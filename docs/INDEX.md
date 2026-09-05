@@ -28,6 +28,7 @@ Bộ hồ sơ v1.2 (05/09/2026). Tài liệu docx nằm trong `ho-so/`; đặc t
 | Cài đặt, phát hành đa nền tảng | EIDE-DEP-26, `PLATFORM.md` | — |
 | Thuật ngữ | EIDE-CON-28 | — |
 | Kế hoạch, backlog, truy vết | EIDE-PLN-27 (Excel), `SPRINT-01.md` | — |
+| Quy trình làm việc với Claude Code | EIDE-DEV-29, `CLAUDE.md` | `.claude/commands/*.md` |
 | Use case, sơ đồ tuần tự | EIDE_Use_Case_Chi_Tiet_v1.2.xlsx (sheet 10, 11) | — |
 
 ## Nhóm năng lực → tập CDS-12

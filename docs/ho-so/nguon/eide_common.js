@@ -104,6 +104,7 @@ const REFS = [
   'V. T. Công, "EIDE-TGT-19 — ISA profile, toolchain, adapter target và discovery v1.0," 05/09/2026.',
   'V. T. Công, "EIDE-SIM-20 — Thiết kế mô phỏng v1.0," 05/09/2026.',
   'V. T. Công, "EIDE-Rà soát đủ điều kiện phát triển (EIDE_Ra_soat_Du_dieu_kien_Phat_trien.xlsx)," 05/09/2026.',
+  'Anthropic, "Claude Code documentation — memory (CLAUDE.md), slash commands, hooks, settings," Claude Docs, 2026. [Online]. Available: https://docs.claude.com/en/docs/claude-code',
 ];
 function refParas(H1) {
   const out = [H1('Tài liệu tham khảo')];
