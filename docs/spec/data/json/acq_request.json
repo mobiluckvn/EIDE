@@ -1,0 +1,63 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/acq_request.json",
+ "title": "AcquisitionRequest",
+ "description": "Yêu cầu nhận tri thức và máy trạng thái",
+ "type": "object",
+ "required": [
+  "id",
+  "need",
+  "state",
+  "created_at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "acq_<hex>"
+  },
+  "need": {
+   "type": "string",
+   "description": "Mô tả nhu cầu"
+  },
+  "subject": {
+   "type": "string",
+   "description": "IRI thiếu"
+  },
+  "part": {
+   "type": "string"
+  },
+  "peripheral": {
+   "type": "string"
+  },
+  "state": {
+   "type": "string",
+   "enum": [
+    "REQUESTED",
+    "CANDIDATES",
+    "CONFIRMED",
+    "EXTRACTED",
+    "NORMALIZED",
+    "REVIEWED",
+    "VERIFIED",
+    "REJECTED"
+   ]
+  },
+  "candidates": {
+   "type": "array",
+   "description": "JSON Candidate[]"
+  },
+  "decisions": {
+   "type": "array",
+   "description": "JSON decision ids"
+  },
+  "created_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "updated_at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

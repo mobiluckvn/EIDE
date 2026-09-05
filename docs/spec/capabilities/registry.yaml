@@ -1,0 +1,206 @@
+- code: REGISTRY-01
+  id: registry.search
+  name: Tìm gói theo id/mpn/từ khóa
+  desc: Tìm gói theo id/mpn/từ khóa
+  input:
+    type: object
+    properties:
+      q:
+        type: string
+    required:
+    - q
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      packages:
+        type: array
+        items:
+          type: object
+    required:
+    - packages
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M4
+  impl: eide.registry:search
+  errors: []
+  example:
+    q: bme280
+- code: REGISTRY-02
+  id: registry.pull
+  name: Kiểm chữ ký; nạp gói vào store; ghim
+  desc: Kiểm chữ ký; nạp gói vào store; ghim
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+        description: id@ver
+    required:
+    - id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      pinned:
+        type: string
+      facts:
+        type: integer
+    required:
+    - pinned
+    - facts
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Chữ ký hợp lệ
+  ask_when:
+  - Chưa kiểm định + dự án nhạy cảm
+  undo:
+    kind: supersede_facts
+  milestone: M4
+  impl: eide.registry:pull
+  errors:
+  - E8001
+  - E4004
+  - E6001
+  example:
+    id: st.stm32f411ce@1.2.0
+- code: REGISTRY-03
+  id: registry.pack
+  name: Đóng gói .hkp (fact + con trỏ nguồn, skill, bench, badge); kiểm license
+  desc: Đóng gói .hkp (fact + con trỏ nguồn, skill, bench, badge); kiểm license
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+      include:
+        type: array
+        items:
+          type: string
+          enum:
+          - passport
+          - skills
+          - bench
+          - badges
+          - template
+    required:
+    - id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+      manifest:
+        type: object
+    required:
+    - file
+    - manifest
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Thiếu license
+  undo:
+    kind: delete_created_files
+  milestone: M4
+  impl: eide.registry:pack
+  errors:
+  - E8001
+  example:
+    id: st.stm32f411ce@1.2.0
+    include:
+    - passport
+    - skills
+- code: REGISTRY-04
+  id: registry.publish
+  name: Ký và phát hành (nội bộ tự động; công khai hỏi)
+  desc: Ký và phát hành (nội bộ tự động; công khai hỏi)
+  input:
+    type: object
+    properties:
+      pkg:
+        type: string
+      scope:
+        type: string
+        enum:
+        - internal
+        - public
+    required:
+    - pkg
+    - scope
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      published:
+        type: boolean
+      url:
+        type: string
+    required:
+    - published
+    additionalProperties: false
+  risk: R2/R4
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Công khai; chứa K3/K6
+  undo:
+    kind: none
+  milestone: M4
+  impl: eide.registry:publish
+  errors:
+  - E3000
+  - E4004
+  example:
+    pkg: dist/st.stm32f411ce-1.2.0.hkp
+    scope: internal
+- code: REGISTRY-05
+  id: registry.seed
+  name: Gieo hạt từ CMSIS-SVD / Microchip packs
+  desc: Gieo hạt từ CMSIS-SVD / Microchip packs
+  input:
+    type: object
+    properties:
+      dir:
+        type: string
+      kinds:
+        type: array
+        items:
+          type: string
+          enum:
+          - svd
+          - atdf
+    required:
+    - dir
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: n_ok, n_fail, per_vendor
+    required:
+    - report
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M0
+  impl: eide.registry:seed
+  errors: []
+  example:
+    dir: /tmp/cmsis-svd-data
+    kinds:
+    - svd

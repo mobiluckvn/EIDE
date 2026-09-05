@@ -1,0 +1,54 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/debug_session.json",
+ "title": "DebugSession",
+ "description": "Phiên gỡ lỗi có chứng cứ",
+ "type": "object",
+ "required": [
+  "id",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "ds_<hex>"
+  },
+  "log_ref": {
+   "type": "string"
+  },
+  "range_start": {
+   "type": "integer",
+   "description": "Dòng"
+  },
+  "range_end": {
+   "type": "integer"
+  },
+  "evidence": {
+   "type": "array",
+   "description": "JSON EvidencePack[]"
+  },
+  "hypotheses": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "outcome": {
+   "type": "string",
+   "enum": [
+    "confirmed",
+    "refuted",
+    "open"
+   ]
+  },
+  "fact_ids": {
+   "type": "array"
+  },
+  "code_ids": {
+   "type": "array"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

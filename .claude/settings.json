@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)", "Bash(python3:*)", "Bash(pytest:*)", "Bash(ruff:*)", "Bash(make:*)", "Bash(git status:*)",
+      "Bash(git diff:*)", "Bash(git log:*)", "Bash(git add:*)", "Bash(git commit:*)", "Bash(grep:*)", "Bash(ls:*)"
+    ],
+    "deny": ["Bash(rm -rf:*)", "Write(docs/ho-so/*.docx)", "Edit(docs/spec/cds.json)", "Edit(docs/spec/caps.json)"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [{"type": "command", "command": "python3 scripts/hooks/guard_spec.py"}]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [{"type": "command", "command": "python3 scripts/hooks/after_edit.py"}]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [{"type": "command", "command": "python3 scripts/hooks/on_stop.py"}]
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/capability.json",
+ "title": "Capability",
+ "description": "Khai báo năng lực (nạp từ YAML, bảng chỉ để truy vấn)",
+ "type": "object",
+ "required": [
+  "code",
+  "id",
+  "ns",
+  "name",
+  "risk",
+  "tier"
+ ],
+ "properties": {
+  "code": {
+   "type": "string",
+   "description": "EXTRACT-05"
+  },
+  "id": {
+   "type": "string",
+   "description": "extract.bom"
+  },
+  "ns": {
+   "type": "string"
+  },
+  "name": {
+   "type": "string"
+  },
+  "desc": {
+   "type": "string"
+  },
+  "input_schema": {
+   "type": "object",
+   "description": "JSON Schema"
+  },
+  "output_schema": {
+   "type": "object",
+   "description": "JSON Schema"
+  },
+  "risk": {
+   "type": "string",
+   "enum": [
+    "R0",
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ]
+  },
+  "tier": {
+   "type": "string",
+   "enum": [
+    "T1",
+    "T1*",
+    "T2",
+    "T3"
+   ]
+  },
+  "grounding": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "ask_when": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "undo_kind": {
+   "type": "string",
+   "enum": [
+    "supersede_facts",
+    "git_revert",
+    "reflash_known_good",
+    "delete_created_files",
+    "restore_config",
+    "none"
+   ]
+  },
+  "milestone": {
+   "type": "string"
+  },
+  "impl": {
+   "type": "string",
+   "description": "module:function"
+  },
+  "ui": {
+   "type": "object",
+   "description": "JSON {screen, action}"
+  }
+ },
+ "additionalProperties": false
+}

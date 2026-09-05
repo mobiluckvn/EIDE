@@ -1,0 +1,207 @@
+{
+  "artboards": [
+    {
+      "file": "FlowMap.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 620,
+      "title": "0 · Hành trình & cổng người"
+    },
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 760,
+      "w": 1440,
+      "h": 900,
+      "title": "1 · Tổng quan dự án"
+    },
+    {
+      "file": "Ingest.dc.html",
+      "x": 1560,
+      "y": 760,
+      "w": 1440,
+      "h": 900,
+      "title": "2 · Nhập tài liệu"
+    },
+    {
+      "file": "ReviewQueue.dc.html",
+      "x": 3120,
+      "y": 760,
+      "w": 1440,
+      "h": 900,
+      "title": "3 · Hàng đợi xác nhận (G-FACT)"
+    },
+    {
+      "file": "Passport.dc.html",
+      "x": 0,
+      "y": 1800,
+      "w": 1440,
+      "h": 900,
+      "title": "4 · Hộ chiếu chip"
+    },
+    {
+      "file": "Board.dc.html",
+      "x": 1560,
+      "y": 1800,
+      "w": 1440,
+      "h": 900,
+      "title": "5 · Hộ chiếu mạch"
+    },
+    {
+      "file": "Graph.dc.html",
+      "x": 3120,
+      "y": 1800,
+      "w": 1440,
+      "h": 900,
+      "title": "6 · Đồ thị tri thức"
+    },
+    {
+      "file": "PlanDiff.dc.html",
+      "x": 0,
+      "y": 2840,
+      "w": 1440,
+      "h": 900,
+      "title": "7 · Kế hoạch (G1) & diff (G3)"
+    },
+    {
+      "file": "LogAssist.dc.html",
+      "x": 1560,
+      "y": 2840,
+      "w": 1440,
+      "h": 900,
+      "title": "8 · Log gigabyte & hỏi tại dòng"
+    },
+    {
+      "file": "Debug.dc.html",
+      "x": 3120,
+      "y": 2840,
+      "w": 1440,
+      "h": 900,
+      "title": "9 · Gỡ lỗi probe & chứng cứ"
+    },
+    {
+      "file": "Registry.dc.html",
+      "x": 0,
+      "y": 3880,
+      "w": 1440,
+      "h": 900,
+      "title": "10 · Registry"
+    },
+    {
+      "file": "Models.dc.html",
+      "x": 1560,
+      "y": 3880,
+      "w": 1440,
+      "h": 900,
+      "title": "11 · Mô hình & chi phí"
+    },
+    {
+      "file": "Chat.dc.html",
+      "x": 3120,
+      "y": 3880,
+      "w": 1440,
+      "h": 900,
+      "title": "12 · Trò chuyện với tác tử"
+    },
+    {
+      "file": "Code.dc.html",
+      "x": 0,
+      "y": 4920,
+      "w": 1440,
+      "h": 900,
+      "title": "13 · Mã nguồn (constant-guard)"
+    },
+    {
+      "file": "Sim.dc.html",
+      "x": 1560,
+      "y": 4920,
+      "w": 1440,
+      "h": 900,
+      "title": "14 · Mô phỏng SIL/HIL"
+    },
+    {
+      "file": "Bench.dc.html",
+      "x": 3120,
+      "y": 4920,
+      "w": 1440,
+      "h": 900,
+      "title": "15 · Benchmark"
+    },
+    {
+      "file": "Env.dc.html",
+      "x": 0,
+      "y": 5960,
+      "w": 1440,
+      "h": 900,
+      "title": "16 · Môi trường & báo cáo"
+    },
+    {
+      "file": "RagAsk.dc.html",
+      "x": 1560,
+      "y": 5960,
+      "w": 1440,
+      "h": 900,
+      "title": "18 · Bản đồ tri thức & hỏi đáp (v1.2)"
+    },
+    {
+      "file": "ReqArch.dc.html",
+      "x": 3120,
+      "y": 5960,
+      "w": 1440,
+      "h": 900,
+      "title": "19 · Yêu cầu & kiến trúc (v1.2)"
+    },
+    {
+      "file": "DiagramView.dc.html",
+      "x": 0,
+      "y": 7000,
+      "w": 1440,
+      "h": 900,
+      "title": "20 · Lược đồ (v1.2)"
+    },
+    {
+      "file": "Doc.dc.html",
+      "x": 1560,
+      "y": 7000,
+      "w": 1440,
+      "h": 900,
+      "title": "21 · Tài liệu (v1.2)"
+    },
+    {
+      "file": "Discovery.dc.html",
+      "x": 3120,
+      "y": 7000,
+      "w": 1440,
+      "h": 900,
+      "title": "22 · Dò board (v1.2)"
+    },
+    {
+      "file": "ToolForge.dc.html",
+      "x": 0,
+      "y": 8040,
+      "w": 1440,
+      "h": 900,
+      "title": "23 · Công cụ tự tạo (v1.2)"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-direction",
+      "x": 1560,
+      "y": 40,
+      "w": 520,
+      "text": "Hướng thiết kế: bàn làm việc kỹ thuật, mật độ cao, sáng. Màu theo nhận diện PTIT: đỏ chủ đạo cho điều hướng/hành động chính, vàng sao = cần con người quyết định, xám xanh cho hành động phụ. Mã HEX chính xác của PTIT chưa công bố — đổi 3 hằng số trong gen.py khi có bộ nhận diện. Mọi giá trị phần cứng luôn đi kèm tầng tin cậy và nguồn.\nKịch bản dữ liệu: robot-ctrl trên WeAct BlackPill F411 + BME280 (kịch bản B của PDA-00)."
+    },
+    {
+      "id": "note-scope",
+      "x": 2140,
+      "y": 40,
+      "w": 420,
+      "text": "Mockup tĩnh 1440×900 (macOS, EIDE trên nền GEditor). CLI và MCP không có màn hình riêng; IDE ngoài dùng tool của Knowledge Plane. 17 màn hình gồm chat, mã nguồn, mô phỏng, benchmark, môi trường & báo cáo."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

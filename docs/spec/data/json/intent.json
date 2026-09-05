@@ -1,0 +1,63 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/intent.json",
+ "title": "Intent",
+ "description": "Ý định đã hiểu từ lệnh (DPS-09)",
+ "type": "object",
+ "required": [
+  "id",
+  "text",
+  "intent",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "it_<hex>"
+  },
+  "text": {
+   "type": "string",
+   "description": "Lệnh gốc"
+  },
+  "intent": {
+   "type": "string"
+  },
+  "slots": {
+   "type": "object",
+   "description": "JSON"
+  },
+  "is_big": {
+   "type": "boolean"
+  },
+  "confidence": {
+   "type": "number"
+  },
+  "lang": {
+   "type": "string",
+   "enum": [
+    "vi",
+    "en"
+   ]
+  },
+  "grounded": {
+   "type": "object",
+   "description": "JSON Grounded"
+  },
+  "defaults_applied": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "question": {
+   "type": "object",
+   "description": "JSON Question"
+  },
+  "session_id": {
+   "type": "string"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

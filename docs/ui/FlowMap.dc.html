@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+body { margin:0; font-family:'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; color:#1b2430; background:#f4f6f9; font-size:13px; }
+a { color:#B8121F; } a:hover { color:#2F4858; }
+.mono { font-family:'IBM Plex Mono', Menlo, Consolas, monospace; }
+.win { width:1440px; height:900px; display:flex; flex-direction:column; background:#f4f6f9; overflow:hidden; border-radius:10px; box-shadow:0 20px 60px rgba(184,18,31,.14); }
+.titlebar { height:38px; display:flex; align-items:center; gap:8px; padding:0 14px; background:#e9edf3; border-bottom:1px solid #d5dbe5; }
+.dot { width:12px; height:12px; border-radius:6px; }
+.tabs { display:flex; gap:2px; margin-left:16px; }
+.tab { padding:7px 14px; font-size:12px; color:#5b6b7f; border-radius:6px 6px 0 0; }
+.tab.on { background:#f4f6f9; color:#B8121F; font-weight:600; }
+.body { flex:1; display:flex; min-height:0; }
+.side { width:212px; background:#B8121F; color:#fbe9ea; display:flex; flex-direction:column; padding:14px 0; gap:2px; }
+.brand { display:flex; align-items:center; gap:10px; padding:4px 16px 14px; }
+.brand b { color:#fff; font-size:14px; letter-spacing:.3px; }
+.nav { display:flex; align-items:center; gap:10px; padding:8px 16px; font-size:13px; color:#f3c6c9; }
+.nav.on { background:rgba(255,255,255,.12); color:#fff; border-left:3px solid #2F4858; padding-left:13px; }
+.nav .cnt { margin-left:auto; background:#F2B705; color:#B8121F; font-size:11px; font-weight:600; padding:1px 7px; border-radius:9px; }
+.nav svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.sidefoot { margin-top:auto; padding:12px 16px; font-size:11px; color:#f0b3b7; border-top:1px solid rgba(255,255,255,.12); display:flex; flex-direction:column; gap:4px; }
+.main { flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar { height:52px; display:flex; align-items:center; gap:12px; padding:0 20px; background:#fff; border-bottom:1px solid #e1e6ee; }
+.topbar h1 { font-size:16px; font-weight:600; margin:0; color:#B8121F; }
+.crumb { color:#7b8a9c; font-size:12px; }
+.search { margin-left:auto; display:flex; align-items:center; gap:8px; width:340px; height:32px; border:1px solid #d5dbe5; border-radius:6px; padding:0 10px; color:#8a97a8; background:#fbfcfd; }
+.btn { display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:6px; font-weight:500; font-size:12.5px; border:1px solid #cfd6e0; background:#fff; color:#243447; }
+.btn.p { background:#B8121F; color:#fff; border-color:#B8121F; }
+.btn.t { background:#2F4858; color:#fff; border-color:#2F4858; }
+.btn.g { background:#F2B705; color:#3a2a00; border-color:#F2B705; }
+.btn.d { background:#fff; color:#b3261e; border-color:#e6b8b5; }
+.content { flex:1; display:flex; gap:16px; padding:16px 20px; min-height:0; }
+.card { background:#fff; border:1px solid #e1e6ee; border-radius:8px; display:flex; flex-direction:column; min-width:0; }
+.card h3 { margin:0; padding:12px 14px; font-size:12px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; color:#5b6b7f; border-bottom:1px solid #eef1f5; display:flex; align-items:center; gap:8px; }
+.card h3 .sp { margin-left:auto; font-weight:500; text-transform:none; letter-spacing:0; color:#8a97a8; }
+.pad { padding:12px 14px; }
+table { border-collapse:collapse; width:100%; font-size:12.5px; }
+th { text-align:left; font-weight:600; color:#5b6b7f; font-size:11px; letter-spacing:.3px; text-transform:uppercase; padding:8px 12px; border-bottom:1px solid #e1e6ee; background:#fafbfd; }
+td { padding:8px 12px; border-bottom:1px solid #eef1f5; vertical-align:top; }
+tr.sel td { background:#fff4e6; }
+.pill { display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+.gold { background:#fff3d6; color:#7a5200; } .silver { background:#e8eef5; color:#3d5064; } .bronze { background:#f6e3dc; color:#8a3b1f; }
+.ok { background:#dff5ee; color:#0b6b52; } .warn { background:#fff0cc; color:#7a5200; } .bad { background:#fde3e1; color:#7a0c0c; } .info { background:#e6effa; color:#B8121F; }
+.kpi { display:flex; flex-direction:column; gap:4px; padding:14px; }
+.kpi .v { font-size:26px; font-weight:600; color:#B8121F; }
+.kpi .l { font-size:11.5px; color:#5b6b7f; }
+.status { height:26px; display:flex; align-items:center; gap:18px; padding:0 20px; font-size:11px; color:#5b6b7f; background:#fff; border-top:1px solid #e1e6ee; }
+.status .dotg { width:8px; height:8px; border-radius:4px; background:#2F4858; display:inline-block; margin-right:6px; }
+.gate { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e1e6ee; border-radius:6px; background:#fff; }
+.gate .tag { font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; color:#fff; background:#B8121F; padding:2px 6px; border-radius:4px; }
+.code { font-family:'IBM Plex Mono', Menlo, monospace; font-size:12px; line-height:1.55; white-space:pre; color:#1b2430; }
+.tree { font-size:12.5px; } .tree div { padding:5px 8px; border-radius:4px; display:flex; gap:8px; align-items:center; } .tree .on { background:#fff4e6; color:#B8121F; font-weight:600; }
+.field { display:flex; flex-direction:column; gap:4px; } .field label { font-size:11px; color:#5b6b7f; font-weight:600; } .field .in { height:30px; border:1px solid #d5dbe5; border-radius:5px; padding:0 10px; display:flex; align-items:center; background:#fff; }
+.hint { font-size:11.5px; color:#7b8a9c; }
+</style></helmet>
+<div style="width:1440px;height:620px;background:#f4f6f9;padding:28px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+  <div style="display:flex;align-items:baseline;gap:14px"><span style="font-size:20px;font-weight:600;color:#B8121F">Hành trình người dùng và cổng người · EIDE</span><span class="hint">P1 nhận tri thức → P2 kế hoạch → P3 sinh mã → P4 xác minh → P5 gỡ lỗi → P6 phát hành · ô vàng = con người quyết định</span></div>
+  <svg viewBox="0 0 1384 470" width="1384" height="470">
+    <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a97a8"/></marker></defs>
+    <rect x="20" y="20" width="200" height="60" rx="8" fill="#fff" stroke="#B8121F" stroke-width="1.5"/><text x="120" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#B8121F">Nhập tài liệu</text><text x="120" y="65" text-anchor="middle" font-size="11" fill="#5b6b7f">Ingest · phân loại · mở nén</text><rect x="248" y="20" width="200" height="60" rx="8" fill="#fff" stroke="#B8121F" stroke-width="1.5"/><text x="348" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#B8121F">Hàng đợi xác nhận</text><text x="348" y="65" text-anchor="middle" font-size="11" fill="#5b6b7f">G-SRC · G-FACT</text><rect x="476" y="20" width="200" height="60" rx="8" fill="#fff" stroke="#B8121F" stroke-width="1.5"/><text x="576" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#B8121F">Hộ chiếu chip / mạch</text><text x="576" y="65" text-anchor="middle" font-size="11" fill="#5b6b7f">Passport · Board · Graph</text><rect x="704" y="20" width="200" height="60" rx="8" fill="#fff" stroke="#B8121F" stroke-width="1.5"/><text x="804" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#B8121F">Kế hoạch & mã</text><text x="804" y="65" text-anchor="middle" font-size="11" fill="#5b6b7f">G1 · G3 · IDE qua MCP</text><rect x="932" y="20" width="200" height="60" rx="8" fill="#fff" stroke="#B8121F" stroke-width="1.5"/><text x="1032" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#B8121F">Log · serial · probe</text><text x="1032" y="65" text-anchor="middle" font-size="11" fill="#5b6b7f">G-OPS · G4 · DebugSession</text><rect x="1160" y="20" width="200" height="60" rx="8" fill="#fff" stroke="#B8121F" stroke-width="1.5"/><text x="1260" y="45" text-anchor="middle" font-size="13" font-weight="600" fill="#B8121F">Registry</text><text x="1260" y="65" text-anchor="middle" font-size="11" fill="#5b6b7f">G5 · .hkp · huy hiệu</text>
+    <line x1="220" y1="50" x2="248" y2="50" stroke="#8a97a8" stroke-width="1.5" marker-end="url(#a2)"/><line x1="448" y1="50" x2="476" y2="50" stroke="#8a97a8" stroke-width="1.5" marker-end="url(#a2)"/><line x1="676" y1="50" x2="704" y2="50" stroke="#8a97a8" stroke-width="1.5" marker-end="url(#a2)"/><line x1="904" y1="50" x2="932" y2="50" stroke="#8a97a8" stroke-width="1.5" marker-end="url(#a2)"/><line x1="1132" y1="50" x2="1160" y2="50" stroke="#8a97a8" stroke-width="1.5" marker-end="url(#a2)"/>
+    <rect x="20" y="120" width="200" height="34" rx="6" fill="#FFF6E0" stroke="#F2B705" stroke-width="1.4"/><text x="120" y="142" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d00">(tự động, có sandbox)</text><rect x="248" y="120" width="200" height="34" rx="6" fill="#FFF6E0" stroke="#F2B705" stroke-width="1.4"/><text x="348" y="142" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d00">G-SRC chọn nguồn · G-FACT duyệt fact</text><rect x="476" y="120" width="200" height="34" rx="6" fill="#FFF6E0" stroke="#F2B705" stroke-width="1.4"/><text x="576" y="142" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d00">Kiểm định trên board (G-OPS)</text><rect x="704" y="120" width="200" height="34" rx="6" fill="#FFF6E0" stroke="#F2B705" stroke-width="1.4"/><text x="804" y="142" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d00">G1 duyệt kế hoạch · G3 merge</text><rect x="932" y="120" width="200" height="34" rx="6" fill="#FFF6E0" stroke="#F2B705" stroke-width="1.4"/><text x="1032" y="142" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d00">G-OPS nạp/ghi · G4 xác nhận vật lý</text><rect x="1160" y="120" width="200" height="34" rx="6" fill="#FFF6E0" stroke="#F2B705" stroke-width="1.4"/><text x="1260" y="142" text-anchor="middle" font-size="11.5" font-weight="600" fill="#5a3d00">G5 duyệt phát hành</text>
+    <rect x="20" y="190" width="1344" height="120" rx="8" fill="#fff" stroke="#e1e6ee"/>
+    <text x="36" y="214" font-size="12" font-weight="600" fill="#B8121F">Knowledge Plane (daemon cục bộ) — mọi bề mặt dùng chung</text>
+    <rect x="36" y="228" width="248" height="66" rx="6" fill="#E6FAF5" stroke="#2F4858"/><text x="160" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#B8121F">Acquisition</text><text x="160" y="272" text-anchor="middle" font-size="10.5" fill="#3d5064">extractor theo tầng · máy trạng thái</text><rect x="304" y="228" width="248" height="66" rx="6" fill="#E6FAF5" stroke="#2F4858"/><text x="428" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#B8121F">Passport Store + KG</text><text x="428" y="272" text-anchor="middle" font-size="10.5" fill="#3d5064">SQLite · fact bất biến · đồ thị</text><rect x="572" y="228" width="248" height="66" rx="6" fill="#E6FAF5" stroke="#2F4858"/><text x="696" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#B8121F">Agent Runtime</text><text x="696" y="272" text-anchor="middle" font-size="10.5" fill="#3d5064">Gateway đa mô hình · hooks · gate</text><rect x="840" y="228" width="248" height="66" rx="6" fill="#E6FAF5" stroke="#2F4858"/><text x="964" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#B8121F">Tool & Target</text><text x="964" y="272" text-anchor="middle" font-size="10.5" fill="#3d5064">build · flash · serial · probe · sim</text><rect x="1108" y="228" width="248" height="66" rx="6" fill="#E6FAF5" stroke="#2F4858"/><text x="1232" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#B8121F">Registry client</text><text x="1232" y="272" text-anchor="middle" font-size="10.5" fill="#3d5064">ký · huy hiệu · pull/publish</text>
+    <rect x="20" y="340" width="420" height="110" rx="8" fill="#fff" stroke="#e1e6ee"/><text x="36" y="364" font-size="12" font-weight="600" fill="#B8121F">Ba bề mặt</text>
+    <text x="36" y="388" font-size="11.5" fill="#3d5064">• GEditor plugin (macOS): hộ chiếu, hàng đợi, log gigabyte, serial, probe</text><text x="36" y="408" font-size="11.5" fill="#3d5064">• IDE ngoài qua MCP: Claude Code, Cursor, VS Code — tool passport.*, review.patch, flash</text><text x="36" y="428" font-size="11.5" fill="#3d5064">• CLI/CI: hkw ingest | query | bench | publish | doctor</text>
+    <rect x="470" y="340" width="440" height="110" rx="8" fill="#fff" stroke="#e1e6ee"/><text x="486" y="364" font-size="12" font-weight="600" fill="#B8121F">Bất biến hiển thị ở mọi màn hình</text>
+    <text x="486" y="388" font-size="11.5" fill="#3d5064">• Thanh trạng thái: chế độ offline, pin phiên bản, gate đang mở, chi phí hôm nay</text><text x="486" y="408" font-size="11.5" fill="#3d5064">• Mọi giá trị phần cứng hiện kèm tầng (vàng/bạc/đồng), trạng thái, nguồn</text><text x="486" y="428" font-size="11.5" fill="#3d5064">• Thao tác không đảo ngược luôn là nút vàng "Cấp quyền" (G-OPS), không bao giờ mặc định</text>
+    <rect x="940" y="340" width="424" height="110" rx="8" fill="#fff" stroke="#e1e6ee"/><text x="956" y="364" font-size="12" font-weight="600" fill="#B8121F">Ngôn ngữ thị giác</text>
+    <text x="956" y="388" font-size="11.5" fill="#3d5064">• Đỏ PTIT điều hướng/chính · Xám xanh hành động phụ · Vàng sao = cần con người</text><text x="956" y="408" font-size="11.5" fill="#3d5064">• IBM Plex Sans / Plex Mono · mật độ kỹ thuật · bảng là đơn vị chính</text><text x="956" y="428" font-size="11.5" fill="#3d5064">• Đỏ chỉ dành cho mâu thuẫn và lỗi phần cứng</text>
+  </svg>
+</div>
+</x-dc>
+</body>
+</html>

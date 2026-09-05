@@ -1,0 +1,53 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/feature.json",
+ "title": "Feature",
+ "description": "Tính năng và bằng chứng",
+ "type": "object",
+ "required": [
+  "id",
+  "title",
+  "status"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "F-nn"
+  },
+  "title": {
+   "type": "string"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "failing",
+    "passing",
+    "blocked"
+   ]
+  },
+  "evidence": {
+   "type": "array",
+   "description": "JSON refs (log hash, measurement id)"
+  },
+  "verified": {
+   "type": "string",
+   "enum": [
+    "auto",
+    "human"
+   ]
+  },
+  "run_id": {
+   "type": "string",
+   "description": "Run đang xử lý"
+  },
+  "requirement_ids": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "updated_at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

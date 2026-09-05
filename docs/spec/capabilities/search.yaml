@@ -1,0 +1,370 @@
+- code: SEARCH-01
+  id: search.registry
+  name: Tìm gói/hộ chiếu/mẫu tham chiếu trong registry
+  desc: Tìm gói/hộ chiếu/mẫu tham chiếu trong registry
+  input:
+    type: object
+    properties:
+      query:
+        type: string
+      kind:
+        type: string
+        enum:
+        - passport
+        - skill
+        - template
+        - any
+    required:
+    - query
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      candidates:
+        type: array
+        items:
+          type: object
+        description: id@ver, kind, badges, score
+    required:
+    - candidates
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M4
+  impl: eide.search:registry
+  errors:
+  - E4004 registry không tới được → trả rỗng + cảnh báo
+  example:
+    query: stm32f411
+    kind: passport
+- code: SEARCH-02
+  id: search.vendor
+  name: Tìm trong kho hãng theo mẫu URL đã biết (CMSIS pack, Microchip pack, ST, Bosch…)
+  desc: Tìm trong kho hãng theo mẫu URL đã biết (CMSIS pack, Microchip pack, ST, Bosch…)
+  input:
+    type: object
+    properties:
+      part:
+        type: string
+    required:
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      candidates:
+        type: array
+        items:
+          type: object
+        description: uri, kind, domain, size_est, license_hint
+    required:
+    - candidates
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.search:vendor
+  errors: []
+  example:
+    part: STM32F411CE
+- code: SEARCH-03
+  id: search.docs_mcp
+  name: Hỏi docs MCP của hãng (Espressif, Nordic) → đoạn trích + URL + ngày
+  desc: Hỏi docs MCP của hãng (Espressif, Nordic) → đoạn trích + URL + ngày
+  input:
+    type: object
+    properties:
+      query:
+        type: string
+      vendor:
+        type: string
+        enum:
+        - espressif
+        - nordic
+    required:
+    - query
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      snippets:
+        type: array
+        items:
+          type: object
+        description: text, url, date, sdk_version
+    required:
+    - snippets
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.search:docs_mcp
+  errors:
+  - E4004
+  - E8002 nếu sensitive và query chứa nội dung dự án
+  example:
+    query: i2c_master_transmit timeout
+    vendor: espressif
+- code: SEARCH-04
+  id: search.web
+  name: Tìm web nhiều nguồn (datasheet, SVD, repo, errata, forum); ưu tiên tên miền hãng
+  desc: Tìm web nhiều nguồn (datasheet, SVD, repo, errata, forum); ưu tiên tên miền hãng; không tải
+  input:
+    type: object
+    properties:
+      query:
+        type: string
+      kinds:
+        type: array
+        items:
+          type: string
+          enum:
+          - datasheet
+          - svd
+          - repo
+          - errata
+          - forum
+          - schematic
+      part:
+        type: string
+    required:
+    - query
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      candidates:
+        type: array
+        items:
+          type: object
+    required:
+    - candidates
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Có Internet
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.search:web
+  errors:
+  - E4004
+  example:
+    query: A4988 datasheet
+    kinds:
+    - datasheet
+    part: A4988
+- code: SEARCH-05
+  id: search.rank
+  name: Xếp hạng ứng viên theo tầng dự kiến, tên miền, hash/license, khớp mã linh kiện
+  desc: Xếp hạng ứng viên theo tầng dự kiến, tên miền, hash/license, khớp mã linh kiện
+  input:
+    type: object
+    properties:
+      candidates:
+        type: array
+        items:
+          type: object
+      part:
+        type: string
+    required:
+    - candidates
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      ranked:
+        type: array
+        items:
+          type: object
+    required:
+    - ranked
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.search:rank
+  errors: []
+  example:
+    candidates: []
+- code: SEARCH-06
+  id: search.fetch
+  name: Tải ứng viên (giới hạn dung lượng), hash, phát hiện license
+  desc: Tải ứng viên (giới hạn dung lượng), hash, phát hiện license
+  input:
+    type: object
+    properties:
+      candidate:
+        type: object
+    required:
+    - candidate
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      source_id:
+        type: string
+      sha256:
+        type: string
+      license:
+        type: string
+      size_bytes:
+        type: integer
+    required:
+    - source_id
+    - sha256
+    - license
+    - size_bytes
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Theo chính sách G-SRC
+  ask_when:
+  - Ngoài danh sách tin cậy; license không rõ; tệp lớn
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.search:fetch
+  errors:
+  - E3000 pending
+  - E3001
+  - E8001
+  - E4004
+  example:
+    candidate:
+      uri: https://www.st.com/…/rm0383.pdf
+      domain: st.com
+      kind: pdf_vendor
+      size_mb: 12
+- code: SEARCH-07
+  id: search.verify_match
+  name: Tóm tắt tài liệu vừa tải và kiểm có đúng linh kiện/phiên bản không
+  desc: Tóm tắt tài liệu vừa tải và kiểm có đúng linh kiện/phiên bản không
+  input:
+    type: object
+    properties:
+      source_id:
+        type: string
+      part:
+        type: string
+      version:
+        type: string
+    required:
+    - source_id
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      match_score:
+        type: number
+      reasons:
+        type: array
+        items:
+          type: string
+      doc_version:
+        type: string
+    required:
+    - match_score
+    - reasons
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Không khớp
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.search:verify_match
+  errors: []
+  example:
+    source_id: src_…
+    part: BME280
+- code: SEARCH-08
+  id: search.missing
+  name: Từ tác vụ, liệt kê tri thức còn thiếu và tạo yêu cầu (sufficiency check)
+  desc: Từ tác vụ, liệt kê tri thức còn thiếu và tạo yêu cầu (sufficiency check)
+  input:
+    type: object
+    properties:
+      task_ref:
+        type: string
+    required:
+    - task_ref
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      requests:
+        type: array
+        items:
+          type: object
+        description: subject, kind, why
+    required:
+    - requests
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.search:missing
+  errors: []
+  example:
+    task_ref: F-04
+- code: SEARCH-09
+  id: search.reference_projects
+  name: Tìm mẫu dự án tham chiếu cho một ý tưởng (robot cân bằng…) trong registry rồi we
+  desc: Tìm mẫu dự án tham chiếu cho một ý tưởng (robot cân bằng…) trong registry rồi web
+  input:
+    type: object
+    properties:
+      idea:
+        type: string
+    required:
+    - idea
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      templates:
+        type: array
+        items:
+          type: object
+        description: id@ver, bom, verified, score
+    required:
+    - templates
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M4
+  impl: eide.search:reference_projects
+  errors: []
+  example:
+    idea: robot hai bánh tự cân bằng

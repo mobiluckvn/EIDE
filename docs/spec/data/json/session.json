@@ -1,0 +1,55 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/session.json",
+ "title": "Session",
+ "description": "Phiên làm việc (session.sqlite, không commit)",
+ "type": "object",
+ "required": [
+  "id",
+  "project",
+  "opened_at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "s_<hex>"
+  },
+  "project": {
+   "type": "string"
+  },
+  "opened_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "closed_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "autonomy_effective": {
+   "type": "string",
+   "enum": [
+    "A0",
+    "A1",
+    "A2",
+    "A3",
+    "A4"
+   ]
+  },
+  "stopped": {
+   "type": "boolean"
+  },
+  "turns": {
+   "type": "array",
+   "description": "JSON Turn[] / TurnSummary"
+  },
+  "undo_items": {
+   "type": "array",
+   "description": "JSON UndoItem[]"
+  },
+  "summary": {
+   "type": "object",
+   "description": "JSON khi đóng"
+  }
+ },
+ "additionalProperties": false
+}

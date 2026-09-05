@@ -1,0 +1,79 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/capability_run.json",
+ "title": "CapabilityRun",
+ "description": "Một lời gọi năng lực qua Router",
+ "type": "object",
+ "required": [
+  "id",
+  "cap",
+  "args_hash",
+  "actor",
+  "status",
+  "started_at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "cr_<hex>"
+  },
+  "run_id": {
+   "type": "string",
+   "description": "Chuỗi cha"
+  },
+  "cap": {
+   "type": "string",
+   "description": "id năng lực"
+  },
+  "args_hash": {
+   "type": "string"
+  },
+  "actor": {
+   "type": "string",
+   "enum": [
+    "human",
+    "orchestrator",
+    "mcp",
+    "cli",
+    "policy"
+   ]
+  },
+  "decision_id": {
+   "type": "string"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "pending",
+    "running",
+    "done",
+    "failed",
+    "cancelled",
+    "undone"
+   ]
+  },
+  "started_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "finished_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "result_ref": {
+   "type": "string",
+   "description": "Đường dẫn/băm kết quả"
+  },
+  "undo_ref": {
+   "type": "string"
+  },
+  "error": {
+   "type": "object",
+   "description": "JSON {code, message}"
+  },
+  "cost_usd": {
+   "type": "number"
+  }
+ },
+ "additionalProperties": false
+}

@@ -1,0 +1,16 @@
+id: armv7e-m
+family_patterns: ["^STM32F[2-4]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]
+abi: {endian: little, word: 32, fpu: optional, align: 8}
+interrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}
+toolchain:
+  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version"}
+  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size}, {name: arm-none-eabi-objcopy}]
+  install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}
+  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}
+  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}
+flash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}
+debug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}
+id_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}
+serial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}
+sim: {engine: renode, platform_template: renode/cortex-m.repl.j2, fallback: qemu}
+skills: [skills/armv7e-m/interrupts.md, skills/armv7e-m/clock.md, skills/armv7e-m/i2c.md]

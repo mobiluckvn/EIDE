@@ -1,0 +1,265 @@
+- code: POLICY-01
+  id: policy.decide
+  name: 'Hàm quyết định theo cổng: APPROVE/ASK/REJECT có lý do'
+  desc: 'Hàm quyết định theo cổng: APPROVE/ASK/REJECT có lý do'
+  input:
+    type: object
+    properties:
+      action:
+        type: object
+      ctx:
+        type: object
+    required:
+    - action
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      decision:
+        type: object
+    required:
+    - decision
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.policy:decide
+  errors: []
+  example:
+    action:
+      cap: search.fetch
+      gate: G-SRC
+      risk: R1
+      features: {}
+- code: POLICY-02
+  id: policy.permit
+  name: Quyền theo phiên cho thao tác R3/R4
+  desc: Quyền theo phiên cho thao tác R3/R4
+  input:
+    type: object
+    properties:
+      op:
+        type: string
+      target:
+        type: string
+      by:
+        type: string
+      ttl_s:
+        type: integer
+    required:
+    - op
+    - by
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      permission_id:
+        type: string
+      expires_at:
+        type: string
+    required:
+    - permission_id
+    - expires_at
+    additionalProperties: false
+  risk: R0
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn (R4)
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.policy:permit
+  errors:
+  - E3000 nếu by≠human
+  example:
+    op: flash
+    target: robot-ctrl
+    by: cong
+- code: POLICY-03
+  id: policy.undo_window
+  name: Theo dõi việc đã tự làm còn trong cửa sổ hoàn tác
+  desc: Theo dõi việc đã tự làm còn trong cửa sổ hoàn tác
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          type: object
+    required:
+    - items
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.policy:undo_window
+  errors: []
+  example: {}
+- code: POLICY-04
+  id: policy.escalate
+  name: Leo thang lên người qua hàng đợi/chat/thông báo
+  desc: Leo thang lên người qua hàng đợi/chat/thông báo
+  input:
+    type: object
+    properties:
+      reason:
+        type: string
+      ref:
+        type: string
+      level:
+        type: string
+        enum:
+        - queue
+        - chat
+        - notify
+    required:
+    - reason
+    - ref
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      notified:
+        type: array
+        items:
+          type: string
+    required:
+    - notified
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.policy:escalate
+  errors: []
+  example:
+    reason: fail_retries
+    ref: cr_9
+- code: POLICY-05
+  id: policy.emergency_stop
+  name: Hạ về A0, hủy thao tác phần cứng đang chờ
+  desc: Hạ về A0, hủy thao tác phần cứng đang chờ
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      stopped:
+        type: boolean
+      cancelled:
+        type: array
+        items:
+          type: string
+    required:
+    - stopped
+    - cancelled
+    additionalProperties: false
+  risk: R0
+  tier: T3
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.policy:emergency_stop
+  errors: []
+  example: {}
+- code: POLICY-06
+  id: policy.learn_thresholds
+  name: Tổng hợp quyết định của người → đề xuất ngưỡng
+  desc: Tổng hợp quyết định của người → đề xuất ngưỡng
+  input:
+    type: object
+    properties:
+      days:
+        type: integer
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      proposals:
+        type: array
+        items:
+          type: object
+    required:
+    - proposals
+    additionalProperties: false
+  risk: R0
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.policy:learn_thresholds
+  errors: []
+  example:
+    days: 30
+- code: POLICY-07
+  id: policy.set_autonomy
+  name: Đặt mức tự chủ dự án/board
+  desc: Đặt mức tự chủ dự án/board
+  input:
+    type: object
+    properties:
+      level:
+        type: string
+        enum:
+        - A0
+        - A1
+        - A2
+        - A3
+        - A4
+      board:
+        type: string
+      by:
+        type: string
+    required:
+    - level
+    - by
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      effective:
+        type: string
+    required:
+    - effective
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Nới lỏng
+  undo:
+    kind: restore_config
+  milestone: M1
+  impl: eide.policy:set_autonomy
+  errors:
+  - E3000
+  example:
+    level: A2
+    board: robot-ctrl
+    by: cong

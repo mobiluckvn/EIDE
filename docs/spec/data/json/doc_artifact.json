@@ -1,0 +1,73 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/doc_artifact.json",
+ "title": "DocArtifact",
+ "description": "Tài liệu sinh ra",
+ "type": "object",
+ "required": [
+  "id",
+  "type",
+  "path",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "doc_<hex>"
+  },
+  "type": {
+   "type": "string",
+   "enum": [
+    "URD",
+    "SRS",
+    "SAD",
+    "SDD",
+    "STP",
+    "BPD",
+    "bringup",
+    "test_report",
+    "api_ref",
+    "datasheet_summary",
+    "changelog",
+    "slides",
+    "section",
+    "custom"
+   ]
+  },
+  "template": {
+   "type": "string"
+  },
+  "path": {
+   "type": "string",
+   "description": ".eide/docs/…"
+  },
+  "sections": {
+   "type": "array",
+   "description": "JSON {heading, hash, citations[]}"
+  },
+  "citations": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "style_issues": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "stale_sections": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "lang": {
+   "type": "string",
+   "enum": [
+    "vi",
+    "en"
+   ]
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

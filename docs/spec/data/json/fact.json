@@ -1,0 +1,124 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/fact.json",
+ "title": "Fact",
+ "description": "Bản ghi tri thức bất biến có nguồn (KAD-07)",
+ "type": "object",
+ "required": [
+  "id",
+  "subject",
+  "predicate",
+  "value",
+  "source_id",
+  "method",
+  "tier",
+  "confidence",
+  "status",
+  "layer"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "f_<16 hex>"
+  },
+  "subject": {
+   "type": "string",
+   "description": "IRI: chip:st.stm32f411ce/periph:I2C1/reg:CR1/field:PE"
+  },
+  "predicate": {
+   "type": "string",
+   "enum": [
+    "base_address",
+    "offset",
+    "bit_range",
+    "reset_value",
+    "enum",
+    "pin_function",
+    "voltage_range",
+    "timing",
+    "irq",
+    "description",
+    "net",
+    "address",
+    "clock",
+    "memory_size",
+    "package",
+    "other"
+   ],
+   "description": "Vị từ"
+  },
+  "value": {
+   "type": "object",
+   "description": "JSON (số/chuỗi/đối tượng)"
+  },
+  "unit": {
+   "type": "string",
+   "description": "Đơn vị"
+  },
+  "source_id": {
+   "type": "string",
+   "description": "Nguồn"
+  },
+  "locator": {
+   "type": "object",
+   "description": "JSON {page,bbox,xpath,line}"
+  },
+  "method": {
+   "type": "string",
+   "enum": [
+    "parser",
+    "layout_llm",
+    "vision_llm",
+    "manual",
+    "inferred",
+    "measured"
+   ],
+   "description": "Cách trích"
+  },
+  "tier": {
+   "type": "string",
+   "enum": [
+    "gold",
+    "silver",
+    "bronze"
+   ]
+  },
+  "confidence": {
+   "type": "number",
+   "description": "0–1"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "normalized",
+    "reviewed",
+    "verified",
+    "rejected",
+    "superseded",
+    "conflict"
+   ]
+  },
+  "confirmed_by": {
+   "type": "string",
+   "description": "policy|<user>"
+  },
+  "confirmed_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "supersedes": {
+   "type": "string",
+   "description": "Fact bị thay"
+  },
+  "layer": {
+   "type": "string",
+   "enum": [
+    "A",
+    "B",
+    "C"
+   ],
+   "description": "Lớp lưu trữ"
+  }
+ },
+ "additionalProperties": false
+}

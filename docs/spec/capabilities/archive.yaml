@@ -1,0 +1,282 @@
+- code: ARCHIVE-01
+  id: archive.list
+  name: Liệt kê nội dung zip/7z/rar/tar/gz không giải nén toàn bộ
+  desc: Liệt kê nội dung zip/7z/rar/tar/gz không giải nén toàn bộ
+  input:
+    type: object
+    properties:
+      path:
+        type: string
+      depth:
+        type: integer
+    required:
+    - path
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      entries:
+        type: array
+        items:
+          type: object
+        description: path, size, compressed, kind_guess, nested
+    required:
+    - entries
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.archive:list
+  errors:
+  - E4001 thiếu 7z/unrar
+  - E8000 tỷ lệ nén bất thường
+  example:
+    path: robot-kit.zip
+    depth: 3
+- code: ARCHIVE-02
+  id: archive.unpack
+  name: Giải nén đệ quy có giới hạn (≤5 cấp, ≤2 GB), chống zip-slip, sandbox
+  desc: Giải nén đệ quy có giới hạn (≤5 cấp, ≤2 GB), chống zip-slip, sandbox
+  input:
+    type: object
+    properties:
+      path:
+        type: string
+      members:
+        type: array
+        items:
+          type: string
+      limits:
+        type: object
+    required:
+    - path
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      files:
+        type: array
+        items:
+          type: string
+      skipped:
+        type: array
+        items:
+          type: object
+    required:
+    - files
+    - skipped
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Có mật khẩu; vượt giới hạn
+  undo:
+    kind: delete_created_files
+  milestone: M0
+  impl: eide.archive:unpack
+  errors:
+  - E8000 SANDBOX_VIOLATION
+  - E4004
+  example:
+    path: robot-kit.zip
+- code: ARCHIVE-03
+  id: archive.extract_one
+  name: Lấy một tệp bên trong theo đường dẫn/mẫu
+  desc: Lấy một tệp bên trong theo đường dẫn/mẫu
+  input:
+    type: object
+    properties:
+      path:
+        type: string
+      member:
+        type: string
+        description: đường dẫn hoặc glob
+    required:
+    - path
+    - member
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.archive:extract_one
+  errors:
+  - E2000 member không có
+  example:
+    path: sdk.zip
+    member: '**/stm32f411.svd'
+- code: ARCHIVE-04
+  id: archive.query
+  name: Tìm bên trong kho nén theo tên/kiểu/nội dung (grep, chữ ký)
+  desc: Tìm bên trong kho nén theo tên/kiểu/nội dung (grep, chữ ký)
+  input:
+    type: object
+    properties:
+      path:
+        type: string
+      pattern:
+        type: string
+      mode:
+        type: string
+        enum:
+        - name
+        - content
+        - signature
+    required:
+    - path
+    - pattern
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      matches:
+        type: array
+        items:
+          type: object
+    required:
+    - matches
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.archive:query
+  errors:
+  - E4004
+  example:
+    path: sdk.zip
+    pattern: I2C_CR1
+    mode: content
+- code: ARCHIVE-05
+  id: ingest.classify
+  name: Phân loại tệp theo chữ ký nội dung → loại, tầng, extractor
+  desc: Phân loại tệp theo chữ ký nội dung → loại, tầng, extractor
+  input:
+    type: object
+    properties:
+      files:
+        type: array
+        items:
+          type: string
+    required:
+    - files
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      classification:
+        type: array
+        items:
+          type: object
+        description: file, kind, tier, extractor, confidence
+    required:
+    - classification
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.archive:classify
+  errors: []
+  example:
+    files:
+    - a.svd
+    - ds.pdf
+    - board.jpg
+- code: ARCHIVE-06
+  id: ingest.hash_dedupe
+  name: sha256, phát hiện trùng với Source đã có
+  desc: sha256, phát hiện trùng với Source đã có
+  input:
+    type: object
+    properties:
+      files:
+        type: array
+        items:
+          type: string
+    required:
+    - files
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      new:
+        type: array
+        items:
+          type: string
+      dup:
+        type: array
+        items:
+          type: object
+    required:
+    - new
+    - dup
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.archive:hash_dedupe
+  errors: []
+  example:
+    files:
+    - ds.pdf
+- code: ARCHIVE-07
+  id: ingest.index_text
+  name: Lập chỉ mục văn bản (BM25) cho tài liệu ngữ cảnh không sinh fact
+  desc: Lập chỉ mục văn bản (BM25) cho tài liệu ngữ cảnh không sinh fact
+  input:
+    type: object
+    properties:
+      files:
+        type: array
+        items:
+          type: string
+    required:
+    - files
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      indexed:
+        type: integer
+    required:
+    - indexed
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.archive:index_text
+  errors: []
+  example:
+    files:
+    - README.md

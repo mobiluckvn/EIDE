@@ -1,0 +1,54 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/discovery.json",
+ "title": "Discovery",
+ "description": "Kết quả dò board/probe/kết nối",
+ "type": "object",
+ "required": [
+  "id",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "dv_<hex>"
+  },
+  "ports": {
+   "type": "array",
+   "description": "JSON Port[]"
+  },
+  "probes": {
+   "type": "array",
+   "description": "JSON Probe[]"
+  },
+  "chip_id": {
+   "type": "object",
+   "description": "JSON ChipIdentity"
+  },
+  "link_speed": {
+   "type": "object",
+   "description": "JSON LinkSpeed"
+  },
+  "firmware": {
+   "type": "object",
+   "description": "JSON {banner, version}"
+  },
+  "power": {
+   "type": "object",
+   "description": "JSON {v, i}"
+  },
+  "network": {
+   "type": "array",
+   "description": "JSON"
+  },
+  "target_config": {
+   "type": "object",
+   "description": "JSON target.yaml"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

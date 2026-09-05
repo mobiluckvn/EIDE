@@ -1,0 +1,395 @@
+- code: TARGET-01
+  id: target.detect
+  name: Phát hiện board/probe/cổng serial; đọc ID
+  desc: Phát hiện board/probe/cổng serial; đọc ID
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      targets:
+        type: array
+        items:
+          type: object
+        description: id, kind, port, probe, chip_id, lab
+    required:
+    - targets
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.target:detect
+  errors: []
+  example: {}
+- code: TARGET-02
+  id: target.flash
+  name: Nạp + verify qua adapter ISA
+  desc: Nạp + verify qua adapter ISA
+  input:
+    type: object
+    properties:
+      artifact:
+        type: string
+      target:
+        type: string
+      verify:
+        type: boolean
+    required:
+    - artifact
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+    required:
+    - report
+    additionalProperties: false
+  risk: R3
+  tier: T1*
+  grounding:
+  - Board lab; artifact qua G3
+  ask_when:
+  - Board không lab; động cơ
+  undo:
+    kind: reflash_known_good
+  milestone: M2
+  impl: eide.target:flash
+  errors:
+  - E3000
+  - E4002
+  - E4003
+  - E4000
+  example:
+    artifact: build/fw.elf
+    target: nucleo-f411
+- code: TARGET-03
+  id: target.reset
+  name: Reset board
+  desc: Reset board
+  input:
+    type: object
+    properties:
+      target:
+        type: string
+    required:
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      ok:
+        type: boolean
+    required:
+    - ok
+    additionalProperties: false
+  risk: R3
+  tier: T1
+  grounding:
+  - Board lab
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.target:reset
+  errors:
+  - E3000
+  - E4002
+  example:
+    target: nucleo-f411
+- code: TARGET-04
+  id: target.serial
+  name: Mở/đọc/ghi/expect serial đa cổng; ghi JSONL
+  desc: Mở/đọc/ghi/expect serial đa cổng; ghi JSONL
+  input:
+    type: object
+    properties:
+      port:
+        type: string
+      op:
+        type: string
+        enum:
+        - open
+        - close
+        - read
+        - write
+        - expect
+      baud:
+        type: integer
+      data:
+        type: string
+      pattern:
+        type: string
+      timeout_s:
+        type: number
+    required:
+    - port
+    - op
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      lines:
+        type: array
+        items:
+          type: object
+      matched:
+        type: boolean
+    required:
+    - lines
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.target:serial
+  errors:
+  - E4002
+  - E4004
+  example:
+    port: /dev/tty.usbmodem1
+    op: expect
+    pattern: BME280 ok
+    timeout_s: 5
+- code: TARGET-05
+  id: target.probe_read
+  name: halt/step/read_memory/read_registers/breakpoint (đọc)
+  desc: halt/step/read_memory/read_registers/breakpoint (đọc)
+  input:
+    type: object
+    properties:
+      op:
+        type: string
+        enum:
+        - halt
+        - run
+        - step
+        - read_memory
+        - read_registers
+        - set_breakpoint
+        - clear_breakpoint
+      addr:
+        type: string
+      len:
+        type: integer
+      target:
+        type: string
+    required:
+    - op
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      evidence:
+        type: object
+        description: EvidencePack
+    required:
+    - evidence
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Probe
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.target:probe_read
+  errors:
+  - E4002
+  - E4004
+  example:
+    op: read_memory
+    addr: '0x40005400'
+    len: 16
+    target: nucleo-f411
+- code: TARGET-06
+  id: target.probe_write
+  name: write_memory/RTT write
+  desc: write_memory/RTT write
+  input:
+    type: object
+    properties:
+      op:
+        type: string
+        enum:
+        - write_memory
+        - rtt_write
+      addr:
+        type: string
+      data:
+        type: string
+      target:
+        type: string
+    required:
+    - op
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      ok:
+        type: boolean
+    required:
+    - ok
+    additionalProperties: false
+  risk: R3
+  tier: T1*
+  grounding:
+  - Board lab
+  ask_when:
+  - Không lab
+  undo:
+    kind: reflash_known_good
+  milestone: M3
+  impl: eide.target:probe_write
+  errors:
+  - E3000
+  - E4002
+  example:
+    op: write_memory
+    addr: '0x20000000'
+    data: '01'
+    target: nucleo-f411
+- code: TARGET-07
+  id: target.erase_fuse
+  name: Xóa flash toàn bộ, ghi fuse/option byte
+  desc: Xóa flash toàn bộ, ghi fuse/option byte
+  input:
+    type: object
+    properties:
+      op:
+        type: string
+        enum:
+        - erase_all
+        - fuse
+        - option_bytes
+        - readout_protect
+      value:
+        type: string
+      target:
+        type: string
+    required:
+    - op
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      ok:
+        type: boolean
+    required:
+    - ok
+    additionalProperties: false
+  risk: R4
+  tier: T3
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.target:erase_fuse
+  errors:
+  - E3000
+  example:
+    op: erase_all
+    target: uno
+- code: TARGET-08
+  id: target.diagnose_fault
+  name: Đọc thanh ghi lỗi, unwind stack, ánh xạ dòng mã
+  desc: Đọc thanh ghi lỗi, unwind stack, ánh xạ dòng mã
+  input:
+    type: object
+    properties:
+      target:
+        type: string
+    required:
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      evidence:
+        type: object
+        description: fault regs, unwind[], line map
+    required:
+    - evidence
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Probe
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.target:diagnose_fault
+  errors:
+  - E4002
+  example:
+    target: nucleo-f411
+- code: TARGET-09
+  id: target.observe
+  name: Chạy kỳ vọng quan sát bằng máy (serial expect, probe, LA, camera)
+  desc: Chạy kỳ vọng quan sát bằng máy (serial expect, probe, LA, camera)
+  input:
+    type: object
+    properties:
+      expect:
+        type: array
+        items:
+          type: object
+        description: kind serial|probe|logic|current|camera, spec
+      target:
+        type: string
+    required:
+    - expect
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      evidence:
+        type: array
+        items:
+          type: object
+      all_passed:
+        type: boolean
+      machine_observable:
+        type: boolean
+    required:
+    - evidence
+    - all_passed
+    - machine_observable
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Cần mắt/tay người
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.target:observe
+  errors:
+  - E3000
+  - E4002
+  example:
+    expect:
+    - kind: serial
+      spec:
+        pattern: T=2[0-9]\.
+    target: nucleo-f411

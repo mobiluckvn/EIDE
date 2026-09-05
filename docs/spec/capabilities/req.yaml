@@ -1,0 +1,325 @@
+- code: REQ-01
+  id: req.elicit
+  name: Thu thập yêu cầu từ lệnh NL, tài liệu, ảnh, chat cũ; sinh câu hỏi gộp cho ô trốn
+  desc: Thu thập yêu cầu từ lệnh NL, tài liệu, ảnh, chat cũ; sinh câu hỏi gộp cho ô trống
+  input:
+    type: object
+    properties:
+      text:
+        type: string
+      sources:
+        type: array
+        items:
+          type: string
+        description: README, tài liệu, ảnh, chat ids
+      feature:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      raw:
+        type: array
+        items:
+          type: object
+        description: text, source, locator, kind_guess
+      gaps:
+        type: array
+        items:
+          type: object
+    required:
+    - raw
+    - gaps
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Ô trống không có mặc định
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.req:elicit
+  errors:
+  - E5002
+  example:
+    sources:
+    - README.md
+    text: robot cân bằng, pin 12 V, chạy 30 phút
+- code: REQ-02
+  id: req.classify
+  name: Phân loại FR/NFR/ràng buộc phần cứng/an toàn/thời gian thực; gán mã UR-/FR-
+  desc: Phân loại FR/NFR/ràng buộc phần cứng/an toàn/thời gian thực; gán mã UR-/FR-
+  input:
+    type: object
+    properties:
+      raw:
+        type: array
+        items:
+          type: object
+    required:
+    - raw
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      reqset:
+        type: array
+        items:
+          type: object
+        description: Requirement
+      codes_assigned:
+        type: integer
+    required:
+    - reqset
+    - codes_assigned
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M1
+  impl: eide.req:classify
+  errors:
+  - E5002
+  example:
+    raw: []
+- code: REQ-03
+  id: req.ground_hw
+  name: 'Đối chiếu yêu cầu với hộ chiếu chip/board (chân, ngoại vi, RAM/Flash, tần số) → '
+  desc: Đối chiếu yêu cầu với hộ chiếu chip/board (chân, ngoại vi, RAM/Flash, tần số) → khả thi/không
+  input:
+    type: object
+    properties:
+      reqset_ids:
+        type: array
+        items:
+          type: string
+      passport:
+        type: string
+    required:
+    - reqset_ids
+    - passport
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: array
+        items:
+          type: object
+        description: req_id, ok, facts[], note, alternative
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Có hộ chiếu
+  ask_when:
+  - Không khả thi trên board đã chọn
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.req:ground_hw
+  errors: []
+  example:
+    reqset_ids:
+    - FR-SNS-01
+    passport: st.stm32f411ce@1.2
+- code: REQ-04
+  id: req.detect_conflict
+  name: Phát hiện yêu cầu mâu thuẫn/mơ hồ/thiếu định lượng; đề xuất câu chữ đo được
+  desc: Phát hiện yêu cầu mâu thuẫn/mơ hồ/thiếu định lượng; đề xuất câu chữ đo được
+  input:
+    type: object
+    properties:
+      reqset_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - reqset_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      issues:
+        type: array
+        items:
+          type: object
+        description: kind conflict|ambiguous|unmeasurable, req_ids[], text, suggestion
+    required:
+    - issues
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Mâu thuẫn không tự giải được
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.req:detect_conflict
+  errors: []
+  example:
+    reqset_ids:
+    - FR-PWR-01
+    - FR-PWR-02
+- code: REQ-05
+  id: req.prioritize
+  name: Ưu tiên MoSCoW theo mục tiêu dự án và rủi ro phần cứng
+  desc: Ưu tiên MoSCoW theo mục tiêu dự án và rủi ro phần cứng
+  input:
+    type: object
+    properties:
+      reqset_ids:
+        type: array
+        items:
+          type: string
+      goal:
+        type: string
+    required:
+    - reqset_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      reqset:
+        type: array
+        items:
+          type: object
+    required:
+    - reqset
+    additionalProperties: false
+  risk: R0
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Đổi ưu tiên M↔S
+  undo:
+    kind: restore_config
+  milestone: M1
+  impl: eide.req:prioritize
+  errors:
+  - E3000
+  example:
+    reqset_ids:
+    - FR-SNS-01
+    goal: cân bằng
+- code: REQ-06
+  id: req.trace_matrix
+  name: Ma trận truy vết UR→FR→thiết kế→mã→test; phát hiện lỗ hổng
+  desc: Ma trận truy vết UR→FR→thiết kế→mã→test; phát hiện lỗ hổng
+  input:
+    type: object
+    properties:
+      format:
+        type: string
+        enum:
+        - xlsx
+        - md
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+      gaps:
+        type: array
+        items:
+          type: object
+    required:
+    - file
+    - gaps
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.req:trace_matrix
+  errors: []
+  example:
+    format: xlsx
+- code: REQ-07
+  id: req.acceptance
+  name: Sinh tiêu chí chấp nhận/kịch bản kiểm thử từ yêu cầu (Given-When-Then)
+  desc: Sinh tiêu chí chấp nhận/kịch bản kiểm thử từ yêu cầu (Given-When-Then)
+  input:
+    type: object
+    properties:
+      reqset_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - reqset_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      acceptance:
+        type: array
+        items:
+          type: object
+        description: req_id, given, when, then, observable kind
+    required:
+    - acceptance
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.req:acceptance
+  errors:
+  - E5002
+  example:
+    reqset_ids:
+    - FR-SNS-01
+- code: REQ-08
+  id: req.change_impact
+  name: 'Đánh giá tác động khi đổi yêu cầu: module, fact, test, tài liệu bị ảnh hưởng'
+  desc: 'Đánh giá tác động khi đổi yêu cầu: module, fact, test, tài liệu bị ảnh hưởng'
+  input:
+    type: object
+    properties:
+      delta:
+        type: object
+        description: req_id, old, new | fact_id
+    required:
+    - delta
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      impact:
+        type: object
+        description: modules[], code_units[], tests[], docs[], diagrams[], features[]
+    required:
+    - impact
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - KG dự án
+  ask_when:
+  - Tác động > ngưỡng
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.req:change_impact
+  errors: []
+  example:
+    delta:
+      req_id: FR-SNS-01
+      new: …

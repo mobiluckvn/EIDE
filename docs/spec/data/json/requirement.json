@@ -1,0 +1,74 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/requirement.json",
+ "title": "Requirement",
+ "description": "Yêu cầu do req.* sinh (K10)",
+ "type": "object",
+ "required": [
+  "id",
+  "kind",
+  "text",
+  "status"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "UR-xx-nn | FR-xx-nn | NFR-nn"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "FR",
+    "NFR",
+    "HW",
+    "SAFETY",
+    "RT",
+    "CR"
+   ]
+  },
+  "text": {
+   "type": "string",
+   "description": "Câu đo được"
+  },
+  "priority": {
+   "type": "string",
+   "enum": [
+    "M",
+    "S",
+    "C",
+    "W"
+   ]
+  },
+  "acceptance": {
+   "type": "array",
+   "description": "JSON Given-When-Then[]"
+  },
+  "trace": {
+   "type": "array",
+   "description": "JSON ids (module, code_unit, tc, doc)"
+  },
+  "source": {
+   "type": "string",
+   "description": "lệnh/README/tài liệu + locator"
+  },
+  "feasibility": {
+   "type": "object",
+   "description": "JSON {ok, facts[], note}"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "generated",
+    "reviewed",
+    "accepted",
+    "rejected",
+    "stale"
+   ]
+  },
+  "updated_at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

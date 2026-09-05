@@ -1,0 +1,41 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/preference.json",
+ "title": "Preference",
+ "description": "Tùy chọn người dùng (D8)",
+ "type": "object",
+ "required": [
+  "key",
+  "scope",
+  "value",
+  "at"
+ ],
+ "properties": {
+  "key": {
+   "type": "string"
+  },
+  "scope": {
+   "type": "string",
+   "enum": [
+    "user",
+    "project"
+   ]
+  },
+  "value": {
+   "type": "object",
+   "description": "JSON"
+  },
+  "learned_from": {
+   "type": "string",
+   "description": "decision/turn id"
+  },
+  "ttl_days": {
+   "type": "integer"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

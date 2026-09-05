@@ -1,0 +1,29 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/hw_map.json",
+ "title": "HwMap",
+ "description": "Gán module ↔ tài nguyên phần cứng",
+ "type": "object",
+ "required": [
+  "module_id",
+  "resource"
+ ],
+ "properties": {
+  "module_id": {
+   "type": "string"
+  },
+  "resource": {
+   "type": "string",
+   "description": "IRI chip:…/periph:… | pin:… | irq:… | dma:…"
+  },
+  "role": {
+   "type": "string",
+   "description": "master|slave|input|output|shared"
+  },
+  "fact_ids": {
+   "type": "array",
+   "description": "JSON"
+  }
+ },
+ "additionalProperties": false
+}

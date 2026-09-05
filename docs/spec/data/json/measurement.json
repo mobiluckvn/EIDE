@@ -1,0 +1,54 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/measurement.json",
+ "title": "Measurement",
+ "description": "Số đo làm bằng chứng",
+ "type": "object",
+ "required": [
+  "id",
+  "kind",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "m_<hex>"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "serial_expect",
+    "probe_reg",
+    "logic",
+    "current",
+    "voltage",
+    "frequency",
+    "camera",
+    "custom"
+   ]
+  },
+  "target": {
+   "type": "string",
+   "description": "board id"
+  },
+  "value": {
+   "type": "object",
+   "description": "JSON"
+  },
+  "unit": {
+   "type": "string"
+  },
+  "file_ref": {
+   "type": "string",
+   "description": "CSV/log"
+  },
+  "hash": {
+   "type": "string"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

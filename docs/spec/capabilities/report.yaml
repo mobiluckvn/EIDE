@@ -1,0 +1,134 @@
+- code: REPORT-01
+  id: report.progress
+  name: 'Báo cáo tiến độ/ngày: việc tự làm, chờ người, chi phí'
+  desc: 'Báo cáo tiến độ/ngày: việc tự làm, chờ người, chi phí'
+  input:
+    type: object
+    properties:
+      period:
+        type: string
+        enum:
+        - day
+        - week
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      md:
+        type: string
+    required:
+    - md
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.report:progress
+  errors: []
+  example:
+    period: day
+- code: REPORT-02
+  id: report.export
+  name: docx/pdf/md có mục Nguồn
+  desc: docx/pdf/md có mục Nguồn
+  input:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+        - docx
+        - pdf
+        - md
+      scope:
+        type: string
+    required:
+    - type
+    - scope
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M4
+  impl: eide.report:export
+  errors:
+  - E5002
+  example:
+    type: docx
+    scope: project
+- code: REPORT-03
+  id: report.human_ai_matrix
+  name: Ma trận Người–AI từ ledger
+  desc: Ma trận Người–AI từ ledger
+  input:
+    type: object
+    properties:
+      range:
+        type: object
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M4
+  impl: eide.report:human_ai_matrix
+  errors: []
+  example: {}
+- code: REPORT-04
+  id: report.explain
+  name: Giải thích một quyết định/mã (rationale có trích dẫn)
+  desc: Giải thích một quyết định/mã (rationale có trích dẫn)
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+        description: decision|commit|fact|plan
+    required:
+    - id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.report:explain
+  errors: []
+  example:
+    id: d_12

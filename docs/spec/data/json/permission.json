@@ -1,0 +1,51 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/permission.json",
+ "title": "Permission",
+ "description": "Quyền theo phiên cho thao tác R3/R4",
+ "type": "object",
+ "required": [
+  "id",
+  "session_id",
+  "op",
+  "granted_by",
+  "granted_at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "session_id": {
+   "type": "string"
+  },
+  "op": {
+   "type": "string",
+   "enum": [
+    "flash",
+    "erase_all",
+    "fuse",
+    "write_mem",
+    "install",
+    "actuator",
+    "publish_public",
+    "delete_project",
+    "upload_sensitive"
+   ]
+  },
+  "target": {
+   "type": "string"
+  },
+  "granted_by": {
+   "type": "string"
+  },
+  "granted_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "expires_at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

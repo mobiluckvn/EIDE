@@ -1,0 +1,325 @@
+# policy/rules.yaml — sinh từ EIDE-POL-17 §2; PolicyGate nạp lúc khởi động; quy tắc ưu tiên nhỏ xét trước; quy tắc đầu tiên khớp thắng
+version: 1.0
+rules:
+  - id: G-SRC-01
+    gate: "G-SRC"
+    when: "source.domain in trusted_sources and source.license in allowed_licenses and source.size_mb <= thresholds.download_max_mb and source.kind in [\"svd\",\"atdf\",\"edc\",\"binding\",\"pdf_vendor\"]"
+    decision: APPROVE
+    reason: "Nguồn hãng tin cậy, license rõ, trong ngưỡng"
+    priority: 10
+    features: ["source.domain","license","size_mb","kind","hash_match"]
+  - id: G-SRC-02
+    gate: "G-SRC"
+    when: "source.kind == \"registry\" and source.signature_valid"
+    decision: APPROVE
+    reason: "Gói registry đã ký"
+    priority: 10
+    features: ["signature_valid"]
+  - id: G-SRC-03
+    gate: "G-SRC"
+    when: "source.hash_match == False and source.expected_hash"
+    decision: REJECT
+    reason: "Hash không khớp hash đã biết"
+    priority: 5
+    features: ["hash_match"]
+  - id: G-SRC-04
+    gate: "G-SRC"
+    when: "source.size_mb > thresholds.download_max_mb"
+    decision: ASK
+    reason: "Tệp lớn"
+    priority: 20
+    features: ["size_mb"]
+  - id: G-SRC-05
+    gate: "G-SRC"
+    when: "source.license not in allowed_licenses"
+    decision: ASK
+    reason: "License không rõ/không cho phép"
+    priority: 20
+    features: ["license"]
+  - id: G-SRC-06
+    gate: "G-SRC"
+    when: "source.match_score < thresholds.source_match_min"
+    decision: ASK
+    reason: "Tài liệu có thể không đúng linh kiện/phiên bản"
+    priority: 25
+    features: ["match_score"]
+  - id: G-SRC-07
+    gate: "G-SRC"
+    when: "project.sensitive and source.requires_upload"
+    decision: ASK
+    reason: "Dự án nhạy cảm, nguồn yêu cầu gửi dữ liệu ra ngoài"
+    priority: 5
+    features: ["requires_upload"]
+  - id: G-SRC-99
+    gate: "G-SRC"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định: nguồn ngoài danh sách tin cậy"
+    priority: 99
+    features: []
+  - id: G-FACT-01
+    gate: "G-FACT"
+    when: "fact.tier == \"gold\""
+    decision: APPROVE
+    reason: "Fact tầng vàng"
+    priority: 10
+    features: ["tier"]
+  - id: G-FACT-02
+    gate: "G-FACT"
+    when: "fact.tier == \"silver\" and fact.confidence >= thresholds.fact_silver_auto and (fact.second_source or fact.range_ok) and not fact.conflict and fact.method != \"vision_llm\" and fact.predicate not in [\"voltage_range\",\"timing\"]"
+    decision: APPROVE
+    reason: "Bạc đạt ngưỡng, có nguồn thứ hai hoặc khớp dải, không mâu thuẫn"
+    priority: 15
+    features: ["confidence","second_source","range_ok","conflict","method","predicate"]
+  - id: G-FACT-03
+    gate: "G-FACT"
+    when: "fact.tier == \"silver\" and fact.predicate in [\"voltage_range\",\"timing\"] and fact.second_source and fact.confidence >= thresholds.fact_silver_auto"
+    decision: APPROVE
+    reason: "Fact điện/timing chỉ tự duyệt khi có nguồn thứ hai"
+    priority: 16
+    features: ["predicate","second_source"]
+  - id: G-FACT-04
+    gate: "G-FACT"
+    when: "fact.conflict"
+    decision: ASK
+    reason: "Mâu thuẫn với fact hiện hành"
+    priority: 5
+    features: ["conflict"]
+  - id: G-FACT-05
+    gate: "G-FACT"
+    when: "fact.tier == \"bronze\""
+    decision: REJECT
+    reason: "Tầng đồng không vào fact (KAD E8)"
+    priority: 5
+    features: ["tier"]
+  - id: G-FACT-99
+    gate: "G-FACT"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định: bạc dưới ngưỡng / OCR / thiếu nguồn hai"
+    priority: 99
+    features: []
+  - id: G1-01
+    gate: "G1"
+    when: "plan.steps <= thresholds.plan_max_steps and plan.all_cited and not plan.new_resources and not plan.touches_forbidden and plan.est_cost_usd <= thresholds.plan_max_cost_usd and not feature.needs_review"
+    decision: APPROVE
+    reason: "Kế hoạch nhỏ, có trích dẫn, không tài nguyên mới"
+    priority: 10
+    features: ["steps","all_cited","new_resources","touches_forbidden","est_cost_usd","needs_review"]
+  - id: G1-02
+    gate: "G1"
+    when: "plan.missing"
+    decision: ASK
+    reason: "Thiếu tri thức → mở P1 trước"
+    priority: 5
+    features: ["missing"]
+  - id: G1-03
+    gate: "G1"
+    when: "plan.arch_change"
+    decision: ASK
+    reason: "Đổi kiến trúc (RTOS, clock, linker)"
+    priority: 5
+    features: ["arch_change"]
+  - id: G1-99
+    gate: "G1"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định"
+    priority: 99
+    features: []
+  - id: G3-01
+    gate: "G3"
+    when: "patch.tools_passed == 4 and patch.constant_guard_violations == 0 and review.verdict == \"PASS\" and review.max_severity in [\"minor\",\"nit\",\"none\"] and patch.in_scope and patch.size_growth_pct <= thresholds.merge_size_growth_pct and not patch.touches_isr_linker and reviewer.vendor != coder.vendor"
+    decision: APPROVE
+    reason: "Đủ bằng chứng máy: 4 cổng, reviewer khác hãng PASS, trong phạm vi"
+    priority: 10
+    features: ["tools_passed","constant_guard_violations","verdict","max_severity","in_scope","size_growth_pct","touches_isr_linker","vendors"]
+  - id: G3-02
+    gate: "G3"
+    when: "review.max_severity in [\"blocker\",\"major\"]"
+    decision: ASK
+    reason: "Reviewer có finding blocker/major"
+    priority: 5
+    features: ["max_severity"]
+  - id: G3-03
+    gate: "G3"
+    when: "patch.constant_guard_violations > 0"
+    decision: REJECT
+    reason: "Hằng số không nguồn"
+    priority: 1
+    features: ["constant_guard_violations"]
+  - id: G3-04
+    gate: "G3"
+    when: "reviewer.vendor == coder.vendor"
+    decision: ASK
+    reason: "Không có hãng thứ hai (cảnh báo ledger)"
+    priority: 20
+    features: ["vendors"]
+  - id: G3-99
+    gate: "G3"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định"
+    priority: 99
+    features: []
+  - id: G-OPS-01
+    gate: "G-OPS"
+    when: "board.lab and op in [\"flash\",\"reset\",\"rtt\",\"read_mem\",\"write_ram\",\"experiment_no_actuator\"] and artifact.passed_g3 and artifact.hash_match and board.flash_count_hour < thresholds.flash_per_hour"
+    decision: APPROVE
+    reason: "Board lab, artifact qua G3, trong hạn mức"
+    priority: 10
+    features: ["board.lab","op","passed_g3","hash_match","flash_count_hour"]
+  - id: G-OPS-02
+    gate: "G-OPS"
+    when: "op in [\"erase_all\",\"fuse\",\"option_bytes\",\"readout_protect\"]"
+    decision: ASK
+    reason: "Không hoàn tác (R4)"
+    priority: 1
+    features: ["op"]
+  - id: G-OPS-03
+    gate: "G-OPS"
+    when: "op == \"actuator\" or board.has_actuator and op in [\"flash\",\"experiment\"]"
+    decision: ASK
+    reason: "Cơ cấu chấp hành / board có động cơ"
+    priority: 1
+    features: ["op","has_actuator"]
+  - id: G-OPS-04
+    gate: "G-OPS"
+    when: "op == \"install\" and package in trusted_packages"
+    decision: APPROVE
+    reason: "Cài gói từ danh sách tin cậy"
+    priority: 10
+    features: ["package"]
+  - id: G-OPS-05
+    gate: "G-OPS"
+    when: "op == \"install\" and (package not in trusted_packages or needs_sudo)"
+    decision: ASK
+    reason: "Gói lạ hoặc cần quyền hệ thống"
+    priority: 5
+    features: ["package","needs_sudo"]
+  - id: G-OPS-06
+    gate: "G-OPS"
+    when: "not board.lab"
+    decision: ASK
+    reason: "Board chưa đánh dấu lab (đề nghị đánh dấu nếu không có cơ cấu chấp hành)"
+    priority: 20
+    features: ["board.lab"]
+  - id: G-OPS-99
+    gate: "G-OPS"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định"
+    priority: 99
+    features: []
+  - id: G4-01
+    gate: "G4"
+    when: "expect.machine_observable and expect.all_passed"
+    decision: APPROVE
+    reason: "Kỳ vọng máy quan sát được đều đạt → auto-verified"
+    priority: 10
+    features: ["machine_observable","all_passed"]
+  - id: G4-02
+    gate: "G4"
+    when: "expect.machine_observable and not expect.all_passed"
+    decision: REJECT
+    reason: "Kỳ vọng máy không đạt → Feature vẫn failing, về P3/P5"
+    priority: 5
+    features: ["all_passed"]
+  - id: G4-99
+    gate: "G4"
+    when: "True"
+    decision: ASK
+    reason: "Chỉ quan sát bằng mắt/tay"
+    priority: 99
+    features: []
+  - id: G5-01
+    gate: "G5"
+    when: "publish.scope == \"internal\" and pkg.auto_verified and pkg.bench_bc >= thresholds.bench_bc_min and pkg.license_ok and not pkg.contains_project_knowledge"
+    decision: APPROVE
+    reason: "Phát hành nội bộ gói đã kiểm định"
+    priority: 10
+    features: ["scope","auto_verified","bench_bc","license_ok","contains_project_knowledge"]
+  - id: G5-02
+    gate: "G5"
+    when: "publish.scope == \"public\""
+    decision: ASK
+    reason: "Công khai (R4)"
+    priority: 1
+    features: ["scope"]
+  - id: G5-03
+    gate: "G5"
+    when: "pkg.contains_project_knowledge"
+    decision: ASK
+    reason: "Chứa K3/K6 của dự án"
+    priority: 2
+    features: ["contains_project_knowledge"]
+  - id: G5-99
+    gate: "G5"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định"
+    priority: 99
+    features: []
+  - id: TOOL-01
+    gate: "G-TOOL"
+    when: "tool.tested and tool.effects_ok and tool.risk == \"R0\""
+    decision: APPROVE
+    reason: "Công cụ chỉ đọc, đã test, hiệu ứng khớp"
+    priority: 10
+    features: ["tested","effects_ok","risk"]
+  - id: TOOL-02
+    gate: "G-TOOL"
+    when: "tool.tested and tool.effects_ok and tool.risk in [\"R1\",\"R2\"] and tool.last_fail_count == 0"
+    decision: APPROVE
+    reason: "Công cụ ghi dự án/mạng đã test, không lỗi gần đây (có hoàn tác)"
+    priority: 12
+    features: ["tested","effects_ok","risk","last_fail_count"]
+  - id: TOOL-03
+    gate: "G-TOOL"
+    when: "not tool.tested or not tool.effects_ok"
+    decision: REJECT
+    reason: "Chưa test hoặc hiệu ứng thực tế vượt khai báo"
+    priority: 1
+    features: ["tested","effects_ok"]
+  - id: TOOL-04
+    gate: "G-TOOL"
+    when: "tool.risk == \"R3\" and board.lab and tool.uses_ok >= 3"
+    decision: APPROVE
+    reason: "Công cụ phần cứng đã dùng ≥ 3 lần ok trên board lab"
+    priority: 15
+    features: ["risk","board.lab","uses_ok"]
+  - id: TOOL-05
+    gate: "G-TOOL"
+    when: "tool.risk == \"R4\" or \"system\" in tool.effects"
+    decision: ASK
+    reason: "Hiệu ứng hệ thống (sudo, ngoài dự án, cài đặt)"
+    priority: 1
+    features: ["risk","effects"]
+  - id: TOOL-99
+    gate: "G-TOOL"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định cho công cụ tự viết"
+    priority: 99
+    features: []
+  - id: GEN-01
+    gate: "*"
+    when: "cap.ask_when_matched"
+    decision: ASK
+    reason: "Điều kiện \"Hỏi kỹ sư khi\" của năng lực khớp"
+    priority: 30
+    features: ["ask_when_matched"]
+  - id: GEN-02
+    gate: "*"
+    when: "action.fail_count >= thresholds.fail_retries"
+    decision: ASK
+    reason: "Thất bại lặp → leo thang"
+    priority: 3
+    features: ["fail_count"]
+  - id: GEN-03
+    gate: "*"
+    when: "action.is_delete_project or action.is_overwrite_project"
+    decision: ASK
+    reason: "Xóa/ghi đè dự án (R4)"
+    priority: 1
+    features: ["is_delete_project","is_overwrite_project"]

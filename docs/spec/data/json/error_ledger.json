@@ -1,0 +1,54 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/error_ledger.json",
+ "title": "ErrorLedgerEntry",
+ "description": "Sổ lỗi (MEM-11 §6)",
+ "type": "object",
+ "required": [
+  "id",
+  "kind",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "e_<hex>"
+  },
+  "role": {
+   "type": "string"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "hallucination",
+    "refusal",
+    "tool_fail",
+    "human_reject",
+    "undo",
+    "policy_reject"
+   ]
+  },
+  "task_ref": {
+   "type": "string"
+  },
+  "chip": {
+   "type": "string"
+  },
+  "evidence": {
+   "type": "string"
+  },
+  "negative_prompt": {
+   "type": "string",
+   "description": "≤ 40 token"
+  },
+  "ttl_until": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

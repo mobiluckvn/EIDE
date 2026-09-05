@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+body { margin:0; font-family:'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; color:#1b2430; background:#f4f6f9; font-size:13px; }
+a { color:#B8121F; } a:hover { color:#2F4858; }
+.mono { font-family:'IBM Plex Mono', Menlo, Consolas, monospace; }
+.win { width:1440px; height:900px; display:flex; flex-direction:column; background:#f4f6f9; overflow:hidden; border-radius:10px; box-shadow:0 20px 60px rgba(184,18,31,.14); }
+.titlebar { height:38px; display:flex; align-items:center; gap:8px; padding:0 14px; background:#e9edf3; border-bottom:1px solid #d5dbe5; }
+.dot { width:12px; height:12px; border-radius:6px; }
+.tabs { display:flex; gap:2px; margin-left:16px; }
+.tab { padding:7px 14px; font-size:12px; color:#5b6b7f; border-radius:6px 6px 0 0; }
+.tab.on { background:#f4f6f9; color:#B8121F; font-weight:600; }
+.body { flex:1; display:flex; min-height:0; }
+.side { width:212px; background:#B8121F; color:#fbe9ea; display:flex; flex-direction:column; padding:14px 0; gap:2px; }
+.brand { display:flex; align-items:center; gap:10px; padding:4px 16px 14px; }
+.brand b { color:#fff; font-size:14px; letter-spacing:.3px; }
+.nav { display:flex; align-items:center; gap:10px; padding:8px 16px; font-size:13px; color:#f3c6c9; }
+.nav.on { background:rgba(255,255,255,.12); color:#fff; border-left:3px solid #2F4858; padding-left:13px; }
+.nav .cnt { margin-left:auto; background:#F2B705; color:#B8121F; font-size:11px; font-weight:600; padding:1px 7px; border-radius:9px; }
+.nav svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.sidefoot { margin-top:auto; padding:12px 16px; font-size:11px; color:#f0b3b7; border-top:1px solid rgba(255,255,255,.12); display:flex; flex-direction:column; gap:4px; }
+.main { flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar { height:52px; display:flex; align-items:center; gap:12px; padding:0 20px; background:#fff; border-bottom:1px solid #e1e6ee; }
+.topbar h1 { font-size:16px; font-weight:600; margin:0; color:#B8121F; }
+.crumb { color:#7b8a9c; font-size:12px; }
+.search { margin-left:auto; display:flex; align-items:center; gap:8px; width:340px; height:32px; border:1px solid #d5dbe5; border-radius:6px; padding:0 10px; color:#8a97a8; background:#fbfcfd; }
+.btn { display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:6px; font-weight:500; font-size:12.5px; border:1px solid #cfd6e0; background:#fff; color:#243447; }
+.btn.p { background:#B8121F; color:#fff; border-color:#B8121F; }
+.btn.t { background:#2F4858; color:#fff; border-color:#2F4858; }
+.btn.g { background:#F2B705; color:#3a2a00; border-color:#F2B705; }
+.btn.d { background:#fff; color:#b3261e; border-color:#e6b8b5; }
+.content { flex:1; display:flex; gap:16px; padding:16px 20px; min-height:0; }
+.card { background:#fff; border:1px solid #e1e6ee; border-radius:8px; display:flex; flex-direction:column; min-width:0; }
+.card h3 { margin:0; padding:12px 14px; font-size:12px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; color:#5b6b7f; border-bottom:1px solid #eef1f5; display:flex; align-items:center; gap:8px; }
+.card h3 .sp { margin-left:auto; font-weight:500; text-transform:none; letter-spacing:0; color:#8a97a8; }
+.pad { padding:12px 14px; }
+table { border-collapse:collapse; width:100%; font-size:12.5px; }
+th { text-align:left; font-weight:600; color:#5b6b7f; font-size:11px; letter-spacing:.3px; text-transform:uppercase; padding:8px 12px; border-bottom:1px solid #e1e6ee; background:#fafbfd; }
+td { padding:8px 12px; border-bottom:1px solid #eef1f5; vertical-align:top; }
+tr.sel td { background:#fff4e6; }
+.pill { display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+.gold { background:#fff3d6; color:#7a5200; } .silver { background:#e8eef5; color:#3d5064; } .bronze { background:#f6e3dc; color:#8a3b1f; }
+.ok { background:#dff5ee; color:#0b6b52; } .warn { background:#fff0cc; color:#7a5200; } .bad { background:#fde3e1; color:#7a0c0c; } .info { background:#e6effa; color:#B8121F; }
+.kpi { display:flex; flex-direction:column; gap:4px; padding:14px; }
+.kpi .v { font-size:26px; font-weight:600; color:#B8121F; }
+.kpi .l { font-size:11.5px; color:#5b6b7f; }
+.status { height:26px; display:flex; align-items:center; gap:18px; padding:0 20px; font-size:11px; color:#5b6b7f; background:#fff; border-top:1px solid #e1e6ee; }
+.status .dotg { width:8px; height:8px; border-radius:4px; background:#2F4858; display:inline-block; margin-right:6px; }
+.gate { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e1e6ee; border-radius:6px; background:#fff; }
+.gate .tag { font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; color:#fff; background:#B8121F; padding:2px 6px; border-radius:4px; }
+.code { font-family:'IBM Plex Mono', Menlo, monospace; font-size:12px; line-height:1.55; white-space:pre; color:#1b2430; }
+.tree { font-size:12.5px; } .tree div { padding:5px 8px; border-radius:4px; display:flex; gap:8px; align-items:center; } .tree .on { background:#fff4e6; color:#B8121F; font-weight:600; }
+.field { display:flex; flex-direction:column; gap:4px; } .field label { font-size:11px; color:#5b6b7f; font-weight:600; } .field .in { height:30px; border:1px solid #d5dbe5; border-radius:5px; padding:0 10px; display:flex; align-items:center; background:#fff; }
+.hint { font-size:11.5px; color:#7b8a9c; }
+</style>
+</helmet>
+<div class="win">
+  <div class="titlebar"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span>
+    <span style="margin-left:10px;font-size:12px;color:#5b6b7f;font-weight:600">EIDE — robot-ctrl · ST-Link nucleo-f411 đang cắm</span>
+    <div class="tabs"><div class="tab on">Tổng quan</div><div class="tab ">driver_bme280.c</div><div class="tab ">serial-3.log</div></div>
+  </div>
+  <div class="body">
+    <div class="side">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" style="stroke:#2F4858;fill:none;stroke-width:1.8"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg><b>EIDE</b><span style="font-size:10px;color:#f3c6c9;margin-left:auto">0.1 · PTIT</span></div>
+      <div class="nav "><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span>Trò chuyện (mặc định)</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Tổng quan</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h13"/><circle cx="19" cy="17" r="2"/></svg><span>Chờ tôi / Đã làm</span><span class="cnt">2</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg><span>Nhập tài liệu</span></div><div class="nav "><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg><span>Hộ chiếu chip</span></div><div class="nav "><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><circle cx="16" cy="15" r="1.5"/><path d="M9.5 9h5l-3.5 6"/></svg><span>Hộ chiếu mạch</span></div><div class="nav "><svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.5"/><circle cx="19" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7 7.5l3.5 8M17 7.5l-3.5 8M7.5 6h9"/></svg><span>Bản đồ tri thức & hỏi đáp</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Yêu cầu & kiến trúc</span></div><div class="nav "><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="5" rx="1"/><rect x="14" y="4" width="7" height="5" rx="1"/><rect x="8.5" y="15" width="7" height="5" rx="1"/><path d="M6.5 9v3h11V9M12 12v3"/></svg><span>Lược đồ</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5M9 13h7M9 17h7M9 9h3"/></svg><span>Tài liệu</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M4 5h1M4 12h1M4 19h1"/></svg><span>Kế hoạch & mã</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg><span>Mã nguồn</span></div><div class="nav on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z"/></svg><span>Mô phỏng</span></div><div class="nav "><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="8"/></svg><span>Dò board</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M7 9h10M7 13h7M7 17h4"/></svg><span>Log & serial</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M8 9a4 4 0 0 1 8 0v6a4 4 0 0 1-8 0zM3 13h5M16 13h5M5 7l3 2M19 7l-3 2M5 19l3-2M19 19l-3-2"/></svg><span>Gỡ lỗi probe</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.1-2.1z"/></svg><span>Công cụ tự tạo</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Benchmark</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9z"/><path d="M12 12l9-4.5M12 12L3 7.5M12 12v9"/></svg><span>Registry</span></div><div class="nav "><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Mô hình & môi trường</span></div>
+      <div class="sidefoot"><span><span class="dotg"></span>Knowledge Plane · PC này · Internet</span><span>Tự chủ: <b style="color:#fff">A3</b> · board lab nucleo-f411</span><span>Pin: st.stm32f411@1.2.0</span><span style="margin-top:6px"><span class="btn d" style="height:24px;padding:0 8px;font-size:11px">■ Dừng khẩn</span></span></div>
+    </div>
+    <div class="main">
+      <div class="topbar"><h1>Mô phỏng</h1><span class="crumb">P4 · SIL trước, HIL sau · cùng một kịch bản</span><div class="search"><svg viewBox="0 0 24 24" width="14" height="14" style="stroke:#8a97a8;fill:none;stroke-width:1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Hỏi hộ chiếu… ví dụ: thanh ghi tốc độ I2C1 của chip này</span></div><span class="btn">Mở kịch bản</span></div>
+      <div class="content">
+<div style="display:flex;flex-direction:column;gap:16px;flex:1">
+  <div class="card" style="flex:1"><h3>SIL · Renode stm32f4 + mô hình robot 2 bánh<span class="sp">firmware thật (ELF) · chu kỳ 200 Hz · 4,0 s ảo / 1,3 s thật</span></h3>
+    <div class="pad" style="display:flex;gap:16px;flex:1">
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+        <svg viewBox="0 0 760 180" width="100%" height="180" style="background:#fbfcfd;border:1px solid #eef1f5;border-radius:6px">
+          <line x1="30" y1="150" x2="750" y2="150" stroke="#d5dbe5"/><text x="34" y="20" font-size="11" fill="#5b6b7f">góc nghiêng θ (°) — đỏ · lệnh mô-men u — xám xanh · kỳ vọng |θ| &lt; 1° sau 3 s</text>
+          <polyline fill="none" stroke="#B8121F" stroke-width="1.6" points="30,90.0 39,99.11945127813257 48,116.92088492841864 57,139.02421429027876 66,160.72340986669582 75,177.9217479278789 84,187.84498383273785 93,189.42141592656267 102,183.2939528693968 111,171.50349360756775 120,156.94123125404127 129,142.7005672256646 138,131.463708647592 147,125.03612692803694 156,124.1010302839098 165,128.21584285761395 174,136.0239965695195 183,145.61725671685528 192,154.96239029433946 201,162.30344929164133 210,166.46562967066282 219,167.01382847094294 228,164.2520608237163 237,159.08184365992435 246,152.76252895088214 255,146.63042688430724 264,141.83499898027645 273,139.14055218604926 282,138.82388415053268 291,140.67656929765448 300,144.09961654648956 309,148.2619829707585 318,152.28546199819428 327,155.41766817430005 336,157.16144136317388 345,157.34089491678665 354,156.0986633478386 363,153.83265486144109 372,151.09122358719927 381,148.4514752396693 390,146.4058451823177 399,145.2776659461992 408,145.17856443034967 417,146.0110916676234 426,147.5109682492862 435,149.31640094476055 444,151.04817662613485 453,152.38402470245163 462,153.11370022989928 471,153.16645231151313 480,152.60875666933853 489,151.6161077602879 498,150.4271887167787 507,149.29116087671315 516,148.41891347847525 525,147.94713224505685 534,147.92059668732716 543,148.29402431364133 552,148.95089932658377 561,149.73377076984414 570,150.47893918355555 579,151.04841376053372 588,151.35334796427702 597,151.36544331078173 606,151.1155048625324 615,150.68087707274094 624,150.16541590926926 633,149.6766646169921 642,149.30490652588972 651,149.10788151324616 660,149.1034433365852 669,149.27066161804876 678,149.55820319153764 687,149.89756964829692 696,150.2181148682875 705,150.4607743783611 714,150.5880312393636 723,150.58864152459657 732,150.47680986877864 741,150.2866000605836"/><polyline fill="none" stroke="#2F4858" stroke-width="1.6" points="30,160.0 39,160.0 48,160.0 57,156.58547142583274 66,143.5659540799825 75,140.0 84,140.0 93,140.0 102,140.0 111,140.0 120,145.83526124757523 129,154.37965966460123 138,160.0 147,160.0 156,160.0 165,160.0 174,158.3856020582883 183,152.62964596988684 192,147.02256582339632 201,142.6179304250152 210,140.1206221976023 219,140.0 228,141.44876350577022 237,144.5508938040454 246,148.3424826294707 255,152.02174386941567 264,154.89900061183414 273,156.51566868837043 282,156.70566950968038 291,155.5940584214073 300,153.54023007210625 309,151.04281021754488 318,148.62872280108343 327,146.74939909541996 336,145.70313518209568 345,145.59546304992801 354,146.34080199129684 363,147.70040708313533 372,149.34526584768045 381,150.92911485619842 390,152.15649289060937 399,152.83340043228048 408,152.8928613417902 417,152.39334499942598 426,151.4934190504283 435,150.41015943314366 444,149.3710940243191 453,148.56958517852902 462,148.13177986206043 471,148.10012861309212 480,148.4347459983969 489,149.03033534382726 498,149.7436867699328 507,150.42530347397212 516,150.94865191291484 525,151.2317206529659 534,151.2476419876037 543,151.02358541181522 552,150.62946040404975 561,150.1597375380935 570,149.71263648986667 579,149.37095174367977 588,149.18799122143378 597,149.18073401353098 606,149.33069708248055 615,149.59147375635544 624,149.90075045443845 633,150.19400122980474 642,150.41705608446617 651,150.5352710920523 660,150.53793399804889 669,150.43760302917073 678,150.26507808507742 687,150.06145821102183 696,149.8691310790275 705,149.72353537298335 714,149.64718125638183 723,149.64681508524205 732,149.7139140787328 741,149.82803996364984"/>
+          <line x1="30" y1="145" x2="750" y2="145" stroke="#F2B705" stroke-dasharray="4 3"/><line x1="30" y1="155" x2="750" y2="155" stroke="#F2B705" stroke-dasharray="4 3"/>
+          <text x="600" y="172" font-size="10" fill="#0b6b52">ổn định tại 2,6 s ✓</text></svg>
+        <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:10px">
+          <div class="card"><div class="kpi"><span class="v" style="font-size:20px">2,6 s</span><span class="l">Thời gian ổn định (SIL)</span></div></div>
+          <div class="card"><div class="kpi"><span class="v" style="font-size:20px">4,9 ms</span><span class="l">Loop latency max (kỳ vọng ≤ 5)</span></div></div>
+          <div class="card"><div class="kpi"><span class="v" style="font-size:20px">0,31 ms</span><span class="l">Jitter</span></div></div>
+          <div class="card"><div class="kpi"><span class="v" style="font-size:20px;color:#7a0c0c">+0,8°</span><span class="l">Lệch so với HIL (board thật)</span></div></div>
+        </div>
+      </div>
+      <div style="width:320px;display:flex;flex-direction:column;gap:8px">
+        <b style="font-size:12px">Kịch bản (bench/balance_step.yaml)</b>
+        <div class="code" style="font-size:11px;background:#fbfcfd;border:1px solid #eef1f5;border-radius:6px;padding:8px">init: {theta: 12deg, omega: 0}
+inject:
+  - t: 1.5s  push: 0.3 N·m
+expect:
+  - settle: {abs_theta_lt: 1deg, within: 3s}
+  - loop_latency_max_ms: 5
+peripherals_mocked: [MPU6050 (model), A4988 (step counter)]
+run_on: [renode, board:nucleo-f411]</div>
+        <b style="font-size:12px">Kết quả so sánh SIL ↔ HIL</b>
+        <table><tr><th>Chỉ số</th><th>SIL</th><th>HIL</th><th></th></tr><tr><td>Ổn định</td><td>2,6 s</td><td>3,1 s</td><td><span class="pill ok">đạt</span></td></tr><tr><td>Latency max</td><td>4,9 ms</td><td>5,3 ms</td><td><span class="pill warn">vượt 0,3</span></td></tr><tr><td>Góc dư</td><td>0,2°</td><td>1,0°</td><td><span class="pill warn">lệch</span></td></tr></table>
+        <span class="hint">Lệch HIL do ma sát bánh chưa mô hình hóa → đề xuất cập nhật mô hình (K7 → K5) chờ duyệt.</span>
+      </div>
+    </div></div>
+  <div class="card" style="height:190px"><h3>Thiết bị ảo & log Renode<span class="sp">UART2 → serial console · GPIO PB3 LED · I2C1 MPU6050 mock</span></h3>
+    <div class="pad code" style="font-size:11.5px">00:00:00.000 [INFO] sysbus.usart2: "EIDE robot-ctrl v0.6 · SIL"
+00:00:00.005 [INFO] sysbus.i2c1: MPU6050 mock WHO_AM_I=0x68
+00:00:01.500 [INFO] scenario: inject push 0.3 N·m
+00:00:02.612 [INFO] scenario: settle ✓ |θ|=0.9°
+00:00:04.000 [INFO] scenario: done · exit 0 · ToolReport sim#41 passed</div></div>
+</div>
+<div class="card" style="width:330px"><h3>Chạy</h3><div class="pad" style="display:flex;flex-direction:column;gap:10px">
+  <div class="field"><label>Mục tiêu</label><div class="in">Renode · platforms/cpus/stm32f4.repl</div></div>
+  <div class="field"><label>Firmware</label><div class="in mono">build/robot-ctrl.elf (sha 41c0…)</div></div>
+  <div class="field"><label>Kịch bản</label><div class="in">bench/balance_step.yaml</div></div>
+  <div class="field"><label>Tốc độ</label><div class="in">Nhanh nhất có thể (không realtime)</div></div>
+  <span class="btn t">Chạy SIL</span><span class="btn g">Chạy trên board (cần G-OPS)</span><span class="btn">So sánh SIL/HIL</span>
+  <span class="hint">SIL không cần quyền; HIL luôn hỏi. Kết quả trở thành ToolReport và bằng chứng EVIDENCED_BY cho tính năng.</span>
+</div></div></div>
+      <div class="status"><span><span class="dotg"></span><b style="color:#B8121F">Tự chủ A3</b> · 12 việc tự làm hôm nay · 2 chờ anh · hoàn tác được đến 09:14</span><span>store.sqlite · 13.494 fact · 2 hộ chiếu</span><span>Ledger: 214 lượt gọi · 0,42 USD hôm nay</span><span>Toolchain: arm-none-eabi-gcc 13.2 · probe-rs 0.24 · ST-Link V3</span><span style="margin-left:auto">G1 ✓ · G3 chờ 1 · G4 ✓ · G-OPS hết hạn 12:40</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

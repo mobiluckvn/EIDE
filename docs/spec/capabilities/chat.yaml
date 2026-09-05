@@ -1,0 +1,302 @@
+- code: CHAT-01
+  id: chat.parse_intent
+  name: Câu lệnh → ý định + tham số (slot); nhận diện lệnh lớn
+  desc: Câu lệnh → ý định + tham số (slot); nhận diện lệnh lớn
+  input:
+    type: object
+    properties:
+      text:
+        type: string
+      attachments:
+        type: array
+        items:
+          type: string
+    required:
+    - text
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      intent:
+        type: object
+    required:
+    - intent
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.chat:parse_intent
+  errors:
+  - E5002
+  example:
+    text: Tạo cho anh dự án robot hai bánh tự cân bằng
+- code: CHAT-02
+  id: chat.ground
+  name: Đối chiếu ý định với trạng thái (dự án/hộ chiếu/board tồn tại?)
+  desc: Đối chiếu ý định với trạng thái (dự án/hộ chiếu/board tồn tại?)
+  input:
+    type: object
+    properties:
+      intent:
+        type: object
+    required:
+    - intent
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      grounded:
+        type: object
+    required:
+    - grounded
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.chat:ground
+  errors: []
+  example:
+    intent: {}
+- code: CHAT-03
+  id: chat.fill_defaults
+  name: Điền ô trống bằng mặc định có căn cứ; ghi ledger
+  desc: Điền ô trống bằng mặc định có căn cứ; ghi ledger
+  input:
+    type: object
+    properties:
+      intent:
+        type: object
+      grounded:
+        type: object
+    required:
+    - intent
+    - grounded
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      intent:
+        type: object
+      applied:
+        type: array
+        items:
+          type: object
+    required:
+    - intent
+    - applied
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.chat:fill_defaults
+  errors: []
+  example:
+    intent: {}
+    grounded: {}
+- code: CHAT-04
+  id: chat.clarify
+  name: Một câu hỏi gộp có phương án và mặc định; timeout
+  desc: Một câu hỏi gộp có phương án và mặc định; timeout
+  input:
+    type: object
+    properties:
+      gaps:
+        type: array
+        items:
+          type: object
+      context:
+        type: object
+    required:
+    - gaps
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      question:
+        type: object
+      answer:
+        type: object
+      by:
+        type: string
+        enum:
+        - human
+        - timeout
+    required:
+    - question
+    additionalProperties: false
+  risk: R0
+  tier: T2
+  grounding: []
+  ask_when:
+  - Khi không có mặc định
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.chat:clarify
+  errors: []
+  example:
+    gaps:
+    - slot: board
+- code: CHAT-05
+  id: chat.restate
+  name: Nói lại ý hiểu 1–2 câu trước chuỗi dài
+  desc: Nói lại ý hiểu 1–2 câu trước chuỗi dài
+  input:
+    type: object
+    properties:
+      intent:
+        type: object
+      chain:
+        type: array
+        items:
+          type: object
+    required:
+    - intent
+    - chain
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.chat:restate
+  errors: []
+  example:
+    intent: {}
+    chain: []
+- code: CHAT-06
+  id: chat.orchestrate
+  name: Biến lệnh lớn thành chuỗi gọi năng lực có nhánh; chạy theo chính sách
+  desc: Biến lệnh lớn thành chuỗi gọi năng lực có nhánh; chạy theo chính sách
+  input:
+    type: object
+    properties:
+      intent:
+        type: object
+      grounded:
+        type: object
+    required:
+    - intent
+    - grounded
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      run_id:
+        type: string
+    required:
+    - run_id
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.chat:orchestrate
+  errors:
+  - E5002
+  - E3003
+  example:
+    intent: {}
+    grounded: {}
+- code: CHAT-07
+  id: chat.report_back
+  name: Tóm tắt việc đã làm, đang chờ, hoàn tác được, chi phí
+  desc: Tóm tắt việc đã làm, đang chờ, hoàn tác được, chi phí
+  input:
+    type: object
+    properties:
+      run_id:
+        type: string
+    required:
+    - run_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+      text:
+        type: string
+    required:
+    - report
+    - text
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.chat:report_back
+  errors: []
+  example:
+    run_id: r_1
+- code: CHAT-08
+  id: chat.decline
+  name: Nói 'không có trong hộ chiếu'/'không làm được' có lý do và đề xuất
+  desc: Nói 'không có trong hộ chiếu'/'không làm được' có lý do và đề xuất
+  input:
+    type: object
+    properties:
+      reason:
+        type: string
+        enum:
+        - not_in_passport
+        - policy_reject
+        - cannot
+        - out_of_scope
+      detail:
+        type: string
+      suggestions:
+        type: array
+        items:
+          type: string
+    required:
+    - reason
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.chat:decline
+  errors: []
+  example:
+    reason: not_in_passport
+    detail: timing I2C BME280

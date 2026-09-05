@@ -1,0 +1,474 @@
+- code: DOC-01
+  id: doc.generate
+  name: Sinh tài liệu theo chuẩn bộ EAA/EIDE (URD, SRS, SAD, SDD, STP, BPD…) từ tri thức
+  desc: Sinh tài liệu theo chuẩn bộ EAA/EIDE (URD, SRS, SAD, SDD, STP, BPD…) từ tri thức dự án; thuộc tính, lịch sử, mục Nguồn
+  input:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+        - URD
+        - SRS
+        - SAD
+        - SDD
+        - STP
+        - BPD
+        - bringup
+        - test_report
+        - custom
+      scope:
+        type: string
+      lang:
+        type: string
+        enum:
+        - vi
+        - en
+    required:
+    - type
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      doc_id:
+        type: string
+      path:
+        type: string
+      style_issues:
+        type: integer
+    required:
+    - doc_id
+    - path
+    - style_issues
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Fact có nguồn
+  ask_when:
+  - Thiếu fact bắt buộc
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.doc:generate
+  errors:
+  - E5002
+  - E4001 thiếu node/docx
+  example:
+    type: SRS
+    lang: vi
+- code: DOC-02
+  id: doc.section
+  name: Viết/viết lại một mục (mô tả module, hướng dẫn cấu hình, ghi chú phát hành)
+  desc: Viết/viết lại một mục (mô tả module, hướng dẫn cấu hình, ghi chú phát hành)
+  input:
+    type: object
+    properties:
+      target:
+        type: string
+        description: doc_id#heading | module | topic
+      style:
+        type: string
+      instructions:
+        type: string
+    required:
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      markdown:
+        type: string
+      citations:
+        type: array
+        items:
+          type: string
+    required:
+    - markdown
+    - citations
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.doc:section
+  errors:
+  - E5002
+  example:
+    target: mod_bme280
+    style: hướng dẫn cấu hình
+- code: DOC-03
+  id: doc.api_ref
+  name: Sinh tham chiếu API từ header/Doxygen; ví dụ dùng theo hộ chiếu
+  desc: Sinh tham chiếu API từ header/Doxygen; ví dụ dùng theo hộ chiếu
+  input:
+    type: object
+    properties:
+      src:
+        type: array
+        items:
+          type: string
+    required:
+    - src
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.doc:api_ref
+  errors:
+  - E4001
+  example:
+    src:
+    - src/drivers/bme280.h
+- code: DOC-04
+  id: doc.datasheet_summary
+  name: Tóm tắt datasheet/errata cho phần dự án dùng, có trích dẫn trang
+  desc: Tóm tắt datasheet/errata cho phần dự án dùng, có trích dẫn trang
+  input:
+    type: object
+    properties:
+      part:
+        type: string
+      scope:
+        type: array
+        items:
+          type: string
+        description: periph|electrical|timing|errata
+    required:
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Fact có nguồn
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.doc:datasheet_summary
+  errors:
+  - E5002
+  example:
+    part: bosch.bme280
+    scope:
+    - periph
+    - timing
+- code: DOC-05
+  id: doc.bringup_guide
+  name: 'Hướng dẫn bring-up board: nguồn, nạp, kiểm tra bước đầu, lỗi thường gặp'
+  desc: 'Hướng dẫn bring-up board: nguồn, nạp, kiểm tra bước đầu, lỗi thường gặp'
+  input:
+    type: object
+    properties:
+      board:
+        type: string
+    required:
+    - board
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.doc:bringup_guide
+  errors: []
+  example:
+    board: robot-main
+- code: DOC-06
+  id: doc.test_report
+  name: Báo cáo kiểm thử từ kết quả sim/target/bench với bằng chứng
+  desc: Báo cáo kiểm thử từ kết quả sim/target/bench với bằng chứng
+  input:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          type: string
+        description: tool_report/measurement ids
+      format:
+        type: string
+        enum:
+        - docx
+        - md
+    required:
+    - results
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.doc:test_report
+  errors: []
+  example:
+    results:
+    - tr_1
+    - m_2
+    format: md
+- code: DOC-07
+  id: doc.embed_diagram
+  name: Chèn lược đồ (diagram.*) vào tài liệu với chú thích, đánh số hình
+  desc: Chèn lược đồ (diagram.*) vào tài liệu với chú thích, đánh số hình
+  input:
+    type: object
+    properties:
+      doc_id:
+        type: string
+      diagram_id:
+        type: string
+      caption:
+        type: string
+      after_heading:
+        type: string
+    required:
+    - doc_id
+    - diagram_id
+    - caption
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      figure_no:
+        type: integer
+    required:
+    - figure_no
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.doc:embed_diagram
+  errors: []
+  example:
+    doc_id: doc_1
+    diagram_id: dg_1
+    caption: Kiến trúc firmware
+- code: DOC-08
+  id: doc.style_check
+  name: 'Kiểm tài liệu theo chuẩn: tiếng Việt ưu tiên, thuật ngữ có giải nghĩa, mọi khẳng'
+  desc: 'Kiểm tài liệu theo chuẩn: tiếng Việt ưu tiên, thuật ngữ có giải nghĩa, mọi khẳng định có nguồn, định dạng bộ tài liệu'
+  input:
+    type: object
+    properties:
+      doc_id:
+        type: string
+    required:
+    - doc_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      issues:
+        type: array
+        items:
+          type: object
+        description: kind lang|term|uncited|format|glossary, location, text
+    required:
+    - issues
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.doc:style_check
+  errors: []
+  example:
+    doc_id: doc_1
+- code: DOC-09
+  id: doc.translate
+  name: Dịch tài liệu Việt↔Anh giữ thuật ngữ và bố cục
+  desc: Dịch tài liệu Việt↔Anh giữ thuật ngữ và bố cục
+  input:
+    type: object
+    properties:
+      doc_id:
+        type: string
+      lang:
+        type: string
+        enum:
+        - vi
+        - en
+    required:
+    - doc_id
+    - lang
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.doc:translate
+  errors:
+  - E5002
+  example:
+    doc_id: doc_1
+    lang: en
+- code: DOC-10
+  id: doc.changelog
+  name: Sinh changelog/ghi chú phát hành từ commit và ledger
+  desc: Sinh changelog/ghi chú phát hành từ commit và ledger
+  input:
+    type: object
+    properties:
+      range:
+        type: string
+        description: tag..tag | since date
+    required:
+    - range
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      markdown:
+        type: string
+    required:
+    - markdown
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.doc:changelog
+  errors: []
+  example:
+    range: v0.1..HEAD
+- code: DOC-11
+  id: doc.slides
+  name: Sinh bộ slide trình bày dự án/đề án từ tài liệu và lược đồ
+  desc: Sinh bộ slide trình bày dự án/đề án từ tài liệu và lược đồ
+  input:
+    type: object
+    properties:
+      scope:
+        type: string
+      n_slides:
+        type: integer
+    required:
+    - scope
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.doc:slides
+  errors:
+  - E4001
+  example:
+    scope: project
+    n_slides: 15
+- code: DOC-12
+  id: doc.sync
+  name: Cập nhật tài liệu khi mã/kiến trúc/fact đổi; đánh dấu mục lỗi thời
+  desc: Cập nhật tài liệu khi mã/kiến trúc/fact đổi; đánh dấu mục lỗi thời
+  input:
+    type: object
+    properties:
+      delta:
+        type: object
+        description: fact_id|module_id|req_id
+    required:
+    - delta
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      stale:
+        type: array
+        items:
+          type: object
+      updated:
+        type: array
+        items:
+          type: string
+    required:
+    - stale
+    - updated
+    additionalProperties: false
+  risk: R0
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Thay đổi lớn
+  undo:
+    kind: git_revert
+  milestone: M3
+  impl: eide.doc:sync
+  errors:
+  - E3000
+  example:
+    delta:
+      fact_id: f_9e0f

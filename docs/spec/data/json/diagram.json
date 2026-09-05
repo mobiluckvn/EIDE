@@ -1,0 +1,83 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/diagram.json",
+ "title": "Diagram",
+ "description": "Lược đồ dạng văn bản",
+ "type": "object",
+ "required": [
+  "id",
+  "kind",
+  "lang",
+  "src",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "dg_<hex>"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "block",
+    "pinmap",
+    "architecture",
+    "sequence",
+    "state",
+    "flow",
+    "timing",
+    "memory_map",
+    "kg_view",
+    "gantt",
+    "from_image",
+    "custom"
+   ]
+  },
+  "lang": {
+   "type": "string",
+   "enum": [
+    "mermaid",
+    "plantuml",
+    "dot",
+    "d2",
+    "wavedrom",
+    "svg"
+   ]
+  },
+  "src": {
+   "type": "string",
+   "description": "Mã lược đồ"
+  },
+  "source_ref": {
+   "type": "string",
+   "description": "Mô hình gốc (module_id, fsm, plan…)"
+  },
+  "rendered_ref": {
+   "type": "string",
+   "description": "svg/png"
+  },
+  "lint": {
+   "type": "array",
+   "description": "JSON Issue[]"
+  },
+  "node_ids": {
+   "type": "array",
+   "description": "JSON để sync"
+  },
+  "synced_with": {
+   "type": "string"
+  },
+  "stale": {
+   "type": "boolean"
+  },
+  "path": {
+   "type": "string",
+   "description": ".eide/diagrams/…"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

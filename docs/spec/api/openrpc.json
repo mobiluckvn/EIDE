@@ -1,0 +1,1095 @@
+{
+ "openrpc": "1.3.2",
+ "info": {
+  "title": "EIDE JSON-RPC",
+  "version": "1.0.0"
+ },
+ "methods": [
+  {
+   "name": "plane.hello",
+   "summary": "Handshake; từ chối khi major khác",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{plugin_version, client}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{api_version, daemon_version, project?, capabilities_hash}"
+    }
+   }
+  },
+  {
+   "name": "project.list",
+   "summary": "Mở dự án = M2 SessionMemory mới",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {path|id} / {}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{projects[]} / {project, state_summary} / {}"
+    }
+   }
+  },
+  {
+   "name": "project.open",
+   "summary": "Mở dự án = M2 SessionMemory mới",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {path|id} / {}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{projects[]} / {project, state_summary} / {}"
+    }
+   }
+  },
+  {
+   "name": "project.close",
+   "summary": "Mở dự án = M2 SessionMemory mới",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {path|id} / {}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{projects[]} / {project, state_summary} / {}"
+    }
+   }
+  },
+  {
+   "name": "chat.send",
+   "summary": "Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{text, attachments?[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{intent_id, run_id?}"
+    }
+   }
+  },
+  {
+   "name": "chat.answer",
+   "summary": "Trả lời câu hỏi gộp",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{question_id, option?, text?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{}"
+    }
+   }
+  },
+  {
+   "name": "chat.history",
+   "summary": "Từ session.turns",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{limit?, before?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{turns[]}"
+    }
+   }
+  },
+  {
+   "name": "caps.list",
+   "summary": "Từ registry",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{ns?, tier?, risk?, screen?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{capabilities[]{code, id, name, desc, risk, tier, ui}}"
+    }
+   }
+  },
+  {
+   "name": "caps.describe",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{id}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{capability (đủ 13 trường + schema)}"
+    }
+   }
+  },
+  {
+   "name": "caps.invoke",
+   "summary": "Đường gọi duy nhất; tool nặng trả job_id trong result",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{id, args, run_id?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{status: ok|pending|rejected, result?, run_id, undo_until?, gate_id?, error?}"
+    }
+   }
+  },
+  {
+   "name": "queue.list",
+   "summary": "Hàng đợi chờ tôi / đã làm",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{kind: ask|done|all, gate?, limit?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{items[]{id, kind, gate, cap, summary, risk, evidence[], deadline?, undo_ref?}}"
+    }
+   }
+  },
+  {
+   "name": "gate.decide",
+   "summary": "Người quyết định mục ASK",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{gate_id, decision: approve|reject, note?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{}"
+    }
+   }
+  },
+  {
+   "name": "undo.list",
+   "summary": "Hoàn tác việc tự làm",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {undo_ref}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{items[]} / {result}"
+    }
+   }
+  },
+  {
+   "name": "undo.apply",
+   "summary": "Hoàn tác việc tự làm",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {undo_ref}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{items[]} / {result}"
+    }
+   }
+  },
+  {
+   "name": "autonomy.get",
+   "summary": "set là R4 khi nới lỏng → gate",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {level, board?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{effective, project, boards{}} / {}"
+    }
+   }
+  },
+  {
+   "name": "autonomy.set",
+   "summary": "set là R4 khi nới lỏng → gate",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{} / {level, board?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{effective, project, boards{}} / {}"
+    }
+   }
+  },
+  {
+   "name": "stop",
+   "summary": "Dừng khẩn < 1 s",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{}"
+    }
+   }
+  },
+  {
+   "name": "job.status",
+   "summary": "Tool nặng (build, flash, extract, render, install)",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{job_id}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{state, progress, log_tail[], result?}"
+    }
+   }
+  },
+  {
+   "name": "job.cancel",
+   "summary": "Tool nặng (build, flash, extract, render, install)",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{job_id}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{state, progress, log_tail[], result?}"
+    }
+   }
+  },
+  {
+   "name": "view.kg_map",
+   "summary": "Alias caps.invoke để plugin gọi ngắn",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "theo năng lực view.*"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "GraphView / ProvenanceChain / Heatmap / Timeline"
+    }
+   }
+  },
+  {
+   "name": "view.focus",
+   "summary": "Alias caps.invoke để plugin gọi ngắn",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "theo năng lực view.*"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "GraphView / ProvenanceChain / Heatmap / Timeline"
+    }
+   }
+  },
+  {
+   "name": "view.provenance",
+   "summary": "Alias caps.invoke để plugin gọi ngắn",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "theo năng lực view.*"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "GraphView / ProvenanceChain / Heatmap / Timeline"
+    }
+   }
+  },
+  {
+   "name": "view.coverage",
+   "summary": "Alias caps.invoke để plugin gọi ngắn",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "theo năng lực view.*"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "GraphView / ProvenanceChain / Heatmap / Timeline"
+    }
+   }
+  },
+  {
+   "name": "view.impact",
+   "summary": "Alias caps.invoke để plugin gọi ngắn",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "theo năng lực view.*"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "GraphView / ProvenanceChain / Heatmap / Timeline"
+    }
+   }
+  },
+  {
+   "name": "view.timeline",
+   "summary": "Alias caps.invoke để plugin gọi ngắn",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "theo năng lực view.*"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "GraphView / ProvenanceChain / Heatmap / Timeline"
+    }
+   }
+  },
+  {
+   "name": "view.rag_ask",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{question, scope?} / {trace_id}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{answer, citations[], trace_id} / {chunks[], scores[], path[]}"
+    }
+   }
+  },
+  {
+   "name": "view.rag_trace",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{question, scope?} / {trace_id}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{answer, citations[], trace_id} / {chunks[], scores[], path[]}"
+    }
+   }
+  },
+  {
+   "name": "passport.query",
+   "summary": "< 200 ms",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{part, periph?, reg?, field?} / {id, group}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "QueryResult / {groups[], facts[]}"
+    }
+   }
+  },
+  {
+   "name": "passport.browse",
+   "summary": "< 200 ms",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{part, periph?, reg?, field?} / {id, group}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "QueryResult / {groups[], facts[]}"
+    }
+   }
+  },
+  {
+   "name": "log.register",
+   "summary": "GEditor tính stats native",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{path} / {path, range} / {path, range, question}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {stats} / {answer, session_id}"
+    }
+   }
+  },
+  {
+   "name": "log.stats",
+   "summary": "GEditor tính stats native",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{path} / {path, range} / {path, range, question}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {stats} / {answer, session_id}"
+    }
+   }
+  },
+  {
+   "name": "debug.ask",
+   "summary": "GEditor tính stats native",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{path} / {path, range} / {path, range, question}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {stats} / {answer, session_id}"
+    }
+   }
+  },
+  {
+   "name": "serial.open",
+   "summary": "Sự kiện serial.line",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{port, baud} / {port} / {port, bytes} / {port, pattern, timeout_s}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {} / {} / {matched, lines[]}"
+    }
+   }
+  },
+  {
+   "name": "serial.close",
+   "summary": "Sự kiện serial.line",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{port, baud} / {port} / {port, bytes} / {port, pattern, timeout_s}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {} / {} / {matched, lines[]}"
+    }
+   }
+  },
+  {
+   "name": "serial.write",
+   "summary": "Sự kiện serial.line",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{port, baud} / {port} / {port, bytes} / {port, pattern, timeout_s}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {} / {} / {matched, lines[]}"
+    }
+   }
+  },
+  {
+   "name": "serial.expect",
+   "summary": "Sự kiện serial.line",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{port, baud} / {port} / {port, bytes} / {port, pattern, timeout_s}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{} / {} / {} / {matched, lines[]}"
+    }
+   }
+  },
+  {
+   "name": "diagram.open",
+   "summary": "GEditor render",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{src, lang} / {id, src}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{id, lint[]} / {lint[], sync_diff?}"
+    }
+   }
+  },
+  {
+   "name": "diagram.save",
+   "summary": "GEditor render",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{src, lang} / {id, src}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{id, lint[]} / {lint[], sync_diff?}"
+    }
+   }
+  },
+  {
+   "name": "doc.open",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{path}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{sections[], stale[]}"
+    }
+   }
+  },
+  {
+   "name": "discover.status",
+   "summary": "Cập nhật qua event.discover.changed",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "Discovery"
+    }
+   }
+  },
+  {
+   "name": "hex.resolve",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{address}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{subject, facts[]}"
+    }
+   }
+  },
+  {
+   "name": "event.chat.restated",
+   "summary": "Thẻ \"tôi hiểu là…\"",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{intent_id, text}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.chat.question",
+   "summary": "Thẻ câu hỏi gộp",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{question_id, text, options[], default, timeout_s, remember_as?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.chat.report",
+   "summary": "Thẻ báo cáo cuối",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{run_id, done[], waiting[], undo_until?, cost_usd}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.run.progress",
+   "summary": "Dòng tiến độ chuỗi",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{run_id, node_id, cap, state, pct?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.queue.changed",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{kind, added[], removed[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.gate.opened",
+   "summary": "Mục ASK mới",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{gate_id, gate, cap, summary, risk, evidence[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.undo.registered / event.undo.expired",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{undo_ref, deadline}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.autonomy.changed",
+   "summary": "Kể cả STOP",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{effective, reason}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.discover.changed",
+   "summary": "Cắm/rút board",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "Discovery"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.serial.line",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{port, ts, line}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.job.progress",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{job_id, pct, log_tail[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.knowledge.changed",
+   "summary": "Sau extract/review",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{facts_added, facts_superseded, conflicts, stale_code_units[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.doc.stale / event.diagram.stale",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{id, sections[]|node_ids[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.notice",
+   "summary": "Cảnh báo chung",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{level, text, ref?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  }
+ ]
+}

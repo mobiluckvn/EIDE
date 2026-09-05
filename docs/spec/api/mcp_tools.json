@@ -1,0 +1,80 @@
+[
+ {
+  "name": "caps_list"
+ },
+ {
+  "name": "caps_describe"
+ },
+ {
+  "name": "caps_invoke"
+ },
+ {
+  "name": "chat_command"
+ },
+ {
+  "name": "passport_query",
+  "description": "Tra fact theo part/periph/reg/field hoặc câu hỏi NL; kèm trích dẫn/tầng/trạng thái",
+  "capability": "passport.query",
+  "risk": "R0"
+ },
+ {
+  "name": "kg_conflicts",
+  "description": "Fact mâu thuẫn + tài nguyên bị dùng bởi >1 module",
+  "capability": "kg.conflicts",
+  "risk": "R0"
+ },
+ {
+  "name": "kg_impact",
+  "description": "Fact đổi → CodeUnit stale, Feature cần tái kiểm",
+  "capability": "kg.impact",
+  "risk": "R0"
+ },
+ {
+  "name": "kg_request",
+  "description": "Tạo yêu cầu nhận tri thức",
+  "capability": "kg.request",
+  "risk": "R1"
+ },
+ {
+  "name": "code_review",
+  "description": "Reviewer khác hãng chấm checklist",
+  "capability": "code.review",
+  "risk": "R0"
+ },
+ {
+  "name": "target_flash",
+  "description": "Nạp + verify qua adapter ISA",
+  "capability": "target.flash",
+  "risk": "R3"
+ },
+ {
+  "name": "target_serial",
+  "description": "Mở/đọc/ghi/expect serial đa cổng; ghi JSONL",
+  "capability": "target.serial",
+  "risk": "R0"
+ },
+ {
+  "name": "target_probe_read",
+  "description": "halt/step/read_memory/read_registers/breakpoint (đọc)",
+  "capability": "target.probe_read",
+  "risk": "R0"
+ },
+ {
+  "name": "report_export",
+  "description": "docx/pdf/md có mục Nguồn",
+  "capability": "report.export",
+  "risk": "R1"
+ },
+ {
+  "name": "view_rag_ask",
+  "description": "Hỏi–đáp RAG trên toàn kho tài liệu dự án (PDF, ảnh OCR, mã, chat); trả lời có trích dẫn nhấp mở nguồn",
+  "capability": "view.rag_ask",
+  "risk": "R0"
+ },
+ {
+  "name": "discover_ports",
+  "description": "Liệt kê cổng USB/serial/JTAG-SWD đang cắm; VID/PID, driver, quyền truy cập",
+  "capability": "discover.ports",
+  "risk": "R0"
+ }
+]

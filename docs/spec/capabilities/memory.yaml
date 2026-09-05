@@ -1,0 +1,322 @@
+- code: MEMORY-01
+  id: memory.compose
+  name: Ghép ngữ cảnh 7 lớp K1–K7 theo vai trò và tác vụ; kiểm ngân sách token
+  desc: Ghép ngữ cảnh 7 lớp K1–K7 theo vai trò và tác vụ; kiểm ngân sách token
+  input:
+    type: object
+    properties:
+      role:
+        type: string
+      task_ref:
+        type: string
+    required:
+    - role
+    - task_ref
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      bundle:
+        type: object
+        description: ContextBundle
+    required:
+    - bundle
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.memory:compose
+  errors:
+  - E5001 CONTEXT_OVERFLOW
+  example:
+    role: coder
+    task_ref: F-04/step-2
+- code: MEMORY-02
+  id: memory.compress
+  name: 'Nén ngữ cảnh: tóm tắt lịch sử, lọc log theo mẫu, rút gọn fact'
+  desc: 'Nén ngữ cảnh: tóm tắt lịch sử, lọc log theo mẫu, rút gọn fact'
+  input:
+    type: object
+    properties:
+      text:
+        type: string
+      target_tokens:
+        type: integer
+      kind:
+        type: string
+        enum:
+        - history
+        - facts
+        - log
+        - code
+    required:
+    - text
+    - target_tokens
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      text:
+        type: string
+      compressions:
+        type: array
+        items:
+          type: string
+    required:
+    - text
+    - compressions
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.memory:compress
+  errors:
+  - E5000
+  example:
+    kind: log
+    target_tokens: 900
+    text: …
+- code: MEMORY-03
+  id: memory.retrieve
+  name: 'Truy hồi Graph-RAG: lan tỏa 2 bước từ subject rồi lấy văn bản'
+  desc: 'Truy hồi Graph-RAG: lan tỏa 2 bước từ subject rồi lấy văn bản'
+  input:
+    type: object
+    properties:
+      subjects:
+        type: array
+        items:
+          type: string
+      k:
+        type: integer
+      hops:
+        type: integer
+    required:
+    - subjects
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      facts:
+        type: array
+        items:
+          type: object
+      snippets:
+        type: array
+        items:
+          type: object
+    required:
+    - facts
+    - snippets
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.memory:retrieve
+  errors: []
+  example:
+    subjects:
+    - part:bosch.bme280
+    k: 8
+- code: MEMORY-04
+  id: memory.progress
+  name: Ghi/đọc PROGRESS.md, FEATURES.json (harness dài hạn)
+  desc: Ghi/đọc PROGRESS.md, FEATURES.json (harness dài hạn)
+  input:
+    type: object
+    properties:
+      entry:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      progress_md:
+        type: string
+      features:
+        type: object
+    required:
+    - progress_md
+    - features
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.memory:progress
+  errors: []
+  example: {}
+- code: MEMORY-05
+  id: memory.ledger
+  name: 'Ghi nhật ký bất biến: gate, tool, model call, quyết định tự động'
+  desc: 'Ghi nhật ký bất biến: gate, tool, model call, quyết định tự động'
+  input:
+    type: object
+    properties:
+      kind:
+        type: string
+      data:
+        type: object
+    required:
+    - kind
+    - data
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      hash:
+        type: string
+    required:
+    - hash
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.memory:ledger
+  errors:
+  - E1000 kind lạ
+  example:
+    kind: tool.report
+    data: {}
+- code: MEMORY-06
+  id: memory.error_ledger
+  name: 'Sổ lỗi: ghi lỗi ảo giác/từ chối; đưa vào prompt phủ định'
+  desc: 'Sổ lỗi: ghi lỗi ảo giác/từ chối; đưa vào prompt phủ định'
+  input:
+    type: object
+    properties:
+      role:
+        type: string
+      kind:
+        type: string
+        enum:
+        - hallucination
+        - refusal
+        - tool_fail
+        - human_reject
+        - undo
+        - policy_reject
+      task_ref:
+        type: string
+      evidence:
+        type: string
+      chip:
+        type: string
+    required:
+    - kind
+    - evidence
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      id:
+        type: string
+      negative_prompt:
+        type: string
+    required:
+    - id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.memory:error_ledger
+  errors: []
+  example:
+    kind: human_reject
+    role: coder
+    evidence: đặt sai bit CTRL_MEAS
+    chip: bosch.bme280
+- code: MEMORY-07
+  id: memory.forget
+  name: Xóa mềm/hết hạn ngữ cảnh tạm, cache; không xóa fact
+  desc: Xóa mềm/hết hạn ngữ cảnh tạm, cache; không xóa fact
+  input:
+    type: object
+    properties:
+      scope:
+        type: string
+        enum:
+        - cache
+        - session
+        - preference
+        - run
+      key:
+        type: string
+    required:
+    - scope
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      removed:
+        type: integer
+    required:
+    - removed
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Xóa tri thức đã duyệt (R4)
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.memory:forget
+  errors:
+  - E1000
+  example:
+    scope: cache
+- code: MEMORY-08
+  id: memory.summarize_session
+  name: 'Tóm tắt phiên: đã làm gì, chờ gì, bước tiếp'
+  desc: 'Tóm tắt phiên: đã làm gì, chờ gì, bước tiếp'
+  input:
+    type: object
+    properties:
+      session_id:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      summary:
+        type: object
+        description: done[], waiting[], next[], undo_until
+    required:
+    - summary
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.memory:summarize_session
+  errors: []
+  example: {}

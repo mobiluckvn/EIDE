@@ -1,0 +1,275 @@
+- code: PLAN-01
+  id: plan.define_feature
+  name: Chuẩn hóa yêu cầu → Feature có kỳ vọng quan sát được, ràng buộc
+  desc: Chuẩn hóa yêu cầu → Feature có kỳ vọng quan sát được, ràng buộc
+  input:
+    type: object
+    properties:
+      text:
+        type: string
+      requirement_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - text
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      feature:
+        type: object
+        description: id, title, expectation (máy quan sát được), constraints[], touches[]
+    required:
+    - feature
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Mơ hồ (≤ 3 câu hỏi)
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.plan:define_feature
+  errors:
+  - E5002
+  example:
+    text: Đọc BME280 và phát UART 1 Hz
+- code: PLAN-02
+  id: plan.decompose
+  name: Tách mục tiêu lớn thành module/feature theo kiến trúc (driver → HAL → app)
+  desc: Tách mục tiêu lớn thành module/feature theo kiến trúc (driver → HAL → app)
+  input:
+    type: object
+    properties:
+      goal:
+        type: string
+      module_graph:
+        type: object
+    required:
+    - goal
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      features:
+        type: array
+        items:
+          type: object
+    required:
+    - features
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.plan:decompose
+  errors: []
+  example:
+    goal: robot cân bằng
+- code: PLAN-03
+  id: plan.create
+  name: Kế hoạch từng bước có trích dẫn fact; missing[]
+  desc: Kế hoạch từng bước có trích dẫn fact; missing[]
+  input:
+    type: object
+    properties:
+      feature:
+        type: string
+    required:
+    - feature
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      plan:
+        type: object
+        description: Plan (PRS-16 §4)
+      decision:
+        type: object
+    required:
+    - plan
+    - decision
+    additionalProperties: false
+  risk: R1
+  tier: T1*
+  grounding:
+  - Đủ tri thức
+  ask_when:
+  - Đổi kiến trúc; tài nguyên mới
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.plan:create
+  errors:
+  - E5001
+  - E5002
+  - E3000
+  example:
+    feature: F-04
+- code: PLAN-04
+  id: plan.order
+  name: Sắp thứ tự phụ thuộc giữa module (clock → GPIO → I2C → cảm biến → app)
+  desc: Sắp thứ tự phụ thuộc giữa module (clock → GPIO → I2C → cảm biến → app)
+  input:
+    type: object
+    properties:
+      features:
+        type: array
+        items:
+          type: string
+    required:
+    - features
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      order:
+        type: array
+        items:
+          type: string
+      cycles:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+    required:
+    - order
+    - cycles
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.plan:order
+  errors: []
+  example:
+    features:
+    - F-01
+    - F-04
+    - F-03
+- code: PLAN-05
+  id: plan.estimate
+  name: Ước lượng token/chi phí/thời gian; so ngân sách
+  desc: Ước lượng token/chi phí/thời gian; so ngân sách
+  input:
+    type: object
+    properties:
+      plan:
+        type: object
+    required:
+    - plan
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      estimate:
+        type: object
+        description: tokens, cost_usd, tool_rounds, minutes
+      within_budget:
+        type: boolean
+    required:
+    - estimate
+    - within_budget
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Vượt ngân sách
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.plan:estimate
+  errors: []
+  example:
+    plan: {}
+- code: PLAN-06
+  id: plan.replan
+  name: Lập lại khi thất bại/thiếu tri thức/xung đột
+  desc: Lập lại khi thất bại/thiếu tri thức/xung đột
+  input:
+    type: object
+    properties:
+      plan_id:
+        type: string
+      reason:
+        type: string
+        enum:
+        - tool_fail
+        - missing_knowledge
+        - conflict
+        - human_change
+      detail:
+        type: string
+    required:
+    - plan_id
+    - reason
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      plan:
+        type: object
+    required:
+    - plan
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Lần 3
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.plan:replan
+  errors:
+  - E5002
+  example:
+    plan_id: p_1
+    reason: conflict
+    detail: PB3
+- code: PLAN-07
+  id: plan.sufficiency
+  name: Tự đánh giá đủ thông tin trước khi làm
+  desc: Tự đánh giá đủ thông tin trước khi làm
+  input:
+    type: object
+    properties:
+      task_ref:
+        type: string
+    required:
+    - task_ref
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      sufficient:
+        type: boolean
+      missing:
+        type: array
+        items:
+          type: object
+    required:
+    - sufficient
+    - missing
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.plan:sufficiency
+  errors: []
+  example:
+    task_ref: F-04

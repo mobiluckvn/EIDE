@@ -1,0 +1,20 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/passport_fact.json",
+ "title": "PassportFact",
+ "description": "Liên kết hộ chiếu ↔ fact",
+ "type": "object",
+ "required": [
+  "passport_id",
+  "fact_id"
+ ],
+ "properties": {
+  "passport_id": {
+   "type": "string"
+  },
+  "fact_id": {
+   "type": "string"
+  }
+ },
+ "additionalProperties": false
+}

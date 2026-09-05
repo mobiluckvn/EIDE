@@ -1,0 +1,57 @@
+const fs = require('fs');
+const { P, H1, H2, H3, CAP, SP, T, IMG, CODE, build } = require('./eaa_doc');
+const { metaNew, refParas } = require('./eide_common');
+const D = JSON.parse(fs.readFileSync('ddd.json', 'utf8'));
+const m = metaNew('EIDE-DDD-14', 'Từ điển dữ liệu', 'TỪ ĐIỂN DỮ LIỆU, DDL VÀ DI TRÚ (DDD)',
+  'Nguồn duy nhất cho mọi thực thể của EIDE: từ điển dữ liệu 27 thực thể / 253 trường, JSON Schema 2020-12, DDL SQLite, thứ tự di trú từ M0, schema các tệp YAML, quy ước định danh',
+  [['Tài liệu trước', 'EIDE-SDD-04 §3, EIDE-SAD-03 §5, EIDE-MEM-11 §3, EIDE-POL-17 §4'], ['Tệp kèm', 'ddd_model.py (nguồn), data/json/*.json (27 JSON Schema), data/schema.sql (DDL), gen_ddd.py'], ['Dùng khi', 'Hiện thực pydantic models, migration, kiểm hợp lệ khi ghi; sinh tài liệu API']],
+  'Phát hành lần đầu — bổ sung lĩnh vực L05/L31; sinh tự động từ ddd_model.py');
+const c = [];
+c.push(H1('1. Nguyên tắc và quy ước'));
+c.push(P('Tài liệu này được sinh từ một mô hình duy nhất (`ddd_model.py`); mọi thay đổi schema phải sửa mô hình rồi sinh lại JSON Schema, DDL và tài liệu — không sửa tay ba nơi. Quy ước: (1) mọi id có tiền tố loại + 16 hex (f_, src_, cr_, d_, r_, it_, dg_, doc_, dv_, e_, m_, tr_, ds_, cu_, acq_), trừ id có nghĩa (F-nn, ADR-nn, UR-/FR-, passport ns.part@semver, module mod_<slug>); (2) IRI subject theo KAD-07 §6.1: `chip:<vendor>.<part>[/periph:X[/reg:Y[/field:Z]]]`, `board:<id>[/net:N|/pin:P]`, `part:<vendor>.<mpn>`, `isa:<id>`; (3) cột JSON lưu TEXT (UTF-8) và được kiểm bằng JSON Schema tương ứng trước khi ghi; (4) thời gian ISO-8601 UTC; (5) mọi bảng có cột `at` hoặc `created_at` để dòng thời gian (view.timeline); (6) SQLite WAL, foreign_keys=ON, user_version tăng theo migration; (7) ba tệp cơ sở dữ liệu: `store.sqlite` (commit Git), `session.sqlite` (không commit), `index/index.sqlite` (không commit, tái dựng được).'));
+c.push(H1('2. Từ điển dữ liệu'));
+for (const e of D.entities) {
+  c.push(H2(`2.${D.entities.indexOf(e) + 1}. ${e.name} — bảng \`${e.table}\`${e.layer ? ' · lớp ' + e.layer : ''} · từ ${e.since}`));
+  c.push(P(e.desc + (e.pk.startsWith('(') ? ` Khóa chính: ${e.pk}.` : '') + (e.indexes.length ? ` Chỉ mục: ${e.indexes.join('; ')}.` : '')));
+  c.push(T([1700, 1100, 2300, 700, 3500], ['Trường', 'Kiểu JSON', 'SQL', 'Bắt buộc', 'Mô tả / giá trị cho phép'], e.fields.map(f => [f[0], f[1], f[2], f[3] ? '✓' : '', (f[4] || '') + (f[5] ? ` — {${f[5].filter(x => x).join(', ')}}` : '')]), { size: 18 }));
+  c.push(SP());
+}
+c.push(H1('3. JSON Schema'));
+c.push(P('27 tệp `data/json/<table>.json` theo JSON Schema 2020-12 [24], `additionalProperties: false`, enum đúng như bảng trên. Ví dụ `decision_log.json` (rút gọn):'));
+c.push(...CODE(JSON.stringify(JSON.parse(fs.readFileSync('data/json/decision_log.json', 'utf8')), null, 1).split('\n').slice(0, 40)));
+c.push(SP());
+c.push(P('Các schema đầu ra của vai trò (Plan, CodePatch, Review, Diagnosis, ReqSet, ModuleGraph, HwMap, ADR, DocSections, Diagram, NetProposal, Candidates, MissingList, Intent, Chain, ContextBundle) tuân thủ mẫu số chung (sâu ≤ 3, không anyOf/$ref) và được đặt cùng thư mục với tiền tố `out_`; PRS-16 §4 và DPS-09 §4.1 liệt kê nội dung; DDD-14 giữ bản chính thức.'));
+c.push(H1('4. DDL SQLite'));
+c.push(P('Tệp `data/schema.sql` (đã kiểm bằng sqlite3: 32 bảng kể cả FTS5). Trích:'));
+c.push(...CODE(fs.readFileSync('data/schema.sql', 'utf8').split('\n').slice(0, 45)));
+c.push(SP());
+c.push(H1('5. Di trú'));
+c.push(T([2200, 900, 6200], ['Migration', 'Mốc', 'Nội dung'], D.migrations));
+c.push(SP());
+c.push(P('Quy trình: `eide migrate` đọc `PRAGMA user_version`, chạy tuần tự các migration còn thiếu trong một giao dịch, ghi ledger `store.migrate`; sao lưu `store.sqlite.bak-<version>` trước khi chạy; migration chỉ thêm bảng/cột (không xóa) cho tới v1.0; đổi tên `.hkw` → `.eide` làm ở tầng đường dẫn, giữ symlink một mốc.'));
+c.push(H1('6. Schema các tệp YAML'));
+c.push(T([2200, 2400, 3900, 800], ['Tệp', 'Vai trò', 'Khóa chính', 'Từ'], D.yaml));
+c.push(SP());
+c.push(P('Mỗi tệp YAML có JSON Schema tương ứng trong `data/json/yaml_<tên>.json` (autonomy: POL-17 §4; capabilities: SDD-04 §4.0; isa: TGT-19; manifest: PKG-22). Daemon kiểm hợp lệ khi nạp; lỗi schema → từ chối mở dự án với thông báo dòng/cột.'));
+c.push(H1('7. Quan hệ chính'));
+c.push(...CODE([
+  'source 1—n fact ; fact n—n passport (passport_fact) ; fact —supersedes→ fact',
+  'code_unit —cites→ fact ; code_unit —uses→ subject IRI ; code_unit n—1 module ; module n—n resource (hw_map)',
+  'requirement —trace→ module | code_unit | tc | doc_artifact ; feature —requirement_ids→ requirement',
+  'intent 1—1 run ; run 1—n capability_run ; capability_run n—1 decision_log ; decision_log —undone_at',
+  'tool_report / measurement / debug_session —evidence→ feature ; discovery → target.yaml',
+  'diagram —source_ref→ module | hw_map | adr | plan ; doc_artifact —sections.citations→ fact | source',
+  'rag_chunk n—1 source ; rag_chunk —graph_nodes→ subject IRI',
+]));
+c.push(SP());
+c.push(H1('8. Kiểm thử'));
+c.push(T([1000, 3500, 3600, 1200], ['TC', 'Mục tiêu', 'Kỳ vọng', 'Mức'], [
+  ['TC-DD-01', 'DDL hợp lệ', 'schema.sql chạy trên SQLite trống → 32 bảng; PRAGMA foreign_key_check rỗng', 'L1'],
+  ['TC-DD-02', 'JSON Schema ↔ pydantic', 'Mọi model pydantic sinh schema tương đương (so bằng jsonschema-diff) với data/json', 'L1'],
+  ['TC-DD-03', 'Ghi sai schema bị chặn', 'Ghi fact với predicate ngoài enum → lỗi tại cổng ghi, không có dòng mới', 'L1'],
+  ['TC-DD-04', 'Migration tuần tự', 'store v1 (M0) → migrate → user_version 4; dữ liệu M0 nguyên vẹn; bản sao lưu tồn tại', 'L1'],
+  ['TC-DD-05', 'Ba tệp DB tách bạch', 'Xóa index/ và session.sqlite → dự án vẫn mở; index tái dựng bằng view.rag_index', 'L1'],
+]));
+c.push(SP());
+c.push(...refParas(H1));
+build(m, c, 'EIDE-DDD-14_Tu_dien_du_lieu.docx');

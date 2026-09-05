@@ -1,0 +1,170 @@
+[
+ {
+  "code": "E1000",
+  "name": "INVALID_ARGS",
+  "meaning": "Tham số không khớp input_schema",
+  "handling": "Trả chi tiết trường sai; không ghi run"
+ },
+ {
+  "code": "E1001",
+  "name": "UNKNOWN_CAPABILITY",
+  "meaning": "id không có trong registry",
+  "handling": ""
+ },
+ {
+  "code": "E1002",
+  "name": "API_VERSION",
+  "meaning": "Phiên bản plugin/daemon không tương thích",
+  "handling": "Handshake"
+ },
+ {
+  "code": "E1003",
+  "name": "UNAUTHORIZED",
+  "meaning": "Token REST sai",
+  "handling": ""
+ },
+ {
+  "code": "E2000",
+  "name": "GROUNDING_FAILED",
+  "meaning": "Tiền điều kiện không thỏa: dự án chưa mở, nguồn không tồn tại, hộ chiếu thiếu",
+  "handling": "Payload {exists[], candidates[], missing[]} để Orchestrator hỏi/dùng luôn"
+ },
+ {
+  "code": "E2001",
+  "name": "ALREADY_EXISTS",
+  "meaning": "Tạo trùng (dự án, feature)",
+  "handling": "Kèm phương án reuse|clone|new"
+ },
+ {
+  "code": "E3000",
+  "name": "POLICY_ASK",
+  "meaning": "Cần người (không phải lỗi; status pending)",
+  "handling": "gate_id"
+ },
+ {
+  "code": "E3001",
+  "name": "POLICY_REJECT",
+  "meaning": "Chính sách từ chối",
+  "handling": "rule, reason"
+ },
+ {
+  "code": "E3002",
+  "name": "STOPPED",
+  "meaning": "Phiên đang dừng khẩn",
+  "handling": ""
+ },
+ {
+  "code": "E3003",
+  "name": "BUDGET_EXCEEDED",
+  "meaning": "Vượt ngân sách ngày",
+  "handling": ""
+ },
+ {
+  "code": "E4000",
+  "name": "TOOL_FAILED",
+  "meaning": "Công cụ ngoài thất bại (build, flash, render…)",
+  "handling": "ToolReport ref"
+ },
+ {
+  "code": "E4001",
+  "name": "TOOL_MISSING",
+  "meaning": "Thiếu công cụ",
+  "handling": "Gợi ý env.install_tool"
+ },
+ {
+  "code": "E4002",
+  "name": "TARGET_NOT_FOUND",
+  "meaning": "Không có board/probe phù hợp",
+  "handling": "Gợi ý discover.scan"
+ },
+ {
+  "code": "E4003",
+  "name": "CHIP_ID_MISMATCH",
+  "meaning": "ID chip không khớp hộ chiếu",
+  "handling": "Leo thang"
+ },
+ {
+  "code": "E4004",
+  "name": "TIMEOUT",
+  "meaning": "Quá thời gian job/serial/probe",
+  "handling": ""
+ },
+ {
+  "code": "E5000",
+  "name": "MODEL_ERROR",
+  "meaning": "Lỗi gọi mô hình (rate limit, refusal, schema)",
+  "handling": "Router fallback trước khi ném"
+ },
+ {
+  "code": "E5001",
+  "name": "CONTEXT_OVERFLOW",
+  "meaning": "Không nén được về ngân sách (CXD-10 §7)",
+  "handling": "Báo cáo lớp"
+ },
+ {
+  "code": "E5002",
+  "name": "OUTPUT_INVALID",
+  "meaning": "Đầu ra mô hình sai schema sau 1 lần sửa",
+  "handling": ""
+ },
+ {
+  "code": "E5003",
+  "name": "CONSTANT_GUARD",
+  "meaning": "Hằng số không nguồn trong mã",
+  "handling": "violations[]"
+ },
+ {
+  "code": "E6000",
+  "name": "STORE_INTEGRITY",
+  "meaning": "Hash store lệch / ghi ngoài cổng",
+  "handling": "Yêu cầu rebuild"
+ },
+ {
+  "code": "E6001",
+  "name": "SCHEMA_VIOLATION",
+  "meaning": "Ghi sai JSON Schema (DDD-14)",
+  "handling": ""
+ },
+ {
+  "code": "E6002",
+  "name": "CONFLICT",
+  "meaning": "Fact mâu thuẫn cần người",
+  "handling": ""
+ },
+ {
+  "code": "E6003",
+  "name": "MIGRATION_REQUIRED",
+  "meaning": "user_version cũ",
+  "handling": "eide migrate"
+ },
+ {
+  "code": "E7000",
+  "name": "UNDO_EXPIRED",
+  "meaning": "Quá cửa sổ hoàn tác",
+  "handling": ""
+ },
+ {
+  "code": "E7001",
+  "name": "UNDO_FAILED",
+  "meaning": "Hoàn tác không thành (revert xung đột…)",
+  "handling": "Leo thang"
+ },
+ {
+  "code": "E8000",
+  "name": "SANDBOX_VIOLATION",
+  "meaning": "Extractor/công cụ vượt giới hạn",
+  "handling": "SEC-25"
+ },
+ {
+  "code": "E8001",
+  "name": "LICENSE_BLOCKED",
+  "meaning": "License không cho phép",
+  "handling": ""
+ },
+ {
+  "code": "E8002",
+  "name": "SENSITIVE_UPLOAD",
+  "meaning": "Dự án nhạy cảm cần xác nhận gửi ra ngoài",
+  "handling": ""
+ }
+]

@@ -1,0 +1,89 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/source.json",
+ "title": "Source",
+ "description": "Nguồn tri thức: tệp/URL đã tải, có băm, tầng tin cậy, license",
+ "type": "object",
+ "required": [
+  "id",
+  "uri",
+  "sha256",
+  "kind",
+  "tier"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "src_<16 hex>"
+  },
+  "uri": {
+   "type": "string",
+   "description": "Đường dẫn cục bộ hoặc URL gốc"
+  },
+  "sha256": {
+   "type": "string",
+   "description": "Băm nội dung"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "svd",
+    "atdf",
+    "edc",
+    "binding",
+    "header",
+    "pdf",
+    "docx",
+    "xlsx",
+    "html",
+    "md",
+    "image",
+    "kicad",
+    "netlist",
+    "bom",
+    "csv",
+    "archive",
+    "web",
+    "docs_mcp",
+    "registry",
+    "readme"
+   ],
+   "description": "Loại nguồn"
+  },
+  "tier": {
+   "type": "string",
+   "enum": [
+    "gold",
+    "silver",
+    "bronze"
+   ],
+   "description": "Tầng tin cậy"
+  },
+  "license": {
+   "type": "string",
+   "description": "SPDX hoặc 'unknown'"
+  },
+  "domain": {
+   "type": "string",
+   "description": "Tên miền nếu tải từ web"
+  },
+  "fetched_at": {
+   "type": "string",
+   "format": "date-time",
+   "description": "Thời điểm tải"
+  },
+  "confirmed_by": {
+   "type": "string",
+   "description": "policy|<user>"
+  },
+  "size_bytes": {
+   "type": "integer",
+   "description": "Kích thước"
+  },
+  "meta": {
+   "type": "object",
+   "description": "JSON: trang, phiên bản tài liệu, ngày phát hành"
+  }
+ },
+ "additionalProperties": false
+}

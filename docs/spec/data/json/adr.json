@@ -1,0 +1,51 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/adr.json",
+ "title": "ADR",
+ "description": "Architecture Decision Record",
+ "type": "object",
+ "required": [
+  "id",
+  "title",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "ADR-nn"
+  },
+  "title": {
+   "type": "string"
+  },
+  "context": {
+   "type": "string"
+  },
+  "options": {
+   "type": "array",
+   "description": "JSON {name, pros, cons}[]"
+  },
+  "decision": {
+   "type": "string"
+  },
+  "consequences": {
+   "type": "string"
+  },
+  "citations": {
+   "type": "array",
+   "description": "JSON fact/source ids"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "proposed",
+    "accepted",
+    "superseded"
+   ]
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

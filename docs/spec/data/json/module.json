@@ -1,0 +1,58 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/module.json",
+ "title": "Module",
+ "description": "Module firmware (ModuleGraph)",
+ "type": "object",
+ "required": [
+  "id",
+  "name"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "mod_<slug>"
+  },
+  "name": {
+   "type": "string"
+  },
+  "responsibility": {
+   "type": "string"
+  },
+  "interfaces": {
+   "type": "array",
+   "description": "JSON InterfaceSpec[]"
+  },
+  "depends": {
+   "type": "array",
+   "description": "JSON module ids"
+  },
+  "arch_style": {
+   "type": "string",
+   "enum": [
+    "super_loop",
+    "event_driven",
+    "rtos",
+    "layered"
+   ]
+  },
+  "budget": {
+   "type": "object",
+   "description": "JSON {ram, flash, stack, wcet_us, period_ms}"
+  },
+  "fsm": {
+   "type": "object",
+   "description": "JSON FSM"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "proposed",
+    "accepted",
+    "implemented",
+    "stale"
+   ]
+  }
+ },
+ "additionalProperties": false
+}

@@ -1,0 +1,25 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-13, python: "3.12", name: mac-intel, required: true }
+          - { os: macos-14, python: "3.12", name: mac-arm, required: true }
+          - { os: windows-latest, python: "3.12", name: windows, required: false }
+          - { os: ubuntu-latest, python: "3.12", name: linux, required: false }
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ !matrix.required }}
+    name: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests scripts
+      - run: python scripts/validate_specs.py
+      - run: python -m pytest -m "not hardware"
+      - run: python -m eide.cli doctor || true
+      - run: python -m eide.cli caps list --ns tool

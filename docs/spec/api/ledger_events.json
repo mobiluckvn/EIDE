@@ -1,0 +1,77 @@
+[
+ {
+  "kind": "context.bundle",
+  "fields": "{role, hash, tokens{C0..C7}, sources[], compressions[], model_id}",
+  "source": "CXD-10"
+ },
+ {
+  "kind": "model.call",
+  "fields": "{role, model_id, request_hash, prompt_hash, tokens_in, tokens_out, cache_read_tokens, latency_ms, cost_usd, stop_reason, error_kind?}",
+  "source": "Gateway"
+ },
+ {
+  "kind": "cap.run.start / cap.run.finish",
+  "fields": "{run_id, cr_id, cap, actor, args_hash, decision_id} / {cr_id, status, result_hash, duration_ms, undo_ref?, error?}",
+  "source": "Router"
+ },
+ {
+  "kind": "gate.decision",
+  "fields": "DecisionLog",
+  "source": "PolicyGate"
+ },
+ {
+  "kind": "gate.human",
+  "fields": "{gate_id, decision, by, note}",
+  "source": "Người"
+ },
+ {
+  "kind": "undo.register / undo.apply / undo.expire",
+  "fields": "{undo_ref, kind, deadline} / {undo_ref, by, result} / {undo_ref}",
+  "source": "UndoService"
+ },
+ {
+  "kind": "autonomy.change / stop",
+  "fields": "{from, to, by, reason}",
+  "source": ""
+ },
+ {
+  "kind": "store.write",
+  "fields": "{batch_id, n_facts, n_conflicts, actor, reason}",
+  "source": "PassportStore"
+ },
+ {
+  "kind": "acq.state",
+  "fields": "{acq_id, from, to, by}",
+  "source": "AcquisitionService"
+ },
+ {
+  "kind": "tool.report",
+  "fields": "ToolReport",
+  "source": "TargetService"
+ },
+ {
+  "kind": "discover.result",
+  "fields": "Discovery",
+  "source": ""
+ },
+ {
+  "kind": "intent / question / answer / report",
+  "fields": "Intent / Question / {question_id, answer, by: human|timeout} / Report",
+  "source": "Orchestrator"
+ },
+ {
+  "kind": "error",
+  "fields": "ErrorLedgerEntry",
+  "source": "Mọi thành phần"
+ },
+ {
+  "kind": "session.open / session.summary",
+  "fields": "{session_id, project} / {session_id, summary}",
+  "source": ""
+ },
+ {
+  "kind": "store.migrate",
+  "fields": "{from_version, to_version}",
+  "source": ""
+ }
+]

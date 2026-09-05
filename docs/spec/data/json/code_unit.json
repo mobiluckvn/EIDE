@@ -1,0 +1,45 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/code_unit.json",
+ "title": "CodeUnit",
+ "description": "Đơn vị mã (tệp/hàm) và liên kết fact",
+ "type": "object",
+ "required": [
+  "id",
+  "path",
+  "hash"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "cu_<hex>"
+  },
+  "path": {
+   "type": "string"
+  },
+  "symbol": {
+   "type": "string",
+   "description": "Hàm/biến"
+  },
+  "hash": {
+   "type": "string",
+   "description": "Băm nội dung"
+  },
+  "cites": {
+   "type": "array",
+   "description": "JSON fact ids"
+  },
+  "uses": {
+   "type": "array",
+   "description": "JSON subject IRIs"
+  },
+  "module_id": {
+   "type": "string"
+  },
+  "stale": {
+   "type": "boolean",
+   "description": "Fact đổi"
+  }
+ },
+ "additionalProperties": false
+}

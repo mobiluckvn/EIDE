@@ -1,0 +1,45 @@
+{"id":"S01","gate":"G-SRC","situation":"A3; st.com; svd; 2 MB; license MIT; hash khớp","expected":"APPROVE G-SRC-01"}
+{"id":"S02","gate":"G-SRC","situation":"A3; forum.st.com; pdf; 1 MB","expected":"ASK G-SRC-99"}
+{"id":"S03","gate":"G-SRC","situation":"A3; st.com; pdf_vendor; 80 MB","expected":"ASK G-SRC-04"}
+{"id":"S04","gate":"G-SRC","situation":"A1; registry; chữ ký hợp lệ","expected":"APPROVE G-SRC-02"}
+{"id":"S05","gate":"G-SRC","situation":"A3; st.com; hash lệch hash đã biết","expected":"REJECT G-SRC-03"}
+{"id":"S06","gate":"G-SRC","situation":"A3; bosch-sensortec.com; match_score 0,4","expected":"ASK G-SRC-06"}
+{"id":"S07","gate":"G-SRC","situation":"A3; dự án nhạy cảm; docs MCP cần upload","expected":"ASK G-SRC-07"}
+{"id":"S08","gate":"G-SRC","situation":"A0; st.com; svd","expected":"ASK (T3 LEVEL)"}
+{"id":"S09","gate":"G-FACT","situation":"A3; gold","expected":"APPROVE G-FACT-01"}
+{"id":"S10","gate":"G-FACT","situation":"A3; silver 0,9; nguồn 2; không mâu thuẫn; parser","expected":"APPROVE G-FACT-02"}
+{"id":"S11","gate":"G-FACT","situation":"A3; silver 0,8; nguồn 2","expected":"ASK G-FACT-99"}
+{"id":"S12","gate":"G-FACT","situation":"A3; silver 0,95; mâu thuẫn","expected":"ASK G-FACT-04"}
+{"id":"S13","gate":"G-FACT","situation":"A3; silver 0,95; vision_llm","expected":"ASK G-FACT-99"}
+{"id":"S14","gate":"G-FACT","situation":"A3; silver 0,9 timing; không nguồn 2","expected":"ASK G-FACT-99"}
+{"id":"S15","gate":"G-FACT","situation":"A3; silver 0,9 timing; nguồn 2","expected":"APPROVE G-FACT-03"}
+{"id":"S16","gate":"G-FACT","situation":"A3; bronze","expected":"REJECT G-FACT-05"}
+{"id":"S17","gate":"G-FACT","situation":"A1; gold","expected":"APPROVE G-FACT-01"}
+{"id":"S18","gate":"G1","situation":"A3; 6 bước; đủ trích dẫn; không tài nguyên mới; 0,3 USD","expected":"APPROVE G1-01"}
+{"id":"S19","gate":"G1","situation":"A3; 14 bước","expected":"ASK G1-99"}
+{"id":"S20","gate":"G1","situation":"A3; missing = [I2C timing]","expected":"ASK G1-02"}
+{"id":"S21","gate":"G1","situation":"A3; đổi sang RTOS","expected":"ASK G1-03"}
+{"id":"S22","gate":"G1","situation":"A1; 6 bước hợp lệ","expected":"ASK (T3 LEVEL, R2 cần A2)"}
+{"id":"S23","gate":"G3","situation":"A3; 4/4 cổng; CG 0; PASS minor; trong phạm vi; +2%; khác hãng","expected":"APPROVE G3-01"}
+{"id":"S24","gate":"G3","situation":"A3; như S23 nhưng major","expected":"ASK G3-02"}
+{"id":"S25","gate":"G3","situation":"A3; CG 2 vi phạm","expected":"REJECT G3-03"}
+{"id":"S26","gate":"G3","situation":"A3; như S23 nhưng cùng hãng","expected":"ASK G3-04"}
+{"id":"S27","gate":"G3","situation":"A3; như S23 nhưng chạm ISR","expected":"ASK G3-99"}
+{"id":"S28","gate":"G3","situation":"A3; như S23 nhưng +8% Flash","expected":"ASK G3-99"}
+{"id":"S29","gate":"G-OPS","situation":"A3; board lab; flash; artifact qua G3; hash khớp; 3 lần/giờ","expected":"APPROVE G-OPS-01"}
+{"id":"S30","gate":"G-OPS","situation":"A3; board không lab; flash","expected":"ASK G-OPS-06 (T2 R3-NOLAB)"}
+{"id":"S31","gate":"G-OPS","situation":"A4; erase_all","expected":"ASK G-OPS-02 (R4)"}
+{"id":"S32","gate":"G-OPS","situation":"A3; board lab có động cơ; flash","expected":"ASK G-OPS-03"}
+{"id":"S33","gate":"G-OPS","situation":"A3; install renode (trusted)","expected":"APPROVE G-OPS-04"}
+{"id":"S34","gate":"G-OPS","situation":"A3; install gói lạ cần sudo","expected":"ASK G-OPS-05"}
+{"id":"S35","gate":"G-OPS","situation":"A3; board lab; flash lần 21 trong giờ","expected":"ASK G-OPS-99"}
+{"id":"S36","gate":"G4","situation":"A3; serial expect + probe đọc đạt","expected":"APPROVE G4-01"}
+{"id":"S37","gate":"G4","situation":"A3; kỳ vọng \"LED sáng\" không cảm biến","expected":"ASK G4-99"}
+{"id":"S38","gate":"G5","situation":"A4; nội bộ; auto-verified; BC 0,93; license ok","expected":"APPROVE G5-01"}
+{"id":"S39","gate":"G5","situation":"A4; công khai","expected":"ASK G5-02"}
+{"id":"S40","gate":"*","situation":"A3; session.stopped; bất kỳ","expected":"REJECT STOP"}
+{"id":"S41","gate":"G-TOOL","situation":"A3; công cụ tự viết đã test, effects [read_fs]","expected":"APPROVE TOOL-01"}
+{"id":"S42","gate":"G-TOOL","situation":"A3; công cụ chưa test","expected":"REJECT TOOL-03"}
+{"id":"S43","gate":"G-TOOL","situation":"A3; effects [write_project], test đạt, 0 lỗi","expected":"APPROVE TOOL-02"}
+{"id":"S44","gate":"G-TOOL","situation":"A3; effects [hardware], board lab, uses_ok 1","expected":"ASK TOOL-99"}
+{"id":"S45","gate":"G-TOOL","situation":"A4; effects [system]","expected":"ASK TOOL-05"}

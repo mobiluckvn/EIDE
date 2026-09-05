@@ -1,0 +1,285 @@
+- code: SIM-01
+  id: sim.build_platform
+  name: Sinh mô tả nền tảng (Renode .repl / simavr / tự xây) từ hộ chiếu
+  desc: Sinh mô tả nền tảng (Renode .repl / simavr / tự xây) từ hộ chiếu
+  input:
+    type: object
+    properties:
+      chip:
+        type: string
+      board:
+        type: string
+    required:
+    - chip
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      platform_dir:
+        type: string
+      engine:
+        type: string
+        enum:
+        - renode
+        - simavr
+        - qemu
+        - native
+      coverage:
+        type: object
+    required:
+    - platform_dir
+    - engine
+    - coverage
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Hộ chiếu vàng
+  ask_when:
+  - Chip không có trong Renode
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.sim:build_platform
+  errors:
+  - E4001 thiếu engine
+  example:
+    chip: st.stm32f411ce
+    board: blackpill-f411
+- code: SIM-02
+  id: sim.mock_peripheral
+  name: Mock ngoại vi ngoài theo datasheet (id, dữ liệu theo công thức)
+  desc: Mock ngoại vi ngoài theo datasheet (id, dữ liệu theo công thức)
+  input:
+    type: object
+    properties:
+      part:
+        type: string
+    required:
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      mock_path:
+        type: string
+      params:
+        type: object
+    required:
+    - mock_path
+    - params
+    additionalProperties: false
+  risk: R1
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Tham số không có nguồn
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.sim:mock_peripheral
+  errors:
+  - E5002
+  example:
+    part: bosch.bme280
+- code: SIM-03
+  id: sim.model_plant
+  name: Mô hình động lực học (robot 2 bánh) với tham số có nguồn/tạm
+  desc: Mô hình động lực học (robot 2 bánh) với tham số có nguồn/tạm
+  input:
+    type: object
+    properties:
+      params:
+        type: object
+      template:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      model_path:
+        type: string
+      params_used:
+        type: object
+      provisional:
+        type: array
+        items:
+          type: string
+    required:
+    - model_path
+    - params_used
+    - provisional
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Tham số thật
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.sim:model_plant
+  errors: []
+  example:
+    template: balancing-robot
+- code: SIM-04
+  id: sim.scenario
+  name: Sinh kịch bản từ kỳ vọng Feature (init, inject, expect)
+  desc: Sinh kịch bản từ kỳ vọng Feature (init, inject, expect)
+  input:
+    type: object
+    properties:
+      feature:
+        type: string
+    required:
+    - feature
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      scenario_path:
+        type: string
+    required:
+    - scenario_path
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.sim:scenario
+  errors:
+  - E5002
+  example:
+    feature: F-04
+- code: SIM-05
+  id: sim.run
+  name: Chạy firmware trên mô phỏng; bắt UART/GPIO/biến
+  desc: Chạy firmware trên mô phỏng; bắt UART/GPIO/biến
+  input:
+    type: object
+    properties:
+      artifact:
+        type: string
+      scenario:
+        type: string
+    required:
+    - artifact
+    - scenario
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: ToolReport + captured{uart[], gpio[], vars{}}
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.sim:run
+  errors:
+  - E4000
+  - E4004
+  example:
+    artifact: build/fw.elf
+    scenario: sim/f04.yaml
+- code: SIM-06
+  id: sim.sweep
+  name: Quét tham số (PID, tốc độ bus) trên mô phỏng
+  desc: Quét tham số (PID, tốc độ bus) trên mô phỏng
+  input:
+    type: object
+    properties:
+      scenario:
+        type: string
+      ranges:
+        type: object
+    required:
+    - scenario
+    - ranges
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      table:
+        type: array
+        items:
+          type: object
+      best:
+        type: object
+    required:
+    - table
+    - best
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.sim:sweep
+  errors:
+  - E4004
+  example:
+    scenario: sim/pid.yaml
+    ranges:
+      kp:
+      - 1
+      - 10
+      - 1
+- code: SIM-07
+  id: sim.compare_hil
+  name: So kết quả SIL/HIL; đề xuất cập nhật mô hình
+  desc: So kết quả SIL/HIL; đề xuất cập nhật mô hình
+  input:
+    type: object
+    properties:
+      scenario:
+        type: string
+      sim_report:
+        type: string
+      hil_report:
+        type: string
+    required:
+    - scenario
+    - sim_report
+    - hil_report
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diff:
+        type: object
+      proposals:
+        type: array
+        items:
+          type: string
+    required:
+    - diff
+    - proposals
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Cập nhật mô hình
+  undo:
+    kind: none
+  milestone: M4
+  impl: eide.sim:compare_hil
+  errors: []
+  example:
+    scenario: sim/f04.yaml
+    sim_report: tr_9
+    hil_report: tr_10

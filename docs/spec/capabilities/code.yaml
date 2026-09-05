@@ -1,0 +1,611 @@
+- code: CODE-01
+  id: code.generate_module
+  name: Sinh một module theo STEP + skill + fact; hkw:fact cho hằng số
+  desc: Sinh một module theo STEP + skill + fact; hkw:fact cho hằng số
+  input:
+    type: object
+    properties:
+      step_ref:
+        type: string
+      files_allowed:
+        type: array
+        items:
+          type: string
+    required:
+    - step_ref
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      patch:
+        type: object
+        description: CodePatch
+      cites:
+        type: array
+        items:
+          type: string
+    required:
+    - patch
+    - cites
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding:
+  - G1 approved
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.code:generate_module
+  errors:
+  - E5003
+  - E5002
+  - E5001
+  example:
+    step_ref: F-04/step-2
+- code: CODE-02
+  id: code.modify
+  name: Sửa mã có sẵn theo yêu cầu/finding
+  desc: Sửa mã có sẵn theo yêu cầu/finding
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      intent:
+        type: string
+      findings:
+        type: array
+        items:
+          type: object
+    required:
+    - file
+    - intent
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      patch:
+        type: object
+    required:
+    - patch
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when:
+  - Chạm ISR/linker
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.code:modify
+  errors:
+  - E5003
+  example:
+    file: src/drivers/bme280.c
+    intent: thêm timeout
+- code: CODE-03
+  id: code.integrate
+  name: 'Tích hợp module: wiring, init order, cấu hình build, kiểm tương thích giao diện'
+  desc: 'Tích hợp module: wiring, init order, cấu hình build, kiểm tương thích giao diện'
+  input:
+    type: object
+    properties:
+      modules:
+        type: array
+        items:
+          type: string
+    required:
+    - modules
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      patch:
+        type: object
+      init_order:
+        type: array
+        items:
+          type: string
+    required:
+    - patch
+    - init_order
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when:
+  - Xung đột tài nguyên
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.code:integrate
+  errors:
+  - E5003
+  example:
+    modules:
+    - mod_i2c
+    - mod_bme280
+- code: CODE-04
+  id: code.constant_guard
+  name: 'Hook: mọi hằng số phần cứng phải trỏ fact reviewed/verified'
+  desc: 'Hook: mọi hằng số phần cứng phải trỏ fact reviewed/verified'
+  input:
+    type: object
+    properties:
+      patch:
+        type: object
+    required:
+    - patch
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      verdict:
+        type: string
+        enum:
+        - pass
+        - block
+      violations:
+        type: array
+        items:
+          type: object
+        description: file, line, literal, reason
+    required:
+    - verdict
+    - violations
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.code:constant_guard
+  errors: []
+  example:
+    patch: {}
+- code: CODE-05
+  id: code.build
+  name: Biên dịch theo Pack; phân loại lỗi
+  desc: Biên dịch theo Pack; phân loại lỗi
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+      target:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: ToolReport
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Toolchain
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.code:build
+  errors:
+  - E4000
+  - E4001
+  example: {}
+- code: CODE-06
+  id: code.size
+  name: Kiểm Flash/RAM so ràng buộc; phân tích .map
+  desc: Kiểm Flash/RAM so ràng buộc; phân tích .map
+  input:
+    type: object
+    properties:
+      artifact:
+        type: string
+    required:
+    - artifact
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: text/data/bss, flash_pct, ram_pct, top_symbols[]
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.code:size
+  errors:
+  - E4000
+  example:
+    artifact: build/fw.elf
+- code: CODE-07
+  id: code.static
+  name: cppcheck/clang-tidy + quy tắc Pack (delay, malloc, float trong ISR)
+  desc: cppcheck/clang-tidy + quy tắc Pack (delay, malloc, float trong ISR)
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.code:static
+  errors:
+  - E4001
+  example: {}
+- code: CODE-08
+  id: code.test_host
+  name: Kiểm thử trên máy chủ với mock ngoại vi (ctypes)
+  desc: Kiểm thử trên máy chủ với mock ngoại vi (ctypes)
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+      filter:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.code:test_host
+  errors:
+  - E4000
+  example: {}
+- code: CODE-09
+  id: code.generate_tests
+  name: Sinh unit test/kịch bản từ kỳ vọng Feature
+  desc: Sinh unit test/kịch bản từ kỳ vọng Feature
+  input:
+    type: object
+    properties:
+      feature:
+        type: string
+    required:
+    - feature
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      tests:
+        type: array
+        items:
+          type: object
+        description: path, content, kind host|sim|hil
+    required:
+    - tests
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.code:generate_tests
+  errors:
+  - E5002
+  example:
+    feature: F-04
+- code: CODE-10
+  id: code.self_repair
+  name: Tự sửa theo ToolReport ≤ 3 vòng
+  desc: Tự sửa theo ToolReport ≤ 3 vòng
+  input:
+    type: object
+    properties:
+      report_id:
+        type: string
+      patch:
+        type: object
+      round:
+        type: integer
+    required:
+    - report_id
+    - patch
+    - round
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      patch:
+        type: object
+      give_up:
+        type: boolean
+    required:
+    - patch
+    - give_up
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when:
+  - Lần 3
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.code:self_repair
+  errors:
+  - E5003
+  example:
+    report_id: tr_1
+    patch: {}
+    round: 1
+- code: CODE-11
+  id: code.review
+  name: Reviewer khác hãng chấm checklist
+  desc: Reviewer khác hãng chấm checklist
+  input:
+    type: object
+    properties:
+      patch:
+        type: object
+    required:
+    - patch
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      review:
+        type: object
+        description: Review
+    required:
+    - review
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - ≥ 2 hãng
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.code:review
+  errors:
+  - E5002
+  example:
+    patch: {}
+- code: CODE-12
+  id: code.merge
+  name: Merge vào auto/ với commit truy vết; cửa sổ hoàn tác
+  desc: Merge vào auto/ với commit truy vết; cửa sổ hoàn tác
+  input:
+    type: object
+    properties:
+      patch:
+        type: object
+      feature:
+        type: string
+      reports:
+        type: array
+        items:
+          type: string
+      review_id:
+        type: string
+    required:
+    - patch
+    - feature
+    - reports
+    - review_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      commit:
+        type: string
+      branch:
+        type: string
+      undo_until:
+        type: string
+    required:
+    - commit
+    - branch
+    additionalProperties: false
+  risk: R2
+  tier: T1*
+  grounding:
+  - 4 cổng + review
+  ask_when:
+  - Blocker; chạm ISR/linker; ngoài phạm vi
+  undo:
+    kind: git_revert
+  milestone: M2
+  impl: eide.code:merge
+  errors:
+  - E3000
+  - E3001
+  - E7001
+  example:
+    patch: {}
+    feature: F-04
+    reports:
+    - tr_1
+    - tr_2
+    - tr_3
+    - tr_4
+    review_id: rv_1
+- code: CODE-13
+  id: code.revert
+  name: Hoàn tác merge
+  desc: Hoàn tác merge
+  input:
+    type: object
+    properties:
+      commit:
+        type: string
+      reason:
+        type: string
+    required:
+    - commit
+    - reason
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      revert_commit:
+        type: string
+    required:
+    - revert_commit
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.code:revert
+  errors:
+  - E7001
+  example:
+    commit: abc123
+    reason: undo
+- code: CODE-14
+  id: code.annotate
+  name: Gợi ý/chèn hkw:fact cho mã người viết
+  desc: Gợi ý/chèn hkw:fact cho mã người viết
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      suggestions:
+        type: array
+        items:
+          type: object
+        description: line, literal, fact_id, confidence
+    required:
+    - suggestions
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.code:annotate
+  errors: []
+  example:
+    file: src/hal/i2c.c
+- code: CODE-15
+  id: code.docs
+  name: Sinh tài liệu mã/README module có trích dẫn
+  desc: Sinh tài liệu mã/README module có trích dẫn
+  input:
+    type: object
+    properties:
+      module:
+        type: string
+    required:
+    - module
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+    required:
+    - path
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.code:docs
+  errors:
+  - E5002
+  example:
+    module: mod_bme280
+- code: CODE-16
+  id: code.refactor
+  name: Tái cấu trúc theo quy ước repo, không đổi hành vi (kiểm bằng test)
+  desc: Tái cấu trúc theo quy ước repo, không đổi hành vi (kiểm bằng test)
+  input:
+    type: object
+    properties:
+      scope:
+        type: array
+        items:
+          type: string
+      rules:
+        type: array
+        items:
+          type: string
+    required:
+    - scope
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      patch:
+        type: object
+    required:
+    - patch
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: git_revert
+  milestone: M3
+  impl: eide.code:refactor
+  errors:
+  - E5003
+  example:
+    scope:
+    - src/drivers/

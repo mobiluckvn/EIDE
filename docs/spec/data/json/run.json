@@ -1,0 +1,56 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/run.json",
+ "title": "Run",
+ "description": "Chuỗi năng lực đang/đã chạy",
+ "type": "object",
+ "required": [
+  "id",
+  "graph",
+  "state"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "r_<hex>"
+  },
+  "intent_id": {
+   "type": "string"
+  },
+  "graph": {
+   "type": "object",
+   "description": "JSON ChainNode[]"
+  },
+  "state": {
+   "type": "string",
+   "enum": [
+    "planned",
+    "running",
+    "asked",
+    "done",
+    "failed",
+    "cancelled"
+   ]
+  },
+  "working": {
+   "type": "object",
+   "description": "JSON WorkingMemory (MEM-11)"
+  },
+  "report": {
+   "type": "object",
+   "description": "JSON Report"
+  },
+  "cost_usd": {
+   "type": "number"
+  },
+  "started_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "finished_at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

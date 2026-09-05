@@ -1,0 +1,45 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/passport.json",
+ "title": "Passport",
+ "description": "Hộ chiếu chip/board/ISA: tập fact có phiên bản",
+ "type": "object",
+ "required": [
+  "id",
+  "kind",
+  "header",
+  "created_at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "ns.part@semver, ví dụ st.stm32f411ce@1.2.0"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "chip",
+    "board",
+    "isa",
+    "part"
+   ]
+  },
+  "header": {
+   "type": "object",
+   "description": "JSON/YAML: tên, họ, lõi, gói, nguồn gốc"
+  },
+  "created_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "badges": {
+   "type": "array",
+   "description": "JSON: verified_on_board, bench"
+  },
+  "pinned_by": {
+   "type": "array",
+   "description": "Dự án ghim"
+  }
+ },
+ "additionalProperties": false
+}

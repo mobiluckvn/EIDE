@@ -1,0 +1,63 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/tool_report.json",
+ "title": "ToolReport",
+ "description": "Kết quả một cổng công cụ",
+ "type": "object",
+ "required": [
+  "id",
+  "tool",
+  "passed",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "tr_<hex>"
+  },
+  "tool": {
+   "type": "string",
+   "enum": [
+    "build",
+    "size",
+    "static",
+    "test",
+    "flash",
+    "sim",
+    "serial",
+    "probe",
+    "measure",
+    "bench",
+    "render",
+    "install"
+   ]
+  },
+  "passed": {
+   "type": "boolean"
+  },
+  "log_ref": {
+   "type": "string",
+   "description": "Đường dẫn/băm log"
+  },
+  "metrics": {
+   "type": "object",
+   "description": "JSON (text/data/bss, thời gian…)"
+  },
+  "artifacts": {
+   "type": "array",
+   "description": "JSON đường dẫn"
+  },
+  "duration_ms": {
+   "type": "integer"
+  },
+  "started_by": {
+   "type": "string",
+   "description": "run/cap"
+  },
+  "at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

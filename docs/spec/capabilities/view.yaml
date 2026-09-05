@@ -1,0 +1,489 @@
+- code: VIEW-01
+  id: view.kg_map
+  name: 'Hiển thị bản đồ tri thức toàn dự án: chip/board/module/fact/nguồn; tô màu theo t'
+  desc: 'Hiển thị bản đồ tri thức toàn dự án: chip/board/module/fact/nguồn; tô màu theo tier, trạng thái, mâu thuẫn; zoom/lọc/tìm'
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+      filter:
+        type: object
+        description: tier[], status[], kinds[], layer[]
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      graph:
+        type: object
+        description: nodes[] {id, kind, label, tier, status, layer}, edges[]
+    required:
+    - graph
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:kg_map
+  errors: []
+  example:
+    filter:
+      status:
+      - conflict
+- code: VIEW-02
+  id: view.kg_focus
+  name: Bản đồ lân cận từ một nút (thanh ghi, chân, module) với đường dẫn tới nguồn và m
+  desc: Bản đồ lân cận từ một nút (thanh ghi, chân, module) với đường dẫn tới nguồn và mã dùng nó
+  input:
+    type: object
+    properties:
+      node:
+        type: string
+      depth:
+        type: integer
+    required:
+    - node
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      graph:
+        type: object
+      paths_to_sources:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+    required:
+    - graph
+    - paths_to_sources
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:kg_focus
+  errors: []
+  example:
+    node: chip:st.stm32f411ce/periph:I2C1/reg:CR1
+    depth: 2
+- code: VIEW-03
+  id: view.provenance
+  name: 'Xem chuỗi nguồn gốc của một fact: tài liệu → trang/locator → trích đoạn → supers'
+  desc: 'Xem chuỗi nguồn gốc của một fact: tài liệu → trang/locator → trích đoạn → supersede/conflict; mở đúng trang PDF'
+  input:
+    type: object
+    properties:
+      fact_id:
+        type: string
+    required:
+    - fact_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      chain:
+        type: array
+        items:
+          type: object
+        description: source, locator, snippet, method, confirmed_by, supersedes chain
+    required:
+    - chain
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:provenance
+  errors:
+  - E2000
+  example:
+    fact_id: f_9e0f
+- code: VIEW-04
+  id: view.conflict_board
+  name: Bảng mâu thuẫn/chờ duyệt/đã thay thế; thao tác duyệt ngay trên bảng
+  desc: Bảng mâu thuẫn/chờ duyệt/đã thay thế; thao tác duyệt ngay trên bảng
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      rows:
+        type: array
+        items:
+          type: object
+        description: conflict_id, subject, a, b, tiers, sources, actions[]
+    required:
+    - rows
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:conflict_board
+  errors: []
+  example: {}
+- code: VIEW-05
+  id: view.coverage_map
+  name: 'Bản đồ độ phủ tri thức: ngoại vi/thanh ghi/chân nào đã có fact, đang thiếu, đang'
+  desc: 'Bản đồ độ phủ tri thức: ngoại vi/thanh ghi/chân nào đã có fact, đang thiếu, đang được yêu cầu'
+  input:
+    type: object
+    properties:
+      passport:
+        type: string
+    required:
+    - passport
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      heatmap:
+        type: object
+        description: periph → {registers_total, with_facts, reviewed, requested}
+    required:
+    - heatmap
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.view:coverage_map
+  errors: []
+  example:
+    passport: st.stm32f411ce@1.2
+- code: VIEW-06
+  id: view.impact_map
+  name: 'Bản đồ tác động khi fact/yêu cầu đổi: module, test, tài liệu bị ảnh hưởng'
+  desc: 'Bản đồ tác động khi fact/yêu cầu đổi: module, test, tài liệu bị ảnh hưởng'
+  input:
+    type: object
+    properties:
+      delta:
+        type: object
+    required:
+    - delta
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      graph:
+        type: object
+    required:
+    - graph
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.view:impact_map
+  errors: []
+  example:
+    delta:
+      fact_id: f_9e0f
+- code: VIEW-07
+  id: view.rag_ask
+  name: Hỏi–đáp RAG trên toàn kho tài liệu dự án (PDF, ảnh OCR, mã, chat); trả lời có tr
+  desc: Hỏi–đáp RAG trên toàn kho tài liệu dự án (PDF, ảnh OCR, mã, chat); trả lời có trích dẫn nhấp mở nguồn
+  input:
+    type: object
+    properties:
+      question:
+        type: string
+      scope:
+        type: array
+        items:
+          type: string
+        description: source ids | kinds
+      k:
+        type: integer
+    required:
+    - question
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      answer:
+        type: string
+      citations:
+        type: array
+        items:
+          type: object
+        description: source_id, locator, snippet
+      trace_id:
+        type: string
+      not_found:
+        type: boolean
+    required:
+    - answer
+    - citations
+    - trace_id
+    - not_found
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Chỉ nguồn trong phạm vi
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:rag_ask
+  errors:
+  - E5002
+  example:
+    question: BME280 địa chỉ I2C mặc định?
+- code: VIEW-08
+  id: view.rag_trace
+  name: 'Hiển thị lý do trả lời: đoạn văn bản được truy hồi, điểm số, đường lan tỏa trên '
+  desc: 'Hiển thị lý do trả lời: đoạn văn bản được truy hồi, điểm số, đường lan tỏa trên đồ thị (Graph-RAG)'
+  input:
+    type: object
+    properties:
+      trace_id:
+        type: string
+    required:
+    - trace_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      chunks:
+        type: array
+        items:
+          type: object
+      scores:
+        type: object
+      graph_path:
+        type: array
+        items:
+          type: string
+    required:
+    - chunks
+    - scores
+    - graph_path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:rag_trace
+  errors:
+  - E2000
+  example:
+    trace_id: tr_a1
+- code: VIEW-09
+  id: view.rag_index
+  name: Xây/cập nhật chỉ mục RAG (chunk, embedding, chỉ mục từ khóa + đồ thị) cho tài li
+  desc: Xây/cập nhật chỉ mục RAG (chunk, embedding, chỉ mục từ khóa + đồ thị) cho tài liệu mới nạp; báo tiến độ
+  input:
+    type: object
+    properties:
+      sources:
+        type: array
+        items:
+          type: string
+      rebuild:
+        type: boolean
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      chunks:
+        type: integer
+      status:
+        type: object
+    required:
+    - chunks
+    - status
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.view:rag_index
+  errors:
+  - E5000
+  example:
+    rebuild: false
+- code: VIEW-10
+  id: view.rag_compare
+  name: So sánh câu trả lời theo nhiều nguồn (datasheet vs errata vs cộng đồng) và chỉ r
+  desc: So sánh câu trả lời theo nhiều nguồn (datasheet vs errata vs cộng đồng) và chỉ ra chỗ khác nhau
+  input:
+    type: object
+    properties:
+      question:
+        type: string
+    required:
+    - question
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      comparison:
+        type: array
+        items:
+          type: object
+        description: tier/source → answer, citations; differences[]
+    required:
+    - comparison
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.view:rag_compare
+  errors: []
+  example:
+    question: I2C fast mode tối đa?
+- code: VIEW-11
+  id: view.doc_side_by_side
+  name: 'Xem tài liệu gốc cạnh fact/mã đã trích: bôi sáng vùng nguồn trong PDF/ảnh'
+  desc: 'Xem tài liệu gốc cạnh fact/mã đã trích: bôi sáng vùng nguồn trong PDF/ảnh'
+  input:
+    type: object
+    properties:
+      ref:
+        type: string
+        description: fact_id | code_unit_id
+    required:
+    - ref
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      left:
+        type: object
+        description: source, page, bbox
+      right:
+        type: object
+        description: fact/code
+    required:
+    - left
+    - right
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:doc_side_by_side
+  errors:
+  - E2000
+  example:
+    ref: f_9e0f
+- code: VIEW-12
+  id: view.timeline
+  name: 'Dòng thời gian tri thức/quyết định: fact nhập, supersede, gate, merge, nạp — lọc'
+  desc: 'Dòng thời gian tri thức/quyết định: fact nhập, supersede, gate, merge, nạp — lọc theo ngày/người/AI'
+  input:
+    type: object
+    properties:
+      range:
+        type: object
+      filter:
+        type: object
+        description: by policy|human, kinds
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          type: object
+    required:
+    - events
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.view:timeline
+  errors: []
+  example:
+    range:
+      days: 7
+- code: VIEW-13
+  id: view.export_map
+  name: Xuất bản đồ tri thức ra DOT/GraphML/SVG/PNG hoặc mã Mermaid để chèn tài liệu
+  desc: Xuất bản đồ tri thức ra DOT/GraphML/SVG/PNG hoặc mã Mermaid để chèn tài liệu
+  input:
+    type: object
+    properties:
+      view:
+        type: object
+      format:
+        type: string
+        enum:
+        - dot
+        - graphml
+        - svg
+        - png
+        - mermaid
+    required:
+    - view
+    - format
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.view:export_map
+  errors: []
+  example:
+    view: {}
+    format: mermaid

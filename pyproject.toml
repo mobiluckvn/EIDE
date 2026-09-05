@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eide"
+version = "0.1.0"
+description = "EIDE — Embedded IDE có tác tử: Knowledge Plane, PolicyGate, registry năng lực (Đề án ThS Kỹ thuật Điện tử, PTIT)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "Vũ Trí Công", email = "vutricongbka@gmail.com" }]
+dependencies = [
+  "pyyaml>=6.0",            # capabilities/*.yaml, policy/*.yaml
+  "jsonschema>=4.17",       # kiểm input/output theo cds.json (API-15 E1000)
+  "platformdirs>=3.0",      # thư mục cấu hình/cache đa nền tảng (PLATFORM.md)
+]
+# CLI dùng argparse (stdlib) — ít phụ thuộc, chạy ngay trên ba nền tảng. pydantic thêm ở Sprint 2 khi có DDD store.
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2", "pytest-cov>=5.0", "ruff>=0.5", "mypy>=1.10", "openpyxl>=3.1"]
+hardware = ["pyserial>=3.5", "pyusb>=1.2"]
+llm = ["anthropic>=0.30", "google-genai>=1.0"]
+
+[project.scripts]
+eide = "eide.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/eide", "src/eide_core"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["hardware: cần board/probe thật — bỏ qua trên CI"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "PTH"]   # PTH: bắt buộc pathlib (PLATFORM.md quy tắc 1)
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true

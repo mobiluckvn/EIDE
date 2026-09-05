@@ -1,0 +1,22 @@
+# defaults.yaml — giá trị mặc định cho PolicyGate khi dự án chưa có .eide/autonomy.yaml
+# Nguồn: POL-17 §5 (schema autonomy.json, trường default), SDD-04 §6 (ví dụ autonomy.yaml). Xem DEVIATIONS DEV-001.
+autonomy: A3
+thresholds:
+  fact_silver_auto: 0.85
+  source_match_min: 0.7
+  download_max_mb: 50
+  plan_max_steps: 12
+  plan_max_cost_usd: 1.0
+  merge_size_growth_pct: 5
+  flash_per_hour: 20
+  bench_bc_min: 0.9
+  fail_retries: 2
+  budget_warn_pct: 20
+trusted_sources: [st.com, microchip.com, nordicsemi.com, espressif.com, bosch-sensortec.com, github.com/cmsis-svd]
+trusted_packages: [gcc-arm-none-eabi, avr-gcc, renode, probe-rs, openocd, esptool, simavr, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli]
+allowed_licenses: [MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, CC-BY-4.0, vendor-doc]
+undo_window: {facts: 72h, merge: 24h, flash: session, files: 24h}
+ask_timeout_s: 120
+defaults: {project_dir: "~/eide", model_profile: default, sim_first: true, diagram_lang: mermaid, doc_lang: vi, create_when_exists: ask}
+escalation: {channels: [queue, chat, notify]}
+sensitive: false

@@ -1,0 +1,447 @@
+- code: DISCOVER-01
+  id: discover.ports
+  name: Liệt kê cổng USB/serial/JTAG-SWD đang cắm; VID/PID, driver, quyền truy cập
+  desc: Liệt kê cổng USB/serial/JTAG-SWD đang cắm; VID/PID, driver, quyền truy cập
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      ports:
+        type: array
+        items:
+          type: object
+        description: dev, vid, pid, product, serial, kind, driver_ok
+    required:
+    - ports
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.discover:ports
+  errors: []
+  example: {}
+- code: DISCOVER-02
+  id: discover.probe
+  name: Dò debug probe (ST-Link, J-Link, CMSIS-DAP, PICkit, AVRISP, ESP USB-JTAG, FTDI);
+  desc: Dò debug probe (ST-Link, J-Link, CMSIS-DAP, PICkit, AVRISP, ESP USB-JTAG, FTDI); phiên bản firmware; đề xuất cập nhật
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      probes:
+        type: array
+        items:
+          type: object
+        description: kind, serial, fw, tool
+    required:
+    - probes
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.discover:probe
+  errors:
+  - E4001
+  example: {}
+- code: DISCOVER-03
+  id: discover.chip_id
+  name: Đọc ID chip qua probe/bootloader (IDCODE, DEVICE_ID, signature bytes, JEDEC); đố
+  desc: Đọc ID chip qua probe/bootloader (IDCODE, DEVICE_ID, signature bytes, JEDEC); đối chiếu hộ chiếu
+  input:
+    type: object
+    properties:
+      probe:
+        type: string
+      isa_hint:
+        type: string
+    required:
+    - probe
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      identity:
+        type: object
+        description: method, raw, passport_match, confidence
+    required:
+    - identity
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Probe kết nối
+  ask_when:
+  - ID không khớp hộ chiếu
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.discover:chip_id
+  errors:
+  - E4002
+  - E4003
+  example:
+    probe: stlink:0669FF…
+- code: DISCOVER-04
+  id: discover.board_match
+  name: Nhận diện board từ chip ID + ngoại vi phản hồi (I2C scan, GPIO) + ảnh/BOM; xếp h
+  desc: Nhận diện board từ chip ID + ngoại vi phản hồi (I2C scan, GPIO) + ảnh/BOM; xếp hạng ứng viên trong registry/web
+  input:
+    type: object
+    properties:
+      evidence:
+        type: object
+        description: chip_id, bus_devices[], image?, bom?
+    required:
+    - evidence
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      candidates:
+        type: array
+        items:
+          type: object
+        description: board_id, score, reasons[]
+    required:
+    - candidates
+    additionalProperties: false
+  risk: R0
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Nhiều ứng viên điểm gần nhau
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.discover:board_match
+  errors:
+  - E3000
+  example:
+    evidence:
+      chip_id:
+        passport_match: st.stm32f411ce
+      bus_devices:
+      - '0x68'
+- code: DISCOVER-05
+  id: discover.bus_scan
+  name: Quét bus I2C/SPI/1-Wire/CAN tìm thiết bị đang có; đối chiếu địa chỉ với BOM
+  desc: Quét bus I2C/SPI/1-Wire/CAN tìm thiết bị đang có; đối chiếu địa chỉ với BOM
+  input:
+    type: object
+    properties:
+      bus:
+        type: string
+        enum:
+        - i2c
+        - spi
+        - onewire
+        - can
+      target:
+        type: string
+    required:
+    - bus
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      devices:
+        type: array
+        items:
+          type: object
+        description: addr|id, matched_part
+    required:
+    - devices
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Board lab
+  ask_when:
+  - Board không lab
+  undo:
+    kind: reflash_known_good
+  milestone: M3
+  impl: eide.discover:bus_scan
+  errors:
+  - E3000
+  - E4002
+  example:
+    bus: i2c
+    target: nucleo-f411
+- code: DISCOVER-06
+  id: discover.link_speed
+  name: 'Dò tốc độ kết nối tối ưu: baud serial (auto-baud), SWD/JTAG clock, SPI/I2C clock'
+  desc: 'Dò tốc độ kết nối tối ưu: baud serial (auto-baud), SWD/JTAG clock, SPI/I2C clock; thử nấc và đo lỗi'
+  input:
+    type: object
+    properties:
+      kind:
+        type: string
+        enum:
+        - baud
+        - swd
+        - jtag
+        - spi
+        - i2c
+      target:
+        type: string
+      limit_fact:
+        type: string
+    required:
+    - kind
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      chosen:
+        type: integer
+      tried:
+        type: array
+        items:
+          type: array
+          items:
+            type: number
+      limit:
+        type: integer
+    required:
+    - chosen
+    - tried
+    - limit
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Thử nấc vượt datasheet
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.discover:link_speed
+  errors:
+  - E3000
+  - E4002
+  example:
+    kind: baud
+    target: nucleo-f411
+- code: DISCOVER-07
+  id: discover.clock_measure
+  name: Đo tần số thực của chip/bus (qua probe timestamp, LA, hoặc firmware đo) để đối c
+  desc: Đo tần số thực của chip/bus (qua probe timestamp, LA, hoặc firmware đo) để đối chiếu cấu hình clock
+  input:
+    type: object
+    properties:
+      target:
+        type: string
+    required:
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      clocks:
+        type: object
+        description: sysclk, bus clocks measured vs configured
+    required:
+    - clocks
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Board lab
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.discover:clock_measure
+  errors:
+  - E4002
+  example:
+    target: nucleo-f411
+- code: DISCOVER-08
+  id: discover.power
+  name: Đọc điện áp/dòng cấp (nếu probe/board hỗ trợ) và cảnh báo bất thường trước khi n
+  desc: Đọc điện áp/dòng cấp (nếu probe/board hỗ trợ) và cảnh báo bất thường trước khi nạp
+  input:
+    type: object
+    properties:
+      target:
+        type: string
+    required:
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      power:
+        type: object
+        description: vdd, idd, ok, warnings[]
+    required:
+    - power
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Bất thường
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.discover:power
+  errors:
+  - E4002
+  example:
+    target: nucleo-f411
+- code: DISCOVER-09
+  id: discover.firmware_probe
+  name: Nhận diện firmware đang chạy trên board (banner serial, bootloader, phiên bản) đ
+  desc: Nhận diện firmware đang chạy trên board (banner serial, bootloader, phiên bản) để quyết định nạp lại hay tái dùng
+  input:
+    type: object
+    properties:
+      port:
+        type: string
+    required:
+    - port
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      firmware:
+        type: object
+        description: banner, version, bootloader, known_good_match
+    required:
+    - firmware
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.discover:firmware_probe
+  errors:
+  - E4002
+  example:
+    port: /dev/tty.usbmodem1
+- code: DISCOVER-10
+  id: discover.network
+  name: Dò thiết bị nhúng trên mạng LAN (mDNS, OTA endpoint, IP cố định) cho board có Wi
+  desc: Dò thiết bị nhúng trên mạng LAN (mDNS, OTA endpoint, IP cố định) cho board có Wi-Fi/Ethernet
+  input:
+    type: object
+    properties:
+      subnet:
+        type: string
+      services:
+        type: array
+        items:
+          type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      devices:
+        type: array
+        items:
+          type: object
+    required:
+    - devices
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Quét ngoài mạng lab
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.discover:network
+  errors:
+  - E3000
+  example: {}
+- code: DISCOVER-11
+  id: discover.env_hw
+  name: 'Tóm tắt phần cứng máy phát triển: OS, cổng, driver thiếu, quyền (udev/driver ký)'
+  desc: 'Tóm tắt phần cứng máy phát triển: OS, cổng, driver thiếu, quyền (udev/driver ký) → đề xuất sửa'
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: os, ports, drivers_missing[], permissions[], fixes[]
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Cài driver (R2)
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.discover:env_hw
+  errors: []
+  example: {}
+- code: DISCOVER-12
+  id: discover.auto_setup
+  name: 'Từ kết quả dò: chọn adapter ISA, cấu hình openocd/probe-rs/esptool, tốc độ, cổng'
+  desc: 'Từ kết quả dò: chọn adapter ISA, cấu hình openocd/probe-rs/esptool, tốc độ, cổng; ghi vào dự án'
+  input:
+    type: object
+    properties:
+      discovery_id:
+        type: string
+    required:
+    - discovery_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      target_config:
+        type: object
+      path:
+        type: string
+    required:
+    - target_config
+    - path
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Có ID chip khớp
+  ask_when:
+  - ID không khớp
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.discover:auto_setup
+  errors:
+  - E4003
+  example:
+    discovery_id: dv_1

@@ -1,0 +1,46 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/rag_chunk.json",
+ "title": "RagChunk",
+ "description": "Đoạn văn bản chỉ mục RAG (index/index.sqlite, không commit)",
+ "type": "object",
+ "required": [
+  "id",
+  "source_id",
+  "text"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "rc_<hex>"
+  },
+  "source_id": {
+   "type": "string"
+  },
+  "locator": {
+   "type": "object",
+   "description": "JSON {page,bbox,line}"
+  },
+  "text": {
+   "type": "string",
+   "description": "≤ 800 token"
+  },
+  "embedding": {
+   "type": "array",
+   "description": "float32[] qua Gateway"
+  },
+  "keywords": {
+   "type": "string",
+   "description": "FTS5"
+  },
+  "graph_nodes": {
+   "type": "array",
+   "description": "JSON subject IRIs xuất hiện"
+  },
+  "model": {
+   "type": "string",
+   "description": "Mô hình embedding"
+  }
+ },
+ "additionalProperties": false
+}

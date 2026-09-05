@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+body { margin:0; font-family:'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; color:#1b2430; background:#f4f6f9; font-size:13px; }
+a { color:#B8121F; } a:hover { color:#2F4858; }
+.mono { font-family:'IBM Plex Mono', Menlo, Consolas, monospace; }
+.win { width:1440px; height:900px; display:flex; flex-direction:column; background:#f4f6f9; overflow:hidden; border-radius:10px; box-shadow:0 20px 60px rgba(184,18,31,.14); }
+.titlebar { height:38px; display:flex; align-items:center; gap:8px; padding:0 14px; background:#e9edf3; border-bottom:1px solid #d5dbe5; }
+.dot { width:12px; height:12px; border-radius:6px; }
+.tabs { display:flex; gap:2px; margin-left:16px; }
+.tab { padding:7px 14px; font-size:12px; color:#5b6b7f; border-radius:6px 6px 0 0; }
+.tab.on { background:#f4f6f9; color:#B8121F; font-weight:600; }
+.body { flex:1; display:flex; min-height:0; }
+.side { width:212px; background:#B8121F; color:#fbe9ea; display:flex; flex-direction:column; padding:14px 0; gap:2px; }
+.brand { display:flex; align-items:center; gap:10px; padding:4px 16px 14px; }
+.brand b { color:#fff; font-size:14px; letter-spacing:.3px; }
+.nav { display:flex; align-items:center; gap:10px; padding:8px 16px; font-size:13px; color:#f3c6c9; }
+.nav.on { background:rgba(255,255,255,.12); color:#fff; border-left:3px solid #2F4858; padding-left:13px; }
+.nav .cnt { margin-left:auto; background:#F2B705; color:#B8121F; font-size:11px; font-weight:600; padding:1px 7px; border-radius:9px; }
+.nav svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.sidefoot { margin-top:auto; padding:12px 16px; font-size:11px; color:#f0b3b7; border-top:1px solid rgba(255,255,255,.12); display:flex; flex-direction:column; gap:4px; }
+.main { flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar { height:52px; display:flex; align-items:center; gap:12px; padding:0 20px; background:#fff; border-bottom:1px solid #e1e6ee; }
+.topbar h1 { font-size:16px; font-weight:600; margin:0; color:#B8121F; }
+.crumb { color:#7b8a9c; font-size:12px; }
+.search { margin-left:auto; display:flex; align-items:center; gap:8px; width:340px; height:32px; border:1px solid #d5dbe5; border-radius:6px; padding:0 10px; color:#8a97a8; background:#fbfcfd; }
+.btn { display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:6px; font-weight:500; font-size:12.5px; border:1px solid #cfd6e0; background:#fff; color:#243447; }
+.btn.p { background:#B8121F; color:#fff; border-color:#B8121F; }
+.btn.t { background:#2F4858; color:#fff; border-color:#2F4858; }
+.btn.g { background:#F2B705; color:#3a2a00; border-color:#F2B705; }
+.btn.d { background:#fff; color:#b3261e; border-color:#e6b8b5; }
+.content { flex:1; display:flex; gap:16px; padding:16px 20px; min-height:0; }
+.card { background:#fff; border:1px solid #e1e6ee; border-radius:8px; display:flex; flex-direction:column; min-width:0; }
+.card h3 { margin:0; padding:12px 14px; font-size:12px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; color:#5b6b7f; border-bottom:1px solid #eef1f5; display:flex; align-items:center; gap:8px; }
+.card h3 .sp { margin-left:auto; font-weight:500; text-transform:none; letter-spacing:0; color:#8a97a8; }
+.pad { padding:12px 14px; }
+table { border-collapse:collapse; width:100%; font-size:12.5px; }
+th { text-align:left; font-weight:600; color:#5b6b7f; font-size:11px; letter-spacing:.3px; text-transform:uppercase; padding:8px 12px; border-bottom:1px solid #e1e6ee; background:#fafbfd; }
+td { padding:8px 12px; border-bottom:1px solid #eef1f5; vertical-align:top; }
+tr.sel td { background:#fff4e6; }
+.pill { display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+.gold { background:#fff3d6; color:#7a5200; } .silver { background:#e8eef5; color:#3d5064; } .bronze { background:#f6e3dc; color:#8a3b1f; }
+.ok { background:#dff5ee; color:#0b6b52; } .warn { background:#fff0cc; color:#7a5200; } .bad { background:#fde3e1; color:#7a0c0c; } .info { background:#e6effa; color:#B8121F; }
+.kpi { display:flex; flex-direction:column; gap:4px; padding:14px; }
+.kpi .v { font-size:26px; font-weight:600; color:#B8121F; }
+.kpi .l { font-size:11.5px; color:#5b6b7f; }
+.status { height:26px; display:flex; align-items:center; gap:18px; padding:0 20px; font-size:11px; color:#5b6b7f; background:#fff; border-top:1px solid #e1e6ee; }
+.status .dotg { width:8px; height:8px; border-radius:4px; background:#2F4858; display:inline-block; margin-right:6px; }
+.gate { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #e1e6ee; border-radius:6px; background:#fff; }
+.gate .tag { font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; color:#fff; background:#B8121F; padding:2px 6px; border-radius:4px; }
+.code { font-family:'IBM Plex Mono', Menlo, monospace; font-size:12px; line-height:1.55; white-space:pre; color:#1b2430; }
+.tree { font-size:12.5px; } .tree div { padding:5px 8px; border-radius:4px; display:flex; gap:8px; align-items:center; } .tree .on { background:#fff4e6; color:#B8121F; font-weight:600; }
+.field { display:flex; flex-direction:column; gap:4px; } .field label { font-size:11px; color:#5b6b7f; font-weight:600; } .field .in { height:30px; border:1px solid #d5dbe5; border-radius:5px; padding:0 10px; display:flex; align-items:center; background:#fff; }
+.hint { font-size:11.5px; color:#7b8a9c; }
+</style>
+</helmet>
+<div class="win">
+  <div class="titlebar"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span>
+    <span style="margin-left:10px;font-size:12px;color:#5b6b7f;font-weight:600">EIDE — robot-ctrl · ST-Link nucleo-f411 đang cắm</span>
+    <div class="tabs"><div class="tab on">Tổng quan</div><div class="tab ">driver_bme280.c</div><div class="tab ">serial-3.log</div></div>
+  </div>
+  <div class="body">
+    <div class="side">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" style="stroke:#2F4858;fill:none;stroke-width:1.8"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg><b>EIDE</b><span style="font-size:10px;color:#f3c6c9;margin-left:auto">0.1 · PTIT</span></div>
+      <div class="nav "><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span>Trò chuyện (mặc định)</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Tổng quan</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h13"/><circle cx="19" cy="17" r="2"/></svg><span>Chờ tôi / Đã làm</span><span class="cnt">2</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg><span>Nhập tài liệu</span></div><div class="nav "><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg><span>Hộ chiếu chip</span></div><div class="nav "><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><circle cx="16" cy="15" r="1.5"/><path d="M9.5 9h5l-3.5 6"/></svg><span>Hộ chiếu mạch</span></div><div class="nav "><svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.5"/><circle cx="19" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7 7.5l3.5 8M17 7.5l-3.5 8M7.5 6h9"/></svg><span>Bản đồ tri thức & hỏi đáp</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Yêu cầu & kiến trúc</span></div><div class="nav "><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="5" rx="1"/><rect x="14" y="4" width="7" height="5" rx="1"/><rect x="8.5" y="15" width="7" height="5" rx="1"/><path d="M6.5 9v3h11V9M12 12v3"/></svg><span>Lược đồ</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5M9 13h7M9 17h7M9 9h3"/></svg><span>Tài liệu</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M4 5h1M4 12h1M4 19h1"/></svg><span>Kế hoạch & mã</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg><span>Mã nguồn</span></div><div class="nav "><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z"/></svg><span>Mô phỏng</span></div><div class="nav on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="8"/></svg><span>Dò board</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M7 9h10M7 13h7M7 17h4"/></svg><span>Log & serial</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M8 9a4 4 0 0 1 8 0v6a4 4 0 0 1-8 0zM3 13h5M16 13h5M5 7l3 2M19 7l-3 2M5 19l3-2M19 19l-3-2"/></svg><span>Gỡ lỗi probe</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.1-2.1z"/></svg><span>Công cụ tự tạo</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Benchmark</span></div><div class="nav "><svg viewBox="0 0 24 24"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9z"/><path d="M12 12l9-4.5M12 12L3 7.5M12 12v9"/></svg><span>Registry</span></div><div class="nav "><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Mô hình & môi trường</span></div>
+      <div class="sidefoot"><span><span class="dotg"></span>Knowledge Plane · PC này · Internet</span><span>Tự chủ: <b style="color:#fff">A3</b> · board lab nucleo-f411</span><span>Pin: st.stm32f411@1.2.0</span><span style="margin-top:6px"><span class="btn d" style="height:24px;padding:0 8px;font-size:11px">■ Dừng khẩn</span></span></div>
+    </div>
+    <div class="main">
+      <div class="topbar"><h1>Dò board</h1><span class="crumb">discover.* · cổng · probe · ID chip · tốc độ kết nối · bus · nguồn · tự cấu hình target</span><div class="search"><svg viewBox="0 0 24 24" width="14" height="14" style="stroke:#8a97a8;fill:none;stroke-width:1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Hỏi hộ chiếu… ví dụ: thanh ghi tốc độ I2C1 của chip này</span></div><span class="btn t">Nạp fw mới nhất</span></div>
+      <div class="content">
+<div style="display:flex;flex-direction:column;gap:16px;flex:1">
+  <div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:16px">
+    <div class="card"><div class="kpi"><span class="v">2</span><span class="l">Cổng USB/serial đang cắm</span></div></div>
+    <div class="card"><div class="kpi"><span class="v">ST-Link V3</span><span class="l">Probe · fw J40 · cập nhật khả dụng</span></div></div>
+    <div class="card"><div class="kpi"><span class="v">0x431</span><span class="l">IDCODE → STM32F411 · khớp hộ chiếu</span></div></div>
+    <div class="card"><div class="kpi"><span class="v">921600</span><span class="l">Baud tối ưu · 0 lỗi / 1.000 khung</span></div></div>
+  </div>
+  <div class="card" style="flex:1"><h3>Kết quả dò (discover.*)<span class="sp">21:14 · 4,8 s · target.yaml đã ghi (auto_setup)</span></h3>
+    <table><tr><th>Bước</th><th>Kết quả</th><th>Đối chiếu</th><th>Trạng thái</th></tr>
+    <tr><td>discover.ports</td><td class="mono">/dev/tty.usbmodem14203 (0483:374E) · /dev/tty.usbserial-A50 (0403:6001)</td><td>ST-Link VCP · FTDI</td><td><span class="pill ok">driver ok</span></td></tr>
+    <tr><td>discover.probe</td><td>ST-Link V3 · serial 0669FF… · fw J40M27</td><td>probe-rs 0.24</td><td><span class="pill ok">ok</span></td></tr>
+    <tr><td>discover.chip_id</td><td class="mono">DP IDCODE 0x2BA01477 · DBGMCU 0x431 rev A</td><td>st.stm32f411ce@1.2.0</td><td><span class="pill ok">khớp</span></td></tr>
+    <tr><td>discover.link_speed (swd)</td><td>100k ✓ 1M ✓ 4M ✓ 8M ✗(3 lỗi) → chọn <b>4 MHz</b></td><td>giới hạn fact f_swd1: 8 MHz</td><td><span class="pill ok">trong giới hạn</span></td></tr>
+    <tr><td>discover.link_speed (baud)</td><td>115200 ✓ 460800 ✓ 921600 ✓ → chọn <b>921600</b></td><td>firmware kiểm định echo</td><td><span class="pill ok">0 lỗi</span></td></tr>
+    <tr><td>discover.bus_scan (i2c)</td><td class="mono">0x68 · 0x76</td><td>MPU6050 · BME280 (BOM)</td><td><span class="pill ok">khớp BOM</span></td></tr>
+    <tr><td>discover.firmware_probe</td><td>banner "EIDE fw 0.3 r_0188"</td><td>known-good 0.3</td><td><span class="pill ok">đã nạp trước</span></td></tr>
+    <tr><td>discover.power</td><td>VDD 3,29 V · IDD 42 mA</td><td>fact f_vdd: 1,7–3,6 V</td><td><span class="pill ok">an toàn nạp</span></td></tr>
+    <tr><td>discover.board_match</td><td>nucleo-f411 (điểm 9) · blackpill-f411 (điểm 4)</td><td>registry boards</td><td><span class="pill ok">nucleo-f411 · lab</span></td></tr></table>
+  </div>
+</div>
+<div class="card" style="width:340px"><h3>target.yaml</h3><div class="code pad" style="flex:1">board: nucleo-f411
+isa: armv7e-m
+adapter: {kind: probe-rs, probe: "0669FF…", chip: STM32F411CEUx}
+port: {dev: /dev/tty.usbmodem14203, baud: 921600}
+speeds: {swd_khz: 4000}
+lab: true
+last_discovery: dv_0031</div>
+  <div class="pad" style="border-top:1px solid #eef1f5;display:flex;flex-direction:column;gap:8px"><span class="btn p">Dò lại</span><span class="btn">Đo tần số thực</span><span class="btn">Dò thiết bị LAN</span><span class="hint">Cắm/rút board tự cập nhật (event.discover.changed). ID không khớp hộ chiếu → cảnh báo và không nạp.</span></div></div></div>
+      <div class="status"><span><span class="dotg"></span><b style="color:#B8121F">Tự chủ A3</b> · 12 việc tự làm hôm nay · 2 chờ anh · hoàn tác được đến 09:14</span><span>store.sqlite · 13.494 fact · 2 hộ chiếu</span><span>Ledger: 214 lượt gọi · 0,42 USD hôm nay</span><span>Toolchain: arm-none-eabi-gcc 13.2 · probe-rs 0.24 · ST-Link V3</span><span style="margin-left:auto">G1 ✓ · G3 chờ 1 · G4 ✓ · G-OPS hết hạn 12:40</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
