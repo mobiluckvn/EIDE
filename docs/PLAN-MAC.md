@@ -24,15 +24,22 @@ Runner `macos-13` (Intel) của GitHub Actions đã ngừng phục vụ, nên ma
 không còn chạy được như viết (DEVIATIONS **DEV-005**). Cách thay thế đã được kiểm chứng
 06/09/2026: chạy x86_64 qua **Rosetta 2** trên runner arm64 và trên máy chủ sản phẩm.
 
-**Trạng thái hôm nay** — `make check-ca-hai` xanh cả hai kiến trúc trên máy chủ sản phẩm:
+**Trạng thái 06/09/2026 — Sprint 1 ĐÓNG.** `make check-ca-hai` xanh cả hai kiến trúc:
 
 ```
 ######## arm64 ########                 ######## x86_64 (Rosetta 2) ########
 ruff: All checks passed                 ruff: All checks passed
 spec: 238 năng lực, 55 RPC, OK          spec: 238 năng lực, 55 RPC, OK
-36 passed                               36 passed
+254 passed                              254 passed
 NFR-SEC-01: không có khóa riêng         NFR-SEC-01: không có khóa riêng
+rules.yaml khớp nguồn pol.js            rules.yaml khớp nguồn pol.js
 ```
+
+Và `scripts/nghiem_thu_sprint1.sh` — CLI thật, dự án thật, ledger thật — **17/17 bước ĐẠT**:
+tạo dự án từ câu tiếng Việt (slug giữ chữ `đ`), từ chối mở khi chưa di trú (E6003), di trú,
+mở phiên, ghi tùy chọn, **chặn chuỗi giống khóa API mà không in lại nó**, cửa sổ hoàn tác,
+sandbox, `policy.decide` ra đúng `ASK G-SRC-06` sau bản sửa DEV-011, báo cáo, và chuỗi hash
+ledger còn liền mạch.
 
 `eide caps invoke env.detect` trả đúng `arch: arm64` / `arch: x86_64`, đi qua PolicyGate
 (APPROVE theo TIER-T1) và được ghi vào ledger — tức là **trọn vòng lặp** *lệnh → cổng → năng
@@ -88,14 +95,18 @@ vào `models.yaml` theo PRS-16 §1, và vai trò nào cần suy luận dài hơn
 
 ---
 
-## 3. Sprint 1 — "xương sống chạy được trên Mac" (2 tuần)
+## 3. Sprint 1 — "xương sống chạy được trên Mac" — **ĐÃ XONG 06/09/2026**
 
 Đã xong (nay có bằng chứng nền tảng thật trên cả hai kiến trúc): WI-001 khởi tạo kho,
 WI-003 Registry + Router, WI-004 PolicyGate 46 quy tắc, WI-008 ledger chuỗi hash,
 WI-010 JSON-RPC 9/55 + CLI; sáu năng lực `project.create/list`, `env.detect/check`,
 `policy.emergency_stop/set_autonomy`.
 
-Còn lại, theo thứ tự phụ thuộc:
+**Tất cả đã xong.** Hạ tầng 7/7 (WI-001, 002, 003, 004, 007, 008, 009, 010, 013); năng lực
+17/17. Chi tiết và bằng chứng nền tảng từng dòng ở `docs/SPRINT-01.md`; kế hoạch tiếp theo ở
+`docs/SPRINT-02.md`.
+
+Thứ tự đã đi (giữ lại vì nó là bản đồ phụ thuộc, dùng cho các mốc sau):
 
 | Thứ tự | Việc | Đọc trước | Chặn cái gì |
 |---|---|---|---|

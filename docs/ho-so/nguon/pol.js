@@ -4,7 +4,11 @@ const { metaNew, refParas } = require('./eide_common');
 const m = metaNew('EIDE-POL-17', 'Quy tắc chính sách tự chủ', 'QUY TẮC CHÍNH SÁCH TỰ CHỦ MÁY ĐỌC ĐƯỢC (POL)',
   'Chuyển EIDE-APD-08 thành đặc tả lập trình được: mô hình quyết định, bảng quy tắc theo cổng, danh sách trắng, schema autonomy.yaml, hoàn tác theo loại, máy trạng thái leo thang và dừng khẩn, học ngưỡng, 40 tình huống kiểm thử',
   [['Tài liệu trước', 'EIDE-APD-08, Danh mục năng lực (cột R, Mức, Hỏi khi), EIDE-SDD-04 §4.7'], ['Tệp kèm', 'policy/rules.yaml, policy/autonomy.schema.json, tests/policy/situations.jsonl'], ['Dùng khi', 'Hiện thực core/engine/policy.py, undo.py; viết TC-51…TC-57']],
-  'Phát hành lần đầu — bổ sung lĩnh vực L08');
+  'Phát hành lần đầu — bổ sung lĩnh vực L08',
+  [['1.1', '06/09/2026', 'Vũ Trí Công',
+    'DEV-011: G-SRC-06 (tài liệu có thể không đúng linh kiện) đổi priority 25 → 5. Ở 25 nó nằm sau '
+    + 'G-SRC-01 (10), nên tài liệu từ tên miền tin cậy được tự duyệt mà match_score không bao giờ '
+    + 'được xét. Tình huống S06 nay ra đúng "ASK G-SRC-06".']]);
 const c = [];
 c.push(H1('1. Mô hình quyết định'));
 c.push(P('PolicyGate là một hàm thuần: `decide(action, ctx) → Decision`. Đầu vào là **Action** (năng lực, tham số, cổng gắn nếu có, lớp rủi ro từ registry) và **Context** (mức tự chủ hiệu lực, board, đặc trưng tình huống). Quyết định tính theo bốn tầng, dừng ở tầng đầu tiên cho kết quả REJECT hoặc ASK; APPROVE chỉ khi qua cả bốn tầng. Mọi quyết định ghi DecisionLog với lý do là mã quy tắc (ví dụ `G-SRC-03`), không phải văn xuôi, để thống kê và học ngưỡng.'));

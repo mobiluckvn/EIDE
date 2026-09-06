@@ -1,0 +1,8 @@
+{
+  "name": "eide-nguon-tai-lieu",
+  "private": true,
+  "description": "Bộ sinh bộ hồ sơ EIDE v1.2 (tài liệu = mã, SAD-03 ADR-12). Chạy qua scripts/sinh_tai_lieu.sh.",
+  "dependencies": {
+    "docx": "^9.7.1"
+  }
+}

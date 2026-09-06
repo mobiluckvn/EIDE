@@ -115,13 +115,25 @@ const byNs = ns => CAPS.filter(c => c.ns === ns);
 const count = (pred) => CAPS.filter(pred).length;
 module.exports = { meta, REFS, refParas, CAPS, NS_ORDER, NS_VI, byNs, count, DOCSET, H11, H12 };
 // v1.2: tài liệu bổ sung mới (phát hành lần đầu cùng bộ v1.2)
-function metaNew(code, short, title, subtitle, extraAttrs, historyNote) {
+// `lichSu`: các bản sửa SAU 1.0, dạng [[phiên_bản, ngày, người, nội dung], …].
+//
+// Có tham số này vì tiêu chí chấp nhận quy trình (DEV-29 §8 mục 3) đòi "sau mỗi đồng bộ,
+// phiên bản tài liệu TĂNG". Trước đây `1.0` bị viết cứng cho mọi tài liệu, nên hai bản khác
+// nội dung mang cùng một số và không ai truy được bản nào có bản sửa nào. Nâng theo TỪNG tài
+// liệu chứ không nâng cả bộ: chỉ tài liệu thật sự đổi mới cần số mới.
+function metaNew(code, short, title, subtitle, extraAttrs, historyNote, lichSu) {
   const m = meta(code, short, title, subtitle, extraAttrs);
   m.version = '1.0';
   m.attrs[0] = ['Mã tài liệu', code];
   m.attrs[1] = ['Phiên bản', '1.0 — phát hành cùng bộ hồ sơ v1.2 (bổ sung theo Rà soát đủ điều kiện phát triển)'];
-  
+
   m.history = [['1.0', '05/09/2026', 'Vũ Trí Công', historyNote || 'Phát hành lần đầu']];
+  if (Array.isArray(lichSu) && lichSu.length) {
+    m.history = m.history.concat(lichSu);
+    const cuoi = lichSu[lichSu.length - 1];
+    m.version = cuoi[0];
+    m.attrs[1] = ['Phiên bản', `${cuoi[0]} — ${cuoi[3]}`];
+  }
   return m;
 }
 module.exports.metaNew = metaNew;
