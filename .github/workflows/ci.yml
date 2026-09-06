@@ -1,25 +1,91 @@
+# CI — EIDE
+#
+# Thứ tự nền tảng theo PLATFORM.md: macOS trước (Intel và Apple Silicon đều BẮT BUỘC),
+# rồi Windows, rồi Linux.
+#
+# VÌ SAO KHÔNG CÓ `macos-13`. PLATFORM.md viết khi runner `macos-13` (Intel) còn phục vụ;
+# nó đã ngừng, và GitHub không còn runner Intel miễn phí. Bỏ trống phần Intel thì ma trận
+# vẫn xanh cho một sản phẩm chưa ai chạy thử trên Intel — đúng cái bẫy mà
+# `apps/geditor/scripts/build-universal.sh` mô tả: "không ai phát hiện phần x86_64 đã biến
+# mất cho tới khi một người dùng Intel tải về".
+#
+# Nên phần Intel được phủ bằng Rosetta 2 trên chính runner arm64: cùng mã Python, nhưng
+# `platform.machine()` trả `x86_64` và `which()` phải tìm ra Homebrew ở `/usr/local` thay vì
+# `/opt/homebrew`. Đó chính là hai chỗ mã EIDE phân biệt kiến trúc (PLATFORM.md quy tắc 2, 5).
+# Xem DEVIATIONS DEV-005.
 name: ci
 on: [push, pull_request]
+
 jobs:
-  test:
+  mac:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { os: macos-13, python: "3.12", name: mac-intel, required: true }
-          - { os: macos-14, python: "3.12", name: mac-arm, required: true }
-          - { os: windows-latest, python: "3.12", name: windows, required: false }
-          - { os: ubuntu-latest, python: "3.12", name: linux, required: false }
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ !matrix.required }}
-    name: ${{ matrix.name }}
+          - { arch: arm64,  runner: macos-14, python: "3.12" }
+          - { arch: x86_64, runner: macos-14, python: "3.12" }   # qua Rosetta 2
+    runs-on: ${{ matrix.runner }}
+    name: mac-${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "${{ matrix.python }}" }
+
+      # Với arm64 thì `arch -arm64` là lệnh rỗng; với x86_64 nó bắt Rosetta vào cuộc. Đặt
+      # tiền tố vào một biến để mọi bước dưới chạy cùng một đường, không rẽ nhánh `if`.
+      - name: Chọn kiến trúc
+        run: echo "ARCH_RUN=arch -${{ matrix.arch }}" >> "$GITHUB_ENV"
+
+      - name: Xác nhận kiến trúc thật
+        run: |
+          $ARCH_RUN python -c "import platform; print('máy:', platform.machine())"
+          $ARCH_RUN python -c "import platform,sys; sys.exit(0 if platform.machine()=='${{ matrix.arch }}' else 1)"
+
+      - run: $ARCH_RUN python -m pip install -e ".[dev]"
+      - run: $ARCH_RUN python -m ruff check src tests scripts
+      - run: $ARCH_RUN python scripts/validate_specs.py
+      - run: $ARCH_RUN python -m pytest -m "not hardware"
+      - run: $ARCH_RUN python -m eide.cli doctor || true
+      - run: $ARCH_RUN python -m eide.cli caps list --ns tool
+
+  # Windows và Linux: thứ tự 2 và 3 trong PLATFORM.md — chạy để biết sớm, không chặn PR.
+  khac:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    name: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
       - run: pip install -e ".[dev]"
       - run: ruff check src tests scripts
       - run: python scripts/validate_specs.py
       - run: python -m pytest -m "not hardware"
       - run: python -m eide.cli doctor || true
-      - run: python -m eide.cli caps list --ns tool
+
+  # GEditor (Swift) — thành phần giao diện, nay nằm trong kho (DEVIATIONS DEV-004).
+  # Chạy cổng khóa riêng TRƯỚC mọi thứ khác: rẻ nhất, và hỏng thì phải đổi khóa chứ không
+  # phải sửa mã.
+  geditor:
+    runs-on: macos-14
+    timeout-minutes: 45
+    defaults:
+      run: { working-directory: apps/geditor }
+    steps:
+      - uses: actions/checkout@v4
+        with: { lfs: true }
+      - run: swift --version && xcodebuild -version
+      - name: Không có khóa riêng trong kho (NFR-SEC-01)
+        run: |
+          ./scripts/check-no-secrets.sh --tu-kiem
+          ./scripts/check-no-secrets.sh
+      - name: libduckdb có đủ hai kiến trúc
+        run: lipo -info vendor/duckdb/libduckdb.dylib
+      - name: Lõi độc lập UI (NFR-MNT-01)
+        run: ./scripts/check-core-no-ui.sh
+      - name: Test lõi
+        run: swift test

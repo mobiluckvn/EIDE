@@ -2,7 +2,6 @@
 mọi @capability trỏ tới id trong cds.json; capabilities/*.yaml khớp cds.json; docstring có `Spec:`."""
 import json
 import re
-from pathlib import Path
 
 import yaml
 
@@ -50,6 +49,6 @@ def test_handlers_cite_spec_in_docstring():
 
 def test_deviations_have_status():
     text = (repo_root() / "docs" / "DEVIATIONS.md").read_text(encoding="utf-8")
-    rows = [l for l in text.splitlines() if l.startswith("| DEV-")]
+    rows = [line for line in text.splitlines() if line.startswith("| DEV-")]
     for r in rows:
         assert r.rstrip("| ").split("|")[-1].strip() in {"Mở", "Đã duyệt", "Bác"} or "Đã cập nhật tài liệu" in r, r

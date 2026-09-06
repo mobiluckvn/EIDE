@@ -136,18 +136,55 @@ def build_parser() -> argparse.ArgumentParser:
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("doctor", help="kiểm tra môi trường máy").set_defaults(fn=cmd_doctor)
     caps = sub.add_parser("caps", help="registry năng lực").add_subparsers(dest="sub", required=True)
-    p = caps.add_parser("list"); p.add_argument("--ns"); p.add_argument("--implemented", action="store_true"); p.set_defaults(fn=cmd_caps_list)
-    p = caps.add_parser("describe"); p.add_argument("cap_id"); p.set_defaults(fn=cmd_caps_describe)
-    p = caps.add_parser("invoke"); p.add_argument("cap_id"); p.add_argument("params", nargs="?", default="{}")
-    p.add_argument("-p", "--project", type=Path); p.add_argument("--autonomy"); p.set_defaults(fn=cmd_caps_invoke)
+
+    p = caps.add_parser("list")
+    p.add_argument("--ns")
+    p.add_argument("--implemented", action="store_true")
+    p.set_defaults(fn=cmd_caps_list)
+
+    p = caps.add_parser("describe")
+    p.add_argument("cap_id")
+    p.set_defaults(fn=cmd_caps_describe)
+
+    p = caps.add_parser("invoke")
+    p.add_argument("cap_id")
+    p.add_argument("params", nargs="?", default="{}")
+    p.add_argument("-p", "--project", type=Path)
+    p.add_argument("--autonomy")
+    p.set_defaults(fn=cmd_caps_invoke)
+
     proj = sub.add_parser("project", help="dự án").add_subparsers(dest="sub", required=True)
-    p = proj.add_parser("new"); p.add_argument("text"); p.add_argument("--dir", type=Path); p.add_argument("--chip"); p.set_defaults(fn=cmd_project_new)
-    p = proj.add_parser("list"); p.add_argument("workspace", nargs="?", type=Path); p.set_defaults(fn=cmd_project_list)
+
+    p = proj.add_parser("new")
+    p.add_argument("text")
+    p.add_argument("--dir", type=Path)
+    p.add_argument("--chip")
+    p.set_defaults(fn=cmd_project_new)
+
+    p = proj.add_parser("list")
+    p.add_argument("workspace", nargs="?", type=Path)
+    p.set_defaults(fn=cmd_project_list)
+
     pol = sub.add_parser("policy", help="chính sách tự chủ").add_subparsers(dest="sub", required=True)
-    p = pol.add_parser("stop"); p.add_argument("-p", "--project", type=Path); p.set_defaults(fn=cmd_policy_stop)
-    p = pol.add_parser("set"); p.add_argument("level"); p.add_argument("-p", "--project", type=Path, required=True); p.add_argument("--board"); p.set_defaults(fn=cmd_policy_set)
-    p = sub.add_parser("spec", help="trạng thái hiện thực so với spec"); p.add_argument("--ns"); p.set_defaults(fn=cmd_spec)
-    p = sub.add_parser("daemon", help="JSON-RPC qua stdio"); p.add_argument("-p", "--project", type=Path); p.set_defaults(fn=cmd_daemon)
+
+    p = pol.add_parser("stop")
+    p.add_argument("-p", "--project", type=Path)
+    p.set_defaults(fn=cmd_policy_stop)
+
+    p = pol.add_parser("set")
+    p.add_argument("level")
+    p.add_argument("-p", "--project", type=Path, required=True)
+    p.add_argument("--board")
+    p.set_defaults(fn=cmd_policy_set)
+
+    p = sub.add_parser("spec", help="trạng thái hiện thực so với spec")
+    p.add_argument("--ns")
+    p.set_defaults(fn=cmd_spec)
+
+    p = sub.add_parser("daemon", help="JSON-RPC qua stdio")
+    p.add_argument("-p", "--project", type=Path)
+    p.set_defaults(fn=cmd_daemon)
+
     return ap
 
 

@@ -8,11 +8,11 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 
 | WI | Việc | Tài liệu | Trạng thái | Nền tảng | DEV |
 |---|---|---|---|---|---|
-| WI-001 | Khởi tạo kho eide: CLAUDE.md, .claude/, docs/spec, pyproject, CI | CLAUDE.md, PLATFORM.md, DEP-26 | Xong | linux (sandbox); cần chạy `make check` trên mac-intel, mac-arm | DEV-003 |
-| WI-008 | Ledger chuỗi hash + api/errors.json (bộ lọc bí mật: Sprint 2) | SEC-25 §3, API-15 §3, §5 | Xong (phần hash + kiểu sự kiện) | linux | — |
-| WI-003 | Capability Registry + Router (nạp cds.json, kiểm schema, invoke, ledger; grounding/undo: Sprint 2) | SDD-04 §4, CDS-12, API-15 caps.* | Xong (bản đầu) | linux | DEV-002 |
-| WI-004 | PolicyGate + rules.yaml + defaults.yaml (UndoService, decision_log SQLite: Sprint 2) | APD-08, POL-17 | Xong (bản đầu, 46 quy tắc) | linux | DEV-001 |
-| WI-010 | JSON-RPC stdio (9/55 phương thức) + CLI eide | API-15 §1, §CLI | Xong (bản đầu) | linux | — |
+| WI-001 | Khởi tạo kho eide: CLAUDE.md, .claude/, docs/spec, pyproject, CI | CLAUDE.md, PLATFORM.md, DEP-26 | Xong | mac-arm ✓, mac-intel ✓ (Rosetta 2, 06/09/2026), linux | DEV-003, DEV-005 |
+| WI-008 | Ledger chuỗi hash + api/errors.json (bộ lọc bí mật: Sprint 2) | SEC-25 §3, API-15 §3, §5 | Xong (phần hash + kiểu sự kiện) | mac-arm ✓, mac-intel ✓ | — |
+| WI-003 | Capability Registry + Router (nạp cds.json, kiểm schema, invoke, ledger; grounding/undo: Sprint 2) | SDD-04 §4, CDS-12, API-15 caps.* | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | DEV-002 |
+| WI-004 | PolicyGate + rules.yaml + defaults.yaml (UndoService, decision_log SQLite: Sprint 2) | APD-08, POL-17 | Xong (bản đầu, 46 quy tắc) | mac-arm ✓, mac-intel ✓ | DEV-001 |
+| WI-010 | JSON-RPC stdio (9/55 phương thức) + CLI eide | API-15 §1, §CLI | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | — |
 | WI-002 | SQLite store + migration 0001 + `eide migrate` | DDD-14 §DDL, schema.sql, migrations | Chưa | — | — |
 | WI-007 | Memory M1/M2 (WorkingMemory, SessionMemory), PROGRESS/FEATURES tự sinh, resume | MEM-11 §2–§4, DDD-14 | Chưa | — | — |
 | WI-009 | Sandbox tiến trình con + giám sát hiệu ứng (nền cho tool.*) | SEC-25 §4, CDS-12.3 env.sandbox | Chưa | — | — |
@@ -25,12 +25,12 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 
 | Mã | Năng lực | Tập CDS | tc (tiêu chí xong, rút gọn) | Trạng thái | Nền tảng | DEV |
 |---|---|---|---|---|---|---|
-| PROJECT-01 | project.create | 12.3 | cấu trúc .eide đúng; lần 2 cùng tên → E2001; gần giống → existing[] | Xong | linux | — |
-| PROJECT-03 | project.list | 12.3 | 3 dự án mẫu đúng thứ tự | Xong | linux | — |
-| ENV-01 | env.detect | 12.3 | macOS/Linux/Windows nhận đúng (ports/probes: Sprint 2) | Xong | linux | — |
-| ENV-02 | env.check | 12.3 | thiếu gcc → ok=false kèm install hint; ISA lạ → E2000 | Xong | linux | — |
-| POLICY-05 | policy.emergency_stop | 12.5 | TC-53: stopped=true, năng lực sau đó bị REJECT | Xong | linux | — |
-| POLICY-07 | policy.set_autonomy | 12.5 | TC-56: nới lỏng cần by=human; siết tức thì; ghi autonomy.yaml | Xong | linux | — |
+| PROJECT-01 | project.create | 12.3 | cấu trúc .eide đúng; lần 2 cùng tên → E2001; gần giống → existing[] | Xong | mac-arm ✓, mac-intel ✓ | — |
+| PROJECT-03 | project.list | 12.3 | 3 dự án mẫu đúng thứ tự | Xong | mac-arm ✓, mac-intel ✓ | — |
+| ENV-01 | env.detect | 12.3 | macOS/Linux/Windows nhận đúng (ports/probes: Sprint 2) | Xong | mac-arm ✓, mac-intel ✓ | — |
+| ENV-02 | env.check | 12.3 | thiếu gcc → ok=false kèm install hint; ISA lạ → E2000 | Xong | mac-arm ✓, mac-intel ✓ | — |
+| POLICY-05 | policy.emergency_stop | 12.5 | TC-53: stopped=true, năng lực sau đó bị REJECT | Xong | mac-arm ✓, mac-intel ✓ | — |
+| POLICY-07 | policy.set_autonomy | 12.5 | TC-56: nới lỏng cần by=human; siết tức thì; ghi autonomy.yaml | Xong | mac-arm ✓, mac-intel ✓ | — |
 | PROJECT-02 | project.open | 12.3 | store hợp lệ → summary; ghi ngoài cổng → E6000; user_version cũ → E6003 | Chưa (cần WI-002) | — | — |
 | PROJECT-08 | project.status | 12.3 | số liệu khớp ledger | Chưa | — | — |
 | PROJECT-09 | project.preferences | 12.3 | D8: ghi/đọc preferences.yaml | Chưa | — | — |
@@ -50,7 +50,7 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | WI-253 | TC hợp đồng sinh tự động cho 238 năng lực (schema vào/ra, mã lỗi khai báo tồn tại) | Chưa |
 | WI-257 | **Người:** ký danh sách trắng nguồn/gói/board lab, đặt autonomy.yaml ban đầu (defaults.yaml tạm dùng) | Chưa |
 | WI-258 | **Người:** xác nhận mã màu PTIT chính thức và ngôn ngữ lược đồ GEditor hỗ trợ | Chưa |
-| — | Chạy `make check` trên Mac Intel và Mac Apple Silicon thật; ghi nền tảng vào các dòng "linux" ở trên | Chưa |
+| — | Chạy `make check` trên Mac Intel và Mac Apple Silicon thật; ghi nền tảng vào các dòng ở trên | **Xong** 06/09/2026 — arm64 gốc + x86_64 qua Rosetta 2, cả hai: ruff + spec + 36/36 test xanh |
 
 ## Định nghĩa "xong" của sprint
 
