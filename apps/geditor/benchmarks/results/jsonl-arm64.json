@@ -1,0 +1,21 @@
+{
+  "corpusBytes" : 1024000161,
+  "duplicateGroupCount" : 0,
+  "emptyCount" : 0,
+  "idField" : "id",
+  "inspectBudgetMs" : 10352.715,
+  "inspectMs" : 10115.157958,
+  "jumpMedianMs" : 0.0070419999999999996,
+  "jumpWorstMs" : 0.062709000000000001,
+  "lineCount" : 690181,
+  "openBudgetMs" : 10000,
+  "openMs" : 3900.8434999999999,
+  "passed" : true,
+  "problemCount" : 0,
+  "progressReports" : 244,
+  "recognized" : true,
+  "recordCount" : 690181,
+  "scanMs" : 1125.30475,
+  "sniffMs" : 0.018374999999999999,
+  "textField" : "text"
+}

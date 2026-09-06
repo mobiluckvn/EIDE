@@ -1,0 +1,126 @@
+{
+  "architecture" : "arm64",
+  "correctness" : {
+    "GROUP BY cardinality cao ra đúng số nhóm" : "đúng (1000000 nhóm = 1000000 hàng, mã khách duy nhất)",
+    "GROUP BY: COUNT và SUM khớp công thức sinh" : "đúng cả 5 nhóm",
+    "LIMIT không kèm ORDER BY thì DỪNG SỚM" : "đúng (quét 10 hàng thay vì 1000000)",
+    "SUM toàn bảng khớp (gồm cả giá trị cực đoan 999.999.999)" : "đúng",
+    "WHERE đếm đúng số hàng Đà Nẵng" : "đúng (200000)",
+    "dòng tiêu đề KHÔNG bị tính thành một nhóm" : "đúng (5 thành phố)",
+    "mã sản phẩm đếm ra cùng số hàng với kế hoạch dựng tay" : "đúng (200000)",
+    "sàn quét: hai đường đếm ra cùng số hàng" : "đúng (1000001)"
+  },
+  "fixture" : {
+    "cells" : 20000000,
+    "columns" : 20,
+    "megabytes" : 157.19036388397217,
+    "rows" : 1000000
+  },
+  "memory" : [
+    {
+      "bytesPerGroup" : 50,
+      "deltaMB" : 48.31254577636719,
+      "description" : "bảng băm GROUP BY ma_kh (khoá String)",
+      "footprintAfterMB" : 207.67242431640625,
+      "footprintBeforeMB" : 159.35987854003906,
+      "groups" : 1000000
+    }
+  ],
+  "notes" : [
+    "PoC CỐ Ý không có parser SQL. Kế hoạch truy vấn dựng tay; thứ đang đo là chi phí THỰC THI, vì đó là thứ chưa ai biết và là thứ có thể giết phương án.",
+    "Mốc 5 giây là ĐỀ NGHỊ, chưa phải chỉ tiêu đã chốt: bộ tài liệu chưa có NFR nào cho FR-CSV-407. Đặt ngang hàng NFR-CLN-01 (Data Profile ≤ 10 s trên cùng cỡ bảng) rồi siết một nửa.",
+    "Mọi kỳ vọng đúng-sai suy từ CÔNG THỨC SINH fixture, không suy từ đường CSV đang đo — lấy kết quả của phép đo làm đáp án thì không kiểm được gì.",
+    "Chưa đo: JOIN, subquery, cửa sổ hàm. Nếu phạm vi cần chúng thì PoC này KHÔNG trả lời cho chúng, và câu trả lời rất có thể đổi."
+  ],
+  "poc" : "PoC-G — tập con SQL trên CSVEngine (FR-CSV-407)",
+  "product" : [
+    {
+      "milliseconds" : 619.015834,
+      "note" : "so cùng phép lọc ở mục 2",
+      "prototypeMs" : 568.923875,
+      "rowsOut" : 1,
+      "rowsScanned" : 1000000,
+      "sql" : "SELECT COUNT(*) FROM t WHERE thanh_pho = 'Đà Nẵng'"
+    },
+    {
+      "milliseconds" : 751.766917,
+      "note" : "so cùng phép gộp ở mục 3",
+      "prototypeMs" : 683.063791,
+      "rowsOut" : 5,
+      "rowsScanned" : 1000000,
+      "sql" : "SELECT thanh_pho, COUNT(*), SUM(doanh_thu), AVG(doanh_thu) FROM t GROUP BY thanh_pho"
+    },
+    {
+      "milliseconds" : 1454.138416,
+      "note" : "ca xấu nhất — so cùng mục 5",
+      "prototypeMs" : 747.175458,
+      "rowsOut" : 1000000,
+      "rowsScanned" : 1000000,
+      "sql" : "SELECT ma_kh, SUM(doanh_thu) FROM t GROUP BY ma_kh"
+    },
+    {
+      "milliseconds" : 1458.692667,
+      "note" : "cùng phép gộp, chỉ khác là KHÔNG dựng ra một triệu hàng kết quả — hiệu với dòng trên là giá của việc vật chất hoá kết quả",
+      "prototypeMs" : 747.175458,
+      "rowsOut" : 10,
+      "rowsScanned" : 1000000,
+      "sql" : "SELECT ma_kh, SUM(doanh_thu) FROM t GROUP BY ma_kh LIMIT 10"
+    },
+    {
+      "milliseconds" : 6.846042,
+      "note" : "phải DỪNG SỚM: quét vài hàng chứ không cả bảng",
+      "rowsOut" : 10,
+      "rowsScanned" : 10,
+      "sql" : "SELECT * FROM t LIMIT 10"
+    }
+  ],
+  "queries" : [
+    {
+      "milliseconds" : 568.923875,
+      "note" : "200000 hàng khớp",
+      "rowsOut" : 1,
+      "sql" : "SELECT COUNT(*) FROM t WHERE thanh_pho = 'Đà Nẵng'   -- so trên BYTE"
+    },
+    {
+      "milliseconds" : 584.768792,
+      "note" : "200000 hàng khớp",
+      "rowsOut" : 1,
+      "sql" : "SELECT COUNT(*) FROM t WHERE thanh_pho = 'Đà Nẵng'   -- dựng String mỗi ô"
+    },
+    {
+      "milliseconds" : 683.063791,
+      "note" : "5 nhóm",
+      "rowsOut" : 5,
+      "sql" : "SELECT thanh_pho, COUNT(*), SUM(doanh_thu), AVG(doanh_thu) FROM t GROUP BY thanh_pho"
+    },
+    {
+      "milliseconds" : 0.000542,
+      "note" : "sắp xếp chạy trên KẾT QUẢ ĐÃ GỘP (5 dòng), không trên bảng gốc",
+      "rowsOut" : 3,
+      "sql" : "… GROUP BY thanh_pho ORDER BY SUM(doanh_thu) DESC LIMIT 3"
+    },
+    {
+      "milliseconds" : 747.175458,
+      "note" : "ca xấu nhất: số nhóm = số hàng",
+      "rowsOut" : 1000000,
+      "sql" : "SELECT ma_kh, SUM(doanh_thu) FROM t GROUP BY ma_kh   -- mỗi hàng một nhóm"
+    }
+  ],
+  "scan" : [
+    {
+      "millionCellsPerSecond" : 31.310276342510797,
+      "milliseconds" : 638.767917,
+      "note" : "tiện, nhưng cấp phát theo HÀNG",
+      "path" : "forEachRow (một mảng CSVField mỗi hàng)",
+      "rowsSeen" : 1000001
+    },
+    {
+      "millionCellsPerSecond" : 35.91953758494785,
+      "milliseconds" : 556.800041,
+      "note" : "đường mà mọi câu truy vấn phải đi",
+      "path" : "forEachWindow (một mảng mỗi cửa sổ 1 MB)",
+      "rowsSeen" : 1000001
+    }
+  ],
+  "verdict" : "ĐẠT — câu chậm nhất 1459 ms trên 1000000 hàng × 20 cột. Tập con SQL tự viết sống được ở cỡ này; không cần DuckDB cho SELECT\/WHERE\/GROUP BY\/ORDER BY."
+}

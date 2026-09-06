@@ -1,0 +1,26 @@
+{
+  "architecture" : "arm64",
+  "fixtureMB" : 32.00004577636719,
+  "iterations" : 5,
+  "metrics" : {
+    "atomicWriteThroughputMBps" : 3600.3485780913015,
+    "batchEdit10kMs" : 15.462667,
+    "csvParseThroughputMBps" : 278.6020512270186,
+    "interactiveTypingP95Ms" : 0.004292,
+    "lineIndexThroughputMBps" : 5673.51549600943,
+    "lineQueryP95Ms" : 0.009459,
+    "newlineScanThroughputMBps" : 48948.44478220602,
+    "regexDateThroughputMBps" : 361.6163156750333,
+    "regexLiteralThroughputMBps" : 3447.3212656829664
+  },
+  "pending" : [
+    "NFR-PERF-01 khởi động nguội — cần app thật (TC-PERF-01)",
+    "NFR-PERF-02 mở file 100 MB tới tương tác (TC-PERF-02)",
+    "NFR-PERF-03 mở 1 GB + cuộn 60 fps (TC-PERF-03\/TC-DOC-03)",
+    "NFR-PERF-04 latency gõ p95 ≤ 16 ms — phần lõi đã đo ở interactiveTypingP95Ms; phần hiển thị cần engine từ PoC-A",
+    "NFR-PERF-05 RAM idle ≤ 80 MB (TC-PERF-04)",
+    "NFR-PERF-07 năng lượng Low (TC-PERF-07)"
+  ],
+  "simdBackend" : "neon",
+  "version" : "0.0.1"
+}

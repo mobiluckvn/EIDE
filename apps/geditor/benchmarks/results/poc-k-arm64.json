@@ -1,0 +1,219 @@
+{
+  "architecture": "arm64",
+  "correctness": {
+    "DuckDB đếm ra cùng số hàng Đà Nẵng với engine tự viết": "đúng (200000)",
+    "JOIN của DuckDB khớp đáp án suy từ công thức sinh": "đúng (400000 hàng)",
+    "bảng khoảng trống có đối chứng: câu trong tập con vẫn chạy được": "đúng (4/4 câu hợp lệ chạy)",
+    "engine tự viết đếm đúng số hàng Đà Nẵng": "đúng (200000)",
+    "số câu ngoài tập con bị TỪ CHỐI (chứ không lặng lẽ trả sai)": "7/7",
+    "đáp án JOIN suy từ công thức sinh (vùng Trung = Đà Nẵng + Huế)": "400000 hàng · tổng 179796100000"
+  },
+  "duckdb": {
+    "gaps": [
+      {
+        "answer": "400000",
+        "label": "JOIN đa file (FR-QRY-005 · FR-DQR-001 foreign_key)",
+        "ms": 5.1,
+        "ok": true
+      },
+      {
+        "answer": "5",
+        "label": "DISTINCT (FR-QRY-003)",
+        "ms": 3.9,
+        "ok": true
+      },
+      {
+        "answer": "5",
+        "label": "HAVING (FR-QRY-003)",
+        "ms": 3.7,
+        "ok": true
+      },
+      {
+        "answer": "400000",
+        "label": "IN (FR-DQR-001 in_set)",
+        "ms": 3.5,
+        "ok": true
+      },
+      {
+        "answer": "900000",
+        "label": "LIKE (FR-DQR-001 regex)",
+        "ms": 2.3,
+        "ok": true
+      },
+      {
+        "answer": "1118",
+        "label": "BETWEEN (FR-DQR-001 range)",
+        "ms": 0.7,
+        "ok": true
+      },
+      {
+        "answer": "498729",
+        "label": "subquery (FR-DQR-002 · FR-KNW-913)",
+        "ms": 2.6,
+        "ok": true
+      }
+    ],
+    "ingestMs": 731.8,
+    "queries": [
+      {
+        "answer": "200000",
+        "label": "WHERE thanh_pho = 'Đà Nẵng' (COUNT)",
+        "ms": 144.3,
+        "rows": 1
+      },
+      {
+        "answer": "Cần Thơ",
+        "label": "GROUP BY thanh_pho (5 nhóm)",
+        "ms": 146.7,
+        "rows": 5
+      },
+      {
+        "answer": "KH00436862",
+        "label": "GROUP BY ma_kh (1 triệu nhóm)",
+        "ms": 154.7,
+        "rows": 1000000
+      },
+      {
+        "answer": "KH00000000",
+        "label": "SELECT * LIMIT 10",
+        "ms": 86.2,
+        "rows": 10
+      }
+    ],
+    "tabled": [
+      {
+        "answer": "200000",
+        "label": "WHERE (bảng đã nạp)",
+        "ms": 1.6,
+        "rows": 1
+      },
+      {
+        "answer": "Cần Thơ",
+        "label": "GROUP BY thanh_pho (bảng đã nạp)",
+        "ms": 4.1,
+        "rows": 5
+      },
+      {
+        "answer": "KH00980041",
+        "label": "GROUP BY ma_kh (bảng đã nạp)",
+        "ms": 17.1,
+        "rows": 1000000
+      }
+    ]
+  },
+  "duckdbVersion": "v1.5.5",
+  "dylib": {
+    "dlopenMs": 6.9,
+    "rawMB": 111,
+    "sandbox": "Ký AD-HOC + hardened runtime: library validation chặn CẢ libduckdb LẪN libTreeSitterHeavy của ADR-08 (khác Team ID) — tức đây là tính chất của cách ký, không phải của DuckDB. Runtime TẮT: cả hai nạp được. Câu trả lời dứt điểm cần GEDITOR_SIGN_IDENTITY.",
+    "strippedMB": 94,
+    "thin": "arm64:45 x86_64:48"
+  },
+  "fixture": {
+    "cells": 20000000,
+    "columns": 20,
+    "lookupPath": "/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.L0Wy3YHdaw/fixture/poc-k-vung-mien.csv",
+    "lookupRows": 5,
+    "megabytes": 157.19036388397217,
+    "path": "/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.L0Wy3YHdaw/fixture/poc-k-fixture.csv",
+    "rows": 1000000
+  },
+  "gapsOwnEngine": [
+    {
+      "error": "syntax(message: \"Phần thừa ở cuối câu truy vấn\", offset: 8)",
+      "need": "FR-QRY-005 join đa file · FR-DQR-001 rule foreign_key",
+      "parsed": false,
+      "sql": "SELECT t.thanh_pho, COUNT(*) FROM t JOIN v ON t.thanh_pho = v.thanh_pho GROUP BY t.thanh_pho"
+    },
+    {
+      "error": "unsupported(\"DISTINCT\")",
+      "need": "FR-QRY-003 pivot sinh SQL có DISTINCT",
+      "parsed": false,
+      "sql": "SELECT DISTINCT thanh_pho FROM t"
+    },
+    {
+      "error": "unsupported(\"HAVING\")",
+      "need": "FR-QRY-003 pivot có điều kiện trên nhóm",
+      "parsed": false,
+      "sql": "SELECT thanh_pho, COUNT(*) FROM t GROUP BY thanh_pho HAVING COUNT(*) > 100"
+    },
+    {
+      "error": "unsupported(\"IN (…)\")",
+      "need": "FR-DQR-001 rule in_set",
+      "parsed": false,
+      "sql": "SELECT COUNT(*) FROM t WHERE thanh_pho IN ('Huế', 'Đà Nẵng')"
+    },
+    {
+      "error": "unsupported(\"LIKE\")",
+      "need": "FR-DQR-001 rule regex/like",
+      "parsed": false,
+      "sql": "SELECT COUNT(*) FROM t WHERE ghi_chu LIKE 'binh%'"
+    },
+    {
+      "error": "unsupported(\"BETWEEN\")",
+      "need": "FR-DQR-001 rule range",
+      "parsed": false,
+      "sql": "SELECT COUNT(*) FROM t WHERE doanh_thu BETWEEN 0 AND 1000"
+    },
+    {
+      "error": "syntax(message: \"Bên phải `>` phải là một chuỗi trong dấu nháy hoặc một số\", offset: 41)",
+      "need": "FR-DQR-002 chiều ACCURACY · FR-KNW-913 openCypher → SQL lồng",
+      "parsed": false,
+      "sql": "SELECT COUNT(*) FROM t WHERE doanh_thu > (SELECT AVG(doanh_thu) FROM t)"
+    }
+  ],
+  "notes": [
+    "Hai engine đo TRONG CÙNG MỘT PHIÊN trên CÙNG MỘT file. Không so với con số 619/752 ms lưu từ phiên khác: ADR-08 đã ghi cùng một bản dựng cho 507/524/547 ms ở ba phiên.",
+    "DuckDB dùng nhiều lõi theo mặc định; engine tự viết chạy một luồng. Chênh lệch dưới đây là chênh lệch của HAI SẢN PHẨM, không phải của hai thuật toán.",
+    "Phép đo khởi động là đối chứng CẶP: cùng binary, cùng máy, chỉ khác một file nằm cạnh.",
+    "PoC này KHÔNG vendor gì. Dylib nằm ở .build/poc-k/ và ngoài git."
+  ],
+  "ownEngine": [
+    {
+      "answer": "200000",
+      "milliseconds": 676.828875,
+      "rowsOut": 1,
+      "rowsScanned": 1000000,
+      "sql": "SELECT COUNT(*) FROM t WHERE thanh_pho = 'Đà Nẵng'"
+    },
+    {
+      "answer": "Hà Nội · 200000 · 90897399999 · 454486.999995",
+      "milliseconds": 791.387167,
+      "rowsOut": 5,
+      "rowsScanned": 1000000,
+      "sql": "SELECT thanh_pho, COUNT(*), SUM(doanh_thu), AVG(doanh_thu) FROM t GROUP BY thanh_pho"
+    },
+    {
+      "answer": "KH00000000 · 0",
+      "milliseconds": 1530.447541,
+      "rowsOut": 1000000,
+      "rowsScanned": 1000000,
+      "sql": "SELECT ma_kh, SUM(doanh_thu) FROM t GROUP BY ma_kh"
+    },
+    {
+      "answer": "KH00000000 · Hà Nội · 0 · N/A · 2026-08-01 · v0_5 · v0_6 · v0_7 · v0_8 · v0_9 · ",
+      "milliseconds": 7.82425,
+      "rowsOut": 10,
+      "rowsScanned": 10,
+      "sql": "SELECT * FROM t LIMIT 10"
+    }
+  ],
+  "poc": "PoC-K — DuckDB ở phạm vi rộng hơn FR-CSV-407",
+  "startup": {
+    "coldWithDylibMs": [
+      382.7,
+      371.3,
+      364.4,
+      377.0,
+      390.3
+    ],
+    "coldWithoutDylibMs": [
+      613.7,
+      379.1,
+      370.3,
+      379.7,
+      382.3
+    ],
+    "medianDeltaMs": -2.6999999999999886
+  }
+}

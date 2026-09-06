@@ -1,0 +1,84 @@
+{
+  "adr" : "ADR-02",
+  "architecture" : "arm64",
+  "batchEdit" : {
+    "applyMs" : 22.605375,
+    "edits" : 10000,
+    "pieceCountAfter" : 20000,
+    "redoMs" : 13.867167,
+    "treeDepthAfter" : 33,
+    "undoMs" : 11.788791
+  },
+  "fixture" : {
+    "lineCount" : 13421772,
+    "megabytes" : 1023.9999389648438,
+    "path" : "\/private\/tmp\/claude-501\/-Users-congvt-Documents-GEditor\/03cd150d-ac5e-439b-af0d-0d01e986f2ff\/scratchpad\/geditor-fixture-1024mb.csv"
+  },
+  "interactiveEdits" : {
+    "edits" : 10000,
+    "maxUs" : 121.084,
+    "p50Us" : 4.2909999999999995,
+    "p95Us" : 6.083,
+    "p99Us" : 9.709000000000001,
+    "totalMs" : 44.38975
+  },
+  "lineQuery" : {
+    "lineToOffsetP95Us" : 9.792,
+    "offsetToLineP95Us" : 4.083,
+    "pieceCount" : 20001,
+    "samples" : 5000
+  },
+  "memory" : {
+    "addBufferKB" : 19.53125,
+    "afterEditsFootprintMB" : 5.7198486328125,
+    "afterOpenFootprintMB" : 2.3604507446289062,
+    "afterOpenResidentMB" : 1030.859375,
+    "baselineFootprintMB" : 1.5315933227539062,
+    "newlineIndexKB" : 128
+  },
+  "notes" : [
+    "afterOpenResidentMB gồm trang mmap SẠCH do quét chỉ mục chạm vào; kernel thu hồi được. Con số ràng buộc NFR-PERF-05 là footprint.",
+    "Fixture sinh ngoài repo tại GEDITOR_FIXTURE_DIR (mặc định thư mục tạm).",
+    "scaling đo trên nguồn trong RAM để loại nhiễu I\/O; chỉ so cấu trúc dữ liệu."
+  ],
+  "open" : {
+    "firstLineQueryMs" : 0.000959,
+    "mmapMs" : 5.105791,
+    "newlineIndexMs" : 896.79525,
+    "throughputMBps" : 1135.3782772017844,
+    "totalMs" : 901.9019999999999
+  },
+  "poc" : "PoC-B",
+  "scaling" : [
+    {
+      "edits" : 2000,
+      "flatArrayMs" : 191.816958,
+      "megabytes" : 4,
+      "pieceTreeMs" : 2.812416,
+      "speedup" : 68.20362208151283
+    },
+    {
+      "edits" : 2000,
+      "flatArrayMs" : 521.503708,
+      "megabytes" : 16,
+      "pieceTreeMs" : 3.559792,
+      "speedup" : 146.4983650730155
+    },
+    {
+      "edits" : 2000,
+      "flatArrayMs" : 2410.558541,
+      "megabytes" : 64,
+      "pieceTreeMs" : 6.081375,
+      "speedup" : 396.38380152514844
+    },
+    {
+      "edits" : 2000,
+      "flatArrayMs" : 10322.5085,
+      "megabytes" : 256,
+      "pieceTreeMs" : 6.578,
+      "speedup" : 1569.2472636059592
+    }
+  ],
+  "simdBackend" : "neon",
+  "version" : "0.0.1"
+}

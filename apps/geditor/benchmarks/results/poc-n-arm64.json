@@ -1,0 +1,16 @@
+{
+  "poc": "N",
+  "framework": "PDFKit",
+  "baseMedianMs": 165.553,
+  "linkedMedianMs": 165.863,
+  "deltaMs": 0.31,
+  "noiseFloorMs": 8.291,
+  "lazy": {
+    "preMainMs": 168.893,
+    "images": 516,
+    "pdfkitLoaded": 0,
+    "lazyDlopenMs": 0.142
+  },
+  "runs": 15,
+  "method": "hai binary khác nhau đúng một cờ -framework; mỗi lần đo là một bản sao mới"
+}

@@ -1,0 +1,172 @@
+{
+  "fullParse": [
+    {
+      "bytesPerSecond": 11509491.608767241,
+      "language": "json",
+      "megabytes": 1,
+      "parseMilliseconds": 91.111583
+    },
+    {
+      "bytesPerSecond": 16118036.906700386,
+      "language": "json",
+      "megabytes": 8,
+      "parseMilliseconds": 520.453083
+    },
+    {
+      "bytesPerSecond": 20388768.624991827,
+      "language": "c",
+      "megabytes": 1,
+      "parseMilliseconds": 51.489083
+    },
+    {
+      "bytesPerSecond": 19511402.096642565,
+      "language": "c",
+      "megabytes": 8,
+      "parseMilliseconds": 429.937375
+    }
+  ],
+  "highlight": [
+    {
+      "capturesInViewport": 1262,
+      "language": "json",
+      "megabytes": 1,
+      "visibleQueryMilliseconds": 0.400333
+    },
+    {
+      "capturesInViewport": 1262,
+      "language": "json",
+      "megabytes": 8,
+      "visibleQueryMilliseconds": 0.3875
+    },
+    {
+      "capturesInViewport": 892,
+      "language": "c",
+      "megabytes": 1,
+      "visibleQueryMilliseconds": 0.261583
+    },
+    {
+      "capturesInViewport": 847,
+      "language": "c",
+      "megabytes": 8,
+      "visibleQueryMilliseconds": 0.227875
+    }
+  ],
+  "incremental": [
+    {
+      "language": "json",
+      "megabytes": 1,
+      "reparseMillisecondsP50": 2.9985,
+      "reparseMillisecondsP95": 3.53725
+    },
+    {
+      "language": "json",
+      "megabytes": 8,
+      "reparseMillisecondsP50": 39.1375,
+      "reparseMillisecondsP95": 51.515
+    },
+    {
+      "language": "c",
+      "megabytes": 1,
+      "reparseMillisecondsP50": 0.706584,
+      "reparseMillisecondsP95": 0.816
+    },
+    {
+      "language": "c",
+      "megabytes": 8,
+      "reparseMillisecondsP50": 6.980917,
+      "reparseMillisecondsP95": 7.968917
+    }
+  ],
+  "languages": [
+    "json",
+    "c"
+  ],
+  "memory": [
+    {
+      "footprintAfterMB": 31.9534912109375,
+      "footprintBeforeMB": 2.5940933227539062,
+      "language": "json",
+      "megabytes": 1,
+      "treeMB": 29.359397888183594,
+      "treeTimesSource": 29.35738207673118
+    },
+    {
+      "footprintAfterMB": 244.40679931640625,
+      "footprintBeforeMB": 9.6097412109375,
+      "language": "json",
+      "megabytes": 8,
+      "treeMB": 234.79705810546875,
+      "treeTimesSource": 29.349373358055534
+    },
+    {
+      "footprintAfterMB": 18.1878662109375,
+      "footprintBeforeMB": 2.5472183227539062,
+      "language": "c",
+      "megabytes": 1,
+      "treeMB": 15.640647888183594,
+      "treeTimesSource": 15.622426769314888
+    },
+    {
+      "footprintAfterMB": 133.85983276367188,
+      "footprintBeforeMB": 9.6253662109375,
+      "language": "c",
+      "megabytes": 8,
+      "treeMB": 124.23446655273438,
+      "treeTimesSource": 15.529173179907545
+    }
+  ],
+  "notes": [
+    "parseMilliseconds: phân tích CẢ tài liệu, cây dựng từ đầu.",
+    "reparse: sửa một ký tự ở GIỮA tài liệu rồi ts_parser_parse lại với cây cũ.",
+    "visibleQuery: chạy truy vấn highlights.scm giới hạn theo byte range của một màn hình.",
+    "windowAccuracy: cắt một lát ở giữa file theo biên dòng rồi phân tích riêng, so số capture với phần tương ứng của cây phân tích cả file."
+  ],
+  "treeSitterVersion": 15,
+  "windowAccuracy": [
+    {
+      "capturesFromFullParse": 215088,
+      "capturesFromSliceParse": 215088,
+      "cutInsideMultilineConstruct": false,
+      "cutKind": "biên dòng giữa file",
+      "damageExtentBytes": 0,
+      "damageExtentPercentOfSlice": 0,
+      "language": "json",
+      "mismatchPercent": 0,
+      "mismatchedCaptures": 0,
+      "mismatchesInFirst64KB": 0,
+      "mismatchesInLast64KB": 0,
+      "mismatchesInMiddle": 0,
+      "sliceMegabytes": 1
+    },
+    {
+      "capturesFromFullParse": 157203,
+      "capturesFromSliceParse": 157453,
+      "cutInsideMultilineConstruct": false,
+      "cutKind": "biên dòng giữa file",
+      "damageExtentBytes": 2097132,
+      "damageExtentPercentOfSlice": 99.99971389579513,
+      "language": "c",
+      "mismatchPercent": 0.1603022843075514,
+      "mismatchedCaptures": 252,
+      "mismatchesInFirst64KB": 0,
+      "mismatchesInLast64KB": 252,
+      "mismatchesInMiddle": 0,
+      "sliceMegabytes": 1
+    },
+    {
+      "capturesFromFullParse": 157796,
+      "capturesFromSliceParse": 158345,
+      "cutInsideMultilineConstruct": true,
+      "cutKind": "GIỮA khối chú thích",
+      "damageExtentBytes": 2097111,
+      "damageExtentPercentOfSlice": 99.99971389293015,
+      "language": "c",
+      "mismatchPercent": 0.35045248295267306,
+      "mismatchedCaptures": 553,
+      "mismatchesInFirst64KB": 313,
+      "mismatchesInLast64KB": 240,
+      "mismatchesInMiddle": 0,
+      "sliceMegabytes": 1
+    }
+  ]
+}

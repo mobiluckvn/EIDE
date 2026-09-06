@@ -1,0 +1,17 @@
+{
+  "architecture" : "arm64",
+  "budgetMs" : 300,
+  "candidates" : 500,
+  "chunks" : 20000,
+  "enoughCandidates" : true,
+  "graphNodes" : 2000,
+  "kpi" : "NFR-KNW-05",
+  "medianRerankMs" : 12.500666,
+  "notes" : [
+
+  ],
+  "pass" : true,
+  "queries" : 20,
+  "rerankMs" : 12.500666,
+  "worstRerankMs" : 13.186083
+}

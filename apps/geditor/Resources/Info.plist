@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>GEditor</string>
+    <key>CFBundleDisplayName</key>
+    <string>GEditor</string>
+    <key>CFBundleExecutable</key>
+    <string>GEditor</string>
+    <key>CFBundleIdentifier</key>
+    <string>ai.code247.GEditor</string>
+    <!-- Biểu tượng ứng dụng. Tên KHÔNG có đuôi `.icns` — macOS tự thêm; ghi cả đuôi vào đây
+         vẫn chạy trên nhiều bản hệ điều hành nhưng không phải mọi bản, và khi hỏng thì hỏng
+         im lặng: ứng dụng hiện biểu tượng trắng mặc định mà không báo gì.
+         Tệp do `scripts/make-icon.sh` sinh từ `Resources/geditor_sunset_C_lockup.png`. -->
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.0.1</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
+    <!-- NFR-PORT-02: macOS 12 Monterey trở lên. -->
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
+
+    <key>NSHumanReadableCopyright</key>
+    <string>CÔNG TY TNHH MOBILUCK · code247.ai</string>
+
+    <!-- NFR-USE-01/04: tiếng Anh và tiếng Việt sẵn sàng từ Phase 1 (FR-UI-804). -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>vi</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>vi</string>
+        <string>en</string>
+    </array>
+
+    <!-- Bắt buộc để nộp App Store. GEditor là công cụ cho lập trình viên và người xử lý dữ
+         liệu, không phải app năng suất văn phòng. -->
+    <!-- Kênh tự cập nhật Sparkle (NFR-SEC-01) — xem docs/adr/ADR-16-sparkle.md.
+
+         SUFeedURL nằm trên TÊN MIỀN CÔNG TY SỞ HỮU, không phải của nhà cung cấp hosting. Lý do
+         là thứ không đảo ngược được: đổi URL sau khi đã phát hành thì mọi bản đã cài không bao
+         giờ thấy bản cập nhật nào nữa, và hỏng TRONG IM LẶNG — người dùng không thấy lỗi, họ
+         chỉ đứng lại mãi ở phiên bản cũ. Subdomain riêng để hosting đổi bên dưới mà URL không
+         đổi. HTTPS bắt buộc: Sparkle từ chối feed http://.
+
+         SUPublicEDKey là KHOÁ THẬT từ 28/08/2026, sinh bằng vendor/sparkle/bin/generate_keys
+         trên máy anh Công. Khoá riêng nằm trong Keychain của anh (chỗ sign_update đọc lúc ký)
+         và có một bản sao ở secrets/ theo quyết định ở docs/khoa-va-ky.md §2bis.
+
+         Đã kiểm bằng VÒNG THẬT trước khi đưa vào đây, không tin suông vào định dạng: sign_update
+         ký một gói, chữ ký thẩm định đúng bằng khoá công khai này, và đối chứng âm — sửa một
+         byte của gói thì chữ ký bị từ chối. Khoá công khai suy từ tệp khớp đúng khoá Keychain.
+
+         ĐỔI CHUỖI NÀY LÀ MỘT VIỆC KHÔNG QUAY LẠI ĐƯỢC sau lần phát hành đầu tiên: mọi bản đã
+         cài chỉ tin đúng khoá này. Xem docs/adr/ADR-16-sparkle.md.
+
+         SUEnableAutomaticChecks = false: app không tự đi mạng khi chưa ai cho phép. Sparkle sẽ
+         hỏi người dùng ở lần kiểm tra đầu tiên, và đó là chỗ đúng để hỏi. -->
+    <key>SUFeedURL</key>
+    <string>https://geditor.code247.ai/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>XDhykAxCsgq8poBrEByGNfacMG0kco+4qHHLSTtHZ6A=</string>
+    <key>SUEnableAutomaticChecks</key>
+    <false/>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.developer-tools</string>
+
+    <!-- Kiểu tài liệu mở được (NFR-USE-01).
+         Khai theo UTI CHUẨN chứ không theo đuôi file: `public.plain-text` đã bao mọi thứ kế
+         thừa từ nó, kể cả những đuôi chưa nghĩ tới. Ba dòng đầu là các kiểu có UTI riêng mà
+         KHÔNG kế thừa public.plain-text theo cách ta cần, nên phải kể tên. -->
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Văn bản</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.plain-text</string>
+                <string>public.source-code</string>
+                <string>public.comma-separated-values-text</string>
+                <string>public.tab-separated-values-text</string>
+                <string>public.json</string>
+                <string>public.xml</string>
+                <string>public.yaml</string>
+                <string>net.daringfireball.markdown</string>
+                <string>public.log</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- Ảnh. `Viewer` chứ không `Editor`: GEditor xem, phóng, xoay, chép — không sửa
+                 điểm ảnh. Khai `Editor` là hứa một thứ không có. -->
+            <key>CFBundleTypeName</key>
+            <string>Ảnh</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.image</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- PDF: xem, tìm, và CHÚ THÍCH (bôi vàng, gạch chân, ghi chú) → `Editor`. -->
+            <key>CFBundleTypeName</key>
+            <string>PDF</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.adobe.pdf</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- Office: sửa được nội dung và ⌘S ghi ngược vào chính tệp → `Editor`. -->
+            <key>CFBundleTypeName</key>
+            <string>Tài liệu Office</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>org.openxmlformats.wordprocessingml.document</string>
+                <string>org.openxmlformats.spreadsheetml.sheet</string>
+                <string>org.openxmlformats.presentationml.presentation</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- File nén: duyệt mục, mở mục ra tab, bung ra thư mục. Không ghi ngược vào kho
+                 nên `Viewer`. -->
+            <key>CFBundleTypeName</key>
+            <string>File nén</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.zip-archive</string>
+                <string>public.tar-archive</string>
+                <string>org.gnu.gnu-zip-archive</string>
+                <string>org.gnu.gnu-zip-tar-archive</string>
+                <string>public.bzip2-archive</string>
+                <string>org.tukaani.xz-archive</string>
+                <string>org.7-zip.7-zip-archive</string>
+                <string>com.rarlab.rar-archive</string>
+                <!-- Nhóm dưới đây mở được nhờ libarchive nạp từ nguồn (Sources/LibArchive).
+                     Bốn UTI đầu nằm trong không gian tên `public.` và `com.apple.`, tức do
+                     chính macOS khai — chỉ cần trỏ vào, không phải khai lại. -->
+                <string>public.cpio-archive</string>
+                <string>public.iso-image</string>
+                <string>com.apple.xar-archive</string>
+                <string>public.z-archive</string>
+                <!-- Hai UTI cuối thì KHÔNG có trên một máy sạch; xem UTImportedTypeDeclarations
+                     ở cuối tệp. -->
+                <string>com.microsoft.cab-archive</string>
+                <string>vn.geditor.lha-archive</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- Nhạc: phát bằng AVFoundation của hệ điều hành. `Viewer` vì không ghi ngược. -->
+            <key>CFBundleTypeName</key>
+            <string>Âm thanh</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.audio</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- Phim. Khai `public.movie` chứ không liệt kê từng định dạng: những gì phát được
+                 là do bộ giải mã của macOS quyết, và nó đổi theo từng bản hệ điều hành. Định
+                 dạng không phát được vẫn mở ra khung nói rõ lý do, kèm chế độ nhị phân. -->
+            <key>CFBundleTypeName</key>
+            <string>Video</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.movie</string>
+            </array>
+        </dict>
+        <dict>
+            <!-- Mọi file khác: mở được ở chế độ chỉ đọc/hex. Một trình soạn thảo hạng
+                 Notepad++ phải mở được thứ người dùng kéo vào, kể cả khi không nhận ra kiểu. -->
+            <key>CFBundleTypeName</key>
+            <string>Tệp bất kỳ</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>None</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.data</string>
+            </array>
+        </dict>
+    </array>
+    <!-- Ba kiểu tệp macOS KHÔNG biết sẵn. Không khai thì Finder không có gì để so với
+         `LSItemContentTypes` ở trên, và mục "Mở bằng" sẽ không hiện GEditor dù ứng dụng mở
+         được tệp — người dùng chỉ thấy nó im lặng vắng mặt.
+
+         `UTImportedTypeDeclarations` (nhập) chứ không `UTExported` (xuất): ba định dạng này do
+         người khác định nghĩa, ta chỉ đọc. Khai `UTExported` là nhận mình là chủ sở hữu kiểu,
+         và khi ấy hệ thống lấy MÔ TẢ của ta làm chuẩn cho cả máy. -->
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>org.7-zip.7-zip-archive</string>
+            <key>UTTypeDescription</key>
+            <string>Kho nén 7-Zip</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.archive</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>7z</string></array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.rarlab.rar-archive</string>
+            <key>UTTypeDescription</key>
+            <string>Kho nén RAR</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.archive</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>rar</string></array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>org.tukaani.xz-archive</string>
+            <key>UTTypeDescription</key>
+            <string>Kho nén XZ</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.archive</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>xz</string></array>
+            </dict>
+        </dict>
+        <dict>
+            <!-- Trên máy này UTI của CAB có tồn tại, nhưng do The Unarchiver khai chứ không
+                 phải macOS — kiểm bằng `lsregister -dump`. Tức trên một máy sạch nó KHÔNG có,
+                 và một dòng LSItemContentTypes trỏ vào UTI không tồn tại là dòng vô nghĩa. -->
+            <key>UTTypeIdentifier</key>
+            <string>com.microsoft.cab-archive</string>
+            <key>UTTypeDescription</key>
+            <string>Kho nén CAB</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.archive</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>cab</string></array>
+            </dict>
+        </dict>
+        <dict>
+            <!-- LHA/LZH thì không có UTI nào, của ai, ở đâu — nên phải tự đặt tên trong không
+                 gian tên của GEditor. Đây là chỗ DUY NHẤT trong tệp này dùng tiền tố
+                 `vn.geditor.`, và nó vẫn là khai NHẬP: định dạng do người khác định nghĩa từ
+                 thập niên 1980, GEditor chỉ đọc. -->
+            <key>UTTypeIdentifier</key>
+            <string>vn.geditor.lha-archive</string>
+            <key>UTTypeDescription</key>
+            <string>Kho nén LHA</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.archive</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array><string>lha</string><string>lzh</string></array>
+            </dict>
+        </dict>
+    </array>
+    <key>NSSupportsAutomaticTermination</key>
+    <false/>
+    <key>NSSupportsSuddenTermination</key>
+    <false/>
+
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSRequiresAquaSystemAppearance</key>
+    <false/>
+
+    <!-- Services: nhận văn bản từ ứng dụng KHÁC (FR-AUTO-606).
+
+         Nửa này chạy được ở CẢ HAI kênh phát hành — Services đi qua pasteboard của hệ điều
+         hành, không đòi quyền gì mà App Sandbox từ chối. (Nửa AppleScript ở cuối file.)
+
+         `NSReturnTypes` để RỖNG là có chủ ý: hai dịch vụ này MỞ văn bản ra một tab mới chứ
+         không trả kết quả ngược về ứng dụng gọi. Khai kiểu trả về mà không trả gì thì Safari
+         và Mail sẽ chờ một câu trả lời không bao giờ tới. -->
+    <key>NSServices</key>
+    <array>
+        <dict>
+            <key>NSMenuItem</key>
+            <dict>
+                <key>default</key>
+                <string>Mở trong GEditor</string>
+            </dict>
+            <key>NSMessage</key>
+            <string>openSelectedTextInGEditor</string>
+            <key>NSPortName</key>
+            <string>GEditor</string>
+            <key>NSSendTypes</key>
+            <array>
+                <string>NSStringPboardType</string>
+            </array>
+        </dict>
+        <dict>
+            <key>NSMenuItem</key>
+            <dict>
+                <key>default</key>
+                <string>Mở file trong GEditor</string>
+            </dict>
+            <key>NSMessage</key>
+            <string>openSelectedFilesInGEditor</string>
+            <key>NSPortName</key>
+            <string>GEditor</string>
+            <key>NSSendTypes</key>
+            <array>
+                <string>NSFilenamesPboardType</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- AppleScript (FR-AUTO-606, nửa còn lại sau Services).
+
+         `OSAScriptingDefinition` trỏ tới file .sdef trong bundle. `NSAppleScriptEnabled` là
+         công tắc: thiếu nó thì Script Editor thấy ứng dụng nhưng từ điển rỗng, và người dùng
+         kết luận GEditor không hỗ trợ AppleScript. -->
+    <key>NSAppleScriptEnabled</key>
+    <true/>
+    <key>OSAScriptingDefinition</key>
+    <string>GEditor.sdef</string>
+
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+</dict>
+</plist>

@@ -1,0 +1,39 @@
+{
+  "architecture" : "arm64",
+  "build" : {
+    "buildMs" : 337.312833,
+    "columnCount" : 6,
+    "denseIndexKB" : 7812.5078125,
+    "fixtureMB" : 74.38814163208008,
+    "indexKB" : 122.078125,
+    "rowCount" : 1000001,
+    "rows" : 1000000
+  },
+  "kpi" : [
+    "FR-CSV-403 (Table view)"
+  ],
+  "lookup" : {
+    "budgetMs" : 100,
+    "offsetToRowP99Ms" : 0.037458,
+    "pass" : true,
+    "samples" : 2000,
+    "screenMaxMs" : 0.545333,
+    "screenP50Ms" : 0.036167,
+    "screenP99Ms" : 0.057875,
+    "switchP99Ms" : 0.095333
+  },
+  "notes" : [
+    "Trần 100 ms của đặc tả áp cho CHUYỂN CHẾ ĐỘ, không cho lần dựng chỉ mục — dựng chỉ mục chạy nền một lần khi vào chế độ CSV.",
+    "Vị trí tra cứu lấy ngẫu nhiên TẤT ĐỊNH khắp tài liệu: đọc tuần tự sẽ được đệm của hệ điều hành che cho và cho ra con số dễ hơn thực tế.",
+    "Fixture có quoted field chứa dấu phẩy và xuống dòng, nên đường phân tích lại khối là đường thật chứ không phải đường tắt.",
+    "Con số là của MÁY ĐANG ĐO; phải đo lại trên máy chuẩn STP §2.1 trước khi chốt."
+  ],
+  "sort" : {
+    "applyEditCount" : 1,
+    "applyToFileMs" : 555.595042,
+    "numericColumnMs" : 852.267333,
+    "orderCorrect" : true,
+    "rows" : 1000001,
+    "textColumnMs" : 3239.970416
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "poc": "O",
+  "framework": "AVKit",
+  "baseMedianMs": 148.241,
+  "linkedMedianMs": 152.323,
+  "deltaMs": 4.082,
+  "noiseFloorMs": 6.881,
+  "lazy": {
+    "preMainMs": 154.123,
+    "images": 516,
+    "avfoundationLoaded": 1,
+    "lazyDlopenMs": 3.775
+  },
+  "runs": 15,
+  "method": "hai binary khác nhau đúng một cờ -framework; mỗi lần đo là một bản sao mới"
+}

@@ -1,0 +1,227 @@
+PoC-A · ADR-01
+ngày 2026-08-20 15:33:52
+macOS 26.5.2 · Apple M2 Pro
+kiến trúc chạy: arm64
+
+── Scintilla-Cocoa 5.5.5 · 1.0 MB ──
+  nạp            0.006 s   (15212 dòng)
+  phys_footprint 20.7 MB
+  khung nhìn     1100×480 pt, 36 dòng hiện
+  gõ             n=300  p50=0.93 ms  p95=12.30 ms  p99=14.73 ms  max=16.23 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  521170
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    1000 caret trong 5.1 ms
+  column mode    10000 dòng trong 100.2 ms
+  nhảy cuối file 0.002 s
+
+── TextKit 2 (NSTextView) · 1.0 MB ──
+  nạp            0.018 s   (15212 dòng)
+  phys_footprint 4.9 MB
+  khung nhìn     1100×480 pt, ~26 dòng hiện
+  bảng chỉ số dòng: 0.1 MB
+  gõ             n=300  p50=0.92 ms  p95=1.24 ms  p99=1.41 ms  max=1.74 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  412150
+  nội dung tăng  300 / 300 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.001 s
+
+── TextKit 2 · cửa sổ 2 MB trên piece table · 1.0 MB ──
+  nạp            0.028 s   (15211 dòng)
+  phys_footprint 14.1 MB
+  khung nhìn     1100×480 pt · cửa sổ 1.0 MB · nạp lại cửa sổ 1 lần, tb 6.8 ms
+  gõ             n=300  p50=1.96 ms  p95=2.24 ms  p99=2.49 ms  max=2.70 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  521100
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.003 s
+
+── Scintilla-Cocoa 5.5.5 · 10.0 MB ──
+  nạp            0.013 s   (149957 dòng)
+  phys_footprint 48.1 MB
+  khung nhìn     1100×480 pt, 36 dòng hiện
+  gõ             n=300  p50=0.93 ms  p95=8.39 ms  p99=12.08 ms  max=29.29 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  5212361
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    1000 caret trong 4.7 ms
+  column mode    10000 dòng trong 98.1 ms
+  nhảy cuối file 0.002 s
+
+── TextKit 2 (NSTextView) · 10.0 MB ──
+  nạp            0.066 s   (149957 dòng)
+  phys_footprint 23.5 MB
+  khung nhìn     1100×480 pt, ~26 dòng hiện
+  bảng chỉ số dòng: 1.1 MB
+  gõ             n=300  p50=0.90 ms  p95=1.23 ms  p99=1.32 ms  max=1.44 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  4137671
+  nội dung tăng  300 / 300 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.001 s
+
+── TextKit 2 · cửa sổ 2 MB trên piece table · 10.0 MB ──
+  nạp            0.034 s   (149956 dòng)
+  phys_footprint 16.0 MB
+  khung nhìn     1100×480 pt · cửa sổ 2.0 MB · nạp lại cửa sổ 1 lần, tb 9.1 ms
+  gõ             n=300  p50=3.06 ms  p95=3.52 ms  p99=3.73 ms  max=8.22 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  5212361
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.012 s
+
+── Scintilla-Cocoa 5.5.5 · 50.0 MB ──
+  nạp            0.042 s   (743491 dòng)
+  phys_footprint 171.0 MB
+  khung nhìn     1100×480 pt, 36 dòng hiện
+  gõ             n=300  p50=0.93 ms  p95=11.83 ms  p99=13.51 ms  max=16.55 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  26158870
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    1000 caret trong 6.0 ms
+  column mode    10000 dòng trong 104.0 ms
+  nhảy cuối file 0.002 s
+
+── TextKit 2 (NSTextView) · 50.0 MB ──
+  nạp            0.295 s   (743491 dòng)
+  phys_footprint 104.3 MB
+  khung nhìn     1100×480 pt, ~26 dòng hiện
+  bảng chỉ số dòng: 5.7 MB
+  gõ             n=300  p50=0.87 ms  p95=1.13 ms  p99=1.26 ms  max=1.40 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  20830525
+  nội dung tăng  300 / 300 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.001 s
+
+── TextKit 2 · cửa sổ 2 MB trên piece table · 50.0 MB ──
+  nạp            0.040 s   (743490 dòng)
+  phys_footprint 8.7 MB
+  khung nhìn     1100×480 pt · cửa sổ 2.0 MB · nạp lại cửa sổ 1 lần, tb 12.2 ms
+  gõ             n=300  p50=3.00 ms  p95=3.40 ms  p99=3.68 ms  max=7.65 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  26158870
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.011 s
+
+── Scintilla-Cocoa 5.5.5 · 100.0 MB ──
+  nạp            0.080 s   (1478635 dòng)
+  phys_footprint 323.8 MB
+  khung nhìn     1100×480 pt, 36 dòng hiện
+  gõ             n=300  p50=1.09 ms  p95=12.41 ms  p99=15.38 ms  max=31.29 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  52133958
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    1000 caret trong 6.3 ms
+  column mode    10000 dòng trong 106.8 ms
+  nhảy cuối file 0.003 s
+
+── TextKit 2 (NSTextView) · 100.0 MB ──
+  nạp            0.558 s   (1478635 dòng)
+  phys_footprint 188.5 MB
+  khung nhìn     1100×480 pt, ~26 dòng hiện
+  bảng chỉ số dòng: 11.3 MB
+  gõ             n=300  p50=0.85 ms  p95=1.11 ms  p99=1.30 ms  max=1.36 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  41537081
+  nội dung tăng  300 / 300 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.001 s
+
+── TextKit 2 · cửa sổ 2 MB trên piece table · 100.0 MB ──
+  nạp            0.071 s   (1478634 dòng)
+  phys_footprint 16.2 MB
+  khung nhìn     1100×480 pt · cửa sổ 2.0 MB · nạp lại cửa sổ 1 lần, tb 9.0 ms
+  gõ             n=300  p50=3.00 ms  p95=3.40 ms  p99=3.79 ms  max=8.01 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  52133958
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.011 s
+
+── Scintilla-Cocoa 5.5.5 · 250.0 MB ──
+  nạp            0.192 s   (3673329 dòng)
+  phys_footprint 784.1 MB
+  khung nhìn     1100×480 pt, 36 dòng hiện
+  gõ             n=300  p50=3.54 ms  p95=14.14 ms  p99=16.67 ms  max=73.63 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  130516478
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    1000 caret trong 5.7 ms
+  column mode    10000 dòng trong 102.5 ms
+  nhảy cuối file 0.002 s
+
+── TextKit 2 (NSTextView) · 250.0 MB ──
+  nạp            1.385 s   (3673329 dòng)
+  phys_footprint 464.3 MB
+  khung nhìn     1100×480 pt, ~26 dòng hiện
+  bảng chỉ số dòng: 28.0 MB
+  gõ             n=300  p50=0.86 ms  p95=1.11 ms  p99=1.19 ms  max=1.30 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  104190960
+  nội dung tăng  300 / 300 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.001 s
+
+── TextKit 2 · cửa sổ 2 MB trên piece table · 250.0 MB ──
+  nạp            0.129 s   (3673328 dòng)
+  phys_footprint 16.1 MB
+  khung nhìn     1100×480 pt · cửa sổ 2.0 MB · nạp lại cửa sổ 1 lần, tb 8.6 ms
+  gõ             n=300  p50=2.97 ms  p95=3.30 ms  p99=3.57 ms  max=7.47 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  130516478
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.011 s
+
+── Scintilla-Cocoa 5.5.5 · 500.0 MB ──
+  nạp            0.389 s   (7331152 dòng)
+  phys_footprint 1555.1 MB
+  khung nhìn     1100×480 pt, 36 dòng hiện
+  gõ             n=300  p50=4.67 ms  p95=8.86 ms  p99=28.27 ms  max=148.73 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  261588507
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    1000 caret trong 5.4 ms
+  column mode    10000 dòng trong 101.2 ms
+  nhảy cuối file 0.003 s
+
+── TextKit 2 (NSTextView) · 500.0 MB ──
+  nạp            2.808 s   (7331152 dòng)
+  phys_footprint 928.5 MB
+  khung nhìn     1100×480 pt, ~26 dòng hiện
+  bảng chỉ số dòng: 55.9 MB
+  gõ             n=300  p50=0.92 ms  p95=1.23 ms  p99=1.37 ms  max=1.78 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  209048579
+  nội dung tăng  300 / 300 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.001 s
+
+── TextKit 2 · cửa sổ 2 MB trên piece table · 500.0 MB ──
+  nạp            0.293 s   (7331151 dòng)
+  phys_footprint 13.3 MB
+  khung nhìn     1100×480 pt · cửa sổ 2.0 MB · nạp lại cửa sổ 1 lần, tb 8.8 ms
+  gõ             n=300  p50=2.96 ms  p95=3.31 ms  p99=3.73 ms  max=8.53 ms
+  số lần vẽ      300 / 300 phím
+  caret bắt đầu  261588433
+  nội dung tăng  350 / 350 đơn vị
+  multi-caret    KHÔNG hỗ trợ
+  column mode    KHÔNG hỗ trợ
+  nhảy cuối file 0.012 s
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Entitlement của BẢN APP STORE (NFR-SEC-01).
+
+  GEditor phát hành qua hai kênh — xem `Sources/GEditorCore/Session/Distribution.swift`.
+  Bản này chạy trong App Sandbox và KHÔNG có `geditor` CLI.
+
+  com.apple.security.cs.allow-jit là HỆ QUẢ TRỰC TIẾP của ADR-03: PCRE2 sinh mã máy lúc chạy
+  qua sljit, cần vùng nhớ MAP_JIT vừa ghi vừa thực thi. Hardened runtime — bắt buộc để
+  notarize — chặn vùng nhớ đó. Thiếu entitlement này thì bản phát hành CRASH ngay lần tìm
+  kiếm đầu tiên, trong khi bản build ad-hoc lúc phát triển vẫn chạy bình thường: đúng kiểu
+  lỗi chỉ lộ ra sau khi đã gửi đi.
+
+  com.apple.security.app-sandbox là BẮT BUỘC với Mac App Store — mục tiêu phát hành đã chốt
+  ngày 22/08/2026 (docs/appstore-ra-soat.md). Nó đi kèm files.user-selected.read-write: GEditor
+  mở file bất kỳ trên đĩa, nhưng luôn qua NSOpenPanel hoặc kéo-thả, tức là luôn do người dùng
+  chỉ định. Quyền ấy chỉ sống trong phiên; muốn sống qua lần khởi động sau thì phải lưu
+  security-scoped bookmark — xem `SandboxAccess`.
+
+  allow-jit dùng CHUNG được với sandbox: sljit của PCRE2 xin vùng nhớ bằng MAP_JIT
+  (sljitExecAllocatorApple.c), đúng cơ chế Apple dành cho việc này.
+
+  com.apple.security.network.client — XIN VÌ WEBKIT, KHÔNG VÌ GEDITOR CẦN MẠNG.
+
+  Đây là chỗ đã đảo một quyết định cũ, nên phải ghi rõ vì sao. Bản trước viết "network.*:
+  GEditor không đụng tới, đừng xin" — đúng với hành vi, nhưng SAI với thứ hệ thống đòi. Một
+  app sandbox dùng WKWebView phải có entitlement này, kể cả khi trang chỉ là HTML dựng trong
+  bộ nhớ và không nạp một URL nào: WebKit luôn khởi động tiến trình Networking riêng, và
+  không có quyền thì nó không lên, còn WKWebView thì đứng im mãi mãi.
+
+  ĐÃ ĐO, KHÔNG PHẢI SUY. Bundle App Store thiếu dòng này: 27 bài tự kiểm đỏ, tất cả cùng một
+  câu "hết giờ chờ vẽ". Thêm vào: 273/276 đạt, 0 trượt. Bundle bản trực tiếp — cùng mã, cùng
+  đóng gói, chỉ khác entitlement — thì 276/276. Tức toàn bộ cụm FR-MMD (sơ đồ, Mermaid Studio,
+  Graph Preview, hình trong báo cáo) CHẾT LẶNG ở tay người dùng App Store nếu thiếu dòng này.
+
+  NÓ KHÔNG NỚI LỎNG NFR-MMD-03 ("WKWebView sandboxed: không network"). Hàng rào thật nằm ở
+  `MermaidRenderer`: một `WKContentRuleList` chặn MỌI URL, dựng xong mới nạp trang, và không
+  dựng được thì KHÔNG nạp trang. PoC-L đã kiểm nó có đối chứng âm — bật hàng rào thì "BỊ CHẶN",
+  tắt thì "ĐI ĐƯỢC". Entitlement này chỉ cho WebKit dựng nổi tiến trình của nó; cái quyết định
+  gói tin có ra khỏi máy hay không vẫn là hàng rào ấy, và nó vẫn chặn tất cả.
+
+  Cố ý KHÔNG có ở đây:
+    - allow-unsigned-executable-memory: rộng hơn allow-jit rất nhiều và không cần.
+    - allow-dyld-environment-variables / disable-library-validation: mở đường nạp mã lạ, và
+      App Store từ chối. Dylib grammar nặng (ADR-08) nằm TRONG bundle và ký cùng bundle nên
+      không cần tới chúng.
+    - network.server: GEditor không mở cổng nghe. WebKit cũng không đòi.
+    - files.downloads / files.pictures: GEditor không đụng tới, đừng xin.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.network.client</key>
+    <true/>
+</dict>
+</plist>

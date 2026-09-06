@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBL-UIX-GEDIT-001 · Đặc tả UI/UX — GEditor for macOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DOCUMENT DESIGN TOKENS ============ */
+:root{
+  --navy:#A34309; --teal:#ED6A1F; --gold:#F8B942;
+  --ink:#17222e; --ink-2:#4a5866; --ink-3:#8494a3;
+  --paper:#f7f9fb; --card:#ffffff; --line:#dfe6ec;
+  --code-bg:#241207; --code-ink:#f3ddc9;
+  --doc-font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --disp:"Space Grotesk",var(--doc-font);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --rail:264px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--doc-font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.65}
+
+/* ============ DOC CHROME ============ */
+.rail{position:fixed;inset:0 auto 0 0;width:var(--rail);background:#7A2E08;color:#F6D9C2;overflow-y:auto;padding:26px 0 40px;z-index:50}
+.rail .brand{padding:0 22px 18px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:14px}
+.rail .brand b{display:block;font-family:var(--disp);font-size:19px;color:#fff;letter-spacing:.2px}
+.rail .brand span{font-size:11.5px;color:#F2BE93}
+.rail a{display:block;padding:7px 22px;color:#F0CBAA;text-decoration:none;font-size:13px;border-left:3px solid transparent}
+.rail a:hover{background:rgba(255,255,255,.06);color:#fff}
+.rail a.h{margin-top:10px;font-weight:600;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.09em}
+.rail a:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+main{margin-left:var(--rail);padding:0 0 120px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 44px}
+
+/* hero */
+.hero{background:linear-gradient(135deg,#6E2906 0%,#B34A0C 55%,#ED6A1F 100%);color:#fff;padding:58px 0 46px;margin-bottom:44px}
+.hero .eyebrow{font-family:var(--mono);font-size:12px;color:#FFD9A1;letter-spacing:.12em}
+.hero h1{font-family:var(--disp);font-size:44px;line-height:1.12;margin:12px 0 10px;font-weight:700}
+.hero h1 em{font-style:normal;color:#FFD9A1}
+.hero p{max-width:760px;color:#FFE3CC;font-size:16px}
+.hero .meta{display:flex;gap:26px;margin-top:22px;flex-wrap:wrap}
+.hero .meta div{font-size:12.5px;color:#F4C9A3}
+.hero .meta b{display:block;color:#fff;font-size:13.5px;font-weight:600}
+
+h2{font-family:var(--disp);font-size:27px;color:var(--navy);margin:56px 0 6px;scroll-margin-top:24px}
+h2 .no{color:var(--teal);margin-right:10px;font-family:var(--mono);font-size:19px}
+h3{font-family:var(--disp);font-size:18.5px;color:var(--navy);margin:30px 0 10px;scroll-margin-top:24px}
+h4{font-size:14.5px;color:var(--ink);margin:18px 0 6px}
+p{margin:0 0 12px;max-width:860px}
+p.lead{font-size:16px;color:var(--ink-2);max-width:860px;margin-bottom:18px}
+ul.doc{margin:0 0 14px 20px;max-width:860px}
+ul.doc li{margin-bottom:6px}
+.small{font-size:12.5px;color:var(--ink-3)}
+kbd{font-family:var(--mono);font-size:11.5px;background:#FBF0E6;border:1px solid #EAD3BC;border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--navy);white-space:nowrap}
+code{font-family:var(--mono);font-size:12.5px;background:#FBEede;border-radius:4px;padding:1px 5px;color:#8A3A0C}
+.tag{display:inline-block;font-family:var(--mono);font-size:10.5px;background:#FDEADB;color:#A34309;border:1px solid #F3CDAA;border-radius:20px;padding:1px 9px;vertical-align:2px;margin-left:6px}
+.tag.p0{background:#fdeeee;color:#a12626;border-color:#f2cccc}
+.tag.ph{background:#fdf4e0;color:#8a6510;border-color:#f0dcae}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:16px 0}
+.grid{display:grid;gap:16px;margin:16px 0}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:1100px){.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:880px){.rail{display:none}main{margin-left:0}.g2,.g3{grid-template-columns:1fr}.wrap{padding:0 20px}}
+
+table.spec{width:100%;border-collapse:collapse;margin:14px 0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13.5px}
+table.spec th{background:var(--navy);color:#fff;text-align:left;padding:9px 12px;font-weight:600;font-size:12.5px}
+table.spec td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+table.spec tr:nth-child(even) td{background:#f4f8fb}
+table.spec td:first-child{font-family:var(--mono);font-size:12px;color:var(--navy);white-space:nowrap}
+
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px;margin:14px 0}
+.sw{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.sw .chip{height:56px}
+.sw .nm{padding:8px 11px}
+.sw .nm b{display:block;font-size:12.5px}
+.sw .nm span{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+
+.callout{border-left:4px solid var(--gold);background:#fffaf0;border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;max-width:860px}
+.callout.teal{border-color:var(--teal);background:#FEF3E9}
+.callout b{color:var(--navy)}
+
+.flow{display:flex;gap:0;flex-wrap:wrap;margin:14px 0;counter-reset:st}
+.flow .st{flex:1 1 180px;min-width:180px;background:var(--card);border:1px solid var(--line);padding:14px 16px 12px;position:relative;counter-increment:st}
+.flow .st:first-child{border-radius:10px 0 0 10px}
+.flow .st:last-child{border-radius:0 10px 10px 0}
+.flow .st+.st{border-left:none}
+.flow .st::before{content:counter(st);position:absolute;top:-11px;left:12px;background:var(--teal);color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.flow .st b{display:block;font-size:13px;color:var(--navy);margin:4px 0 4px}
+.flow .st span{font-size:12px;color:var(--ink-2);display:block;line-height:1.5}
+
+/* ============ MOCKUP: macOS window ============ */
+.stage{margin:18px 0 8px}
+.stage .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.stage .cap{font-size:12.5px;color:var(--ink-3)}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.toggle button{border:0;background:transparent;font:600 12px var(--doc-font);color:var(--ink-2);padding:5px 13px;cursor:pointer}
+.toggle button.on{background:var(--navy);color:#fff}
+.toggle button:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+
+.mac{border-radius:11px;overflow:hidden;box-shadow:0 18px 50px rgba(12,32,56,.22),0 2px 8px rgba(12,32,56,.14);border:1px solid var(--mac-outline);font-family:var(--doc-font);font-size:12.5px}
+/* mockup theme vars — light */
+.mac{
+  --mac-outline:#c6ced6; --tb:#ececee; --tb-ink:#3c4650; --tb-line:#d7dbdf;
+  --tabbar:#e3e4e6; --tab:#d3d5d8; --tab-on:#ffffff; --tab-ink:#4c565f;
+  --ed-bg:#ffffff; --ed-ink:#1f2933; --gut:#f3f5f7; --gut-ink:#9aa7b2; --gut-line:#e6eaee;
+  --sel:#FFDCC5; --caret:#C24E08; --cur-line:#FDF4EC;
+  --side:#f4f6f8; --side-ink:#3c4650; --side-line:#e2e7eb;
+  --status:#eef0f2; --status-ink:#556270;
+  --inv:#b6c2cc;
+  --find:#f4f6f8;
+  --c1:#0b62c4;--c2:#0a8f6f;--c3:#7A6A00;--c4:#8a3ec4;--c5:#c02959;--c6:#2E7DA1;
+  --mark:#fff1c2; --err:#d13438; --acc:#C24E08;
+}
+.mac.dark{
+  --mac-outline:#2A1C11; --tb:#2C2118; --tb-ink:#D8C8BA; --tb-line:#1E150E;
+  --tabbar:#241B13; --tab:#2C2118; --tab-on:#171310; --tab-ink:#B39C88;
+  --ed-bg:#171310; --ed-ink:#E7DCD2; --gut:#1D1712; --gut-ink:#8A7462; --gut-line:#2A211A;
+  --sel:#4A2410; --caret:#FF9E5E; --cur-line:#1d1610;
+  --side:#1C1610; --side-ink:#C9B7A6; --side-line:#2A211A;
+  --status:#1A140F; --status-ink:#A08A76;
+  --inv:#4A3826;
+  --find:#211913;
+  --c1:#57a8ff;--c2:#3fd6ab;--c3:#E4CB4A;--c4:#c88aff;--c5:#ff7ba1;--c6:#6FC7E8;
+  --mark:#4d3f11; --err:#ff7075; --acc:#FF9E5E;
+}
+.mac .titlebar{background:var(--tb);color:var(--tb-ink);display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--tb-line)}
+.lights{display:flex;gap:7px}
+.lights i{width:12px;height:12px;border-radius:50%;display:block}
+.lights i:nth-child(1){background:#ff5f57}.lights i:nth-child(2){background:#febc2e}.lights i:nth-child(3){background:#28c840}
+.mac .ttl{flex:1;text-align:center;font-weight:600;font-size:12.5px;opacity:.85}
+.mac .tspace{width:56px}
+.tabbar{display:flex;align-items:stretch;background:var(--tabbar);border-bottom:1px solid var(--tb-line);padding:5px 8px 0;gap:4px}
+.tab{background:var(--tab);color:var(--tab-ink);border-radius:7px 7px 0 0;padding:5px 12px 6px;display:flex;align-items:center;gap:7px;font-size:12px;max-width:210px}
+.tab.on{background:var(--tab-on);color:var(--ed-ink);font-weight:600}
+.tab .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.tab .x{opacity:.5;font-size:11px}
+.tab .pin{font-size:10px;color:var(--teal)}
+.body-split{display:flex;min-height:300px}
+.sidebar{width:190px;background:var(--side);color:var(--side-ink);border-right:1px solid var(--side-line);padding:9px 0;font-size:12px;flex:none}
+.sidebar .sh{padding:2px 13px 7px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;opacity:.65;font-weight:700}
+.sidebar .it{padding:3.5px 13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar .it.on{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--ed-ink);border-radius:6px;margin:0 6px;padding:3.5px 7px}
+.sidebar .it i{font-style:normal;margin-right:6px;opacity:.75}
+.editor{flex:1;background:var(--ed-bg);color:var(--ed-ink);font-family:var(--mono);font-size:12px;line-height:1.75;overflow:auto;position:relative}
+.row{display:flex;white-space:pre}
+.row .no{width:44px;flex:none;text-align:right;padding-right:10px;color:var(--gut-ink);background:var(--gut);border-right:1px solid var(--gut-line);user-select:none}
+.row .tx{padding-left:12px;flex:1;min-width:0}
+.row.cur .tx{background:var(--cur-line)}
+.row .fold{color:var(--gut-ink);cursor:default}
+.sel{background:var(--sel);border-radius:2px}
+.mkline{background:var(--mark)}
+.caret{display:inline-block;width:2px;height:1.05em;background:var(--caret);vertical-align:-2px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}}
+.inv{color:var(--inv)}
+.c1{color:var(--c1)}.c2{color:var(--c2)}.c3{color:var(--c3)}.c4{color:var(--c4)}.c5{color:var(--c5)}.c6{color:var(--c6)}
+.err{color:var(--err);text-decoration:wavy underline}
+.statusbar{display:flex;gap:0;background:var(--status);color:var(--status-ink);border-top:1px solid var(--tb-line);font-size:11px}
+.statusbar .sg{padding:5px 11px;border-right:1px solid var(--tb-line);white-space:nowrap}
+.statusbar .sg.click{color:var(--acc);cursor:pointer}
+.statusbar .sp{flex:1;border-right:none}
+.findbar{background:var(--find);border-bottom:1px solid var(--tb-line);padding:7px 10px;display:flex;gap:8px;align-items:center;color:var(--tb-ink)}
+.findbar .fld{flex:1;display:flex;align-items:center;gap:8px;background:var(--ed-bg);border:1px solid var(--tb-line);border-radius:7px;padding:4px 10px;font-family:var(--mono);font-size:12px;color:var(--ed-ink)}
+.findbar .fld .ph{opacity:.45}
+.chipbtn{border:1px solid var(--tb-line);background:var(--ed-bg);color:var(--tb-ink);border-radius:6px;font:600 10.5px var(--mono);padding:3px 7px}
+.chipbtn.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.mbtn{border:1px solid var(--tb-line);background:var(--ed-bg);color:var(--tb-ink);border-radius:7px;font:600 11.5px var(--doc-font);padding:4px 12px}
+.mbtn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.mac.dark .mbtn.pri{color:#331503}
+.mac.dark .chipbtn.on{color:#331503}
+.banner{display:flex;gap:10px;align-items:center;background:color-mix(in srgb,var(--gold) 22%,var(--ed-bg));border-bottom:1px solid var(--tb-line);color:var(--ed-ink);padding:6px 12px;font-size:12px}
+.banner b{font-weight:700}
+.banner .mbtn{margin-left:auto}
+
+.anno{position:relative}
+.pin-n{position:absolute;background:var(--gold);color:#4a3305;font:700 11px var(--mono);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:5}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px 22px;margin:14px 0;font-size:13px}
+.legend div b{display:inline-flex;background:var(--gold);color:#4a3305;font:700 11px var(--mono);width:19px;height:19px;border-radius:50%;align-items:center;justify-content:center;margin-right:8px;vertical-align:-3px}
+
+.kmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:8px 26px;margin:12px 0;max-width:100%}
+.kmap .k{display:flex;justify-content:space-between;gap:14px;border-bottom:1px dashed var(--line);padding:5px 2px;font-size:13px}
+.kmap .k span:last-child{white-space:nowrap}
+
+footer{margin-top:70px;border-top:1px solid var(--line);padding-top:22px;color:var(--ink-3);font-size:12.5px}
+.tocgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 30px;margin:14px 0}
+.tocgrid a{color:var(--navy);text-decoration:none;font-size:13.5px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.tocgrid a:hover{color:var(--teal)}
+</style>
+</head>
+<body>
+
+<nav class="rail" aria-label="Mục lục tài liệu">
+  <div class="brand"><b>GEditor <span style="color:var(--teal)">UI/UX</span></b><span>MBL-UIX-GEDIT-001 · v1.6 · 20/08/2026</span></div>
+  <a class="h" href="#nguyen-tac">Nền tảng</a>
+  <a href="#nguyen-tac">1. Nguyên tắc thiết kế</a>
+  <a href="#token">2. Design tokens</a>
+  <a class="h" href="#anatomy">Cấu trúc</a>
+  <a href="#anatomy">3. Giải phẫu cửa sổ chính</a>
+  <a href="#editor">4. Vùng soạn thảo</a>
+  <a href="#search">5. Tìm kiếm &amp; thay thế</a>
+  <a href="#csv">6. Chế độ CSV + Làm sạch dữ liệu</a>
+  <a class="h" href="#panels">Màn hình phụ</a>
+  <a href="#panels">7. Panel, hộp thoại &amp; trạng thái</a>
+  <a href="#prefs">8. Preferences &amp; Plugin</a>
+  <a class="h" href="#keyboard">Tương tác</a>
+  <a href="#keyboard">9. Bản đồ phím tắt</a>
+  <a href="#ime">10. IME tiếng Việt &amp; trợ năng</a>
+  <a href="#flows">11. Luồng người dùng chính</a>
+  <a href="#motion">12. Chuyển động &amp; phản hồi</a>
+  <a href="#trace">13. Truy vết FR ↔ màn hình</a>
+  <a class="h" href="#kp">Mở rộng</a>
+  <a href="#kp">14. Knowledge Pack (Phase 4)</a>
+  <a href="#agent">15. Agent Pack (Phase 5)</a>
+</nav>
+
+<main>
+<div class="hero"><div class="wrap">
+  <div class="eyebrow">MOBILUCK · code247.ai · ĐẶC TẢ THIẾT KẾ GIAO DIỆN &amp; TRẢI NGHIỆM</div>
+  <h1>GEditor for macOS<br>sinh ra để mở <em>file hàng Gigabyte</em>, kỷ luật của macOS</h1>
+  <p>Tài liệu đặc tả UI/UX đầy đủ chức năng cho GEditor — truy vết trực tiếp từ SRS (MBL-SRS-GEDIT-001) và SAD (MBL-SAD-GEDIT-001). Mọi mockup trong tài liệu được dựng bằng HTML/CSS đúng token đặc tả, có thể chuyển Sáng/Tối ngay tại chỗ: tài liệu đồng thời là nguyên mẫu tham chiếu cho đội phát triển.</p>
+  <div class="meta">
+    <div><b>MBL-UIX-GEDIT-001</b>Mã tài liệu</div>
+    <div><b>1.6 · + Bàn làm sạch dữ liệu</b>Phiên bản</div>
+    <div><b>SRS v1.5 · SAD v1.6</b>Tài liệu gốc</div>
+    <div><b>Vũ Trí Công — Founder</b>Phê duyệt</div>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+<div class="card">
+  <b style="font-family:var(--disp);color:var(--navy)">Cách đọc tài liệu</b>
+  <div class="tocgrid" style="margin-top:10px">
+    <a href="#nguyen-tac">1 · Nguyên tắc thiết kế — 5 điều bất biến</a>
+    <a href="#token">2 · Design tokens — màu, chữ, lưới, icon</a>
+    <a href="#anatomy">3 · Giải phẫu cửa sổ chính (mockup chú giải)</a>
+    <a href="#editor">4 · Vùng soạn thảo: multi-caret, cột, ký tự ẩn</a>
+    <a href="#search">5 · Find/Replace, Find in Files, dry-run diff</a>
+    <a href="#csv">6 · CSV: rainbow, sticky header, Table view</a>
+    <a href="#panels">7 · Banner, hộp thoại, trạng thái rỗng</a>
+    <a href="#prefs">8 · Preferences, Plugin Manager, Macro</a>
+    <a href="#keyboard">9 · Bản đồ phím tắt + preset Notepad++</a>
+    <a href="#ime">10 · IME tiếng Việt, VoiceOver</a>
+    <a href="#flows">11 · 4 luồng người dùng then chốt</a>
+    <a href="#trace">13 · Ma trận truy vết yêu cầu ↔ UI</a>
+  </div>
+  <p class="small" style="margin:6px 0 0">Quy ước: <span class="tag p0">P0</span> thành phần chặn phát hành phase · <span class="tag ph">Phase 2/3</span> giai đoạn xuất hiện · <span class="tag">FR/NFR</span> mã truy vết SRS.</p>
+</div>
+
+<!-- ============ 1. PRINCIPLES ============ -->
+<h2 id="nguyen-tac"><span class="no">01</span>Nguyên tắc thiết kế</h2>
+<p class="lead">Năm nguyên tắc bất biến, xếp theo thứ tự ưu tiên khi xung đột. Mọi quyết định UI trong tài liệu này đều dẫn chiếu được về ít nhất một nguyên tắc.</p>
+<div class="grid g2">
+  <div class="card"><h4>NT-1 · Văn bản là nhân vật chính</h4><p style="margin:0">Chrome tối giản, không toolbar icon mặc định. Mọi pixel không phục vụ nội dung phải tự biện minh. Panel phụ luôn đóng được về trạng thái chỉ-có-editor (Distraction-free: <kbd>⌘⇧D</kbd>).</p></div>
+  <div class="card"><h4>NT-2 · Không bao giờ chặn tay người gõ</h4><p style="margin:0">Không hộp thoại modal cho việc có thể làm inline. Tác vụ dài chạy nền có tiến trình + Hủy (&le; 200 ms). Cảnh báo dùng banner trong ngữ cảnh, không popup — trừ nguy cơ mất dữ liệu.</p></div>
+  <div class="card"><h4>NT-3 · Quyền lực lộ dần</h4><p style="margin:0">Mặc định trông đơn giản như TextEdit; sức mạnh (regex, cột, macro, CSV) xuất hiện đúng lúc theo ngữ cảnh. Người mới không trả giá vì tính năng power-user, power-user không phải đào menu.</p></div>
+  <div class="card"><h4>NT-4 · Công dân hạng nhất của macOS</h4><p style="margin:0">HIG là luật: phím <kbd>⌘</kbd>, menu bar đầy đủ, Dark Mode hệ thống, VoiceOver, Services. Không bê UI Windows sang — người dùng Notepad++ được đón bằng <em>keymap preset</em>, không phải bằng giao diện Windows.</p></div>
+  <div class="card" style="grid-column:1/-1"><h4>NT-5 · Trạng thái luôn hiển thị, hành động luôn đảo ngược</h4><p style="margin:0">Encoding, EOL, ngôn ngữ, chế độ (LFM/CSV/Monitoring) luôn đọc được trên status bar. Mọi biến đổi hàng loạt là một bước undo (<span class="tag">FR-CORE-004</span>); thao tác ghi nhiều file luôn có dry-run trước (<span class="tag">FR-SRCH-106</span>).</p></div>
+</div>
+
+<!-- ============ 2. TOKENS ============ -->
+<h2 id="token"><span class="no">02</span>Design tokens</h2>
+<p class="lead">Token là nguồn sự thật duy nhất cho code (định nghĩa trong <code>theme/*.json</code> — khớp ADR-09). Bảng màu GEditor lấy <b>cam làm chủ đạo</b>: ORANGE #ED6A1F (nhận diện, nhấn), EMBER #A34309 (heading, chrome đậm), ACTION #C24E08 (nút chính/link theme sáng — đạt tương phản AA với chữ trắng) / #FF9E5E (theme tối), GOLD #F8B942 giữ vai trò phụ trợ (chấm chưa lưu, banner). Hai theme mặc định: <b>G-Light</b> / <b>G-Dark</b> (nền tối ngả ấm đồng bộ tông cam).</p>
+
+<h3>2.1. Màu ngữ nghĩa</h3>
+<div class="swatches">
+  <div class="sw"><div class="chip" style="background:#ED6A1F"></div><div class="nm"><b>brand/orange</b><span>#ED6A1F · chủ đạo, nhấn</span></div></div>
+  <div class="sw"><div class="chip" style="background:#A34309"></div><div class="nm"><b>brand/ember</b><span>#A34309 · heading, chrome đậm</span></div></div>
+  <div class="sw"><div class="chip" style="background:#F8B942"></div><div class="nm"><b>brand/gold</b><span>#F8B942 · dirty dot, banner</span></div></div>
+  <div class="sw"><div class="chip" style="background:linear-gradient(90deg,#C24E08 50%,#FF9E5E 50%)"></div><div class="nm"><b>accent/action</b><span>light #C24E08 · dark #FF9E5E</span></div></div>
+  <div class="sw"><div class="chip" style="background:#ffffff;border-bottom:1px solid #eee"></div><div class="nm"><b>editor/bg·light</b><span>#FFFFFF / ink #1F2933</span></div></div>
+  <div class="sw"><div class="chip" style="background:#171310"></div><div class="nm"><b>editor/bg·dark</b><span>#171310 (ấm) / ink #E7DCD2</span></div></div>
+  <div class="sw"><div class="chip" style="background:#FFDCC5"></div><div class="nm"><b>selection·light</b><span>#FFDCC5 · dark #4A2410 (cam nhạt)</span></div></div>
+  <div class="sw"><div class="chip" style="background:#fff1c2"></div><div class="nm"><b>mark/line</b><span>#FFF1C2 · dark #4D3F11</span></div></div>
+  <div class="sw"><div class="chip" style="background:#d13438"></div><div class="nm"><b>state/error</b><span>#D13438 · lỗi, validate</span></div></div>
+</div>
+<div class="callout teal"><b>Rainbow CSV — 6 màu cột</b> (lặp tuần hoàn, WCAG AA trên nền editor cả hai theme): light <code>#0B62C4 #0A8F6F #7A6A00 #8A3EC4 #C02959 #2E7DA1</code> · dark <code>#57A8FF #3FD6AB #E4CB4A #C88AFF #FF7BA1 #6FC7E8</code>. Bỏ tông cam khỏi dải cột để không lẫn với màu hành động của giao diện. Màu gán theo <em>chỉ số cột logic</em> (sau parse RFC 4180), không theo vị trí ký tự — quoted field không làm lệch màu. <span class="tag">FR-CSV-402</span></div>
+
+<h3>2.2. Chữ</h3>
+<table class="spec">
+  <tr><th>Vai trò</th><th>Font</th><th>Cỡ mặc định</th><th>Ghi chú</th></tr>
+  <tr><td>editor/mono</td><td>SF Mono → Menlo (fallback)</td><td>13 pt / line-height 1.6</td><td>Người dùng đổi được; ligature bật/tắt (<span class="tag">NFR-USE-05</span>); zoom 9–36 pt theo view</td></tr>
+  <tr><td>ui/text</td><td>SF Pro Text (system)</td><td>13 pt</td><td>Toàn bộ chrome, hộp thoại, panel</td></tr>
+  <tr><td>ui/caption</td><td>SF Pro Text</td><td>11 pt</td><td>Status bar, chú thích, đếm kết quả</td></tr>
+  <tr><td>ui/mono-inline</td><td>SF Mono</td><td>12 pt</td><td>Ô nhập pattern, path, giá trị field</td></tr>
+</table>
+
+<h3>2.3. Lưới, bo góc, cao độ</h3>
+<ul class="doc">
+  <li><b>Lưới 4 pt.</b> Mọi padding/margin là bội của 4; hàng danh sách 24 px; hàng bảng CSV 22 px (compact) / 28 px (thoáng).</li>
+  <li><b>Bo góc:</b> cửa sổ theo hệ thống; panel nổi 10 px; nút/ô nhập 7 px; chip 6 px. Không bo góc trong vùng editor.</li>
+  <li><b>Cao độ:</b> chỉ 3 mức bóng — panel neo (không bóng, phân tách bằng đường 1 px), popover (bóng nhẹ), cửa sổ phụ (bóng hệ thống). Không dùng bóng trang trí.</li>
+  <li><b>Icon:</b> SF Symbols, weight <i>regular</i>, đổi theo Dynamic Type; không icon tự vẽ trừ logo. Sidebar/tab dùng chữ là chính, icon là phụ (NT-1).</li>
+</ul>
+
+<!-- ============ 3. ANATOMY ============ -->
+<h2 id="anatomy"><span class="no">03</span>Giải phẫu cửa sổ chính</h2>
+<p class="lead">Một cửa sổ = một phiên làm việc. Mọi vùng đánh số dưới đây có đặc tả riêng ở các mục sau. Dùng nút để xem hai theme — mockup dùng đúng token mục 2.</p>
+
+<div class="stage">
+  <div class="bar">
+    <span class="cap">Hình 3.1 — Cửa sổ chính, đủ thành phần (sidebar + editor + status bar)</span>
+    <span class="toggle" role="group" aria-label="Đổi theme mockup">
+      <button class="on" onclick="setTheme(this,'m1','light')">Sáng</button><button onclick="setTheme(this,'m1','dark')">Tối</button>
+    </span>
+  </div>
+  <div class="mac anno" id="m1">
+    <span class="pin-n" style="top:8px;left:130px">1</span>
+    <span class="pin-n" style="top:40px;left:330px">2</span>
+    <span class="pin-n" style="top:86px;left:96px">3</span>
+    <span class="pin-n" style="top:86px;right:14px">4</span>
+    <span class="pin-n" style="bottom:8px;left:210px">5</span>
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">bao_cao_q3.csv — ~/Du_lieu</span><span class="tspace"></span></div>
+    <div class="tabbar">
+      <div class="tab"><span class="pin">⌖</span>ghi_chu.md<span class="x">×</span></div>
+      <div class="tab on"><span class="dot" title="Chưa lưu"></span>bao_cao_q3.csv<span class="x">×</span></div>
+      <div class="tab">server.log<span class="x">×</span></div>
+      <div class="tab">config.json<span class="x">×</span></div>
+    </div>
+    <div class="body-split">
+      <div class="sidebar">
+        <div class="sh">Workspace — Du_lieu</div>
+        <div class="it"><i>▸</i>backup</div>
+        <div class="it on"><i>▾</i>quy3</div>
+        <div class="it" style="padding-left:26px">bao_cao_q3.csv</div>
+        <div class="it" style="padding-left:26px">doanh_thu.tsv</div>
+        <div class="it"><i>▸</i>scripts</div>
+        <div class="it">server.log</div>
+        <div class="sh" style="margin-top:10px">Function list</div>
+        <div class="it" style="opacity:.6">— (không áp dụng cho CSV)</div>
+      </div>
+      <div class="editor" role="img" aria-label="Mockup vùng soạn thảo CSV có tô màu cột">
+        <div class="row"><span class="no">1</span><span class="tx"><span class="c1">ma_don</span>,<span class="c2">khach_hang</span>,<span class="c3">tinh_thanh</span>,<span class="c4">doanh_thu</span>,<span class="c5">ngay_giao</span></span></div>
+        <div class="row"><span class="no">2</span><span class="tx"><span class="c1">DH-0091</span>,<span class="c2">"Công ty Anh Đào, CN Huế"</span>,<span class="c3">Thừa Thiên Huế</span>,<span class="c4">128500000</span>,<span class="c5">2026-07-02</span></span></div>
+        <div class="row cur"><span class="no">3</span><span class="tx"><span class="c1">DH-0092</span>,<span class="c2">Mai Lan Store</span>,<span class="c3">Đà Nẵng</span>,<span class="c4">86200000</span><span class="caret"></span>,<span class="c5">2026-07-02</span></span></div>
+        <div class="row"><span class="no">4</span><span class="tx"><span class="c1">DH-0093</span>,<span class="c2">"Siêu thị ""Bốn Mùa"""</span>,<span class="c3">Hà Nội</span>,<span class="c4">240100000</span>,<span class="c5">2026-07-03</span></span></div>
+        <div class="row"><span class="no">5</span><span class="tx"><span class="c1">DH-0094</span>,<span class="c2">Cửa hàng Đông Hà</span>,<span class="c3">Quảng Trị</span>,<span class="c4">51750000</span>,<span class="c5">2026-07-05</span></span></div>
+        <div class="row"><span class="no">6</span><span class="tx"><span class="c1">DH-0095</span>,<span class="c2">Tạp hóa Cầu Giấy</span>,<span class="c3">Hà Nội</span>,<span class="c4">19900000</span>,<span class="c5">2026-07-06</span></span></div>
+      </div>
+    </div>
+    <div class="statusbar">
+      <span class="sg">Dòng 3, Cột 41</span>
+      <span class="sg click">UTF-8</span>
+      <span class="sg click">LF</span>
+      <span class="sg click">CSV · dấu phẩy</span>
+      <span class="sg">5 cột · 6 dòng</span>
+      <span class="sg sp"></span>
+      <span class="sg click">Bảng ⌥⌘T</span>
+      <span class="sg">Tab: 4</span>
+    </div>
+  </div>
+</div>
+<div class="legend">
+  <div><b>1</b>Tab bar: dirty dot vàng, ghim, kéo đổi chỗ, kéo sang pane/cửa sổ khác <span class="tag">FR-DOC-301</span></div>
+  <div><b>2</b>Editor: nguồn sự thật; mọi vùng khác là projection (SAD §2.2)</div>
+  <div><b>3</b>Sidebar (ẩn/hiện <kbd>⌘0</kbd>): Workspace + Function List <span class="tag">FR-DOC-307/308</span></div>
+  <div><b>4</b>Vùng cuộn kiêm minimap khi bật <span class="tag ph">Phase 2</span></div>
+  <div><b>5</b>Status bar tương tác — mọi mục click đổi nhanh <span class="tag p0">P0</span> <span class="tag">FR-UI-805</span></div>
+</div>
+<div class="callout"><b>Quy tắc cửa sổ.</b> Split 2 pane dọc/ngang (<kbd>⌘\</kbd>), clone document sang pane thứ hai (<span class="tag">FR-DOC-302</span>). Panel dưới (Search Results / Console / Validate) cao mặc định 30%, kéo được, nhớ theo phiên. Toàn bộ bố cục khôi phục qua Session (<span class="tag">FR-DOC-303</span>).</div>
+<!-- ============ 4. EDITOR ============ -->
+<h2 id="editor"><span class="no">04</span>Vùng soạn thảo</h2>
+<p class="lead">Nơi 90% thời gian sử dụng diễn ra. Đặc tả dưới đây định nghĩa hành vi hiển thị cho multi-caret, chế độ cột, ký tự ẩn và folding — khớp engine đã chọn ở ADR-01.</p>
+
+<h3>4.1. Multi-caret & chế độ cột <span class="tag p0">P0</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 4.1 — Trái: multi-caret (⌘D ×3). Phải: chọn cột (⌥ kéo) trên log fixed-width</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m2','light')">Sáng</button><button onclick="setTheme(this,'m2','dark')">Tối</button></span></div>
+  <div class="mac" id="m2">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">endpoint.ts · server.log</span><span class="tspace"></span></div>
+    <div class="body-split">
+      <div class="editor" style="border-right:1px solid var(--side-line)">
+        <div class="row"><span class="no">14</span><span class="tx">const <span class="sel">total</span><span class="caret"></span>Price = 0;</span></div>
+        <div class="row"><span class="no">15</span><span class="tx">const <span class="sel">total</span><span class="caret"></span>Qty = 0;</span></div>
+        <div class="row"><span class="no">16</span><span class="tx">const <span class="sel">total</span><span class="caret"></span>Tax = 0;</span></div>
+        <div class="row"><span class="no">17</span><span class="tx">export { totalPrice };</span></div>
+        <div class="row"><span class="no">18</span><span class="tx"><span class="inv">····</span>// ⌘D lần 4 sẽ chọn "total" ở dòng 17</span></div>
+      </div>
+      <div class="editor">
+        <div class="row"><span class="no">201</span><span class="tx">2026-08-19 <span class="sel">10:41:07</span> INFO  boot ok</span></div>
+        <div class="row"><span class="no">202</span><span class="tx">2026-08-19 <span class="sel">10:41:09</span> WARN  slow io</span></div>
+        <div class="row"><span class="no">203</span><span class="tx">2026-08-19 <span class="sel">10:41:12</span> ERROR db conn</span></div>
+        <div class="row"><span class="no">204</span><span class="tx">2026-08-19 <span class="sel">10:41:15</span> INFO  retry 1</span></div>
+        <div class="row"><span class="no">205</span><span class="tx">2026-08-19 <span class="sel">10:41:18</span> INFO  ready</span></div>
+      </div>
+    </div>
+    <div class="statusbar"><span class="sg">3 vùng chọn · 15 ký tự</span><span class="sg sp"></span><span class="sg">Chọn cột: 5 dòng × 8 cột</span></div>
+  </div>
+</div>
+<table class="spec">
+  <tr><th>Hành vi</th><th>Đặc tả</th><th>Truy vết</th></tr>
+  <tr><td>Thêm caret</td><td><kbd>⌘Click</kbd> thêm/bỏ caret tại điểm; <kbd>⌘D</kbd> chọn occurrence kế của từ dưới caret (bỏ qua: <kbd>⌘K ⌘D</kbd>); <kbd>⌃⌘G</kbd> chọn tất cả occurrence. <kbd>Esc</kbd> gộp về caret chính (caret tạo đầu tiên).</td><td>FR-CORE-001</td></tr>
+  <tr><td>Chọn cột</td><td><kbd>⌥kéo chuột</kbd> hoặc <kbd>⌥⌘↑/↓/←/→</kbd>. Vùng hiển thị là khối chữ nhật kể cả khi dòng ngắn hơn (vùng ảo sau EOL vẽ mờ 40%). Gõ/dán/xóa áp cho mọi dòng; status bar hiện "N dòng × M cột".</td><td>FR-CORE-002</td></tr>
+  <tr><td>Column Editor</td><td><kbd>⌥⌘E</kbd> mở popover neo tại caret: tab Văn bản / Số (bắt đầu, bước, cơ số, đệm 0) / Ngày. Preview 3 dòng đầu ngay trong popover trước khi Chèn.</td><td>FR-CORE-003</td></tr>
+  <tr><td>Giới hạn hiển thị</td><td>&gt; 10.000 caret: gộp hiển thị, thao tác vẫn đúng; cảnh báo hiệu năng ở status bar thay vì chặn.</td><td>NFR-PERF-04</td></tr>
+</table>
+
+<h3>4.2. Ký tự ẩn, EOL, ký tự đáng ngờ</h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 4.2 — Show Invisibles: space (·), tab (→), EOL (¶/␊), NBSP, zero-width, BOM</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m3','light')">Sáng</button><button onclick="setTheme(this,'m3','dark')">Tối</button></span></div>
+  <div class="mac" id="m3">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">du_lieu_tho.txt</span><span class="tspace"></span></div>
+    <div class="banner">⚠ <b>EOL hỗn hợp:</b> file chứa cả CRLF (12 dòng) và LF (3.408 dòng).<button class="mbtn">Chuẩn hóa về LF</button><button class="mbtn" style="margin-left:8px">Bỏ qua</button></div>
+    <div class="editor">
+      <div class="row"><span class="no">1</span><span class="tx"><span class="inv">⌐BOM</span>ten<span class="inv">→</span>gia<span class="inv">→</span>ghi chu<span class="inv">␍␊</span></span></div>
+      <div class="row"><span class="no">2</span><span class="tx">Cà phê<span class="inv">→</span>45000<span class="inv">→</span>hạt<span class="inv">·</span>Arabica<span class="inv">␊</span></span></div>
+      <div class="row"><span class="no">3</span><span class="tx">Trà<span class="err">⍽</span>sen<span class="inv">→</span>60000<span class="inv">→</span>NBSP lẫn trong tên<span class="inv">␊</span></span></div>
+      <div class="row"><span class="no">4</span><span class="tx">Mật<span class="err">​⟨ZWSP⟩</span>ong<span class="inv">→</span>120000<span class="inv">→</span>zero-width cần xóa<span class="inv">␊</span></span></div>
+    </div>
+    <div class="statusbar"><span class="sg">UTF-8 BOM</span><span class="sg" style="color:var(--err)">EOL hỗn hợp</span><span class="sg sp"></span><span class="sg click">Ẩn ký tự ⌥⌘I</span></div>
+  </div>
+</div>
+<ul class="doc">
+  <li>Bật/tắt theo nhóm trong menu View; render 40% độ mờ so với chữ để không lấn nội dung (NT-1). <span class="tag">FR-ENC-205</span></li>
+  <li><b>Ký tự đáng ngờ luôn hiển thị</b> kể cả khi tắt Invisibles: NBSP, zero-width, control chars, ký tự Unicode dễ nhầm — vẽ màu <code>state/error</code> vì đây là nguồn lỗi dữ liệu số 1 với CSV.</li>
+  <li>Banner EOL hỗn hợp xuất hiện khi mở file (NT-2: banner, không popup), hành động chính đặt tên theo kết quả: "Chuẩn hóa về LF". <span class="tag">FR-ENC-204</span></li>
+  <li>Click "UTF-8" trên status bar mở menu 2 nhóm tách bạch: <b>Diễn giải lại theo…</b> (reinterpret) và <b>Chuyển đổi sang…</b> (convert) — đúng ngữ nghĩa FR-ENC-203, kèm dòng mô tả ngắn dưới mỗi nhóm để tránh nhầm.</li>
+</ul>
+
+<!-- ============ 5. SEARCH ============ -->
+<h2 id="search"><span class="no">05</span>Tìm kiếm &amp; thay thế</h2>
+<p class="lead">Ba tầng giao diện cho ba quy mô: thanh inline (tài liệu hiện tại) → panel Find in Files (thư mục) → kết quả có lịch sử ở panel dưới. Regex không bao giờ được phép treo UI (<span class="tag">FR-SRCH-104</span>).</p>
+
+<h3>5.1. Thanh Find/Replace inline <span class="tag p0">P0</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 5.1 — ⌘F mở; ⌥⌘F thêm hàng Replace; chip chế độ bên phải ô nhập</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m4','light')">Sáng</button><button onclick="setTheme(this,'m4','dark')">Tối</button></span></div>
+  <div class="mac" id="m4">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">khach_hang.csv</span><span class="tspace"></span></div>
+    <div class="findbar">
+      <div class="fld">(?&lt;=,)\s+ <span style="margin-left:auto;display:flex;gap:4px"><span class="chipbtn">Aa</span><span class="chipbtn">\b</span><span class="chipbtn on">.*</span></span></div>
+      <span class="small" style="min-width:86px;text-align:center;color:var(--tb-ink)">214 kết quả</span>
+      <button class="mbtn">‹</button><button class="mbtn">›</button>
+      <button class="mbtn">Đánh dấu</button>
+    </div>
+    <div class="findbar" style="border-top:none">
+      <div class="fld"><span class="ph">Thay bằng… (hỗ trợ $1, \u \l \U \L \E)</span></div>
+      <button class="mbtn">Thay</button><button class="mbtn pri">Thay tất cả</button>
+    </div>
+    <div class="editor">
+      <div class="row mkline"><span class="no">7</span><span class="tx">Lê Hoa,<span class="sel">·· </span>Đà Nẵng,active</span></div>
+      <div class="row"><span class="no">8</span><span class="tx">Trần Bình,Hà Nội,active</span></div>
+      <div class="row mkline"><span class="no">9</span><span class="tx">Phạm Cường,<span class="sel">·</span>Huế,paused</span></div>
+    </div>
+    <div class="statusbar"><span class="sg">Regex · PCRE2</span><span class="sg sp"></span><span class="sg">Đánh dấu: 214 dòng</span></div>
+  </div>
+</div>
+<table class="spec">
+  <tr><th>Chi tiết</th><th>Đặc tả</th></tr>
+  <tr><td>Chip chế độ</td><td><code>Aa</code> phân biệt hoa thường · <code>\b</code> nguyên từ · <code>.*</code> regex (bật = tắt Extended; menu phụ chọn Extended). Trạng thái chip nhớ theo phiên. Ô nhập dùng <code>ui/mono-inline</code>.</td></tr>
+  <tr><td>Regex lỗi / độc</td><td>Cú pháp sai: viền đỏ ô nhập + tooltip vị trí lỗi, không popup. Quá deadline: chip <code>.*</code> nhấp nháy vàng + thông báo "Biểu thức quá phức tạp — đã dừng sau 2 s" ở đếm kết quả; nút Hủy luôn hoạt động.</td></tr>
+  <tr><td>Đánh dấu (Mark)</td><td>Nút "Đánh dấu" tô nền <code>mark/line</code> + bookmark. Menu cạnh nút: Copy dòng đánh dấu · Cắt · Xóa · <b>Giữ lại chỉ dòng đánh dấu</b> · Đảo đánh dấu · đổi màu bookmark (9 màu). <span class="tag">FR-SRCH-107</span></td></tr>
+  <tr><td>Điều hướng</td><td><kbd>⌘G</kbd>/<kbd>⇧⌘G</kbd> kế/trước; <kbd>Esc</kbd> đóng bar trả focus về editor tại kết quả hiện hành; <kbd>⌘E</kbd> nạp vùng chọn vào ô Find (chuẩn macOS).</td></tr>
+</table>
+
+<h3>5.2. Find in Files &amp; Replace dry-run <span class="tag p0">P0</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 5.2 — ⇧⌘F: panel trái là phạm vi; giữa là preview diff dry-run trước khi commit</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m5','light')">Sáng</button><button onclick="setTheme(this,'m5','dark')">Tối</button></span></div>
+  <div class="mac" id="m5">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">Tìm trong thư mục — ~/Du_lieu</span><span class="tspace"></span></div>
+    <div class="body-split">
+      <div class="sidebar" style="width:230px">
+        <div class="sh">Phạm vi</div>
+        <div class="it">Thư mục: <b>~/Du_lieu</b></div>
+        <div class="it">Bao gồm: <code style="font-size:11px">*.csv;*.tsv</code></div>
+        <div class="it">Loại trừ: <code style="font-size:11px">backup/;node_modules/</code></div>
+        <div class="sh" style="margin-top:8px">Tiến trình</div>
+        <div class="it">Đã quét 8.412 / 10.037 file</div>
+        <div class="it"><span style="display:block;height:5px;border-radius:3px;background:var(--side-line)"><span style="display:block;width:84%;height:5px;border-radius:3px;background:var(--acc)"></span></span></div>
+        <div class="it" style="color:var(--acc)">Hủy (Esc)</div>
+      </div>
+      <div class="editor" style="font-size:11.5px">
+        <div class="row"><span class="tx" style="padding:8px 12px 2px;color:var(--gut-ink)">▾ quy3/bao_cao_q3.csv — 3 thay thế</span></div>
+        <div class="row"><span class="no">12</span><span class="tx">DH-0102,<span style="background:#f7d6d6;color:#8c1d1d;text-decoration:line-through">Ha Noi</span><span style="background:#d1f0e2;color:#0a6b45"> Hà Nội</span>,active</span></div>
+        <div class="row"><span class="no">31</span><span class="tx">DH-0121,<span style="background:#f7d6d6;color:#8c1d1d;text-decoration:line-through">Ha Noi</span><span style="background:#d1f0e2;color:#0a6b45"> Hà Nội</span>,paused</span></div>
+        <div class="row"><span class="tx" style="padding:8px 12px 2px;color:var(--gut-ink)">▸ quy3/doanh_thu.tsv — 1 thay thế (bỏ chọn)</span></div>
+        <div class="row"><span class="tx" style="padding:8px 12px;color:var(--gut-ink)">Tổng: 196/197 file được chọn · 512 thay thế</span></div>
+      </div>
+    </div>
+    <div class="findbar" style="border-top:1px solid var(--tb-line);border-bottom:none">
+      <span class="small" style="color:var(--tb-ink)">Chưa có file nào bị ghi — đây là bản xem trước.</span>
+      <span style="flex:1"></span>
+      <button class="mbtn">Xuất danh sách</button>
+      <button class="mbtn pri">Ghi thay đổi vào 196 file</button>
+    </div>
+  </div>
+</div>
+<ul class="doc">
+  <li>Replace in Files <b>luôn</b> qua 2 pha (SAD Hình 2): pha preview cho phép bỏ chọn từng file/từng match; nút chính ghi rõ số file sẽ ghi — không có nút "OK" mơ hồ. <span class="tag">FR-SRCH-106, NFR-REL-02</span></li>
+  <li>Kết quả Find All đổ vào panel dưới với lịch sử nhiều lượt dạng tab dọc; double-click nhảy tới dòng; <kbd>⌘C</kbd> trên nhóm copy toàn bộ dòng khớp. <span class="tag">FR-SRCH-105</span></li>
+  <li>Hủy tác vụ đáp ứng &le; 200 ms — nút Hủy nằm ngay trong vùng tiến trình, kèm phím <kbd>Esc</kbd>. <span class="tag">NFR-PERF-06</span></li>
+</ul>
+
+<!-- ============ 6. CSV ============ -->
+<h2 id="csv"><span class="no">06</span>Chế độ CSV <span class="tag ph">Phase 2</span></h2>
+<p class="lead">CSV là first-class: mở file .csv/.tsv tự vào CSV mode (tắt được). Hai chế độ xem chuyển bằng <kbd>⌥⌘T</kbd> — Text view là nguồn sự thật, Table view là projection (SAD Hình 4).</p>
+
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 6.1 — Table view: header dính, sort hiển thị, sửa ô, cột ẩn, panel Validate dưới</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m6','light')">Sáng</button><button onclick="setTheme(this,'m6','dark')">Tối</button></span></div>
+  <div class="mac" id="m6">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">bao_cao_q3.csv — Bảng</span><span class="tspace"></span></div>
+    <div class="findbar">
+      <span class="chipbtn on">Bảng</span><span class="chipbtn">Văn bản</span>
+      <span class="small" style="color:var(--tb-ink)">Sắp xếp: doanh_thu ↓ (chỉ hiển thị)</span>
+      <span style="flex:1"></span>
+      <button class="mbtn">Áp sắp xếp vào file</button>
+      <button class="mbtn">Chuyển đổi ▾</button>
+      <button class="mbtn">Kiểm tra dữ liệu</button>
+    </div>
+    <div class="editor" style="font-family:var(--doc-font)">
+      <table style="border-collapse:collapse;width:100%;font-size:12px">
+        <tr style="position:sticky;top:0">
+          <th style="background:var(--gut);color:var(--gut-ink);border:1px solid var(--gut-line);padding:4px 8px;text-align:left">#</th>
+          <th style="background:var(--gut);color:var(--c1);border:1px solid var(--gut-line);padding:4px 8px;text-align:left">ma_don</th>
+          <th style="background:var(--gut);color:var(--c2);border:1px solid var(--gut-line);padding:4px 8px;text-align:left">khach_hang</th>
+          <th style="background:var(--gut);color:var(--c4);border:1px solid var(--gut-line);padding:4px 8px;text-align:left">doanh_thu ↓</th>
+          <th style="background:var(--gut);color:var(--c5);border:1px solid var(--gut-line);padding:4px 8px;text-align:left">ngay_giao</th>
+        </tr>
+        <tr><td style="border:1px solid var(--gut-line);padding:3px 8px;color:var(--gut-ink)">4</td><td style="border:1px solid var(--gut-line);padding:3px 8px">DH-0093</td><td style="border:1px solid var(--gut-line);padding:3px 8px">Siêu thị "Bốn Mùa"</td><td style="border:1px solid var(--gut-line);padding:3px 8px">240.100.000</td><td style="border:1px solid var(--gut-line);padding:3px 8px">2026-07-03</td></tr>
+        <tr><td style="border:1px solid var(--gut-line);padding:3px 8px;color:var(--gut-ink)">2</td><td style="border:1px solid var(--gut-line);padding:3px 8px">DH-0091</td><td style="border:2px solid var(--acc);padding:3px 8px;background:var(--cur-line)">Công ty Anh Đào, CN Huế<span class="caret"></span></td><td style="border:1px solid var(--gut-line);padding:3px 8px">128.500.000</td><td style="border:1px solid var(--gut-line);padding:3px 8px">2026-07-02</td></tr>
+        <tr><td style="border:1px solid var(--gut-line);padding:3px 8px;color:var(--gut-ink)">3</td><td style="border:1px solid var(--gut-line);padding:3px 8px">DH-0092</td><td style="border:1px solid var(--gut-line);padding:3px 8px">Mai Lan Store</td><td style="border:1px solid var(--gut-line);padding:3px 8px">86.200.000</td><td style="border:1px solid var(--gut-line);padding:3px 8px">2026-07-02</td></tr>
+        <tr><td style="border:1px solid var(--gut-line);padding:3px 8px;color:var(--gut-ink)">5</td><td style="border:1px solid var(--gut-line);padding:3px 8px">DH-0094</td><td style="border:1px solid var(--gut-line);padding:3px 8px">Cửa hàng Đông Hà</td><td style="border:1px solid var(--gut-line);padding:3px 8px">51.750.000</td><td style="border:1px solid var(--gut-line);padding:3px 8px">2026-07-05</td></tr>
+      </table>
+      <div style="font-family:var(--doc-font);font-size:11.5px;color:var(--gut-ink);padding:6px 10px">Cột ẩn: tinh_thanh (1) — hiện lại từ menu ngữ cảnh header</div>
+    </div>
+    <div class="findbar" style="border-top:1px solid var(--tb-line);border-bottom:none">
+      <span class="small" style="color:var(--err)">⚠ 2 dòng lệch số cột (dòng 1.204, 8.771)</span>
+      <button class="mbtn" style="margin-left:8px">Tới dòng lỗi đầu</button>
+      <span style="flex:1"></span>
+      <span class="small" style="color:var(--tb-ink)">Sửa ô đang ghi ngược vào văn bản (1 lịch sử undo)</span>
+    </div>
+  </div>
+</div>
+<table class="spec">
+  <tr><th>Thành phần</th><th>Đặc tả hành vi</th><th>Truy vết</th></tr>
+  <tr><td>Chuyển chế độ</td><td><kbd>⌥⌘T</kbd> hoặc segmented control; trạng thái caret/hàng giữ tương ứng hai chiều; chuyển đổi tức thời (&lt; 100 ms với 1 triệu dòng nhờ chỉ mục CSVEngine).</td><td>FR-CSV-403</td></tr>
+  <tr><td>Sort hiển thị vs ghi</td><td>Click header = sort hiển thị (badge "chỉ hiển thị"); nút "Áp sắp xếp vào file" mới ghi văn bản — tách bạch để không phá dữ liệu ngoài ý muốn (NT-5).</td><td>FR-CSV-403</td></tr>
+  <tr><td>Menu ngữ cảnh header</td><td>Ẩn cột · Đổi tên header · Xóa cột · Chèn cột trái/phải · Hoán vị (kéo header) · Thống kê cột <span class="tag ph">Phase 3</span> — mọi thao tác theo <em>field</em>, an toàn quoted.</td><td>FR-CSV-404/408</td></tr>
+  <tr><td>Sửa ô</td><td><kbd>Enter</kbd> sửa, <kbd>Tab</kbd> ô kế; giá trị chứa delimiter/quote tự escape khi ghi ngược; ô lỗi kiểu dữ liệu viền <code>state/error</code>.</td><td>FR-CSV-403/405</td></tr>
+  <tr><td>Chuyển đổi</td><td>Menu "Chuyển đổi ▾": TSV · JSON · XML · Markdown · SQL INSERT · Đổi delimiter/quote/encoding — mở sheet có preview 5 dòng đầu trước khi tạo tab mới.</td><td>FR-CSV-406</td></tr>
+  <tr><td>Truy vấn SQL</td><td><span class="tag ph">Phase 3</span> Panel dưới dạng console: gõ SQL (DuckDB), kết quả dạng bảng, nút "Mở thành tab CSV".</td><td>FR-CSV-407</td></tr>
+</table>
+
+<h3>6.2. Bàn làm sạch dữ liệu & Data Profile <span class="tag">FR-CLN-001…006</span> <span class="tag ph">Phase 2</span></h3>
+<p>Một cửa cho toàn bộ nghiệp vụ làm sạch — người dùng văn phòng thao tác trọn vẹn không cần regex. Mỗi mục hiển thị <b>số lượng phát hiện</b> (bấm số để xem các dòng liên quan); mọi hành động tuân bất biến NFR-CLN-02: có preview, một bước undo, có báo cáo.</p>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 6.2 — Bàn làm sạch (⌘⇧L): danh mục phát hiện theo ngữ cảnh file + Data Profile + lưu Recipe</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m11','light')">Sáng</button><button onclick="setTheme(this,'m11','dark')">Tối</button></span></div>
+  <div class="mac" id="m11">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">khach_hang.csv — Bàn làm sạch</span><span class="tspace"></span></div>
+    <div class="body-split">
+      <div class="editor" style="border-right:1px solid var(--side-line)">
+        <div class="row"><span class="no">1</span><span class="tx"><span class="c1">ten</span>,<span class="c2">ngay_dk</span>,<span class="c4">doanh_so</span>,<span class="c5">tinh</span></span></div>
+        <div class="row"><span class="no">2</span><span class="tx"><span class="c1">Cty Anh Đào</span>,<span class="c2">02/07/2026</span>,<span class="c4">1.234,56</span>,<span class="c5">Huế</span></span></div>
+        <div class="row"><span class="no">3</span><span class="tx"><span class="c1">Công ty Anh Đào</span>,<span class="c2">2026-07-02</span>,<span class="c4">986,40</span>,<span class="c5">Huế</span></span></div>
+        <div class="row"><span class="no">4</span><span class="tx"><span class="c1">Mai Lan<span class="err">⍽</span>Store</span>,<span class="c2">5-Jul-26</span>,<span class="c4">N/A</span>,<span class="c5">Đà Nẵng</span></span></div>
+      </div>
+      <div class="sidebar" style="width:300px">
+        <div class="sh">Phát hiện — 4 nhóm</div>
+        <div class="it" style="white-space:normal;padding:5px 13px">📅 Ngày 3 định dạng khác nhau · <b style="color:var(--acc)">8.412 ô</b> → <span style="color:var(--acc)">Chuẩn hóa ISO…</span></div>
+        <div class="it" style="white-space:normal;padding:5px 13px">🔢 Số kiểu Việt/Âu · <b style="color:var(--acc)">12.007 ô</b> → <span style="color:var(--acc)">Đổi quy ước…</span></div>
+        <div class="it" style="white-space:normal;padding:5px 13px">∅ Null/placeholder ("N/A","-") · <b style="color:var(--acc)">89 ô</b> → <span style="color:var(--acc)">Xử lý…</span></div>
+        <div class="it" style="white-space:normal;padding:5px 13px">👥 Trùng mờ cột "ten" · <b style="color:var(--acc)">42 cụm</b> → <span style="color:var(--acc)">Duyệt gộp…</span> <span class="tag ph" style="font-size:9px">Ph4</span></div>
+        <div class="it" style="white-space:normal;padding:5px 13px;color:var(--gut-ink)">✓ Encoding UTF-8 · EOL LF · không ký tự ẩn bất thường ngoài 1 NBSP (dòng 4)</div>
+        <div class="sh" style="margin-top:6px">Data Profile (DuckDB · 1,2 s)</div>
+        <div class="it" style="white-space:normal;padding:4px 13px;font-size:11px;color:var(--gut-ink)">ngay_dk: date 98% · null 0,2% · 2019→2026<br>doanh_so: số 99,3% · p50 = 1,1 tr · 3 outlier<br>tinh: 63 distinct · top: Hà Nội (31%)</div>
+      </div>
+    </div>
+    <div class="findbar" style="border-top:1px solid var(--tb-line);border-bottom:none">
+      <span class="small" style="color:var(--tb-ink)">Đã áp dụng 2/4 nhóm · mỗi nhóm 1 bước undo</span>
+      <span style="flex:1"></span>
+      <button class="mbtn">Xuất báo cáo</button>
+      <button class="mbtn pri">Lưu thành Recipe…</button>
+    </div>
+  </div>
+</div>
+<table class="spec">
+  <tr><th>Thành phần</th><th>Đặc tả hành vi</th><th>Truy vết</th></tr>
+  <tr><td>Mở Bàn làm sạch</td><td><kbd>⌘⇧L</kbd> hoặc menu Data → Clean-up. Danh mục phát hiện quét nền (DuckDB + bộ nhận diện), cập nhật khi file đổi; click số lượng lọc tới dòng liên quan (dùng Mark).</td><td>FR-CLN-006</td></tr>
+  <tr><td>Chuẩn hóa ngày</td><td>Sheet preview: bảng mẫu 10 dòng trước→sau; gặp ô mơ hồ dd/MM vs MM/dd hỏi quy ước đúng một lần cho cả cột, ô không suy luận được đánh dấu đỏ chứ không đoán.</td><td>FR-CLN-001</td></tr>
+  <tr><td>Null/placeholder</td><td>Danh sách placeholder sửa được; ba hành động theo cột: điền mặc định / forward-backward fill / xóa dòng — mỗi hành động hiện số dòng ảnh hưởng ngay trên nút.</td><td>FR-CLN-002</td></tr>
+  <tr><td>Duyệt gộp trùng mờ</td><td>Danh sách cụm xếp theo điểm tương đồng; mỗi cụm chọn bản ghi giữ + xem diff các bản gộp; "Gộp cụm đã duyệt" là một changeset — không bao giờ tự merge.</td><td>FR-CLN-004</td></tr>
+  <tr><td>Recipe</td><td>"Lưu thành Recipe" gom các bước đã áp dụng theo thứ tự; trình sửa recipe liệt kê từng bước bật/tắt được; chạy lại trên file/thư mục từ menu Data hoặc CLI <code>geditor --recipe lam_sach.json *.csv</code>.</td><td>FR-CLN-005</td></tr>
+</table>
+
+<!-- ============ 7. PANELS/DIALOGS ============ -->
+<h2 id="panels"><span class="no">07</span>Panel, hộp thoại &amp; trạng thái</h2>
+<h3>7.1. Ngôn ngữ banner (NT-2)</h3>
+<table class="spec">
+  <tr><th>Tình huống</th><th>Nội dung banner (đúng giọng UI — chỉ dẫn, không xin lỗi)</th><th>Hành động</th></tr>
+  <tr><td>Large File Mode</td><td>"File 2,4 GB — đã tắt tô màu cú pháp và xuống dòng để giữ tốc độ."</td><td>Bật lại từng mục · Ngưỡng…</td></tr>
+  <tr><td>File đổi trên đĩa (chưa dirty)</td><td>"File đã thay đổi bên ngoài. Đã tải lại." (tự ẩn 4 s)</td><td>Hoàn tác tải lại</td></tr>
+  <tr><td>File đổi trên đĩa (đang dirty)</td><td>"File thay đổi bên ngoài trong khi bạn đang sửa."</td><td>So sánh · Giữ bản của tôi · Tải bản trên đĩa</td></tr>
+  <tr><td>Khôi phục sau sự cố</td><td>"Đã khôi phục 3 tài liệu chưa lưu từ phiên trước."</td><td>Xem danh sách</td></tr>
+  <tr><td>Monitoring</td><td>"Đang theo dõi — tự cuộn theo dòng mới." (nền teal nhạt)</td><td>Tạm dừng · Dừng</td></tr>
+  <tr><td>Encoding nghi sai</td><td>"Phát hiện Windows-1258 (độ tin cậy 62%). Ký tự có thể hiển thị sai."</td><td>Diễn giải lại… · Đúng rồi</td></tr>
+</table>
+<h3>7.2. Hộp thoại thực sự modal — chỉ 3 loại</h3>
+<ul class="doc">
+  <li><b>Đóng khi chưa lưu</b> (sheet chuẩn macOS): Lưu / Không lưu / Hủy — có "Áp dụng cho N tab còn lại" khi đóng cửa sổ.</li>
+  <li><b>Ghi đè nhiều file</b> (batch macro, replace-in-files khi file đổi giữa preview và commit): liệt kê xung đột, chọn từng file.</li>
+  <li><b>Cấp quyền plugin/script</b>: hiển thị đúng permission manifest yêu cầu (SAD §6.1), nút "Cho phép" ghi rõ phạm vi — "Cho phép đọc thư mục ~/Du_lieu".</li>
+</ul>
+<h3>7.3. Hộp Save As với encoding/EOL <span class="tag p0">P0</span> <span class="tag">FR-DOC-314, FR-ENC-207</span></h3>
+<ul class="doc">
+  <li>Save panel chuẩn macOS gắn <b>accessory view</b> hai menu: <b>Bảng mã</b> (mặc định = bảng mã hiện tại của tài liệu; nhóm gợi ý UTF-8 đứng đầu) và <b>Xuống dòng</b> (LF/CRLF/CR, mặc định = hiện tại). Đổi giá trị tại đây <em>chỉ áp dụng cho lần lưu này</em> — không đổi thiết lập mặc định file mới (thiết lập đó nằm ở Preferences → Bảng mã &amp; file mới).</li>
+  <li>Chọn bảng mã không biểu diễn được toàn bộ ký tự (vd Windows-1252 với chữ Việt): cảnh báo inline ngay dưới menu — "17 ký tự không biểu diễn được trong bảng mã này" + link "Xem danh sách" — nút Save vẫn bấm được nhưng đổi nhãn thành "Lưu (thay ký tự bằng ?)".</li>
+  <li>Duplicate / Rename / Move theo mô hình document-based; mọi đường lưu đều atomic (SAD FileIO).</li>
+</ul>
+<h3>7.4. Chế độ chỉ đọc <span class="tag">FR-DOC-311</span></h3>
+<ul class="doc">
+  <li>Biểu tượng khóa 🔒 (SF Symbol <code>lock.fill</code>) hiện trên tab và một segment status bar "Chỉ đọc" — click segment để bật/tắt read-only thủ công; file không quyền ghi thì segment hiển thị lý do và không tắt được.</li>
+  <li>Thao tác sửa khi đang chỉ đọc: chặn + rung nhẹ caret + status message "Tài liệu đang ở chế độ chỉ đọc" (không popup — NT-2); Save As luôn khả dụng.</li>
+</ul>
+<h3>7.5. Trạng thái rỗng là lời mời hành động</h3>
+<div class="grid g3">
+  <div class="card"><b>Cửa sổ mới</b><p class="small" style="margin:6px 0 0">"Kéo file vào đây, hoặc ⌘O mở file · ⌘⇧F tìm trong thư mục · ⌘N tài liệu trống". Kèm 5 file gần đây.</p></div>
+  <div class="card"><b>Search Results trống</b><p class="small" style="margin:6px 0 0">"Chưa có lượt tìm nào. ⌘F tìm trong tài liệu, ⇧⌘F tìm trong thư mục."</p></div>
+  <div class="card"><b>Workspace trống</b><p class="small" style="margin:6px 0 0">"Chọn thư mục làm không gian làm việc để duyệt và theo dõi file." + nút Chọn thư mục…</p></div>
+</div>
+<!-- ============ 8. PREFS/PLUGIN/MACRO ============ -->
+<h2 id="prefs"><span class="no">08</span>Preferences, Plugin Manager, Macro</h2>
+
+<h3>8.1. Preferences <span class="tag">FR-UI-803</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 8.1 — Cửa sổ Preferences: nav trái theo nhóm, tìm kiếm thiết lập, mọi giá trị là token</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m7','light')">Sáng</button><button onclick="setTheme(this,'m7','dark')">Tối</button></span></div>
+  <div class="mac" id="m7" style="max-width:760px">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">Cài đặt GEditor</span><span class="tspace"></span></div>
+    <div class="body-split" style="min-height:250px">
+      <div class="sidebar" style="width:172px">
+        <div class="it">Tổng quát</div>
+        <div class="it on">Soạn thảo</div>
+        <div class="it">Bảng mã &amp; file mới</div>
+        <div class="it">Tìm kiếm</div>
+        <div class="it">CSV</div>
+        <div class="it">Phím tắt</div>
+        <div class="it">Theme</div>
+        <div class="it">Script &amp; lệnh ngoài</div>
+        <div class="it">Plugin</div>
+        <div class="it">Cập nhật &amp; riêng tư</div>
+      </div>
+      <div class="editor" style="font-family:var(--doc-font);font-size:12.5px;padding:14px 18px;line-height:2">
+        <div><b>Font soạn thảo</b> — SF Mono · 13 pt · <span style="color:var(--acc)">Đổi…</span> · Ligature ☐</div>
+        <div><b>Thụt lề</b> — ◉ Space ○ Tab · Độ rộng 4 · Theo ngôn ngữ <span style="color:var(--acc)">Tùy chỉnh…</span></div>
+        <div><b>Khi lưu</b> — ☑ Xóa khoảng trắng cuối dòng (theo loại file) · ☑ Chuẩn hóa Unicode NFC</div>
+        <div><b>File lớn</b> — Bật Large File Mode từ <u>256 MB</u> · Tắt: tô màu ☑ · xuống dòng ☑ · highlight-all ☑</div>
+        <div><b>Sao lưu bản nháp</b> — mỗi <u>10 giây</u> (5–30)</div>
+        <div style="color:var(--gut-ink)">Xuất/Nhập toàn bộ cấu hình… (JSON) — đồng bộ giữa các máy</div>
+      </div>
+    </div>
+  </div>
+</div>
+<ul class="doc">
+  <li>Ô tìm kiếm thiết lập ở đầu cửa sổ lọc mọi nhóm (chuẩn System Settings). Mọi thiết lập có giá trị mặc định ghi mờ bên cạnh khi đã đổi, kèm "Đặt lại".</li>
+  <li>Nhóm <b>Cập nhật &amp; riêng tư</b> ghi tường minh: "GEditor không gửi dữ liệu sử dụng hay nội dung tài liệu đi đâu. Kiểm tra cập nhật: ☑ (tắt được)." <span class="tag">NFR-SEC-02</span></li>
+</ul>
+
+<h3>8.2. Plugin Manager <span class="tag ph">Phase 2–3</span></h3>
+<table class="spec">
+  <tr><th>Vùng</th><th>Đặc tả</th><th>Truy vết</th></tr>
+  <tr><td>Danh sách</td><td>3 tab: Đã cài · Danh mục · Cập nhật. Mỗi dòng: tên, phiên bản, loại (Script/Native), kiến trúc (badge "Universal" bắt buộc với Native), quyền yêu cầu dạng chip.</td><td>FR-PLUG-704</td></tr>
+  <tr><td>Trang chi tiết</td><td>Quyền liệt kê bằng ngôn ngữ người dùng ("Chạy lệnh shell", "Đọc thư mục bạn chọn"); nút Cài ghi rõ "Cài (đã xác minh chữ ký)".</td><td>NFR-SEC-03</td></tr>
+  <tr><td>Từ chối nạp</td><td>Plugin thiếu arm64/x86_64 hoặc sai hash: dòng đỏ trong danh sách + lý do chính xác + link hướng dẫn cho tác giả plugin. Không thông báo mơ hồ.</td><td>FR-PLUG-702</td></tr>
+  <tr><td>Plugin crash</td><td>Toast: "Plugin X gặp sự cố và đã được tách khỏi ứng dụng. Tài liệu của bạn không bị ảnh hưởng." + nút Khởi động lại plugin / Vô hiệu hóa.</td><td>FR-PLUG-703</td></tr>
+</table>
+
+<h3>8.3. Macro &amp; Scripts <span class="tag">FR-AUTO-601…603</span></h3>
+<ul class="doc">
+  <li><b>Ghi macro:</b> chấm đỏ nhỏ ở status bar + đếm thao tác ("● Đang ghi · 14 thao tác") — không che editor. Dừng: <kbd>⇧⌘R</kbd>.</li>
+  <li><b>Chạy hàng loạt:</b> sheet "Chạy macro" với 4 chế độ (1 lần · N lần · Đến cuối file · Trên nhiều file). Chế độ "Trên nhiều file" mở phạm vi giống Find in Files (mask, loại trừ) và <b>luôn kết thúc bằng màn tổng kết</b>: N file thành công, M lỗi (liệt kê), toàn bộ ghi atomic.</li>
+  <li><b>Menu Scripts:</b> liệt kê script người dùng + "Mở console" (panel dưới, REPL JavaScriptCore, in <code>console.log</code> và lỗi kèm số dòng).</li>
+</ul>
+
+<!-- ============ 9. KEYBOARD ============ -->
+<h2 id="keyboard"><span class="no">09</span>Bản đồ phím tắt</h2>
+<p class="lead">Hai preset: <b>macOS chuẩn</b> (mặc định) và <b>Notepad++ (Windows)</b> — ánh xạ Ctrl→⌘ giữ trí nhớ cơ bắp. Shortcut Mapper cho phép remap toàn bộ, phát hiện xung đột theo ngữ cảnh. <span class="tag">FR-UI-802</span></p>
+<h3>9.1. Preset macOS chuẩn — nhóm lệnh lõi</h3>
+<div class="kmap">
+  <div class="k"><span>Tìm / Thay trong tài liệu</span><span><kbd>⌘F</kbd> / <kbd>⌥⌘F</kbd></span></div>
+  <div class="k"><span>Tìm trong thư mục</span><span><kbd>⇧⌘F</kbd></span></div>
+  <div class="k"><span>Kết quả kế / trước</span><span><kbd>⌘G</kbd> / <kbd>⇧⌘G</kbd></span></div>
+  <div class="k"><span>Nạp vùng chọn vào Find</span><span><kbd>⌘E</kbd></span></div>
+  <div class="k"><span>Chọn occurrence kế / tất cả</span><span><kbd>⌘D</kbd> / <kbd>⌃⌘G</kbd></span></div>
+  <div class="k"><span>Đi tới dòng</span><span><kbd>⌘L</kbd></span></div>
+  <div class="k"><span>Chọn cột</span><span><kbd>⌥kéo</kbd> / <kbd>⌥⌘↕↔</kbd></span></div>
+  <div class="k"><span>Column Editor</span><span><kbd>⌥⌘E</kbd></span></div>
+  <div class="k"><span>Nhân đôi / Xóa dòng</span><span><kbd>⇧⌘D</kbd> / <kbd>⇧⌘K</kbd></span></div>
+  <div class="k"><span>Chuyển dòng lên / xuống</span><span><kbd>⌥⌘↑</kbd>ctx / <kbd>⌥⌘↓</kbd>ctx</span></div>
+  <div class="k"><span>Comment dòng</span><span><kbd>⌘/</kbd></span></div>
+  <div class="k"><span>Split pane / đổi pane</span><span><kbd>⌘\</kbd> / <kbd>⌥⌘→</kbd></span></div>
+  <div class="k"><span>Tab kế / trước / mở lại tab đã đóng</span><span><kbd>⌃Tab</kbd> / <kbd>⌃⇧Tab</kbd> / <kbd>⇧⌘T</kbd></span></div>
+  <div class="k"><span>Bảng ↔ Văn bản (CSV)</span><span><kbd>⌥⌘T</kbd></span></div>
+  <div class="k"><span>Ẩn/hiện ký tự ẩn</span><span><kbd>⌥⌘I</kbd></span></div>
+  <div class="k"><span>Ghi / dừng macro · phát</span><span><kbd>⇧⌘R</kbd> · <kbd>⌘R</kbd></span></div>
+  <div class="k"><span>Sidebar · Panel dưới</span><span><kbd>⌘0</kbd> · <kbd>⌘J</kbd></span></div>
+  <div class="k"><span>Distraction-free</span><span><kbd>⌃⌘D</kbd></span></div>
+</div>
+<p class="small">Quyết định keymap (khắc phục A-06, rà soát MBL-RTM-GEDIT-001): <kbd>⇧⌘D</kbd> chốt cho Nhân đôi dòng (giữ trí nhớ cơ bắp Notepad++ Ctrl+D), Distraction-free dùng <kbd>⌃⌘D</kbd>. Bảng trên là keymap chuẩn v1.1 — file <code>keymap-default.json</code> phát hành cùng ứng dụng lấy bảng này làm nguồn.</p>
+<h3>9.2. Preset Notepad++ — nguyên tắc ánh xạ</h3>
+<ul class="doc">
+  <li>Ctrl→⌘ trực tiếp cho: F, H (→⌥⌘F), G, D (nhân đôi dòng — giữ đúng thói quen N++), L (xóa dòng), Q (comment), Tab (chuyển tab).</li>
+  <li>Giữ nguyên các phím chức năng quen thuộc: <kbd>F3</kbd>/<kbd>⇧F3</kbd> tìm kế/trước, <kbd>⌘F2</kbd> bookmark, <kbd>F2</kbd> nhảy bookmark.</li>
+  <li>Bảng ánh xạ đầy đủ (≥ 30 lệnh — tiêu chí TC-UI-01) xuất bản trong trang "Di cư từ Notepad++" và xem được ngay trong Shortcut Mapper (cột "Notepad++ tương đương").</li>
+</ul>
+
+<!-- ============ 10. IME ============ -->
+<h2 id="ime"><span class="no">10</span>IME tiếng Việt &amp; trợ năng</h2>
+<div class="grid g2">
+  <div class="card">
+    <h4>Bộ gõ tiếng Việt <span class="tag p0">P0</span> <span class="tag">NFR-USE-02</span></h4>
+    <ul class="doc" style="margin-bottom:0">
+      <li>Marked-text (chuỗi đang tổ hợp) gạch chân chấm; commit mới ghi vào buffer — không bao giờ ghi ký tự thô trung gian.</li>
+      <li>Multi-caret: chuỗi tổ hợp áp dụng cho <b>mọi</b> caret khi commit (TC-IME-02); nếu engine không đảm bảo, tạm gộp caret trong lúc composition và khôi phục sau commit — hành vi phải nhất quán, có tài liệu.</li>
+      <li><kbd>Enter</kbd>/<kbd>Esc</kbd> khi đang composition xử lý theo IME trước, lệnh editor sau — áp dụng cả trong ô Find, ô sửa cell CSV, Preferences.</li>
+      <li>Normalize NFC khi lưu (bật mặc định) để file tương thích Windows/Web; tìm kiếm khớp cả NFC lẫn NFD ở chế độ Normal.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>VoiceOver &amp; bàn phím <span class="tag">NFR-USE-03</span></h4>
+    <ul class="doc" style="margin-bottom:0">
+      <li>Editor công bố đúng AXTextArea: nội dung, dòng/cột, vùng chọn; thông báo qua announcement: "214 kết quả", "Đã lưu", "Đang ghi macro".</li>
+      <li>Điều hướng đầy đủ bằng bàn phím: mọi panel vào được bằng <kbd>⌃F6</kbd> vòng; focus ring hiển thị rõ cả hai theme.</li>
+      <li>Tôn trọng Reduce Motion (tắt animation cuộn/caret nhấp nháy tĩnh), Increase Contrast (đường viền đậm thêm 1 px, màu rainbow chuyển bộ tương phản cao).</li>
+      <li>Kích thước hit-target tối thiểu 24×24 pt cho mọi control chuột.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 11. FLOWS ============ -->
+<h2 id="flows"><span class="no">11</span>Bốn luồng người dùng then chốt</h2>
+<h3>F1 · Sửa mojibake CSV tiếng Việt (persona: văn phòng nâng cao)</h3>
+<div class="flow">
+  <div class="st"><b>Mở file</b><span>Kéo CSV vào cửa sổ. Banner: "Phát hiện Windows-1258 (62%)".</span></div>
+  <div class="st"><b>Diễn giải lại</b><span>Click banner → menu Diễn giải lại → chọn Windows-1258. Chữ Việt hiện đúng tức thời.</span></div>
+  <div class="st"><b>Chuyển đổi</b><span>Status bar → "Chuyển đổi sang UTF-8". Preview xác nhận không mất ký tự.</span></div>
+  <div class="st"><b>Lưu</b><span>⌘S. Status bar: UTF-8 · LF. Xong trong &lt; 30 giây, không mở menu sâu.</span></div>
+</div>
+<h3>F2 · Lọc log 1 GB lấy dòng lỗi (persona: quản trị hệ thống)</h3>
+<div class="flow">
+  <div class="st"><b>Mở + LFM</b><span>Mở log 1 GB — banner LFM, tương tác ≤ 8 s.</span></div>
+  <div class="st"><b>Mark</b><span>⌘F, pattern <code>ERROR|FATAL</code>, bật regex, "Đánh dấu" — 3.204 dòng.</span></div>
+  <div class="st"><b>Giữ dòng mark</b><span>Menu Đánh dấu → "Giữ lại chỉ dòng đánh dấu" (1 bước undo).</span></div>
+  <div class="st"><b>Xuất</b><span>⌘S As… lưu file lỗi riêng; file gốc không bị chạm.</span></div>
+</div>
+<h3>F3 · Đổi tên cột hàng loạt trên 200 file (persona: kỹ sư dữ liệu)</h3>
+<div class="flow">
+  <div class="st"><b>Phạm vi</b><span>⇧⌘F, thư mục dữ liệu, mask *.csv, exclude backup/.</span></div>
+  <div class="st"><b>Dry-run</b><span>Replace regex; preview diff theo file, bỏ chọn 1 file ngoại lệ.</span></div>
+  <div class="st"><b>Commit</b><span>"Ghi thay đổi vào 196 file" — atomic, tổng kết lỗi riêng từng file.</span></div>
+  <div class="st"><b>Đóng gói</b><span>Ghi macro cho lần sau; gán phím; hoặc lưu script từ console.</span></div>
+</div>
+<h3>F4 · Người dùng Notepad++ ngày đầu (persona: di cư)</h3>
+<div class="flow">
+  <div class="st"><b>Onboarding 1 màn</b><span>Lần chạy đầu: chọn theme + chọn keymap (macOS / Notepad++) — đúng 2 câu hỏi, bỏ qua được.</span></div>
+  <div class="st"><b>Quen tay ngay</b><span>⌘D nhân đôi dòng, F3 tìm tiếp hoạt động như cũ.</span></div>
+  <div class="st"><b>Khám phá dần</b><span>Tooltip lần đầu chạm tính năng mới (CSV Bảng, Mark) — mỗi tooltip hiện đúng 1 lần (NT-3).</span></div>
+  <div class="st"><b>Tra cứu</b><span>Trợ giúp → "Di cư từ Notepad++": bảng đối chiếu lệnh, tìm được theo tên lệnh N++.</span></div>
+</div>
+
+<!-- ============ 12. MOTION ============ -->
+<h2 id="motion"><span class="no">12</span>Chuyển động &amp; phản hồi</h2>
+<table class="spec">
+  <tr><th>Sự kiện</th><th>Phản hồi</th><th>Thời lượng</th></tr>
+  <tr><td>Mở/đóng panel, find bar</td><td>Trượt + fade, ease-out hệ thống</td><td>160 ms (0 nếu Reduce Motion)</td></tr>
+  <tr><td>Nhảy tới kết quả tìm</td><td>Cuộn animated + nháy nền dòng đích 1 lần (màu mark 60%)</td><td>220 ms cuộn · 400 ms nháy</td></tr>
+  <tr><td>Thao tác hàng loạt xong</td><td>Toast góc trên phải: "Đã thay 512 kết quả trong 196 file" + Undo</td><td>Hiện 5 s, hover giữ</td></tr>
+  <tr><td>Tác vụ &gt; 400 ms</td><td>Bắt buộc có tiến trình (thanh hoặc %), kèm Hủy</td><td>NFR-PERF: hủy ≤ 200 ms</td></tr>
+  <tr><td>Lưu thành công</td><td>Dirty dot mờ dần; không toast (đây là việc thường xuyên, không cần ăn mừng)</td><td>200 ms</td></tr>
+  <tr><td>Không bao giờ</td><td>Không parallax, không bounce trang trí, không animation lặp vô hạn (trừ caret) — tôn trọng NFR-PERF-07</td><td>—</td></tr>
+</table>
+
+<!-- ============ 13. TRACE ============ -->
+<h2 id="trace"><span class="no">13</span>Ma trận truy vết FR ↔ màn hình</h2>
+<table class="spec">
+  <tr><th>Nhóm yêu cầu</th><th>Mục UI/UX đặc tả</th><th>Mockup</th></tr>
+  <tr><td>FR-CORE (soạn thảo)</td><td>§4.1 multi-caret/cột, §4.2 ký tự ẩn, §9 phím tắt</td><td>Hình 4.1, 4.2</td></tr>
+  <tr><td>FR-SRCH (tìm kiếm)</td><td>§5.1 find bar + Mark, §5.2 Find in Files + dry-run</td><td>Hình 5.1, 5.2</td></tr>
+  <tr><td>FR-ENC (bảng mã)</td><td>§4.2 banner EOL/encoding, status bar §3, flow F1</td><td>Hình 4.2</td></tr>
+  <tr><td>FR-DOC (tài liệu/phiên)</td><td>§3 tab/sidebar/session, §7.1 banner LFM/monitoring/khôi phục</td><td>Hình 3.1</td></tr>
+  <tr><td>FR-CSV</td><td>§6 toàn bộ: rainbow, Table view, validate, convert, SQL</td><td>Hình 3.1, 6.1</td></tr>
+  <tr><td>FR-FMT</td><td>Theme editor §2, folding §4 (gutter), Function List §3</td><td>Hình 3.1</td></tr>
+  <tr><td>FR-AUTO</td><td>§8.3 macro/scripts/console; flow F3</td><td>—</td></tr>
+  <tr><td>FR-PLUG</td><td>§8.2 Plugin Manager, thông điệp từ chối/crash</td><td>—</td></tr>
+  <tr><td>FR-UI</td><td>§2 token, §8.1 Preferences, §9 Shortcut Mapper, §3 status bar</td><td>Hình 8.1</td></tr>
+  <tr><td>NFR-USE (IME/A11y)</td><td>§10 toàn bộ; tiêu chí chặn phát hành</td><td>—</td></tr>
+  <tr><td>NFR-PERF/REL</td><td>Quy tắc tiến trình + Hủy §12; dry-run §5.2; 1 bước undo xuyên suốt</td><td>Hình 5.2</td></tr>
+</table>
+
+<!-- ============ 14. KNOWLEDGE PACK ============ -->
+<h2 id="kp"><span class="no">14</span>Knowledge Pack <span class="tag ph">Phase 4</span> <span class="tag">FR-KNW-901…912</span></h2>
+<p class="lead">Gói mở rộng cho kỹ sư tri thức: nhìn, kiểm tra và sửa dữ liệu RAG/GraphRAG (chunks JSONL, triple, đồ thị, prompt) ở quy mô Gigabyte. Toàn bộ là MỘT plugin (ADR-11) — cài qua Plugin Manager, gỡ là ứng dụng về đúng trạng thái Phase 3; các mục ẩn hoàn toàn khi Pack tắt (zero-cost, NT-3 "quyền lực lộ dần").</p>
+
+<h3>14.1. JSONL / Chunk Inspector <span class="tag">FR-KNW-901/902</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 14.1 — JSONL mode: danh sách record trái, thẻ record pretty giữa, thanh công cụ Pack trên cùng</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m8','light')">Sáng</button><button onclick="setTheme(this,'m8','dark')">Tối</button></span></div>
+  <div class="mac" id="m8">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">corpus_chunks.jsonl — Knowledge Pack</span><span class="tspace"></span></div>
+    <div class="findbar">
+      <span class="chipbtn on">Records</span><span class="chipbtn">Văn bản thô</span>
+      <span class="small" style="color:var(--tb-ink)">1.204.318 record · 3 lỗi JSON · 214 chunk rỗng · 1.892 trùng lặp</span>
+      <span style="flex:1"></span>
+      <button class="mbtn">Thống kê</button>
+      <button class="mbtn">Chunking preview</button>
+      <button class="mbtn">SQL</button>
+    </div>
+    <div class="body-split">
+      <div class="sidebar" style="width:200px">
+        <div class="sh">Record</div>
+        <div class="it">#000117 · 812 tokens</div>
+        <div class="it on">#000118 · 794 tokens</div>
+        <div class="it" style="color:var(--err)">#000119 · ⚠ JSON lỗi</div>
+        <div class="it" style="opacity:.6">#000120 · rỗng</div>
+        <div class="it">#000121 · 803 tokens</div>
+        <div class="sh" style="margin-top:8px">Lọc</div>
+        <div class="it">metadata.source = "sach_rag"</div>
+        <div class="it" style="color:var(--acc)">+ Thêm bộ lọc…</div>
+      </div>
+      <div class="editor" style="font-size:11.5px">
+        <div class="row"><span class="tx" style="padding:8px 12px 2px;color:var(--gut-ink)">Record #000118 — dòng 118 trong file · ⌘⏎ mở dạng văn bản thô tại dòng</span></div>
+        <div class="row"><span class="tx">{</span></div>
+        <div class="row"><span class="tx">  <span class="c1">"id"</span>: <span class="c2">"rag-ch03-0118"</span>,</span></div>
+        <div class="row"><span class="tx">  <span class="c1">"text"</span>: <span class="c2">"GraphRAG kết hợp truy hồi vector với truy vấn đồ thị tri thức…"</span>,</span></div>
+        <div class="row"><span class="tx">  <span class="c1">"metadata"</span>: { <span class="c1">"source"</span>: <span class="c2">"sach_rag"</span>, <span class="c1">"chapter"</span>: <span class="c4">3</span>, <span class="c1">"lang"</span>: <span class="c2">"vi"</span> }</span></div>
+        <div class="row"><span class="tx">}</span></div>
+        <div class="row"><span class="tx" style="padding:10px 12px;color:var(--gut-ink)">Histogram độ dài (tokens): ▁▂▅█▆▃▁ · p50 = 780 · p95 = 1.240 · ngoài ngưỡng &gt; 1.500: 0,4%</span></div>
+      </div>
+    </div>
+    <div class="statusbar"><span class="sg">JSONL · UTF-8 · LF</span><span class="sg click">Nhảy tới lỗi kế</span><span class="sg sp"></span><span class="sg">Index: XPC · 8,4 s</span></div>
+  </div>
+</div>
+<ul class="doc">
+  <li>Hai chế độ xem chuyển như CSV (<kbd>⌥⌘T</kbd>): "Records" là projection — nguồn sự thật vẫn là văn bản (nhất quán SAD Hình 4); sửa trong thẻ record ghi ngược đúng dòng, escape JSON chuẩn.</li>
+  <li>Nút "Thống kê" mở panel dưới với histogram/dedup (DuckDB); "Chunking preview" tô ranh giới chunk ngay trong editor bằng indicator màu, đổi chiến lược thấy kết quả tức thời trước khi xuất JSONL. <span class="tag">FR-KNW-903</span></li>
+  <li>Mọi số liệu trên toolbar click được để lọc: click "1.892 trùng lặp" → danh sách cặp trùng, chọn "Giữ bản đầu" là một bước undo.</li>
+</ul>
+
+<h3>14.2. Graph mode <span class="tag">FR-KNW-904/905/906</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 14.2 — Văn bản DOT trái, preview đồ thị phải; chọn node đồng bộ hai chiều</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m9','light')">Sáng</button><button onclick="setTheme(this,'m9','dark')">Tối</button></span></div>
+  <div class="mac" id="m9">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">kg_insurance.dot — Xem trước đồ thị</span><span class="tspace"></span></div>
+    <div class="body-split">
+      <div class="editor" style="border-right:1px solid var(--side-line)">
+        <div class="row"><span class="no">1</span><span class="tx"><span class="c4">digraph</span> KG {</span></div>
+        <div class="row"><span class="no">2</span><span class="tx">  HopDong -&gt; DieuKhoan [<span class="c1">label</span>=<span class="c2">"bao_gom"</span>];</span></div>
+        <div class="row cur"><span class="no">3</span><span class="tx">  <span class="sel">DieuKhoan</span><span class="caret"></span> -&gt; QuyenLoi [<span class="c1">label</span>=<span class="c2">"quy_dinh"</span>];</span></div>
+        <div class="row"><span class="no">4</span><span class="tx">  HopDong -&gt; KhachHang [<span class="c1">label</span>=<span class="c2">"thuoc_ve"</span>];</span></div>
+        <div class="row"><span class="no">5</span><span class="tx">  QuyenLoi -&gt; <span class="err">MucChiTra</span> <span style="color:var(--gut-ink)">// ⚠ node chưa khai báo</span></span></div>
+        <div class="row"><span class="no">6</span><span class="tx">}</span></div>
+      </div>
+      <div class="editor" style="font-family:var(--doc-font)" role="img" aria-label="Preview đồ thị">
+        <div style="padding:14px;font-size:11px;color:var(--gut-ink)">Preview (Graphviz) · click node → nhảy tới định nghĩa</div>
+        <div style="display:flex;gap:26px;align-items:center;justify-content:center;padding:6px 10px 18px;flex-wrap:wrap">
+          <span style="border:1.5px solid var(--acc);border-radius:18px;padding:5px 13px;font-size:11.5px;color:var(--ed-ink)">HopDong</span>
+          <span style="color:var(--gut-ink)">→</span>
+          <span style="border:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent);border-radius:18px;padding:5px 13px;font-size:11.5px;font-weight:700;color:var(--ed-ink)">DieuKhoan</span>
+          <span style="color:var(--gut-ink)">→</span>
+          <span style="border:1.5px solid var(--gut-ink);border-radius:18px;padding:5px 13px;font-size:11.5px;color:var(--ed-ink)">QuyenLoi</span>
+          <span style="border:1.5px dashed var(--err);border-radius:18px;padding:5px 13px;font-size:11.5px;color:var(--err)">MucChiTra?</span>
+        </div>
+      </div>
+    </div>
+    <div class="statusbar"><span class="sg">DOT · 4 node · 4 cạnh</span><span class="sg" style="color:var(--err)">1 node chưa khai báo</span><span class="sg sp"></span><span class="sg click">Export SVG</span></div>
+  </div>
+</div>
+<table class="spec">
+  <tr><th>Thành phần</th><th>Đặc tả hành vi</th><th>Truy vết</th></tr>
+  <tr><td>Đồng bộ chọn</td><td>Chọn node trong văn bản → node sáng trong preview (viền action 2 px); click node trong preview → caret nhảy tới định nghĩa. Preview cập nhật debounce 300 ms sau sửa.</td><td>FR-KNW-905</td></tr>
+  <tr><td>Validate</td><td>Lỗi cú pháp và tham chiếu (node chưa khai báo, cạnh mồ côi) gạch sóng đỏ + liệt kê panel dưới, click nhảy dòng — cùng khuôn với CSV Validate.</td><td>FR-KNW-904</td></tr>
+  <tr><td>Bảng triple</td><td>File N-Triples/edge list mở bằng Table view 3 cột subject–predicate–object; menu header có "Đếm degree theo cột" (chạy DuckDB, kết quả panel dưới).</td><td>FR-KNW-906/907</td></tr>
+  <tr><td>Đánh dấu entity</td><td>Lệnh "Đánh dấu entity từ file…" nạp CSV danh sách; mỗi loại entity một màu Mark; thanh đếm tần suất trong panel — dùng chung điều hướng bookmark 9 màu.</td><td>FR-KNW-908</td></tr>
+  <tr><td>Trạng thái ẩn</td><td>Toàn bộ menu/nút của Pack không render khi Pack tắt — không disabled xám gây nhiễu; lần đầu mở file .jsonl/.dot khi chưa cài Pack: một banner gợi ý cài (hiện đúng 1 lần).</td><td>FR-KNW-911, NT-3</td></tr>
+</table>
+
+<h3>14.3. Luồng F5 · Chuẩn hóa corpus RAG trước khi ingest</h3>
+<div class="flow">
+  <div class="st"><b>Mở & quét</b><span>Mở chunks.jsonl 1 GB — index XPC chạy nền, toolbar báo: 3 lỗi JSON, 214 rỗng, 1.892 trùng.</span></div>
+  <div class="st"><b>Làm sạch</b><span>Click từng số liệu → sửa 3 record lỗi, xóa rỗng + trùng ("Giữ bản đầu"), mỗi thao tác 1 bước undo.</span></div>
+  <div class="st"><b>Kiểm phân bố</b><span>Panel Thống kê: histogram token, p95 = 1.240 &lt; ngưỡng 1.500 — đạt; SQL đếm phủ metadata.source.</span></div>
+  <div class="st"><b>Xuất & tự động hóa</b><span>Lưu UTF-8/LF; lưu script jsonl.* thành lệnh menu để lần sau chạy 1 phím trên cả thư mục corpus.</span></div>
+</div>
+
+<!-- ============ 15. AGENT PACK ============ -->
+<h2 id="agent"><span class="no">15</span>Agent Pack <span class="tag ph">Phase 5</span> <span class="tag">FR-AGT-1001…1010</span></h2>
+<p class="lead">GEditor hoạt động như một agent theo mô hình BYOK: người dùng nhập key (lưu Keychain) và chọn mô hình; agent hành động qua chính Editor API nên thao tác được file hàng Gigabyte mà không nạp vào context. Ba lớp phanh hiển thị ngay trong UI: cổng diff duyệt, checkpoint phiên, quyền theo phiên. Plugin riêng — zero-cost khi tắt, mọi mục ẩn hoàn toàn khi Pack không bật (NT-3).</p>
+
+<h3>15.1. Agent panel & cổng diff <span class="tag">FR-AGT-1003/1005/1008</span></h3>
+<div class="stage">
+  <div class="bar"><span class="cap">Hình 15.1 — Editor trái, Agent panel phải: hội thoại, log tool call, thẻ diff chờ duyệt, đồng hồ chi phí</span>
+  <span class="toggle"><button class="on" onclick="setTheme(this,'m10','light')">Sáng</button><button onclick="setTheme(this,'m10','dark')">Tối</button></span></div>
+  <div class="mac" id="m10">
+    <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span class="ttl">server.log (1,2 GB) — Agent</span><span class="tspace"></span></div>
+    <div class="body-split">
+      <div class="editor" style="border-right:1px solid var(--side-line)">
+        <div class="row"><span class="no">88412</span><span class="tx">2026-08-19 03:12:44 ERROR db timeout pool-7</span></div>
+        <div class="row mkline"><span class="no">88413</span><span class="tx">2026-08-19 03:12:45 ERROR db timeout pool-7</span></div>
+        <div class="row"><span class="no">88414</span><span class="tx">2026-08-19 03:12:47 INFO  retry ok</span></div>
+        <div class="row mkline"><span class="no">90201</span><span class="tx">2026-08-19 04:02:11 ERROR db timeout pool-2</span></div>
+        <div class="row"><span class="no">90202</span><span class="tx">2026-08-19 04:02:12 INFO  retry ok</span></div>
+      </div>
+      <div class="sidebar" style="width:300px;display:flex;flex-direction:column">
+        <div class="sh">Agent · Claude Sonnet (key của bạn)</div>
+        <div class="it" style="white-space:normal;background:color-mix(in srgb,var(--acc) 10%,transparent);border-radius:8px;margin:2px 8px;padding:6px 9px">Bạn: Lọc mọi dòng ERROR db timeout, gom theo pool, xuất báo cáo CSV</div>
+        <div class="it" style="white-space:normal;margin:2px 8px;padding:2px 9px;color:var(--gut-ink);font-size:11px">⚙ search.find("ERROR db timeout", regex) → 3.842 dòng<br>⚙ sql.query(GROUP BY pool) → 6 nhóm<br>⚙ document.create("bao_cao.csv") → chờ duyệt</div>
+        <div class="it" style="white-space:normal;background:var(--ed-bg);border:1px solid var(--tb-line);border-radius:8px;margin:4px 8px;padding:7px 9px">
+          <b style="font-size:11.5px">Thay đổi chờ duyệt</b><br>
+          <span style="font-size:11px">+ Tạo file bao_cao.csv (7 dòng)<br>± Không sửa file gốc</span><br>
+          <button class="mbtn pri" style="margin-top:5px">Áp dụng</button>
+          <button class="mbtn" style="margin-top:5px">Xem diff</button>
+          <button class="mbtn" style="margin-top:5px">Từ chối</button>
+        </div>
+        <div class="it" style="margin-top:auto;border-top:1px solid var(--side-line);padding-top:6px;font-size:10.5px;color:var(--gut-ink)">Phiên: 1.240 tokens vào · 380 ra · ≈ $0,004 / trần $0,50 · <span style="color:var(--acc)">Lưu thành lệnh lặp</span></div>
+      </div>
+    </div>
+    <div class="statusbar"><span class="sg">Agent: đang chờ duyệt</span><span class="sg click">Hoàn tác cả phiên</span><span class="sg sp"></span><span class="sg">Payload gửi: 41 KB / trần 256 KB</span></div>
+  </div>
+</div>
+<table class="spec">
+  <tr><th>Thành phần</th><th>Đặc tả hành vi</th><th>Truy vết</th></tr>
+  <tr><td>Cấu hình provider</td><td>Preferences → nhóm "Agent": bảng provider (Anthropic / OpenAI-compatible / Gemini / Ollama), ô key ghi thẳng vào Keychain (hiển thị •••• + 4 ký tự cuối, không copy lại được); nút Kiểm tra kết nối; danh sách model reload từ file cấu hình.</td><td>FR-AGT-1001/1002</td></tr>
+  <tr><td>Log tool call</td><td>Mỗi bước ⚙ hiện tên tool + tham số rút gọn + kết quả tóm tắt, click mở chi tiết; xuất JSONL từ menu panel. Key luôn bị che trong mọi hiển thị/log.</td><td>FR-AGT-1008, NFR-AGT-01</td></tr>
+  <tr><td>Thẻ diff</td><td>Mọi ghi gom thành changeset: "Xem diff" mở đúng khuôn preview của Replace in Files (bỏ chọn từng mục); "Áp dụng" = 1 bước undo; auto-approve chỉ khi dưới ngưỡng trong Preferences (mặc định: ≤ 5 edit, 1 file).</td><td>FR-AGT-1005</td></tr>
+  <tr><td>Phanh phiên</td><td>Status bar luôn có "Hoàn tác cả phiên" khi panel mở; hủy streaming bằng <kbd>Esc</kbd> (≤ 200 ms); vượt trần ngân sách → phiên dừng kèm tổng kết chi phí.</td><td>FR-AGT-1006/1008, NFR-AGT-04</td></tr>
+  <tr><td>Quyền theo phiên</td><td>Agent xin shell/ghi ngoài workspace/network → hộp cấp quyền nêu đúng phạm vi ("Chạy: sort -u", "Ghi: ~/bao_cao/"); từ chối trả lỗi có cấu trúc cho agent, phiên tiếp tục.</td><td>FR-AGT-1007</td></tr>
+  <tr><td>Lệnh lặp</td><td>"Lưu thành lệnh lặp": chuỗi tool call phiên thành công biên dịch thành script (không cần LLM khi chạy lại), xuất hiện trong menu Scripts, chạy được batch trên thư mục.</td><td>FR-AGT-1009</td></tr>
+</table>
+
+<h3>15.2. Luồng F6 · Dọn log 1 GB bằng ngôn ngữ tự nhiên</h3>
+<div class="flow">
+  <div class="st"><b>Yêu cầu</b><span>Mở log 1,2 GB; gõ NL trong panel. Agent gọi search/sql qua tools — payload gửi provider chỉ 41 KB.</span></div>
+  <div class="st"><b>Duyệt</b><span>Thẻ diff: tạo bao_cao.csv, không sửa file gốc → "Áp dụng". Mọi thứ 1 bước undo.</span></div>
+  <div class="st"><b>Kiểm chi phí</b><span>Đồng hồ: ≈ $0,004, dưới trần $0,50. Audit log xuất JSONL nếu cần lưu vết.</span></div>
+  <div class="st"><b>Đóng gói</b><span>"Lưu thành lệnh lặp" → tuần sau chạy lại trên log mới bằng 1 phím, không tốn token.</span></div>
+</div>
+
+<footer>
+  <b style="color:var(--navy)">MBL-UIX-GEDIT-001 · v1.6 · 20/08/2026 · Bổ sung §6.2 Bàn làm sạch dữ liệu (FR-CLN), mục 14–15 các Pack mở rộng</b><br>
+  CÔNG TY TNHH MOBILUCK · code247.ai · Tài liệu nội bộ. Bộ tài liệu dự án: SRS (MBL-SRS-GEDIT-001) → SAD (MBL-SAD-GEDIT-001) → STP (MBL-STP-GEDIT-001) → UI/UX (tài liệu này).<br>
+  Mockup trong tài liệu dựng bằng HTML/CSS theo đúng design token §2 — dùng làm tham chiếu trực quan khi triển khai AppKit; giá trị pixel/pt trong bảng đặc tả là chuẩn.
+</footer>
+
+</div><!-- /wrap -->
+</main>
+
+<script>
+function setTheme(btn, id, mode){
+  const m = document.getElementById(id);
+  if(!m) return;
+  m.classList.toggle('dark', mode === 'dark');
+  const group = btn.parentElement.querySelectorAll('button');
+  group.forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+</script>
+</body>
+</html>

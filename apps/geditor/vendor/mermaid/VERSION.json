@@ -1,0 +1,10 @@
+{
+  "name": "mermaid",
+  "version": "11.17.2",
+  "license": "MIT",
+  "file": "mermaid.min.js",
+  "bytes": 3572661,
+  "sha256": "581ed7d74bd9048d0e3a91363927d72ef22942d7722546b27f7cc29e35390eb8",
+  "source": "https://registry.npmjs.org/mermaid/-/mermaid-11.17.2.tgz",
+  "note": "Vendor tay bằng scripts/vendor-mermaid.sh. KHÔNG tải lúc dựng, KHÔNG CDN lúc chạy (NFR-MMD-02)."
+}

@@ -1,0 +1,15 @@
+{
+  "architecture" : "arm64",
+  "boxMs" : 81.748167,
+  "budgetMs" : 2000,
+  "downsampleMs" : 6.143541,
+  "histogramMs" : 66.907917,
+  "kpi" : "NFR-QRY-02 — biểu đồ 1 triệu điểm ≤ 2 s",
+  "notes" : [
+    "Ba phép đo là ba loại biểu đồ khác nhau, không phải ba lần cùng một phép: đường\/phân tán đi qua LTTB, phân bố đi qua chia khoảng, hộp đi qua phân vị. Mốc 2 giây áp cho phép CHẬM NHẤT.",
+    "Phần VẼ không nằm trong con số này — nó đo phần TÍNH ở lõi. Phần vẽ nhận tối đa 2000 điểm nên chi phí của nó không phụ thuộc cỡ dữ liệu."
+  ],
+  "pass" : true,
+  "points" : 1000000,
+  "sampledTo" : 2000
+}

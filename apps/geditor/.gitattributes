@@ -1,0 +1,18 @@
+# libduckdb đi qua Git LFS (ADR-14).
+#
+# VÌ SAO KHÔNG COMMIT THẲNG. 94 MB sau strip. Git giữ mọi phiên bản mãi mãi, nên mỗi lần nâng
+# DuckDB là cộng thêm 94 MB VĨNH VIỄN vào mọi bản clone — kể cả sau khi xoá file. Kho hiện nay
+# là 26 MB; một lần nâng cấp sẽ làm nó gấp bốn, hai lần nữa là gấp mười.
+#
+# VÌ SAO KHÔNG TẢI LÚC DỰNG. `ci.yml` ghi rõ một bất biến: "vendor nằm trong kho mã, không tải
+# về lúc dựng — NFR-SEC-03 chuỗi cung ứng". Một bước `curl` trong CI phá đúng bất biến ấy, và
+# làm bản dựng đứt mỗi khi GitHub releases đứt.
+#
+# LFS giữ được cả hai vế: artefact THUỘC kho (clone ra là có, không cần mạng lúc dựng), mà bản
+# clone chỉ kéo phiên bản đang dùng chứ không kéo cả lịch sử.
+#
+# Cái giá phải nói ra: máy nào chưa có `git lfs` sẽ clone ra một file con trỏ 130 byte thay vì
+# dylib. Triệu chứng là tính năng truy vấn báo "không nạp được libduckdb" — `DuckDB.failureReason`
+# in ra đường dẫn đã thử, nên nó chẩn đoán được, nhưng người gặp cần biết câu trả lời là
+# `git lfs install && git lfs pull`.
+vendor/duckdb/libduckdb.dylib filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,23 @@
+{
+  "architecture" : "arm64",
+  "batchedMs" : 324.309417,
+  "budgetMs" : 15000,
+  "columns" : 20,
+  "kpi" : "NFR-DQR-01 — 1 triệu dòng × 50 rule ≤ 15 s",
+  "notes" : [
+    "Cột đối chứng 'từng câu một' KHÔNG phải một bản hiện thực khác — nó là chính engine ấy chạy 50 lần với mỗi lần một luật. Chênh lệch vì thế đo đúng một thứ: giá của việc gom nhiều luật vào một lượt quét.",
+    "Mọi kỳ vọng đúng-sai suy từ công thức sinh fixture (CleanKPI.fixture), không suy từ kết quả engine đang đo."
+  ],
+  "oneByOneMs" : 15022.880041,
+  "pass" : true,
+  "rows" : 1000000,
+  "ruleCount" : 50,
+  "speedup" : 46.322675980142755,
+  "violationsBySample" : {
+    "«doanh_thu» trong khoảng ≥ 0" : 0,
+    "«ghi_chu» dài ≤ 40 ký tự" : 0,
+    "«ma_kh» không rỗng" : 0,
+    "«ngay» đúng dạng ngày `%Y-%m-%d`" : 0,
+    "«thanh_pho» thuộc danh sách (Hà Nội, Huế, Đà Nẵng…)" : 0
+  }
+}

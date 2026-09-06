@@ -1,0 +1,291 @@
+{
+  "architecture" : "arm64",
+  "buildBudgetMs" : 30000,
+  "buildMs" : 19589.586791000002,
+  "checkCorpus" : ".build\/poc-m\/doi-chung.jsonl",
+  "checkRows" : [
+    {
+      "doc" : 77,
+      "query" : "hopdong quyetdinh",
+      "score" : 5.8161244533926508
+    },
+    {
+      "doc" : 197,
+      "query" : "hopdong quyetdinh",
+      "score" : 5.496629582451015
+    },
+    {
+      "doc" : 212,
+      "query" : "hopdong quyetdinh",
+      "score" : 5.1815689251467365
+    },
+    {
+      "doc" : 275,
+      "query" : "hopdong quyetdinh",
+      "score" : 4.7809428787871955
+    },
+    {
+      "doc" : 245,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.73572012694202338
+    },
+    {
+      "doc" : 410,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.72206428045998405
+    },
+    {
+      "doc" : 303,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.70983014825746316
+    },
+    {
+      "doc" : 446,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.69755664505268367
+    },
+    {
+      "doc" : 37,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.69255965930014063
+    },
+    {
+      "doc" : 3,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.68666860844129429
+    },
+    {
+      "doc" : 409,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.68030427669423033
+    },
+    {
+      "doc" : 124,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.67304604725100947
+    },
+    {
+      "doc" : 44,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.67193898823114417
+    },
+    {
+      "doc" : 360,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.67050504639820774
+    },
+    {
+      "doc" : 418,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.66995523467517581
+    },
+    {
+      "doc" : 235,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.66896774387319835
+    },
+    {
+      "doc" : 74,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.66260850243318892
+    },
+    {
+      "doc" : 290,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.66213598537705665
+    },
+    {
+      "doc" : 84,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.66117139407090542
+    },
+    {
+      "doc" : 261,
+      "query" : "hopdong quyetdinh",
+      "score" : 0.66026291480676524
+    },
+    {
+      "doc" : 260,
+      "query" : "bienban bangiao",
+      "score" : 4.3350907301920092
+    },
+    {
+      "doc" : 227,
+      "query" : "bienban bangiao",
+      "score" : 3.9412936544681387
+    },
+    {
+      "doc" : 187,
+      "query" : "bienban bangiao",
+      "score" : 3.7936041864827792
+    },
+    {
+      "doc" : 459,
+      "query" : "bienban bangiao",
+      "score" : 3.7841507892678865
+    },
+    {
+      "doc" : 434,
+      "query" : "bienban bangiao",
+      "score" : 3.6742782458133725
+    },
+    {
+      "doc" : 191,
+      "query" : "bienban bangiao",
+      "score" : 3.5046813005821735
+    },
+    {
+      "doc" : 319,
+      "query" : "bienban bangiao",
+      "score" : 3.4179113270666508
+    },
+    {
+      "doc" : 115,
+      "query" : "bienban bangiao",
+      "score" : 3.2991037327401096
+    },
+    {
+      "doc" : 383,
+      "query" : "bienban bangiao",
+      "score" : 3.2496837525223587
+    },
+    {
+      "doc" : 86,
+      "query" : "thuyloi khoangsan",
+      "score" : 5.3374723878111192
+    },
+    {
+      "doc" : 355,
+      "query" : "thuyloi khoangsan",
+      "score" : 5.0581595953772007
+    },
+    {
+      "doc" : 52,
+      "query" : "nganhang thanhtoan chuyenkhoan",
+      "score" : 5.1124883095270519
+    }
+  ],
+  "corpusBytes" : 1024000161,
+  "deterministic" : true,
+  "documentCount" : 690181,
+  "goldenBudgetMs" : 60000,
+  "goldenIdentifierMapMs" : 486.45499999999998,
+  "goldenMs" : 9670.4765829999997,
+  "goldenQueryCount" : 1000,
+  "goldenRecall" : 0.80700000000000005,
+  "goldenScoredCount" : 1000,
+  "hybridEntityCount" : 2000,
+  "hybridRerankBudgetMs" : 300,
+  "hybridRerankMedianMs" : 35.953166000000003,
+  "hybridRerankWorstMs" : 43.845874999999999,
+  "indexBytes" : 187026175,
+  "indexRatio" : 0.18264272030715042,
+  "notes" : [
+    "Corpus sinh bằng bộ sinh có seed cố định — hai lần đo so được với nhau.",
+    "Truy vấn đo trên chỉ mục ĐỌC LẠI TỪ ĐĨA, không dùng bản còn nóng trong bộ nhớ.",
+    "Bảng «checkRows» để scripts\/run-poc-m.sh chấm lại bằng một cài đặt Python viết độc lập: hai ngôn ngữ, một công thức."
+  ],
+  "pass" : true,
+  "phases" : {
+    "flushMs" : 3.8835410000000001,
+    "mergeMs" : 2.9338329999999999,
+    "parseMs" : 0,
+    "postingMs" : 0,
+    "readMs" : 0.10387399999999999,
+    "recordMs" : 12.973130999999981,
+    "splitMs" : 0.069583999999999993,
+    "tokenizeMs" : 0,
+    "writeMs" : 3.2246250000000001
+  },
+  "poc" : "PoC-M — BM25 Retrieval Lab (FR-KNW-918, NFR-KNW-04)",
+  "queryBudgetMs" : 500,
+  "queryMedianMs" : 0.72550000000000003,
+  "queryMs" : [
+    4.3746660000000004,
+    0.74945899999999999,
+    0.72550000000000003,
+    0.71550000000000002,
+    0.53379100000000002
+  ],
+  "rssBeforeMB" : 7.078125,
+  "rssPeakMB" : 1029.625,
+  "termCount" : 19000,
+  "tokenizer" : "Tách token theo ranh giới chữ\/số, hạ chữ thường, GIỮ dấu tiếng Việt. Chưa tách TỪ GHÉP (FR-MIN-006 chưa có mã): «cơ sở dữ liệu» thành bốn token, nên phép khớp là theo ÂM TIẾT chứ không theo từ.",
+  "topHits" : [
+    {
+      "hits" : [
+        {
+          "doc" : 515000,
+          "score" : 7.2446009166973138
+        },
+        {
+          "doc" : 3219,
+          "score" : 7.0532856031947677
+        },
+        {
+          "doc" : 392674,
+          "score" : 7.0179436803536532
+        }
+      ],
+      "query" : "hopdong quyetdinh"
+    },
+    {
+      "hits" : [
+        {
+          "doc" : 561004,
+          "score" : 7.9235840565918378
+        },
+        {
+          "doc" : 196360,
+          "score" : 7.0556149257816099
+        },
+        {
+          "doc" : 530077,
+          "score" : 6.8151992630211167
+        }
+      ],
+      "query" : "bienban bangiao"
+    },
+    {
+      "hits" : [
+        {
+          "doc" : 243656,
+          "score" : 12.540770386695336
+        },
+        {
+          "doc" : 331467,
+          "score" : 11.844737177121139
+        },
+        {
+          "doc" : 367170,
+          "score" : 10.858554060894939
+        }
+      ],
+      "query" : "thuyloi khoangsan"
+    },
+    {
+      "hits" : [
+        {
+          "doc" : 137876,
+          "score" : 12.54274639279501
+        },
+        {
+          "doc" : 674300,
+          "score" : 12.481169485713458
+        },
+        {
+          "doc" : 418467,
+          "score" : 12.258531092872651
+        }
+      ],
+      "query" : "nganhang thanhtoan chuyenkhoan"
+    },
+    {
+      "hits" : [
+
+      ],
+      "query" : "so ngay thang nam"
+    }
+  ],
+  "totalTokens" : 110081891
+}

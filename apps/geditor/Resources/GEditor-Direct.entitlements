@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Entitlement của BẢN TẢI TRỰC TIẾP từ trang web (NFR-SEC-01).
+
+  GEditor phát hành qua hai kênh — xem `Sources/GEditorCore/Session/Distribution.swift`.
+  Bản này KHÔNG sandbox, đổi lại nó giữ được `geditor` CLI: cầu nối dùng socket Unix trong
+  Application Support, và một tiến trình CLI bên ngoài chỉ mở được socket ấy khi app không bị
+  giam trong container.
+
+  Vẫn có hardened runtime (bắt buộc để công chứng), nên allow-jit vẫn cần: sljit của PCRE2 sinh
+  mã máy lúc chạy và xin vùng nhớ bằng MAP_JIT. Thiếu nó thì bản phát hành CRASH ngay lần tìm
+  kiếm đầu tiên, trong khi bản dựng ad-hoc lúc phát triển vẫn chạy bình thường — đúng kiểu lỗi
+  chỉ lộ ra sau khi đã gửi đi.
+
+  Cố ý KHÔNG có ở đây, y như bản App Store:
+    - allow-unsigned-executable-memory: rộng hơn allow-jit rất nhiều và không cần.
+    - allow-dyld-environment-variables / disable-library-validation: mở đường nạp mã lạ. Dylib
+      grammar nặng (ADR-08) nằm TRONG bundle và ký cùng bundle nên không cần tới chúng.
+
+  KHÔNG sandbox không có nghĩa là muốn gì cũng được: hai bản dùng CHUNG một binary và cùng một
+  đường mã. Khác biệt duy nhất là cầu nối CLI, và chính app tự nhận ra mình đang ở kênh nào.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+</dict>
+</plist>

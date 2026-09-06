@@ -1,0 +1,37 @@
+{
+  "csrBuildMs" : 216.855458,
+  "deterministic" : true,
+  "edgeCount" : 998775,
+  "nodeCount" : 125000,
+  "passed" : true,
+  "steps" : {
+    "2-hop" : {
+      "budgetMs" : 2000,
+      "ms" : 4.3230420000000001,
+      "passed" : true,
+      "ticks" : 0,
+      "worstGapMs" : 0
+    },
+    "liên thông" : {
+      "budgetMs" : 10000,
+      "ms" : 3.9503339999999998,
+      "passed" : true,
+      "ticks" : 1,
+      "worstGapMs" : 0.092208999999999999
+    },
+    "Louvain" : {
+      "budgetMs" : 60000,
+      "ms" : 1073.8321659999999,
+      "passed" : true,
+      "ticks" : 45,
+      "worstGapMs" : 79.525750000000002
+    },
+    "PageRank" : {
+      "budgetMs" : 30000,
+      "ms" : 43.905417,
+      "passed" : true,
+      "ticks" : 18,
+      "worstGapMs" : 1.3425830000000001
+    }
+  }
+}

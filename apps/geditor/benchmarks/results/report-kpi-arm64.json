@@ -1,0 +1,15 @@
+{
+  "architecture" : "arm64",
+  "blocks" : 10,
+  "budgetMs" : 5000,
+  "cacheHelps" : true,
+  "firstRenderMs" : 3090.504375,
+  "kpi" : "NFR-RPT-01",
+  "notes" : [
+    "cache khối: 10 lần trúng · 10 lần trượt"
+  ],
+  "pass" : true,
+  "rows" : 1000000,
+  "secondRenderMs" : 0.853375,
+  "succeeded" : 10
+}

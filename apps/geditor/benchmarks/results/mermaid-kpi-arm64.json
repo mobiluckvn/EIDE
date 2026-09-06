@@ -1,0 +1,25 @@
+{
+  "architecture" : "arm64",
+  "firstBudgetMs" : 2000,
+  "firstRenderMs" : 1098.9471249999999,
+  "kpi" : "NFR-MMD-01 — 500 node ≤ 2 s · cập nhật ≤ 500 ms",
+  "mermaidVersion" : "11.17.2",
+  "notes" : [
+    "Đo bằng CHÍNH `MermaidRenderer` mà bảng Mermaid Studio dùng — kể cả hàng rào chặn mạng và `deterministicIds`, hai thứ một harness riêng sẽ bỏ qua.",
+    "Cột «lần đầu» tính CẢ dựng WKWebView và nạp 3,4 MB JavaScript. Người dùng trả khoản ấy đúng một lần cho mỗi phiên, và chỉ khi họ mở một sơ đồ.",
+    "RAM: chênh lệch trước\/sau là giá của WKWebView. NFR-PERF-05 nói về RAM NGHỈ, nên nó không đụng chỉ tiêu ấy — miễn là bộ render dựng lười."
+  ],
+  "pass" : true,
+  "rssAfterMB" : 109.421875,
+  "rssBeforeMB" : 78.84375,
+  "svgBytes" : 736363,
+  "updateBudgetMs" : 500,
+  "updateMedianMs" : 9.3793330000000008,
+  "updateMs" : [
+    18.794125000000001,
+    10.14875,
+    8.5465420000000005,
+    9.3793330000000008,
+    8.4280830000000009
+  ]
+}

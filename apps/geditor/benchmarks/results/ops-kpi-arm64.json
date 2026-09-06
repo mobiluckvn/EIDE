@@ -1,0 +1,40 @@
+{
+  "architecture" : "arm64",
+  "dedup" : {
+    "applyMs" : 506.073208,
+    "budgetMs" : 3000,
+    "deletedLines" : 400000,
+    "duplicateRatio" : 0.4,
+    "editCount" : 239695,
+    "lines" : 1000000,
+    "linesAfter" : 600000,
+    "orderPreserved" : true,
+    "pass" : true,
+    "planMs" : 655.010833,
+    "totalMs" : 1161.084041,
+    "undoSteps" : 1,
+    "uniqueLines" : 600000
+  },
+  "deleteColumn" : {
+    "applyMs" : 2435.640333,
+    "budgetMs" : 5000,
+    "column" : 2,
+    "editCount" : 1000000,
+    "fixtureMB" : 76.2939453125,
+    "pass" : true,
+    "planMs" : 322.438625,
+    "quotedFieldsIntact" : true,
+    "rows" : 1000000,
+    "totalMs" : 2758.078958,
+    "undoSteps" : 1
+  },
+  "kpi" : [
+    "FR-CORE-006 (TC-CORE-08)",
+    "FR-CSV-404 (TC-CSV-03)"
+  ],
+  "notes" : [
+    "Dòng trùng được rải TẤT ĐỊNH khắp tài liệu chứ không dồn cụm: dồn cụm sẽ gộp thành vài edit và làm phép đo dễ hơn thực tế.",
+    "Kế hoạch và áp dụng đo tách nhau vì chúng chịu chi phối bởi hai thứ khác nhau — băm nội dung và thao tác trên cây piece.",
+    "Trần lấy từ STP §4.1; con số thời gian là của MÁY ĐANG ĐO, phải đo lại trên máy chuẩn §2.1 trước khi chốt."
+  ]
+}

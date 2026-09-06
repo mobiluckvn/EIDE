@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Entitlement của TIẾN TRÌNH PHỤ nạp plugin native (ADR-12 phương án C).
+
+  ĐÂY LÀ CẢ ĐIỂM CỦA PHƯƠNG ÁN C. `disable-library-validation` phải có ở đâu đó thì mới
+  `dlopen` được một dylib do người khác ký — nhưng nếu nó nằm ở app CHÍNH thì mọi người dùng,
+  kể cả người không cài plugin nào, chạy một ứng dụng đã tắt mất phép kiểm chữ ký thư viện.
+  Tách ra tiến trình riêng là để hàng rào ấy chỉ hạ xuống trong đúng một tiến trình nhỏ, không
+  đọc file, không mở mạng, không vẽ giao diện.
+
+  `scripts/build-universal.sh` có một cổng chốt chặn đọc entitlement của APP CHÍNH và đỏ nếu
+  thấy khoá này ở đó. Cổng ấy vẫn đúng sau khi có file này: nó soi app, không soi tiến trình phụ.
+
+  CHỈ ĐI CÙNG BẢN TẢI TRỰC TIẾP. Bản App Store không được mang tiến trình này — một tiến trình
+  biết `dlopen` mã lạ nằm trong bundle nộp lên là mời từ chối, dù nó không bao giờ chạy.
+-->
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+</dict>
+</plist>

@@ -1,0 +1,9 @@
+// Module map viết tay thay vì để SwiftPM sinh umbrella-directory.
+//
+// Lý do: `vendor/include/pcre2.h` báo lỗi biên dịch nếu PCRE2_CODE_UNIT_WIDTH chưa được
+// định nghĩa trước khi include. Umbrella directory sẽ kéo thẳng file đó vào và hỏng ngay.
+// Header bọc bên dưới chốt bề rộng code unit = 8 rồi mới include.
+module PCRE2 {
+    header "GEditorPCRE2.h"
+    export *
+}

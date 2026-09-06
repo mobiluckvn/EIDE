@@ -1,0 +1,66 @@
+# macOS
+.DS_Store
+
+# SwiftPM
+.build/
+.swiftpm/
+Package.resolved
+
+# Artefact build — dựng lại bằng scripts/build-universal.sh, không đưa vào git
+dist/
+
+# Fixture benchmark hàng GB — sinh tại chỗ, xem STP §2.2 và scripts/run-poc-b.sh
+benchmarks/fixtures/
+*.fixture.csv
+
+# vendor/duckdb/ KHÔNG bị bỏ qua — nó đi qua Git LFS (xem .gitattributes và ADR-14 §6).
+#
+# Bản đầu của dòng này bỏ qua cả thư mục và để CI tải lúc dựng. Cách ấy phá đúng bất biến mà
+# chính ci.yml ghi ra: "vendor nằm trong kho mã, không tải về lúc dựng — NFR-SEC-03". LFS giữ
+# được cả hai vế: artefact là một phần của kho, mà bản clone không phải kéo 94 MB cho mỗi
+# phiên bản trong lịch sử.
+
+# Sinh từ Resources/geditor_sunset_C_lockup.png bằng scripts/make-icon.sh — xem chú thích
+# trong script về việc vì sao không commit bản nhị phân.
+Resources/AppIcon.icns
+
+# Rác của bộ đo độ phủ — sinh ra khi chạy binary có thiết bị đo ngoài script.
+*.profraw
+
+# Bytecode Python — `scripts/*.py` sinh ra khi chạy hoặc khi bị import. Đã có một tệp
+# `.pyc` lọt vào kho và nó đổi theo TỪNG phiên bản Python của máy chạy, nên nó tạo diff
+# không ai đọc và không ai duyệt.
+__pycache__/
+*.pyc
+
+# Khoá riêng và chứng chỉ — KHÔNG BAO GIỜ vào kho. `docs/khoa-va-ky.md` nói vì sao, và
+# `scripts/check-no-secrets.sh` là thứ thật sự chặn: .gitignore chỉ giúp khi tên tệp đúng
+# khuôn, còn cổng kia đọc NỘI DUNG.
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.mobileprovision
+*.keychain
+*.key
+*.pem
+AuthKey_*.p8
+id_rsa
+id_ed25519
+id_ecdsa
+
+# Dữ liệu thử của người dùng — KHÔNG vào kho.
+#
+# Có mặt vì một tệp 48 MB đã lọt vào một commit qua `git add -A` ngày 28/08/2026.
+data/
+
+# Ảnh chụp cửa sổ do `GEditorApp --capture <cảnh>` sinh ra.
+#
+# `--capture` ghi vào một thư mục MANG TÊN CẢNH ngay tại thư mục đang đứng, nên chạy nó từ gốc
+# kho sẽ để lại `cay-json/`, `trong/`… đầy PNG. Một lượt soi giao diện đã lỡ đưa 52 ảnh vào một
+# commit; dòng này để lần sau không lặp lại.
+/cay-json/
+/trong/
+/panel/
+/csv/
+/anh-chup/

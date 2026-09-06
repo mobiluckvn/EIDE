@@ -1,0 +1,50 @@
+{
+  "architecture": "arm64",
+  "budgetMB": 80,
+  "budgetMs": 500,
+  "cold": {
+    "appLaunchMs": {
+      "max": 224.6,
+      "median": 206.1,
+      "min": 191.3
+    },
+    "preMainMs": {
+      "max": 1041.9,
+      "median": 346.3,
+      "min": 319.8
+    },
+    "startupMs": {
+      "max": 1266.5,
+      "median": 548.9,
+      "min": 514.2
+    }
+  },
+  "idleFootprintMB": {
+    "max": 32.2,
+    "median": 30.2,
+    "min": 30.0
+  },
+  "kpi": [
+    "NFR-PERF-01 (khởi động nguội)",
+    "NFR-PERF-05 (RAM nhàn rỗi)"
+  ],
+  "memoryPass": true,
+  "startupPass": false,
+  "warm": {
+    "appLaunchMs": {
+      "max": 217.5,
+      "median": 207.7,
+      "min": 203.9
+    },
+    "preMainMs": {
+      "max": 297.1,
+      "median": 13.8,
+      "min": 9.4
+    },
+    "startupMs": {
+      "max": 506.7,
+      "median": 222.6,
+      "min": 217.5
+    }
+  }
+}

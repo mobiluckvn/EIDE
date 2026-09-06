@@ -1,0 +1,79 @@
+{
+  "architecture" : "arm64",
+  "findInFiles" : {
+    "activeCores" : 12,
+    "caveat" : "STP TC-PERF-05 đo bằng cách GIỚI HẠN MÁY còn 4 rồi 8 lõi (taskpolicy) trên                     máy chuẩn §2.1. Ở đây chỉ giới hạn được SỐ LUỒNG CÔNG NHÂN trên một máy                     12 lõi — hai thí nghiệm khác nhau:                     lượt 4 luồng vẫn được dùng toàn bộ băng thông bộ nhớ và cache của cả máy,                     nên nó nhanh hơn so với một máy thật sự chỉ có 4 lõi, và tỉ lệ 8\/4 vì thế                     bị đẩy lên. Con số kết luận được là speedupOverSingle; tỉ lệ 8\/4 phải đo                     lại trên máy chuẩn.",
+    "expectedFilesWithMatches" : 2000,
+    "files" : 7334,
+    "filesWithMatches" : 2000,
+    "ioStrategy" : [
+      {
+        "concurrency" : 8,
+        "elapsedMs" : 117.595333,
+        "strategy" : "mmap",
+        "throughputMBps" : 609.4994245734268
+      },
+      {
+        "concurrency" : 8,
+        "elapsedMs" : 61.5575,
+        "strategy" : "read",
+        "throughputMBps" : 1164.3469568455594
+      }
+    ],
+    "pass" : false,
+    "points" : [
+      {
+        "concurrency" : 1,
+        "elapsedMs" : 172.60725,
+        "speedupOverSingle" : 1,
+        "throughputMBps" : 415.24494362792126
+      },
+      {
+        "concurrency" : 2,
+        "elapsedMs" : 110.523375,
+        "speedupOverSingle" : 1.5617261959291415,
+        "throughputMBps" : 648.4989061908443
+      },
+      {
+        "concurrency" : 4,
+        "elapsedMs" : 81.630125,
+        "speedupOverSingle" : 2.114504296054918,
+        "throughputMBps" : 878.0372172163218
+      },
+      {
+        "concurrency" : 8,
+        "elapsedMs" : 61.72425,
+        "speedupOverSingle" : 2.7964252299541914,
+        "throughputMBps" : 1161.201436972025
+      }
+    ],
+    "ratioEightOverFour" : 0.7561454793803145,
+    "threshold" : 0.6,
+    "totalMB" : 71.67428779602051
+  },
+  "kpi" : [
+    "NFR-PERF-06 (TC-PERF-05)",
+    "NFR-PERF-08 (TC-PERF-06)"
+  ],
+  "notes" : [
+    "Template dùng tham chiếu nhóm nên mỗi kết quả đi qua pcre2_substitute — đường CHẬM. Template chuỗi hằng nhanh hơn nhiều nhưng không đại diện.",
+    "Số lõi giới hạn bằng số luồng công nhân, không phải taskpolicy như STP mô tả: cách này chặn đúng thứ cần chặn và không cần quyền đặc biệt.",
+    "Máy đo có 12 lõi hoạt động; tỉ lệ 8\/4 chỉ có nghĩa khi máy đủ 8 lõi thật.",
+    "Cây fixture nằm ngoài repo tại GEDITOR_FIXTURE_DIR và được dùng lại giữa các lần chạy."
+  ],
+  "pcre2Version" : "10.47 2025-10-21",
+  "replaceMillionMatches" : {
+    "applyMs" : 2978.575083,
+    "budgetMs" : 30000,
+    "fixtureMB" : 100,
+    "footprintPeakMB" : 456.703857421875,
+    "matches" : 1000000,
+    "pass" : true,
+    "pattern" : "(\\d{4})-(\\d{2})-(\\d{2})",
+    "planMs" : 411.253334,
+    "template" : "$3\/$2\/$1",
+    "totalMs" : 3389.828417,
+    "undoMs" : 1980.529209,
+    "undoSteps" : 1
+  }
+}

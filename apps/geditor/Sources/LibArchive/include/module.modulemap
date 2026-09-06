@@ -1,0 +1,9 @@
+// Module map viết tay thay vì để SwiftPM sinh umbrella-directory.
+//
+// Umbrella sẽ kéo cả `archive_*_private.h` vào module. Chúng `#include "config.h"` và giả
+// định các macro HAVE_* đã có sẵn, nên module sẽ đứt ngay ở bước dựng — mà đứt vì một lý do
+// hoàn toàn không liên quan tới thứ Swift cần.
+module LibArchive {
+    header "GEditorLibArchive.h"
+    export *
+}

@@ -1,0 +1,166 @@
+{
+  "adr" : "ADR-03",
+  "architecture" : "x86_64",
+  "build" : {
+    "jitAvailable" : true,
+    "jitTarget" : "x86 64bit (little endian + unaligned)",
+    "pcre2Version" : "10.47 2025-10-21"
+  },
+  "bulkMatch" : {
+    "elapsedMs" : 54.873,
+    "matchesPerSecond" : 18223898.820913747,
+    "targetMatches" : 1000000
+  },
+  "deadline" : {
+    "budgetMs" : 100,
+    "calibration" : [
+      {
+        "interpreterElapsedMs" : 0.030208,
+        "jitElapsedMs" : 0.118584,
+        "matchLimit" : 1000,
+        "outcome" : "budget"
+      },
+      {
+        "interpreterElapsedMs" : 0.211084,
+        "jitElapsedMs" : 0.095458,
+        "matchLimit" : 10000,
+        "outcome" : "budget"
+      },
+      {
+        "interpreterElapsedMs" : 2.020584,
+        "jitElapsedMs" : 0.28075,
+        "matchLimit" : 100000,
+        "outcome" : "budget"
+      },
+      {
+        "interpreterElapsedMs" : 20.261167,
+        "jitElapsedMs" : 2.132667,
+        "matchLimit" : 1000000,
+        "outcome" : "budget"
+      },
+      {
+        "interpreterElapsedMs" : 196.964042,
+        "jitElapsedMs" : 21.024458,
+        "matchLimit" : 10000000,
+        "outcome" : "budget"
+      }
+    ],
+    "pattern" : "(a+)+$",
+    "recommendedMatchLimit" : 1000000,
+    "subjectLength" : 61,
+    "worstCaseMsAtRecommended" : 20.261167
+  },
+  "fixtureMB" : 100,
+  "notes" : [
+    "Throughput đo trên nguồn trong RAM để loại nhiễu I\/O — chỉ so engine với engine.",
+    "interpreterThroughputMBps là ĐƯỜNG DỰ PHÒNG khi JIT không biên dịch được pattern, không phải cấu hình phát hành.",
+    "Hiệu chỉnh trần dùng (a+)+$ trên chuỗi toàn 'a': số bước tăng theo hàm mũ, không có kết quả khớp.",
+    "budgetMs là ngân sách cho MỘT lần khớp; find-in-files còn chịu thêm CancelToken giữa các kết quả."
+  ],
+  "patterns" : [
+    {
+      "compileMs" : 0.178,
+      "interpreterThroughputMBps" : 489.1160478593792,
+      "interpreterTimedOut" : false,
+      "jitCompileMs" : 1.063209,
+      "jitSpeedup" : 4.42510308497497,
+      "jitThroughputMBps" : 2164.388932293304,
+      "matches" : 1310720,
+      "mode" : "normal",
+      "name" : "literal",
+      "pattern" : "Thừa Thiên Huế"
+    },
+    {
+      "compileMs" : 0.16775,
+      "interpreterThroughputMBps" : 0.025459735186184926,
+      "interpreterTimedOut" : true,
+      "jitCompileMs" : 0.441542,
+      "jitSpeedup" : 57497.06438395775,
+      "jitThroughputMBps" : 1463.8600331985892,
+      "matches" : 1310720,
+      "mode" : "regex",
+      "name" : "mã đơn",
+      "pattern" : "\\bDH-\\d+\\b"
+    },
+    {
+      "compileMs" : 0.413042,
+      "interpreterThroughputMBps" : 34.85403624200622,
+      "interpreterTimedOut" : false,
+      "jitCompileMs" : 0.099166,
+      "jitSpeedup" : 10.729274566010476,
+      "jitThroughputMBps" : 373.95852457416464,
+      "matches" : 1310720,
+      "mode" : "regex",
+      "name" : "ngày",
+      "pattern" : "\\d{4}-\\d{2}-\\d{2}"
+    },
+    {
+      "compileMs" : 0.125416,
+      "interpreterThroughputMBps" : 380.80809602886495,
+      "interpreterTimedOut" : false,
+      "jitCompileMs" : 0.043833,
+      "jitSpeedup" : 5.176915314263755,
+      "jitThroughputMBps" : 1971.4112641274535,
+      "matches" : 1310720,
+      "mode" : "regex",
+      "name" : "neo đầu dòng",
+      "pattern" : "^DH-\\d+"
+    },
+    {
+      "compileMs" : 0.018542,
+      "interpreterThroughputMBps" : 108.93851401330576,
+      "interpreterTimedOut" : false,
+      "jitCompileMs" : 0.564,
+      "jitSpeedup" : 3.45554564521778,
+      "jitThroughputMBps" : 376.4420076951748,
+      "matches" : 2621440,
+      "mode" : "regex",
+      "name" : "lựa chọn",
+      "pattern" : "(Huế|Đà Nẵng|Hà Nội)"
+    },
+    {
+      "compileMs" : 0.077292,
+      "interpreterThroughputMBps" : 36.807146877277276,
+      "interpreterTimedOut" : false,
+      "jitCompileMs" : 0.047583,
+      "jitSpeedup" : 7.7793552860919295,
+      "jitThroughputMBps" : 286.33587262570904,
+      "matches" : 3932160,
+      "mode" : "regex",
+      "name" : "lớp Unicode",
+      "pattern" : "\\p{L}{4,}"
+    },
+    {
+      "compileMs" : 0.082208,
+      "interpreterThroughputMBps" : 140.61590116248925,
+      "interpreterTimedOut" : false,
+      "jitCompileMs" : 0.0405,
+      "jitSpeedup" : 6.391865822621068,
+      "jitThroughputMBps" : 898.7979727575772,
+      "matches" : 1310720,
+      "mode" : "regex",
+      "name" : "số tiền",
+      "pattern" : "[0-9]{6,}"
+    },
+    {
+      "compileMs" : 0.103291,
+      "interpreterThroughputMBps" : 14.188668430705233,
+      "interpreterTimedOut" : true,
+      "jitCompileMs" : 0.051875,
+      "jitSpeedup" : 6.970755311000903,
+      "jitThroughputMBps" : 98.90573581936935,
+      "matches" : 1310720,
+      "mode" : "regex",
+      "name" : "tham chiếu ngược",
+      "pattern" : "(\\w{2,})\\1"
+    }
+  ],
+  "poc" : "PoC-C",
+  "utfCheckCost" : {
+    "fixtureMB" : 2.0000457763671875,
+    "matches" : 26215,
+    "recheckedEveryMatchMs" : 17554.889208,
+    "slowdown" : 15817.581014818434,
+    "validatedOnceMs" : 1.109834
+  }
+}

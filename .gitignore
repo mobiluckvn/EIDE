@@ -1,4 +1,7 @@
-.venv/
+# Một venv cho mỗi kiến trúc (PLATFORM.md: macOS arm64 và x86_64 đều là nền tảng thứ tự 1).
+# Mẫu phải có dấu sao: `.venv/` không khớp `.venv-arm/`, và cái venv lọt vào staging là
+# 2743 tệp không ai đọc.
+.venv*/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -8,3 +11,21 @@ dist/
 *.egg-info/
 .DS_Store
 docs/sync/*.draft.md
+
+# Bí mật — không bao giờ commit (SEC-25)
+.env
+.env.local
+*.pem
+*.p12
+# Khóa ký cập nhật Sparkle: bản RIÊNG không bao giờ vào kho; bản CÔNG KHAI thì có
+# (build nhúng nó vào Info.plist). Xem DEVIATIONS DEV-004.
+*_private.txt
+secrets/*_private*
+
+# Hiện vật gốc do chủ sản phẩm nạp vào (zip bộ hồ sơ, bản kho tham khảo)
+_incoming/
+
+# Dữ liệu chạy thật
+.eide/
+*.sqlite
+*.sqlite-journal

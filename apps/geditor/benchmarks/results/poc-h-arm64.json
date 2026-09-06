@@ -1,0 +1,31 @@
+{
+  "libraryValidation": [
+    {
+      "case": "ky ad-hoc, KHONG hardened runtime",
+      "detail": "plugin-thu-nghiem",
+      "loaded": true
+    },
+    {
+      "case": "ky ad-hoc, CO hardened runtime",
+      "detail": "dlopen(/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib, 0x0005): tried: '/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (no such file), '/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (no such file), '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)",
+      "loaded": false
+    },
+    {
+      "case": "hardened runtime + disable-library-validation",
+      "detail": "plugin-thu-nghiem",
+      "loaded": true
+    },
+    {
+      "case": "plugin ky cung danh tinh, CO hardened runtime",
+      "detail": "dlopen(/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib, 0x0005): tried: '/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (no such file), '/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (no such file), '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' (code signature in <A9C13088-DEA9-30AB-A968-238DFCB9AF30> '/private/var/folders/k4/4fgy070s0qbfk79wxsgn69qm0000gn/T/tmp.6MPRMeFj9a/libplugin.dylib' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)",
+      "loaded": false
+    }
+  ],
+  "outOfProcessCallMs": {
+    "median": 0.0103,
+    "min": 0.0046,
+    "note": "tiến trình con sống lâu qua ống — cận DƯỚI của XPC",
+    "p99": 0.0241
+  },
+  "poc": "PoC-H — plugin native trong bản tải trực tiếp (FR-PLUG-702/703/704)"
+}

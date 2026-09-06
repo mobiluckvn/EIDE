@@ -1,0 +1,87 @@
+{
+  "architecture" : "arm64",
+  "correctness" : {
+    "cột doanh thu: bắt được giá trị cực đoan" : "ĐÚNG (true)",
+    "cột doanh thu: kiểu" : "ĐÚNG (số)",
+    "cột ghi chú: tỉ lệ null" : "ĐÚNG (10.0)",
+    "cột mã: distinct là cận dưới" : "ĐÚNG (false)",
+    "cột ngày: kiểu" : "ĐÚNG (ngày (YYYY-MM-DD))",
+    "cột thành phố: distinct" : "ĐÚNG (5)"
+  },
+  "filters" : [
+    {
+      "budgetMs" : 300,
+      "description" : "chữ, một cột",
+      "firstScreenMs" : 4.020916,
+      "fullScanMs" : 2814.395208,
+      "matched" : 200000,
+      "pass" : true,
+      "rows" : 1000000
+    },
+    {
+      "budgetMs" : 300,
+      "description" : "số, một cột",
+      "firstScreenMs" : 6.188459,
+      "fullScanMs" : 1032.330291,
+      "matched" : 110950,
+      "pass" : true,
+      "rows" : 1000000
+    },
+    {
+      "budgetMs" : 300,
+      "description" : "hai cột (AND)",
+      "firstScreenMs" : 10.908959,
+      "fullScanMs" : 2888.719875,
+      "matched" : 110949,
+      "pass" : true,
+      "rows" : 1000000
+    },
+    {
+      "budgetMs" : 300,
+      "description" : "ô thiếu",
+      "firstScreenMs" : 3.540083,
+      "fullScanMs" : 782.847875,
+      "matched" : 100000,
+      "pass" : true,
+      "rows" : 1000000
+    },
+    {
+      "budgetMs" : 300,
+      "description" : "khớp một hàng CUỐI bảng",
+      "firstScreenMs" : 919.53025,
+      "fullScanMs" : 942.652083,
+      "matched" : 1,
+      "pass" : false,
+      "rows" : 1000000
+    }
+  ],
+  "kpi" : [
+    "NFR-CLN-01 (Data Profile)",
+    "FR-CLN-006 (bộ phát hiện)",
+    "NFR-QRY-01 (gõ filter)"
+  ],
+  "notes" : [
+    "Đo ở ĐÚNG cỡ của NFR-CLN-01, không ngoại suy từ bảng nhỏ.",
+    "Hồ sơ đọc byte của cửa sổ; chuỗi chỉ dựng cho ô không rỗng và giữ lại cho bảng đếm.",
+    "distinct đếm chính xác tới 10000; vượt thì là CẬN DƯỚI.",
+    "Lọc đo trên cùng bảng: mỗi ký tự người dùng gõ là một lượt quét mới."
+  ],
+  "profile" : {
+    "budgetSeconds" : 10,
+    "cells" : 20000000,
+    "columns" : 20,
+    "fixtureMB" : 157.19036388397217,
+    "millionCellsPerSecond" : 4.499293835832466,
+    "pass" : true,
+    "rows" : 1000000,
+    "seconds" : 4.445142
+  },
+  "scanner" : {
+    "cells" : 20000000,
+    "columns" : 20,
+    "fixtureMB" : 157.19036388397217,
+    "millionCellsPerSecond" : 2.0973294482761977,
+    "rows" : 1000000,
+    "seconds" : 9.535936291
+  }
+}

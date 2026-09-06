@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+
+<!-- Từ điển AppleScript của GEditor (FR-AUTO-606).
+
+     CỐ Ý HẸP, và hẹp theo cùng nguyên tắc với API script JavaScript (FR-AUTO-603): mở rộng bề
+     mặt về sau thì dễ, thu hẹp lại thì phá mọi script người dùng đã viết. Bốn thứ ở đây là bốn
+     thứ người ta thật sự cần khi ghép GEditor vào một quy trình tự động:
+
+       - đọc nội dung tài liệu đang mở
+       - đọc phần đang chọn
+       - thay nội dung tài liệu
+       - mở một file
+
+     KHÔNG có: điều khiển cửa sổ, tab, con nháy, panel. Những thứ ấy là chuyện của người ngồi
+     trước máy; script cần DỮ LIỆU, không cần giả làm người dùng.
+-->
+<dictionary title="GEditor">
+
+    <suite name="Standard Suite" code="????" description="Lệnh chuẩn của mọi ứng dụng.">
+        <command name="open" code="aevtodoc" description="Mở một hoặc nhiều file.">
+            <direct-parameter description="File cần mở." type="file"/>
+        </command>
+        <command name="quit" code="aevtquit" description="Thoát GEditor."/>
+    </suite>
+
+    <suite name="GEditor Suite" code="GEdt" description="Đọc và sửa tài liệu đang mở.">
+
+        <class name="application" code="capp"
+               description="Ứng dụng GEditor."
+               inherits="application" plural="applications">
+            <cocoa class="NSApplication"/>
+
+            <property name="document text" code="DcTx" type="text"
+                      description="Toàn văn tài liệu đang mở. Đặt giá trị là MỘT bước hoàn tác.">
+                <cocoa key="scriptingDocumentText"/>
+            </property>
+
+            <property name="selected text" code="SlTx" type="text" access="r"
+                      description="Phần đang chọn; chuỗi rỗng nếu không chọn gì.">
+                <cocoa key="scriptingSelectedText"/>
+            </property>
+
+            <property name="document path" code="DcPt" type="text" access="r"
+                      description="Đường dẫn tài liệu đang mở; chuỗi rỗng nếu chưa lưu.">
+                <cocoa key="scriptingDocumentPath"/>
+            </property>
+        </class>
+    </suite>
+</dictionary>

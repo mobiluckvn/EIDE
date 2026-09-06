@@ -1,0 +1,130 @@
+# CI hai kiến trúc (NFR-MNT-03)
+#
+# Ba việc, theo đúng thứ tự đắt dần:
+#
+#   1. Ràng buộc kiến trúc — rẻ nhất, và hỏng thì mọi thứ sau vô nghĩa.
+#   2. Test lõi + tự kiểm giao diện.
+#   3. Dựng universal binary và KIỂM bằng `lipo` là nó thật sự có hai kiến trúc.
+#
+# Bước 3 không thừa: `swift build` trên máy Apple Silicon ra binary arm64 chạy tốt trên mọi
+# máy CI, và không ai phát hiện phần x86_64 đã biến mất cho tới khi một người dùng Intel tải
+# về. Chỉ `lipo` mới nói ra.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build-and-test:
+    # `macos-14` là runner Apple Silicon. Phần x86_64 dựng bằng cross-compile của Xcode chứ
+    # không cần runner Intel riêng — xem `scripts/build-universal.sh`.
+    runs-on: macos-14
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # libduckdb đi qua Git LFS (ADR-14). Không có dòng này thì checkout ra một file con
+          # trỏ 130 byte, và mọi bài kiểm DuckDB sẽ LẶNG LẼ tự bỏ qua — CI xanh cho một sản
+          # phẩm không truy vấn được.
+          lfs: true
+
+      - name: Phiên bản công cụ
+        run: swift --version && xcodebuild -version
+
+      # Vendor (PCRE2, tree-sitter, Scintilla) nằm trong kho mã, không tải về lúc dựng —
+      # NFR-SEC-03 chuỗi cung ứng: không phụ thuộc mạng ở thời điểm dựng.
+      #
+      # libduckdb (ADR-14) cũng nằm trong kho, nhưng qua **Git LFS**: nó là binary 94 MB, và
+      # commit thẳng thì mỗi lần nâng phiên bản cộng 94 MB VĨNH VIỄN vào mọi bản clone. Bất
+      # biến "không tải về lúc dựng" được giữ nguyên — `actions/checkout` với `lfs: true` lấy
+      # nó cùng lúc với mã, trước khi bước dựng nào chạy. Xem `.gitattributes` và ADR-14 §6.
+      #
+      # KHÔNG có bước `vendor-duckdb.sh` ở đây: script ấy dành cho lúc NÂNG PHIÊN BẢN trên máy
+      # người phát triển, không phải cho mỗi lượt CI.
+      - name: Kiểm libduckdb đã có (ADR-14)
+        run: |
+          if [ ! -f vendor/duckdb/libduckdb.dylib ]; then
+            echo "❌ thiếu vendor/duckdb/libduckdb.dylib"; exit 1
+          fi
+          # Một file con trỏ LFS chưa hydrate nặng ~130 byte và KHÔNG dlopen được — triệu chứng
+          # là mọi bài kiểm DuckDB lặng lẽ tự bỏ qua (XCTSkip). Bắt ở đây, nói ra ở đây.
+          size=$(stat -f%z vendor/duckdb/libduckdb.dylib)
+          if [ "$size" -lt 1000000 ]; then
+            echo "❌ libduckdb.dylib chỉ $size byte — đây là con trỏ LFS chưa tải."
+            echo "   Chạy: git lfs install && git lfs pull"
+            exit 1
+          fi
+          lipo -info vendor/duckdb/libduckdb.dylib
+
+      # ĐỨNG TRƯỚC mọi bước khác, và là bước rẻ nhất trong cả job. Một khoá lọt vào kho thì
+      # commit đã xảy ra rồi — cổng ở CI không ngăn được nó, nó chỉ báo càng sớm càng tốt để
+      # còn kịp ĐỔI KHOÁ. Chỗ ngăn thật là móc pre-commit; xem `docs/khoa-va-ky.md`.
+      - name: Không có khoá riêng trong kho (NFR-SEC-01)
+        run: |
+          ./scripts/check-no-secrets.sh --tu-kiem
+          ./scripts/check-no-secrets.sh
+
+      - name: Lõi độc lập UI (NFR-MNT-01)
+        run: ./scripts/check-core-no-ui.sh
+
+      - name: Test lõi
+        run: swift test
+
+      # NFR-MNT-02 đòi ≥70% ĐỘ PHỦ, không phải "nhiều bài kiểm". Đếm số bài kiểm không đo được
+      # phần nào của lõi chưa ai chạm tới — và đó chính là phần dễ hỏng nhất.
+      - name: Độ phủ lõi (NFR-MNT-02)
+        run: ./scripts/run-coverage.sh
+
+      # CẦN MÀN HÌNH: `NSApplication` không dựng nổi cửa sổ nếu không có phiên đồ hoạ. Runner
+      # macOS của GitHub có sẵn một phiên, nên bài này chạy được — nhưng nếu ngày nào đó nó
+      # không chạy nữa thì phải để lộ ra, không được lặng lẽ bỏ qua.
+      - name: Tự kiểm giao diện
+        run: ./scripts/run-self-test.sh
+
+      - name: Dựng universal binary
+        run: ./scripts/build-universal.sh --channel direct
+
+      # CHẠY LẠI TỰ KIỂM, LẦN NÀY TRONG BUNDLE ĐÃ KÝ. Bước trên chạy binary trần trong `.build`,
+      # và hai chỗ ấy KHÁC NHAU ở đúng những thứ chỉ hỏng lúc phát hành: bố cục bundle, chữ ký,
+      # entitlement, và những gì được chép vào.
+      #
+      # Không phải giả định. Ngày 28/08/2026 sáu bài tự kiểm plugin native XANH ở binary trần và
+      # ĐỎ trong bundle suốt nhiều tuần, vì `build-universal.sh` chưa bao giờ chép
+      # `geditor-plugin-host` vào bundle — tức FR-PLUG-702/703/704 đánh ✅ mà không chạy được
+      # trong bất kỳ bản nào người dùng nhận. Không ai thấy vì CI chỉ chạy đường binary trần.
+      - name: Tự kiểm giao diện TRONG BUNDLE
+        run: ./scripts/run-self-test.sh --bundle direct
+
+      # Bản App Store KHÔNG được mang tiến trình phụ nạp plugin: một tiến trình biết `dlopen` mã
+      # lạ nằm trong bundle nộp lên là mời từ chối, dù nó không bao giờ chạy (ADR-12).
+      - name: Bản App Store không mang tiến trình nạp plugin (ADR-12)
+        run: |
+          ./scripts/build-universal.sh --channel appstore
+          if [ -e "dist/appstore/GEditor.app/Contents/MacOS/geditor-plugin-host" ]; then
+            echo "❌ bản App Store mang geditor-plugin-host"; exit 1
+          fi
+          echo "✅ bản App Store không mang tiến trình nạp plugin"
+
+      - name: Xác nhận binary có ĐỦ HAI kiến trúc (NFR-PORT-01)
+        run: |
+          BIN="dist/direct/GEditor.app/Contents/MacOS/GEditor"
+          lipo -info "$BIN"
+          lipo -info "$BIN" | grep -q "x86_64" || { echo "❌ thiếu x86_64"; exit 1; }
+          lipo -info "$BIN" | grep -q "arm64"  || { echo "❌ thiếu arm64"; exit 1; }
+          echo "✅ universal binary đủ hai kiến trúc"
+
+      # Benchmark là bước CHẶN MERGE theo STP, nhưng NGƯỠNG chỉ có nghĩa trên máy chuẩn STP
+      # §2.1. Runner CI không phải máy ấy, nên ở đây chỉ CHẠY để bắt hồi quy sập hẳn, và số đo
+      # thì lưu lại chứ không so với trần. So trên máy sai là cách chắc chắn tạo ra một cổng
+      # lúc đỏ lúc xanh mà không ai còn tin.
+      - name: Chạy benchmark (không so ngưỡng)
+        run: ./scripts/run-benchmarks.sh || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results
+          path: benchmarks/results/

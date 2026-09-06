@@ -1,0 +1,4 @@
+module TreeSitter {
+    header "GEditorTreeSitter.h"
+    export *
+}

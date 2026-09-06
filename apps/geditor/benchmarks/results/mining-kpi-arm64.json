@@ -1,0 +1,29 @@
+{
+  "anomalyBudgetMs" : 10000,
+  "anomalyMs" : 95.322625,
+  "aprioriBudgetMs" : 60000,
+  "aprioriMs" : 36215.698167,
+  "aprioriRules" : 456,
+  "architecture" : "arm64",
+  "cancelBudgetMs" : 200,
+  "cancelMeasured" : true,
+  "cancelMs" : 46.57602310180664,
+  "columns" : 20,
+  "deterministic" : true,
+  "filterCancelBudgetMs" : 200,
+  "filterCancelMs" : 1.4480352401733398,
+  "groupCount" : 1000,
+  "groupMiningBudgetMs" : 120000,
+  "groupMiningMs" : 178.556,
+  "kMeansBudgetMs" : 30000,
+  "kMeansIterations" : 50,
+  "kMeansMs" : 25312.260167,
+  "kpi" : "NFR-MIN-01 · NFR-MIN-05 · NFR-DQR-03",
+  "notes" : [
+    "huỷ đo từ lúc gọi `cancel()` tới lúc tác vụ trả về; tác vụ đã chạy 405 ms trước đó"
+  ],
+  "partialGroupsKept" : 580,
+  "partialMeasured" : true,
+  "pass" : true,
+  "rows" : 1000000
+}

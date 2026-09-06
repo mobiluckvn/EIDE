@@ -1,0 +1,6 @@
+// Viết tay: umbrella-directory sẽ kéo `lzma/*.h` vào, mà mỗi tệp trong đó mở đầu bằng một
+// `#error` nếu bị include thẳng thay vì qua `lzma.h`.
+module LZMA {
+    header "GEditorLZMA.h"
+    export *
+}
