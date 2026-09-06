@@ -18,7 +18,9 @@ def test_create_structure_and_ledger(tmp_path, workspace):
     for name in ["store", "session", "index", "docs", "diagrams", "PROGRESS.md", "FEATURES.json", "constraints.yaml", "autonomy.yaml", ".gitignore"]:
         assert (e / name).exists(), name
     kinds = [x["kind"] for x in r.ledger.records()]
-    assert kinds == ["cap.run.start", "cap.run.finish"]
+    # `undo.register` đi sau `cap.run.finish`: project.create có undo=delete_created_files nên
+    # Router đưa nó vào cửa sổ hoàn tác ngay (POL-17 §5, xem test_policy_undo_escalate.py).
+    assert kinds == ["cap.run.start", "cap.run.finish", "undo.register"]
     assert run.undo == "delete_created_files"
 
 

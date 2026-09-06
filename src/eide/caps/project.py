@@ -18,6 +18,7 @@ from eide_core.errors import EideError
 from eide_core.paths import project_dir_default, spec_dir, user_config
 from eide_core.registry import capability
 from eide_core.router import Context
+from eide_core.undo import UndoService
 
 EIDE_DIR = ".eide"
 SUBDIRS = ["store", "session", "index", "docs", "diagrams"]
@@ -159,8 +160,9 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             "first_failing": {"id": dau[0], "title": dau[1]} if dau else None,
             # "mục chờ": lời gọi đang đợi người quyết (APD-08 ASK → capability_run.status pending)
             "pending": conn.execute("SELECT count(*) FROM capability_run WHERE status='pending'").fetchone()[0],
-            # "undo còn hạn": UndoService là Sprint 2 (WI-004 ghi chú) — chưa có nguồn để đọc
-            "undo_open": [],
+            # "undo còn hạn" (output_schema) — POL-17 §5 qua UndoService
+            "undo_open": UndoService(led_ctx, getattr(ctx.extra.get("gate"), "config", None)).list()
+            if (led_ctx := ctx.extra.get("ledger")) else [],
         }
         stale = [r[0] for r in conn.execute("SELECT id FROM run WHERE state IN ('running','asked') ORDER BY id")]
     finally:
@@ -221,7 +223,7 @@ def status(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                      "failing": sum(1 for x in feats if x[2] == "failing"),
                      "first_failing": dau[0] if dau else None},
         "gates_open": len(cho),
-        "undo_items": [],
+        "undo_items": UndoService(led, getattr(ctx.extra.get("gate"), "config", None)).list() if led else [],
         "cost_today": round(cost, 6),
         "autonomy": autonomy,
         "target": target,

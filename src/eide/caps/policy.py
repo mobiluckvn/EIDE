@@ -10,6 +10,7 @@ from eide_core.errors import EideError
 from eide_core.policy import LEVELS, PolicyGate
 from eide_core.registry import capability
 from eide_core.router import Context
+from eide_core.undo import UndoService
 
 _STATE: dict[str, Any] = {"stopped": False}
 
@@ -42,6 +43,52 @@ def decide(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"decision": {"decision": d.decision, "rule": d.rule_id, "reason": d.reason,
                          "gate": d.gate, "autonomy": gate._effective_level(
                              c.get("autonomy") or ctx.autonomy, c.get("board") or ctx.board)}}
+
+
+@capability("policy.undo_window")
+def undo_window(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: POLICY-03 — CDS-12.5; POL-17 §5 (loại undo × cửa sổ), §6; API-15 §5 undo.*.
+
+    Một bước: "UndoService.list; hết hạn → expire". Danh sách này là thứ ReviewQueue hiển thị ở
+    cột "đã làm — hoàn tác được" (UXD-13 U2), nên nó phải nói đúng: mục quá hạn bị ghi
+    `undo.expire` rồi mới loại ra, không biến mất lặng lẽ.
+    """
+    led = ctx.extra.get("ledger")
+    if led is None:
+        return {"items": []}
+    gate = ctx.extra.get("gate")
+    return {"items": UndoService(led, getattr(gate, "config", None)).list()}
+
+
+# POL-17 §6: "queue (luôn) → chat (ASK sau timeout/2) → notify (R3/R4 hoặc ngân sách < warn_pct
+# hoặc board lệch hộ chiếu)". Bậc thang TÍCH LŨY: một việc gấp hơn không được bỏ qua kênh nhẹ hơn.
+BAC_THANG = ["queue", "chat", "notify"]
+LY_DO_MUC = {
+    "ask_timeout": "chat",       # ASK quá nửa thời gian chờ
+    "budget_low": "notify",      # ngân sách < budget_warn_pct
+    "board_mismatch": "notify",  # ID chip lệch hộ chiếu
+    "risk_r3": "notify",
+    "risk_r4": "notify",
+}
+
+
+@capability("policy.escalate")
+def escalate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: POLICY-04 — CDS-12.5; POL-17 §6 (kênh theo mức); STP-05 TC-54; API-15 §5.
+
+    Lý do không có trong bảng §6 vẫn lên `queue`: im lặng là kết cục tệ nhất của một cơ chế leo
+    thang. `escalation.channels` trong autonomy.yaml có thể tắt bớt kênh, nhưng không tắt được
+    hàng đợi vì đó là nơi người vào xem việc đang chờ.
+    """
+    muc = params.get("level") or LY_DO_MUC.get(params["reason"], "queue")
+    gate = ctx.extra.get("gate")
+    cho_phep = ((getattr(gate, "config", None) or {}).get("escalation") or {}).get("channels") or BAC_THANG
+    kenh = [k for k in BAC_THANG[: BAC_THANG.index(muc) + 1] if k in cho_phep]
+    led = ctx.extra.get("ledger")
+    if led is not None:
+        led.append("question", {"question_id": params["ref"], "reason": params["reason"],
+                                "channels": kenh, "escalated": True})
+    return {"notified": kenh}
 
 
 @capability("policy.emergency_stop")

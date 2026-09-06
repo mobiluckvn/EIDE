@@ -87,7 +87,10 @@ def test_summary_co_board_va_ho_chieu(tmp_path, workspace):
                  Context(project_dir=workspace)).result["summary"]
     assert s["board"] == "nucleo-f411re"
     assert s["passports"] == 1
-    assert s["pending"] == 0 and s["undo_open"] == []
+    assert s["pending"] == 0
+    # `undo_open` nay có nguồn thật (POLICY-03): project.create ở trên là một việc còn hoàn tác
+    # được, nên nó phải xuất hiện — đó chính là cột "đã làm — hoàn tác được" của UXD-13 U2.
+    assert [x["cap"] for x in s["undo_open"]] == ["project.create"]
 
 
 def test_stale_runs_la_run_dang_chay_hoac_dang_hoi(tmp_path, workspace):

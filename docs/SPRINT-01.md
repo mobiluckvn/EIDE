@@ -36,8 +36,8 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | PROJECT-09 | project.preferences | 12.3 | D8: ghi/đọc preferences.yaml | Xong | mac-arm ✓, mac-intel ✓ | DEV-009, DEV-010 |
 | MEMORY-* | memory.progress, memory.summarize_session | 12.6 | theo MEM-11 | Chưa (cần WI-007) | — | — |
 | POLICY-01 | policy.decide | 12.5 | 45 tình huống situations.jsonl đúng kỳ vọng | Xong — **45/45** khớp fixture; hai lỗi chính sách tìm thấy đã sửa | mac-arm ✓, mac-intel ✓ | DEV-011, DEV-012 (Đã duyệt) |
-| POLICY-03 | policy.undo_window | 12.5 | cửa sổ theo undo_window; E7000 khi hết hạn | Chưa | — | — |
-| POLICY-04 | policy.escalate | 12.5 | leo thang theo kênh queue/chat/notify | Chưa | — | — |
+| POLICY-03 | policy.undo_window | 12.5 | cửa sổ theo undo_window; E7000 khi hết hạn | Xong (list + expire; `undo.apply` là Sprint 2) | mac-arm ✓, mac-intel ✓ | DEV-014 |
+| POLICY-04 | policy.escalate | 12.5 | leo thang theo kênh queue/chat/notify | Xong | mac-arm ✓, mac-intel ✓ | DEV-013 |
 | ENV-05 | env.lock | 12.3 | tools.lock ghi hash/phiên bản; trôi → cảnh báo | Chưa | — | — |
 | ENV-07 | env.sandbox | 12.3 | giới hạn CPU/thời gian/tệp; vượt → E8000 | Chưa (= WI-009) | — | — |
 | REPORT-01 | report.progress | 12.5 | PROGRESS.md sinh từ ledger/FEATURES | Chưa | — | — |

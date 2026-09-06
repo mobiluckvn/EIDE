@@ -17,6 +17,7 @@ from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.policy import ASK, PolicyGate
 from eide_core.registry import Registry, get_registry
+from eide_core.undo import KIND_WINDOW, UndoService
 
 
 @dataclass
@@ -86,7 +87,15 @@ class Router:
             self._log("cap.run.finish", {"run_id": run_id, "status": "failed", "error": e.code, "duration_ms": ms})
             return CapabilityRun(run_id, cap_id, "failed", None, dec, ms, e.to_rpc()["data"] | {"message": str(e)})
         ms = int((time.perf_counter() - t0) * 1000)
-        self._log("cap.run.finish", {"run_id": run_id, "status": "done", "result_hash": _h(result), "duration_ms": ms})
+        self._log("cap.run.finish", {"run_id": run_id, "status": "done", "result_hash": _h(result),
+                                     "duration_ms": ms, "undo_ref": run_id if reg.spec.undo in KIND_WINDOW else None})
+        # Việc tác tử vừa TỰ làm phải vào cửa sổ hoàn tác ngay tại đây, không để năng lực tự nhớ.
+        # UXD-13 U2 hứa "mỗi việc tự làm có lý do và nút hoàn tác"; nếu việc đăng ký nằm trong
+        # từng handler thì lời hứa ấy đúng tới khi ai đó quên một chỗ. Router là điểm gọi duy
+        # nhất nên nó là chỗ duy nhất không quên được. POL-17 §5, API-15 §5 undo.register.
+        if self.ledger is not None and reg.spec.undo in KIND_WINDOW:
+            UndoService(self.ledger, getattr(self.gate, "config", None)).register(
+                run_id, reg.spec.undo, cap=cap_id)
         return CapabilityRun(run_id, cap_id, "done", result, dec, ms, undo=reg.spec.undo)
 
     def _log(self, kind: str, data: dict[str, Any]) -> None:
