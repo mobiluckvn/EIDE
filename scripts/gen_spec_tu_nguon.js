@@ -7,8 +7,10 @@
 //
 // VÌ SAO KHÔNG CHẠY THẲNG BỘ SINH DOCX. Ba lý do khác nhau, mỗi tệp một lý do:
 //   pol.js  chạy được, nhưng cần `node_modules` và dựng cả docx chỉ để lấy hai tệp text.
-//   dps.js  KHÔNG chạy được: nó `require('./dialog.json')`, tệp ấy không có trong kho (DEV-019).
-//   cxd.js  cùng tình trạng — bảng ngân sách nằm trong văn xuôi, không có tệp máy đọc được.
+//   dps.js  nay CŨNG chạy được — `dialog.json` đã khôi phục 06/09/2026 (DEV-019 đóng) — nhưng
+//           giữ đường rút literal ở đây vì nó không cần `node_modules`, tức `make check` chạy
+//           được trên một máy chưa từng `npm install`.
+//   cxd.js  bảng ngân sách nằm trong văn xuôi, không có tệp máy đọc được.
 // Điểm chung: các BẢNG DỮ LIỆU trong những tệp ấy là literal độc lập, rút ra được mà không
 // cần chạy phần còn lại.
 //

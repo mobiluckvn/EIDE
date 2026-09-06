@@ -40,7 +40,11 @@ fi
 
 SAN=$(mktemp -d "${TMPDIR:-/tmp}/eide-sinh-XXXXXX")
 trap 'rm -rf "$SAN"' EXIT
-cp "$NGUON"/*.js "$NGUON"/*.py "$SAN"/ 2>/dev/null || true
+# `.json` cũng là nguồn: `dps.js` require('./dialog.json') (bảng §3 và 10 kịch bản §5).
+cp "$NGUON"/*.js "$NGUON"/*.py "$NGUON"/*.json "$SAN"/ 2>/dev/null || true
+# …nhưng KHÔNG phải package.json/package-lock.json: chép chúng vào thư mục dàn dựng làm node
+# coi đó là gốc gói và bỏ qua symlink node_modules bên dưới.
+rm -f "$SAN/package.json" "$SAN/package-lock.json"
 ln -s "$NGUON/node_modules" "$SAN/node_modules"
 [ -d "$NGUON/hinh" ] && cp -R "$NGUON/hinh" "$SAN/" || true
 # Bộ sinh đọc ba tệp sinh sẵn này làm đầu vào
@@ -49,11 +53,28 @@ for f in caps.json cds.json ddd.json; do [ -f "$SPEC/$f" ] && cp "$SPEC/$f" "$SA
 (cd "$SAN" && node "$TEN.js" >/dev/null)
 
 lech=0
+PY="$GOC/.venv-arm/bin/python"; [ -x "$PY" ] || PY="$GOC/.venv-x86/bin/python"; [ -x "$PY" ] || PY=python3
+
+khac() {  # $1 = tệp A, $2 = tệp B → 0 nếu GIỐNG
+    # docx là zip có dấu thời gian nén: hai lần sinh từ cùng nguồn khác byte nhưng giống nội
+    # dung. Dùng `cmp` ở đây làm `--kiem` báo "LỆCH nguồn" cho MỌI tài liệu (đo 06/09/2026:
+    # pol, prs, cxd đều ✗ dù đang đồng bộ) — một cổng luôn đỏ che mất lần lệch thật.
+    case "$1" in
+        *.docx) "$PY" "$GOC/scripts/so_docx.py" "$1" "$2" --im ;;
+        *)      cmp -s "$1" "$2" ;;
+    esac
+}
+
 chep() {  # $1 = tệp trong $SAN, $2 = đích
     [ -f "$SAN/$1" ] || return 0
     if [ "$KIEM" = "--kiem" ]; then
-        if cmp -s "$SAN/$1" "$2"; then echo "  = $(basename "$2")"
-        else echo "  ✗ $(basename "$2") LỆCH nguồn"; lech=1; fi
+        if [ ! -f "$2" ]; then echo "  ✗ $(basename "$2") CHƯA CÓ trong kho"; lech=1
+        elif khac "$SAN/$1" "$2"; then echo "  = $(basename "$2")"
+        else
+            echo "  ✗ $(basename "$2") LỆCH nguồn"
+            case "$1" in *.docx) "$PY" "$GOC/scripts/so_docx.py" "$SAN/$1" "$2" | head -6 ;; esac
+            lech=1
+        fi
     else
         cp "$SAN/$1" "$2"; echo "  → $2"
     fi
