@@ -7,11 +7,41 @@ from typing import Any
 import yaml
 
 from eide_core.errors import EideError
-from eide_core.policy import LEVELS
+from eide_core.policy import LEVELS, PolicyGate
 from eide_core.registry import capability
 from eide_core.router import Context
 
 _STATE: dict[str, Any] = {"stopped": False}
+
+
+@capability("policy.decide")
+def decide(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: POLICY-01 — CDS-12.5; APD-08 §4.1 bốn tầng; POL-17 §1–2 rules.yaml; DDD-14 decision_log.
+
+    Bọc PolicyGate thành năng lực để chính sách gọi được qua Router, MCP và JSON-RPC — không chỉ
+    từ bên trong tiến trình. Không quyết định lại điều gì: cùng một `PolicyGate.decide`, cùng
+    thứ tự tầng, nên hai đường gọi không thể cho hai câu trả lời khác nhau.
+
+    `action` = {cap, gate, risk, features}; `ctx` = {autonomy, board, tier, actor}. Trả DecisionLog
+    (DDD-14) rút gọn: quyết định, quy tắc đã thắng, lý do, cổng.
+    """
+    action = params["action"]
+    c = params.get("ctx") or {}
+    gate = ctx.extra.get("gate") or PolicyGate()
+    features = dict(action.get("features") or {})
+    if action.get("cap"):
+        features.setdefault("cap", {"id": action["cap"], "risk": action.get("risk", "R1")})
+    d = gate.decide(
+        action.get("gate", "*"), features,
+        risk=action.get("risk", "R1"),
+        autonomy=c.get("autonomy") or ctx.autonomy,
+        board=c.get("board") or ctx.board,
+        tier=c.get("tier", "T2"),
+        actor=c.get("actor") or ctx.actor,
+    )
+    return {"decision": {"decision": d.decision, "rule": d.rule_id, "reason": d.reason,
+                         "gate": d.gate, "autonomy": gate._effective_level(
+                             c.get("autonomy") or ctx.autonomy, c.get("board") or ctx.board)}}
 
 
 @capability("policy.emergency_stop")
