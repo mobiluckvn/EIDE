@@ -80,6 +80,10 @@ class Router:
         # ledger thứ hai và làm gãy chuỗi hash.
         if self.ledger is not None:
             ctx.extra.setdefault("ledger", self.ledger)
+        # `tool.register` nạp nóng một năng lực `user.*` và nó phải vào ĐÚNG registry mà Router
+        # đang dùng — `get_registry()` dựng một đối tượng MỚI mỗi lần gọi, nên đăng ký vào đó
+        # là đăng ký vào hư không.
+        ctx.extra.setdefault("registry", self.registry)
         try:
             result = reg.handler(params, ctx)  # type: ignore[misc]
             self.registry.validate_output(cap_id, result)

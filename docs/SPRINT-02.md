@@ -24,7 +24,7 @@ Mỗi dòng: `Chưa` → `Đang` → `Xong` (kèm nền tảng đã kiểm và m
 | WI-006 | Composer + Compressor: ContextBundle theo lớp C0–C7, ngân sách token, cache mark | CXD-10 §4–§7 | WI-003 | 4ng | Chưa |
 | WI-011 | MCP server sinh tool từ registry | API-15 §MCP, `mcp_tools.json` | WI-003 | 2ng | Chưa |
 | WI-012 | RagIndex: chunk, embedding qua Gateway, FTS5, truy hồi lai | KAD-07, CXD-10 §4.5 | WI-002 (index.sqlite đã có) | 3ng | Chưa |
-| WI-020 | ToolForge `tool.*` (+ cổng G-TOOL đã có 6 quy tắc) | CDS-12.3 TOOL-01…07, SEC-25 | WI-009 ✓ | 4ng | Chưa |
+| WI-020 | ToolForge `tool.*` (+ cổng G-TOOL đã có 6 quy tắc) | CDS-12.3 TOOL-01…07, SEC-25 | WI-009 ✓ | 4ng | **Xong** — 7 năng lực M1, 29 test; Gemini viết được công cụ CRC-16/MODBUS chạy đúng |
 | WI-021 | Plugin/panel GEditor: RpcClient sinh từ `openrpc.json`, ChatPanel, AutonomyBar, QueuePanel | UXD-13, GPI-23 (xem DEV-004) | WI-010 ✓ | 6ng | **Xong (bản đầu)** — `EIDEKit`: client + mã sinh (RPC và token), panel ba vùng, **đã gắn vào GEditorApp** (tầng `.eide`, menu "EIDE: trợ lý nhúng…"), 19 test Swift gồm đo tương phản WCAG và tìm daemon. Còn: gợi ý `/` (U1), thẻ câu hỏi gộp (U3) |
 
 ## B. Năng lực
@@ -35,7 +35,7 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 |---|---|---|---|
 | CHAT-01…05, 07, 08 | `parse_intent`, `ground`, `fill_defaults`, `clarify`, `restate`, `report_back`, `decline` | 12.6 | **Xong** — TC-59 đo với Gemini thật: intent 96–100%. CHAT-06 `orchestrate` là M2 |
 | POLICY-02/06 | `policy.explain`, `policy.queue` | 12.5 | Hàng đợi "chờ tôi" của UXD U2 — nay có `policy.escalate` và `undo_window` làm nền |
-| TOOL-01…07 | `tool.need/search/write/test/run/register/repair` | 12.3 | Sandbox đã đạt TC-SE-03; G-TOOL đã có quy tắc và 5/6 được tình huống phủ |
+| TOOL-01…07 | `tool.need/search/write/test/run/register/repair` | 12.3 | **Xong** — bốn lớp bảo vệ (AST · audit hook · G-TOOL · đòi đã test). TOOL-08/09/10 là M2 |
 | MEMORY-01/02/03 | `memory.compose`, `compress`, `retrieve` | 12.6 | Đi cùng WI-006 và WI-012 |
 | KG-* | `kg.build`, `kg.query`, `kg.review_facts` | 12.2 | **Gỡ nốt DEV-008** (bước 3 của `project.open`) |
 | SEARCH/ARCHIVE/EXTRACT | `search.fetch`, `archive.explore`, `extract.pdf` | 12.2 | Cổng G-SRC và G-FACT đã có quy tắc nhưng chưa có năng lực nào đi qua |

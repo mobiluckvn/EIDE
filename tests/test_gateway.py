@@ -245,3 +245,38 @@ def test_gemini_that_tra_dung_schema(tmp_path):
     assert 0 <= r.data["confidence"] <= 1
     assert r.tokens_in > 0 and r.cost_usd > 0
     print("\nGemini thật →", json.dumps(r.data, ensure_ascii=False))
+
+
+def test_bo_qua_nha_cung_cap_chua_cau_hinh(tmp_path, monkeypatch):
+    """Nhà cung cấp không có khóa thì VẮNG MẶT, không phải hỏng.
+
+    Vai trò `planner` có ứng viên đầu là claude-opus. Với một máy chỉ có khóa Gemini — đúng
+    tình huống thật của chủ sản phẩm — nếu coi thiếu khóa là lỗi thì planner, architect,
+    reviewer, debugger, writer đều chết, dù Gemini đứng ngay sau và dùng được.
+    """
+    from eide_core.gateway import ClaudePort, GeminiPort
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "AIza-gia-lam")
+    cfg = yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8"))
+    echo = EchoPort([{"steps": [], "citations": [], "missing": []}])
+    gw = Gateway(config=cfg, ledger=Ledger(tmp_path / "l.jsonl"),
+                 ports={"gemini": echo, "claude": ClaudePort()})
+    gw.run("planner", "lập kế hoạch", {"type": "object"})
+    # Đi thẳng tới gemini-pro, KHÔNG thử claude-opus rồi mới lui
+    assert [g["model"] for g in echo.goi] == ["gemini-3.1-pro-preview"]
+    assert not [r for r in gw.ledger.records()
+                if (r["data"] or {}).get("error_kind") == "no_key"], "không được ghi như một lỗi"
+    assert GeminiPort().co_khoa() and not ClaudePort().co_khoa()
+
+
+def test_khong_nha_cung_cap_nao_cau_hinh_thi_bao_ro(tmp_path, monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    from eide_core.gateway import ClaudePort, GeminiPort
+    cfg = yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8"))
+    gw = Gateway(config=cfg, ledger=Ledger(tmp_path / "l.jsonl"),
+                 ports={"gemini": GeminiPort(), "claude": ClaudePort()})
+    with pytest.raises(EideError) as ei:
+        gw.run("intent", "lệnh", S_INTENT)
+    assert ei.value.code == "E5000"
+    assert "chưa cấu hình" in str(ei.value) or "cần khóa" in str(ei.value)

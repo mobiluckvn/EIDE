@@ -49,6 +49,10 @@ class CapabilitySpec:
     example: str = ""
     tc: str = ""
     volume: int = 0
+    # DDD-14 bảng `capability` có hai cột này, và TOOL-06 bước 1 đòi khai `impl`/`ui` khi
+    # đăng ký năng lực tạm. `cds.json` không mang chúng nên mặc định rỗng.
+    impl: str = ""
+    ui: str = ""
 
     @property
     def risk_class(self) -> str:
@@ -66,9 +70,18 @@ class CapabilitySpec:
 
     @property
     def gate(self) -> str:
-        """Cổng mặc định theo lớp rủi ro/nhóm (APD-08 §3.1; POL-17 §2)."""
-        if self.ns == "tool":
-            return "G-TOOL"
+        """Cổng mặc định theo nhóm năng lực (APD-08 §3.1; POL-17 §2).
+
+        `cds.json` KHÔNG có trường `gate`, nên ánh xạ này là suy đoán của mã — và một suy đoán
+        sai đã gây hậu quả thật: gán cả nhóm `tool.*` vào G-TOOL làm `tool.write` không bao giờ
+        chạy được, vì mọi quy tắc G-TOOL đều hỏi `tool.tested`, và một công cụ CHƯA VIẾT thì
+        đương nhiên chưa test. Xem DEVIATIONS DEV-026.
+
+        CDS-12.3 chỉ nói `gate=G-TOOL` ở đúng MỘT chỗ: TOOL-05 bước 2, tức `tool.run`. Và
+        `tool.run` tự hỏi cổng ấy với đặc trưng thật của công cụ, vì đó là nơi duy nhất các
+        đặc trưng ấy tồn tại. Các `tool.*` còn lại là thao tác VỀ công cụ, không phải thực thi
+        công cụ, nên chúng đi cổng chung.
+        """
         return {
             "search": "G-SRC", "kg": "G-FACT", "passport": "G-FACT", "plan": "G1", "code": "G3",
             "target": "G-OPS", "discover": "G-OPS", "measure": "G4", "registry": "G5",
@@ -95,6 +108,27 @@ class Registry:
             spec = CapabilitySpec(**{k: r[k] for k in CapabilitySpec.__dataclass_fields__ if k in r})
             self._caps[spec.id] = Registered(spec)
         self._user: dict[str, Registered] = {}
+
+    # ---- năng lực tạm do tác tử tự viết (CDS-12.3 TOOL-06)
+    def dang_ky_tam(self, khai_bao: dict[str, Any], handler: Handler | None = None) -> Registered:
+        """Nạp NÓNG một năng lực `user.*` — TOOL-06 bước 2.
+
+        Giữ trong `_user` tách khỏi `_caps` chứ không trộn chung, và đó là điểm chính: `_caps`
+        đến từ `cds.json`, tức là từ hợp đồng người viết và duyệt; `_user` đến từ mô hình. Hai
+        nguồn ấy có mức tin cậy khác nhau, nên `caps.list` phân biệt được, `test_specs_
+        consistency` chỉ soi `_caps`, và một lần dọn `.eide/tools/` là xóa sạch phần thứ hai
+        mà không đụng phần thứ nhất.
+        """
+        if not str(khai_bao.get("id", "")).startswith("user."):
+            raise EideError("E1000", "Năng lực tạm phải nằm trong namespace `user.` (TOOL-06)")
+        spec = CapabilitySpec(**{k: khai_bao[k] for k in CapabilitySpec.__dataclass_fields__
+                                 if k in khai_bao})
+        r = Registered(spec, handler)
+        self._user[spec.id] = r
+        return r
+
+    def bo_dang_ky_tam(self, cap_id: str) -> None:
+        self._user.pop(cap_id, None)
 
     # ---- tra cứu
     def __contains__(self, cap_id: str) -> bool:

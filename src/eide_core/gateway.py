@@ -58,6 +58,16 @@ class ModelPort:
 
     provider = "?"
 
+    def co_khoa(self) -> bool:
+        """Nhà cung cấp này đã được cấu hình chưa.
+
+        KHÁC với "gọi bị lỗi": một nhà cung cấp không có khóa thì VẮNG MẶT, không phải hỏng.
+        Phân biệt hai thứ ấy là lý do EIDE chạy được với một khóa Gemini duy nhất — nếu coi
+        thiếu khóa là lỗi, mọi vai trò có Claude đứng đầu (planner, architect, reviewer…) đều
+        chết, dù Gemini đứng ngay sau và dùng được.
+        """
+        return True
+
     def generate(self, model: str, system: str, user: str, schema: dict[str, Any], *,
                  temperature: float = 0.0, max_output: int = 4096) -> ModelResponse:
         raise NotImplementedError
@@ -79,6 +89,14 @@ def _post(url: str, body: dict[str, Any], headers: dict[str, str]) -> dict[str, 
         raise GatewayError("network", str(e.reason)) from e
 
 
+class _KhongCo:
+    """Cổng vắng mặt — coi như chưa cấu hình."""
+
+    @staticmethod
+    def co_khoa() -> bool:
+        return False
+
+
 class GatewayError(Exception):
     """Lỗi khi gọi mô hình. `kind` khớp từ vựng của `policy.fallback_on`."""
 
@@ -93,6 +111,9 @@ class GeminiPort(ModelPort):
 
     def __init__(self, api_key: str | None = None) -> None:
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY", "")
+
+    def co_khoa(self) -> bool:
+        return bool(self.api_key)
 
     def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096):
         if not self.api_key:
@@ -124,6 +145,9 @@ class ClaudePort(ModelPort):
 
     def __init__(self, api_key: str | None = None) -> None:
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+
+    def co_khoa(self) -> bool:
+        return bool(self.api_key)
 
     def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096):
         if not self.api_key:
@@ -232,6 +256,16 @@ class Gateway:
         # "vượt ngân sách" hay "offline_mode" sẽ gửi người đi sai hướng.
         ds = self.ung_vien(role)
         cfg = (self.config.get("roles") or {})[role]
+        # Bỏ qua nhà cung cấp CHƯA CẤU HÌNH, giữ nguyên thứ tự ưu tiên cho phần còn lại.
+        # Đây không phải một đường lui: đường lui là khi một lời gọi THẤT BẠI. Ở đây ứng viên
+        # ấy chưa từng có mặt.
+        co_the = [uv for uv in ds if (self.ports.get(uv["provider"]) or _KhongCo()).co_khoa()]
+        if not co_the:
+            thieu = sorted({uv["provider"] for uv in ds})
+            raise EideError("E5000", f"Vai trò {role} không có nhà cung cấp nào đã cấu hình "
+                                     f"(cần khóa cho: {', '.join(thieu)}) — xem .env.example",
+                            role=role, providers=thieu)
+        ds = co_the
         pol = self.config.get("policy") or {}
         if pol.get("offline_mode"):
             raise EideError("E5000", "offline_mode đang bật — không gọi mô hình (SDD-04 §6)")
