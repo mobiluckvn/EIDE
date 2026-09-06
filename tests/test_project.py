@@ -55,3 +55,33 @@ def test_invalid_args_E1000(tmp_path, workspace):
     with pytest.raises(EideError) as e:
         _router(tmp_path).invoke("project.create", {}, Context(project_dir=workspace))
     assert e.value.code == "E1000"
+
+
+def test_slug_giu_chu_d_gach_ngang(tmp_path, workspace):
+    """`đ`/`Đ` phải thành `d`/`D`, không được biến mất.
+
+    UXD-13 U8 đặt tiếng Việt lên trước, và slug là ĐỊNH DANH dự án: nó vào đường dẫn thư mục
+    và là khóa để bước 2 của PROJECT-01 phát hiện trùng (E2001). Chuẩn hóa NFD tách được dấu
+    khỏi nguyên âm (ệ → e), nhưng `đ` là một CHỮ CÁI riêng trong bảng chữ cái tiếng Việt chứ
+    không phải `d` cộng dấu — NFD không tách nó, nên `encode('ascii','ignore')` xóa hẳn.
+
+    Hậu quả không chỉ là slug xấu: hai tên khác nhau cho ra cùng một slug, và khi ấy dự án
+    thứ hai bị từ chối bằng E2001 "đã tồn tại" cho một dự án mà người dùng chưa hề tạo.
+    """
+    from eide.caps.project import slugify
+
+    assert slugify("máy đo nhiệt độ dùng STM32F411") == "may-do-nhiet-do-dung-stm32f411"
+    assert slugify("Đèn giao thông") == "den-giao-thong"
+    assert slugify("robot dò đường") == "robot-do-duong"
+    assert slugify("đo điện áp") == "do-dien-ap"
+    # Hai tên khác nhau thì slug phải khác nhau
+    assert slugify("máy đo nhiệt độ") != slugify("máy o nhiệt o")
+
+
+def test_hai_du_an_khac_dau_khong_va_cham(tmp_path, workspace):
+    """Hệ quả của lỗi `đ`: dự án thứ hai bị E2001 oan."""
+    r = _router(tmp_path)
+    ctx = Context(project_dir=workspace)
+    assert r.invoke("project.create", {"text": "dự án đo điện áp"}, ctx).status == "done"
+    run = r.invoke("project.create", {"text": "dự án o ien ap"}, ctx)
+    assert run.status == "done", "tên khác nhau không được va chạm slug"

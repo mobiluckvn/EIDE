@@ -21,8 +21,18 @@ SUBDIRS = ["store", "session", "index", "docs", "diagrams"]
 
 
 def slugify(text: str) -> str:
-    """Slug ASCII từ tiếng Việt có dấu (CDS PROJECT-01 bước 1)."""
-    t = unicodedata.normalize("NFD", text).encode("ascii", "ignore").decode()
+    """Slug ASCII từ tiếng Việt có dấu (CDS PROJECT-01 bước 1).
+
+    `đ`/`Đ` phải đổi tay TRƯỚC khi chuẩn hóa: NFD tách dấu khỏi nguyên âm (ệ → e + dấu, rồi
+    `ascii ignore` bỏ dấu), nhưng `đ` là một chữ cái riêng trong bảng chữ cái tiếng Việt chứ
+    không phải `d` cộng dấu — NFD để nguyên, và `ascii ignore` xóa hẳn nó.
+
+    Không phải chuyện thẩm mỹ: slug là ĐỊNH DANH dự án (đường dẫn thư mục, và là khóa dò trùng
+    ở bước 2 → E2001). Thiếu bước này thì "máy đo nhiệt độ" và "máy o nhiệt o" ra cùng một
+    slug, và dự án thứ hai bị từ chối "đã tồn tại" cho một dự án người dùng chưa hề tạo.
+    """
+    t = text.replace("đ", "d").replace("Đ", "D")
+    t = unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode()
     t = re.sub(r"[^a-zA-Z0-9]+", "-", t).strip("-").lower()
     return t[:48] or "du-an"
 
