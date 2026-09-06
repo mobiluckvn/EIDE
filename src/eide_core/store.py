@@ -15,8 +15,11 @@ migration, một kho từ schema.sql, rồi so từng bảng từng cột. Mã k
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import shutil
 import sqlite3
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -105,7 +108,71 @@ def migrate(path: Path | str, *, ledger: Ledger | None = None, target: int | Non
     if ledger:
         ledger.append("store.migrate", {"from_version": tu, "to_version": den,
                                         "applied": [m["name"] for m in con_lai]}, actor=actor)
+    # Di trú là con đường duy nhất một store ra đời, nên đây là chỗ đặt niêm phong đầu tiên.
+    # Nhờ vậy `verify_seal` được phép coi "thiếu niêm" là "ghi ngoài cổng" (PROJECT-02 bước 2).
+    write_seal(path, ledger)
     return kq
+
+
+# ---------- niêm phong toàn vẹn (PROJECT-02 bước 2; DEVIATIONS DEV-007) ----------
+
+def content_digest(conn: sqlite3.Connection) -> str:
+    """Vân tay của NỘI DUNG store, không phải của tệp.
+
+    Băm byte thô của store.sqlite thì vô dụng: WAL, checkpoint, VACUUM và cả thứ tự trang đều
+    đổi tệp mà không đổi một dòng dữ liệu nào — mỗi lần mở sẽ báo "ghi ngoài cổng" cho một kho
+    chưa ai chạm tới. Nên băm phần logic: các bảng theo thứ tự tên, mỗi bảng các dòng đã sắp,
+    thành một chuỗi xác định.
+    """
+    h = hashlib.sha256()
+    ten = [r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")]
+    for t in ten:
+        h.update(f"\x00T{t}".encode())
+        cot = [r[1] for r in conn.execute(f"PRAGMA table_info({t})")]
+        h.update(("|".join(cot)).encode())
+        thu_tu = ", ".join(f'"{c}"' for c in cot)
+        for row in conn.execute(f"SELECT * FROM {t} ORDER BY {thu_tu}"):  # noqa: S608 — tên cột từ PRAGMA
+            h.update(b"\x00R")
+            h.update(json.dumps(list(row), ensure_ascii=False, default=str, sort_keys=True).encode())
+    return h.hexdigest()
+
+
+def seal_path(db: Path | str) -> Path:
+    db = Path(db)
+    return db.with_name(db.name + ".seal.json")
+
+
+def write_seal(db: Path | str, ledger: Ledger | None = None) -> dict[str, Any]:
+    """Niêm phong store sau một lần ghi hợp lệ (qua cổng).
+
+    Buộc vân tay nội dung với đầu chuỗi hash của ledger — đó chính là "hash store vs
+    ledger.last_hash" trong CDS PROJECT-02 bước 2.
+    """
+    db = Path(db)
+    conn = _connect(db)
+    seal = {"content_hash": content_digest(conn),
+            "ledger_last_hash": getattr(ledger, "_last_hash", None) if ledger else None,
+            "user_version": current_version(conn),
+            "at": datetime.now(UTC).isoformat()}
+    conn.close()
+    seal_path(db).write_text(json.dumps(seal, ensure_ascii=False, indent=2), encoding="utf-8")
+    return seal
+
+
+def verify_seal(db: Path | str) -> tuple[bool, dict[str, Any]]:
+    """(khớp, chi tiết). Không có niêm phong cũng là không khớp: store hợp lệ luôn được niêm."""
+    db = Path(db)
+    p = seal_path(db)
+    if not p.exists():
+        return False, {"reason": "thiếu niêm phong", "seal": None}
+    seal = json.loads(p.read_text(encoding="utf-8"))
+    conn = _connect(db)
+    hien = content_digest(conn)
+    conn.close()
+    if hien != seal.get("content_hash"):
+        return False, {"reason": "vân tay nội dung lệch", "expected": seal.get("content_hash"), "found": hien}
+    return True, {"seal": seal}
 
 
 def open_store(path: Path | str) -> sqlite3.Connection:

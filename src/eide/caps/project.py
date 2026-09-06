@@ -3,14 +3,17 @@ from __future__ import annotations
 
 import json
 import re
+import sqlite3
 import time
 import unicodedata
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from eide_core import store
 from eide_core.errors import EideError
 from eide_core.paths import project_dir_default, spec_dir
 from eide_core.registry import capability
@@ -109,6 +112,88 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if not nxt:
         nxt.append("search.reference_projects")
     return {"project_id": slug, "path": str(root), "created": True, "existing": near, "next": nxt}
+
+
+@capability("project.open")
+def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-02 — CDS-12.3; DDD-14 §5 user_version; API-15 E6003/E6000/E2000; UC-A06.
+
+    Bước 1 kiểm `.eide/` và user_version (cũ → E6003, KHÔNG tự di trú — hợp đồng giao việc ấy cho
+    Orchestrator gọi `eide migrate`); bước 2 kiểm niêm phong toàn vẹn (lệch → E6000); bước 4 đọc
+    run còn dở; bước 5 trả summary và ghi ledger `session.open`.
+
+    Bước 3 (tái dựng KG) và phần SessionMemory/summarize_session của bước 4 chờ WI-007 — xem
+    DEVIATIONS DEV-008.
+    """
+    workspace = Path(ctx.project_dir or project_dir_default()).expanduser()
+    root = _resolve_project(params["project"], workspace)
+    db = store.store_path(root)
+
+    if not db.exists():
+        raise EideError("E6003", f"Dự án chưa có store — chạy `eide migrate` trong {root}",
+                        found=0, expected=store.LATEST_VERSION, remedy="eide migrate")
+    with sqlite3.connect(db) as c:
+        v = store.current_version(c)
+    if v != store.LATEST_VERSION:
+        raise EideError("E6003", f"store user_version={v}, cần {store.LATEST_VERSION}",
+                        found=v, expected=store.LATEST_VERSION, remedy="eide migrate")
+
+    ok, chi_tiet = store.verify_seal(db)
+    if not ok:
+        raise EideError("E6000", f"Store bị ghi ngoài cổng ({chi_tiet.get('reason')}): {db}",
+                        handling="rebuild", detail=chi_tiet.get("reason"))
+
+    conn = store.open_store(db)
+    try:
+        feats = conn.execute("SELECT id, title, status FROM feature ORDER BY updated_at, id").fetchall()
+        dau = next((f for f in feats if f[2] == "failing"), None)
+        summary = {
+            "project": root.name,
+            "path": str(root),
+            "user_version": v,
+            "board": _board_of(root),
+            "passports": conn.execute("SELECT count(*) FROM passport").fetchone()[0],
+            "features": {"total": len(feats),
+                         "passing": sum(1 for f in feats if f[2] == "passing"),
+                         "failing": sum(1 for f in feats if f[2] == "failing")},
+            "first_failing": {"id": dau[0], "title": dau[1]} if dau else None,
+            # "mục chờ": lời gọi đang đợi người quyết (APD-08 ASK → capability_run.status pending)
+            "pending": conn.execute("SELECT count(*) FROM capability_run WHERE status='pending'").fetchone()[0],
+            # "undo còn hạn": UndoService là Sprint 2 (WI-004 ghi chú) — chưa có nguồn để đọc
+            "undo_open": [],
+        }
+        stale = [r[0] for r in conn.execute("SELECT id FROM run WHERE state IN ('running','asked') ORDER BY id")]
+    finally:
+        conn.close()
+
+    led = ctx.extra.get("ledger")     # Router đưa xuống; xem router.py
+    session_id = uuid.uuid4().hex[:12]
+    if led is not None:
+        led.append("session.open", {"session_id": session_id, "project": root.name})
+    ctx.extra["session_id"] = session_id
+    return {"summary": summary, "migrated": False, "stale_runs": stale}
+
+
+def _resolve_project(gia_tri: str, workspace: Path) -> Path:
+    """"id hoặc đường dẫn" (input_schema). Không tìm thấy → E2000 kèm payload API-15 §3."""
+    p = Path(gia_tri).expanduser()
+    if (p / EIDE_DIR).is_dir():
+        return p
+    ung_vien = workspace / gia_tri
+    if (ung_vien / EIDE_DIR).is_dir():
+        return ung_vien
+    co = sorted(x.name for x in workspace.iterdir() if (x / EIDE_DIR).is_dir()) if workspace.is_dir() else []
+    raise EideError("E2000", f"Không tìm thấy dự án '{gia_tri}' trong {workspace}",
+                    exists=co, candidates=[x for x in co if _similar(x, slugify(gia_tri))],
+                    missing=[gia_tri])
+
+
+def _board_of(root: Path) -> str | None:
+    f = root / EIDE_DIR / "constraints.yaml"
+    if not f.exists():
+        return None
+    c = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+    return (c.get("target") or {}).get("board")
 
 
 @capability("project.list")

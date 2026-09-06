@@ -72,6 +72,12 @@ class Router:
         if d.decision != "APPROVE":
             self._log("cap.run.finish", {"run_id": run_id, "status": "rejected", "error": "E3001"})
             return CapabilityRun(run_id, cap_id, "rejected", None, dec, 0, {"code": "E3001", "message": d.reason})
+        # Nhiều năng lực phải tự ghi sự kiện nghiệp vụ của mình vào ledger (API-15 §5:
+        # session.open, store.write, acq.state, tool.report…). Router là điểm gọi duy nhất và
+        # đã giữ ledger, nên nó là chỗ đúng để đưa xuống — thay vì mỗi handler tự mở một
+        # ledger thứ hai và làm gãy chuỗi hash.
+        if self.ledger is not None:
+            ctx.extra.setdefault("ledger", self.ledger)
         try:
             result = reg.handler(params, ctx)  # type: ignore[misc]
             self.registry.validate_output(cap_id, result)
