@@ -195,3 +195,36 @@ def test_vacuum_khong_lam_lech_van_tay(tmp_path, workspace):
     con.close()
     ok, _ = store.verify_seal(db)
     assert ok
+
+
+def test_mo_du_an_tao_phien_moi(tmp_path, workspace):
+    """Bước 4 (MEM-11 §5): "Mở SessionMemory mới" — WI-007 đã gỡ nợ này."""
+    from eide_core import store as _store
+    from eide_core.memory import SessionMemory
+    duong_dan = _du_an(tmp_path, workspace)
+    r = _router(tmp_path)
+    s = r.invoke("project.open", {"project": str(duong_dan)},
+                 Context(project_dir=workspace)).result["summary"]
+    assert s["session_id"].startswith("s_")
+    assert SessionMemory.gan_nhat(duong_dan).session_id == s["session_id"]
+    assert _store.session_path(duong_dan).exists()
+
+
+def test_mo_lai_dong_phien_truoc_va_bao_cao(tmp_path, workspace):
+    """"memory.summarize_session của phiên TRƯỚC": mở lại phải đóng phiên cũ và nhắc tới nó.
+
+    Nếu không đóng, mỗi lần mở dự án lại thêm một phiên "đang mở" và `gan_nhat` mất nghĩa —
+    resume sẽ báo cáo về một phiên chưa từng có ai làm gì.
+    """
+    duong_dan = _du_an(tmp_path, workspace)
+    r = _router(tmp_path)
+    ctx = Context(project_dir=workspace)
+    s1 = r.invoke("project.open", {"project": str(duong_dan)}, ctx).result["summary"]
+    assert "previous_session" not in s1          # lần đầu thì chưa có phiên trước
+
+    s2 = r.invoke("project.open", {"project": str(duong_dan)}, ctx).result["summary"]
+    assert s2["previous_session"]["session_id"] == s1["session_id"]
+    assert s2["session_id"] != s1["session_id"]
+
+    from eide_core.memory import SessionMemory
+    assert SessionMemory.doc(duong_dan, s1["session_id"]).closed_at is not None

@@ -14,7 +14,7 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | WI-004 | PolicyGate + rules.yaml + defaults.yaml (UndoService, decision_log SQLite: Sprint 2) | APD-08, POL-17 | Xong (bản đầu, 46 quy tắc) | mac-arm ✓, mac-intel ✓ | DEV-001 |
 | WI-010 | JSON-RPC stdio (9/55 phương thức) + CLI eide | API-15 §1, §CLI | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | — |
 | WI-002 | SQLite store + migration 0001/0002 + index riêng (0003) + `eide migrate` | DDD-14 §5, schema.sql | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
-| WI-007 | Memory M1/M2 (WorkingMemory, SessionMemory), PROGRESS/FEATURES tự sinh, resume | MEM-11 §2–§4, DDD-14 | Chưa | — | — |
+| WI-007 | Memory M1/M2 (WorkingMemory, SessionMemory), PROGRESS/FEATURES tự sinh, resume | MEM-11 §2–§5, DDD-14 | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
 | WI-009 | Sandbox tiến trình con + giám sát hiệu ứng (nền cho tool.*) | SEC-25 §4, CDS-12.3 env.sandbox | Chưa | — | — |
 | WI-013 | Prompt 9 vai trò + models.yaml + Gateway LLM (Claude/Gemini) | PRS-16, SDD-04 §6, CXD-10 | Chưa | — | — |
 | WI-005 | Orchestrator: intent → ground → defaults → clarify → chain → runner → report | DPS-09, PRS-16 intent.md, SDD-04 §4.3 | Chưa (Sprint 2) | — | — |
@@ -31,10 +31,11 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | ENV-02 | env.check | 12.3 | thiếu gcc → ok=false kèm install hint; ISA lạ → E2000 | Xong | mac-arm ✓, mac-intel ✓ | — |
 | POLICY-05 | policy.emergency_stop | 12.5 | TC-53: stopped=true, năng lực sau đó bị REJECT | Xong | mac-arm ✓, mac-intel ✓ | — |
 | POLICY-07 | policy.set_autonomy | 12.5 | TC-56: nới lỏng cần by=human; siết tức thì; ghi autonomy.yaml | Xong | mac-arm ✓, mac-intel ✓ | — |
-| PROJECT-02 | project.open | 12.3 | store hợp lệ → summary; ghi ngoài cổng → E6000; user_version cũ → E6003 | Xong (bước 3 và nửa bước 4 chờ WI-007) | mac-arm ✓, mac-intel ✓ | DEV-007, DEV-008 |
+| PROJECT-02 | project.open | 12.3 | store hợp lệ → summary; ghi ngoài cổng → E6000; user_version cũ → E6003 | Xong (bước 4 đã đủ; bước 3 tái dựng KG chờ nhóm kg.*) | mac-arm ✓, mac-intel ✓ | DEV-007, DEV-008 |
 | PROJECT-08 | project.status | 12.3 | số liệu khớp ledger | Xong | mac-arm ✓, mac-intel ✓ | — |
 | PROJECT-09 | project.preferences | 12.3 | D8: ghi/đọc preferences.yaml | Xong | mac-arm ✓, mac-intel ✓ | DEV-009, DEV-010 |
-| MEMORY-* | memory.progress, memory.summarize_session | 12.6 | theo MEM-11 | Chưa (cần WI-007) | — | — |
+| MEMORY-04 | memory.progress | 12.6 | nội dung khớp ledger; không viết tay | Xong | mac-arm ✓, mac-intel ✓ | — |
+| MEMORY-08 | memory.summarize_session | 12.6 | done/waiting/next/undo_until; ≤ 200 token | Xong | mac-arm ✓, mac-intel ✓ | — |
 | POLICY-01 | policy.decide | 12.5 | 45 tình huống situations.jsonl đúng kỳ vọng | Xong — **45/45** khớp fixture; hai lỗi chính sách tìm thấy đã sửa | mac-arm ✓, mac-intel ✓ | DEV-011, DEV-012 (Đã duyệt) |
 | POLICY-03 | policy.undo_window | 12.5 | cửa sổ theo undo_window; E7000 khi hết hạn | Xong (list + expire; `undo.apply` là Sprint 2) | mac-arm ✓, mac-intel ✓ | DEV-014 |
 | POLICY-04 | policy.escalate | 12.5 | leo thang theo kênh queue/chat/notify | Xong | mac-arm ✓, mac-intel ✓ | DEV-013 |

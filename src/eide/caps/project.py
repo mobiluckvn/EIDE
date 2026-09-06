@@ -6,7 +6,6 @@ import re
 import sqlite3
 import time
 import unicodedata
-import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -15,6 +14,7 @@ import yaml
 
 from eide_core import store
 from eide_core.errors import EideError
+from eide_core.memory import SessionMemory
 from eide_core.paths import project_dir_default, spec_dir, user_config
 from eide_core.registry import capability
 from eide_core.router import Context
@@ -123,8 +123,8 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     Orchestrator gọi `eide migrate`); bước 2 kiểm niêm phong toàn vẹn (lệch → E6000); bước 4 đọc
     run còn dở; bước 5 trả summary và ghi ledger `session.open`.
 
-    Bước 3 (tái dựng KG) và phần SessionMemory/summarize_session của bước 4 chờ WI-007 — xem
-    DEVIATIONS DEV-008.
+    Bước 4 nay mở SessionMemory thật (WI-007) và đóng phiên trước lại. Chỉ còn bước 3 "tái dựng
+    KG" chờ nhóm `kg.*` — xem DEVIATIONS DEV-008.
     """
     workspace = Path(ctx.project_dir or project_dir_default()).expanduser()
     root = _resolve_project(params["project"], workspace)
@@ -153,6 +153,7 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             "path": str(root),
             "user_version": v,
             "board": _board_of(root),
+            "autonomy": _autonomy_of(root),
             "passports": conn.execute("SELECT count(*) FROM passport").fetchone()[0],
             "features": {"total": len(feats),
                          "passing": sum(1 for f in feats if f[2] == "passing"),
@@ -168,11 +169,19 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     finally:
         conn.close()
 
+    # Bước 4: "Mở SessionMemory mới; memory.summarize_session của phiên trước" (MEM-11 §5).
+    # Tóm tắt phiên TRƯỚC được lấy trước khi mở phiên mới — sau đó thì "gần nhất" đã là phiên
+    # vừa mở và câu "lần trước đã…" sẽ nói về chính lúc này.
     led = ctx.extra.get("ledger")     # Router đưa xuống; xem router.py
-    session_id = uuid.uuid4().hex[:12]
-    if led is not None:
-        led.append("session.open", {"session_id": session_id, "project": root.name})
-    ctx.extra["session_id"] = session_id
+    truoc = SessionMemory.gan_nhat(root)
+    if truoc is not None:
+        truoc.dong(summary=truoc.summary, ledger=led)
+        summary["previous_session"] = {"session_id": truoc.session_id,
+                                       "turns": len(truoc.turns), "summary": truoc.summary}
+    phien = SessionMemory.mo(root, project=root.name, autonomy=summary.get("autonomy") or ctx.autonomy,
+                             ledger=led)
+    ctx.extra["session_id"] = phien.session_id
+    summary["session_id"] = phien.session_id
     return {"summary": summary, "migrated": False, "stale_runs": stale}
 
 
@@ -378,6 +387,11 @@ def _resolve_project(gia_tri: str, workspace: Path) -> Path:
     raise EideError("E2000", f"Không tìm thấy dự án '{gia_tri}' trong {workspace}",
                     exists=co, candidates=[x for x in co if _similar(x, slugify(gia_tri))],
                     missing=[gia_tri])
+
+
+def _autonomy_of(root: Path) -> str | None:
+    f = root / EIDE_DIR / "autonomy.yaml"
+    return (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("autonomy") if f.exists() else None
 
 
 def _board_of(root: Path) -> str | None:
