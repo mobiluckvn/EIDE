@@ -33,7 +33,7 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | POLICY-07 | policy.set_autonomy | 12.5 | TC-56: nới lỏng cần by=human; siết tức thì; ghi autonomy.yaml | Xong | mac-arm ✓, mac-intel ✓ | — |
 | PROJECT-02 | project.open | 12.3 | store hợp lệ → summary; ghi ngoài cổng → E6000; user_version cũ → E6003 | Xong (bước 3 và nửa bước 4 chờ WI-007) | mac-arm ✓, mac-intel ✓ | DEV-007, DEV-008 |
 | PROJECT-08 | project.status | 12.3 | số liệu khớp ledger | Xong | mac-arm ✓, mac-intel ✓ | — |
-| PROJECT-09 | project.preferences | 12.3 | D8: ghi/đọc preferences.yaml | Chưa | — | — |
+| PROJECT-09 | project.preferences | 12.3 | D8: ghi/đọc preferences.yaml | Xong | mac-arm ✓, mac-intel ✓ | DEV-009, DEV-010 |
 | MEMORY-* | memory.progress, memory.summarize_session | 12.6 | theo MEM-11 | Chưa (cần WI-007) | — | — |
 | POLICY-01 | policy.decide | 12.5 | 45 tình huống situations.jsonl đúng kỳ vọng | Chưa (đã có PolicyGate; cần bọc thành năng lực + test situations đầy đủ) | — | — |
 | POLICY-03 | policy.undo_window | 12.5 | cửa sổ theo undo_window; E7000 khi hết hạn | Chưa | — | — |

@@ -15,7 +15,7 @@ import yaml
 
 from eide_core import store
 from eide_core.errors import EideError
-from eide_core.paths import project_dir_default, spec_dir
+from eide_core.paths import project_dir_default, spec_dir, user_config
 from eide_core.registry import capability
 from eide_core.router import Context
 
@@ -226,6 +226,142 @@ def status(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         "autonomy": autonomy,
         "target": target,
     }}
+
+
+# API-15 §7: bộ lọc che chuỗi giống khóa API trước khi ghi ledger. PROJECT-09 bước 3 đòi cùng
+# phép kiểm ấy trước khi ghi tùy chọn — cùng một regex, để hai chỗ không trôi khỏi nhau.
+RE_BI_MAT = re.compile(r"sk-|AIza|Bearer ")
+
+
+def _co_bi_mat(x: Any) -> bool:
+    """Quét đệ quy: khóa nằm sau ba lớp object vẫn là khóa."""
+    if isinstance(x, str):
+        return bool(RE_BI_MAT.search(x))
+    if isinstance(x, dict):
+        return any(_co_bi_mat(v) for v in x.values())
+    if isinstance(x, (list, tuple)):
+        return any(_co_bi_mat(v) for v in x)
+    return False
+
+
+@capability("project.preferences")
+def preferences(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-09 — CDS-12.3; DPS-09 D8; DDD-14 §2 preference + §6 preferences.yaml; undo restore_config.
+
+    Hai phạm vi, hai nơi lưu, và đó không phải tùy tiện: `project` vào bảng `preference` của
+    store dự án (DDD-14 §2, khóa chính (key, scope)); `user` vào `preferences.yaml` trong thư
+    mục cấu hình người dùng (DDD-14 §6). Nếu để cả hai trong bảng thì tùy chọn phạm vi `user`
+    ghi ở dự án A sẽ không thấy được ở dự án B — mà đúng nghĩa của "user" là ngược lại.
+
+    Bước 1 "đọc dự án trước, người sau": tùy chọn dự án che tùy chọn người dùng cùng khóa.
+    """
+    op = params.get("op", "list")
+    key = params.get("key")
+    scope = params.get("scope")
+
+    if op in ("get", "set", "delete") and not key:
+        raise EideError("E1000", f"op={op} cần `key`")
+    if op == "set":
+        if params.get("value") is None:
+            raise EideError("E1000", "op=set cần `value`")
+        # Không in lại chuỗi bị bắt: thông báo lỗi đi vào ledger và ra màn hình.
+        if _co_bi_mat(params["value"]):
+            raise EideError("E1000", "Giá trị giống khóa API — tùy chọn không lưu dữ liệu nhạy cảm "
+                                     "(PROJECT-09 bước 3; regex API-15 §7)", key=key)
+        scope = scope or "project"
+
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    co_du_an = bool(root and (root / EIDE_DIR).is_dir())
+
+    if op == "set":
+        gia_tri = dict(params["value"])
+        gia_tri.setdefault("learned_from", params.get("learned_from"))
+        gia_tri["at"] = datetime.now(UTC).isoformat()
+        if scope == "user":
+            _pref_yaml_set(key, gia_tri)
+        else:
+            if not co_du_an:
+                raise EideError("E2000", "Tùy chọn phạm vi `project` cần một dự án đang mở",
+                                exists=[], candidates=[], missing=["project"])
+            _pref_db_set(root, key, gia_tri)
+        return {"prefs": {key: {**gia_tri, "scope": scope}}}
+
+    if op == "delete":
+        pham_vi = [scope] if scope else ["project", "user"]
+        for s in pham_vi:
+            if s == "user":
+                _pref_yaml_del(key)
+            elif co_du_an:
+                _pref_db_del(root, key)
+        return {"prefs": {}}
+
+    # get / list — dự án trước, người sau
+    gop: dict[str, Any] = {}
+    for k, v in _pref_yaml_all().items():
+        gop[k] = {**v, "scope": "user"}
+    if co_du_an:
+        for k, v in _pref_db_all(root).items():
+            gop[k] = {**v, "scope": "project"}
+    if op == "get":
+        return {"prefs": {key: gop[key]} if key in gop else {}}
+    return {"prefs": gop}
+
+
+def _pref_file() -> Path:
+    return user_config() / "preferences.yaml"
+
+
+def _pref_yaml_all() -> dict[str, Any]:
+    f = _pref_file()
+    return (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+
+
+def _pref_yaml_set(key: str, gia_tri: dict[str, Any]) -> None:
+    d = _pref_yaml_all()
+    d[key] = gia_tri
+    f = _pref_file()
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(yaml.safe_dump(d, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
+def _pref_yaml_del(key: str) -> None:
+    d = _pref_yaml_all()
+    if d.pop(key, None) is not None:
+        _pref_file().write_text(yaml.safe_dump(d, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
+def _pref_db_all(root: Path) -> dict[str, Any]:
+    db = store.store_path(root)
+    if not db.exists():
+        return {}
+    with sqlite3.connect(db) as c:
+        rows = c.execute("SELECT key, value FROM preference WHERE scope='project'").fetchall()
+    return {k: json.loads(v) for k, v in rows}
+
+
+def _pref_db_set(root: Path, key: str, gia_tri: dict[str, Any]) -> None:
+    db = store.store_path(root)
+    if not db.exists():
+        raise EideError("E6003", "Dự án chưa có store — chạy `eide migrate`",
+                        found=0, expected=store.LATEST_VERSION, remedy="eide migrate")
+    with sqlite3.connect(db) as c:
+        c.execute("INSERT INTO preference (key, scope, value, learned_from, ttl_days, at)"
+                  " VALUES (?,'project',?,?,?,?)"
+                  " ON CONFLICT(key, scope) DO UPDATE SET value=excluded.value,"
+                  " learned_from=excluded.learned_from, ttl_days=excluded.ttl_days, at=excluded.at",
+                  (key, json.dumps(gia_tri, ensure_ascii=False), gia_tri.get("learned_from"),
+                   gia_tri.get("ttl_days"), gia_tri["at"]))
+    # Ghi qua cổng thì niêm lại, nếu không project.open sẽ báo E6000 cho chính lần ghi hợp lệ này.
+    store.write_seal(db)
+
+
+def _pref_db_del(root: Path, key: str) -> None:
+    db = store.store_path(root)
+    if not db.exists():
+        return
+    with sqlite3.connect(db) as c:
+        c.execute("DELETE FROM preference WHERE key=? AND scope='project'", (key,))
+    store.write_seal(db)
 
 
 def _resolve_project(gia_tri: str, workspace: Path) -> Path:
