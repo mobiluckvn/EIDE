@@ -43,41 +43,47 @@ def mong_doi(s: dict) -> tuple[str, str | None]:
     return phan[0], rule
 
 
-# Ba chỗ rules.yaml hôm nay KHÔNG cho ra thứ situations.jsonl ghi. Giá trị = hành vi THẬT.
-# Đây là bảng nợ, không phải bảng miễn trừ: mỗi dòng ứng với một mục DEVIATIONS đang Mở, và
-# khi rules.yaml được sửa thì dòng ấy phải biến mất — test sẽ đỏ để nhắc.
-LECH = {
-    # DEV-011 — LỖI AN TOÀN THẬT, không phải chuyện nhãn. `G-SRC-01` (priority 10) thắng trước
-    # `G-SRC-06` (priority 25), nên tài liệu từ hãng tin cậy được TỰ DUYỆT ngay cả khi
-    # match_score 0,4 nói nó có thể không phải của linh kiện này. Fixture đòi ASK; máy trả APPROVE.
-    "S06": ("APPROVE", "G-SRC-01"),
-    # DEV-012 — an toàn, chỉ khác nhãn. Tầng ngưỡng cứng (APD-08 §4.1 tầng 2) bắt R4 trước khi
-    # tới quy tắc cổng, nên G-OPS-02 và G5-02 không bao giờ thắng. Quyết định vẫn đúng: ASK.
-    "S31": ("ASK", "HARD-R4"),
-    "S39": ("ASK", "HARD-R4"),
-}
-
-
 @pytest.mark.parametrize("s", tinh_huong(), ids=lambda s: s["id"])
 def test_45_tinh_huong(s):
-    """42/45 khớp fixture từng chữ; 3 chỗ còn lại bị ghim vào hành vi thật kèm mã DEVIATIONS."""
+    """CẢ 45 khớp fixture từng chữ — quyết định và mã quy tắc.
+
+    Trước 06/09/2026 có ba chỗ lệch (DEV-011, DEV-012); cả ba đã được sửa ở nguồn `pol.js` và
+    ở `eide_core/policy.py`, nên bảng miễn trừ đã bị xóa. Không thêm lại: một fixture chính
+    sách mà test tự nới cho vừa thì không còn là fixture.
+    """
     that = chay(s["id"])
     exp_dec, exp_rule = mong_doi(s)
-    if s["id"] in LECH:
-        assert that == LECH[s["id"]], (
-            f"{s['id']} đổi hành vi: fixture mong '{s['expected']}', DEVIATIONS ghi {LECH[s['id']]}, "
-            f"nay ra {that}. Nếu rules.yaml đã được sửa thì xóa {s['id']} khỏi LECH.")
-        return
     assert that[0] == exp_dec, f"{s['id']} ({s['situation']}): mong {exp_dec}, thật {that}"
     if exp_rule is not None:
-        assert that[1] == exp_rule, f"{s['id']} ({s['situation']})"
+        assert that[1] == exp_rule, f"{s['id']} ({s['situation']}): mong {exp_rule}, thật {that[1]}"
 
 
-def test_chi_ba_tinh_huong_lech_va_khong_hon():
-    """Chốt con số. Thêm một tình huống lệch nữa là một quyết định, không phải một tai nạn."""
+def test_khong_con_tinh_huong_nao_lech():
+    """Chốt con số 0. Một tình huống lệch là một quyết định, không phải một tai nạn."""
     lech = {s["id"] for s in tinh_huong()
             if (lambda t, e: t[0] != e[0] or (e[1] is not None and t[1] != e[1]))(chay(s["id"]), mong_doi(s))}
-    assert lech == set(LECH), f"số tình huống lệch đã đổi: {sorted(lech)}"
+    assert lech == set(), f"đã có tình huống lệch trở lại: {sorted(lech)}"
+
+
+def test_nguong_cung_van_neu_ly_do_cu_the(tmp_path):
+    """DEV-012: ngưỡng cứng ép ASK nhưng vẫn lấy mã quy tắc cổng để nhật ký nói được điều gì
+    sắp xảy ra, không chỉ nói lớp rủi ro.
+
+    Và nó chỉ được SIẾT: một quy tắc APPROVE gặp ngưỡng cứng vẫn phải ra ASK, nếu không thì
+    ngưỡng cứng đã bị quy tắc cổng vượt mặt.
+    """
+    g = PolicyGate()
+    d = g.decide("G-OPS", {"op": "erase_all", "board": {"lab": True}}, risk="R4", autonomy="A4")
+    assert (d.decision, d.rule_id) == ("ASK", "G-OPS-02")
+    assert "Không hoàn tác" in d.reason
+
+    # G-OPS-04 là APPROVE ("cài gói tin cậy"), nhưng ở A1 lớp R2 vượt mức tự chủ → phải ASK
+    d = g.decide("G-OPS", {"op": "install", "package": "renode"}, risk="R2", autonomy="A1")
+    assert d.decision == "ASK", f"ngưỡng cứng bị quy tắc cổng vượt mặt: {d}"
+
+    # REJECT mạnh hơn ASK nên được giữ nguyên
+    d = g.decide("G3", {"patch": {"constant_guard_violations": 2}}, risk="R4", autonomy="A4")
+    assert (d.decision, d.rule_id) == ("REJECT", "G3-03")
 
 
 def test_dung_45_tinh_huong_va_bang_dich_phu_het():
@@ -96,14 +102,15 @@ def test_moi_quy_tac_fixture_nhac_toi_deu_ton_tai():
 def test_bao_cao_quy_tac_khong_duoc_tinh_huong_nao_cham():
     """Khoảng trống của fixture phải nhìn thấy được, không nằm im.
 
-    45 tình huống chạm tới 35/46 quy tắc. Mười một quy tắc còn lại chưa từng được chứng minh
-    là chạy đúng — trong đó G-SRC-05 (license không rõ) và GEN-03 (xóa/ghi đè dự án) là những
-    cái đáng có tình huống nhất. Test này KHÔNG đỏ; nó giữ con số ấy khỏi tăng lên trong im lặng.
+    45 tình huống chạm tới 38/46 quy tắc (trước khi sửa DEV-011/DEV-012 là 35). Tám quy tắc
+    còn lại chưa từng được chứng minh là chạy đúng — trong đó `G-SRC-05` (license không rõ) và
+    `GEN-03` (xóa/ghi đè dự án) là những cái đáng có tình huống nhất, vì cả hai đều chặn thứ
+    khó hoàn tác. Test này KHÔNG đỏ; nó giữ con số ấy khỏi tụt đi trong im lặng.
     """
     het = {r["id"] for r in PolicyGate().rules}
     cham = {chay(sid)[1] for sid in SITUATIONS}
     thieu = het - cham
-    assert thieu == {"G-OPS-02", "G-SRC-05", "G-SRC-06", "G4-02", "G5-02", "G5-03", "G5-99",
+    assert thieu == {"G-SRC-05", "G4-02", "G5-03", "G5-99",
                      "GEN-01", "GEN-02", "GEN-03", "TOOL-04"}, (
         f"độ phủ fixture đã đổi — nay thiếu: {sorted(thieu)}")
 

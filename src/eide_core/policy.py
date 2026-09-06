@@ -25,6 +25,11 @@ LEVELS = ["A0", "A1", "A2", "A3", "A4"]
 # R4 (không hoàn tác được: xóa flash, fuse, cơ cấu chấp hành, phát hành công khai) luôn ASK ở mọi mức.
 MAX_AUTO_RISK = {"A0": -1, "A1": 1, "A2": 2, "A3": 3, "A4": 3}
 
+# Dải "chặn" của rules.yaml: các quy tắc priority <= 5 nói vì sao chính hành động này nguy hiểm
+# (hash lệch, không hoàn tác, hằng số không nguồn, dự án nhạy cảm). Quy tắc ưu tiên lớn hơn là
+# lời khuyên chung. Ngưỡng cứng chỉ mượn lý do từ dải này — xem `decide` tầng 2, DEVIATIONS DEV-012.
+PRI_CHAN = 5
+
 
 @dataclass
 class Decision:
@@ -104,19 +109,35 @@ class PolicyGate:
         if self.stopped:
             return Decision(REJECT, "STOP", "Phiên đang dừng khẩn (E3002)", gate)
         # Tầng 2 — ngưỡng cứng lớp rủi ro × mức tự chủ
-        r = int(risk[1]) if len(risk) > 1 and risk[1].isdigit() else 1
-        if r >= 4:
-            return Decision(ASK, "HARD-R4", "Hành động lớp R4 không hoàn tác được — luôn hỏi người", gate)
-        if r > MAX_AUTO_RISK[level] and r > 0:
-            return Decision(ASK, f"HARD-{level}", f"Lớp {risk} vượt mức tự chủ {level}", gate)
-        # Tầng 3 + 4 — quy tắc theo cổng rồi quy tắc chung
+        #
+        # Ngưỡng cứng ép ASK, nhưng vẫn tra quy tắc cổng TRƯỚC để lấy lý do cụ thể. Không có
+        # bước ấy thì `G-OPS-02` ("Không hoàn tác") và `G5-02` ("Công khai") là quy tắc chết —
+        # mọi R4 đều bị nuốt thành một dòng "HARD-R4" trong decision_log, và người duyệt chỉ
+        # đọc được lớp rủi ro chứ không đọc được ĐIỀU GÌ sắp xảy ra. Xem DEVIATIONS DEV-012.
+        #
+        # Quy tắc cổng chỉ được phép SIẾT ở đây, không được nới: một quy tắc APPROVE gặp ngưỡng
+        # cứng vẫn ra ASK. REJECT thì mạnh hơn ASK nên được giữ nguyên.
         env = self._env(features, level, board)
-        for scope in (gate, "*"):
-            for rule in self.rules:
-                if rule["gate"] != scope:
-                    continue
-                if _eval(rule["_code"], env):
-                    return Decision(rule["decision"], rule["id"], rule.get("reason", ""), gate, features)
+        r = int(risk[1]) if len(risk) > 1 and risk[1].isdigit() else 1
+        cung = None
+        if r >= 4:
+            cung = ("HARD-R4", "Hành động lớp R4 không hoàn tác được — luôn hỏi người")
+        elif r > MAX_AUTO_RISK[level] and r > 0:
+            cung = (f"HARD-{level}", f"Lớp {risk} vượt mức tự chủ {level}")
+        if cung:
+            khop = self._match(gate, env)
+            # Chỉ mượn lý do của quy tắc NÓI VỀ CHÍNH HÀNH ĐỘNG NÀY. Quy tắc trong dải chặn
+            # (priority <= PRI_CHAN) mô tả vì sao hành động này nguy hiểm — "Không hoàn tác",
+            # "Công khai", "Hằng số không nguồn". Quy tắc ưu tiên lớn hơn là lời khuyên chung
+            # ("board chưa đánh dấu lab") và dùng nó làm lý do cho một hành động R4 là nói
+            # nhỏ đi mức nghiêm trọng thật.
+            if khop and khop.get("priority", 50) <= PRI_CHAN and khop["decision"] in (ASK, REJECT):
+                return Decision(khop["decision"], khop["id"], khop.get("reason", ""), gate, features)
+            return Decision(ASK, cung[0], cung[1], gate)
+        # Tầng 3 + 4 — quy tắc theo cổng rồi quy tắc chung
+        khop = self._match(gate, env)
+        if khop:
+            return Decision(khop["decision"], khop["id"], khop.get("reason", ""), gate, features)
         # Tầng 5 — mức năng lực (APD-08 §4.1, Danh mục cột "Mức"): T1/T1* tự làm (T1* làm rồi báo cáo) trong
         # phạm vi lớp rủi ro đã qua tầng 2; T2 cần người duyệt; T3 người làm.
         if actor == "human":
@@ -141,6 +162,14 @@ class PolicyGate:
             raise EideError("E3000", d.reason, rule=d.rule_id, gate=d.gate)
 
     # ---- nội bộ
+    def _match(self, gate: str, env: dict[str, Any]) -> dict[str, Any] | None:
+        """Quy tắc đầu tiên khớp, xét cổng trước rồi quy tắc chung `*` (POL-17 §2)."""
+        for scope in (gate, "*"):
+            for rule in self.rules:
+                if rule["gate"] == scope and _eval(rule["_code"], env):
+                    return rule
+        return None
+
     def _effective_level(self, autonomy: str | None, board: str | None) -> str:
         level = autonomy or self.config.get("autonomy", "A3")
         boards = self.config.get("boards") or {}

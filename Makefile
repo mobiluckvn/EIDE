@@ -27,7 +27,14 @@ check-spec:       ## đối chiếu docs/spec nhất quán
 check-secrets:    ## cổng chặn khóa riêng lọt vào kho (SEC-25 / NFR-SEC-01)
 	cd apps/geditor && ./scripts/check-no-secrets.sh --tu-kiem && ./scripts/check-no-secrets.sh
 
-check: lint check-spec test check-secrets   ## tất cả — phải xanh trước khi commit
+# docs/spec/ là bản SINH từ docs/ho-so/nguon/ (CLAUDE.md §"Đồng bộ tài liệu"). Không có cổng
+# này thì một lần sửa tay rules.yaml sẽ sống sót im lặng, và lần sinh lại sau đó âm thầm nuốt
+# mất nó. `node` không phải phụ thuộc bắt buộc để chạy EIDE nên thiếu node thì bỏ qua, có báo.
+check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
+	@command -v node >/dev/null && node scripts/gen_policy_spec.js --kiem \
+	 || echo "bỏ qua check-gen: không có node (cần để đối chiếu docs/spec với docs/ho-so/nguon)"
+
+check: lint check-spec test check-secrets check-gen   ## tất cả — phải xanh trước khi commit
 
 # Một năng lực chỉ được ghi "Xong" khi cột Nền tảng trong SPRINT ghi nền tảng đã chạy test
 # THẬT (PLATFORM.md quy tắc 7). Trên máy Apple Silicon, đây là lệnh sinh ra bằng chứng ấy

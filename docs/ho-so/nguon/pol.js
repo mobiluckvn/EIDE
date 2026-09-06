@@ -31,7 +31,12 @@ const RULES = [
  ['G-SRC-03', 'G-SRC', 'source.hash_match == False and source.expected_hash', 'REJECT', 'Hash không khớp hash đã biết', 5, 'hash_match'],
  ['G-SRC-04', 'G-SRC', 'source.size_mb > thresholds.download_max_mb', 'ASK', 'Tệp lớn', 20, 'size_mb'],
  ['G-SRC-05', 'G-SRC', 'source.license not in allowed_licenses', 'ASK', 'License không rõ/không cho phép', 20, 'license'],
- ['G-SRC-06', 'G-SRC', 'source.match_score < thresholds.source_match_min', 'ASK', 'Tài liệu có thể không đúng linh kiện/phiên bản', 25, 'match_score'],
+ // priority 5 (không phải 25) — cùng nhóm "chặn trước khi tin" với G-SRC-03 (hash lệch) và
+ // G-SRC-07 (dự án nhạy cảm). Ở 25 nó nằm SAU G-SRC-01 (10), nên tài liệu từ tên miền tin cậy
+ // được tự duyệt mà match_score không bao giờ được xét: datasheet của biến thể chip khác, tải
+ // từ đúng trang hãng, vào kho không ai hỏi — rồi mọi fact trích từ nó mang nhãn "nguồn tin
+ // cậy". Xem DEVIATIONS DEV-011, tình huống S06.
+ ['G-SRC-06', 'G-SRC', 'source.match_score < thresholds.source_match_min', 'ASK', 'Tài liệu có thể không đúng linh kiện/phiên bản', 5, 'match_score'],
  ['G-SRC-07', 'G-SRC', 'project.sensitive and source.requires_upload', 'ASK', 'Dự án nhạy cảm, nguồn yêu cầu gửi dữ liệu ra ngoài', 5, 'requires_upload'],
  ['G-SRC-99', 'G-SRC', 'True', 'ASK', 'Mặc định: nguồn ngoài danh sách tin cậy', 99, ''],
  // G-FACT

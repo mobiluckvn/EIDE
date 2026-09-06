@@ -41,7 +41,7 @@ rules:
     when: "source.match_score < thresholds.source_match_min"
     decision: ASK
     reason: "Tài liệu có thể không đúng linh kiện/phiên bản"
-    priority: 25
+    priority: 5
     features: ["match_score"]
   - id: G-SRC-07
     gate: "G-SRC"
