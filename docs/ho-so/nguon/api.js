@@ -42,10 +42,10 @@ const EV = [
  ['event.chat.restated', '{intent_id, text}', 'Thẻ "tôi hiểu là…"'], ['event.chat.question', '{question_id, text, options[], default, timeout_s, remember_as?}', 'Thẻ câu hỏi gộp'],
  ['event.chat.report', '{run_id, done[], waiting[], undo_until?, cost_usd}', 'Thẻ báo cáo cuối'], ['event.run.progress', '{run_id, node_id, cap, state, pct?}', 'Dòng tiến độ chuỗi'],
  ['event.queue.changed', '{kind, added[], removed[]}', ''], ['event.gate.opened', '{gate_id, gate, cap, summary, risk, evidence[]}', 'Mục ASK mới'],
- ['event.undo.registered / event.undo.expired', '{undo_ref, deadline}', ''], ['event.autonomy.changed', '{effective, reason}', 'Kể cả STOP'],
+ ['event.undo.registered', '{undo_ref, deadline}', ''], ['event.undo.expired', '{undo_ref}', ''], ['event.autonomy.changed', '{effective, reason}', 'Kể cả STOP'],
  ['event.discover.changed', 'Discovery', 'Cắm/rút board'], ['event.serial.line', '{port, ts, line}', ''],
  ['event.job.progress', '{job_id, pct, log_tail[]}', ''], ['event.knowledge.changed', '{facts_added, facts_superseded, conflicts, stale_code_units[]}', 'Sau extract/review'],
- ['event.doc.stale / event.diagram.stale', '{id, sections[]|node_ids[]}', ''], ['event.notice', '{level, text, ref?}', 'Cảnh báo chung'],
+ ['event.doc.stale', '{id, sections[]}', ''], ['event.diagram.stale', '{id, node_ids[]}', ''], ['event.notice', '{level, text, ref?}', 'Cảnh báo chung'],
 ];
 c.push(T([3000, 3800, 2500], ['Sự kiện', 'Payload', 'Dùng cho'], EV, { size: 19 }));
 c.push(SP());

@@ -31,6 +31,7 @@ check-secrets:    ## cổng chặn khóa riêng lọt vào kho (SEC-25 / NFR-SEC
 # này thì một lần sửa tay rules.yaml sẽ sống sót im lặng, và lần sinh lại sau đó âm thầm nuốt
 # mất nó. `node` không phải phụ thuộc bắt buộc để chạy EIDE nên thiếu node thì bỏ qua, có báo.
 check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
+	$(PY) scripts/gen_rpc_swift.py --kiem
 	@command -v node >/dev/null \
 	 && node scripts/gen_policy_spec.js --kiem && node scripts/gen_dialog_spec.js --kiem \
 	 || echo "bỏ qua check-gen: không có node (cần để đối chiếu docs/spec với docs/ho-so/nguon)"
@@ -54,6 +55,9 @@ doctor:
 
 geditor:          ## build + test phần Swift (apps/geditor)
 	cd apps/geditor && swift build && swift test
+
+eidekit:          ## chỉ EIDEKit — client JSON-RPC của panel GEditor (WI-021)
+	cd apps/geditor && swift build --target EIDEKit && swift test --filter EIDEKitTests
 
 clean:
 	rm -rf .venv .venv-arm .venv-x86 .pytest_cache .ruff_cache build dist *.egg-info

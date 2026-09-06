@@ -940,7 +940,7 @@
    }
   },
   {
-   "name": "event.undo.registered / event.undo.expired",
+   "name": "event.undo.registered",
    "summary": "",
    "params": [
     {
@@ -948,6 +948,25 @@
      "schema": {
       "type": "object",
       "description": "{undo_ref, deadline}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.undo.expired",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{undo_ref}"
      }
     }
    ],
@@ -1054,14 +1073,33 @@
    }
   },
   {
-   "name": "event.doc.stale / event.diagram.stale",
+   "name": "event.doc.stale",
    "summary": "",
    "params": [
     {
      "name": "params",
      "schema": {
       "type": "object",
-      "description": "{id, sections[]|node_ids[]}"
+      "description": "{id, sections[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.diagram.stale",
+   "summary": "",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{id, node_ids[]}"
      }
     }
    ],

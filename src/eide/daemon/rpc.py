@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, TextIO
 
 from eide import __version__
-from eide_core.errors import EideError
+from eide_core.errors import EideError, error_table
 from eide_core.ledger import Ledger
 from eide_core.paths import user_log
 from eide_core.policy import PolicyGate
@@ -82,11 +82,17 @@ class Daemon:
         except EideError as e:
             return {"jsonrpc": "2.0", "id": rid, "error": e.to_rpc()}
         except (KeyError, TypeError) as e:
-            return _err(rid, -32602, f"Tham số sai: {e}")
+            # Tham số thiếu/sai kiểu là E1000 INVALID_ARGS của API-15 §3, không phải một mã
+            # JSON-RPC trần. Client (EIDEKit) tra `eide_code` để hiện CÁCH XỬ LÝ mà tài liệu
+            # khuyến nghị; thiếu nó thì phía giao diện chỉ có một con số âm để đưa cho người dùng.
+            return _err(rid, -32602, f"Tham số sai: {e}", eide_code="E1000")
 
 
-def _err(rid: Any, code: int, message: str) -> dict[str, Any]:
-    return {"jsonrpc": "2.0", "id": rid, "error": {"code": code, "message": message}}
+def _err(rid: Any, code: int, message: str, eide_code: str | None = None) -> dict[str, Any]:
+    err: dict[str, Any] = {"code": code, "message": message}
+    if eide_code:
+        err["data"] = {"eide_code": eide_code, "name": error_table()[eide_code]["name"]}
+    return {"jsonrpc": "2.0", "id": rid, "error": err}
 
 
 def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:

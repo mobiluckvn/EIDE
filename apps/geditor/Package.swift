@@ -17,6 +17,9 @@ let package = Package(
     ],
     products: [
         .library(name: "GEditorCore", targets: ["GEditorCore"]),
+        // EIDE (WI-021): client JSON-RPC thuần, không phụ thuộc AppKit — để test được
+        // mà không cần dựng cửa sổ, và để CLI dùng lại nếu cần.
+        .library(name: "EIDEKit", targets: ["EIDEKit"]),
         .executable(name: "geditor-poca", targets: ["GEditorPoCA"]),
         .executable(name: "geditor", targets: ["GEditorCLI"]),
         .executable(name: "GEditorApp", targets: ["GEditorApp"]),
@@ -196,6 +199,9 @@ let package = Package(
         ),
 
         // Lớp 1 — Lõi xử lý văn bản, độc lập UI, test được không cần app (NFR-MNT-01).
+        .target(name: "EIDEKit"),
+        .testTarget(name: "EIDEKitTests", dependencies: ["EIDEKit"]),
+
         .target(
             name: "GEditorCore",
             dependencies: ["GEditorSIMD", "PCRE2", "TreeSitter", "LibArchive"],

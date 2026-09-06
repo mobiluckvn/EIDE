@@ -50,6 +50,7 @@ jobs:
       # docs/spec/ là bản sinh từ docs/ho-so/nguon/ — sửa tay một bên là trôi khỏi bên kia
       - run: node scripts/gen_policy_spec.js --kiem
       - run: node scripts/gen_dialog_spec.js --kiem
+      - run: $ARCH_RUN python scripts/gen_rpc_swift.py --kiem
 
   # Windows và Linux: thứ tự 2 và 3 trong PLATFORM.md — chạy để biết sớm, không chặn PR.
   khac:
@@ -92,3 +93,6 @@ jobs:
         run: ./scripts/check-core-no-ui.sh
       - name: Test lõi
         run: swift test
+      # EIDEKit (WI-021): client JSON-RPC nói chuyện thật với `eide daemon`
+      - name: EIDEKit ↔ daemon
+        run: swift test --filter EIDEKitTests
