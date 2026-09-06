@@ -25,6 +25,11 @@
   "source": "Người"
  },
  {
+  "kind": "policy.sign",
+  "fields": "{hash, by, keys[], alg}",
+  "source": "eide policy sign"
+ },
+ {
   "kind": "undo.register / undo.apply / undo.expire",
   "fields": "{undo_ref, kind, deadline} / {undo_ref, by, result} / {undo_ref}",
   "source": "UndoService"

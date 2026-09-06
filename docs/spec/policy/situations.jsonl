@@ -43,3 +43,6 @@
 {"id":"S43","gate":"G-TOOL","situation":"A3; effects [write_project], test đạt, 0 lỗi","expected":"APPROVE TOOL-02"}
 {"id":"S44","gate":"G-TOOL","situation":"A3; effects [hardware], board lab, uses_ok 1","expected":"ASK TOOL-99"}
 {"id":"S45","gate":"G-TOOL","situation":"A4; effects [system]","expected":"ASK TOOL-05"}
+{"id":"S46","gate":"G-WL","situation":"Người chạy `eide policy sign`; niêm khớp cấu hình sau hợp nhất","expected":"APPROVE G-WL-01"}
+{"id":"S47","gate":"G-WL","situation":"Tác tử tự gọi để thêm một tên miền vào trusted_sources","expected":"REJECT G-WL-02"}
+{"id":"S48","gate":"G-WL","situation":"Người ký nhưng băm không khớp niêm (danh sách đã đổi sau khi ký)","expected":"ASK G-WL-99"}

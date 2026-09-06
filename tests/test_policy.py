@@ -8,8 +8,21 @@ from eide_core.policy import APPROVE, ASK, REJECT, PolicyGate, compile_rule
 
 
 def test_all_rules_compile():
+    """Mọi quy tắc biên dịch được, mã không trùng, và mỗi cổng có quy tắc mặc định.
+
+    Không đếm cứng số quy tắc: thêm quy tắc vào POL-17 §2 là việc hợp lệ (v1.2 thêm cổng G-WL).
+    Ba bất biến dưới đây mới là thứ vỡ ra thành lỗi thật — nhất là cái cuối: một cổng không có
+    quy tắc bắt hết sẽ trả về "không khớp quy tắc nào" cho một hành động nó lẽ ra phải chặn.
+    """
     g = PolicyGate()
-    assert len(g.rules) == 46 and g.version
+    assert g.version
+    ids = [r["id"] for r in g.rules]
+    assert len(ids) == len(set(ids)), f"mã quy tắc trùng: {sorted({i for i in ids if ids.count(i) > 1})}"
+    # `*` không phải một cổng mà là dải quy tắc chung áp cho mọi hành động; chỗ bắt hết của nó
+    # là tầng năng lực (APD-08 §4.1 tầng 5), không phải một dòng `when: True` trong bảng này.
+    cong = {r["gate"] for r in g.rules} - {"*"}
+    thieu = [c for c in cong if not any(r["gate"] == c and r["when"] == "True" for r in g.rules)]
+    assert not thieu, f"cổng không có quy tắc mặc định: {sorted(thieu)}"
 
 
 def test_unsafe_expression_rejected():

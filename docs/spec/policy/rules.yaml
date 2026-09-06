@@ -199,11 +199,11 @@ rules:
     features: ["package","needs_sudo"]
   - id: G-OPS-06
     gate: "G-OPS"
-    when: "not board.lab"
+    when: "not board.lab and op in [\"flash\",\"reset\",\"rtt\",\"read_mem\",\"write_ram\",\"experiment\",\"experiment_no_actuator\"]"
     decision: ASK
     reason: "Board chưa đánh dấu lab (đề nghị đánh dấu nếu không có cơ cấu chấp hành)"
     priority: 20
-    features: ["board.lab"]
+    features: ["board.lab","op"]
   - id: G-OPS-99
     gate: "G-OPS"
     when: "True"
@@ -300,6 +300,27 @@ rules:
     when: "True"
     decision: ASK
     reason: "Mặc định cho công cụ tự viết"
+    priority: 99
+    features: []
+  - id: G-WL-01
+    gate: "G-WL"
+    when: "actor == \"human\" and wl.verified"
+    decision: APPROVE
+    reason: "Người ký danh sách trắng, niêm khớp"
+    priority: 5
+    features: ["actor","verified"]
+  - id: G-WL-02
+    gate: "G-WL"
+    when: "actor != \"human\""
+    decision: REJECT
+    reason: "Chỉ người mới được đổi danh sách trắng (R4)"
+    priority: 1
+    features: ["actor"]
+  - id: G-WL-99
+    gate: "G-WL"
+    when: "True"
+    decision: ASK
+    reason: "Mặc định: thay đổi danh sách trắng cần người xác nhận"
     priority: 99
     features: []
   - id: GEN-01

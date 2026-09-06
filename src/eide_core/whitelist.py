@@ -1,9 +1,9 @@
-"""Danh sách trắng và niêm chữ ký — POL-17 §3. WI-257.
+"""Danh sách trắng và niêm chữ ký — POL-17 §3 (v1.2). WI-257.
 
-    Ba danh sách trong autonomy.yaml [...]. Mỗi thay đổi danh sách là hành động R4 theo cổng
-    riêng: người ký bằng lệnh `eide policy sign` (ghi băm nội dung + user + thời điểm vào
-    decision_log và tệp `.eide/policy.sig`); PolicyGate từ chối nạp danh sách có băm không
-    khớp chữ ký.
+    Bốn danh sách trong autonomy.yaml [...]. Mỗi thay đổi danh sách là hành động R4 qua cổng
+    `G-WL` (§2): người ký bằng lệnh `eide policy sign` — ghi băm nội dung + user + thời điểm
+    vào decision_log (sự kiện `policy.sign`, API-15 §7) và tệp `.eide/policy.sig`. PolicyGate
+    từ chối nạp danh sách có băm không khớp chữ ký.
 
 ## "Chữ ký" ở đây là NIÊM, không phải mật mã
 
@@ -39,20 +39,16 @@ from typing import Any
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 
-# POL-17 §3 nói "ba danh sách", §4 cho schema bốn khóa. Niêm phủ cả bốn: `allowed_licenses`
-# quyết định G-SRC-04/05 và `boards` quyết định G-OPS — bỏ chúng ra ngoài niêm thì ký xong vẫn
-# còn hai đường sửa được chính sách mà không ai hay. Xem DEVIATIONS DEV-030.
+# Bốn khóa, theo schema §4. Tới v1.1 văn xuôi §3 còn nói "ba danh sách" và gọi danh sách thứ ba
+# là `lab_boards` — một cái tên mà chính schema §4 từ chối (`additionalProperties: false`).
+# Niêm phủ cả bốn: `allowed_licenses` quyết định G-SRC-04/05 và `boards` quyết định G-OPS, bỏ
+# chúng ra ngoài thì ký xong vẫn còn hai đường sửa được chính sách. Xem DEVIATIONS DEV-030.
 KHOA_NIEM = ("trusted_sources", "trusted_packages", "allowed_licenses", "boards")
 
-# POL-17 §3 bảo ghi việc ký "vào decision_log", nhưng API-15 §5 (ledger_events.json) không có
-# loại sự kiện nào cho nó, và §2 cũng không định nghĩa "cổng riêng" mà §3 nhắc tới — trong 46
-# quy tắc không có cổng danh sách trắng. Hai khoảng trống ấy ở DEVIATIONS DEV-031.
-#
-# `gate.human` {gate_id, decision, by, note} là loại gần nhất đã có và đúng nghĩa: ký là một
-# người quyết định tại một cổng. Thêm khóa `hash` vì `kiem()` phải đối chiếu được — để băm
-# trong `note` dạng văn xuôi thì bước đối chiếu thành ra phân tích chuỗi tự do.
-KIND = "gate.human"
-GATE_WL = "G-WL"
+# API-15 §7 v1.2 `policy.sign {hash, by, keys[], alg}` — đúng bốn trường của `Nien`. Trước v1.2
+# không có kiểu nào cho việc ký nên đây từng là `gate.human` cộng một khóa `hash` ngoài hợp
+# đồng; DEV-031 đóng khi POL-17 §2 định nghĩa cổng G-WL và API-15 §7 định nghĩa kiểu này.
+KIND = "policy.sign"
 
 
 @dataclass(frozen=True)
@@ -100,8 +96,7 @@ def doc_nien(p: Path) -> Nien | None:
 def _nien_moi_nhat(led: Ledger | None) -> dict[str, Any] | None:
     if led is None:
         return None
-    ra = [r for r in led.records()
-          if r.get("kind") == KIND and r.get("data", {}).get("gate_id") == GATE_WL]
+    ra = [r for r in led.records() if r.get("kind") == KIND]
     return ra[-1] if ra else None
 
 
@@ -133,9 +128,7 @@ def ky(cfg: dict[str, Any], sig_path: Path, by: str, led: Ledger | None = None) 
         # Ghi nhật ký TRƯỚC khi ghi tệp: nếu chỉ một trong hai kịp ghi thì phải là nhật ký.
         # Có nhật ký mà thiếu `.sig` ⇒ `kiem()` trả "chưa ký" ⇒ hỏi người, an toàn. Ngược lại,
         # có `.sig` mà nhật ký thiếu thì niêm trông hợp lệ nhưng không có gì chứng thực nó.
-        led.append(KIND, {"gate_id": GATE_WL, "decision": "APPROVE", "by": n.by,
-                          "note": f"ký danh sách trắng ({', '.join(n.keys)})",
-                          "hash": n.hash}, actor="human")
+        led.append(KIND, n.as_dict(), actor="human")
     sig_path.parent.mkdir(parents=True, exist_ok=True)
     sig_path.write_text(json.dumps(n.as_dict(), ensure_ascii=False, indent=2) + "\n",
                         encoding="utf-8")

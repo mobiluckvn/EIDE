@@ -225,4 +225,19 @@ SITUATIONS: dict[str, tuple[str, dict, dict]] = {
     "S45": ("G-TOOL", {"tool": {"tested": True, "effects_ok": True, "risk": "R2",
                                 "effects": ["system"], "last_fail_count": 0, "uses_ok": 0}},
             {"risk": "R2", "autonomy": "A4"}),
+
+    # G-WL — cổng danh sách trắng (POL-17 §3, thêm ở v1.2).
+    #
+    # `risk="R2"` chứ không phải R4 dù §3 gọi đổi danh sách là "hành động R4": ba tình huống này
+    # kiểm CHÍNH bảng quy tắc §2, và ở R4 thì ngưỡng cứng tầng T2 trả lời trước khi cổng được
+    # hỏi tới — S46 sẽ ra `ASK HARD-R4` và không quy tắc G-WL nào được chạm. Lớp rủi ro thật của
+    # hành động do registry gắn, không do fixture này quyết; xem DEV-012 về quan hệ giữa hai tầng.
+    "S46": ("G-WL", {"actor": "human", "wl": {"verified": True}},
+            {"risk": "R2", "autonomy": "A3", "actor": "human"}),
+
+    "S47": ("G-WL", {"actor": "agent", "wl": {"verified": False}},
+            {"risk": "R2", "autonomy": "A3"}),
+
+    "S48": ("G-WL", {"actor": "human", "wl": {"verified": False}},
+            {"risk": "R2", "autonomy": "A3", "actor": "human"}),
 }

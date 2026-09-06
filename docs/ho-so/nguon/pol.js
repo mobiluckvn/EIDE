@@ -2,13 +2,23 @@ const fs = require('fs');
 const { P, H1, H2, H3, CAP, SP, T, IMG, CODE, build } = require('./eaa_doc');
 const { metaNew, refParas } = require('./eide_common');
 const m = metaNew('EIDE-POL-17', 'Quy tắc chính sách tự chủ', 'QUY TẮC CHÍNH SÁCH TỰ CHỦ MÁY ĐỌC ĐƯỢC (POL)',
-  'Chuyển EIDE-APD-08 thành đặc tả lập trình được: mô hình quyết định, bảng quy tắc theo cổng, danh sách trắng, schema autonomy.yaml, hoàn tác theo loại, máy trạng thái leo thang và dừng khẩn, học ngưỡng, 40 tình huống kiểm thử',
+  'Chuyển EIDE-APD-08 thành đặc tả lập trình được: mô hình quyết định, bảng quy tắc theo cổng, danh sách trắng, schema autonomy.yaml, hoàn tác theo loại, máy trạng thái leo thang và dừng khẩn, học ngưỡng, 48 tình huống kiểm thử',
   [['Tài liệu trước', 'EIDE-APD-08, Danh mục năng lực (cột R, Mức, Hỏi khi), EIDE-SDD-04 §4.7'], ['Tệp kèm', 'policy/rules.yaml, policy/autonomy.schema.json, tests/policy/situations.jsonl'], ['Dùng khi', 'Hiện thực core/engine/policy.py, undo.py; viết TC-51…TC-57']],
   'Phát hành lần đầu — bổ sung lĩnh vực L08',
   [['1.1', '06/09/2026', 'Vũ Trí Công',
     'DEV-011: G-SRC-06 (tài liệu có thể không đúng linh kiện) đổi priority 25 → 5. Ở 25 nó nằm sau '
     + 'G-SRC-01 (10), nên tài liệu từ tên miền tin cậy được tự duyệt mà match_score không bao giờ '
-    + 'được xét. Tình huống S06 nay ra đúng "ASK G-SRC-06".']]);
+    + 'được xét. Tình huống S06 nay ra đúng "ASK G-SRC-06".'],
+   ['1.2', '06/09/2026', 'Vũ Trí Công',
+    'Đồng bộ nhóm POL sau Sprint 1. §1: nói rõ tầng T2 mượn mã quy tắc và lý do từ dải chặn '
+    + '(ưu tiên ≤ 5) thay vì trả về một mã chung, để G-OPS-02 và G5-02 không còn là quy tắc chết '
+    + '(DEV-012); và đặc trưng chưa được cung cấp luôn coi là SAI, kể cả khi viết dạng tên trần '
+    + '(DEV-033). §2: G-OPS-06 thêm điều kiện op nên không còn khớp lệnh cài gói (DEV-032); thêm '
+    + 'cổng G-WL với ba quy tắc cho việc đổi danh sách trắng (DEV-031). §3: danh sách thứ tư đổi '
+    + 'tên lab_boards → boards cho khớp schema §4, vốn khai additionalProperties: false nên từ '
+    + 'chối chính cái tên §3 bảo dùng (DEV-030); bổ sung ba điểm về giới hạn của niêm. §5: phạm vi '
+    + 'cửa sổ hoàn tác trên hai nhật ký và yêu cầu ReviewQueue gộp cả hai (DEV-014); giá trị mặc '
+    + 'định của defaults.yaml (DEV-001). §8: thêm S46–S48 phủ cổng G-WL.']]);
 const c = [];
 c.push(H1('1. Mô hình quyết định'));
 c.push(P('PolicyGate là một hàm thuần: `decide(action, ctx) → Decision`. Đầu vào là **Action** (năng lực, tham số, cổng gắn nếu có, lớp rủi ro từ registry) và **Context** (mức tự chủ hiệu lực, board, đặc trưng tình huống). Quyết định tính theo bốn tầng, dừng ở tầng đầu tiên cho kết quả REJECT hoặc ASK; APPROVE chỉ khi qua cả bốn tầng. Mọi quyết định ghi DecisionLog với lý do là mã quy tắc (ví dụ `G-SRC-03`), không phải văn xuôi, để thống kê và học ngưỡng.'));
@@ -18,6 +28,10 @@ c.push(T([600, 2800, 5900], ['Tầng', 'Kiểm', 'Kết quả'], [
   ['T3', 'Mức tự chủ hiệu lực', 'effective_level = min(project.autonomy, board.autonomy?, action_type.autonomy?); nếu effective_level < MIN_LEVEL[risk] → ASK(LEVEL)'],
   ['T4', 'Quy tắc của cổng và của năng lực', 'Bảng §2 theo gate (G-SRC, G-FACT, G1, G3, G-OPS, G4, G5, G-TOOL cho công cụ tác tử tự viết) + điều kiện ask_when của năng lực; quy tắc đầu tiên khớp thắng; không khớp quy tắc nào → mặc định của cổng'],
 ]));
+c.push(SP());
+c.push(P('**Tầng T2 tra bảng quy tắc trước khi trả lời.** Ngưỡng cứng của T2 ép ASK, nhưng nếu nó trả về ngay một mã chung như `HARD-R4` thì hai quy tắc `G-OPS-02` ("Không hoàn tác") và `G5-02` ("Công khai") không bao giờ thắng — chúng nói về chính những hành động R4 mà T2 vừa chặn, nên chúng thành quy tắc chết và `decision_log` chỉ còn ghi lớp rủi ro chứ không ghi **điều gì sắp xảy ra**. Người duyệt đọc nhật ký để quyết định, nên đó là mất mát thật. Vì vậy T2 tra bảng §2 để **mượn** mã quy tắc và lý do, nhưng chỉ mượn từ dải chặn — quy tắc có ưu tiên ≤ 5. Quy tắc ưu tiên lớn hơn là lời khuyên chung; dùng nó làm lý do cho một hành động R4 là nói nhỏ đi mức nghiêm trọng (ví dụ giải thích một lệnh xóa flash bằng "Board chưa đánh dấu lab"). Và T2 chỉ **siết**, không nới: một quy tắc APPROVE gặp ngưỡng cứng vẫn ra ASK. Xem DEVIATIONS DEV-012.'));
+c.push(SP());
+c.push(P('**Đặc trưng chưa được cung cấp luôn được coi là SAI**, dù nó viết dưới dạng thuộc tính (`board.has_actuator`) hay tên trần (`needs_sudo`). Một hiện thực để tên trần vắng mặt mang tính đúng sẽ làm mọi quy tắc chứa `or <tên đó>` khớp vô điều kiện: đo được trên `G-OPS-05` (ưu tiên 5, ASK), nó che hẳn `G-OPS-04` (ưu tiên 10, APPROVE) và không gói nào trong `trusted_packages` được duyệt tự động — cả danh sách gói tin cậy trở nên vô nghĩa mà bốn mươi lăm tình huống §8 vẫn xanh, vì không tình huống nào bỏ trống đặc trưng ấy. Xem DEVIATIONS DEV-033.'));
 c.push(SP());
 c.push(...CODE([
   'class Action(BaseModel): cap: str; args: dict; gate: str|None; risk: RiskClass; features: dict     # features do năng lực cung cấp (xem §2 cột Đặc trưng)',
@@ -67,7 +81,12 @@ const RULES = [
  ['G-OPS-03', 'G-OPS', 'op == "actuator" or board.has_actuator and op in ["flash","experiment"]', 'ASK', 'Cơ cấu chấp hành / board có động cơ', 1, 'op, has_actuator'],
  ['G-OPS-04', 'G-OPS', 'op == "install" and package in trusted_packages', 'APPROVE', 'Cài gói từ danh sách tin cậy', 10, 'package'],
  ['G-OPS-05', 'G-OPS', 'op == "install" and (package not in trusted_packages or needs_sudo)', 'ASK', 'Gói lạ hoặc cần quyền hệ thống', 5, 'package, needs_sudo'],
- ['G-OPS-06', 'G-OPS', 'not board.lab', 'ASK', 'Board chưa đánh dấu lab (đề nghị đánh dấu nếu không có cơ cấu chấp hành)', 20, 'board.lab'],
+ // Bảy `op` dưới đây là đúng những thao tác trên BOARD còn tới được ưu tiên 20: tập của
+ // G-OPS-01 cộng `experiment` (G-OPS-02/03 đã bắt erase_all/fuse/option_bytes/readout_protect
+ // và actuator ở ưu tiên 1). Thiếu điều kiện này, quy tắc khớp cả `op == "install"` và ghi vào
+ // decision_log "Board chưa đánh dấu lab" cho một lệnh cài gói — mời người đi nới lỏng chính
+ // sách cho một vấn đề không nằm ở board. Xem DEVIATIONS DEV-032.
+ ['G-OPS-06', 'G-OPS', 'not board.lab and op in ["flash","reset","rtt","read_mem","write_ram","experiment","experiment_no_actuator"]', 'ASK', 'Board chưa đánh dấu lab (đề nghị đánh dấu nếu không có cơ cấu chấp hành)', 20, 'board.lab, op'],
  ['G-OPS-99', 'G-OPS', 'True', 'ASK', 'Mặc định', 99, ''],
  // G4
  ['G4-01', 'G4', 'expect.machine_observable and expect.all_passed', 'APPROVE', 'Kỳ vọng máy quan sát được đều đạt → auto-verified', 10, 'machine_observable, all_passed'],
@@ -86,6 +105,14 @@ const RULES = [
  ['TOOL-05', 'G-TOOL', 'tool.risk == "R4" or "system" in tool.effects', 'ASK', 'Hiệu ứng hệ thống (sudo, ngoài dự án, cài đặt)', 1, 'risk, effects'],
  ['TOOL-99', 'G-TOOL', 'True', 'ASK', 'Mặc định cho công cụ tự viết', 99, ''],
  // Hội thoại / chung
+ // G-WL — cổng danh sách trắng. §3 gọi đổi danh sách là "hành động R4 theo cổng riêng" nhưng
+ // trước v1.2 không có cổng nào như thế trong bảng này (DEVIATIONS DEV-031). Ba quy tắc:
+ // ký là việc của NGƯỜI (không năng lực nào mang mã `policy.sign`, xem §3), nên tác tử chạm
+ // vào danh sách là REJECT chứ không phải ASK — hỏi người "cho tôi tự sửa danh sách trắng nhé?"
+ // là đúng câu hỏi mà một tác tử bị chiếm quyền sẽ hỏi.
+ ['G-WL-01', 'G-WL', 'actor == "human" and wl.verified', 'APPROVE', 'Người ký danh sách trắng, niêm khớp', 5, 'actor, verified'],
+ ['G-WL-02', 'G-WL', 'actor != "human"', 'REJECT', 'Chỉ người mới được đổi danh sách trắng (R4)', 1, 'actor'],
+ ['G-WL-99', 'G-WL', 'True', 'ASK', 'Mặc định: thay đổi danh sách trắng cần người xác nhận', 99, ''],
  ['GEN-01', '*', 'cap.ask_when_matched', 'ASK', 'Điều kiện "Hỏi kỹ sư khi" của năng lực khớp', 30, 'ask_when_matched'],
  ['GEN-02', '*', 'action.fail_count >= thresholds.fail_retries', 'ASK', 'Thất bại lặp → leo thang', 3, 'fail_count'],
  ['GEN-03', '*', 'action.is_delete_project or action.is_overwrite_project', 'ASK', 'Xóa/ghi đè dự án (R4)', 1, 'is_delete_project, is_overwrite_project'],
@@ -98,7 +125,11 @@ for (const r of RULES) yaml.push(`  - id: ${r[0]}\n    gate: "${r[1]}"\n    when
 fs.writeFileSync('policy/rules.yaml', yaml.join('\n') + '\n');
 c.push(P('Tệp `policy/rules.yaml` kèm theo chứa đúng bảng trên. Trình đánh giá điều kiện là một trình thông dịch biểu thức nhỏ (không `eval`): chỉ cho phép tên đặc trưng, hằng, so sánh, `and/or/not/in`, danh sách; đặc trưng thiếu ⇒ điều kiện sai (an toàn về phía ASK). Người có thể thêm quy tắc riêng trong `.eide/policy.local.yaml` nhưng chỉ được **siết** (đổi APPROVE → ASK), không được nới; nới lỏng chỉ qua đổi ngưỡng có xác nhận (§7).'));
 c.push(H1('3. Danh sách trắng và chữ ký'));
-c.push(P('Ba danh sách trong autonomy.yaml: `trusted_sources` (tên miền), `trusted_packages` (gói công cụ), `lab_boards` (board id). Mỗi thay đổi danh sách là hành động R4 theo cổng riêng: người ký bằng lệnh `eide policy sign` (ghi băm nội dung + user + thời điểm vào decision_log và tệp `.eide/policy.sig`); PolicyGate từ chối nạp danh sách có băm không khớp chữ ký. Đánh dấu board lab (board.mark_lab) yêu cầu người xác nhận hai điều: không có cơ cấu chấp hành nguy hiểm và nguồn có giới hạn dòng.'));
+c.push(P('Bốn danh sách trong autonomy.yaml, tên và hình dạng theo schema §4: `trusted_sources` (tên miền), `trusted_packages` (gói công cụ), `allowed_licenses` (license được nhận), `boards` (bảng board id → {lab, has_actuator, autonomy, reason}). Mỗi thay đổi danh sách là hành động R4 qua cổng `G-WL` (§2): người ký bằng lệnh `eide policy sign` — ghi băm nội dung + user + thời điểm vào decision_log (sự kiện `policy.sign`, API-15 §5) và tệp `.eide/policy.sig`. PolicyGate từ chối nạp danh sách có băm không khớp chữ ký; khi ấy nó **bỏ hẳn** ba danh sách khỏi biểu thức điều kiện thay vì nạp danh sách rỗng, và ghi lý do "danh sách trắng chưa ký" vào quyết định. Đánh dấu board lab (board.mark_lab) yêu cầu người xác nhận hai điều: không có cơ cấu chấp hành nguy hiểm và nguồn có giới hạn dòng.'));
+c.push(SP());
+c.push(P('**Ba điểm cần nói rõ về cơ chế này.** (a) Chữ ký ở đây là *niêm*, không phải mật mã: nội dung của nó là băm + người + thời điểm, không có khóa và không có bên thứ ba. Nó phát hiện được sửa đổi vô tình hoặc cẩu thả, chứ không chống được người đã ghi được vào `.eide/` — người ấy sửa danh sách rồi sửa luôn `policy.sig`. Điều làm nó không rỗng nghĩa là yêu cầu ghi vào **hai** nơi: nhật ký là chuỗi băm nối tiếp, nên phép đối chiếu `.sig` với bản ghi `policy.sign` mới nhất bắt được đúng trường hợp sửa hai tệp cạnh nhau. (b) Niêm phủ cấu hình **sau khi hợp nhất** `defaults.yaml` với `autonomy.yaml` của dự án, không phủ nội dung tệp: một dự án bỏ trống `allowed_licenses` vẫn chạy bằng danh sách của tệp mặc định, nên niêm chỉ phủ tệp dự án sẽ để người ký đặt tên mình lên một phần chính sách trong khi phần còn lại đến từ một tệp không ai niêm. (c) Niêm **không** phủ `thresholds` và `autonomy`: hai thứ ấy đổi thường xuyên qua `policy.learn_thresholds` (§7) và có đường kiểm soát riêng — gộp chúng vào sẽ bắt ký lại danh sách trắng mỗi tuần, và một cơ chế bắt ký quá thường xuyên là một cơ chế người ta bấm qua cho xong.'));
+c.push(SP());
+c.push(P('Việc ký là **lệnh CLI**, không phải năng lực: trong danh mục 238 năng lực không có mã nào cho `policy.sign`. Một năng lực thì Router gọi được, tức tác tử gọi được, tức tác tử tự cấp quyền cho chính nó — hỏng đúng thứ danh sách trắng dựng lên để giữ. Vì lẽ đó quy tắc `G-WL-02` trả REJECT chứ không phải ASK khi bên gọi không phải người.'));
 c.push(H1('4. Schema autonomy.yaml'));
 const AUTONOMY_SCHEMA = [
   '{ "$id": "https://eide.code247.ai/schema/autonomy.json", "type": "object", "required": ["autonomy", "thresholds"], "additionalProperties": false,',
@@ -131,6 +162,10 @@ c.push(T([2000, 3300, 2200, 1800], ['Loại undo', 'Cách hoàn tác', 'Cửa s�
   ['none', 'Không hoàn tác (R0 đọc; hoặc R4 đã qua người)', '—', '—'],
 ]));
 c.push(SP());
+c.push(P('**Phạm vi của cửa sổ hoàn tác.** DEP-26 §3 đặt một daemon cho mỗi người dùng phục vụ nhiều dự án, nên có **hai** nhật ký: nhật ký dự án (`<dự án>/.eide/store/ledger.jsonl`) và nhật ký người dùng. Sự kiện thuộc về một dự án ghi vào nhật ký dự án; sự kiện liên-dự-án ghi vào nhật ký người dùng. `project.create` thuộc loại thứ hai — lúc nó chạy thì dự án chưa tồn tại, nên chưa có nhật ký nào để ghi vào. Hệ quả cần biết khi hiện thực: `policy.undo_window` gọi bên trong một dự án sẽ **không** thấy mục hoàn tác của việc tạo chính dự án ấy, và **màn hình ReviewQueue (UXD-13) phải gộp cả hai nguồn** — đọc mỗi nhật ký dự án thì người dùng không bao giờ thấy nút hoàn tác cho việc tạo dự án. Xem DEVIATIONS DEV-014.'));
+c.push(SP());
+c.push(P('**Giá trị mặc định.** Khi một dự án chưa có `.eide/autonomy.yaml`, PolicyGate chạy bằng `policy/defaults.yaml` đi kèm bản cài: các ngưỡng lấy đúng trường `default` của schema §4; `allowed_licenses` = MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, CC-BY-4.0, vendor-doc; `boards` để rỗng, vì đánh dấu board lab đòi người xác nhận hai điều chỉ người cầm board mới biết (§3). Bốn danh sách trong tệp ấy được niêm sẵn (`policy/defaults.sig`) và dự án mới kế thừa niêm khi băm trùng — bắt người ký lại một danh sách họ vừa ký là cách chắc chắn khiến lần ký sau không ai đọc. Cấu hình dự án hợp nhất **lên trên** tệp mặc định, không thay thế nó. Xem DEVIATIONS DEV-001.'));
+c.push(SP());
 c.push(H1('6. Máy trạng thái leo thang và dừng khẩn'));
 c.push(...CODE([
   'Action: DECIDED(APPROVE) → EXECUTING → DONE(undo_deadline) → [UNDONE | EXPIRED]',
@@ -142,7 +177,7 @@ c.push(...CODE([
 c.push(SP());
 c.push(H1('7. Học ngưỡng'));
 c.push(P('policy.learn_thresholds chạy hằng tuần trên DecisionLog 30 ngày: với mỗi cổng và mỗi nhóm đặc trưng (ví dụ G-FACT × nguồn pdf_vendor × dải confidence 0,05), tính tỷ lệ người APPROVE khi máy ASK (gợi ý nới) và tỷ lệ người UNDO khi máy APPROVE (gợi ý siết). Đề xuất chỉ khi n ≥ 20 và tỷ lệ ≥ 0,9 (nới) hoặc ≥ 0,2 (siết); mỗi đề xuất là một bản ghi {threshold, from, to, evidence_n, rate} hiển thị trong hàng đợi; người xác nhận ⇒ ghi autonomy.yaml + ký; từ chối ⇒ không đề xuất lại cùng nội dung trong 60 ngày. Siết được đề xuất tự động áp dụng tạm (an toàn hơn) cho tới khi người quyết định.'));
-c.push(H1('8. Bốn mươi tình huống kiểm thử (TC-51)'));
+c.push(H1('8. Bốn mươi tám tình huống kiểm thử (TC-51)'));
 const SIT = [
  ['S01', 'G-SRC', 'A3; st.com; svd; 2 MB; license MIT; hash khớp', 'APPROVE G-SRC-01'],
  ['S02', 'G-SRC', 'A3; forum.st.com; pdf; 1 MB', 'ASK G-SRC-99'],
@@ -189,11 +224,16 @@ const SIT = [
  ['S43', 'G-TOOL', 'A3; effects [write_project], test đạt, 0 lỗi', 'APPROVE TOOL-02'],
  ['S44', 'G-TOOL', 'A3; effects [hardware], board lab, uses_ok 1', 'ASK TOOL-99'],
  ['S45', 'G-TOOL', 'A4; effects [system]', 'ASK TOOL-05'],
+ // G-WL — cổng danh sách trắng, thêm ở v1.2 (§3). Không có tình huống nào cho một cổng
+ // nghĩa là cổng ấy không được TC-51 kiểm, và test độ phủ trong kho bắt đúng điều đó.
+ ['S46', 'G-WL', 'Người chạy `eide policy sign`; niêm khớp cấu hình sau hợp nhất', 'APPROVE G-WL-01'],
+ ['S47', 'G-WL', 'Tác tử tự gọi để thêm một tên miền vào trusted_sources', 'REJECT G-WL-02'],
+ ['S48', 'G-WL', 'Người ký nhưng băm không khớp niêm (danh sách đã đổi sau khi ký)', 'ASK G-WL-99'],
 ];
 c.push(T([700, 900, 5000, 2700], ['#', 'Cổng', 'Tình huống (mức; đặc trưng)', 'Kỳ vọng (quyết định, quy tắc)'], SIT, { size: 19 }));
 fs.writeFileSync('policy/situations.jsonl', SIT.map(s => JSON.stringify({ id: s[0], gate: s[1], situation: s[2], expected: s[3] })).join('\n') + '\n');
 c.push(SP());
-c.push(P('Tệp `tests/policy/situations.jsonl` chứa 45 tình huống; TC-51 nạp rules.yaml và autonomy.yaml mặc định, dựng Action/Context tương ứng, so quyết định và mã quy tắc. TC-55 đổi `fact_silver_auto` 0,85 → 0,8 và kiểm S11 chuyển thành APPROVE.'));
+c.push(P('Tệp `tests/policy/situations.jsonl` chứa 48 tình huống; TC-51 nạp rules.yaml và autonomy.yaml mặc định, dựng Action/Context tương ứng, so quyết định và mã quy tắc. TC-55 đổi `fact_silver_auto` 0,85 → 0,8 và kiểm S11 chuyển thành APPROVE.'));
 c.push(H1('9. Giao diện Python'));
 c.push(...CODE([
   'class PolicyGate:',

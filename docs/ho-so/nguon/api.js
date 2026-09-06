@@ -4,7 +4,15 @@ const { metaNew, refParas, CAPS, NS_ORDER } = require('./eide_common');
 const m = metaNew('EIDE-API-15', 'Đặc tả giao diện lập trình', 'ĐẶC TẢ GIAO DIỆN LẬP TRÌNH: JSON-RPC, MCP, REST, CLI, MÃ LỖI, LEDGER (API)',
   'Đặc tả máy đọc được mọi phương thức, sự kiện, mã lỗi và bản ghi nhật ký của EIDE; phần lớn sinh từ Capability Registry để giao diện người dùng, IDE ngoài, dòng lệnh và tác tử điều phối dùng chung một đường gọi',
   [['Tài liệu trước', 'EIDE-SDD-04 §4.0, §5, §7, §8; EIDE-DDD-14'], ['Tệp kèm', 'api/openrpc.json (JSON-RPC), api/mcp_tools.json (tool MCP sinh từ registry), api/errors.json, api/ledger_events.json'], ['Dùng khi', 'Hiện thực eide/plane/rpc.py, eide/mcp/server.py, eide/cli; plugin GEditor (Swift); test hợp đồng TC-28, TC-65']],
-  'Phát hành lần đầu — bổ sung lĩnh vực L26/L33');
+  'Phát hành lần đầu — bổ sung lĩnh vực L26/L33',
+  [['1.1', '06/09/2026', 'Vũ Trí Công',
+    'DEV-023: tách hai mục methods[].name chứa hai tên gộp bằng " / " thành bốn mục riêng — '
+    + 'OpenRPC 1.3 quy định name là MỘT tên phương thức, và một client sinh từ tài liệu ấy không '
+    + 'gọi được cái nào trong hai. Số phương thức: 55 → 57.'],
+   ['1.2', '06/09/2026', 'Vũ Trí Công',
+    '§7: thêm kiểu sự kiện ledger `policy.sign {hash, by, keys[], alg}`. POL-17 §3 đòi ghi việc '
+    + 'ký danh sách trắng vào decision_log nhưng không kiểu nào có trường `hash` — mà băm chính là '
+    + 'thứ phép đối chiếu .sig ↔ nhật ký cần đọc (DEV-031).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc'));
 c.push(P('Bốn bề mặt gọi (plugin GEditor qua JSON-RPC 2.0 [50] trên Unix socket, IDE ngoài qua MCP [13], REST nội bộ cho CI/kiểm thử, CLI) đều đi tới cùng `CapabilityRouter.invoke` (SDD-04 §4.0). Vì vậy: (1) mọi năng lực tự động là một phương thức `caps.invoke` với `input_schema`/`output_schema` từ khai báo — không viết tay; (2) chỉ có một tập phương thức "khung" (phiên, hàng đợi, chat, sự kiện, job) viết tay và liệt kê dưới đây; (3) mọi lỗi dùng chung bảng mã §6; (4) mọi lời gọi có `request_id` xuất hiện trong ledger để truy vết đầu-cuối; (5) phiên bản API semver trong handshake, thay đổi phá vỡ chỉ ở phiên bản lớn.'));
@@ -124,6 +132,11 @@ const LED = [
  ['cap.run.start / cap.run.finish', '{run_id, cr_id, cap, actor, args_hash, decision_id} / {cr_id, status, result_hash, duration_ms, undo_ref?, error?}', 'Router'],
  ['gate.decision', 'DecisionLog', 'PolicyGate'],
  ['gate.human', '{gate_id, decision, by, note}', 'Người'],
+ // POL-17 §3 đòi ghi việc ký danh sách trắng vào decision_log, nhưng tới v1.1 không có kiểu
+ // nào cho nó. `gate.human` là chỗ gần nhất, song nó không có trường `hash` — mà băm chính là
+ // thứ phép đối chiếu `.sig` ↔ nhật ký cần đọc; nhét băm vào `note` dạng văn xuôi thì bước đối
+ // chiếu thành ra phân tích chuỗi tự do. Xem DEVIATIONS DEV-031.
+ ['policy.sign', '{hash, by, keys[], alg}', 'eide policy sign'],
  ['undo.register / undo.apply / undo.expire', '{undo_ref, kind, deadline} / {undo_ref, by, result} / {undo_ref}', 'UndoService'],
  ['autonomy.change / stop', '{from, to, by, reason}', ''],
  ['store.write', '{batch_id, n_facts, n_conflicts, actor, reason}', 'PassportStore'],

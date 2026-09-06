@@ -157,7 +157,7 @@ class PolicyGate:
         # Tầng 3 + 4 — quy tắc theo cổng rồi quy tắc chung
         khop = self._match(gate, env)
         if khop:
-            return Decision(khop["decision"], khop["id"], khop.get("reason", ""), gate, features)
+            return Decision(khop["decision"], khop["id"], self._ly_do(khop), gate, features)
         # Tầng 5 — mức năng lực (APD-08 §4.1, Danh mục cột "Mức"): T1/T1* tự làm (T1* làm rồi báo cáo) trong
         # phạm vi lớp rủi ro đã qua tầng 2; T2 cần người duyệt; T3 người làm.
         if actor == "human":
@@ -182,6 +182,20 @@ class PolicyGate:
             raise EideError("E3000", d.reason, rule=d.rule_id, gate=d.gate)
 
     # ---- nội bộ
+    def _ly_do(self, rule: dict[str, Any]) -> str:
+        """Nói ra khi cổng đang chạy THIẾU danh sách trắng — POL-17 §3.
+
+        Niêm không đạt thì ba danh sách bị bỏ khỏi biểu thức, nên các quy tắc dựa vào chúng
+        không khớp và lời gọi rơi xuống quy tắc bắt hết của cổng. Lý do ghi vào decision_log khi
+        ấy là "Mặc định: nguồn ngoài danh sách tin cậy" — đúng chữ nhưng sai nguyên nhân: nguồn
+        có thể đang nằm trong danh sách, chỉ là danh sách không được nạp. Người đọc nhật ký sẽ
+        đi thêm tên miền vào một tệp đằng nào cũng không được đọc.
+        """
+        ly_do = rule.get("reason", "")
+        if not self.danh_sach_da_ky and rule.get("when") == "True":
+            return f"{ly_do} — lưu ý: {self.ly_do_chua_ky}"
+        return ly_do
+
     def _match(self, gate: str, env: dict[str, Any]) -> dict[str, Any] | None:
         """Quy tắc đầu tiên khớp, xét cổng trước rồi quy tắc chung `*` (POL-17 §2)."""
         for scope in (gate, "*"):

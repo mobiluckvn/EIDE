@@ -138,6 +138,35 @@ def test_defaults_sig_di_kem_ban_cai_van_khop():
     assert dat, f"{ly_do} — chạy: eide policy sign --by '<tên>'"
 
 
+def test_chua_ky_thi_quyet_dinh_noi_ra_ly_do_that(tmp_path):
+    """Quy tắc bắt hết phải nói ra rằng cổng đang chạy THIẾU danh sách trắng (POL-17 §3, v1.2).
+
+    Không có câu ấy, lý do ghi vào decision_log là "Mặc định: nguồn ngoài danh sách tin cậy" —
+    đúng chữ nhưng sai nguyên nhân: nguồn có thể đang nằm trong danh sách, chỉ là danh sách
+    không được nạp. Người đọc nhật ký sẽ đi thêm tên miền vào một tệp đằng nào cũng không được
+    đọc, rồi tự hỏi vì sao không có gì đổi.
+    """
+    g = PolicyGate(sig_path=tmp_path / "khong-co.sig")
+    d = g.decide("G-SRC", NGUON_TIN, risk="R1")
+    assert "chưa được ký" in d.reason, d.reason
+    assert "eide policy sign" in d.reason, "phải nói luôn cách sửa"
+    # …nhưng chỉ ở quy tắc bắt hết. Quy tắc khớp thật sự đã có lý do riêng đúng của nó.
+    assert "chưa được ký" not in PolicyGate().decide("G-SRC", NGUON_TIN, risk="R1").reason
+
+
+def test_cong_G_WL_chan_tac_tu_tu_doi_danh_sach():
+    """POL-17 §2 v1.2 `G-WL-02`: tác tử chạm vào danh sách trắng là REJECT, không phải ASK.
+
+    Hỏi người "cho tôi tự sửa danh sách trắng nhé?" là đúng câu hỏi mà một tác tử bị chiếm quyền
+    sẽ hỏi — và người đang làm dở việc khác rất dễ bấm đồng ý.
+    """
+    g = PolicyGate()
+    d = g.decide("G-WL", {"actor": "agent", "wl": {"verified": False}}, risk="R2")
+    assert (d.decision, d.rule_id) == ("REJECT", "G-WL-02")
+    assert g.decide("G-WL", {"actor": "human", "wl": {"verified": True}},
+                    risk="R2", actor="human").rule_id == "G-WL-01"
+
+
 # ---- niêm cấp dự án
 
 

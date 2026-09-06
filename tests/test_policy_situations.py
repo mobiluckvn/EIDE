@@ -86,10 +86,17 @@ def test_nguong_cung_van_neu_ly_do_cu_the(tmp_path):
     assert (d.decision, d.rule_id) == ("REJECT", "G3-03")
 
 
-def test_dung_45_tinh_huong_va_bang_dich_phu_het():
+def test_bang_dich_phu_het_tinh_huong_cua_spec():
+    """Bảng dịch phải phủ ĐÚNG tập tình huống trong spec — không thiếu, không thừa.
+
+    Bất biến là sự phủ nhau, không phải con số: thêm một tình huống vào POL-17 §8 là việc hợp
+    lệ và thường xuyên (v1.2 thêm S46–S48 cho cổng G-WL). Viết cứng "== 45" biến mỗi lần mở
+    rộng đặc tả thành một test đổ ở chỗ không liên quan, và cái giá của việc ấy là người ta sửa
+    con số cho qua mà không đọc xem tình huống mới có được dịch đúng không.
+    """
     ids = {s["id"] for s in tinh_huong()}
-    assert len(ids) == 45
     assert ids == set(SITUATIONS), f"bảng dịch lệch: thiếu {ids - set(SITUATIONS)}, thừa {set(SITUATIONS) - ids}"
+    assert len(ids) >= 45, f"spec chỉ còn {len(ids)} tình huống — TC-51 đòi tối thiểu 45"
 
 
 def test_moi_quy_tac_fixture_nhac_toi_deu_ton_tai():
