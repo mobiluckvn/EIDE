@@ -33,8 +33,7 @@ check-secrets:    ## cổng chặn khóa riêng lọt vào kho (SEC-25 / NFR-SEC
 check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
 	$(PY) scripts/gen_rpc_swift.py --kiem
 	$(PY) scripts/gen_ui_swift.py --kiem
-	@command -v node >/dev/null \
-	 && node scripts/gen_policy_spec.js --kiem && node scripts/gen_dialog_spec.js --kiem \
+	@command -v node >/dev/null && node scripts/gen_spec_tu_nguon.js --kiem \
 	 || echo "bỏ qua check-gen: không có node (cần để đối chiếu docs/spec với docs/ho-so/nguon)"
 
 check: lint check-spec test check-secrets check-gen   ## tất cả — phải xanh trước khi commit

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { P, H1, H2, H3, CAP, SP, T, IMG, CODE, build } = require('./eaa_doc');
 const { metaNew, refParas } = require('./eide_common');
 const m = metaNew('EIDE-CXD-10', 'Kiến trúc ngữ cảnh', 'KIẾN TRÚC NGỮ CẢNH CHO TÁC TỬ (CXD)',
@@ -45,6 +46,39 @@ c.push(...CODE([
 ]));
 c.push(SP());
 c.push(H1('3. Ngân sách theo vai trò'));
+// Bảng ngân sách, thứ tự cắt và hằng ước lượng token là NGUỒN DUY NHẤT cho Composer
+// (`eide_core/composer.py`), cho `models.yaml → roles.<role>.budget`, và cho chính tài liệu
+// này. Trước đây chúng chỉ nằm trong văn xuôi §3 và §5. Xem DEVIATIONS DEV-029.
+const CXD = {
+  // token đầu vào cho mỗi lớp; `null` = lớp ấy không dùng ở vai trò này.
+  budget: {
+    intent:       { C0: 1200, C1: 300, C2: 400, C3: null, C4: null, C5: null, C6: null, C7: 300, total: 2200 },
+    librarian:    { C0: 400, C1: 400, C2: 400, C3: 600, C4: 1500, C5: 600, C6: 600, C7: 300, total: 4800 },
+    cartographer: { C0: null, C1: 400, C2: 400, C3: 600, C4: 1800, C5: 400, C6: 400, C7: 200, total: 4200 },
+    planner:      { C0: 800, C1: 400, C2: 600, C3: 1800, C4: 2500, C5: 2000, C6: 600, C7: 300, total: 9000 },
+    coder:        { C0: null, C1: 400, C2: 600, C3: 1800, C4: 2500, C5: 1500, C6: 900, C7: 300, total: 8000 },
+    reviewer:     { C0: null, C1: 400, C2: 600, C3: 1200, C4: 2000, C5: 2500, C6: 900, C7: 200, total: 7800 },
+    debugger:     { C0: null, C1: 400, C2: 400, C3: 1200, C4: 2000, C5: 1200, C6: 2200, C7: 300, total: 7700 },
+    architect:    { C0: 400, C1: 400, C2: 800, C3: 1500, C4: 2500, C5: 3000, C6: 400, C7: 300, total: 9300 },
+    writer:       { C0: null, C1: 400, C2: 600, C3: 1000, C4: 2000, C5: 3000, C6: 400, C7: 300, total: 7700 },
+  },
+  // §3: giới hạn token ĐẦU RA (schema JSON).
+  output_max: { coder: 16000, writer: 12000, _mac_dinh: 4000 },
+  // §3 thứ tự cắt khi tràn: số nhỏ cắt TRƯỚC. C1 và C2 không bao giờ cắt.
+  cut_priority: { C7: 1, C6: 2, C5: 3, C4: 4, C3: 5, C0: 6, C1: 9, C2: 9 },
+  // §3: "1 token ≈ 3,5 ký tự tiếng Việt có dấu, 4 ký tự tiếng Anh" khi adapter không có
+  // count_tokens. Lấy 3,5 vì giao diện và tài liệu của EIDE là tiếng Việt — ước thấp hơn
+  // thực tế sẽ làm ngân sách bị vượt mà không ai báo.
+  chars_per_token: 3.5,
+  // §4.5 trọng số cạnh cho Graph-RAG hai bước.
+  edge_weight: { HAS: 1.0, CONNECTS: 0.9, USES: 0.8, APPLIES_TO: 0.6, CONFLICTS_WITH: 1.0 },
+  // §4.2 số năng lực đưa vào C0 theo vai trò.
+  k0: { intent: 30, planner: 15, architect: 15, librarian: 8 },
+  max_skills: 3,        // §4.4
+  history_turns: 2,     // §2 C7
+};
+if (!fs.existsSync('context')) fs.mkdirSync('context');
+fs.writeFileSync('context/budgets.json', JSON.stringify(CXD, null, 2) + '\n');
 c.push(P('Ngân sách tính bằng token đầu vào (đếm bằng count_tokens của adapter; khi không có, ước lượng 1 token ≈ 3,5 ký tự tiếng Việt có dấu, 4 ký tự tiếng Anh). Giá trị dưới đây là mặc định trong `models.yaml → roles.<role>.budget`, tinh chỉnh theo đo lường §9. Tổng của vai trò sinh không vượt 8.000 (NFR-10); Planner và Architect được phép 12.000 khi mô hình có cửa sổ ≥ 200k và dự án bật `context.extended: true`.'));
 c.push(T([1300, 700, 700, 700, 700, 800, 800, 800, 700, 900], ['Vai trò', 'C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'Tổng'], [
   ['intent (hiểu lệnh)', '1.200', '300', '400 (C1′ trạng thái)', '—', '—', '—', '—', '300', '2.200'],

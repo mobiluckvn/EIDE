@@ -34,20 +34,24 @@ def _schema_intent() -> dict[str, Any]:
     return json.loads((spec_dir() / "dialog" / "intent.schema.json").read_text(encoding="utf-8"))
 
 
-def _c0(ctx: Context) -> str:
-    """Lớp C0 của CXD-10 cho vai trò `intent`: danh sách ý định + trạng thái dự án tóm tắt.
+def _ngu_canh(ctx: Context, text: str) -> str:
+    """Dựng ngữ cảnh cho vai trò `intent` qua `memory.compose` (CXD-10 §4.1).
 
-    `prompts/intent.md` viết "chọn năng lực không có trong danh sách C0" — tức nó GIẢ ĐỊNH
-    danh sách này được cấp. Trước khi có hàm này thì không ai cấp, và TC-59 đo được 76%: mô
-    hình phải tự đoán `view.ask` khác `debug.ask` chỗ nào. Đây không phải chỉnh prompt cho vừa
-    bài kiểm — đây là hiện thực nốt điều DPS-09 §4.1 đã yêu cầu.
+    Trước đây đây là một hàm `_c0()` ghép chuỗi tại chỗ: nó chạy, nhưng không có ngân sách,
+    không có thứ tự cắt, không ghi `context.bundle` vào ledger — nên không ai đo được ngữ cảnh
+    đang tốn bao nhiêu, và §9 của CXD-10 (đo lường và tinh chỉnh) không có dữ liệu để làm việc.
+    Nay đi qua Composer như mọi vai trò khác.
     """
-    phan = [(spec_dir() / "dialog" / "intents.md").read_text(encoding="utf-8").strip()]
-    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
-    if root and (root / EIDE_DIR).is_dir():
-        # "trạng thái dự án tóm tắt" (§4.1) — để "tiếp tục việc hôm qua" có chỗ bám
-        phan.append(f"\nDự án đang mở: {root.name}.")
-    return "\n".join(phan)
+    from eide.caps.memory import compose
+    return _ghep(compose({"role": "intent", "task_ref": text}, ctx)["bundle"])
+
+
+def _ghep(bundle: dict[str, Any]) -> str:
+    """Ghép các khối NGOÀI C1: C1 đã là `system` của Gateway, đưa lại lần nữa là lặp."""
+    thu_tu = {"C2": 0, "C0": 1, "C3": 2, "C4": 3, "C5": 4, "C6": 5, "C7": 6}
+    kh = [b for b in bundle["blocks"] if b["layer"] != "C1"]
+    kh.sort(key=lambda b: thu_tu.get(b["layer"], 9))
+    return "\n\n".join(b["text"] for b in kh)
 
 
 def _gateway(ctx: Context) -> Gateway:
@@ -71,7 +75,7 @@ def parse_intent(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     text = params["text"]
     dinh_kem = params.get("attachments") or []
     lenh = text if not dinh_kem else f"{text}\n(đính kèm: {', '.join(dinh_kem)})"
-    resp = _gateway(ctx).run("intent", lenh, _schema_intent(), system_extra=_c0(ctx))
+    resp = _gateway(ctx).run("intent", lenh, _schema_intent(), system_extra=_ngu_canh(ctx, text))
     intent = dict(resp.data)
 
     if float(intent.get("confidence", 0)) < NGUONG_UNKNOWN:

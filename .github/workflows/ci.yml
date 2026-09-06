@@ -48,8 +48,7 @@ jobs:
       - run: $ARCH_RUN python -m eide.cli doctor || true
       - run: $ARCH_RUN python -m eide.cli caps list --ns tool
       # docs/spec/ là bản sinh từ docs/ho-so/nguon/ — sửa tay một bên là trôi khỏi bên kia
-      - run: node scripts/gen_policy_spec.js --kiem
-      - run: node scripts/gen_dialog_spec.js --kiem
+      - run: node scripts/gen_spec_tu_nguon.js --kiem
       - run: $ARCH_RUN python scripts/gen_rpc_swift.py --kiem
       - run: $ARCH_RUN python scripts/gen_ui_swift.py --kiem
 

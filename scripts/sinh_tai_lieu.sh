@@ -60,7 +60,7 @@ chep() {  # $1 = tệp trong $SAN, $2 = đích
 }
 
 for d in "$SAN"/*.docx; do [ -f "$d" ] && chep "$(basename "$d")" "$HO_SO/$(basename "$d")"; done
-for sub in policy api prompts isa data capabilities dialog ui; do
+for sub in policy api prompts isa data capabilities dialog ui context; do
     [ -d "$SAN/$sub" ] || continue
     mkdir -p "$SPEC/$sub"
     for d in "$SAN/$sub"/*; do [ -f "$d" ] && chep "$sub/$(basename "$d")" "$SPEC/$sub/$(basename "$d")"; done
