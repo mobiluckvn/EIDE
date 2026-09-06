@@ -211,7 +211,7 @@ let package = Package(
         // Lớp 2 — Trình bày: AppKit (ADR-10).
         .executableTarget(
             name: "GEditorApp",
-            dependencies: ["GEditorCore"],
+            dependencies: ["GEditorCore", "EIDEKit"],
             path: "Sources/GEditorApp",
             // `-F` phải có ở CẢ hai chỗ: trình biên dịch cần nó để tìm module `Sparkle`, trình
             // liên kết cần nó để tìm framework. Thiếu vế đầu thì lỗi là "no such module", tức

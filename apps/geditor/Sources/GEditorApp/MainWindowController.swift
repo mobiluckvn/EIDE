@@ -1,5 +1,6 @@
 import AppKit
 import UniformTypeIdentifiers
+import EIDEKit
 import GEditorCore
 
 /// Cửa sổ chính — một cửa sổ = một phiên làm việc (UI/UX §3).
@@ -353,7 +354,7 @@ final class MainWindowController: NSWindowController {
 
     /// Thứ tự các tầng từ trên xuống. Số nhỏ nằm trên.
     private enum Layer: Int, CaseIterable {
-        case tabBar, docBar, banner, middle, results, validation, quality, chart, anomaly, correlation, forecast, groupMining, association, clean, jsonPath, jsonl, retrieval, sql, find, status
+        case tabBar, docBar, banner, middle, results, validation, quality, chart, anomaly, correlation, forecast, groupMining, association, clean, jsonPath, jsonl, retrieval, sql, eide, find, status
     }
 
     /// Những tầng đã có mặt trong cột, giữ đúng thứ tự của `Layer`.
@@ -837,6 +838,48 @@ final class MainWindowController: NSWindowController {
         jsonlHeight = makePanelHeight(jsonlPanel, .jsonl, minimum: JSONLPanel.height)
         jsonlHeight.isActive = true
     }
+
+    // MARK: - EIDE (WI-021)
+
+    /// Panel trợ lý nhúng EIDE — DEVIATIONS DEV-004 (thành phần trong app, không qua khung plugin).
+    ///
+    /// `lazy` là cố ý: dựng panel nghĩa là mở một tiến trình `eide daemon`, và người không dùng
+    /// EIDE không nên phải trả giá ấy chỉ vì mở GEditor.
+    lazy var eidePanel: EidePanel? = {
+        guard let c = EideDaemonLauncher.moClient() else { return nil }
+        return EidePanel(client: c)
+    }()
+    private var eideHeight: NSLayoutConstraint!
+
+    private func attachEidePanel() -> Bool {
+        guard let panel = eidePanel else { return false }
+        guard attach(panel, as: .eide) else { return true }
+        eideHeight = makePanelHeight(panel, .eide, minimum: EidePanel.height)
+        eideHeight.isActive = true
+        return true
+    }
+
+    @objc func showEidePanel(_ sender: Any?) {
+        guard attachEidePanel(), let panel = eidePanel else {
+            // U9: trạng thái lỗi phải NÓI RA. Không tìm thấy `eide` là chuyện thường gặp
+            // (chưa `make setup`), và im lặng thì người dùng bấm menu rồi không thấy gì.
+            let a = NSAlert()
+            a.messageText = "Chưa chạy được EIDE"
+            a.informativeText = "Không tìm thấy `eide`. Chạy `make setup` trong kho EIDE, "
+                + "hoặc đặt biến môi trường EIDE_PYTHON trỏ tới python của venv."
+            a.runModal()
+            return
+        }
+        panel.isHidden = false
+        eideHeight.constant = panelOpenHeight(.eide)
+    }
+
+    private func hideEidePanel() {
+        eidePanel?.isHidden = true
+        eideHeight?.constant = 0
+    }
+
+    var isEidePanelVisible: Bool { isAttached(.eide) && !(eidePanel?.isHidden ?? true) }
 
     private func attachRetrievalPanel() {
         guard attach(retrievalPanel, as: .retrieval) else { return }

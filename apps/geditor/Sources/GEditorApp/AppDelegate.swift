@@ -616,6 +616,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             ("JSON: truy vấn JSONPath…", #selector(MainWindowController.showJSONPathPanel(_:)), "~J"),
             // FR-KNW-901 · FR-KNW-902 — chế độ JSONL và Chunk Inspector.
             ("JSONL: kiểm và soi chunk…", #selector(MainWindowController.showJSONLPanel(_:)), ""),
+            ("EIDE: trợ lý nhúng…", #selector(MainWindowController.showEidePanel(_:)), ""),
             // FR-KNW-918 · FR-KNW-919 — truy hồi BM25 và đánh giá golden set.
             ("JSONL: phòng thí nghiệm truy hồi…",
              #selector(MainWindowController.showRetrievalPanel(_:)), ""),

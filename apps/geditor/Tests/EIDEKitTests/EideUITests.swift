@@ -124,3 +124,44 @@ extension NSView {
         return ra
     }
 }
+
+/// Bộ khởi chạy daemon — DEP-26 §2 (EIDE là gói riêng, GEditor phải TÌM nó).
+final class EideLauncherTests: XCTestCase {
+
+    func testTimDuocEideTrongKhoPhatTrien() throws {
+        // Kho này có .venv-arm hoặc .venv-x86 sau `make setup`; nếu chưa có thì bỏ qua chứ
+        // không đỏ — máy chưa dựng môi trường không phải một lỗi của mã.
+        guard let eide = EideDaemonLauncher.timEide() else {
+            throw XCTSkip("chưa có venv — chạy `make setup` ở gốc kho EIDE")
+        }
+        XCTAssertTrue(FileManager.default.isExecutableFile(atPath: eide[0]), "\(eide)")
+    }
+
+    func testTimThayGocKhoQuaCLAUDEmd() throws {
+        // `repo_root()` phía Python tìm ngược từ CLAUDE.md; phía Swift phải tìm ra CÙNG chỗ,
+        // nếu không daemon sẽ chạy ở thư mục không có docs/spec và registry rỗng.
+        guard let goc = EideDaemonLauncher.gocKho() else {
+            throw XCTSkip("không chạy từ bản dựng phát triển")
+        }
+        XCTAssertTrue(FileManager.default.fileExists(atPath: goc + "/docs/spec/cds.json"))
+    }
+
+    func testBienMoiTruongEIDE_PYTHONThangMoiThu() throws {
+        // Người dùng chỉ đích danh thì phải thắng mọi phép đoán — nếu không, một venv cũ nằm
+        // cạnh kho sẽ lặng lẽ ghi đè lựa chọn của họ.
+        let gia = "/bin/echo"   // tồn tại và chạy được trên mọi máy macOS
+        setenv("EIDE_PYTHON", gia, 1)
+        defer { unsetenv("EIDE_PYTHON") }
+        XCTAssertEqual(EideDaemonLauncher.timEide()?.first, gia)
+    }
+
+    func testMoClientThatVaGoiDuocDaemon() async throws {
+        guard let c = EideDaemonLauncher.moClient() else {
+            throw XCTSkip("chưa có venv")
+        }
+        let r = try await c.goi(.planeHello, ["client": "GEditor"])
+        await c.dong()
+        XCTAssertNotNil(r["api_version"])
+        XCTAssertNotNil(r["caps"], "daemon phải báo số năng lực — nếu nil thì registry rỗng")
+    }
+}
