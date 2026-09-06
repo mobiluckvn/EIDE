@@ -25,7 +25,7 @@ Mỗi dòng: `Chưa` → `Đang` → `Xong` (kèm nền tảng đã kiểm và m
 | WI-011 | MCP server sinh tool từ registry | API-15 §MCP, `mcp_tools.json` | WI-003 | 2ng | Chưa |
 | WI-012 | RagIndex: chunk, embedding qua Gateway, FTS5, truy hồi lai | KAD-07, CXD-10 §4.5 | WI-002 (index.sqlite đã có) | 3ng | Chưa |
 | WI-020 | ToolForge `tool.*` (+ cổng G-TOOL đã có 6 quy tắc) | CDS-12.3 TOOL-01…07, SEC-25 | WI-009 ✓ | 4ng | Chưa |
-| WI-021 | Plugin/panel GEditor: RpcClient sinh từ `openrpc.json`, ChatPanel, AutonomyBar, QueuePanel | UXD-13, GPI-23 (xem DEV-004) | WI-010 ✓ | 6ng | **Đang** — `EIDEKit` xong (client + mã sinh, 7 test nói chuyện thật với daemon); còn panel AppKit, chờ WI-258 |
+| WI-021 | Plugin/panel GEditor: RpcClient sinh từ `openrpc.json`, ChatPanel, AutonomyBar, QueuePanel | UXD-13, GPI-23 (xem DEV-004) | WI-010 ✓ | 6ng | **Xong (bản đầu)** — `EIDEKit`: client + mã sinh (RPC và token), panel ba vùng (AutonomyBar, ChatView, ReviewQueue), 15 test Swift gồm đo tương phản WCAG. Còn: gắn vào MainWindowController, gợi ý `/`, thẻ câu hỏi gộp |
 
 ## B. Năng lực
 
@@ -48,7 +48,7 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | WI-253 | TC hợp đồng sinh tự động cho 238 năng lực | Nay khả thi: `validate_specs.py` đã có, cần thêm sinh test từ `input_schema`/`errors` |
 | — | Duyệt 14 bản nháp trong `docs/sync/`, sinh lại tài liệu lên v1.3 | `scripts/dong_bo_tai_lieu.py` → duyệt → `scripts/sinh_tai_lieu.sh <ten>` |
 | **WI-257** | **Người:** ký danh sách trắng nguồn/gói/board lab | **Chặn**: PolicyGate đang chạy bằng `defaults.yaml` tạm (DEV-001), nên G-SRC/G-PKG mới là giả định |
-| **WI-258** | **Người:** mã màu PTIT + ngôn ngữ lược đồ GEditor | **Chặn** WI-021 |
+| **WI-258** | **Người:** XÁC NHẬN đỏ PTIT chính thức + ngôn ngữ lược đồ GEditor | Không còn chặn: dùng `#B8121F` theo UXD-13 §7 (tài liệu tự ghi "gần đúng, xác nhận với bộ nhận diện chính thức"). Đổi một chỗ ở `uxd.js` là cả mockup lẫn Swift theo |
 
 ## Định nghĩa "xong" của sprint
 

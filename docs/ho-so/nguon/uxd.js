@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { P, H1, H2, H3, CAP, SP, T, IMG, CODE, build } = require('./eaa_doc');
 const { metaNew, refParas, CAPS } = require('./eide_common');
 const m = metaNew('EIDE-UXD-13', 'Đặc tả UI/UX', 'ĐẶC TẢ GIAO DIỆN VÀ TRẢI NGHIỆM NGƯỜI DÙNG (UXD)',
@@ -114,6 +115,35 @@ c.push(SP());
 c.push(H2('6.3. Bản đồ tri thức & hỏi đáp, Lược đồ, Dò board, Công cụ tự tạo'));
 c.push(P('Bản đồ: cuộn = zoom, kéo = pan, nhấp nút = focus 2 bước + panel nguồn gốc, phím F = tìm nút, bộ lọc là chip nhấn (tier/status/lớp); hỏi–đáp: Enter hỏi, nhấp [n] mở nguồn ở panel trượt, nút "Vì sao" mở trace, "So sánh nguồn" chạy rag_compare. Lược đồ: sửa mã bên trái → lint tức thì (≤ 300 ms) và render debounce 500 ms; nút "Sync ↔ mã" hiện diff trước khi áp (to_code cần G3 nếu chạm mã). Dò board: tự chạy khi cắm (event.discover.changed); bảng bước với trạng thái; "Nạp fw mới nhất" đi qua G-OPS. Công cụ tự tạo: thẻ công cụ; "Tạo công cụ mới…" mở ô lệnh với mẫu "viết cho anh công cụ …"; chạy hiện sandbox log; thăng cấp mở PR/registry.'));
 c.push(H1('7. Token thiết kế'));
+// Token là NGUỒN DUY NHẤT cho ba chỗ dùng chúng: 23 mockup HTML, panel EIDE trong GEditor
+// (Swift/AppKit), và tài liệu này. Trước đây chúng chỉ nằm trong văn xuôi §7, nên ba chỗ ấy
+// đều chép tay — đúng bài học DEV-018. Nay sinh ra `ui/tokens.json`. Xem DEVIATIONS DEV-025.
+//
+// `primary` là đỏ PTIT. UXD-13 ghi "gần đúng, xác nhận với bộ nhận diện chính thức" — WI-258
+// là việc xác nhận ấy; tới khi có xác nhận thì đây là mã dùng chính thức trong sản phẩm.
+const TOKENS = {
+  color: {
+    primary: '#B8121F',      // đỏ PTIT — điều hướng, hành động chính
+    accent: '#F2B705',       // vàng sao — việc cần người, cảnh báo nhẹ
+    secondary: '#2F4858',    // xám xanh — hành động phụ, tác tử
+    ok: '#0b6b52', okBg: '#dff5ee',
+    warn: '#7a5200', warnBg: '#fff0cc',
+    bad: '#7a0c0c', badBg: '#fde3e1',
+    info: '#B8121F', infoBg: '#e6effa',
+    bg: '#f4f6f9', surface: '#ffffff', border: '#e1e6ee',
+    text: '#1b2430', muted: '#5b6b7f',
+  },
+  font: { ui: 'IBM Plex Sans', uiSize: 13, uiLine: 1.45, mono: 'IBM Plex Mono', monoSize: 12 },
+  space: [4, 8, 12, 16, 24],
+  radius: [6, 8, 10],
+  layout: { sidebar: 212, topbar: 52, statusbar: 26, contentGap: 16 },
+  // UXD-13 U10 / WCAG 2.2 AA: tương phản chữ trên nền ≥ 4,5:1. Ghi ra để test kiểm được,
+  // chứ không để nó thành một câu trong tài liệu mà không ai đo.
+  contrastMin: 4.5,
+  darkMode: false,
+};
+if (!fs.existsSync('ui')) fs.mkdirSync('ui');
+fs.writeFileSync('ui/tokens.json', JSON.stringify(TOKENS, null, 2) + '\n');
 c.push(...CODE([
   'color.primary      #B8121F  (đỏ PTIT — điều hướng, hành động chính; gần đúng, xác nhận với bộ nhận diện chính thức)',
   'color.accent       #F2B705  (vàng sao — việc cần người, cảnh báo nhẹ)',

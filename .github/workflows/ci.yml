@@ -51,6 +51,7 @@ jobs:
       - run: node scripts/gen_policy_spec.js --kiem
       - run: node scripts/gen_dialog_spec.js --kiem
       - run: $ARCH_RUN python scripts/gen_rpc_swift.py --kiem
+      - run: $ARCH_RUN python scripts/gen_ui_swift.py --kiem
 
   # Windows và Linux: thứ tự 2 và 3 trong PLATFORM.md — chạy để biết sớm, không chặn PR.
   khac:
