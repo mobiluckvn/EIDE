@@ -15,7 +15,7 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | WI-010 | JSON-RPC stdio (9/55 phương thức) + CLI eide | API-15 §1, §CLI | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | — |
 | WI-002 | SQLite store + migration 0001/0002 + index riêng (0003) + `eide migrate` | DDD-14 §5, schema.sql | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
 | WI-007 | Memory M1/M2 (WorkingMemory, SessionMemory), PROGRESS/FEATURES tự sinh, resume | MEM-11 §2–§5, DDD-14 | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
-| WI-009 | Sandbox tiến trình con + giám sát hiệu ứng (nền cho tool.*) | SEC-25 §4, CDS-12.3 env.sandbox | Chưa | — | — |
+| WI-009 | Sandbox tiến trình con + giám sát hiệu ứng (nền cho tool.*) | SEC-25 §2, CDS-12.3 env.sandbox | Xong | mac-arm ✓, mac-intel ✓; TC-SE-03 đạt thật (sandbox-exec chặn mạng) | DEV-017 |
 | WI-013 | Prompt 9 vai trò + models.yaml + Gateway LLM (Claude/Gemini) | PRS-16, SDD-04 §6, CXD-10 | Xong | mac-arm ✓, mac-intel ✓; gọi Gemini thật ✓ | DEV-015, DEV-016 |
 | WI-005 | Orchestrator: intent → ground → defaults → clarify → chain → runner → report | DPS-09, PRS-16 intent.md, SDD-04 §4.3 | Chưa (Sprint 2) | — | — |
 | WI-011 | MCP server sinh tool từ registry | API-15 §MCP, mcp_tools.json | Chưa (Sprint 2) | — | — |
@@ -39,9 +39,9 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | POLICY-01 | policy.decide | 12.5 | 45 tình huống situations.jsonl đúng kỳ vọng | Xong — **45/45** khớp fixture; hai lỗi chính sách tìm thấy đã sửa | mac-arm ✓, mac-intel ✓ | DEV-011, DEV-012 (Đã duyệt) |
 | POLICY-03 | policy.undo_window | 12.5 | cửa sổ theo undo_window; E7000 khi hết hạn | Xong (list + expire; `undo.apply` là Sprint 2) | mac-arm ✓, mac-intel ✓ | DEV-014 |
 | POLICY-04 | policy.escalate | 12.5 | leo thang theo kênh queue/chat/notify | Xong | mac-arm ✓, mac-intel ✓ | DEV-013 |
-| ENV-05 | env.lock | 12.3 | tools.lock ghi hash/phiên bản; trôi → cảnh báo | Chưa | — | — |
-| ENV-07 | env.sandbox | 12.3 | giới hạn CPU/thời gian/tệp; vượt → E8000 | Chưa (= WI-009) | — | — |
-| REPORT-01 | report.progress | 12.5 | PROGRESS.md sinh từ ledger/FEATURES | Chưa | — | — |
+| ENV-05 | env.lock | 12.3 | tools.lock ghi hash/phiên bản; trôi → cảnh báo | Xong | mac-arm ✓, mac-intel ✓ | — |
+| ENV-07 | env.sandbox | 12.3 | giới hạn CPU/thời gian/tệp; vượt → E8000 | Xong | mac-arm ✓, mac-intel ✓ | DEV-017 |
+| REPORT-01 | report.progress | 12.5 | số liệu khớp ledger; ≤ 40 dòng | Xong | mac-arm ✓, mac-intel ✓ | — |
 
 ## C. Kiểm thử và tài liệu
 

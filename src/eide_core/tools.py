@@ -42,3 +42,13 @@ def version_of(exe: Path, args: tuple[str, ...] = ("--version",), timeout: float
         return line[0] if line else None
     except (OSError, subprocess.TimeoutExpired):
         return None
+
+
+# Bộ công cụ EIDE quan tâm trên mọi nền tảng: `eide doctor` báo cáo, `env.lock` khóa phiên bản.
+# Đặt ở lõi chứ không ở CLI vì năng lực (`env.lock`) cũng cần — một năng lực import CLI là
+# đảo ngược tầng: lõi không được biết gì về giao diện.
+COMMON_TOOLS: list[tuple[str, bool]] = [
+    ("git", True), ("python3", True), ("node", False), ("cmake", False), ("ninja", False),
+    ("arm-none-eabi-gcc", False), ("avr-gcc", False), ("probe-rs", False),
+    ("openocd", False), ("renode", False),
+]

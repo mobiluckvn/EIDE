@@ -17,8 +17,7 @@ from eide_core.policy import PolicyGate
 from eide_core.registry import get_registry
 from eide_core.router import Context, Router
 
-COMMON_TOOLS = [("git", True), ("python3", True), ("node", False), ("cmake", False), ("ninja", False),
-                ("arm-none-eabi-gcc", False), ("avr-gcc", False), ("probe-rs", False), ("openocd", False), ("renode", False)]
+COMMON_TOOLS = tools.COMMON_TOOLS   # nguồn duy nhất ở eide_core.tools
 
 
 def _router(project: Path | None = None) -> tuple[Router, Context]:
