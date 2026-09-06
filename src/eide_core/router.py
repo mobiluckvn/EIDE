@@ -61,7 +61,8 @@ class Router:
         run_id = uuid.uuid4().hex[:12]
         t0 = time.perf_counter()
         d = self.gate.decide(reg.spec.gate, {"cap": {"id": cap_id, "risk": reg.spec.risk_class}, **features},
-                             risk=reg.spec.risk_class, autonomy=ctx.autonomy, board=ctx.board, tier=reg.spec.tier, actor=ctx.actor)
+                             risk=reg.spec.risk_class, autonomy=ctx.autonomy, board=ctx.board,
+                             tier=reg.spec.tier_hieu_luc, actor=ctx.actor)
         dec = {"decision": d.decision, "rule": d.rule_id, "reason": d.reason, "gate": d.gate}
         self._log("cap.run.start", {"run_id": run_id, "cap": cap_id, "actor": ctx.actor,
                                     "args_hash": _h(params), "decision": dec})

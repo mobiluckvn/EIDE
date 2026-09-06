@@ -20,7 +20,7 @@ Mỗi dòng: `Chưa` → `Đang` → `Xong` (kèm nền tảng đã kiểm và m
 
 | WI | Việc | Tài liệu | Phụ thuộc | Ước | Trạng thái |
 |---|---|---|---|---|---|
-| WI-005 | **Orchestrator**: intent → ground → defaults → clarify → chain → runner → report | DPS-09 §3–§5, PRS-16 intent.md, SDD-04 §4.6 | WI-003, WI-004, WI-013 | 6ng | Chưa |
+| WI-005 | **Orchestrator**: intent → ground → defaults → clarify → report | DPS-09 §3–§5, PRS-16 intent.md, SDD-04 §4.6 | WI-003, WI-004, WI-013 | 6ng | **Xong** (①③④; ② lập chuỗi = CHAT-06, mốc M2) |
 | WI-006 | Composer + Compressor: ContextBundle theo lớp C0–C7, ngân sách token, cache mark | CXD-10 §4–§7 | WI-003 | 4ng | Chưa |
 | WI-011 | MCP server sinh tool từ registry | API-15 §MCP, `mcp_tools.json` | WI-003 | 2ng | Chưa |
 | WI-012 | RagIndex: chunk, embedding qua Gateway, FTS5, truy hồi lai | KAD-07, CXD-10 §4.5 | WI-002 (index.sqlite đã có) | 3ng | Chưa |
@@ -33,7 +33,7 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 
 | Mã | Năng lực | Tập CDS | Vì sao ở sprint này |
 |---|---|---|---|
-| CHAT-* | `chat.command`, `chat.clarify`, `chat.report_back`, `chat.confirm` | 12.6 | Mặt tiền của Orchestrator; `chat.report_back` dùng `memory.summarize_session` đã có |
+| CHAT-01…05, 07, 08 | `parse_intent`, `ground`, `fill_defaults`, `clarify`, `restate`, `report_back`, `decline` | 12.6 | **Xong** — TC-59 đo với Gemini thật: intent 96–100%. CHAT-06 `orchestrate` là M2 |
 | POLICY-02/06 | `policy.explain`, `policy.queue` | 12.5 | Hàng đợi "chờ tôi" của UXD U2 — nay có `policy.escalate` và `undo_window` làm nền |
 | TOOL-01…07 | `tool.need/search/write/test/run/register/repair` | 12.3 | Sandbox đã đạt TC-SE-03; G-TOOL đã có quy tắc và 5/6 được tình huống phủ |
 | MEMORY-01/02/03 | `memory.compose`, `compress`, `retrieve` | 12.6 | Đi cùng WI-006 và WI-012 |

@@ -49,6 +49,7 @@ jobs:
       - run: $ARCH_RUN python -m eide.cli caps list --ns tool
       # docs/spec/ là bản sinh từ docs/ho-so/nguon/ — sửa tay một bên là trôi khỏi bên kia
       - run: node scripts/gen_policy_spec.js --kiem
+      - run: node scripts/gen_dialog_spec.js --kiem
 
   # Windows và Linux: thứ tự 2 và 3 trong PLATFORM.md — chạy để biết sớm, không chặn PR.
   khac:

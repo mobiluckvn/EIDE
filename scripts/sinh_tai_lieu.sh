@@ -60,7 +60,15 @@ chep() {  # $1 = tệp trong $SAN, $2 = đích
 }
 
 for d in "$SAN"/*.docx; do [ -f "$d" ] && chep "$(basename "$d")" "$HO_SO/$(basename "$d")"; done
-for d in "$SAN"/policy/*; do [ -f "$d" ] && chep "policy/$(basename "$d")" "$SPEC/policy/$(basename "$d")"; done
-for d in "$SAN"/api/*; do [ -f "$d" ] && chep "api/$(basename "$d")" "$SPEC/api/$(basename "$d")"; done
+for sub in policy api prompts isa data capabilities dialog; do
+    [ -d "$SAN/$sub" ] || continue
+    mkdir -p "$SPEC/$sub"
+    for d in "$SAN/$sub"/*; do [ -f "$d" ] && chep "$sub/$(basename "$d")" "$SPEC/$sub/$(basename "$d")"; done
+done
+# `prs.js` sinh fixture 50 câu lệnh có nhãn cho TC-59 nhưng đặt tên phẳng ở cwd; đưa nó vào
+# spec dưới đúng tên mà PRS-16 §7 nói tới (`tests/dialog/commands.jsonl`).
+if [ -f "$SAN/tests_dialog_commands.jsonl" ]; then
+    mkdir -p "$SPEC/dialog"; chep "tests_dialog_commands.jsonl" "$SPEC/dialog/commands.jsonl"
+fi
 
 exit $lech

@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { P, H1, H2, H3, CAP, SP, T, IMG, CODE, build } = require('./eaa_doc');
 const { meta, refParas, CAPS, byNs, count } = require('./eide_common');
 const D = require('./dialog.json');
@@ -30,6 +31,72 @@ c.push(T([600, 2300, 4300, 2100], ['Mã', 'Quy tắc', 'Nội dung', 'Vì sao'],
 c.push(SP());
 c.push(H1('4. Đặc tả kỹ thuật'));
 c.push(H2('4.1. Schema ý định (mẫu số chung, dùng cho ba adapter LLM)'));
+// Schema Intent là NGUỒN DUY NHẤT cho ba chỗ dùng nó: prompt vai trò `intent` (PRS-16 §2),
+// Gateway (ép đầu ra có cấu trúc) và test TC-59. Trước đây nó chỉ nằm trong văn xuôi docx,
+// nên ba chỗ ấy đều phải chép tay và không có gì giữ chúng khỏi trôi khỏi nhau — đúng bài
+// học DEV-018. Nay sinh ra `dialog/intent.schema.json`. Xem DEVIATIONS DEV-019.
+const INTENT_SCHEMA = {
+  type: 'object',
+  required: ['intent', 'slots', 'is_big', 'confidence'],
+  properties: {
+    intent: { type: 'string', enum: ['project.create', 'project.open', 'knowledge.build', 'env.setup',
+      'sim.run', 'code.feature', 'target.flash', 'debug.ask', 'req.analyze', 'arch.design',
+      'diagram.draw', 'doc.write', 'view.ask', 'discover.scan', 'policy.stop', 'policy.set',
+      'big_command', 'unknown',
+      // DEV-021: POL-17 GEN-03 có quy tắc chặn `action.is_delete_project`, nhưng enum không
+      // có cách nào NÓI điều đó — nên bộ 50 câu phải gán "Xóa dự án test-1" thành
+      // `project.create`, tức dạy tầng hiểu lệnh đọc "xóa" thành "tạo". Thêm ý định thật.
+      'project.delete'] },
+    slots: { type: 'object', properties: {
+      project_name: { type: 'string' }, idea: { type: 'string' }, chip: { type: 'string' },
+      board: { type: 'string' }, path: { type: 'string' }, feature: { type: 'string' },
+      doc_type: { type: 'string' }, diagram_kind: { type: 'string' },
+      question: { type: 'string' }, level: { type: 'string' } } },
+    is_big: { type: 'boolean' },
+    confidence: { type: 'number', minimum: 0, maximum: 1 },
+    lang: { type: 'string', enum: ['vi', 'en'] },
+    mentions: { type: 'array', items: { type: 'string' } },
+  },
+};
+if (!fs.existsSync('dialog')) fs.mkdirSync('dialog');
+// C0 (CXD-10) cho vai trò `intent`: danh sách ý định kèm mô tả một dòng. Prompt intent.md đã
+// nói "chọn năng lực không có trong danh sách C0" — tức là nó GIẢ ĐỊNH danh sách này được cấp.
+// Trước đây không ai cấp, và đo được TC-59 chỉ 76%: mô hình phải tự đoán `view.ask` khác
+// `debug.ask` chỗ nào. Giữ cạnh enum để hai bên không trôi khỏi nhau. Xem DEVIATIONS DEV-021.
+const INTENT_MO_TA = [
+  ['project.create',  'tạo dự án MỚI từ ý tưởng, tài liệu hoặc mã có sẵn'],
+  ['project.open',    'mở hoặc TIẾP TỤC một dự án đã có ("tiếp tục việc hôm qua")'],
+  ['project.delete',  'xóa hoặc ghi đè một dự án đã có'],
+  ['knowledge.build', 'TÌM/TẢI hoặc nạp tài liệu, datasheet, zip, ảnh vào kho tri thức'],
+  ['env.setup',       'cài, kiểm hoặc khóa toolchain và môi trường build'],
+  ['sim.run',         'chạy firmware trên mô phỏng'],
+  ['code.feature',    'viết hoặc sửa MÃ cho một tính năng, cấu hình ngoại vi'],
+  ['target.flash',    'nạp firmware lên board thật'],
+  ['debug.ask',       'hỏi về một LỖI ĐANG XẢY RA: log, HardFault, vì sao không chạy'],
+  ['req.analyze',     'phân tích, làm rõ hoặc truy vết YÊU CẦU'],
+  ['arch.design',     'thiết kế kiến trúc, chia module, ánh xạ phần cứng, kiểm xung đột chân'],
+  ['diagram.draw',    'vẽ một lược đồ'],
+  ['doc.write',       'viết MỘT tài liệu hoặc một mục tài liệu'],
+  ['view.ask',        'hỏi TRI THỨC ĐÃ CÓ: thanh ghi, thông số, "X là gì", "vì sao đã chọn Y" (ADR)'],
+  ['discover.scan',   'dò cổng, probe, chip đang cắm'],
+  ['policy.stop',     'dừng khẩn, dừng mọi việc đang chạy (kể cả "dừng tự chủ")'],
+  ['policy.set',      'đổi mức tự chủ, DUYỆT/từ chối mục chờ, HOÀN TÁC việc đã làm'],
+  ['big_command',     'lệnh gồm NHIỀU bước thuộc nhiều nhóm: "làm hết", "bộ tài liệu đầy đủ", "đóng gói lên registry", "chạy benchmark", "đo dòng tiêu thụ"'],
+  ['unknown',         'không hiểu, hoặc mơ hồ tới mức đoán sẽ sai'],
+];
+// Hai cặp hay lẫn, nêu thẳng thay vì để mô hình suy:
+const INTENT_PHAN_BIET = [
+  '`view.ask` hỏi tri thức TĨNH đã có trong hộ chiếu; `debug.ask` hỏi về một hiện tượng ĐANG hỏng.',
+  '`doc.write` là một tài liệu; cả BỘ tài liệu là `big_command`.',
+  '`arch.design` gồm kiểm xung đột chân và ngân sách tài nguyên, không phải `debug.ask`.',
+  '`policy.set` gồm cả duyệt hàng đợi và hoàn tác, không phải `knowledge.build`.',
+];
+fs.writeFileSync('dialog/intents.md',
+  '# C0 — danh sách ý định cho vai trò `intent` (sinh từ DPS-09 §4.1)\n\n'
+  + INTENT_MO_TA.map(([k, v]) => `- \`${k}\` — ${v}`).join('\n')
+  + '\n\nPhân biệt:\n' + INTENT_PHAN_BIET.map(s => `- ${s}`).join('\n') + '\n');
+
+fs.writeFileSync('dialog/intent.schema.json', JSON.stringify(INTENT_SCHEMA, null, 2) + '\n');
 c.push(...CODE([
   '{ "type": "object", "required": ["intent", "slots", "is_big", "confidence"],',
   '  "properties": {',

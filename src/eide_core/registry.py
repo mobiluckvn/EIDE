@@ -20,6 +20,14 @@ from eide_core.paths import spec_dir
 
 Handler = Callable[..., dict[str, Any]]
 
+# Mức năng lực buộc phải khác hợp đồng — mỗi dòng là một mục DEVIATIONS đang Mở.
+#
+# `chat.clarify` khai T2 ("cần người duyệt"), nhưng nó CHÍNH LÀ cơ chế hỏi người: bắt nó xin
+# phép người trước khi được phép hỏi người là một vòng luẩn quẩn, và hệ quả thật là D3 của
+# DPS-09 ("gộp mọi điểm mơ hồ thành một câu") không bao giờ chạy — lời gọi rơi vào hàng đợi
+# với một câu hỏi chưa từng được dựng. Xem DEVIATIONS DEV-020.
+TIER_SUA: dict[str, str] = {"chat.clarify": "T1"}
+
 
 @dataclass
 class CapabilitySpec:
@@ -45,6 +53,16 @@ class CapabilitySpec:
     @property
     def risk_class(self) -> str:
         return self.risk[:2]
+
+    @property
+    def tier_hieu_luc(self) -> str:
+        """Mức thực dùng khi hỏi PolicyGate.
+
+        Bằng `tier` của hợp đồng, TRỪ các năng lực trong `TIER_SUA` — xem DEVIATIONS DEV-020.
+        Đặt ở đây chứ không rải trong PolicyGate để chỗ lệch spec có đúng MỘT nơi, và
+        `tests/test_specs_consistency.py` soi được nó.
+        """
+        return TIER_SUA.get(self.id, self.tier)
 
     @property
     def gate(self) -> str:

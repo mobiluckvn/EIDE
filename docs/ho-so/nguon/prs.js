@@ -185,12 +185,12 @@ const CMDS = [
  ['Tải datasheet từ trang này (link)', 'knowledge.build', 'path=<url>', 'false'],
  ['Duyệt hết fact chờ đi', 'policy.set', 'approve=pending_facts', 'false'],
  ['So sánh datasheet với errata về I2C', 'view.ask', 'question=compare I2C', 'false'],
- ['Đóng gói hộ chiếu này lên registry lớp', 'big_command', 'publish=internal', 'false'],
- ['Chạy benchmark với Gemini', 'big_command', 'bench; model=gemini', 'false'],
- ['Xóa dự án test-1', 'project.create', 'delete=test-1 (R4 → hỏi)', 'false'],
+ ['Đóng gói hộ chiếu này lên registry lớp', 'big_command', 'publish=internal', 'true'],
+ ['Chạy benchmark với Gemini', 'big_command', 'bench; model=gemini', 'true'],
+ ['Xóa dự án test-1', 'project.delete', 'project_name=test-1 (R4 → hỏi, POL-17 GEN-03)', 'false'],
  ['abc xyz', 'unknown', '—; confidence < 0,6', 'false'],
  ['Cấu hình I2C1 400 kHz trên PB6/PB7', 'code.feature', 'mentions=I2C1,PB6,PB7', 'false'],
- ['Đo dòng tiêu thụ khi ngủ', 'big_command', 'measure=current; mode=sleep', 'false'],
+ ['Đo dòng tiêu thụ khi ngủ', 'big_command', 'measure=current; mode=sleep', 'true'],
 ];
 c.push(T([600, 4000, 1700, 2500, 500], ['#', 'Câu lệnh', 'intent', 'slots / mentions', 'is_big'], CMDS.map((r, i) => [String(i + 1), ...r]), { size: 19 }));
 fs.writeFileSync('tests_dialog_commands.jsonl', CMDS.map((r, i) => JSON.stringify({ id: i + 1, text: r[0], intent: r[1], slots: r[2], is_big: r[3] === 'true' })).join('\n') + '\n');
