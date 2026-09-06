@@ -200,6 +200,21 @@ def open_index(path: Path | str) -> sqlite3.Connection:
     return conn
 
 
+def open_session_db(path: Path | str) -> sqlite3.Connection:
+    """Mở (và dựng nếu chưa có) session.sqlite — MEM-11 §2 M2, DDD-14 §2.25.
+
+    Không có user_version, cùng lý do với index.sqlite: một phiên dựng lại được bằng cách mở
+    lại dự án, nên nó không cần lịch di trú.
+    """
+    conn = _connect(Path(path))
+    conn.executescript((MIGRATIONS_DIR / "session_db.sql").read_text(encoding="utf-8"))
+    return conn
+
+
+def session_path(project_dir: Path | str) -> Path:
+    return Path(project_dir) / ".eide" / "session" / "session.sqlite"
+
+
 def store_path(project_dir: Path | str) -> Path:
     """`.eide/store/store.sqlite` — cấu trúc do project.create dựng (SDD-04 §6)."""
     return Path(project_dir) / ".eide" / "store" / STORE_NAME

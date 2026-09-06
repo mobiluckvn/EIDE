@@ -13,6 +13,7 @@ import sqlite3
 
 import pytest
 
+from eide_core import store
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.paths import spec_dir
@@ -29,8 +30,10 @@ from eide_core.store import (
 # liệu (hoặc ngược lại), test này đỏ. Đó là chỗ duy nhất bắt được sai lệch ấy.
 BANG_M0 = {"source", "fact", "passport", "passport_fact", "code_unit", "feature", "tool_report"}
 BANG_M1 = {"acq_request", "permission", "decision_log", "capability_run", "intent", "run",
-           "error_ledger", "preference", "capability", "requirement", "diagram",
-           "session"}  # `session` — DEVIATIONS DEV-006
+           "error_ledger", "preference", "capability", "requirement", "diagram"}
+# `session` KHÔNG ở store.sqlite: DDD-14 §2.25 ghi "Phiên làm việc (session.sqlite, không
+# commit)" — cơ sở dữ liệu riêng như rag_chunk ở index.sqlite. Xem DEVIATIONS DEV-006.
+BANG_SESSION = {"session"}
 BANG_M2_M3 = {"module", "hw_map", "adr", "doc_artifact", "discovery", "measurement", "debug_session"}
 
 
@@ -53,6 +56,7 @@ def test_migrate_kho_moi_len_phien_ban_moi_nhat(tmp_path):
     assert [m["name"] for m in kq["applied"]] == ["0001_m0_base", "0002_m1_policy_runtime"]
     with sqlite3.connect(db) as c:
         assert tables(c) == BANG_M0 | BANG_M1
+        assert "session" not in tables(c), "session thuộc session.sqlite, không thuộc store"
         assert current_version(c) == 2
 
 
@@ -175,8 +179,9 @@ def test_lich_migration_phu_het_schema_sql(tmp_path):
     ref = tmp_path / "ref.sqlite"
     with sqlite3.connect(ref) as c:
         c.executescript((spec_dir() / "data" / "schema.sql").read_text(encoding="utf-8"))
-        het = tables(c) - {"rag_chunk", "rag_chunk_fts"}   # §5: hai bảng này ở index.sqlite riêng
-        het = {t for t in het if not t.startswith("rag_chunk_")}
+        # Ba nhóm ra khỏi store chính: rag_chunk* ở index.sqlite (§5 migration 0003),
+        # session ở session.sqlite (§2.25)
+        het = {t for t in tables(c) if not t.startswith("rag_chunk")} - BANG_SESSION
     assert het == BANG_M0 | BANG_M1 | BANG_M2_M3
 
 
@@ -225,3 +230,24 @@ def test_index_db_co_rag_chunk_va_fts5(tmp_path):
 def test_index_db_khong_nam_trong_day_user_version(tmp_path):
     """§5: "không migration trong store chính" — 0003 không được lọt vào dãy của store."""
     assert all(not m["name"].startswith("index") for m in migrations())
+
+
+def test_session_db_rieng_khong_nam_trong_store(tmp_path):
+    """DDD-14 §2.25: "Phiên làm việc (session.sqlite, không commit)".
+
+    Đây là bản sửa của DEV-006. Bảng lịch migration §5 không xếp `session` vào migration nào
+    của store chính KHÔNG phải vì bỏ sót, mà vì nó thuộc một cơ sở dữ liệu khác — đúng như
+    `rag_chunk` thuộc index.sqlite.
+    """
+    db = tmp_path / "store.sqlite"
+    migrate(db)
+    with sqlite3.connect(db) as c:
+        assert "session" not in tables(c)
+    with store.open_session_db(tmp_path / "session.sqlite") as s:
+        assert tables(s) == {"session"}
+        s.execute("INSERT INTO session (id,project,opened_at) VALUES ('s_1','robot','2026-09-06T00:00:00Z')")
+        assert s.execute("SELECT project FROM session").fetchone()[0] == "robot"
+
+
+def test_session_db_khong_nam_trong_day_user_version():
+    assert all(not m["name"].startswith("session") for m in migrations())

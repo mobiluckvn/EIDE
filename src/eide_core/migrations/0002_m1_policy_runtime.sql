@@ -3,9 +3,10 @@
 -- Bảng theo §5: acq_request, permission, decision_log, capability_run, intent, run, error_ledger,
 -- preference, capability, requirement, diagram; cột fact.layer; chỉ mục mới. user_version=2.
 --
--- THÊM `session`, KHÔNG có trong §5 — xem DEVIATIONS DEV-006. DDD-14 §2.25 ghi rõ bảng `session`
--- là "từ M1" và schema.sql có nó, nhưng bảng lịch migration §5 không xếp nó vào migration nào,
--- nên nếu bám §5 từng chữ thì `session` không bao giờ được tạo. Đặt ở đây vì §2.25 nói M1.
+-- KHÔNG có `session` ở đây, dù schema.sql có bảng ấy: DDD-14 §2.25 ghi rõ "Phiên làm việc
+-- (session.sqlite, không commit)". Nó thuộc một cơ sở dữ liệu RIÊNG, đúng như `rag_chunk`
+-- thuộc index.sqlite — và đó là lý do bảng lịch §5 không xếp nó vào migration nào của store
+-- chính, chứ không phải §5 bỏ sót. Xem `session_db.sql` và DEVIATIONS DEV-006.
 --
 -- Thứ tự trong tệp có ý nghĩa: decision_log trước capability_run và intent trước run, vì khóa
 -- ngoại tham chiếu tới chúng.
@@ -151,18 +152,6 @@ CREATE TABLE IF NOT EXISTS preference (
   ttl_days INTEGER,
   at TEXT NOT NULL,
   PRIMARY KEY (key, scope)
-);
-
-CREATE TABLE IF NOT EXISTS session (
-  id TEXT PRIMARY KEY,
-  project TEXT NOT NULL,
-  opened_at TEXT NOT NULL,
-  closed_at TEXT,
-  autonomy_effective TEXT,
-  stopped INTEGER DEFAULT 0,
-  turns TEXT,
-  undo_items TEXT,
-  summary TEXT
 );
 
 CREATE TABLE IF NOT EXISTS capability (
