@@ -8,8 +8,10 @@ import json
 import sys
 from pathlib import Path
 
+import yaml
+
 from eide import __version__
-from eide_core import store, tools
+from eide_core import store, tools, whitelist
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.paths import project_dir_default, spec_dir, user_log
@@ -22,7 +24,12 @@ COMMON_TOOLS = tools.COMMON_TOOLS   # nguồn duy nhất ở eide_core.tools
 
 def _router(project: Path | None = None) -> tuple[Router, Context]:
     ledger = Ledger((project / ".eide" / "store" / "ledger.jsonl") if project else user_log() / "ledger.jsonl")
-    gate = PolicyGate()
+    # Trong một dự án thì chính sách CỦA DỰ ÁN mới là chính sách có hiệu lực, và niêm phải là
+    # niêm của dự án ấy. Dùng `defaults.sig` ở đây thì `eide policy sign -p <dự án>` ghi ra một
+    # tệp không ai đọc, và mức tự chủ riêng của dự án cũng không có tác dụng.
+    gate = PolicyGate(config=_autonomy_cua_du_an(project),
+                      sig_path=(project / ".eide" / "policy.sig") if project else None,
+                      ledger=ledger)
     return Router(gate=gate, ledger=ledger), Context(project_dir=project, extra={"gate": gate})
 
 
@@ -135,6 +142,42 @@ def cmd_policy_set(a) -> int:
     return _print_run(r.invoke("policy.set_autonomy", p, ctx))
 
 
+def cmd_policy_sign(a) -> int:
+    """`eide policy sign` — POL-17 §3.
+
+    Là LỆNH chứ không phải năng lực, và cố ý thế. Trong 238 năng lực không có `policy.sign`:
+    năng lực thì Router gọi được, tức tác tử gọi được, tức tác tử tự cấp quyền cho chính nó —
+    hỏng đúng thứ mà danh sách trắng dựng lên để giữ.
+    """
+    root = Path(a.project).expanduser() if a.project else None
+    sig = (root / ".eide" / "policy.sig") if root else spec_dir() / "policy" / "defaults.sig"
+    cfg = PolicyGate(config=_autonomy_cua_du_an(root)).config
+
+    print(f"Danh sách trắng có hiệu lực (niêm ghi vào {sig}):")
+    print(whitelist.tom_tat(cfg))
+    dat, ly_do = whitelist.kiem(cfg, sig)
+    print(f"\nTrạng thái hiện tại: {'đã ký, khớp' if dat else ly_do}")
+    if dat and not a.force:
+        print("Không có gì để ký. Dùng --force để ký lại.")
+        return 0
+    if not a.yes:
+        # Ký là hành động R4 (POL-17 §3). Không có --yes thì phải gõ tay, không bấm Enter cho qua.
+        if input(f"\nKý với tên {a.by!r}? Gõ 'ky' để xác nhận: ").strip() != "ky":
+            print("Đã hủy.")
+            return 1
+    led = Ledger(root / ".eide" / "store" / "ledger.jsonl") if root else None
+    n = whitelist.ky(cfg, sig, a.by, led)
+    print(f"Đã ký: {n.hash[:16]}… bởi {n.by} lúc {n.at}")
+    return 0
+
+
+def _autonomy_cua_du_an(root: Path | None) -> dict | None:
+    if root is None:
+        return None
+    f = root / ".eide" / "autonomy.yaml"
+    return yaml.safe_load(f.read_text(encoding="utf-8")) if f.exists() else None
+
+
 def cmd_spec(a) -> int:
     f = spec_dir().parents[1] / "scripts" / "spec_status.py"
     m = importlib.util.spec_from_file_location("spec_status", f)
@@ -197,6 +240,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-p", "--project", type=Path, required=True)
     p.add_argument("--board")
     p.set_defaults(fn=cmd_policy_set)
+
+    p = pol.add_parser("sign", help="ký danh sách trắng nguồn/gói/license/board (POL-17 §3)")
+    p.add_argument("--by", required=True, help="tên người ký — ghi vào niêm và nhật ký")
+    p.add_argument("-p", "--project", type=Path, help="bỏ trống = ký danh sách mặc định của bản cài")
+    p.add_argument("--force", action="store_true", help="ký lại dù niêm đang khớp")
+    p.add_argument("--yes", action="store_true", help="bỏ bước gõ xác nhận (dùng cho script)")
+    p.set_defaults(fn=cmd_policy_sign)
 
     p = sub.add_parser("migrate", help="di trú store.sqlite của dự án (DDD-14 §5)")
     p.add_argument("-p", "--project", type=Path)

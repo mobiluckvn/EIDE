@@ -1,0 +1,202 @@
+{
+  "$id": "https://eide.code247.ai/schema/autonomy.json",
+  "type": "object",
+  "required": [
+    "autonomy",
+    "thresholds"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "autonomy": {
+      "type": "string",
+      "enum": [
+        "A0",
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+      ]
+    },
+    "boards": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "autonomy": {
+            "type": "string",
+            "enum": [
+              "A0",
+              "A1",
+              "A2",
+              "A3",
+              "A4"
+            ]
+          },
+          "lab": {
+            "type": "boolean"
+          },
+          "has_actuator": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "action_types": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "A0",
+          "A1",
+          "A2",
+          "A3",
+          "A4"
+        ]
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "fact_silver_auto": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1,
+          "default": 0.85
+        },
+        "source_match_min": {
+          "type": "number",
+          "default": 0.7
+        },
+        "download_max_mb": {
+          "type": "integer",
+          "default": 50
+        },
+        "plan_max_steps": {
+          "type": "integer",
+          "default": 12
+        },
+        "plan_max_cost_usd": {
+          "type": "number",
+          "default": 1
+        },
+        "merge_size_growth_pct": {
+          "type": "number",
+          "default": 5
+        },
+        "flash_per_hour": {
+          "type": "integer",
+          "default": 20
+        },
+        "bench_bc_min": {
+          "type": "number",
+          "default": 0.9
+        },
+        "fail_retries": {
+          "type": "integer",
+          "default": 2
+        },
+        "budget_warn_pct": {
+          "type": "number",
+          "default": 20
+        }
+      }
+    },
+    "trusted_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "trusted_packages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowed_licenses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "undo_window": {
+      "type": "object",
+      "properties": {
+        "facts": {
+          "type": "string",
+          "default": "72h"
+        },
+        "merge": {
+          "type": "string",
+          "default": "24h"
+        },
+        "flash": {
+          "type": "string",
+          "default": "session"
+        },
+        "files": {
+          "type": "string",
+          "default": "24h"
+        }
+      }
+    },
+    "ask_timeout_s": {
+      "type": "integer",
+      "default": 120
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "project_dir": {
+          "type": "string"
+        },
+        "model_profile": {
+          "type": "string"
+        },
+        "sim_first": {
+          "type": "boolean"
+        },
+        "diagram_lang": {
+          "type": "string"
+        },
+        "doc_lang": {
+          "type": "string"
+        },
+        "create_when_exists": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "reuse",
+            "new"
+          ]
+        }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "queue",
+              "chat",
+              "notify"
+            ]
+          }
+        },
+        "notify": {
+          "type": "object"
+        }
+      }
+    },
+    "sensitive": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

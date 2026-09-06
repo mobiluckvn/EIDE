@@ -11,6 +11,7 @@ import json
 import sqlite3
 
 import pytest
+import yaml
 
 from eide_core import store
 from eide_core.ledger import Ledger
@@ -163,7 +164,10 @@ def test_progress_sinh_tu_ledger_khong_viet_tay(tmp_path, workspace):
     md = out["progress_md"]
     assert md.startswith("## Trạng thái")
     assert root.name in md
-    assert "A3" in md
+    # Mức tự chủ đọc từ `.eide/autonomy.yaml` của dự án, không phải một hằng số chép vào test:
+    # mức mặc định là quyết định cấu hình của người dùng (A3 → A2 ngày 2026-09-06), đổi nó không
+    # được làm đổ một test đang kiểm chuyện khác.
+    assert yaml.safe_load((root / ".eide" / "autonomy.yaml").read_text(encoding="utf-8"))["autonomy"] in md
     # số việc tự động phải khớp ledger, không phải một con số nghĩ ra
     assert f"{xong} việc tự động" in md
 

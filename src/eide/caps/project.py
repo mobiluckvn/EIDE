@@ -12,7 +12,7 @@ from typing import Any
 
 import yaml
 
-from eide_core import store
+from eide_core import store, whitelist
 from eide_core.errors import EideError
 from eide_core.memory import SessionMemory
 from eide_core.paths import project_dir_default, spec_dir, user_config
@@ -69,6 +69,27 @@ def _lev(a: str, b: str) -> int:
     return prev[-1]
 
 
+def _ke_thua_niem(defaults: dict[str, Any], autonomy: dict[str, Any], sig: Path) -> None:
+    """Chép niêm của bản cài sang dự án mới — POL-17 §3.
+
+    Dự án mới có danh sách trắng GIỐNG HỆT bản mặc định đã ký, nên bắt người ký lại lần nữa là
+    bắt ký một thứ họ vừa ký. Mà một cơ chế bắt ký những thứ hiển nhiên là cơ chế người ta gõ
+    cho xong mà không đọc — hỏng đúng chỗ nó định giữ.
+
+    Nên: chỉ kế thừa khi băm của dự án TRÙNG băm đã ký của bản cài, và ghi rõ trong `by` rằng
+    đây là niêm kế thừa chứ không phải một lần ký mới. Lệch một mục là không kế thừa nữa, dự án
+    ở trạng thái chưa ký, và `eide policy sign` là việc của người.
+
+    Bản cài chưa ký ⇒ không ghi gì. Hỏng an toàn: PolicyGate sẽ bỏ danh sách và hỏi người.
+    """
+    goc = spec_dir() / "policy" / "defaults.sig"
+    n = whitelist.doc_nien(goc)
+    if n is None or n.hash != whitelist.bam(defaults) or whitelist.bam(autonomy) != n.hash:
+        return
+    sig.write_text(json.dumps({**n.as_dict(), "by": f"{n.by} (niêm kế thừa từ bản cài)"},
+                              ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 @capability("project.create", features=["name_conflict"])
 def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: PROJECT-01 — CDS-12.3; POL-17 GEN-03 (ghi đè = R4); DDD-14 project; undo delete_created_files.
@@ -95,10 +116,13 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     for d in SUBDIRS:
         (eide / d).mkdir(parents=True, exist_ok=True)
     defaults = yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8"))
-    autonomy = {k: defaults[k] for k in ("autonomy", "thresholds", "trusted_sources", "trusted_packages", "undo_window", "ask_timeout_s", "defaults", "escalation") if k in defaults}
+    autonomy = {k: defaults[k] for k in ("autonomy", "thresholds", "trusted_sources", "trusted_packages",
+                                         "allowed_licenses", "boards", "undo_window", "ask_timeout_s",
+                                         "defaults", "escalation") if k in defaults}
     if params.get("autonomy"):
         autonomy["autonomy"] = params["autonomy"]
     (eide / "autonomy.yaml").write_text(yaml.safe_dump(autonomy, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    _ke_thua_niem(defaults, autonomy, eide / "policy.sig")
     constraints = {"project": {"id": slug, "name": name, "created": datetime.now(UTC).isoformat(), "text": params["text"]},
                    "target": {"chip": params.get("chip"), "board": params.get("board")}}
     (eide / "constraints.yaml").write_text(yaml.safe_dump(constraints, allow_unicode=True, sort_keys=False), encoding="utf-8")

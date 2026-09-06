@@ -100,7 +100,7 @@ c.push(P('Tệp `policy/rules.yaml` kèm theo chứa đúng bảng trên. Trình
 c.push(H1('3. Danh sách trắng và chữ ký'));
 c.push(P('Ba danh sách trong autonomy.yaml: `trusted_sources` (tên miền), `trusted_packages` (gói công cụ), `lab_boards` (board id). Mỗi thay đổi danh sách là hành động R4 theo cổng riêng: người ký bằng lệnh `eide policy sign` (ghi băm nội dung + user + thời điểm vào decision_log và tệp `.eide/policy.sig`); PolicyGate từ chối nạp danh sách có băm không khớp chữ ký. Đánh dấu board lab (board.mark_lab) yêu cầu người xác nhận hai điều: không có cơ cấu chấp hành nguy hiểm và nguồn có giới hạn dòng.'));
 c.push(H1('4. Schema autonomy.yaml'));
-c.push(...CODE([
+const AUTONOMY_SCHEMA = [
   '{ "$id": "https://eide.code247.ai/schema/autonomy.json", "type": "object", "required": ["autonomy", "thresholds"], "additionalProperties": false,',
   '  "properties": {',
   '    "autonomy": {"type": "string", "enum": ["A0","A1","A2","A3","A4"]},',
@@ -118,7 +118,8 @@ c.push(...CODE([
   '    "defaults": {"type": "object", "properties": {"project_dir": {"type": "string"}, "model_profile": {"type": "string"}, "sim_first": {"type": "boolean"}, "diagram_lang": {"type": "string"}, "doc_lang": {"type": "string"}, "create_when_exists": {"type": "string", "enum": ["ask","reuse","new"]}}},',
   '    "escalation": {"type": "object", "properties": {"channels": {"type": "array", "items": {"type": "string", "enum": ["queue","chat","notify"]}}, "notify": {"type": "object"}}},',
   '    "sensitive": {"type": "boolean", "default": false} } }',
-]));
+];
+c.push(...CODE(AUTONOMY_SCHEMA));
 c.push(SP());
 c.push(H1('5. Hoàn tác theo loại'));
 c.push(T([2000, 3300, 2200, 1800], ['Loại undo', 'Cách hoàn tác', 'Cửa sổ', 'Năng lực dùng'], [

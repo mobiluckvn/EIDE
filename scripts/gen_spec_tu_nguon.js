@@ -54,6 +54,14 @@ const VIEC = [
             .join('\n') + '\n',
     },
     {
+        // POL-17 §4 là schema CHUẨN TẮC của autonomy.yaml, nhưng nó nằm trong một khối CODE
+        // của tài liệu — tức là văn xuôi. Trước khi có mục này, `.eide/autonomy.yaml` không hề
+        // được kiểm: `additionalProperties: false` nghĩa là một khóa gõ sai (hay một khóa §3
+        // nhắc tới mà §4 không có, xem DEV-030) phải bị bắt, mà không ai bắt cả.
+        tep: 'policy/autonomy.schema.json', nguon: 'pol.js',
+        dung: () => JSON.stringify(JSON.parse(literal('pol.js', 'AUTONOMY_SCHEMA').join('\n')), null, 2) + '\n',
+    },
+    {
         tep: 'dialog/intent.schema.json', nguon: 'dps.js',
         dung: () => JSON.stringify(literal('dps.js', 'INTENT_SCHEMA'), null, 2) + '\n',
     },

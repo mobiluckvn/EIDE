@@ -1,6 +1,13 @@
 # defaults.yaml — giá trị mặc định cho PolicyGate khi dự án chưa có .eide/autonomy.yaml
-# Nguồn: POL-17 §5 (schema autonomy.json, trường default), SDD-04 §6 (ví dụ autonomy.yaml). Xem DEVIATIONS DEV-001.
-autonomy: A3
+# Nguồn: POL-17 §5 (schema autonomy.json, trường default), SDD-04 §6 (ví dụ autonomy.yaml).
+#
+# Bốn khóa danh sách trắng ở đây được NIÊM trong `defaults.sig` (POL-17 §3). Sửa tay một trong
+# bốn khóa ấy mà không ký lại thì PolicyGate không nạp chúng nữa và mọi thứ rơi về ASK — đó là
+# hành vi đúng, không phải hỏng. Ký lại bằng: eide policy sign
+#
+# `autonomy: A2` — Vũ Trí Công chọn ngày 2026-09-06, hạ từ A3. A2 nghĩa là tác tử tự làm tới
+# lớp R2 (đọc, sinh mã, ghi dự án); mọi thao tác chạm phần cứng đều hỏi người. Xem DEV-001.
+autonomy: A2
 thresholds:
   fact_silver_auto: 0.85
   source_match_min: 0.7
@@ -15,6 +22,12 @@ thresholds:
 trusted_sources: [st.com, microchip.com, nordicsemi.com, espressif.com, bosch-sensortec.com, github.com/cmsis-svd]
 trusted_packages: [gcc-arm-none-eabi, avr-gcc, renode, probe-rs, openocd, esptool, simavr, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli]
 allowed_licenses: [MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, CC-BY-4.0, vendor-doc]
+# Danh sách thứ tư mà POL-17 §3 gọi là `lab_boards` nhưng §4 đặt tên `boards` (DEV-030).
+# Để RỖNG có chủ ý: đánh dấu board lab đòi người xác nhận hai điều mà chỉ người cầm board mới
+# biết — không có cơ cấu chấp hành nguy hiểm, và nguồn có giới hạn dòng (POL-17 §3). Ở mức A2
+# hiện tại thì mục này chưa đổi gì cả: thao tác R3 đã bị ngưỡng cứng ép hỏi người trước khi
+# G-OPS được hỏi tới. Nó chỉ có tác dụng nếu sau này nâng lên A3.
+boards: {}
 undo_window: {facts: 72h, merge: 24h, flash: session, files: 24h}
 ask_timeout_s: 120
 defaults: {project_dir: "~/eide", model_profile: default, sim_first: true, diagram_lang: mermaid, doc_lang: vi, create_when_exists: ask}

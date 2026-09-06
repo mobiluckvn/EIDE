@@ -15,6 +15,7 @@ from typing import Any
 
 import yaml
 
+from eide_core import whitelist
 from eide_core.errors import EideError
 from eide_core.paths import spec_dir
 
@@ -54,6 +55,20 @@ class _Ns:
         v = self._d.get(k)
         return _Ns(v) if isinstance(v, dict) else v
 
+    def __bool__(self) -> bool:
+        """Đặc trưng chưa biết là SAI, kể cả khi nó xuất hiện dưới dạng tên trần.
+
+        Thiếu hàm này thì `_Ns` mang tính đúng mặc định của object, và hai cách viết cùng một ý
+        lại cho hai kết quả ngược nhau: `board.has_actuator` thiếu ⇒ None ⇒ sai, còn `needs_sudo`
+        thiếu ⇒ `_Ns({})` ⇒ ĐÚNG. Docstring của lớp này vẫn nói "đặc trưng chưa biết ⇒ không
+        khớp APPROVE", nên nhánh tên trần đang làm ngược điều nó tự hứa.
+
+        Hậu quả đo được: `needs_sudo` không ai cung cấp làm G-OPS-05 (ưu tiên 5, ASK) luôn khớp,
+        che mất G-OPS-04 (ưu tiên 10, APPROVE) — không gói nào trong `trusted_packages` được
+        duyệt tự động, và bảng quy tắc nói một đằng động cơ làm một nẻo. Xem DEVIATIONS DEV-033.
+        """
+        return bool(self._d)
+
     def __repr__(self) -> str:
         return f"_Ns({self._d})"
 
@@ -90,7 +105,8 @@ def _eval(code: Any, env: dict[str, Any]) -> bool:
 
 
 class PolicyGate:
-    def __init__(self, rules_path: Path | None = None, config: dict[str, Any] | None = None) -> None:
+    def __init__(self, rules_path: Path | None = None, config: dict[str, Any] | None = None,
+                 *, sig_path: Path | None = None, ledger: Any = None) -> None:
         rules_path = rules_path or spec_dir() / "policy" / "rules.yaml"
         data = yaml.safe_load(rules_path.read_text(encoding="utf-8"))
         self.version = data.get("version")
@@ -100,6 +116,10 @@ class PolicyGate:
         defaults = yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8"))
         self.config = {**defaults, **(config or {})}
         self.stopped = False  # dừng khẩn (APD-08 §5; API-15 `stop`)
+        # POL-17 §3: "PolicyGate từ chối nạp danh sách có băm không khớp chữ ký". Niêm phủ cấu
+        # hình SAU hợp nhất — xem whitelist.py về lý do.
+        sig_path = sig_path or spec_dir() / "policy" / "defaults.sig"
+        self.danh_sach_da_ky, self.ly_do_chua_ky = whitelist.kiem(self.config, sig_path, ledger)
 
     # ---- API chính
     def decide(self, gate: str, features: dict[str, Any], *, risk: str = "R1", autonomy: str | None = None,
@@ -188,11 +208,18 @@ class PolicyGate:
             "True": True, "False": False, "None": None,
             "autonomy": level, "level": LEVELS.index(level),
             "thresholds": _Ns(cfg.get("thresholds")),
-            "trusted_sources": cfg.get("trusted_sources", []),
-            "trusted_packages": cfg.get("trusted_packages", []),
-            "allowed_licenses": cfg.get("allowed_licenses", []),
             "board": _Ns({**binfo, **(features.get("board") or {})}),
         }
+        # Niêm không đạt ⇒ BỎ HẲN ba khóa, không nạp danh sách rỗng. `_Env.__missing__` trả
+        # `_Ns({})`, `x in _Ns({})` ném TypeError, `_eval` bắt TypeError ⇒ quy tắc không khớp ⇒
+        # rơi xuống quy tắc mặc định của cổng ⇒ ASK.
+        #
+        # Nạp rỗng cũng ra ASK, nhưng ra vì lý do SAI: `license in []` là False nên G-SRC-05
+        # bắt trước và ghi vào decision_log "License không rõ/không cho phép", trong khi license
+        # hoàn toàn hợp lệ và thứ hỏng là chữ ký. Người duyệt đọc dòng đó rồi đi sửa nhầm chỗ.
+        if self.danh_sach_da_ky:
+            for k in ("trusted_sources", "trusted_packages", "allowed_licenses"):
+                env[k] = cfg.get(k, [])
         for k, v in features.items():
             if k == "board":
                 continue
