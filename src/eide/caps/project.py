@@ -174,6 +174,60 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"summary": summary, "migrated": False, "stale_runs": stale}
 
 
+@capability("project.status")
+def status(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-08 — CDS-12.3; DDD-14 feature/capability_run; API-15 §5 model.call, gate.human; UC-A06.
+
+    Một bước: "Tổng hợp từ FEATURES, queue, undo, ledger chi phí, session". `tc` là "số liệu khớp
+    ledger", nên `gates_open` và `cost_today` đọc THẲNG từ ledger chứ không giữ bộ đếm riêng —
+    bộ đếm riêng là thứ trôi khỏi nhật ký mà không ai biết.
+
+    `undo_items` để rỗng cho tới khi có UndoService (Sprint 2) — xem DEVIATIONS DEV-008.
+    """
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if not root or not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", "Chưa mở dự án", exists=[], candidates=[], missing=["project"])
+
+    feats: list[tuple[str, str, str]] = []
+    db = store.store_path(root)
+    if db.exists():
+        with sqlite3.connect(db) as c:
+            feats = c.execute("SELECT id, title, status FROM feature ORDER BY updated_at, id").fetchall()
+    dau = next((f for f in feats if f[2] == "failing"), None)
+
+    led = ctx.extra.get("ledger")
+    recs = led.records() if led is not None else []
+    hom_nay = datetime.now(UTC).date().isoformat()
+    cost = sum(float((r["data"] or {}).get("cost_usd") or 0)
+               for r in recs if r["kind"] == "model.call" and str(r["ts"]).startswith(hom_nay))
+    cho: set[str] = set()
+    for r in recs:
+        d = r["data"] or {}
+        if r["kind"] == "cap.run.finish" and d.get("status") == "pending" and d.get("run_id"):
+            cho.add(d["run_id"])
+        elif r["kind"] == "gate.human" and d.get("gate_id"):
+            cho.discard(d["gate_id"])
+
+    autonomy = None
+    f = root / EIDE_DIR / "autonomy.yaml"
+    if f.exists():
+        autonomy = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("autonomy")
+    c = root / EIDE_DIR / "constraints.yaml"
+    target = (yaml.safe_load(c.read_text(encoding="utf-8")) or {}).get("target") if c.exists() else None
+
+    return {"report": {
+        "features": {"total": len(feats),
+                     "passing": sum(1 for x in feats if x[2] == "passing"),
+                     "failing": sum(1 for x in feats if x[2] == "failing"),
+                     "first_failing": dau[0] if dau else None},
+        "gates_open": len(cho),
+        "undo_items": [],
+        "cost_today": round(cost, 6),
+        "autonomy": autonomy,
+        "target": target,
+    }}
+
+
 def _resolve_project(gia_tri: str, workspace: Path) -> Path:
     """"id hoặc đường dẫn" (input_schema). Không tìm thấy → E2000 kèm payload API-15 §3."""
     p = Path(gia_tri).expanduser()
