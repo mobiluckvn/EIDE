@@ -30,8 +30,13 @@ packages = ["src/eide", "src/eide_core"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["hardware: cần board/probe thật — bỏ qua trên CI"]
-addopts = "-q"
+markers = [
+  "hardware: cần board/probe thật — bỏ qua trên CI",
+  # DEP-26 §5: job `dialog` gọi mô hình THẬT chạy ban đêm với khóa từ secrets. Test hằng ngày
+  # dùng EchoPort (job `contract`), nên `make check` loại nhóm này ra: nó tốn tiền và cần mạng.
+  "llm: gọi mô hình thật — cần khóa API, bỏ qua trong make check",
+]
+addopts = "-q -m 'not llm'"
 
 [tool.ruff]
 line-length = 110

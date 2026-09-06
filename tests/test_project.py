@@ -15,7 +15,7 @@ def test_create_structure_and_ledger(tmp_path, workspace):
     res = run.result
     assert res["created"] and res["project_id"] == "robot-hai-banh-tu-can-bang"
     e = workspace / res["project_id"] / ".eide"
-    for name in ["store", "session", "index", "docs", "diagrams", "PROGRESS.md", "FEATURES.json", "constraints.yaml", "autonomy.yaml", ".gitignore"]:
+    for name in ["store", "session", "index", "docs", "diagrams", "PROGRESS.md", "FEATURES.json", "constraints.yaml", "autonomy.yaml", "models.yaml", ".gitignore"]:
         assert (e / name).exists(), name
     kinds = [x["kind"] for x in r.ledger.records()]
     # `undo.register` đi sau `cap.run.finish`: project.create có undo=delete_created_files nên

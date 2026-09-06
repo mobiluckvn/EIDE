@@ -9,14 +9,14 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | WI | Việc | Tài liệu | Trạng thái | Nền tảng | DEV |
 |---|---|---|---|---|---|
 | WI-001 | Khởi tạo kho eide: CLAUDE.md, .claude/, docs/spec, pyproject, CI | CLAUDE.md, PLATFORM.md, DEP-26 | Xong | mac-arm ✓, mac-intel ✓ (Rosetta 2, 06/09/2026), linux | DEV-003, DEV-005 |
-| WI-008 | Ledger chuỗi hash + api/errors.json (bộ lọc bí mật: Sprint 2) | SEC-25 §3, API-15 §3, §5 | Xong (phần hash + kiểu sự kiện) | mac-arm ✓, mac-intel ✓ | — |
+| WI-008 | Ledger chuỗi hash + api/errors.json + bộ lọc bí mật | SEC-25 §3, API-15 §3, §5, §7 | Xong (hash + kiểu sự kiện + lọc bí mật, DEV-016) | mac-arm ✓, mac-intel ✓ | DEV-016 |
 | WI-003 | Capability Registry + Router (nạp cds.json, kiểm schema, invoke, ledger; grounding/undo: Sprint 2) | SDD-04 §4, CDS-12, API-15 caps.* | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | DEV-002 |
 | WI-004 | PolicyGate + rules.yaml + defaults.yaml (UndoService, decision_log SQLite: Sprint 2) | APD-08, POL-17 | Xong (bản đầu, 46 quy tắc) | mac-arm ✓, mac-intel ✓ | DEV-001 |
 | WI-010 | JSON-RPC stdio (9/55 phương thức) + CLI eide | API-15 §1, §CLI | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | — |
 | WI-002 | SQLite store + migration 0001/0002 + index riêng (0003) + `eide migrate` | DDD-14 §5, schema.sql | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
 | WI-007 | Memory M1/M2 (WorkingMemory, SessionMemory), PROGRESS/FEATURES tự sinh, resume | MEM-11 §2–§5, DDD-14 | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
 | WI-009 | Sandbox tiến trình con + giám sát hiệu ứng (nền cho tool.*) | SEC-25 §4, CDS-12.3 env.sandbox | Chưa | — | — |
-| WI-013 | Prompt 9 vai trò + models.yaml + Gateway LLM (Claude/Gemini) | PRS-16, SDD-04 §6, CXD-10 | Chưa | — | — |
+| WI-013 | Prompt 9 vai trò + models.yaml + Gateway LLM (Claude/Gemini) | PRS-16, SDD-04 §6, CXD-10 | Xong | mac-arm ✓, mac-intel ✓; gọi Gemini thật ✓ | DEV-015, DEV-016 |
 | WI-005 | Orchestrator: intent → ground → defaults → clarify → chain → runner → report | DPS-09, PRS-16 intent.md, SDD-04 §4.3 | Chưa (Sprint 2) | — | — |
 | WI-011 | MCP server sinh tool từ registry | API-15 §MCP, mcp_tools.json | Chưa (Sprint 2) | — | — |
 | WI-020 | ToolForge tool.need/search/write/test/run/register (+G-TOOL) | CDS-12.3 TOOL-01…07, APD-08 §4.2, SEC-25 | Chưa (Sprint 2; phụ thuộc WI-009) | — | — |

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
@@ -16,6 +17,23 @@ from eide_core.errors import EideError
 from eide_core.paths import spec_dir
 
 GENESIS = "0" * 64
+
+# API-15 §7: "bộ lọc che chuỗi giống khóa API (regex `sk-|AIza|Bearer `) trước khi ghi".
+# Che ở TẦNG LEDGER chứ không ở từng chỗ gọi: ledger là append-only và chống sửa, nên một khóa
+# lọt vào đây thì không gỡ ra được nữa mà không phá chuỗi hash — và vẫn phải đổi khóa. Chỗ duy
+# nhất chặn được là ngay trước khi ghi.
+RE_BI_MAT = re.compile(r"(sk-|AIza|Bearer )[A-Za-z0-9\-_\.]{8,}")
+
+
+def che_bi_mat(x: Any) -> Any:
+    """Thay chuỗi giống khóa bằng `<đã che>`, giữ 4 ký tự đầu để còn truy được là khóa nào."""
+    if isinstance(x, str):
+        return RE_BI_MAT.sub(lambda m: m.group(0)[:8] + "…<đã che>", x)
+    if isinstance(x, dict):
+        return {k: che_bi_mat(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [che_bi_mat(v) for v in x]
+    return x
 
 
 @lru_cache(maxsize=1)
@@ -44,7 +62,7 @@ class Ledger:
             raise EideError("E6001", f"Kiểu sự kiện ledger không có trong API-15: {kind}")
         self._seq += 1
         rec = {"seq": self._seq, "ts": datetime.now(UTC).isoformat(), "kind": kind, "actor": actor,
-               "data": data, "prev_hash": self._last_hash}
+               "data": che_bi_mat(data), "prev_hash": self._last_hash}
         rec["hash"] = _hash(rec)
         with self.path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")

@@ -102,6 +102,8 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     constraints = {"project": {"id": slug, "name": name, "created": datetime.now(UTC).isoformat(), "text": params["text"]},
                    "target": {"chip": params.get("chip"), "board": params.get("board")}}
     (eide / "constraints.yaml").write_text(yaml.safe_dump(constraints, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    # models.yaml: chép bản mặc định để dự án đổi mô hình được mà không đụng vào spec (SDD-04 §6)
+    (eide / "models.yaml").write_text((spec_dir() / "models.yaml").read_text(encoding="utf-8"), encoding="utf-8")
     (eide / "FEATURES.json").write_text(json.dumps({"features": []}, ensure_ascii=False, indent=2), encoding="utf-8")
     (eide / "PROGRESS.md").write_text(f"# {name}\n\n- {time.strftime('%Y-%m-%d %H:%M')} — tạo dự án từ lệnh: \"{params['text']}\"\n", encoding="utf-8")
     (eide / ".gitignore").write_text("store/\nsession/\nindex/\n", encoding="utf-8")
