@@ -13,7 +13,7 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | WI-003 | Capability Registry + Router (nạp cds.json, kiểm schema, invoke, ledger; grounding/undo: Sprint 2) | SDD-04 §4, CDS-12, API-15 caps.* | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | DEV-002 |
 | WI-004 | PolicyGate + rules.yaml + defaults.yaml (UndoService, decision_log SQLite: Sprint 2) | APD-08, POL-17 | Xong (bản đầu, 46 quy tắc) | mac-arm ✓, mac-intel ✓ | DEV-001 |
 | WI-010 | JSON-RPC stdio (9/55 phương thức) + CLI eide | API-15 §1, §CLI | Xong (bản đầu) | mac-arm ✓, mac-intel ✓ | — |
-| WI-002 | SQLite store + migration 0001 + `eide migrate` | DDD-14 §DDL, schema.sql, migrations | Chưa | — | — |
+| WI-002 | SQLite store + migration 0001/0002 + index riêng (0003) + `eide migrate` | DDD-14 §5, schema.sql | Xong | mac-arm ✓, mac-intel ✓ | DEV-006 |
 | WI-007 | Memory M1/M2 (WorkingMemory, SessionMemory), PROGRESS/FEATURES tự sinh, resume | MEM-11 §2–§4, DDD-14 | Chưa | — | — |
 | WI-009 | Sandbox tiến trình con + giám sát hiệu ứng (nền cho tool.*) | SEC-25 §4, CDS-12.3 env.sandbox | Chưa | — | — |
 | WI-013 | Prompt 9 vai trò + models.yaml + Gateway LLM (Claude/Gemini) | PRS-16, SDD-04 §6, CXD-10 | Chưa | — | — |
@@ -31,7 +31,7 @@ Ghi chú về WI-001 (PLN-27): kho làm mới hoàn toàn, **không** đổi tê
 | ENV-02 | env.check | 12.3 | thiếu gcc → ok=false kèm install hint; ISA lạ → E2000 | Xong | mac-arm ✓, mac-intel ✓ | — |
 | POLICY-05 | policy.emergency_stop | 12.5 | TC-53: stopped=true, năng lực sau đó bị REJECT | Xong | mac-arm ✓, mac-intel ✓ | — |
 | POLICY-07 | policy.set_autonomy | 12.5 | TC-56: nới lỏng cần by=human; siết tức thì; ghi autonomy.yaml | Xong | mac-arm ✓, mac-intel ✓ | — |
-| PROJECT-02 | project.open | 12.3 | store hợp lệ → summary; ghi ngoài cổng → E6000; user_version cũ → E6003 | Chưa (cần WI-002) | — | — |
+| PROJECT-02 | project.open | 12.3 | store hợp lệ → summary; ghi ngoài cổng → E6000; user_version cũ → E6003 | Chưa (WI-002 đã xong, sẵn sàng làm) | — | — |
 | PROJECT-08 | project.status | 12.3 | số liệu khớp ledger | Chưa | — | — |
 | PROJECT-09 | project.preferences | 12.3 | D8: ghi/đọc preferences.yaml | Chưa | — | — |
 | MEMORY-* | memory.progress, memory.summarize_session | 12.6 | theo MEM-11 | Chưa (cần WI-007) | — | — |

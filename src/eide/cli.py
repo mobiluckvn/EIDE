@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from eide import __version__
-from eide_core import tools
+from eide_core import store, tools
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.paths import project_dir_default, spec_dir, user_log
@@ -64,6 +64,28 @@ def cmd_doctor(a) -> int:
     if missing:
         print(f"Thiếu {missing} công cụ bắt buộc — xem docs/PLATFORM.md và scripts/setup-mac.sh")
         return 1
+    return 0
+
+
+def cmd_migrate(a) -> int:
+    """`eide migrate` — DDD-14 §5. Đưa store.sqlite của dự án lên phiên bản mới nhất."""
+    project = a.project or Path.cwd()
+    db = store.store_path(project)
+    if not (Path(project) / ".eide").is_dir():
+        print(f"Không thấy .eide/ trong {project} — đây có phải thư mục dự án không?", file=sys.stderr)
+        return 2
+    led = Ledger(Path(project) / ".eide" / "store" / "ledger.jsonl")
+    kq = store.migrate(db, ledger=led, actor="human")
+    if not kq["applied"]:
+        print(f"store đã ở user_version={kq['to_version']} — không có migration nào còn thiếu")
+        return 0
+    for m in kq["applied"]:
+        print(f"  ✓ {m['name']} → user_version={m['version']}")
+    if kq["backup"]:
+        print(f"sao lưu: {kq['backup']}")
+    print(f"{db} · user_version {kq['from_version']} → {kq['to_version']}")
+    # index.sqlite là cơ sở dữ liệu riêng, dựng lại được từ nguồn (§5 migration 0003).
+    store.open_index(store.index_path(project)).close()
     return 0
 
 
@@ -176,6 +198,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-p", "--project", type=Path, required=True)
     p.add_argument("--board")
     p.set_defaults(fn=cmd_policy_set)
+
+    p = sub.add_parser("migrate", help="di trú store.sqlite của dự án (DDD-14 §5)")
+    p.add_argument("-p", "--project", type=Path)
+    p.set_defaults(fn=cmd_migrate)
 
     p = sub.add_parser("spec", help="trạng thái hiện thực so với spec")
     p.add_argument("--ns")
