@@ -66,6 +66,7 @@ phải trả giá.
 | WI-253 | TC hợp đồng sinh tự động cho 238 năng lực | Nay khả thi: `validate_specs.py` đã có, cần thêm sinh test từ `input_schema`/`errors` |
 | — | Duyệt 14 bản nháp trong `docs/sync/`, sinh lại tài liệu lên v1.3 | `scripts/dong_bo_tai_lieu.py` → duyệt → `scripts/sinh_tai_lieu.sh <ten>` |
 | **WI-257** | **Người:** ký danh sách trắng nguồn/gói/board lab | **Chặn**: PolicyGate đang chạy bằng `defaults.yaml` tạm (DEV-001), nên G-SRC/G-PKG mới là giả định |
+| **WI-259** | **Hoãn sang M5:** ISA rv32imac, xtensa-esp32, pic16/18 + schema manifest + TC-48 | **DEV-055.** Chủ sản phẩm quyết 07/09/2026 gộp về một mốc. ⚠️ Trong gói này có một món **nợ M0 chứ không phải việc tương lai**: `avr8.yaml` đã nằm trong kho từ Sprint 1 nhưng **không test nào chạm tới** — sai cú pháp hay thiếu khóa đều không ai báo. Cùng loại hỏng im lặng với DEV-052/053. Việc (1) của gói M5 (schema + nạp mọi tệp trong `docs/spec/isa/`) đóng luôn nợ này |
 | **WI-258** | **Người:** XÁC NHẬN đỏ PTIT chính thức + ngôn ngữ lược đồ GEditor | Không còn chặn: dùng `#B8121F` theo UXD-13 §7 (tài liệu tự ghi "gần đúng, xác nhận với bộ nhận diện chính thức"). Đổi một chỗ ở `uxd.js` là cả mockup lẫn Swift theo |
 
 ## Định nghĩa "xong" của sprint
