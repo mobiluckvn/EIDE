@@ -4,7 +4,12 @@ const m = meta('EIDE-SDD-04', 'Thiết kế chi tiết', 'THIẾT KẾ CHI TIẾ
   'Bản vẽ thi công của EIDE (Embedded IDE): cây thư mục, schema dữ liệu, giao diện mô-đun, hợp đồng MCP, CLI · theo IEEE 1016',
   [['Tài liệu trước', 'EIDE-SAD-03, EIDE-APD-08, EIDE-DPS-09, Danh mục năng lực'], ['Tài liệu kế tiếp', 'EIDE-STP-05']],
   [['1.0', '05/09/2026', 'Vũ Trí Công', 'Phát hành lần đầu (HKW-SDD-04)']],
-  'Thêm §4.0 hợp đồng năng lực và Capability Registry/Router; §4.6 Orchestrator; §4.7 PolicyGate/Undo; §4.8 Discovery; §4.9 Diagram; §4.10 Doc; §4.11 ReqArch; §4.12 View/RAG; bảng SQLite mới; autonomy.yaml, preferences.yaml, capabilities/*.yaml; CLI eide "<lệnh>"; JSON-RPC chat/view/diagram; cây thư mục đổi tên eide');
+  'Thêm §4.0 hợp đồng năng lực và Capability Registry/Router; §4.6 Orchestrator; §4.7 PolicyGate/Undo; §4.8 Discovery; §4.9 Diagram; §4.10 Doc; §4.11 ReqArch; §4.12 View/RAG; bảng SQLite mới; autonomy.yaml, preferences.yaml, capabilities/*.yaml; CLI eide "<lệnh>"; JSON-RPC chat/view/diagram; cây thư mục đổi tên eide',
+  [['1.3', '07/09/2026', 'Vũ Trí Công',
+    '§6 models.yaml: thêm `aliases` (bí danh trong `roles` → mã model THẬT của nhà cung cấp) và '
+    + '`pricing` (USD/triệu token). Thiếu `aliases` thì `candidates` là những cái tên không gọi '
+    + 'được API nào; thiếu `pricing` thì `policy.daily_budget_usd` không cưỡng chế được và trường '
+    + '`cost_usd` của sự kiện `model.call` luôn bằng 0 (DEV-015). Đường dẫn đổi `.hkw/` → `.eide/`.']]);
 const c = [];
 c.push(H1('1. Giới thiệu'));
 c.push(P('Tài liệu mô tả thiết kế ở mức có thể lập trình ngay theo IEEE 1016 [6]: cấu trúc kho mã, schema dữ liệu (JSON Schema 2020-12 [24] và bảng SQLite), giao diện Python của từng mô-đun, hợp đồng tool MCP, hooks, cấu hình và CLI. Mã ví dụ là Python 3.11 với pydantic v2; chữ ký hàm là hợp đồng, thân hàm do lập trình viên (hoặc EAA-U/Claude) hiện thực theo STP.'));
@@ -301,8 +306,15 @@ c.push(T([2300, 3400, 3600], ['Tool', 'Đầu vào', 'Đầu ra / ghi chú'], [
 c.push(SP());
 c.push(P('Schema của mọi tool tuân theo mẫu số chung (object/string/number/integer/boolean/array/enum; sâu ≤ 3; không anyOf/$ref) để cùng một định nghĩa dùng được cho MCP và cho ba adapter LLM [19]. Tool nặng trả `{job_id}` và có `job.status`. Từ v1.1, tool MCP được sinh từ khai báo năng lực (input/output schema) — không viết tay; giới hạn ≤ 20 tool/phiên đạt bằng ba tool chung caps.* cộng các tool thường dùng.'));
 c.push(H1('6. Tệp cấu hình'));
+c.push(P('`models.yaml` cần **hai phần** mà bản v1.2 chưa nêu, và thiếu phần nào thì một cơ chế cụ thể ngừng hoạt động. `aliases` ánh xạ bí danh trong `roles` (`gemini-flash`, `claude-opus`) sang mã model thật của nhà cung cấp — không có nó, `candidates` là những cái tên không gọi được API nào. `pricing` cho giá theo triệu token — không có nó, `policy.daily_budget_usd` không cưỡng chế được và trường `cost_usd` của sự kiện `model.call` (API-15 §7) luôn bằng 0, tức mọi báo cáo chi phí đều bằng không. Xem DEVIATIONS DEV-015.'));
 c.push(...CODE([
-  '# .hkw/models.yaml',
+  '# .eide/models.yaml',
+  'aliases:                       # bí danh → mã model THẬT của nhà cung cấp; không có bảng này',
+  '  gemini-flash: gemini-3.8-flash          # thì "gemini-flash" không gọi được API nào',
+  '  gemini-pro:   gemini-3.1-pro-preview',
+  '  claude-haiku: claude-haiku-4-5-20251001',
+  '  claude-sonnet: claude-sonnet-5',
+  '  claude-opus:  claude-opus-5',
   'roles:',
   '  librarian: {candidates: [gemini-flash, local/qwen], temperature: 0}',
   '  cartographer: {candidates: [claude-sonnet, gemini-pro], inputs: [image]}',
@@ -314,6 +326,9 @@ c.push(...CODE([
   '  architect: {candidates: [claude-opus, gemini-pro]}                                          # v1.1: req/arch/adr',
   '  writer: {candidates: [claude-sonnet, gemini-pro]}                                           # v1.1: doc/diagram',
   'policy: {daily_budget_usd: 5, offline_mode: false, fallback_on: [rate_limit, timeout, refusal]}',
+  'pricing:                       # USD / 1 triệu token; thiếu bảng này thì daily_budget_usd',
+  '  gemini-3.8-flash: {in: 0.30, out: 2.50}      # không cưỡng chế được và model.call.cost_usd',
+  '  claude-sonnet-5:  {in: 3.00, out: 15.00}     # luôn bằng 0',
   '',
   '# .eide/autonomy.yaml (v1.1, theo APD-08)',
   'autonomy: A3',

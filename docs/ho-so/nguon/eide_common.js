@@ -14,12 +14,23 @@ const NS_VI = {
 const DOCSET = 'Nền: EIDE-PDA-00 · URD-01 · SRS-02 · SAD-03 · SDD-04 · STP-05 · BPD-06 · KAD-07 · APD-08 · DPS-09. Bổ sung v1.2: CXD-10 · MEM-11 · CDS-12 (6 tập) · UXD-13 · DDD-14 · API-15 · PRS-16 · POL-17 · TGT-19 · SIM-20 · BEN-21 · PKG-22 · GPI-23 · SEC-25 · DEP-26 · CON-28. Excel: Danh mục năng lực v1.2 · Use case chi tiết v1.2 (UCD-24) · Kế hoạch backlog (PLN-27) · Rà soát đủ điều kiện phát triển';
 const H12 = 'Bổ sung nhóm năng lực gốc tool.* (tác tử tự viết công cụ Python, kiểm thử trong sandbox, đăng ký thành năng lực tạm user.* và thăng cấp qua Pack) — 238 năng lực / 27 nhóm; phát hành 19 tài liệu bổ sung mức 3 (CXD, MEM, CDS ×6, UXD, DDD, API, PRS, POL, TGT, SIM, BEN, PKG, GPI, SEC, DEP, CON, PLN); cổng G-TOOL trong chính sách; 11 use case mới (nhóm I/J/K), sơ đồ tuần tự và ánh xạ bước ↔ năng lực; đồng bộ toàn bộ hồ sơ với caps.json/cds.json (tài liệu = mã)';
 const H11 = 'Đổi mã HKW→EIDE; tích hợp Danh mục năng lực v1.1 (228 năng lực / 26 nhóm) làm xương sống yêu cầu–thiết kế; áp dụng EIDE-APD-08 (bản đầu: một PC có Internet đầy đủ, lệnh ngôn ngữ tự nhiên là giao diện chính, mức tự chủ A3 mặc định, "làm rồi báo cáo"); bỏ chế độ cục bộ/không mạng khỏi mặc định; bổ sung năng lực phân tích yêu cầu, thiết kế kiến trúc, vẽ lược đồ, viết tài liệu, bản đồ tri thức/RAG, dò board và kết nối';
-function meta(code, short, title, subtitle, extraAttrs, history10, extra11) {
+// `lichSu13`: các hàng lịch sử THÊM SAU 1.2, dùng khi đồng bộ tài liệu (DEV-29 §4).
+//
+// Thiếu tham số này thì 12 tài liệu gốc dùng `meta()` không nâng phiên bản được: `version` viết
+// cứng '1.2' và ba hàng 1.0/1.1/1.2 cũng viết cứng. Chèn hàng mới vào `history10` — chỗ duy
+// nhất trông có vẻ nhận được — cho ra "1.0 → 1.1 → 1.1 → 1.2", tức một hàng 1.1 thứ hai nằm
+// TRƯỚC hàng 1.1 gốc. Và tiêu chí DEV-29 §8.3 ("sau mỗi đồng bộ, phiên bản tài liệu tăng")
+// không đạt được cho nhóm ấy, đúng thứ DEV-018 dựng vòng đồng bộ để tránh.
+function meta(code, short, title, subtitle, extraAttrs, history10, extra11, lichSu13) {
+  const them = Array.isArray(lichSu13) && lichSu13.length ? lichSu13 : null;
+  const cuoi = them ? them[them.length - 1] : null;
   return {
     kicker: 'HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG · ĐỀ ÁN TỐT NGHIỆP THẠC SĨ KỸ THUẬT ĐIỆN TỬ · EIDE v1.2', footer: 'EIDE — Bộ hồ sơ thiết kế v1.2',
-    code, short, version: '1.2', title, subtitle,
+    code, short, version: cuoi ? cuoi[0] : '1.2', title, subtitle,
     attrs: [
-      ['Mã tài liệu', `${code} (trước đây ${code.replace('EIDE', 'HKW')})`], ['Phiên bản', '1.2 — đồng bộ với 19 tài liệu bổ sung và năng lực gốc tool.*'], ['Ngày lập', '05/09/2026'],
+      ['Mã tài liệu', `${code} (trước đây ${code.replace('EIDE', 'HKW')})`],
+      ['Phiên bản', cuoi ? `${cuoi[0]} — ${cuoi[3]}` : '1.2 — đồng bộ với 19 tài liệu bổ sung và năng lực gốc tool.*'],
+      ['Ngày lập', '05/09/2026'],
       ['Người lập', 'Vũ Trí Công — học viên cao học (hỗ trợ soạn thảo: Claude)'],
       ['Người hướng dẫn', 'TS. Nguyễn Trung Hiếu'],
       ['Khuôn khổ', 'Đề án tốt nghiệp Thạc sĩ ngành Kỹ thuật Điện tử — Học viện Công nghệ Bưu chính Viễn thông (PTIT)'],
@@ -31,6 +42,7 @@ function meta(code, short, title, subtitle, extraAttrs, history10, extra11) {
       ...(history10 || [['1.0', '05/09/2026', 'Vũ Trí Công', 'Phát hành lần đầu (mã HKW)']]),
       ['1.1', '05/09/2026', 'Vũ Trí Công', H11 + (extra11 ? '. ' + extra11 : '')],
       ['1.2', '05/09/2026', 'Vũ Trí Công', H12],
+      ...(them || []),
     ],
   };
 }

@@ -4,7 +4,14 @@ const { metaNew, refParas } = require('./eide_common');
 const m = metaNew('EIDE-PRS-16', 'Prompt, vai trò LLM và skill', 'PROMPT, VAI TRÒ MÔ HÌNH NGÔN NGỮ VÀ SKILL (PRS)',
   'Nội dung prompt hệ thống, schema đầu ra, ví dụ, công cụ và mô hình cho 9 vai trò; định dạng skill K5; chuỗi mẫu điều phối; prompt phủ định; bộ 50 câu lệnh có nhãn; quy trình đánh giá và thay đổi prompt',
   [['Tài liệu trước', 'EIDE-DPS-09, EIDE-CXD-10, EIDE-MEM-11, EIDE-SDD-04 §6'], ['Tệp kèm', 'prompts/<role>.md (9 tệp), prompts/negative.md, skills/TEMPLATE.md, chains/*.yaml, tests/dialog/commands.jsonl'], ['Dùng khi', 'Hiện thực roles.yaml/models.yaml, AgentRuntime, Orchestrator; benchmark khi đổi mô hình']],
-  'Phát hành lần đầu — bổ sung lĩnh vực L30');
+  'Phát hành lần đầu — bổ sung lĩnh vực L30',
+  [['1.1', '07/09/2026', 'Vũ Trí Công',
+    '§7: cột `is_big` của bộ 50 câu nay có PHÉP THỬ ghi ra được thay vì gán tay từng dòng — lệnh '
+    + 'gọi toàn bộ một chuỗi mẫu DPS-09 §4.4 là true, lệnh gọi một nút của chuỗi là false. Ba câu '
+    + '45/46/50 giữ nguyên nhãn gốc `is_big=false`: chúng mang `intent=big_command` không phải vì '
+    + 'nhiều bước mà vì nhóm registry/bench/measure chưa có ý định riêng (DEV-035). Đo với Gemini '
+    + 'thật 07/09/2026: intent 50/50, is_big 48/50; hai câu còn lại là #13 (fixture có thể sai) và '
+    + '#34 (mô hình trả lời khác nhau cho cùng một lệnh ở tiếng Việt và tiếng Anh).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc viết prompt trong EIDE'));
 c.push(P('Prompt là bộ nhớ thủ tục (M5, MEM-11) — có phiên bản, có test, có benchmark. Sáu quy tắc: (1) tiếng Việt, câu ngắn, mệnh lệnh; định danh kỹ thuật giữ nguyên; (2) mọi đầu ra có cấu trúc theo schema mẫu số chung (object/string/number/integer/boolean/array/enum, sâu ≤ 3, không anyOf/$ref) để dùng chung cho Claude, Gemini, OpenAI-compatible [19]; (3) prompt hệ thống ≤ 400 token — tri thức vào các lớp C2–C6 (CXD-10), không nhét vào prompt; (4) mỗi vai trò nêu rõ *không được làm gì* trước *phải làm gì* (mô hình tuân thủ cấm tốt hơn khi đứng đầu); (5) trích dẫn là bắt buộc: mọi số liệu phần cứng phải kèm fact id có trong C4, nếu không có thì nói "không có trong hộ chiếu"; (6) prompt phủ định từ sổ lỗi được nối vào cuối C1, tối đa 5 dòng, mỗi dòng ≤ 40 token.'));
@@ -185,12 +192,12 @@ const CMDS = [
  ['Tải datasheet từ trang này (link)', 'knowledge.build', 'path=<url>', 'false'],
  ['Duyệt hết fact chờ đi', 'policy.set', 'approve=pending_facts', 'false'],
  ['So sánh datasheet với errata về I2C', 'view.ask', 'question=compare I2C', 'false'],
- ['Đóng gói hộ chiếu này lên registry lớp', 'big_command', 'publish=internal', 'true'],
- ['Chạy benchmark với Gemini', 'big_command', 'bench; model=gemini', 'true'],
+ ['Đóng gói hộ chiếu này lên registry lớp', 'big_command', 'publish=internal', 'false'],
+ ['Chạy benchmark với Gemini', 'big_command', 'bench; model=gemini', 'false'],
  ['Xóa dự án test-1', 'project.delete', 'project_name=test-1 (R4 → hỏi, POL-17 GEN-03)', 'false'],
  ['abc xyz', 'unknown', '—; confidence < 0,6', 'false'],
  ['Cấu hình I2C1 400 kHz trên PB6/PB7', 'code.feature', 'mentions=I2C1,PB6,PB7', 'false'],
- ['Đo dòng tiêu thụ khi ngủ', 'big_command', 'measure=current; mode=sleep', 'true'],
+ ['Đo dòng tiêu thụ khi ngủ', 'big_command', 'measure=current; mode=sleep', 'false'],
 ];
 c.push(T([600, 4000, 1700, 2500, 500], ['#', 'Câu lệnh', 'intent', 'slots / mentions', 'is_big'], CMDS.map((r, i) => [String(i + 1), ...r]), { size: 19 }));
 fs.writeFileSync('tests_dialog_commands.jsonl', CMDS.map((r, i) => JSON.stringify({ id: i + 1, text: r[0], intent: r[1], slots: r[2], is_big: r[3] === 'true' })).join('\n') + '\n');

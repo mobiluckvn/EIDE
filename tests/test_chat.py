@@ -382,14 +382,25 @@ def test_orchestrator_confidence_thap_thi_hoi_lai_khong_lam(tmp_path, workspace)
 def test_tc59_bo_50_cau_lenh_that(tmp_path):
     """TC-59: intent đúng ≥ 95%, is_big đúng 100%, câu 48 confidence < 0,6 (DPS-09 §7).
 
-    HAI ĐIỀU PHẢI NÓI RÕ VỀ CON SỐ NÀY.
+    BA ĐIỀU PHẢI NÓI RÕ VỀ CON SỐ NÀY.
 
-    (1) Ngưỡng `is_big` 100% KHÔNG đạt được với fixture hiện tại, vì cột `is_big` của nó tự
-        mâu thuẫn: câu 1 và 34 (cùng một lệnh, Việt và Anh) gán `true`, còn câu 32 và 33 —
-        cũng `project.create` — gán `false`, không có quy tắc phân biệt nào được nêu ở đâu.
-        Xem DEVIATIONS DEV-022. Ở đây chốt sàn theo số ĐO ĐƯỢC, không hạ ngưỡng của hợp đồng.
+    (1) Ngưỡng `is_big` 100% chưa đạt: đo 07/09/2026 được 48/50, và hai câu còn lại thuộc HAI
+        loại khác hẳn nhau — trộn chúng vào một con số là mất thông tin.
 
-    (2) Các mô tả ý định trong `dialog/intents.md` (lớp C0) được viết VÀ TINH CHỈNH dựa trên
+          #13 "Thêm tính năng đọc MPU6050 qua I2C1" — mô hình trả `true`, fixture ghi `false`.
+              "Thêm tính năng" đúng là tên chuỗi mẫu Z-05 (DPS-09 §4.4), nên ở đây khả năng cao
+              là FIXTURE sai chứ không phải mô hình. Chờ chủ sản phẩm gán lại (DEV-022).
+          #34 "Create a new project for a balancing robot" — mô hình trả `false`, trong khi
+              câu 1 là ĐÚNG LỆNH ẤY bằng tiếng Việt và nó trả `true`. Cùng một lệnh, hai ngôn
+              ngữ, hai câu trả lời: đây là điểm yếu của MÔ HÌNH, không phải của fixture. DPS-09
+              có trường `lang` vì sản phẩm nhận cả hai thứ tiếng, nên đây là lỗi thật.
+
+    (2) Cột `is_big` từng bị chính tôi sửa nhầm chiều: ba câu 45/46/50 mang `intent=big_command`
+        nhưng `is_big=false`, tôi đọc thành mâu thuẫn và đổi `is_big` sang `true`. Sai — mâu
+        thuẫn nằm ở cột `intent`, vì `big_command` còn gánh vai sọt chứa cho 14/27 nhóm năng lực
+        chưa có ý định riêng (DEV-035). Đã trả về nhãn gốc 07/09/2026.
+
+    (3) Các mô tả ý định trong `dialog/intents.md` (lớp C0) được viết VÀ TINH CHỈNH dựa trên
         chính 50 câu này. Nên 100% intent là số REGRESSION, không phải ước lượng khả năng khái
         quát. Muốn có số trung thực thì cần một bộ câu giữ riêng chưa từng dùng để chỉnh —
         DEV-022 đề xuất đúng việc đó cho v1.3.
@@ -423,6 +434,7 @@ def test_tc59_bo_50_cau_lenh_that(tmp_path):
         print("  ✗", s)
     print(f"chi phí: {gw.da_tieu_hom_nay():.4f} USD")
     assert ty_le >= 0.95, f"intent đúng {ty_le:.0%} < 95%"
-    # Ngưỡng hợp đồng là 100%; sàn 0,94 là số đo được sau khi cấp C0, và nó tồn tại để bắt
-    # TỤT LÙI chứ không phải để hợp thức hóa. Xóa dòng này khi fixture được gán lại (DEV-022).
-    assert big_dung / len(ds) >= 0.94, f"is_big đúng {big_dung}/{len(ds)} — tụt so với mức đã đo"
+    # Ngưỡng hợp đồng là 100%; sàn 48/50 là số ĐO ĐƯỢC ngày 07/09/2026 sau khi trả nhãn về
+    # bản gốc và viết quy tắc suy `is_big` vào lớp C0. Sàn tồn tại để bắt TỤT LÙI, không phải
+    # để hợp thức hóa — nâng nó lên 50/50 khi DEV-022 và DEV-035 được giải quyết.
+    assert big_dung >= 48, f"is_big đúng {big_dung}/{len(ds)} — tụt so với mức đã đo (48/50)"

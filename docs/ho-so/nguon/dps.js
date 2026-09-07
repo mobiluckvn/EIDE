@@ -7,8 +7,19 @@ const m = meta('EIDE-DPS-09', 'Chính sách hội thoại', 'CHÍNH SÁCH HỘI 
   [['Tài liệu trước', 'EIDE-APD-08 (chính sách tự chủ), Danh mục năng lực v1.1, Use case chi tiết (sheet 9 kịch bản hội thoại)'], ['Dùng khi', 'Hiện thực eide.orchestrator; viết prompt vai trò intent; thiết kế ChatPanel; viết TC-59…TC-64; viết Chương lý thuyết về tương tác người–tác tử']],
   [['1.0', '05/09/2026', 'Vũ Trí Công', 'Phát hành lần đầu, tách từ phân tích "đầu vào chưa có gì" (sheet 9 Use case) và bốn trách nhiệm của tác tử khi làm việc với kỹ sư']],
   'Phát hành cùng bộ v1.1');
-m.attrs[1] = ['Phiên bản', '1.0 (phát hành cùng bộ hồ sơ v1.1)'];
-m.history = [m.history[0]];
+// DPS-09 ra đời cùng bộ v1.1 nên phát hành ở 1.0, không mang ba hàng lịch sử mặc định của
+// `meta()`; hai dòng dưới cắt chúng đi. Hàng 1.1 thêm ở đây khi đồng bộ tài liệu.
+const LICH_SU = [['1.1', '07/09/2026', 'Vũ Trí Công',
+  '§4.1: thêm ý định `project.delete` — POL-17 GEN-03 chặn `action.is_delete_project` như hành '
+  + 'động R4, nhưng không có ý định ấy thì "xóa dự án test-1" buộc rơi vào `project.create`, tức '
+  + 'tầng hiểu lệnh đọc "xóa" thành "tạo" và cổng không bao giờ được hỏi tới (DEV-021). Mô tả lớp '
+  + 'C0 của vai trò `intent` kèm số đo: thiếu C0 thì độ đúng ý định 76%, có C0 đầy đủ 100%, bản '
+  + 'thiếu bảng phân biệt 82%. Nói rõ `big_command` KHÔNG kéo theo `is_big=true` vì nhãn ấy còn '
+  + 'gánh vai sọt chứa cho 14/27 nhóm chưa có ý định riêng (DEV-035), và ghi phép thử suy `is_big`: '
+  + 'toàn bộ một chuỗi mẫu §4.4 → true, một nút của chuỗi → false (DEV-022).']];
+m.history = [m.history[0], ...LICH_SU];
+m.version = LICH_SU[LICH_SU.length - 1][0];
+m.attrs[1] = ['Phiên bản', `${m.version} — ${LICH_SU[LICH_SU.length - 1][3].slice(0, 90)}…`];
 const c = [];
 c.push(H1('1. Vấn đề và phạm vi'));
 c.push(P('Từ v1.1, kỹ sư làm việc với EIDE chủ yếu bằng lệnh ngôn ngữ tự nhiên: "tạo dự án robot hai bánh tự cân bằng", "làm hết đi" (sau khi thả một tệp zip), "nạp lên board", "vẽ sơ đồ kiến trúc rồi viết SRS". Các chức năng phần mềm được khai báo thành năng lực có hợp đồng [25]; câu hỏi còn lại là **tác tử hiểu lệnh, quyết định gọi năng lực nào, với tham số gì, và hỏi người khi nào**. Tài liệu này đặc tả tầng đó — gọi là *tầng hiểu lệnh* (Orchestrator) — tách biệt với phần *sinh* (kế hoạch, mã, chẩn đoán, tài liệu) do các vai trò LLM đảm nhiệm, và tách biệt với *chính sách tự chủ* (APD-08 [26]) quyết định ai duyệt ở mỗi cổng rủi ro. Ba tầng phối hợp: DPS quyết định *hỏi vì thiếu thông tin*, APD quyết định *hỏi vì rủi ro*, vai trò sinh tạo ra nội dung.'));
@@ -81,7 +92,7 @@ const INTENT_MO_TA = [
   ['discover.scan',   'dò cổng, probe, chip đang cắm'],
   ['policy.stop',     'dừng khẩn, dừng mọi việc đang chạy (kể cả "dừng tự chủ")'],
   ['policy.set',      'đổi mức tự chủ, DUYỆT/từ chối mục chờ, HOÀN TÁC việc đã làm'],
-  ['big_command',     'lệnh gồm NHIỀU bước thuộc nhiều nhóm: "làm hết", "bộ tài liệu đầy đủ", "đóng gói lên registry", "chạy benchmark", "đo dòng tiêu thụ"'],
+  ['big_command',     'lệnh gồm NHIỀU bước thuộc nhiều nhóm: "làm hết đi", "dựng tri thức rồi viết firmware", "bộ tài liệu đầy đủ". CŨNG dùng tạm cho lệnh MỘT bước thuộc nhóm chưa có ý định riêng (registry, bench, measure, passport, kg, tool, search…) — khi ấy `is_big` vẫn là false'],
   ['unknown',         'không hiểu, hoặc mơ hồ tới mức đoán sẽ sai'],
 ];
 // Hai cặp hay lẫn, nêu thẳng thay vì để mô hình suy:
@@ -90,11 +101,23 @@ const INTENT_PHAN_BIET = [
   '`doc.write` là một tài liệu; cả BỘ tài liệu là `big_command`.',
   '`arch.design` gồm kiểm xung đột chân và ngân sách tài nguyên, không phải `debug.ask`.',
   '`policy.set` gồm cả duyệt hàng đợi và hoàn tác, không phải `knowledge.build`.',
+  '`big_command` KHÔNG kéo theo `is_big = true`: "đo dòng tiêu thụ khi ngủ" là một bước (measure.power) nhưng nhóm `measure` chưa có ý định riêng nên vẫn mang nhãn `big_command`.',
+];
+// `is_big` suy ra từ chuỗi mẫu §4.4, không gán tay — xem PRS-16 §7 và DEVIATIONS DEV-022.
+const IS_BIG_QUY_TAC = [
+  'Phép thử: lệnh gọi TOÀN BỘ một chuỗi mẫu §4.4, hay chỉ MỘT NÚT của chuỗi ấy?',
+  '  toàn bộ chuỗi → true · một nút → false.',
+  'Cùng một nhóm năng lực có thể rơi vào cả hai phía: "viết SRS" là một nút (`doc.write`, false),',
+  '"viết bộ tài liệu đầy đủ" là cả chuỗi P7 (true); "nạp lên board" là một nút (false),',
+  '"dò board rồi nạp" là cả chuỗi Z-10 (true).',
+  'Năm chuỗi mẫu: Z-01 dự án mới từ ý tưởng · Z-07 dự án mới từ tài liệu/zip · Z-05 thêm tính năng · P7 bộ tài liệu · Z-10 dò board rồi nạp.',
+  '`big_command` KHÔNG kéo theo true: nhãn ấy còn dùng tạm cho lệnh một bước thuộc nhóm chưa có ý định riêng.',
 ];
 fs.writeFileSync('dialog/intents.md',
   '# C0 — danh sách ý định cho vai trò `intent` (sinh từ DPS-09 §4.1)\n\n'
   + INTENT_MO_TA.map(([k, v]) => `- \`${k}\` — ${v}`).join('\n')
-  + '\n\nPhân biệt:\n' + INTENT_PHAN_BIET.map(s => `- ${s}`).join('\n') + '\n');
+  + '\n\nPhân biệt:\n' + INTENT_PHAN_BIET.map(s => `- ${s}`).join('\n')
+  + '\n\nis_big:\n' + IS_BIG_QUY_TAC.map(s => `- ${s}`).join('\n') + '\n');
 
 fs.writeFileSync('dialog/intent.schema.json', JSON.stringify(INTENT_SCHEMA, null, 2) + '\n');
 c.push(...CODE([
@@ -109,6 +132,12 @@ c.push(...CODE([
 ]));
 c.push(SP());
 c.push(P('Mô hình hiểu lệnh là mô hình rẻ, temperature 0 (vai trò `intent` trong models.yaml), được cung cấp: danh sách ý định, mô tả ngắn của ≤ 30 năng lực liên quan nhất (chọn theo từ khóa), trạng thái dự án tóm tắt, và 2 lượt gần nhất (KAD §6.6b). Confidence < 0,6 ⇒ coi là `unknown` và hỏi lại bằng một câu diễn giải ("Anh muốn tôi tạo dự án mới hay mở dự án robot-ctrl?").'));
+c.push(SP());
+c.push(P('**Lớp C0 của vai trò `intent`.** "Danh sách ý định" ở trên là một lớp ngữ cảnh cụ thể, không phải một lời khuyên: nó nằm ở `dialog/intents.md`, sinh từ chính §4.1 này, gồm ba phần — mô tả một dòng cho từng ý định, bảng phân biệt các cặp hay lẫn, và quy tắc suy `is_big`. Phải cấp CẢ danh sách ý định lẫn mô tả năng lực, không phải một trong hai: đo trên bộ 50 câu §7 của PRS-16, thiếu hẳn C0 thì độ đúng ý định là **76%**; có C0 đầy đủ thì **96–100%**; và một bản chỉ có mô tả năng lực mà thiếu bảng phân biệt đo được **82%** — mô hình mất chính chỗ tách `view.ask` khỏi `debug.ask`. Xem DEVIATIONS DEV-021.'));
+c.push(SP());
+c.push(P('Enum có `project.delete` vì POL-17 quy tắc `GEN-03` chặn `action.is_delete_project` như một hành động R4. Không có ý định ấy thì "xóa dự án test-1" buộc phải rơi vào `project.create`, tức tầng hiểu lệnh đọc "xóa" thành "tạo" — và cổng sinh ra để chặn việc xóa sẽ không bao giờ được hỏi tới, vì hành động tới nơi đã mang tên khác.'));
+c.push(SP());
+c.push(P('Mười bốn trong hai mươi bảy nhóm năng lực chưa có ý định riêng (`registry`, `bench`, `measure`, `passport`, `kg`, `tool`, `search`, `archive`, `extract`, `board`, `plan`, `report`, `chat`, `memory`). Lệnh một bước thuộc những nhóm ấy hiện mang nhãn `big_command` vì không còn chỗ nào khác — nhưng `is_big` của chúng vẫn là `false`, và hai thứ ấy phải được đọc tách nhau. Xem DEVIATIONS DEV-035.'));
 c.push(H2('4.2. Đối chiếu trạng thái (D1)'));
 c.push(T([2200, 3600, 3500], ['Đối tượng', 'Cách tra', 'Kết quả đưa vào Grounded'], [
   ['Dự án', 'Tên chuẩn hóa (bỏ dấu, tách từ) so với workspace; khớp gần đúng theo từ khóa (robot, cân bằng, balance); thời gian mở gần nhất', 'exists[] {name, created, features passing/total, board}; candidates[] tương tự'],

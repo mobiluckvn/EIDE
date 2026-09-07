@@ -71,7 +71,8 @@ const VIEC = [
         tep: 'dialog/intents.md', nguon: 'dps.js',
         dung: () => '# C0 — danh sách ý định cho vai trò `intent` (sinh từ DPS-09 §4.1)\n\n'
             + literal('dps.js', 'INTENT_MO_TA').map(([k, v]) => `- \`${k}\` — ${v}`).join('\n')
-            + '\n\nPhân biệt:\n' + literal('dps.js', 'INTENT_PHAN_BIET').map(s => `- ${s}`).join('\n') + '\n',
+            + '\n\nPhân biệt:\n' + literal('dps.js', 'INTENT_PHAN_BIET').map(s => `- ${s}`).join('\n')
+            + '\n\nis_big:\n' + literal('dps.js', 'IS_BIG_QUY_TAC').map(s => `- ${s}`).join('\n') + '\n',
     },
     {
         tep: 'ui/tokens.json', nguon: 'uxd.js',
