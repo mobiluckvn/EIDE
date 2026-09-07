@@ -39,7 +39,25 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | MEMORY-01/02 | `memory.compose`, `memory.compress` | 12.6 | **Xong**. MEMORY-03 `retrieve` đi cùng WI-012 RagIndex |
 | KG-* | `kg.build`, `kg.query`, `kg.review_facts` | 12.2 | **Gỡ nốt DEV-008** (bước 3 của `project.open`) |
 | REQ-01…08 | `elicit`, `classify`, `ground_hw`, `detect_conflict`, `prioritize`, `trace_matrix`, `acceptance`, `change_impact` | 12.1 | **Xong** — 34 test, cả 8 (5 ở mốc M1 + 3 M2 làm luôn vì chung bảng `requirement`). TC-67/TC-68 xanh. Đã kiểm cả arm64 lẫn x86_64 |
+| ARCH-01…11 | `style_select`, `decompose`, `map_hw`, `memory_budget`, `timing_budget`, `interface_spec`, `state_machine`, `adr`, `review`, `compare`, `to_plan` | 12.1 | **Xong** — 60 test; TC-69/TC-70 xanh. Kèm migration `0004_m2_engineering_hw` (module, hw_map, adr, doc_artifact, discovery, measurement, `code_unit.module_id`) |
 | SEARCH/ARCHIVE/EXTRACT | `search.fetch`, `archive.explore`, `extract.pdf` | 12.2 | Cổng G-SRC và G-FACT đã có quy tắc nhưng chưa có năng lực nào đi qua |
+
+`arch.*` — ba chỗ phần deterministic quyết định hành vi:
+
+- **Quy tắc tiền kiểm của ARCH-01 chạy TRƯỚC mô hình và thắng nó.** RAM 2 KB thì không nhét
+  được kernel RTOS, bất kể lập luận hay đến đâu. Để mô hình quyết trước rồi kiểm sau nghĩa là
+  thỉnh thoảng nó viết một lý do thuyết phục cho một phương án bất khả thi — và lý do thuyết
+  phục thì khó cãi hơn là không có lý do.
+- **`timing_budget` nói "chưa CHỨNG MINH được là lập lịch được", không nói "không lập lịch
+  được".** Liu–Layland `U ≤ n(2^(1/n)−1)` là điều kiện đủ, không phải điều kiện cần. Báo sai một
+  kiến trúc là bất khả thi sẽ đẩy người ta đi làm lại một thiết kế vốn đúng.
+- **Chưa biết ≠ 0.** `ram_bytes = None` và `ok = None` là câu trả lời thứ ba, có thật: chưa nạp
+  hộ chiếu thì `memory_budget` không được nói "đạt" (chưa so với gì cả) mà cũng không được chặn.
+
+Migration `0004_m2_engineering_hw` làm lộ hai chỗ khác, cả hai đều là test cũ khoá đúng trạng
+thái M1 — đó là việc của chúng: `plan.order`/`kg.conflicts` từng dựng bảng `module` giả, và
+`kg.conflicts.resource_ready` nay là hằng số `True` vì `open_store` từ chối mọi store chưa di
+trú (xem `tests/test_kg.py::test_resource_ready_khong_con_duong_nao_ra_False`).
 
 `req.*` bám hợp đồng ở ba chỗ đáng ghi lại:
 

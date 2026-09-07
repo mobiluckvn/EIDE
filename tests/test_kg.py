@@ -188,11 +188,43 @@ def test_fact_da_bi_thay_khong_gay_mau_thuan_gia(du_an):
     assert {"f_pin", "f_cu"} not in cap
 
 
-def test_xung_dot_tai_nguyen_noi_ro_la_chua_kiem_duoc(du_an):
-    """`hw_map` là bảng mốc M2. Trả mảng rỗng mà không nói gì thì bên gọi đọc thành "đã kiểm và
-    sạch" — hai điều rất khác nhau."""
+def test_xung_dot_tai_nguyen_noi_ro_da_kiem_duoc_sau_0004(du_an):
+    """`resource_ready` phân biệt "đã kiểm và sạch" với "chưa kiểm được". Từ khi 0004 dựng
+    `hw_map` (mốc M2), nhánh đúng là `True` — mảng rỗng giờ THẬT SỰ nghĩa là không có xung đột.
+
+    Giữ khẳng định về `is True` chứ không bỏ test: trường này tồn tại để bên gọi khỏi đọc nhầm
+    hai trạng thái khác nhau, nên nó phải đổi giá trị đúng lúc bảng xuất hiện — nếu nó kẹt ở
+    `False` sau khi có bảng thì nó nói dối theo hướng ngược lại.
+    """
     r, ctx, _ = du_an
-    assert r.invoke("kg.conflicts", {}, ctx).result["resource_ready"] is False
+    out = r.invoke("kg.conflicts", {}, ctx).result
+    assert out["resource_ready"] is True
+    assert out["conflicts"] == [] or all("type" in x for x in out["conflicts"])
+
+
+def test_resource_ready_khong_con_duong_nao_ra_False(tmp_path, workspace):
+    """Ghi lại đúng sự thật: từ 0004, nhánh `False` KHÔNG TỚI ĐƯỢC nữa.
+
+    `open_store` từ chối mọi store có `user_version` khác bản mới nhất (E6003), nên hễ
+    `kg.conflicts` chạy được thì `hw_map` chắc chắn đã có. Trường `resource_ready` vì thế thành
+    hằng số `True`.
+
+    Viết test này thay vì lặng lẽ xóa test cũ: người đọc `output_schema` thấy mô tả "false nghĩa
+    là chưa kiểm" sẽ tưởng cần xử lý nhánh ấy, và sẽ viết mã chết. Ghi ở đây để lần sau ai đó
+    nới `open_store` cho phép mở store cũ ở chế độ chỉ đọc thì biết trường này sống lại.
+    """
+    from eide_core import store as st
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+    res = r.invoke("project.create", {"text": "kho cũ"}, Context(project_dir=workspace)).result
+    root = workspace / res["project_id"]
+    st.migrate(st.store_path(root), target=2)          # dừng ở M1: chưa có hw_map
+    ctx = Context(project_dir=root, extra={"gate": PolicyGate(), "ledger": r.ledger})
+    # E6003 bật ra từ Router trước cả handler (khi ghi decision_log), nên nó là ngoại lệ chứ
+    # không phải một run `failed` — đúng tầng: store chưa di trú là điều kiện tiên quyết của
+    # phiên làm việc, không phải một năng lực chạy hỏng.
+    with pytest.raises(EideError) as e:
+        r.invoke("kg.conflicts", {}, ctx)
+    assert e.value.code == "E6003"
 
 
 # ---------- KG-03 kg.impact

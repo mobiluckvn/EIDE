@@ -58,9 +58,8 @@ def test_chu_trinh_tra_ve_chu_khong_nem(du_an):
     cần NHÌN THẤY để gỡ, không phải một ngoại lệ chặn cả lời gọi."""
     r, ctx, root = du_an
     with store.open_store(store.store_path(root)) as c:
-        c.execute("CREATE TABLE IF NOT EXISTS module (id TEXT PRIMARY KEY, depends TEXT)")
-        c.execute("INSERT INTO module (id, depends) VALUES ('a', '[\"b\"]')")
-        c.execute("INSERT INTO module (id, depends) VALUES ('b', '[\"a\"]')")
+        c.execute("INSERT INTO module (id, name, depends) VALUES ('a', 'A', '[\"b\"]')")
+        c.execute("INSERT INTO module (id, name, depends) VALUES ('b', 'B', '[\"a\"]')")
         c.commit()
     out = r.invoke("plan.order", {"features": ["a", "b"]}, ctx).result
     assert out["order"] == []

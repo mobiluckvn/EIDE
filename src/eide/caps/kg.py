@@ -74,9 +74,10 @@ def conflicts(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: KG-02 — CDS-12.2; KAD-07 §6.5. tc: TC-13, TC-21.
 
     Hai loại xung đột theo hợp đồng: `fact` (cùng subject+predicate, khác giá trị) và `resource`
-    (một tài nguyên bị hơn một module dùng). Loại thứ hai đọc `hw_map`, bảng của mốc M2 chưa có
-    trong store — trả về rỗng chứ KHÔNG im lặng bỏ qua: `resource_ready` nói rõ điều đó, để bên
-    gọi không đọc "không có xung đột tài nguyên" thành "đã kiểm và sạch".
+    (một tài nguyên bị hơn một module dùng). Loại thứ hai đọc `hw_map` — bảng của mốc M2, dựng
+    bởi migration `0004_m2_engineering_hw`. Trên store chưa di trú tới đó, trả về rỗng chứ KHÔNG
+    im lặng bỏ qua: `resource_ready` nói rõ điều đó, để bên gọi không đọc "không có xung đột tài
+    nguyên" thành "đã kiểm và sạch".
     """
     g, _ = _do_thi(ctx)
     ra = [{"type": "fact", "nodes": [a, b], "detail": _chi_tiet_mau_thuan(ctx, a, b)}

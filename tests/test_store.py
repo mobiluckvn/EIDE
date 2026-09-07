@@ -34,7 +34,8 @@ BANG_M1 = {"acq_request", "permission", "decision_log", "capability_run", "inten
 # `session` KHÔNG ở store.sqlite: DDD-14 §2.25 ghi "Phiên làm việc (session.sqlite, không
 # commit)" — cơ sở dữ liệu riêng như rag_chunk ở index.sqlite. Xem DEVIATIONS DEV-006.
 BANG_SESSION = {"session"}
-BANG_M2_M3 = {"module", "hw_map", "adr", "doc_artifact", "discovery", "measurement", "debug_session"}
+BANG_M2 = {"module", "hw_map", "adr", "doc_artifact", "discovery", "measurement"}
+BANG_M3 = {"debug_session"}
 
 
 def tables(conn: sqlite3.Connection) -> set[str]:
@@ -52,12 +53,13 @@ def test_migrate_kho_moi_len_phien_ban_moi_nhat(tmp_path):
     db = tmp_path / "store.sqlite"
     kq = migrate(db)
     assert kq["from_version"] == 0
-    assert kq["to_version"] == LATEST_VERSION == 2
-    assert [m["name"] for m in kq["applied"]] == ["0001_m0_base", "0002_m1_policy_runtime"]
+    assert kq["to_version"] == LATEST_VERSION == 4
+    assert [m["name"] for m in kq["applied"]] == ["0001_m0_base", "0002_m1_policy_runtime",
+                                                  "0004_m2_engineering_hw"]
     with sqlite3.connect(db) as c:
-        assert tables(c) == BANG_M0 | BANG_M1
+        assert tables(c) == BANG_M0 | BANG_M1 | BANG_M2
         assert "session" not in tables(c), "session thuộc session.sqlite, không thuộc store"
-        assert current_version(c) == 2
+        assert current_version(c) == 4
 
 
 def test_migrate_chay_lai_khong_lam_gi(tmp_path):
@@ -87,8 +89,9 @@ def test_migrate_ghi_ledger_store_migrate(tmp_path):
     migrate(tmp_path / "store.sqlite", ledger=led)
     recs = [r for r in led.records() if r["kind"] == "store.migrate"]
     assert len(recs) == 1
-    assert recs[0]["data"] == {"from_version": 0, "to_version": 2,
-                               "applied": ["0001_m0_base", "0002_m1_policy_runtime"]}
+    assert recs[0]["data"] == {"from_version": 0, "to_version": 4,
+                               "applied": ["0001_m0_base", "0002_m1_policy_runtime",
+                                           "0004_m2_engineering_hw"]}
     assert led.verify() == (True, 0)
 
 
@@ -139,12 +142,27 @@ def test_fact_layer_them_o_0002(tmp_path):
 
 
 def test_code_unit_chua_co_module_id_o_m1(tmp_path):
-    """§5 xếp `code_unit.module_id` vào 0004 (M2) cùng bảng `module` mà nó tham chiếu."""
+    """§5 xếp `code_unit.module_id` vào 0004 (M2) cùng bảng `module` mà nó tham chiếu.
+
+    Dừng ở `target=2` để kiểm ĐÚNG điều §5 nói: cột và bảng ấy KHÔNG thuộc M1. Đổi test thành
+    "sau khi migrate đầy đủ thì có module_id" sẽ mất mất khẳng định về mốc — mà mốc mới là thứ
+    §5 quy định, còn việc cuối cùng cột ấy tồn tại thì test dưới đã nói rồi.
+    """
     db = tmp_path / "store.sqlite"
-    migrate(db)
+    migrate(db, target=2)
     with sqlite3.connect(db) as c:
         assert "module_id" not in columns(c, "code_unit")
         assert "module" not in tables(c)
+
+
+def test_code_unit_co_module_id_sau_0004(tmp_path):
+    """Vế còn lại: khóa ngoại `code_unit.module_id → module(id)` chỉ dựng được sau khi có bảng
+    `module`, nên thứ tự trong 0004 (module trước ALTER) là ràng buộc chứ không phải sở thích."""
+    db = tmp_path / "store.sqlite"
+    migrate(db)
+    with sqlite3.connect(db) as c:
+        assert "module_id" in columns(c, "code_unit")
+        assert {"module", "hw_map", "adr"} <= tables(c)
 
 
 # ---------- mã ≡ spec ----------
@@ -161,7 +179,7 @@ def test_migration_khop_schema_sql(tmp_path):
     ref = tmp_path / "ref.sqlite"
     with sqlite3.connect(ref) as c:
         c.executescript((spec_dir() / "data" / "schema.sql").read_text(encoding="utf-8"))
-    doi_sau = {("code_unit", "module_id")}   # §5 → 0004
+    doi_sau: set[tuple[str, str]] = set()    # 0004 đã chạy: không còn cột nào dời sang sau
     with sqlite3.connect(db) as a, sqlite3.connect(ref) as b:
         assert tables(a) <= tables(b)
         for t in sorted(tables(a)):
@@ -182,7 +200,7 @@ def test_lich_migration_phu_het_schema_sql(tmp_path):
         # Ba nhóm ra khỏi store chính: rag_chunk* ở index.sqlite (§5 migration 0003),
         # session ở session.sqlite (§2.25)
         het = {t for t in tables(c) if not t.startswith("rag_chunk")} - BANG_SESSION
-    assert het == BANG_M0 | BANG_M1 | BANG_M2_M3
+    assert het == BANG_M0 | BANG_M1 | BANG_M2 | BANG_M3
 
 
 # ---------- mở store ----------
