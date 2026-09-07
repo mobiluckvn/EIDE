@@ -62,7 +62,7 @@ public final class AutonomyBar: NSView {
 }
 
 /// Vùng hội thoại — UXD-13 U1 (ChatPanel là màn hình mặc định), U8, U9.
-public final class ChatView: NSView, NSTextFieldDelegate {
+public final class ChatView: NSView {
 
     public override func accessibilityRole() -> NSAccessibility.Role? { .group }
     public override func accessibilityLabel() -> String? { "Hội thoại với tác tử" }
@@ -73,7 +73,12 @@ public final class ChatView: NSView, NSTextFieldDelegate {
 
     private let cuon = NSScrollView()
     private let van = NSTextView()
-    private let oLenh = NSTextField()
+    /// Ô lệnh có gợi ý "/" (U1). Công khai để panel nạp danh sách năng lực vào.
+    public let oLenh = CommandBox()
+    /// Chỗ đặt thẻ tương tác (câu hỏi gộp U3, báo cáo, tiến độ). Nằm GIỮA bản ghi hội thoại và
+    /// ô lệnh: một thẻ đang đợi trả lời phải ở ngay trên chỗ người đang gõ, không trôi lên trên
+    /// theo dòng chảy hội thoại rồi khuất khỏi màn hình đúng lúc đồng hồ đang đếm.
+    private let cocThe = NSStackView()
 
     public init() {
         super.init(frame: .zero)
@@ -85,14 +90,14 @@ public final class ChatView: NSView, NSTextFieldDelegate {
         cuon.hasVerticalScroller = true
         cuon.borderType = .lineBorder
 
-        // U1: "ô lệnh có gợi ý '/' liệt kê năng lực có `ui`" — gợi ý là việc sau; nhưng chỗ
-        // gõ phải là thứ đầu tiên người thấy, nên nó nằm dưới cùng và luôn ở đó.
-        oLenh.placeholderString = "Gõ lệnh cho EIDE…  (ví dụ: nháy LED trên PB6 mỗi giây)"
-        oLenh.font = EideToken.fontUI
-        oLenh.delegate = self
-        oLenh.setAccessibilityLabel("Ô lệnh")
+        oLenh.onGui = { [weak self] t in self?.onGui?(t) }
 
-        for v in [cuon, oLenh] {
+        cocThe.orientation = .vertical
+        cocThe.alignment = .leading
+        cocThe.spacing = EideToken.space[1]
+        cocThe.setAccessibilityLabel("Thẻ đang chờ")
+
+        for v in [cuon, cocThe, oLenh] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -101,7 +106,10 @@ public final class ChatView: NSView, NSTextFieldDelegate {
             cuon.topAnchor.constraint(equalTo: topAnchor),
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
-            oLenh.topAnchor.constraint(equalTo: cuon.bottomAnchor, constant: s),
+            cocThe.topAnchor.constraint(equalTo: cuon.bottomAnchor, constant: s),
+            cocThe.leadingAnchor.constraint(equalTo: leadingAnchor),
+            cocThe.trailingAnchor.constraint(equalTo: trailingAnchor),
+            oLenh.topAnchor.constraint(equalTo: cocThe.bottomAnchor, constant: s),
             oLenh.leadingAnchor.constraint(equalTo: leadingAnchor),
             oLenh.trailingAnchor.constraint(equalTo: trailingAnchor),
             oLenh.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -112,12 +120,26 @@ public final class ChatView: NSView, NSTextFieldDelegate {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
-    public func controlTextDidEndEditing(_ obj: Notification) {
-        let t = oLenh.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !t.isEmpty else { return }
-        oLenh.stringValue = ""
-        onGui?(t)
+    /// Thêm một thẻ tương tác; thẻ tự gỡ mình khi trả lời xong.
+    public func themThe(_ the: NSView) {
+        cocThe.addArrangedSubview(the)
+        the.widthAnchor.constraint(equalTo: cocThe.widthAnchor).isActive = true
+        if let q = the as? QuestionCard {
+            let truoc = q.onTraLoi
+            q.onTraLoi = { [weak self, weak q] v, hetGio in
+                truoc?(v, hetGio)
+                guard let q else { return }
+                self?.themLuot(by: hetGio ? .heThong : .nguoi,
+                               text: hetGio ? "hết giờ — chọn mặc định: \(v)" : v)
+                // Gỡ sau khi đã ghi vào bản ghi hội thoại: câu trả lời phải còn dấu vết, thẻ
+                // thì không — để lại một thẻ đã trả lời chỉ làm người dùng tưởng còn phải bấm.
+                self?.cocThe.removeArrangedSubview(q)
+                q.removeFromSuperview()
+            }
+        }
     }
+
+    public var soThe: Int { cocThe.arrangedSubviews.count }
 
     public func themLuot(by ai: Ai, text: String) {
         let (nhan, mau): (String, NSColor) = {

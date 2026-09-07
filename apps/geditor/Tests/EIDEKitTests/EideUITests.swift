@@ -165,3 +165,128 @@ final class EideLauncherTests: XCTestCase {
         XCTAssertNotNil(r["caps"], "daemon phải báo số năng lực — nếu nil thì registry rỗng")
     }
 }
+
+// MARK: - Ô lệnh với gợi ý "/" (UXD-13 U1, §4 CommandBox)
+
+final class CommandBoxTests: XCTestCase {
+
+    private func hop() -> CommandBox {
+        let b = CommandBox()
+        b.napNangLuc([
+            .init(id: "kg.build", mota: "Dựng đồ thị tri thức từ store", manHinh: "Graph"),
+            .init(id: "kg.conflicts", mota: "Fact mâu thuẫn", manHinh: "ReviewQueue"),
+            .init(id: "project.create", mota: "Tạo dự án từ câu lệnh", manHinh: "Chat"),
+            .init(id: "khong.man.hinh", mota: "Không thuộc màn hình nào", manHinh: ""),
+        ])
+        return b
+    }
+
+    func testNangLucKhongCoManHinhKhongVaoMenu() {
+        // U1: "liệt kê năng lực CÓ `ui`". Một mục menu mở ra thứ không hiện ở đâu là một lời
+        // hứa suông, và người dùng chỉ phát hiện sau khi đã bấm.
+        XCTAssertEqual(hop().soNangLuc, 3)
+    }
+
+    func testChiMoMenuKhiGachCheoODAUDONG() {
+        // Một đường dẫn `src/main.c` giữa câu KHÔNG được mở menu — người ta gõ dấu gạch chéo
+        // giữa câu thường xuyên hơn là gõ nó để tìm năng lực.
+        let b = hop()
+        XCTAssertEqual(b.tienTo("/kg"), "kg")
+        XCTAssertEqual(b.tienTo("nháy LED\n/pro"), "pro")
+        XCTAssertNil(b.tienTo("sửa src/main.c giúp anh"))
+        XCTAssertNil(b.tienTo("nháy LED"))
+    }
+
+    func testLocUuTienKhopIdTruocKhopMoTa() {
+        // Người gõ "/kg" muốn thấy nhóm kg trước một năng lực khác tình cờ có "kg" trong mô tả.
+        let ra = hop().loc("tri thức")
+        XCTAssertEqual(ra.first?.id, "kg.build", "khớp mô tả vẫn phải ra kết quả")
+        let idTruoc = hop().loc("kg")
+        XCTAssertEqual(idTruoc.map(\.id), ["kg.build", "kg.conflicts"])
+    }
+
+    func testGachCheoTrongLietKeTatCa() {
+        XCTAssertEqual(hop().loc("").count, 3)
+    }
+}
+
+// MARK: - Thẻ câu hỏi gộp (UXD-13 U3, §4 QuestionCard)
+
+final class QuestionCardTests: XCTestCase {
+
+    private func the(timeout: Int = 120) -> QuestionCard {
+        QuestionCard(cauHoi: "Anh dùng probe nào?",
+                     phuongAn: [.init(nhan: "ST-Link", giaTri: "stlink"),
+                                .init(nhan: "J-Link", giaTri: "jlink")],
+                     macDinh: 1, timeoutS: timeout, ghiNho: "probe")
+    }
+
+    func testDemNguocDinhDangMMSS() {
+        // §4: "đếm ngược mm:ss".
+        XCTAssertEqual(QuestionCard.mmss(120), "02:00")
+        XCTAssertEqual(QuestionCard.mmss(9), "00:09")
+        XCTAssertEqual(QuestionCard.mmss(0), "00:00")
+        XCTAssertEqual(QuestionCard.mmss(-3), "00:00", "đồng hồ âm phải kẹp về 0")
+    }
+
+    func testHetGioChonMacDinhVaBaoRoLaHetGio() {
+        // DPS-09 D3: "im lặng quá T ⇒ chọn mặc định và BÁO". Cờ thứ hai đi vào chat.answer để
+        // nhật ký phân biệt "người chọn" với "hết giờ lấy mặc định" — hai chuyện rất khác nhau
+        // khi sau này có ai hỏi vì sao lại làm thế.
+        let t = the()
+        var ra: (String, Bool)?
+        t.onTraLoi = { ra = ($0, $1) }
+        t.chayHetGioNgay()
+        XCTAssertEqual(ra?.0, "jlink")
+        XCTAssertEqual(ra?.1, true)
+    }
+
+    func testChiTraLoiMOTLan() {
+        // Người bấm đúng lúc đồng hồ về 0 sẽ gửi hai câu trả lời cho cùng một question_id, và
+        // bên kia không có cách nào biết cái nào là thật.
+        let t = the()
+        var lan = 0
+        t.onTraLoi = { _, _ in lan += 1 }
+        t.chayHetGioNgay()
+        t.chayHetGioNgay()
+        XCTAssertEqual(lan, 1)
+    }
+
+    func testKhongQuaChinPhuongAn() {
+        // §4: "gõ số 1–9 để chọn". Nút thứ 10 là một nút không phím nào tới được.
+        let pa = (1...12).map { QuestionCard.PhuongAn(nhan: "P\($0)", giaTri: "v\($0)") }
+        let t = QuestionCard(cauHoi: "?", phuongAn: pa, macDinh: 0, timeoutS: 999)
+        var ra: String?
+        t.onTraLoi = { v, _ in ra = v }
+        t.chayHetGioNgay()
+        XCTAssertEqual(ra, "v1")
+    }
+}
+
+// MARK: - Nối thẻ vào hội thoại
+
+final class ChatCardTests: XCTestCase {
+
+    func testTheTuGoSauKhiTraLoiNhungCauTraLoiOLAI() {
+        // Để lại một thẻ đã trả lời chỉ làm người dùng tưởng còn phải bấm. Nhưng câu trả lời
+        // phải còn dấu vết trong bản ghi hội thoại — nếu không, người quay lại sau nửa tiếng
+        // không biết mình đã chọn gì.
+        let chat = ChatView()
+        let the = QuestionCard(cauHoi: "Probe nào?",
+                               phuongAn: [.init(nhan: "ST-Link", giaTri: "stlink"),
+                                          .init(nhan: "J-Link", giaTri: "jlink")],
+                               macDinh: 0, timeoutS: 999)
+        chat.themThe(the)
+        XCTAssertEqual(chat.soThe, 1)
+        the.chayHetGioNgay()
+        XCTAssertEqual(chat.soThe, 0, "thẻ đã trả lời phải tự gỡ")
+    }
+
+    func testOLenhLaCommandBoxChuKhongPhaiOMotDong() {
+        // §4 CommandBox: "Nhập nhiều dòng". Một NSTextField không xuống dòng được, nên một câu
+        // lệnh dài sẽ trôi ngang khỏi tầm nhìn.
+        let chat = ChatView()
+        chat.oLenh.napNangLuc([.init(id: "kg.build", mota: "x", manHinh: "Graph")])
+        XCTAssertEqual(chat.oLenh.soNangLuc, 1)
+    }
+}

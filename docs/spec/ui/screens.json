@@ -1,0 +1,203 @@
+[
+ {
+  "so": "1",
+  "man_hinh": "Chat (mặc định)",
+  "noi_dung": "Lệnh NL; thẻ ý hiểu; câu hỏi gộp; tiến độ chuỗi; báo cáo; trạng thái tự chủ; ngữ cảnh lượt",
+  "nang_luc": [
+   "chat.*",
+   "policy.*",
+   "memory.compose"
+  ]
+ },
+ {
+  "so": "2",
+  "man_hinh": "Main (Tổng quan)",
+  "noi_dung": "KPI dự án; feature; gate mở; target đang cắm",
+  "nang_luc": [
+   "project.status",
+   "target.detect"
+  ]
+ },
+ {
+  "so": "3",
+  "man_hinh": "ReviewQueue (Chờ tôi / Đã làm)",
+  "noi_dung": "Hai danh sách; chi tiết mục; lý do quy tắc; duyệt/từ chối/hoàn tác",
+  "nang_luc": [
+   "policy.undo_window",
+   "kg.review_facts",
+   "gate.decide"
+  ]
+ },
+ {
+  "so": "4",
+  "man_hinh": "Ingest (Nhập tài liệu)",
+  "noi_dung": "Kéo thả; zip lồng; phân loại; tiến độ trích; nguồn tự tải",
+  "nang_luc": [
+   "archive.*",
+   "ingest.*",
+   "extract.*",
+   "search.fetch"
+  ]
+ },
+ {
+  "so": "5",
+  "man_hinh": "Passport (Hộ chiếu chip)",
+  "noi_dung": "Nhóm/tier/nguồn; nhảy PDF; auto-reviewed",
+  "nang_luc": [
+   "passport.*",
+   "view.provenance"
+  ]
+ },
+ {
+  "so": "6",
+  "man_hinh": "Board (Hộ chiếu mạch)",
+  "noi_dung": "Net/pin; xung đột; đánh dấu lab",
+  "nang_luc": [
+   "board.*",
+   "diagram.pinmap"
+  ]
+ },
+ {
+  "so": "7",
+  "man_hinh": "Graph → RagAsk (Bản đồ tri thức & hỏi đáp)",
+  "noi_dung": "Bản đồ màu tier/status; nguồn gốc; hỏi–đáp có trích dẫn; trace",
+  "nang_luc": [
+   "view.*"
+  ]
+ },
+ {
+  "so": "8",
+  "man_hinh": "ReqArch (Yêu cầu & kiến trúc)",
+  "noi_dung": "ReqSet; khả thi; issue; ADR; HwMap; ngân sách",
+  "nang_luc": [
+   "req.*",
+   "arch.*"
+  ]
+ },
+ {
+  "so": "9",
+  "man_hinh": "DiagramView (Lược đồ)",
+  "noi_dung": "Mã ↔ hình 6 ngôn ngữ; lint; sync; chèn tài liệu",
+  "nang_luc": [
+   "diagram.*"
+  ]
+ },
+ {
+  "so": "10",
+  "man_hinh": "Doc (Tài liệu)",
+  "noi_dung": "Bộ tài liệu; mục stale; style check; xuất",
+  "nang_luc": [
+   "doc.*",
+   "report.*"
+  ]
+ },
+ {
+  "so": "11",
+  "man_hinh": "PlanDiff (Kế hoạch & mã)",
+  "noi_dung": "Kế hoạch có trích dẫn; diff; 4 cổng; review; auto-merge",
+  "nang_luc": [
+   "plan.*",
+   "code.review",
+   "code.merge"
+  ]
+ },
+ {
+  "so": "12",
+  "man_hinh": "Code (Mã nguồn)",
+  "noi_dung": "Hằng số có fact hover; constant-guard; gửi G3",
+  "nang_luc": [
+   "code.*"
+  ]
+ },
+ {
+  "so": "13",
+  "man_hinh": "Sim (Mô phỏng)",
+  "noi_dung": "Kịch bản; plant; SIL/HIL",
+  "nang_luc": [
+   "sim.*"
+  ]
+ },
+ {
+  "so": "14",
+  "man_hinh": "Discovery (Dò board)",
+  "noi_dung": "Cổng/probe/ID/tốc độ/bus/nguồn; target.yaml",
+  "nang_luc": [
+   "discover.*"
+  ]
+ },
+ {
+  "so": "15",
+  "man_hinh": "LogAssist (Log & serial)",
+  "noi_dung": "Log lớn; hỏi tại dòng; serial",
+  "nang_luc": [
+   "debug.log_stats",
+   "debug.ask_at",
+   "target.serial"
+  ]
+ },
+ {
+  "so": "16",
+  "man_hinh": "Debug (Gỡ lỗi probe)",
+  "noi_dung": "EvidencePack; giả thuyết; thí nghiệm",
+  "nang_luc": [
+   "debug.*",
+   "target.probe_*"
+  ]
+ },
+ {
+  "so": "17",
+  "man_hinh": "ToolForge (Công cụ tự tạo)",
+  "noi_dung": "Danh sách công cụ; mã; hiệu ứng; test; thăng cấp",
+  "nang_luc": [
+   "tool.*"
+  ]
+ },
+ {
+  "so": "18",
+  "man_hinh": "Bench",
+  "noi_dung": "Tác vụ CF/BF/BC; huy hiệu",
+  "nang_luc": [
+   "bench.*"
+  ]
+ },
+ {
+  "so": "19",
+  "man_hinh": "Registry",
+  "noi_dung": "Gói; template; publish",
+  "nang_luc": [
+   "registry.*"
+  ]
+ },
+ {
+  "so": "20",
+  "man_hinh": "Models (Mô hình & chi phí)",
+  "noi_dung": "Vai trò → mô hình; ngân sách; không offline mặc định",
+  "nang_luc": [
+   "policy",
+   "gateway"
+  ]
+ },
+ {
+  "so": "21",
+  "man_hinh": "Env (Môi trường)",
+  "noi_dung": "doctor; cài tự động; tools.lock",
+  "nang_luc": [
+   "env.*"
+  ]
+ },
+ {
+  "so": "22",
+  "man_hinh": "FlowMap",
+  "noi_dung": "Bản đồ luồng P0–P7",
+  "nang_luc": []
+ },
+ {
+  "so": "23",
+  "man_hinh": "Trạng thái/khung (Main shell)",
+  "noi_dung": "Sidebar 20 mục; thanh trạng thái tự chủ; dừng khẩn; tab tệp",
+  "nang_luc": [
+   "policy.set_autonomy",
+   "emergency_stop"
+  ]
+ }
+]

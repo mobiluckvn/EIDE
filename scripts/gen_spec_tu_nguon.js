@@ -75,6 +75,22 @@ const VIEC = [
             + '\n\nis_big:\n' + literal('dps.js', 'IS_BIG_QUY_TAC').map(s => `- ${s}`).join('\n') + '\n',
     },
     {
+        // UXD-13 U1: ô lệnh gợi ý "/" liệt kê "năng lực có `ui`". Nhưng KHÔNG năng lực nào có
+        // trường ấy (0/238 trong cds.json), nên quy tắc U1 không áp dụng được. Nguồn duy nhất
+        // nói năng lực nào thuộc màn hình nào là bảng §2 — và nó ở dạng literal `S`, rút được.
+        // Xem DEVIATIONS DEV-046.
+        tep: 'ui/screens.json', nguon: 'uxd.js',
+        dung: () => {
+            const S = literal('uxd.js', 'S');
+            const ra = S.map(r => ({
+                so: r[0], man_hinh: r[1], noi_dung: r[2],
+                // "chat.*, policy.*, memory.compose" → ["chat.*", "policy.*", "memory.compose"]
+                nang_luc: r[3].split(',').map(x => x.trim()).filter(x => x && x !== '—'),
+            }));
+            return JSON.stringify(ra, null, 1) + '\n';
+        },
+    },
+    {
         tep: 'ui/tokens.json', nguon: 'uxd.js',
         dung: () => JSON.stringify(literal('uxd.js', 'TOKENS'), null, 2) + '\n',
     },

@@ -72,6 +72,32 @@ def _gate_tu_spec() -> dict[str, str]:
     return ra
 
 
+@lru_cache(maxsize=1)
+def _ui_tu_spec() -> dict[str, str]:
+    """id năng lực → tên màn hình, suy từ bảng §2 của UXD-13 (`ui/screens.json`).
+
+    UXD-13 U1 nói ô lệnh gợi ý "/" liệt kê "năng lực có `ui`", nhưng KHÔNG năng lực nào trong
+    `cds.json` có trường ấy (0/238) — nên quy tắc U1 không áp dụng được như viết. Nguồn duy nhất
+    nói năng lực nào thuộc màn hình nào là bảng §2, dạng `chat.*` (cả nhóm) hoặc `project.status`
+    (một năng lực). Xem DEVIATIONS DEV-046.
+
+    Một năng lực xuất hiện ở nhiều màn hình thì lấy màn hình ĐẦU TIÊN: bảng §2 xếp theo thứ tự
+    màn hình, và màn hình số nhỏ là màn hình chính của năng lực ấy (Chat là số 1).
+    """
+    f = spec_dir() / "ui" / "screens.json"
+    if not f.exists():
+        return {}
+    ra: dict[str, str] = {}
+    caps = [c["id"] for c in json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))]
+    for man in json.loads(f.read_text(encoding="utf-8")):
+        for mau in man["nang_luc"]:
+            khop = ([c for c in caps if c.startswith(mau[:-1])] if mau.endswith("*")
+                    else [c for c in caps if c == mau])
+            for c in khop:
+                ra.setdefault(c, man["man_hinh"])
+    return ra
+
+
 @dataclass
 class CapabilitySpec:
     code: str
@@ -93,9 +119,16 @@ class CapabilitySpec:
     tc: str = ""
     volume: int = 0
     # DDD-14 bảng `capability` có hai cột này, và TOOL-06 bước 1 đòi khai `impl`/`ui` khi
-    # đăng ký năng lực tạm. `cds.json` không mang chúng nên mặc định rỗng.
+    # đăng ký năng lực tạm. `cds.json` không mang chúng nên mặc định rỗng — `ui` được suy từ
+    # bảng màn hình UXD-13 §2 qua thuộc tính `man_hinh` bên dưới (DEV-046).
     impl: str = ""
     ui: str = ""
+
+    @property
+    def man_hinh(self) -> str:
+        """Màn hình của năng lực: `ui` nếu hợp đồng có khai (năng lực `user.*` tự tạo), không
+        thì suy từ bảng UXD-13 §2. Rỗng = không xuất hiện trên màn hình nào."""
+        return self.ui or _ui_tu_spec().get(self.id, "")
 
     @property
     def risk_class(self) -> str:

@@ -43,8 +43,12 @@ class Daemon:
                 "autonomy": self.gate.config.get("autonomy")}
 
     def caps_list(self, p: dict[str, Any]) -> dict[str, Any]:
-        return {"caps": [{"id": c.spec.id, "code": c.spec.code, "ns": c.spec.ns, "risk": c.spec.risk_class,
-                          "tier": c.spec.tier, "implemented": c.implemented} for c in get_registry().list(p.get("ns"))]}
+        # `desc` và `ui` là thứ ô lệnh cần cho gợi ý "/" (UXD-13 U1 + §4 CommandBox: "tên + một
+        # câu"). Không trả chúng thì plugin phải gọi `caps.describe` 238 lần để dựng một menu.
+        return {"caps": [{"id": c.spec.id, "code": c.spec.code, "ns": c.spec.ns,
+                          "risk": c.spec.risk_class, "tier": c.spec.tier_hieu_luc,
+                          "desc": c.spec.desc, "ui": c.spec.man_hinh,
+                          "implemented": c.implemented} for c in get_registry().list(p.get("ns"))]}
 
     def caps_describe(self, p: dict[str, Any]) -> dict[str, Any]:
         return get_registry().describe(p["id"])

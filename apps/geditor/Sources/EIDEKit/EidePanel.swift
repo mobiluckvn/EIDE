@@ -125,8 +125,45 @@ public final class EidePanel: NSView {
         }
     }
 
+    /// Nạp danh sách năng lực cho gợi ý "/" — UXD-13 U1.
+    ///
+    /// Gọi MỘT lần lúc mở panel, không gọi lại mỗi lần gõ: registry chỉ đổi khi daemon khởi
+    /// động lại (hoặc khi `tool.register` nạp nóng một năng lực `user.*`), nên hỏi lại theo
+    /// từng phím là 238 dòng đi qua socket cho mỗi ký tự.
+    private func napGoiY() async {
+        guard let r = try? await client.goi(.capsList, [:]),
+              let caps = r["caps"] as? [[String: Any]] else { return }
+        let ds = caps.compactMap { c -> CommandBox.NangLuc? in
+            guard let id = c["id"] as? String, c["implemented"] as? Bool == true else { return nil }
+            return .init(id: id, mota: c["desc"] as? String ?? "", manHinh: c["ui"] as? String ?? "")
+        }
+        await MainActor.run { self.hoiThoai.oLenh.napNangLuc(ds) }
+    }
+
+    /// Hiện một thẻ câu hỏi gộp — UXD-13 U3, từ sự kiện `event.chat.question`.
+    public func hienCauHoi(_ p: [String: Any]) {
+        let pa = (p["options"] as? [[String: Any]] ?? []).map {
+            QuestionCard.PhuongAn(nhan: $0["label"] as? String ?? "?",
+                                  giaTri: String(describing: $0["value"] ?? ""))
+        }
+        guard !pa.isEmpty else { return }
+        let the = QuestionCard(cauHoi: p["text"] as? String ?? "Anh chọn giúp?",
+                               phuongAn: pa,
+                               macDinh: p["default"] as? Int ?? 0,
+                               timeoutS: p["timeout_s"] as? Int ?? 120,
+                               ghiNho: p["remember_as"] as? String)
+        let qid = p["question_id"] as? String ?? ""
+        the.onTraLoi = { [weak self] giaTri, hetGio in
+            Task { _ = try? await self?.client.goi(.chatAnswer,
+                                                   ["question_id": qid, "option": giaTri,
+                                                    "by_timeout": hetGio]) }
+        }
+        hoiThoai.themThe(the)
+    }
+
     /// Đọc lại trạng thái từ daemon. Panel không giữ bản sao nào (GPI-23 §1).
     private func lamMoi() async {
+        await napGoiY()
         let tuChu = try? await client.goi(.autonomyGet, [:])
         let doi = try? await client.goi(.queueList, [:])
         let undo = try? await client.goi(.undoList, [:])
