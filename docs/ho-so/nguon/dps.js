@@ -16,7 +16,12 @@ const LICH_SU = [['1.1', '07/09/2026', 'Vũ Trí Công',
   + 'C0 của vai trò `intent` kèm số đo: thiếu C0 thì độ đúng ý định 76%, có C0 đầy đủ 100%, bản '
   + 'thiếu bảng phân biệt 82%. Nói rõ `big_command` KHÔNG kéo theo `is_big=true` vì nhãn ấy còn '
   + 'gánh vai sọt chứa cho 14/27 nhóm chưa có ý định riêng (DEV-035), và ghi phép thử suy `is_big`: '
-  + 'toàn bộ một chuỗi mẫu §4.4 → true, một nút của chuỗi → false (DEV-022).']];
+  + 'toàn bộ một chuỗi mẫu §4.4 → true, một nút của chuỗi → false (DEV-022).'],
+  ['1.2', '07/09/2026', 'Vũ Trí Công',
+   '§4.4: năm chuỗi mẫu chuyển vào literal đặt tên và sinh ra `dialog/chains.json`, kèm cột ý '
+   + 'định kích hoạt (`trigger_intents`) mà CHAT-06 bước 1 nhắc tới nhưng bảng chưa có. Trước đó '
+   + 'bảng chỉ nằm trong văn xuôi nên `chat.orchestrate` phải chép tay — cùng khuôn '
+   + 'DEV-025/029/043/046.']];
 m.history = [m.history[0], ...LICH_SU];
 m.version = LICH_SU[LICH_SU.length - 1][0];
 m.attrs[1] = ['Phiên bản', `${m.version} — ${LICH_SU[LICH_SU.length - 1][3].slice(0, 90)}…`];
@@ -157,13 +162,20 @@ c.push(...CODE([
 c.push(SP());
 c.push(H2('4.4. Lập chuỗi năng lực (②)'));
 c.push(P('Với `is_big = true`, Orchestrator lập đồ thị chuỗi bằng mô hình lập kế hoạch (vai trò planner) có output_schema `Chain{nodes[]: {id, cap, args, when?, on_ask}}` và kiểm tra deterministic sau đó: mọi `cap` tồn tại trong registry; tham số khớp input schema; không có chu trình; số nút ≤ ngưỡng; ước lượng chi phí ≤ ngân sách. Nút có `on_ask = parallel` tiếp tục các nhánh không phụ thuộc khi nút đó chờ người; `wait` dừng nhánh; `skip` bỏ qua với ghi chú. Mẫu chuỗi cho các lệnh lớn thường gặp được lưu như K5 thủ tục (skills/orchestration/*.md) để mô hình bám theo thay vì sáng tác: "dự án mới từ zip", "dự án mới từ ý tưởng", "thêm tính năng", "gỡ lỗi từ log", "viết bộ tài liệu", "dò board và nạp".'));
-c.push(T([2600, 6700], ['Lệnh lớn', 'Chuỗi mẫu (rút gọn)'], [
-  ['Dự án mới từ ý tưởng (Z-01)', 'project.create → search.reference_projects → [template? registry.pull : req.elicit] → passport.pull → board.build_passport(template) → env.check/install_tool → sim.build → req.classify → arch.style_select/decompose/map_hw → diagram.block/architecture → plan.create → chat.report_back'],
-  ['Dự án mới từ zip (Z-07)', 'project.create → archive.explore/classify → extract.* → passport.build → board.build_passport → board.check_pins → search.missing → search.web/vendor → search.fetch → kg.review_facts → view.rag_index → env.* → sim.build/run(hello) → req.elicit(README) → plan.create → code.* → sim.run(test) → doc.bringup_guide → report'],
-  ['Thêm tính năng (Z-05)', 'chat.ground(dự án) → req.elicit(feature) → req.ground_hw → arch.map_hw(delta) → plan.create → code.module/integrate/test/review → code.merge → sim.run → [board lab? target.flash → target.observe] → doc.section → report'],
-  ['Bộ tài liệu (P7)', 'req.trace_matrix → diagram.* (theo loại tài liệu) → doc.generate(URD, SRS, SAD, SDD, STP) → doc.embed_diagram → doc.style_check → report'],
-  ['Dò board và nạp (Z-10)', 'discover.ports/probes → discover.chip_id → [khớp hộ chiếu?] → discover.link_speed → discover.auto_setup → policy.decide(G-OPS) → target.flash → target.serial/observe → report'],
-]));
+// §4.4 năm chuỗi mẫu. Đặt tên literal để sinh ra `dialog/chains.json`: `chat.orchestrate`
+// chọn chuỗi theo ý định TRƯỚC khi nhờ mô hình lập kế hoạch, và một bảng chỉ nằm trong văn
+// xuôi thì phần mã phải chép tay — đúng khuôn DEV-025/029/043/046.
+//
+// Cột thứ ba là ý định kích hoạt (`trigger_intents` mà CHAT-06 bước 1 nhắc tới); nó không
+// hiện trong bảng của tài liệu vì tài liệu đã nêu mã kịch bản Z-xx ngay ở cột đầu.
+const CHUOI_MAU = [
+  ['Dự án mới từ ý tưởng (Z-01)', 'project.create → search.reference_projects → [template? registry.pull : req.elicit] → passport.pull → board.build_passport(template) → env.check/install_tool → sim.build → req.classify → arch.style_select/decompose/map_hw → diagram.block/architecture → plan.create → chat.report_back', ['project.create']],
+  ['Dự án mới từ zip (Z-07)', 'project.create → archive.explore/classify → extract.* → passport.build → board.build_passport → board.check_pins → search.missing → search.web/vendor → search.fetch → kg.review_facts → view.rag_index → env.* → sim.build/run(hello) → req.elicit(README) → plan.create → code.* → sim.run(test) → doc.bringup_guide → report', ['knowledge.build', 'big_command']],
+  ['Thêm tính năng (Z-05)', 'chat.ground(dự án) → req.elicit(feature) → req.ground_hw → arch.map_hw(delta) → plan.create → code.module/integrate/test/review → code.merge → sim.run → [board lab? target.flash → target.observe] → doc.section → report', ['code.feature']],
+  ['Bộ tài liệu (P7)', 'req.trace_matrix → diagram.* (theo loại tài liệu) → doc.generate(URD, SRS, SAD, SDD, STP) → doc.embed_diagram → doc.style_check → report', ['doc.write']],
+  ['Dò board và nạp (Z-10)', 'discover.ports/probes → discover.chip_id → [khớp hộ chiếu?] → discover.link_speed → discover.auto_setup → policy.decide(G-OPS) → target.flash → target.serial/observe → report', ['discover.scan', 'target.flash']],
+];
+c.push(T([2600, 6700], ['Lệnh lớn', 'Chuỗi mẫu (rút gọn)'], CHUOI_MAU.map(r => [r[0], r[1]])));
 c.push(SP());
 c.push(H2('4.5. Ưu tiên nguồn khi suy luận (D5) và ghi nhớ (D8)'));
 c.push(P('Khi phải suy ra chip/board/linh kiện/tham số cho một ý tưởng, thứ tự là: điều người nói > dự án hiện có > mẫu tham chiếu trong registry (K5′) > web (chỉ ứng viên). Mọi suy luận được trình bày là **đề xuất có nguồn** ("BOM tham chiếu từ eide.ref.balancing-robot@1.2, đã kiểm định trên board") và mang nhãn tạm cho tới khi người xác nhận hoặc có fact thật (Z-09: tham số vật lý mặc định gắn nhãn "tham số tạm"). Mỗi câu trả lời của người cho một Question có `remember_as` được ghi vào preferences.yaml với phạm vi (người/dự án); lần sau Orchestrator áp dụng và chỉ nhắc "áp dụng như lần trước: dùng ST-Link". Người có thể nói "hỏi lại tôi mỗi lần" để xóa một tùy chọn.'));

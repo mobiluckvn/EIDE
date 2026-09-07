@@ -75,6 +75,18 @@ const VIEC = [
             + '\n\nis_big:\n' + literal('dps.js', 'IS_BIG_QUY_TAC').map(s => `- ${s}`).join('\n') + '\n',
     },
     {
+        // DPS-09 §4.4 năm chuỗi mẫu, cột 3 là ý định kích hoạt. `chat.orchestrate` (CHAT-06 bước
+        // 1) chọn chuỗi theo `trigger_intents` TRƯỚC khi nhờ mô hình lập kế hoạch — bám mẫu rẻ
+        // hơn và đoán được hơn là để mô hình sáng tác mỗi lần.
+        tep: 'dialog/chains.json', nguon: 'dps.js',
+        dung: () => JSON.stringify(literal('dps.js', 'CHUOI_MAU').map(r => ({
+            ten: r[0],
+            chuoi: r[1],
+            buoc: r[1].split('\u2192').map(x => x.trim()).filter(Boolean),
+            trigger_intents: r[2] || [],
+        })), null, 1) + '\n',
+    },
+    {
         // UXD-13 U1: ô lệnh gợi ý "/" liệt kê "năng lực có `ui`". Nhưng KHÔNG năng lực nào có
         // trường ấy (0/238 trong cds.json), nên quy tắc U1 không áp dụng được. Nguồn duy nhất
         // nói năng lực nào thuộc màn hình nào là bảng §2 — và nó ở dạng literal `S`, rút được.

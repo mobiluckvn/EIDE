@@ -6,23 +6,29 @@ hàm lớn: ① hiểu và đối chiếu = `parse_intent` + `ground`; ③ đủ
 để tầng hiểu lệnh kiểm thử được bằng kịch bản xác định, độc lập với chất lượng sinh của mô
 hình — đó là câu cuối của §2 và cũng là lý do TC-59 chạy được.
 
-② lập chuỗi (`chat.orchestrate`, CHAT-06) là mốc M2, chưa ở đây.
+② lập chuỗi = `orchestrate` (CHAT-06): chọn chuỗi mẫu theo ý định, kiểm deterministic,
+rồi chạy từng nút qua Router — cùng đường đi với mọi lời gọi khác, nên cùng chính sách và nhật ký.
 """
 from __future__ import annotations
 
 import json
+import secrets
+import sqlite3
 import time
 import unicodedata
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 from eide.caps.project import EIDE_DIR, slugify
+from eide_core import chain as chain_mod
+from eide_core import store
 from eide_core.errors import EideError
 from eide_core.gateway import Gateway
 from eide_core.paths import spec_dir
-from eide_core.registry import capability
+from eide_core.registry import capability, get_registry
 from eide_core.router import Context
 from eide_core.undo import UndoService
 
@@ -391,3 +397,194 @@ def decline(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 def _unaccent(s: str) -> str:
     t = s.replace("đ", "d").replace("Đ", "D")
     return unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode().lower()
+
+
+@capability("chat.orchestrate")
+def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CHAT-06 — CDS-12.6; DPS-09 §4.4 (lập chuỗi), §1 (ranh giới deterministic ↔ sinh);
+    POL-17 §6 (leo thang). tc: TC-63.
+
+    Năm bước của hợp đồng, và bước nào cũng có một lý do cụ thể để không làm khác:
+
+    1. **Chọn chuỗi mẫu theo `trigger_intents` trước, planner sau.** §4.4 nói thẳng: mẫu tồn tại
+       "để mô hình bám theo thay vì sáng tác". Một chuỗi sáng tác lại mỗi lần thì hai lần chạy
+       cùng một lệnh cho hai kế hoạch khác nhau, và không ai gỡ được lỗi trong đó.
+    2. **Kiểm deterministic SAU khi có chuỗi**, kể cả chuỗi từ mẫu. Mẫu cũng có thể trỏ tới năng
+       lực chưa hiện thực ở mốc hiện tại — đó là trạng thái bình thường giữa chừng, không phải
+       lỗi của mẫu.
+    3. **Run planned → running**, ghi `run.graph` xuống store để "tiếp tục sau tắt máy".
+    4. **Mỗi nút một `Router.invoke`** — cùng đường đi với mọi lời gọi khác, nên cùng chính sách,
+       cùng nhật ký, cùng hoàn tác. Orchestrator KHÔNG có đường tắt.
+    5. **`on_ask` quyết định nhánh làm gì khi một nút chờ người**; hỏng ≥ 2 lần thì leo thang
+       (POL-17 §6 `fail_retries`), không thử mãi.
+    """
+    intent = params["intent"]
+    ten_y_dinh = intent.get("intent", "unknown") if isinstance(intent, dict) else str(intent)
+    grounded = params.get("grounded") or {}
+
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    run_id = "r_" + secrets.token_hex(6)
+
+    # Bước 1 — mẫu trước, planner sau.
+    mau = chain_mod.chon_mau(ten_y_dinh)
+    chuoi, nguon = _dung_chuoi(mau, intent, grounded, ctx)
+
+    # Bước 2 — kiểm deterministic. Ném E5002 (cấu trúc) hoặc E3003 (ngân sách).
+    gate = ctx.extra.get("gate")
+    nguong = ((getattr(gate, "config", None) or {}).get("thresholds") or {})
+    chain_mod.kiem(chuoi, get_registry(),
+                   tran_nut=int(nguong.get("plan_max_steps") or chain_mod.TRAN_NUT),
+                   chi_phi_uoc=_uoc_chi_phi(chuoi),
+                   ngan_sach=float(nguong.get("plan_max_cost_usd") or 0) or None)
+
+    # Bước 3 — ghi kế hoạch xuống store TRƯỚC khi chạy: một chuỗi đang chạy dở mà máy tắt thì
+    # phần đã làm vẫn phải đọc lại được, và `run.graph` là chỗ duy nhất giữ được điều đó.
+    _ghi_run(root, run_id, chuoi, "running", intent)
+
+    # Bước 4–5 — chạy từng nút.
+    ket_qua, cho, bo_qua, hong = [], [], [], []
+    router = ctx.extra.get("router")
+    xong: set[str] = set()
+    for nut in chain_mod.thu_tu_chay(chuoi):
+        if nut.when and nut.when not in xong:
+            # Nhánh cha đang chờ hoặc đã hỏng. `wait` dừng nhánh này; `parallel` để nhánh khác
+            # chạy tiếp (chính là việc không làm gì ở đây); `skip` bỏ qua và ghi chú.
+            (bo_qua if nut.on_ask == "skip" else cho).append(
+                {"id": nut.id, "cap": nut.cap, "vi": f"chờ nút {nut.when}"})
+            continue
+        if router is None:
+            cho.append({"id": nut.id, "cap": nut.cap, "vi": "không có router trong ngữ cảnh"})
+            continue
+        run = router.invoke(nut.cap, dict(nut.args), ctx)
+        if run.status == "done":
+            xong.add(nut.id)
+            ket_qua.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id})
+        elif run.status == "pending":
+            cho.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id, "on_ask": nut.on_ask})
+            if nut.on_ask == "wait":
+                break           # dừng cả chuỗi: các nút sau phụ thuộc chỗ này
+        else:
+            hong.append({"id": nut.id, "cap": nut.cap, "error": run.error})
+            if len(hong) >= int(nguong.get("fail_retries") or 2):
+                # POL-17 §6: thất bại lặp → leo thang, không thử mãi.
+                if router is not None:
+                    router.invoke("policy.escalate",
+                                  {"reason": "fail_retries", "ref": run_id}, ctx)
+                break
+
+    trang_thai = "done" if not cho and not hong else ("asked" if cho else "failed")
+    # Hợp đồng trả ĐÚNG `{run_id}` — CHAT-06 là bất đồng bộ theo thiết kế: tiến độ đi qua sự kiện
+    # `cap.run.start`/`cap.run.finish` của từng nút (đã có sẵn vì mỗi nút đi qua Router), còn
+    # báo cáo cuối nằm ở `run.report` (DDD-14 §2 Run, cột "JSON Report"). Trả cả báo cáo ra
+    # ngoài sẽ buộc bên gọi CHỜ hết chuỗi mới nhận được gì — mà một chuỗi 12 nút có thể dừng ở
+    # nút thứ ba để hỏi người, và lúc ấy "chờ hết chuỗi" nghĩa là chờ vô hạn.
+    _ghi_run(root, run_id, chuoi, trang_thai, intent,
+             report={"nguon_chuoi": nguon, "state": trang_thai, "done": ket_qua,
+                     "waiting": cho, "skipped": bo_qua, "failed": hong})
+    return {"run_id": run_id}
+
+
+def _dung_chuoi(mau: dict[str, Any] | None, intent: dict[str, Any],
+                grounded: dict[str, Any], ctx: Context) -> tuple[Any, str]:
+    """Chuỗi từ mẫu, hoặc từ mô hình lập kế hoạch nếu không mẫu nào khớp.
+
+    Mẫu của §4.4 là chuỗi RÚT GỌN viết cho người đọc ("project.create → search.reference_projects
+    → [template? registry.pull : req.elicit] → …"), không phải Chain máy chạy được: nó có nhánh
+    điều kiện viết bằng văn xuôi và có `extract.*` là cả một nhóm. Nên ở đây mẫu được dùng làm
+    KHUNG — lấy các bước là năng lực có thật và đã hiện thực — còn phần còn lại để planner lo.
+
+    Nói ra giới hạn ấy thay vì im lặng bỏ bớt: một chuỗi 12 bước rút còn 3 mà không ai biết thì
+    người dùng tưởng tác tử đã làm cả 12.
+    """
+    reg = get_registry()
+    if mau is not None:
+        nut = []
+        for i, b in enumerate(mau["buoc"]):
+            ten = b.split("(")[0].strip()
+            if ten in reg and reg.get(ten).implemented:
+                nut.append(chain_mod.Nut(id=f"n{i + 1}", cap=ten,
+                                         args=_args_cho(ten, intent, grounded),
+                                         when=f"n{i}" if nut else None, on_ask="wait"))
+        if nut:
+            # Nối `when` theo đúng thứ tự các nút GIỮ LẠI, không theo chỉ số gốc: bỏ bước 3 mà
+            # vẫn để bước 4 phụ thuộc "n3" thì cả chuỗi treo ở một nút không tồn tại.
+            for k, n in enumerate(nut):
+                n.when = nut[k - 1].id if k else None
+            return chain_mod.Chain(nut), f"mẫu: {mau['ten']}"
+    return chain_mod.Chain(_chuoi_toi_thieu(intent, grounded, reg)), "tối thiểu"
+
+
+def _chuoi_toi_thieu(intent: dict[str, Any], grounded: dict[str, Any], reg: Any) -> list[Any]:
+    """Chuỗi một nút từ chính ý định, khi không mẫu nào khớp.
+
+    Vai trò `planner` (PRS-16 §2) là bước đúng ở đây, nhưng nó thuộc mốc M2 cùng `plan.create`.
+    Trong lúc chờ: nếu ý định trùng tên một năng lực đã hiện thực thì gọi thẳng năng lực ấy —
+    đủ để `chat.orchestrate` có ích ngay, và không giả vờ lập kế hoạch. Xem DEVIATIONS DEV-051.
+    """
+    ten = intent.get("intent", "") if isinstance(intent, dict) else str(intent)
+    if ten in reg and reg.get(ten).implemented:
+        return [chain_mod.Nut(id="n1", cap=ten, args=_args_cho(ten, intent, grounded))]
+    return []
+
+
+def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any]) -> dict[str, Any]:
+    """Ghép tham số cho một nút từ slots của ý định và kết quả grounding.
+
+    Chỉ lấy khóa CÓ TRONG input_schema của năng lực: thừa một khóa là E1000 ở Router, và phép
+    kiểm deterministic ở bước 2 sẽ bắt nó — nhưng bắt ở đây thì thông điệp nói được vì sao.
+    """
+    reg = get_registry()
+    if cap not in reg:
+        return {}
+    cho_phep = set(reg.get(cap).spec.input_schema.get("properties") or {})
+    nguon = {**(grounded or {}), **((intent or {}).get("slots") or {})}
+    return {k: v for k, v in nguon.items() if k in cho_phep and v is not None}
+
+
+def _uoc_chi_phi(chuoi: Any) -> float:
+    """Ước lượng thô: số nút × chi phí trung bình một lượt gọi mô hình.
+
+    Thô có chủ ý — phép kiểm ngân sách của §4.4 để chặn một chuỗi 200 nút, không để dự báo hóa
+    đơn. Con số chính xác chỉ có sau khi chạy, và `model.call.cost_usd` mới là nơi ghi nó.
+    """
+    return len(chuoi.nodes) * 0.01
+
+
+def _ghi_run(root: Path | None, run_id: str, chuoi: Any, state: str,
+             intent: dict[str, Any], report: dict[str, Any] | None = None) -> None:
+    """Ghi `run.graph` và `run.report` — CHAT-06 bước 3 và 5.
+
+    `graph` ghi TRƯỚC khi chạy để chuỗi tiếp tục được sau khi tắt máy; `report` ghi sau, và đó
+    là chỗ bên gọi đọc kết quả (DDD-14 §2 Run).
+    """
+    if root is None:
+        return
+    db = store.store_path(root)
+    if not db.exists():
+        return
+    try:
+        with store.open_store(db) as c:
+            c.execute(
+                "INSERT INTO run (id, intent_id, graph, state, report, started_at)"
+                " VALUES (?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET graph=excluded.graph,"
+                " state=excluded.state, report=COALESCE(excluded.report, run.report)",
+                # `intent_id` là KHÓA NGOẠI sang bảng `intent`, không phải tên ý định. Chưa mã
+                # nào ghi bảng ấy (`chat.parse_intent` chỉ ghi sự kiện nhật ký), nên để NULL —
+                # truyền "kg.build" vào đây làm cả câu chèn hỏng vì ràng buộc khóa ngoại.
+                (run_id, None,
+                 json.dumps(chuoi.as_dict(), ensure_ascii=False), state,
+                 json.dumps(report, ensure_ascii=False) if report else None,
+                 datetime.now(UTC).isoformat()))
+            c.commit()
+    except sqlite3.OperationalError:
+        # CHỈ nuốt lỗi "store cũ chưa có bảng/cột" — đó là trạng thái thật khi user_version thấp.
+        # Nuốt cả `sqlite3.Error` thì một lỗi lập trình (sai cột, sai khóa ngoại) trông y hệt
+        # "chưa migrate", và nó đã che đúng lỗi khóa ngoại ở trên cho tới khi chạy tay câu SQL.
+        pass
+
+
+def doc_bao_cao(root: Path, run_id: str) -> dict[str, Any]:
+    """Báo cáo của một chuỗi — `run.report`. Dùng bởi test và bởi `chat.report_back`."""
+    with store.open_store(store.store_path(root)) as c:
+        row = c.execute("SELECT report FROM run WHERE id=?", (run_id,)).fetchone()
+    return json.loads(row[0]) if row and row[0] else {}

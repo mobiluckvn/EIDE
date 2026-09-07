@@ -1,0 +1,107 @@
+[
+ {
+  "ten": "Dự án mới từ ý tưởng (Z-01)",
+  "chuoi": "project.create → search.reference_projects → [template? registry.pull : req.elicit] → passport.pull → board.build_passport(template) → env.check/install_tool → sim.build → req.classify → arch.style_select/decompose/map_hw → diagram.block/architecture → plan.create → chat.report_back",
+  "buoc": [
+   "project.create",
+   "search.reference_projects",
+   "[template? registry.pull : req.elicit]",
+   "passport.pull",
+   "board.build_passport(template)",
+   "env.check/install_tool",
+   "sim.build",
+   "req.classify",
+   "arch.style_select/decompose/map_hw",
+   "diagram.block/architecture",
+   "plan.create",
+   "chat.report_back"
+  ],
+  "trigger_intents": [
+   "project.create"
+  ]
+ },
+ {
+  "ten": "Dự án mới từ zip (Z-07)",
+  "chuoi": "project.create → archive.explore/classify → extract.* → passport.build → board.build_passport → board.check_pins → search.missing → search.web/vendor → search.fetch → kg.review_facts → view.rag_index → env.* → sim.build/run(hello) → req.elicit(README) → plan.create → code.* → sim.run(test) → doc.bringup_guide → report",
+  "buoc": [
+   "project.create",
+   "archive.explore/classify",
+   "extract.*",
+   "passport.build",
+   "board.build_passport",
+   "board.check_pins",
+   "search.missing",
+   "search.web/vendor",
+   "search.fetch",
+   "kg.review_facts",
+   "view.rag_index",
+   "env.*",
+   "sim.build/run(hello)",
+   "req.elicit(README)",
+   "plan.create",
+   "code.*",
+   "sim.run(test)",
+   "doc.bringup_guide",
+   "report"
+  ],
+  "trigger_intents": [
+   "knowledge.build",
+   "big_command"
+  ]
+ },
+ {
+  "ten": "Thêm tính năng (Z-05)",
+  "chuoi": "chat.ground(dự án) → req.elicit(feature) → req.ground_hw → arch.map_hw(delta) → plan.create → code.module/integrate/test/review → code.merge → sim.run → [board lab? target.flash → target.observe] → doc.section → report",
+  "buoc": [
+   "chat.ground(dự án)",
+   "req.elicit(feature)",
+   "req.ground_hw",
+   "arch.map_hw(delta)",
+   "plan.create",
+   "code.module/integrate/test/review",
+   "code.merge",
+   "sim.run",
+   "[board lab? target.flash",
+   "target.observe]",
+   "doc.section",
+   "report"
+  ],
+  "trigger_intents": [
+   "code.feature"
+  ]
+ },
+ {
+  "ten": "Bộ tài liệu (P7)",
+  "chuoi": "req.trace_matrix → diagram.* (theo loại tài liệu) → doc.generate(URD, SRS, SAD, SDD, STP) → doc.embed_diagram → doc.style_check → report",
+  "buoc": [
+   "req.trace_matrix",
+   "diagram.* (theo loại tài liệu)",
+   "doc.generate(URD, SRS, SAD, SDD, STP)",
+   "doc.embed_diagram",
+   "doc.style_check",
+   "report"
+  ],
+  "trigger_intents": [
+   "doc.write"
+  ]
+ },
+ {
+  "ten": "Dò board và nạp (Z-10)",
+  "chuoi": "discover.ports/probes → discover.chip_id → [khớp hộ chiếu?] → discover.link_speed → discover.auto_setup → policy.decide(G-OPS) → target.flash → target.serial/observe → report",
+  "buoc": [
+   "discover.ports/probes",
+   "discover.chip_id",
+   "[khớp hộ chiếu?]",
+   "discover.link_speed",
+   "discover.auto_setup",
+   "policy.decide(G-OPS)",
+   "target.flash",
+   "target.serial/observe",
+   "report"
+  ],
+  "trigger_intents": [
+   "discover.scan",
+   "target.flash"
+  ]
+ }
+]

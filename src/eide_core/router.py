@@ -99,6 +99,11 @@ class Router:
         # đang dùng — `get_registry()` dựng một đối tượng MỚI mỗi lần gọi, nên đăng ký vào đó
         # là đăng ký vào hư không.
         ctx.extra.setdefault("registry", self.registry)
+        # `chat.orchestrate` chạy từng nút của chuỗi qua Router — cùng đường đi với mọi lời gọi
+        # khác, nên cùng chính sách, cùng nhật ký, cùng hoàn tác. Đưa Router xuống thay vì để nó
+        # tự dựng một cái mới: một Router thứ hai sẽ có hàng đợi riêng và ledger riêng, và mục
+        # chờ do chuỗi sinh ra sẽ không bao giờ xuất hiện trong hàng đợi người đang nhìn.
+        ctx.extra.setdefault("router", self)
         try:
             result = reg.handler(params, ctx)  # type: ignore[misc]
             self.registry.validate_output(cap_id, result)
@@ -216,7 +221,7 @@ class Router:
         try:
             with store.open_store(db) as c:
                 wm.save(c)
-        except sqlite3.Error:
+        except sqlite3.OperationalError:
             pass
 
     def _doc_cho(self, run_id: str, ctx: Context | None
@@ -229,7 +234,7 @@ class Router:
         try:
             with store.open_store(db) as c:
                 wm = WorkingMemory.load(c, run_id)
-        except sqlite3.Error:
+        except sqlite3.OperationalError:
             return None
         if wm is None or wm.state != "asked":
             return None
@@ -250,7 +255,7 @@ class Router:
             with store.open_store(db) as c:
                 if (wm := WorkingMemory.load(c, run_id)) is not None:
                     wm.ket_thuc(c, "done" if quyet == "approve" else "rejected")
-        except sqlite3.Error:
+        except sqlite3.OperationalError:
             pass
 
     def cho_con_lai(self, ctx: Context) -> list[dict[str, Any]]:
@@ -293,7 +298,7 @@ class Router:
                 c.execute(f"UPDATE decision_log SET {dat} WHERE id=?",  # noqa: S608 — khóa từ mã
                           (*cot.values(), decision_id))
                 c.commit()
-        except sqlite3.Error:
+        except sqlite3.OperationalError:
             pass
 
     def _ghi_decision_log(self, run_id: str, cap_id: str, reg: Any, d: Any,
@@ -326,10 +331,16 @@ class Router:
                      json.dumps(features, ensure_ascii=False, default=str),
                      datetime.now(UTC).isoformat()))
                 c.commit()
-        except sqlite3.Error:
+        except sqlite3.OperationalError:
             # Ghi nhật ký quyết định KHÔNG được làm hỏng chính quyết định ấy. Store cũ chưa có
             # bảng (user_version thấp) là trường hợp thật, và bắt người chạy `eide migrate`
             # trước khi được phép làm bất cứ việc gì là một cái giá quá cao cho một dòng thống kê.
+            #
+            # CHỈ `OperationalError` (thiếu bảng/cột), không phải cả `sqlite3.Error`: nuốt rộng
+            # thì một lỗi lập trình — sai tên cột, vi phạm khóa ngoại — trông y hệt "chưa migrate"
+            # và im lặng trôi qua. Đã xảy ra thật ở `chat.orchestrate`: `intent_id` nhận tên ý
+            # định thay vì khóa ngoại, cả câu chèn hỏng, và không dòng nào được ghi trong nhiều
+            # lần chạy mà không ai thấy.
             pass
 
     def _log(self, kind: str, data: dict[str, Any]) -> None:
