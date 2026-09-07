@@ -38,7 +38,25 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | TOOL-01…07 | `tool.need/search/write/test/run/register/repair` | 12.3 | **Xong** — bốn lớp bảo vệ (AST · audit hook · G-TOOL · đòi đã test). TOOL-08/09/10 là M2 |
 | MEMORY-01/02 | `memory.compose`, `memory.compress` | 12.6 | **Xong**. MEMORY-03 `retrieve` đi cùng WI-012 RagIndex |
 | KG-* | `kg.build`, `kg.query`, `kg.review_facts` | 12.2 | **Gỡ nốt DEV-008** (bước 3 của `project.open`) |
+| REQ-01…08 | `elicit`, `classify`, `ground_hw`, `detect_conflict`, `prioritize`, `trace_matrix`, `acceptance`, `change_impact` | 12.1 | **Xong** — 34 test, cả 8 (5 ở mốc M1 + 3 M2 làm luôn vì chung bảng `requirement`). TC-67/TC-68 xanh. Đã kiểm cả arm64 lẫn x86_64 |
 | SEARCH/ARCHIVE/EXTRACT | `search.fetch`, `archive.explore`, `extract.pdf` | 12.2 | Cổng G-SRC và G-FACT đã có quy tắc nhưng chưa có năng lực nào đi qua |
+
+`req.*` bám hợp đồng ở ba chỗ đáng ghi lại:
+
+- **Chuẩn hóa đơn vị trước khi so ngưỡng.** Bảng `DON_VI` ghi tường minh `đơn vị → (đại lượng,
+  hệ số)`. Suy hệ số từ tiền tố là bẫy: "M" trong `MHz`/`MSPS` là mega, "m" trong `ms`/`mA` là
+  milli — cùng chữ cái, lệch 10⁹ lần. Không có bảng này thì REQ-04 báo "400 kHz ≠ 0,4 MHz".
+- **`ground_hw` lọc fact theo hộ chiếu** (`fact.subject` khớp phần trước `@` của `passport.id`).
+  Fact của chip khác dùng để kết luận "khả thi" còn tệ hơn không có fact nào — nó sai một cách
+  tự tin. Không có fact ⇒ `ok=None` + đề nghị `kg.request`, không bao giờ đoán.
+- **`req.prioritize` tính lại ưu tiên từ đầu**, không `cu or mặc_định`. Nếu đã có ưu tiên là bỏ
+  qua thì ask "Đổi ưu tiên M↔S" của REQ-05 không có đường nào chạm tới — một quy tắc chết.
+  SAFETY→M là quy tắc cứng đứng TRƯỚC mọi điều chỉnh, nên yêu cầu an toàn khó làm trên board
+  hiện tại không tự tụt xuống S.
+
+Thêm `openpyxl` vào phụ thuộc chạy (trước chỉ có ở `dev`): REQ-06 khai `format ∈ {xlsx, md}`, và
+trả `.md` khi người dùng xin `.xlsx` là nói dối về đầu ra. Import trễ nên ai chỉ dùng `md` không
+phải trả giá.
 
 ## C. Kiểm thử và tài liệu
 

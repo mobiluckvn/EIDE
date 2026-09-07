@@ -14,6 +14,7 @@ dependencies = [
   "pyyaml>=6.0",            # capabilities/*.yaml, policy/*.yaml
   "jsonschema>=4.17",       # kiểm input/output theo cds.json (API-15 E1000)
   "platformdirs>=3.0",      # thư mục cấu hình/cache đa nền tảng (PLATFORM.md)
+  "openpyxl>=3.1",          # req.trace_matrix format=xlsx (CDS-12.1 REQ-06); import trễ
 ]
 # CLI dùng argparse (stdlib) — ít phụ thuộc, chạy ngay trên ba nền tảng. pydantic thêm ở Sprint 2 khi có DDD store.
 
