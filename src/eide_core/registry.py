@@ -181,7 +181,11 @@ class Registry:
         try:
             jsonschema.validate(result, self.get(cap_id).spec.output_schema)
         except jsonschema.ValidationError as e:
-            raise EideError("E6001", f"{cap_id}: kết quả không khớp output_schema: {e.message}") from e  # DEV-002
+            # API-15 §3 v1.5 `E1004 OUTPUT_SCHEMA`. Trước đó phải mượn E6001 SCHEMA_VIOLATION,
+            # vốn dành cho ghi sai schema dữ liệu DDD-14 — một lỗi của DỮ LIỆU, không phải của
+            # mã. Lẫn hai thứ vào một mã làm người đọc nhật ký đi soi store trong khi chỗ hỏng
+            # là một hàm trả sai hình dạng. Xem DEVIATIONS DEV-002.
+            raise EideError("E1004", f"{cap_id}: kết quả không khớp output_schema: {e.message}") from e
 
     # ---- chuyển spec sang YAML/MCP (API-15 §MCP: sinh từ registry)
     def describe(self, cap_id: str) -> dict[str, Any]:

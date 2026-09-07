@@ -1,6 +1,6 @@
-"""So hai tệp .docx theo NỘI DUNG, không theo byte.
+"""So hai tệp .docx hoặc .xlsx theo NỘI DUNG, không theo byte.
 
-    python scripts/so_docx.py <a.docx> <b.docx> [--im]
+    python scripts/so_tai_lieu.py <a> <b> [--im]
 
 Vì sao cần: docx là tệp zip, mỗi mục có dấu thời gian nén, nên hai lần sinh từ cùng một nguồn
 cho ra hai tệp khác byte. `sinh_tai_lieu.sh --kiem` dùng `cmp` nên báo "LỆCH nguồn" cho MỌI tài
@@ -36,8 +36,26 @@ def khoi(p: Path) -> list[tuple[str, object]]:
     return ra
 
 
+def khoi_xlsx(p: Path) -> list[tuple[str, object]]:
+    """Sổ tính thành danh sách khối: mỗi dòng của mỗi sheet là một khối.
+
+    Đọc CÔNG THỨC (`data_only=False`), không đọc giá trị đã tính: một tệp vừa sinh chưa từng
+    được Excel mở nên không có giá trị nào trong cache, và so theo giá trị sẽ báo lệch ở mọi ô
+    công thức — đo trên PLN-27: 21 chỗ lệch giả, trong khi thật ra chỉ có 2.
+    """
+    import openpyxl
+
+    wb = openpyxl.load_workbook(p, data_only=False)
+    ra: list[tuple[str, object]] = []
+    for ws in wb:
+        for i, row in enumerate(ws.iter_rows(), 1):
+            ra.append((f"{ws.title}!{i}", [c.value for c in row]))
+    return ra
+
+
 def so(a: Path, b: Path) -> list[str]:
-    ka, kb = khoi(a), khoi(b)
+    doc = khoi_xlsx if a.suffix.lower() == ".xlsx" else khoi
+    ka, kb = doc(a), doc(b)
     loi = []
     for i, (x, y) in enumerate(zip(ka, kb, strict=False)):
         if x != y:

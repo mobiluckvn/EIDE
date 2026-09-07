@@ -82,3 +82,20 @@ def test_vi_du_cua_hop_dong_phai_qua_noi_input_schema_cua_chinh_no():
         for e in jsonschema.Draft202012Validator(sch).iter_errors(val):
             loi.append(f"{c['code']} {c['id']}: {list(e.path) or '(gốc)'} — {e.message}")
     assert not loi, "ví dụ mâu thuẫn với input_schema:\n  " + "\n  ".join(loi)
+
+
+def test_ket_qua_sai_output_schema_la_E1004_khong_phai_E6001():
+    """API-15 §3 v1.5: lỗi hiện thực có mã RIÊNG, không mượn mã của lỗi dữ liệu (DEV-002).
+
+    E6001 SCHEMA_VIOLATION nói về việc GHI sai schema dữ liệu DDD-14 — một lỗi của dữ liệu.
+    Một năng lực trả sai hình dạng là lỗi của MÃ. Lẫn hai thứ vào một mã làm người đọc nhật ký
+    đi soi store trong khi chỗ hỏng là một hàm.
+    """
+    from eide_core.errors import EideError
+
+    reg = get_registry()
+    with pytest.raises(EideError) as e:
+        # `project.list` khai `projects` là mảng bắt buộc; trả về một chuỗi là sai hình dạng.
+        reg.validate_output("project.list", {"projects": "không phải mảng"})
+    assert e.value.code == "E1004", f"đang là {e.value.code}"
+    assert e.value.name == "OUTPUT_SCHEMA"

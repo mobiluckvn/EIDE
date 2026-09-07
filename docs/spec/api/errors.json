@@ -24,6 +24,12 @@
   "handling": ""
  },
  {
+  "code": "E1004",
+  "name": "OUTPUT_SCHEMA",
+  "meaning": "Kết quả năng lực không khớp output_schema (lỗi hiện thực)",
+  "handling": "Registry kiểm sau mỗi lời gọi"
+ },
+ {
   "code": "E2000",
   "name": "GROUNDING_FAILED",
   "meaning": "Tiền điều kiện không thỏa: dự án chưa mở, nguồn không tồn tại, hộ chiếu thiếu",

@@ -6,7 +6,11 @@ const { metaNew, refParas, CAPS, NS_ORDER, NS_VI } = require('./eide_common');
 const m = metaNew('EIDE-SEC-25', 'Thiết kế an toàn', 'THIẾT KẾ AN TOÀN VÀ QUYỀN RIÊNG TƯ (SEC)',
   'Mô hình đe dọa, sandbox cho extractor/công cụ/bộ render, quản lý khóa API, cờ nhạy cảm và dữ liệu gửi mô hình, kiểm license, quyền hệ thống, nhật ký không lộ bí mật, kiểm thử an toàn',
   [['Tài liệu trước', 'EIDE-SRS-02 NFR-06, EIDE-SAD-03 §8, EIDE-POL-17, EIDE-API-15 §6'], ['Dùng khi', 'Hiện thực Sandbox, Gateway, Ledger, env.install_tool; rà soát trước phát hành']],
-  'Phát hành lần đầu — bổ sung lĩnh vực L32');
+  'Phát hành lần đầu — bổ sung lĩnh vực L32',
+  [['1.1', '07/09/2026', 'Vũ Trí Công',
+    '§2: nói rõ giới hạn RAM trên macOS canh bằng RSS ở tiến trình CHA (chu kỳ 0,2 s, vượt → '
+    + 'SIGKILL) chứ không bằng `RLIMIT_AS` — đo được rằng `RLIMIT_AS` ở bất kỳ giá trị nào cũng '
+    + 'làm hỏng chính lời gọi exec trên macOS. Ba giới hạn còn lại giữ nguyên (DEV-017).']]);
 const c = [];
 c.push(H1('1. Phạm vi và mô hình đe dọa'));
 c.push(P('Bản đầu chạy trên một PC của kỹ sư, có Internet, dùng LLM đám mây; kẻ tấn công không phải người dùng máy mà là **nội dung không tin cậy** đi vào hệ thống: tệp trong zip (PDF, ảnh, header, script), trang web tìm được, gói công cụ tải về, và chính đầu ra của mô hình (mã, lệnh). Bảng dưới liệt kê mối đe dọa theo OWASP Top 10 cho ứng dụng LLM [51] và biện pháp; mỗi biện pháp có test ở §8.'));
@@ -22,7 +26,9 @@ c.push(T([600, 2800, 3200, 2700], ['#', 'Mối đe dọa', 'Kịch bản trong E
 ]));
 c.push(SP());
 c.push(H1('2. Sandbox'));
-c.push(P('Mọi extractor, bộ render lược đồ, lệnh cài đặt và công cụ ngoài chạy trong `Sandbox.run(cmd|callable, limits)` trên tiến trình con: `resource` (Linux/macOS) giới hạn CPU 60 s, RAM 1 GB, tệp mở 256, kích thước ghi 2 GB; wall-clock 300 s (cấu hình theo loại); thư mục làm việc tạm riêng, chỉ được đọc `allowed_dirs` (tài liệu nguồn) và ghi `out_dir`; biến môi trường tối thiểu (không PATH của người dùng, không khóa API); trên macOS dùng `sandbox-exec` profile khi có, trên Linux `bwrap` nếu có, nếu không thì tiến trình con + giới hạn `resource` (ghi ledger mức cách ly). Archive: độ sâu ≤ 5, tổng giải nén ≤ 2 GB, tỷ lệ nén > 100:1 → dừng, chuẩn hóa đường dẫn và từ chối `..`/tuyệt đối/symlink ra ngoài. Đầu ra sandbox là tệp/JSON, được kiểm schema trước khi vào store.'));
+c.push(P('Mọi extractor, bộ render lược đồ, lệnh cài đặt và công cụ ngoài chạy trong `Sandbox.run(cmd|callable, limits)` trên tiến trình con: `resource` giới hạn CPU 60 s, tệp mở 256, kích thước ghi 2 GB (cả ba dùng được trên Linux và macOS), RAM 1 GB (xem đoạn dưới về macOS); wall-clock 300 s (cấu hình theo loại); thư mục làm việc tạm riêng, chỉ được đọc `allowed_dirs` (tài liệu nguồn) và ghi `out_dir`; biến môi trường tối thiểu (không PATH của người dùng, không khóa API); trên macOS dùng `sandbox-exec` profile khi có, trên Linux `bwrap` nếu có, nếu không thì tiến trình con + giới hạn `resource` (ghi ledger mức cách ly). Archive: độ sâu ≤ 5, tổng giải nén ≤ 2 GB, tỷ lệ nén > 100:1 → dừng, chuẩn hóa đường dẫn và từ chối `..`/tuyệt đối/symlink ra ngoài. Đầu ra sandbox là tệp/JSON, được kiểm schema trước khi vào store.'));
+c.push(SP());
+c.push(P('**Giới hạn RAM trên macOS không dùng `RLIMIT_AS` được.** Đo trực tiếp 06/09/2026 trên macOS 26 arm64: đặt `RLIMIT_AS` ở bất kỳ giá trị nào — thử cả 2 GB — đều làm hỏng chính lời gọi `exec` của tiến trình con, vì Python trên macOS đặt trước một vùng địa chỉ ảo rất lớn; lỗi xuất hiện ngay ở `preexec_fn` chứ không phải khi công cụ chạy. Ba giới hạn còn lại hoạt động bình thường (`RLIMIT_CPU` → SIGXCPU, `RLIMIT_FSIZE` → Errno 27, `RLIMIT_NOFILE` → Errno 24). macOS là nền tảng thứ tự một, nên không thể bỏ giới hạn RAM. Thay vào đó, tiến trình **cha** canh RSS của tiến trình con theo chu kỳ 0,2 giây và gửi SIGKILL khi vượt ngưỡng, ghi `violations: [rss]`. Canh ở cha chứ không ở con là có chủ ý: một công cụ đang ăn hết bộ nhớ là đúng thứ không nên nhờ chính nó tự dừng. `RLIMIT_AS` vẫn dùng trên Linux. Xem DEVIATIONS DEV-017.'));
 c.push(H1('3. Khóa, bí mật và dữ liệu gửi ra ngoài'));
 c.push(T([2600, 6700], ['Chủ đề', 'Quy tắc'], [
   ['Khóa API LLM', 'Đọc từ biến môi trường hoặc keychain hệ điều hành (macOS Keychain, Linux secret-service, Windows Credential Manager) qua `keyring`; không bao giờ ghi vào .eide/, ledger, log, tài liệu; models.yaml chỉ ghi tên biến'],
@@ -101,7 +107,7 @@ c.push(T([1000, 3400, 3700, 1200], ['TC', 'Mục tiêu', 'Kỳ vọng', 'Mức']
   ['TC-DP-01', 'Cài sạch trên 3 hệ điều hành', 'Máy ảo mới → cài → eide doctor 0 → chạy kịch bản chuẩn với sim', 'L2'],
   ['TC-DP-02', 'Daemon tự khởi động và tắt nhàn rỗi', 'Gọi CLI khi chưa có daemon → tự lên < 3 s; 30 phút không phiên → tắt', 'L2'],
   ['TC-DP-03', 'Lệch phiên bản', 'Plugin major 2 với daemon major 1 → thông báo nâng cấp, không treo', 'L1'],
-  ['TC-DP-04', 'Nâng cấp có dữ liệu', 'Dự án v1.0 (.hkw) → nâng cấp → mở được, migrate, symlink', 'L1'],
+  ['TC-DP-04', 'Nâng cấp có dữ liệu', 'Dự án `.eide` phiên bản store cũ → nâng cấp → mở được, `eide migrate` chạy, dữ liệu nguyên vẹn. Không còn bước `.hkw` → `.eide`: kho eide viết mới hoàn toàn, không kế thừa hkw-core (SAD-03 ADR-16, DEVIATIONS DEV-003)', 'L1'],
   ['TC-DP-05', 'Release pipeline', 'Tag → wheel + plugin ký + changelog + tài liệu sinh lại', 'L2'],
 ]));
 c.push(SP());

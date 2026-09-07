@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-"""EIDE-PLN-27 — Kế hoạch phát triển và backlog theo mốc (Excel), sinh từ Danh mục năng lực + tài liệu + TC."""
+"""Chạy trong thư mục dàn dựng của `scripts/sinh_tai_lieu.sh` (đọc caps.json/cds.json ở cwd).
+Trước 07/09/2026 hai tệp ấy đọc từ `/home/claude/eide-docs/` — đường dẫn tuyệt đối của MÁY KHÁC,
+nên bộ sinh này chưa từng chạy được trong kho. Xem DEVIATIONS DEV-018 và DEV-003.
+
+EIDE-PLN-27 — Kế hoạch phát triển và backlog theo mốc (Excel), sinh từ Danh mục năng lực + tài liệu + TC."""
 import openpyxl, json, re
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.datavalidation import DataValidation
 from collections import defaultdict
-caps = json.load(open("/home/claude/eide-docs/caps.json"))
-cds = {r["id"]: r for r in json.load(open("/home/claude/eide-docs/cds.json"))}
+caps = json.load(open("caps.json", encoding="utf-8"))
+cds = {r["id"]: r for r in json.load(open("cds.json", encoding="utf-8"))}
 RED, SLATE, ZEBRA = "B8121F", "2F4858", "F2F6FB"
 thin = Side(style="thin", color="D0D5DD"); BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
 HF = Font(bold=True, color="FFFFFF", name="Arial", size=10); BODY = Font(name="Arial", size=10); WRAP = Alignment(wrap_text=True, vertical="top")
@@ -44,7 +48,9 @@ def add(kind, title, ms, prio, days, deps, who, ref, cap=""):
     rows.append([f"WI-{n:03d}", kind, title, ms, prio, days, deps, who, ref, cap, "Chưa"])
 # Hạ tầng M1
 for t, d, dep, ref in [
- ("Đổi tên kho hkw-core → eide; alias import; .hkw → .eide symlink", 1, "", "DEP-26, CON-28"),
+ # Kho eide viết MỚI hoàn toàn (quyết định 05/09/2026), không đổi tên hay kế thừa hkw-core,
+ # nên không có bước migrate .hkw → .eide. Xem DEVIATIONS DEV-003.
+ ("Khởi tạo kho eide: lõi eide_core/ tách riêng, CLI argparse, không kế thừa hkw-core", 1, "", "DEP-26, CON-28, SAD-03 ADR-16"),
  ("Migration 0002_m1 (bảng policy/runtime) + eide migrate", 1.5, "WI-001", "DDD-14 §5"),
  ("Capability Registry + Router (nạp capabilities/*.yaml, invoke, grounding, ledger, undo)", 4, "WI-002", "SDD-04 §4.0, CDS-12"),
  ("PolicyGate + rules.yaml + autonomy.yaml + UndoService + decision_log", 4, "WI-003", "POL-17"),

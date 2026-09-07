@@ -21,7 +21,12 @@ const m = metaNew('EIDE-API-15', 'Đặc tả giao diện lập trình', 'ĐẶC
    ['1.4', '07/09/2026', 'Vũ Trí Công',
     '§7: `store.write` thêm trường `hash` để nối bản ghi với niêm phong toàn vẹn '
     + '`store.sqlite.seal.json` (DDD-14 §5). CDS-12.3 PROJECT-02 bước 2 đòi kiểm hash store '
-    + 'nhưng không sự kiện nào mang được nó (DEV-007).']]);
+    + 'nhưng không sự kiện nào mang được nó (DEV-007).'],
+   ['1.5', '07/09/2026', 'Vũ Trí Công',
+    '§3: thêm mã lỗi `E1004 OUTPUT_SCHEMA` cho trường hợp kết quả một năng lực không khớp '
+    + '`output_schema`. E1000 là tham số vào sai, E5002 là đầu ra mô hình sai — không mã nào '
+    + 'dành cho lỗi hiện thực này, nên nó phải mượn E6001 vốn dành cho ghi sai schema dữ liệu '
+    + 'DDD-14, làm hai loại lỗi rất khác nhau lẫn vào một mã (DEV-002).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc'));
 c.push(P('Bốn bề mặt gọi (plugin GEditor qua JSON-RPC 2.0 [50] trên Unix socket, IDE ngoài qua MCP [13], REST nội bộ cho CI/kiểm thử, CLI) đều đi tới cùng `CapabilityRouter.invoke` (SDD-04 §4.0). Vì vậy: (1) mọi năng lực tự động là một phương thức `caps.invoke` với `input_schema`/`output_schema` từ khai báo — không viết tay; (2) chỉ có một tập phương thức "khung" (phiên, hàng đợi, chat, sự kiện, job) viết tay và liệt kê dưới đây; (3) mọi lỗi dùng chung bảng mã §6; (4) mọi lời gọi có `request_id` xuất hiện trong ledger để truy vết đầu-cuối; (5) phiên bản API semver trong handshake, thay đổi phá vỡ chỉ ở phiên bản lớn.'));
@@ -104,6 +109,11 @@ const ERR = [
  ['E1001', 'UNKNOWN_CAPABILITY', 'id không có trong registry', ''],
  ['E1002', 'API_VERSION', 'Phiên bản plugin/daemon không tương thích', 'Handshake'],
  ['E1003', 'UNAUTHORIZED', 'Token REST sai', ''],
+ // E1000 là tham số VÀO sai; E5002 là đầu ra MÔ HÌNH sai schema. Kết quả của một năng lực
+ // không khớp `output_schema` không thuộc cả hai: đó là lỗi hiện thực, và Registry kiểm nó
+ // ở mọi lời gọi để bắt sớm (STP-05). Trước v1.5 phải mượn E6001 SCHEMA_VIOLATION, vốn dành
+ // cho ghi sai schema dữ liệu DDD-14 — nên hai loại lỗi rất khác nhau lẫn vào một mã. DEV-002.
+ ['E1004', 'OUTPUT_SCHEMA', 'Kết quả năng lực không khớp output_schema (lỗi hiện thực)', 'Registry kiểm sau mỗi lời gọi'],
  ['E2000', 'GROUNDING_FAILED', 'Tiền điều kiện không thỏa: dự án chưa mở, nguồn không tồn tại, hộ chiếu thiếu', 'Payload {exists[], candidates[], missing[]} để Orchestrator hỏi/dùng luôn'],
  ['E2001', 'ALREADY_EXISTS', 'Tạo trùng (dự án, feature)', 'Kèm phương án reuse|clone|new'],
  ['E3000', 'POLICY_ASK', 'Cần người (không phải lỗi; status pending)', 'gate_id'],

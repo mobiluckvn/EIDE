@@ -30,7 +30,10 @@ if [ "${1:-}" = "--danh-sach" ] || [ $# -eq 0 ]; then
 fi
 
 TEN="$1"; KIEM="${2:-}"
-[ -f "$NGUON/$TEN.js" ] || { echo "Không có bộ sinh: $TEN.js"; exit 2; }
+# `excel` là bí danh cho bốn tệp .xlsx sinh bằng openpyxl, không có tệp .js tương ứng.
+if [ "$TEN" != "excel" ]; then
+    [ -f "$NGUON/$TEN.js" ] || { echo "Không có bộ sinh: $TEN.js"; exit 2; }
+fi
 
 command -v node >/dev/null || { echo "Cần node để sinh tài liệu"; exit 1; }
 if [ ! -d "$NGUON/node_modules" ]; then
@@ -54,9 +57,20 @@ ln -s "$NGUON/node_modules" "$SAN/node_modules"
 # xong docx vẫn dựng từ bản cũ, và người sửa tưởng mình vừa đổi tài liệu. Cùng khuôn mẫu DEV-018.
 cp "$SPEC/caps.json" "$SAN/"
 (cd "$SAN" && "$PY" gen_cds.py >/dev/null && "$PY" gen_ddd.py >/dev/null)
+# Bốn tệp Excel của bộ hồ sơ có bộ sinh riêng ở `nguon/excel/`. Chỉ chạy khi được gọi đích danh
+# (`sinh_tai_lieu.sh excel`) vì chúng cần openpyxl và không phải bộ sinh docx nào cũng liên quan.
+[ -d "$NGUON/excel" ] && cp "$NGUON"/excel/*.py "$SAN"/ 2>/dev/null || true
 
 # `ddd.js` đọc `data/json/*.json` — do gen_ddd.py vừa sinh ở trên, nên không chép từ kho.
-(cd "$SAN" && node "$TEN.js" >/dev/null)
+if [ "$TEN" = "excel" ]; then
+    # CHỈ PLN-27. Ba tệp Excel còn lại có chuỗi phụ thuộc riêng chưa được kiểm chứng —
+    # `build_uc_v12.py` đọc `EIDE_Use_Case_Chi_Tiet.xlsx` do `build_xlsx.py` sinh, tức một
+    # chuỗi hai bước; `build_caps.py` và `build_audit.py` chưa đối chiếu với bản trong kho.
+    # Nối chúng vào đây mà chưa chứng minh sinh lại đúng thì cổng `--kiem` sẽ báo lệch giả.
+    (cd "$SAN" && "$PY" build_plan.py >/dev/null)
+else
+    (cd "$SAN" && node "$TEN.js" >/dev/null)
+fi
 
 lech=0
 
@@ -65,7 +79,7 @@ khac() {  # $1 = tệp A, $2 = tệp B → 0 nếu GIỐNG
     # dung. Dùng `cmp` ở đây làm `--kiem` báo "LỆCH nguồn" cho MỌI tài liệu (đo 06/09/2026:
     # pol, prs, cxd đều ✗ dù đang đồng bộ) — một cổng luôn đỏ che mất lần lệch thật.
     case "$1" in
-        *.docx) "$PY" "$GOC/scripts/so_docx.py" "$1" "$2" --im ;;
+        *.docx|*.xlsx) "$PY" "$GOC/scripts/so_tai_lieu.py" "$1" "$2" --im ;;
         *)      cmp -s "$1" "$2" ;;
     esac
 }
@@ -77,11 +91,11 @@ chep() {  # $1 = tệp trong $SAN, $2 = đích
         elif khac "$SAN/$1" "$2"; then echo "  = $(basename "$2")"
         else
             echo "  ✗ $(basename "$2") LỆCH nguồn"
-            # KHÔNG nối `| head`: `so_docx.py` in nhiều hơn 6 dòng thì head đóng ống, python
+            # KHÔNG nối `| head`: `so_tai_lieu.py` in nhiều hơn 6 dòng thì head đóng ống, python
             # nhận SIGPIPE, `pipefail` biến cả pipeline thành lỗi và `set -e` giết script ngay
             # tại đây — mọi tệp còn lại không bao giờ được đối chiếu, mà script vẫn thoát 1 nên
-            # trông y hệt một lần "có lệch" bình thường. `so_docx.py` đã tự giới hạn 8 dòng.
-            case "$1" in *.docx) "$PY" "$GOC/scripts/so_docx.py" "$SAN/$1" "$2" || true ;; esac
+            # trông y hệt một lần "có lệch" bình thường. `so_tai_lieu.py` đã tự giới hạn 8 dòng.
+            case "$1" in *.docx|*.xlsx) "$PY" "$GOC/scripts/so_tai_lieu.py" "$SAN/$1" "$2" || true ;; esac
             lech=1
         fi
     else
@@ -89,7 +103,9 @@ chep() {  # $1 = tệp trong $SAN, $2 = đích
     fi
 }
 
-for d in "$SAN"/*.docx; do [ -f "$d" ] && chep "$(basename "$d")" "$HO_SO/$(basename "$d")"; done
+for d in "$SAN"/*.docx "$SAN"/*.xlsx; do
+    [ -f "$d" ] && chep "$(basename "$d")" "$HO_SO/$(basename "$d")"
+done
 # `cds.json`/`ddd.json` là đầu ra của gen_cds.py/gen_ddd.py và cũng là đầu vào của các bộ sinh
 # docx khác, nên phải đưa về kho — không thì sửa `cds_data_a.py` chỉ đổi được docx của chính
 # nhóm ấy, còn `docs/spec/cds.json` mà sản phẩm đọc thì đứng yên.

@@ -12,7 +12,11 @@ const m = metaNew('EIDE-DDD-14', 'Từ điển dữ liệu', 'TỪ ĐIỂN DỮ 
     + 'dự án A không đọc được ở dự án B (DEV-010); trường `value` nói rõ là giá trị JSON bất kỳ '
     + 'chứ không chỉ đối tượng, và learned_from/ttl_days là trường ngang hàng (DEV-009). '
     + '§5: mô tả niêm phong `store.sqlite.seal.json` mà PROJECT-02 bước 2 đòi nhưng chưa tài '
-    + 'liệu nào định nghĩa (DEV-007).']]);
+    + 'liệu nào định nghĩa (DEV-007).'],
+   ['1.2', '07/09/2026', 'Vũ Trí Công',
+    '§5: thêm dòng `0003b_m1_session` cho `session.sqlite`. §2 khai Phiên làm việc ở tệp ấy và '
+    + 'MEM-11 §2 xếp M2 vào đó, nhưng bảng lịch §5 chỉ có dòng cho `index.sqlite` — nên đọc riêng '
+    + '§5 sẽ tưởng bảng `session` bị bỏ sót khỏi store chính (DEV-006).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc và quy ước'));
 c.push(P('Tài liệu này được sinh từ một mô hình duy nhất (`ddd_model.py`); mọi thay đổi schema phải sửa mô hình rồi sinh lại JSON Schema, DDL và tài liệu — không sửa tay ba nơi. Quy ước: (1) mọi id có tiền tố loại + 16 hex (f_, src_, cr_, d_, r_, it_, dg_, doc_, dv_, e_, m_, tr_, ds_, cu_, acq_), trừ id có nghĩa (F-nn, ADR-nn, UR-/FR-, passport ns.part@semver, module mod_<slug>); (2) IRI subject theo KAD-07 §6.1: `chip:<vendor>.<part>[/periph:X[/reg:Y[/field:Z]]]`, `board:<id>[/net:N|/pin:P]`, `part:<vendor>.<mpn>`, `isa:<id>`; (3) cột JSON lưu TEXT (UTF-8) và được kiểm bằng JSON Schema tương ứng trước khi ghi; (4) thời gian ISO-8601 UTC; (5) mọi bảng có cột `at` hoặc `created_at` để dòng thời gian (view.timeline); (6) SQLite WAL, foreign_keys=ON, user_version tăng theo migration; (7) ba tệp cơ sở dữ liệu: `store.sqlite` (commit Git), `session.sqlite` (không commit), `index/index.sqlite` (không commit, tái dựng được).'));

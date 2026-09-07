@@ -125,6 +125,8 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
     case apiVersion = 1002
     /// UNAUTHORIZED — Token REST sai
     case unauthorized = 1003
+    /// OUTPUT_SCHEMA — Kết quả năng lực không khớp output_schema (lỗi hiện thực)
+    case outputSchema = 1004
     /// GROUNDING_FAILED — Tiền điều kiện không thỏa: dự án chưa mở, nguồn không tồn tại, hộ chiếu thiếu
     case groundingFailed = 2000
     /// ALREADY_EXISTS — Tạo trùng (dự án, feature)
@@ -184,6 +186,7 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
         case .unknownCapability: return ""
         case .apiVersion: return "Handshake"
         case .unauthorized: return ""
+        case .outputSchema: return "Registry kiểm sau mỗi lời gọi"
         case .groundingFailed: return "Payload {exists[], candidates[], missing[]} để Orchestrator hỏi/dùng luôn"
         case .alreadyExists: return "Kèm phương án reuse|clone|new"
         case .policyAsk: return "gate_id"
@@ -214,4 +217,4 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
 
 /// Số phương thức và mã lỗi lúc sinh — test hợp đồng đối chiếu với spec (API-15 §8).
 public let eideSoPhuongThuc = 57
-public let eideSoMaLoi = 28
+public let eideSoMaLoi = 29

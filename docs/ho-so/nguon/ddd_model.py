@@ -115,6 +115,10 @@ MIGRATIONS = [
  ("0001_m0_base", "M0", "source, fact, passport, passport_fact, code_unit, feature, tool_report; PRAGMA journal_mode=WAL; user_version=1"),
  ("0002_m1_policy_runtime", "M1", "acq_request, permission, decision_log, capability_run, intent, run, error_ledger, preference, capability, requirement, diagram; cột fact.layer; chỉ mục mới; user_version=2"),
  ("0003_m1_index", "M1", "index/index.sqlite riêng: rag_chunk + FTS5 (rag_chunk_fts); không migration trong store chính"),
+ # §2 khai Phiên làm việc ở "session.sqlite, không commit" và MEM-11 §2 xếp M2 vào đó, nhưng
+ # bảng lịch này chỉ có dòng cho index.sqlite — nên đọc riêng §5 sẽ tưởng bảng `session` bị bỏ
+ # sót khỏi store chính. Xem DEVIATIONS DEV-006.
+ ("0003b_m1_session", "M1", "session/session.sqlite riêng: session (M2 SessionMemory, MEM-11 §2); không commit vào git; không migration trong store chính"),
  ("0004_m2_engineering_hw", "M2", "module, hw_map, adr, doc_artifact, discovery, measurement; code_unit.module_id; user_version=3"),
  ("0005_m3_debug", "M3", "debug_session; user_version=4"),
  ("0006_rename_eide", "M1", "Đổi thư mục .hkw → .eide (giữ symlink đọc); không đổi schema"),

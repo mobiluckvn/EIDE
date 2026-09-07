@@ -5,7 +5,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.worksheet.table import Table, TableStyleInfo
 import uc_data as D
 import uc_data_v12  # đăng ký UC mới vào D.UCS/FLOWS/ALTS
-caps = json.load(open("/home/claude/eide-docs/caps.json"))
+caps = json.load(open("caps.json", encoding="utf-8"))
 capnames = {c["name"] for c in caps}
 RED, SLATE, ZEBRA, LIGHT = "B8121F", "2F4858", "F2F6FB", "FFF4D6"
 thin = Side(style="thin", color="D0D5DD"); BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
