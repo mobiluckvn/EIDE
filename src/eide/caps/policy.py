@@ -1,17 +1,22 @@
 """Namespace policy.* — CDS-12.5; APD-08 §2, §5; POL-17."""
 from __future__ import annotations
 
+import secrets
+from collections import defaultdict
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from eide_core import store
 from eide_core.errors import EideError
 from eide_core.policy import LEVELS, PolicyGate
 from eide_core.registry import capability
 from eide_core.router import Context
 from eide_core.undo import UndoService
 
+EIDE_DIR = ".eide"
 _STATE: dict[str, Any] = {"stopped": False}
 
 
@@ -125,3 +130,150 @@ def set_autonomy(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
     return {"effective": level}
+
+
+@capability("policy.permit")
+def permit(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: POLICY-02 — CDS-12.5; DDD-14 §2 Permission. tc: TC-03; ask "Luôn (R4)".
+
+    Quyền theo PHIÊN cho một thao tác R3/R4: người cấp một lần, tác tử dùng trong phiên ấy mà
+    không phải hỏi lại từng lần. Ba ràng buộc, mỗi cái chặn một cách hỏng khác nhau:
+
+    · `by=human` bắt buộc (E3000). Một tác tử tự cấp quyền cho chính nó thì cả cơ chế thành
+      trang trí — cùng lý do `eide policy sign` là lệnh chứ không phải năng lực.
+    · Hết hạn khi đóng phiên, kể cả khi `ttl_s` còn dài. Bước 1 của hợp đồng ghi "hết hạn khi
+      đóng phiên", và đó là điều làm cho "quyền theo phiên" đúng nghĩa: mở lại máy ngày hôm sau
+      thì mọi quyền phải xin lại, vì hoàn cảnh đã khác.
+    · Ghi vào store của dự án, không vào bộ nhớ tiến trình: quyền phải đọc lại được sau khi
+      daemon khởi động lại, và phải kiểm được bằng mắt.
+    """
+    if params["by"] != "human" and ctx.actor != "human":
+        raise EideError("E3000", "Cấp quyền là quyết định của người (POLICY-02: chỉ by=human)",
+                        rule="POLICY-02", gate="*")
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if not root or not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", "policy.permit cần một dự án đang mở",
+                        exists=[], candidates=[], missing=["project"])
+    ttl = int(params.get("ttl_s") or 0)
+    now = datetime.now(UTC)
+    het = (now + timedelta(seconds=ttl)).isoformat() if ttl > 0 else None
+    pid = "perm_" + secrets.token_hex(6)
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT INTO permission (id, session_id, op, target, granted_by, granted_at,"
+                  " expires_at) VALUES (?,?,?,?,?,?,?)",
+                  (pid, ctx.session_id, params["op"], params.get("target"), params["by"],
+                   now.isoformat(), het))
+        c.commit()
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("gate.human", {"gate_id": "*", "decision": "APPROVE", "by": params["by"],
+                                  "note": f"policy.permit {params['op']}"
+                                          + (f" trên {params['target']}" if params.get("target") else "")
+                                          + (f", ttl {ttl}s" if ttl else ", tới hết phiên")})
+    return {"permission_id": pid, "expires_at": het}
+
+
+def quyen_con_hieu_luc(root: Path, session_id: str, op: str, target: str | None = None) -> bool:
+    """Phiên này đã được cấp quyền cho `op` chưa? — dùng bởi PolicyGate ở Sprint sau.
+
+    Lọc theo session_id ngay trong truy vấn: một quyền của phiên trước còn hạn theo đồng hồ vẫn
+    KHÔNG được dùng cho phiên này (POLICY-02 bước 1 "hết hạn khi đóng phiên").
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return False
+    now = datetime.now(UTC).isoformat()
+    with store.open_store(db) as c:
+        rows = c.execute(
+            "SELECT target, expires_at FROM permission WHERE session_id=? AND op=?",
+            (session_id, op)).fetchall()
+    return any((t is None or t == target) and (e is None or e > now) for t, e in rows)
+
+
+# POL-17 §7: "Đề xuất chỉ khi n ≥ 20 và tỷ lệ ≥ 0,9 (nới) hoặc ≥ 0,2 (siết)".
+N_TOI_THIEU = 20
+TY_LE_NOI = 0.9
+TY_LE_SIET = 0.2
+NGAY_MAC_DINH = 30
+
+# Cổng → ngưỡng mà đề xuất sẽ chạm tới. Ánh xạ này CẦN nói ra: một đề xuất "nới G-FACT" mà không
+# nêu chỉnh con số nào thì người duyệt không có gì để duyệt.
+NGUONG_THEO_CONG = {
+    "G-FACT": "fact_silver_auto",
+    "G-SRC": "source_match_min",
+    "G-OPS": "flash_per_hour",
+    "G3": "bench_bc_min",
+    "*": "fail_retries",
+}
+
+
+@capability("policy.learn_thresholds")
+def learn_thresholds(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: POLICY-06 — CDS-12.5; POL-17 §7. tc: TC-55; ask "Luôn".
+
+    Bước duy nhất của hợp đồng kết thúc bằng ba chữ quan trọng nhất: **"không áp dụng"**. Năng
+    lực này chỉ ĐỀ XUẤT; đổi ngưỡng là việc của `policy.set_autonomy` sau khi người xác nhận, và
+    một hệ thống tự nới ngưỡng cho chính nó dựa trên thống kê hành vi của chính nó là vòng lặp
+    mà cả APD-08 dựng lên để tránh.
+
+    Hai tín hiệu, ngược chiều nhau (POL-17 §7):
+      · người APPROVE khi máy ASK  → máy đang hỏi quá nhiều  → gợi ý NỚI (cần tỷ lệ ≥ 0,9)
+      · người UNDO khi máy APPROVE → máy đang tự làm quá tay → gợi ý SIẾT (cần tỷ lệ ≥ 0,2)
+
+    Ngưỡng cho hai chiều KHÁC NHAU rất xa, và cố ý: nới là bỏ bớt một lần hỏi, chỉ nên làm khi
+    gần như chắc chắn; siết là thêm một lần hỏi, và một phần năm số lần phải hoàn tác đã đủ để
+    nói rằng mức tự chủ hiện tại đang sai.
+    """
+    ngay = int(params.get("days") or NGAY_MAC_DINH)
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if not root or not store.store_path(root).exists():
+        raise EideError("E2000", "policy.learn_thresholds cần một dự án đang mở",
+                        exists=[], candidates=[], missing=["project"])
+    moc = (datetime.now(UTC) - timedelta(days=ngay)).isoformat()
+    with store.open_store(store.store_path(root)) as c:
+        rows = c.execute(
+            "SELECT gate, decision, human_answer, undone_at FROM decision_log WHERE at >= ?",
+            (moc,)).fetchall()
+
+    thong_ke: dict[str, dict[str, int]] = defaultdict(lambda: {"ask": 0, "ask_approve": 0,
+                                                               "approve": 0, "approve_undo": 0})
+    for gate, quyet, tra_loi, hoan_tac in rows:
+        t = thong_ke[gate or "*"]
+        if quyet == "ASK":
+            t["ask"] += 1
+            t["ask_approve"] += int((tra_loi or "").upper() == "APPROVE")
+        elif quyet == "APPROVE":
+            t["approve"] += 1
+            t["approve_undo"] += int(bool(hoan_tac))
+
+    nguong_hien = (ctx.extra.get("gate").config if ctx.extra.get("gate") else {}).get("thresholds", {})
+    de_xuat = []
+    for gate, t in sorted(thong_ke.items()):
+        ten = NGUONG_THEO_CONG.get(gate)
+        if ten is None:
+            continue
+        hien = nguong_hien.get(ten)
+        if t["ask"] >= N_TOI_THIEU and t["ask_approve"] / t["ask"] >= TY_LE_NOI:
+            de_xuat.append(_de_xuat(gate, ten, hien, "noi", t["ask_approve"], t["ask"]))
+        if t["approve"] >= N_TOI_THIEU and t["approve_undo"] / t["approve"] >= TY_LE_SIET:
+            de_xuat.append(_de_xuat(gate, ten, hien, "siet", t["approve_undo"], t["approve"]))
+    return {"proposals": de_xuat}
+
+
+def _de_xuat(gate: str, ten: str, hien: Any, huong: str, k: int, n: int) -> dict[str, Any]:
+    """Một bản ghi {threshold, from, to, evidence_n, rate} — POL-17 §7.
+
+    `to` là `None` khi ngưỡng không phải số: đề xuất vẫn có ích (nó nói cổng nào đang lệch và
+    bằng chứng bao nhiêu), nhưng đoán bừa một con số mới thì người duyệt sẽ tin nó là kết quả
+    tính toán. Thà để trống và nói rõ.
+    """
+    buoc = 0.05 if isinstance(hien, float) else (1 if isinstance(hien, int) else None)
+    moi = None
+    if buoc is not None and hien is not None:
+        moi = round(hien - buoc, 4) if huong == "noi" else round(hien + buoc, 4)
+        if isinstance(hien, int):
+            moi = int(moi)
+    return {"gate": gate, "threshold": ten, "from": hien, "to": moi,
+            "huong": huong, "evidence_n": n, "rate": round(k / n, 3),
+            "ly_do": (f"người APPROVE {k}/{n} lần máy hỏi" if huong == "noi"
+                      else f"người hoàn tác {k}/{n} lần máy tự làm"),
+            "ap_dung": False}

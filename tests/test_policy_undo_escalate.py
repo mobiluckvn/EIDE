@@ -227,3 +227,139 @@ def test_ly_do_la_van_len_queue(tmp_path):
     out = r.invoke("policy.escalate", {"reason": "chuyen-gi-do-chua-tung-gap", "ref": "x"},
                    Context()).result
     assert out["notified"] == ["queue"]
+
+
+# ---------- POLICY-02 policy.permit
+
+
+def _du_an(tmp_path, workspace):
+    from eide_core import store
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "lp.jsonl"))
+    res = r.invoke("project.create", {"text": "dự án quyền"}, Context(project_dir=workspace)).result
+    root = workspace / res["project_id"]
+    store.migrate(store.store_path(root), ledger=r.ledger)
+    ctx = Context(project_dir=root, actor="human",
+                  extra={"gate": PolicyGate(), "ledger": r.ledger})
+    return r, ctx, root
+
+
+def test_permit_ghi_vao_store_chu_khong_vao_bo_nho(tmp_path, workspace):
+    """tc POLICY-02: TC-03. Quyền phải đọc lại được sau khi daemon khởi động lại."""
+    from eide_core import store
+    r, ctx, root = _du_an(tmp_path, workspace)
+    out = r.invoke("policy.permit", {"op": "flash", "target": "nucleo-f411",
+                                     "by": "human", "ttl_s": 900}, ctx).result
+    with store.open_store(store.store_path(root)) as c:
+        row = c.execute("SELECT op, target, granted_by, expires_at FROM permission WHERE id=?",
+                        (out["permission_id"],)).fetchone()
+    assert row[:3] == ("flash", "nucleo-f411", "human")
+    assert out["expires_at"] == row[3] and row[3] is not None
+
+
+def test_tac_tu_khong_tu_cap_quyen_cho_minh(tmp_path, workspace):
+    """POLICY-02 lỗi "E3000 nếu by≠human".
+
+    Một tác tử tự cấp quyền R3/R4 cho chính nó thì cả cơ chế thành trang trí — cùng lý do
+    `eide policy sign` là lệnh CLI chứ không phải năng lực.
+    """
+    r, ctx, _ = _du_an(tmp_path, workspace)
+    ctx.actor = "agent"
+    run = r.invoke("policy.permit", {"op": "flash", "by": "agent"}, ctx)
+    assert run.status in ("failed", "pending")
+    if run.status == "failed":
+        assert run.error["eide_code"] == "E3000"
+
+
+def test_quyen_cua_phien_khac_khong_dung_duoc(tmp_path, workspace):
+    """Bước 1: "hết hạn khi đóng phiên". Một quyền còn hạn theo ĐỒNG HỒ nhưng thuộc phiên trước
+    vẫn không được dùng — mở lại máy hôm sau thì hoàn cảnh đã khác, phải xin lại."""
+    from eide.caps.policy import quyen_con_hieu_luc
+
+    r, ctx, root = _du_an(tmp_path, workspace)
+    ctx.session_id = "s_hom_qua"
+    r.invoke("policy.permit", {"op": "flash", "by": "human", "ttl_s": 86400}, ctx)
+    assert quyen_con_hieu_luc(root, "s_hom_qua", "flash") is True
+    assert quyen_con_hieu_luc(root, "s_hom_nay", "flash") is False
+
+
+def test_quyen_het_han_theo_dong_ho(tmp_path, workspace):
+    from eide.caps.policy import quyen_con_hieu_luc
+
+    r, ctx, root = _du_an(tmp_path, workspace)
+    r.invoke("policy.permit", {"op": "erase", "by": "human", "ttl_s": -1}, ctx)
+    # ttl âm ⇒ coi như không đặt hạn (tới hết phiên), không phải "đã hết hạn ngay".
+    assert quyen_con_hieu_luc(root, ctx.session_id, "erase") is True
+
+
+# ---------- POLICY-06 policy.learn_thresholds
+
+
+def _quyet_dinh(root, gate, decision, n, *, human_answer=None, undone=False):
+    """Bơm n dòng decision_log. `id` là khóa chính nên phải duy nhất qua NHIỀU lần gọi — một
+    fixture tự đụng khóa chính là một fixture dựng ra trạng thái store không bao giờ xảy ra."""
+    import secrets
+    from datetime import UTC, datetime
+
+    from eide_core import store
+    with store.open_store(store.store_path(root)) as c:
+        for _ in range(n):
+            c.execute("INSERT INTO decision_log (id, gate, action_cap, risk, autonomy_level,"
+                      " decision, by, rule, reason, human_answer, undone_at, at)"
+                      " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                      (secrets.token_hex(8), gate, "x.y", "R1", "A2", decision,
+                       "agent", "R1", "", human_answer,
+                       datetime.now(UTC).isoformat() if undone else None,
+                       datetime.now(UTC).isoformat()))
+        c.commit()
+
+
+def test_hoc_nguong_chi_DE_XUAT_khong_ap_dung(tmp_path, workspace):
+    """tc POLICY-06: TC-55. Bước duy nhất kết thúc bằng "không áp dụng".
+
+    Một hệ thống tự nới ngưỡng cho chính nó dựa trên thống kê hành vi của chính nó là đúng vòng
+    lặp mà cả APD-08 dựng lên để tránh.
+    """
+    r, ctx, root = _du_an(tmp_path, workspace)
+    truoc = (ctx.project_dir / ".eide" / "autonomy.yaml").read_text(encoding="utf-8")
+    _quyet_dinh(root, "G-FACT", "ASK", 25, human_answer="APPROVE")
+    out = r.invoke("policy.learn_thresholds", {"days": 30}, ctx).result
+    assert out["proposals"], "25/25 người duyệt sau khi máy hỏi mà không đề xuất gì"
+    assert all(p["ap_dung"] is False for p in out["proposals"])
+    assert (ctx.project_dir / ".eide" / "autonomy.yaml").read_text(encoding="utf-8") == truoc
+
+
+def test_duoi_20_mau_thi_khong_de_xuat(tmp_path, workspace):
+    """§7: "chỉ khi n ≥ 20". Đề xuất đổi chính sách dựa trên 5 lần là đoán, không phải học."""
+    r, ctx, root = _du_an(tmp_path, workspace)
+    _quyet_dinh(root, "G-FACT", "ASK", 19, human_answer="APPROVE")
+    assert r.invoke("policy.learn_thresholds", {}, ctx).result["proposals"] == []
+
+
+def test_hai_nguong_khac_nhau_cho_noi_va_siet(tmp_path, workspace):
+    """§7: nới cần ≥ 0,9; siết cần ≥ 0,2. Chênh lệch ấy có chủ ý — nới là bỏ bớt một lần hỏi,
+    chỉ nên làm khi gần như chắc chắn; siết là thêm một lần hỏi, và một phần năm số lần phải
+    hoàn tác đã đủ để nói mức tự chủ hiện tại đang sai."""
+    r, ctx, root = _du_an(tmp_path, workspace)
+    # 24/30 = 0,80 — chưa đủ để NỚI
+    _quyet_dinh(root, "G-FACT", "ASK", 24, human_answer="APPROVE")
+    _quyet_dinh(root, "G-FACT", "ASK", 6, human_answer="REJECT")
+    # 6/25 = 0,24 — đã đủ để SIẾT
+    _quyet_dinh(root, "G-SRC", "APPROVE", 6, undone=True)
+    _quyet_dinh(root, "G-SRC", "APPROVE", 19)
+    huong = {p["gate"]: p["huong"] for p in r.invoke("policy.learn_thresholds", {}, ctx).result["proposals"]}
+    assert "G-FACT" not in huong, "0,80 chưa tới ngưỡng nới 0,9"
+    assert huong.get("G-SRC") == "siet"
+
+
+def test_de_xuat_neu_ro_nguong_nao_va_bang_chung_bao_nhieu(tmp_path, workspace):
+    """§7: "mỗi đề xuất là một bản ghi {threshold, from, to, evidence_n, rate}".
+
+    Một đề xuất "nới G-FACT" mà không nêu chỉnh con số nào thì người duyệt không có gì để duyệt.
+    """
+    r, ctx, root = _du_an(tmp_path, workspace)
+    _quyet_dinh(root, "G-FACT", "ASK", 25, human_answer="APPROVE")
+    p = r.invoke("policy.learn_thresholds", {}, ctx).result["proposals"][0]
+    assert p["threshold"] == "fact_silver_auto"
+    assert p["from"] == 0.85 and p["to"] == 0.8, "nới = hạ ngưỡng tự duyệt"
+    assert p["evidence_n"] == 25 and p["rate"] == 1.0
+    assert "25" in p["ly_do"]

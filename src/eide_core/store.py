@@ -116,17 +116,31 @@ def migrate(path: Path | str, *, ledger: Ledger | None = None, target: int | Non
 
 # ---------- niêm phong toàn vẹn (PROJECT-02 bước 2; DEVIATIONS DEV-007) ----------
 
+# Bảng GHI CHÉP VẬN HÀNH: đổi ở mỗi lời gọi năng lực, theo đúng thiết kế.
+#
+# Chúng nằm ngoài `content_digest` vì niêm phong trả lời câu hỏi "tri thức có bị sửa ngoài cổng
+# không?", mà năm bảng này thì cổng tự ghi vào — mỗi lần. Đưa chúng vào thì phải niêm lại sau
+# TỪNG lời gọi, và một niêm phong phải viết lại liên tục thì không còn là niêm phong; mở dự án
+# sau bất kỳ hoạt động nào cũng sẽ báo E6000 cho một kho hoàn toàn lành.
+#
+# Bỏ ra KHÔNG mất bảo vệ: mọi quyết định cũng vào nhật ký `gate.decision`, và nhật ký là chuỗi
+# băm nối tiếp — mạnh hơn một niêm phong đơn. Ai sửa `decision_log` để giấu một quyết định vẫn
+# lộ khi đối chiếu bảng với nhật ký. Xem DEVIATIONS DEV-047.
+BANG_VAN_HANH = frozenset({"decision_log", "capability_run", "run", "intent", "error_ledger"})
+
+
 def content_digest(conn: sqlite3.Connection) -> str:
     """Vân tay của NỘI DUNG store, không phải của tệp.
 
     Băm byte thô của store.sqlite thì vô dụng: WAL, checkpoint, VACUUM và cả thứ tự trang đều
     đổi tệp mà không đổi một dòng dữ liệu nào — mỗi lần mở sẽ báo "ghi ngoài cổng" cho một kho
     chưa ai chạm tới. Nên băm phần logic: các bảng theo thứ tự tên, mỗi bảng các dòng đã sắp,
-    thành một chuỗi xác định.
+    thành một chuỗi xác định. Trừ `BANG_VAN_HANH` — xem chú thích ở trên.
     """
     h = hashlib.sha256()
     ten = [r[0] for r in conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")]
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+        if r[0] not in BANG_VAN_HANH]
     for t in ten:
         h.update(f"\x00T{t}".encode())
         cot = [r[1] for r in conn.execute(f"PRAGMA table_info({t})")]

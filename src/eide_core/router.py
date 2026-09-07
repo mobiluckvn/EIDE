@@ -8,11 +8,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sqlite3
 import time
 import uuid
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Any
 
+from eide_core import store
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.policy import ASK, PolicyGate
@@ -66,6 +69,7 @@ class Router:
         dec = {"decision": d.decision, "rule": d.rule_id, "reason": d.reason, "gate": d.gate}
         self._log("cap.run.start", {"run_id": run_id, "cap": cap_id, "actor": ctx.actor,
                                     "args_hash": _h(params), "decision": dec})
+        self._ghi_decision_log(run_id, cap_id, reg, d, ctx, features)
         if d.decision == ASK:
             run = CapabilityRun(run_id, cap_id, "pending", None, dec, 0, undo=reg.spec.undo)
             self.queue.append(run)
@@ -102,6 +106,42 @@ class Router:
             UndoService(self.ledger, getattr(self.gate, "config", None)).register(
                 run_id, reg.spec.undo, cap=cap_id)
         return CapabilityRun(run_id, cap_id, "done", result, dec, ms, undo=reg.spec.undo)
+
+    def _ghi_decision_log(self, run_id: str, cap_id: str, reg: Any, d: Any,
+                          ctx: Context, features: dict[str, Any]) -> None:
+        """Ghi một dòng `decision_log` — DDD-14 §2.
+
+        Nhật ký sự kiện đã có `gate.decision`, nhưng nó CHỈ THÊM: hai cột `human_answer` và
+        `undone_at` là những thứ được điền SAU, khi người trả lời một mục ASK hoặc hoàn tác một
+        việc đã APPROVE. Một bản ghi chỉ-thêm không mang được cập nhật ấy, nên DDD-14 dựng riêng
+        một bảng — và POLICY-06 học ngưỡng đọc đúng hai cột đó ("tỷ lệ người APPROVE khi máy
+        ASK", "tỷ lệ người UNDO khi máy APPROVE", POL-17 §7).
+
+        Bảng nằm trong store của dự án, nên không có dự án thì không ghi. Không phải thiếu sót:
+        một quyết định ngoài dự án (ví dụ `project.create`) chưa có store nào để thuộc về.
+        """
+        if not ctx.project_dir:
+            return
+        db = store.store_path(ctx.project_dir)
+        if not db.exists():
+            return
+        try:
+            with store.open_store(db) as c:
+                c.execute(
+                    "INSERT INTO decision_log (id, gate, action_cap, risk, autonomy_level,"
+                    " decision, by, rule, reason, evidence, features, at)"
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (run_id, d.gate, cap_id, reg.spec.risk_class,
+                     ctx.autonomy or self.gate.config.get("autonomy", ""), d.decision, ctx.actor,
+                     d.rule_id, d.reason, None,
+                     json.dumps(features, ensure_ascii=False, default=str),
+                     datetime.now(UTC).isoformat()))
+                c.commit()
+        except sqlite3.Error:
+            # Ghi nhật ký quyết định KHÔNG được làm hỏng chính quyết định ấy. Store cũ chưa có
+            # bảng (user_version thấp) là trường hợp thật, và bắt người chạy `eide migrate`
+            # trước khi được phép làm bất cứ việc gì là một cái giá quá cao cho một dòng thống kê.
+            pass
 
     def _log(self, kind: str, data: dict[str, Any]) -> None:
         if self.ledger:
