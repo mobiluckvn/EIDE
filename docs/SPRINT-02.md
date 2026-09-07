@@ -41,7 +41,30 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | REQ-01…08 | `elicit`, `classify`, `ground_hw`, `detect_conflict`, `prioritize`, `trace_matrix`, `acceptance`, `change_impact` | 12.1 | **Xong** — 34 test, cả 8 (5 ở mốc M1 + 3 M2 làm luôn vì chung bảng `requirement`). TC-67/TC-68 xanh. Đã kiểm cả arm64 lẫn x86_64 |
 | ARCH-01…11 | `style_select`, `decompose`, `map_hw`, `memory_budget`, `timing_budget`, `interface_spec`, `state_machine`, `adr`, `review`, `compare`, `to_plan` | 12.1 | **Xong** — 60 test; TC-69/TC-70 xanh. Kèm migration `0004_m2_engineering_hw` (module, hw_map, adr, doc_artifact, discovery, measurement, `code_unit.module_id`) |
 | ARCHIVE-05…07, EXTRACT-01/02, PASSPORT-01/02/03/07 | `ingest.classify/hash_dedupe/index_text`, `extract.svd/atdf`, `passport.import/query/list/export` | 12.2 | **Xong** — 47 test. Khép chuỗi thu nhận: tệp SVD/ATDF → `source` → `fact` → hộ chiếu → `passport.query`. **M0 từ 9/22 lên 17/22** |
-| SEARCH / phần còn lại của ARCHIVE/EXTRACT | `search.fetch`, `archive.list/unpack`, `extract.pdf_layout` | 12.2 | Cổng G-SRC vẫn chưa có năng lực nào đi qua (G-FACT thì đã có, qua `passport.import`) |
+| ARCHIVE-01/02, MEMORY-05, PROJECT-02, REGISTRY-01 | `archive.list/unpack`, `memory.ledger`, `project.set_target`, `registry.seed` | 12.2/12.6/12.3/12.5 | **Xong — mốc M0 đóng 22/22.** 36 test, phần lớn về việc KHÔNG làm gì |
+| SEARCH / phần còn lại của ARCHIVE/EXTRACT | `search.fetch`, `archive.extract_one/query`, `extract.pdf_layout` | 12.2 | Cổng G-SRC vẫn chưa có năng lực nào đi qua (G-FACT thì đã có, qua `passport.import`) |
+
+**Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
+thêm một mục M0 vào spec thì biết ngay là còn nợ thay vì phải nhớ đi đếm.
+
+`archive.unpack` là bề mặt tấn công thật của EIDE — người dùng tải một "SDK" từ diễn đàn rồi bảo
+tác tử mở ra. Tám lớp phòng thủ, mỗi lớp một test, và **cả tám đều đã được chứng minh bằng kiểm
+đột biến** (gỡ lớp nào ra thì test tương ứng đỏ):
+
+| Lớp | Mối đe dọa |
+|---|---|
+| zip-slip (resolve rồi kiểm `is_relative_to`) | entry `../../.ssh/authorized_keys` ghi ra ngoài |
+| đường dẫn tuyệt đối | `/etc/cron.d/x` — lọc chuỗi `../` bỏ sót hoàn toàn |
+| symlink trong zip (bit `external_attr`) | liên kết trỏ ra `/etc`, entry sau ghi "qua" nó |
+| symlink/hardlink trong tar | cùng mối đe dọa, đường khác |
+| tổng dung lượng ≤ 2 GB | zip bomb theo kích thước |
+| tỷ lệ nén ≤ 100:1 | 42 KB → 4,5 PB |
+| độ sâu đệ quy ≤ 5 (unpack) | lồng sâu làm cạn ngăn xếp |
+| trần cứng `depth` (list) | như trên, độc lập với `depth` người gọi truyền |
+
+Hai lớp cuối **thoát khỏi lượt kiểm đột biến đầu tiên**: cả hai test của tôi đều chạy dưới ngưỡng
+nên chưa bao giờ chạm tới phép chặn. Cùng loại sai với test SAFETY ở `req.*` và ngưỡng 85% Flash
+ở `arch.*` — test xanh vì lý do khác với lý do nó được viết ra.
 
 Chuỗi thu nhận là vòng khép kín cuối cùng còn thiếu: trước nó, `req.ground_hw` và `arch.*` đọc
 bảng `fact` mà không có đường nào đưa fact vào ngoài chèn tay — tức mọi kết luận "khả thi" đều

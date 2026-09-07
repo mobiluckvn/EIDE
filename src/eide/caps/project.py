@@ -474,3 +474,99 @@ def list_projects(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                     "total": len(feats), "autonomy": a.get("autonomy")})
     out.sort(key=lambda x: x["last_open"], reverse=True)
     return {"projects": out}
+
+
+def _root(ctx: Context) -> Path:
+    """Thư mục dự án đang mở. Cùng phép kiểm với các năng lực khác trong tệp — tách ra vì
+    `set_target` cần nó ở hai chỗ."""
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if not root or not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", "Cần một dự án đang mở", exists=[], candidates=[],
+                        missing=["project"])
+    return root
+
+
+# ---------------------------------------------------------------- PROJECT-02 set_target
+
+
+# Bước 1: "Suy ISA từ chip qua hộ chiếu/seed (bảng họ chip → ISA)". Bảng ấy KHÔNG viết ở đây:
+# nó đã nằm trong `family_patterns` của từng `docs/spec/isa/*.yaml`. Chép lại sang Python là
+# tạo bản thứ hai của cùng một sự thật, và hai bản sẽ trôi khỏi nhau ngay lần thêm ISA sau —
+# đúng loại lỗi mà DEV-043/DEV-046 đã ghi.
+def _isa_tu_chip(chip: str) -> str | None:
+    """Khớp tên chip với `family_patterns` trong các manifest ISA."""
+    import re as _re
+    for f in sorted((spec_dir() / "isa").glob("*.yaml")):
+        d = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        for pat in (d.get("family_patterns") or []):
+            if _re.search(pat, chip, _re.I):
+                return d.get("id") or f.stem
+    return None
+
+
+@capability("project.set_target")
+def set_target(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-02 — CDS-12.3. tc: "Ghim st.stm32f411ce@x; constraints.yaml cập nhật;
+    chip lạ → missing"; undo `restore_config`.
+
+    GHIM phiên bản hộ chiếu, không chỉ ghi tên chip. Khác biệt ấy là toàn bộ giá trị của năng
+    lực này: `chip: stm32f411` nói dự án dùng chip gì, còn `chip: st.stm32f411ce@1.2.0` nói nó
+    dùng **bản mô tả nào** của chip ấy. Khi hộ chiếu lên phiên bản mới và một offset đổi,
+    `passport.diff` chỉ so được nếu biết dự án đang ở bản nào — không ghim thì mọi dự án lặng lẽ
+    trôi theo bản mới nhất, và mã sinh tháng trước không tái lập được.
+
+    Chip không có hộ chiếu thì vào `missing` chứ KHÔNG ném lỗi: hợp đồng khai `missing` như một
+    trường bình thường, và dự án vẫn lập kế hoạch được trong lúc chờ tài liệu về. E2000 chỉ dành
+    cho trường hợp không suy ra nổi chip nào.
+    """
+    root = _root(ctx)
+    f = root / EIDE_DIR / "constraints.yaml"
+    cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    target = dict(cu.get("target") or {})
+
+    chip = params.get("chip") or target.get("chip")
+    board = params.get("board") or target.get("board")
+    if not chip and not board:
+        raise EideError("E2000", "Không suy ra được chip: nêu `chip` hoặc cắm board rồi chạy "
+                        "`eide discover`", exists=[], candidates=[], missing=["chip"])
+
+    isa = params.get("isa") or (_isa_tu_chip(chip) if chip else None)
+    pins: dict[str, Any] = {"isa": isa}
+    missing: list[str] = []
+
+    if chip:
+        ghim, co = _ghim(root, chip, params.get("pin_version"))
+        pins["chip"] = ghim
+        if not co:
+            missing.append(f"hộ chiếu cho {chip}")
+    if board:
+        ghim, co = _ghim(root, board, None, kind="board")
+        pins["board"] = ghim
+        if not co:
+            missing.append(f"hộ chiếu board cho {board}")
+    if chip and not isa:
+        missing.append(f"ISA cho {chip} (không khớp family_patterns nào trong docs/spec/isa/)")
+
+    cu["target"] = {**target, "chip": chip, "board": board, "isa": isa, "pins": pins}
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(yaml.safe_dump(cu, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    return {"pins": pins, "missing": missing}
+
+
+def _ghim(root: Path, ten: str, ban: str | None, kind: str = "chip") -> tuple[str, bool]:
+    """Trả (chuỗi ghim `id@ver`, đã có hộ chiếu trong store chưa).
+
+    Ghim cả khi CHƯA có hộ chiếu — dùng bản người gọi nêu, hoặc `@?` khi chưa biết. Để trống
+    thì sau này không phân biệt được "chưa ghim bao giờ" với "đã ghim rồi mất"; `@?` nói rõ là
+    đã chọn chip nhưng còn chờ tài liệu.
+    """
+    db = store.store_path(root)
+    if db.exists():
+        with store.open_store(db) as c:
+            rows = [r[0] for r in c.execute(
+                "SELECT id FROM passport WHERE kind=? AND (id = ? OR id LIKE ?) ORDER BY id",
+                (kind, ten, f"%{ten}%@%")).fetchall()]
+        if rows:
+            khop = [r for r in rows if ban and r.endswith("@" + ban)] or rows
+            return khop[-1], True          # bản mới nhất theo thứ tự id
+    return f"{ten}@{ban}" if ban else f"{ten}@?", False

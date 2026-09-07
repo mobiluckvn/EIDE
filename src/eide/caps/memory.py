@@ -443,3 +443,36 @@ def _fact_theo_diem(root: Path, diem: dict[str, float], k: int) -> list[dict[str
     mau_thuan = [f for f in ra if f["conflict"]]
     con_lai = [f for f in ra if not f["conflict"]]
     return mau_thuan + con_lai[: max(0, k - len(mau_thuan))]
+
+
+@capability("memory.ledger")
+def ledger(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: MEMORY-05 — CDS-12.6; API-15 §5 (bảng loại sự kiện). tc: "Chuỗi hash liên tục;
+    regex khóa bị che".
+
+    Vỏ mỏng quanh `eide_core.ledger.Ledger` — cố ý mỏng. Sổ cái là bất biến nền của cả hệ
+    (SEC-25): chuỗi băm phải liên tục, nên chỉ được có MỘT chỗ nối mắt xích. Một năng lực tự
+    ghi JSONL riêng sẽ tạo ra hai chuỗi băm, và `ledger.verify()` không phát hiện được đứt gãy
+    ở chuỗi mà nó không biết.
+
+    Đổi mã lỗi so với lớp lõi, có chủ ý: `Ledger.append` ném E6001 SCHEMA_VIOLATION cho `kind`
+    lạ, nhưng hợp đồng MEMORY-05 khai E1000 và hợp đồng đúng hơn ở đây. Người GỌI truyền sai
+    `kind` là đối số không hợp lệ (E1000 INVALID_ARGS), không phải sổ cái vi phạm schema của
+    chính nó — phân biệt ấy quan trọng vì E6001 khiến người ta đi kiểm sổ cái thay vì kiểm lời
+    gọi của mình.
+    """
+    from eide_core.ledger import Ledger, event_kinds
+    kind = params["kind"]
+    if kind not in event_kinds():
+        gan = sorted(k for k in event_kinds() if k.split(".")[0] == kind.split(".")[0])
+        raise EideError("E1000", f"Loại sự kiện {kind!r} không có trong bảng API-15 §5"
+                        + (f" — ý bạn là {gan}?" if gan else ""),
+                        kind=kind, candidates=gan)
+    led = ctx.extra.get("ledger")
+    if led is None:
+        root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+        if not root:
+            raise EideError("E2000", "memory.ledger cần một dự án đang mở hoặc `ledger` trong ctx",
+                            exists=[], candidates=[], missing=["project"])
+        led = Ledger(root / ".eide" / "ledger.jsonl")
+    return {"hash": led.append(kind, params["data"], actor=ctx.actor)["hash"]}
