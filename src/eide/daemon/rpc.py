@@ -18,6 +18,7 @@ from eide_core.paths import user_log
 from eide_core.policy import PolicyGate
 from eide_core.registry import get_registry
 from eide_core.router import Context, Router
+from eide_core.undo import UndoService
 
 API_VERSION = "1.2"
 
@@ -32,6 +33,7 @@ class Daemon:
             "plane.hello": self.hello, "caps.list": self.caps_list, "caps.describe": self.caps_describe,
             "caps.invoke": self.caps_invoke, "queue.list": self.queue_list, "autonomy.get": self.autonomy_get,
             "autonomy.set": self.autonomy_set, "stop": self.stop, "project.list": self.project_list,
+            "gate.decide": self.gate_decide, "undo.list": self.undo_list, "undo.apply": self.undo_apply,
         }
 
     # ---- phương thức
@@ -56,6 +58,17 @@ class Daemon:
     def caps_invoke(self, p: dict[str, Any]) -> dict[str, Any]:
         run = self.router.invoke(p["id"], p.get("params", {}), self.ctx, p.get("features"))
         return asdict(run)
+
+    def gate_decide(self, p: dict[str, Any]) -> dict[str, Any]:
+        """API-15 §2 `{gate_id, decision: approve|reject, note?}` — UXD-13 U2 nút duyệt/từ chối."""
+        run = self.router.quyet_dinh(p["gate_id"], p["decision"], by="human", note=p.get("note", ""))
+        return asdict(run)
+
+    def undo_list(self, p: dict[str, Any]) -> dict[str, Any]:
+        return {"items": UndoService(self.ledger, self.gate.config).list()}
+
+    def undo_apply(self, p: dict[str, Any]) -> dict[str, Any]:
+        return self.router.hoan_tac(p["undo_ref"], by="human", ctx=self.ctx)
 
     def queue_list(self, p: dict[str, Any]) -> dict[str, Any]:
         return {"items": [asdict(r) for r in self.router.queue]}
