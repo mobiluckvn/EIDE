@@ -43,7 +43,8 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | ARCHIVE-05…07, EXTRACT-01/02, PASSPORT-01/02/03/07 | `ingest.classify/hash_dedupe/index_text`, `extract.svd/atdf`, `passport.import/query/list/export` | 12.2 | **Xong** — 47 test. Khép chuỗi thu nhận: tệp SVD/ATDF → `source` → `fact` → hộ chiếu → `passport.query`. **M0 từ 9/22 lên 17/22** |
 | ARCHIVE-01/02, MEMORY-05, PROJECT-02, REGISTRY-01 | `archive.list/unpack`, `memory.ledger`, `project.set_target`, `registry.seed` | 12.2/12.6/12.3/12.5 | **Xong — mốc M0 đóng 22/22.** 36 test, phần lớn về việc KHÔNG làm gì |
 | SEARCH-02/05/06/07/08 | `search.vendor`, `search.rank`, `search.fetch`, `search.verify_match`, `search.missing` | 12.2 | **Xong** — 39 test, **cổng G-SRC lần đầu có việc**. `search.web` hoãn theo quyết định chủ sản phẩm 07/09 (cần API tìm kiếm trả phí; `search.vendor` đã phủ phần lớn nhu cầu thật) |
-| SEARCH / phần còn lại của ARCHIVE/EXTRACT | `search.fetch`, `archive.extract_one/query`, `extract.pdf_layout` | 12.2 | Cổng G-SRC vẫn chưa có năng lực nào đi qua (G-FACT thì đã có, qua `passport.import`) |
+| EXTRACT-03… | `extract.pdf_layout` và nhóm PDF (7 năng lực M1) | 12.2 | **Việc tiếp theo đề xuất.** Cảm biến/cơ cấu chấp hành (BME280, MPU6050, A4988 — tài liệu nêu đích danh) CHỈ có PDF, không có SVD/ATDF. Cũng mở khóa `search.verify_match` đọc được nội dung thật thay vì chỉ đối chiếu đường dẫn |
+| `search.web`, `archive.extract_one/query`, `view.*` | | 12.2 | Hoãn hoặc chưa xếp lịch |
 
 **Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
 thêm một mục M0 vào spec thì biết ngay là còn nợ thay vì phải nhớ đi đếm.
