@@ -54,8 +54,12 @@
         items:
           type: object
         description: type fact|resource, nodes[], detail
+      resource_ready:
+        type: boolean
+        description: đã kiểm được xung đột TÀI NGUYÊN chưa (cần hw_map, mốc M2). false nghĩa là chưa kiểm, KHÁC với đã kiểm và sạch
     required:
     - conflicts
+    - resource_ready
     additionalProperties: false
   risk: R0
   tier: T1
@@ -179,9 +183,13 @@
         type: integer
       asked:
         type: integer
+      rejected:
+        type: integer
+        description: nhánh REJECT của G-FACT (ví dụ tầng đồng)
     required:
     - reviewed
     - asked
+    - rejected
     additionalProperties: false
   risk: R1
   tier: T1*

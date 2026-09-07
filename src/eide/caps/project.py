@@ -149,8 +149,8 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     Orchestrator gọi `eide migrate`); bước 2 kiểm niêm phong toàn vẹn (lệch → E6000); bước 4 đọc
     run còn dở; bước 5 trả summary và ghi ledger `session.open`.
 
-    Bước 4 nay mở SessionMemory thật (WI-007) và đóng phiên trước lại. Chỉ còn bước 3 "tái dựng
-    KG" chờ nhóm `kg.*` — xem DEVIATIONS DEV-008.
+    Bước 4 mở SessionMemory thật (WI-007) và đóng phiên trước lại. Bước 3 "tái dựng KG" xong
+    07/09/2026 cùng nhóm `kg.*` — DEV-008 đóng. Cả năm bước của hợp đồng nay có hiện thực.
     """
     workspace = Path(ctx.project_dir or project_dir_default()).expanduser()
     root = _resolve_project(params["project"], workspace)
@@ -190,6 +190,10 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             # "undo còn hạn" (output_schema) — POL-17 §5 qua UndoService
             "undo_open": UndoService(led_ctx, getattr(ctx.extra.get("gate"), "config", None)).list()
             if (led_ctx := ctx.extra.get("ledger")) else [],
+            # Bước 3 "tái dựng KG từ cache (hash khớp) hoặc từ store" — nhóm kg.* có từ 07/09/2026.
+            # Dựng ở đây chứ không để lần gọi kg.* đầu tiên tự dựng: mở dự án là lúc người dùng
+            # chờ sẵn, còn một câu hỏi giữa chừng thì không.
+            "kg": _dung_kg(root),
         }
         stale = [r[0] for r in conn.execute("SELECT id FROM run WHERE state IN ('running','asked') ORDER BY id")]
     finally:
@@ -424,6 +428,21 @@ def _resolve_project(gia_tri: str, workspace: Path) -> Path:
 def _autonomy_of(root: Path) -> str | None:
     f = root / EIDE_DIR / "autonomy.yaml"
     return (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("autonomy") if f.exists() else None
+
+
+def _dung_kg(root: Path) -> dict[str, Any]:
+    """Bước 3 của PROJECT-02. Lỗi ở đây KHÔNG được làm hỏng việc mở dự án.
+
+    Đồ thị là khung nhìn dựng lại được, không phải dữ liệu: một store lạ làm nó dựng hỏng thì
+    người dùng vẫn phải mở được dự án để đi sửa. Nên báo `ok: false` kèm lý do thay vì ném lên.
+    """
+    from eide.caps import kg as nkg
+
+    try:
+        g, tu_cache = nkg._do_thi(Context(project_dir=root))
+        return {"ok": True, "nodes": len(g.nut), "edges": len(g.canh), "cached": tu_cache}
+    except Exception as e:                                    # noqa: BLE001 — xem docstring
+        return {"ok": False, "reason": f"{type(e).__name__}: {e}"[:160]}
 
 
 def _board_of(root: Path) -> str | None:

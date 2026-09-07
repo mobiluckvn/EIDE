@@ -31,6 +31,47 @@ Handler = Callable[..., dict[str, Any]]
 TIER_SUA: dict[str, str] = {}
 
 
+@lru_cache(maxsize=1)
+def _gate_tu_spec() -> dict[str, str]:
+    """id năng lực → cổng, rút từ chỗ hợp đồng NHẮC ĐÍCH DANH cổng ấy.
+
+    Quét `steps` và `ask_when` của cds.json tìm tên cổng trong bảng quy tắc POL-17 §2. Quét chứ
+    không chép tay: một bảng chép tay sẽ trôi khỏi đặc tả đúng lúc đặc tả đổi, và cả phiên làm
+    việc này đã cho thấy chuyện ấy xảy ra ở đâu cũng được.
+
+    Bỏ qua `*`: nó là dải quy tắc chung áp cho mọi hành động, không phải cổng của riêng ai.
+
+    Bỏ qua cả `G-FACT`, và đây là một khác biệt về BẢN CHẤT chứ không phải một ngoại lệ: G-FACT
+    là cổng của một FACT, không phải của một hành động. Mọi quy tắc của nó hỏi `fact.tier`,
+    `fact.confidence`, `fact.second_source` — thuộc tính của dữ liệu đang được xét, không phải
+    của lời gọi. Nên năng lực không "đi qua" G-FACT; nó HỎI G-FACT cho từng fact nó xử lý, đúng
+    như CDS-12.2 KG-05 viết ("với mỗi fact chạy policy.decide(G-FACT)").
+
+    Cả ba năng lực mà đặc tả gắn G-FACT đều theo kiểu ấy: `kg.review_facts` hỏi cho từng fact,
+    `view.conflict_board` xếp hàng đợi ASK, `extract.pdf_electrical` nói về fact nó SINH RA.
+    Để Router chặn chúng ở cửa thì `kg.review_facts` bị chính cổng mà nó phục vụ chặn lại, và
+    không fact nào được duyệt bao giờ — cùng vòng luẩn quẩn với `chat.clarify` (DEV-020) và
+    `tool.write` (DEV-026), lần này ở tầng dữ liệu.
+    """
+    import re
+
+    from eide_core.paths import spec_dir
+
+    caps = json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))
+    ten_cong = sorted(
+        {r["gate"] for r in yaml.safe_load(
+            (spec_dir() / "policy" / "rules.yaml").read_text(encoding="utf-8"))["rules"]} - {"*"},
+        key=len, reverse=True)          # dài trước: "G-OPS" phải khớp trước "G1"
+    ten_cong = [g for g in ten_cong if g != "G-FACT"]
+    mau = re.compile("|".join(re.escape(g) for g in ten_cong))
+    ra: dict[str, str] = {}
+    for c in caps:
+        van = " ".join(c.get("steps", [])) + " " + str(c.get("ask_when", ""))
+        if (m := mau.search(van)):
+            ra[c["id"]] = m.group(0)
+    return ra
+
+
 @dataclass
 class CapabilitySpec:
     code: str
@@ -72,22 +113,26 @@ class CapabilitySpec:
 
     @property
     def gate(self) -> str:
-        """Cổng mặc định theo nhóm năng lực (APD-08 §3.1; POL-17 §2).
+        """Cổng của năng lực, SUY TỪ ĐẶC TẢ chứ không đoán theo nhóm (APD-08 §3.1; POL-17 §2).
 
-        `cds.json` KHÔNG có trường `gate`, nên ánh xạ này là suy đoán của mã — và một suy đoán
-        sai đã gây hậu quả thật: gán cả nhóm `tool.*` vào G-TOOL làm `tool.write` không bao giờ
-        chạy được, vì mọi quy tắc G-TOOL đều hỏi `tool.tested`, và một công cụ CHƯA VIẾT thì
-        đương nhiên chưa test. Xem DEVIATIONS DEV-026.
+        `cds.json` không có trường `gate` riêng, nhưng các hợp đồng CÓ nhắc đích danh cổng trong
+        `steps` hoặc `ask_when` — ví dụ TOOL-05 bước 2 nói `gate=G-TOOL`, KG-05 nói "với mỗi
+        fact chạy policy.decide(G-FACT)". `_GATE_TU_SPEC` rút chính những chỗ ấy ra.
 
-        CDS-12.3 chỉ nói `gate=G-TOOL` ở đúng MỘT chỗ: TOOL-05 bước 2, tức `tool.run`. Và
-        `tool.run` tự hỏi cổng ấy với đặc trưng thật của công cụ, vì đó là nơi duy nhất các
-        đặc trưng ấy tồn tại. Các `tool.*` còn lại là thao tác VỀ công cụ, không phải thực thi
-        công cụ, nên chúng đi cổng chung.
+        Bản trước ánh xạ theo NHÓM, và đó là một suy đoán sai với hậu quả đo được. Lần đầu:
+        gán cả `tool.*` vào G-TOOL làm `tool.write` không bao giờ chạy được, vì mọi quy tắc
+        G-TOOL đều hỏi `tool.tested` mà một công cụ CHƯA VIẾT thì đương nhiên chưa test
+        (DEV-026). Lần thứ hai, khi nhóm `kg.*` được hiện thực: ánh xạ theo nhóm áp cổng cho
+        **73 năng lực** trong khi tài liệu chỉ nêu cổng cho **10**, và ba nhóm nguyên vẹn
+        (`passport` 8 năng lực, `discover` 12, `measure` 3) nhận một cổng mà không hợp đồng nào
+        trong đó từng nhắc tới. Hệ quả: `kg.request` — tạo một yêu cầu nhận tri thức — bị hỏi
+        bằng quy tắc `G-FACT-99` "bạc dưới ngưỡng / OCR / thiếu nguồn hai", một câu chẳng liên
+        quan gì tới việc nó làm. Xem DEVIATIONS DEV-041.
+
+        Năng lực không được đặc tả gán cổng nào thì đi dải quy tắc chung `*`, nơi tầng năng lực
+        (APD-08 §4.1 tầng 5) quyết theo mức T1/T2/T3 — đúng thứ dành cho chúng.
         """
-        return {
-            "search": "G-SRC", "kg": "G-FACT", "passport": "G-FACT", "plan": "G1", "code": "G3",
-            "target": "G-OPS", "discover": "G-OPS", "measure": "G4", "registry": "G5",
-        }.get(self.ns, "*")
+        return _gate_tu_spec().get(self.id, "*")
 
 
 @dataclass

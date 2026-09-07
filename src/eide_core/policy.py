@@ -154,6 +154,34 @@ class PolicyGate:
             if khop and khop.get("priority", 50) <= PRI_CHAN and khop["decision"] in (ASK, REJECT):
                 return Decision(khop["decision"], khop["id"], khop.get("reason", ""), gate, features)
             return Decision(ASK, cung[0], cung[1], gate)
+        # Tầng 2, nhánh còn lại — APD-08 §4.1 và POL-17 §1 hàng T2: "R0 → APPROVE(R0) (bỏ qua
+        # tầng sau)". R0 là lớp CHỈ ĐỌC: không ghi, không chạm phần cứng, không phát ra ngoài.
+        #
+        # Thiếu nhánh này thì mọi năng lực R0 nằm sau một cổng thật đều rơi xuống quy tắc bắt
+        # hết của cổng — vốn luôn là ASK. Đo 07/09/2026: **43 năng lực R0** ở bảy cổng đều bị
+        # hỏi người, gồm cả `kg.build` và `search.rank`. Lỗi nằm im tới giờ vì mọi năng lực đã
+        # hiện thực trước đó đều gắn cổng `*`, nơi tầng 5 trả APPROVE cho T1. Xem DEV-040.
+        #
+        # NHƯNG không "bỏ qua tầng sau" theo nghĩa đen, vì hai lẽ.
+        #
+        # (a) Quy tắc trong DẢI CHẶN (priority ≤ 5) vẫn thắng, kể cả khi nó chỉ ASK. Hai ví dụ
+        #     cụ thể: `TOOL-03` chặn công cụ chưa test — mà lớp rủi ro của một công cụ tác tử tự
+        #     viết được SUY TỪ HIỆU ỨNG NÓ KHAI BÁO, và `effects_ok` tồn tại đúng vì khai báo ấy
+        #     có thể sai, nên cho R0 vượt qua là tin lời khai của chính thứ đang bị nghi. Và
+        #     `G-SRC-07` hỏi khi một dự án NHẠY CẢM dùng nguồn đòi gửi dữ liệu ra ngoài — vài
+        #     năng lực `search.*` mang nhãn R0 vì chúng chỉ đọc, nhưng "chỉ đọc" ở đây là đọc từ
+        #     một dịch vụ bên ngoài. Cùng nguyên tắc với DEV-012: dải chặn chỉ siết, không nới.
+        #
+        # (b) Quy tắc APPROVE khớp thì MƯỢN mã và lý do của nó. Trả về mã chung "R0" khi
+        #     `TOOL-01` vừa khớp sẽ biến TOOL-01 thành quy tắc chết và decision_log mất câu giải
+        #     thích — đúng khuôn hỏng mà DEV-012 mô tả, chỉ đổi chỗ.
+        if r == 0:
+            khop = self._match(gate, env)
+            if khop and khop.get("priority", 50) <= PRI_CHAN and khop["decision"] in (ASK, REJECT):
+                return Decision(khop["decision"], khop["id"], khop.get("reason", ""), gate, features)
+            if khop and khop["decision"] == APPROVE:
+                return Decision(APPROVE, khop["id"], self._ly_do(khop), gate, features)
+            return Decision(APPROVE, "R0", "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)", gate, features)
         # Tầng 3 + 4 — quy tắc theo cổng rồi quy tắc chung
         khop = self._match(gate, env)
         if khop:
