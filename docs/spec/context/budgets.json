@@ -123,6 +123,21 @@
     "APPLIES_TO": 0.6,
     "CONFLICTS_WITH": 1
   },
+  "pred_weight": {
+    "base_address": 1,
+    "offset": 1,
+    "bit_range": 1,
+    "reset_value": 1,
+    "address": 1,
+    "net": 1,
+    "enum": 0.9,
+    "pin_function": 0.9,
+    "irq": 0.9,
+    "voltage_range": 0.8,
+    "timing": 0.8,
+    "description": 0.3,
+    "_mac_dinh": 0.5
+  },
   "k0": {
     "intent": 30,
     "planner": 15,

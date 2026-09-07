@@ -11,9 +11,11 @@ from typing import Any
 import yaml
 
 from eide_core import store
+from eide_core.composer import cau_hinh
 from eide_core.errors import EideError
 from eide_core.memory import SessionMemory
 from eide_core.paths import spec_dir
+from eide_core.rag import RagIndex
 from eide_core.registry import capability, get_registry
 from eide_core.router import Context
 from eide_core.undo import UndoService
@@ -349,3 +351,95 @@ def compress(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 def _unaccent(s: str) -> str:
     t = s.replace("đ", "d").replace("Đ", "D")
     return unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode().lower()
+
+
+@capability("memory.retrieve")
+def retrieve(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: MEMORY-03 — CDS-12.6; CXD-10 §4.5 (Graph-RAG hai bước); DDD-14 RagChunk. tc: TC-CX-02.
+
+    Hai nguồn, hai đường, trả về riêng: `facts` từ đồ thị tri thức, `snippets` từ RagIndex.
+    Hợp đồng khai đúng hai mảng ấy, và giữ chúng tách nhau là có lý do — một fact đã qua G-FACT
+    là tri thức đã duyệt, còn một đoạn văn bản chỉ là chỗ để người đọc kiểm lại. Trộn hai thứ
+    vào một danh sách xếp hạng chung sẽ xóa mất phân biệt ấy đúng lúc nó quan trọng nhất.
+
+    Cả hai đều mang `locator` và `score` như bước 2 của hợp đồng đòi: không có locator thì người
+    dùng không lần về trang/dòng nào trong tài liệu gốc được, và một câu trả lời không truy
+    nguyên được thì KAD-07 §4.1 không cho phép đưa vào fact.
+    """
+    subjects = params["subjects"]
+    k = int(params.get("k") or 8)
+    hops = int(params.get("hops") or 2)
+    if hops < 1 or hops > 2:
+        raise EideError("E1000", "hops phải là 1 hoặc 2 (CXD-10 §4.5 'Graph-RAG hai bước')")
+
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if not root or not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", "memory.retrieve cần một dự án đang mở",
+                        exists=[], candidates=[], missing=["project"])
+
+    diem = _lan_toa(root, subjects, hops)
+    facts = _fact_theo_diem(root, diem, k)
+    snippets = RagIndex(root).retrieve(subjects, k)
+    return {"facts": facts, "snippets": snippets}
+
+
+def _lan_toa(root: Path, seeds: list[str], hops: int) -> dict[str, float]:
+    """Lan tỏa điểm trên đồ thị — CXD-10 §4.5.
+
+    `w = EDGE_W[type] / hop`, và điểm của một nút là LỚN NHẤT trong các đường tới nó, không
+    phải tổng: một nút nối tới hạt giống bằng hai cạnh yếu không được vượt một nút nối bằng một
+    cạnh mạnh. Cộng dồn sẽ làm những nút có bậc cao (chip gốc, chẳng hạn) luôn đứng đầu bất kể
+    chúng có liên quan tới tác vụ hay không.
+    """
+    from eide.caps.kg import _do_thi
+
+    g, _ = _do_thi(Context(project_dir=root))
+    trong_so = cau_hinh()["edge_weight"]
+    diem: dict[str, float] = {s: 1.0 for s in seeds if s in g.nut}
+    bien = set(diem)
+    for hop in range(1, hops + 1):
+        moi: set[str] = set()
+        for n in bien:
+            for loai, b, _huong in g.ke.get(n, []):
+                w = trong_so.get(loai, 0.0) / hop
+                if w <= 0:
+                    continue        # cạnh không có trọng số trong §4.5 ⇒ không lan điểm qua nó
+                if w > diem.get(b, 0.0):
+                    diem[b] = w
+                moi.add(b)
+        bien = moi - set(seeds)
+    return diem
+
+
+def _fact_theo_diem(root: Path, diem: dict[str, float], k: int) -> list[dict[str, Any]]:
+    """Xếp hạng fact: `điểm_subject × PRED_W[predicate] × (1,0 vàng | 0,8 còn lại)` — §4.5.
+
+    Chỉ lấy fact HIỆN HÀNH (`reviewed`/`verified`, hoặc `gold`) đúng như §4.5 ghi. Nhưng fact
+    `conflict` LUÔN có mặt bất kể điểm và bất kể ngân sách: §4.5 nói "always_include", và lý do
+    nằm ở câu cuối của §4.5 — mô hình phải nói "không xác định" thay vì tự chọn một bên. Giấu
+    mâu thuẫn đi là cách chắc chắn nhất để nó chọn bừa.
+    """
+    if not diem:
+        return []
+    pw = cau_hinh()["pred_weight"]
+    mac_dinh = pw.get("_mac_dinh", 0.5)
+    with store.open_store(store.store_path(root)) as c:
+        rows = c.execute(
+            "SELECT id, subject, predicate, value, unit, tier, status, source_id FROM fact"
+        ).fetchall()
+    ra = []
+    for fid, subject, pred, value, unit, tier, status, src in rows:
+        if subject not in diem:
+            continue
+        hien_hanh = status in ("reviewed", "verified") or tier == "gold"
+        if not hien_hanh and status != "conflict":
+            continue
+        d = diem[subject] * pw.get(pred, mac_dinh) * (1.0 if tier == "gold" else 0.8)
+        ra.append({"id": fid, "subject": subject, "predicate": pred,
+                   "value": json.loads(value) if isinstance(value, str) else value,
+                   "unit": unit, "tier": tier, "source_id": src, "status": status,
+                   "score": round(d, 4), "conflict": status == "conflict"})
+    ra.sort(key=lambda f: (-f["conflict"], -f["score"], f["id"]))
+    mau_thuan = [f for f in ra if f["conflict"]]
+    con_lai = [f for f in ra if not f["conflict"]]
+    return mau_thuan + con_lai[: max(0, k - len(mau_thuan))]

@@ -72,6 +72,16 @@ const CXD = {
   chars_per_token: 3.5,
   // §4.5 trọng số cạnh cho Graph-RAG hai bước.
   edge_weight: { HAS: 1.0, CONNECTS: 0.9, USES: 0.8, APPLIES_TO: 0.6, CONFLICTS_WITH: 1.0 },
+  // §4.5 trọng số VỊ TỪ. Trước v1.1 bảng này chỉ nằm trong văn xuôi cạnh `edge_weight`, nên
+  // hai nửa của cùng một công thức xếp hạng ở hai dạng khác nhau: một nửa máy đọc được, một
+  // nửa phải chép tay. Cùng khuôn mẫu DEV-025/DEV-029.
+  pred_weight: {
+    base_address: 1.0, offset: 1.0, bit_range: 1.0, reset_value: 1.0, address: 1.0, net: 1.0,
+    enum: 0.9, pin_function: 0.9, irq: 0.9,
+    voltage_range: 0.8, timing: 0.8,
+    description: 0.3,           // chỉ khi còn ngân sách
+    _mac_dinh: 0.5,             // vị từ không có trong bảng — DDD-14 cho phép `other`
+  },
   // §4.2 số năng lực đưa vào C0 theo vai trò.
   k0: { intent: 30, planner: 15, architect: 15, librarian: 8 },
   max_skills: 3,        // §4.4
