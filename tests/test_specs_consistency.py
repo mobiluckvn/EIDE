@@ -3,6 +3,7 @@ mọi @capability trỏ tới id trong cds.json; capabilities/*.yaml khớp cds.
 import json
 import re
 
+import pytest
 import yaml
 
 from eide_core.paths import repo_root, spec_dir
@@ -52,3 +53,32 @@ def test_deviations_have_status():
     rows = [line for line in text.splitlines() if line.startswith("| DEV-")]
     for r in rows:
         assert r.rstrip("| ").split("|")[-1].strip() in {"Mở", "Đã duyệt", "Bác"} or "Đã cập nhật tài liệu" in r, r
+
+
+def test_vi_du_cua_hop_dong_phai_qua_noi_input_schema_cua_chinh_no():
+    """Mỗi hợp đồng CDS-12 có `input_schema` và `example`; ví dụ phải hợp lệ theo schema ấy.
+
+    Router kiểm input theo `input_schema` và chặn bằng E1000 trước khi vào handler (API-15 §3).
+    Nên một ví dụ không qua nổi schema của chính nó là một lời hướng dẫn sai: người đọc tài liệu
+    gõ theo ví dụ và nhận lỗi, hoặc tệ hơn — người hiện thực đọc ví dụ rồi viết mã theo hình
+    dạng ấy, và mâu thuẫn chỉ lộ ra ở chỗ khác.
+
+    Phép kiểm này tìm ra HAI lỗi trong 238 hợp đồng mà trước đó không ai thấy (DEV-009
+    PROJECT-09, và KG-07 thiếu `actor` trong ví dụ), nên nó ở lại làm cổng thường trực.
+    """
+    jsonschema = pytest.importorskip("jsonschema")
+    caps = json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))
+    loi = []
+    for c in caps:
+        ex, sch = c.get("example"), c.get("input_schema")
+        if not ex or not isinstance(sch, dict):
+            continue
+        try:
+            val = json.loads(ex) if isinstance(ex, str) else ex
+        except json.JSONDecodeError:
+            continue                      # ví dụ viết dạng dòng lệnh, không phải JSON
+        if not isinstance(val, dict):
+            continue
+        for e in jsonschema.Draft202012Validator(sch).iter_errors(val):
+            loi.append(f"{c['code']} {c['id']}: {list(e.path) or '(gốc)'} — {e.message}")
+    assert not loi, "ví dụ mâu thuẫn với input_schema:\n  " + "\n  ".join(loi)

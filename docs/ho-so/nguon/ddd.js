@@ -5,7 +5,14 @@ const D = JSON.parse(fs.readFileSync('ddd.json', 'utf8'));
 const m = metaNew('EIDE-DDD-14', 'Từ điển dữ liệu', 'TỪ ĐIỂN DỮ LIỆU, DDL VÀ DI TRÚ (DDD)',
   'Nguồn duy nhất cho mọi thực thể của EIDE: từ điển dữ liệu 27 thực thể / 253 trường, JSON Schema 2020-12, DDL SQLite, thứ tự di trú từ M0, schema các tệp YAML, quy ước định danh',
   [['Tài liệu trước', 'EIDE-SDD-04 §3, EIDE-SAD-03 §5, EIDE-MEM-11 §3, EIDE-POL-17 §4'], ['Tệp kèm', 'ddd_model.py (nguồn), data/json/*.json (27 JSON Schema), data/schema.sql (DDL), gen_ddd.py'], ['Dùng khi', 'Hiện thực pydantic models, migration, kiểm hợp lệ khi ghi; sinh tài liệu API']],
-  'Phát hành lần đầu — bổ sung lĩnh vực L05/L31; sinh tự động từ ddd_model.py');
+  'Phát hành lần đầu — bổ sung lĩnh vực L05/L31; sinh tự động từ ddd_model.py',
+  [['1.1', '07/09/2026', 'Vũ Trí Công',
+    '§2 Preference: bảng `preference` giữ RIÊNG scope=project, scope=user nằm ở '
+    + '`preferences.yaml` (§6) — bảng nằm trong store TỪNG dự án nên một tùy chọn "user" ghi ở '
+    + 'dự án A không đọc được ở dự án B (DEV-010); trường `value` nói rõ là giá trị JSON bất kỳ '
+    + 'chứ không chỉ đối tượng, và learned_from/ttl_days là trường ngang hàng (DEV-009). '
+    + '§5: mô tả niêm phong `store.sqlite.seal.json` mà PROJECT-02 bước 2 đòi nhưng chưa tài '
+    + 'liệu nào định nghĩa (DEV-007).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc và quy ước'));
 c.push(P('Tài liệu này được sinh từ một mô hình duy nhất (`ddd_model.py`); mọi thay đổi schema phải sửa mô hình rồi sinh lại JSON Schema, DDL và tài liệu — không sửa tay ba nơi. Quy ước: (1) mọi id có tiền tố loại + 16 hex (f_, src_, cr_, d_, r_, it_, dg_, doc_, dv_, e_, m_, tr_, ds_, cu_, acq_), trừ id có nghĩa (F-nn, ADR-nn, UR-/FR-, passport ns.part@semver, module mod_<slug>); (2) IRI subject theo KAD-07 §6.1: `chip:<vendor>.<part>[/periph:X[/reg:Y[/field:Z]]]`, `board:<id>[/net:N|/pin:P]`, `part:<vendor>.<mpn>`, `isa:<id>`; (3) cột JSON lưu TEXT (UTF-8) và được kiểm bằng JSON Schema tương ứng trước khi ghi; (4) thời gian ISO-8601 UTC; (5) mọi bảng có cột `at` hoặc `created_at` để dòng thời gian (view.timeline); (6) SQLite WAL, foreign_keys=ON, user_version tăng theo migration; (7) ba tệp cơ sở dữ liệu: `store.sqlite` (commit Git), `session.sqlite` (không commit), `index/index.sqlite` (không commit, tái dựng được).'));
@@ -29,6 +36,9 @@ c.push(H1('5. Di trú'));
 c.push(T([2200, 900, 6200], ['Migration', 'Mốc', 'Nội dung'], D.migrations));
 c.push(SP());
 c.push(P('Quy trình: `eide migrate` đọc `PRAGMA user_version`, chạy tuần tự các migration còn thiếu trong một giao dịch, ghi ledger `store.migrate`; sao lưu `store.sqlite.bak-<version>` trước khi chạy; migration chỉ thêm bảng/cột (không xóa) cho tới v1.0; đổi tên `.hkw` → `.eide` làm ở tầng đường dẫn, giữ symlink một mốc.'));
+c.push(SP());
+c.push(P('**Niêm phong toàn vẹn `store.sqlite.seal.json`.** CDS-12.3 PROJECT-02 bước 2 đòi "kiểm hash store vs ledger.last_hash → lệch: E6000" nhưng không nói hash ấy tính thế nào hay lưu ở đâu. Niêm phong là một tệp cạnh store, ghi `{content_hash, ledger_last_hash, user_version, at}`, cập nhật sau mỗi lần ghi đi qua cổng (hiện tại: `migrate`). `content_hash` băm **nội dung logic** — các bảng theo tên, các dòng đã sắp — chứ không băm byte của tệp: SQLite ở chế độ WAL đổi byte tệp sau mỗi lần mở, và `VACUUM` viết lại toàn bộ mà không đổi một dữ liệu nào, nên băm byte sẽ báo E6000 mỗi lần mở dự án và người dùng sẽ học cách bỏ qua nó. Sự kiện ledger `store.write` (API-15 §7) mang thêm trường `hash` để nối bản ghi với niêm phong. Xem DEVIATIONS DEV-007.'));
+c.push(SP());
 c.push(H1('6. Schema các tệp YAML'));
 c.push(T([2200, 2400, 3900, 800], ['Tệp', 'Vai trò', 'Khóa chính', 'Từ'], D.yaml));
 c.push(SP());

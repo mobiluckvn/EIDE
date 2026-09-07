@@ -311,9 +311,15 @@ def preferences(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     co_du_an = bool(root and (root / EIDE_DIR).is_dir())
 
     if op == "set":
-        gia_tri = dict(params["value"])
-        gia_tri.setdefault("learned_from", params.get("learned_from"))
-        gia_tri["at"] = datetime.now(UTC).isoformat()
+        # Bản ghi đúng hình dạng thực thể Preference của DDD-14 §2: `value` là một GIÁ TRỊ JSON
+        # bất kỳ, còn `learned_from`/`ttl_days` là trường ngang hàng chứ không nằm trong nó.
+        # Bản đầu nhận `value` phải là đối tượng rồi trộn learned_from vào trong — hệ quả là
+        # ví dụ của chính hợp đồng (`"value":"stlink"`) bị Router chặn bằng E1000. Xem DEV-009.
+        gia_tri: dict[str, Any] = {"value": params["value"],
+                                   "learned_from": params.get("learned_from"),
+                                   "at": datetime.now(UTC).isoformat()}
+        if params.get("ttl_days") is not None:
+            gia_tri["ttl_days"] = params["ttl_days"]
         if scope == "user":
             _pref_yaml_set(key, gia_tri)
         else:

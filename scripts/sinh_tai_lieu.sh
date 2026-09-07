@@ -38,6 +38,7 @@ if [ ! -d "$NGUON/node_modules" ]; then
     (cd "$NGUON" && npm install --silent --no-fund --no-audit)
 fi
 
+PY="$GOC/.venv-arm/bin/python"; [ -x "$PY" ] || PY="$GOC/.venv-x86/bin/python"; [ -x "$PY" ] || PY=python3
 SAN=$(mktemp -d "${TMPDIR:-/tmp}/eide-sinh-XXXXXX")
 trap 'rm -rf "$SAN"' EXIT
 # `.json` cũng là nguồn: `dps.js` require('./dialog.json') (bảng §3 và 10 kịch bản §5).
@@ -47,13 +48,17 @@ cp "$NGUON"/*.js "$NGUON"/*.py "$NGUON"/*.json "$SAN"/ 2>/dev/null || true
 rm -f "$SAN/package.json" "$SAN/package-lock.json"
 ln -s "$NGUON/node_modules" "$SAN/node_modules"
 [ -d "$NGUON/hinh" ] && cp -R "$NGUON/hinh" "$SAN/" || true
-# Bộ sinh đọc ba tệp sinh sẵn này làm đầu vào
-for f in caps.json cds.json ddd.json; do [ -f "$SPEC/$f" ] && cp "$SPEC/$f" "$SAN/"; done
+# `caps.json` là dữ liệu viết tay (không bộ sinh nào ghi ra nó); `cds.json` và `ddd.json` thì
+# SINH ra từ `cds_data_*.py` / `ddd_model.py` bằng hai kịch bản Python cạnh chúng. Chạy lại hai
+# kịch bản ấy ở đây thay vì chép bản cũ trong `docs/spec`: nếu chỉ chép thì sửa `cds_data_a.py`
+# xong docx vẫn dựng từ bản cũ, và người sửa tưởng mình vừa đổi tài liệu. Cùng khuôn mẫu DEV-018.
+cp "$SPEC/caps.json" "$SAN/"
+(cd "$SAN" && "$PY" gen_cds.py >/dev/null && "$PY" gen_ddd.py >/dev/null)
 
+# `ddd.js` đọc `data/json/*.json` — do gen_ddd.py vừa sinh ở trên, nên không chép từ kho.
 (cd "$SAN" && node "$TEN.js" >/dev/null)
 
 lech=0
-PY="$GOC/.venv-arm/bin/python"; [ -x "$PY" ] || PY="$GOC/.venv-x86/bin/python"; [ -x "$PY" ] || PY=python3
 
 khac() {  # $1 = tệp A, $2 = tệp B → 0 nếu GIỐNG
     # docx là zip có dấu thời gian nén: hai lần sinh từ cùng nguồn khác byte nhưng giống nội
@@ -72,7 +77,11 @@ chep() {  # $1 = tệp trong $SAN, $2 = đích
         elif khac "$SAN/$1" "$2"; then echo "  = $(basename "$2")"
         else
             echo "  ✗ $(basename "$2") LỆCH nguồn"
-            case "$1" in *.docx) "$PY" "$GOC/scripts/so_docx.py" "$SAN/$1" "$2" | head -6 ;; esac
+            # KHÔNG nối `| head`: `so_docx.py` in nhiều hơn 6 dòng thì head đóng ống, python
+            # nhận SIGPIPE, `pipefail` biến cả pipeline thành lỗi và `set -e` giết script ngay
+            # tại đây — mọi tệp còn lại không bao giờ được đối chiếu, mà script vẫn thoát 1 nên
+            # trông y hệt một lần "có lệch" bình thường. `so_docx.py` đã tự giới hạn 8 dòng.
+            case "$1" in *.docx) "$PY" "$GOC/scripts/so_docx.py" "$SAN/$1" "$2" || true ;; esac
             lech=1
         fi
     else
@@ -81,10 +90,19 @@ chep() {  # $1 = tệp trong $SAN, $2 = đích
 }
 
 for d in "$SAN"/*.docx; do [ -f "$d" ] && chep "$(basename "$d")" "$HO_SO/$(basename "$d")"; done
+# `cds.json`/`ddd.json` là đầu ra của gen_cds.py/gen_ddd.py và cũng là đầu vào của các bộ sinh
+# docx khác, nên phải đưa về kho — không thì sửa `cds_data_a.py` chỉ đổi được docx của chính
+# nhóm ấy, còn `docs/spec/cds.json` mà sản phẩm đọc thì đứng yên.
+for f in cds.json ddd.json; do chep "$f" "$SPEC/$f"; done
+# `find` chứ không phải `*`: `data/` có thư mục con `json/` với 27 JSON Schema bên trong, và
+# một vòng lặp chỉ quét tệp phẳng sẽ bỏ qua đúng phần nhiều nhất.
 for sub in policy api prompts isa data capabilities dialog ui context; do
     [ -d "$SAN/$sub" ] || continue
-    mkdir -p "$SPEC/$sub"
-    for d in "$SAN/$sub"/*; do [ -f "$d" ] && chep "$sub/$(basename "$d")" "$SPEC/$sub/$(basename "$d")"; done
+    while IFS= read -r d; do
+        rel="${d#"$SAN"/}"
+        mkdir -p "$(dirname "$SPEC/$rel")"
+        chep "$rel" "$SPEC/$rel"
+    done < <(find "$SAN/$sub" -type f | sort)
 done
 # `prs.js` sinh fixture 50 câu lệnh có nhãn cho TC-59 nhưng đặt tên phẳng ở cwd; đưa nó vào
 # spec dưới đúng tên mà PRS-16 §7 nói tới (`tests/dialog/commands.jsonl`).

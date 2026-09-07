@@ -44,7 +44,7 @@ def _goi(tmp_path, root, params, actor="human"):
 def test_set_roi_get_tra_dung(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
     run = _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project",
-                                "value": {"value": "stlink", "learned_from": "UC-A03"}})
+                                "value": "stlink", "learned_from": "UC-A03"})
     assert run.status == "done", run
     got = _goi(tmp_path, root, {"op": "get", "key": "probe"}).result["prefs"]
     assert got["probe"]["value"] == "stlink"
@@ -54,15 +54,15 @@ def test_set_roi_get_tra_dung(tmp_path, workspace, cau_hinh_rieng):
 
 def test_delete_xoa(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": {"value": "stlink"}})
+    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": "stlink"})
     _goi(tmp_path, root, {"op": "delete", "key": "probe", "scope": "project"})
     assert _goi(tmp_path, root, {"op": "get", "key": "probe"}).result["prefs"] == {}
 
 
 def test_list_tra_het(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": {"value": "stlink"}})
-    _goi(tmp_path, root, {"op": "set", "key": "editor", "scope": "user", "value": {"value": "geditor"}})
+    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": "stlink"})
+    _goi(tmp_path, root, {"op": "set", "key": "editor", "scope": "user", "value": "geditor"})
     prefs = _goi(tmp_path, root, {"op": "list"}).result["prefs"]
     assert set(prefs) == {"probe", "editor"}
 
@@ -77,8 +77,8 @@ def test_op_mac_dinh_la_list(tmp_path, workspace, cau_hinh_rieng):
 
 def test_du_an_che_nguoi_dung(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "user", "value": {"value": "jlink"}})
-    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": {"value": "stlink"}})
+    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "user", "value": "jlink"})
+    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": "stlink"})
     got = _goi(tmp_path, root, {"op": "get", "key": "probe"}).result["prefs"]
     assert got["probe"]["value"] == "stlink" and got["probe"]["scope"] == "project"
 
@@ -86,7 +86,7 @@ def test_du_an_che_nguoi_dung(tmp_path, workspace, cau_hinh_rieng):
 def test_khong_co_du_an_thi_van_doc_duoc_pham_vi_user(tmp_path, workspace, cau_hinh_rieng):
     """Tùy chọn `user` sống ngoài dự án, nên nó phải dùng được khi chưa mở dự án nào."""
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "editor", "scope": "user", "value": {"value": "geditor"}})
+    _goi(tmp_path, root, {"op": "set", "key": "editor", "scope": "user", "value": "geditor"})
     r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l2.jsonl"))
     got = r.invoke("project.preferences", {"op": "get", "key": "editor"},
                    Context(project_dir=None, actor="human")).result["prefs"]
@@ -96,7 +96,7 @@ def test_khong_co_du_an_thi_van_doc_duoc_pham_vi_user(tmp_path, workspace, cau_h
 def test_user_scope_dung_chung_giua_hai_du_an(tmp_path, workspace, cau_hinh_rieng):
     a = _du_an(tmp_path, workspace, "dự án alpha")
     b = _du_an(tmp_path, workspace, "dự án beta")
-    _goi(tmp_path, a, {"op": "set", "key": "editor", "scope": "user", "value": {"value": "geditor"}})
+    _goi(tmp_path, a, {"op": "set", "key": "editor", "scope": "user", "value": "geditor"})
     got = _goi(tmp_path, b, {"op": "get", "key": "editor"}).result["prefs"]
     assert got["editor"]["value"] == "geditor"
 
@@ -104,7 +104,7 @@ def test_user_scope_dung_chung_giua_hai_du_an(tmp_path, workspace, cau_hinh_rien
 def test_project_scope_khong_ro_ri_sang_du_an_khac(tmp_path, workspace, cau_hinh_rieng):
     a = _du_an(tmp_path, workspace, "dự án alpha")
     b = _du_an(tmp_path, workspace, "dự án beta")
-    _goi(tmp_path, a, {"op": "set", "key": "probe", "scope": "project", "value": {"value": "stlink"}})
+    _goi(tmp_path, a, {"op": "set", "key": "probe", "scope": "project", "value": "stlink"})
     assert _goi(tmp_path, b, {"op": "get", "key": "probe"}).result["prefs"] == {}
 
 
@@ -118,7 +118,7 @@ def test_project_scope_khong_ro_ri_sang_du_an_khac(tmp_path, workspace, cau_hinh
 def test_tu_choi_ghi_bi_mat(tmp_path, workspace, cau_hinh_rieng, bi_mat):
     """D8 ghi nhớ CÂU TRẢ LỜI của kỹ sư, không phải khóa của họ. Lọt vào đây là lọt vào git."""
     root = _du_an(tmp_path, workspace)
-    run = _goi(tmp_path, root, {"op": "set", "key": "token", "scope": "user", "value": {"value": bi_mat}})
+    run = _goi(tmp_path, root, {"op": "set", "key": "token", "scope": "user", "value": bi_mat})
     assert run.status == "failed"
     assert run.error["eide_code"] == "E1000"
     # và thông báo lỗi không được in lại chính chuỗi bí mật
@@ -128,14 +128,14 @@ def test_tu_choi_ghi_bi_mat(tmp_path, workspace, cau_hinh_rieng, bi_mat):
 def test_bi_mat_nam_sau_trong_object_cung_bi_bat(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
     run = _goi(tmp_path, root, {"op": "set", "key": "cfg", "scope": "user",
-                                "value": {"value": {"nested": {"k": "AIzaSyD-khoa-nam-sau-ba-lop-0123456789"}}}})
+                                "value": {"nested": {"k": "AIzaSyD-khoa-nam-sau-ba-lop-0123456789"}}})
     assert run.status == "failed" and run.error["eide_code"] == "E1000"
 
 
 def test_chuoi_binh_thuong_khong_bi_bat_nham(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
     for v in ["stlink", "luôn tạo mới", "openocd -f interface/stlink.cfg", "Bearer"]:
-        run = _goi(tmp_path, root, {"op": "set", "key": "k", "scope": "user", "value": {"value": v}})
+        run = _goi(tmp_path, root, {"op": "set", "key": "k", "scope": "user", "value": v})
         assert run.status == "done", f"{v!r} bị chặn oan"
 
 
@@ -143,7 +143,7 @@ def test_chuoi_binh_thuong_khong_bi_bat_nham(tmp_path, workspace, cau_hinh_rieng
 
 def test_set_thieu_key_la_E1000(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
-    run = _goi(tmp_path, root, {"op": "set", "value": {"value": "x"}})
+    run = _goi(tmp_path, root, {"op": "set", "value": "x"})
     assert run.status == "failed" and run.error["eide_code"] == "E1000"
 
 
@@ -159,7 +159,7 @@ def test_op_la_thi_bi_schema_chan(tmp_path, workspace, cau_hinh_rieng):
 
 def test_user_scope_ghi_ra_preferences_yaml(tmp_path, workspace, cau_hinh_rieng):
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "editor", "scope": "user", "value": {"value": "geditor"}})
+    _goi(tmp_path, root, {"op": "set", "key": "editor", "scope": "user", "value": "geditor"})
     f = cau_hinh_rieng / "preferences.yaml"
     assert f.exists()
     d = yaml.safe_load(f.read_text(encoding="utf-8"))
@@ -171,7 +171,7 @@ def test_project_scope_ghi_vao_bang_preference(tmp_path, workspace, cau_hinh_rie
     """DDD-14 §2: thực thể Preference, PRIMARY KEY (key, scope)."""
     import sqlite3
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": {"value": "stlink"}})
+    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": "stlink"})
     with sqlite3.connect(store.store_path(root)) as c:
         rows = c.execute("SELECT key, scope, value FROM preference").fetchall()
     assert len(rows) == 1 and rows[0][0] == "probe" and rows[0][1] == "project"
@@ -180,7 +180,7 @@ def test_project_scope_ghi_vao_bang_preference(tmp_path, workspace, cau_hinh_rie
 def test_ghi_project_scope_giu_nguyen_niem_phong(tmp_path, workspace, cau_hinh_rieng):
     """Ghi QUA CỔNG thì store phải được niêm lại, nếu không project.open sẽ báo E6000 oan."""
     root = _du_an(tmp_path, workspace)
-    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": {"value": "stlink"}})
+    _goi(tmp_path, root, {"op": "set", "key": "probe", "scope": "project", "value": "stlink"})
     ok, chi_tiet = store.verify_seal(store.store_path(root))
     assert ok, chi_tiet
     r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l3.jsonl"))

@@ -155,7 +155,7 @@ def test_progress_sinh_tu_ledger_khong_viet_tay(tmp_path, workspace):
     r = _router(tmp_path)
     ctx = Context(project_dir=root)
     r.invoke("project.preferences", {"op": "set", "key": "probe", "scope": "project",
-                                     "value": {"value": "stlink"}}, ctx)
+                                     "value": "stlink"}, ctx)
     # Đếm TRƯỚC khi gọi: một năng lực không thể đếm chính lần chạy của nó, vì `cap.run.finish`
     # của nó chỉ được Router ghi sau khi handler trả về.
     xong = len([x for x in r.ledger.records()
@@ -210,7 +210,7 @@ def test_progress_neu_muc_hoan_tac_con_han(tmp_path, workspace):
     r = _router(tmp_path)
     ctx = Context(project_dir=root)
     r.invoke("project.preferences", {"op": "set", "key": "k", "scope": "project",
-                                     "value": {"value": "v"}}, ctx)
+                                     "value": "v"}, ctx)
     md = r.invoke("memory.progress", {}, ctx).result["progress_md"]
     assert "Hoàn tác được" in md and "project.preferences" in md
 
@@ -229,7 +229,7 @@ def test_tom_tat_phien_du_bon_truong(tmp_path, workspace):
     ctx = Context(project_dir=root)
     SessionMemory.mo(root, project=root.name, autonomy="A3", ledger=r.ledger)
     r.invoke("project.preferences", {"op": "set", "key": "k", "scope": "project",
-                                     "value": {"value": "v"}}, ctx)
+                                     "value": "v"}, ctx)
     s = r.invoke("memory.summarize_session", {}, ctx).result["summary"]
     assert set(s) == {"done", "waiting", "next", "undo_until"}
     assert "project.preferences" in " ".join(s["done"])
@@ -283,7 +283,7 @@ def test_tom_tat_khong_qua_200_token(tmp_path, workspace):
     ctx = Context(project_dir=root)
     for i in range(30):
         r.invoke("project.preferences", {"op": "set", "key": f"k{i}", "scope": "project",
-                                         "value": {"value": "v"}}, ctx)
+                                         "value": "v"}, ctx)
     s = r.invoke("memory.summarize_session", {}, ctx).result["summary"]
     tu = len(" ".join(s["done"] + s["waiting"] + s["next"]).split())
     assert tu <= 200, f"tóm tắt {tu} từ — vượt ngưỡng MEM-11 §8"

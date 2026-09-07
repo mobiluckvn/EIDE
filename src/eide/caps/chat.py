@@ -290,8 +290,8 @@ def _ghi_nho(ctx: Context, key: str, value: Any, tu_dau: str) -> None:
     from eide.caps.project import preferences
     root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
     scope = "project" if root and (root / EIDE_DIR).is_dir() else "user"
-    preferences({"op": "set", "key": key, "scope": scope,
-                 "value": {"value": value, "learned_from": f"chat.clarify: {tu_dau[:60]}"}}, ctx)
+    preferences({"op": "set", "key": key, "scope": scope, "value": value,
+                 "learned_from": f"chat.clarify: {tu_dau[:60]}"}, ctx)
 
 
 @capability("chat.restate")

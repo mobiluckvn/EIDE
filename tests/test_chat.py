@@ -176,7 +176,7 @@ def test_thu_tu_mac_dinh_preferences_truoc(tmp_path, workspace):
     r, ctx, _ = _rt(tmp_path)
     ctx.project_dir = root
     r.invoke("project.preferences", {"op": "set", "key": "diagram_lang", "scope": "project",
-                                     "value": {"value": "plantuml"}}, ctx)
+                                     "value": "plantuml"}, ctx)
     out = r.invoke("chat.fill_defaults", {"intent": {"intent": "diagram.draw", "slots": {}},
                                           "grounded": {}}, ctx).result
     ap = {a["slot"]: a for a in out["applied"]}
@@ -308,7 +308,7 @@ def test_report_back_du_bon_phan(tmp_path, workspace):
     r, ctx, _ = _rt(tmp_path)
     ctx.project_dir = root
     run = r.invoke("project.preferences", {"op": "set", "key": "k", "scope": "project",
-                                           "value": {"value": "v"}}, ctx)
+                                           "value": "v"}, ctx)
     out = r.invoke("chat.report_back", {"run_id": run.run_id}, ctx).result
     assert set(out["report"]) >= {"done", "waiting", "undo", "cost"}
     assert out["text"]
@@ -321,7 +321,7 @@ def test_report_back_toi_da_10_dong(tmp_path, workspace):
     ctx.project_dir = root
     for i in range(40):
         r.invoke("project.preferences", {"op": "set", "key": f"k{i}", "scope": "project",
-                                         "value": {"value": "v"}}, ctx)
+                                         "value": "v"}, ctx)
     out = r.invoke("chat.report_back", {"run_id": "r1"}, ctx).result
     assert len(out["text"].splitlines()) <= 10
 

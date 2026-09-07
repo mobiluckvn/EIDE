@@ -198,13 +198,19 @@ def test_du_an_tat_bot_kenh_thi_ton_trong(tmp_path):
 
 
 def test_escalate_ghi_ledger(tmp_path):
-    """steps: "ghi ledger"."""
+    """steps: "ghi ledger" — kiểu riêng `policy.escalate` (API-15 §7 v1.3, DEV-013).
+
+    Trước v1.3 phải mượn kiểu `question` với cờ `escalated: True`. Dùng chung một kiểu thì chỉ
+    số "bao nhiêu việc phải leo thang" của POL-17 §6 không tách được khỏi câu hỏi thường, mà đó
+    lại đúng là con số cho biết mức tự chủ đang đặt quá cao hay quá thấp.
+    """
     r = _router(tmp_path)
     r.invoke("policy.escalate", {"reason": "budget_low", "ref": "run_3"}, Context())
-    q = [x for x in r.ledger.records() if x["kind"] == "question"]
+    q = [x for x in r.ledger.records() if x["kind"] == "policy.escalate"]
     assert len(q) == 1
-    assert q[0]["data"] == {"question_id": "run_3", "reason": "budget_low",
-                            "channels": ["queue", "chat", "notify"], "escalated": True}
+    assert q[0]["data"] == {"ref": "run_3", "reason": "budget_low",
+                            "channels": ["queue", "chat", "notify"], "level": "notify"}
+    assert not [x for x in r.ledger.records() if x["kind"] == "question"], "không mượn kiểu nữa"
     assert r.ledger.verify() == (True, 0)
 
 

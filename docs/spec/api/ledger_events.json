@@ -30,6 +30,11 @@
   "source": "eide policy sign"
  },
  {
+  "kind": "policy.escalate",
+  "fields": "{ref, reason, channels[], level}",
+  "source": "policy.escalate"
+ },
+ {
   "kind": "undo.register / undo.apply / undo.expire",
   "fields": "{undo_ref, kind, deadline} / {undo_ref, by, result} / {undo_ref}",
   "source": "UndoService"
@@ -41,7 +46,7 @@
  },
  {
   "kind": "store.write",
-  "fields": "{batch_id, n_facts, n_conflicts, actor, reason}",
+  "fields": "{batch_id, n_facts, n_conflicts, actor, reason, hash}",
   "source": "PassportStore"
  },
  {

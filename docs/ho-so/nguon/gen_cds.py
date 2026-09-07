@@ -18,6 +18,12 @@ def parse_type(spec):
         item = parse_type(m.group(1))[0]; s = {"type": "array", "items": item}
     elif spec.startswith("enum:"):
         s = {"type": "string", "enum": spec[5:].split("|")}
+    elif spec == "json":
+        # Giá trị JSON BẤT KỲ — không ràng `type`. Khác `obj`: DDD-14 §2 dùng chữ "object" cho
+        # cột kiểu với nghĩa "lưu dạng JSON (số/chuỗi/đối tượng)", nhưng trong JSON Schema
+        # `"type":"object"` chỉ nhận đối tượng. Chép thẳng chữ ấy sang làm `project.preferences`
+        # từ chối chính ví dụ của nó (`"value":"stlink"`). Xem DEVIATIONS DEV-009.
+        s = {}
     else:
         s = {"type": {"str": "string", "int": "integer", "num": "number", "bool": "boolean", "obj": "object"}[spec]}
     if desc: s["description"] = desc

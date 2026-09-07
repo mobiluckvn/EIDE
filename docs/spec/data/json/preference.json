@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "https://eide.code247.ai/schema/preference.json",
  "title": "Preference",
- "description": "Tùy chọn người dùng (D8)",
+ "description": "Tùy chọn người dùng (D8). Bảng này giữ RIÊNG `scope=project`; `scope=user` nằm ở `preferences.yaml` trong thư mục cấu hình người dùng (§6). Phân công theo phạm vi chứ không tùy chọn: bảng nằm trong store của TỪNG dự án, nên một tùy chọn `user` ghi ở dự án A sẽ không đọc được ở dự án B — trái đúng nghĩa của \"user\". Xem DEVIATIONS DEV-010.",
  "type": "object",
  "required": [
   "key",
@@ -19,11 +19,12 @@
    "enum": [
     "user",
     "project"
-   ]
+   ],
+   "description": "chỉ `project` trong bảng này"
   },
   "value": {
    "type": "object",
-   "description": "JSON"
+   "description": "JSON — giá trị bất kỳ (số, chuỗi, mảng, đối tượng), KHÔNG chỉ đối tượng; `learned_from`/`ttl_days` là trường ngang hàng, không lồng bên trong (DEV-009)"
   },
   "learned_from": {
    "type": "string",

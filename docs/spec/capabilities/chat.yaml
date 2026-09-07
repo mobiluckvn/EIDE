@@ -137,7 +137,7 @@
     - question
     additionalProperties: false
   risk: R0
-  tier: T2
+  tier: T1
   grounding: []
   ask_when:
   - Khi không có mặc định

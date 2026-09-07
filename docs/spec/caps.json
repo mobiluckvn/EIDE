@@ -2302,7 +2302,7 @@
 "inp": "gaps",
 "out": "answer|default",
 "risk": "R0",
-"tier": "T2",
+"tier": "T1",
 "ground": "—",
 "ask": "Khi không có mặc định",
 "ref": "D3",

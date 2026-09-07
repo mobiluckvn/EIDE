@@ -132,7 +132,7 @@ def test_bao_cao_neu_muc_hoan_tac_va_loi(tmp_path, workspace):
     r = _router(tmp_path)
     ctx = Context(project_dir=root)
     r.invoke("project.preferences", {"op": "set", "key": "k", "scope": "project",
-                                     "value": {"value": "v"}}, ctx)
+                                     "value": "v"}, ctx)
     r.ledger.append("error", {"kind": "tool_fail", "role": "coder", "evidence": "build hỏng"})
     md = r.invoke("report.progress", {}, ctx).result["md"]
     assert "hoàn tác" in md.lower()

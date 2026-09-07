@@ -22,11 +22,13 @@ Handler = Callable[..., dict[str, Any]]
 
 # Mức năng lực buộc phải khác hợp đồng — mỗi dòng là một mục DEVIATIONS đang Mở.
 #
-# `chat.clarify` khai T2 ("cần người duyệt"), nhưng nó CHÍNH LÀ cơ chế hỏi người: bắt nó xin
-# phép người trước khi được phép hỏi người là một vòng luẩn quẩn, và hệ quả thật là D3 của
-# DPS-09 ("gộp mọi điểm mơ hồ thành một câu") không bao giờ chạy — lời gọi rơi vào hàng đợi
-# với một câu hỏi chưa từng được dựng. Xem DEVIATIONS DEV-020.
-TIER_SUA: dict[str, str] = {"chat.clarify": "T1"}
+# RỖNG từ 07/09/2026, và rỗng ở đây có nghĩa: mức trong mã bằng đúng mức trong hợp đồng, không
+# năng lực nào đang chạy khác điều CDS-12 khai. Mục duy nhất từng nằm đây là `chat.clarify`
+# (khai T2 "cần người duyệt" trong khi nó CHÍNH LÀ cơ chế hỏi người — một vòng luẩn quẩn khiến
+# D3 của DPS-09 không bao giờ chạy); CDS-12.6 v1.3 đã đổi nó thành T1, nên chỗ lệch biến mất
+# thay vì được che. Giữ lại cơ chế vì lần lệch sau cần một nơi có tên để đặt, thay vì rải điều
+# kiện trong PolicyGate. Xem DEVIATIONS DEV-020.
+TIER_SUA: dict[str, str] = {}
 
 
 @dataclass

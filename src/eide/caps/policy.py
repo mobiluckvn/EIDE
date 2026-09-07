@@ -86,8 +86,11 @@ def escalate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     kenh = [k for k in BAC_THANG[: BAC_THANG.index(muc) + 1] if k in cho_phep]
     led = ctx.extra.get("ledger")
     if led is not None:
-        led.append("question", {"question_id": params["ref"], "reason": params["reason"],
-                                "channels": kenh, "escalated": True})
+        # API-15 §7 v1.3 `policy.escalate {ref, reason, channels[], level}`. Trước v1.3 phải
+        # mượn kiểu `question` với cờ `escalated`, và khi đó chỉ số "bao nhiêu việc phải leo
+        # thang" không tách được khỏi câu hỏi thường. Xem DEVIATIONS DEV-013.
+        led.append("policy.escalate", {"ref": params["ref"], "reason": params["reason"],
+                                       "channels": kenh, "level": muc})
     return {"notified": kenh}
 
 

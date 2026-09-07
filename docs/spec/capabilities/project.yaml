@@ -349,7 +349,7 @@
       key:
         type: string
       value:
-        type: object
+        description: giá trị JSON bất kỳ (số, chuỗi, mảng, đối tượng)
       scope:
         type: string
         enum:
@@ -362,6 +362,11 @@
         - set
         - delete
         - list
+      learned_from:
+        type: string
+        description: id decision/turn (D8)
+      ttl_days:
+        type: integer
     required: []
     additionalProperties: false
   output:
@@ -387,3 +392,4 @@
     key: probe
     value: stlink
     scope: user
+    learned_from: UC-A03

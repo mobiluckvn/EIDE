@@ -288,6 +288,7 @@
     old: f_1a2b
     new: {}
     reason: SVD 1.2
+    actor: agent
 - code: KG-08
   id: kg.request
   name: Tạo yêu cầu nhận tri thức

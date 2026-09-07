@@ -33,7 +33,21 @@ for (const [v, [title, nss, desc]] of Object.entries(VOLS)) {
   const m = metaNew(`EIDE-CDS-12.${v}`, `Đặc tả năng lực — tập ${v}`, `ĐẶC TẢ CHI TIẾT NĂNG LỰC (CDS) — TẬP ${v}: ${title.toUpperCase()}`,
     `${desc}. ${recs.length} năng lực trong ${nss.length} nhóm; mỗi năng lực có hợp đồng 13 trường, JSON Schema vào/ra, các bước, lỗi, hoàn tác, ví dụ gọi và test`,
     [['Tài liệu trước', 'Danh mục năng lực v1.2 (238), EIDE-SRS-02 §3B, EIDE-SDD-04 §4.0, EIDE-POL-17, EIDE-CXD-10, EIDE-MEM-11, EIDE-PRS-16'], ['Tệp kèm', `capabilities/<ns>.yaml (khai báo nạp vào Capability Registry) cho các nhóm: ${nss.join(', ')}`], ['Dùng khi', 'Hiện thực từng năng lực; sinh test hợp đồng; sinh tool MCP; viết UI gọi năng lực']],
-    'Phát hành lần đầu — bổ sung lĩnh vực L03/L11; sinh từ cds_data_*.py + caps.py');
+    'Phát hành lần đầu — bổ sung lĩnh vực L03/L11; sinh từ cds_data_*.py + caps.py',
+    v == '3' ? [['1.1', '07/09/2026', 'Vũ Trí Công',
+      'PROJECT-09 project.preferences: `value` nhận GIÁ TRỊ JSON bất kỳ thay vì chỉ đối tượng, '
+      + 'và `learned_from`/`ttl_days` thành tham số ngang hàng đúng như thực thể Preference của '
+      + 'DDD-14 §2. Trước đó ví dụ của chính hợp đồng (`"value":"stlink"`) bị Router chặn bằng '
+      + 'E1000 vì không qua nổi input_schema của nó (DEV-009).']]
+    : v == '2' ? [['1.1', '07/09/2026', 'Vũ Trí Công',
+      'KG-07 kg.supersede: ví dụ gọi bổ sung trường bắt buộc `actor` — thiếu nó thì ví dụ không '
+      + 'qua nổi input_schema của chính hợp đồng.']]
+    : v == '6' ? [['1.1', '07/09/2026', 'Vũ Trí Công',
+      'CHAT-04 chat.clarify: mức T2 → T1. T2 nghĩa là "cần người duyệt", nhưng chat.clarify '
+      + 'CHÍNH LÀ cơ chế hỏi người: bắt nó xin phép trước khi được phép hỏi là một vòng luẩn '
+      + 'quẩn — PolicyGate trả ASK, lời gọi vào hàng đợi với một câu hỏi chưa từng được dựng, '
+      + 'và quy tắc D3 của DPS-09 không bao giờ chạy (DEV-020).']]
+    : undefined);
   const c = [];
   c.push(H1('1. Cách đọc tập này'));
   c.push(P(`Mỗi năng lực là một mục gồm: bảng hợp đồng (lớp rủi ro, mức tự chủ, grounding, điều kiện hỏi, hoàn tác, mốc, ví dụ gọi, test), JSON Schema tham số vào và kết quả ra theo mẫu số chung (object/string/number/integer/boolean/array/enum; sâu ≤ 3; không anyOf/$ref) [19], các bước thực hiện (thuật toán ở mức lập trình được, có tham chiếu tới tài liệu nền: CXD-10 ngữ cảnh, MEM-11 bộ nhớ, POL-17 chính sách, PRS-16 prompt, SEC-25 sandbox, TGT-19 phần cứng, SIM-20 mô phỏng), và mã lỗi (API-15 §6). Khai báo YAML tương ứng nằm trong \`capabilities/<ns>.yaml\` và là thứ Capability Registry nạp; tài liệu này là bản đọc cho người của cùng dữ liệu. Router luôn thực hiện các bước chung trước khi vào năng lực: kiểm input_schema → grounding → policy.decide → thực thi → ledger → đăng ký hoàn tác (SDD-04 §4.0), nên các bước dưới đây không lặp lại phần chung. Quy ước mức: T1 AI làm trọn; T1* tự làm khi chính sách có bằng chứng; T2 AI làm — người duyệt; T3 người làm.`));

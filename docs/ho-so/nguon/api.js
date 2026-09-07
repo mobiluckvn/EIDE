@@ -12,7 +12,16 @@ const m = metaNew('EIDE-API-15', 'Đặc tả giao diện lập trình', 'ĐẶC
    ['1.2', '06/09/2026', 'Vũ Trí Công',
     '§7: thêm kiểu sự kiện ledger `policy.sign {hash, by, keys[], alg}`. POL-17 §3 đòi ghi việc '
     + 'ký danh sách trắng vào decision_log nhưng không kiểu nào có trường `hash` — mà băm chính là '
-    + 'thứ phép đối chiếu .sig ↔ nhật ký cần đọc (DEV-031).']]);
+    + 'thứ phép đối chiếu .sig ↔ nhật ký cần đọc (DEV-031).'],
+   ['1.3', '06/09/2026', 'Vũ Trí Công',
+    '§7: thêm kiểu `policy.escalate {ref, reason, channels[], level}`. POL-17 §6 có một máy '
+    + 'trạng thái leo thang nhưng không kiểu sự kiện nào ghi được nó, nên hiện thực phải mượn '
+    + 'kiểu `question` — và khi đó không phân biệt được câu hỏi thường với câu hỏi đã leo thang, '
+    + 'tức chỉ số "bao nhiêu việc phải leo thang" không tính được (DEV-013).'],
+   ['1.4', '07/09/2026', 'Vũ Trí Công',
+    '§7: `store.write` thêm trường `hash` để nối bản ghi với niêm phong toàn vẹn '
+    + '`store.sqlite.seal.json` (DDD-14 §5). CDS-12.3 PROJECT-02 bước 2 đòi kiểm hash store '
+    + 'nhưng không sự kiện nào mang được nó (DEV-007).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc'));
 c.push(P('Bốn bề mặt gọi (plugin GEditor qua JSON-RPC 2.0 [50] trên Unix socket, IDE ngoài qua MCP [13], REST nội bộ cho CI/kiểm thử, CLI) đều đi tới cùng `CapabilityRouter.invoke` (SDD-04 §4.0). Vì vậy: (1) mọi năng lực tự động là một phương thức `caps.invoke` với `input_schema`/`output_schema` từ khai báo — không viết tay; (2) chỉ có một tập phương thức "khung" (phiên, hàng đợi, chat, sự kiện, job) viết tay và liệt kê dưới đây; (3) mọi lỗi dùng chung bảng mã §6; (4) mọi lời gọi có `request_id` xuất hiện trong ledger để truy vết đầu-cuối; (5) phiên bản API semver trong handshake, thay đổi phá vỡ chỉ ở phiên bản lớn.'));
@@ -137,9 +146,13 @@ const LED = [
  // thứ phép đối chiếu `.sig` ↔ nhật ký cần đọc; nhét băm vào `note` dạng văn xuôi thì bước đối
  // chiếu thành ra phân tích chuỗi tự do. Xem DEVIATIONS DEV-031.
  ['policy.sign', '{hash, by, keys[], alg}', 'eide policy sign'],
+ // POL-17 §6 có hẳn một máy trạng thái leo thang, nhưng tới v1.2 không kiểu sự kiện nào ghi
+ // được nó — `question` là chỗ gần nhất và nó không phân biệt được câu hỏi thường với câu hỏi
+ // ĐÃ leo thang, tức thống kê "bao nhiêu việc phải leo thang" không tính được. DEVIATIONS DEV-013.
+ ['policy.escalate', '{ref, reason, channels[], level}', 'policy.escalate'],
  ['undo.register / undo.apply / undo.expire', '{undo_ref, kind, deadline} / {undo_ref, by, result} / {undo_ref}', 'UndoService'],
  ['autonomy.change / stop', '{from, to, by, reason}', ''],
- ['store.write', '{batch_id, n_facts, n_conflicts, actor, reason}', 'PassportStore'],
+ ['store.write', '{batch_id, n_facts, n_conflicts, actor, reason, hash}', 'PassportStore'],
  ['acq.state', '{acq_id, from, to, by}', 'AcquisitionService'],
  ['tool.report', 'ToolReport', 'TargetService'],
  ['discover.result', 'Discovery', ''],
