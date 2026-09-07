@@ -489,3 +489,228 @@ def test_da_co_fact_thi_khong_yeu_cau_nua(du_an):
 def test_task_khong_can_gi_thi_tra_rong(du_an):
     r, ctx, _ = du_an
     assert r.invoke("search.missing", {"task_ref": "viết tài liệu"}, ctx).result["requests"] == []
+
+
+# ---------- SEARCH-04 search.web
+
+
+def _cau_hinh(monkeypatch, base, kind="searxng"):
+    """Trỏ `search.web` vào máy chủ cục bộ, không gọi mạng thật."""
+    import eide.caps.search as m
+    if kind == "searxng":
+        monkeypatch.setenv("SEARXNG_URL", base)
+        p = {"id": "test", "kind": "searxng", "base_url_env": "SEARXNG_URL"}
+    else:
+        monkeypatch.setenv("BRAVE_API_KEY", "k")
+        p = {"id": "test", "kind": "brave", "key_env": "BRAVE_API_KEY"}
+    monkeypatch.setattr(m, "_cau_hinh_tim_kiem",
+                        lambda: {"providers": [p], "max_results": 20, "timeout_s": 5})
+    return p
+
+
+def _searxng(noi, ket_qua):
+    noi["/search"] = json.dumps({"results": ket_qua}).encode()
+
+
+class _Json(_Handler):
+    pass
+
+
+@pytest.fixture
+def may_chu_json():
+    """Máy chủ trả JSON theo đường dẫn, bỏ qua chuỗi truy vấn."""
+    class _H(BaseHTTPRequestHandler):
+        NOI: dict[str, bytes] = {}
+
+        def _gui(self):
+            duong = self.path.split("?")[0]
+            if duong not in self.NOI:
+                self.send_error(404)
+                return
+            d = self.NOI[duong]
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(d)))
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(d)
+
+        do_GET = do_POST = lambda self: self._gui()  # noqa: E731
+
+        def log_message(self, *a):
+            pass
+
+    _H.NOI = {}
+    srv = HTTPServer(("127.0.0.1", 0), _H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{srv.server_port}", _H.NOI
+    srv.shutdown()
+
+
+KQ = [
+    {"url": "https://www.allegromicro.com/-/media/files/datasheets/a4988-datasheet.pdf",
+     "title": "A4988 DMOS Microstepping Driver Datasheet", "content": "…"},
+    {"url": "https://forum.arduino.cc/t/a4988-help/12345",
+     "title": "A4988 wiring help", "content": "…"},
+    {"url": "https://www.amazon.com/dp/B01234", "title": "A4988 Driver 5pcs", "content": "…"},
+    {"url": "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/x.svd",
+     "title": "STM32F411 SVD", "content": "…"},
+]
+
+
+def test_TC_trang_hang_xep_tren_forum(du_an, may_chu_json, monkeypatch):
+    """tc SEARCH-04 nguyên văn: "allegromicro.com xếp trên forum".
+
+    Trang hãng thắng vì TẦNG khác nhau, không vì thứ tự công cụ tìm kiếm trả về — thứ tự ấy là
+    của nhà cung cấp, không phải của ta.
+    """
+    base, noi = may_chu_json
+    _searxng(noi, KQ)
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    ds = r.invoke("search.web", {"query": "A4988 datasheet", "part": "A4988"},
+                  ctx).result["candidates"]
+    xh = r.invoke("search.rank", {"candidates": ds, "part": "A4988"}, ctx).result["ranked"]
+    assert "allegromicro.com" in xh[0]["domain"], [x["domain"] for x in xh]
+    forum = next(x for x in xh if x["kind"] == "forum")
+    assert xh[0]["score"] > forum["score"]
+
+
+def test_loai_trang_khong_phai_tai_lieu(du_an, may_chu_json, monkeypatch):
+    """Một trang bán hàng trông giống kết quả hợp lệ với mọi công cụ tìm kiếm; để lọt thì
+    `search.fetch` tải về và `extract.*` sinh fact từ quảng cáo."""
+    base, noi = may_chu_json
+    _searxng(noi, KQ)
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    ds = r.invoke("search.web", {"query": "A4988"}, ctx).result["candidates"]
+    assert not [x for x in ds if "amazon" in x["domain"]]
+    assert len(ds) == 3
+
+
+def test_dien_dan_khong_bi_loai_chi_bi_ha_tang(du_an, may_chu_json, monkeypatch):
+    """TGT-19 §8 xếp "forum → đồng (chỉ ứng viên)". Một câu trả lời trên diễn đàn có khi là
+    nguồn DUY NHẤT cho một con chip cũ — nhưng nó không bao giờ tự duyệt ở G-FACT."""
+    base, noi = may_chu_json
+    _searxng(noi, KQ)
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    ds = r.invoke("search.web", {"query": "A4988"}, ctx).result["candidates"]
+    f = next(x for x in ds if "forum" in x["domain"])
+    assert f["kind"] == "forum" and f["tier_expected"] == "bronze"
+
+
+def test_tang_du_kien_theo_bang_nguon_hang(du_an, may_chu_json, monkeypatch):
+    """Đọc từ `sources/vendors.yaml` — cùng bảng `search.vendor` dùng, nên thêm một hãng là hai
+    năng lực cùng biết."""
+    base, noi = may_chu_json
+    _searxng(noi, KQ)
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    theo = {x["domain"]: x for x in r.invoke("search.web", {"query": "x"},
+                                             ctx).result["candidates"]}
+    assert theo["allegromicro.com"]["tier_expected"] == "silver"     # PDF hãng
+    assert theo["raw.githubusercontent.com"]["tier_expected"] == "gold"   # SVD trong bảng hãng
+
+
+def test_khong_tai_gi_chi_tra_ung_vien(du_an, may_chu_json, monkeypatch):
+    """"không tải" — bước 2. Tải là việc của `search.fetch`, nơi cổng G-SRC quyết."""
+    base, noi = may_chu_json
+    _searxng(noi, KQ)
+    _cau_hinh(monkeypatch, base)
+    r, ctx, root = du_an
+    r.invoke("search.web", {"query": "A4988"}, ctx)
+    cache = root / ".eide" / "cache" / "downloads"
+    assert not cache.exists() or list(cache.iterdir()) == []
+    with store.open_store(store.store_path(root)) as c:
+        assert c.execute("SELECT COUNT(*) FROM source").fetchone()[0] == 0
+
+
+def test_chua_cau_hinh_thi_E4001_kem_tung_lua_chon(du_an, monkeypatch):
+    """Liệt kê từng lựa chọn với biến môi trường của nó, thay vì một câu "chưa cấu hình": người
+    đọc thông báo lỗi ấy cần biết mình có những đường nào và rẻ nhất là đường nào."""
+    for v in ("SEARXNG_URL", "BRAVE_API_KEY", "TAVILY_API_KEY", "GOOGLE_API_KEY"):
+        monkeypatch.delenv(v, raising=False)
+    r, ctx, _ = du_an
+    run = r.invoke("search.web", {"query": "x"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E4001"
+    t = str(run.error)
+    assert "SEARXNG_URL" in t and "BRAVE_API_KEY" in t
+    assert "search.vendor" in t, "phải nêu đường đi được ngay khi chưa cấu hình gì"
+
+
+def test_may_chu_khong_tra_loi_thi_E4004(du_an, may_chu_json, monkeypatch):
+    base, _ = may_chu_json
+    _cau_hinh(monkeypatch, base)          # không nạp /search ⇒ 404
+    r, ctx, _ = du_an
+    run = r.invoke("search.web", {"query": "x"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E4004"
+
+
+def test_doc_duoc_dinh_dang_cua_tung_nha_cung_cap():
+    """Mỗi dịch vụ đặt tên trường một kiểu. Bộ chuyển đổi tách theo `kind` chứ không theo `id`,
+    để hai người đặt tên khác nhau cho cùng một dịch vụ vẫn dùng chung một bộ."""
+    from eide.caps.search import _doc_ket_qua
+    assert _doc_ket_qua("searxng", {"results": [{"url": "u", "title": "t", "content": "c"}]}) \
+        == [{"url": "u", "title": "t", "snippet": "c"}]
+    assert _doc_ket_qua("brave", {"web": {"results": [{"url": "u", "title": "t",
+                                                       "description": "c"}]}}) \
+        == [{"url": "u", "title": "t", "snippet": "c"}]
+    assert _doc_ket_qua("tavily", {"results": [{"url": "u", "title": "t", "content": "c"}]}) \
+        == [{"url": "u", "title": "t", "snippet": "c"}]
+    assert _doc_ket_qua("google_cse", {"items": [{"link": "u", "title": "t", "snippet": "c"}]}) \
+        == [{"url": "u", "title": "t", "snippet": "c"}]
+
+
+def test_ket_qua_cua_web_dung_duoc_cho_fetch(du_an, may_chu_json, monkeypatch):
+    """Vòng khép: ứng viên `search.web` sinh ra phải đủ trường cho `dac_trung_nguon` và cổng."""
+    base, noi = may_chu_json
+    _searxng(noi, KQ)
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    c = r.invoke("search.web", {"query": "A4988"}, ctx).result["candidates"][0]
+    dt = dac_trung_nguon(c)["source"]
+    assert dt["domain"] and dt["kind"]
+    assert set(dt) >= {"domain", "size_mb", "license", "kind", "expected_hash"}
+
+
+def test_cau_hinh_mac_dinh_dat_SearXNG_dau_tien():
+    """SearXNG không cần khóa và không tốn tiền — hoàn thiện mốc M1 không nên buộc ai phải mua
+    gì. Thứ tự trong `models.yaml` là thứ tự thử, nên nó phải đứng đầu."""
+    import yaml as _y
+
+    from eide_core.paths import spec_dir as _sd
+    d = _y.safe_load((_sd() / "models.yaml").read_text(encoding="utf-8"))
+    ps = d["search"]["providers"]
+    assert ps[0]["kind"] == "searxng"
+    assert "key_env" not in ps[0], "lựa chọn đầu tiên không được đòi khóa"
+    assert d["search"]["max_results"] == 20          # SEARCH-04 bước 1
+
+
+def test_dien_dan_TREN_ten_mien_hang_van_la_dong(du_an, may_chu_json, monkeypatch):
+    """`community.st.com` là diễn đàn CHÍNH THỨC của ST — tên miền hãng, nhưng nội dung là câu
+    trả lời của người dùng.
+
+    Đây mới là trường hợp nhánh "diễn đàn → đồng" sinh ra để xử lý, và là test tôi thiếu ở lượt
+    đầu: `forum.arduino.cc` không phải tên miền hãng nên nó rơi về đồng bằng đường mặc định —
+    gỡ hẳn nhánh ấy đi mà test vẫn xanh. Không có nhánh, một bài viết trên diễn đàn ST được xếp
+    ngang datasheet ST.
+    """
+    base, noi = may_chu_json
+    _searxng(noi, [{"url": "https://community.st.com/t5/stm32-mcus/i2c-issue/td-p/123",
+                    "title": "I2C1 base address question", "content": "…"}])
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    c = r.invoke("search.web", {"query": "STM32F411 I2C1"}, ctx).result["candidates"][0]
+    assert c["kind"] == "forum"
+    assert c["tier_expected"] == "bronze", "diễn đàn trên tên miền hãng vẫn phải là đồng"
+
+
+def test_tran_20_ket_qua(du_an, may_chu_json, monkeypatch):
+    """SEARCH-04 bước 1: "tối đa 20 kết quả". Nhà cung cấp trả bao nhiêu là việc của họ; trần
+    này là của ta, vì mỗi ứng viên sau đó là một lần `search.rank` và có thể một lần tải."""
+    base, noi = may_chu_json
+    _searxng(noi, [{"url": f"https://www.st.com/resource/ds{i}.pdf", "title": f"DS {i}",
+                    "content": "…"} for i in range(35)])
+    _cau_hinh(monkeypatch, base)
+    r, ctx, _ = du_an
+    assert len(r.invoke("search.web", {"query": "x"}, ctx).result["candidates"]) == 20

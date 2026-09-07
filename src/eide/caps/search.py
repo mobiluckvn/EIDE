@@ -528,3 +528,218 @@ def _vi_tu_can(root: Path, task_ref: str) -> list[str]:
         chip = c.execute("SELECT id FROM passport WHERE kind='chip' ORDER BY id LIMIT 1").fetchone()
     goc = f"chip:{chip[0].split('@')[0]}" if chip else "chip:?"
     return [f"{goc}/{x}" if ":" not in x else x for x in ds]
+
+
+# ---------------------------------------------------------------- SEARCH-04 web
+
+
+# Bước 2: "loại trang không phải tài liệu". Đây là phần deterministic đáng giá nhất của năng
+# lực này — một trang bán hàng hay một bài blog trông giống kết quả hợp lệ với mọi công cụ tìm
+# kiếm, và nếu để lọt thì `search.fetch` tải về rồi `extract.*` sinh ra fact từ quảng cáo.
+DUOI_TAI_LIEU = (".pdf", ".svd", ".atdf", ".xml", ".zip", ".h", ".hpp", ".txt", ".md", ".json")
+TU_KHOA_TAI_LIEU = ("datasheet", "reference manual", "user manual", "errata", "application note",
+                    "programming manual", "technical reference", "schematic", "svd", "atdf")
+
+# Tên miền KHÔNG PHẢI nguồn tài liệu: chợ điện tử, mạng xã hội, hỏi đáp chung. Chúng có thể
+# hữu ích cho người, nhưng làm nguồn fact thì không — và `search.rank` sẽ xếp chúng cao nếu
+# tiêu đề tình cờ chứa mã linh kiện.
+MIEN_LOAI = ("amazon.", "ebay.", "aliexpress.", "alibaba.", "taobao.", "shopee.", "lazada.",
+             "facebook.", "twitter.", "x.com", "linkedin.", "pinterest.", "youtube.",
+             "reddit.com", "quora.com", "medium.com", "wikipedia.org")
+
+# Diễn đàn: KHÔNG loại, nhưng hạ tầng xuống `bronze`. TGT-19 §8 xếp "forum → đồng (chỉ ứng
+# viên)" — một câu trả lời trên diễn đàn có thể đúng và có khi là nguồn duy nhất cho một con
+# chip cũ, nhưng nó không bao giờ được tự duyệt ở cổng G-FACT.
+MIEN_DIEN_DAN = ("stackoverflow.com", "stackexchange.com", "electronics.stackexchange.com",
+                 "forum.", "forums.", "community.", "discuss.", "github.com/issues",
+                 "edaboard.com", "eevblog.com", "avrfreaks.net", "esp32.com")
+
+KIND_TU_KHOA = {
+    "datasheet": ("datasheet", "data sheet", "ds"),
+    "svd": ("svd", "cmsis"),
+    "repo": ("github.com", "gitlab.com", "bitbucket.org", "sourceforge"),
+    "errata": ("errata", "erratum", "es0"),
+    "forum": MIEN_DIEN_DAN,
+    "schematic": ("schematic", "sch", "kicad", "eagle"),
+}
+
+
+@capability("search.web")
+def web(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: SEARCH-04 — CDS-12.2; TGT-19 §8. tc: "allegromicro.com xếp trên forum"; lỗi E4004.
+
+    Hợp đồng chỉ nói *"công cụ tìm kiếm (API cấu hình)"* — cố ý không nêu nhà cung cấp. Nên ở
+    đây nhà cung cấp là **cấu hình**, không phải mã: `models.yaml → search.providers` liệt kê
+    ứng viên theo thứ tự, và năng lực dùng cái đầu tiên có đủ khóa/địa chỉ. Đổi nhà cung cấp
+    hoặc thêm một cái mới là sửa YAML.
+
+    SearXNG đứng đầu danh sách mặc định vì nó tự dựng được, không cần khóa và không tốn tiền —
+    hoàn thiện mốc M1 không nên buộc ai phải mua gì.
+
+    Bước 2 — *"loại trang không phải tài liệu"* — là phần deterministic đáng giá nhất. Một trang
+    bán hàng hay một bài blog trông giống kết quả hợp lệ với mọi công cụ tìm kiếm; để lọt thì
+    `search.fetch` tải về và `extract.*` sinh fact từ quảng cáo. Diễn đàn thì KHÔNG loại nhưng
+    hạ xuống tầng đồng: có khi nó là nguồn duy nhất cho một con chip cũ, nhưng không bao giờ
+    được tự duyệt ở G-FACT.
+
+    "không tải" — chỉ trả ứng viên. Tải là việc của `search.fetch`, nơi cổng G-SRC quyết.
+    """
+    q = params["query"]
+    part = params.get("part")
+    kinds = list(params.get("kinds") or [])
+    cfg = _cau_hinh_tim_kiem()
+    nha_cc = _chon_nha_cung_cap(cfg)
+
+    truy_van = " ".join(x for x in [q, part, *(f"{k}" for k in kinds)] if x)
+    tho = _goi(nha_cc, truy_van, int(cfg.get("max_results") or 20),
+               float(cfg.get("timeout_s") or TIMEOUT_S))
+
+    ra = []
+    for r in tho:
+        uri = r.get("url") or ""
+        dom = _chuan_hoa_domain(uri)
+        if not dom or _bi_loai(uri, dom):
+            continue
+        kind = _doan_kind(uri, r.get("title") or "", dom)
+        ra.append({"uri": uri, "title": r.get("title") or "", "snippet": r.get("snippet") or "",
+                   "domain": dom, "kind": kind, "tier_expected": _tang_du_kien(dom, kind),
+                   "license_hint": None, "provider": nha_cc["id"],
+                   "size_est": None, "reachable": None})
+        if len(ra) >= int(cfg.get("max_results") or 20):
+            break
+    return {"candidates": ra}
+
+
+def _cau_hinh_tim_kiem() -> dict[str, Any]:
+    d = yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8")) or {}
+    return d.get("search") or {}
+
+
+def _chon_nha_cung_cap(cfg: dict[str, Any]) -> dict[str, Any]:
+    """Ứng viên đầu tiên có đủ cấu hình. Không có cái nào ⇒ E4001 kèm HƯỚNG DẪN CỤ THỂ.
+
+    Liệt kê từng lựa chọn với biến môi trường của nó, thay vì một câu "chưa cấu hình": người
+    đọc thông báo lỗi ấy cần biết mình có những đường nào và rẻ nhất là đường nào.
+    """
+    import os
+    for p in (cfg.get("providers") or []):
+        if p.get("key_env") and os.environ.get(p["key_env"]):
+            return p
+        if p.get("base_url_env") and os.environ.get(p["base_url_env"]):
+            return p
+    goi_y = "; ".join(
+        f"{p['id']}: đặt {p.get('key_env') or p.get('base_url_env')}"
+        + (f" và {p['cx_env']}" if p.get("cx_env") else "")
+        for p in (cfg.get("providers") or []))
+    raise EideError("E4001", "Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa "
+                    f"chọn trong `models.yaml → search.providers` — {goi_y}. Rẻ nhất: dựng một "
+                    "SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. "
+                    "Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã "
+                    "phủ phần lớn nhu cầu.",
+                    tool="search provider", providers=[p["id"] for p in (cfg.get("providers") or [])],
+                    alternative="search.vendor")
+
+
+def _goi(p: dict[str, Any], q: str, n: int, timeout: float) -> list[dict[str, Any]]:
+    """Gọi nhà cung cấp. Mỗi `kind` là một bộ chuyển đổi nhỏ: dựng URL, đọc kết quả.
+
+    Tách theo `kind` chứ không theo `id` để hai người dùng đặt tên khác nhau cho cùng một dịch
+    vụ vẫn dùng chung một bộ chuyển đổi.
+    """
+    import json as _json
+    import os
+    import urllib.parse
+    ky = p.get("kind")
+    hdr = {"User-Agent": UA, "Accept": "application/json"}
+    if ky == "searxng":
+        goc = os.environ[p["base_url_env"]].rstrip("/")
+        url = f"{goc}/search?{urllib.parse.urlencode({'q': q, 'format': 'json'})}"
+    elif ky == "brave":
+        url = ("https://api.search.brave.com/res/v1/web/search?"
+               + urllib.parse.urlencode({"q": q, "count": min(n, 20)}))
+        hdr["X-Subscription-Token"] = os.environ[p["key_env"]]
+    elif ky == "tavily":
+        url = "https://api.tavily.com/search"
+        hdr["Authorization"] = "Bearer " + os.environ[p["key_env"]]
+    elif ky == "google_cse":
+        url = ("https://www.googleapis.com/customsearch/v1?"
+               + urllib.parse.urlencode({"key": os.environ[p["key_env"]],
+                                         "cx": os.environ[p["cx_env"]], "q": q,
+                                         "num": min(n, 10)}))
+    else:
+        raise EideError("E1000", f"Loại nhà cung cấp tìm kiếm lạ: {ky}", kind=ky)
+
+    than = _json.dumps({"query": q, "max_results": min(n, 20)}).encode() if ky == "tavily" else None
+    req = urllib.request.Request(url, data=than, headers=hdr)  # noqa: S310
+    if than is not None:
+        req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310
+            d = _json.loads(r.read().decode("utf-8", errors="ignore"))
+    except (urllib.error.URLError, OSError, TimeoutError, ValueError) as e:
+        raise EideError("E4004", f"Công cụ tìm kiếm `{p['id']}` không trả lời: {e}",
+                        provider=p["id"]) from e
+    return _doc_ket_qua(ky, d)
+
+
+def _doc_ket_qua(ky: str, d: dict[str, Any]) -> list[dict[str, Any]]:
+    """Chuẩn hóa về `{url, title, snippet}`. Mỗi dịch vụ đặt tên trường một kiểu."""
+    if ky == "searxng":
+        return [{"url": x.get("url"), "title": x.get("title"),
+                 "snippet": x.get("content")} for x in (d.get("results") or [])]
+    if ky == "brave":
+        return [{"url": x.get("url"), "title": x.get("title"),
+                 "snippet": x.get("description")}
+                for x in ((d.get("web") or {}).get("results") or [])]
+    if ky == "tavily":
+        return [{"url": x.get("url"), "title": x.get("title"),
+                 "snippet": x.get("content")} for x in (d.get("results") or [])]
+    if ky == "google_cse":
+        return [{"url": x.get("link"), "title": x.get("title"),
+                 "snippet": x.get("snippet")} for x in (d.get("items") or [])]
+    return []
+
+
+def _bi_loai(uri: str, dom: str) -> bool:
+    """Trang KHÔNG phải nguồn tài liệu. Diễn đàn không bị loại — nó chỉ bị hạ tầng."""
+    return any(x in dom for x in MIEN_LOAI)
+
+
+def _doan_kind(uri: str, title: str, dom: str) -> str:
+    t = f"{uri} {title}".lower()
+    if any(x in dom for x in MIEN_DIEN_DAN):
+        return "forum"
+    for k, tu in KIND_TU_KHOA.items():
+        if k == "forum":
+            continue
+        if any(x in t for x in tu):
+            return k
+    return "pdf" if uri.lower().endswith(".pdf") else "web"
+
+
+def _tang_du_kien(dom: str, kind: str) -> str:
+    """Tầng dự kiến theo TGT-19 §8: trang hãng → bạc (PDF) hoặc vàng (SVD/ATDF); diễn đàn → đồng.
+
+    Đây là chỗ tc "allegromicro.com xếp trên forum" được quyết: cùng một mã linh kiện xuất hiện
+    ở trang hãng và trên diễn đàn thì trang hãng phải thắng, và nó thắng vì TẦNG khác nhau chứ
+    không vì thứ tự công cụ tìm kiếm trả về — thứ tự ấy là của nhà cung cấp, không phải của ta.
+    """
+    if any(x in dom for x in MIEN_DIEN_DAN):
+        return "bronze"
+    if _la_trang_hang(dom):
+        return "gold" if kind in ("svd", "atdf", "edc") else "silver"
+    return "bronze"
+
+
+def _la_trang_hang(dom: str) -> bool:
+    """Tên miền có trong bảng nguồn hãng TGT-19 §8 (`sources/vendors.yaml`).
+
+    Đọc từ spec, không chép tay — cùng bảng mà `search.vendor` dùng, nên thêm một hãng là hai
+    năng lực cùng biết.
+    """
+    for v in bang_hang():
+        for d in (v.get("domains") or []):
+            d = d.split("/")[0].lower()
+            if dom == d or dom.endswith("." + d):
+                return True
+    return False

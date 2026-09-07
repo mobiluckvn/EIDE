@@ -45,3 +45,20 @@ pricing:
   claude-haiku-4-5-20251001:   {input: 1.00, output: 5.00}
   claude-sonnet-5:             {input: 3.00, output: 15.00}
   claude-opus-5:               {input: 15.00, output: 75.00}
+
+# Công cụ tìm kiếm cho SEARCH-04 `search.web`. Hợp đồng chỉ nói "API cấu hình" — cố ý không
+# nêu nhà cung cấp — nên đây là danh sách ỨNG VIÊN theo thứ tự, dùng cái đầu tiên có đủ cấu
+# hình. Đổi nhà cung cấp là sửa tệp này, không sửa mã.
+#
+# SearXNG đứng ĐẦU vì nó tự dựng được, không cần khóa và không tốn tiền: hoàn thiện mốc M1
+# không nên buộc ai phải mua gì. Ba mục sau đều có bậc miễn phí đủ cho một đề án.
+#
+# Khóa đọc từ biến môi trường, KHÔNG ghi trong tệp này — tệp này vào Git.
+search:
+  providers:
+    - {id: searxng, kind: searxng,    base_url_env: SEARXNG_URL}
+    - {id: brave,   kind: brave,      key_env: BRAVE_API_KEY}
+    - {id: tavily,  kind: tavily,     key_env: TAVILY_API_KEY}
+    - {id: google,  kind: google_cse, key_env: GOOGLE_API_KEY, cx_env: GOOGLE_CSE_ID}
+  max_results: 20        # SEARCH-04 bước 1: "tối đa 20 kết quả"
+  timeout_s: 20

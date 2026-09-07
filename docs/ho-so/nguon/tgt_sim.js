@@ -120,7 +120,7 @@ vendors:
   - id: st
     name: STMicroelectronics
     prefixes: ["^STM32", "^STM8", "^LSM", "^L3G"]
-    domains: [st.com, github.com/cmsis-svd]
+    domains: [st.com, github.com/cmsis-svd, raw.githubusercontent.com]
     urls:
       - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/STMicro/{part_upper}.svd"}
       - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/datasheet/{part_lower}.pdf"}
@@ -135,13 +135,13 @@ vendors:
   - id: nordic
     name: Nordic Semiconductor
     prefixes: ["^nRF"]
-    domains: [nordicsemi.com, docs.nordicsemi.com, github.com/NordicSemiconductor]
+    domains: [nordicsemi.com, docs.nordicsemi.com, github.com/NordicSemiconductor, raw.githubusercontent.com]
     urls:
       - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/NordicSemiconductor/nrfx/master/mdk/{part_lower}.svd"}
   - id: espressif
     name: Espressif
     prefixes: ["^ESP"]
-    domains: [espressif.com, docs.espressif.com, github.com/espressif]
+    domains: [espressif.com, docs.espressif.com, github.com/espressif, raw.githubusercontent.com]
     urls:
       - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/espressif/svd/main/svd/{part_lower}.svd"}
   - id: raspberrypi
@@ -171,7 +171,7 @@ vendors:
   - id: community
     name: Cộng đồng
     prefixes: []
-    domains: [github.com/cmsis-svd]
+    domains: [github.com/cmsis-svd, raw.githubusercontent.com]
     urls:
       - {kind: svd, tier: silver, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/{vendor}/{part_upper}-Community.svd", note: "SVD community: bạc, không phải vàng"}
 `);

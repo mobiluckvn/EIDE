@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 08/09/2026. Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 08/09/2026 (lần 2). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -8,7 +8,7 @@
 
 ## 1. Một dòng
 
-**113/238 năng lực (47%). Mốc M0 đóng 22/22; M1 đạt 68/75 (90%), còn 7. 816 test xanh trên
+**114/238 năng lực (48%). Mốc M0 đóng 22/22; M1 đạt 69/75 (92%), còn 6. 828 test xanh trên
 cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
@@ -22,19 +22,18 @@ chân**: sinh mã, nạp board, mô phỏng.
 | Mốc | Xong | Ý nghĩa |
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
-| **M1** | **68/75 · 90%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
+| **M1** | **69/75 · 92%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
 | M2 | 23/99 · 23% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
 
-**M1 còn đúng 7 năng lực**, và phần lớn không chặn bởi công sức mà bởi thứ khác:
+**M1 còn đúng 6 năng lực**, và phần lớn không chặn bởi công sức mà bởi thứ khác:
 
 | Năng lực | Vì sao chưa |
 |---|---|
 | `env.install` (R4), `env.guide_install` | **R4** — cài phần mềm lên máy người dùng. Cần bàn kỹ về chính sách trước khi viết |
 | `passport.verify_on_board` (R3) | **Cần board thật.** Không mô phỏng được phần "nạp firmware rồi đọc lại ID" |
-| `search.web` | Cần API tìm kiếm trả phí — **chủ sản phẩm đã quyết hoãn** 07/09 |
 | `archive.extract_one`, `archive.query` | Làm được ngay, khối lượng nhỏ |
 | `code.constant_guard` | Hook cho `code.*`, hợp lý làm cùng nhóm `code` ở M2 |
 
@@ -45,7 +44,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 **Đủ hoặc gần đủ** — `arch` 11/11 · `chat` 8/8 · `req` 8/8 · `plan` 7/7 · `policy` 7/7 ·
 `ingest` 3/3 · `kg` 8/9 · `view` 9/13 · `tool` 7/10
 
-**Mới một phần** — `extract` 9/21 · `project` 6/9 · `memory` 6/8 · `search` 5/9 ·
+**Mới một phần** — `extract` 9/21 · `project` 6/9 · `memory` 6/8 · `search` 6/9 ·
 `env` 4/7 · `passport` 4/8 · `diagram` 4/14 · `doc` 3/12 · `archive` 2/4 · `registry` 1/5 ·
 `report` 1/4
 
@@ -99,7 +98,7 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **816** xanh, arm64 + x86_64 |
+| Test Python | **828** xanh, arm64 + x86_64 |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
 | Mục DEVIATIONS | 59 tổng, **3 Mở** |
@@ -128,7 +127,7 @@ ngưỡng 0,35 của `view.rag_ask`.
 
 | Việc | Vì sao cần người |
 |---|---|
-| **WI-257** ký danh sách trắng | `trusted_sources` ghi `github.com/cmsis-svd` nhưng SVD thật phục vụ từ `raw.githubusercontent.com` — **nguồn SVD tầng vàng phổ biến nhất vẫn rơi vào ASK** |
+| **WI-257** ký danh sách trắng | `trusted_sources` (POL-17, ĐÃ KÝ) ghi `github.com/cmsis-svd` nhưng SVD thật phục vụ từ `raw.githubusercontent.com` — **nguồn SVD tầng vàng phổ biến nhất vẫn rơi vào ASK ở cổng G-SRC**. Bảng nguồn hãng TGT-19 §8 đã thêm tên miền ấy (nó mô tả *nơi tài liệu thật sự nằm*), nhưng danh sách trắng thì khác: nó quyết định *cho tải hay không*, và sửa nó cần chữ ký của chủ sản phẩm |
 | [DEV-054](DEVIATIONS.md) | POL-17 phân biệt hai loại cổng — chạm cách gác cổng của cả hệ |
 | [DEV-050](DEVIATIONS.md) | "Duyệt hàng loạt" trong hàng đợi — đề nghị gom theo *cùng cổng + cùng quy tắc* |
 | [DEV-035](DEVIATIONS.md) | Thêm ý định theo nhóm năng lực — đã quyết hoãn tới CHAT-06 |
@@ -145,8 +144,14 @@ còn thiếu của luận điểm đề án.
 **Ưu tiên 2 — `doc.generate` + `diagram.*` còn lại.** Khép chuỗi P7, và cho ra chính bộ tài
 liệu dùng làm phụ lục đề án — tức sản phẩm tự viết tài liệu về mình.
 
-**Ưu tiên 3 — dọn nốt M1** (4 năng lực làm được ngay: `archive.extract_one/query`,
-`code.constant_guard`, và `env.*` sau khi bàn chính sách R4).
+**Ưu tiên 3 — dọn nốt M1** (3 năng lực làm được ngay: `archive.extract_one/query`,
+`code.constant_guard`; `env.*` chờ bàn chính sách R4, `passport.verify_on_board` chờ board).
+
+`search.web` đã xong 08/09 — hiện thực **không buộc nhà cung cấp nào**: `models.yaml →
+search.providers` liệt kê ứng viên theo thứ tự và dùng cái đầu tiên có đủ cấu hình. SearXNG
+đứng đầu vì tự dựng được, **không cần khóa và không tốn tiền** — hoàn thiện M1 không buộc phải
+mua gì. Chưa cấu hình gì thì E4001 liệt kê từng lựa chọn kèm biến môi trường, và chỉ sang
+`search.vendor` như đường đi được ngay.
 
 `discover.*`/`target.*`/`sim.*` để sau: chúng cần board thật hoặc trình mô phỏng chưa cài, nên
 làm sớm cũng không kiểm được.
