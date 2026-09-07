@@ -119,7 +119,7 @@ MIGRATIONS = [
  # bảng lịch này chỉ có dòng cho index.sqlite — nên đọc riêng §5 sẽ tưởng bảng `session` bị bỏ
  # sót khỏi store chính. Xem DEVIATIONS DEV-006.
  ("0003b_m1_session", "M1", "session/session.sqlite riêng: session (M2 SessionMemory, MEM-11 §2); không commit vào git; không migration trong store chính"),
- ("0004_m2_engineering_hw", "M2", "module, hw_map, adr, doc_artifact, discovery, measurement; code_unit.module_id; user_version=3"),
- ("0005_m3_debug", "M3", "debug_session; user_version=4"),
+ ("0004_m2_engineering_hw", "M2", "module, hw_map, adr, doc_artifact, discovery, measurement; code_unit.module_id; user_version=4"),
+ ("0005_m3_debug", "M3", "debug_session; user_version=5"),
  ("0006_rename_eide", "M1", "Đổi thư mục .hkw → .eide (giữ symlink đọc); không đổi schema"),
 ]

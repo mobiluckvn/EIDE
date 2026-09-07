@@ -10,7 +10,9 @@ const m = metaNew('EIDE-CXD-10', 'Kiến trúc ngữ cảnh', 'KIẾN TRÚC NG�
     + '`context/budgets.json` — trước đó hai nửa của cùng một công thức xếp hạng ở hai dạng khác '
     + 'nhau, một nửa có cổng chống trôi, một nửa chép tay (DEV-043). Nói rõ hai đường vào RAG: '
     + 'theo IRI (deterministic, M1) và theo câu hỏi ngôn ngữ tự nhiên (embedding, M2) — cột '
-    + '`embedding` để trống ở M1 nên không phải di trú khi tới M2 (DEV-042).']]);
+    + '`embedding` để trống ở M1 nên không phải di trú khi tới M2 (DEV-042).'],
+   ['1.2', '07/09/2026', 'Vũ Trí Công',
+    '§4.5: định nghĩa thang điểm truy hồi là ĐỒNG BIẾN trong [0,1] và liệt kê bốn thành phần (bm25, coverage, vector, graph) kèm khoảng giá trị. Trước đó §4.5 chỉ nói "truy hồi lai" mà không định nghĩa thang, nên hai hiện thực ngược nhau đều "đúng tài liệu" — và một bản đảo thang vẫn cho thứ hạng đúng nhờ `ORDER BY`, im lặng cho tới khi có ai dùng điểm làm ngưỡng. Thêm `coverage` vì bm25 suy biến trên kho nhỏ: IDF = 0 khi từ có mặt trong mọi tài liệu (DEV-058).']]);
 const c = [];
 c.push(H1('1. Mục đích, phạm vi và nguyên tắc'));
 c.push(P('Mô hình ngôn ngữ chỉ "biết" những gì nằm trong cửa sổ ngữ cảnh của lượt gọi. Với EIDE, ngữ cảnh là nơi tri thức có nguồn (hộ chiếu, mạch, ràng buộc, bằng chứng) gặp tham số của mô hình (K9); chất lượng của mọi đầu ra sinh — kế hoạch, mã, chẩn đoán, yêu cầu, kiến trúc, tài liệu — phụ thuộc trực tiếp vào việc chọn đúng thứ, đủ ít, đúng thứ tự. Tài liệu này đặc tả *kỹ thuật ngữ cảnh* (context engineering [40]) của EIDE ở mức lập trình được: cấu trúc gói ngữ cảnh (ContextBundle), thuật toán dựng cho từng vai trò, ngân sách, nén, định dạng, bộ đệm, xử lý tràn và đo lường. Phạm vi: mọi lượt gọi qua LLM Gateway (core.gateway) từ 9 vai trò của PRS-16 [63]; không bao gồm ngữ cảnh của mô hình embedding (view.rag_index) và ngữ cảnh hiển thị cho người (UXD-13).'));
@@ -95,6 +97,15 @@ const CXD = {
 };
 if (!fs.existsSync('context')) fs.mkdirSync('context');
 fs.writeFileSync('context/budgets.json', JSON.stringify(CXD, null, 2) + '\n');
+c.push(P('**Thang điểm truy hồi là ĐỒNG BIẾN: điểm càng cao càng khớp**, trong khoảng [0, 1]. Nói ra vì `bm25()` của SQLite trả số ÂM (càng âm càng khớp), nên một hiện thực chuẩn hóa thiếu cẩn thận cho ra thang ĐẢO — và thứ hạng vẫn đúng nhờ `ORDER BY`, nên lỗi im lặng cho tới khi có ai đó dùng điểm làm NGƯỠNG. Bốn thành phần và cách gộp:'));
+c.push(T([1600, 1200, 5600], ['Thành phần', 'Khoảng', 'Nghĩa'], [
+  ['bm25', '[0, 1)', 'chuẩn hóa đồng biến từ `bm25()`: `1 − 1/(1 + abs(bm25))`'],
+  ['coverage', '[0, 1]', 'tỷ lệ từ khóa câu hỏi thực sự xuất hiện trong đoạn'],
+  ['vector', '[0, 1]', 'cosine với embedding câu hỏi (0 khi chưa có embedding)'],
+  ['graph', '{0, 1}', '1 nếu đoạn được đánh dấu nói về một IRI trong tập lan tỏa 2 bước'],
+]));
+c.push(P('Điểm FTS = trung bình của `bm25` và `coverage`. Phải có `coverage` vì **bm25 suy biến trên kho nhỏ**: BM25 nhân với IDF, mà một từ có mặt trong MỌI tài liệu thì IDF = 0 — nên kho một tài liệu luôn cho bm25 = 0 với mọi khớp, và một ngưỡng dựa riêng vào nó sẽ chặn hết mọi câu trả lời của một dự án vừa nạp đúng một datasheet. `coverage` không suy biến và giải thích được cho người dùng (“đoạn này chứa 4/5 từ bạn hỏi”). Đoạn khớp bằng đồ thị giữ điểm riêng (≥ 0,9) và KHÔNG trộn vào thang FTS: khớp `graph_nodes` là sự thật đã ghi lúc lập chỉ mục, còn điểm FTS là ước lượng — gộp hai loại vào một thang thì bên đọc không biết mình đang nhìn cái nào. Xem DEVIATIONS DEV-058.'));
+c.push(SP());
 c.push(P('Ngân sách tính bằng token đầu vào (đếm bằng count_tokens của adapter; khi không có, ước lượng 1 token ≈ 3,5 ký tự tiếng Việt có dấu, 4 ký tự tiếng Anh). Giá trị dưới đây là mặc định trong `models.yaml → roles.<role>.budget`, tinh chỉnh theo đo lường §9. Tổng của vai trò sinh không vượt 8.000 (NFR-10); Planner và Architect được phép 12.000 khi mô hình có cửa sổ ≥ 200k và dự án bật `context.extended: true`.'));
 c.push(T([1300, 700, 700, 700, 700, 800, 800, 800, 700, 900], ['Vai trò', 'C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'Tổng'], [
   ['intent (hiểu lệnh)', '1.200', '300', '400 (C1′ trạng thái)', '—', '—', '—', '—', '300', '2.200'],

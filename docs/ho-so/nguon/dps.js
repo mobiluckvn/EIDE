@@ -21,7 +21,9 @@ const LICH_SU = [['1.1', '07/09/2026', 'Vũ Trí Công',
    '§4.4: năm chuỗi mẫu chuyển vào literal đặt tên và sinh ra `dialog/chains.json`, kèm cột ý '
    + 'định kích hoạt (`trigger_intents`) mà CHAT-06 bước 1 nhắc tới nhưng bảng chưa có. Trước đó '
    + 'bảng chỉ nằm trong văn xuôi nên `chat.orchestrate` phải chép tay — cùng khuôn '
-   + 'DEV-025/029/043/046.']];
+   + 'DEV-025/029/043/046.'],
+  ['1.3', '07/09/2026', 'Vũ Trí Công',
+   '§4.4: thêm trường `nodes` — dạng MÁY DÙNG ĐƯỢC của năm chuỗi mẫu, mỗi nút `{id, cap, when, on_ask}` với `cap` là id THẬT trong danh mục 238. Trước v1.3 chỉ có bản văn xuôi, trong đó chín tên là viết tắt không phân giải được (`passport.build`, `sim.build`, `code.module`, `discover.probes`…), nên phần khung mà mẫu đóng góp cho `chat.orchestrate` nhỏ hơn hẳn ý định của §4.4 — và đúng những bước then chốt lại rơi vào tay planner, tức về lại chỗ "sáng tác" mà mẫu sinh ra để tránh. Nhánh điều kiện biểu diễn bằng `on_ask: skip`. DEV-059.']];
 m.history = [m.history[0], ...LICH_SU];
 m.version = LICH_SU[LICH_SU.length - 1][0];
 m.attrs[1] = ['Phiên bản', `${m.version} — ${LICH_SU[LICH_SU.length - 1][3].slice(0, 90)}…`];
@@ -175,7 +177,74 @@ const CHUOI_MAU = [
   ['Bộ tài liệu (P7)', 'req.trace_matrix → diagram.* (theo loại tài liệu) → doc.generate(URD, SRS, SAD, SDD, STP) → doc.embed_diagram → doc.style_check → report', ['doc.write']],
   ['Dò board và nạp (Z-10)', 'discover.ports/probes → discover.chip_id → [khớp hộ chiếu?] → discover.link_speed → discover.auto_setup → policy.decide(G-OPS) → target.flash → target.serial/observe → report', ['discover.scan', 'target.flash']],
 ];
+// §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
+// đọc: nó có nhánh điều kiện viết bằng chữ ("[template? … : …]"), ký hiệu nhóm ("extract.*"),
+// và tên viết tắt không phải id thật (`passport.build`, `sim.build`, `code.module`…). Chín tên
+// như thế không phân giải được, nên phần khung mà mẫu đóng góp cho `chat.orchestrate` nhỏ hơn
+// hẳn ý định của §4.4 — và đúng những bước then chốt (dựng hộ chiếu, sinh module, dò probe)
+// lại rơi vào tay planner, tức về lại chỗ "sáng tác" mà mẫu sinh ra để tránh. Xem DEV-059.
+//
+// `cap` dưới đây là id THẬT trong danh mục 238; `when` là id nút phải xong trước (DPS-09 §4.4
+// ChainNode); `on_ask` theo enum wait|parallel|skip.
+const CHUOI_NUT = {
+  'Dự án mới từ ý tưởng (Z-01)': [
+    ['n1', 'project.create'], ['n2', 'search.reference_projects', 'n1'],
+    ['n3', 'registry.pull', 'n2', 'skip'], ['n4', 'req.elicit', 'n2'],
+    ['n5', 'board.build_passport', 'n3', 'skip'], ['n6', 'env.check', 'n1'],
+    ['n7', 'sim.build_platform', 'n5', 'skip'], ['n8', 'req.classify', 'n4'],
+    ['n9', 'arch.style_select', 'n8'], ['n10', 'arch.decompose', 'n9'],
+    ['n11', 'arch.map_hw', 'n10'], ['n12', 'diagram.block', 'n10', 'parallel'],
+    ['n13', 'plan.create', 'n11'], ['n14', 'chat.report_back', 'n13'],
+  ],
+  'Dự án mới từ zip (Z-07)': [
+    ['n1', 'project.create'], ['n2', 'archive.list', 'n1'],
+    ['n3', 'archive.unpack', 'n2'], ['n4', 'ingest.classify', 'n3'],
+    ['n5', 'ingest.hash_dedupe', 'n4'], ['n6', 'extract.svd', 'n5', 'skip'],
+    ['n7', 'extract.atdf', 'n5', 'skip'], ['n8', 'extract.pdf_layout', 'n5', 'skip'],
+    ['n9', 'extract.pdf_register_map', 'n8', 'skip'], ['n10', 'passport.import', 'n6'],
+    ['n11', 'board.build_passport', 'n10', 'skip'], ['n12', 'board.check_pins', 'n11', 'skip'],
+    ['n13', 'search.missing', 'n10'], ['n14', 'search.vendor', 'n13'],
+    ['n15', 'search.rank', 'n14'], ['n16', 'search.fetch', 'n15'],
+    ['n17', 'kg.review_facts', 'n16'], ['n18', 'view.rag_index', 'n17'],
+    ['n19', 'env.check', 'n1'], ['n20', 'req.elicit', 'n18'],
+    ['n21', 'plan.create', 'n20'], ['n22', 'doc.bringup_guide', 'n21', 'skip'],
+    ['n23', 'chat.report_back', 'n21'],
+  ],
+  'Thêm tính năng (Z-05)': [
+    ['n1', 'chat.ground'], ['n2', 'req.elicit', 'n1'], ['n3', 'req.classify', 'n2'],
+    ['n4', 'req.ground_hw', 'n3'], ['n5', 'arch.map_hw', 'n4'],
+    ['n6', 'plan.create', 'n5'], ['n7', 'code.generate_module', 'n6', 'skip'],
+    ['n8', 'code.integrate', 'n7', 'skip'], ['n9', 'code.generate_tests', 'n7', 'skip'],
+    ['n10', 'code.review', 'n8', 'skip'], ['n11', 'code.merge', 'n10', 'skip'],
+    ['n12', 'sim.run', 'n11', 'skip'], ['n13', 'target.flash', 'n12', 'skip'],
+    ['n14', 'target.observe', 'n13', 'skip'], ['n15', 'doc.section', 'n11', 'skip'],
+    ['n16', 'chat.report_back', 'n6'],
+  ],
+  'Bộ tài liệu (P7)': [
+    ['n1', 'req.trace_matrix'], ['n2', 'diagram.block', 'n1', 'parallel'],
+    ['n3', 'diagram.architecture', 'n1', 'parallel'], ['n4', 'diagram.state', 'n1', 'parallel'],
+    ['n5', 'doc.generate', 'n1'], ['n6', 'doc.embed_diagram', 'n5', 'skip'],
+    ['n7', 'doc.style_check', 'n5', 'skip'], ['n8', 'chat.report_back', 'n5'],
+  ],
+  'Dò board và nạp (Z-10)': [
+    ['n1', 'discover.ports'], ['n2', 'discover.probe', 'n1'],
+    ['n3', 'discover.chip_id', 'n2'], ['n4', 'discover.board_match', 'n3'],
+    ['n5', 'discover.link_speed', 'n3'], ['n6', 'discover.auto_setup', 'n5'],
+    ['n7', 'target.flash', 'n6'], ['n8', 'target.serial', 'n7'],
+    ['n9', 'target.observe', 'n8'], ['n10', 'chat.report_back', 'n9'],
+  ],
+};
+
 c.push(T([2600, 6700], ['Lệnh lớn', 'Chuỗi mẫu (rút gọn)'], CHUOI_MAU.map(r => [r[0], r[1]])));
+c.push(SP());
+c.push(P('Cột "Chuỗi mẫu" ở trên viết cho người đọc. Dạng **máy dùng được** đi kèm trong '
+  + '`dialog/chains.json` ở trường `nodes`: mỗi nút `{id, cap, when, on_ask}` với `cap` là id '
+  + 'THẬT trong danh mục 238, `when` là nút phải xong trước, và `on_ask` theo enum '
+  + '`wait|parallel|skip`. Nhánh điều kiện của bản văn xuôi ("[template? …]") biểu diễn bằng '
+  + '`on_ask: skip` — nút bỏ qua được khi điều kiện không thỏa, thay vì chặn cả chuỗi. '
+  + '`scripts/kiem_chuoi_chuan.py` đối chiếu `nodes` với registry, nên một tên gõ sai bị bắt '
+  + 'ngay thay vì im lặng biến mất khỏi khung mà `chat.orchestrate` dựng. Xem DEVIATIONS '
+  + 'DEV-059.'));
 c.push(SP());
 c.push(H2('4.5. Ưu tiên nguồn khi suy luận (D5) và ghi nhớ (D8)'));
 c.push(P('Khi phải suy ra chip/board/linh kiện/tham số cho một ý tưởng, thứ tự là: điều người nói > dự án hiện có > mẫu tham chiếu trong registry (K5′) > web (chỉ ứng viên). Mọi suy luận được trình bày là **đề xuất có nguồn** ("BOM tham chiếu từ eide.ref.balancing-robot@1.2, đã kiểm định trên board") và mang nhãn tạm cho tới khi người xác nhận hoặc có fact thật (Z-09: tham số vật lý mặc định gắn nhãn "tham số tạm"). Mỗi câu trả lời của người cho một Question có `remember_as` được ghi vào preferences.yaml với phạm vi (người/dự án); lần sau Orchestrator áp dụng và chỉ nhắc "áp dụng như lần trước: dùng ST-Link". Người có thể nói "hỏi lại tôi mỗi lần" để xóa một tùy chọn.'));

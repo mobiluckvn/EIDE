@@ -7,7 +7,9 @@ const { metaNew, refParas } = require('./eide_common');
 const m = metaNew('EIDE-TGT-19', 'ISA, toolchain, adapter, discovery', 'ISA PROFILE, TOOLCHAIN, ADAPTER TARGET VÀ DISCOVERY (TGT)',
   'Đặc tả từng tập lệnh được hỗ trợ: schema ISA profile, manifest toolchain theo hệ điều hành, lệnh build/flash/serial/probe/sim, bảng VID/PID probe, cách đọc ID chip theo họ, thuật toán dò tốc độ kết nối, schema target.yaml, nguồn tài liệu hãng',
   [['Tài liệu trước', 'EIDE-SDD-04 §4.5, §4.8, §6; EIDE-CDS-12 tập 3–4 (env.*, target.*, discover.*); EIDE-SEC-25'], ['Tệp kèm', 'isa/armv7e-m.yaml, isa/avr8.yaml, isa/rv32imac.yaml, isa/xtensa-esp32.yaml, isa/pic16.yaml (mẫu)'], ['Dùng khi', 'Hiện thực core.targets, eide.discover, eide-packs/isa; thêm ISA mới (NFR-08)']],
-  'Phát hành lần đầu — bổ sung lĩnh vực L20/L21/L23');
+  'Phát hành lần đầu — bổ sung lĩnh vực L20/L21/L23',
+  [['1.1', '07/09/2026', 'Vũ Trí Công',
+    '§2 bảng ISA: rv32imac và xtensa-esp32 chuyển M2 → M5 kèm lý do — cả hai cần chuỗi công cụ và trình mô phỏng chưa cài được, nên "kiểm" ở M2 mà không có board lẫn toolchain chỉ là nạp YAML. Ghi gói ba việc của M5: schema manifest ISA, TC-48 ("ISA là dữ liệu, không phải mã"), manifest xtensa-esp32 và pic16. Nêu rõ avr8 ở mốc M0 đã có manifest từ Sprint 1 nhưng chưa test nào chạm tới. §8: bảng nguồn hãng sinh ra `sources/vendors.yaml` kèm giấy phép từng mục, để `search.vendor` đọc từ spec thay vì chép tay (DEV-055).']]);
 const c = [];
 c.push(H1('1. Schema ISA profile'));
 c.push(...CODE([
@@ -37,10 +39,12 @@ c.push(T([1300, 1700, 1500, 1500, 1500, 1800], ['ISA', 'Chip mẫu', 'Toolchain'
   ['armv7e-m (M0)', 'STM32F411, nRF52840, LPC55', 'arm-none-eabi-gcc 13.2, cmake/ninja', 'probe-rs / OpenOCD', 'ST-Link, J-Link, CMSIS-DAP / IDCODE + DBGMCU', 'Renode (.repl), fallback QEMU'],
   ['armv6-m', 'RP2040, STM32F0, SAMD21', 'như trên', 'probe-rs / picotool (RP2040 UF2)', 'CMSIS-DAP, picoprobe / IDCODE', 'Renode'],
   ['avr8 (M0)', 'ATmega328P, ATtiny1616', 'avr-gcc 12, avrdude 7', 'avrdude (arduino, usbasp, jtag2updi, pymcuprog UPDI)', 'AVRISP mkII, Arduino bootloader / signature bytes', 'simavr [52]'],
-  ['rv32imac (M2)', 'GD32VF103, ESP32-C3 (rv32imc)', 'riscv-none-elf-gcc 13', 'OpenOCD / esptool (ESP)', 'FTDI JTAG, ESP USB-JTAG / DTM IDCODE, esptool chip_id', 'Renode, QEMU riscv32 [53]'],
-  ['xtensa-esp32 (M2)', 'ESP32, ESP32-S3', 'ESP-IDF 5.x (idf.py)', 'esptool / idf.py flash', 'ESP USB-JTAG / esptool chip_id', 'QEMU xtensa (esp32)'],
+  ['rv32imac (M5)', 'GD32VF103, ESP32-C3 (rv32imc)', 'riscv-none-elf-gcc 13', 'OpenOCD / esptool (ESP)', 'FTDI JTAG, ESP USB-JTAG / DTM IDCODE, esptool chip_id', 'Renode, QEMU riscv32 [53]'],
+  ['xtensa-esp32 (M5)', 'ESP32, ESP32-S3', 'ESP-IDF 5.x (idf.py)', 'esptool / idf.py flash', 'ESP USB-JTAG / esptool chip_id', 'QEMU xtensa (esp32)'],
   ['pic16/pic18 (M5)', 'PIC16F18855', 'XC8 (đóng, guide_install)', 'pymcuprog (UPDI không), MPLAB IPECMD', 'PICkit 4/5 / Device ID', 'MPLAB sim (không tự động hóa)'],
 ]));
+c.push(SP());
+c.push(P('**rv32imac và xtensa-esp32 chuyển từ M2 sang M5** (quyết định 07/09/2026). Cả hai cần chuỗi công cụ và trình mô phỏng chưa cài được trong môi trường phát triển hiện tại (`riscv-none-elf-gcc`, ESP-IDF, QEMU riscv32/xtensa), nên “kiểm” chúng ở M2 mà không có board lẫn toolchain sẽ chỉ là nạp YAML — đúng việc mà schema manifest cộng TC-48 làm được rẻ hơn nhiều. Ở M5 làm một gói: (1) `docs/spec/isa/isa.schema.json` cùng test nạp MỌI tệp trong `docs/spec/isa/` qua schema — `avr8` (mốc M0, manifest đã có từ Sprint 1 nhưng chưa test nào chạm tới) tự có test từ đó; (2) TC-48 thả `rv32imac.yaml` vào rồi khẳng định `env.check` hiểu nó mà KHÔNG sửa dòng mã nào trong `src/`, tức chứng minh “ISA là dữ liệu, không phải mã”; (3) manifest `xtensa-esp32` và `pic16`. PIC giữ nguyên M5 vì lý do hệ sinh thái đã ghi ở bảng trên, không phải vì chưa làm: XC8 là trình dịch đóng và MPLAB sim không tự động hóa được, nên PIC không chạy được vòng “mô phỏng trước phần cứng” mà `defaults.sim_first` đòi. Xem DEVIATIONS DEV-055.'));
 c.push(SP());
 c.push(H1('3. Manifest toolchain và kiểm/cài'));
 c.push(P('env.check chạy `check` của từng tool trong sandbox, so `min` theo semver, ghi `hash` của nhị phân khi có; env.install chọn lệnh theo OS và trình quản lý gói có sẵn (thứ tự: brew → pipx → winget/apt → tải chính hãng có băm), luôn không sudo trước; gói phải thuộc `trusted_packages` (POL-17) — danh sách mặc định: gcc-arm-none-eabi, avr-gcc, avrdude, riscv-none-elf-gcc, esp-idf, cmake, ninja, probe-rs, openocd, esptool, pymcuprog, picotool, renode, simavr, qemu, cppcheck, clang-tidy, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli, sigrok-cli, docling. `tools.lock` ghi {tool, version, path, sha256?, installed_by, at}; env.lock phát hiện trôi phiên bản và đề nghị khóa lại.'));

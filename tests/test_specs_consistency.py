@@ -99,3 +99,31 @@ def test_ket_qua_sai_output_schema_la_E1004_khong_phai_E6001():
         reg.validate_output("project.list", {"projects": "không phải mảng"})
     assert e.value.code == "E1004", f"đang là {e.value.code}"
     assert e.value.name == "OUTPUT_SCHEMA"
+
+
+def test_khong_muc_DEVIATIONS_nao_roi_khoi_bao_cao_dong_bo():
+    """Mọi mục `Mở` phải xuất hiện trong báo cáo đồng bộ — bất biến của cả quy trình sai khác.
+
+    Chủ sản phẩm duyệt danh sách ấy và tin rằng nó đầy đủ; một mục lặng lẽ rơi ra là hỏng đúng
+    chỗ quy trình sinh ra để chống.
+
+    Đã hỏng thật một lần: DEV-058 nói về công thức `1/(1+|bm25|)`, mà `|` là dấu ngăn cột của
+    bảng Markdown — dòng vỡ thành 14 mảnh, bộ phân giải lấy `c[7]` làm trạng thái nên đọc ra
+    rác, và mục ấy bị lọc mất. Không cảnh báo gì.
+
+    Kiểm ĐẦU RA chứ không kiểm số cột: số cột chỉ bắt được một nguyên nhân, còn phép kiểm này bắt
+    mọi nguyên nhân — kể cả nguyên nhân chưa nghĩ ra. (Bộ phân giải nay lấy trạng thái từ cột
+    CUỐI, nên `|` trong nội dung không còn làm hỏng nó; test này là chốt cho lần sau.)
+    """
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    t = Path("docs/DEVIATIONS.md").read_text(encoding="utf-8")
+    mo = {d.split("|")[1].strip() for d in t.splitlines()
+          if d.startswith("| DEV-") and d.rstrip().split("|")[-2].strip() in ("Mở", "Đã duyệt")}
+    assert mo, "phải có ít nhất một mục Mở để test này có nghĩa"
+    out = subprocess.run([sys.executable, "scripts/dong_bo_tai_lieu.py", "--tom-tat"],
+                         capture_output=True, text=True, check=False).stdout
+    thieu = sorted(x for x in mo if x not in out)
+    assert thieu == [], f"mục Mở không xuất hiện trong báo cáo đồng bộ: {thieu}"

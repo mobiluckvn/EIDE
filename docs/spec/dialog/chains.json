@@ -16,6 +16,92 @@
    "plan.create",
    "chat.report_back"
   ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "project.create",
+    "when": null,
+    "on_ask": "wait"
+   },
+   {
+    "id": "n2",
+    "cap": "search.reference_projects",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n3",
+    "cap": "registry.pull",
+    "when": "n2",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n4",
+    "cap": "req.elicit",
+    "when": "n2",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n5",
+    "cap": "board.build_passport",
+    "when": "n3",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n6",
+    "cap": "env.check",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n7",
+    "cap": "sim.build_platform",
+    "when": "n5",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n8",
+    "cap": "req.classify",
+    "when": "n4",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n9",
+    "cap": "arch.style_select",
+    "when": "n8",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n10",
+    "cap": "arch.decompose",
+    "when": "n9",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n11",
+    "cap": "arch.map_hw",
+    "when": "n10",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n12",
+    "cap": "diagram.block",
+    "when": "n10",
+    "on_ask": "parallel"
+   },
+   {
+    "id": "n13",
+    "cap": "plan.create",
+    "when": "n11",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n14",
+    "cap": "chat.report_back",
+    "when": "n13",
+    "on_ask": "wait"
+   }
+  ],
   "trigger_intents": [
    "project.create"
   ]
@@ -44,6 +130,146 @@
    "doc.bringup_guide",
    "report"
   ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "project.create",
+    "when": null,
+    "on_ask": "wait"
+   },
+   {
+    "id": "n2",
+    "cap": "archive.list",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n3",
+    "cap": "archive.unpack",
+    "when": "n2",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n4",
+    "cap": "ingest.classify",
+    "when": "n3",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n5",
+    "cap": "ingest.hash_dedupe",
+    "when": "n4",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n6",
+    "cap": "extract.svd",
+    "when": "n5",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n7",
+    "cap": "extract.atdf",
+    "when": "n5",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n8",
+    "cap": "extract.pdf_layout",
+    "when": "n5",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n9",
+    "cap": "extract.pdf_register_map",
+    "when": "n8",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n10",
+    "cap": "passport.import",
+    "when": "n6",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n11",
+    "cap": "board.build_passport",
+    "when": "n10",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n12",
+    "cap": "board.check_pins",
+    "when": "n11",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n13",
+    "cap": "search.missing",
+    "when": "n10",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n14",
+    "cap": "search.vendor",
+    "when": "n13",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n15",
+    "cap": "search.rank",
+    "when": "n14",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n16",
+    "cap": "search.fetch",
+    "when": "n15",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n17",
+    "cap": "kg.review_facts",
+    "when": "n16",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n18",
+    "cap": "view.rag_index",
+    "when": "n17",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n19",
+    "cap": "env.check",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n20",
+    "cap": "req.elicit",
+    "when": "n18",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n21",
+    "cap": "plan.create",
+    "when": "n20",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n22",
+    "cap": "doc.bringup_guide",
+    "when": "n21",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n23",
+    "cap": "chat.report_back",
+    "when": "n21",
+    "on_ask": "wait"
+   }
+  ],
   "trigger_intents": [
    "knowledge.build",
    "big_command"
@@ -66,6 +292,104 @@
    "doc.section",
    "report"
   ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "chat.ground",
+    "when": null,
+    "on_ask": "wait"
+   },
+   {
+    "id": "n2",
+    "cap": "req.elicit",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n3",
+    "cap": "req.classify",
+    "when": "n2",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n4",
+    "cap": "req.ground_hw",
+    "when": "n3",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n5",
+    "cap": "arch.map_hw",
+    "when": "n4",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n6",
+    "cap": "plan.create",
+    "when": "n5",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n7",
+    "cap": "code.generate_module",
+    "when": "n6",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n8",
+    "cap": "code.integrate",
+    "when": "n7",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n9",
+    "cap": "code.generate_tests",
+    "when": "n7",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n10",
+    "cap": "code.review",
+    "when": "n8",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n11",
+    "cap": "code.merge",
+    "when": "n10",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n12",
+    "cap": "sim.run",
+    "when": "n11",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n13",
+    "cap": "target.flash",
+    "when": "n12",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n14",
+    "cap": "target.observe",
+    "when": "n13",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n15",
+    "cap": "doc.section",
+    "when": "n11",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n16",
+    "cap": "chat.report_back",
+    "when": "n6",
+    "on_ask": "wait"
+   }
+  ],
   "trigger_intents": [
    "code.feature"
   ]
@@ -80,6 +404,56 @@
    "doc.embed_diagram",
    "doc.style_check",
    "report"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "req.trace_matrix",
+    "when": null,
+    "on_ask": "wait"
+   },
+   {
+    "id": "n2",
+    "cap": "diagram.block",
+    "when": "n1",
+    "on_ask": "parallel"
+   },
+   {
+    "id": "n3",
+    "cap": "diagram.architecture",
+    "when": "n1",
+    "on_ask": "parallel"
+   },
+   {
+    "id": "n4",
+    "cap": "diagram.state",
+    "when": "n1",
+    "on_ask": "parallel"
+   },
+   {
+    "id": "n5",
+    "cap": "doc.generate",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n6",
+    "cap": "doc.embed_diagram",
+    "when": "n5",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n7",
+    "cap": "doc.style_check",
+    "when": "n5",
+    "on_ask": "skip"
+   },
+   {
+    "id": "n8",
+    "cap": "chat.report_back",
+    "when": "n5",
+    "on_ask": "wait"
+   }
   ],
   "trigger_intents": [
    "doc.write"
@@ -98,6 +472,68 @@
    "target.flash",
    "target.serial/observe",
    "report"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "discover.ports",
+    "when": null,
+    "on_ask": "wait"
+   },
+   {
+    "id": "n2",
+    "cap": "discover.probe",
+    "when": "n1",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n3",
+    "cap": "discover.chip_id",
+    "when": "n2",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n4",
+    "cap": "discover.board_match",
+    "when": "n3",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n5",
+    "cap": "discover.link_speed",
+    "when": "n3",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n6",
+    "cap": "discover.auto_setup",
+    "when": "n5",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n7",
+    "cap": "target.flash",
+    "when": "n6",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n8",
+    "cap": "target.serial",
+    "when": "n7",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n9",
+    "cap": "target.observe",
+    "when": "n8",
+    "on_ask": "wait"
+   },
+   {
+    "id": "n10",
+    "cap": "chat.report_back",
+    "when": "n9",
+    "on_ask": "wait"
+   }
   ],
   "trigger_intents": [
    "discover.scan",

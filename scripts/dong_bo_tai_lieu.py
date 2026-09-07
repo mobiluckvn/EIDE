@@ -47,8 +47,16 @@ def doc_deviations() -> list[dict]:
         c = [x.strip() for x in dong.strip("|").split("|")]
         if len(c) < 8:
             continue
+        # Trạng thái lấy từ cột CUỐI, không phải `c[7]`. Nhiều mục có `|` trong nội dung (công
+        # thức `1/(1+|bm25|)`, biểu thức chính quy), và `|` là dấu ngăn cột của Markdown — nên
+        # `c[7]` rơi vào giữa câu, trạng thái đọc ra là rác, và mục ấy BIẾN MẤT khỏi báo cáo vì
+        # bị lọc bởi `trang_thai in ("Mở", "Đã duyệt")`. Im lặng, không cảnh báo.
+        #
+        # Đó là đúng thứ quy trình sai khác sinh ra để chống: chủ sản phẩm duyệt một danh sách
+        # và tin nó đầy đủ. Bốn cột đầu ngắn và không bao giờ chứa `|`; phần giữa gộp lại.
         ra.append({"ma": c[0], "ngay": c[1], "tai_lieu": c[2], "ma_nguon": c[3],
-                   "sai_khac": c[4], "ly_do": c[5], "de_xuat": c[6], "trang_thai": c[7]})
+                   "sai_khac": c[4], "ly_do": " | ".join(c[5:-2]) if len(c) > 8 else c[5],
+                   "de_xuat": c[-2], "trang_thai": c[-1]})
     return ra
 
 

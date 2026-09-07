@@ -54,7 +54,15 @@ def main() -> int:
     bao = []
     for ch in chains:
         buoc_ra = []
-        for b in ch["buoc"]:
+        # Từ v1.3, `nodes` mang id THẬT (DEV-059). Vẫn giữ đường rút-từ-văn-xuôi cho chuỗi cũ
+        # chưa có `nodes`: nếu bỏ hẳn thì một chuỗi thêm sau mà quên `nodes` sẽ báo "0 bước" —
+        # trông như đã hỏng hết, thay vì nói rõ là thiếu dạng máy dùng được.
+        for n in (ch.get("nodes") or []):
+            i = n["cap"]
+            thieu = [] if (i in moi and moi[i].implemented) else [i]
+            buoc_ra.append({"buoc": f'{n["id"]} {i}', "caps": [i], "thieu": thieu,
+                            "ngoai_spec": [i] if i not in moi else [], "xong": not thieu})
+        for b in ([] if ch.get("nodes") else ch["buoc"]):
             ids = cac_id(b, set(moi))
             thieu = [i for i in ids if i not in moi or not moi[i].implemented]
             la = [i for i in ids if i not in moi]

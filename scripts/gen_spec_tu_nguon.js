@@ -79,12 +79,22 @@ const VIEC = [
         // 1) chọn chuỗi theo `trigger_intents` TRƯỚC khi nhờ mô hình lập kế hoạch — bám mẫu rẻ
         // hơn và đoán được hơn là để mô hình sáng tác mỗi lần.
         tep: 'dialog/chains.json', nguon: 'dps.js',
-        dung: () => JSON.stringify(literal('dps.js', 'CHUOI_MAU').map(r => ({
-            ten: r[0],
-            chuoi: r[1],
-            buoc: r[1].split('\u2192').map(x => x.trim()).filter(Boolean),
-            trigger_intents: r[2] || [],
-        })), null, 1) + '\n',
+        dung: () => {
+            // `nodes` là dạng MÁY DÙNG ĐƯỢC; `chuoi`/`buoc` giữ nguyên làm bản cho người đọc.
+            // Trước v1.3 chỉ có bản văn xuôi, nên chín tên trong đó (`passport.build`,
+            // `sim.build`, `code.module`…) không phân giải được và `chat.orchestrate` bỏ qua
+            // đúng những bước then chốt. Xem DEVIATIONS DEV-059.
+            const NUT = literal('dps.js', 'CHUOI_NUT');
+            return JSON.stringify(literal('dps.js', 'CHUOI_MAU').map(r => ({
+                ten: r[0],
+                chuoi: r[1],
+                buoc: r[1].split('\u2192').map(x => x.trim()).filter(Boolean),
+                nodes: (NUT[r[0]] || []).map(n => ({
+                    id: n[0], cap: n[1], when: n[2] || null, on_ask: n[3] || 'wait',
+                })),
+                trigger_intents: r[2] || [],
+            })), null, 1) + '\n';
+        },
     },
     {
         // UXD-13 U1: ô lệnh gợi ý "/" liệt kê "năng lực có `ui`". Nhưng KHÔNG năng lực nào có
