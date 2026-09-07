@@ -17,7 +17,8 @@ from typing import Any
 
 from eide_core import store
 from eide_core.errors import EideError
-from eide_core.ledger import Ledger
+from eide_core.ledger import Ledger, che_bi_mat
+from eide_core.memory import WorkingMemory
 from eide_core.policy import ASK, PolicyGate
 from eide_core.registry import Registry, get_registry
 from eide_core.undo import KIND_WINDOW, UndoService
@@ -77,10 +78,12 @@ class Router:
         if d.decision == ASK:
             run = CapabilityRun(run_id, cap_id, "pending", None, dec, 0, undo=reg.spec.undo)
             self.queue.append(run)
-            # Giữ tham số và ngữ cảnh để `quyet_dinh()` chạy tiếp được khi người duyệt. Bảng
-            # `capability_run` của DDD-14 chỉ lưu `args_hash` (toàn vẹn), không lưu tham số, nên
-            # một mục ASK KHÔNG phục hồi được sau khi daemon khởi động lại — xem DEV-049.
+            # Giữ tham số để `quyet_dinh()` chạy tiếp được. Trong RAM cho lần gọi ngay, VÀ
+            # xuống `run.working` để sống qua lần khởi động lại — MEM-11 §2 định nghĩa M1 đúng
+            # là "RAM + run.state (SQLite) ĐỂ TIẾP TỤC SAU TẮT MÁY", và `WorkingMemory` đã có sẵn
+            # hai trường `pending_question`/`asked_at` cho chính tình huống này. Xem DEV-049.
             self._cho[run_id] = (cap_id, params, ctx, features)
+            self._luu_cho(run_id, cap_id, params, ctx, features, dec)
             self._log("cap.run.finish", {"run_id": run_id, "status": "pending", "error": "E3000"})
             return run
         if d.decision != "APPROVE":
@@ -116,8 +119,8 @@ class Router:
         return CapabilityRun(run_id, cap_id, "done", result, dec, ms, undo=reg.spec.undo)
 
     # ---- người quyết định một mục đang chờ (API-15 §2 `gate.decide`)
-    def quyet_dinh(self, run_id: str, quyet: str, by: str = "human",
-                   note: str = "") -> CapabilityRun:
+    def quyet_dinh(self, run_id: str, quyet: str, by: str = "human", note: str = "",
+                   ctx_goi_y: Context | None = None) -> CapabilityRun:
         """Người duyệt hoặc từ chối một mục ASK — APD-08 §4.1, UXD-13 U2.
 
         Ghi câu trả lời vào `decision_log.human_answer` TRƯỚC khi chạy: đó là dữ liệu POLICY-06
@@ -134,17 +137,26 @@ class Router:
             raise EideError("E3000", "Duyệt mục chờ là quyết định của người (APD-08 §1)",
                             rule="GATE-HUMAN", gate="*")
         cho = next((r for r in self.queue if r.run_id == run_id and r.status == "pending"), None)
-        if cho is None:
+        goc = self._cho.pop(run_id, None)
+        if goc is None:
+            # Không có trong RAM ⇒ có thể là mục của một phiên daemon TRƯỚC. Đọc lại từ M1.
+            goc = self._doc_cho(run_id, ctx_goi_y)
+        if cho is None and goc is None:
             raise EideError("E2000", f"Không có mục đang chờ với id {run_id}",
                             exists=[r.run_id for r in self.queue], candidates=[], missing=[run_id])
-        cap_id, params, ctx, features = self._cho.pop(run_id, (cho.cap, {}, Context(), {}))
+        cap_id, params, ctx, features = goc or (cho.cap, {}, Context(), {})
         self._cap_nhat_decision_log(ctx, run_id, human_answer=quyet.upper())
+        # `cho` là None khi mục đến từ phiên daemon TRƯỚC: RAM không còn, chỉ store còn.
+        ly_do = cho.decision.get("reason", "") if cho is not None else ""
         self._log("gate.human", {"gate_id": run_id, "decision": quyet.upper(), "by": by,
-                                 "note": note or cho.decision.get("reason", "")})
-        self.queue.remove(cho)
+                                 "note": note or ly_do})
+        if cho is not None:
+            self.queue.remove(cho)
+        self._xoa_cho(ctx, run_id, quyet)
         if quyet == "reject":
             self._log("cap.run.finish", {"run_id": run_id, "status": "rejected", "error": "E3001"})
-            return CapabilityRun(run_id, cap_id, "rejected", None, cho.decision, 0,
+            return CapabilityRun(run_id, cap_id, "rejected", None,
+                                 cho.decision if cho is not None else {"decision": "ASK"}, 0,
                                  {"code": "E3001", "message": f"người từ chối: {note}" if note
                                   else "người từ chối"})
         ctx_nguoi = replace(ctx, actor="human")
@@ -179,6 +191,90 @@ class Router:
             self._cap_nhat_decision_log(ctx or Context(), undo_ref,
                                         undone_at=datetime.now(UTC).isoformat())
         return ket_qua
+
+    # ---- mục chờ bền qua lần khởi động lại (M1 WorkingMemory, MEM-11 §2 §3)
+    def _luu_cho(self, run_id: str, cap_id: str, params: dict[str, Any], ctx: Context,
+                 features: dict[str, Any], dec: dict[str, Any]) -> None:
+        """Lưu mục chờ vào `run.working`.
+
+        Che bí mật TRƯỚC khi ghi, cùng bộ lọc dùng cho nhật ký (API-15 §7): tham số của một lời
+        gọi có thể mang khóa API, và một mục chờ nằm trong store hàng tuần là chỗ tệ nhất để một
+        khóa nằm lại. Đây cũng là điểm khác biệt với phương án "thêm cột `args` vào
+        capability_run": ở đó không có bước lọc nào, và bảng ấy vốn chỉ giữ băm.
+        """
+        if not ctx.project_dir:
+            return
+        db = store.store_path(ctx.project_dir)
+        if not db.exists():
+            return
+        wm = WorkingMemory(
+            run_id=run_id, state="asked",
+            intent={"cap": cap_id, "features": che_bi_mat(features)},
+            vars={"params": che_bi_mat(params)},
+            pending_question={"decision": dec, "autonomy": ctx.autonomy, "board": ctx.board},
+            asked_at=datetime.now(UTC).isoformat())
+        try:
+            with store.open_store(db) as c:
+                wm.save(c)
+        except sqlite3.Error:
+            pass
+
+    def _doc_cho(self, run_id: str, ctx: Context | None
+                 ) -> tuple[str, dict[str, Any], Context, dict[str, Any]] | None:
+        if ctx is None or not ctx.project_dir:
+            return None
+        db = store.store_path(ctx.project_dir)
+        if not db.exists():
+            return None
+        try:
+            with store.open_store(db) as c:
+                wm = WorkingMemory.load(c, run_id)
+        except sqlite3.Error:
+            return None
+        if wm is None or wm.state != "asked":
+            return None
+        pq = wm.pending_question or {}
+        lai = replace(ctx, autonomy=pq.get("autonomy") or ctx.autonomy,
+                      board=pq.get("board") or ctx.board)
+        return (wm.intent.get("cap", ""), wm.vars.get("params", {}), lai,
+                wm.intent.get("features", {}))
+
+    def _xoa_cho(self, ctx: Context, run_id: str, quyet: str) -> None:
+        """MEM-11 §2 M1 cột "Quên": xóa khi Run kết thúc; bằng chứng ở lại ledger (M3)."""
+        if not ctx.project_dir:
+            return
+        db = store.store_path(ctx.project_dir)
+        if not db.exists():
+            return
+        try:
+            with store.open_store(db) as c:
+                if (wm := WorkingMemory.load(c, run_id)) is not None:
+                    wm.ket_thuc(c, "done" if quyet == "approve" else "rejected")
+        except sqlite3.Error:
+            pass
+
+    def cho_con_lai(self, ctx: Context) -> list[dict[str, Any]]:
+        """Mục chờ của dự án, gồm cả mục từ phiên daemon TRƯỚC — UXD-13 U2.
+
+        Hàng đợi phải bền: người thấy một việc đang chờ hôm nay, tắt máy, mở lại thì nó vẫn phải
+        ở đó. Đọc từ store chứ không từ `self.queue`, vì `self.queue` chỉ biết phiên hiện tại.
+        """
+        if not ctx.project_dir:
+            return [{"run_id": r.run_id, "cap": r.cap, "decision": r.decision} for r in self.queue]
+        db = store.store_path(ctx.project_dir)
+        if not db.exists():
+            return []
+        with store.open_store(db) as c:
+            rows = c.execute("SELECT id, working FROM run WHERE state='asked' ORDER BY id").fetchall()
+        ra = []
+        for rid, w in rows:
+            if not w:
+                continue
+            d = json.loads(w)
+            ra.append({"run_id": rid, "cap": (d.get("intent") or {}).get("cap", ""),
+                       "decision": (d.get("pending_question") or {}).get("decision", {}),
+                       "asked_at": d.get("asked_at")})
+        return ra
 
     def _cap_nhat_decision_log(self, ctx: Context, decision_id: str, **cot: str) -> None:
         """Điền `human_answer` / `undone_at` vào dòng đã ghi lúc quyết định.

@@ -185,6 +185,54 @@ def _autonomy_cua_du_an(root: Path | None) -> dict | None:
     return yaml.safe_load(f.read_text(encoding="utf-8")) if f.exists() else None
 
 
+def cmd_queue_list(a) -> int:
+    """`eide queue` — UXD-13 U2 HAI danh sách: việc chờ tôi, và việc máy đã tự làm còn rút lại được.
+
+    Có mặt ở CLI chứ không chỉ trong GEditor là có chủ ý: một việc đang chờ người thì phải trả
+    lời được từ chỗ người đang đứng — cửa sổ trò chuyện, dòng lệnh, hay một phiên ssh — chứ không
+    bắt mở đúng một ứng dụng. Mục chờ nằm trong store nên cả ba đường đều thấy cùng một danh sách.
+    """
+    r, ctx = _router(a.project)
+    cho = r.cho_con_lai(ctx)
+    undo = r.invoke("policy.undo_window", {}, ctx).result["items"] if a.project else []
+    print(f"CHỜ ANH ({len(cho)})")
+    if not cho:
+        print("  (không có việc nào đang chờ)")
+    for x in cho:
+        d = x.get("decision") or {}
+        print(f"  {x['run_id']}  {x['cap']:26} {d.get('gate', ''):8} {d.get('rule', '')}")
+        print(f"  {'':14}{d.get('reason', '')}")
+    print(f"\nĐÃ LÀM — HOÀN TÁC ĐƯỢC ({len(undo)})")
+    if not undo:
+        print("  (không có việc nào còn trong cửa sổ hoàn tác)")
+    for x in undo:
+        print(f"  {x['undo_ref']}  {x.get('cap', ''):26} {x['kind']:22} hạn {x.get('deadline', '')[:16]}")
+    return 0
+
+
+def cmd_queue_decide(a) -> int:
+    """`eide queue approve|reject <id>` — API-15 §2 `gate.decide`."""
+    r, ctx = _router(a.project)
+    try:
+        run = r.quyet_dinh(a.run_id, a.quyet, by="human", note=a.note or "", ctx_goi_y=ctx)
+    except EideError as e:
+        print(f"{e.code}: {e}", file=sys.stderr)
+        return 2
+    return _print_run(run)
+
+
+def cmd_queue_undo(a) -> int:
+    """`eide queue undo <undo_ref>` — API-15 §2 `undo.apply`."""
+    r, ctx = _router(a.project)
+    try:
+        ra = r.hoan_tac(a.undo_ref, by="human", ctx=ctx)
+    except EideError as e:
+        print(f"{e.code}: {e}", file=sys.stderr)
+        return 2
+    print(json.dumps(ra, ensure_ascii=False, indent=2))
+    return 0 if ra.get("applied") else 1
+
+
 def cmd_spec(a) -> int:
     f = spec_dir().parents[1] / "scripts" / "spec_status.py"
     m = importlib.util.spec_from_file_location("spec_status", f)
@@ -274,6 +322,21 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("spec", help="trạng thái hiện thực so với spec")
     p.add_argument("--ns")
     p.set_defaults(fn=cmd_spec)
+
+    q = sub.add_parser("queue", help="việc chờ người và việc hoàn tác được (UXD-13 U2)").add_subparsers(dest="sub")
+    p = q.add_parser("list", help="liệt kê (mặc định)")
+    p.add_argument("-p", "--project", type=Path)
+    p.set_defaults(fn=cmd_queue_list)
+    for ten in ("approve", "reject"):
+        p = q.add_parser(ten, help=f"{'duyệt' if ten == 'approve' else 'từ chối'} một mục chờ")
+        p.add_argument("run_id")
+        p.add_argument("-p", "--project", type=Path)
+        p.add_argument("--note", default="")
+        p.set_defaults(fn=cmd_queue_decide, quyet=ten)
+    p = q.add_parser("undo", help="hoàn tác một việc máy đã tự làm")
+    p.add_argument("undo_ref")
+    p.add_argument("-p", "--project", type=Path)
+    p.set_defaults(fn=cmd_queue_undo)
 
     p = sub.add_parser("mcp", help="MCP server qua stdio (Claude Code, Cursor, VS Code)")
     p.add_argument("-p", "--project", type=Path)

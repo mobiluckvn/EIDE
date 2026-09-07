@@ -214,7 +214,8 @@ def review_facts(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     mức T1* ("làm rồi báo cáo") chứ không phải T1.
     """
     nhom, quyet, actor = params["group"], params.get("decision", "policy"), params["actor"]
-    if quyet in ("accept", "reject") and actor in ("policy", "agent"):
+    # Như KG-06: quyền theo ngữ cảnh, tên theo tham số. Xem chú thích ở `resolve_conflict`.
+    if quyet in ("accept", "reject") and ctx.actor != "human":
         raise EideError("E3000", "accept/reject là quyết định của người; tác tử dùng decision=policy",
                         rule="KG-05", gate="G-FACT")
     db = _store(ctx)
@@ -288,7 +289,15 @@ def resolve_conflict(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     "E3000 nếu actor=policy": chọn fact nào đúng là việc của người, và một tác tử tự chọn giữa
     hai fact mâu thuẫn chính là cách một sai lệch tri thức trở thành sự thật trong store.
     """
-    if params["actor"] in ("policy", "agent"):
+    # QUYỀN đọc từ `ctx.actor`, không từ `params["actor"]`. Hai thứ ấy khác nhau: tham số ghi
+    # TÊN người chịu trách nhiệm vào store (`confirmed_by`), còn ngữ cảnh nói lời gọi này đang
+    # chạy trên thẩm quyền của ai.
+    #
+    # Lẫn hai thứ có hậu quả đo được: một mục ASK do tác tử tạo mang `params["actor"]="agent"`;
+    # khi người duyệt nó qua `gate.decide`, Router chạy lại với `ctx.actor="human"` nhưng THAM SỐ
+    # vẫn là bản gốc. Kiểm theo tham số thì năng lực từ chối chính lệnh người vừa duyệt — nút
+    # "duyệt" bấm xong không làm gì, đúng ở những năng lực cần người duyệt nhất.
+    if ctx.actor != "human":
         raise EideError("E3000", "Giải quyết xung đột fact luôn cần người (KG-06 ask: Luôn)",
                         rule="KG-06", gate="G-FACT")
     a, _, b = params["conflict_id"].partition(":")

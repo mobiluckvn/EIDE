@@ -303,6 +303,8 @@ def test_tac_tu_khong_duoc_tu_accept(du_an):
 def test_review_theo_nhom_prefix_subject(du_an):
     """`group` là "batch_id | subject prefix | status" — ba loại, phân biệt bằng hình dạng."""
     r, ctx, root = du_an
+    # `ctx.actor` là QUYỀN, `params["actor"]` là TÊN ghi vào store. `accept` cần quyền của người.
+    ctx.actor = "human"
     out = r.invoke("kg.review_facts", {"group": CHIP, "decision": "accept",
                                        "actor": "Vũ Trí Công"}, ctx).result
     with store.open_store(store.store_path(root)) as c:

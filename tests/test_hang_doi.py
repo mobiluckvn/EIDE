@@ -204,3 +204,88 @@ def test_policy_06_hoc_duoc_tu_hanh_vi_that(du_an):
     assert de_xuat, "22 lần người duyệt sau khi máy hỏi mà không đề xuất nới gì"
     assert all(p["huong"] == "noi" for p in de_xuat)
     assert all(p["ap_dung"] is False for p in de_xuat), "POLICY-06 chỉ đề xuất, không áp dụng"
+
+
+# ---------- mục chờ sống qua lần khởi động lại (DEV-049)
+
+
+def test_muc_cho_song_qua_lan_khoi_dong_lai(du_an):
+    """UXD-13 U2 dựng hàng đợi làm nơi "người vào xem việc đang chờ" — nên nó phải BỀN.
+
+    Người thấy một việc chờ hôm nay, tắt máy, mở lại thì nó vẫn phải ở đó. Router thứ hai ở đây
+    là một tiến trình daemon mới: nó không thấy gì trong RAM, chỉ đọc được từ store.
+    """
+    r, ctx, root = du_an
+    cho = _mot_muc_cho(r, ctx)
+
+    moi = Router(gate=PolicyGate(), ledger=Ledger(root / ".eide" / "store" / "l2.jsonl"))
+    assert moi.queue == [], "Router mới không được thừa hưởng RAM của cái cũ"
+    ds = moi.cho_con_lai(ctx)
+    assert [x["run_id"] for x in ds] == [cho.run_id]
+    assert ds[0]["cap"] == "kg.resolve_conflict"
+    assert ds[0]["asked_at"]
+
+
+def test_duyet_duoc_muc_cua_phien_TRUOC(du_an):
+    """Đây mới là điều làm cho hàng đợi bền có ích: không chỉ NHÌN thấy mục cũ mà còn duyệt được."""
+    r, ctx, root = du_an
+    cho = _mot_muc_cho(r, ctx)
+
+    moi = Router(gate=PolicyGate(), ledger=Ledger(root / ".eide" / "store" / "l2.jsonl"))
+    ra = moi.quyet_dinh(cho.run_id, "approve", ctx_goi_y=ctx)
+    assert ra.cap == "kg.resolve_conflict", "phải khôi phục đúng năng lực và tham số"
+    assert ra.status != "pending"
+    assert _cot(root, cho.run_id, "human_answer") == "APPROVE"
+    assert moi.cho_con_lai(ctx) == [], "duyệt xong thì mục phải rời hàng đợi"
+
+
+def test_tham_so_duoc_CHE_BI_MAT_truoc_khi_luu(du_an):
+    """API-15 §7: cùng bộ lọc dùng cho nhật ký.
+
+    Tham số của một lời gọi có thể mang khóa API, và một mục chờ nằm trong store hàng tuần là
+    chỗ tệ nhất để một khóa nằm lại. Đây cũng là điểm khác biệt với phương án "thêm cột `args`
+    vào capability_run": ở đó không có bước lọc nào.
+    """
+    r, ctx, root = du_an
+    run = r.invoke("kg.resolve_conflict",
+                   {"conflict_id": "f_a:f_b", "choice": "a",
+                    "actor": "agent", "condition": "khóa AIzaSyD-gia-dinh-lo-ra-0123456789"}, ctx)
+    assert run.status == "pending"
+    with store.open_store(store.store_path(root)) as c:
+        w = c.execute("SELECT working FROM run WHERE id=?", (run.run_id,)).fetchone()[0]
+    assert "AIzaSyD-gia-dinh-lo-ra-0123456789" not in w, "khóa API bị ghi thẳng vào store"
+    assert "AIza" in w, "vẫn giữ đủ đầu chuỗi để truy được là khóa nào"
+
+
+def test_duyet_xong_thi_nang_luc_CHAY_that(du_an):
+    """Quyền theo `ctx.actor`, TÊN theo `params["actor"]` — hai thứ khác nhau.
+
+    Một mục ASK do tác tử tạo mang `params["actor"]="agent"`. Khi người duyệt, Router chạy lại
+    với `ctx.actor="human"` nhưng THAM SỐ vẫn là bản gốc. Năng lực nào kiểm quyền theo tham số
+    sẽ từ chối chính lệnh người vừa duyệt — nút "duyệt" bấm xong không làm gì, và đúng ở những
+    năng lực cần người duyệt nhất (`kg.resolve_conflict` ask "Luôn").
+
+    Phát hiện bằng cách chạy thật qua CLI ở hai tiến trình, không phải bằng đọc mã.
+    """
+    import hashlib
+
+    r, ctx, root = du_an
+    with store.open_store(store.store_path(root)) as c:
+        # `fact.source_id` là khoá ngoại sang `source` — mọi fact phải có nguồn, đó là bất biến
+        # của KAD-07 §4.1 và schema cưỡng chế nó.
+        c.execute("INSERT INTO source (id,uri,sha256,kind,tier,license) VALUES (?,?,?,?,?,?)",
+                  ("src", "u", hashlib.sha256(b"s").hexdigest(), "pdf_vendor", "gold", "MIT"))
+        for fid in ("f_a", "f_b"):
+            c.execute("INSERT INTO fact (id, subject, predicate, value, source_id, method, tier,"
+                      " confidence, status, layer) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                      (fid, "part:x", "address", '"0x76"', "src", "parser", "silver", 0.9,
+                       "normalized", "A"))
+        c.commit()
+    store.write_seal(store.store_path(root))
+
+    cho = _mot_muc_cho(r, ctx)
+    ra = r.quyet_dinh(cho.run_id, "approve")
+    assert ra.status == "done", f"duyệt rồi mà vẫn không chạy: {ra.error}"
+    with store.open_store(store.store_path(root)) as c:
+        st = dict(c.execute("SELECT id, status FROM fact WHERE id IN ('f_a','f_b')").fetchall())
+    assert st == {"f_a": "verified", "f_b": "superseded"}
