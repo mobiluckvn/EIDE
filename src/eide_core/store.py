@@ -57,7 +57,7 @@ def _connect(path: Path) -> sqlite3.Connection:
     ngoại không được cưỡng chế và không có gì báo — nên có test riêng cho nó.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path, isolation_level=None)
+    conn = sqlite3.connect(path, isolation_level=None, factory=_Conn)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
@@ -187,6 +187,30 @@ def verify_seal(db: Path | str) -> tuple[bool, dict[str, Any]]:
     if hien != seal.get("content_hash"):
         return False, {"reason": "vân tay nội dung lệch", "expected": seal.get("content_hash"), "found": hien}
     return True, {"seal": seal}
+
+
+# Bộ đếm commit theo TIẾN TRÌNH. Router đọc nó để biết có ai ghi trong một lời gọi hay không,
+# rồi mới quyết định tính lại vân tay nội dung (~90 ms trên hộ chiếu 20.000 fact).
+#
+# Ba tín hiệu rẻ hơn đã thử và đều SAI với SQLite chế độ WAL:
+#   - mtime của `store.sqlite` — commit ghi vào `-wal`, không đụng tệp chính;
+#   - mtime của `-shm`/`-wal` — cả hai bị đụng ngay khi MỞ kết nối để đọc;
+#   - `PRAGMA data_version` — chỉ đổi với kết nối KHÁC, và không bền qua tiến trình.
+# Đếm ngay tại `commit()` thì không có ngoại lệ nào lách được.
+_SO_COMMIT = 0
+
+
+def so_commit() -> int:
+    return _SO_COMMIT
+
+
+class _Conn(sqlite3.Connection):
+    """`sqlite3.Connection` có đếm commit. Chỉ thêm một phép cộng — không đổi hành vi."""
+
+    def commit(self) -> None:
+        global _SO_COMMIT
+        _SO_COMMIT += 1
+        super().commit()
 
 
 def open_store(path: Path | str) -> sqlite3.Connection:

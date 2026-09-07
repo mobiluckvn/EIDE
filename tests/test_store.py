@@ -269,3 +269,67 @@ def test_session_db_rieng_khong_nam_trong_store(tmp_path):
 
 def test_session_db_khong_nam_trong_day_user_version():
     assert all(not m["name"].startswith("session") for m in migrations())
+
+
+# ---------- niêm store sau khi năng lực ghi (tìm ra bằng scripts/nghiem_thu_sprint2.sh) ----------
+
+
+def test_niem_van_khop_sau_khi_nang_luc_R0_ghi_store(tmp_path, workspace):
+    """Niêm phải khớp sau MỌI năng lực ghi hợp lệ, kể cả năng lực lớp R0.
+
+    Bản đầu để từng năng lực tự gọi `store.write_seal`; `req.*`, `arch.*`, `extract.*` quên, và
+    không có gì báo vì `verify_seal` chỉ chạy lúc mở dự án. Bộ test cũng không thấy: mỗi test
+    dùng store riêng và không ai kiểm niêm sau đó. Chỉ `scripts/nghiem_thu_sprint2.sh` chạy
+    chuỗi thật bằng CLI mới lộ ra.
+
+    Lần sửa thứ nhất lọc theo lớp rủi ro ("R0 chỉ đọc" — APD-08 §4.1) và VẪN sai: `req.ground_hw`
+    là R0 mà có ghi `requirement.feasibility`. Nên bộ lọc cuối cùng dựa trên `mtime` của tệp
+    store — không lớp rủi ro nào lách được, và rẻ hơn `content_digest` (~90 ms trên 20.000 fact).
+    """
+    from eide.caps.req import _ghi_requirement
+    from eide_core.ledger import Ledger as _L
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+
+    r = Router(gate=PolicyGate(), ledger=_L(tmp_path / "l.jsonl"))
+    res = r.invoke("project.create", {"text": "dự án niêm"}, Context(project_dir=workspace)).result
+    root = workspace / res["project_id"]
+    migrate(store.store_path(root), ledger=r.ledger)
+    ctx = Context(project_dir=root, extra={"gate": PolicyGate(), "ledger": r.ledger})
+
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT INTO source (id, uri, sha256, kind, tier) "
+                  "VALUES ('s_1','a.svd','h1','svd','gold')")
+        c.execute("INSERT INTO fact (id, subject, predicate, value, unit, source_id, method,"
+                  " tier, confidence, status) VALUES ('f_1','chip:x/mem:RAM','memory_size',"
+                  "'131072','byte','s_1','parser','gold',1.0,'verified')")
+        c.commit()
+    _ghi_requirement(root, [{"id": "UR-01", "kind": "HW", "text": "RAM tối thiểu 64 kb"}])
+    store.write_seal(store.store_path(root), r.ledger)      # niêm sạch trước khi thử
+
+    run = r.invoke("req.ground_hw", {"reqset_ids": ["UR-01"], "passport": "x@1.0.0"}, ctx)
+    assert run.status == "done"
+    ok, ly_do = store.verify_seal(store.store_path(root))
+    assert ok, f"niêm lệch sau req.ground_hw (R0 nhưng có ghi): {ly_do}"
+
+
+def test_khong_niem_lai_khi_khong_ai_ghi(tmp_path, workspace, monkeypatch):
+    """Vế còn lại: `content_digest` mất ~90 ms trên hộ chiếu lớn, mà `passport.query` có hợp
+    đồng "< 200 ms". Niêm sau MỌI lời gọi thì một năng lực chỉ đọc cũng phải trả giá ấy."""
+    from eide_core.ledger import Ledger as _L
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+
+    r = Router(gate=PolicyGate(), ledger=_L(tmp_path / "l.jsonl"))
+    res = r.invoke("project.create", {"text": "dự án đọc"}, Context(project_dir=workspace)).result
+    root = workspace / res["project_id"]
+    migrate(store.store_path(root), ledger=r.ledger)
+    store.write_seal(store.store_path(root), r.ledger)
+    ctx = Context(project_dir=root, extra={"gate": PolicyGate(), "ledger": r.ledger})
+
+    dem = {"n": 0}
+    that = store.content_digest
+    monkeypatch.setattr(store, "content_digest",
+                        lambda c: (dem.__setitem__("n", dem["n"] + 1), that(c))[1])
+    r.invoke("passport.query", {"part": "khong-co"}, ctx)
+    assert dem["n"] == 0, "lời gọi chỉ đọc không được tính lại vân tay nội dung"

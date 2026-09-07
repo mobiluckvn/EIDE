@@ -13,6 +13,7 @@ import time
 import uuid
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from eide_core import store
@@ -104,6 +105,7 @@ class Router:
         # tự dựng một cái mới: một Router thứ hai sẽ có hàng đợi riêng và ledger riêng, và mục
         # chờ do chuỗi sinh ra sẽ không bao giờ xuất hiện trong hàng đợi người đang nhìn.
         ctx.extra.setdefault("router", self)
+        commit_truoc = store.so_commit()
         try:
             result = reg.handler(params, ctx)  # type: ignore[misc]
             self.registry.validate_output(cap_id, result)
@@ -121,7 +123,48 @@ class Router:
         if self.ledger is not None and reg.spec.undo in KIND_WINDOW:
             UndoService(self.ledger, getattr(self.gate, "config", None)).register(
                 run_id, reg.spec.undo, cap=cap_id)
+        self._niem_lai(ctx, commit_truoc)
         return CapabilityRun(run_id, cap_id, "done", result, dec, ms, undo=reg.spec.undo)
+
+    def _niem_lai(self, ctx: Context, commit_truoc: int) -> None:
+        """Niêm lại store sau một năng lực CÓ THỂ GHI — cùng lập luận với `undo.register` trên.
+
+        Niêm (`store.sqlite.seal.json`) tồn tại để `project.open` phát hiện store bị sửa NGOÀI
+        EIDE (PROJECT-02 bước 2). Nó chỉ có nghĩa khi mọi ghi hợp lệ đều cập nhật nó — một niêm
+        lệch sau mỗi phiên làm việc bình thường là một cảnh báo luôn đỏ, và cảnh báo luôn đỏ thì
+        người ta tắt đi.
+
+        Bản đầu để từng năng lực tự gọi `store.write_seal`. `passport.*`, `kg.*`, `search.*`,
+        `project.*` nhớ; `req.*`, `arch.*`, `extract.*` quên — và không có gì báo, vì `verify_seal`
+        chỉ chạy lúc mở dự án. `scripts/nghiem_thu_sprint2.sh` bước 12 mới lộ ra: chạy chuỗi thật
+        bằng CLI xong thì niêm lệch. Đặt ở Router là chỗ duy nhất không quên được.
+
+        Lọc theo **thời điểm sửa tệp**, không theo lớp rủi ro và cũng không theo danh sách năng
+        lực. Hai cách kia đều đã thử và đều sai:
+
+        - *Danh sách năng lực*: phải nhớ cập nhật — đúng cái vừa hỏng.
+        - *Lớp rủi ro R0*: nghe chắc chắn vì APD-08 §4.1 định nghĩa "lớp R0 chỉ đọc", nhưng đo ra
+          thì `req.ground_hw` là R0 mà VẪN ghi (`requirement.feasibility`). Bước 1 của REQ-03 nói
+          "so ngưỡng; ghi fact id", và "ghi" ở đó có nghĩa là lưu lại. Nên R0 trong danh mục nói
+          về rủi ro với NGƯỜI DÙNG, không phải về việc có chạm store hay không.
+
+        Tín hiệu là **bộ đếm commit** (`store.so_commit()`), so trước và sau handler. Ba cách rẻ
+        hơn đều đã thử và đều sai với SQLite chế độ WAL: mtime của tệp chính không đổi khi commit
+        (ghi vào `-wal`); mtime của `-wal`/`-shm` lại đổi cả khi chỉ MỞ kết nối để đọc; còn
+        `PRAGMA data_version` chỉ phản ánh kết nối khác và không bền qua tiến trình. Đếm ngay tại
+        `commit()` thì không có ngoại lệ nào lách được, và lời gọi chỉ đọc không trả giá gì.
+        """
+        if not ctx.project_dir or store.so_commit() == commit_truoc:
+            return                           # không ai commit trong lời gọi này
+        try:
+            db = store.store_path(Path(ctx.project_dir).expanduser())
+            if db.exists():
+                store.write_seal(db, self.ledger)
+        except (OSError, sqlite3.Error, EideError):
+            # Niêm hỏng không được làm hỏng một lời gọi ĐÃ THÀNH CÔNG: kết quả đã có, đã ghi
+            # ledger, và người dùng đã thấy nó chạy. Bỏ qua ở đây rồi để `project.open` báo còn
+            # trung thực hơn là nuốt mất kết quả.
+            pass
 
     # ---- người quyết định một mục đang chờ (API-15 §2 `gate.decide`)
     def quyet_dinh(self, run_id: str, quyet: str, by: str = "human", note: str = "",
