@@ -15,6 +15,19 @@ dependencies = [
   "jsonschema>=4.17",       # kiểm input/output theo cds.json (API-15 E1000)
   "platformdirs>=3.0",      # thư mục cấu hình/cache đa nền tảng (PLATFORM.md)
   "openpyxl>=3.1",          # req.trace_matrix format=xlsx (CDS-12.1 REQ-06); import trễ
+  # Nhóm extract.* (CDS-12.2). Cả hai đều import TRỄ: ai không đụng PDF/docx không phải trả giá.
+  "pdfplumber>=0.11",       # extract.pdf_layout — hợp đồng ghi "Docling (fallback pdfplumber)".
+                            # Docling KHÔNG khai ở đây: nó kéo theo PyTorch (~2 GB) cho một việc
+                            # mà pdfplumber làm đủ tốt, và EXTRACT-05 đã lường trước bằng E4001
+                            # "thiếu docling". Có docling trong môi trường thì dùng, không thì
+                            # pdfplumber — người dùng chọn, không phải cài đặt bắt buộc.
+  "python-docx>=1.1",       # extract.office — docx; xlsx đã có openpyxl
+  # Ghim TRẦN có lý do nền tảng, không phải sở thích. `pdfminer.six` (qua pdfplumber) cần
+  # `cryptography`; từ bản 44 trở đi PyPI không còn bánh xe x86_64 cho macOS, nên pip DỊCH TỪ
+  # NGUỒN — và phần Rust dưới Rosetta vẫn sinh mã arm64, tạo ra một `.so` arm64 nằm trong venv
+  # x86 rồi hỏng lúc import. Bản < 44 phát hành bánh xe universal2 nên chạy cả hai kiến trúc.
+  # Bỏ trần này thì `make check-ca-hai` gãy ở nhánh Intel (PLATFORM.md §ma trận).
+  "cryptography<44",
 ]
 # CLI dùng argparse (stdlib) — ít phụ thuộc, chạy ngay trên ba nền tảng. pydantic thêm ở Sprint 2 khi có DDD store.
 

@@ -43,7 +43,7 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | ARCHIVE-05…07, EXTRACT-01/02, PASSPORT-01/02/03/07 | `ingest.classify/hash_dedupe/index_text`, `extract.svd/atdf`, `passport.import/query/list/export` | 12.2 | **Xong** — 47 test. Khép chuỗi thu nhận: tệp SVD/ATDF → `source` → `fact` → hộ chiếu → `passport.query`. **M0 từ 9/22 lên 17/22** |
 | ARCHIVE-01/02, MEMORY-05, PROJECT-02, REGISTRY-01 | `archive.list/unpack`, `memory.ledger`, `project.set_target`, `registry.seed` | 12.2/12.6/12.3/12.5 | **Xong — mốc M0 đóng 22/22.** 36 test, phần lớn về việc KHÔNG làm gì |
 | SEARCH-02/05/06/07/08 | `search.vendor`, `search.rank`, `search.fetch`, `search.verify_match`, `search.missing` | 12.2 | **Xong** — 39 test, **cổng G-SRC lần đầu có việc**. `search.web` hoãn theo quyết định chủ sản phẩm 07/09 (cần API tìm kiếm trả phí; `search.vendor` đã phủ phần lớn nhu cầu thật) |
-| EXTRACT-03… | `extract.pdf_layout` và nhóm PDF (7 năng lực M1) | 12.2 | **Việc tiếp theo đề xuất.** Cảm biến/cơ cấu chấp hành (BME280, MPU6050, A4988 — tài liệu nêu đích danh) CHỈ có PDF, không có SVD/ATDF. Cũng mở khóa `search.verify_match` đọc được nội dung thật thay vì chỉ đối chiếu đường dẫn |
+| EXTRACT-03…09 | `edc`, `header_c`, `pdf_layout`, `pdf_register_map`, `pdf_electrical`, `office`, `code_constants` | 12.2 | **Xong** — 38 test, PDF trong test là PDF THẬT (viết tay cú pháp PDF, có cả bảng kẻ khung). Mở khoá cảm biến/cơ cấu chấp hành: chúng chỉ có PDF, không có SVD/ATDF |
 | `search.web`, `archive.extract_one/query`, `view.*` | | 12.2 | Hoãn hoặc chưa xếp lịch |
 
 **Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
@@ -159,3 +159,24 @@ SINH RA (`fact`, `plan`) thì hỏi bên trong. `dac_trung_nguon()` là chỗ du
 enum DDD-14 vào cổng thì mọi datasheet hãng trượt G-SRC-01 và rơi xuống ASK. Mất khá lâu mới
 tìm ra vì mọi đặc trưng đều trông đúng — chỉ một từ lệch, và quy tắc không khớp thì im lặng rơi
 xuống mặc định chứ không báo gì.
+
+
+## Nhóm `extract.*` M1 — ba ranh giới
+
+**Bố cục và ý nghĩa là hai việc, tách ra mới đúng.** `pdf_layout` chỉ chuyển PDF thành khối có
+`bbox` và KHÔNG sinh fact; `pdf_register_map` mới hiểu bảng. Gộp lại thì không phân biệt được
+"đọc sai trang" với "hiểu sai bảng" — hai lỗi sửa bằng hai cách khác nhau.
+
+**Ba việc quanh mô hình vẫn là của mã.** *Chọn bảng* theo tiêu đề cột (một datasheet 900 trang
+có hàng trăm bảng; đưa hết cho mô hình vừa tốn vừa làm nó lẫn bảng đặt hàng với bảng thanh ghi).
+*`locator`* lấy từ khối, không hỏi mô hình — mô hình bịa số trang là chuyện thường, và một trích
+dẫn sai tệ hơn không trích dẫn vì nó tạo vẻ đã kiểm chứng. *`confidence`* tính từ điểm bảng ×
+độ khớp kiểu; mô hình tự chấm điểm tin cậy cho chính nó thì con số ấy không mang thông tin.
+
+**`extract.pdf_electrical` là T2 và hỏi người MỌI LẦN** — đúng hợp đồng, không phải trở ngại
+của test. Fact `voltage_range` sai là con đường ngắn nhất tới một board cháy.
+
+Ghim `cryptography<44` trong `pyproject.toml` có lý do nền tảng: từ bản 44 PyPI không còn bánh
+xe x86_64 cho macOS, pip dịch từ nguồn, và phần Rust dưới Rosetta sinh mã arm64 — tạo ra một
+`.so` arm64 nằm trong venv x86 rồi hỏng lúc import. Bỏ trần này thì `make check-ca-hai` gãy ở
+nhánh Intel.
