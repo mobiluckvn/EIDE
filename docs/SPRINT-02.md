@@ -45,7 +45,8 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | SEARCH-02/05/06/07/08 | `search.vendor`, `search.rank`, `search.fetch`, `search.verify_match`, `search.missing` | 12.2 | **Xong** — 39 test, **cổng G-SRC lần đầu có việc**. `search.web` hoãn theo quyết định chủ sản phẩm 07/09 (cần API tìm kiếm trả phí; `search.vendor` đã phủ phần lớn nhu cầu thật) |
 | EXTRACT-03…09 | `edc`, `header_c`, `pdf_layout`, `pdf_register_map`, `pdf_electrical`, `office`, `code_constants` | 12.2 | **Xong** — 38 test, PDF trong test là PDF THẬT (viết tay cú pháp PDF, có cả bảng kẻ khung). Mở khoá cảm biến/cơ cấu chấp hành: chúng chỉ có PDF, không có SVD/ATDF |
 | VIEW-01…09 | `kg_map`, `kg_focus`, `provenance`, `conflict_board`, `rag_ask`, `rag_trace`, `rag_index`, `doc_side_by_side`, `export_map` | 12.4 | **Xong** — 38 test. Tầng trình bày: không sinh fact, không sửa store. Phát hiện [DEV-058](DEVIATIONS.md) — thang điểm FTS bị đảo từ Sprint 2 |
-| `search.web`, `archive.extract_one/query`, `diagram.*`, `doc.*` | | | Hoãn hoặc chưa xếp lịch |
+| DIAGRAM-01…04, DOC-05/07/08 | `diagram.lint/render/block/kg_view`, `doc.section/datasheet_summary/style_check` | 12.4 | **Xong** — 37 test. Bảng thuật ngữ CON-28 §6 nay sinh ra `doc/glossary.json` |
+| `search.web`, `archive.extract_one/query`, `env.install_pack`, `code.annotate`, `passport.verify_on_board` | | | **M1 còn 7** — phần lớn cần phần cứng hoặc dịch vụ ngoài |
 
 **Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
 thêm một mục M0 vào spec thì biết ngay là còn nợ thay vì phải nhớ đi đếm.
@@ -204,3 +205,25 @@ Sửa xong lại lộ ra vấn đề thứ hai: **bm25 suy biến trên kho nh�
 thì IDF = 0, nên kho một tài liệu luôn cho bm25 = 0). Nay điểm là trung bình của bm25 đồng biến
 và **độ phủ** — tỷ lệ từ khóa câu hỏi xuất hiện trong đoạn: không suy biến, và giải thích được
 cho người dùng.
+
+
+## `diagram.*` + `doc.*` — hai bất biến, cùng một chữ
+
+**Lược đồ là VĂN BẢN, ảnh chỉ là sản phẩm phụ.** CON-28 §6 định nghĩa "lược đồ" đúng một câu:
+*"Sơ đồ ở dạng ngôn ngữ văn bản"*. `diagram.block` và `diagram.kg_view` trả **mã**, không trả
+ảnh; muốn ảnh thì gọi `diagram.render`. Hệ quả: lược đồ vào Git dưới dạng khác biệt đọc được,
+xem lại được lịch sử "vì sao cạnh này đổi", và `diagram.lint` kiểm được nội dung — một PNG thì
+cả ba đều mất.
+
+**Không có số nào không có trang.** `doc.datasheet_summary` KHÔNG gọi mô hình: nó xếp lại fact
+và gắn `[src#page]` từ `locator`. Bản tóm tắt vì thế THIẾU so với datasheet gốc, và điều đó
+đúng — một bản đầy đủ hơn dữ liệu là bản có phần bịa, mà người đọc không phân biệt được phần
+nào. `doc.style_check` cưỡng chế chiều ngược lại: câu có số liệu kỹ thuật mà không trích dẫn thì
+bị báo. Hai năng lực là hai nửa của một quy tắc.
+
+Phép kiểm đáng giá nhất của `diagram.lint` là **nút lạ so với ModuleGraph**, không phải cú pháp:
+lược đồ sai cú pháp thì renderer báo ngay, còn lược đồ đúng cú pháp mà vẽ sai hệ thống thì không
+ai báo — nó được dán vào tài liệu và trở thành mô tả chính thức của một kiến trúc không tồn tại.
+
+Bảng thuật ngữ CON-28 §6 nay sinh ra `docs/spec/doc/glossary.json` — lần thứ tư gặp khuôn
+DEV-025/029/043/046, nên lần này đặt tên literal và sinh spec ngay từ đầu thay vì chép 34 dòng.

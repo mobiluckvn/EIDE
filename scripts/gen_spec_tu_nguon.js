@@ -97,6 +97,15 @@ const VIEC = [
         },
     },
     {
+        // CON-28 §6 bảng thuật ngữ Việt–Anh. `doc.style_check` bước 1 đòi "thuật ngữ trong
+        // glossary CON-28 xuất hiện lần đầu không kèm giải nghĩa → term", nên phần mã cần bảng
+        // ở dạng máy đọc được thay vì chép tay 40 dòng. Cùng khuôn DEV-043/046.
+        tep: 'doc/glossary.json', nguon: 'sec_dep_con.js',
+        dung: () => JSON.stringify(literal('sec_dep_con.js', 'GLOSSARY')
+            .filter(r => r[0] && r[1])
+            .map(r => ({ vi: r[0], en: r[1], nghia: r[2] || '' })), null, 1) + '\n',
+    },
+    {
         // UXD-13 U1: ô lệnh gợi ý "/" liệt kê "năng lực có `ui`". Nhưng KHÔNG năng lực nào có
         // trường ấy (0/238 trong cds.json), nên quy tắc U1 không áp dụng được. Nguồn duy nhất
         // nói năng lực nào thuộc màn hình nào là bảng §2 — và nó ở dạng literal `S`, rút được.

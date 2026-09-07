@@ -1,0 +1,172 @@
+[
+ {
+  "vi": "tác tử",
+  "en": "agent",
+  "nghia": "Chương trình dùng mô hình ngôn ngữ để hiểu lệnh, lập chuỗi và gọi năng lực"
+ },
+ {
+  "vi": "năng lực",
+  "en": "capability",
+  "nghia": "Đơn vị chức năng có hợp đồng 13 trường"
+ },
+ {
+  "vi": "tác tử điều phối",
+  "en": "orchestrator",
+  "nghia": "Tầng hiểu lệnh (DPS-09)"
+ },
+ {
+  "vi": "hộ chiếu (chip/mạch)",
+  "en": "passport",
+  "nghia": "Tập fact có nguồn về chip/board/ISA"
+ },
+ {
+  "vi": "fact",
+  "en": "fact",
+  "nghia": "Bản ghi tri thức bất biến có nguồn"
+ },
+ {
+  "vi": "nguồn gốc",
+  "en": "provenance",
+  "nghia": "Chuỗi nguồn → locator → người xác nhận"
+ },
+ {
+  "vi": "tầng vàng/bạc/đồng",
+  "en": "gold/silver/bronze tier",
+  "nghia": "Mức tin cậy theo nguồn"
+ },
+ {
+  "vi": "đồ thị tri thức",
+  "en": "knowledge graph",
+  "nghia": "Nút/cạnh HAS, CITES, USES…"
+ },
+ {
+  "vi": "bản đồ tri thức",
+  "en": "knowledge map",
+  "nghia": "Hiển thị đồ thị (view.*)"
+ },
+ {
+  "vi": "truy hồi có tăng cường sinh",
+  "en": "RAG",
+  "nghia": "Hỏi–đáp trên kho tài liệu có trích dẫn"
+ },
+ {
+  "vi": "ngữ cảnh",
+  "en": "context",
+  "nghia": "Nội dung đưa vào một lượt gọi mô hình"
+ },
+ {
+  "vi": "bộ nhớ",
+  "en": "memory",
+  "nghia": "Trạng thái tác tử giữ qua bước/lượt/phiên"
+ },
+ {
+  "vi": "cổng (người/chính sách)",
+  "en": "gate",
+  "nghia": "Điểm kiểm soát trong máy trạng thái"
+ },
+ {
+  "vi": "mức tự chủ",
+  "en": "autonomy level",
+  "nghia": "A0–A4"
+ },
+ {
+  "vi": "lớp rủi ro",
+  "en": "risk class",
+  "nghia": "R0–R4"
+ },
+ {
+  "vi": "làm rồi báo cáo",
+  "en": "do-then-report",
+  "nghia": "Thực thi tự động có hoàn tác"
+ },
+ {
+  "vi": "hoàn tác",
+  "en": "undo",
+  "nghia": "Khôi phục trạng thái trước"
+ },
+ {
+  "vi": "leo thang",
+  "en": "escalation",
+  "nghia": "Đưa việc lên người"
+ },
+ {
+  "vi": "dừng khẩn",
+  "en": "emergency stop",
+  "nghia": "Hạ A0, hủy thao tác phần cứng"
+ },
+ {
+  "vi": "lược đồ",
+  "en": "diagram",
+  "nghia": "Sơ đồ ở dạng ngôn ngữ văn bản"
+ },
+ {
+  "vi": "sơ đồ chân",
+  "en": "pin map",
+  "nghia": ""
+ },
+ {
+  "vi": "máy trạng thái",
+  "en": "state machine (FSM)",
+  "nghia": ""
+ },
+ {
+  "vi": "bản ghi quyết định kiến trúc",
+  "en": "ADR",
+  "nghia": ""
+ },
+ {
+  "vi": "dò board",
+  "en": "board discovery",
+  "nghia": "Liệt kê cổng/probe/ID chip"
+ },
+ {
+  "vi": "tốc độ kết nối",
+  "en": "link speed",
+  "nghia": "Baud/clock SWD/JTAG/SPI/I2C"
+ },
+ {
+  "vi": "bộ đệm prompt",
+  "en": "prompt caching",
+  "nghia": ""
+ },
+ {
+  "vi": "trình trích xuất",
+  "en": "extractor",
+  "nghia": ""
+ },
+ {
+  "vi": "hộp cát",
+  "en": "sandbox",
+  "nghia": "Cách ly tiến trình"
+ },
+ {
+  "vi": "sổ lỗi",
+  "en": "error ledger",
+  "nghia": ""
+ },
+ {
+  "vi": "nhật ký (bất biến)",
+  "en": "ledger",
+  "nghia": ""
+ },
+ {
+  "vi": "mẫu dự án tham chiếu",
+  "en": "reference project template (K5′)",
+  "nghia": ""
+ },
+ {
+  "vi": "kịch bản chuẩn",
+  "en": "reference scenario",
+  "nghia": "17 bước từ zip đến firmware chạy sim"
+ },
+ {
+  "vi": "board thí nghiệm",
+  "en": "lab board",
+  "nghia": "Không cơ cấu chấp hành, nguồn giới hạn dòng"
+ },
+ {
+  "vi": "tập lệnh",
+  "en": "ISA",
+  "nghia": "armv7e-m, avr8, rv32…"
+ }
+]

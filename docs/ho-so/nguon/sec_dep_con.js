@@ -157,7 +157,11 @@ c.push(...CODE([
 ]));
 c.push(SP());
 c.push(H1('6. Bảng thuật ngữ Việt–Anh hợp nhất'));
-c.push(T([2300, 2300, 4700], ['Tiếng Việt', 'English', 'Giải nghĩa ngắn'], [
+// §6 bảng thuật ngữ. Đặt tên literal để sinh ra `doc/glossary.json`: `doc.style_check`
+// bước 1 đòi "thuật ngữ trong glossary CON-28 xuất hiện lần đầu không kèm giải nghĩa →
+// term", nên phần mã cần bảng ở dạng máy đọc được. Bảng chỉ nằm trong văn xuôi thì mã
+// phải chép tay — cùng khuôn DEV-025/029/043/046.
+const GLOSSARY = [
   ['tác tử', 'agent', 'Chương trình dùng mô hình ngôn ngữ để hiểu lệnh, lập chuỗi và gọi năng lực'], ['năng lực', 'capability', 'Đơn vị chức năng có hợp đồng 13 trường'], ['tác tử điều phối', 'orchestrator', 'Tầng hiểu lệnh (DPS-09)'],
   ['hộ chiếu (chip/mạch)', 'passport', 'Tập fact có nguồn về chip/board/ISA'], ['fact', 'fact', 'Bản ghi tri thức bất biến có nguồn'], ['nguồn gốc', 'provenance', 'Chuỗi nguồn → locator → người xác nhận'],
   ['tầng vàng/bạc/đồng', 'gold/silver/bronze tier', 'Mức tin cậy theo nguồn'], ['đồ thị tri thức', 'knowledge graph', 'Nút/cạnh HAS, CITES, USES…'], ['bản đồ tri thức', 'knowledge map', 'Hiển thị đồ thị (view.*)'],
@@ -168,7 +172,8 @@ c.push(T([2300, 2300, 4700], ['Tiếng Việt', 'English', 'Giải nghĩa ngắn
   ['dò board', 'board discovery', 'Liệt kê cổng/probe/ID chip'], ['tốc độ kết nối', 'link speed', 'Baud/clock SWD/JTAG/SPI/I2C'], ['bộ đệm prompt', 'prompt caching', ''], ['trình trích xuất', 'extractor', ''],
   ['hộp cát', 'sandbox', 'Cách ly tiến trình'], ['sổ lỗi', 'error ledger', ''], ['nhật ký (bất biến)', 'ledger', ''], ['mẫu dự án tham chiếu', 'reference project template (K5′)', ''],
   ['kịch bản chuẩn', 'reference scenario', '17 bước từ zip đến firmware chạy sim'], ['board thí nghiệm', 'lab board', 'Không cơ cấu chấp hành, nguồn giới hạn dòng'], ['tập lệnh', 'ISA', 'armv7e-m, avr8, rv32…'],
-]));
+];
+c.push(T([2300, 2300, 4700], ['Tiếng Việt', 'English', 'Giải nghĩa ngắn'], GLOSSARY));
 c.push(SP());
 c.push(...refParas(H1));
 build(m, c, 'EIDE-CON-28_Quy_uoc_thuat_ngu.docx');

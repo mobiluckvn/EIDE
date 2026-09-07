@@ -112,7 +112,7 @@ done
 for f in cds.json ddd.json; do chep "$f" "$SPEC/$f"; done
 # `find` chứ không phải `*`: `data/` có thư mục con `json/` với 27 JSON Schema bên trong, và
 # một vòng lặp chỉ quét tệp phẳng sẽ bỏ qua đúng phần nhiều nhất.
-for sub in policy api prompts isa sources data capabilities dialog ui context; do
+for sub in policy api prompts isa sources doc data capabilities dialog ui context; do
     [ -d "$SAN/$sub" ] || continue
     while IFS= read -r d; do
         rel="${d#"$SAN"/}"
