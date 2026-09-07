@@ -42,6 +42,7 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | ARCH-01…11 | `style_select`, `decompose`, `map_hw`, `memory_budget`, `timing_budget`, `interface_spec`, `state_machine`, `adr`, `review`, `compare`, `to_plan` | 12.1 | **Xong** — 60 test; TC-69/TC-70 xanh. Kèm migration `0004_m2_engineering_hw` (module, hw_map, adr, doc_artifact, discovery, measurement, `code_unit.module_id`) |
 | ARCHIVE-05…07, EXTRACT-01/02, PASSPORT-01/02/03/07 | `ingest.classify/hash_dedupe/index_text`, `extract.svd/atdf`, `passport.import/query/list/export` | 12.2 | **Xong** — 47 test. Khép chuỗi thu nhận: tệp SVD/ATDF → `source` → `fact` → hộ chiếu → `passport.query`. **M0 từ 9/22 lên 17/22** |
 | ARCHIVE-01/02, MEMORY-05, PROJECT-02, REGISTRY-01 | `archive.list/unpack`, `memory.ledger`, `project.set_target`, `registry.seed` | 12.2/12.6/12.3/12.5 | **Xong — mốc M0 đóng 22/22.** 36 test, phần lớn về việc KHÔNG làm gì |
+| SEARCH-02/05/06/07/08 | `search.vendor`, `search.rank`, `search.fetch`, `search.verify_match`, `search.missing` | 12.2 | **Xong** — 39 test, **cổng G-SRC lần đầu có việc**. `search.web` hoãn theo quyết định chủ sản phẩm 07/09 (cần API tìm kiếm trả phí; `search.vendor` đã phủ phần lớn nhu cầu thật) |
 | SEARCH / phần còn lại của ARCHIVE/EXTRACT | `search.fetch`, `archive.extract_one/query`, `extract.pdf_layout` | 12.2 | Cổng G-SRC vẫn chưa có năng lực nào đi qua (G-FACT thì đã có, qua `passport.import`) |
 
 **Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
@@ -136,3 +137,24 @@ phải trả giá.
 2. `make check-ca-hai` xanh; `scripts/nghiem_thu_sprint2.sh` chạy chuỗi ấy đầu-cuối.
 3. Không mục DEVIATIONS `Mở` quá 7 ngày chưa duyệt; tài liệu đã đồng bộ lên v1.3.
 4. `tool.*` viết được một công cụ nhỏ, chạy trong sandbox, và qua cổng G-TOOL.
+
+
+## Nhóm `search.*` — ba điều học được
+
+**Bảng nguồn hãng TGT-19 §8 nay sinh ra `docs/spec/sources/vendors.yaml`.** Bảng ấy đã in trong
+tài liệu; chép tay sang Python là tạo bản thứ hai sẽ trôi ngay lần hãng đổi đường dẫn. Đây là
+lần thứ ba gặp đúng khuôn ấy (DEV-043 `PRED_W`, DEV-046 bản đồ màn hình UI), nên lần này làm
+đúng ngay từ đầu: sửa `tgt_sim.js`, sinh lại, và mã đọc từ spec.
+
+**G-SRC là cổng do Router áp, không phải do năng lực tự gọi.** Bản đầu tôi gọi `gate.decide`
+ngay trong `search.fetch` — thành gác hai lần, và lần của Router chạy trước với đặc trưng rỗng
+nên mọi lời gọi rơi vào G-SRC-99. Quy tắc phân loại đã có từ trước: cổng canh hiện vật TỒN TẠI
+TRƯỚC lời gọi (`source`, `artifact`, `patch`, `pkg`) thì Router áp; cổng canh hiện vật năng lực
+SINH RA (`fact`, `plan`) thì hỏi bên trong. `dac_trung_nguon()` là chỗ duy nhất dựng đặc trưng
+`source.*`, để hai bên gọi không map thiếu trường mỗi bên một kiểu.
+
+**Hai bộ từ vựng `kind` — [DEV-057](DEVIATIONS.md).** `Source.kind` của DDD-14 là ĐỊNH DẠNG
+(`pdf`); `G-SRC-01` chờ `pdf_vendor`, một PHÁN XÉT ("PDF từ chính trang hãng"). Truyền thẳng
+enum DDD-14 vào cổng thì mọi datasheet hãng trượt G-SRC-01 và rơi xuống ASK. Mất khá lâu mới
+tìm ra vì mọi đặc trưng đều trông đúng — chỉ một từ lệch, và quy tắc không khớp thì im lặng rơi
+xuống mặc định chứ không báo gì.

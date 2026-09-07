@@ -108,6 +108,69 @@ c.push(T([1000, 3400, 3700, 1200], ['TC', 'Mục tiêu', 'Kỳ vọng', 'Mức']
 c.push(SP());
 c.push(...refParas(H1));
 build(m, c, 'EIDE-TGT-19_ISA_toolchain_adapter_discovery.docx');
+// Bảng §8 sinh ra bản máy đọc được cho `search.vendor`. Cùng một nguồn với bảng in trong
+// tài liệu, nên không có bản chép tay thứ hai để trôi (bài học DEV-043/DEV-046).
+fs.mkdirSync('sources', { recursive: true });
+fs.writeFileSync('sources/vendors.yaml', `# Sinh từ EIDE-TGT-19 §8 "Nguồn tài liệu hãng (search.vendor)". KHÔNG sửa tay.
+vendors:
+  - id: st
+    name: STMicroelectronics
+    prefixes: ["^STM32", "^STM8", "^LSM", "^L3G"]
+    domains: [st.com, github.com/cmsis-svd]
+    urls:
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/STMicro/{part_upper}.svd"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/datasheet/{part_lower}.pdf"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/reference_manual/rm0383-{part_lower}.pdf", note: "reference manual"}
+  - id: microchip
+    name: Microchip
+    prefixes: ["^AT", "^PIC", "^SAM", "^dsPIC"]
+    domains: [microchip.com, packs.download.microchip.com, ww1.microchip.com]
+    urls:
+      - {kind: atdf, tier: gold, license: Apache-2.0, template: "https://packs.download.microchip.com/Microchip.{family}_DFP.atpack", note: "ATDF/EDC trong gói DFP"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://ww1.microchip.com/downloads/en/DeviceDoc/{part}-DataSheet.pdf"}
+  - id: nordic
+    name: Nordic Semiconductor
+    prefixes: ["^nRF"]
+    domains: [nordicsemi.com, docs.nordicsemi.com, github.com/NordicSemiconductor]
+    urls:
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/NordicSemiconductor/nrfx/master/mdk/{part_lower}.svd"}
+  - id: espressif
+    name: Espressif
+    prefixes: ["^ESP"]
+    domains: [espressif.com, docs.espressif.com, github.com/espressif]
+    urls:
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/espressif/svd/main/svd/{part_lower}.svd"}
+  - id: raspberrypi
+    name: Raspberry Pi
+    prefixes: ["^RP2"]
+    domains: [datasheets.raspberrypi.com, raspberrypi.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://datasheets.raspberrypi.com/{part_lower}/{part_lower}-datasheet.pdf"}
+  - id: bosch
+    name: Bosch Sensortec
+    prefixes: ["^BME", "^BMP", "^BMI", "^BMA"]
+    domains: [bosch-sensortec.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-{part_lower}-ds002.pdf", note: "bảng thanh ghi cần duyệt"}
+  - id: invensense
+    name: InvenSense / TDK
+    prefixes: ["^MPU", "^ICM"]
+    domains: [invensense.tdk.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://invensense.tdk.com/wp-content/uploads/2015/02/{part_upper}-Datasheet.pdf"}
+  - id: allegro
+    name: Allegro MicroSystems
+    prefixes: ["^A4", "^ACS"]
+    domains: [allegromicro.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.allegromicro.com/-/media/files/datasheets/{part_lower}-datasheet.pdf"}
+  - id: community
+    name: Cộng đồng
+    prefixes: []
+    domains: [github.com/cmsis-svd]
+    urls:
+      - {kind: svd, tier: silver, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/{vendor}/{part_upper}-Community.svd", note: "SVD community: bạc, không phải vàng"}
+`);
 fs.mkdirSync('isa', { recursive: true });
 fs.writeFileSync('isa/armv7e-m.yaml', `id: armv7e-m\nfamily_patterns: ["^STM32F[2-4]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]\nabi: {endian: little, word: 32, fpu: optional, align: 8}\ninterrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}\ntoolchain:\n  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version"}\n  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size}, {name: arm-none-eabi-objcopy}]\n  install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}\n  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}\n  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}\nflash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}\ndebug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}\nid_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}\nsim: {engine: renode, platform_template: renode/cortex-m.repl.j2, fallback: qemu}\nskills: [skills/armv7e-m/interrupts.md, skills/armv7e-m/clock.md, skills/armv7e-m/i2c.md]\n`);
 fs.writeFileSync('isa/avr8.yaml', `id: avr8\nfamily_patterns: ["^ATmega", "^ATtiny", "^AVR(64|128)"]\nabi: {endian: little, word: 8, fpu: none, align: 1}\ninterrupts: {model: vector_table, priority_bits: 0}\ntoolchain:\n  compiler: {name: avr-gcc, min: "12.0", check: "avr-gcc --version"}\n  tools: [{name: avrdude, min: "7.0"}, {name: avr-size}]\n  install: {macos: ["brew tap osx-cross/avr && brew install avr-gcc avrdude"], linux: ["apt install gcc-avr avr-libc avrdude"], windows: ["winget install AVRDudes.AVRDUDE"]}\n  build: {cmd: "make -C . MCU={mcu} F_CPU={f_cpu}", artifact: "build/*.elf"}\nflash: {adapters: [avrdude, pymcuprog], default: avrdude, cmd: {avrdude: "avrdude -c {programmer} -p {part} -P {port} -U flash:w:{hex}:i"}, verify: true}\ndebug: {adapter: none, probes: [avrisp2, arduino]}\nid_read: {method: signature, cmd: "avrdude -c {programmer} -p {part} -P {port} -v", regex: "signature = (0x[0-9a-f]+ 0x[0-9a-f]+ 0x[0-9a-f]+)", table: id_tables/avr.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200]}\nsim: {engine: simavr}\nskills: [skills/avr8/timers.md, skills/avr8/twi.md]\n`);

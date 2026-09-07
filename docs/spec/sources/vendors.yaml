@@ -1,0 +1,59 @@
+# Sinh từ EIDE-TGT-19 §8 "Nguồn tài liệu hãng (search.vendor)". KHÔNG sửa tay.
+vendors:
+  - id: st
+    name: STMicroelectronics
+    prefixes: ["^STM32", "^STM8", "^LSM", "^L3G"]
+    domains: [st.com, github.com/cmsis-svd]
+    urls:
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/STMicro/{part_upper}.svd"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/datasheet/{part_lower}.pdf"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/reference_manual/rm0383-{part_lower}.pdf", note: "reference manual"}
+  - id: microchip
+    name: Microchip
+    prefixes: ["^AT", "^PIC", "^SAM", "^dsPIC"]
+    domains: [microchip.com, packs.download.microchip.com, ww1.microchip.com]
+    urls:
+      - {kind: atdf, tier: gold, license: Apache-2.0, template: "https://packs.download.microchip.com/Microchip.{family}_DFP.atpack", note: "ATDF/EDC trong gói DFP"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://ww1.microchip.com/downloads/en/DeviceDoc/{part}-DataSheet.pdf"}
+  - id: nordic
+    name: Nordic Semiconductor
+    prefixes: ["^nRF"]
+    domains: [nordicsemi.com, docs.nordicsemi.com, github.com/NordicSemiconductor]
+    urls:
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/NordicSemiconductor/nrfx/master/mdk/{part_lower}.svd"}
+  - id: espressif
+    name: Espressif
+    prefixes: ["^ESP"]
+    domains: [espressif.com, docs.espressif.com, github.com/espressif]
+    urls:
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/espressif/svd/main/svd/{part_lower}.svd"}
+  - id: raspberrypi
+    name: Raspberry Pi
+    prefixes: ["^RP2"]
+    domains: [datasheets.raspberrypi.com, raspberrypi.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://datasheets.raspberrypi.com/{part_lower}/{part_lower}-datasheet.pdf"}
+  - id: bosch
+    name: Bosch Sensortec
+    prefixes: ["^BME", "^BMP", "^BMI", "^BMA"]
+    domains: [bosch-sensortec.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-{part_lower}-ds002.pdf", note: "bảng thanh ghi cần duyệt"}
+  - id: invensense
+    name: InvenSense / TDK
+    prefixes: ["^MPU", "^ICM"]
+    domains: [invensense.tdk.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://invensense.tdk.com/wp-content/uploads/2015/02/{part_upper}-Datasheet.pdf"}
+  - id: allegro
+    name: Allegro MicroSystems
+    prefixes: ["^A4", "^ACS"]
+    domains: [allegromicro.com]
+    urls:
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.allegromicro.com/-/media/files/datasheets/{part_lower}-datasheet.pdf"}
+  - id: community
+    name: Cộng đồng
+    prefixes: []
+    domains: [github.com/cmsis-svd]
+    urls:
+      - {kind: svd, tier: silver, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/{vendor}/{part_upper}-Community.svd", note: "SVD community: bạc, không phải vàng"}
