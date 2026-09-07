@@ -49,6 +49,15 @@ class Doan:
     model: str = ""
 
 
+def _do_phu(tu: list[str], text: str) -> float:
+    """Tỷ lệ từ khóa câu hỏi xuất hiện trong đoạn. Không suy biến trên kho nhỏ, và giải thích
+    được: "đoạn này chứa 4/5 từ bạn hỏi"."""
+    if not tu:
+        return 0.0
+    t = text.lower()
+    return sum(1 for x in tu if x.lower() in t) / len(tu)
+
+
 class RagIndex:
     """Đóng gói `index.sqlite`. Mở/đóng theo từng thao tác, không giữ kết nối lâu."""
 
@@ -119,7 +128,26 @@ class RagIndex:
         return sorted(ra.values(), key=lambda x: x["id"])[:k]
 
     def tim(self, truy_van: str, k: int = 8) -> list[dict[str, Any]]:
-        """FTS5 theo từ khóa. Điểm chuẩn hóa về (0, 1] từ `bm25()` (nhỏ hơn = khớp hơn)."""
+        """FTS5 theo từ khóa. Điểm chuẩn hóa về [0, 1) — CÀNG CAO CÀNG KHỚP.
+
+        `bm25()` của SQLite trả số ÂM, càng âm càng khớp. Bản đầu tôi chuẩn hóa bằng
+        `1/(1+|bm25|)` — nghe hợp lý nhưng ĐẢO NGƯỢC thang: một đoạn khớp mạnh (|bm25| lớn) ra
+        điểm gần 0, còn một đoạn khớp yếu (|bm25| ≈ 0) ra điểm 1,0.
+
+        Thứ tự trả về vẫn đúng vì SQL đã `ORDER BY s`, nên lỗi này im lặng suốt — cho tới khi
+        `view.rag_ask` dùng điểm làm NGƯỠNG. Với thang đảo, mọi đoạn khớp yếu đều đạt 1,0 và
+        ngưỡng "< 0,35 → not_found" của VIEW-05 không bao giờ chặn được gì: nó thành phép kiểm
+        "có đoạn nào không", không phải "đoạn có liên quan không".
+
+        Sửa xong lại lộ ra một điểm nữa: **bm25 SUY BIẾN trên kho nhỏ**. BM25 nhân với IDF, mà
+        một từ có mặt trong MỌI tài liệu thì IDF = 0 — nên trong kho một tài liệu, mọi khớp đều
+        ra bm25 = 0. Dùng riêng nó làm ngưỡng thì một dự án mới nạp đúng một datasheet sẽ không
+        bao giờ trả lời được gì.
+
+        Nên điểm là trung bình của hai tín hiệu: bm25 chuẩn hóa (tốt khi kho lớn) và ĐỘ PHỦ —
+        tỷ lệ từ khóa trong câu hỏi thực sự xuất hiện trong đoạn (không suy biến, và giải thích
+        được cho người dùng: "đoạn này chứa 4/5 từ bạn hỏi").
+        """
         tu = tach_tu(truy_van)
         if not tu:
             return []
@@ -131,9 +159,15 @@ class RagIndex:
                 "SELECT r.id, r.source_id, r.locator, r.text, bm25(rag_chunk_fts) AS s"
                 " FROM rag_chunk_fts f JOIN rag_chunk r ON r.rowid = f.rowid"
                 " WHERE rag_chunk_fts MATCH ? ORDER BY s LIMIT ?", (q, k)).fetchall()
-        return [{"id": r[0], "source_id": r[1], "locator": json.loads(r[2]) if r[2] else None,
-                 "text": r[3], "score": round(1.0 / (1.0 + abs(r[4])), 4), "cach": "fts"}
-                for r in rows]
+        ra = []
+        for r in rows:
+            bm = 1.0 - 1.0 / (1.0 + abs(r[4]))
+            phu = _do_phu(tu, r[3])
+            ra.append({"id": r[0], "source_id": r[1],
+                       "locator": json.loads(r[2]) if r[2] else None, "text": r[3],
+                       "score": round((bm + phu) / 2, 4), "bm25": round(bm, 4),
+                       "coverage": round(phu, 4), "cach": "fts"})
+        return ra
 
     def retrieve(self, iris: list[str], k: int = 8) -> list[dict[str, Any]]:
         """`RagIndex.retrieve theo IRI` (MEMORY-03 bước 1): khớp chính xác trước, từ khóa bù sau.

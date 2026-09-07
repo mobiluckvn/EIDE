@@ -44,7 +44,8 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | ARCHIVE-01/02, MEMORY-05, PROJECT-02, REGISTRY-01 | `archive.list/unpack`, `memory.ledger`, `project.set_target`, `registry.seed` | 12.2/12.6/12.3/12.5 | **Xong — mốc M0 đóng 22/22.** 36 test, phần lớn về việc KHÔNG làm gì |
 | SEARCH-02/05/06/07/08 | `search.vendor`, `search.rank`, `search.fetch`, `search.verify_match`, `search.missing` | 12.2 | **Xong** — 39 test, **cổng G-SRC lần đầu có việc**. `search.web` hoãn theo quyết định chủ sản phẩm 07/09 (cần API tìm kiếm trả phí; `search.vendor` đã phủ phần lớn nhu cầu thật) |
 | EXTRACT-03…09 | `edc`, `header_c`, `pdf_layout`, `pdf_register_map`, `pdf_electrical`, `office`, `code_constants` | 12.2 | **Xong** — 38 test, PDF trong test là PDF THẬT (viết tay cú pháp PDF, có cả bảng kẻ khung). Mở khoá cảm biến/cơ cấu chấp hành: chúng chỉ có PDF, không có SVD/ATDF |
-| `search.web`, `archive.extract_one/query`, `view.*` | | 12.2 | Hoãn hoặc chưa xếp lịch |
+| VIEW-01…09 | `kg_map`, `kg_focus`, `provenance`, `conflict_board`, `rag_ask`, `rag_trace`, `rag_index`, `doc_side_by_side`, `export_map` | 12.4 | **Xong** — 38 test. Tầng trình bày: không sinh fact, không sửa store. Phát hiện [DEV-058](DEVIATIONS.md) — thang điểm FTS bị đảo từ Sprint 2 |
+| `search.web`, `archive.extract_one/query`, `diagram.*`, `doc.*` | | | Hoãn hoặc chưa xếp lịch |
 
 **Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
 thêm một mục M0 vào spec thì biết ngay là còn nợ thay vì phải nhớ đi đếm.
@@ -180,3 +181,26 @@ Ghim `cryptography<44` trong `pyproject.toml` có lý do nền tảng: từ bả
 xe x86_64 cho macOS, pip dịch từ nguồn, và phần Rust dưới Rosetta sinh mã arm64 — tạo ra một
 `.so` arm64 nằm trong venv x86 rồi hỏng lúc import. Bỏ trần này thì `make check-ca-hai` gãy ở
 nhánh Intel.
+
+
+## Nhóm `view.*` — và một lỗi im lặng từ Sprint 2
+
+Bất biến của cả nhóm: **không có gì không có nguồn**. `view.kg_map` giữ `tier`/`status` nguyên
+văn cho từng nút (trả mã màu mà bỏ trạng thái thì bản mù màu, bản in đen trắng và bản xuất
+`graphml` đều mất thông tin); `view.provenance` dựng cả chuỗi supersede tới `Source`;
+`view.rag_ask` **từ chối trả lời** khi không đủ đoạn có điểm.
+
+Hai chỗ chọn "gom" thay vì "cắt": đồ thị quá lớn thì **gom cụm và ghi rõ `n`**, không cắt bớt —
+cắt thì người xem thấy một đồ thị trông đầy đủ nhưng thiếu, và không có gì báo cho họ biết.
+
+**[DEV-058] — thang điểm FTS bị đảo ngược từ Sprint 2 và không ai thấy.** `bm25()` của SQLite
+trả số âm, càng âm càng khớp; bản đầu chuẩn hóa `1/(1+|bm25|)` nên đoạn khớp *mạnh* ra điểm gần
+0 còn đoạn khớp *yếu* ra 1,0. Thứ hạng vẫn đúng nhờ `ORDER BY` trong SQL, nên lỗi im lặng hoàn
+toàn suốt thời gian `memory.retrieve` là bên dùng duy nhất — nó chỉ cần thứ tự. Chỉ khi VIEW-05
+dùng điểm làm **ngưỡng** thì hậu quả mới lộ: quy tắc "< 0,35 → not_found" thoái hóa thành phép
+kiểm "có đoạn nào không".
+
+Sửa xong lại lộ ra vấn đề thứ hai: **bm25 suy biến trên kho nhỏ** (từ có mặt trong mọi tài liệu
+thì IDF = 0, nên kho một tài liệu luôn cho bm25 = 0). Nay điểm là trung bình của bm25 đồng biến
+và **độ phủ** — tỷ lệ từ khóa câu hỏi xuất hiện trong đoạn: không suy biến, và giải thích được
+cho người dùng.
