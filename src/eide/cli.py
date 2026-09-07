@@ -67,6 +67,13 @@ def cmd_doctor(a) -> int:
         missing += int(req and not exe)
         rows.append([name, "bắt buộc" if req else "", str(exe) if exe else "—", (ver or "")[:60]])
     _table(["Công cụ", "", "Tìm thấy", "Phiên bản"], rows)
+    # MCP (API-15 §3): nói rõ tool nào phơi được và tool nào bị bỏ vì năng lực chưa hiện thực.
+    # Một danh sách chỉ ghi cái CÓ sẽ trông như đã đủ.
+    from eide.mcp.server import bo_qua, dung_tool
+
+    bo = bo_qua()
+    print(f"MCP: {len(dung_tool())} tool phơi ra (trần 20)"
+          + (f"; {len(bo)} bỏ vì năng lực chưa hiện thực: {', '.join(bo)}" if bo else ""))
     if missing:
         print(f"Thiếu {missing} công cụ bắt buộc — xem docs/PLATFORM.md và scripts/setup-mac.sh")
         return 1
@@ -194,6 +201,18 @@ def cmd_daemon(a) -> int:
     return 0
 
 
+def cmd_mcp(a) -> int:
+    """`eide mcp` — MCP server qua stdio (API-15 §3), cho Claude Code / Cursor / VS Code.
+
+    Khác `eide daemon`: daemon nói JSON-RPC có khung `Content-Length` như LSP (API-15 §2, dành
+    cho plugin GEditor), còn MCP nói JSON-RPC mỗi tin nhắn một dòng. Hai giao thức, hai lệnh.
+    """
+    from eide.mcp.server import serve_stdio as mcp_stdio
+
+    mcp_stdio(sys.stdin, sys.stdout, a.project)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(prog="eide", description="EIDE — Embedded IDE có tác tử (bộ hồ sơ v1.2)")
     ap.add_argument("-V", "--version", action="version", version=f"eide {__version__}")
@@ -255,6 +274,10 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("spec", help="trạng thái hiện thực so với spec")
     p.add_argument("--ns")
     p.set_defaults(fn=cmd_spec)
+
+    p = sub.add_parser("mcp", help="MCP server qua stdio (Claude Code, Cursor, VS Code)")
+    p.add_argument("-p", "--project", type=Path)
+    p.set_defaults(fn=cmd_mcp)
 
     p = sub.add_parser("daemon", help="JSON-RPC qua stdio")
     p.add_argument("-p", "--project", type=Path)
