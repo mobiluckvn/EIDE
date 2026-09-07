@@ -40,7 +40,26 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | KG-* | `kg.build`, `kg.query`, `kg.review_facts` | 12.2 | **Gỡ nốt DEV-008** (bước 3 của `project.open`) |
 | REQ-01…08 | `elicit`, `classify`, `ground_hw`, `detect_conflict`, `prioritize`, `trace_matrix`, `acceptance`, `change_impact` | 12.1 | **Xong** — 34 test, cả 8 (5 ở mốc M1 + 3 M2 làm luôn vì chung bảng `requirement`). TC-67/TC-68 xanh. Đã kiểm cả arm64 lẫn x86_64 |
 | ARCH-01…11 | `style_select`, `decompose`, `map_hw`, `memory_budget`, `timing_budget`, `interface_spec`, `state_machine`, `adr`, `review`, `compare`, `to_plan` | 12.1 | **Xong** — 60 test; TC-69/TC-70 xanh. Kèm migration `0004_m2_engineering_hw` (module, hw_map, adr, doc_artifact, discovery, measurement, `code_unit.module_id`) |
-| SEARCH/ARCHIVE/EXTRACT | `search.fetch`, `archive.explore`, `extract.pdf` | 12.2 | Cổng G-SRC và G-FACT đã có quy tắc nhưng chưa có năng lực nào đi qua |
+| ARCHIVE-05…07, EXTRACT-01/02, PASSPORT-01/02/03/07 | `ingest.classify/hash_dedupe/index_text`, `extract.svd/atdf`, `passport.import/query/list/export` | 12.2 | **Xong** — 47 test. Khép chuỗi thu nhận: tệp SVD/ATDF → `source` → `fact` → hộ chiếu → `passport.query`. **M0 từ 9/22 lên 17/22** |
+| SEARCH / phần còn lại của ARCHIVE/EXTRACT | `search.fetch`, `archive.list/unpack`, `extract.pdf_layout` | 12.2 | Cổng G-SRC vẫn chưa có năng lực nào đi qua (G-FACT thì đã có, qua `passport.import`) |
+
+Chuỗi thu nhận là vòng khép kín cuối cùng còn thiếu: trước nó, `req.ground_hw` và `arch.*` đọc
+bảng `fact` mà không có đường nào đưa fact vào ngoài chèn tay — tức mọi kết luận "khả thi" đều
+dựa trên dữ liệu do người gõ. Ba điểm:
+
+- **Chữ ký nội dung đi trước phần mở rộng** (INGEST-01 bước 1, nguyên văn). Phần mở rộng là thứ
+  người dùng gõ, không phải thứ tệp thật sự là. Một tệp tên `.atdf` mà ruột là trang lỗi 404, nếu
+  tin cái tên, sẽ được gán `tier: gold` — và fact tầng vàng đi thẳng qua G-FACT không hỏi ai.
+- **`passport.import` là cổng ghi duy nhất** vào bảng `fact` (SDD-04 §4.1). Ba dòng của bảng gộp
+  KAD-07 §5.1 nằm ở đúng một chỗ, trong đó dòng khó nhất là dòng 3: fact mới **cùng tier**, giá
+  trị khác thì thành `conflict`, KHÔNG ghi đè. Hai nguồn cùng tầng nói khác nhau về cùng một
+  thanh ghi là thông tin — im lặng chọn cái mới thì quăng mất bằng chứng có gì đó không khớp.
+- **Parser gold phải cẩn thận hơn parser bạc**, không phải ít hơn: fact vàng không bị chặn ở
+  đâu cả. Nên `extract.svd`/`extract.atdf` thà bỏ sót còn hơn đoán — `_so()` trả `None` chứ
+  không trả `0`, vì `0x00000000` là địa chỉ hợp lệ.
+
+`extract.atdf` cũng là năng lực đầu tiên trong kho chạm tới AVR, khép một phần nợ nêu ở
+[DEV-055](DEVIATIONS.md) (phần còn lại — schema manifest ISA và TC-48 — vẫn ở M5).
 
 `arch.*` — ba chỗ phần deterministic quyết định hành vi:
 
