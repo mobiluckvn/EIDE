@@ -4,7 +4,12 @@ const m = meta('EIDE-KAD-07', 'Kiến trúc và tổ chức tri thức', 'KIẾN
   'Phân loại tri thức của EIDE (Embedded IDE): loại nào cố định, loại nào được làm giàu, các con đường làm giàu, và cách tổ chức lưu trữ, phiên bản, xung đột, chia sẻ',
   [['Tài liệu trước', 'EIDE-PDA-00 (P1–P7), EIDE-SAD-03 (§5 dữ liệu), EIDE-SDD-04 (§3 schema)'], ['Dùng khi', 'Thiết kế extractor, composer, registry; viết chính sách tri thức; viết Chương lý thuyết về quản trị tri thức phần cứng']],
   [['1.0', '05/09/2026', 'Vũ Trí Công', 'Phát hành lần đầu (HKW-KAD-07): 9 loại tri thức trên 3 trục; quy tắc cố định/làm giàu; 10 con đường làm giàu; tổ chức 5 lớp lưu trữ; chính sách phiên bản, xung đột, ngữ cảnh, chia sẻ; ánh xạ hiện trạng M0']],
-  'Thêm K5′ mẫu dự án tham chiếu và K10 tri thức kỹ nghệ (yêu cầu, kiến trúc, ADR, lược đồ, tài liệu); con đường E11 (tác tử sinh tri thức kỹ nghệ) và E12 (dò board); cổng ở E1–E10 ghi mức tự động theo APD-08; §6.9 hiển thị và truy hồi (view.*, chỉ mục RAG); ánh xạ loại tri thức ↔ nhóm năng lực');
+  'Thêm K5′ mẫu dự án tham chiếu và K10 tri thức kỹ nghệ (yêu cầu, kiến trúc, ADR, lược đồ, tài liệu); con đường E11 (tác tử sinh tri thức kỹ nghệ) và E12 (dò board); cổng ở E1–E10 ghi mức tự động theo APD-08; §6.9 hiển thị và truy hồi (view.*, chỉ mục RAG); ánh xạ loại tri thức ↔ nhóm năng lực',
+  [['1.3', '07/09/2026', 'Vũ Trí Công',
+    '§6.3: thêm cạnh `ABOUT` (Fact → subject IRI mà nó nói về). Chín cạnh trước đó nối Fact với '
+    + 'Source, CodeUnit và Fact khác, nhưng không cạnh nào nối Fact với chính subject của nó — nên '
+    + 'câu hỏi "biết gì về periph:I2C1" không trả lời được bằng duyệt đồ thị, tức kg.neighborhood '
+    + 'mất đúng việc của nó (DEV-038).']]);
 const c = [];
 
 c.push(H1('1. Mục đích và câu hỏi cần trả lời'));
@@ -142,6 +147,7 @@ c.push(H2('6.3. Đồ thị tri thức: quan hệ giữa các loại'));
 c.push(T([2400, 6900], ['Cạnh', 'Nối loại nào với loại nào'], [
   ['HAS', 'K2: chip → periph → reg → field; K3: board → net → pin'],
   ['CONNECTS', 'K3 ↔ K2/K4: net nối pin chip với pin linh kiện ngoài'],
+  ['ABOUT', 'Fact → subject IRI mà nó nói về (K2/K3/K4). Không có cạnh này thì fact chỉ nối tới Source và CodeUnit, và câu hỏi "biết gì về chip:…/periph:I2C1" không trả lời được bằng duyệt đồ thị — tức kg.neighborhood mất đúng việc của nó'],
   ['CITES', 'Fact → Source (mọi loại); CodeUnit (K6) → Fact (K2/K3/K4)'],
   ['USES', 'CodeUnit (K6) → periph/pin (K2/K3): cơ sở cho xung đột tài nguyên'],
   ['SUPERSEDES', 'Fact overlay (K2′) → Fact lõi (K2); fact mới → cũ trong cùng lớp'],

@@ -26,7 +26,12 @@ const m = metaNew('EIDE-API-15', 'Đặc tả giao diện lập trình', 'ĐẶC
     '§3: thêm mã lỗi `E1004 OUTPUT_SCHEMA` cho trường hợp kết quả một năng lực không khớp '
     + '`output_schema`. E1000 là tham số vào sai, E5002 là đầu ra mô hình sai — không mã nào '
     + 'dành cho lỗi hiện thực này, nên nó phải mượn E6001 vốn dành cho ghi sai schema dữ liệu '
-    + 'DDD-14, làm hai loại lỗi rất khác nhau lẫn vào một mã (DEV-002).']]);
+    + 'DDD-14, làm hai loại lỗi rất khác nhau lẫn vào một mã (DEV-002).'],
+   ['1.6', '07/09/2026', 'Vũ Trí Công',
+    '§3: danh sách tool nhanh nay IN RA từ chính literal sinh `api/mcp_tools.json`. Trước đó văn '
+    + 'xuôi liệt kê 16 tên không khớp năng lực nào trong khi literal có 12 id thật — hai danh sách '
+    + 'trong cùng một tài liệu, và literal mới là thứ sinh ra tệp (DEV-045).']]);
+const quick = ['passport.query', 'kg.conflicts', 'kg.impact', 'kg.request', 'code.review', 'env.build', 'target.flash', 'target.serial', 'target.probe_read', 'report.export', 'view.rag_ask', 'discover.ports'];
 const c = [];
 c.push(H1('1. Nguyên tắc'));
 c.push(P('Bốn bề mặt gọi (plugin GEditor qua JSON-RPC 2.0 [50] trên Unix socket, IDE ngoài qua MCP [13], REST nội bộ cho CI/kiểm thử, CLI) đều đi tới cùng `CapabilityRouter.invoke` (SDD-04 §4.0). Vì vậy: (1) mọi năng lực tự động là một phương thức `caps.invoke` với `input_schema`/`output_schema` từ khai báo — không viết tay; (2) chỉ có một tập phương thức "khung" (phiên, hàng đợi, chat, sự kiện, job) viết tay và liệt kê dưới đây; (3) mọi lỗi dùng chung bảng mã §6; (4) mọi lời gọi có `request_id` xuất hiện trong ledger để truy vết đầu-cuối; (5) phiên bản API semver trong handshake, thay đổi phá vỡ chỉ ở phiên bản lớn.'));
@@ -72,7 +77,7 @@ const EV = [
 c.push(T([3000, 3800, 2500], ['Sự kiện', 'Payload', 'Dùng cho'], EV, { size: 19 }));
 c.push(SP());
 c.push(H1('3. MCP server (cho Claude Code, Cursor, VS Code)'));
-c.push(P('Tool MCP được sinh từ registry lúc khởi động: ba tool chung `caps_list`, `caps_describe`, `caps_invoke` + `chat_command` + tối đa 16 tool "nhanh" (một tool = một năng lực hay dùng, schema chính là input_schema của năng lực) để tổng ≤ 20 tool/phiên (ACI). Danh sách nhanh mặc định: passport_query, kg_conflicts, kg_impact, acquire_request, review_patch, build, size, static, test, flash, serial_expect, probe_read_memory, feature_status, export_report, view_rag_ask, discover_scan. Tool R3/R4 trả `{status:"pending", gate_id}` khi ASK. Tên tool dùng dấu gạch dưới (MCP không cho dấu chấm). Tệp `api/mcp_tools.json` là đầu ra sinh tự động; kiểm bằng SchemaCompiler mẫu số chung trước khi phơi.'));
+c.push(P('Tool MCP được sinh từ registry lúc khởi động: ba tool chung `caps_list`, `caps_describe`, `caps_invoke` + `chat_command` + tối đa 16 tool "nhanh" (một tool = một năng lực hay dùng, schema chính là input_schema của năng lực) để tổng ≤ 20 tool/phiên (ACI). Danh sách nhanh mặc định in ra từ chính literal sinh `api/mcp_tools.json` (xem cuối tài liệu), nên hai chỗ không thể trôi khỏi nhau: ' + quick.map(x => x.replace('.', '_')).join(', ') + '. Tool R3/R4 trả `{status:"pending", gate_id}` khi ASK. Tên tool dùng dấu gạch dưới (MCP không cho dấu chấm). Tệp `api/mcp_tools.json` là đầu ra sinh tự động; kiểm bằng SchemaCompiler mẫu số chung trước khi phơi.'));
 c.push(...CODE([
   '{ "name": "caps_invoke", "description": "Gọi một năng lực EIDE theo id (xem caps_list). Đi qua chính sách tự chủ; có thể trả pending khi cần người.",',
   '  "inputSchema": {"type":"object","required":["id","args"],"properties":{"id":{"type":"string"},"args":{"type":"object"},"run_id":{"type":"string"}}} }',
@@ -180,7 +185,6 @@ c.push(P('`eide api gen` đọc registry và sinh: `api/openrpc.json` (phương 
 // openrpc skeleton
 const openrpc = { openrpc: '1.3.2', info: { title: 'EIDE JSON-RPC', version: '1.0.0' }, methods: RPC.flatMap(r => r[0].split(' / ').map(n => ({ name: n.trim(), summary: r[3], params: [{ name: 'params', schema: { type: 'object', description: r[1] } }], result: { name: 'result', schema: { type: 'object', description: r[2] } } }))).concat(EV.map(e => ({ name: e[0], summary: e[2], params: [{ name: 'params', schema: { type: 'object', description: e[1] } }], result: { name: 'result', schema: { type: 'null' } } }))) };
 fs.writeFileSync('api/openrpc.json', JSON.stringify(openrpc, null, 1));
-const quick = ['passport.query', 'kg.conflicts', 'kg.impact', 'kg.request', 'code.review', 'env.build', 'target.flash', 'target.serial', 'target.probe_read', 'report.export', 'view.rag_ask', 'discover.ports'];
 const tools = [{ name: 'caps_list' }, { name: 'caps_describe' }, { name: 'caps_invoke' }, { name: 'chat_command' }].concat(CAPS.filter(x => quick.includes(x.name)).map(x => ({ name: x.name.replace('.', '_'), description: x.desc, capability: x.name, risk: x.risk })));
 fs.writeFileSync('api/mcp_tools.json', JSON.stringify(tools, null, 1));
 c.push(...refParas(H1));

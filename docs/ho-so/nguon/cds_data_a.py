@@ -85,7 +85,7 @@ d("passport.export", {"id": "str!", "format": "enum:yaml|json"}, {"file": "str!"
 d("passport.resolve_address", {"address": "str!", "part": "str"}, {"subject": "str", "facts": "arr<obj>!"}, ["Tra base_address/offset trong hộ chiếu ghim; trả periph/reg gần nhất"], [], "none", '{"address":"0x40005400"}', "TC-40")
 
 # ---------- kg ----------
-d("kg.build", {"part": "str", "force": "bool"}, {"nodes": "int!", "edges": "int!", "cached": "bool!"}, ["Cache hash store; NetworkX từ store (M0)"], [], "none", '{}', "Đổi store → rebuild")
+d("kg.build", {"part": "str", "force": "bool"}, {"nodes": "int!", "edges": "int!", "cached": "bool!"}, ["Dựng đồ thị từ store; cache theo băm NỘI DUNG store (không băm byte tệp: WAL/VACUUM đổi tệp mà không đổi dữ liệu). Chọn thư viện là việc của thiết kế chi tiết, không phải của hợp đồng năng lực"], [], "none", '{}', "Đổi store → rebuild")
 d("kg.conflicts", {"project": "str"}, {"conflicts": "arr<obj>! # type fact|resource, nodes[], detail", "resource_ready": "bool! # đã kiểm được xung đột TÀI NGUYÊN chưa (cần hw_map, mốc M2). false nghĩa là chưa kiểm, KHÁC với đã kiểm và sạch"}, ["Fact CONFLICTS_WITH + tài nguyên bị >1 module dùng (hw_map)"], [], "none", '{}', "TC-13, TC-21")
 d("kg.impact", {"fact_id": "str!"}, {"stale_code_units": "arr<str>!", "features": "arr<str>!", "docs": "arr<str>!", "diagrams": "arr<str>!"}, ["CITES ngược từ fact → code_unit → feature; requirement.trace; doc_artifact.citations; diagram.source_ref"], ["E2000"], "none", '{"fact_id":"f_1a2b"}', "TC-17")
 d("kg.neighborhood", {"node": "str!", "depth": "int"}, {"subgraph": "obj!"}, ["BFS ≤ 2 bước theo loại cạnh; giới hạn 500 nút"], [], "none", '{"node":"chip:st.stm32f411ce/periph:I2C1","depth":2}', "Có PB6/PB7 và BME280")

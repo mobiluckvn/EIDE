@@ -16,7 +16,12 @@ const m = metaNew('EIDE-DDD-14', 'Từ điển dữ liệu', 'TỪ ĐIỂN DỮ 
    ['1.2', '07/09/2026', 'Vũ Trí Công',
     '§5: thêm dòng `0003b_m1_session` cho `session.sqlite`. §2 khai Phiên làm việc ở tệp ấy và '
     + 'MEM-11 §2 xếp M2 vào đó, nhưng bảng lịch §5 chỉ có dòng cho `index.sqlite` — nên đọc riêng '
-    + '§5 sẽ tưởng bảng `session` bị bỏ sót khỏi store chính (DEV-006).']]);
+    + '§5 sẽ tưởng bảng `session` bị bỏ sót khỏi store chính (DEV-006).'],
+   ['1.3', '07/09/2026', 'Vũ Trí Công',
+    '§5: chia rõ bảng TRI THỨC (được niêm phong) và bảng VẬN HÀNH (decision_log, capability_run, '
+    + 'run, intent, error_ledger — không niêm, đối chiếu bằng nhật ký). Năm bảng ấy đổi ở mỗi lời '
+    + 'gọi năng lực nên đưa vào niêm thì phải niêm lại liên tục, và một niêm phong viết lại liên '
+    + 'tục thì không còn là niêm phong (DEV-047).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc và quy ước'));
 c.push(P('Tài liệu này được sinh từ một mô hình duy nhất (`ddd_model.py`); mọi thay đổi schema phải sửa mô hình rồi sinh lại JSON Schema, DDL và tài liệu — không sửa tay ba nơi. Quy ước: (1) mọi id có tiền tố loại + 16 hex (f_, src_, cr_, d_, r_, it_, dg_, doc_, dv_, e_, m_, tr_, ds_, cu_, acq_), trừ id có nghĩa (F-nn, ADR-nn, UR-/FR-, passport ns.part@semver, module mod_<slug>); (2) IRI subject theo KAD-07 §6.1: `chip:<vendor>.<part>[/periph:X[/reg:Y[/field:Z]]]`, `board:<id>[/net:N|/pin:P]`, `part:<vendor>.<mpn>`, `isa:<id>`; (3) cột JSON lưu TEXT (UTF-8) và được kiểm bằng JSON Schema tương ứng trước khi ghi; (4) thời gian ISO-8601 UTC; (5) mọi bảng có cột `at` hoặc `created_at` để dòng thời gian (view.timeline); (6) SQLite WAL, foreign_keys=ON, user_version tăng theo migration; (7) ba tệp cơ sở dữ liệu: `store.sqlite` (commit Git), `session.sqlite` (không commit), `index/index.sqlite` (không commit, tái dựng được).'));
@@ -42,6 +47,8 @@ c.push(SP());
 c.push(P('Quy trình: `eide migrate` đọc `PRAGMA user_version`, chạy tuần tự các migration còn thiếu trong một giao dịch, ghi ledger `store.migrate`; sao lưu `store.sqlite.bak-<version>` trước khi chạy; migration chỉ thêm bảng/cột (không xóa) cho tới v1.0; đổi tên `.hkw` → `.eide` làm ở tầng đường dẫn, giữ symlink một mốc.'));
 c.push(SP());
 c.push(P('**Niêm phong toàn vẹn `store.sqlite.seal.json`.** CDS-12.3 PROJECT-02 bước 2 đòi "kiểm hash store vs ledger.last_hash → lệch: E6000" nhưng không nói hash ấy tính thế nào hay lưu ở đâu. Niêm phong là một tệp cạnh store, ghi `{content_hash, ledger_last_hash, user_version, at}`, cập nhật sau mỗi lần ghi đi qua cổng (hiện tại: `migrate`). `content_hash` băm **nội dung logic** — các bảng theo tên, các dòng đã sắp — chứ không băm byte của tệp: SQLite ở chế độ WAL đổi byte tệp sau mỗi lần mở, và `VACUUM` viết lại toàn bộ mà không đổi một dữ liệu nào, nên băm byte sẽ báo E6000 mỗi lần mở dự án và người dùng sẽ học cách bỏ qua nó. Sự kiện ledger `store.write` (API-15 §7) mang thêm trường `hash` để nối bản ghi với niêm phong. Xem DEVIATIONS DEV-007.'));
+c.push(SP());
+c.push(P('**Bảng TRI THỨC và bảng VẬN HÀNH — niêm phong chỉ phủ loại thứ nhất.** `content_hash` của niêm phong băm các bảng tri thức (fact, source, passport, code_unit, feature, requirement, diagram, preference, permission, acq_request, capability) và **bỏ qua** năm bảng ghi chép vận hành: `decision_log`, `capability_run`, `run`, `intent`, `error_ledger`. Lý do: năm bảng ấy đổi ở MỖI lời gọi năng lực, theo đúng thiết kế, nên đưa chúng vào niêm thì phải niêm lại sau từng lời gọi — và một niêm phong phải viết lại liên tục thì không còn là niêm phong; mở dự án sau bất kỳ hoạt động nào cũng sẽ báo E6000 cho một kho hoàn toàn lành. Bỏ ra không mất bảo vệ: mọi quyết định cũng vào nhật ký `gate.decision`, mà nhật ký là chuỗi băm nối tiếp — mạnh hơn một niêm phong đơn, nên ai sửa `decision_log` để giấu một quyết định vẫn lộ khi đối chiếu bảng với nhật ký. Một hệ quả có ích: xóa `decision_log` để dọn dẹp không làm hỏng niêm, tức người dùng dọn được lịch sử vận hành mà không mất khả năng kiểm tra tri thức. Xem DEVIATIONS DEV-047.'));
 c.push(SP());
 c.push(H1('6. Schema các tệp YAML'));
 c.push(T([2200, 2400, 3900, 800], ['Tệp', 'Vai trò', 'Khóa chính', 'Từ'], D.yaml));

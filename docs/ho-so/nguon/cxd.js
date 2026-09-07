@@ -4,7 +4,13 @@ const { metaNew, refParas } = require('./eide_common');
 const m = metaNew('EIDE-CXD-10', 'Kiến trúc ngữ cảnh', 'KIẾN TRÚC NGỮ CẢNH CHO TÁC TỬ (CXD)',
   'Cách EIDE dựng ngữ cảnh cho từng lượt gọi mô hình ngôn ngữ: lớp ngữ cảnh theo vai trò, thuật toán chọn và nén, ngân sách token, định dạng khối, bộ đệm prompt, xử lý tràn, đo lường',
   [['Tài liệu trước', 'EIDE-KAD-07 §6.6 (lớp composer), EIDE-DPS-09, EIDE-SDD-04 §4.3–4.4'], ['Tài liệu liên quan', 'EIDE-MEM-11 (bộ nhớ), EIDE-PRS-16 (prompt), EIDE-CDS-12 tập 6 (memory.compose/compress)'], ['Dùng khi', 'Hiện thực eide/agents/composer.py và memory.compose; viết prompt vai trò; đo chi phí token; viết Chương lý thuyết về context engineering']],
-  'Phát hành lần đầu — tách từ KAD-07 §6.6 thành tài liệu mức 3');
+  'Phát hành lần đầu — tách từ KAD-07 §6.6 thành tài liệu mức 3',
+  [['1.1', '07/09/2026', 'Vũ Trí Công',
+    '§4.5: bảng trọng số vị từ PRED_W chuyển vào khối máy đọc được cạnh EDGE_W và sinh ra '
+    + '`context/budgets.json` — trước đó hai nửa của cùng một công thức xếp hạng ở hai dạng khác '
+    + 'nhau, một nửa có cổng chống trôi, một nửa chép tay (DEV-043). Nói rõ hai đường vào RAG: '
+    + 'theo IRI (deterministic, M1) và theo câu hỏi ngôn ngữ tự nhiên (embedding, M2) — cột '
+    + '`embedding` để trống ở M1 nên không phải di trú khi tới M2 (DEV-042).']]);
 const c = [];
 c.push(H1('1. Mục đích, phạm vi và nguyên tắc'));
 c.push(P('Mô hình ngôn ngữ chỉ "biết" những gì nằm trong cửa sổ ngữ cảnh của lượt gọi. Với EIDE, ngữ cảnh là nơi tri thức có nguồn (hộ chiếu, mạch, ràng buộc, bằng chứng) gặp tham số của mô hình (K9); chất lượng của mọi đầu ra sinh — kế hoạch, mã, chẩn đoán, yêu cầu, kiến trúc, tài liệu — phụ thuộc trực tiếp vào việc chọn đúng thứ, đủ ít, đúng thứ tự. Tài liệu này đặc tả *kỹ thuật ngữ cảnh* (context engineering [40]) của EIDE ở mức lập trình được: cấu trúc gói ngữ cảnh (ContextBundle), thuật toán dựng cho từng vai trò, ngân sách, nén, định dạng, bộ đệm, xử lý tràn và đo lường. Phạm vi: mọi lượt gọi qua LLM Gateway (core.gateway) từ 9 vai trò của PRS-16 [63]; không bao gồm ngữ cảnh của mô hình embedding (view.rag_index) và ngữ cảnh hiển thị cho người (UXD-13).'));
@@ -149,6 +155,8 @@ c.push(...CODE([
 ]));
 c.push(SP());
 c.push(P('Trọng số vị từ PRED_W: base_address, offset, bit_range, reset_value, address, net = 1,0; enum, pin_function, irq = 0,9; voltage_range, timing = 0,8; description = 0,3 (chỉ khi còn ngân sách). Fact được trình bày dạng bảng: `| id | subject | predicate | value | unit | tier | src |` — mỗi dòng ≈ 25 token; C4 = 2.500 token ≈ 100 fact. Fact mâu thuẫn luôn có mặt kèm nhãn CONFLICT để mô hình không tự chọn (phải nói "không xác định").'));
+c.push(P('**Hai đường vào RAG, và chúng khác nhau về bản chất chứ không chỉ về kỹ thuật.** Đường thứ nhất nhận một **IRI** (`chip:st.stm32f411ce/periph:I2C1`) và trả lời bằng khớp chính xác `graph_nodes` cộng tìm toàn văn — deterministic, rẻ, và là đường mà `memory.retrieve` dùng (mốc M1). Đường thứ hai nhận một **câu hỏi ngôn ngữ tự nhiên** và cần nhúng vector để so ngữ nghĩa — đó là `view.rag_ask` ở mốc M2. Cột `embedding` của `RagChunk` (DDD-14 §2) dành cho đường thứ hai và để trống ở M1: nhúng mỗi đoạn chỉ để so cosine với một chuỗi định danh là tốn tiền mà không thêm thông tin. Cùng một bảng phục vụ cả hai nên không phải di trú khi tới M2. Xem DEVIATIONS DEV-042.'));
+c.push(SP());
 c.push(H2('4.6. Chọn tác vụ và mã (C5)'));
 c.push(P('Thứ tự: (1) STEP.md/Feature hiện tại (nguyên văn, ≤ 600); (2) Requirement liên quan (id + text, ≤ 300); (3) chữ ký hàm và cấu trúc của module đích (từ code_unit, ≤ 400); (4) đoạn mã trong CITES/USES giao với subject của tác vụ — chỉ đoạn (hàm) chứa tham chiếu, không toàn tệp (≤ 1.000); (5) tệp giao diện chung (HAL header) chỉ khi module gọi tới. Đoạn mã kèm đường dẫn:dòng để reviewer đối chiếu.'));
 c.push(H2('4.7. Phản hồi công cụ (C6)'));

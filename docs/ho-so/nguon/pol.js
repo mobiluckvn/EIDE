@@ -18,18 +18,25 @@ const m = metaNew('EIDE-POL-17', 'Quy tắc chính sách tự chủ', 'QUY TẮC
     + 'tên lab_boards → boards cho khớp schema §4, vốn khai additionalProperties: false nên từ '
     + 'chối chính cái tên §3 bảo dùng (DEV-030); bổ sung ba điểm về giới hạn của niêm. §5: phạm vi '
     + 'cửa sổ hoàn tác trên hai nhật ký và yêu cầu ReviewQueue gộp cả hai (DEV-014); giá trị mặc '
-    + 'định của defaults.yaml (DEV-001). §8: thêm S46–S48 phủ cổng G-WL.']]);
+    + 'định của defaults.yaml (DEV-001). §8: thêm S46–S48 phủ cổng G-WL.'],
+   ['1.3', '07/09/2026', 'Vũ Trí Công',
+    '§1: ghi rõ HAI ngoại lệ của nhánh R0 ở tầng T2 — quy tắc trong dải chặn (ưu tiên ≤ 5) vẫn '
+    + 'thắng kể cả khi chỉ ASK, và quy tắc APPROVE khớp thì mượn mã cùng lý do. Không ghi ra thì '
+    + 'lần hiện thực sau đọc "bỏ qua tầng sau" theo nghĩa đen và mở lại đúng hai lỗ hổng ấy '
+    + '(DEV-040).']]);
 const c = [];
 c.push(H1('1. Mô hình quyết định'));
 c.push(P('PolicyGate là một hàm thuần: `decide(action, ctx) → Decision`. Đầu vào là **Action** (năng lực, tham số, cổng gắn nếu có, lớp rủi ro từ registry) và **Context** (mức tự chủ hiệu lực, board, đặc trưng tình huống). Quyết định tính theo bốn tầng, dừng ở tầng đầu tiên cho kết quả REJECT hoặc ASK; APPROVE chỉ khi qua cả bốn tầng. Mọi quyết định ghi DecisionLog với lý do là mã quy tắc (ví dụ `G-SRC-03`), không phải văn xuôi, để thống kê và học ngưỡng.'));
 c.push(T([600, 2800, 5900], ['Tầng', 'Kiểm', 'Kết quả'], [
   ['T1', 'Dừng khẩn và ngân sách', 'session.stopped → REJECT(STOP); budget_left_pct < 5 → ASK(BUDGET)'],
-  ['T2', 'Lớp rủi ro và danh sách trắng', 'R4 và không trong whitelist đã ký → ASK(R4); R3 và board không lab → ASK(R3-NOLAB); R0 → APPROVE(R0) (bỏ qua tầng sau)'],
+  ['T2', 'Lớp rủi ro và danh sách trắng', 'R4 và không trong whitelist đã ký → ASK(R4); R3 và board không lab → ASK(R3-NOLAB); R0 → APPROVE(R0), bỏ qua tầng sau TRỪ hai ngoại lệ ở đoạn dưới'],
   ['T3', 'Mức tự chủ hiệu lực', 'effective_level = min(project.autonomy, board.autonomy?, action_type.autonomy?); nếu effective_level < MIN_LEVEL[risk] → ASK(LEVEL)'],
   ['T4', 'Quy tắc của cổng và của năng lực', 'Bảng §2 theo gate (G-SRC, G-FACT, G1, G3, G-OPS, G4, G5, G-TOOL cho công cụ tác tử tự viết) + điều kiện ask_when của năng lực; quy tắc đầu tiên khớp thắng; không khớp quy tắc nào → mặc định của cổng'],
 ]));
 c.push(SP());
 c.push(P('**Tầng T2 tra bảng quy tắc trước khi trả lời.** Ngưỡng cứng của T2 ép ASK, nhưng nếu nó trả về ngay một mã chung như `HARD-R4` thì hai quy tắc `G-OPS-02` ("Không hoàn tác") và `G5-02` ("Công khai") không bao giờ thắng — chúng nói về chính những hành động R4 mà T2 vừa chặn, nên chúng thành quy tắc chết và `decision_log` chỉ còn ghi lớp rủi ro chứ không ghi **điều gì sắp xảy ra**. Người duyệt đọc nhật ký để quyết định, nên đó là mất mát thật. Vì vậy T2 tra bảng §2 để **mượn** mã quy tắc và lý do, nhưng chỉ mượn từ dải chặn — quy tắc có ưu tiên ≤ 5. Quy tắc ưu tiên lớn hơn là lời khuyên chung; dùng nó làm lý do cho một hành động R4 là nói nhỏ đi mức nghiêm trọng (ví dụ giải thích một lệnh xóa flash bằng "Board chưa đánh dấu lab"). Và T2 chỉ **siết**, không nới: một quy tắc APPROVE gặp ngưỡng cứng vẫn ra ASK. Xem DEVIATIONS DEV-012.'));
+c.push(SP());
+c.push(P('**Hai ngoại lệ của nhánh R0 ở tầng T2.** "Bỏ qua tầng sau" đúng với đa số, nhưng không đúng tuyệt đối, và cả hai chỗ trừ ra đều có lý do cụ thể. (a) Quy tắc trong **dải chặn** (ưu tiên ≤ 5) vẫn thắng, kể cả khi nó chỉ ASK: `TOOL-03` chặn công cụ tác tử tự viết chưa qua kiểm thử — mà lớp rủi ro của công cụ ấy được SUY TỪ HIỆU ỨNG NÓ TỰ KHAI, và `effects_ok` tồn tại đúng vì lời khai có thể sai, nên cho R0 vượt qua là tin lời khai của chính thứ đang bị nghi; `G-SRC-07` hỏi khi một dự án nhạy cảm dùng nguồn đòi gửi dữ liệu ra ngoài, mà vài năng lực `search.*` mang nhãn R0 vì chúng "chỉ đọc" — đọc từ một dịch vụ bên ngoài. (b) Quy tắc APPROVE khớp thì tầng T2 **mượn mã và lý do** của nó thay vì trả về mã chung `R0`: không mượn thì `TOOL-01` thành quy tắc chết và `decision_log` mất câu giải thích, đúng khuôn hỏng mà đoạn trên vừa mô tả cho `G-OPS-02`. Xem DEVIATIONS DEV-040.'));
 c.push(SP());
 c.push(P('**Đặc trưng chưa được cung cấp luôn được coi là SAI**, dù nó viết dưới dạng thuộc tính (`board.has_actuator`) hay tên trần (`needs_sudo`). Một hiện thực để tên trần vắng mặt mang tính đúng sẽ làm mọi quy tắc chứa `or <tên đó>` khớp vô điều kiện: đo được trên `G-OPS-05` (ưu tiên 5, ASK), nó che hẳn `G-OPS-04` (ưu tiên 10, APPROVE) và không gói nào trong `trusted_packages` được duyệt tự động — cả danh sách gói tin cậy trở nên vô nghĩa mà bốn mươi lăm tình huống §8 vẫn xanh, vì không tình huống nào bỏ trống đặc trưng ấy. Xem DEVIATIONS DEV-033.'));
 c.push(SP());

@@ -289,3 +289,23 @@ def test_duyet_xong_thi_nang_luc_CHAY_that(du_an):
     with store.open_store(store.store_path(root)) as c:
         st = dict(c.execute("SELECT id, status FROM fact WHERE id IN ('f_a','f_b')").fetchall())
     assert st == {"f_a": "verified", "f_b": "superseded"}
+
+
+def test_daemon_thay_VA_duyet_duoc_muc_cua_phien_truoc(du_an):
+    """Thấy được mà không duyệt được là trạng thái TỆ HƠN không thấy.
+
+    `queue.list` đọc từ store nên daemon mới thấy mục cũ; nhưng nếu `gate.decide` không truyền
+    ngữ cảnh dự án thì Router không biết đọc store nào và trả E2000 cho một mục đang hiện ngay
+    trước mắt người dùng. Hai đầu phải khớp nhau.
+    """
+    from eide.daemon.rpc import Daemon
+
+    r, ctx, root = du_an
+    cho = _mot_muc_cho(r, ctx)
+
+    d = Daemon(root)
+    assert [x["run_id"] for x in d.queue_list({})["items"]] == [cho.run_id]
+    ra = d.gate_decide({"gate_id": cho.run_id, "decision": "approve"})
+    assert ra["status"] != "pending", "duyệt qua daemon mà vẫn chờ"
+    assert d.queue_list({})["items"] == []
+    assert _cot(root, cho.run_id, "human_answer") == "APPROVE"

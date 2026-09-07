@@ -162,20 +162,33 @@ public final class ChatView: NSView {
     }
 }
 
-/// Hàng đợi — UXD-13 U2: HAI danh sách, "chờ tôi" và "đã làm — hoàn tác được".
+/// Hàng đợi — UXD-13 U2 và §4 (QueueList).
 ///
-/// Tách hai danh sách là điểm chính của U2, không phải cách trình bày: chúng trả lời hai câu
-/// hỏi khác nhau — *tôi phải làm gì bây giờ* và *máy vừa làm gì mà tôi còn rút lại được*.
-/// Gộp một danh sách thì câu thứ hai biến mất, và "làm rồi báo cáo" mất vế báo cáo.
+/// U2: HAI danh sách, "chờ tôi" và "đã làm — hoàn tác được". Tách hai danh sách là điểm chính,
+/// không phải cách trình bày: chúng trả lời hai câu hỏi khác nhau — *tôi phải làm gì bây giờ* và
+/// *máy vừa làm gì mà tôi còn rút lại được*. Gộp một danh sách thì câu thứ hai biến mất, và
+/// "làm rồi báo cáo" mất vế báo cáo.
+///
+/// §4 đòi mỗi mục có "tag cổng, tóm tắt, rủi ro, lý do quy tắc, hạn hoàn tác" và hành động
+/// "duyệt/từ chối/hoàn tác/hàng loạt". Ba hành động đầu có ở đây; **hàng loạt thì chưa, có chủ
+/// ý**: duyệt hàng loạt một chồng mục ASK lẫn lộn nhiều cổng và nhiều lớp rủi ro chính là cách
+/// biến cổng chính sách thành một con dấu. Nếu làm, nó phải gom theo cùng cổng + cùng quy tắc để
+/// người duyệt MỘT LOẠI quyết định chứ không phải một đống — và đó là một thiết kế cần bàn, không
+/// phải một nút thêm vào cho đủ. Xem DEVIATIONS DEV-050.
 public final class ReviewQueueView: NSView {
 
     public override func accessibilityRole() -> NSAccessibility.Role? { .group }
     public override func accessibilityLabel() -> String? { "Hàng đợi: chờ tôi và đã làm" }
 
+    /// (run_id, "approve" | "reject")
+    public var onQuyetDinh: ((String, String) -> Void)?
+    /// (undo_ref)
+    public var onHoanTac: ((String) -> Void)?
+
     private let choNhan = NSTextField(labelWithString: "Chờ anh")
     private let hoanTacNhan = NSTextField(labelWithString: "Đã làm — hoàn tác được")
-    private let choND = NSTextField(labelWithString: "")
-    private let hoanTacND = NSTextField(labelWithString: "")
+    private let choCot = NSStackView()
+    private let hoanTacCot = NSStackView()
 
     public init() {
         super.init(frame: .zero)
@@ -189,13 +202,13 @@ public final class ReviewQueueView: NSView {
             n.font = NSFont.boldSystemFont(ofSize: 12)
             n.textColor = m
         }
-        for v in [choND, hoanTacND] {
-            v.font = EideToken.fontUI
-            v.textColor = EideToken.Mau.muted
-            v.maximumNumberOfLines = 3
+        for c in [choCot, hoanTacCot] {
+            c.orientation = .vertical
+            c.alignment = .leading
+            c.spacing = EideToken.space[1]
         }
-        let cot1 = NSStackView(views: [choNhan, choND])
-        let cot2 = NSStackView(views: [hoanTacNhan, hoanTacND])
+        let cot1 = NSStackView(views: [choNhan, choCot])
+        let cot2 = NSStackView(views: [hoanTacNhan, hoanTacCot])
         for c in [cot1, cot2] {
             c.orientation = .vertical
             c.alignment = .leading
@@ -220,18 +233,109 @@ public final class ReviewQueueView: NSView {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
+    /// Số nút hành động đang hiện — cho test đếm mà không phải dựng cả cửa sổ.
+    public private(set) var soNut = 0
+
     public func capNhat(cho: [[String: Any]], hoanTac: [[String: Any]]) {
-        // U9: "mọi panel có ba trạng thái thiết kế sẵn" — rỗng phải NÓI RA là rỗng, không để
-        // một khoảng trắng khiến người dùng tưởng đang tải.
         choNhan.stringValue = "Chờ anh (\(cho.count))"
         hoanTacNhan.stringValue = "Đã làm — hoàn tác được (\(hoanTac.count))"
-        choND.stringValue = cho.isEmpty
-            ? "Không có việc nào chờ anh."
-            : cho.prefix(3).map { ($0["cap"] as? String) ?? "?" }.joined(separator: "\n")
-        hoanTacND.stringValue = hoanTac.isEmpty
-            ? "Chưa có việc nào tự làm."
-            : hoanTac.prefix(3).map {
-                "\(($0["cap"] as? String) ?? "?") — đến \(String((($0["deadline"] as? String) ?? "hết phiên").prefix(16)))"
-            }.joined(separator: "\n")
+        for c in [choCot, hoanTacCot] {
+            for v in c.arrangedSubviews { c.removeArrangedSubview(v); v.removeFromSuperview() }
+        }
+        soNut = 0
+
+        // U9: "mọi panel có ba trạng thái thiết kế sẵn" — rỗng phải NÓI RA là rỗng, không để một
+        // khoảng trắng khiến người dùng tưởng đang tải.
+        if cho.isEmpty {
+            choCot.addArrangedSubview(_nhanMo("Không có việc nào chờ anh."))
+        }
+        for m in cho { choCot.addArrangedSubview(_dongCho(m)) }
+
+        if hoanTac.isEmpty {
+            hoanTacCot.addArrangedSubview(_nhanMo("Chưa có việc nào tự làm."))
+        }
+        for m in hoanTac { hoanTacCot.addArrangedSubview(_dongHoanTac(m)) }
+    }
+
+    private func _nhanMo(_ t: String) -> NSTextField {
+        let v = NSTextField(labelWithString: t)
+        v.font = EideToken.fontUI
+        v.textColor = EideToken.Mau.muted
+        return v
+    }
+
+    private func _dongCho(_ m: [String: Any]) -> NSView {
+        let rid = (m["run_id"] as? String) ?? ""
+        let d = (m["decision"] as? [String: Any]) ?? [:]
+        let cap = (m["cap"] as? String) ?? "?"
+        let cong = (d["gate"] as? String) ?? ""
+        let quy = (d["rule"] as? String) ?? ""
+        let ly = (d["reason"] as? String) ?? ""
+
+        let coc = NSStackView()
+        coc.orientation = .vertical
+        coc.alignment = .leading
+        coc.spacing = 2
+        coc.addArrangedSubview(_manh("\(cap)   \(cong.isEmpty ? "" : "[\(cong)]") \(quy)",
+                                     dam: true, mau: EideToken.Mau.text))
+        // §4 đòi "lý do quy tắc" hiện ra: người duyệt cần biết VÌ SAO máy hỏi, không chỉ biết là
+        // nó đang hỏi. Không có câu ấy thì mọi mục trông giống nhau và người bấm theo thói quen.
+        if !ly.isEmpty { coc.addArrangedSubview(_manh(ly, dam: false, mau: EideToken.Mau.muted)) }
+
+        let nut = NSStackView()
+        nut.orientation = .horizontal
+        nut.spacing = EideToken.space[1]
+        for (nhan, quyet) in [("Duyệt", "approve"), ("Từ chối", "reject")] {
+            let b = NSButton(title: nhan, target: self, action: #selector(_bamQuyetDinh(_:)))
+            b.bezelStyle = .rounded
+            b.font = EideToken.fontUI
+            b.identifier = NSUserInterfaceItemIdentifier("\(quyet):\(rid)")
+            b.setAccessibilityLabel("\(nhan) \(cap). Lý do máy hỏi: \(ly)")
+            nut.addArrangedSubview(b)
+            soNut += 1
+        }
+        coc.addArrangedSubview(nut)
+        return coc
+    }
+
+    private func _dongHoanTac(_ m: [String: Any]) -> NSView {
+        let uref = (m["undo_ref"] as? String) ?? ""
+        let cap = (m["cap"] as? String) ?? "?"
+        let loai = (m["kind"] as? String) ?? ""
+        let han = String(((m["deadline"] as? String) ?? "hết phiên").prefix(16))
+
+        let coc = NSStackView()
+        coc.orientation = .vertical
+        coc.alignment = .leading
+        coc.spacing = 2
+        coc.addArrangedSubview(_manh("\(cap)   \(loai)", dam: true, mau: EideToken.Mau.text))
+        coc.addArrangedSubview(_manh("hoàn tác được đến \(han)", dam: false, mau: EideToken.Mau.muted))
+        let b = NSButton(title: "Hoàn tác", target: self, action: #selector(_bamHoanTac(_:)))
+        b.bezelStyle = .rounded
+        b.font = EideToken.fontUI
+        b.identifier = NSUserInterfaceItemIdentifier(uref)
+        b.setAccessibilityLabel("Hoàn tác \(cap), loại \(loai), hạn \(han)")
+        coc.addArrangedSubview(b)
+        soNut += 1
+        return coc
+    }
+
+    private func _manh(_ t: String, dam: Bool, mau: NSColor) -> NSTextField {
+        let v = NSTextField(labelWithString: t)
+        v.font = dam ? NSFont.boldSystemFont(ofSize: 12) : EideToken.fontUI
+        v.textColor = mau
+        v.lineBreakMode = .byTruncatingTail
+        return v
+    }
+
+    @objc private func _bamQuyetDinh(_ s: NSButton) {
+        let p = (s.identifier?.rawValue ?? "").split(separator: ":", maxSplits: 1)
+        guard p.count == 2 else { return }
+        onQuyetDinh?(String(p[1]), String(p[0]))
+    }
+
+    @objc private func _bamHoanTac(_ s: NSButton) {
+        guard let u = s.identifier?.rawValue, !u.isEmpty else { return }
+        onHoanTac?(u)
     }
 }

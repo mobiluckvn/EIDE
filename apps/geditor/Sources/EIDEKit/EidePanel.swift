@@ -31,6 +31,7 @@ public final class EidePanel: NSView {
         self.client = client
         super.init(frame: .zero)
         dungGiaoDien()
+        noiHangDoi()
         hoiThoai.onGui = { [weak self] text in self?.gui(text) }
         thanhTuChu.onDungKhan = { [weak self] in self?.dungKhan() }
         Task { await lamMoi() }
@@ -38,6 +39,47 @@ public final class EidePanel: NSView {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("dùng init(client:)") }
+
+    /// Nối nút của hàng đợi vào daemon — API-15 §2 `gate.decide` / `undo.apply`.
+    ///
+    /// Làm mới NGAY sau mỗi hành động, không đợi chu kỳ: người vừa bấm "Duyệt" cần thấy mục ấy
+    /// rời danh sách để biết cú bấm đã tới nơi. Một nút bấm xong mà danh sách không đổi thì
+    /// người sẽ bấm lại — và bấm lại một mục đã duyệt là cách tạo ra hai lần chạy.
+    private func noiHangDoi() {
+        hangDoi.onQuyetDinh = { [weak self] rid, quyet in
+            guard let self else { return }
+            Task {
+                do {
+                    let r = try await self.client.goi(.gateDecide,
+                                                      ["gate_id": rid, "decision": quyet])
+                    await MainActor.run { self.hienKetQua(r) }
+                } catch {
+                    await MainActor.run { self.hienLoi(error) }
+                }
+                await self.lamMoi()
+            }
+        }
+        hangDoi.onHoanTac = { [weak self] uref in
+            guard let self else { return }
+            Task {
+                do {
+                    let r = try await self.client.goi(.undoApply, ["undo_ref": uref])
+                    // `undo.apply` trả `applied: false` khi loại hoàn tác chưa hiện thực — đó
+                    // KHÔNG phải lỗi giao thức, nhưng người phải đọc được lý do chứ không thấy
+                    // một dòng "xong" cho một việc chưa làm.
+                    let xong = (r["applied"] as? Bool) ?? false
+                    await MainActor.run {
+                        self.hoiThoai.themLuot(by: xong ? .tacTu : .cho,
+                                               text: xong ? "đã hoàn tác \(uref)"
+                                                          : (r["reason"] as? String) ?? "chưa hoàn tác được")
+                    }
+                } catch {
+                    await MainActor.run { self.hienLoi(error) }
+                }
+                await self.lamMoi()
+            }
+        }
+    }
 
     private func dungGiaoDien() {
         wantsLayer = true

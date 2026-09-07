@@ -61,7 +61,11 @@ class Daemon:
 
     def gate_decide(self, p: dict[str, Any]) -> dict[str, Any]:
         """API-15 §2 `{gate_id, decision: approve|reject, note?}` — UXD-13 U2 nút duyệt/từ chối."""
-        run = self.router.quyet_dinh(p["gate_id"], p["decision"], by="human", note=p.get("note", ""))
+        # `ctx_goi_y` nói cho Router biết đọc store nào khi mục đến từ phiên daemon TRƯỚC —
+        # thiếu nó thì daemon THẤY được mục cũ nhưng không duyệt được, một trạng thái tệ hơn cả
+        # không thấy: người bấm nút và nhận E2000 cho một mục đang hiện ngay trước mắt.
+        run = self.router.quyet_dinh(p["gate_id"], p["decision"], by="human",
+                                     note=p.get("note", ""), ctx_goi_y=self.ctx)
         return asdict(run)
 
     def undo_list(self, p: dict[str, Any]) -> dict[str, Any]:
@@ -71,7 +75,13 @@ class Daemon:
         return self.router.hoan_tac(p["undo_ref"], by="human", ctx=self.ctx)
 
     def queue_list(self, p: dict[str, Any]) -> dict[str, Any]:
-        return {"items": [asdict(r) for r in self.router.queue]}
+        """Mục chờ của dự án — gồm cả mục từ phiên daemon TRƯỚC (UXD-13 U2).
+
+        Đọc từ store qua `cho_con_lai`, không từ `router.queue`: hàng đợi trong RAM chỉ biết
+        phiên hiện tại, nên panel sẽ thấy rỗng sau mỗi lần khởi động lại daemon trong khi các
+        mục vẫn nằm nguyên trong store — đúng thứ DEV-049 vừa sửa ở tầng dưới.
+        """
+        return {"items": self.router.cho_con_lai(self.ctx)}
 
     def autonomy_get(self, p: dict[str, Any]) -> dict[str, Any]:
         return {"autonomy": self.ctx.autonomy or self.gate.config.get("autonomy"), "stopped": self.gate.stopped}
