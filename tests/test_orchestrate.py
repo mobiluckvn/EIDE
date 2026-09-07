@@ -193,3 +193,38 @@ def test_chuoi_rong_khi_khong_co_mau_va_y_dinh_khong_phai_nang_luc(du_an):
     run = r.invoke("chat.orchestrate", {"intent": {"intent": "unknown"}, "grounded": {}}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
     assert "chuỗi rỗng" in run.error["message"]
+
+
+def test_planner_vao_cuoc_khi_khong_mau_nao_khop(du_an, monkeypatch):
+    """DEV-051 đóng: `chat.orchestrate` gọi vai trò `planner` qua `plan.create`.
+
+    Gọi QUA ROUTER chứ không gọi thẳng hàm — `plan.create` là T1* và hỏi cổng G1 bên trong, nên
+    một kế hoạch thiếu tri thức hay đổi kiến trúc dừng ở đó chứ không lặng lẽ thành chuỗi.
+    """
+    class _GW:
+        def prompt(self, role): return f"# {role}"
+
+        def run(self, role, prompt, schema, system_extra=""):
+            class R:
+                data = {"steps": [{"id": "s1", "goal": "dựng đồ thị", "cap": "kg.build"},
+                                  {"id": "s2", "goal": "tìm mâu thuẫn", "cap": "kg.conflicts"},
+                                  {"id": "s3", "goal": "việc của người", "cap": "khong.co"}]}
+            return R()
+
+    r, ctx, root = du_an
+    ctx.extra["gateway"] = _GW()
+    out = r.invoke("chat.orchestrate",
+                   {"intent": {"intent": "code.refactor", "slots": {"feature": "gọn lại I2C"}},
+                    "grounded": {}}, ctx).result
+    bc = doc_bao_cao(root, out["run_id"])
+    assert bc["nguon_chuoi"] == "planner", bc["nguon_chuoi"]
+    # Bước có `cap` chưa hiện thực bị bỏ — nhưng chuỗi vẫn chạy phần làm được.
+    assert [n["cap"] for n in bc["done"]] == ["kg.build", "kg.conflicts"]
+
+
+def test_khong_dung_duoc_chuoi_thi_NOI_RA(du_an):
+    """Trả "không dựng được chuỗi" rồi để `kiem()` báo chuỗi rỗng — thật thà hơn là im lặng trả
+    một run_id cho một việc chưa hề bắt đầu."""
+    r, ctx, _ = du_an
+    run = r.invoke("chat.orchestrate", {"intent": {"intent": "unknown"}, "grounded": {}}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"

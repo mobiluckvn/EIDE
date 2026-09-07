@@ -511,20 +511,55 @@ def _dung_chuoi(mau: dict[str, Any] | None, intent: dict[str, Any],
             for k, n in enumerate(nut):
                 n.when = nut[k - 1].id if k else None
             return chain_mod.Chain(nut), f"mẫu: {mau['ten']}"
-    return chain_mod.Chain(_chuoi_toi_thieu(intent, grounded, reg)), "tối thiểu"
+    if (mot := _chuoi_toi_thieu(intent, grounded, reg)):
+        return chain_mod.Chain(mot), "ý định là năng lực"
+    tu_planner = _chuoi_tu_planner(intent, grounded, ctx)
+    return chain_mod.Chain(tu_planner), "planner" if tu_planner else "không dựng được chuỗi"
 
 
 def _chuoi_toi_thieu(intent: dict[str, Any], grounded: dict[str, Any], reg: Any) -> list[Any]:
-    """Chuỗi một nút từ chính ý định, khi không mẫu nào khớp.
+    """Chuỗi khi không mẫu nào khớp: ý định-là-năng-lực trước, planner sau.
 
-    Vai trò `planner` (PRS-16 §2) là bước đúng ở đây, nhưng nó thuộc mốc M2 cùng `plan.create`.
-    Trong lúc chờ: nếu ý định trùng tên một năng lực đã hiện thực thì gọi thẳng năng lực ấy —
-    đủ để `chat.orchestrate` có ích ngay, và không giả vờ lập kế hoạch. Xem DEVIATIONS DEV-051.
+    Thứ tự ấy không phải để tiết kiệm mà vì độ tin cậy: nếu ý định TRÙNG TÊN một năng lực đã
+    hiện thực thì đó là câu trả lời chắc chắn, còn nhờ mô hình lập kế hoạch cho một việc một
+    bước là mời ảo giác vào chỗ không cần. Planner chỉ vào cuộc khi thật sự không biết làm gì.
     """
     ten = intent.get("intent", "") if isinstance(intent, dict) else str(intent)
     if ten in reg and reg.get(ten).implemented:
         return [chain_mod.Nut(id="n1", cap=ten, args=_args_cho(ten, intent, grounded))]
     return []
+
+
+def _chuoi_tu_planner(intent: dict[str, Any], grounded: dict[str, Any],
+                      ctx: Context) -> list[Any]:
+    """Chuỗi từ vai trò `planner` qua `plan.create` — DPS-09 §4.4, DEV-051 đóng.
+
+    Gọi qua Router chứ không gọi thẳng hàm: `plan.create` là T1* và hỏi cổng G1 bên trong, nên
+    một kế hoạch thiếu tri thức hay đổi kiến trúc sẽ dừng ở đó chứ không lặng lẽ thành chuỗi.
+    Kế hoạch chờ người thì trả rỗng — và `kiem()` sẽ nói "chuỗi rỗng", đúng sự thật.
+
+    Bước của Plan nào có `cap` là năng lực đã hiện thực thì thành nút; bước không có `cap` là
+    việc của người hoặc của một năng lực chưa có, và bỏ chúng đi mà không nói thì người dùng
+    tưởng tác tử đã làm cả kế hoạch — nên `nguon_chuoi` ghi rõ số bước giữ lại trên tổng số.
+    """
+    router = ctx.extra.get("router")
+    ten = intent.get("intent", "") if isinstance(intent, dict) else str(intent)
+    mo_ta = (intent.get("slots") or {}).get("idea") or (intent.get("slots") or {}).get("feature") or ten
+    if router is None or not mo_ta:
+        return []
+    run = router.invoke("plan.create", {"feature": str(mo_ta)}, ctx)
+    if run.status != "done" or not run.result:
+        return []
+    reg = get_registry()
+    buoc = (run.result.get("plan") or {}).get("steps") or []
+    nut = []
+    for b in buoc:
+        cap = b.get("cap")
+        if cap and cap in reg and reg.get(cap).implemented:
+            nut.append(chain_mod.Nut(id=b.get("id") or f"n{len(nut) + 1}", cap=cap,
+                                     args=_args_cho(cap, intent, grounded),
+                                     when=nut[-1].id if nut else None, on_ask="wait"))
+    return nut
 
 
 def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any]) -> dict[str, Any]:

@@ -41,17 +41,22 @@ def _gate_tu_spec() -> dict[str, str]:
 
     Bỏ qua `*`: nó là dải quy tắc chung áp cho mọi hành động, không phải cổng của riêng ai.
 
-    Bỏ qua cả `G-FACT`, và đây là một khác biệt về BẢN CHẤT chứ không phải một ngoại lệ: G-FACT
-    là cổng của một FACT, không phải của một hành động. Mọi quy tắc của nó hỏi `fact.tier`,
-    `fact.confidence`, `fact.second_source` — thuộc tính của dữ liệu đang được xét, không phải
-    của lời gọi. Nên năng lực không "đi qua" G-FACT; nó HỎI G-FACT cho từng fact nó xử lý, đúng
-    như CDS-12.2 KG-05 viết ("với mỗi fact chạy policy.decide(G-FACT)").
+    Bỏ qua `G-FACT` và `G1`, và đây là một khác biệt về BẢN CHẤT chứ không phải hai ngoại lệ.
+    Mọi cổng đều xét một HIỆN VẬT — G-OPS xét `board`/`artifact`, G-SRC xét `source`, G3 xét
+    `patch`, G5 xét `pkg`. Khác biệt nằm ở chỗ hiện vật ấy có TỒN TẠI TRƯỚC lời gọi hay không:
 
-    Cả ba năng lực mà đặc tả gắn G-FACT đều theo kiểu ấy: `kg.review_facts` hỏi cho từng fact,
-    `view.conflict_board` xếp hàng đợi ASK, `extract.pdf_electrical` nói về fact nó SINH RA.
-    Để Router chặn chúng ở cửa thì `kg.review_facts` bị chính cổng mà nó phục vụ chặn lại, và
-    không fact nào được duyệt bao giờ — cùng vòng luẩn quẩn với `chat.clarify` (DEV-020) và
-    `tool.write` (DEV-026), lần này ở tầng dữ liệu.
+    · `target.flash` nhận `artifact` làm THAM SỐ, nên Router đánh giá G-OPS được trước khi gọi —
+      đó là mô hình mà POL-17 §2 mô tả ("đặc trưng do năng lực cung cấp khi gọi Router");
+    · `plan.create` SINH RA bản kế hoạch mà G1 xét (`plan.steps`, `plan.all_cited`,
+      `plan.arch_change`), và `kg.review_facts` xét từng fact nó nạp lên. Hiện vật chưa tồn tại
+      lúc Router quyết định, nên hỏi cổng ở cửa chỉ cho ra quy tắc bắt hết — luôn ASK.
+
+    Hệ quả nếu để Router chặn: `kg.review_facts` bị chính cổng nó phục vụ chặn lại và không fact
+    nào được duyệt bao giờ; `plan.create` không bao giờ chạy nên không bao giờ có kế hoạch để G1
+    xét. Cùng vòng luẩn quẩn với `chat.clarify` (DEV-020) và `tool.write` (DEV-026), lần này ở
+    tầng hiện vật. Hai năng lực ấy hỏi cổng BÊN TRONG, đúng như hợp đồng viết: CDS-12.2 KG-05
+    "với mỗi fact chạy policy.decide(G-FACT)", CDS-12.1 PLAN-03 "policy.decide(G1) với đặc trưng
+    steps/all_cited/…". Xem DEVIATIONS DEV-054.
     """
     import re
 
@@ -62,7 +67,7 @@ def _gate_tu_spec() -> dict[str, str]:
         {r["gate"] for r in yaml.safe_load(
             (spec_dir() / "policy" / "rules.yaml").read_text(encoding="utf-8"))["rules"]} - {"*"},
         key=len, reverse=True)          # dài trước: "G-OPS" phải khớp trước "G1"
-    ten_cong = [g for g in ten_cong if g != "G-FACT"]
+    ten_cong = [g for g in ten_cong if g not in ("G-FACT", "G1")]
     mau = re.compile("|".join(re.escape(g) for g in ten_cong))
     ra: dict[str, str] = {}
     for c in caps:
