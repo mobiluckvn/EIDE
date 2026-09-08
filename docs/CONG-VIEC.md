@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 10) từ registry — không gõ tay. Còn **100/238** năng lực. Xem
+*Đo 08/09/2026 (lần 11) từ registry — không gõ tay. Còn **96/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -23,6 +23,9 @@ chủ sản phẩm 08/09).
 | P7b | [DEV-066](DEVIATIONS.md) — EXTRACT-16 thiếu `name` | Mã đã sửa cho khớp tài liệu (tên board = tên tệp). Chốt có thêm tham số hay giữ nguyên |
 | P7c | [DEV-067](DEVIATIONS.md) — BOARD-04 gọi vai trò `architect` | Hiện thực sinh phương án bằng mã vì chân thay thế phải tra fact. Chốt bỏ tiền tố vai trò hay giữ |
 | P7d | [DEV-068](DEVIATIONS.md) — bảng linh kiện chấp hành | Đang nằm trong mã; nên có tệp máy đọc được trong `docs/spec/` |
+| **P7e** | **[DEV-069](DEVIATIONS.md) — DDD-14 Module thiếu `layer`** | Đáng chú ý nhất trong nhóm: `arch.decompose` kiểm bất biến "không phụ thuộc ngược lớp" rồi vứt lớp đi, nên bất biến ấy chỉ kiểm được ĐÚNG MỘT LẦN. Cần thêm cột + migration |
+| P7f | [DEV-070](DEVIATIONS.md) — DOC-01 dựng docx? mục lục ở đâu? | Chốt ranh giới DOC-01 / REPORT-02, và sinh `docs/spec/doc/outlines.json` |
+| P7g | [DEV-071](DEVIATIONS.md) — `DocArtifact.figures` không tồn tại | Bỏ khỏi DOC-07 hay thêm vào DDD-14 |
 | P8 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
 | P9 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
@@ -66,17 +69,18 @@ mà không nối về fact thì EIDE chỉ là một trình sinh mã nữa.
 
 ---
 
-## C. `doc.*` + `diagram.*` còn lại — 13 ở M2 · **ưu tiên cao nhất hiện nay** (+5 ở M3: `slides`, `sync`, `translate`, `from_image`, `diagram.sync`)
+## C. `doc.*` + `diagram.*` — C1+C2 xong; còn 9 ở M2 (+5 ở M3: `slides`, `sync`, `translate`, `from_image`, `diagram.sync`)
 
 | # | Việc | Giá trị |
 |---|---|---|
-| C1 | `doc.generate` (URD/SRS/SAD/SDD/STP), `doc.embed_diagram` | Khép chuỗi **P7** (hiện 4/8) |
-| C2 | `diagram.architecture`, `state`, `sequence`, `pinmap`, `memory_map` | Lược đồ cho chính bộ tài liệu ấy |
+| ~~C1~~ | ~~`doc.generate`, `doc.embed_diagram`~~ | **Xong 08/09** — khép chuỗi **P7 (8/8)**. Bảng số liệu dựng bằng mã, văn xuôi do mô hình viết quanh bảng |
+| C2 | `sequence`, `pinmap`, `memory_map` — ~~`architecture`, `state`~~ xong 08/09 | Lược đồ cho chính bộ tài liệu ấy |
 | C3 | `api_ref`, `test_report`, `changelog` — ~~`bringup_guide`~~ xong 08/09 | Tài liệu vận hành |
 | C4 | `diagram.flow`, `gantt`, `timing` | Còn lại |
 
-**Vì sao đáng làm sớm:** nó cho ra **chính bộ tài liệu dùng làm phụ lục đề án** — sản phẩm tự
-viết tài liệu về mình, có trích dẫn tới fact. Đó là bằng chứng mạnh hơn bất kỳ mô tả nào.
+**Đã đạt điều đáng làm sớm:** `eide doc generate --type SRS` nay cho ra **chính bộ tài liệu
+dùng làm phụ lục đề án** — sản phẩm tự viết tài liệu về mình, bảng số liệu dựng từ store, mục
+Nguồn truy ngược về từng `source`. Đó là bằng chứng mạnh hơn bất kỳ mô tả nào.
 
 ---
 
@@ -161,8 +165,9 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 
 ```
 A1+A2 (xong)  →  B1+B2 (xong)  →  E board.* (xong, Z-07 đóng)
-              →  C1+C2 (bộ tài liệu tự sinh)  ←  ĐANG Ở ĐÂY
-              →  D (extract còn lại)  →  F (mô phỏng)  →  H (phần cứng, cuối cùng)
+              →  C1+C2 (bộ tài liệu tự sinh — xong, P7 đóng)
+              →  C3+C4 · D (extract còn lại)  ←  ĐANG Ở ĐÂY
+              →  F (mô phỏng)  →  H (phần cứng, cuối cùng)
 ```
 
 **Lý do đặt B trước C:** `doc.generate` viết tài liệu *về* thiết kế và mã. Có `code.*` rồi thì

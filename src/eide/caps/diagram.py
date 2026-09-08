@@ -371,3 +371,233 @@ def kg_view(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"diagram": {"lang": "dot", "src": Path(f).read_text(encoding="utf-8"),
                         "path": f, "nodes": len(g["nodes"]), "edges": len(g["edges"]),
                         "legend": g.get("legend")}}
+
+
+# ---------------------------------------------------------------- DIAGRAM-04 architecture
+
+# C4 [36] có bốn mức; hợp đồng dùng ba mức trên. Ánh xạ sang một hệ firmware:
+#   context   — hệ thống này, con chip, board, và người vận hành
+#   container — các LỚP của firmware (arch.LOP), vì trong firmware "container" không phải tiến
+#               trình hay dịch vụ mà là lớp: hal → driver → service → control → app
+#   component — từng module và phụ thuộc giữa chúng
+LOP_C4 = ("hal", "driver", "service", "control", "app")
+NHAN_LOP = {"hal": "HAL — chạm thanh ghi", "driver": "Driver — một ngoại vi một driver",
+            "service": "Service — nghiệp vụ không biết chân nào", "control": "Control — điều khiển",
+            "app": "App — vòng chính, chính sách"}
+
+
+@capability("diagram.architecture")
+def architecture(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-04 — CDS-12.4; ARCH-02 (ModuleGraph, năm lớp). tc: TC-72.
+
+    Sinh từ **ModuleGraph đã có trong store**, không hỏi mô hình. `arch.decompose` đã quyết định
+    module nào thuộc lớp nào và phụ thuộc ra sao, và nó đã kiểm hai bất biến (không chu trình,
+    mọi FR có module). Vẽ lại bằng mô hình là mở một đường cho lược đồ nói khác thiết kế — mà
+    lược đồ kiến trúc chính là thứ người ta đọc thay cho thiết kế.
+
+    `node_ids = module id` theo bước 1, để `diagram.sync` và `diagram.lint` đối chiếu được với
+    bảng `module`. Nhãn hiển thị là `name`, nhưng định danh nút thì phải là id — nếu lấy tên làm
+    id thì đổi tên một module sẽ làm mọi lược đồ cũ thành không đối chiếu được.
+
+    **Cạnh chỉ đi xuống lớp.** ARCH-02 cấm phụ thuộc ngược; nếu store có một cạnh đi lên thì nó
+    được vẽ kèm nhãn `⚠ ngược lớp` chứ không bị giấu — lược đồ giấu một vi phạm là lược đồ nói
+    dối, và chỗ này là chỗ duy nhất người đọc còn có cơ hội thấy nó.
+    """
+    from eide.caps.arch import _doc_module
+
+    root = _root(ctx)
+    muc = params.get("level") or "component"
+    lang = params.get("lang") or "mermaid"
+    mods = _doc_module(root, list(params["module_ids"]) if params.get("module_ids") else None)
+
+    if muc == "context":
+        nut, canh = _c4_context(root, mods)
+    elif muc == "container":
+        nut, canh = _c4_container(mods)
+    else:
+        if not mods:
+            raise EideError("E2000", "Chưa có module nào — chạy `arch.decompose` trước; sơ đồ "
+                            "kiến trúc phải vẽ từ ModuleGraph có thật, không đoán",
+                            exists=[], candidates=[], missing=["module"])
+        nut, canh = _c4_component(mods)
+
+    src = _ve(nut, canh, lang, huong="TB")
+    return {"diagram": {"lang": lang, "src": src, "level": muc,
+                        "nodes": [n["id"] for n in nut],
+                        "edges": [{"from": a, "to": b, "label": nh} for a, b, nh in canh],
+                        "model_ref": "module"}}
+
+
+def _c4_context(root: Path, mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[tuple[str, str, str]]]:
+    """Mức context: hệ thống, chip, board, người. Lấy từ `constraints.yaml`, không bịa tên."""
+    import yaml
+    f = root / EIDE_DIR / "constraints.yaml"
+    cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    ten = str((cu.get("project") or {}).get("name") or "Firmware")
+    tg = cu.get("target") or {}
+    nut = [{"id": "sys", "label": f"{ten}\\n({len(mods)} module)", "kind": "system"},
+           {"id": "nguoi", "label": "Người vận hành", "kind": "person"}]
+    canh = [("nguoi", "sys", "điều khiển, đọc trạng thái")]
+    for khoa, nhan in (("chip", "Chip"), ("board", "Board")):
+        if (v := tg.get(khoa)):
+            nut.append({"id": khoa, "label": f"{nhan}: {v}", "kind": "external"})
+            canh.append(("sys", khoa, "chạy trên" if khoa == "chip" else "gắn trên"))
+    return nut, canh
+
+
+def _c4_container(mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[tuple[str, str, str]]]:
+    """Mức container: năm LỚP của firmware, chỉ vẽ lớp nào thật sự có module.
+
+    Lớp có thể KHÔNG có trong store: `arch.decompose` tính `layer`, kiểm phụ thuộc theo nó, rồi
+    mất nó lúc ghi vì DDD-14 §2 Module không có cột `layer` (xem [DEV-069]). Khi ấy nói thẳng ra
+    chứ không gộp bừa mọi module vào `service` — một sơ đồ container gom nhầm lớp còn tệ hơn
+    không có sơ đồ, vì nó trông đúng.
+    """
+    theo: dict[str, list[dict[str, Any]]] = {}
+    for m in mods:
+        if (lp := str(m.get("layer") or "")) in LOP_C4:
+            theo.setdefault(lp, []).append(m)
+    if not theo:
+        raise EideError("E2000", "Không module nào có `layer`, nên không dựng được mức "
+                        "container. `arch.decompose` có tính lớp nhưng DDD-14 §2 Module chưa có "
+                        "cột để giữ (DEV-069) — dùng `level=\"component\"` cho tới khi có.",
+                        exists=[m["id"] for m in mods], candidates=list(LOP_C4),
+                        missing=["module.layer"])
+    co = [x for x in LOP_C4 if x in theo]
+    nut = [{"id": x, "label": f"{NHAN_LOP[x]}\\n{len(theo[x])} module", "kind": "container"}
+           for x in co]
+    canh = [(co[i], co[i + 1], "gọi xuống") for i in range(len(co) - 1)]
+    return nut, canh
+
+
+def _c4_component(mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[tuple[str, str, str]]]:
+    """Mức component: từng module, cạnh là `depends`, có đánh dấu cạnh đi NGƯỢC lớp.
+
+    Không có `layer` trong store (DEV-069) thì vẫn vẽ được — module và `depends` đều có thật;
+    chỉ mất phần nhãn lớp và phần cảnh báo cạnh ngược. Mất một lớp thông tin thì vẽ ít đi, chứ
+    không đoán bù.
+    """
+    bac = {m["id"]: (LOP_C4.index(m["layer"]) if m.get("layer") in LOP_C4 else -1) for m in mods}
+    co = set(bac)
+    nut = [{"id": m["id"],
+            "label": f"{m['name']}\\n{m['layer']}" if m.get("layer") in LOP_C4 else m["name"],
+            "kind": "component"} for m in mods]
+    canh = []
+    for m in mods:
+        for d in (m.get("depends") or []):
+            if d not in co:
+                continue
+            nguoc = bac[m["id"]] >= 0 and bac[d] >= 0 and bac[d] > bac[m["id"]]
+            canh.append((m["id"], d, "⚠ ngược lớp" if nguoc else ""))
+    return nut, canh
+
+
+# ---------------------------------------------------------------- DIAGRAM-06 state
+
+
+@capability("diagram.state")
+def state(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-06 — CDS-12.4; ARCH-07 (`arch.state_machine` sinh `module.fsm`). tc: TC-73.
+
+    Vẽ từ `module.fsm` — cùng cấu trúc mà `arch.state_machine` đã kiểm đầy đủ (mọi cặp
+    (trạng thái, sự kiện) có khai, không trạng thái nào không tới được). Nên lược đồ này không
+    phải một bản vẽ song song mà là một CÁCH ĐỌC của chính máy trạng thái đã kiểm.
+
+    **Sự kiện bỏ qua thành ghi chú, không thành cạnh.** ARCH-07 buộc khai cả những cặp
+    `ignore: true`, và số ấy là |trạng thái| × |sự kiện| trừ số chuyển thật — vẽ hết thành
+    cạnh tự-lặp thì lược đồ đặc kín và không ai đọc được. Nhưng bỏ hẳn cũng sai: "bỏ qua" là
+    một QUYẾT ĐỊNH, và nó phân biệt "đã nghĩ tới rồi" với "quên mất". Nên chúng vào `note`
+    cạnh trạng thái — đọc được mà không che mất luồng chính.
+    """
+    from eide.caps.arch import _doc_module
+
+    root = _root(ctx)
+    mid = params["module_id"]
+    lang = params.get("lang") or "mermaid"
+    mods = _doc_module(root, [mid])
+    if not mods:
+        raise EideError("E2000", f"Không có module `{mid}`",
+                        exists=[], candidates=[], missing=[mid])
+    fsm = mods[0].get("fsm") or {}
+    if not fsm.get("states"):
+        raise EideError("E2000", f"Module `{mid}` chưa có máy trạng thái — chạy "
+                        "`arch.state_machine` trước",
+                        exists=[mid], candidates=[], missing=[f"fsm:{mid}"])
+
+    states = [str(s) for s in fsm["states"]]
+    dau = str(fsm.get("initial") or (states[0] if states else ""))
+    chuyen = [t for t in (fsm.get("transitions") or []) if not t.get("ignore")]
+    bo_qua: dict[str, list[str]] = {}
+    for t in (fsm.get("transitions") or []):
+        if t.get("ignore"):
+            bo_qua.setdefault(str(t.get("from")), []).append(str(t.get("event")))
+
+    src = (_state_mermaid(states, dau, chuyen, bo_qua) if lang == "mermaid"
+           else _state_plantuml(states, dau, chuyen, bo_qua))
+    return {"diagram": {"lang": lang, "src": src, "nodes": states,
+                        "edges": [{"from": str(t.get("from")), "to": str(t.get("to")),
+                                   "label": _nhan_chuyen(t)} for t in chuyen],
+                        "initial": dau, "ignored": bo_qua, "model_ref": f"fsm:{mid}"}}
+
+
+def _nhan_chuyen(t: dict[str, Any]) -> str:
+    """`sự_kiện [guard] / hành_động` — cú pháp UML, đọc được ở cả mermaid lẫn PlantUML."""
+    s = str(t.get("event") or "")
+    if t.get("guard"):
+        s += f" [{t['guard']}]"
+    if t.get("action"):
+        s += f" / {t['action']}"
+    return s
+
+
+def _ma_trang_thai(s: str) -> str:
+    return re.sub(r"[^0-9A-Za-z_]+", "_", s)[:40] or "s"
+
+
+def _state_mermaid(states, dau, chuyen, bo_qua) -> str:
+    d = ["stateDiagram-v2", f"  [*] --> {_ma_trang_thai(dau)}"]
+    for s in states:
+        if (m := _ma_trang_thai(s)) != s:
+            d.append(f'  {m} : {s}')
+    for t in chuyen:
+        d.append(f"  {_ma_trang_thai(str(t.get('from')))} --> "
+                 f"{_ma_trang_thai(str(t.get('to')))} : {_nhan_chuyen(t)}")
+    for s, ds in sorted(bo_qua.items()):
+        d += [f"  note right of {_ma_trang_thai(s)}", f"    bỏ qua: {', '.join(sorted(ds))}",
+              "  end note"]
+    return "\n".join(d) + "\n"
+
+
+def _state_plantuml(states, dau, chuyen, bo_qua) -> str:
+    d = ["@startuml", f"[*] --> {_ma_trang_thai(dau)}"]
+    for s in states:
+        if (m := _ma_trang_thai(s)) != s:
+            d.append(f'state "{s}" as {m}')
+    for t in chuyen:
+        d.append(f"{_ma_trang_thai(str(t.get('from')))} --> "
+                 f"{_ma_trang_thai(str(t.get('to')))} : {_nhan_chuyen(t)}")
+    for s, ds in sorted(bo_qua.items()):
+        d.append(f"note right of {_ma_trang_thai(s)} : bỏ qua: {', '.join(sorted(ds))}")
+    return "\n".join(d) + "\n@enduml\n"
+
+
+# ---------------------------------------------------------------- dựng mã lược đồ chung
+
+
+def _ve(nut: list[dict[str, str]], canh: list[tuple[str, str, str]], lang: str,
+        huong: str = "LR") -> str:
+    """Cùng một đồ thị, ba ngôn ngữ. Một hàm chứ ba bản sao — ba bản sao thì sửa hình dạng nút
+    ở một chỗ và hai chỗ kia lặng lẽ khác đi."""
+    if lang == "plantuml":
+        d = ["@startuml", "left to right direction" if huong == "LR" else ""]
+        d += [f'rectangle "{n["label"]}" as {n["id"]}' for n in nut]
+        d += [f"{a} --> {b}" + (f" : {nh}" if nh else "") for a, b, nh in canh]
+        return "\n".join(x for x in d if x) + "\n@enduml\n"
+    if lang == "d2":
+        d = [f'{n["id"]}: "{n["label"]}"' for n in nut]
+        d += [f"{a} -> {b}" + (f': "{nh}"' if nh else "") for a, b, nh in canh]
+        return "\n".join(d) + "\n"
+    d = [f"flowchart {huong}"]
+    d += [f'  {n["id"]}["{n["label"]}"]' for n in nut]
+    d += [f"  {a} -->" + (f"|{nh}| " if nh else " ") + b for a, b, nh in canh]
+    return "\n".join(d) + "\n"

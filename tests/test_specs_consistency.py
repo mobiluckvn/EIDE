@@ -84,6 +84,30 @@ def test_vi_du_cua_hop_dong_phai_qua_noi_input_schema_cua_chinh_no():
     assert not loi, "ví dụ mâu thuẫn với input_schema:\n  " + "\n  ".join(loi)
 
 
+def test_khong_module_nao_dinh_nghia_trung_ten_o_muc_cao_nhat():
+    """Hai `def` cùng tên trong một module: cái sau che cái trước, im lặng tuyệt đối.
+
+    Xảy ra thật khi thêm `doc.generate`: `_muc_nguon` đã có nghĩa **cấp nguồn điện** cho
+    `doc.bringup_guide`, và mục "Nguồn" (tài liệu tham khảo) của `doc.generate` vô tình lấy
+    đúng cái tên ấy. Python không kêu một tiếng nào; ba test của bringup guide đỏ ở một tệp
+    KHÁC hẳn tệp vừa sửa, nên dấu vết đầu tiên trỏ sai chỗ.
+
+    Lần ấy có test bắt được. Một hàm nội bộ chưa có test thì không — nó chỉ đơn giản gọi nhầm
+    hàm cho tới lúc ai đó đọc kỹ. Phép kiểm này rẻ và bắt cả lớp ấy.
+    """
+    import ast
+    from collections import Counter
+
+    loi = []
+    for f in sorted(SRC.rglob("*.py")):
+        than = ast.parse(f.read_text(encoding="utf-8")).body
+        ten = [n.name for n in than
+               if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))]
+        loi += [f"{f.relative_to(SRC)}: `{k}` định nghĩa {v} lần"
+                for k, v in Counter(ten).items() if v > 1]
+    assert not loi, "định nghĩa trùng tên, cái sau che cái trước:\n  " + "\n  ".join(loi)
+
+
 def test_ma_hop_dong_trong_docstring_phai_dung_ma_trong_cds():
     """`Spec: DOC-05` ở đầu một handler phải là mã CỦA CHÍNH nó trong cds.json.
 
