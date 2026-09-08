@@ -2,6 +2,8 @@
 
 Bộ hồ sơ v1.2 (05/09/2026). Tài liệu docx nằm trong `ho-so/`; đặc tả máy đọc được trong `spec/` (đây là bản chuẩn để test đối chiếu; docx là bản giải thích).
 
+**Làm gì tiếp?** → [`CONG-VIEC.md`](CONG-VIEC.md) — danh sách công việc theo thứ tự nên làm, đo từ registry. Khối cần phần cứng để cuối cùng (quyết định 08/09).
+
 **Đang ở đâu?** → [`TIEN-DO.md`](TIEN-DO.md) — tiến độ đo từ mã (năng lực theo mốc, chỗ đứt của năm chuỗi chuẩn, việc chờ chủ sản phẩm). Số liệu trong đó sinh lại bằng `eide spec`, `scripts/kiem_chuoi_chuan.py` và `pytest`, không gõ tay.
 
 ## Bản đồ nhanh: việc → tài liệu

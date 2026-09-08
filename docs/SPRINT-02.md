@@ -22,8 +22,8 @@ Mỗi dòng: `Chưa` → `Đang` → `Xong` (kèm nền tảng đã kiểm và m
 |---|---|---|---|---|---|
 | WI-005 | **Orchestrator**: intent → ground → defaults → clarify → report | DPS-09 §3–§5, PRS-16 intent.md, SDD-04 §4.6 | WI-003, WI-004, WI-013 | 6ng | **Xong** (①③④; ② lập chuỗi = CHAT-06, mốc M2) |
 | WI-006 | Composer + Compressor: ContextBundle theo lớp C0–C7, ngân sách token, cache mark | CXD-10 §2–§7 | WI-003 | 4ng | **Xong** — 23 test; TC-59 giữ 100% sau khi chuyển sang Composer |
-| WI-011 | MCP server sinh tool từ registry | API-15 §MCP, `mcp_tools.json` | WI-003 | 2ng | Chưa |
-| WI-012 | RagIndex: chunk, embedding qua Gateway, FTS5, truy hồi lai | KAD-07, CXD-10 §4.5 | WI-002 (index.sqlite đã có) | 3ng | Chưa |
+| WI-011 | MCP server sinh tool từ registry | API-15 §MCP, `mcp_tools.json` | WI-003 | 2ng | **Xong** — `eide mcp` qua stdio, dùng được từ Claude Code/Cursor; 12 test |
+| WI-012 | RagIndex: chunk, embedding qua Gateway, FTS5, truy hồi lai | KAD-07, CXD-10 §4.5 | WI-002 (index.sqlite đã có) | 3ng | **Xong** — `memory.retrieve` + `view.rag_index/rag_ask/rag_trace`; 11 test. Thang điểm sửa ở [DEV-058](DEVIATIONS.md) |
 | WI-020 | ToolForge `tool.*` (+ cổng G-TOOL đã có 6 quy tắc) | CDS-12.3 TOOL-01…07, SEC-25 | WI-009 ✓ | 4ng | **Xong** — 7 năng lực M1, 29 test; Gemini viết được công cụ CRC-16/MODBUS chạy đúng |
 | WI-021 | Plugin/panel GEditor: RpcClient sinh từ `openrpc.json`, ChatPanel, AutonomyBar, QueuePanel | UXD-13, GPI-23 (xem DEV-004) | WI-010 ✓ | 6ng | **Xong (bản đầu)** — `EIDEKit`: client + mã sinh (RPC và token), panel ba vùng, **đã gắn vào GEditorApp** (tầng `.eide`, menu "EIDE: trợ lý nhúng…"), 19 test Swift gồm đo tương phản WCAG và tìm daemon. Còn: gợi ý `/` (U1), thẻ câu hỏi gộp (U3) |
 
