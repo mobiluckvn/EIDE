@@ -98,7 +98,8 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **828** xanh, arm64 + x86_64 |
+| Test Python | **829** xanh, arm64 + x86_64 (`make check`) |
+| Test GỌI THẬT | 9 mạng (`make check-net`) · 6 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
 | Mục DEVIATIONS | 59 tổng, **3 Mở** |
@@ -108,6 +109,20 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó được viết ra" — trong đó có test
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
+
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (837 test, giả lập) hỏi *"mã có đúng
+với giả định của tôi không"*. `make check-net` (9 test, không tốn tiền) và `make check-llm`
+(6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
+đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
+
+- **4/11 mẫu URL hãng sai.** `STM32F411CE.svd` không tồn tại: tệp SVD mô tả một **die**, không
+  mô tả một mã đóng gói — `STM32F411CE` (LQFP48) và `STM32F411RE` (LQFP64) dùng chung
+  `STM32F411.svd`. `nrfx/mdk` cũng không còn tệp `.svd` nào. Cả hai trông hoàn toàn hợp lý
+  trong YAML và `search.vendor` vẫn trả ứng viên — chỉ là mọi ứng viên đều 404.
+- **`doc.section` phạt mô hình vì nó trung thực.** Hỏi về một module chưa có fact, mô hình trả
+  lời *"chưa có dữ liệu trong ngữ cảnh được cung cấp"* — đúng điều ta muốn — rồi bị E5002 vì
+  không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
+  nó phải có là **dạy mô hình bịa cho đủ**.
 
 **Bốn lỗi im lặng tìm được nhờ chạy thật thay vì chỉ chạy test:**
 

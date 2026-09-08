@@ -437,4 +437,12 @@ def test_tc59_bo_50_cau_lenh_that(tmp_path):
     # Ngưỡng hợp đồng là 100%; sàn 48/50 là số ĐO ĐƯỢC ngày 07/09/2026 sau khi trả nhãn về
     # bản gốc và viết quy tắc suy `is_big` vào lớp C0. Sàn tồn tại để bắt TỤT LÙI, không phải
     # để hợp thức hóa — nâng nó lên 50/50 khi DEV-022 và DEV-035 được giải quyết.
-    assert big_dung >= 48, f"is_big đúng {big_dung}/{len(ds)} — tụt so với mức đã đo (48/50)"
+    # Ngưỡng CHỐT (ratchet) ở mức đã đo, không phải ở 100%. Đo 08/09/2026: hai lần chạy liên
+    # tiếp cho 47/50 và 49/50 — câu 34 ("Create a new project for a balancing robot", tiếng Anh)
+    # lật qua lật lại. Đó là dao động của mô hình ở một câu ranh giới, không phải trôi chất
+    # lượng; và nó là lý do nhóm `llm` KHÔNG nằm trong `make check`.
+    #
+    # Không hạ ngưỡng xuống 47 để hết đỏ: hạ ngưỡng cho khỏi phiền là cách một chỉ số chất
+    # lượng lặng lẽ trôi xuống. Chạy lại một lần trước khi kết luận là có trôi thật.
+    assert big_dung >= 48, (f"is_big đúng {big_dung}/{len(ds)} — tụt so với mức đã đo (48/50). "
+                            "Chạy lại một lần trước khi kết luận: câu 34 dao động.")

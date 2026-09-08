@@ -406,13 +406,31 @@ def test_ghi_doc_artifact(du_an):
 # ---------- DOC-05 section
 
 
-def test_khong_co_citations_thi_tu_choi(du_an, monkeypatch):
+def test_neu_so_lieu_ma_khong_citations_thi_tu_choi(du_an, monkeypatch):
     """tc: "Có citations". Một mục tài liệu kỹ thuật không truy được nguồn thì người phản biện
     hỏi ngay câu đầu tiên."""
     r, ctx, _ = du_an
-    _gia_lap(monkeypatch, {"markdown": "Một đoạn văn nghe rất hợp lý.", "citations": []})
+    _gia_lap(monkeypatch, {"markdown": "Khối I2C1 chạy ở 400 kHz và dùng 2 chân.",
+                           "citations": []})
     run = r.invoke("doc.section", {"target": "I2C1"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+def test_cau_tra_loi_TRUNG_THUC_khong_du_lieu_thi_khong_bi_coi_la_loi(du_an, monkeypatch):
+    """Một câu "chưa có dữ liệu trong ngữ cảnh" thì KHÔNG THỂ có trích dẫn.
+
+    Đây là test sinh ra từ một lần gọi mô hình THẬT: hỏi về một module chưa có fact nào, mô
+    hình trả lời đúng điều ta muốn — từ chối bịa — rồi bị E5002. Bắt nó phải có trích dẫn là
+    dạy nó bịa cho đủ. Trích dẫn tồn tại để chống lưng cho KHẲNG ĐỊNH; không khẳng định gì thì
+    không cần chống lưng.
+    """
+    r, ctx, _ = du_an
+    _gia_lap(monkeypatch, {
+        "markdown": "Chưa có dữ liệu về mô-đun này trong ngữ cảnh được cung cấp.",
+        "citations": []})
+    out = r.invoke("doc.section", {"target": "mod_la"}, ctx).result
+    assert out["citations"] == []
+    assert "Chưa có dữ liệu" in out["markdown"]
 
 
 def test_co_citations_thi_tra_markdown(du_an, monkeypatch):

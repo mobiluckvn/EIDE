@@ -18,6 +18,12 @@ setup-ca-hai:     ## cài cả arm64 và x86_64 (Apple Silicon + Rosetta 2)
 test:             ## pytest
 	$(PY) -m pytest
 
+check-net:        ## test GỌI MẠNG THẬT — mẫu URL hãng, bộ dựng lược đồ (không cần khóa)
+	$(PY) -m pytest -m net -v
+
+check-llm:        ## test GỌI MÔ HÌNH THẬT — cần GEMINI_API_KEY/ANTHROPIC_API_KEY, tốn token
+	$(PY) -m pytest -m llm -v
+
 lint:             ## ruff
 	$(PY) -m ruff check src tests scripts
 

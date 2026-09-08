@@ -308,11 +308,20 @@ def section(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     cit = list(resp.data.get("citations") or [])
     if not md:
         raise EideError("E5002", f"Không viết được mục `{target}` — ngữ cảnh rỗng?", target=target)
-    if not cit:
-        raise EideError("E5002", f"Mục `{target}` không có trích dẫn nào (DOC-05 tc: \"Có "
-                        "citations\") — một mục tài liệu kỹ thuật không truy được nguồn thì "
-                        "người phản biện hỏi ngay câu đầu tiên", target=target,
-                        markdown=md[:200])
+    # Đòi trích dẫn khi VÀ CHỈ KHI mục có nội dung kỹ thuật để trích dẫn.
+    #
+    # Bản đầu đòi vô điều kiện, và gọi mô hình THẬT mới lộ ra là sai: hỏi về một module chưa có
+    # fact nào, mô hình trả lời "chưa có dữ liệu chi tiết trong ngữ cảnh được cung cấp" — tức
+    # nó làm ĐÚNG điều ta muốn, từ chối bịa — rồi bị E5002. Một câu trung thực "không có dữ
+    # liệu" thì KHÔNG THỂ có trích dẫn, và bắt nó phải có là dạy mô hình bịa cho đủ.
+    #
+    # Dùng lại chính `RE_SO_KY_THUAT` của `doc.style_check`: trích dẫn tồn tại để chống lưng cho
+    # KHẲNG ĐỊNH, nên không khẳng định gì thì không cần chống lưng.
+    if not cit and RE_SO_KY_THUAT.search(md):
+        raise EideError("E5002", f"Mục `{target}` nêu số liệu kỹ thuật mà không có trích dẫn "
+                        "nào (DOC-05 tc: \"Có citations\") — một mục tài liệu kỹ thuật không "
+                        "truy được nguồn thì người phản biện hỏi ngay câu đầu tiên",
+                        target=target, markdown=md[:200])
 
     # Chạy luôn style_check trên mục vừa viết — bước 1 nói "style_check mục". Ghi ra tệp tạm để
     # dùng lại đúng một hiện thực thay vì viết bản kiểm thứ hai cho chuỗi trong bộ nhớ.

@@ -127,8 +127,13 @@ def test_vendor_giu_ca_hai_kieu_chu(du_an, khong_mang):
     r, ctx, _ = du_an
     uris = [c["uri"] for c in
             r.invoke("search.vendor", {"part": "STM32F411CE"}, ctx).result["candidates"]]
-    assert any("STM32F411CE" in u for u in uris), "thiếu biến thể chữ hoa"
+    assert any("STM32F411" in u for u in uris), "thiếu biến thể chữ hoa"
     assert any("stm32f411ce" in u for u in uris), "thiếu biến thể chữ thường"
+    # Và mẫu SVD dùng mã DIE, không dùng mã hàng — đo bằng test `net`, xem
+    # `tests/test_that.py::test_ma_die_khong_phai_ma_vo`. `STM32F411CE.svd` trả 404;
+    # `STM32F411.svd` trả 200, vì tệp SVD mô tả một die chứ không mô tả một mã đóng gói.
+    svd = next(u for u in uris if u.endswith(".svd"))
+    assert svd.endswith("STM32F411.svd"), svd
 
 
 def test_vendor_cam_bien_khong_phai_vi_dieu_khien(du_an, khong_mang):

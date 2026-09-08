@@ -122,11 +122,25 @@ def _dien(mau: str, part: str, v: dict[str, Any]) -> str:
     nửa số mẫu, và triệu chứng là 404 — trông y hệt "hãng bỏ tài liệu này".
     """
     ho = re.match(r"^([A-Za-z]+)", part)
-    return (mau.replace("{part_upper}", part.upper())
+    return (mau.replace("{part_base}", _die(part))
+               .replace("{part_upper}", part.upper())
                .replace("{part_lower}", part.lower())
                .replace("{part}", part)
                .replace("{family}", (ho.group(1) if ho else part).upper())
                .replace("{vendor}", v.get("name", v["id"]).split()[0]))
+
+
+def _die(part: str) -> str:
+    """Mã DIE — cắt hậu tố mã vỏ/dải nhiệt. `STM32F411CE` → `STM32F411`.
+
+    Tệp SVD mô tả một die, không mô tả một mã hàng: `STM32F411CE` (LQFP48) và `STM32F411RE`
+    (LQFP64) dùng chung `STM32F411.svd`. Dùng thẳng mã hàng thì 404 — đo được bằng test `net`,
+    và đó là lý do test ấy tồn tại: một mẫu URL sai vẫn trông hoàn toàn hợp lý trong YAML.
+
+    Cắt tối đa hai chữ cái cuối SAU một cụm số, không cắt chữ trong tên họ (`nRF52840` giữ
+    nguyên vì nó kết thúc bằng số).
+    """
+    return re.sub(r"(?<=\d)[A-Za-z]{1,2}$", "", part).upper()
 
 
 def _head(uri: str) -> dict[str, Any]:

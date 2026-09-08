@@ -5,7 +5,7 @@ vendors:
     prefixes: ["^STM32", "^STM8", "^LSM", "^L3G"]
     domains: [st.com, github.com/cmsis-svd, raw.githubusercontent.com]
     urls:
-      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/STMicro/{part_upper}.svd"}
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/STMicro/{part_base}.svd", note: "SVD theo DIE, không theo mã vỏ: STM32F411CE và STM32F411RE dùng chung STM32F411.svd"}
       - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/datasheet/{part_lower}.pdf"}
       - {kind: pdf, tier: silver, license: vendor-doc, template: "https://www.st.com/resource/en/reference_manual/rm0383-{part_lower}.pdf", note: "reference manual"}
   - id: microchip
@@ -20,7 +20,7 @@ vendors:
     prefixes: ["^nRF"]
     domains: [nordicsemi.com, docs.nordicsemi.com, github.com/NordicSemiconductor, raw.githubusercontent.com]
     urls:
-      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/NordicSemiconductor/nrfx/master/mdk/{part_lower}.svd"}
+      - {kind: svd, tier: gold, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/Nordic/{part_lower}.svd", note: "nrfx/mdk không còn tệp .svd — bản dùng được nằm trong cmsis-svd-data"}
   - id: espressif
     name: Espressif
     prefixes: ["^ESP"]
@@ -44,7 +44,7 @@ vendors:
     prefixes: ["^MPU", "^ICM"]
     domains: [invensense.tdk.com]
     urls:
-      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://invensense.tdk.com/wp-content/uploads/2015/02/{part_upper}-Datasheet.pdf"}
+      - {kind: pdf, tier: silver, license: vendor-doc, template: "https://invensense.tdk.com/wp-content/uploads/2015/02/{part_upper}-Datasheet1.pdf", note: "CHƯA KIỂM ĐƯỢC: TDK trả 404 cho mẫu này (đo 08/09/2026). Giữ nguyên mẫu của TGT-19 §8 thay vì đoán một đường dẫn khác — một mẫu đoán bừa trông giống một mẫu đã kiểm"}
   - id: allegro
     name: Allegro MicroSystems
     prefixes: ["^A4", "^ACS"]

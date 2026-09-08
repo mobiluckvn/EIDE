@@ -49,8 +49,14 @@ markers = [
   # DEP-26 §5: job `dialog` gọi mô hình THẬT chạy ban đêm với khóa từ secrets. Test hằng ngày
   # dùng EchoPort (job `contract`), nên `make check` loại nhóm này ra: nó tốn tiền và cần mạng.
   "llm: gọi mô hình thật — cần khóa API, bỏ qua trong make check",
+  # Mẫu URL hãng (TGT-19 §8) và bộ dựng lược đồ chỉ đúng nếu ĐỜI THẬT còn như tài liệu mô tả.
+  # Giả lập không bắt được: một mẫu URL sai vẫn trông hoàn toàn hợp lý trong YAML, và một thứ
+  # tự tham số subprocess sai cũng vậy. Đo được rồi: 4/11 mẫu sai lúc kiểm lần đầu.
+  # Không vào `make check` vì cần mạng và vì máy chủ hãng có lúc chặn/hết giờ — một test đỏ vì
+  # st.com giới hạn tần suất là test người ta học cách bỏ qua.
+  "net: gọi mạng thật (không cần khóa) — chạy bằng `make check-net`",
 ]
-addopts = "-q -m 'not llm'"
+addopts = "-q -m 'not llm and not net'"
 
 [tool.ruff]
 line-length = 110
