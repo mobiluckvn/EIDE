@@ -84,8 +84,18 @@ for (const [role, text] of Object.entries(PROMPTS)) {
   c.push(...CODE(text.split('\n')));
   c.push(SP());
 }
-c.push(H1('4. Schema đầu ra (mẫu số chung)'));
-c.push(...CODE([
+// §4 — schema đầu ra của các vai trò. ĐẶT TÊN literal (thay vì viết thẳng vào lời gọi CODE)
+// để `scripts/gen_spec_tu_nguon.js` rút ra được thành `prompts/out_schemas.json`.
+//
+// Vì sao cần: bốn schema này là hợp đồng giữa tài liệu và mã — `plan.create` gửi Plan cho mô
+// hình, `code.generate_module` gửi CodePatch, `code.review` gửi Review, `debug.hypothesize` gửi
+// Diagnosis. Trước 08/09/2026 chúng chỉ tồn tại ở đây, trong một khối CODE của docx, nên mã
+// phải chép tay — và bản chép của Plan trong `plan.py` ĐÃ TRÔI: thiếu `touches` (enum
+// isr/linker/clock/dma/power/actuator/none) và đòi `required` ít hơn tài liệu. Hệ quả là ba
+// trong bảy đặc trưng của cổng G1 luôn bằng false, tức G1-03 là quy tắc chết. Xem DEV-061.
+//
+// Nội dung các dòng giữ NGUYÊN VẸN — tài liệu docx sinh ra không đổi một ký tự.
+const SCHEMA_LINES = [
   '# Plan',
   '{"type":"object","required":["steps","citations","missing"],"properties":{',
   ' "steps":{"type":"array","items":{"type":"object","required":["n","goal","by","done_when"],"properties":{"n":{"type":"integer"},"goal":{"type":"string"},"by":{"type":"string"},"done_when":{"type":"string"},"cites":{"type":"array","items":{"type":"string"}},"needs_review":{"type":"boolean"},"touches":{"type":"array","items":{"type":"string","enum":["isr","linker","clock","dma","power","actuator","none"]}}}}},',
@@ -99,7 +109,9 @@ c.push(...CODE([
   '# Diagnosis',
   '{"type":"object","required":["hypotheses","next_action"],"properties":{"hypotheses":{"type":"array","items":{"type":"object","required":["text","p","experiment"],"properties":{"text":{"type":"string"},"p":{"type":"number"},"evidence_for":{"type":"array","items":{"type":"string"}},"evidence_against":{"type":"array","items":{"type":"string"}},"experiment":{"type":"string"}}}},"next_action":{"type":"string"},"needs_permission":{"type":"boolean"}}}',
   '# ReqSet (mục Requirement), ModuleGraph, HwMap, ADR, DocSections, Diagram, NetProposal, Candidates, MissingList: xem DDD-14 §2 (JSON Schema đầy đủ, cùng quy tắc mẫu số chung)',
-]));
+];
+c.push(H1('4. Schema đầu ra (mẫu số chung)'));
+c.push(...CODE(SCHEMA_LINES));
 c.push(SP());
 c.push(H1('5. Định dạng skill (K5) và chuỗi mẫu (K5 thủ tục)'));
 c.push(...CODE([

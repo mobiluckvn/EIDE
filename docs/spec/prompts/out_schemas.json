@@ -1,0 +1,254 @@
+{
+ "Plan": {
+  "type": "object",
+  "required": [
+   "steps",
+   "citations",
+   "missing"
+  ],
+  "properties": {
+   "steps": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "required": [
+      "n",
+      "goal",
+      "by",
+      "done_when"
+     ],
+     "properties": {
+      "n": {
+       "type": "integer"
+      },
+      "goal": {
+       "type": "string"
+      },
+      "by": {
+       "type": "string"
+      },
+      "done_when": {
+       "type": "string"
+      },
+      "cites": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "needs_review": {
+       "type": "boolean"
+      },
+      "touches": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "enum": [
+         "isr",
+         "linker",
+         "clock",
+         "dma",
+         "power",
+         "actuator",
+         "none"
+        ]
+       }
+      }
+     }
+    }
+   },
+   "citations": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "missing": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "risks": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "estimate": {
+    "type": "object",
+    "properties": {
+     "tokens": {
+      "type": "integer"
+     },
+     "tool_rounds": {
+      "type": "integer"
+     }
+    }
+   }
+  }
+ },
+ "CodePatch": {
+  "type": "object",
+  "required": [
+   "files",
+   "cites",
+   "rationale"
+  ],
+  "properties": {
+   "files": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "required": [
+      "path",
+      "content"
+     ],
+     "properties": {
+      "path": {
+       "type": "string"
+      },
+      "content": {
+       "type": "string"
+      },
+      "mode": {
+       "type": "string",
+       "enum": [
+        "create",
+        "replace",
+        "diff"
+       ]
+      }
+     }
+    }
+   },
+   "cites": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "rationale": {
+    "type": "string"
+   },
+   "tests": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "missing_facts": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "Review": {
+  "type": "object",
+  "required": [
+   "verdict",
+   "findings"
+  ],
+  "properties": {
+   "verdict": {
+    "type": "string",
+    "enum": [
+     "PASS",
+     "FAIL"
+    ]
+   },
+   "findings": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "required": [
+      "severity",
+      "file",
+      "line",
+      "message"
+     ],
+     "properties": {
+      "severity": {
+       "type": "string",
+       "enum": [
+        "blocker",
+        "major",
+        "minor",
+        "nit"
+       ]
+      },
+      "file": {
+       "type": "string"
+      },
+      "line": {
+       "type": "integer"
+      },
+      "message": {
+       "type": "string"
+      },
+      "evidence": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "checked_constants": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "Diagnosis": {
+  "type": "object",
+  "required": [
+   "hypotheses",
+   "next_action"
+  ],
+  "properties": {
+   "hypotheses": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "required": [
+      "text",
+      "p",
+      "experiment"
+     ],
+     "properties": {
+      "text": {
+       "type": "string"
+      },
+      "p": {
+       "type": "number"
+      },
+      "evidence_for": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "evidence_against": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "experiment": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "next_action": {
+    "type": "string"
+   },
+   "needs_permission": {
+    "type": "boolean"
+   }
+  }
+ }
+}

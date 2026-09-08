@@ -275,3 +275,66 @@ def test_lap_lai_lan_ba_thi_hoi_nguoi(du_an):
         c.commit()
     run = r.invoke("plan.replan", {"plan_id": "r_2", "reason": "conflict"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E3000"
+
+
+# ---------- PLAN-03 / cổng G1: `touches` (PRS-16 §4) và ba đặc trưng từng chết
+
+def _ke_hoach_sach(**them):
+    """Kế hoạch thoả MỌI vế của G1-01: 3 bước, mọi bước có trích dẫn, không tài nguyên mới."""
+    b = [{"id": f"s{i}", "goal": "x", "cap": "code.build", "done_when": "xong",
+          "cites": ["f_00000000000000ab"], **them} for i in range(1, 4)]
+    return {"steps": b, "citations": ["f_00000000000000ab"], "missing": [],
+            "estimate": {"cost_usd": 0.01}}
+
+
+def test_schema_plan_doc_tu_PRS16_khong_chep_tay():
+    """Mọi trường của Plan (trừ hai cái đổi tên có ghi DEV-061) phải đến từ
+    `prompts/out_schemas.json`. Chép tay là cách `touches` biến mất lần trước."""
+    from eide.caps.plan import _SCHEMA_PLAN, schema_vai_tro
+
+    goc = schema_vai_tro("Plan")["properties"]["steps"]["items"]["properties"]
+    ma = _SCHEMA_PLAN["properties"]["steps"]["items"]["properties"]
+    for ten, sch in goc.items():
+        if ten in ("n", "by"):          # DEV-061: `n`→`id`, `by`→`cap`
+            continue
+        assert ma.get(ten) == sch, f"trường `{ten}` của Plan đã trôi khỏi PRS-16 §4"
+    assert ma["touches"]["items"]["enum"] == ["isr", "linker", "clock", "dma", "power",
+                                              "actuator", "none"]
+
+
+def test_touches_suy_ra_hai_dac_trung_cua_G1():
+    from eide.caps.plan import _dac_trung_G1
+
+    sach = _dac_trung_G1(_ke_hoach_sach(touches=["none"]), Context())["plan"]
+    assert sach["touches_forbidden"] is False and sach["arch_change"] is False
+
+    linker = _dac_trung_G1(_ke_hoach_sach(touches=["linker"]), Context())["plan"]
+    assert linker["touches_forbidden"] is True and linker["arch_change"] is True
+
+    # DMA không phải "đổi kiến trúc", nhưng vẫn là thứ G1-01 không được tự duyệt. Cách đọc hẹp
+    # ("chỉ isr với linker") sẽ cho qua đúng ở đây — nên đây là ca phân biệt hai cách đọc.
+    dma = _dac_trung_G1(_ke_hoach_sach(touches=["dma"]), Context())["plan"]
+    assert dma["touches_forbidden"] is True and dma["arch_change"] is False
+
+
+def test_G1_khong_tu_duyet_ke_hoach_cham_ISR():
+    """Đây là lỗ hổng thật trước 08/09: `touches_forbidden` đọc từ một khóa mức kế hoạch mà
+    schema gửi cho mô hình không có và không chỗ nào tính, nên nó LUÔN false — G1-01 tự duyệt
+    được một kế hoạch sửa vector ngắt, còn G1-03 ("Đổi kiến trúc") là quy tắc chết. Xem DEV-061.
+    """
+    from eide.caps.plan import _dac_trung_G1
+
+    gate = PolicyGate()
+    sach = gate.decide("G1", _dac_trung_G1(_ke_hoach_sach(touches=["none"]), Context()),
+                       risk="R1", tier="T1*")
+    assert sach.decision == "APPROVE" and sach.rule_id == "G1-01", \
+        "kế hoạch sạch phải tự duyệt được — nếu không thì test dưới không chứng minh gì"
+
+    isr = gate.decide("G1", _dac_trung_G1(_ke_hoach_sach(touches=["isr"]), Context()),
+                      risk="R1", tier="T1*")
+    assert isr.decision == "ASK", f"kế hoạch chạm ISR vẫn được duyệt bởi {isr.rule_id}"
+
+    clock = gate.decide("G1", _dac_trung_G1(_ke_hoach_sach(touches=["clock"]), Context()),
+                        risk="R1", tier="T1*")
+    assert clock.decision == "ASK" and clock.rule_id == "G1-03", \
+        f"đổi clock phải rơi vào G1-03, không phải {clock.rule_id}"

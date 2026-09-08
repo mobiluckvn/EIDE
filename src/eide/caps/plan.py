@@ -13,6 +13,7 @@ planner KHÔNG ĐƯỢC làm — "giả định tri thức chắc có".
 """
 from __future__ import annotations
 
+import copy
 import json
 import re
 from pathlib import Path
@@ -21,6 +22,7 @@ from typing import Any
 from eide.caps.project import EIDE_DIR
 from eide_core import store
 from eide_core.errors import EideError
+from eide_core.paths import spec_dir
 from eide_core.registry import capability
 from eide_core.router import Context
 
@@ -275,22 +277,44 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                          "gate": d.gate} if d else {}}
 
 
-_SCHEMA_PLAN = {
-    "type": "object",
-    "required": ["steps"],
-    "properties": {
-        "steps": {"type": "array", "items": {
-            "type": "object", "required": ["id", "goal"],
-            "properties": {"id": {"type": "string"}, "goal": {"type": "string"},
-                           "cap": {"type": "string"}, "done_when": {"type": "string"},
-                           "cites": {"type": "array", "items": {"type": "string"}},
-                           "needs_review": {"type": "boolean"}}}},
-        "citations": {"type": "array", "items": {"type": "string"}},
-        "missing": {"type": "array", "items": {"type": "object"}},
-        "risks": {"type": "array", "items": {"type": "string"}},
-        "estimate": {"type": "object"},
-    },
-}
+def schema_vai_tro(ten: str) -> dict[str, Any]:
+    """Schema đầu ra của một vai trò, đọc từ PRS-16 §4.
+
+    `docs/spec/prompts/out_schemas.json` do `scripts/gen_spec_tu_nguon.js` rút ra từ khối §4 của
+    `prs.js`. Đọc thay vì chép tay là điều kiện để schema không trôi — bản chép trước của Plan
+    thiếu hẳn `touches`, và thiếu một trường thì hai quy tắc cổng thành quy tắc chết mà không ai
+    thấy. Cùng khuôn với PRED_W (DEV-043), màn hình UI (DEV-046), bảng thuật ngữ CON-28.
+    """
+    d = json.loads((spec_dir() / "prompts" / "out_schemas.json").read_text(encoding="utf-8"))
+    if ten not in d:
+        raise EideError("E2000", f"PRS-16 §4 không có schema `{ten}` (có: {sorted(d)})")
+    return copy.deepcopy(d[ten])
+
+
+def _schema_plan() -> dict[str, Any]:
+    """Plan theo PRS-16 §4, đổi tên hai trường của mỗi bước.
+
+    `n` → `id` và `by` → `cap`, và đây là chỗ DUY NHẤT áp phép đổi tên ấy. Lý do giữ tên của mã
+    chứ không theo tài liệu: `cap` là một mã năng lực có thật, đối chiếu được với registry, còn
+    `by` của tài liệu là chuỗi tự do; `id` là chuỗi nên đặt được `s1`/`step-2` mà `code.*` tham
+    chiếu qua `step_ref`, còn `n` là số nguyên. Ghi lại ở DEV-061 để tài liệu theo sau.
+
+    Mọi trường khác — kể cả `touches` — đi thẳng từ tài liệu, không chép.
+    """
+    s = schema_vai_tro("Plan")
+    b = s["properties"]["steps"]["items"]
+    b["properties"]["id"] = {"type": "string"}
+    b["properties"]["cap"] = b["properties"].pop("by", {"type": "string"})
+    b["properties"].pop("n", None)
+    b["required"] = ["id" if x == "n" else "cap" if x == "by" else x for x in b.get("required", [])]
+    # `citations`/`missing` ở mức kế hoạch: tài liệu đòi bắt buộc, nhưng `plan.create` bổ sung
+    # `missing` từ `plan.sufficiency` SAU khi mô hình trả lời, nên ép mô hình phải có sẵn là ép
+    # nó đoán. Giữ `steps` là trường bắt buộc duy nhất; `_kiem_plan` mới là chỗ kiểm nội dung.
+    s["required"] = ["steps"]
+    return s
+
+
+_SCHEMA_PLAN = _schema_plan()
 
 
 def _kiem_plan(plan: dict[str, Any], root: Path) -> list[str]:
@@ -319,19 +343,45 @@ def _kiem_plan(plan: dict[str, Any], root: Path) -> list[str]:
     return loi
 
 
+# PRS-16 §4 cho `touches` một enum đóng: isr, linker, clock, dma, power, actuator, none.
+#
+# `none` là giá trị "bước này không chạm gì nhạy cảm"; sáu giá trị còn lại đều nhạy cảm, nên
+# `touches_forbidden` của G1-01 = "có bước nào chạm bất kỳ cái nào trong sáu". POL-17 không định
+# nghĩa chữ "forbidden", và cách đọc hẹp hơn — chỉ isr với linker — làm G1-01 tự duyệt một kế
+# hoạch động vào clock, DMA hay cơ cấu chấp hành, tức đúng loại việc mà cả cổng sinh ra để hỏi.
+# Xem DEV-061.
+CHAM_NHAY_CAM = frozenset({"isr", "linker", "clock", "dma", "power", "actuator"})
+
+# G1-03 ("Đổi kiến trúc") tự nêu ba thứ trong chính lý do của nó: "RTOS, clock, linker". RTOS
+# không có trong enum `touches`; hai cái còn lại thì có.
+CHAM_DOI_KIEN_TRUC = frozenset({"linker", "clock"})
+
+
+def _cham(buoc: list[dict[str, Any]]) -> set[str]:
+    return {t for b in buoc for t in (b.get("touches") or [])}
+
+
 def _dac_trung_G1(plan: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Bảy đặc trưng mà G1-01 hỏi (POL-17 §2)."""
+    """Bảy đặc trưng mà G1-01 hỏi (POL-17 §2).
+
+    `touches_forbidden` và `arch_change` được SUY TỪ `touches` của từng bước, không đọc từ hai
+    khóa cùng tên ở mức kế hoạch. Bản trước đọc `plan["touches_forbidden"]` và
+    `plan["arch_change"]` — hai khóa mà schema gửi cho mô hình không hề có và không chỗ nào
+    tính, nên cả hai luôn `False`: G1-03 là quy tắc chết, và G1-01 tự duyệt được một kế hoạch
+    sửa linker. Xem DEV-061.
+    """
     buoc = plan.get("steps") or []
     est = plan.get("estimate") or {}
+    cham = _cham(buoc)
     return {
         "plan": {
             "steps": len(buoc),
             "all_cited": all(b.get("cites") for b in buoc) if buoc else False,
             "new_resources": bool(plan.get("new_resources")),
-            "touches_forbidden": bool(plan.get("touches_forbidden")),
+            "touches_forbidden": bool(cham & CHAM_NHAY_CAM),
             "est_cost_usd": float(est.get("cost_usd") or 0),
             "missing": bool(plan.get("missing")),
-            "arch_change": bool(plan.get("arch_change")),
+            "arch_change": bool(cham & CHAM_DOI_KIEN_TRUC),
         },
         "feature": {"needs_review": any(b.get("needs_review") for b in buoc)},
     }

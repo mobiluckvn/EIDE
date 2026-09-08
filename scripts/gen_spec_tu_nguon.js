@@ -97,6 +97,34 @@ const VIEC = [
         },
     },
     {
+        // PRS-16 §4 — schema đầu ra của bốn vai trò (Plan, CodePatch, Review, Diagnosis). Cùng
+        // khuôn DEV-043/046/DEV-053: hợp đồng chỉ tồn tại trong một khối CODE của docx, nên mã
+        // phải chép tay, và bản chép của Plan trong `plan.py` đã trôi thật (xem DEV-061).
+        //
+        // Không sinh lại VĂN BẢN của khối CODE — chỉ đọc nó. Các dòng trong `SCHEMA_LINES` giữ
+        // nguyên vẹn để tài liệu docx không đổi; ở đây chúng được gộp lại theo đầu mục `# Tên`
+        // rồi phân tích thành JSON. Nhóm nào không phải JSON (dòng "# ReqSet …: xem DDD-14 §2")
+        // bị bỏ qua — đó là chú thích trỏ sang tài liệu khác, không phải schema.
+        tep: 'prompts/out_schemas.json', nguon: 'prs.js',
+        dung: () => {
+            const L = literal('prs.js', 'SCHEMA_LINES');
+            const ra = {};
+            let ten = null, than = [];
+            const xong = () => {
+                if (!ten) return;
+                try { ra[ten] = JSON.parse(than.join('')); } catch { /* chú thích, không phải schema */ }
+                ten = null; than = [];
+            };
+            for (const dong of L) {
+                if (dong.startsWith('# ')) { xong(); ten = dong.slice(2).trim(); }
+                else than.push(dong);
+            }
+            xong();
+            if (Object.keys(ra).length < 4) throw new Error(`PRS-16 §4 chỉ rút được ${Object.keys(ra).length} schema, cần ≥ 4`);
+            return JSON.stringify(ra, null, 1) + '\n';
+        },
+    },
+    {
         // CON-28 §6 bảng thuật ngữ Việt–Anh. `doc.style_check` bước 1 đòi "thuật ngữ trong
         // glossary CON-28 xuất hiện lần đầu không kèm giải nghĩa → term", nên phần mã cần bảng
         // ở dạng máy đọc được thay vì chép tay 40 dòng. Cùng khuôn DEV-043/046.
