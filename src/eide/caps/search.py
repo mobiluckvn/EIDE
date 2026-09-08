@@ -82,12 +82,12 @@ def bang_hang() -> list[dict[str, Any]]:
     return (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("vendors") or []
 
 
-# ---------------------------------------------------------------- SEARCH-01 vendor
+# ---------------------------------------------------------------- SEARCH-02 vendor
 
 
 @capability("search.vendor")
 def vendor(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: SEARCH-01 — CDS-12.2; TGT-19 §8. Trả `uri, kind, domain, size_est, license_hint`.
+    """Spec: SEARCH-02 — CDS-12.2; TGT-19 §8. Trả `uri, kind, domain, size_est, license_hint`.
 
     Bước 2 nói rõ: "HEAD để lấy kích thước; KHÔNG tải". Ràng buộc ấy là lý do năng lực này tách
     khỏi `search.fetch`: liệt kê ứng viên phải rẻ và không có hệ quả, để tác tử chạy được tự do
@@ -155,12 +155,12 @@ def _head(uri: str) -> dict[str, Any]:
         return {"size_est": None, "content_type": None, "reachable": False}
 
 
-# ---------------------------------------------------------------- SEARCH-03 rank
+# ---------------------------------------------------------------- SEARCH-05 rank
 
 
 @capability("search.rank")
 def rank(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: SEARCH-03 — CDS-12.2. Công thức chấm điểm nguyên văn ở bước 1.
+    """Spec: SEARCH-05 — CDS-12.2. Công thức chấm điểm nguyên văn ở bước 1.
 
     Trả `reasons` cho từng ứng viên, không chỉ con số. Bảng xếp hạng chỉ có điểm thì khi nó chọn
     sai, người dùng không biết sửa gì — còn "+2 vì tên miền tin cậy; KHÔNG được +2 vì tiêu đề
@@ -272,12 +272,12 @@ def dac_trung_nguon(candidate: dict[str, Any]) -> dict[str, Any]:
     }}
 
 
-# ---------------------------------------------------------------- SEARCH-04 fetch
+# ---------------------------------------------------------------- SEARCH-06 fetch
 
 
 @capability("search.fetch")
 def fetch(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: SEARCH-04 — CDS-12.2; POL-17 G-SRC; SEC-25 §4. Lỗi: E3000, E3001, E8001, E4004.
+    """Spec: SEARCH-06 — CDS-12.2; POL-17 G-SRC; SEC-25 §4. Lỗi: E3000, E3001, E8001, E4004.
 
     Ba bước, và **thứ tự không đảo được**:
 
@@ -403,12 +403,12 @@ def _ghi_source(root: Path, f: Path, uri: str, h: str, n: int, kind: str | None,
     return sid
 
 
-# ---------------------------------------------------------------- SEARCH-05 verify_match
+# ---------------------------------------------------------------- SEARCH-07 verify_match
 
 
 @capability("search.verify_match")
 def verify_match(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: SEARCH-05 — CDS-12.2. Trả `match_score` 0–1 và `reasons`.
+    """Spec: SEARCH-07 — CDS-12.2. Trả `match_score` 0–1 và `reasons`.
 
     Năng lực này canh một lỗi rất dễ xảy ra và rất khó thấy: **tải nhầm tài liệu**. Mẫu URL của
     ST cho STM32F411 và STM32F401 chỉ khác một ký tự; tải nhầm thì mọi fact trích ra đều đúng
@@ -489,12 +489,12 @@ def _ban_tai_lieu(t: str) -> str | None:
     return None
 
 
-# ---------------------------------------------------------------- SEARCH-06 missing
+# ---------------------------------------------------------------- SEARCH-08 missing
 
 
 @capability("search.missing")
 def missing(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: SEARCH-06 — CDS-12.2. Trả `requests` với `subject, kind, why`.
+    """Spec: SEARCH-08 — CDS-12.2. Trả `requests` với `subject, kind, why`.
 
     Trả lời câu hỏi "để làm được việc này, tôi còn thiếu tri thức gì" — và đó là năng lực làm
     cho tác tử biết mình không biết. Không có nó, tác tử đi tới bước cần `base_address` của I2C1,

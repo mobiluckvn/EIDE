@@ -182,7 +182,7 @@ def _doc_noi_dung(root: Path, doc_id: str) -> tuple[str, str | None]:
                     "hoặc đường dẫn tệp", exists=[], candidates=[], missing=[doc_id])
 
 
-# ---------------------------------------------------------------- DOC-07 datasheet_summary
+# ---------------------------------------------------------------- DOC-04 datasheet_summary
 
 
 PHAM_VI = ("periph", "electrical", "timing", "errata")
@@ -197,7 +197,7 @@ VI_TU_THEO_PHAM_VI = {
 
 @capability("doc.datasheet_summary")
 def datasheet_summary(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: DOC-07 — CDS-12.4. tc: "Mọi số liệu có trang"; lỗi E5002.
+    """Spec: DOC-04 — CDS-12.4. tc: "Mọi số liệu có trang"; lỗi E5002.
 
     Bước 1 đặt hai ràng buộc, và ràng buộc thứ hai mới là ràng buộc thật: *"KHÔNG nêu số không
     có fact"*. Nghĩa là bản tóm tắt bị giới hạn bởi những gì đã trích được — nó sẽ THIẾU so với
@@ -278,12 +278,12 @@ def _ghi_doc_artifact(root: Path, f: Path, loai: str) -> None:
         c.commit()
 
 
-# ---------------------------------------------------------------- DOC-05 section
+# ---------------------------------------------------------------- DOC-02 section
 
 
 @capability("doc.section")
 def section(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: DOC-05 — CDS-12.4. tc: "Có citations"; lỗi E5002.
+    """Spec: DOC-02 — CDS-12.4. tc: "Có citations"; lỗi E5002.
 
     Đây là năng lực CÓ SINH duy nhất của nhóm — và nó vẫn bị chặn bởi cùng một quy tắc: không
     có `citations` thì E5002. `doc.datasheet_summary` không cần mô hình vì nó chỉ xếp lại fact;

@@ -84,6 +84,38 @@ def test_vi_du_cua_hop_dong_phai_qua_noi_input_schema_cua_chinh_no():
     assert not loi, "ví dụ mâu thuẫn với input_schema:\n  " + "\n  ".join(loi)
 
 
+def test_ma_hop_dong_trong_docstring_phai_dung_ma_trong_cds():
+    """`Spec: DOC-05` ở đầu một handler phải là mã CỦA CHÍNH nó trong cds.json.
+
+    `test_handlers_cite_spec_in_docstring` chỉ kiểm docstring có bắt đầu bằng `Spec:` — nó
+    không kiểm mã ấy có đúng không. Nên 25 handler trỏ sang một hợp đồng KHÁC mà mọi phép kiểm
+    vẫn xanh: đánh số CDS đã đổi (`INGEST-01` → `ARCHIVE-05`, `DOC-05` → `DOC-02`, cả loạt
+    `SEARCH-*` và `VIEW-*` lệch một hai số) còn docstring thì giữ số cũ.
+
+    Hậu quả không phải thẩm mỹ. Nguyên tắc số 1 của kho này là "mọi hành vi truy vết được về
+    một tài liệu"; một mã sai gửi người đọc — và gửi chính tôi ở phiên sau — sang đúng hợp đồng
+    của một năng lực khác. `doc.section` trỏ `DOC-05`, mà DOC-05 là `doc.bringup_guide`: hai
+    năng lực có thật, hai hợp đồng có thật, và cái sai không tự lộ ra bao giờ.
+    """
+    import inspect
+
+    from eide.cli import main  # noqa: F401 — nạp mọi module caps để registry đầy đủ
+
+    cds = {c["id"]: c["code"] for c in
+           json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))}
+    loi = []
+    for c in get_registry().list(implemented=True):
+        doc = (c.handler.__doc__ or "").lstrip()
+        m = re.match(r"Spec:\s*([A-Z][A-Z0-9_]*-\d+)", doc)
+        if not m:
+            loi.append(f"{c.spec.id}: docstring không nêu mã hợp đồng nào")
+        elif m.group(1) != cds[c.spec.id]:
+            loi.append(f"{c.spec.id}: docstring nói `{m.group(1)}`, cds.json nói "
+                       f"`{cds[c.spec.id]}`")
+        _ = inspect
+    assert not loi, "docstring trỏ sai hợp đồng:\n  " + "\n  ".join(loi)
+
+
 def test_hien_thuc_khong_doc_tham_so_ma_input_schema_khong_cho_phep():
     """Mọi khoá `params["x"]` / `params.get("x")` trong hiện thực phải nằm trong `input_schema`.
 

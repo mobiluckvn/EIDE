@@ -314,12 +314,12 @@ def conflict_board(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"rows": rows}
 
 
-# ---------------------------------------------------------------- VIEW-05 rag_ask
+# ---------------------------------------------------------------- VIEW-07 rag_ask
 
 
 @capability("view.rag_ask")
 def rag_ask(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: VIEW-05 — CDS-12.4. tc: TC-79 "≥ 90%, 100% citations"; lỗi E5002.
+    """Spec: VIEW-07 — CDS-12.4. tc: TC-79 "≥ 90%, 100% citations"; lỗi E5002.
 
     Bước 1 đặt ba ràng buộc, và cả ba đều là ràng buộc về việc KHÔNG nói:
 
@@ -456,12 +456,12 @@ def _luu_trace(ctx: Context, tid: str, q: str, doan: list[dict[str, Any]]) -> No
         encoding="utf-8")
 
 
-# ---------------------------------------------------------------- VIEW-06 rag_trace
+# ---------------------------------------------------------------- VIEW-08 rag_trace
 
 
 @capability("view.rag_trace")
 def rag_trace(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: VIEW-06 — CDS-12.4. tc: "Hiển thị đủ 3 điểm"; lỗi E2000.
+    """Spec: VIEW-08 — CDS-12.4. tc: "Hiển thị đủ 3 điểm"; lỗi E2000.
 
     Ba điểm thành phần (`bm25`, `vector`, `graph`) chứ không phải một điểm gộp. Khi câu trả lời
     sai, người sửa cần biết đoạn ấy lọt vào vì trùng từ khóa hay vì lan tỏa đồ thị — hai nguyên
@@ -481,7 +481,7 @@ def rag_trace(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             "graph_path": (ch[0].get("graph_path") if ch else []) or []}
 
 
-# ---------------------------------------------------------------- VIEW-07 rag_index
+# ---------------------------------------------------------------- VIEW-09 rag_index
 
 
 DAI_CHUNK = 800 * 4      # ~800 token; xấp xỉ 4 ký tự/token cho văn bản kỹ thuật
@@ -489,7 +489,7 @@ DAI_CHUNK = 800 * 4      # ~800 token; xấp xỉ 4 ký tự/token cho văn bả
 
 @capability("view.rag_index")
 def rag_index(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: VIEW-07 — CDS-12.4. tc: TC-DD-05 "tái dựng"; lỗi E5000.
+    """Spec: VIEW-09 — CDS-12.4. tc: TC-DD-05 "tái dựng"; lỗi E5000.
 
     **Tăng dần theo `source.sha256`** là điểm chính, không phải việc chunk. Lập lại chỉ mục cho
     một datasheet 900 trang tốn hàng phút và tốn tiền embedding; làm lại mỗi lần mở dự án thì
@@ -602,12 +602,12 @@ def _ghi_bam(idx: Any, moi: dict[str, str]) -> None:
                               encoding="utf-8")
 
 
-# ---------------------------------------------------------------- VIEW-08 doc_side_by_side
+# ---------------------------------------------------------------- VIEW-11 doc_side_by_side
 
 
 @capability("view.doc_side_by_side")
 def doc_side_by_side(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: VIEW-08 — CDS-12.4. tc: "Vùng bôi sáng đúng bbox"; lỗi E2000.
+    """Spec: VIEW-11 — CDS-12.4. tc: "Vùng bôi sáng đúng bbox"; lỗi E2000.
 
     Trả `bbox` NGUYÊN VĂN từ `locator`, không quy đổi sang toạ độ màn hình. Giao diện biết tỉ lệ
     hiển thị của nó, còn năng lực này thì không — quy đổi ở đây là đoán một con số mà chỉ phía
@@ -650,12 +650,12 @@ def doc_side_by_side(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                       "cites": cites, "stale": bool(cu[4])}}
 
 
-# ---------------------------------------------------------------- VIEW-09 export_map
+# ---------------------------------------------------------------- VIEW-13 export_map
 
 
 @capability("view.export_map")
 def export_map(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: VIEW-09 — CDS-12.4. tc: "Mermaid render được".
+    """Spec: VIEW-13 — CDS-12.4. tc: "Mermaid render được".
 
     Năm định dạng, hai mục đích khác nhau. `dot`/`graphml` để công cụ khác đọc; `mermaid` để
     dán vào tài liệu. Trần 300 nút chỉ áp cho mermaid vì đó là ngưỡng nó còn vẽ ra thứ người

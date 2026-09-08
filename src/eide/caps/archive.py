@@ -98,7 +98,7 @@ def _root(ctx: Context) -> Path:
 
 @capability("ingest.classify")
 def classify(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: INGEST-01 — CDS-12.2. tc: TC-01 "≥ 95% đúng trên bộ 10 tệp".
+    """Spec: ARCHIVE-05 — CDS-12.2. tc: TC-01 "≥ 95% đúng trên bộ 10 tệp".
 
     Trả `confidence` cho từng tệp, và con số ấy có nghĩa thật: 1.0 khi chữ ký nội dung khẳng
     định, 0.6 khi chỉ có phần mở rộng làm chứng. Bên gọi dùng nó để quyết có hỏi người không —
@@ -214,7 +214,7 @@ def _loai_pdf(p: Path, dau: bytes) -> tuple[str, float, str]:
 
 @capability("ingest.hash_dedupe")
 def hash_dedupe(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: INGEST-02 — CDS-12.2; DDD-14 §2 Source (`sha256 TEXT UNIQUE`). tc: "Tệp đã có →
+    """Spec: ARCHIVE-06 — CDS-12.2; DDD-14 §2 Source (`sha256 TEXT UNIQUE`). tc: "Tệp đã có →
     dup kèm source_id".
 
     Băm NỘI DUNG, không phải đường dẫn hay ngày sửa. Cùng một datasheet tải hai lần vào hai chỗ
@@ -263,7 +263,7 @@ def bam_tep(p: Path, chunk: int = 1 << 20) -> str:
 
 @capability("ingest.index_text")
 def index_text(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: INGEST-03 — CDS-12.2. tc: "Truy vấn từ khóa tìm thấy".
+    """Spec: ARCHIVE-07 — CDS-12.2. tc: "Truy vấn từ khóa tìm thấy".
 
     Bước 1 giới hạn rõ: "CHỈ tài liệu ngữ cảnh (README, ghi chú)". Không phải sự dè dặt — chỉ
     mục toàn văn là để tìm câu chữ của người, còn tri thức phần cứng thì đi đường fact, có nguồn

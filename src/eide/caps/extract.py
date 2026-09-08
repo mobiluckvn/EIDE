@@ -539,7 +539,7 @@ def _iri_field(goc: str, ten: str) -> str:
     return f"{goc}/periph:{ten}"
 
 
-# ---------------------------------------------------------------- EXTRACT-09 code_constants
+# ---------------------------------------------------------------- EXTRACT-21 code_constants
 
 
 # Hằng số đáng ngờ: địa chỉ, mặt nạ bit, hoặc số lớn không rõ nguồn. Số nhỏ (0, 1, 2…) là chỉ
@@ -551,7 +551,7 @@ DUOI_MA = (".c", ".h", ".cpp", ".hpp", ".cc", ".rs")
 
 @capability("extract.code_constants")
 def code_constants(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: EXTRACT-09 — CDS-12.2. tc: "UC-A05: 100 hằng số → phân loại đúng".
+    """Spec: EXTRACT-21 — CDS-12.2. tc: "UC-A05: 100 hằng số → phân loại đúng".
 
     Trả lời một câu hỏi cụ thể: **hằng số nào trong mã không truy được về nguồn nào?** Một
     `0x40005400` viết tay trong driver có thể đúng, có thể là số của con chip người viết dùng
@@ -611,12 +611,12 @@ def _cac_tep(repo: Path, paths: list[str] | None) -> list[Path]:
             and not any(x in p.parts for x in ("build", ".git", "node_modules"))]
 
 
-# ---------------------------------------------------------------- EXTRACT-05 pdf_layout
+# ---------------------------------------------------------------- EXTRACT-06 pdf_layout
 
 
 @capability("extract.pdf_layout")
 def pdf_layout(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: EXTRACT-05 — CDS-12.2. tc: "Bảng thanh ghi nhận dạng là table với bbox";
+    """Spec: EXTRACT-06 — CDS-12.2. tc: "Bảng thanh ghi nhận dạng là table với bbox";
     lỗi E4001 (thiếu docling), E4004.
 
     Năng lực này KHÔNG sinh fact. Nó chỉ chuyển một PDF thành khối có `bbox`, và việc tách ấy là
@@ -812,7 +812,7 @@ def _khoi_van_ban(page: Any, so_trang: int) -> list[dict[str, Any]]:
     return ra
 
 
-# ---------------------------------------------------------------- EXTRACT-06 pdf_register_map
+# ---------------------------------------------------------------- EXTRACT-07 pdf_register_map
 
 
 # Bước 1: "Chọn bảng có tiêu đề/cột dạng thanh ghi (Register, Address, Bit, Reset…)". Chọn bảng
@@ -825,7 +825,7 @@ NGUONG_CHON_BANG = 2          # số cột nhận ra được, tối thiểu
 
 @capability("extract.pdf_register_map")
 def pdf_register_map(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: EXTRACT-06 — CDS-12.2. tc: TC-12 "≥ 90%"; ask "confidence < ngưỡng".
+    """Spec: EXTRACT-07 — CDS-12.2. tc: TC-12 "≥ 90%"; ask "confidence < ngưỡng".
 
     Đây là chỗ mô hình thật sự cần: bảng thanh ghi trong PDF không có lược đồ. Cột "Bits" có thể
     là `[7:4]`, `7:4`, `7-4`, hay bốn dòng riêng; "Reset" có thể là `0x00`, `0000 0000`, hay
@@ -974,12 +974,12 @@ def _gateway(ctx: Context) -> Any:
     return gw
 
 
-# ---------------------------------------------------------------- EXTRACT-07 pdf_electrical
+# ---------------------------------------------------------------- EXTRACT-08 pdf_electrical
 
 
 @capability("extract.pdf_electrical")
 def pdf_electrical(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: EXTRACT-07 — CDS-12.2, mức **T2**. ask "Luôn (an toàn)"; tc: "VDD range đúng;
+    """Spec: EXTRACT-08 — CDS-12.2, mức **T2**. ask "Luôn (an toàn)"; tc: "VDD range đúng;
     timing có min/typ/max".
 
     T2 và "ask luôn" không phải sự thận trọng thừa. Fact `voltage_range` sai là con đường ngắn
@@ -1067,12 +1067,12 @@ def _fact_dien(m: dict[str, Any], goc: str, sid: str, b: dict[str, Any]) -> dict
             "method": "layout_llm", "tier": "silver", "confidence": 0.7}
 
 
-# ---------------------------------------------------------------- EXTRACT-08 office
+# ---------------------------------------------------------------- EXTRACT-19 office
 
 
 @capability("extract.office")
 def office(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: EXTRACT-08 — CDS-12.2. tc: "Bảng trong docx thành block table".
+    """Spec: EXTRACT-19 — CDS-12.2. tc: "Bảng trong docx thành block table".
 
     Trả cùng dạng khối như `extract.pdf_layout` — `page/bbox/type/content` — dù docx và xlsx
     không có trang lẫn tọa độ. Cố ý: `extract.pdf_register_map` nhận `blocks` bất kể chúng từ

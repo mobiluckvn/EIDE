@@ -29,7 +29,7 @@ DUOI = {"svd": (".svd",), "atdf": (".atdf",)}
 
 @capability("registry.seed")
 def seed(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: REGISTRY-01 — CDS-12.5. tc: TC-42; undo `delete_created_files`.
+    """Spec: REGISTRY-05 — CDS-12.5. tc: TC-42; undo `delete_created_files`.
 
     Một tệp hỏng KHÔNG dừng cả lô. Bộ `cmsis-svd-data` có vài chục tệp sai cú pháp hoặc thiếu
     thẻ, và dừng ở tệp thứ 12 nghĩa là 600 hộ chiếu còn lại không bao giờ được nạp vì một tệp

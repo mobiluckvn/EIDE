@@ -290,12 +290,12 @@ def list_(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         for r in rows]}
 
 
-# ---------------------------------------------------------------- PASSPORT-08 export
+# ---------------------------------------------------------------- PASSPORT-07 export
 
 
 @capability("passport.export")
 def export(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: PASSPORT-08 — CDS-12.2. tc: "Tệp nạp lại được".
+    """Spec: PASSPORT-07 — CDS-12.2. tc: "Tệp nạp lại được".
 
     Bước 1: "Xuất fact + Source CON TRỎ (không PDF)". Nhúng cả datasheet vào bản xuất sẽ biến
     một tệp YAML vài trăm KB thành vài chục MB, và tệ hơn: nó phát tán lại tài liệu có bản

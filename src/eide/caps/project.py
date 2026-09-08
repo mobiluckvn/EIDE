@@ -486,7 +486,7 @@ def _root(ctx: Context) -> Path:
     return root
 
 
-# ---------------------------------------------------------------- PROJECT-02 set_target
+# ---------------------------------------------------------------- PROJECT-06 set_target
 
 
 # Bước 1: "Suy ISA từ chip qua hộ chiếu/seed (bảng họ chip → ISA)". Bảng ấy KHÔNG viết ở đây:
@@ -506,7 +506,7 @@ def _isa_tu_chip(chip: str) -> str | None:
 
 @capability("project.set_target")
 def set_target(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: PROJECT-02 — CDS-12.3. tc: "Ghim st.stm32f411ce@x; constraints.yaml cập nhật;
+    """Spec: PROJECT-06 — CDS-12.3. tc: "Ghim st.stm32f411ce@x; constraints.yaml cập nhật;
     chip lạ → missing"; undo `restore_config`.
 
     GHIM phiên bản hộ chiếu, không chỉ ghi tên chip. Khác biệt ấy là toàn bộ giá trị của năng

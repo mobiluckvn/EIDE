@@ -56,7 +56,7 @@ def _thu_muc(ctx: Context) -> Path:
     return d
 
 
-# ---------------------------------------------------------------- DIAGRAM-04 lint
+# ---------------------------------------------------------------- DIAGRAM-13 lint
 
 
 # Bốn nhóm kiểm của bước 1. Tách thành hằng số có tên để `issues` trả `kind` ổn định — giao diện
@@ -66,7 +66,7 @@ KIND_CU_PHAP, KIND_MO_COI, KIND_LA, KIND_KICH_THUOC = "syntax", "orphan", "unkno
 
 @capability("diagram.lint")
 def lint(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: DIAGRAM-04 — CDS-12.4. tc: "Nút không có trong ModuleGraph → issue".
+    """Spec: DIAGRAM-13 — CDS-12.4. tc: "Nút không có trong ModuleGraph → issue".
 
     Phép kiểm đáng giá nhất là `unknown_node`, không phải cú pháp. Một lược đồ sai cú pháp thì
     renderer báo ngay; một lược đồ **đúng cú pháp nhưng vẽ sai hệ thống** thì không ai báo — nó
@@ -339,12 +339,12 @@ def _bus_tu_fact(ctx: Context, bom: list[dict[str, Any]]) -> list[tuple[str, str
     return ra
 
 
-# ---------------------------------------------------------------- DIAGRAM-03 kg_view
+# ---------------------------------------------------------------- DIAGRAM-10 kg_view
 
 
 @capability("diagram.kg_view")
 def kg_view(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: DIAGRAM-03 — CDS-12.4. tc: "Render được; màu đúng".
+    """Spec: DIAGRAM-10 — CDS-12.4. tc: "Render được; màu đúng".
 
     Dùng lại `view.kg_map` cho phần màu và `view.export_map` cho phần sinh DOT, thay vì tự tô
     lại. Hai bảng màu cho cùng một ý nghĩa là hai bảng sẽ lệch — và lệch màu thì `conflict` đỏ ở
