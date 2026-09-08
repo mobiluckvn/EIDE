@@ -71,7 +71,7 @@ c.push(T([2200, 4100, 3000], ['Thành phần', 'Nội dung / biến thể', 'S�
   ['Thẻ báo cáo (ReportCard)', 'Bốn mục cố định: Đã làm / Chờ anh / Hoàn tác được đến / Chi phí; mỗi mục có liên kết', 'event.chat.report'],
   ['Thanh tự chủ (AutonomyBar)', 'Mức (A0–A4) · N việc tự làm · M chờ · hạn hoàn tác; đỏ khi dừng; nhấp mở popover đặt mức (nới lỏng → cần ký)', 'autonomy.get/set; event.autonomy.changed'],
   ['Nút dừng khẩn (StopButton)', 'Đỏ viền, luôn thấy; xác nhận 1 nút; ⌘⇧.', 'stop'],
-  ['Hàng đợi (QueueList)', 'Hai nhóm; mục có tag cổng, tóm tắt, rủi ro, lý do quy tắc, hạn hoàn tác; hành động duyệt/từ chối/hoàn tác/hàng loạt', 'queue.list; gate.decide; undo.apply'],
+  ['Hàng đợi (QueueList)', 'Hai nhóm; mục có tag cổng, tóm tắt, rủi ro, lý do quy tắc, hạn hoàn tác; hành động duyệt/từ chối/hoàn tác/hàng loạt. Duyệt hàng loạt CHỈ gom các mục cùng cổng VÀ cùng quy tắc, và phải hiện số mục trong nhóm trước khi bấm — gom theo tiêu chí khác là mời người duyệt một đống thay vì một loại quyết định, và khi ấy nút hàng loạt trở thành cách nhanh nhất để đồng ý với thứ mình chưa đọc (DEV-050)', 'queue.list; gate.decide; undo.apply'],
   ['Bảng fact (FactTable)', 'Cột subject/predicate/giá trị/tier/nguồn; chọn nhiều; tô mâu thuẫn; nhấp nguồn → Provenance', 'passport.query; kg.review_facts'],
   ['Panel nguồn gốc (ProvenancePanel)', 'Chuỗi nguồn → trang/bbox → ảnh cắt → người/policy duyệt → supersede; nút mở PDF', 'view.provenance; view.doc_side_by_side'],
   ['Panel đồ thị (GraphPanel)', 'Canvas zoom/pan; màu tier/status/lớp; bộ lọc; nhấp nút → focus; xuất', 'view.kg_map/kg_focus/export_map'],

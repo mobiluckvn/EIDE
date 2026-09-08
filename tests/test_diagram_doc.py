@@ -525,9 +525,47 @@ def test_kien_truc_muc_context_lay_tu_constraints(du_an):
     assert "STM32F411RE" in dg["src"]
 
 
-def test_kien_truc_muc_container_noi_thang_khi_thieu_layer(du_an):
-    """DEV-069: `arch.decompose` tính lớp rồi mất nó lúc ghi vì DDD-14 §2 Module không có cột
-    `layer`. Gộp bừa mọi module vào `service` còn tệ hơn không có sơ đồ, vì nó TRÔNG ĐÚNG."""
+def test_lop_kien_truc_SONG_QUA_mot_vong_ghi_doc(du_an):
+    """DEV-069, DDD-14 v1.3. Trước migration 0005, `layer` được tính, được dùng để kiểm bất biến
+    "phụ thuộc chỉ đi xuống lớp dưới", rồi MẤT lúc ghi — nên bất biến ấy chỉ kiểm được đúng một
+    lần và mọi năng lực đọc ModuleGraph lại từ store đều không dựng được gì theo lớp."""
+    from eide.caps.arch import _doc_module
+
+    _, _, root = du_an
+    nap_module(root, [{"id": "mod_h", "name": "HAL", "layer": "hal", "depends": []}])
+    assert _doc_module(root)[0]["layer"] == "hal"
+
+
+def test_kien_truc_muc_container_gom_theo_LOP(du_an):
+    """Mức container của C4 trong firmware là các LỚP, không phải tiến trình hay dịch vụ."""
+    from eide.caps.diagram import architecture
+
+    _, ctx, root = du_an
+    nap_module(root, [{"id": "mod_h", "name": "HAL", "layer": "hal", "depends": []},
+                      {"id": "mod_d", "name": "Driver", "layer": "driver", "depends": ["mod_h"]},
+                      {"id": "mod_d2", "name": "Driver 2", "layer": "driver", "depends": ["mod_h"]},
+                      {"id": "mod_a", "name": "App", "layer": "app", "depends": ["mod_d"]}])
+    dg = architecture({"level": "container"}, ctx)["diagram"]
+    assert dg["nodes"] == ["hal", "driver", "app"], "chỉ lớp CÓ module, và đúng thứ tự lớp"
+    assert "driver\\n2 module" in dg["src"]
+
+
+def test_canh_NGUOC_LOP_bi_danh_dau_chu_khong_bi_giau(du_an):
+    """Lược đồ giấu một vi phạm là lược đồ nói dối, và đây là chỗ duy nhất người đọc còn có cơ
+    hội thấy nó — `arch.decompose` chỉ kiểm được lúc phân rã."""
+    from eide.caps.diagram import architecture
+
+    _, ctx, root = du_an
+    nap_module(root, [{"id": "mod_h", "name": "HAL", "layer": "hal", "depends": ["mod_a"]},
+                      {"id": "mod_a", "name": "App", "layer": "app", "depends": []}])
+    dg = architecture({"level": "component"}, ctx)["diagram"]
+    nguoc = [e for e in dg["edges"] if e["label"]]
+    assert len(nguoc) == 1 and nguoc[0]["from"] == "mod_h" and "ngược lớp" in nguoc[0]["label"]
+
+
+def test_khong_module_nao_co_lop_thi_noi_thang(du_an):
+    """`layer` NULL nghĩa là "chưa biết" — migration 0005 cố ý không suy ngược cho dữ liệu cũ.
+    Gộp bừa mọi module vào `service` còn tệ hơn không có sơ đồ, vì nó TRÔNG ĐÚNG."""
     from eide.caps.diagram import architecture
     from eide_core.errors import EideError
 
@@ -535,8 +573,8 @@ def test_kien_truc_muc_container_noi_thang_khi_thieu_layer(du_an):
     nap_module(root, [{"id": "mod_a", "name": "A", "depends": []}])
     with pytest.raises(EideError) as e:
         architecture({"level": "container"}, ctx)
-    assert e.value.code == "E2000" and "DEV-069" in str(e.value)
-    assert e.value.data["missing"] == ["module.layer"]
+    assert e.value.code == "E2000" and e.value.data["missing"] == ["module.layer"]
+    assert "arch.decompose" in str(e.value)
 
 
 def test_kien_truc_ba_ngon_ngu_cung_mot_do_thi(du_an):
@@ -681,8 +719,9 @@ def test_muc_khong_co_du_lieu_thi_NOI_LA_CHUA_CO(du_an, monkeypatch):
 
     assert "Chưa có dữ liệu cho mục này" in md
     assert "arch.map_hw" in md, "phải nêu năng lực cần chạy để có dữ liệu"
-    # 7 mục của SRS, trong đó chỉ những mục CÓ dữ liệu (+ hai mục dẫn nhập) mới gọi mô hình
-    assert len(goi) < 7, f"gọi mô hình {len(goi)} lần — mục rỗng không được gọi"
+    from eide.caps.doc import outlines
+    n_muc = len(outlines()["SRS"]["sections"])
+    assert len(goi) < n_muc, f"gọi mô hình {len(goi)}/{n_muc} lần — mục rỗng không được gọi"
 
 
 def test_thieu_fact_BAT_BUOC_thi_E3000_chu_khong_sinh_tai_lieu_rong(du_an, monkeypatch):
@@ -701,7 +740,7 @@ def test_thieu_fact_BAT_BUOC_thi_E3000_chu_khong_sinh_tai_lieu_rong(du_an, monke
 
 def test_moi_loai_tai_lieu_dung_mot_muc_luc_khac_nhau(du_an, monkeypatch):
     """Mục lục lấy đúng đề mục H1 của chính bộ hồ sơ EIDE (DEV-070) — mỗi loại một bộ khác."""
-    from eide.caps.doc import MUC_LUC, generate
+    from eide.caps.doc import generate, outlines
 
     _, ctx, root = du_an
     _gia_lap(monkeypatch, VAN)
@@ -710,8 +749,11 @@ def test_moi_loai_tai_lieu_dung_mot_muc_luc_khac_nhau(du_an, monkeypatch):
     for loai in ("URD", "SAD", "SDD"):
         md = __import__("pathlib").Path(
             generate({"type": loai}, ctx)["path"]).read_text(encoding="utf-8")
-        for tieu_de, _ in MUC_LUC[loai]:
-            assert f"## {tieu_de}" in md, f"{loai} thiếu {tieu_de}"
+        for s in outlines()[loai]["sections"]:
+            assert f"## {s['heading']}" in md, f"{loai} thiếu {s['heading']}"
+    # và ba loại phải KHÁC nhau — một mục lục dùng chung thì bảng nguồn là thừa
+    assert len({tuple(s["heading"] for s in outlines()[x]["sections"])
+                for x in ("URD", "SAD", "SDD")}) == 3
 
 
 def test_bringup_va_test_report_uy_quyen_cho_nang_luc_rieng(du_an, monkeypatch):
@@ -738,7 +780,9 @@ def test_style_check_chay_va_dem_duoc_ghi_vao_DocArtifact(du_an, monkeypatch):
         r = c.execute("SELECT type, sections, citations, style_issues FROM doc_artifact"
                       " WHERE id=?", (out["doc_id"],)).fetchone()
     assert r[0] == "SRS"
-    assert len(json.loads(r[1])) == 7, "mỗi mục một bản ghi sections"
+    from eide.caps.doc import outlines
+    assert len(json.loads(r[1])) == len(outlines()["SRS"]["sections"]), \
+        "mỗi mục một bản ghi sections"
     assert len(json.loads(r[3])) == out["style_issues"]
 
 

@@ -53,7 +53,7 @@
   impl: eide.doc:generate
   errors:
   - E5002
-  - E4001 thiếu node/docx
+  - E3000 thiếu fact bắt buộc
   example:
     type: SRS
     lang: vi

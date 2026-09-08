@@ -64,6 +64,26 @@ const VIEC = [
         dung: () => JSON.stringify(JSON.parse(literal('pol.js', 'AUTONOMY_SCHEMA').join('\n')), null, 2) + '\n',
     },
     {
+        // POL-17 §3 — bảng nhận dạng cơ cấu chấp hành mà `board.mark_lab` đối chiếu với netlist
+        // trước khi tin lời khai `no_actuator` của người. Trước DEV-068 bảng này nằm trong
+        // `board.py`; đưa ra spec để nó sửa được mà không phải sửa mã, cùng khuôn `isa/*.yaml`.
+        tep: 'policy/actuators.yaml', nguon: 'pol.js',
+        dung: () => {
+            const A = literal('pol.js', 'ACTUATORS');
+            const d = ['# policy/actuators.yaml — sinh từ EIDE-POL-17 §3.',
+                '# Linh kiện làm board CHUYỂN ĐỘNG hoặc SINH NHIỆT khi mã chạy sai. `board.mark_lab`',
+                '# dùng bảng này làm lưới chặn MỘT CHIỀU: bắt được thì chắc chắn không phải board lab;',
+                '# không bắt được thì không kết luận gì, và lời khai của người vẫn là điều kiện bắt buộc.',
+                'version: 1.0', 'groups:'];
+            for (const [khoa, ten, mau] of A) {
+                d.push(`  - id: ${khoa}`);
+                d.push(`    name: ${JSON.stringify(ten)}`);
+                d.push(`    patterns: ${JSON.stringify(mau)}`);
+            }
+            return d.join('\n') + '\n';
+        },
+    },
+    {
         tep: 'dialog/intent.schema.json', nguon: 'dps.js',
         dung: () => JSON.stringify(literal('dps.js', 'INTENT_SCHEMA'), null, 2) + '\n',
     },
@@ -157,6 +177,36 @@ const VIEC = [
         tep: 'context/budgets.json', nguon: 'cxd.js',
         dung: () => JSON.stringify(literal('cxd.js', 'CXD'), null, 2) + '\n',
     },
+    {
+        // DOC-01 bước 1 "Mục lục chuẩn theo type (mẫu bộ EAA/EIDE)" — và "mẫu bộ EAA/EIDE" chính
+        // là sáu bộ sinh dưới đây. Rút đề mục THẲNG từ chúng thay vì chép tay vào Python: một
+        // bảng chép tay sẽ trôi khỏi bộ hồ sơ đúng lúc bộ hồ sơ đổi, mà không ai biết. Cùng khuôn
+        // với `doc/glossary.json`. Xem DEVIATIONS DEV-070.
+        //
+        // Nguồn tri thức của từng mục thì KHÔNG có trong bộ hồ sơ — đó là quyết định của EIDE, nên
+        // nó nằm trong `cds.js` cạnh chính hợp đồng DOC-01.
+        tep: 'doc/outlines.json', nguon: 'urd/srs/sad/sdd/stp/bpd.js + cds.js',
+        dung: () => {
+            const NG = literal('cds.js', 'DOC_OUTLINE_NGUON');
+            const BB = literal('cds.js', 'DOC_OUTLINE_BAT_BUOC');
+            const TEP = { URD: 'urd.js', SRS: 'srs.js', SAD: 'sad.js', SDD: 'sdd.js', STP: 'stp.js', BPD: 'bpd.js' };
+            const ra = {};
+            for (const [loai, tep] of Object.entries(TEP)) {
+                const sections = deMuc(tep).map(h => {
+                    const so = (h.match(/^[0-9]+[A-Z]?\./) || [''])[0];
+                    return { heading: h, source: (NG[loai] || {})[so] || '-' };
+                });
+                const co = new Set(sections.map(s => s.source));
+                // Một mục "bắt buộc" trỏ vào nguồn mà không mục nào dùng là một luật chết: nó
+                // không bao giờ kích hoạt, và người viết tưởng mình đã bắt buộc điều gì đó.
+                for (const b of (BB[loai] || [])) {
+                    if (!co.has(b)) throw new Error(`${loai}: nguồn bắt buộc '${b}' không mục nào dùng`);
+                }
+                ra[loai] = { doc: tep.replace('.js', '').toUpperCase(), required: BB[loai] || [], sections };
+            }
+            return JSON.stringify(ra, null, 1) + '\n';
+        },
+    },
 ];
 
 // --- bất biến giữa các tệp: enum ý định và bảng mô tả phải phủ nhau HAI CHIỀU ---
@@ -173,6 +223,14 @@ function kiemBatBien() {
     const cxd = literal('cxd.js', 'CXD');
     const thieuNS = Object.keys(cxd.budget).filter(r => !cxd.budget[r].total);
     if (thieuNS.length) throw new Error(`vai trò thiếu ngân sách tổng: ${thieuNS}`);
+}
+
+/** Rút các đề mục `H1('…')` của một bộ sinh tài liệu, theo đúng thứ tự xuất hiện. */
+function deMuc(tep) {
+    const src = fs.readFileSync(path.join(NGUON, tep), 'utf8');
+    const ra = [];
+    for (const m of src.matchAll(/H1\('((?:[^'\\]|\\.)*)'\)/g)) ra.push(m[1].replace(/\\'/g, "'"));
+    return ra;
 }
 
 const raSoat = process.argv.includes('--kiem');

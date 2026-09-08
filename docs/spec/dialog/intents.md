@@ -26,6 +26,7 @@ Phân biệt:
 - `arch.design` gồm kiểm xung đột chân và ngân sách tài nguyên, không phải `debug.ask`.
 - `policy.set` gồm cả duyệt hàng đợi và hoàn tác, không phải `knowledge.build`.
 - `big_command` KHÔNG kéo theo `is_big = true`: "đo dòng tiêu thụ khi ngủ" là một bước (measure.power) nhưng nhóm `measure` chưa có ý định riêng nên vẫn mang nhãn `big_command`.
+- HƯỚNG ĐÃ CHỐT (DEV-035, 08/09/2026): nhóm năng lực nào còn thiếu thì thêm Ý ĐỊNH RIÊNG cho nhóm ấy, KHÔNG mở rộng nghĩa của `big_command`. `big_command` mô tả HÌNH DẠNG của lệnh (nhiều bước, nhiều nhóm), nên nhét thêm nghĩa "nhóm chưa có ý định" vào là trộn hai chiều phân loại khác nhau vào một nhãn. Việc thêm hoãn tới CHAT-06 `chat.orchestrate` vì lúc ấy Orchestrator phải chọn năng lực cho từng ý định nên bảng ánh xạ thiếu sẽ tự lộ ra; làm sớm thì phải gán nhãn lại cả 50 câu của TC-59 mà chưa có gì bắt buộc.
 
 is_big:
 - Phép thử: lệnh gọi TOÀN BỘ một chuỗi mẫu §4.4, hay chỉ MỘT NÚT của chuỗi ấy?

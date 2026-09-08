@@ -448,10 +448,10 @@ def _c4_context(root: Path, mods: list[dict[str, Any]]) -> tuple[list[dict[str, 
 def _c4_container(mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[tuple[str, str, str]]]:
     """Mức container: năm LỚP của firmware, chỉ vẽ lớp nào thật sự có module.
 
-    Lớp có thể KHÔNG có trong store: `arch.decompose` tính `layer`, kiểm phụ thuộc theo nó, rồi
-    mất nó lúc ghi vì DDD-14 §2 Module không có cột `layer` (xem [DEV-069]). Khi ấy nói thẳng ra
-    chứ không gộp bừa mọi module vào `service` — một sơ đồ container gom nhầm lớp còn tệ hơn
-    không có sơ đồ, vì nó trông đúng.
+    Module dựng TRƯỚC DDD-14 v1.3 không có `layer` (cột ấy thêm ở migration 0005, DEV-069) và
+    `layer` để `NULL` nghĩa là "chưa biết" — không suy ngược. Khi không module nào có lớp thì
+    nói thẳng ra chứ không gộp bừa mọi module vào `service`: một sơ đồ container gom nhầm lớp
+    còn tệ hơn không có sơ đồ, vì nó trông đúng.
     """
     theo: dict[str, list[dict[str, Any]]] = {}
     for m in mods:
@@ -459,8 +459,8 @@ def _c4_container(mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], lis
             theo.setdefault(lp, []).append(m)
     if not theo:
         raise EideError("E2000", "Không module nào có `layer`, nên không dựng được mức "
-                        "container. `arch.decompose` có tính lớp nhưng DDD-14 §2 Module chưa có "
-                        "cột để giữ (DEV-069) — dùng `level=\"component\"` cho tới khi có.",
+                        "container — chạy lại `arch.decompose` để gán lớp (module dựng trước "
+                        "DDD-14 v1.3 chưa có trường này), hoặc dùng `level=\"component\"`.",
                         exists=[m["id"] for m in mods], candidates=list(LOP_C4),
                         missing=["module.layer"])
     co = [x for x in LOP_C4 if x in theo]
@@ -473,9 +473,8 @@ def _c4_container(mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], lis
 def _c4_component(mods: list[dict[str, Any]]) -> tuple[list[dict[str, str]], list[tuple[str, str, str]]]:
     """Mức component: từng module, cạnh là `depends`, có đánh dấu cạnh đi NGƯỢC lớp.
 
-    Không có `layer` trong store (DEV-069) thì vẫn vẽ được — module và `depends` đều có thật;
-    chỉ mất phần nhãn lớp và phần cảnh báo cạnh ngược. Mất một lớp thông tin thì vẽ ít đi, chứ
-    không đoán bù.
+    Module chưa có `layer` thì vẫn vẽ được — module và `depends` đều có thật; chỉ mất phần nhãn
+    lớp và phần cảnh báo cạnh ngược. Mất một lớp thông tin thì vẽ ít đi, chứ không đoán bù.
     """
     bac = {m["id"]: (LOP_C4.index(m["layer"]) if m.get("layer") in LOP_C4 else -1) for m in mods}
     co = set(bac)

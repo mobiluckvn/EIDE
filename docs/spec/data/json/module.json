@@ -27,6 +27,17 @@
    "type": "array",
    "description": "JSON module ids"
   },
+  "layer": {
+   "type": "string",
+   "enum": [
+    "hal",
+    "driver",
+    "service",
+    "control",
+    "app"
+   ],
+   "description": "Lớp kiến trúc (ARCH-02). Bất biến \"phụ thuộc chỉ đi xuống lớp dưới\" tính trên trường này, nên nó phải được LƯU chứ không chỉ tồn tại trong một lời gọi — xem DEVIATIONS DEV-069"
+  },
   "arch_style": {
    "type": "string",
    "enum": [

@@ -1239,11 +1239,11 @@ def kicad_netlist(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     đã là netlist rồi — bắt cài cả bộ KiCad để đọc một tệp s-expression là dựng một rào cản
     không có lý do.
 
-    **Tên board lấy từ tên tệp**, vì `input_schema` của EXTRACT-16 chỉ nhận `file` và đóng
-    `additionalProperties`. Bản đầu nhận thêm `name`, và nó chạy trong test vì test gọi thẳng
-    hàm — nhưng qua router thì `name` bị E1000 chặn trước khi vào đây, tức một tham số không
-    ai dùng được. Xem [DEV-066]: đề nghị CDS-12.2 thêm `name` cho EXTRACT-16, vì tên tệp
-    (`robot.net`) thường không phải tên board (`robot-main`) mà `board.build_passport` hỏi tới.
+    **Tên board:** `name` nếu bên gọi nêu, không thì tên tệp. Hai đường đều cần: tên tệp netlist
+    thường là tên bản vẽ (`robot.net`), còn `board.build_passport` hỏi theo tên board
+    (`robot-main`) — không thống nhất được thì hộ chiếu dựng xong mà bước sau báo "chưa có net".
+    EXTRACT-16 v1.3 mới có `name`; trước đó hiện thực nhận nó mà router chặn bằng E1000, tức
+    một tham số không ai dùng được. Xem [DEV-066].
     """
     root = _root(ctx)
     p = Path(params["file"]).expanduser()
@@ -1262,7 +1262,7 @@ def kicad_netlist(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                         file=str(p), parts=len(parts))
 
     sid = _bao_dam_source(root, p, "netlist", "gold")
-    ten = p.stem
+    ten = params.get("name") or p.stem
     bid = f"board:{re.sub(r'[^A-Za-z0-9_.-]+', '-', ten).lower()}"
     pid = f"{bid.split(':', 1)[1]}@1.0.0"
     facts = _facts_netlist(bid, parts, nets, sid)

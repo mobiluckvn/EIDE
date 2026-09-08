@@ -1,0 +1,20 @@
+-- DDD-14 §2 Module v1.3 — thêm `layer` (DEVIATIONS DEV-069, chủ sản phẩm duyệt 08/09/2026).
+-- user_version=5.
+--
+-- VÌ SAO CẦN CỘT NÀY, chứ không phải một trường tiện tay. CDS-12.1 ARCH-02 chia module theo năm
+-- lớp `hal → driver → service → control → app`, và `arch.decompose` kiểm một bất biến kiến trúc
+-- dựa hẳn vào lớp: "phụ thuộc chỉ đi xuống lớp dưới". Trước bản này, lớp được tính, được dùng để
+-- kiểm, rồi MẤT lúc ghi — bảng `module` không có chỗ giữ. Hệ quả nặng hơn việc thiếu một nhãn:
+-- bất biến ấy chỉ kiểm được ĐÚNG MỘT LẦN, ngay tại lời gọi `decompose`; sau đó bất kỳ ai sửa
+-- `depends` bằng đường khác đều không còn gì đối chiếu lại.
+--
+-- `ALTER TABLE ADD COLUMN` chứ không dựng lại bảng: SQLite thêm cột cuối bảng, còn schema.sql
+-- (sinh từ ddd_model.py) đặt `layer` giữa `depends` và `arch_style`. Thứ tự cột KHÔNG phải một
+-- phần của mô hình dữ liệu — `test_migration_khop_schema_sql` so tập tên cột, không so thứ tự —
+-- và dựng lại bảng thì phải chép dữ liệu, tạm bỏ khóa ngoại của `hw_map`/`code_unit` đang trỏ
+-- tới `module(id)`, rồi dựng lại chúng. Đổi lấy một thứ tự cột không ai đọc thì không đáng.
+--
+-- Không đặt giá trị mặc định và không suy ngược lớp cho module đã có: `NULL` nghĩa là "chưa
+-- biết", và đó là sự thật. Đoán một lớp cho dữ liệu cũ sẽ làm phép kiểm phụ thuộc chạy trên một
+-- con số bịa, tức tệ hơn hẳn việc nó nói thẳng là chưa đủ dữ liệu để kiểm.
+ALTER TABLE module ADD COLUMN layer TEXT;

@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 11) từ registry — không gõ tay. Còn **96/238** năng lực. Xem
+*Đo 08/09/2026 (lần 12) từ registry — không gõ tay. Còn **96/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -11,8 +11,16 @@ chủ sản phẩm 08/09).
 
 ## Việc chờ CHỦ SẢN PHẨM (không phải việc của tôi)
 
+*Đợt đồng bộ 08/09 đã đóng **13 mục** sai khác (DEV-004, 035, 050, 054, 063…071) — bộ hồ sơ nay
+ở **v1.3** và `docs/DEVIATIONS.md` còn **0 mục Mở**. Bảng dưới chỉ còn hai việc thật sự cần anh.*
+
 | # | Việc | Vì sao chặn |
 |---|---|---|
+| **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
+| P2 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
+| P3 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
+
+---|---|---|
 | **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
 | P2 | [DEV-054](DEVIATIONS.md) — POL-17 phân biệt hai loại cổng | Chạm cách gác cổng của cả hệ; tôi có bản đề xuất, cần anh duyệt hướng |
 | P3 | [DEV-050](DEVIATIONS.md) — duyệt hàng loạt trong hàng đợi | Đề nghị gom theo *cùng cổng + cùng quy tắc*; cần anh chốt |

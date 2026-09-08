@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 08/09/2026 (lần 12). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 08/09/2026 (lần 13). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,7 +12,7 @@
 
 ## 1. Một dòng
 
-**142/238 năng lực (60%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 1037 test xanh trên
+**142/238 năng lực (60%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 1042 test xanh trên
 cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
@@ -98,19 +98,19 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1037** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1042** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 71 tổng, **12 Mở** |
-| Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`) |
+| Mục DEVIATIONS | 71 tổng, **0 Mở** — đợt đồng bộ 08/09 đóng cả 13 mục còn lại |
+| Tài liệu | 35 tệp ở **v1.3**, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
 Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó được viết ra" — trong đó có test
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1037 test, giả lập) hỏi *"mã có đúng
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1042 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
@@ -161,15 +161,6 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 | Việc | Vì sao cần người |
 |---|---|
 | **WI-257** ký danh sách trắng | `trusted_sources` (POL-17, ĐÃ KÝ) ghi `github.com/cmsis-svd` nhưng SVD thật phục vụ từ `raw.githubusercontent.com` — **nguồn SVD tầng vàng phổ biến nhất vẫn rơi vào ASK ở cổng G-SRC**. Bảng nguồn hãng TGT-19 §8 đã thêm tên miền ấy (nó mô tả *nơi tài liệu thật sự nằm*), nhưng danh sách trắng thì khác: nó quyết định *cho tải hay không*, và sửa nó cần chữ ký của chủ sản phẩm |
-| [DEV-054](DEVIATIONS.md) | POL-17 phân biệt hai loại cổng — chạm cách gác cổng của cả hệ |
-| [DEV-050](DEVIATIONS.md) | "Duyệt hàng loạt" trong hàng đợi — đề nghị gom theo *cùng cổng + cùng quy tắc* |
-| [DEV-035](DEVIATIONS.md) | Thêm ý định theo nhóm năng lực — đã quyết hoãn tới CHAT-06 |
-| [DEV-066](DEVIATIONS.md) | EXTRACT-16 thiếu `name`, nên `extract.kicad_netlist` và `board.build_passport` không thống nhất được tên board — mã đã sửa cho khớp tài liệu, cần anh chốt có thêm tham số hay không |
-| [DEV-067](DEVIATIONS.md) | BOARD-04 giao việc cho vai trò `architect`, hiện thực sinh phương án bằng mã — vì chân thay thế phải tra fact `pin_function`, mô hình sẽ bịa tên chân |
-| [DEV-068](DEVIATIONS.md) | Bảng "linh kiện chấp hành" của `board.mark_lab` do hiện thực đặt (không tài liệu nào liệt kê) — nên đưa vào `docs/spec/` |
-| [DEV-069](DEVIATIONS.md) | DDD-14 §2 Module thiếu `layer` — `arch.decompose` tính lớp, kiểm bất biến theo nó, rồi MẤT nó lúc ghi |
-| [DEV-070](DEVIATIONS.md) | DOC-01 nói dựng docx trong khi REPORT-02 mới là chỗ chuyển định dạng; mục lục tài liệu nên sinh vào `docs/spec/doc/outlines.json` |
-| [DEV-071](DEVIATIONS.md) | DOC-07 bảo cập nhật `DocArtifact.figures` mà DDD-14 không có trường ấy |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
 
 ---

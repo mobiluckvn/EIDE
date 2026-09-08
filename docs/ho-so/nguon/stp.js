@@ -23,7 +23,7 @@ c.push(T(W, H, [
   ['TC-01', 'Không có đường merge ngoài G3', 'Quét mã tĩnh: mọi lời gọi merge() nằm sau GateService.require(G3); thử gọi merge trực tiếp → ngoại lệ', 'AGT-05, NFR-01', 'L1'],
   ['TC-02', 'R4 không bao giờ tự động; R3 chỉ tự động trên board lab', 'erase/fuse/động cơ ở mọi mức A0–A4 → ASK (trừ danh sách trắng đã ký); flash trên board không lab → ASK; flash trên board lab ở A3 → APPROVE có decision_log', 'GOV-01, MCP-02, AUT-02', 'L1'],
   ['TC-03', 'Quyền hết hạn khi đóng phiên', 'Cấp quyền, đóng phiên, gọi lại → từ chối', 'GOV-01', 'L1'],
-  ['TC-04', 'Constant-guard chặn hằng số không nguồn', '10 patch mẫu có hằng số không chú thích / chú thích fact không tồn tại / fact bạc chưa duyệt → chặn 100%; fact vàng → qua', 'AGT-03', 'L1'],
+  ['TC-04', 'Constant-guard chặn hằng số không nguồn', '10 patch mẫu có hằng số không chú thích / chú thích fact không tồn tại / fact bạc chưa duyệt → chặn 100%; fact vàng → qua. Tệp dưới `tests/` KHÔNG bị quét: ở đó literal là giá trị kỳ vọng, và bắt test trích dẫn cùng fact mà mã đang kiểm cũng trích dẫn thì test không còn kiểm gì (DEV-064)', 'AGT-03', 'L1'],
   ['TC-05', 'Cờ nhạy cảm và khóa API', 'Dự án sensitive=true: search.fetch/upload tài liệu ra dịch vụ ngoài → ASK; nhật ký không chứa khóa (quét regex); (M5) offline_mode=true → 0 kết nối ngoài', 'AGT-04, NFR-06', 'L1'],
   ['TC-06', 'Fact tầng bạc không vào mã trước G-FACT', 'Fact status=normalized → passport.query trả nhưng đánh dấu unreviewed; ConstantGuard từ chối', 'ACQ-05, AGT-03', 'L1'],
   ['TC-07', 'G-SRC theo chính sách', 'Ứng viên st.com có hash/license, ≤ ngưỡng → tự tải, ghi lý do; ứng viên forum lạ → không tải, ASK; tệp > ngưỡng → ASK', 'ACQ-06, AUT-03', 'L1'],

@@ -724,3 +724,40 @@ def test_ghi_boards_xong_phai_KY_LAI_niem(du_an):
     g = ctx.extra["gate"]
     assert isinstance(g, PolicyGate) and g.danh_sach_da_ky
     assert (g.config["boards"] or {})["robot-main"]["lab"] is True
+
+
+def test_name_dat_ten_board_KHAC_ten_tep_va_qua_duoc_router(du_an):
+    """EXTRACT-16 v1.3 (DEV-066). Tên tệp netlist thường là tên bản vẽ, tên board là thứ khác —
+    không thống nhất được thì hộ chiếu dựng xong mà `board.build_passport` báo "chưa có net".
+
+    Gọi QUA ROUTER chứ không gọi thẳng hàm: bản đầu nhận `name` và có test xanh, nhưng test gọi
+    thẳng nên không ai thấy `additionalProperties: false` chặn nó bằng E1000 ở cửa.
+    """
+    r, ctx, root = du_an
+    run = r.invoke("extract.kicad_netlist",
+                   {"file": str(_netlist(root, NETLIST, "ban-ve-v3.net")), "name": "robot-main"},
+                   ctx)
+    assert run.status == "done", run.error
+    assert run.result["board_passport_id"] == "robot-main@1.0.0"
+    assert doc_net(root, "robot-main")["/I2C1_SCL"][0]["ref"] == "U1"
+    assert doc_net(root, "ban-ve-v3") == {}, "tên tệp không được dùng khi đã nêu `name`"
+
+
+def test_bang_co_cau_chap_hanh_doc_tu_SPEC_khong_nhung_trong_ma(du_an, monkeypatch):
+    """DEV-068 duyệt 08/09: bảng ra `docs/spec/policy/actuators.yaml`, sinh từ POL-17 §3.
+
+    Thêm một họ mạch lái động cơ mới phải là sửa một tệp dữ liệu, không phải sửa và phát hành
+    lại mã. Test đổi bảng rồi xác nhận hành vi đổi theo — nếu mẫu còn nhúng trong Python thì
+    board có `L298` vẫn bị bắt và test này đỏ.
+    """
+    from eide.caps import board as m
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    assert {g["id"] for g in m.cac_co_cau()} == {"motor_driver", "actuator", "power_switch"}
+
+    kicad_netlist({"file": str(_netlist(root, NETLIST_DONG_CO, "i1.net"))}, ctx)
+    monkeypatch.setattr(m, "cac_co_cau",
+                        lambda: [{"id": "x", "name": "chỉ rơ-le", "patterns": ["RELAY"]}])
+    assert m.mark_lab({**XAC_NHAN, "board": "i1"}, _ctx_nguoi(ctx)) == {"lab": True}, \
+        "DRV8833 không còn trong bảng thì không được bắt nữa"

@@ -68,6 +68,7 @@
   impl: eide.report:export
   errors:
   - E5002
+  - E4001 thiếu node/docx
   example:
     type: docx
     scope: project

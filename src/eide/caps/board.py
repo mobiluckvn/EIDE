@@ -757,18 +757,27 @@ _PHUONG_AN = {"af_conflict": _pa_af, "reserved": _pa_reserved,
 
 # ---------------------------------------------------------------- BOARD-05 mark_lab
 
-# Cơ cấu chấp hành — thứ làm board **chuyển động hoặc sinh nhiệt** khi mã chạy sai. Bảng này do
-# hiện thực đặt: không tài liệu nào trong bộ hồ sơ liệt kê chúng, mà tc của BOARD-05 lại đòi
-# "board có động cơ → không lab". Xem [DEV-068].
-#
-# Nó là lưới chặn MỘT CHIỀU: bắt được thì chắc chắn không phải board lab, còn không bắt được thì
-# không kết luận gì — lời khai của người vẫn là điều kiện bắt buộc. Đặt ngược lại (tự động cho
-# lab khi không thấy động cơ) thì một con MOSFET lái van sẽ lọt, và cái lọt ấy chuyển động.
-RE_CO_CAU = re.compile(
-    r"(DRV8\d{3}|L29[38]|TB6612|A4988|DRV88\d\d|BTS7960|VNH\d|MP6\d{3}"          # mạch lái động cơ
-    r"|ULN2\d{3}|RELAY|SERVO|STEPPER|SOLENOID|MOTOR|PUMP|VALVE|HEATER"           # chấp hành, gia nhiệt
-    r"|IRF\d{3,4}|IRLZ\d+|AO3400|SI2302)",                                       # MOSFET công suất
-    re.IGNORECASE)
+def cac_co_cau() -> list[dict[str, Any]]:
+    """Bảng nhận dạng cơ cấu chấp hành, sinh ra `docs/spec/policy/actuators.yaml` (POL-17 §3).
+
+    Đọc từ spec chứ không nhúng mẫu vào Python — DEV-068 duyệt 08/09: thêm một họ mạch lái động
+    cơ mới là sửa một tệp dữ liệu, không phải sửa và phát hành lại mã. Cùng khuôn `isa/*.yaml`
+    và `doc/glossary.json`.
+
+    Là lưới chặn MỘT CHIỀU: bắt được thì chắc chắn không phải board lab, còn không bắt được thì
+    không kết luận gì — lời khai của người vẫn là điều kiện bắt buộc. Đặt ngược lại (tự cho lab
+    khi không thấy động cơ) thì một con MOSFET lái van sẽ lọt, và cái lọt ấy chuyển động.
+    """
+    from eide_core.paths import spec_dir
+    f = spec_dir() / "policy" / "actuators.yaml"
+    if not f.exists():
+        return []
+    return list((yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("groups") or [])
+
+
+def _re_co_cau() -> re.Pattern[str]:
+    mau = [m for g in cac_co_cau() for m in (g.get("patterns") or [])]
+    return re.compile("(" + "|".join(mau) + ")", re.IGNORECASE) if mau else re.compile(r"(?!)")
 
 # `by` không được là một cái tên máy. Hợp đồng nêu `E3000 nếu by=policy`; ba tên còn lại là cùng
 # một chuyện — chúng là actor của hệ, không phải người chịu trách nhiệm.
@@ -840,10 +849,11 @@ def mark_lab(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
 def _co_cau_chap_hanh(root: Path, board: str) -> list[tuple[str, str]]:
     """`[(ref, giá trị)]` của các linh kiện trông như cơ cấu chấp hành, từ netlist board này."""
+    mau = _re_co_cau()
     ra = []
     for ref, pt in sorted(doc_part(root, board).items()):
         van = " ".join(str(pt.get(k) or "") for k in ("mpn", "value", "footprint"))
-        if RE_CO_CAU.search(van):
+        if mau.search(van):
             ra.append((ref, str(pt.get("mpn") or pt.get("value") or "?")))
     return ra
 

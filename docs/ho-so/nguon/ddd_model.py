@@ -69,6 +69,7 @@ entity("Requirement", "requirement", "Yêu cầu do req.* sinh (K10)", [
  ("status", S, "TEXT NOT NULL DEFAULT 'generated'", 1, "", ["generated","reviewed","accepted","rejected","stale"]), ("updated_at", DT, "TEXT", 0, "", None)], since="M1")
 entity("Module", "module", "Module firmware (ModuleGraph)", [
  ("id", S, "TEXT PRIMARY KEY", 1, "mod_<slug>", None), ("name", S, "TEXT NOT NULL", 1, "", None), ("responsibility", S, "TEXT", 0, "", None), ("interfaces", A, "TEXT", 0, "JSON InterfaceSpec[]", None), ("depends", A, "TEXT", 0, "JSON module ids", None),
+ ("layer", S, "TEXT", 0, "Lớp kiến trúc (ARCH-02). Bất biến \"phụ thuộc chỉ đi xuống lớp dưới\" tính trên trường này, nên nó phải được LƯU chứ không chỉ tồn tại trong một lời gọi — xem DEVIATIONS DEV-069", ["hal","driver","service","control","app"]),
  ("arch_style", S, "TEXT", 0, "", ["super_loop","event_driven","rtos","layered"]), ("budget", O, "TEXT", 0, "JSON {ram, flash, stack, wcet_us, period_ms}", None), ("fsm", O, "TEXT", 0, "JSON FSM", None), ("status", S, "TEXT", 0, "", ["proposed","accepted","implemented","stale"])], since="M2")
 entity("HwMap", "hw_map", "Gán module ↔ tài nguyên phần cứng", [("module_id", S, "TEXT NOT NULL REFERENCES module(id)", 1, "", None), ("resource", S, "TEXT NOT NULL", 1, "IRI chip:…/periph:… | pin:… | irq:… | dma:…", None), ("role", S, "TEXT", 0, "master|slave|input|output|shared", None), ("fact_ids", A, "TEXT", 0, "JSON", None)], pk="(module_id, resource)", indexes=("(resource)",), since="M2")
 entity("ADR", "adr", "Architecture Decision Record", [

@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS module (
   responsibility TEXT,
   interfaces TEXT,
   depends TEXT,
+  layer TEXT,
   arch_style TEXT,
   budget TEXT,
   fsm TEXT,

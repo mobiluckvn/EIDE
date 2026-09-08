@@ -1,0 +1,204 @@
+{
+ "URD": {
+  "doc": "URD",
+  "required": [
+   "req:UR"
+  ],
+  "sections": [
+   {
+    "heading": "1. Giới thiệu",
+    "source": "-"
+   },
+   {
+    "heading": "2. Bên liên quan",
+    "source": "-"
+   },
+   {
+    "heading": "3. Yêu cầu người dùng",
+    "source": "req:UR"
+   },
+   {
+    "heading": "4. Yêu cầu chất lượng",
+    "source": "req:NFR"
+   },
+   {
+    "heading": "5. Ràng buộc",
+    "source": "constraints"
+   },
+   {
+    "heading": "6. Ma trận truy vết UR → FR (tóm tắt)",
+    "source": "trace"
+   }
+  ]
+ },
+ "SRS": {
+  "doc": "SRS",
+  "required": [
+   "req:FR"
+  ],
+  "sections": [
+   {
+    "heading": "1. Giới thiệu",
+    "source": "-"
+   },
+   {
+    "heading": "2. Mô tả tổng quan",
+    "source": "constraints"
+   },
+   {
+    "heading": "3. Yêu cầu chức năng",
+    "source": "req:FR"
+   },
+   {
+    "heading": "3B. Yêu cầu chức năng theo năng lực (sinh từ Danh mục v1.1)",
+    "source": "req:FR"
+   },
+   {
+    "heading": "4. Yêu cầu phi chức năng",
+    "source": "req:NFR"
+   },
+   {
+    "heading": "5. Yêu cầu giao diện ngoài",
+    "source": "hw_map"
+   },
+   {
+    "heading": "6. Tiêu chí nghiệm thu tổng quát",
+    "source": "acceptance"
+   },
+   {
+    "heading": "7. Ma trận truy vết UR → FR",
+    "source": "trace"
+   }
+  ]
+ },
+ "SAD": {
+  "doc": "SAD",
+  "required": [
+   "module"
+  ],
+  "sections": [
+   {
+    "heading": "1. Giới thiệu và nguyên tắc kiến trúc",
+    "source": "-"
+   },
+   {
+    "heading": "2. Góc nhìn ngữ cảnh",
+    "source": "constraints"
+   },
+   {
+    "heading": "3. Góc nhìn năng lực (mới v1.1)",
+    "source": "module"
+   },
+   {
+    "heading": "3A. Góc nhìn thành phần",
+    "source": "module"
+   },
+   {
+    "heading": "4. Góc nhìn hành vi",
+    "source": "fsm"
+   },
+   {
+    "heading": "5. Góc nhìn dữ liệu",
+    "source": "fact"
+   },
+   {
+    "heading": "6. Góc nhìn triển khai",
+    "source": "-"
+   },
+   {
+    "heading": "7. Quyết định kiến trúc (ADR)",
+    "source": "adr"
+   },
+   {
+    "heading": "8. Rủi ro kiến trúc và biện pháp",
+    "source": "adr"
+   }
+  ]
+ },
+ "SDD": {
+  "doc": "SDD",
+  "required": [
+   "module"
+  ],
+  "sections": [
+   {
+    "heading": "1. Giới thiệu",
+    "source": "-"
+   },
+   {
+    "heading": "2. Cấu trúc kho mã",
+    "source": "code_unit"
+   },
+   {
+    "heading": "3. Thiết kế dữ liệu",
+    "source": "fact"
+   },
+   {
+    "heading": "4. Giao diện mô-đun (Python)",
+    "source": "module"
+   },
+   {
+    "heading": "5. Hợp đồng tool MCP",
+    "source": "constraints"
+   },
+   {
+    "heading": "6. Tệp cấu hình",
+    "source": "constraints"
+   },
+   {
+    "heading": "7. CLI",
+    "source": "-"
+   },
+   {
+    "heading": "8. Giao diện GEditor plugin ↔ daemon (JSON-RPC 2.0)",
+    "source": "-"
+   }
+  ]
+ },
+ "STP": {
+  "doc": "STP",
+  "required": [
+   "acceptance"
+  ],
+  "sections": [
+   {
+    "heading": "1. Giới thiệu",
+    "source": "-"
+   },
+   {
+    "heading": "2. Chiến lược và môi trường",
+    "source": "constraints"
+   },
+   {
+    "heading": "3. Test case",
+    "source": "acceptance"
+   },
+   {
+    "heading": "4. Giao thức benchmark",
+    "source": "tool_report"
+   },
+   {
+    "heading": "5. Tiêu chí nghiệm thu và kế hoạch chạy",
+    "source": "trace"
+   }
+  ]
+ },
+ "BPD": {
+  "doc": "BPD",
+  "required": [],
+  "sections": [
+   {
+    "heading": "1. Giới thiệu",
+    "source": "-"
+   },
+   {
+    "heading": "2. Quy ước",
+    "source": "-"
+   },
+   {
+    "heading": "10. Bảng tổng hợp cổng và tri thức sinh ra",
+    "source": "module"
+   }
+  ]
+ }
+}

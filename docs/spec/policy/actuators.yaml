@@ -1,0 +1,15 @@
+# policy/actuators.yaml — sinh từ EIDE-POL-17 §3.
+# Linh kiện làm board CHUYỂN ĐỘNG hoặc SINH NHIỆT khi mã chạy sai. `board.mark_lab`
+# dùng bảng này làm lưới chặn MỘT CHIỀU: bắt được thì chắc chắn không phải board lab;
+# không bắt được thì không kết luận gì, và lời khai của người vẫn là điều kiện bắt buộc.
+version: 1.0
+groups:
+  - id: motor_driver
+    name: "Mạch lái động cơ"
+    patterns: ["DRV8\\d{3}","L29[38]","TB6612","A4988","BTS7960","VNH\\d","MP6\\d{3}"]
+  - id: actuator
+    name: "Cơ cấu, rơ-le, gia nhiệt"
+    patterns: ["ULN2\\d{3}","RELAY","SERVO","STEPPER","SOLENOID","MOTOR","PUMP","VALVE","HEATER"]
+  - id: power_switch
+    name: "MOSFET công suất"
+    patterns: ["IRF\\d{3,4}","IRLZ\\d+","AO3400","SI2302"]

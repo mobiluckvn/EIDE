@@ -583,6 +583,9 @@
     properties:
       file:
         type: string
+      name:
+        type: string
+        description: tên board; không nêu thì lấy tên tệp. Phải có để khớp với `name` của BOARD-01 — tên tệp netlist thường là tên bản vẽ, không phải tên board (DEV-066)
     required:
     - file
     additionalProperties: false

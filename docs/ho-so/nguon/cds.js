@@ -81,3 +81,30 @@ for (const [v, [title, nss, desc]] of Object.entries(VOLS)) {
   c.push(...refParas(H1));
   build(m, c, `EIDE-CDS-12.${v}_Dac_ta_nang_luc_tap_${v}.docx`);
 }
+
+// ---------------------------------------------------------------------------------------------
+// CDS-12.4 DOC-01 — nguồn tri thức của từng mục, theo LOẠI tài liệu (DEVIATIONS DEV-070).
+//
+// Phần ĐỀ MỤC không nằm ở đây: `scripts/gen_spec_tu_nguon.js` rút thẳng các `H1(...)` của chính
+// bộ sinh tài liệu (`urd.js`, `srs.js`, `sad.js`, `sdd.js`, `stp.js`, `bpd.js`) rồi ghép với bảng
+// dưới đây thành `docs/spec/doc/outlines.json`. Nhờ vậy đổi mục lục trong bộ hồ sơ là mục lục
+// tài liệu do EIDE sinh cũng đổi theo — không phải sửa hai chỗ, và không có bản chép tay nào để
+// trôi đi. Cùng khuôn với `doc/glossary.json` (DEV-025/029/043/046).
+//
+// Khóa là TIỀN TỐ số hiệu mục ("3.", "3B."), không phải cả tiêu đề: tiêu đề còn được sửa chữ,
+// còn số hiệu thì ổn định. `-` nghĩa là mục dẫn nhập, không có bảng số liệu nào.
+const DOC_OUTLINE_NGUON = {
+  URD: { '1.': '-', '2.': '-', '3.': 'req:UR', '4.': 'req:NFR', '5.': 'constraints', '6.': 'trace' },
+  SRS: { '1.': '-', '2.': 'constraints', '3.': 'req:FR', '3B.': 'req:FR', '4.': 'req:NFR', '5.': 'hw_map', '6.': 'acceptance', '7.': 'trace' },
+  SAD: { '1.': '-', '2.': 'constraints', '3.': 'module', '3A.': 'module', '4.': 'fsm', '5.': 'fact', '6.': '-', '7.': 'adr', '8.': 'adr' },
+  SDD: { '1.': '-', '2.': 'code_unit', '3.': 'fact', '4.': 'module', '5.': 'constraints', '6.': 'constraints', '7.': '-', '8.': '-' },
+  STP: { '1.': '-', '2.': 'constraints', '3.': 'acceptance', '4.': 'tool_report', '5.': 'trace' },
+  BPD: { '1.': '-', '2.': '-', '10.': 'module' },
+};
+
+// Mục BẮT BUỘC phải có dữ liệu — `ask_when` của DOC-01 là "Thiếu fact bắt buộc". Một SRS không có
+// yêu cầu chức năng nào không phải SRS mỏng, nó là SRS rỗng, và sinh ra rồi nộp đi là cách tệ
+// nhất để phát hiện chuyện ấy.
+const DOC_OUTLINE_BAT_BUOC = {
+  URD: ['req:UR'], SRS: ['req:FR'], SAD: ['module'], SDD: ['module'], STP: ['acceptance'], BPD: [],
+};

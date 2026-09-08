@@ -93,7 +93,11 @@ def _ngu_canh(ctx: Context, task: str) -> str:
 # ---------------------------------------------------------------- module: đọc/ghi
 
 
-COT_MODULE = ("id", "name", "responsibility", "interfaces", "depends", "arch_style",
+# `layer` có từ DDD-14 v1.3 (DEV-069). Trước đó `decompose` tính lớp, kiểm bất biến "phụ thuộc
+# chỉ đi xuống lớp dưới" theo nó, rồi mất nó lúc ghi — nên bất biến ấy chỉ kiểm được đúng một
+# lần, ngay tại lời gọi decompose, và mọi năng lực đọc ModuleGraph lại từ store đều không dựng
+# được gì theo lớp.
+COT_MODULE = ("id", "name", "responsibility", "interfaces", "depends", "layer", "arch_style",
               "budget", "fsm", "status")
 JSON_MODULE = ("interfaces", "depends", "budget", "fsm")
 

@@ -2,6 +2,7 @@
 mọi @capability trỏ tới id trong cds.json; capabilities/*.yaml khớp cds.json; docstring có `Spec:`."""
 import json
 import re
+import tempfile
 
 import pytest
 import yaml
@@ -192,7 +193,7 @@ def test_ket_qua_sai_output_schema_la_E1004_khong_phai_E6001():
 
 
 def test_khong_muc_DEVIATIONS_nao_roi_khoi_bao_cao_dong_bo():
-    """Mọi mục `Mở` phải xuất hiện trong báo cáo đồng bộ — bất biến của cả quy trình sai khác.
+    """Mọi mục `Mở`/`Đã duyệt` phải xuất hiện trong báo cáo đồng bộ — bất biến của cả quy trình.
 
     Chủ sản phẩm duyệt danh sách ấy và tin rằng nó đầy đủ; một mục lặng lẽ rơi ra là hỏng đúng
     chỗ quy trình sinh ra để chống.
@@ -201,19 +202,46 @@ def test_khong_muc_DEVIATIONS_nao_roi_khoi_bao_cao_dong_bo():
     bảng Markdown — dòng vỡ thành 14 mảnh, bộ phân giải lấy `c[7]` làm trạng thái nên đọc ra
     rác, và mục ấy bị lọc mất. Không cảnh báo gì.
 
-    Kiểm ĐẦU RA chứ không kiểm số cột: số cột chỉ bắt được một nguyên nhân, còn phép kiểm này bắt
-    mọi nguyên nhân — kể cả nguyên nhân chưa nghĩ ra. (Bộ phân giải nay lấy trạng thái từ cột
-    CUỐI, nên `|` trong nội dung không còn làm hỏng nó; test này là chốt cho lần sau.)
+    **Hai nửa, và nửa thứ hai mới là nửa chắc chắn.** Nửa đầu kiểm các mục Mở đang có thật trong
+    kho. Nhưng số mục Mở về 0 sau mỗi đợt đồng bộ — và ngày 08/09 nó về 0 thật, làm phiên bản
+    trước của test này đỏ vì chính giả định "phải có ít nhất một mục Mở". Một phép kiểm chỉ có
+    nghĩa khi kho đang nợ là một phép kiểm tắt đúng lúc vừa dọn xong. Nên nửa sau dựng một bảng
+    DEVIATIONS GIẢ có `|` trong nội dung và kiểm bộ phân giải trực tiếp: nó không phụ thuộc kho
+    nợ bao nhiêu mục, và nó kiểm đúng cái đã hỏng.
     """
     import subprocess
     import sys
     from pathlib import Path
 
+    # --- nửa 1: mục Mở thật (nếu có) phải có mặt trong báo cáo
     t = Path("docs/DEVIATIONS.md").read_text(encoding="utf-8")
     mo = {d.split("|")[1].strip() for d in t.splitlines()
           if d.startswith("| DEV-") and d.rstrip().split("|")[-2].strip() in ("Mở", "Đã duyệt")}
-    assert mo, "phải có ít nhất một mục Mở để test này có nghĩa"
-    out = subprocess.run([sys.executable, "scripts/dong_bo_tai_lieu.py", "--tom-tat"],
-                         capture_output=True, text=True, check=False).stdout
-    thieu = sorted(x for x in mo if x not in out)
-    assert thieu == [], f"mục Mở không xuất hiện trong báo cáo đồng bộ: {thieu}"
+    if mo:
+        out = subprocess.run([sys.executable, "scripts/dong_bo_tai_lieu.py", "--tom-tat"],
+                             capture_output=True, text=True, check=False).stdout
+        thieu = sorted(x for x in mo if x not in out)
+        assert thieu == [], f"mục Mở không xuất hiện trong báo cáo đồng bộ: {thieu}"
+
+    # --- nửa 2: bộ phân giải phải đọc đúng trạng thái dù nội dung có `|`
+    sys.path.insert(0, "scripts")
+    import dong_bo_tai_lieu as dbt
+
+    goc = dbt.ROOT
+    with tempfile.TemporaryDirectory() as d:
+        gia = Path(d) / "docs"
+        gia.mkdir()
+        (gia / "DEVIATIONS.md").write_text(
+            "| Mã | Ngày | Tài liệu | Mã nguồn | Sai khác | Lý do | Đề xuất | Trạng thái |\n"
+            "|---|---|---|---|---|---|---|---|\n"
+            "| DEV-900 | 2026-01-01 | POL-17 §2 | a.py | công thức `1/(1+|bm25|)` sai dấu "
+            "| vì `|` là dấu ngăn cột | sửa | Mở |\n"
+            "| DEV-901 | 2026-01-01 | CDS-12.1 CODE-01 | b.py | không có ký tự lạ | vì thế "
+            "| sửa | Đã cập nhật tài liệu v1.3 |\n", encoding="utf-8")
+        dbt.ROOT = Path(d)
+        try:
+            ds = {r["ma"]: r["trang_thai"] for r in dbt.doc_deviations()}
+        finally:
+            dbt.ROOT = goc
+    assert ds == {"DEV-900": "Mở", "DEV-901": "Đã cập nhật tài liệu v1.3"}, \
+        f"`|` trong nội dung làm lệch cột trạng thái: {ds}"

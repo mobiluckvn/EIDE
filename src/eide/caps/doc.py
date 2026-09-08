@@ -542,40 +542,17 @@ def _manifest(isa: str) -> dict[str, Any]:
 
 # ---------------------------------------------------------------- DOC-01 generate
 
-# Mục lục chuẩn theo loại — lấy đúng các đề mục H1 của CHÍNH bộ hồ sơ EIDE (`docs/ho-so/nguon/
-# {urd,srs,sad,sdd,stp,bpd}.js`), không tự nghĩ ra. Mỗi mục kèm NGUỒN TRI THỨC theo DOC-01 bước
-# 1: mục nào không có nguồn thì tài liệu nói thẳng là chưa có, thay vì để mô hình viết cho đầy.
-#
-# Bảng này nên nằm trong `docs/spec/`, không nằm trong mã — cùng khuôn với `doc/glossary.json`
-# (DEV-025/029/043/046). Xem [DEV-070].
-MUC_LUC: dict[str, list[tuple[str, str]]] = {
-    "URD": [("1. Giới thiệu", "-"), ("2. Bên liên quan", "-"),
-            ("3. Yêu cầu người dùng", "req:UR"), ("4. Yêu cầu chất lượng", "req:NFR"),
-            ("5. Ràng buộc", "constraints"), ("6. Ma trận truy vết UR → FR", "trace")],
-    "SRS": [("1. Giới thiệu", "-"), ("2. Mô tả tổng quan", "constraints"),
-            ("3. Yêu cầu chức năng", "req:FR"), ("4. Yêu cầu phi chức năng", "req:NFR"),
-            ("5. Yêu cầu giao diện ngoài", "hw_map"),
-            ("6. Tiêu chí nghiệm thu tổng quát", "acceptance"),
-            ("7. Ma trận truy vết UR → FR", "trace")],
-    "SAD": [("1. Giới thiệu và nguyên tắc kiến trúc", "-"), ("2. Góc nhìn ngữ cảnh", "constraints"),
-            ("3. Góc nhìn thành phần", "module"), ("4. Góc nhìn hành vi", "fsm"),
-            ("5. Góc nhìn dữ liệu", "fact"), ("6. Góc nhìn triển khai", "-"),
-            ("7. Quyết định kiến trúc (ADR)", "adr")],
-    "SDD": [("1. Giới thiệu", "-"), ("2. Cấu trúc kho mã", "code_unit"),
-            ("3. Thiết kế dữ liệu", "fact"), ("4. Giao diện mô-đun", "module"),
-            ("5. Tệp cấu hình", "constraints"), ("6. Ánh xạ phần cứng", "hw_map")],
-    "STP": [("1. Giới thiệu", "-"), ("2. Chiến lược và môi trường", "constraints"),
-            ("3. Test case", "acceptance"), ("4. Kết quả chạy", "tool_report"),
-            ("5. Tiêu chí nghiệm thu", "trace")],
-    "BPD": [("1. Giới thiệu", "-"), ("2. Quy ước", "-"), ("3. Luồng nghiệp vụ", "module")],
-    "custom": [("1. Nội dung", "fact")],
-}
+def outlines() -> dict[str, dict[str, Any]]:
+    """Mục lục chuẩn theo loại tài liệu, sinh ra `docs/spec/doc/outlines.json` (DEV-070).
 
-# Mục nào là BẮT BUỘC phải có dữ liệu. `ask_when` của DOC-01 là "Thiếu fact bắt buộc" — một
-# SRS không có yêu cầu chức năng nào không phải là một SRS mỏng, nó là một SRS rỗng, và sinh ra
-# nó rồi nộp đi là cách tệ nhất để phát hiện chuyện ấy.
-BAT_BUOC = {"URD": ("req:UR",), "SRS": ("req:FR",), "SAD": ("module",), "SDD": ("module",),
-            "STP": ("acceptance",), "BPD": (), "custom": ()}
+    Đề mục rút THẲNG từ bộ sinh của chính bộ hồ sơ EIDE (`urd.js`, `srs.js`, …), nguồn tri thức
+    của từng mục lấy từ `cds.js` cạnh hợp đồng DOC-01. Đọc từ spec chứ không chép vào Python:
+    một bảng chép tay sẽ trôi khỏi bộ hồ sơ đúng lúc bộ hồ sơ đổi, và không ai biết. Cùng khuôn
+    với `glossary()` ở trên.
+    """
+    f = spec_dir() / "doc" / "outlines.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+
 
 # Loại tài liệu có năng lực riêng — DOC-01 liệt kê chúng trong enum `type`, nhưng nội dung thì
 # đã có chỗ khác lo. Sinh lại lần thứ hai ở đây là hai bản tài liệu cùng tên khác nội dung.
@@ -598,11 +575,12 @@ def generate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     phân biệt được phần nào. Riêng mục BẮT BUỘC thiếu thì dừng hẳn bằng E3000: một SRS không có
     yêu cầu chức năng nào không phải SRS mỏng, nó là SRS rỗng.
 
-    **Đầu ra là Markdown, không phải docx.** Hợp đồng DOC-01 bước 2 nói "dựng docx qua mẫu",
-    nhưng REPORT-02 `report.export` lại khai `docx/pdf/md` và bước 1 của nó là "doc.generate với
-    mẫu báo cáo" — tức chuyển định dạng nằm ở REPORT-02, còn DOC-01 lo NỘI DUNG. Làm docx ở cả
-    hai chỗ là hai bản dựng cùng một tài liệu. Xem [DEV-070]; `E4001 thiếu node/docx` vì thế
-    thuộc đường `report.export`.
+    **Đầu ra là Markdown, không phải docx** (DOC-01 v1.3, DEV-070): chuyển định dạng là việc của
+    `report.export`, và dựng docx ở cả hai chỗ là hai bản dựng cùng một tài liệu. `E4001 thiếu
+    node/docx` vì thế nằm ở REPORT-02.
+
+    **Mục lục đọc từ `doc/outlines.json`**, rút từ chính bộ sinh của bộ hồ sơ EIDE — đổi mục lục
+    trong bộ hồ sơ thì tài liệu EIDE sinh ra đổi theo, không phải sửa hai chỗ.
     """
     root = _root(ctx)
     loai = params["type"]
@@ -611,12 +589,14 @@ def generate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                         "Sinh lại ở đây là hai bản cùng tên khác nội dung.",
                         exists=[], candidates=[uy], missing=[uy])
 
-    muc_luc = MUC_LUC.get(loai) or MUC_LUC["custom"]
+    ban = outlines().get(loai) or {"sections": [{"heading": "1. Nội dung", "source": "fact"}],
+                                    "required": []}
+    muc_luc = [(s["heading"], s.get("source") or "-") for s in ban["sections"]]
     lang = params.get("lang") or "vi"
     pham_vi = params.get("scope")
 
     du_lieu = {khoa: _nguon_tri_thuc(root, khoa, pham_vi) for _, khoa in muc_luc}
-    for khoa in BAT_BUOC.get(loai, ()):
+    for khoa in (ban.get("required") or []):
         if not (du_lieu.get(khoa) or {}).get("rows"):
             raise EideError("E3000", f"`{loai}` đòi mục `{khoa}` nhưng chưa có dữ liệu nào — "
                             f"chạy `{(du_lieu.get(khoa) or {}).get('remedy', '?')}` trước, hoặc "
