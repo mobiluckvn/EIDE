@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 từ registry — không gõ tay. Còn **124/238** năng lực. Xem
+*Đo 08/09/2026 từ registry — không gõ tay. Còn **122/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -22,13 +22,13 @@ chủ sản phẩm 08/09).
 
 ---
 
-## A. Dọn nốt M1 — 4 năng lực
+## A. Dọn nốt M1 — 2 năng lực còn lại
 
-Mốc M1 đang 69/75. Bốn cái này đóng nó lại (trừ hai cái phải chờ, xem H).
+Mốc M1 đang **71/75**. A1 đã xong 08/09. Bốn cái này đóng nó lại (trừ hai cái phải chờ, xem H).
 
 | # | Năng lực | Ghi chú |
 |---|---|---|
-| A1 | `archive.extract_one`, `archive.query` | Nhỏ, làm được ngay. Đóng bước "lấy một tệp trong SDK zip 800 MB" của Z-07 |
+| ~~A1~~ | ~~`archive.extract_one`, `archive.query`~~ | **Xong 08/09** — 10 test. Tìm qua kho lồng; kho lồng là vật chứa nên không grep byte thô của nó |
 | A2 | `env.install` (**R4**), `env.guide_install` | **Cần bàn chính sách trước khi viết mã.** R4 = cài phần mềm lên máy người dùng; POL-17 xếp nó ngang mức "không hoàn tác được" |
 | A3 | `code.constant_guard` | Hook cho `code.*` — hợp lý làm cùng khối B |
 

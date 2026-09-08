@@ -8,7 +8,7 @@
 
 ## 1. Một dòng
 
-**114/238 năng lực (48%). Mốc M0 đóng 22/22; M1 đạt 69/75 (92%), còn 6. 828 test xanh trên
+**116/238 năng lực (49%). Mốc M0 đóng 22/22; M1 đạt 71/75 (95%), còn 4. 839 test xanh trên
 cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
@@ -22,19 +22,18 @@ chân**: sinh mã, nạp board, mô phỏng.
 | Mốc | Xong | Ý nghĩa |
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
-| **M1** | **69/75 · 92%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
+| **M1** | **71/75 · 95%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
 | M2 | 23/99 · 23% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
 
-**M1 còn đúng 6 năng lực**, và phần lớn không chặn bởi công sức mà bởi thứ khác:
+**M1 còn đúng 4 năng lực**, và phần lớn không chặn bởi công sức mà bởi thứ khác:
 
 | Năng lực | Vì sao chưa |
 |---|---|
 | `env.install` (R4), `env.guide_install` | **R4** — cài phần mềm lên máy người dùng. Cần bàn kỹ về chính sách trước khi viết |
 | `passport.verify_on_board` (R3) | **Cần board thật.** Không mô phỏng được phần "nạp firmware rồi đọc lại ID" |
-| `archive.extract_one`, `archive.query` | Làm được ngay, khối lượng nhỏ |
 | `code.constant_guard` | Hook cho `code.*`, hợp lý làm cùng nhóm `code` ở M2 |
 
 ---
@@ -45,7 +44,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 `ingest` 3/3 · `kg` 8/9 · `view` 9/13 · `tool` 7/10
 
 **Mới một phần** — `extract` 9/21 · `project` 6/9 · `memory` 6/8 · `search` 6/9 ·
-`env` 4/7 · `passport` 4/8 · `diagram` 4/14 · `doc` 3/12 · `archive` 2/4 · `registry` 1/5 ·
+`env` 4/7 · `passport` 4/8 · `diagram` 4/14 · `doc` 3/12 · `archive` 4/4 · `registry` 1/5 ·
 `report` 1/4
 
 **Chưa bắt đầu** — `code` (16, M2) · `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) ·
@@ -98,7 +97,7 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **829** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **839** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 9 mạng (`make check-net`) · 6 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |

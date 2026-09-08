@@ -456,3 +456,132 @@ def test_moc_M0_khong_con_nang_luc_nao_chua_hien_thuc():
     con = sorted(c.spec.id for c in get_registry().list()
                  if c.spec.milestone == "M0" and not c.implemented)
     assert con == [], f"còn {len(con)} năng lực M0 chưa hiện thực: {con}"
+
+
+# ---------- ARCHIVE-03 extract_one · ARCHIVE-04 query (mốc M1)
+
+
+def zip_long_co_svd(p: Path) -> Path:
+    """SDK giả: `sdk.zip` → `pack/inner.zip` → `svd/stm32f411.svd` + một tệp header.
+
+    Dựng đúng hình dạng gây khó: thứ cần tìm nằm ở TẦNG TRONG. Đó là tc của ARCHIVE-04 —
+    "tìm thấy trong header nằm trong zip con".
+    """
+    trong = io.BytesIO()
+    with zipfile.ZipFile(trong, "w") as z:
+        z.writestr("svd/stm32f411.svd", b"<device><name>STM32F411</name></device>")
+        z.writestr("inc/stm32f4xx.h", b"#define I2C_CR1 0x40005400\n#define SPI_CR1 0x40013000\n")
+        z.writestr("doc/readme.txt", b"khong lien quan")
+    with zipfile.ZipFile(p, "w") as z:
+        z.writestr("pack/inner.zip", trong.getvalue())
+        z.writestr("top.txt", b"tep o tang ngoai")
+    return p
+
+
+def test_lay_dung_tep_khong_giai_nen_phan_con_lai(tmp_path, du_an):
+    """tc ARCHIVE-03 nguyên văn. Một SDK vendor là zip 800 MB chứa đúng một tệp SVD cần dùng;
+    `unpack` trả 800 MB lên đĩa, còn đây trả một tệp. Đó là khác biệt giữa "dùng được trên máy
+    xách tay" và "không"."""
+    r, ctx, root = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    f = r.invoke("archive.extract_one",
+                 {"path": str(p), "member": "**/stm32f411.svd"}, ctx).result["file"]
+    assert Path(f).read_bytes().startswith(b"<device>")
+    # Thư mục cách ly chỉ được có ĐÚNG tệp ấy — không có readme, không có header.
+    d = Path(f).parent
+    while d.name != "unpacked" and d.parent != d:
+        goc = d
+        d = d.parent
+    ra = [x for x in goc.rglob("*") if x.is_file()]
+    assert len(ra) == 1, [str(x.relative_to(goc)) for x in ra]
+
+
+def test_glob_tim_qua_zip_long(tmp_path, du_an):
+    """SDK hãng hay đóng gói zip trong zip. Tìm một tầng thì trả rỗng — mà "không tìm thấy"
+    không phân biệt được với "không có", nên người dùng kết luận sai rằng SDK thiếu tệp."""
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    f = r.invoke("archive.extract_one", {"path": str(p), "member": "stm32f4xx.h"},
+                 ctx).result["file"]
+    assert b"I2C_CR1" in Path(f).read_bytes()
+
+
+def test_member_khong_co_thi_E2000_kem_goi_y(tmp_path, du_an):
+    """`exists` liệt kê mục CÓ THẬT: người gõ sai tên cần thấy danh sách, không phải một câu
+    "không tìm thấy"."""
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    run = r.invoke("archive.extract_one", {"path": str(p), "member": "**/khong_co.svd"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert run.error["exists"], "phải liệt kê mục có thật để người dùng đối chiếu"
+
+
+def test_extract_one_van_chan_zip_slip(tmp_path, du_an):
+    """Một đường ghi thứ hai vào đĩa mà bỏ qua phép chặn thì cả tám lớp phòng thủ kia thành
+    trang trí."""
+    r, ctx, _ = du_an
+    p = zip_voi(tmp_path / "ac.zip", {"../../thoat.txt": b"x"})
+    run = r.invoke("archive.extract_one", {"path": str(p), "member": "*thoat.txt"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E8000"
+    assert not (tmp_path / "thoat.txt").exists()
+
+
+def test_extract_one_dang_ky_undo(tmp_path, du_an):
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    r.invoke("archive.extract_one", {"path": str(p), "member": "**/*.svd"}, ctx)
+    assert [x for x in r.ledger.records()
+            if x["kind"] == "undo.register" and "extract_one" in str(x["data"])]
+
+
+def test_query_theo_ten(tmp_path, du_an):
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    m = r.invoke("archive.query", {"path": str(p), "pattern": "*.svd", "mode": "name"},
+                 ctx).result["matches"]
+    assert [x["path"] for x in m] == ["pack/inner.zip!svd/stm32f411.svd"]
+    assert m[0]["depth"] == 1
+
+
+def test_TC_query_content_tim_thay_trong_zip_con(tmp_path, du_an):
+    """tc ARCHIVE-04 nguyên văn: "Tìm thấy trong header nằm trong zip con"."""
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    m = r.invoke("archive.query", {"path": str(p), "pattern": "I2C_CR1", "mode": "content"},
+                 ctx).result["matches"]
+    assert m, "không tìm thấy trong zip con"
+    assert m[0]["path"].endswith("!inc/stm32f4xx.h")
+    assert m[0]["line"] == 1 and "0x40005400" in m[0]["text"]
+
+
+def test_query_signature_doc_512_byte_dau(tmp_path, du_an):
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    m = r.invoke("archive.query", {"path": str(p), "pattern": "<device>", "mode": "signature"},
+                 ctx).result["matches"]
+    assert [x["path"] for x in m] == ["pack/inner.zip!svd/stm32f411.svd"]
+    assert m[0]["kind_guess"] == "svd"
+
+
+def test_query_vuot_200MB_thi_NOI_RO_la_chua_du(tmp_path, du_an, monkeypatch):
+    """Trả một danh sách cụt mà im lặng là tệ hơn: bên gọi tưởng đã quét hết.
+
+    Grep cả một SDK 800 MB là đọc giải nén toàn bộ — đúng việc mà cả nhóm `archive.*` sinh ra
+    để tránh.
+    """
+    import eide.caps.archive as m
+    monkeypatch.setattr(m, "TRAN_GREP", 2048)
+    r, ctx, _ = du_an
+    p = zip_voi(tmp_path / "to.zip", {f"f{i}.txt": b"noi dung " * 200 for i in range(6)})
+    kq = r.invoke("archive.query", {"path": str(p), "pattern": "noi dung", "mode": "content"},
+                  ctx).result["matches"]
+    cut = [x for x in kq if x.get("truncated")]
+    assert cut, "phải báo rõ là đã dừng giữa chừng"
+    assert "CHƯA đủ" in cut[0]["note"]
+
+
+def test_query_khong_tim_thay_thi_rong(tmp_path, du_an):
+    r, ctx, _ = du_an
+    p = zip_long_co_svd(tmp_path / "sdk.zip")
+    assert r.invoke("archive.query", {"path": str(p), "pattern": "xyzzy", "mode": "content"},
+                    ctx).result["matches"] == []

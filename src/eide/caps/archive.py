@@ -33,6 +33,7 @@ from eide_core import store
 from eide_core.errors import EideError
 from eide_core.registry import capability
 from eide_core.router import Context
+from eide_core.tools import which
 
 # Bảng `kind → (tier, extractor)` của INGEST-01 bước 2, nguyên văn: "svd/atdf/edc/binding/header:
 # gold; pdf hãng: silver; ảnh: silver-vision; readme/md: context".
@@ -646,3 +647,238 @@ def _vuot_gioi_han(kt: int, nen: int, gh: dict[str, Any], tong: list[int],
     if nen > 0 and kt > 1024**2 and kt / nen > gh["ratio"]:
         return (f"tỷ lệ nén {kt // nen}:1 vượt ngưỡng {gh['ratio']}:1", "ratio")
     return None
+
+
+# ---------------------------------------------------------------- ARCHIVE-03 extract_one
+
+
+TRAN_GREP = 200 * 1024**2     # ARCHIVE-04 bước 1: "content: grep stream (giới hạn 200 MB)"
+
+
+@capability("archive.extract_one")
+def extract_one(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: ARCHIVE-03 — CDS-12.2. tc: "Lấy đúng tệp không giải nén phần còn lại";
+    lỗi E2000; undo `delete_created_files`.
+
+    tc nói rõ điều làm năng lực này khác `archive.unpack`: **không giải nén phần còn lại**. Một
+    SDK vendor là zip 800 MB chứa đúng một tệp SVD cần dùng; `unpack` trả 800 MB lên đĩa, còn
+    đây trả một tệp. Đó là khác biệt giữa "dùng được trên máy xách tay" và "không".
+
+    `member` nhận cả đường dẫn lẫn glob (`**/stm32f411.svd`), và tìm **qua cả kho lồng** — SDK
+    hãng hay đóng gói zip trong zip. Nhiều mục khớp thì lấy mục đầu theo thứ tự bảng mục và ghi
+    rõ trong kết quả là còn mục khác: im lặng chọn một trong nhiều là chỗ người dùng nhận nhầm
+    tệp mà không biết.
+
+    Áp CÙNG các phép kiểm sandbox với `unpack` — zip-slip, symlink, giới hạn. Một đường ghi thứ
+    hai vào đĩa mà bỏ qua phép chặn thì cả tám lớp phòng thủ kia thành trang trí.
+    """
+    p = Path(params["path"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+    mau = params["member"]
+    dich = _thu_muc_cach_ly(ctx, p)
+
+    khop = _tim_muc(p, mau, 0)
+    if not khop:
+        gan = [x for x, _ in _liet_ke_ten(p, 0)][:8]
+        raise EideError("E2000", f"Không có mục nào khớp `{mau}` trong {p.name}",
+                        exists=gan, candidates=gan, missing=[mau])
+
+    ten, doc = khop[0]
+    if (ly := _khong_an_toan(ten, dich)):
+        raise EideError("E8000", f"Mục `{ten}` bị chặn: {ly[0]}", entry=ten, rule=ly[1])
+    noi = doc()
+    if (ly := _vuot_gioi_han(len(noi), len(noi), GIOI_HAN, [0], 0)):
+        raise EideError("E8000", f"Mục `{ten}` vượt giới hạn: {ly[0]}", entry=ten, rule=ly[1])
+
+    ra = (dich / ten).resolve()
+    ra.parent.mkdir(parents=True, exist_ok=True)
+    ra.write_bytes(noi)
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"extract_one:{ra.name}",
+                                     "kind": "delete_created_files", "deadline": ""})
+    return {"file": str(ra)}
+
+
+def _tim_muc(p: Path, mau: str, muc: int) -> list[tuple[str, Any]]:
+    """Mục khớp `mau`, kèm hàm đọc nội dung. Tìm qua cả kho lồng tới `GIOI_HAN["depth"]`.
+
+    Trả HÀM đọc chứ không trả nội dung: bảng mục của một SDK có hàng nghìn mục, và đọc hết chúng
+    ra bộ nhớ để rồi dùng một mục là đúng cái tc bảo đừng làm.
+    """
+    import fnmatch
+    ra: list[tuple[str, Any]] = []
+    for ten, doc in _liet_ke_ten(p, muc):
+        if fnmatch.fnmatch(ten, mau) or fnmatch.fnmatch(Path(ten).name, mau) \
+                or ten == mau:
+            ra.append((ten, doc))
+        elif muc < GIOI_HAN["depth"] and _doan_loai(ten) == "archive":
+            ra += _long_tim(doc, ten, mau, muc)
+    return ra
+
+
+def _long_tim(doc: Any, ten: str, mau: str, muc: int) -> list[tuple[str, Any]]:
+    """Tìm trong một kho lồng. Đổ ra tệp tạm vì `zipfile` cần đối tượng tìm-được-vị-trí."""
+    import tempfile
+    try:
+        noi = doc()
+    except (OSError, ValueError):
+        return []
+    if len(noi) > 256 * 1024**2:
+        return []
+    with tempfile.TemporaryDirectory() as d:
+        f = Path(d) / "nested"
+        f.write_bytes(noi)
+        # Đọc nội dung NGAY trong khi tệp tạm còn sống, rồi bọc lại thành hàm trả hằng số:
+        # tệp tạm biến mất khi ra khỏi khối `with`, nên một hàm đọc-lười trỏ vào nó sẽ hỏng ở
+        # chỗ gọi — và hỏng theo kiểu "tệp không tồn tại", rất khó lần về đây.
+        # Đọc NGAY rồi bọc thành hàm trả hằng số — không dùng `lambda b=d2()` vì ruff B008
+        # cấm gọi hàm trong giá trị mặc định, và cấm có lý: giá trị mặc định tính MỘT lần lúc
+        # định nghĩa, nên trong vòng lặp nó dễ trở thành cái bẫy chia sẻ trạng thái.
+        ra = []
+        for t, d2 in _tim_muc(f, mau, muc + 1):
+            noi_con = d2()
+            ra.append((f"{ten}!{t}", _hang_so(noi_con)))
+        return ra
+
+
+def _hang_so(b: bytes) -> Any:
+    """Hàm trả về đúng `b`. Dùng để giữ nội dung đã đọc từ một kho lồng sau khi tệp tạm biến
+    mất — một hàm đọc-lười trỏ vào tệp tạm sẽ hỏng ở chỗ gọi, kiểu "tệp không tồn tại", rất khó
+    lần ngược về đây."""
+    def doc() -> bytes:
+        return b
+    return doc
+
+
+def _liet_ke_ten(p: Path, muc: int) -> list[tuple[str, Any]]:
+    """(tên, hàm đọc) của mọi mục là TỆP trong một kho — không đệ quy."""
+    dd = _dinh_dang(p)
+    if dd == "zip":
+        import zipfile
+        with zipfile.ZipFile(p) as z:
+            ds = [i for i in z.infolist() if not i.is_dir()]
+        def _mo(info):                        # noqa: ANN001, ANN202
+            def doc() -> bytes:
+                with zipfile.ZipFile(p) as z2:
+                    return z2.read(info)
+            return doc
+        return [(i.filename, _mo(i)) for i in ds]
+    if dd in ("tar", "gz", "xz", "bz2"):
+        import tarfile
+        with tarfile.open(p) as t:
+            ds = [i.name for i in t.getmembers() if i.isfile()]
+        def _mo_tar(ten: str):                # noqa: ANN202
+            def doc() -> bytes:
+                with tarfile.open(p) as t2:
+                    f = t2.extractfile(ten)
+                    return f.read() if f else b""
+            return doc
+        return [(x, _mo_tar(x)) for x in ds]
+    if dd in CAN_CONG_CU:
+        exe, goi = CAN_CONG_CU[dd]
+        if which(exe) is None:
+            raise EideError("E4001", f"Kho nén {dd} cần `{exe}` — chạy `eide env install {goi}`",
+                            tool=exe, package=goi)
+    return []
+
+
+# ---------------------------------------------------------------- ARCHIVE-04 query
+
+
+@capability("archive.query")
+def query(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: ARCHIVE-04 — CDS-12.2. tc: "Tìm thấy trong header nằm trong zip con"; lỗi E4004.
+
+    Ba chế độ của bước 1, và tc chỉ đúng vào chỗ khó: *"header nằm trong ZIP CON"*. Một SDK hãng
+    đóng gói zip trong zip, và tệp cần tìm nằm ở tầng trong. Tìm một tầng thì trả rỗng — mà
+    "không tìm thấy" ở đây không phân biệt được với "không có", nên người dùng kết luận sai rằng
+    SDK thiếu tệp.
+
+    `content` giới hạn 200 MB tổng: grep cả một SDK 800 MB là đọc giải nén toàn bộ, tức đúng
+    việc mà cả nhóm `archive.*` sinh ra để tránh. Vượt ngưỡng thì DỪNG và nói rõ đã quét tới
+    đâu — trả một danh sách cụt mà im lặng là tệ hơn: bên gọi tưởng đã quét hết.
+    """
+    p = Path(params["path"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+    mau = params["pattern"]
+    che_do = params.get("mode", "name")
+    trang_thai = {"da_doc": 0, "cat": False}
+    try:
+        ra = _quet(p, mau, che_do, 0, "", trang_thai)
+    except EideError:
+        raise
+    except Exception as e:                    # noqa: BLE001
+        raise EideError("E4004", f"Không quét được {p.name}: {e}", file=str(p)) from e
+    return {"matches": ra + ([{"path": "", "mode": che_do, "truncated": True,
+                               "note": f"dừng ở {trang_thai['da_doc'] // 1024**2} MB "
+                                       f"(giới hạn {TRAN_GREP // 1024**2} MB) — kết quả CHƯA đủ"}]
+                             if trang_thai["cat"] else [])}
+
+
+def _quet(p: Path, mau: str, che_do: str, muc: int, tien_to: str,
+          tt: dict[str, Any]) -> list[dict[str, Any]]:
+    import fnmatch
+    import re as _re
+    ra: list[dict[str, Any]] = []
+    for ten, doc in _liet_ke_ten(p, muc):
+        day_du = f"{tien_to}{ten}"
+        long = muc < GIOI_HAN["depth"] and _doan_loai(ten) == "archive"
+
+        if che_do == "name" and (fnmatch.fnmatch(ten, mau)
+                                 or fnmatch.fnmatch(Path(ten).name, mau)):
+            ra.append({"path": day_du, "mode": "name", "depth": muc})
+        elif che_do in ("content", "signature"):
+            if tt["cat"]:
+                break
+            try:
+                noi = doc()
+            except (OSError, ValueError):
+                continue
+            tt["da_doc"] += len(noi)
+            if tt["da_doc"] > TRAN_GREP:
+                tt["cat"] = True
+                break
+            # Kho lồng là VẬT CHỨA, không phải tài liệu — chỉ đi vào, không grep byte thô của
+            # nó. Zip lưu không nén (`ZIP_STORED`) mang nguyên nội dung thành viên trong byte
+            # của mình, nên grep nó sẽ báo CÙNG một tệp hai lần: một lần dưới tên kho ngoài,
+            # một lần dưới đường dẫn thật. Người dùng thấy hai kết quả và không biết cái nào là
+            # thật — đo được ngay lần chạy test đầu.
+            if long:
+                ra += _quet_long(noi, day_du, mau, che_do, muc, tt)
+                continue
+            if che_do == "signature":
+                if _re.search(_re.escape(mau).encode(), noi[:512], _re.I):
+                    ra.append({"path": day_du, "mode": "signature", "depth": muc,
+                               "kind_guess": _doan_loai(ten)})
+            else:
+                t = noi.decode("utf-8", errors="ignore")
+                for i, d in enumerate(t.splitlines(), 1):
+                    if mau in d:
+                        ra.append({"path": day_du, "mode": "content", "depth": muc,
+                                   "line": i, "text": d.strip()[:160]})
+                        break
+            continue
+
+        if long:
+            try:
+                ra += _quet_long(doc(), day_du, mau, che_do, muc, tt)
+            except (OSError, ValueError):
+                continue
+    return ra
+
+
+def _quet_long(noi: bytes, tien_to: str, mau: str, che_do: str, muc: int,
+               tt: dict[str, Any]) -> list[dict[str, Any]]:
+    """Quét một kho lồng. `tien_to!` phân tách tầng — quy ước quen thuộc của `unzip`/`jar`."""
+    import tempfile
+    if len(noi) > 256 * 1024**2 or tt["cat"]:
+        return []
+    with tempfile.TemporaryDirectory() as d:
+        f = Path(d) / "nested"
+        f.write_bytes(noi)
+        try:
+            return _quet(f, mau, che_do, muc + 1, tien_to + "!", tt)
+        except EideError:
+            return []
