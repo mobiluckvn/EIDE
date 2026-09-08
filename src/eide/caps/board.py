@@ -444,3 +444,427 @@ def _isa(root: Path) -> str:
     f = root / EIDE_DIR / "constraints.yaml"
     cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
     return str(((cu.get("target") or {}).get("isa")) or "")
+
+
+# ---------------------------------------------------------------- BOARD-03 constraints
+
+# Ngưỡng điện trở kéo lên cho I2C Fast-mode. Chuẩn I2C đòi sườn lên `tr ≤ 300 ns` ở 400 kHz và
+# `tr ≤ 1000 ns` ở 100 kHz; với điện dung bus cỡ 100–200 pF của một board nhỏ, 4k7 là ngưỡng
+# thực tế. Kéo lên 10k vẫn chạy 100 kHz nhưng không đủ nhanh cho 400 kHz — và cái sai khi ấy
+# KHÔNG phải là bus chết hẳn, mà là đọc sai lác đác dưới nhiệt độ cao. Đó là loại lỗi tốn nhiều
+# ngày nhất, nên nó đáng thành một ràng buộc ghi ra chứ không phải một lời nhắc.
+PULLUP_400K_OHM = 4700
+I2C_STANDARD_KHZ, I2C_FAST_KHZ = 100, 400
+
+RE_GIA_TRI_R = re.compile(r"^(\d+(?:[.,]\d+)?)\s*([kKmMrR])?\s*(\d*)\s*(?:ohm|Ω)?$")
+RE_DIEN_AP = re.compile(r"^/?\+?(\d+)V(\d*)$", re.IGNORECASE)
+
+
+@capability("board.constraints")
+def constraints(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: BOARD-03 — CDS-12.2; DDD-14 (constraints.yaml). tc: "I2C1 limit 400 kHz theo
+    pull-up"; undo `restore_config`.
+
+    Dịch bản thiết kế thành **ràng buộc mà Coder đọc được**. `board.check_pins` nói "có vấn đề";
+    năng lực này nói "được phép làm gì" — và khác biệt ấy quan trọng vì mã sinh ra không đọc
+    danh sách cảnh báo, nó đọc `constraints.yaml`.
+
+    Chỗ đáng giá là `bus_limits`. tc nói thẳng: **I2C1 limit 400 kHz theo pull-up**. Tốc độ tối
+    đa của một bus I2C không nằm trong datasheet chip mà nằm ở **điện trở kéo lên trên board
+    này**: 4k7 chạy được 400 kHz, 10k thì không. Không ghi ra thì mã sinh sau đó lấy 400 kHz
+    theo datasheet, board chạy được lúc mát và đọc sai lác đác lúc nóng — loại lỗi tốn nhiều
+    ngày nhất, vì nó không tái lập được trên bàn.
+    """
+    root = _root(ctx)
+    board = str(params["board"])
+    nets, parts = doc_net(root, board), doc_part(root, board)
+    if not nets:
+        co = _cac_board(root)
+        raise EideError("E2000", f"Chưa có net nào cho board `{board}`"
+                        + (f" (board đang có net: {', '.join(co)})" if co else ""),
+                        exists=co, candidates=co, missing=[f"net:{board}"])
+
+    rb = {"reserved_pins": _chan_giu_rb(root),
+          "bus_limits": _gioi_han_bus(nets, parts),
+          "voltage": _dien_ap(nets),
+          "current": _dong(root, board, parts)}
+
+    f = root / EIDE_DIR / "constraints.yaml"
+    cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    cu["board"] = {**(cu.get("board") or {}), board: rb}
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(yaml.safe_dump(cu, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    return {"constraints": rb}
+
+
+def _chan_giu_rb(root: Path) -> list[dict[str, str]]:
+    """Cùng bảng `CHAN_GIU` mà `check_pins` dùng — hai chỗ không được phép lệch nhau, vì một
+    chân bị cấm ở phép kiểm mà không bị cấm ở ràng buộc thì mã sinh ra sẽ dùng nó rồi mới bị
+    phép kiểm bắt, tức phát hiện muộn đúng một vòng."""
+    return [{"pin": p, "why": v} for p, v in sorted((CHAN_GIU.get(_isa(root)) or {}).items())]
+
+
+def doc_ohm(gt: str | None) -> float | None:
+    """`4k7` → 4700, `10k` → 10000, `2.2k` → 2200, `470` → 470, `1M` → 1e6.
+
+    Ký hiệu chen chữ (`4k7`) là cách ghi phổ biến nhất trên sơ đồ vì nó không có dấu chấm để
+    mất khi in mờ hay khi qua OCR — nên nó phải đọc được, không chỉ dạng `4.7k`.
+    """
+    if not gt:
+        return None
+    m = RE_GIA_TRI_R.match(str(gt).strip())
+    if not m:
+        return None
+    nguyen, don_vi, thap_phan = m.group(1).replace(",", "."), (m.group(2) or "").lower(), m.group(3)
+    so = float(f"{nguyen}.{thap_phan}") if thap_phan else float(nguyen)
+    return so * {"k": 1e3, "m": 1e6, "r": 1.0, "": 1.0}[don_vi]
+
+
+def _gioi_han_bus(nets: dict[str, list[dict[str, str]]],
+                  parts: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    ra: dict[str, Any] = {}
+    for ten_bus, ct in sorted(_suy_bus(nets).items()):
+        if ct.get("kind") != "i2c":
+            continue
+        ohm = _ohm_keo_len(ct, parts)
+        if ohm is None:
+            ra[ten_bus] = {"max_khz": I2C_STANDARD_KHZ, "pullup_ohm": None,
+                           "why": "không thấy điện trở kéo lên trên SCL/SDA — bus có thể không "
+                                  "chạy được ở bất kỳ tốc độ nào; giữ mức thấp nhất cho tới khi "
+                                  "đo được"}
+        elif ohm <= PULLUP_400K_OHM:
+            ra[ten_bus] = {"max_khz": I2C_FAST_KHZ, "pullup_ohm": ohm,
+                           "why": f"kéo lên {ohm:.0f} Ω ≤ {PULLUP_400K_OHM} Ω — đủ nhanh cho "
+                                  "Fast-mode 400 kHz"}
+        else:
+            ra[ten_bus] = {"max_khz": I2C_STANDARD_KHZ, "pullup_ohm": ohm,
+                           "why": f"kéo lên {ohm:.0f} Ω > {PULLUP_400K_OHM} Ω — sườn lên quá "
+                                  "chậm cho 400 kHz; ép về 100 kHz"}
+    return ra
+
+
+def _ohm_keo_len(ct: dict[str, Any], parts: dict[str, dict[str, Any]]) -> float | None:
+    """Điện trở kéo lên YẾU NHẤT (giá trị lớn nhất) trên hai đường của bus.
+
+    Lấy cái lớn nhất chứ không phải cái nhỏ nhất: SCL kéo 4k7 mà SDA kéo 10k thì bus vẫn chỉ
+    nhanh bằng đường chậm hơn. Lấy cái nhỏ nhất là tự cho mình một tốc độ không có thật.
+    """
+    ds: list[float] = []
+    for duong in (ct.get("lines") or {}).values():
+        for n in (duong.get("nodes") or []):
+            if RE_DIEN_TRO.fullmatch(n.get("ref", "")) and \
+                    (o := doc_ohm((parts.get(n["ref"]) or {}).get("value"))) is not None:
+                ds.append(o)
+    return max(ds) if ds else None
+
+
+def _dien_ap(nets: dict[str, list[dict[str, str]]]) -> dict[str, Any]:
+    """Mức điện áp từ TÊN net nguồn: `+3V3` → 3.3 V, `5V` → 5.0, `1V8` → 1.8."""
+    muc: dict[str, float] = {}
+    for ten in nets:
+        if RE_NGUON.match(ten) and (m := RE_DIEN_AP.match(ten.strip("/"))):
+            muc[ten] = float(f"{m.group(1)}.{m.group(2) or '0'}")
+    if not muc:
+        return {"rails": {}, "io_v": None,
+                "why": "không suy được mức nào từ tên net nguồn — mã sinh ra không được giả định "
+                       "mức I/O"}
+    # Mức I/O là mức THẤP NHẤT có trên board: nối một chân 3V3 vào một net 5 V làm hỏng chip, và
+    # cái hỏng ấy xảy ra trước khi có gì để gỡ.
+    return {"rails": muc, "io_v": min(muc.values()),
+            "why": f"mức I/O lấy theo nguồn thấp nhất trong {sorted(muc)}"}
+
+
+def _dong(root: Path, board: str, parts: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Ngân sách dòng, từ fact `current` của các linh kiện trên board.
+
+    Chưa có fact nào thì trả `None` kèm năng lực cần chạy, KHÔNG trả một con số mặc định. Một
+    ngân sách dòng bịa ra còn tệ hơn không có: mã sinh ra sẽ bật đồng thời mọi thứ vì "còn
+    trong hạn mức".
+    """
+    db = store.store_path(root)
+    ds: list[tuple[str, float]] = []
+    if db.exists() and parts:
+        with store.open_store(db) as c:
+            for subj, gt in c.execute(
+                    "SELECT subject, value FROM fact WHERE predicate IN ('current','current_max')"
+                    "  AND subject LIKE ? AND status NOT IN ('superseded','rejected')",
+                    (f"{_bid(board)}/part:%",)).fetchall():
+                try:
+                    v = json.loads(gt)
+                except (json.JSONDecodeError, TypeError):
+                    continue
+                if isinstance(v, dict) and isinstance(v.get("value"), (int, float)):
+                    ma = float(v["value"]) * (1000.0 if str(v.get("unit", "")).lower() == "a" else 1.0)
+                    ds.append((str(subj).rsplit(":", 1)[-1], ma))
+    if not ds:
+        return {"budget_ma": None, "parts": {},
+                "why": "chưa có fact `current` cho linh kiện nào trên board — chạy "
+                       "`extract.bom_enrich` hoặc `extract.pdf_register_map` để có"}
+    return {"budget_ma": round(sum(m for _, m in ds), 3), "parts": dict(sorted(ds)),
+            "why": f"tổng dòng khai báo của {len(ds)} linh kiện có fact `current`"}
+
+
+# ---------------------------------------------------------------- BOARD-04 propose_fix
+
+
+@capability("board.propose_fix")
+def propose_fix(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: BOARD-04 — CDS-12.2; ARCH-03 (`map_hw` trỏ tới đây khi xung đột không tự giải).
+    tc: "≥ 2 phương án; phương án chạm mã passing đánh dấu ASK"; ask "Chạm mã passing".
+
+    Bốn loại phương án mà bước 1 của hợp đồng liệt kê — remap AF, đổi chân, đổi địa chỉ (chân
+    ADDR), thêm điện trở — sinh **bằng mã, không bằng mô hình**, và đây là một lựa chọn có lý do
+    chứ không phải cho tiện.
+
+    Một phương án đổi chân chỉ có ích khi nó nêu được **chân thay thế cụ thể**, và chân nào thay
+    được cho chân nào là chuyện tra fact `pin_function` của hộ chiếu chip. Mô hình không có bảng
+    ấy trong đầu; hỏi nó thì được một tên chân nghe rất đúng cho tới lúc nạp. Sinh từ fact thì
+    phương án hoặc có thật, hoặc nói thẳng là chưa tra được. Xem [DEV-067].
+
+    **`touches_code` không phải cờ trang trí.** Một phương án chạm vào mã đang qua test là một
+    phương án có thể làm hỏng thứ đang chạy, nên nó được đánh `ask` — đúng `ask_when` của hợp
+    đồng. Chạm mã CHƯA có test nào xanh thì không đánh: bắt hỏi ở đó chỉ dạy người ta bấm Đồng ý
+    cho nhanh, và đến lúc cần hỏi thật thì cái nút ấy đã mất nghĩa.
+    """
+    root = _root(ctx)
+    xd = dict(params["conflict"])
+    loai = str(xd.get("kind") or "af_conflict")
+    chan = str(xd.get("pin") or "")
+    co_test_xanh = _co_test_xanh(root)
+
+    ds = _PHUONG_AN.get(loai, _phuong_an_chung)(root, xd, chan)
+    # "xếp theo ít thay đổi nhất": không chạm mã trước, rồi tới chi phí.
+    ds.sort(key=lambda o: (o["touches_code"], THU_TU_CHI_PHI.index(o["cost"])))
+    for o in ds:
+        o["ask"] = bool(o["touches_code"] and co_test_xanh)
+        if o["ask"]:
+            o["ask_reason"] = ("chạm mã đang qua test — sửa xong phải chạy lại `code.test_host` "
+                               "trước khi coi là xong")
+    return {"options": ds}
+
+
+THU_TU_CHI_PHI = ["low", "medium", "high"]
+
+
+def _co_test_xanh(root: Path) -> bool:
+    """Dự án có lần chạy test nào ĐẠT chưa — điều kiện của "mã passing" trong `ask_when`."""
+    db = store.store_path(root)
+    if not db.exists():
+        return False
+    with store.open_store(db) as c:
+        r = c.execute("SELECT 1 FROM tool_report WHERE tool IN ('test','test_host')"
+                      "  AND passed=1 LIMIT 1").fetchone()
+    return r is not None
+
+
+def _chan_thay_the(root: Path, chan: str) -> list[str]:
+    """Chân khác cùng chức năng, từ fact `pin_function` của hộ chiếu chip.
+
+    Trả rỗng khi chưa có hộ chiếu chân — và khi ấy phương án vẫn được nêu, chỉ là nó nói "chưa
+    tra được chân thay thế" thay vì bịa một cái tên.
+    """
+    db = store.store_path(root)
+    if not db.exists() or not chan:
+        return []
+    goc = chan.split(".")[-1].upper()
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT subject, value FROM fact WHERE predicate='pin_function'"
+                         "  AND status NOT IN ('superseded','rejected')").fetchall()
+    chuc_nang: set[str] = set()
+    theo_chan: dict[str, set[str]] = {}
+    for subj, gt in rows:
+        try:
+            v = json.loads(gt)
+        except (json.JSONDecodeError, TypeError):
+            continue
+        ten = str((v.get("pin") if isinstance(v, dict) else None)
+                  or str(subj).rsplit(":", 1)[-1]).upper()
+        fs = {str(x).upper() for x in
+              ((v.get("functions") or v.get("af") or []) if isinstance(v, dict) else [])}
+        theo_chan.setdefault(ten, set()).update(fs)
+        if ten == goc:
+            chuc_nang |= fs
+    if not chuc_nang:
+        return []
+    return sorted(p for p, fs in theo_chan.items() if p != goc and (fs & chuc_nang))
+
+
+def _pa(change: str, cost: str, touches_code: bool, **them: Any) -> dict[str, Any]:
+    return {"change": change, "cost": cost, "touches_code": touches_code, **them}
+
+
+def _pa_af(root: Path, xd: dict[str, Any], chan: str) -> list[dict[str, Any]]:
+    thay = _chan_thay_the(root, chan)
+    ds = [_pa("Chuyển một trong hai chức năng sang chân khác cùng AF: "
+              + (", ".join(thay[:4]) if thay else
+                 f"chưa tra được chân thay thế cho {chan} — chạy `extract.pdf_pinout` để có "
+                 "fact `pin_function` rồi hỏi lại"),
+              "low" if thay else "medium", True,
+              alternatives=thay[:4], kind="remap_af"),
+          _pa(f"Đổi hẳn ngoại vi cho một trong hai module (ví dụ SPI1 → SPI2) để thôi tranh "
+              f"{chan}", "medium", True, kind="change_peripheral"),
+          _pa(f"Dùng chung {chan} theo thời gian: chỉ một module giữ chân tại một thời điểm, "
+              "chuyển qua lại bằng cấu hình lại chân", "high", True, kind="time_share",
+              note="rẻ về phần cứng, đắt về mã và là nguồn lỗi ngắt — chỉ nên khi hai module "
+                   "không bao giờ chạy cùng lúc")]
+    return ds
+
+
+def _pa_reserved(root: Path, xd: dict[str, Any], chan: str) -> list[dict[str, Any]]:
+    vi_sao = str(xd.get("detail") or "")
+    thay = _chan_thay_the(root, chan)
+    return [_pa(f"Chuyển chức năng khỏi {chan} sang chân thường: "
+                + (", ".join(thay[:4]) if thay else "chưa tra được chân thay thế"),
+                "low" if thay else "medium", True, alternatives=thay[:4], kind="move_off_reserved"),
+            _pa(f"Giữ nguyên và chấp nhận mất chức năng dành riêng của {chan} ({vi_sao[:80]})",
+                "high", False, kind="accept",
+                note="không chạm mã, nhưng đổi lại là mất đúng đường mà lúc board không chạy "
+                     "người ta cần nhất")]
+
+
+def _pa_dia_chi(root: Path, xd: dict[str, Any], chan: str) -> list[dict[str, Any]]:
+    return [_pa("Đổi chân chọn địa chỉ (SDO/ADDR/A0) của một thiết bị sang mức còn lại — "
+                "một mối hàn, địa chỉ đổi theo", "low", True, kind="change_address",
+                note="chạm mã vì hằng số địa chỉ trong driver phải đổi theo; sau đó chạy "
+                     "`board.build_passport` để fact `address` khớp lại"),
+            _pa("Tách hai thiết bị ra hai bus I2C khác nhau", "medium", True, kind="split_bus"),
+            _pa("Thêm bộ ghép kênh I2C (TCA9548A) nếu buộc phải giữ cùng địa chỉ", "high", True,
+                kind="mux", note="thêm linh kiện và thêm một lớp mã — chỉ đáng khi không đổi "
+                                 "được địa chỉ")]
+
+
+def _pa_pullup(root: Path, xd: dict[str, Any], chan: str) -> list[dict[str, Any]]:
+    return [_pa(f"Thêm điện trở kéo lên {PULLUP_400K_OHM} Ω lên nguồn cho `{chan}`", "low", False,
+                kind="add_pullup",
+                note="không chạm mã — đây là lý do nó đứng đầu danh sách"),
+            _pa("Bật điện trở kéo lên trong chip cho chân I2C", "low", True, kind="internal_pullup",
+                note="kéo lên trong chip cỡ 20–50 kΩ, chỉ đủ cho 100 kHz và bus ngắn; dùng được "
+                     "để thử, không nên để trong bản chạy thật"),
+            _pa(f"Hạ tốc độ bus xuống {I2C_STANDARD_KHZ} kHz", "medium", True, kind="lower_speed",
+                note="không sửa được nguyên nhân: thiếu kéo lên thì bus vẫn không có mức cao")]
+
+
+def _phuong_an_chung(root: Path, xd: dict[str, Any], chan: str) -> list[dict[str, Any]]:
+    return [_pa(f"Đổi chân/ngoại vi liên quan tới {chan or 'xung đột này'}", "medium", True,
+                kind="generic_remap"),
+            _pa("Giữ nguyên và ghi lại quyết định (ADR) kèm lý do chấp nhận", "high", False,
+                kind="accept", note="`arch.adr` để quyết định này không mất khi người khác đọc lại")]
+
+
+_PHUONG_AN = {"af_conflict": _pa_af, "reserved": _pa_reserved,
+              "address_clash": _pa_dia_chi, "missing_pullup": _pa_pullup}
+
+
+# ---------------------------------------------------------------- BOARD-05 mark_lab
+
+# Cơ cấu chấp hành — thứ làm board **chuyển động hoặc sinh nhiệt** khi mã chạy sai. Bảng này do
+# hiện thực đặt: không tài liệu nào trong bộ hồ sơ liệt kê chúng, mà tc của BOARD-05 lại đòi
+# "board có động cơ → không lab". Xem [DEV-068].
+#
+# Nó là lưới chặn MỘT CHIỀU: bắt được thì chắc chắn không phải board lab, còn không bắt được thì
+# không kết luận gì — lời khai của người vẫn là điều kiện bắt buộc. Đặt ngược lại (tự động cho
+# lab khi không thấy động cơ) thì một con MOSFET lái van sẽ lọt, và cái lọt ấy chuyển động.
+RE_CO_CAU = re.compile(
+    r"(DRV8\d{3}|L29[38]|TB6612|A4988|DRV88\d\d|BTS7960|VNH\d|MP6\d{3}"          # mạch lái động cơ
+    r"|ULN2\d{3}|RELAY|SERVO|STEPPER|SOLENOID|MOTOR|PUMP|VALVE|HEATER"           # chấp hành, gia nhiệt
+    r"|IRF\d{3,4}|IRLZ\d+|AO3400|SI2302)",                                       # MOSFET công suất
+    re.IGNORECASE)
+
+# `by` không được là một cái tên máy. Hợp đồng nêu `E3000 nếu by=policy`; ba tên còn lại là cùng
+# một chuyện — chúng là actor của hệ, không phải người chịu trách nhiệm.
+BY_KHONG_PHAI_NGUOI = {"policy", "agent", "eide", "system", "auto"}
+
+
+@capability("board.mark_lab")
+def mark_lab(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: BOARD-05 — CDS-12.2; POL-17 §3 (niêm danh sách trắng); APD-08 §3 (G-OPS).
+    tc: "Z-10; board có động cơ → không lab"; lỗi E3000 nếu `by=policy`, E1000 thiếu xác nhận;
+    undo `restore_config`.
+
+    Đánh dấu lab là **cách duy nhất** để `target.flash` chạy mà không hỏi người từng lần
+    (`G-OPS-01`). Nên nó không phải một cờ tiện tay — nó là chỗ một người nhận trách nhiệm rằng
+    board này không làm gì nguy hiểm khi mã chạy sai.
+
+    Ba lớp, và cả ba đều cần thiết:
+
+    1. **`ctx.actor` phải là người.** `by` chỉ là một chuỗi; tác tử điền được. Nếu chỉ kiểm `by`
+       thì tác tử tự cấp cho mình quyền tự nạp — đúng thứ mà `eide policy sign` cố ý không làm
+       thành năng lực (xem `cli.py::cmd_policy_sign`).
+    2. **Cả hai lời khai phải `true`.** Thiếu một cái là E1000: hợp đồng đòi cả `no_actuator` lẫn
+       `current_limited`, và "board không có cơ cấu chấp hành nhưng chưa hạn dòng" vẫn cháy được.
+    3. **Đối chiếu với netlist.** tc nói "board có động cơ → không lab". Lời khai của người có
+       thể sai vì người khai không phải người vẽ mạch. Thấy mạch lái động cơ trong netlist thì
+       ghi `lab: false` kèm lý do và tên linh kiện — không im lặng bỏ qua, cũng không ném lỗi:
+       schema autonomy.yaml có sẵn `has_actuator` và `reason` đúng cho việc ấy, và một board đã
+       xét rồi kết luận "không lab" là thông tin đáng giữ hơn một lần gọi thất bại.
+
+    **Ký lại niêm sau khi ghi.** `boards` là một trong bốn khóa `whitelist.KHOA_NIEM`, nên ghi
+    vào nó mà không ký lại thì niêm vỡ và MỌI phê duyệt dựa trên danh sách trắng ngừng hoạt động
+    — bao gồm chính `G-OPS-01` mà năng lực này phục vụ. Ký ở đây hợp lệ vì lớp 1 đã bảo đảm
+    người đang ngồi trước máy.
+    """
+
+    root = _root(ctx)
+    board = str(params["board"])
+    by = str(params["by"]).strip()
+
+    if not by or by.lower() in BY_KHONG_PHAI_NGUOI:
+        raise EideError("E3000", f"`by={by or '(rỗng)'}` không phải một người — đánh dấu lab là "
+                        "chỗ một người nhận trách nhiệm, không phải một bước tự động",
+                        gate="G-OPS", rule="BOARD-05")
+    if ctx.actor != "human":
+        raise EideError("E3000", f"Đánh dấu board `{board}` là lab phải do người gọi "
+                        f"(actor hiện tại: {ctx.actor})", gate="G-OPS", rule="BOARD-05")
+    thieu = [k for k in ("no_actuator", "current_limited") if not params.get(k)]
+    if thieu:
+        raise EideError("E1000", f"Thiếu xác nhận: {', '.join(thieu)} phải là `true`. "
+                        "Board chưa hạn dòng vẫn cháy được dù không có cơ cấu chấp hành.",
+                        missing=thieu)
+
+    cc = _co_cau_chap_hanh(root, board)
+    lab = not cc
+    ly_do = (f"{by} xác nhận không có cơ cấu chấp hành và đã hạn dòng" if lab else
+             "netlist có " + "; ".join(f"{r} ({v})" for r, v in cc)
+             + f" — trái với lời khai `no_actuator=true` của {by}")
+
+    f = root / EIDE_DIR / "autonomy.yaml"
+    cfg = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    cfg.setdefault("boards", {})[board] = {**(cfg["boards"].get(board) or {}),
+                                           "lab": lab, "has_actuator": bool(cc), "reason": ly_do}
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+    _ky_lai(ctx, cfg, root / EIDE_DIR / "policy.sig", by)
+    return {"lab": lab}
+
+
+def _co_cau_chap_hanh(root: Path, board: str) -> list[tuple[str, str]]:
+    """`[(ref, giá trị)]` của các linh kiện trông như cơ cấu chấp hành, từ netlist board này."""
+    ra = []
+    for ref, pt in sorted(doc_part(root, board).items()):
+        van = " ".join(str(pt.get(k) or "") for k in ("mpn", "value", "footprint"))
+        if RE_CO_CAU.search(van):
+            ra.append((ref, str(pt.get("mpn") or pt.get("value") or "?")))
+    return ra
+
+
+def _ky_lai(ctx: Context, cfg: dict[str, Any], sig: Path, by: str) -> None:
+    """Ký lại niêm trên cấu hình SAU hợp nhất, rồi cập nhật luôn cổng đang chạy.
+
+    Ký trên `{**defaults, **autonomy.yaml}` chứ không trên riêng tệp dự án — `whitelist.bam()`
+    nhận cấu hình sau hợp nhất, nên ký trên tệp dự án thôi sẽ ra một băm không bao giờ khớp.
+
+    Cập nhật `gate.config` sau khi ký vì `PolicyGate` đọc cấu hình một lần lúc dựng. Không cập
+    nhật thì đánh dấu lab xong, ngay lời gọi `target.flash` tiếp theo trong cùng phiên vẫn thấy
+    board chưa lab — người dùng đọc ra là "đánh dấu không ăn", rồi đánh dấu lại.
+    """
+    from eide_core import whitelist
+    from eide_core.paths import spec_dir
+
+    defaults = yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8"))
+    hop_nhat = {**defaults, **cfg}
+    led = ctx.extra.get("ledger")
+    whitelist.ky(hop_nhat, sig, by=by, led=led)
+    if (gate := ctx.extra.get("gate")) is not None and hasattr(gate, "config"):
+        gate.config = hop_nhat
+        gate.danh_sach_da_ky, gate.ly_do_chua_ky = whitelist.kiem(hop_nhat, sig, led)

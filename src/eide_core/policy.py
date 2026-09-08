@@ -285,7 +285,15 @@ class PolicyGate:
 
     def _env(self, features: dict[str, Any], level: str, board: str | None) -> dict[str, Any]:
         cfg = self.config
-        boards = cfg.get("boards") or {}
+        # `boards` là một trong bốn khóa `whitelist.KHOA_NIEM`, và nó là khóa quyết định G-OPS:
+        # `boards.<id>.lab` bật thẳng `G-OPS-01` (APPROVE tự nạp). Niêm vỡ mà vẫn nạp nó thì sửa
+        # tay `.eide/autonomy.yaml` thêm `lab: true` là đủ để tự nạp không hỏi ai — đúng đường mà
+        # POL-17 §3 niêm `boards` để bịt (xem `whitelist.py`, DEV-030). Ba khóa danh sách kia đã
+        # được gác từ trước; khóa này thì chưa, nên nó là ngoại lệ duy nhất còn sót.
+        #
+        # Bỏ hẳn chứ không nạp rỗng: `board.lab` thiếu ⇒ None ⇒ `G-OPS-01` không khớp ⇒ rơi
+        # xuống `G-OPS-06` ("Board chưa đánh dấu lab") ⇒ ASK. Đó đúng là câu người cần đọc.
+        boards = (cfg.get("boards") or {}) if self.danh_sach_da_ky else {}
         binfo = dict(boards.get(board, {})) if board else {}
         env: dict[str, Any] = {
             "True": True, "False": False, "None": None,

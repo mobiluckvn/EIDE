@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 08/09/2026 (lần 10). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 08/09/2026 (lần 11). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,7 +12,7 @@
 
 ## 1. Một dòng
 
-**135/238 năng lực (57%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 990 test xanh trên
+**138/238 năng lực (58%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 1011 test xanh trên
 cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
@@ -27,7 +27,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
-| M2 | 39/99 · 39% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
+| M2 | 42/99 · 42% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
@@ -40,14 +40,14 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 ## 3. Theo nhóm năng lực
 
 **Đủ hoặc gần đủ** — `arch` 11/11 · `chat` 8/8 · `req` 8/8 · `plan` 7/7 · `policy` 7/7 ·
-`ingest` 3/3 · `kg` 8/9 · `view` 9/13 · `tool` 7/10
+`ingest` 3/3 · `kg` 8/9 · `view` 9/13 · `tool` 7/10 · **`board` 5/5**
 
 **Mới một phần** — `extract` 10/21 · `project` 6/9 · `memory` 6/8 · `search` 6/9 ·
-`env` 6/7 · `code` 13/16 · `passport` 4/8 · `diagram` 4/14 · `doc` 4/12 · `board` 2/5 · `archive` 4/4 · `registry` 1/5 ·
+`env` 6/7 · `code` 13/16 · `passport` 4/8 · `diagram` 4/14 · `doc` 4/12 · `archive` 4/4 · `registry` 1/5 ·
 `report` 1/4
 
 **Chưa bắt đầu** — `code` (16, M2) · `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) ·
-`debug` (6, M3) · `board` (5, M2) · `bench` (3, M2) · `measure` (3, M5)
+`debug` (6, M3) · `bench` (3, M2) · `measure` (3, M5)
 
 ---
 
@@ -64,8 +64,8 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 | **Z-10** dò board và nạp | 1/10 | `discover.ports` (M2) — cần phần cứng |
 
 **Z-07 đã đủ năng lực cho cả 23 bước** — chuỗi đầu tiên trọn vẹn: zip → trích → hộ chiếu board → yêu cầu → kế hoạch → sinh mã → dựng → merge → hướng dẫn bringup. `tests/test_board.py::test_chuoi_Z07_du_nang_luc` giữ điều đó khỏi tụt đi trong im lặng.
-Bốn chuỗi còn lại đứt ở đúng chỗ dự kiến — chúng cần `code.*`, `board.*`, `discover.*`, tức
-mốc M2 trở đi.
+Bốn chuỗi còn lại đứt ở đúng chỗ dự kiến — chúng cần `doc.generate`, `discover.*`, `sim.*`.
+`code.*` và `board.*` của M2 nay đã xong cả.
 
 ---
 
@@ -96,11 +96,11 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **990** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1011** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 66 tổng, **7 Mở** |
+| Mục DEVIATIONS | 68 tổng, **9 Mở** |
 | Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
@@ -108,7 +108,7 @@ Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó đ�
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (990 test, giả lập) hỏi *"mã có đúng
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1011 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
@@ -163,6 +163,8 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 | [DEV-050](DEVIATIONS.md) | "Duyệt hàng loạt" trong hàng đợi — đề nghị gom theo *cùng cổng + cùng quy tắc* |
 | [DEV-035](DEVIATIONS.md) | Thêm ý định theo nhóm năng lực — đã quyết hoãn tới CHAT-06 |
 | [DEV-066](DEVIATIONS.md) | EXTRACT-16 thiếu `name`, nên `extract.kicad_netlist` và `board.build_passport` không thống nhất được tên board — mã đã sửa cho khớp tài liệu, cần anh chốt có thêm tham số hay không |
+| [DEV-067](DEVIATIONS.md) | BOARD-04 giao việc cho vai trò `architect`, hiện thực sinh phương án bằng mã — vì chân thay thế phải tra fact `pin_function`, mô hình sẽ bịa tên chân |
+| [DEV-068](DEVIATIONS.md) | Bảng "linh kiện chấp hành" của `board.mark_lab` do hiện thực đặt (không tài liệu nào liệt kê) — nên đưa vào `docs/spec/` |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
 
 ---

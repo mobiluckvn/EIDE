@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 9) từ registry — không gõ tay. Còn **103/238** năng lực. Xem
+*Đo 08/09/2026 (lần 10) từ registry — không gõ tay. Còn **100/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -21,6 +21,8 @@ chủ sản phẩm 08/09).
 | P6 | [DEV-063](DEVIATIONS.md) — bố cục `tests/host` cho `code.test_host` | Quy ước do tôi đặt vì CODE-08 không nói; cần anh chốt trước khi `code.generate_tests` sinh test theo nó |
 | P7 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
 | P7b | [DEV-066](DEVIATIONS.md) — EXTRACT-16 thiếu `name` | Mã đã sửa cho khớp tài liệu (tên board = tên tệp). Chốt có thêm tham số hay giữ nguyên |
+| P7c | [DEV-067](DEVIATIONS.md) — BOARD-04 gọi vai trò `architect` | Hiện thực sinh phương án bằng mã vì chân thay thế phải tra fact. Chốt bỏ tiền tố vai trò hay giữ |
+| P7d | [DEV-068](DEVIATIONS.md) — bảng linh kiện chấp hành | Đang nằm trong mã; nên có tệp máy đọc được trong `docs/spec/` |
 | P8 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
 | P9 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
@@ -64,13 +66,13 @@ mà không nối về fact thì EIDE chỉ là một trình sinh mã nữa.
 
 ---
 
-## C. `doc.*` + `diagram.*` còn lại — 14 ở M2 (+5 ở M3: `slides`, `sync`, `translate`, `from_image`, `diagram.sync`)
+## C. `doc.*` + `diagram.*` còn lại — 13 ở M2 · **ưu tiên cao nhất hiện nay** (+5 ở M3: `slides`, `sync`, `translate`, `from_image`, `diagram.sync`)
 
 | # | Việc | Giá trị |
 |---|---|---|
 | C1 | `doc.generate` (URD/SRS/SAD/SDD/STP), `doc.embed_diagram` | Khép chuỗi **P7** (hiện 4/8) |
 | C2 | `diagram.architecture`, `state`, `sequence`, `pinmap`, `memory_map` | Lược đồ cho chính bộ tài liệu ấy |
-| C3 | `doc.bringup_guide`, `api_ref`, `test_report`, `changelog` | Tài liệu vận hành |
+| C3 | `api_ref`, `test_report`, `changelog` — ~~`bringup_guide`~~ xong 08/09 | Tài liệu vận hành |
 | C4 | `diagram.flow`, `gantt`, `timing` | Còn lại |
 
 **Vì sao đáng làm sớm:** nó cho ra **chính bộ tài liệu dùng làm phụ lục đề án** — sản phẩm tự
@@ -78,25 +80,30 @@ viết tài liệu về mình, có trích dẫn tới fact. Đó là bằng ch�
 
 ---
 
-## D. `extract.*` còn lại — 11 ở M2 (+1 ở M5: `image_scope`)
+## D. `extract.*` còn lại — 10 ở M2 (+1 ở M5: `image_scope`)
 
 | # | Việc |
 |---|---|
 | D1 | `pdf_errata`, `pdf_pinout` — hai loại bảng còn thiếu của datasheet |
-| D2 | `bom`, `bom_enrich`, `kicad_netlist`, `dt_binding` — đọc thiết kế mạch |
+| D2 | `bom`, `bom_enrich`, `dt_binding` — ~~`kicad_netlist`~~ xong 08/09 |
 | D3 | `image_board`, `image_schematic`, `ocr` — đọc ảnh (cần mô hình vision) |
 
-**Mở khóa:** `board.build_passport` (chỗ đứt của Z-07, hiện 20/23).
+**Mở khóa:** `extract.pdf_pinout` sinh fact `pin_function` — thiếu nó thì `board.propose_fix`
+nêu được phương án đổi chân nhưng không nêu được đổi sang chân nào.
 
 ---
 
-## E. `board.*` — còn 3 (M2)
+## ~~E. `board.*`~~ — **5/5, xong 08/09**
 
-~~`build_passport`, `check_pins`~~ — **xong 08/09**, cùng `extract.kicad_netlist` và
-`doc.bringup_guide`. **Chuỗi Z-07 nay đủ năng lực cho cả 23 bước.**
+~~`build_passport`, `check_pins`, `constraints`, `propose_fix`, `mark_lab`~~ — cùng
+`extract.kicad_netlist` và `doc.bringup_guide`. **Chuỗi Z-07 nay đủ năng lực cho cả 23 bước**;
+`board.*` là nhóm M2 đầu tiên đóng trọn.
 
-Còn `constraints`, `mark_lab`, `propose_fix`. `mark_lab` là T2 "hỏi luôn (một lần)" — nó ghi
-`boards.<id>.lab` vào danh sách đã ký, tức chạm trực tiếp vào cổng G-OPS.
+`mark_lab` ghi `boards.<id>.lab` vào danh sách **đã ký**, nên nó phải ký lại niêm — và làm việc
+ấy lộ ra một lỗ hổng của `PolicyGate`: `boards` nằm trong `whitelist.KHOA_NIEM` nhưng `_env`
+vẫn nạp nó kể cả khi niêm vỡ. Sửa tay `.eide/autonomy.yaml` thêm `lab: true`, không ký, là đủ
+để `G-OPS-01` cho tự nạp firmware — đúng đường mà POL-17 §3 niêm `boards` để bịt. Đã vá, có
+test đối chứng hai chiều (`test_boards_KHONG_duoc_nap_khi_niem_vo`).
 
 ---
 
@@ -112,7 +119,7 @@ board có ý nghĩa. Nó cũng là cách kiểm `code.*` mà không cần board.
 
 ---
 
-## G. Còn lại — 20 năng lực
+## G. Còn lại — 20 năng lực (rải rác)
 
 `view.*` 4 (M2) · `tool.*` 3 · `project.*` 3 · `registry.*` 4 (M4) · `report.*` 3 ·
 `memory.*` 2 · `passport.diff/upgrade` 2 · `kg.evidence` · `env.install_pack` ·
@@ -153,13 +160,17 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 ## Đề xuất thứ tự
 
 ```
-A1 + A2 (xong)  →  B1+B2 (sinh + dựng mã)  →  E (board.*, mở Z-07)
-                   →  C1+C2 (bộ tài liệu tự sinh)  →  D (extract còn lại)
-                   →  F (mô phỏng)  →  H (phần cứng, cuối cùng)
+A1+A2 (xong)  →  B1+B2 (xong)  →  E board.* (xong, Z-07 đóng)
+              →  C1+C2 (bộ tài liệu tự sinh)  ←  ĐANG Ở ĐÂY
+              →  D (extract còn lại)  →  F (mô phỏng)  →  H (phần cứng, cuối cùng)
 ```
 
 **Lý do đặt B trước C:** `doc.generate` viết tài liệu *về* thiết kế và mã. Có `code.*` rồi thì
 tài liệu sinh ra nói về một hệ thống có thật, chứ không phải về một kế hoạch.
 
-**Lý do đặt E ngay sau B:** `board.build_passport` là chỗ đứt duy nhất còn lại của Z-07, và
-Z-07 đang 20/23 — gần nhất trong năm chuỗi. Đóng được một chuỗi trọn vẹn là mốc đáng có.
+**Lý do đặt E ngay sau B** (đã làm xong): `board.build_passport` là chỗ đứt duy nhất còn lại
+của Z-07. Đóng được một chuỗi trọn vẹn là mốc đáng có — và nó đã đóng.
+
+**Kế tiếp là C.** `doc.generate` là chỗ đứt của P7 (4/8), và bộ tài liệu sinh ra chính là phụ
+lục đề án: sản phẩm tự viết tài liệu về mình, có trích dẫn tới fact. Giờ `code.*` và `board.*`
+đã xong nên tài liệu ấy nói về một hệ thống có thật, không phải về một kế hoạch.

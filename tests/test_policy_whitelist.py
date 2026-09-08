@@ -262,3 +262,36 @@ def test_lab_boards_cua_muc3_bi_schema_muc4_tu_choi(cfg):
     s = json.loads((spec_dir() / "policy" / "autonomy.schema.json").read_text(encoding="utf-8"))
     v = jsonschema.Draft202012Validator(s)
     assert list(v.iter_errors({**cfg, "lab_boards": ["b1"]})), "§4 phải từ chối tên của §3"
+
+
+# ---- `boards` cũng nằm trong niêm (DEV-030), nên nó cũng phải chịu hậu quả khi niêm vỡ
+
+
+def test_boards_KHONG_duoc_nap_khi_niem_vo(tmp_path, cfg):
+    """`boards.<id>.lab` bật thẳng `G-OPS-01` (APPROVE tự nạp), nên nó là khóa NGUY HIỂM nhất
+    trong bốn khóa được niêm — và nó là khóa duy nhất mà `_env` từng nạp bất kể niêm.
+
+    Hậu quả đo được ở đây: sửa tay `.eide/autonomy.yaml` thêm `lab: true`, không ký, là đủ để
+    tự nạp firmware không hỏi ai. Ba khóa danh sách kia đã được gác từ trước (`danh_sach_da_ky`
+    quyết định có nạp `trusted_*` hay không); `boards` thì chưa, nên nó là lỗ duy nhất còn sót
+    của POL-17 §3 "PolicyGate từ chối nạp danh sách có băm không khớp chữ ký".
+
+    Cả hai chiều đều kiểm: có niêm thì `lab` có tác dụng, mất niêm thì rơi xuống `G-OPS-06`
+    ("Board chưa đánh dấu lab") — ASK, đúng câu người cần đọc.
+    """
+    sig = tmp_path / "policy.sig"
+    cua_sau = {**cfg, "boards": {"nucleo": {"lab": True}}}
+    dac_trung = {"op": "flash", "artifact": {"passed_g3": True, "hash_match": True},
+                 "board": {"flash_count_hour": 0}}
+
+    whitelist.ky(cua_sau, sig, "Vũ Trí Công")
+    g = PolicyGate(config=cua_sau, sig_path=sig)
+    assert g.danh_sach_da_ky
+    assert g.decide("G-OPS", dac_trung, risk="R3", board="nucleo",
+                    autonomy="A3").rule_id == "G-OPS-01"
+
+    # cùng cấu hình ấy, niêm không còn khớp (ai đó sửa tệp sau khi ký)
+    g2 = PolicyGate(config={**cua_sau, "trusted_sources": ["ke-la.com"]}, sig_path=sig)
+    assert not g2.danh_sach_da_ky
+    d = g2.decide("G-OPS", dac_trung, risk="R3", board="nucleo", autonomy="A3")
+    assert d.decision == "ASK" and d.rule_id == "G-OPS-06", "board.lab lọt qua khi niêm đã vỡ"

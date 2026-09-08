@@ -399,3 +399,328 @@ def test_chuoi_Z07_du_nang_luc():
         importlib.import_module(f"eide.caps.{m.name}")
     co = {c.spec.id for c in get_registry().list() if c.implemented}
     assert not (can - co), f"Z-07 tụt lại: thiếu {sorted(can - co)}"
+
+
+# ---------- BOARD-03 constraints
+
+def _co_pullup(gia_tri="4k7"):
+    """Netlist mẫu, đổi giá trị hai điện trở kéo lên."""
+    return NETLIST.replace('(comp (ref "R1") (value "4k7"))', f'(comp (ref "R1") (value "{gia_tri}"))') \
+                  .replace('(comp (ref "R2") (value "4k7"))', f'(comp (ref "R2") (value "{gia_tri}"))')
+
+
+def test_TC_I2C1_gioi_han_400kHz_theo_pullup(du_an):
+    """tc của BOARD-03, nguyên văn: **"I2C1 limit 400 kHz theo pull-up"**.
+
+    Tốc độ tối đa của một bus I2C không nằm trong datasheet chip mà nằm ở điện trở kéo lên TRÊN
+    BOARD NÀY. Không ghi ra thì mã sinh sau đó lấy 400 kHz theo datasheet, và board đọc sai lác
+    đác lúc nóng — loại lỗi không tái lập được trên bàn.
+    """
+    from eide.caps.board import constraints
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    kicad_netlist({"file": str(_netlist(root))}, ctx)
+    rb = constraints({"board": "robot-main"}, ctx)["constraints"]
+    assert rb["bus_limits"]["i2c1"]["max_khz"] == 400
+    assert rb["bus_limits"]["i2c1"]["pullup_ohm"] == 4700
+
+
+def test_pullup_10k_thi_ep_ve_100kHz(du_an):
+    """Đối chứng. Không có nó thì `max_khz` có thể là hằng số 400 và test trên vẫn xanh."""
+    from eide.caps.board import constraints
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    kicad_netlist({"file": str(_netlist(root, _co_pullup("10k"), "g1.net"))}, ctx)
+    bus = constraints({"board": "g1"}, ctx)["constraints"]["bus_limits"]["i2c1"]
+    assert bus["max_khz"] == 100 and bus["pullup_ohm"] == 10000
+    assert "quá" in bus["why"] or "chậm" in bus["why"]
+
+
+def test_lay_dien_tro_YEU_NHAT_cua_hai_duong(du_an):
+    """SCL kéo 4k7 mà SDA kéo 10k thì bus chỉ nhanh bằng đường chậm hơn. Lấy cái nhỏ nhất là tự
+    cho mình một tốc độ không có thật."""
+    from eide.caps.board import constraints
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    lech = NETLIST.replace('(comp (ref "R2") (value "4k7"))', '(comp (ref "R2") (value "10k"))')
+    kicad_netlist({"file": str(_netlist(root, lech, "g2.net"))}, ctx)
+    bus = constraints({"board": "g2"}, ctx)["constraints"]["bus_limits"]["i2c1"]
+    assert bus["max_khz"] == 100 and bus["pullup_ohm"] == 10000
+
+
+def test_khong_co_pullup_thi_giu_muc_thap_nhat(du_an):
+    from eide.caps.board import constraints
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    khong_r = NETLIST.replace('\n      (node (ref "R1") (pin "1"))', "").replace(
+        '\n      (node (ref "R2") (pin "1"))', "")
+    kicad_netlist({"file": str(_netlist(root, khong_r, "g3.net"))}, ctx)
+    bus = constraints({"board": "g3"}, ctx)["constraints"]["bus_limits"]["i2c1"]
+    assert bus["max_khz"] == 100 and bus["pullup_ohm"] is None
+
+
+def test_doc_duoc_ky_hieu_dien_tro_chen_chu():
+    """`4k7` là cách ghi phổ biến nhất trên sơ đồ vì nó không có dấu chấm để mất khi in mờ hay
+    khi qua OCR — nên nó phải đọc được, không chỉ dạng `4.7k`."""
+    from eide.caps.board import doc_ohm
+
+    assert doc_ohm("4k7") == 4700
+    assert doc_ohm("4.7k") == 4700
+    assert doc_ohm("2.2k") == 2200
+    assert doc_ohm("10k") == 10000
+    assert doc_ohm("470") == 470
+    assert doc_ohm("1M") == 1_000_000
+    assert doc_ohm("DNP") is None and doc_ohm(None) is None
+
+
+def test_dien_ap_IO_lay_muc_THAP_NHAT(du_an):
+    """Nối một chân 3V3 vào net 5 V làm hỏng chip, và cái hỏng ấy xảy ra trước khi có gì để gỡ."""
+    from eide.caps.board import constraints
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    hai_muc = NETLIST.replace('(net (code "3") (name "GND")',
+                              '(net (code "5") (name "+5V")\n      (node (ref "U1") (pin "9")))\n'
+                              '    (net (code "3") (name "GND")')
+    kicad_netlist({"file": str(_netlist(root, hai_muc, "g4.net"))}, ctx)
+    dv = constraints({"board": "g4"}, ctx)["constraints"]["voltage"]
+    assert dv["rails"] == {"+3V3": 3.3, "+5V": 5.0} and dv["io_v"] == 3.3
+
+
+def test_chua_co_fact_current_thi_None_chu_khong_bia_mot_con_so(du_an):
+    """Một ngân sách dòng bịa ra còn tệ hơn không có: mã sinh ra sẽ bật đồng thời mọi thứ vì
+    "còn trong hạn mức"."""
+    from eide.caps.board import constraints
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    kicad_netlist({"file": str(_netlist(root))}, ctx)
+    dong = constraints({"board": "robot-main"}, ctx)["constraints"]["current"]
+    assert dong["budget_ma"] is None and "extract." in dong["why"]
+
+
+def test_constraints_ghi_vao_constraints_yaml_va_dung_chung_bang_chan_giu(du_an):
+    """Ràng buộc phải NẰM TRONG `constraints.yaml`: mã sinh ra không đọc danh sách cảnh báo, nó
+    đọc tệp này. Và bảng chân giữ phải là cùng một bảng với `check_pins` — một chân bị cấm ở
+    phép kiểm mà không bị cấm ở ràng buộc thì phát hiện muộn đúng một vòng."""
+    import yaml as _yaml
+
+    from eide.caps.board import CHAN_GIU, constraints
+    from eide.caps.extract import kicad_netlist
+
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411RE"}, ctx)
+    kicad_netlist({"file": str(_netlist(root))}, ctx)
+    constraints({"board": "robot-main"}, ctx)
+
+    d = _yaml.safe_load((root / ".eide" / "constraints.yaml").read_text(encoding="utf-8"))
+    rb = d["board"]["robot-main"]
+    assert rb["bus_limits"]["i2c1"]["max_khz"] == 400
+    assert {p["pin"] for p in rb["reserved_pins"]} == set(CHAN_GIU["armv7e-m"])
+
+
+def test_constraints_chua_co_net_thi_bao_ro(du_an):
+    from eide.caps.board import constraints
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    with pytest.raises(EideError) as e:
+        constraints({"board": "khong-co"}, ctx)
+    assert e.value.code == "E2000"
+
+
+# ---------- BOARD-04 propose_fix
+
+def _pin_function(root, chan, fs, fid):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id,uri,sha256,kind,tier,license)"
+                  " VALUES ('s_pin','ds.pdf',?,'pdf_vendor','gold','vendor-doc')",
+                  (hashlib.sha256(b"p").hexdigest(),))
+        c.execute("INSERT INTO fact (id, subject, predicate, value, source_id, method, tier,"
+                  " confidence, status, layer) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                  (fid, f"chip:stm32f411/pin:{chan}", "pin_function",
+                   json.dumps({"pin": chan, "functions": fs}), "s_pin", "parser", "gold",
+                   1.0, "verified", "A"))
+        c.commit()
+
+
+def test_TC_moi_loai_xung_dot_deu_cho_it_nhat_hai_phuong_an(du_an):
+    """tc của BOARD-04: **≥ 2 phương án**. Một phương án duy nhất không phải là lựa chọn — nó là
+    một mệnh lệnh đội lốt."""
+    from eide.caps.board import propose_fix
+
+    _, ctx, _ = du_an
+    for loai in ("af_conflict", "reserved", "address_clash", "missing_pullup", "gi_do_la"):
+        ds = propose_fix({"conflict": {"pin": "PB3", "kind": loai}}, ctx)["options"]
+        assert len(ds) >= 2, loai
+        assert all({"change", "cost", "touches_code"} <= set(o) for o in ds), loai
+
+
+def test_phuong_an_KHONG_cham_ma_dung_truoc(du_an):
+    """"Xếp theo ít thay đổi nhất" — thêm một điện trở rẻ hơn sửa mã, và thứ tự phải nói ra điều
+    đó chứ không để người đọc tự xếp."""
+    from eide.caps.board import propose_fix
+
+    _, ctx, _ = du_an
+    ds = propose_fix({"conflict": {"pin": "/I2C1_SCL", "kind": "missing_pullup"}}, ctx)["options"]
+    assert ds[0]["touches_code"] is False and "kéo lên" in ds[0]["change"]
+    assert [o["touches_code"] for o in ds] == sorted(o["touches_code"] for o in ds)
+
+
+def test_cham_ma_PASSING_thi_danh_dau_ask(du_an):
+    """`ask_when` của hợp đồng là "Chạm mã passing" — không phải "chạm mã"."""
+    from eide.caps.board import propose_fix
+
+    _, ctx, root = du_an
+    truoc = propose_fix({"conflict": {"pin": "PB3", "kind": "af_conflict"}}, ctx)["options"]
+    assert not any(o["ask"] for o in truoc), "chưa có test xanh nào mà đã bắt hỏi"
+
+    store.ghi_tool_report(store.store_path(root), {"tool": "test_host", "passed": True,
+                                                   "at": "2026-09-08T00:00:00Z"})
+    sau = propose_fix({"conflict": {"pin": "PB3", "kind": "af_conflict"}}, ctx)["options"]
+    assert [o["ask"] for o in sau] == [o["touches_code"] for o in sau]
+    assert any(o["ask"] for o in sau)
+
+
+def test_test_do_thi_khong_bat_hoi(du_an):
+    """Đối chứng: có ToolReport nhưng KHÔNG đạt thì mã không "passing", nên không đánh dấu ask.
+    Bắt hỏi ở đó chỉ dạy người ta bấm Đồng ý cho nhanh."""
+    from eide.caps.board import propose_fix
+
+    _, ctx, root = du_an
+    store.ghi_tool_report(store.store_path(root), {"tool": "test_host", "passed": False,
+                                                   "at": "2026-09-08T00:00:00Z"})
+    ds = propose_fix({"conflict": {"pin": "PB3", "kind": "af_conflict"}}, ctx)["options"]
+    assert not any(o["ask"] for o in ds)
+
+
+def test_chan_thay_the_lay_tu_fact_pin_function(du_an):
+    """Mô hình không có bảng chân trong đầu; hỏi nó thì được một tên chân nghe rất đúng cho tới
+    lúc nạp. Sinh từ fact thì phương án hoặc có thật, hoặc nói thẳng là chưa tra được."""
+    from eide.caps.board import propose_fix
+
+    _, ctx, root = du_an
+    chua = propose_fix({"conflict": {"pin": "PB3", "kind": "af_conflict"}}, ctx)["options"]
+    assert chua[0]["alternatives"] == [] and "extract.pdf_pinout" in chua[0]["change"]
+
+    _pin_function(root, "PB3", ["SPI1_MOSI", "SWO"], "f_pb3")
+    _pin_function(root, "PB5", ["SPI1_MOSI"], "f_pb5")
+    _pin_function(root, "PA7", ["SPI1_MOSI"], "f_pa7")
+    _pin_function(root, "PC13", ["GPIO"], "f_pc13")
+    co = propose_fix({"conflict": {"pin": "PB3", "kind": "af_conflict"}}, ctx)["options"]
+    assert co[0]["alternatives"] == ["PA7", "PB5"], "chỉ chân cùng chức năng, và không có chính nó"
+
+
+# ---------- BOARD-05 mark_lab
+
+NETLIST_DONG_CO = NETLIST.replace(
+    '(comp (ref "R2") (value "4k7")))',
+    '(comp (ref "R2") (value "4k7"))\n    (comp (ref "U5") (value "DRV8833")))')
+
+XAC_NHAN = {"no_actuator": True, "current_limited": True, "by": "cong"}
+
+
+def _ctx_nguoi(ctx):
+    from eide_core.router import Context as _C
+
+    return _C(project_dir=ctx.project_dir, actor="human", extra=ctx.extra)
+
+
+def test_by_policy_thi_E3000(du_an):
+    """Hợp đồng nêu đích danh. Đánh dấu lab là chỗ một người nhận trách nhiệm."""
+    from eide.caps.board import mark_lab
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    with pytest.raises(EideError) as e:
+        mark_lab({**XAC_NHAN, "board": "b", "by": "policy"}, _ctx_nguoi(ctx))
+    assert e.value.code == "E3000"
+
+
+def test_actor_khong_phai_nguoi_thi_E3000(du_an):
+    """`by` chỉ là một chuỗi; tác tử điền được. Kiểm mỗi `by` thì tác tử tự cấp cho mình quyền
+    tự nạp — đúng thứ mà `eide policy sign` cố ý không làm thành năng lực."""
+    from eide.caps.board import mark_lab
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    with pytest.raises(EideError) as e:
+        mark_lab({**XAC_NHAN, "board": "b"}, ctx)          # ctx.actor mặc định là "agent"
+    assert e.value.code == "E3000" and "người gọi" in str(e.value)
+
+
+def test_thieu_mot_trong_hai_xac_nhan_thi_E1000(du_an):
+    """Board không có cơ cấu chấp hành nhưng chưa hạn dòng thì vẫn cháy được."""
+    from eide.caps.board import mark_lab
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    with pytest.raises(EideError) as e:
+        mark_lab({**XAC_NHAN, "board": "b", "current_limited": False}, _ctx_nguoi(ctx))
+    assert e.value.code == "E1000" and e.value.data["missing"] == ["current_limited"]
+
+
+def test_TC_board_co_dong_co_thi_KHONG_lab(du_an):
+    """tc của BOARD-05: **"board có động cơ → không lab"**.
+
+    Lời khai của người có thể sai vì người khai không phải người vẽ mạch. Thấy mạch lái động cơ
+    trong netlist thì ghi `lab: false` kèm tên linh kiện — người đọc thấy ngay vì sao.
+    """
+    import yaml as _yaml
+
+    from eide.caps.board import mark_lab
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    kicad_netlist({"file": str(_netlist(root, NETLIST_DONG_CO, "h1.net"))}, ctx)
+    assert mark_lab({**XAC_NHAN, "board": "h1"}, _ctx_nguoi(ctx)) == {"lab": False}
+
+    d = _yaml.safe_load((root / ".eide" / "autonomy.yaml").read_text(encoding="utf-8"))
+    assert d["boards"]["h1"] == {"lab": False, "has_actuator": True,
+                                 "reason": d["boards"]["h1"]["reason"]}
+    assert "U5" in d["boards"]["h1"]["reason"] and "DRV8833" in d["boards"]["h1"]["reason"]
+
+
+def test_board_sach_thi_lab_true(du_an):
+    """Đối chứng: không có đối chứng thì `lab` có thể là hằng số False và test trên vẫn xanh."""
+    import yaml as _yaml
+
+    from eide.caps.board import mark_lab
+    from eide.caps.extract import kicad_netlist
+
+    _, ctx, root = du_an
+    kicad_netlist({"file": str(_netlist(root))}, ctx)
+    assert mark_lab({**XAC_NHAN, "board": "robot-main"}, _ctx_nguoi(ctx)) == {"lab": True}
+    d = _yaml.safe_load((root / ".eide" / "autonomy.yaml").read_text(encoding="utf-8"))
+    assert d["boards"]["robot-main"]["lab"] is True
+    assert d["boards"]["robot-main"]["has_actuator"] is False
+
+
+def test_ghi_boards_xong_phai_KY_LAI_niem(du_an):
+    """`boards` là một trong bốn khóa `whitelist.KHOA_NIEM`. Ghi vào nó mà không ký lại thì niêm
+    vỡ và MỌI phê duyệt dựa trên danh sách trắng ngừng hoạt động — kể cả chính `G-OPS-01` mà
+    năng lực này phục vụ."""
+    from eide.caps.board import mark_lab
+    from eide.caps.extract import kicad_netlist
+    from eide_core import whitelist
+    from eide_core.paths import spec_dir
+    from eide_core.policy import PolicyGate
+
+    _, ctx, root = du_an
+    kicad_netlist({"file": str(_netlist(root))}, ctx)
+    mark_lab({**XAC_NHAN, "board": "robot-main"}, _ctx_nguoi(ctx))
+
+    import yaml as _yaml
+    cfg = {**_yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8")),
+           **_yaml.safe_load((root / ".eide" / "autonomy.yaml").read_text(encoding="utf-8"))}
+    dat, ly_do = whitelist.kiem(cfg, root / ".eide" / "policy.sig", ctx.extra.get("ledger"))
+    assert dat, ly_do
+
+    # và cổng ĐANG CHẠY phải thấy ngay, không đợi phiên sau
+    g = ctx.extra["gate"]
+    assert isinstance(g, PolicyGate) and g.danh_sach_da_ky
+    assert (g.config["boards"] or {})["robot-main"]["lab"] is True
