@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 08/09/2026 (lần 2). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 08/09/2026 (lần 3). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -8,7 +8,7 @@
 
 ## 1. Một dòng
 
-**116/238 năng lực (49%). Mốc M0 đóng 22/22; M1 đạt 71/75 (95%), còn 4. 839 test xanh trên
+**118/238 năng lực (50%). Mốc M0 đóng 22/22; M1 đạt 73/75 (97%), còn 2. 859 test xanh trên
 cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
@@ -22,19 +22,25 @@ chân**: sinh mã, nạp board, mô phỏng.
 | Mốc | Xong | Ý nghĩa |
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
-| **M1** | **71/75 · 95%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
+| **M1** | **73/75 · 97%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
 | M2 | 23/99 · 23% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
 
-**M1 còn đúng 4 năng lực**, và phần lớn không chặn bởi công sức mà bởi thứ khác:
+**M1 còn đúng 2 năng lực**, và không cái nào chặn bởi công sức:
 
 | Năng lực | Vì sao chưa |
 |---|---|
-| `env.install` (R4), `env.guide_install` | **R4** — cài phần mềm lên máy người dùng. Cần bàn kỹ về chính sách trước khi viết |
 | `passport.verify_on_board` (R3) | **Cần board thật.** Không mô phỏng được phần "nạp firmware rồi đọc lại ID" |
 | `code.constant_guard` | Hook cho `code.*`, hợp lý làm cùng nhóm `code` ở M2 |
+
+`env.install`/`env.guide_install` xong 08/09. Cần nói thẳng một điều về chúng: danh mục ghi lớp
+rủi ro *"R4→T1 theo danh sách trắng"* và `G-OPS-04` là quy tắc APPROVE, **nhưng APD-08 §2 đặt
+ngưỡng cứng "mọi R4 luôn hỏi người" ở tầng TRƯỚC quy tắc cổng** — nên `G-OPS-04` là quy tắc chết
+cho năng lực này và **mọi lần cài đều hỏi anh**, kể cả `renode` vốn nằm trong danh sách trắng.
+Hiện thực giữ nguyên ngưỡng cứng (nới nó là sửa hạt nhân an toàn của cả hệ, chạm mọi năng lực R4
+khác) và ghim thực tế ấy bằng test. Xem [DEV-060](DEVIATIONS.md).
 
 ---
 
@@ -44,7 +50,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 `ingest` 3/3 · `kg` 8/9 · `view` 9/13 · `tool` 7/10
 
 **Mới một phần** — `extract` 9/21 · `project` 6/9 · `memory` 6/8 · `search` 6/9 ·
-`env` 4/7 · `passport` 4/8 · `diagram` 4/14 · `doc` 3/12 · `archive` 4/4 · `registry` 1/5 ·
+`env` 6/7 · `passport` 4/8 · `diagram` 4/14 · `doc` 3/12 · `archive` 4/4 · `registry` 1/5 ·
 `report` 1/4
 
 **Chưa bắt đầu** — `code` (16, M2) · `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) ·
@@ -97,11 +103,11 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **839** xanh, arm64 + x86_64 (`make check`) |
-| Test GỌI THẬT | 9 mạng (`make check-net`) · 6 mô hình (`make check-llm`) |
+| Test Python | **859** xanh, arm64 + x86_64 (`make check`) |
+| Test GỌI THẬT | 10 mạng (`make check-net`) · 6 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 59 tổng, **3 Mở** |
+| Mục DEVIATIONS | 60 tổng, **4 Mở** |
 | Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
@@ -109,8 +115,8 @@ Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó đ�
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (837 test, giả lập) hỏi *"mã có đúng
-với giả định của tôi không"*. `make check-net` (9 test, không tốn tiền) và `make check-llm`
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (859 test, giả lập) hỏi *"mã có đúng
+với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
 
@@ -123,7 +129,7 @@ với giả định của tôi không"*. `make check-net` (9 test, không tốn 
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Bốn lỗi im lặng tìm được nhờ chạy thật thay vì chỉ chạy test:**
+**Năm lỗi im lặng tìm được nhờ chạy thật thay vì chỉ chạy test:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -134,6 +140,13 @@ với giả định của tôi không"*. `make check-net` (9 test, không tốn 
    cột Markdown. Chủ sản phẩm duyệt một danh sách và tin nó đầy đủ.
 4. **`_doc_do_thi` mất một nửa số cạnh** — 305 dòng cạnh chỉ ra 153 cạnh, nên kiểm kích thước
    lược đồ không bao giờ nổ.
+5. **Sandbox không ghi được vào chính thư mục làm việc của nó** (tìm ra 08/09 khi cho `brew`
+   chạy qua `env.sandbox`). Hồ sơ `sandbox-exec` ghi `(subpath "/var/folders/…")` trong khi
+   `subpath` so khớp trên đường dẫn ĐÃ GIẢI liên kết mềm — mà `/var` là liên kết mềm tới
+   `/private/var`. Hệ quả: với mọi `out_dir` dưới thư mục tạm, tiến trình trong sandbox không
+   ghi được vào đâu cả, kể cả `./a.txt`. **Không test nào thấy vì chưa test nào GHI** — cả bộ
+   chỉ xem mã thoát của lệnh chỉ-đọc. Đây gần như chắc chắn cũng là lý do bốn bộ dựng lược đồ
+   ngoài Graphviz (mục I2 của [CONG-VIEC.md](CONG-VIEC.md)) chưa nhánh nào chạy được.
 
 ---
 
@@ -145,6 +158,7 @@ với giả định của tôi không"*. `make check-net` (9 test, không tốn 
 | [DEV-054](DEVIATIONS.md) | POL-17 phân biệt hai loại cổng — chạm cách gác cổng của cả hệ |
 | [DEV-050](DEVIATIONS.md) | "Duyệt hàng loạt" trong hàng đợi — đề nghị gom theo *cùng cổng + cùng quy tắc* |
 | [DEV-035](DEVIATIONS.md) | Thêm ý định theo nhóm năng lực — đã quyết hoãn tới CHAT-06 |
+| **[DEV-060](DEVIATIONS.md)** | `env.install`: danh sách trắng gói không bao giờ thắng được ngưỡng cứng R4. Chọn (a) sửa tài liệu cho khớp thực tế "luôn hỏi", hay (b) mở một ngoại lệ hẹp trong APD-08 §2. Người viết mã đề nghị (a) |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
 
 ---
@@ -158,8 +172,8 @@ còn thiếu của luận điểm đề án.
 **Ưu tiên 2 — `doc.generate` + `diagram.*` còn lại.** Khép chuỗi P7, và cho ra chính bộ tài
 liệu dùng làm phụ lục đề án — tức sản phẩm tự viết tài liệu về mình.
 
-**Ưu tiên 3 — dọn nốt M1** (3 năng lực làm được ngay: `archive.extract_one/query`,
-`code.constant_guard`; `env.*` chờ bàn chính sách R4, `passport.verify_on_board` chờ board).
+**Ưu tiên 3 — dọn nốt M1**: chỉ còn `code.constant_guard` (làm cùng khối `code.*`) và
+`passport.verify_on_board` (chờ board).
 
 `search.web` đã xong 08/09 — hiện thực **không buộc nhà cung cấp nào**: `models.yaml →
 search.providers` liệt kê ứng viên theo thứ tự và dùng cái đầu tiên có đủ cấu hình. SearXNG

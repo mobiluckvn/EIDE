@@ -149,7 +149,12 @@ class Sandbox:
 
 
 def _moi_truong() -> dict[str, str]:
-    """Môi trường tối thiểu — dựng lại từ đầu (SEC-25 §2, §3)."""
+    """Môi trường tối thiểu — dựng lại từ đầu (SEC-25 §2, §3).
+
+    `HOME` trỏ vào thư mục tạm hệ thống chứ không vào thư mục nhà thật: công cụ ngoài không đọc
+    thấy `~/.ssh`, `~/.aws`, `~/.config` của người dùng. Nó phải GHI ĐƯỢC — `brew` tạo
+    `$HOME/Library` ngay đầu mỗi lệnh — và hồ sơ sandbox mở quyền ghi cho đúng thư mục ấy.
+    """
     return {"PATH": PATH_HE_THONG, "HOME": tempfile.gettempdir(), "LANG": "C.UTF-8",
             "LC_ALL": "C.UTF-8", "TMPDIR": tempfile.gettempdir()}
 
@@ -230,19 +235,29 @@ def _kiem_allowed_dirs(ds: list[str]) -> list[Path]:
 
 
 def _ho_so_macos(cwd: Path, doc_duoc: list[Path], network: bool) -> str:
-    """Hồ sơ `sandbox-exec`. Đã đo: `(deny network*)` chặn socket thật trên macOS 26."""
+    """Hồ sơ `sandbox-exec`. Đã đo: `(deny network*)` chặn socket thật trên macOS 26.
+
+    Mọi đường dẫn đi qua `os.path.realpath` chứ không dùng nguyên chuỗi. `subpath` của
+    `sandbox-exec` so khớp trên đường dẫn ĐÃ GIẢI liên kết mềm, mà trên macOS `/var` là liên kết
+    mềm tới `/private/var` — nên `(subpath "/var/folders/…")` không khớp gì cả. Hệ quả trước khi
+    sửa: với `out_dir` nằm dưới thư mục tạm (tức mọi test, và cả `user_cache()` trên một số
+    máy), tiến trình trong sandbox **không ghi được vào chính thư mục làm việc của nó** — kể cả
+    `./a.txt`. Đo 08/09/2026 bằng `echo > ./a.txt` → "Operation not permitted". Không test nào
+    thấy vì chưa test nào ghi tệp bên trong sandbox: tất cả chỉ xem mã thoát của lệnh chỉ-đọc.
+    """
+    that = os.path.realpath
     dong = [
         "(version 1)",
         "(allow default)",
         "; SEC-25 §2 — chỉ ghi được vào thư mục làm việc tạm và /tmp",
         "(deny file-write*)",
-        f'(allow file-write* (subpath "{cwd}"))',
-        f'(allow file-write* (subpath "{tempfile.gettempdir()}"))',
+        f'(allow file-write* (subpath "{that(cwd)}"))',
+        f'(allow file-write* (subpath "{that(tempfile.gettempdir())}"))',
         '(allow file-write-data (literal "/dev/null") (literal "/dev/stdout") (literal "/dev/stderr"))',
     ]
     if not network:
         dong.append("; SEC-25 §2 — không mạng; §5 cho phép mở khi cài đặt")
         dong.append("(deny network*)")
     for d in doc_duoc:
-        dong.append(f'(allow file-read* (subpath "{d}"))')
+        dong.append(f'(allow file-read* (subpath "{that(d)}"))')
     return "\n".join(dong) + "\n"

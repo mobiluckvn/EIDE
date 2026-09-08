@@ -46,7 +46,9 @@ Thứ tự bám theo cái gì mở khóa cái gì, không theo số hiệu.
 | EXTRACT-03…09 | `edc`, `header_c`, `pdf_layout`, `pdf_register_map`, `pdf_electrical`, `office`, `code_constants` | 12.2 | **Xong** — 38 test, PDF trong test là PDF THẬT (viết tay cú pháp PDF, có cả bảng kẻ khung). Mở khoá cảm biến/cơ cấu chấp hành: chúng chỉ có PDF, không có SVD/ATDF |
 | VIEW-01…09 | `kg_map`, `kg_focus`, `provenance`, `conflict_board`, `rag_ask`, `rag_trace`, `rag_index`, `doc_side_by_side`, `export_map` | 12.4 | **Xong** — 38 test. Tầng trình bày: không sinh fact, không sửa store. Phát hiện [DEV-058](DEVIATIONS.md) — thang điểm FTS bị đảo từ Sprint 2 |
 | DIAGRAM-01…04, DOC-05/07/08 | `diagram.lint/render/block/kg_view`, `doc.section/datasheet_summary/style_check` | 12.4 | **Xong** — 37 test. Bảng thuật ngữ CON-28 §6 nay sinh ra `doc/glossary.json` |
-| `search.web`, `archive.extract_one/query`, `env.install_pack`, `code.annotate`, `passport.verify_on_board` | | | **M1 còn 7** — phần lớn cần phần cứng hoặc dịch vụ ngoài |
+| SEARCH-09, ARCHIVE-03/04 | `search.web`, `archive.extract_one`, `archive.query` | 12.2 | **Xong 08/09** — `search.web` không buộc nhà cung cấp nào: `models.yaml → search.providers` xếp SearXNG đầu vì tự dựng được, không cần khóa |
+| ENV-03/04 | `env.install`, `env.guide_install` | 12.3 | **Xong 08/09** — 20 test. Không `sudo` ở bất kỳ lệnh nào trong bảng; công cụ đóng → E4001 chỉ sang `guide_install`; lệnh cài chạy trong `env.sandbox` có mạng. Lộ ra một lỗi im lặng của sandbox (không ghi được vào chính `cwd` của nó) và một mâu thuẫn tài liệu ([DEV-060](DEVIATIONS.md)) |
+| `code.constant_guard`, `passport.verify_on_board` | | | **M1 còn 2** — một cái làm cùng khối `code.*`, một cái chờ board thật |
 
 **Mốc M0 đã đóng.** `tests/test_archive_m0.py` có một test cho chính bất biến ấy, để lần sau ai
 thêm một mục M0 vào spec thì biết ngay là còn nợ thay vì phải nhớ đi đếm.

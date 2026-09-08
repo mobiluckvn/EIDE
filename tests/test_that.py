@@ -295,3 +295,43 @@ def test_doc_section_khong_bia_khi_khong_co_du_lieu(du_an_that):
         assert any(x in md.lower() for x in ("chưa có", "không có", "không đủ", "thiếu")), \
             f"không trích dẫn mà cũng không nói rõ là thiếu dữ liệu: {md[:200]}"
 
+
+
+# --------------------------------------------------------------------------------------------
+# ENV-03 — trình quản lý gói THẬT chạy được bên trong sandbox
+# --------------------------------------------------------------------------------------------
+
+@pytest.mark.net
+@pytest.mark.skipif(not _co("brew") and not _co("apt-get"), reason="cần brew hoặc apt-get")
+def test_trinh_quan_ly_goi_chay_duoc_trong_sandbox(tmp_path):
+    """`env.install` giả định hai điều mà không giả lập nào kiểm được, vì cả hai đều là câu hỏi
+    về HỆ ĐIỀU HÀNH chứ không về mã của ta.
+
+    1. Gọi được trình quản lý gói bằng đường dẫn tuyệt đối, dù `PATH` trong sandbox bị dựng lại
+       thành `/usr/bin:/bin:/usr/sbin:/sbin` — Homebrew nằm ở `/opt/homebrew/bin`.
+    2. Nó CHẠY được dưới hồ sơ `sandbox-exec`. Đây là chỗ đã hỏng thật: `brew` tạo
+       `$HOME/Library` ngay đầu mỗi lệnh, và trước 08/09/2026 hồ sơ sandbox chặn cả `$HOME` lẫn
+       thư mục làm việc của chính nó (đường dẫn trong hồ sơ chưa giải liên kết mềm). Test giả
+       lập dùng shim `/bin/sh` không thấy, vì `/bin/sh` không đụng tới `$HOME`.
+
+    Lệnh dùng ở đây là lệnh CHỈ ĐỌC (`--version`, `list`): test không được cài gì lên máy ai.
+    """
+    from pathlib import Path
+
+    from eide_core import tools
+    from eide_core.sandbox import Sandbox
+
+    mgr = tools.which("brew") or tools.which("apt-get")
+    sb = Sandbox(out_dir=tmp_path / "sb")
+
+    kq = sb.run([str(mgr), "--version"], limits={"timeout_s": 120}, network=True)
+    assert kq.exit_code == 0, Path(kq.stderr_ref).read_text(encoding="utf-8")[:500]
+    assert Path(kq.stdout_ref).read_text(encoding="utf-8").strip()
+
+    if mgr.name == "brew":
+        # `list` đọc cả prefix lẫn cache trong $HOME — nặng hơn `--version` một bậc, và chính là
+        # nhánh đã ném "Operation not permitted" khi hồ sơ sandbox còn sai.
+        kq = sb.run([str(mgr), "list", "--versions"], limits={"timeout_s": 300}, network=True)
+        err = Path(kq.stderr_ref).read_text(encoding="utf-8")
+        assert "not permitted" not in err, err[:500]
+        assert kq.exit_code == 0, err[:500]

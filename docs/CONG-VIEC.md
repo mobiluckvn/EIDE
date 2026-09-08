@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 từ registry — không gõ tay. Còn **122/238** năng lực. Xem
+*Đo 08/09/2026 (lần 2) từ registry — không gõ tay. Còn **120/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -16,25 +16,27 @@ chủ sản phẩm 08/09).
 | **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
 | P2 | [DEV-054](DEVIATIONS.md) — POL-17 phân biệt hai loại cổng | Chạm cách gác cổng của cả hệ; tôi có bản đề xuất, cần anh duyệt hướng |
 | P3 | [DEV-050](DEVIATIONS.md) — duyệt hàng loạt trong hàng đợi | Đề nghị gom theo *cùng cổng + cùng quy tắc*; cần anh chốt |
-| P4 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
-| P5 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
-| P6 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
+| **P4** | **[DEV-060](DEVIATIONS.md) — `env.install` lớp R4 vs danh sách trắng** | Danh mục ghi "R4→T1 theo danh sách trắng" và `G-OPS-04` là quy tắc APPROVE, nhưng ngưỡng cứng R4 của APD-08 §2 chạy TRƯỚC quy tắc cổng nên `G-OPS-04` không bao giờ khớp. Hiện **mọi lần cài đều hỏi anh**. Chọn: (a) sửa tài liệu cho khớp (đề nghị), hay (b) mở ngoại lệ hẹp trong APD-08 §2 |
+| P5 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
+| P6 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
+| P7 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
 ---
 
-## A. Dọn nốt M1 — 2 năng lực còn lại
+## A. Dọn nốt M1 — 1 năng lực còn lại
 
-Mốc M1 đang **71/75**. A1 đã xong 08/09. Bốn cái này đóng nó lại (trừ hai cái phải chờ, xem H).
+Mốc M1 đang **73/75**. A1 và A2 xong 08/09.
 
 | # | Năng lực | Ghi chú |
 |---|---|---|
 | ~~A1~~ | ~~`archive.extract_one`, `archive.query`~~ | **Xong 08/09** — 10 test. Tìm qua kho lồng; kho lồng là vật chứa nên không grep byte thô của nó |
-| A2 | `env.install` (**R4**), `env.guide_install` | **Cần bàn chính sách trước khi viết mã.** R4 = cài phần mềm lên máy người dùng; POL-17 xếp nó ngang mức "không hoàn tác được" |
+| ~~A2~~ | ~~`env.install` (**R4**), `env.guide_install`~~ | **Xong 08/09** — 20 test. Không sudo ở bất kỳ lệnh nào; công cụ đóng (XC8/IAR/Keil) → E4001 chỉ sang `guide_install`; lệnh cài chạy trong sandbox có mạng. Thực tế cổng khác tài liệu → [DEV-060](DEVIATIONS.md), mục P4 |
 | A3 | `code.constant_guard` | Hook cho `code.*` — hợp lý làm cùng khối B |
 
-> **A2 cần một quyết định, không chỉ cần thời gian.** Câu hỏi: EIDE được phép chạy `brew install`
-> khi nào? Đề nghị của tôi: chỉ với gói trong `trusted_packages`, không sudo, và **luôn hỏi**
-> lần đầu cho mỗi gói dù mức tự chủ là gì.
+> **Làm A2 lộ một lỗi im lặng của sandbox** (đã sửa): hồ sơ `sandbox-exec` không giải liên kết
+> mềm trong đường dẫn, nên tiến trình bên trong **không ghi được vào chính thư mục làm việc của
+> nó**. Không test nào thấy vì chưa test nào ghi tệp trong sandbox. Xem mục I2 — nhiều khả năng
+> đây cũng là lý do bốn bộ dựng lược đồ ngoài Graphviz chưa nhánh nào chạy được.
 
 ---
 
@@ -137,7 +139,7 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 | # | Việc | Ghi chú |
 |---|---|---|
 | I1 | **WI-253** — sinh test hợp đồng tự động cho 238 năng lực | `validate_specs.py` đã có; cần sinh test từ `input_schema`/`errors`. Bắt được lỗi E1000/E1004 mà không phải viết tay từng cái |
-| I2 | Mở rộng `make check-net` cho `mmdc`/`plantuml`/`d2`/`7z` | Hiện chỉ Graphviz chạy thật; bốn bộ dựng còn lại vẫn chưa nhánh nào được thi hành |
+| I2 | Mở rộng `make check-net` cho `mmdc`/`plantuml`/`d2`/`7z` | Hiện chỉ Graphviz chạy thật; bốn bộ dựng còn lại vẫn chưa nhánh nào được thi hành. **Thử lại sau khi sửa sandbox 08/09** — chúng ghi tệp ra, mà đúng chỗ ấy trước đây bị chặn |
 | I3 | Thêm test `llm` cho `plan.*`, `tool.write`, `extract.pdf_register_map` | Ba nhóm sinh còn lại chưa có test gọi thật |
 | I4 | **M5**: schema manifest ISA + TC-48 + rv32imac/xtensa/pic16 | [DEV-055](DEVIATIONS.md). Kèm món nợ M0: `avr8.yaml` chưa test nào chạm tới |
 | I5 | `scripts/nghiem_thu_sprint3.sh` | Khi khối B xong |
@@ -147,7 +149,7 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 ## Đề xuất thứ tự
 
 ```
-A1 (nhỏ, đóng M1)  →  B1+B2 (sinh + dựng mã)  →  E (board.*, mở Z-07)
+A1 + A2 (xong)  →  B1+B2 (sinh + dựng mã)  →  E (board.*, mở Z-07)
                    →  C1+C2 (bộ tài liệu tự sinh)  →  D (extract còn lại)
                    →  F (mô phỏng)  →  H (phần cứng, cuối cùng)
 ```
