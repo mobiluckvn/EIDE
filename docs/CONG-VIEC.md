@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 6) từ registry — không gõ tay. Còn **112/238** năng lực. Xem
+*Đo 08/09/2026 (lần 7) từ registry — không gõ tay. Còn **110/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -16,11 +16,12 @@ chủ sản phẩm 08/09).
 | **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
 | P2 | [DEV-054](DEVIATIONS.md) — POL-17 phân biệt hai loại cổng | Chạm cách gác cổng của cả hệ; tôi có bản đề xuất, cần anh duyệt hướng |
 | P3 | [DEV-050](DEVIATIONS.md) — duyệt hàng loạt trong hàng đợi | Đề nghị gom theo *cùng cổng + cùng quy tắc*; cần anh chốt |
-| P4 | [DEV-064](DEVIATIONS.md) — bỏ `tests/` khỏi phạm vi `constant_guard` | Quyết định thiết kế, tìm ra bằng gọi mô hình thật; cần anh xác nhận trước khi nó thành thói quen |
-| P5 | [DEV-063](DEVIATIONS.md) — bố cục `tests/host` cho `code.test_host` | Quy ước do tôi đặt vì CODE-08 không nói; cần anh chốt trước khi `code.generate_tests` sinh test theo nó |
-| P6 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
-| P7 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
-| P8 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
+| P4 | [DEV-065](DEVIATIONS.md) — git chạy ngoài sandbox; tag `known-good/<date>` | Ranh giới sandbox và dạng tag; cả hai đều nên vào tài liệu |
+| P5 | [DEV-064](DEVIATIONS.md) — bỏ `tests/` khỏi phạm vi `constant_guard` | Quyết định thiết kế, tìm ra bằng gọi mô hình thật; cần anh xác nhận trước khi nó thành thói quen |
+| P6 | [DEV-063](DEVIATIONS.md) — bố cục `tests/host` cho `code.test_host` | Quy ước do tôi đặt vì CODE-08 không nói; cần anh chốt trước khi `code.generate_tests` sinh test theo nó |
+| P7 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
+| P8 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
+| P9 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
 ---
 
@@ -50,7 +51,7 @@ Không có nó, luận điểm của đề án dừng ở phần tri thức.
 |---|---|---|
 | B1 | Sinh | ~~`generate_module`, `generate_tests`~~ — **xong 08/09**. Còn `modify` |
 | ~~B2~~ | Dựng và kiểm | ~~`build`, `test_host`, `static`, `size`~~ — **xong 08/09**. Lệnh dựng và ba quy tắc Pack (`no_delay_in_isr`, `no_malloc`, `no_float_isr_without_fpu`) lấy từ manifest ISA. Bố cục test máy chủ do hiện thực đặt → [DEV-063](DEVIATIONS.md) |
-| B3 | Ghép và soát | ~~`review`~~ (**xong 08/09** — reviewer khác hãng, `max_severity` cho `G3-01`); còn `integrate`, `merge`, `revert`, `self_repair` |
+| B3 | Ghép và soát | ~~`review`, `merge`, `revert`~~ — **xong 08/09**. Bảy đặc trưng của `G3-01` tính lại ở merge; S23…S28 đều có test. Còn `integrate`, `self_repair` |
 | B4 | Truy vết (M3) | `annotate`, `docs`, `refactor`, `constant_guard` |
 
 **Mở khóa:** Z-05 "thêm tính năng" (hiện 8/16) chạy tới `code.merge`; và `code.build` là điều

@@ -952,3 +952,232 @@ def test_reviewer_duoc_giao_dung_vai_tro_va_thay_noi_dung_patch(du_an):
     assert gw.vai_tro == "reviewer"
     assert "src/a.c" in gw.de_bai and "int x = 0x40;" in gw.de_bai
     assert "KHÔNG sửa mã" in gw.de_bai
+
+
+# ---------- CODE-12 merge, CODE-13 revert
+
+def _bao_cao(root, tool, passed=True, metrics=None):
+    from eide_core import store as _s
+    _s.ghi_tool_report(_s.store_path(root), {
+        "tool": tool, "passed": passed, "log_ref": None, "metrics": metrics or {},
+        "artifacts": [], "duration_ms": 1, "started_by": "test",
+        "at": "2026-09-08T00:00:00+00:00"})
+    with _s.open_store(_s.store_path(root)) as c:
+        r = c.execute("SELECT id FROM tool_report WHERE tool=? ORDER BY rowid DESC LIMIT 1",
+                      (tool,)).fetchone()
+    return r[0]
+
+
+def _luu_rv(root, verdict="PASS", sev="minor", coder="gemini", reviewer="claude"):
+    import secrets
+    rid = "rv_" + secrets.token_hex(6)
+    f = root / ".eide" / "reviews" / f"{rid}.json"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"id": rid, "patch_id": "p", "review": {
+        "verdict": verdict, "findings": [], "max_severity": sev,
+        "vendors": {"coder": coder, "reviewer": reviewer}}}), encoding="utf-8")
+    return rid
+
+
+def _patch_sach(**them):
+    return {"id": "patch_1", "by": {"model_id": "gemini-3.8-flash", "vendor": "gemini"},
+            "cites": ["f_00000000000000ab"], "rationale": "đọc nhiệt độ qua I2C",
+            "files": [{"path": "src/bme280.c",
+                       "content": "#define A 0x76 /* eide:fact f_00000000000000ab */\n"}],
+            **them}
+
+
+@pytest.fixture
+def san_sang_merge(du_an):
+    """Dự án đủ điều kiện S23: 4/4 cổng đạt, CG 0, PASS minor, trong phạm vi, khác hãng."""
+    r, ctx, root = du_an
+    _fact(root, "f_00000000000000ab", "0x76", status="verified", tier="gold")
+    reports = [_bao_cao(root, t) for t in ("build", "size", "static", "test_host")]
+    return r, ctx, root, reports, _luu_rv(root)
+
+
+@pytest.mark.skipif(__import__("shutil").which("git") is None, reason="cần git")
+def test_merge_du_bang_chung_thi_commit_vao_nhanh_auto(san_sang_merge):
+    """S23: "4/4 cổng; CG 0; PASS minor; trong phạm vi; +2%; khác hãng" → APPROVE G3-01."""
+    from eide.caps.code import merge
+    from eide_core import git
+
+    r, ctx, root, reports, rid = san_sang_merge
+    out = merge({"patch": _patch_sach(), "feature": "F-01", "reports": reports,
+                 "review_id": rid}, ctx)
+    assert out["branch"] == "auto/F-01" and len(out["commit"]) == 40
+    assert (root / "src" / "bme280.c").exists(), "APPROVE mà không ghi tệp"
+    log = git.chay(root, "log", "-1", "--format=%B").stdout
+    assert log.startswith("feat(F-01): đọc nhiệt độ qua I2C")
+    assert "Eide-Facts: f_00000000000000ab" in log
+    assert "Eide-Model: gemini-3.8-flash" in log and "Eide-Prompt: sha256:" in log
+
+
+@pytest.mark.skipif(__import__("shutil").which("git") is None, reason="cần git")
+def test_merge_KHONG_gom_tep_nguoi_dung_dang_sua_do(san_sang_merge):
+    """`git add -A` sẽ cuốn mọi thứ trong cây làm việc vào một commit mang trailer "do tác tử
+    tạo" — và trailer ấy nói dối."""
+    from eide.caps.code import merge
+    from eide_core import git
+
+    r, ctx, root, reports, rid = san_sang_merge
+    git.dam_bao_kho(root)
+    (root / "ghi_chu_cua_toi.txt").write_text("việc riêng", encoding="utf-8")
+    merge({"patch": _patch_sach(), "feature": "F-01", "reports": reports, "review_id": rid}, ctx)
+    tep = git.chay(root, "show", "--name-only", "--format=", "HEAD").stdout.split()
+    assert tep == ["src/bme280.c"], tep
+
+
+def test_dac_trung_G3_tinh_lai_KHONG_nhan_tu_ben_goi(san_sang_merge):
+    """Một cổng đọc con số do bên xin cấp phép tự khai thì không phải là cổng."""
+    from eide.caps.code import dac_trung_G3
+
+    r, ctx, root, reports, rid = san_sang_merge
+    # bên gọi "khai" toàn số đẹp trong chính patch — phải bị bỏ qua hoàn toàn
+    d = dac_trung_G3(root, _patch_sach(tools_passed=4, constant_guard_violations=0),
+                     reports[:2], rid, ctx)
+    assert d["patch"]["tools_passed"] == 2, "đếm theo báo cáo có thật, không theo lời khai"
+
+
+def test_G3_03_hang_so_khong_nguon_thi_REJECT(san_sang_merge):
+    """S25: "CG 2 vi phạm" → REJECT G3-03. `constant_guard` chạy LẠI ở merge dù generate_module
+    đã chạy: patch nằm trên đĩa giữa hai lần gọi và có thể đã bị sửa."""
+    from eide.caps.code import merge
+    from eide_core.errors import EideError
+
+    r, ctx, root, reports, rid = san_sang_merge
+    ban = _patch_sach()
+    ban["files"][0]["content"] = "#define A 0x76\n#define B 0x77\n"
+    with pytest.raises(EideError) as e:
+        merge({"patch": ban, "feature": "F-01", "reports": reports, "review_id": rid}, ctx)
+    assert e.value.code == "E3001" and e.value.data["rule"] == "G3-03"
+    assert not (root / "src" / "bme280.c").exists(), "REJECT mà vẫn ghi tệp"
+
+
+def test_G3_02_finding_major_thi_hoi_nguoi(san_sang_merge):
+    """S24: "như S23 nhưng major" → ASK G3-02."""
+    from eide.caps.code import merge
+    from eide_core.errors import EideError
+
+    r, ctx, root, reports, _ = san_sang_merge
+    with pytest.raises(EideError) as e:
+        merge({"patch": _patch_sach(), "feature": "F-01", "reports": reports,
+               "review_id": _luu_rv(root, sev="major")}, ctx)
+    assert e.value.code == "E3000" and e.value.data["rule"] == "G3-02"
+
+
+def test_G3_04_cung_hang_thi_hoi_nguoi(san_sang_merge):
+    """S26: "như S23 nhưng cùng hãng" → ASK G3-04."""
+    from eide.caps.code import merge
+    from eide_core.errors import EideError
+
+    r, ctx, root, reports, _ = san_sang_merge
+    with pytest.raises(EideError) as e:
+        merge({"patch": _patch_sach(), "feature": "F-01", "reports": reports,
+               "review_id": _luu_rv(root, reviewer="gemini")}, ctx)
+    assert e.value.code == "E3000" and e.value.data["rule"] == "G3-04"
+
+
+def test_S27_cham_ISR_thi_khong_tu_duyet(san_sang_merge):
+    """S27: "như S23 nhưng chạm ISR" → ASK G3-99."""
+    from eide.caps.code import merge
+    from eide_core.errors import EideError
+
+    r, ctx, root, reports, rid = san_sang_merge
+    ban = _patch_sach()
+    ban["files"][0]["content"] = ("#define A 0x76 /* eide:fact f_00000000000000ab */\n"
+                                  "void TIM2_IRQHandler(void) { dat_co(); }\n")
+    with pytest.raises(EideError) as e:
+        merge({"patch": ban, "feature": "F-01", "reports": reports, "review_id": rid}, ctx)
+    assert e.value.code == "E3000"
+    assert e.value.data["features"]["patch"]["touches_isr_linker"] is True
+
+
+def test_tep_linker_cung_tinh_la_cham(san_sang_merge):
+    from eide.caps.code import _cham_isr_linker
+
+    for d in ("STM32F411.ld", "cmake/../link.icf", "src/startup_stm32.s", "src/vector_table.c"):
+        assert _cham_isr_linker({"files": [{"path": d, "content": ""}]}) is True, d
+    assert _cham_isr_linker({"files": [{"path": "src/i2c.c", "content": "int f(void){return 0;}"}]}) is False
+
+
+def test_thieu_mot_cong_thi_khong_tu_duyet(san_sang_merge):
+    """`tools_passed == 4` — bốn cái CỤ THỂ, không phải bốn cái bất kỳ."""
+    from eide.caps.code import merge
+    from eide_core.errors import EideError
+
+    r, ctx, root, _, rid = san_sang_merge
+    ba = [_bao_cao(root, t) for t in ("build", "size", "static")]
+    with pytest.raises(EideError) as e:
+        merge({"patch": _patch_sach(), "feature": "F-01", "reports": ba, "review_id": rid}, ctx)
+    assert e.value.code == "E3000" and e.value.data["features"]["patch"]["tools_passed"] == 3
+
+
+def test_cong_bao_KHONG_dat_thi_khong_duoc_tinh(san_sang_merge):
+    from eide.caps.code import dac_trung_G3
+
+    r, ctx, root, _, rid = san_sang_merge
+    ds = [_bao_cao(root, t, passed=(t != "static")) for t in
+          ("build", "size", "static", "test_host")]
+    assert dac_trung_G3(root, _patch_sach(), ds, rid, ctx)["patch"]["tools_passed"] == 3
+
+
+def test_size_ghi_moc_flash_lan_truoc_cho_merge(du_an_size):
+    """`size_growth_pct` của `G3-01` cần một mốc. Không ghi lúc ĐO thì lúc merge không còn chỗ
+    nào biết, và ngưỡng `merge_size_growth_pct` thành quy tắc không bao giờ khớp."""
+    from eide.caps.code import _tang_kich_thuoc, size
+
+    r, ctx, root, bin_gia = du_an_size
+    _flash_ram(root, "STM32F411RE", 512 * 1024, 128 * 1024)
+    _shim(bin_gia, "arm-none-eabi-size",
+          "echo 'text data bss dec hex f'; echo ' 10000\t0\t0\t10000\t2710\tfw.elf'")
+    assert size({"artifact": "build/fw.elf"}, ctx)["report"]["metrics"]["flash_truoc"] is None
+    _shim(bin_gia, "arm-none-eabi-size",
+          "echo 'text data bss dec hex f'; echo ' 10500\t0\t0\t10500\t2904\tfw.elf'")
+    m = size({"artifact": "build/fw.elf"}, ctx)["report"]["metrics"]
+    assert m["flash_truoc"] == 10000
+    assert _tang_kich_thuoc([{"tool": "size", "metrics": m}]) == 5.0
+
+
+@pytest.mark.skipif(__import__("shutil").which("git") is None, reason="cần git")
+def test_revert_giu_lich_su_khong_viet_lai(san_sang_merge):
+    """`git revert` chứ không `git reset`: ai đọc `git log` sau này cần thấy CẢ hai việc — đã
+    merge, rồi đã hoàn tác vì lý do gì — chứ không thấy một khoảng trống."""
+    from eide.caps.code import merge, revert
+    from eide_core import git
+
+    r, ctx, root, reports, rid = san_sang_merge
+    sha = merge({"patch": _patch_sach(), "feature": "F-01", "reports": reports,
+                 "review_id": rid}, ctx)["commit"]
+    out = revert({"commit": sha, "reason": "sai địa chỉ"}, ctx)
+    assert out["revert_commit"] != sha
+    assert not (root / "src" / "bme280.c").exists(), "revert mà tệp vẫn còn"
+    log = git.chay(root, "log", "--format=%s").stdout.splitlines()
+    assert len(log) == 2 and log[0].startswith("fix(revert):")
+    assert "sai địa chỉ" in git.chay(root, "log", "-1", "--format=%B").stdout
+
+
+@pytest.mark.skipif(__import__("shutil").which("git") is None, reason="cần git")
+def test_revert_commit_khong_co_thi_E7001(du_an):
+    from eide.caps.code import revert
+    from eide_core import git
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    git.dam_bao_kho(root)
+    with pytest.raises(EideError) as e:
+        revert({"commit": "0" * 40, "reason": "x"}, ctx)
+    assert e.value.code == "E7001"
+
+
+def test_git_chi_cho_phep_con_lenh_trong_danh_sach(du_an):
+    """Thêm `git push` hay `git clean -fdx` vào đây phải là một thay đổi PHẢI ĐỌC — cả hai đều
+    không hoàn tác được, và cả hai đều rất dễ viết ra trong lúc sửa một lỗi khác."""
+    from eide_core import git
+    from eide_core.errors import EideError
+
+    _, _, root = du_an
+    for xau in ("push", "clean", "reset"):
+        with pytest.raises(EideError) as e:
+            git.chay(root, xau)
+        assert e.value.code == "E8000"

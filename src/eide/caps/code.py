@@ -564,8 +564,13 @@ def size(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # khởi động, nên nó chiếm chỗ ở CẢ HAI. Bỏ `data` khỏi flash là báo thiếu đúng phần hay
     # tràn nhất ở một firmware nhiều bảng tra.
     flash, ram = text + data, data + bss
+    truoc = _flash_lan_truoc(root)
     gh = _gioi_han(root)
     bao = {"text": text, "data": data, "bss": bss, "flash": flash, "ram": ram,
+           # `flash_truoc` không dùng ở đây; nó là mốc để `code.merge` tính `size_growth_pct`
+           # cho `G3-01`. Không ghi lúc ĐO thì lúc merge không còn chỗ nào biết, và ngưỡng
+           # `merge_size_growth_pct` trở thành một quy tắc không bao giờ khớp.
+           "flash_truoc": truoc,
            "limits": gh, "threshold_flash": NGUONG_FLASH,
            "flash_pct": round(flash / gh["flash"] * 100, 2) if gh.get("flash") else None,
            "ram_pct": round(ram / gh["ram"] * 100, 2) if gh.get("ram") else None,
@@ -593,6 +598,23 @@ def _vi_sao(bao: dict[str, Any], nguong: float) -> str:
         return (f"Flash {bao['flash_pct']}% vượt ngưỡng {nguong:.0%} (chỗ còn lại dành cho "
                 "bootloader, vùng cấu hình và bản vá tại hiện trường)")
     return f"RAM {bao['ram_pct']}% vượt 100%"
+
+
+def _flash_lan_truoc(root: Path) -> int | None:
+    """Flash của lần `code.size` ĐẠT gần nhất — mốc so cho `size_growth_pct`.
+
+    Chỉ lấy lần `passed=1`: so với một bản dựng đã tràn bộ nhớ thì "tăng 0%" nghĩa là vẫn tràn,
+    và con số ấy sẽ được đọc như một tin tốt.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    with store.open_store(db) as c:
+        r = c.execute("SELECT metrics FROM tool_report WHERE tool='size' AND passed=1"
+                      " ORDER BY at DESC LIMIT 1").fetchone()
+    if not r or not r[0]:
+        return None
+    return (json.loads(r[0]) or {}).get("flash")
 
 
 def _gioi_han(root: Path) -> dict[str, int]:
@@ -1322,3 +1344,234 @@ def _luu_review(root: Path, patch: dict[str, Any], rv: dict[str, Any], ctx: Cont
 def doc_review(root: Path, rid: str) -> dict[str, Any] | None:
     f = root / EIDE_DIR / "reviews" / f"{rid}.json"
     return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+
+
+# ---------------------------------------------------------------- CODE-12 merge
+
+# "4 cổng" của G3-01 (`patch.tools_passed == 4`). Bốn cái này, không phải bốn cái bất kỳ: dựng
+# được, vừa bộ nhớ, sạch phân tích tĩnh, qua test máy chủ. Đó là toàn bộ bằng chứng MÁY có thể
+# đưa ra trước khi chạm phần cứng.
+BON_CONG = ("build", "size", "static", "test_host")
+
+# Tệp chạm tới linker hoặc khởi động — `patch.touches_isr_linker` của G3-01. Sai một dòng trong
+# `.ld` hay `startup_*.s` thì firmware không khởi động, và triệu chứng không trỏ về chỗ sai.
+RE_TEP_LINKER = re.compile(r"(?:^|/)(?:.*\.ld|.*\.icf|.*linker.*|startup[_.].*|.*vector.*)$",
+                           re.IGNORECASE)
+
+LOAI_COMMIT = "feat"          # CON-28 §4: type ∈ feat|fix|docs|refactor|test|chore|knowledge
+
+
+@capability("code.merge", features=["tools_passed", "constant_guard_violations", "verdict",
+                                    "max_severity", "in_scope", "size_growth_pct",
+                                    "touches_isr_linker", "vendors"])
+def merge(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-12 — CDS-12.1; POL-17 G3-01…04; CON-28 §4 (nhánh, thông điệp, trailer, tag);
+    APD-08 (cửa sổ hoàn tác). tc: S23…S28, TC-52; lỗi E3000, E3001, E7001; undo `git_revert`.
+
+    Đây là chỗ mã **thật sự vào kho**, và cũng là chỗ duy nhất trong cả nhóm `code.*` cần bốn
+    loại bằng chứng cùng lúc: bốn báo cáo công cụ, một bản review khác hãng, phép quét hằng số,
+    và phạm vi tệp. Bảy đặc trưng của `G3-01` được **tính lại ở đây**, không nhận từ bên gọi —
+    một cổng đọc con số do bên xin cấp phép tự khai thì không phải là cổng.
+
+    `constant_guard` chạy LẠI dù `code.generate_module` đã chạy. Patch nằm trên đĩa giữa hai lần
+    gọi và có thể đã bị sửa; và `G3-03` là quy tắc REJECT ở ưu tiên 1 — thứ đáng chạy lại.
+
+    Nhánh `auto/<feature>` theo CON-28 §4: mã do tác tử sinh không vào thẳng `main`. Thông điệp
+    commit mang trailer `Eide-Facts` / `Eide-Run` / `Eide-Model` / `Eide-Prompt` để mỗi dòng mã
+    truy về được fact, lượt chạy, và mô hình đã viết nó.
+    """
+    from eide_core import git
+
+    root = _du_an(ctx, {})
+    patch = params["patch"] or {}
+    feature = str(params["feature"])
+    dac_trung = dac_trung_G3(root, patch, params["reports"], str(params["review_id"]), ctx)
+
+    gate = ctx.extra.get("gate")
+    d = gate.decide("G3", dac_trung, risk="R2", autonomy=ctx.autonomy, tier="T1*",
+                    actor=ctx.actor) if gate else None
+    if d is not None and d.decision == "REJECT":
+        raise EideError("E3001", f"Cổng G3 từ chối merge: {d.reason} ({d.rule_id})",
+                        rule=d.rule_id, reason=d.reason, gate="G3", features=dac_trung)
+    if d is not None and d.decision != "APPROVE":
+        raise EideError("E3000", f"Merge cần người duyệt: {d.reason} ({d.rule_id})",
+                        rule=d.rule_id, reason=d.reason, gate="G3", features=dac_trung)
+
+    git.dam_bao_kho(root)
+    nhanh = f"auto/{feature}"
+    git.sang_nhanh(root, nhanh)
+    duong = _ghi_tep(root, patch)
+
+    by = patch.get("by") or {}
+    tin_nhan = git.thong_diep(
+        LOAI_COMMIT, feature, patch.get("rationale") or f"sinh mã cho {feature}",
+        {"Eide-Facts": patch.get("cites") or [], "Eide-Run": ctx.session_id,
+         "Eide-Model": by.get("model_id"), "Eide-Prompt": _bam_prompt(patch),
+         "Eide-Review": params["review_id"]})
+    sha = git.commit(root, tin_nhan, duong)
+    tag = git.dat_tag(root, f"known-good/{datetime.now(UTC).date().isoformat()}")
+
+    _ghi_code_unit(root, patch, sha)
+    han = _dang_ky_undo(ctx, sha, feature)
+    # Tên tag vào ledger chứ không vào kết quả: hợp đồng CODE-12 khai đúng ba trường
+    # (`additionalProperties: false`). Nó vẫn phải ghi lại được ở đâu đó — một tag không ai biết
+    # tên thì lần sau muốn quay về known-good phải đi dò.
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("report", {"cap": "code.merge", "commit": sha, "branch": nhanh, "tag": tag,
+                              "feature": feature, "files": duong,
+                              "cites": patch.get("cites") or []})
+    return {"commit": sha, "branch": nhanh, "undo_until": han}
+
+
+def dac_trung_G3(root: Path, patch: dict[str, Any], reports: list[str], review_id: str,
+                 ctx: Context) -> dict[str, Any]:
+    """Bảy đặc trưng mà `G3-01` hỏi (POL-17 §2), TÍNH LẠI từ store và từ chính patch.
+
+    Bên gọi truyền vào `reports` và `review_id` — hai con TRỎ, không phải hai kết luận. Nhận
+    thẳng `tools_passed=4` từ bên gọi thì bất kỳ ai gọi được năng lực này cũng merge được bất
+    kỳ thứ gì.
+    """
+    from eide.caps.code import doc_review
+
+    bao = _doc_reports(root, reports)
+    dat = {b["tool"] for b in bao if b.get("passed")}
+    rv = (doc_review(root, review_id) or {}).get("review") or {}
+    ven = rv.get("vendors") or {}
+    return {
+        "patch": {
+            "tools_passed": sum(1 for t in BON_CONG if t in dat),
+            "constant_guard_violations": len(
+                constant_guard({"patch": patch}, ctx)["violations"]),
+            "in_scope": not _ngoai_pham_vi(patch, list(PHAM_VI_MAC_DINH)),
+            "size_growth_pct": _tang_kich_thuoc(bao),
+            "touches_isr_linker": _cham_isr_linker(patch),
+        },
+        "review": {"verdict": rv.get("verdict"), "max_severity": rv.get("max_severity", "none")},
+        "coder": {"vendor": (patch.get("by") or {}).get("vendor")},
+        "reviewer": {"vendor": ven.get("reviewer")},
+    }
+
+
+def _doc_reports(root: Path, ids: list[str]) -> list[dict[str, Any]]:
+    db = store.store_path(root)
+    if not db.exists() or not ids:
+        return []
+    with store.open_store(db) as c:
+        rows = c.execute(
+            f"SELECT tool, passed, metrics FROM tool_report WHERE id IN ({','.join('?' * len(ids))})",  # noqa: S608
+            list(ids)).fetchall()
+    return [{"tool": t, "passed": bool(p), "metrics": json.loads(m) if m else {}}
+            for t, p, m in rows]
+
+
+def _tang_kich_thuoc(bao: list[dict[str, Any]]) -> float:
+    """`size_growth_pct` — phần trăm Flash tăng thêm so với lần đo TRƯỚC.
+
+    Không có lần trước thì 0, và đó là câu trả lời đúng chứ không phải giá trị an toàn cho qua:
+    lần dựng đầu tiên của một feature không "tăng" so với gì cả. Ngưỡng `merge_size_growth_pct`
+    canh việc một patch nhỏ làm phình firmware, và chuyện ấy chỉ có nghĩa khi có mốc để so.
+    """
+    m = next((b["metrics"] for b in bao if b["tool"] == "size"), None)
+    if not m:
+        return 0.0
+    truoc, nay = m.get("flash_truoc"), m.get("flash")
+    if not truoc or not nay:
+        return 0.0
+    return round((nay - truoc) / truoc * 100, 2)
+
+
+def _cham_isr_linker(patch: dict[str, Any]) -> bool:
+    """Chạm tới ISR hoặc kịch bản liên kết. Hai thứ này gộp trong một đặc trưng của POL-17 vì
+    chúng cùng một loại rủi ro: sai thì firmware không chạy, và triệu chứng không trỏ về chỗ
+    sai — người gỡ sẽ đi tìm trong mã ứng dụng."""
+    for f in patch.get("files") or []:
+        duong = str(f.get("path") or "")
+        if RE_TEP_LINKER.search(duong):
+            return True
+        if Path(duong).suffix in DUOI_C and _than_isr(str(f.get("content") or "")):
+            return True
+    return False
+
+
+def _ghi_tep(root: Path, patch: dict[str, Any]) -> list[str]:
+    ra: list[str] = []
+    for f in patch.get("files") or []:
+        d = root / str(f.get("path"))
+        d.parent.mkdir(parents=True, exist_ok=True)
+        d.write_text(str(f.get("content") or ""), encoding="utf-8")
+        ra.append(str(f.get("path")))
+    return ra
+
+
+def _bam_prompt(patch: dict[str, Any]) -> str:
+    """`Eide-Prompt: <hash>` của CON-28 — băm phần đầu vào đã quyết định nội dung patch.
+
+    Băm chứ không chép: prompt đầy đủ chứa cả ngữ cảnh dự án, có thể dài hàng chục nghìn ký tự,
+    và nhét nó vào thông điệp commit là nhét vào mọi lần `git log`.
+    """
+    import hashlib
+    goc = json.dumps({"rationale": patch.get("rationale"), "cites": patch.get("cites"),
+                      "files": [f.get("path") for f in (patch.get("files") or [])]},
+                     ensure_ascii=False, sort_keys=True)
+    return "sha256:" + hashlib.sha256(goc.encode("utf-8")).hexdigest()[:16]
+
+
+def _ghi_code_unit(root: Path, patch: dict[str, Any], sha: str) -> None:
+    """Bước 2: "cập nhật code_unit CITES/USES". Đây là cạnh nối MÃ về FACT trong đồ thị tri
+    thức — không có nó thì `kg.impact` không biết fact nào đổi làm mã nào cũ đi."""
+    import hashlib
+    import secrets
+    db = store.store_path(root)
+    if not db.exists():
+        return
+    with store.open_store(db) as c:
+        for f in patch.get("files") or []:
+            noi_dung = str(f.get("content") or "")
+            c.execute("INSERT INTO code_unit (id, path, hash, cites, uses, stale)"
+                      " VALUES (?,?,?,?,?,0)",
+                      ("cu_" + secrets.token_hex(6), str(f.get("path")),
+                       hashlib.sha256(noi_dung.encode("utf-8")).hexdigest(),
+                       json.dumps(patch.get("cites") or []), json.dumps([])))
+        c.commit()
+
+
+def _dang_ky_undo(ctx: Context, sha: str, feature: str) -> str:
+    """`undo: git_revert`, cửa sổ 24 h theo `undo_window.merge` của POL-17 §3."""
+    from eide_core.undo import UndoService
+    led = ctx.extra.get("ledger")
+    if led is None:
+        return ""
+    reg = UndoService(led, (getattr(ctx.extra.get("gate"), "config", None) or {}))
+    return str(reg.register(f"commit:{sha}", "git_revert", cap="code.merge").get("deadline") or "")
+
+
+# ---------------------------------------------------------------- CODE-13 revert
+
+
+@capability("code.revert")
+def revert(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-13 — CDS-12.1; CON-28 §4. tc: "Build đạt sau revert"; lỗi E7001.
+
+    `git revert` chứ không `git reset`: lịch sử của một kho có mã do tác tử sinh phải cộng dồn,
+    không được viết lại. Ai đọc `git log` sau này cần thấy CẢ hai việc — đã merge, rồi đã hoàn
+    tác vì lý do gì — chứ không thấy một khoảng trống.
+    """
+    from eide_core import git
+
+    root = _du_an(ctx, {})
+    sha, ly_do = str(params["commit"]), str(params["reason"])
+    if not git.la_kho(root):
+        raise EideError("E7001", f"{root} chưa phải kho git — không có gì để hoàn tác",
+                        commit=sha)
+    if git.chay(root, "rev-parse", "--verify", "--quiet", f"{sha}^{{commit}}",
+                kiem=False).returncode != 0:
+        raise EideError("E7001", f"Không có commit `{sha}` trong kho", commit=sha)
+
+    git.chay(root, "revert", "--no-edit", "--no-commit", sha)
+    moi = git.commit(root, git.thong_diep(
+        "fix", "revert", f"hoàn tác {sha[:8]}: {ly_do}",
+        {"Eide-Revert": sha, "Eide-Run": ctx.session_id}), ["."])
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.apply", {"undo_ref": f"commit:{sha}", "kind": "git_revert",
+                                  "revert_commit": moi, "reason": ly_do})
+    return {"revert_commit": moi}
