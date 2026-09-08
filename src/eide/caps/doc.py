@@ -969,3 +969,472 @@ def _doc_diagram(root: Path, diagram_id: str) -> tuple[dict[str, Any], bool]:
     raise EideError("E2000", f"Không tìm được lược đồ `{diagram_id}` — thử id trong bảng "
                     "`diagram` hoặc đường dẫn tệp mã lược đồ",
                     exists=[], candidates=[], missing=[diagram_id])
+
+
+# ---------------------------------------------------------------- DOC-03 api_ref
+
+# Bộ phân tích nội bộ chỉ đọc họ C. DOC-03 bước 1 nói "Doxygen/tree-sitter", nhưng cả hai đều
+# KHÔNG phải phụ thuộc của kho (xem [DEV-072]) — nên ngôn ngữ ngoài họ C báo E4001 thay vì im
+# lặng sinh một bản tham chiếu rỗng.
+DUOI_C = {".h", ".hh", ".hpp", ".hxx", ".inl", ".c", ".cc", ".cpp", ".cxx"}
+
+# Từ khóa không bao giờ là TÊN HÀM. Thiếu một từ thì sinh thừa một mục — thấy ngay khi đọc; thừa
+# một từ thì một hàm THẬT biến mất khỏi bản tham chiếu và không ai biết. Nên bảng này chỉ chứa từ
+# khóa của chính ngôn ngữ, không chứa tiền tố quy ước hay tên hay gặp.
+TU_KHOA_C = {
+    "if", "for", "while", "switch", "return", "sizeof", "do", "else", "case", "goto", "catch",
+    "typedef", "struct", "union", "enum", "namespace", "template", "using", "operator", "new",
+    "delete", "static_assert", "_Static_assert", "alignof", "defined", "typeof", "decltype",
+    "int", "char", "void", "float", "double", "short", "long", "signed", "unsigned", "bool",
+    "const", "volatile", "static", "inline", "extern", "register", "restrict", "auto",
+}
+
+# Giữa KIỂU TRẢ VỀ và TÊN HÀM luôn có một ranh giới thật: khoảng trắng, hoặc dấu sao/tham chiếu.
+# Ràng buộc ấy là thứ phân biệt một khai báo với một lời gọi macro ở mức tệp — `_Pragma("…")`,
+# `__deprecated_msg("…")`, `__API_AVAILABLE(macos(10.4))` trông y hệt một hàm với bất kỳ regex
+# nào không đòi ranh giới đó, và chúng có thật trong `pthread.h`, `dirent.h` của SDK macOS.
+RE_HAM = re.compile(r"^(?P<ret>.*?(?:[\w\]>]\s+|[*&]\s*))(?P<ten>[A-Za-z_]\w*)\s*"
+                    r"\((?P<args>.*)\)\s*(?:const\s*)?(?:noexcept\s*)?$", re.S)
+RE_KHOI_DOX = re.compile(r"/\*[*!].*?\*/", re.S)
+RE_DONG_DOX = re.compile(r"(?:^[ \t]*//[/!].*\n?)+", re.M)
+RE_LENH_DOX = re.compile(r"^[@\\](\w+)\s*(.*)$")
+
+
+@capability("doc.api_ref")
+def api_ref(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-03 — CDS-12.1; DDD-14 §2 DocArtifact, `code_unit`, `passport_fact`.
+    tc: "Mọi hàm public có mục"; lỗi E4001; undo `delete_created_files`.
+
+    **Chữ ký đọc từ mã nguồn, ví dụ do mô hình viết** — cùng ranh giới với `doc.generate`, chỉ
+    đổi vai: ở đó mã dựng bảng số liệu, ở đây mã dựng chữ ký và bảng tham số. Một bản tham chiếu
+    API mà chữ ký do mô hình nhớ lại là một bản tham chiếu sai đúng ở chỗ người ta tin nó nhất.
+
+    **"Mọi hàm public có mục"** nghĩa là kể cả hàm chưa ai chú thích: nó vẫn có mục, và mục ấy
+    nói thẳng là chưa có Doxygen. Bỏ nó đi thì bản tham chiếu im lặng về một phần API, mà im
+    lặng thì người đọc không phân biệt được với "không tồn tại".
+
+    **Ví dụ phải neo vào hộ chiếu** (bước 1: "ví dụ dùng theo hộ chiếu (fact id)"). Không có fact
+    nào thì KHÔNG gọi mô hình — nhờ nó viết ví dụ cho một con chip nó chỉ nhớ mang máng là cách
+    nhanh nhất để có một địa chỉ I2C sai nằm trong tài liệu. Ví dụ có số liệu kỹ thuật mà fact id
+    không tra được thì bị bỏ, dùng lại đúng `RE_SO_KY_THUAT` của `doc.style_check`.
+
+    Đầu ra Markdown, không phải html: chuyển định dạng là việc của `report.export` (DEV-070), và
+    `input_schema` của DOC-03 không có chỗ nào để chọn định dạng. Xem [DEV-072].
+    """
+    root = _root(ctx)
+    tep = _tep_nguon(root, list(params["src"]))
+
+    ho_chieu = _fact_ho_chieu(root, [d for d, _ in tep])
+    ten_da = _ten_du_an(root)
+    d = [f"# Tham chiếu API — {ten_da}", "",
+         *_thuoc_tinh_api(ten_da, len(tep)), ""]
+    sections: list[dict[str, Any]] = []
+    trich_dan: list[str] = []
+
+    for tuong_doi, f in tep:
+        ham = _ham_public(f.read_text(encoding="utf-8", errors="replace"))
+        vi_du, cits = _vi_du_ho_chieu(ctx, tuong_doi, ham, ho_chieu)
+        than = _than_api(tuong_doi, ham, vi_du, bool(ho_chieu))
+        d += [f"## {tuong_doi}", "", *than, ""]
+        trich_dan += cits
+        sections.append({"heading": tuong_doi, "source": "code_unit",
+                         "symbols": [h["symbol"] for h in ham],
+                         "hash": _bam_muc(than), "citations": cits})
+
+    d += _muc_nguon_tham_khao(root, trich_dan)
+
+    out = root / EIDE_DIR / "docs" / f"api_ref_{re.sub(r'[^0-9A-Za-z]+', '_', ten_da)}.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(d), encoding="utf-8")
+    _ghi_doc_artifact(root, out, "api_ref", sections=sections, citations=sorted(set(trich_dan)))
+    return {"path": str(out)}
+
+
+def _tep_nguon(root: Path, src: list[str]) -> list[tuple[str, Path]]:
+    """Kiểm TOÀN BỘ danh sách trước khi đọc tệp nào.
+
+    Một bản tham chiếu nửa vời tệ hơn không có bản nào: nó trông như đã xong, nên không ai chạy
+    lại — trong khi đúng cái header thiếu là cái người đọc đi tìm.
+    """
+    ra: list[tuple[str, Path]] = []
+    for s in src:
+        p = Path(s).expanduser()
+        f = p if p.is_absolute() else root / p
+        if not f.is_file():
+            raise EideError("E2000", f"Không có tệp nguồn `{s}`",
+                            exists=[x for x, _ in ra], candidates=[], missing=[s])
+        if (duoi := f.suffix.lower()) not in DUOI_C:
+            raise EideError("E4001", f"Chưa có bộ phân tích cho `{duoi}` — bản dựng này đọc "
+                            "header họ C bằng bộ phân tích nội bộ, ngôn ngữ khác cần "
+                            "Doxygen/tree-sitter mà kho chưa khai (DEV-072)",
+                            lang=duoi, path=s,
+                            candidates=["env.guide_install", "env.install"])
+        ra.append((s, f))
+    return ra
+
+
+def _thuoc_tinh_api(ten: str, so_tep: int) -> list[str]:
+    return ["| Thuộc tính | Giá trị |", "|---|---|",
+            "| Loại | api_ref |", f"| Dự án | {ten} |", f"| Số tệp nguồn | {so_tep} |",
+            f"| Sinh lúc | {datetime.now(UTC).isoformat(timespec='seconds')} |",
+            "| Sinh bởi | EIDE `doc.api_ref` — chữ ký đọc từ mã nguồn, ví dụ dùng do mô hình "
+            "viết quanh fact của hộ chiếu |"]
+
+
+# ---- đọc chữ ký: một bộ quét câu lệnh, không phải một regex trên cả tệp
+
+
+def _lam_sach(t: str) -> str:
+    """Thay chú thích và literal bằng khoảng trắng, GIỮ NGUYÊN độ dài.
+
+    Nhờ giữ độ dài, mọi vị trí tìm được trên bản sạch trỏ đúng ký tự trên bản gốc — chữ ký in ra
+    vì thế cắt từ bản GỐC (còn nguyên tên tham số, dấu cách), còn việc phân tích cú pháp làm trên
+    bản đã sạch chú thích. Một regex chạy thẳng trên bản gốc sẽ nhặt cả mã trong chú thích.
+    """
+    ra = list(t)
+    i, n = 0, len(t)
+
+    def xoa(dau: int, cuoi: int) -> None:
+        for k in range(dau, min(cuoi, n)):
+            if ra[k] != "\n":
+                ra[k] = " "
+
+    while i < n:
+        c = t[i]
+        if c == "/" and t[i + 1:i + 2] == "*":
+            j = t.find("*/", i + 2)
+            j = n if j < 0 else j + 2
+            xoa(i, j)
+            i = j
+        elif c == "/" and t[i + 1:i + 2] == "/":
+            j = t.find("\n", i)
+            j = n if j < 0 else j
+            xoa(i, j)
+            i = j
+        elif c in "\"'":
+            j = i + 1
+            while j < n and t[j] != c:
+                j += 2 if t[j] == "\\" else 1
+            xoa(i, j + 1)
+            i = j + 1
+        else:
+            i += 1
+    return "".join(ra)
+
+
+def _bo_tien_xu_ly(sach: str) -> str:
+    """Xóa dòng tiền xử lý (`#include`, `#define`, `#ifdef`…), kể cả dòng nối bằng `\\`.
+
+    `#define BME280_ADDR_MAX 0x77` và một khai báo hàm trông giống nhau với bất kỳ bộ quét nào
+    chỉ nhìn dấu ngoặc — và `#include <stdint.h>` thì có cả dấu `<`, `>`.
+    """
+    dong = sach.split("\n")
+    i = 0
+    while i < len(dong):
+        if dong[i].lstrip().startswith("#"):
+            while i < len(dong):
+                noi = dong[i].endswith("\\")
+                dong[i] = " " * len(dong[i])
+                i += 1
+                if not noi:
+                    break
+        else:
+            i += 1
+    return "\n".join(dong)
+
+
+def _trong_suot(than: str) -> bool:
+    """`extern "C" {` và `namespace x {` KHÔNG mở một thân hàm.
+
+    Nội dung của chúng vẫn là khai báo ở mức tệp. Coi chúng như thân hàm là bỏ qua gần hết mọi
+    header C có bảo vệ C++ — tức là bỏ đúng những tệp mà năng lực này sinh ra để đọc.
+    """
+    t = than.split()
+    return bool(t) and t[0] in ("extern", "namespace") and "(" not in than
+
+
+def _cau_lenh_ngoai(sach: str) -> list[tuple[int, int, str]]:
+    """`(đầu, cuối, ký tự kết)` cho từng câu lệnh ở NGOÀI mọi thân hàm/thân struct.
+
+    Bỏ qua thân hàm là điều kiện đủ để một lời gọi `ghi(0xF4, 0x27);` bên trong không bị đọc
+    thành một khai báo — và đó là cái bẫy đầu tiên của mọi bộ đọc header viết bằng regex.
+    """
+    ra: list[tuple[int, int, str]] = []
+    dau: int | None = None
+    sau = 0          # độ sâu thân đang bỏ qua
+    ngoac = 0
+    for i, c in enumerate(sach):
+        if sau:
+            sau += 1 if c == "{" else (-1 if c == "}" else 0)
+            continue
+        if c in " \t\r\n":
+            continue
+        if dau is None:
+            dau = i
+        if c == "(":
+            ngoac += 1
+        elif c == ")":
+            ngoac = max(0, ngoac - 1)
+        elif c == ";" and not ngoac:
+            ra.append((dau, i, ";"))
+            dau = None
+        elif c == "{" and not ngoac:
+            ra.append((dau, i, "{"))
+            if not _trong_suot(sach[dau:i]):
+                sau = 1
+            dau = None
+        elif c == "}" and not ngoac:
+            dau = None
+    return ra
+
+
+def _khoi_chu_thich(t: str) -> list[tuple[int, int, str]]:
+    """Chỉ khối Doxygen (`/** */`, `/*! */`, `///`, `//!`) — chú thích thường không phải tài liệu."""
+    ra = [(m.start(), m.end(), m.group(0)) for m in RE_KHOI_DOX.finditer(t)]
+    ra += [(m.start(), m.end(), m.group(0)) for m in RE_DONG_DOX.finditer(t)]
+    return sorted(ra)
+
+
+def _chu_thich_truoc(sach: str, dau: int, khoi: list[tuple[int, int, str]]) -> str | None:
+    """Khối Doxygen dán NGAY TRƯỚC khai báo — giữa hai bên chỉ được có khoảng trắng.
+
+    Kiểm trên bản sạch nên các dòng tiền xử lý xen giữa (đã bị xóa thành khoảng trắng) không cắt
+    đứt liên kết: `/** … */ #ifdef X int f(void);` vẫn là chú thích của `f`.
+    """
+    for _d, c, noi in reversed(khoi):
+        if c <= dau and not sach[c:dau].strip():
+            return noi
+    return None
+
+
+def _ham_public(text: str) -> list[dict[str, Any]]:
+    """Hàm public + chữ ký + chú thích Doxygen, theo thứ tự xuất hiện trong tệp.
+
+    Public = không `static`. Đó là đúng nghĩa của C: `static` ở mức tệp là "không ai ngoài tệp
+    này gọi được", nên nó không thuộc về một bản THAM CHIẾU API.
+    """
+    sach = _bo_tien_xu_ly(_lam_sach(text))
+    khoi = _khoi_chu_thich(text)
+    ra: list[dict[str, Any]] = []
+    da_co: set[str] = set()
+    for dau, cuoi, _ket in _cau_lenh_ngoai(sach):
+        than = sach[dau:cuoi]
+        if "=" in than:                        # khai báo biến có khởi tạo, không phải hàm
+            continue
+        m = RE_HAM.match(than.strip())
+        if not m:
+            continue
+        ten, tok = m.group("ten"), m.group("ret").split()
+        if not tok or ten in TU_KHOA_C or tok[0] == "typedef" or "static" in tok:
+            continue
+        if not (kieu := _bo_macro_bao(m.group("ret"))):
+            continue                           # toàn macro, không còn kiểu trả về — không phải hàm
+        if ten in da_co:                       # khai báo rồi định nghĩa trong cùng một tệp .c
+            continue
+        da_co.add(ten)
+        ra.append({"symbol": ten, "signature": _chu_ky(kieu, ten, _cat_args(m.group("args"))),
+                   "doc": _doxygen(_chu_thich_truoc(sach, dau, khoi))})
+    return ra
+
+
+# Macro bao quanh khai báo — `__BEGIN_DECLS`, `__API_AVAILABLE(macos(10.4))`, `__deprecated_msg
+# ("…")`, `HAL_EXPORT`… Chúng là chi tiết của một bộ dịch, không phải phần API mà người đọc gọi.
+# Hai dạng: gọi có đối số (nhận ra nhờ dấu ngoặc — kiểu trả về không bao giờ là một lời gọi), và
+# tên trần VIẾT HOA TOÀN PHẦN.
+RE_MACRO_GOI = re.compile(r"^[A-Za-z_]\w*\s*\(")
+RE_MACRO_HOA = re.compile(r"^_*[A-Z][A-Z0-9_]*(?![\w])")
+
+
+def _cat_args(args: str) -> str:
+    """Cắt danh sách tham số về dấu ngoặc đóng KHỚP, bỏ phần đuôi.
+
+    `args` của `RE_HAM` bắt tới dấu ngoặc đóng CUỐI CÙNG của câu lệnh, nên một khai báo có macro
+    đuôi — `int chmod(const char *, mode_t) __DARWIN_ALIAS(chmod)` — cho ra danh sách tham số
+    nuốt luôn cả macro. Con trỏ hàm `void (*cb)(int)` thì ngược lại: phải giữ cả hai cặp ngoặc.
+    """
+    sau = 0
+    for i, c in enumerate(args):
+        if c == "(":
+            sau += 1
+        elif c == ")":
+            if not sau:
+                return args[:i]
+            sau -= 1
+    return args
+
+
+def _bo_macro_bao(ret: str) -> str:
+    """Kiểu trả về sau khi bỏ macro bao ở đầu; `""` nếu chẳng còn kiểu nào — tức không phải hàm.
+
+    Dừng khi phần còn lại không có gì ngoài dấu câu: `DIR *opendir(…)` và `ESP_ERR esp_foo(…)`
+    có kiểu trả về viết hoa toàn phần, bỏ chúng thì chữ ký sai chứ không phải gọn (bỏ `DIR` khỏi
+    `DIR *opendir` để lại đúng một dấu sao).
+
+    Nhưng nếu ĐÃ bỏ được một macro rồi mà phần còn lại rỗng hẳn thì câu lệnh vốn chỉ là một chuỗi
+    macro — `_Pragma("…") __BEGIN_DECLS __API_AVAILABLE(macos(10.4), ios(2.0))` trong `pthread.h`
+    trông y hệt một khai báo hàm tên `__API_AVAILABLE`. Trả `""` để bỏ hẳn nó.
+    """
+    s, da_bo = ret.strip(), False
+    while s:
+        if (m := RE_MACRO_GOI.match(s)):
+            con = s[m.end() - 1:]
+            con = con[len(_cat_args(con[1:])) + 2:].lstrip()
+        elif (m := RE_MACRO_HOA.match(s)):
+            con = s[m.end():].lstrip()
+        else:
+            break
+        if any(t.strip("*&") for t in con.split()):
+            s, da_bo = con, True
+            continue
+        return "" if da_bo and not con.strip() else s
+    return s
+
+
+def _chu_ky(kieu: str, ten: str, args: str) -> str:
+    """Dựng lại chữ ký từ chính các nhóm đã phân tích, không cắt thô từ tệp.
+
+    Cắt thô kéo theo cả macro bao lẫn chú thích xen giữa — `__BEGIN_DECLS /* [XSI] */ int
+    chmod(…)` là chữ ký thật cắt ra từ `sys/stat.h` của SDK macOS. Dựng lại thì chữ ký in ra là
+    thứ người đọc gõ được.
+    """
+    tok = kieu.split()
+    # `const char *ten` — dấu sao rời thuộc về TÊN, nên không có dấu cách sau nó. Còn `int* ten`
+    # thì sao đã dính vào kiểu, và bỏ dấu cách ở đó cho ra `int*ten`.
+    noi = "" if tok and not tok[-1].strip("*&") else " "
+    return f"{' '.join(tok)}{noi}{ten}({' '.join(args.split())});"
+
+
+def _doxygen(khoi: str | None) -> dict[str, Any]:
+    """`{brief, params[], returns[], ghi_chu[]}` từ một khối Doxygen. Rỗng nếu không có khối."""
+    if not khoi:
+        return {}
+    t = re.sub(r"^/\*[*!]|\*/\s*$", "", khoi.strip())
+    dong = [re.sub(r"^\s*(?:\*(?!/)|//[/!])\s?", "", d).rstrip() for d in t.splitlines()]
+
+    muc: list[tuple[str, str]] = []
+    for d in dong:
+        if (m := RE_LENH_DOX.match(d.strip())):
+            muc.append((m.group(1).lower(), m.group(2).strip()))
+        elif muc:
+            muc[-1] = (muc[-1][0], (muc[-1][1] + " " + d.strip()).strip())
+        elif d.strip():
+            muc.append(("", d.strip()))
+
+    ra: dict[str, Any] = {"brief": "", "params": [], "returns": [], "ghi_chu": []}
+    for lenh, noi in muc:
+        if lenh in ("file", "ingroup", "defgroup", "addtogroup"):
+            continue
+        if lenh in ("", "brief", "short", "details"):
+            ra["brief"] = (ra["brief"] + " " + noi).strip()
+        elif lenh == "param":
+            # `@param[in] addr Địa chỉ` — hướng nằm trong ngoặc vuông, không phải tên tham số.
+            phan = re.sub(r"^\[[^\]]*\]\s*", "", noi).split(None, 1)
+            if phan:
+                ra["params"].append((phan[0], phan[1] if len(phan) > 1 else ""))
+        elif lenh in ("return", "returns"):
+            ra["returns"].append(noi)
+        elif lenh == "retval":
+            phan = noi.split(None, 1)
+            ra["returns"].append(f"`{phan[0]}` — {phan[1]}" if len(phan) > 1 else noi)
+        elif noi:
+            ra["ghi_chu"].append(f"**{lenh}:** {noi}")
+    return ra
+
+
+# ---- ví dụ dùng: mô hình viết, nhưng phải neo được vào fact của hộ chiếu
+
+
+_SCHEMA_VI_DU = {
+    "type": "object", "required": ["examples"],
+    "properties": {"examples": {"type": "array", "items": {
+        "type": "object", "required": ["symbol", "code", "fact_ids"],
+        "properties": {"symbol": {"type": "string"}, "code": {"type": "string"},
+                       "fact_ids": {"type": "array", "items": {"type": "string"}}}}}},
+}
+
+
+def _fact_ho_chieu(root: Path, duong: list[str]) -> list[tuple]:
+    """Fact để neo ví dụ: ưu tiên fact mà CHÍNH các tệp này trích dẫn (`code_unit.cites`); không
+    có thì fact của hộ chiếu dự án (`passport_fact`).
+
+    Thứ tự ấy không tùy tiện: `code.generate_module` ghi vào `cites` đúng những fact đã dùng để
+    sinh ra tệp, nên chúng là ngữ cảnh gần nhất với API đang mô tả.
+    """
+    ids: list[str] = []
+    for d in duong:
+        for (cites,) in _q(root, "SELECT cites FROM code_unit WHERE path=?", (d,)):
+            ids += list(json.loads(cites or "[]"))
+    if not ids:
+        ids = [r[0] for r in _q(root, "SELECT fact_id FROM passport_fact LIMIT 40")]
+    if not ids:
+        return []
+    return _q(root, "SELECT id, subject, predicate, value, unit FROM fact"
+                    f" WHERE id IN ({','.join('?' * len(ids))})"          # noqa: S608
+                    "   AND status NOT IN ('superseded','rejected')", tuple(ids))
+
+
+def _vi_du_ho_chieu(ctx: Context, tep: str, ham: list[dict[str, Any]],
+                    facts: list[tuple]) -> tuple[dict[str, str], list[str]]:
+    """`({symbol: mã ví dụ}, trích dẫn)`. Không có fact hoặc không có hàm → KHÔNG gọi mô hình.
+
+    Ví dụ nêu số liệu kỹ thuật mà fact id không tra được thì bị bỏ hẳn. `bme280_init(0x76)` là
+    một khẳng định về phần cứng y như một dòng trong bảng số liệu; một fact id bịa không chống
+    lưng được cho nó, và một địa chỉ I2C sai trong tài liệu thì tốn của người đọc cả buổi.
+    """
+    if not facts or not ham:
+        return {}, []
+    hop_le = {str(f[0]) for f in facts}
+    bang = "\n".join(f"- `{f[0]}` — {f[1]} {f[2]} = {json.loads(f[3])}{f' {f[4]}' if f[4] else ''}"
+                     for f in facts)
+    resp = _gateway(ctx).run(
+        "writer",
+        f"Viết ví dụ dùng ngắn (C, 1–5 dòng) cho các hàm public của `{tep}`:\n"
+        + "\n".join(f"- {h['signature']}" for h in ham)
+        + "\n\nMọi hằng số phần cứng trong ví dụ phải lấy từ danh sách fact của hộ chiếu ở ngữ "
+          "cảnh, và `fact_ids` phải liệt kê đúng fact đã dùng. Hàm nào không có fact nào chống "
+          "lưng thì BỎ QUA, đừng viết ví dụ cho nó.",
+        _SCHEMA_VI_DU, system_extra=bang)
+
+    ten_ham = {h["symbol"] for h in ham}
+    ra: dict[str, str] = {}
+    cits: list[str] = []
+    for vd in (resp.data.get("examples") or []):
+        ten, ma = str(vd.get("symbol") or ""), (vd.get("code") or "").strip()
+        neo = [x for x in (vd.get("fact_ids") or []) if x in hop_le]
+        if ten not in ten_ham or not ma or ten in ra:
+            continue
+        if RE_SO_KY_THUAT.search(ma) and not neo:
+            continue
+        ra[ten] = ma
+        if neo:
+            ra[ten] += "\n" + "\n".join(f"// nguồn: {x}" for x in neo)
+            cits += neo
+    return ra, cits
+
+
+def _than_api(tep: str, ham: list[dict[str, Any]], vi_du: dict[str, str],
+              co_ho_chieu: bool) -> list[str]:
+    """Một mục cho mỗi hàm public. Không có hàm nào thì nói thẳng là không có, kèm lý do."""
+    if not ham:
+        return [f"*Không tìm thấy hàm public nào trong `{tep}` — mọi hàm đều `static`, hoặc tệp "
+                "chỉ khai báo kiểu và macro.*"]
+    d: list[str] = []
+    for h in ham:
+        dox = h["doc"]
+        d += [f"### `{h['symbol']}`", "", "```c", h["signature"], "```", ""]
+        d += [dox["brief"], ""] if dox.get("brief") else \
+             ["*Hàm này chưa có chú thích Doxygen — chữ ký đọc từ mã nguồn, phần mô tả sẽ có khi "
+              "ai đó viết khối `/** */` ngay trên khai báo.*", ""]
+        if dox.get("params"):
+            d += _bang(["Tham số", "Mô tả"],
+                       [[f"`{ten}`", mo or "—"] for ten, mo in dox["params"]]) + [""]
+        for r in dox.get("returns") or []:
+            d += [f"**Trả về:** {r}", ""]
+        if (gc := dox.get("ghi_chu")):
+            d += [*gc, ""]
+        if (ma := vi_du.get(h["symbol"])):
+            d += ["**Ví dụ dùng** (theo hộ chiếu):", "", "```c", ma, "```", ""]
+        elif not co_ho_chieu:
+            d += ["*Chưa có ví dụ dùng: dự án chưa có hộ chiếu nào để neo hằng số phần cứng — "
+                  "chạy `passport.import`.*", ""]
+    return d

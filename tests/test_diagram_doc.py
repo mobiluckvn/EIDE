@@ -884,6 +884,282 @@ def test_luoc_do_khong_co_thi_bao_ro(du_an, monkeypatch):
     assert e.value.code == "E2000"
 
 
+# ================================================================ DOC-03 api_ref
+#
+# tc: "Mọi hàm public có mục"; lỗi E4001; undo `delete_created_files`.
+#
+# Bất biến của cả nhóm lặp lại ở đây dưới dạng thứ ba: chữ ký đọc từ MÃ NGUỒN, mô hình chỉ
+# thêm ví dụ dùng — và ví dụ có số liệu kỹ thuật mà không neo được vào fact nào thì bị bỏ.
+
+HEADER = """\
+/**
+ * @file bme280.h
+ * @brief Trình điều khiển cảm biến BME280.
+ */
+#ifndef BME280_H
+#define BME280_H
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define BME280_ADDR_MAX 0x77
+
+/**
+ * @brief Khởi tạo cảm biến qua I2C.
+ * @param addr Địa chỉ I2C 7 bit.
+ * @return 0 nếu thành công, âm nếu lỗi bus.
+ */
+int bme280_init(uint8_t addr);
+
+/** @brief Đọc nhiệt độ đã bù.
+ *  @param out Nơi ghi kết quả, đơn vị 0.01 độ C.
+ *  @retval -1 lỗi bus.
+ */
+int bme280_read_temp(int32_t *out);
+
+void bme280_reset(void);
+
+BME280_API int bme280_set_mode(uint8_t mode) BME280_DEPRECATED("dùng bme280_mode");
+
+typedef int (*bme280_delay_t)(uint32_t ms);
+
+static inline int bme280_crc(uint8_t b) { return b ^ 0xFF; }
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* BME280_H */
+"""
+
+VI_DU = {"examples": [{"symbol": "bme280_init", "code": "bme280_init(0x76);",
+                       "fact_ids": ["f_1"]}]}
+
+
+def _viet_nguon(root, ten, noi):
+    f = root / "src" / ten
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(noi, encoding="utf-8")
+    return f
+
+
+def nap_code_unit(root, duong, cites):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR REPLACE INTO code_unit (id, path, symbol, hash, cites)"
+                  " VALUES (?,?,?,?,?)",
+                  (f"cu_{abs(hash(duong)) % 10**6}", duong, None, "h", json.dumps(cites)))
+        c.commit()
+
+
+def test_tc_moi_ham_public_co_muc(du_an, monkeypatch):
+    """tc DOC-03: "Mọi hàm public có mục". `static` không public; `typedef` con trỏ hàm và
+    `#define` không phải hàm — ba thứ hay bị một regex ngây thơ nhặt nhầm."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    _viet_nguon(root, "bme280.h", HEADER)
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    for ten in ("bme280_init", "bme280_read_temp", "bme280_reset", "bme280_set_mode"):
+        assert f"### `{ten}`" in md, f"thiếu mục cho {ten}"
+    assert "bme280_crc" not in md, "hàm static không public"
+    assert "bme280_delay_t" not in md, "typedef con trỏ hàm không phải hàm"
+    assert "BME280_ADDR_MAX" not in md, "macro không phải hàm"
+
+
+def test_chu_ky_lay_tu_MA_NGUON_khong_phai_tu_mo_hinh(du_an, monkeypatch):
+    """Cùng ranh giới với `doc.generate`: mô hình viết ví dụ, MÃ đọc chữ ký. Ở đây mô hình trả
+    về một chữ ký sai hẳn; nó không được lọt vào khối chữ ký."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, {"examples": [{"symbol": "bme280_init",
+                                         "code": "int bme280_init(char *ten, int cong);",
+                                         "fact_ids": []}]})
+    _viet_nguon(root, "bme280.h", HEADER)
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    chu_ky = md.split("### `bme280_init`")[1].split("```")[1]
+    assert "uint8_t addr" in chu_ky and "char *ten" not in chu_ky
+
+
+def test_chu_thich_doxygen_thanh_bang_tham_so_va_muc_tra_ve(du_an, monkeypatch):
+    """Bước 1: "chữ ký + chú thích". Chú thích Doxygen đã là dữ liệu có cấu trúc — xếp lại
+    thành bảng chứ không nhờ mô hình diễn giải, vì diễn giải thì sai được."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    _viet_nguon(root, "bme280.h", HEADER)
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    muc = md.split("### `bme280_init`")[1].split("### ")[0]
+    assert "Khởi tạo cảm biến qua I2C." in muc
+    assert "`addr`" in muc and "Địa chỉ I2C 7 bit" in muc
+    assert "0 nếu thành công" in muc
+
+
+def test_ham_khong_co_doxygen_van_co_muc(du_an, monkeypatch):
+    """"Mọi hàm public" — kể cả hàm chưa ai chú thích. Bỏ nó đi thì bản tham chiếu im lặng về
+    một phần API, và người đọc không có cách nào biết là nó thiếu."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    _viet_nguon(root, "bme280.h", HEADER)
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    muc = md.split("### `bme280_reset`")[1]
+    assert "chưa có chú thích Doxygen" in muc
+
+
+def test_than_ham_trong_tep_c_khong_sinh_muc_ma(du_an, monkeypatch):
+    """Lời gọi hàm trong thân hàm trông giống hệt một khai báo với một regex đủ ngây thơ."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    _viet_nguon(root, "bme280.c", "#include \"bme280.h\"\n"
+                "static int ghi(uint8_t r, uint8_t v) { return 0; }\n"
+                "int bme280_init(uint8_t addr) {\n"
+                "    if (addr > 0x77) return -1;\n"
+                "    return ghi(0xF4, 0x27);\n"
+                "}\n")
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.c"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    assert "### `bme280_init`" in md
+    assert "### `ghi`" not in md and "### `if`" not in md and "### `return`" not in md
+
+
+def test_vi_du_dung_theo_ho_chieu_neu_duoc_fact_id(du_an, monkeypatch):
+    """Bước 1: "writer thêm ví dụ dùng theo hộ chiếu (fact id)". Fact id có thật thì ví dụ được
+    giữ VÀ được nêu nguồn — người đọc lần ngược được về datasheet."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    nap_fact(root, [("f_1", CHIP, "i2c_address", "0x76", None, 27)])
+    _viet_nguon(root, "bme280.h", HEADER)
+    nap_code_unit(root, "src/bme280.h", ["f_1"])
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    assert "bme280_init(0x76);" in md
+    assert "f_1" in md and "## Nguồn" in md and "stm32f411.pdf" in md
+
+
+def test_vi_du_co_so_lieu_ma_fact_id_bia_thi_bi_bo(du_an, monkeypatch):
+    """Cùng bất biến với `doc.datasheet_summary`: không có số nào không có nguồn. `0x76` trong
+    một ví dụ là một khẳng định về phần cứng, và một fact id bịa không chống lưng được cho nó."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, {"examples": [{"symbol": "bme280_init",
+                                         "code": "bme280_init(0x99);", "fact_ids": ["f_bia"]}]})
+    nap_fact(root, [("f_1", CHIP, "i2c_address", "0x76", None, 27)])
+    _viet_nguon(root, "bme280.h", HEADER)
+    nap_code_unit(root, "src/bme280.h", ["f_1"])
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    assert "0x99" not in md and "f_bia" not in md
+    assert "### `bme280_init`" in md, "bỏ ví dụ chứ không bỏ mục"
+
+
+def test_khong_co_ho_chieu_thi_KHONG_goi_mo_hinh(du_an, monkeypatch):
+    """Không có fact thì không có gì để neo ví dụ vào — nhờ mô hình viết là dạy nó bịa. Cùng
+    cách xử lý với mục rỗng của `doc.generate`."""
+    goi: list[int] = []
+
+    class _R:
+        def __init__(self, d): self.data = d
+
+    class _G:
+        def run(self, *a, **k):
+            goi.append(1)
+            return _R(VI_DU)
+
+    import eide.caps.doc as m
+    monkeypatch.setattr(m, "_gateway", lambda ctx: _G())
+    r, ctx, root = du_an
+    _viet_nguon(root, "bme280.h", HEADER)
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    assert goi == [], "không có hộ chiếu mà vẫn gọi mô hình"
+    assert "passport.import" in md, "phải nêu năng lực cần chạy để có ví dụ"
+
+
+def test_macro_bao_bi_bo_khoi_chu_ky_nhung_kieu_tra_ve_thi_khong(du_an, monkeypatch):
+    """Header nhúng gói khai báo trong macro xuất khẩu (`BME280_API`) và macro thuộc tính đuôi.
+    Chúng là chi tiết của bộ dịch; in chúng ra thì người đọc không biết phải gõ gì."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    _viet_nguon(root, "bme280.h", HEADER)
+    md = __import__("pathlib").Path(
+        r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+    assert "int bme280_set_mode(uint8_t mode);" in md
+    assert "BME280_API" not in md and "BME280_DEPRECATED" not in md
+
+
+@pytest.mark.parametrize("ret,mong", [
+    ("__BEGIN_DECLS int ", "int"),                              # macro trần bao ngoài
+    ("__API_AVAILABLE(macos(10.4), ios(2.0)) int ", "int"),     # macro có đối số
+    ("DIR *", "DIR *"),                                         # KIỂU viết hoa, không phải macro
+    ("ESP_ERR ", "ESP_ERR"),
+    ("_Pragma( ) __BEGIN_DECLS ", ""),                          # cả câu chỉ là chuỗi macro
+])
+def test_kieu_tra_ve_VIET_HOA_khong_bi_nham_la_macro(ret, mong):
+    """Năm trường hợp này lấy từ `pthread.h`, `dirent.h`, `sys/stat.h` của SDK macOS — bộ đọc
+    chạy sai cả năm ở bản đầu. `DIR *opendir(…)` là chỗ nguy hiểm nhất: bỏ `DIR` đi thì chữ ký
+    vẫn in ra được, chỉ là không còn kiểu trả về, và không có gì báo."""
+    from eide.caps.doc import _bo_macro_bao
+    assert _bo_macro_bao(ret) == mong
+
+
+def test_ngon_ngu_chua_co_bo_phan_tich_thi_E4001(du_an):
+    """Lỗi duy nhất của hợp đồng. Bộ phân tích nội bộ chỉ đọc họ C; ngôn ngữ khác cần
+    Doxygen/tree-sitter mà kho chưa khai — [DEV-072]. Nói ra bằng E4001 kèm năng lực gỡ, chứ
+    không im lặng sinh một bản tham chiếu rỗng."""
+    r, ctx, root = du_an
+    _viet_nguon(root, "driver.rs", "pub fn init(addr: u8) -> i32 { 0 }\n")
+    run = r.invoke("doc.api_ref", {"src": ["src/driver.rs"]}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E4001"
+    assert "env.guide_install" in run.error["candidates"]
+    assert run.error["lang"] == ".rs"
+
+
+def test_tep_khong_co_thi_E2000_truoc_khi_ghi_gi(du_an):
+    """Kiểm mọi tệp TRƯỚC khi ghi: một tài liệu nửa vời tệ hơn không có tài liệu, vì nó trông
+    như đã xong."""
+    r, ctx, root = du_an
+    run = r.invoke("doc.api_ref", {"src": ["src/khong-co.h"]}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert run.error["missing"] == ["src/khong-co.h"]
+    assert not list((root / ".eide" / "docs").glob("api_ref*"))
+
+
+def test_ghi_DocArtifact_va_sinh_lai_cho_cung_id(du_an, monkeypatch):
+    """DDD-14 §2 DocArtifact. Id băm từ đường dẫn nên sinh lại cho cùng một id — cùng khuôn với
+    `doc.generate`, và nhờ vậy `doc.embed_diagram` trỏ vào được qua nhiều lần sinh."""
+    r, ctx, root = du_an
+    _gia_lap(monkeypatch, VI_DU)
+    _viet_nguon(root, "bme280.h", HEADER)
+    p1 = r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+    p2 = r.invoke("doc.api_ref", {"src": ["src/bme280.h"]}, ctx).result["path"]
+
+    assert p1 == p2
+    with store.open_store(store.store_path(root)) as c:
+        rows = c.execute("SELECT id, type, sections FROM doc_artifact WHERE path=?", (p1,)).fetchall()
+    assert len(rows) == 1 and rows[0][1] == "api_ref"
+    assert [s["heading"] for s in json.loads(rows[0][2])] == ["src/bme280.h"]
+
+
 def test_chuoi_P7_du_nang_luc():
     """P7 "bộ tài liệu" là chuỗi thứ hai đủ năng lực cho mọi bước. Giữ điều đó khỏi tụt đi trong
     im lặng khi ai đó đổi `chains.json` hoặc gỡ một năng lực."""
