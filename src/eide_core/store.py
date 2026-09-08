@@ -290,3 +290,30 @@ def _peek(path: Path) -> sqlite3.Connection:
     if not path.exists():
         return sqlite3.connect(":memory:")
     return sqlite3.connect(path)
+
+
+def ghi_tool_report(db: Path | str, rep: dict[str, Any]) -> str | None:
+    """Ghi một ToolReport (DDD-14 `tool_report`) và trả id, hoặc None nếu chưa có store.
+
+    Ở đây chứ không ở từng năng lực: `env.install`, `code.build`, `code.size`, `code.static`,
+    `code.test_host` đều sinh ToolReport, và năm bản sao của cùng một câu INSERT là năm chỗ phải
+    sửa khi bảng đổi — bốn trong năm sẽ bị quên.
+
+    Ghi cả khi `passed=false`. Một lần dựng hỏng là dữ liệu, không phải rác: nó là thứ trả lời
+    "vì sao máy này dựng được mà máy kia không".
+    """
+    import json
+    import secrets
+    db = Path(db)
+    if not db.exists():
+        return None
+    rid = "tr_" + secrets.token_hex(8)
+    with open_store(db) as c:
+        c.execute("INSERT INTO tool_report (id, tool, passed, log_ref, metrics, artifacts,"
+                  " duration_ms, started_by, at) VALUES (?,?,?,?,?,?,?,?,?)",
+                  (rid, rep["tool"], int(bool(rep.get("passed"))), rep.get("log_ref"),
+                   json.dumps(rep.get("metrics") or {}, ensure_ascii=False, default=str),
+                   json.dumps(rep.get("artifacts") or [], default=str),
+                   rep.get("duration_ms"), rep.get("started_by"), rep["at"]))
+        c.commit()
+    return rid

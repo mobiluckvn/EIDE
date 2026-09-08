@@ -10,12 +10,15 @@ không ai truy được nguồn.
 from __future__ import annotations
 
 import re
+import time
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from eide.caps.project import EIDE_DIR
-from eide_core import store
+from eide_core import store, tools
 from eide_core.errors import EideError
+from eide_core.paths import spec_dir
 from eide_core.registry import capability
 from eide_core.router import Context
 
@@ -314,3 +317,288 @@ def _fact(fid: str, can: dict[str, dict[str, Any]], ctx: Context) -> dict[str, A
             f = {"id": r[0], "value": r[1], "status": r[2], "tier": r[3]}
     can[fid] = f or {}
     return f
+
+
+# ---------------------------------------------------------------- CODE-05/06 build, size
+
+# Không có bảng lệnh dựng nào trong tệp này. `docs/spec/isa/*.yaml` đã mang `toolchain.build.cmd`,
+# `artifact`, `map`, và `static.cmd` — chép chúng sang Python là tạo bản thứ hai, và bản trong mã
+# là bản không ai sinh lại (cùng lỗi với PRED_W/DEV-043).
+
+
+def _du_an(ctx: Context, params: dict[str, Any]) -> Path:
+    root = Path(params.get("project") or (ctx.project_dir or "")).expanduser()
+    if not root.name or not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", "Nhóm code.* cần một dự án đang mở",
+                        exists=[], candidates=[], missing=["project"])
+    return root
+
+
+def _muc_tieu(root: Path) -> dict[str, Any]:
+    """`target` của dự án — `project.set_target` ghi vào `.eide/constraints.yaml`, không phải vào
+    một tệp riêng. Đọc sai tệp thì mọi dự án trông như chưa ghim ISA."""
+    import yaml
+    f = root / EIDE_DIR / "constraints.yaml"
+    cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    return dict(cu.get("target") or {})
+
+
+def _isa_cua(root: Path) -> str:
+    """ISA đã ghim của dự án (`project.set_target`). Không có thì không dựng được: mọi lệnh dựng
+    đều nằm trong manifest của một ISA cụ thể."""
+    isa = (_muc_tieu(root)).get("isa")
+    if not isa:
+        raise EideError("E2000", "Dự án chưa ghim ISA — chạy `project.set_target` trước "
+                        "(mọi lệnh dựng đến từ manifest của một ISA)",
+                        exists=[], candidates=[], missing=["isa"])
+    return str(isa)
+
+
+def manifest_isa(isa: str) -> dict[str, Any]:
+    import yaml
+    f = spec_dir() / "isa" / f"{isa}.yaml"
+    if not f.exists():
+        raise EideError("E2000", f"ISA '{isa}' chưa có manifest trong docs/spec/isa/ (TGT-19)")
+    return yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+
+
+def tach_lenh(chuoi: str) -> list[list[str]]:
+    """`"cmake -S . -B build && cmake --build build"` → hai lệnh dạng DANH SÁCH.
+
+    Manifest viết lệnh dựng thành một chuỗi shell vì đó là dạng người đọc; PLATFORM.md quy tắc 3
+    thì cấm gọi lệnh dạng chuỗi, và `Sandbox.run` chỉ nhận danh sách. Tách ở đây, một chỗ.
+
+    Chỉ tách `&&`. `|`, `>` hay `;` KHÔNG được hỗ trợ và cũng không nên: một lệnh dựng cần ống
+    dẫn là một lệnh cần shell, mà chạy shell trong sandbox là mở lại đúng cánh cửa vừa đóng.
+    """
+    import shlex
+    if any(x in chuoi for x in ("|", ">", "<", ";", "$(", "`")):
+        raise EideError("E2000", f"Lệnh dựng trong manifest ISA cần shell nên không chạy được "
+                        f"trong sandbox: {chuoi!r}. Chỉ hỗ trợ chuỗi lệnh nối bằng `&&`.")
+    return [shlex.split(x.strip()) for x in chuoi.split("&&") if x.strip()]
+
+
+# Phân loại lỗi của bước 1 CODE-05: "compile/link/size". Ba loại dẫn tới ba hành động khác nhau
+# — sửa mã, sửa cấu hình liên kết, cắt bớt — nên gộp chúng thành "build failed" là vứt đi thông
+# tin duy nhất giúp `code.self_repair` biết phải làm gì.
+MAU_LOI = [
+    ("size", re.compile(r"region `?\w+'? overflowed|will not fit in region|section .* overlaps",
+                        re.IGNORECASE)),
+    ("link", re.compile(r"undefined reference to|cannot find -l|multiple definition of|"
+                        r"ld(?:\.exe)?: ", re.IGNORECASE)),
+    ("compile", re.compile(r"^[^\s:]+:\d+:\d+:\s*(?:fatal\s+)?error:", re.MULTILINE)),
+]
+SO_DONG_LOI = 20            # bước 1: "trích 20 dòng lỗi đầu"
+
+
+def phan_loai_loi(log: str) -> dict[str, Any]:
+    """Nhật ký trình dịch → `{kind, lines[]}`.
+
+    Thứ tự xét quan trọng: một bản dựng tràn Flash cũng in dòng của `ld`, nên nếu xét `link`
+    trước thì mọi lỗi tràn bộ nhớ bị dán nhãn "lỗi liên kết" và `code.self_repair` sẽ đi sửa
+    khai báo hàm thay vì đi cắt mã.
+    """
+    for ten, mau in MAU_LOI:
+        if mau.search(log):
+            dong = [d for d in log.splitlines() if mau.search(d)] or log.splitlines()
+            return {"kind": ten, "lines": dong[:SO_DONG_LOI]}
+    return {"kind": "unknown", "lines": [d for d in log.splitlines() if d.strip()][:SO_DONG_LOI]}
+
+
+@capability("code.build")
+def build(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-05 — CDS-12.1; TGT-19 `toolchain.build`; SEC-25 §2. tc: TC-31; lỗi E4000, E4001.
+
+    Lệnh dựng đến từ `docs/spec/isa/<isa>.yaml`, không từ một bảng trong mã. Chạy trong sandbox
+    **không mạng**: một bản dựng cần tải phụ thuộc lúc biên dịch là một bản dựng không lặp lại
+    được, và đó là điều `env.lock` sinh ra để chống.
+
+    Thiếu công cụ → **E4001 trước khi chạy**, kèm đúng danh sách còn thiếu. Để `cmake` tự báo
+    "command not found" thì người dùng nhận một dòng lỗi shell thay vì câu "cài arm-none-eabi-gcc
+    rồi chạy lại", và `code.self_repair` sẽ tưởng mã sai mà đi sửa mã.
+    """
+    from eide.caps.env import check as env_check
+    from eide.caps.env import sandbox as env_sandbox
+
+    root = _du_an(ctx, params)
+    isa = _isa_cua(root)
+    man = manifest_isa(isa)
+    tc = (man.get("toolchain") or {}).get("build") or {}
+    if not tc.get("cmd"):
+        raise EideError("E2000", f"Manifest ISA `{isa}` không có `toolchain.build.cmd` (TGT-19)")
+
+    thieu = [r["tool"] for r in env_check({"isa": isa}, ctx)["report"] if not r["ok"]]
+    if thieu:
+        raise EideError("E4001", f"Thiếu công cụ để dựng {isa}: {', '.join(thieu)} — "
+                        "`env.install` hoặc `env.guide_install`",
+                        missing=thieu, isa=isa, remedy="env.install")
+
+    t0 = time.perf_counter()
+    ma, log_ref, err_ref = 0, None, None
+    for lenh in tach_lenh(str(tc["cmd"])):
+        kq = env_sandbox({"cmd": lenh, "network": False,
+                          "allowed_dirs": [str(root)],
+                          "limits": {"timeout_s": TIMEOUT_DUNG}}, ctx)
+        ma, log_ref, err_ref = kq["exit_code"], kq["stdout_ref"], kq["stderr_ref"]
+        if ma != 0:
+            break
+
+    loi = {}
+    if ma != 0:
+        noi_dung = ""
+        for ref in (err_ref, log_ref):
+            if ref and Path(ref).exists():
+                noi_dung += Path(ref).read_text(encoding="utf-8", errors="replace")
+        loi = phan_loai_loi(noi_dung)
+
+    artifact = _khop_dau_tien(root, tc.get("artifact"))
+    rep = {"tool": "build", "passed": ma == 0 and artifact is not None, "log_ref": log_ref,
+           "metrics": {"isa": isa, "exit_code": ma, "error_kind": loi.get("kind"),
+                       "error_lines": loi.get("lines", []),
+                       "map": _khop_dau_tien(root, tc.get("map"))},
+           "artifacts": [artifact] if artifact else [],
+           "duration_ms": int((time.perf_counter() - t0) * 1000),
+           "started_by": ctx.session_id, "at": datetime.now(UTC).isoformat()}
+    store.ghi_tool_report(store.store_path(root), rep)
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("tool.report", rep)
+
+    if not rep["passed"]:
+        ly = f"lỗi {loi.get('kind')}" if ma != 0 else "dựng xong nhưng không thấy artifact"
+        raise EideError("E4000", f"Dựng {isa} không thành: {ly}. Nhật ký: {err_ref}",
+                        isa=isa, exit_code=ma, error_kind=loi.get("kind"),
+                        error_lines=loi.get("lines", []), log=err_ref)
+    return {"report": rep}
+
+
+TIMEOUT_DUNG = 600
+
+
+def _khop_dau_tien(root: Path, mau: Any) -> str | None:
+    """`"build/*.elf"` → đường dẫn thật đầu tiên, hoặc None. Sắp để kết quả ổn định."""
+    if not mau:
+        return None
+    ds = sorted(root.glob(str(mau)))
+    return str(ds[0]) if ds else None
+
+
+# `arm-none-eabi-size` dạng Berkeley — dòng tiêu đề rồi một dòng số:
+#    text    data     bss     dec     hex filename
+#   12048     108    2064   14220    378c build/fw.elf
+RE_SIZE = re.compile(r"^\s*(\d+)\s+(\d+)\s+(\d+)\s+\d+\s+[0-9a-fA-F]+\s+\S", re.MULTILINE)
+
+# Dòng ký hiệu trong tệp .map của GNU ld: địa chỉ, kích thước, rồi tệp .o.
+#   .text.i2c_init  0x08000180  0x9c  CMakeFiles/fw.dir/src/i2c.c.obj
+RE_MAP = re.compile(r"^\s*(\.\S+)\s+0x([0-9a-fA-F]+)\s+0x([0-9a-fA-F]+)\s+(\S+)", re.MULTILINE)
+
+SO_KY_HIEU = 20             # "top_symbols[]" — 20 là đủ để thấy chỗ phình, không đủ để làm ngập
+
+
+@capability("code.size")
+def size(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-06 — CDS-12.1; ARCH-04 (ngân sách bộ nhớ). tc: "Vượt ngân sách → passed=false";
+    lỗi E4000.
+
+    **`passed=false` chứ không phải ném lỗi.** Một firmware vượt ngân sách vẫn dựng ra được và
+    vẫn nạp được — nó chỉ không còn chỗ cho bootloader và cho lần cập nhật sau. Đó là một KẾT
+    QUẢ ĐO, và `code.self_repair` cần đọc được con số để biết phải cắt bao nhiêu; ném lỗi thì
+    thứ duy nhất nó nhận được là "thất bại".
+
+    Ngưỡng lấy đúng của ARCH-04: 85% Flash, và cùng lý do — phần còn lại dành cho bootloader,
+    vùng cấu hình, và bản vá tại hiện trường. RAM thì so với 100%: RAM hết là chương trình
+    không chạy, không có chỗ cho "dành sau".
+    """
+    from eide.caps.arch import NGUONG_FLASH
+    from eide.caps.env import sandbox as env_sandbox
+
+    # Hợp đồng CODE-06 chỉ nhận `artifact` (`additionalProperties: false`), nên dự án lấy từ
+    # ngữ cảnh và tệp `.map` lấy từ manifest ISA — không nhận thêm tham số nào.
+    root = _du_an(ctx, {})
+    art = Path(params["artifact"])
+    if not art.is_absolute():
+        art = root / art
+    if not art.exists():
+        raise EideError("E4000", f"Không thấy artifact {art} — chạy `code.build` trước",
+                        artifact=str(art))
+
+    isa = _isa_cua(root)
+    man_tc = manifest_isa(isa).get("toolchain") or {}
+    ten_size = next((t["name"] for t in (man_tc.get("tools") or [])
+                     if str(t.get("name", "")).endswith("size")), "size")
+    duong = tools.which(ten_size)
+    if duong is None:
+        raise EideError("E4001", f"Thiếu `{ten_size}` — `env.install` hoặc `env.guide_install`",
+                        missing=[ten_size], remedy="env.install")
+
+    t0 = time.perf_counter()
+    kq = env_sandbox({"cmd": [str(duong), str(art)], "network": False,
+                      "allowed_dirs": [str(root)], "limits": {"timeout_s": 60}}, ctx)
+    if kq["exit_code"] != 0:
+        raise EideError("E4000", f"`{ten_size}` trả mã {kq['exit_code']} trên {art}",
+                        exit_code=kq["exit_code"], log=kq["stderr_ref"])
+    ra = Path(kq["stdout_ref"]).read_text(encoding="utf-8", errors="replace")
+    m = RE_SIZE.search(ra)
+    if not m:
+        raise EideError("E4000", f"Không đọc được kết quả của `{ten_size}`: {ra[:200]!r}")
+    text, data, bss = (int(x) for x in m.groups())
+
+    # Flash giữ cả `.text` lẫn `.data` — `.data` nằm trong ảnh nạp rồi được chép sang RAM lúc
+    # khởi động, nên nó chiếm chỗ ở CẢ HAI. Bỏ `data` khỏi flash là báo thiếu đúng phần hay
+    # tràn nhất ở một firmware nhiều bảng tra.
+    flash, ram = text + data, data + bss
+    gh = _gioi_han(root)
+    bao = {"text": text, "data": data, "bss": bss, "flash": flash, "ram": ram,
+           "limits": gh, "threshold_flash": NGUONG_FLASH,
+           "flash_pct": round(flash / gh["flash"] * 100, 2) if gh.get("flash") else None,
+           "ram_pct": round(ram / gh["ram"] * 100, 2) if gh.get("ram") else None,
+           "top_symbols": _ky_hieu_lon(root, _khop_dau_tien(root, (man_tc.get("build") or {}).get("map")))}
+
+    # Chưa biết giới hạn thì KHÔNG kết luận đạt. Một `passed=true` vì thiếu số liệu đọc y hệt
+    # một `passed=true` vì vừa vặn, và đó là kiểu im lặng nguy hiểm nhất.
+    dat = (bao["flash_pct"] is not None and bao["flash_pct"] <= NGUONG_FLASH * 100
+           and (bao["ram_pct"] is None or bao["ram_pct"] <= 100))
+    bao["reason"] = None if dat else _vi_sao(bao, NGUONG_FLASH)
+
+    rep = {"tool": "size", "passed": dat, "log_ref": kq["stdout_ref"], "metrics": bao,
+           "artifacts": [str(art)], "duration_ms": int((time.perf_counter() - t0) * 1000),
+           "started_by": ctx.session_id, "at": datetime.now(UTC).isoformat()}
+    store.ghi_tool_report(store.store_path(root), rep)
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("tool.report", rep)
+    return {"report": rep}
+
+
+def _vi_sao(bao: dict[str, Any], nguong: float) -> str:
+    if bao["flash_pct"] is None:
+        return "chưa biết dung lượng Flash của chip — ghim hộ chiếu bằng `project.set_target`"
+    if bao["flash_pct"] > nguong * 100:
+        return (f"Flash {bao['flash_pct']}% vượt ngưỡng {nguong:.0%} (chỗ còn lại dành cho "
+                "bootloader, vùng cấu hình và bản vá tại hiện trường)")
+    return f"RAM {bao['ram_pct']}% vượt 100%"
+
+
+def _gioi_han(root: Path) -> dict[str, int]:
+    """Dung lượng Flash/RAM của chip. Dùng lại phép tra của `arch.memory_budget` — cùng câu hỏi
+    thì phải cùng câu trả lời, và hai phép tra khác nhau sẽ lệch nhau đúng lúc quan trọng."""
+    from eide.caps.arch import _gioi_han_bo_nho
+    chip = _muc_tieu(root).get("chip")
+    return _gioi_han_bo_nho(root, str(chip)) if chip else {}
+
+
+def _ky_hieu_lon(root: Path, map_ref: Any) -> list[dict[str, Any]]:
+    """`top_symbols[]` từ tệp `.map`. Không có .map thì trả rỗng — đó là câu trả lời đúng, chứ
+    không phải lý do để hỏng cả phép đo kích thước."""
+    if not map_ref:
+        return []
+    f = Path(map_ref)
+    if not f.is_absolute():
+        f = root / f
+    if not f.exists():
+        return []
+    gom: dict[str, int] = {}
+    for ten, _dia_chi, kich, _obj in RE_MAP.findall(
+            f.read_text(encoding="utf-8", errors="replace")):
+        if (n := int(kich, 16)) > 0:
+            gom[ten] = gom.get(ten, 0) + n
+    return [{"symbol": k, "bytes": v}
+            for k, v in sorted(gom.items(), key=lambda kv: -kv[1])[:SO_KY_HIEU]]

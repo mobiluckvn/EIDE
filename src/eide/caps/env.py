@@ -1,10 +1,8 @@
 """Namespace env.* — CDS-12.3; TGT-19 (manifest ISA, toolchain); PLATFORM.md."""
 from __future__ import annotations
 
-import json
 import platform
 import re
-import secrets
 import sys
 import time
 from datetime import UTC, datetime
@@ -240,7 +238,8 @@ def install(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                        "trusted": ten in _goi_tin_cay(ctx)},
            "artifacts": [], "duration_ms": int((time.perf_counter() - t0) * 1000),
            "started_by": ctx.session_id, "at": datetime.now(UTC).isoformat()}
-    _ghi_tool_report(ctx, rep)
+    if root := (Path(ctx.project_dir).expanduser() if ctx.project_dir else None):
+        store.ghi_tool_report(store.store_path(root), rep)
     if (led := ctx.extra.get("ledger")) is not None:
         led.append("tool.report", rep)
 
@@ -266,24 +265,6 @@ def _goi_tin_cay(ctx: Context) -> list[str]:
     if g is None or not getattr(g, "danh_sach_da_ky", False):
         return []
     return list((getattr(g, "config", None) or {}).get("trusted_packages") or [])
-
-
-def _ghi_tool_report(ctx: Context, rep: dict[str, Any]) -> None:
-    """DDD-14 `tool_report`. Ghi cả khi cài HỎNG — một lần cài thất bại là dữ liệu, không phải
-    rác: nó là thứ trả lời "vì sao máy này dựng được mà máy kia không"."""
-    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
-    if not root:
-        return
-    db = store.store_path(root)
-    if not db.exists():
-        return
-    with store.open_store(db) as c:
-        c.execute("INSERT INTO tool_report (id, tool, passed, log_ref, metrics, artifacts,"
-                  " duration_ms, started_by, at) VALUES (?,?,?,?,?,?,?,?,?)",
-                  ("tr_" + secrets.token_hex(8), rep["tool"], int(rep["passed"]), rep["log_ref"],
-                   json.dumps(rep["metrics"], ensure_ascii=False), json.dumps(rep["artifacts"]),
-                   rep["duration_ms"], rep["started_by"], rep["at"]))
-        c.commit()
 
 
 def _cap_nhat_lock(ctx: Context, ten: str, ver: str | None, exe: Any) -> None:
