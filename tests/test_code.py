@@ -592,3 +592,188 @@ def test_cau_if_trong_ISR_khong_bi_dem_thanh_mot_ISR_nua():
     ds = [f for f in _pack(src) if f["rule"] == "no_delay_in_isr"]
     assert len(ds) == 1, f"báo trùng: {ds}"
     assert "`h`" in ds[0]["message"]
+
+
+# ---------- CODE-01 generate_module
+
+class _GW:
+    """Gateway giả. `compose` cần `prompt(role)` cho lớp C1 (CXD-10 §2); `run` trả CodePatch."""
+
+    def __init__(self, patch):
+        self.patch = patch
+        self.de_bai = None
+
+    def prompt(self, role):
+        return f"# vai trò {role}"
+
+    def run(self, role, prompt, schema, system_extra=""):
+        self.de_bai = prompt
+        assert role == "coder", role
+
+        class R:
+            data = self.patch
+        return R()
+
+
+def _ke_hoach(root, feature="F-01", quyet_dinh="APPROVE", buoc=None):
+    from eide.caps.plan import ghi_plan
+    plan = {"steps": buoc or [{"id": "step-2", "goal": "đọc nhiệt độ qua I2C",
+                               "cap": "code.generate_module", "done_when": "trả về mã lỗi 0",
+                               "cites": ["f_00000000000000ab"], "touches": ["none"]}]}
+    ghi_plan(root, feature, plan, {"decision": quyet_dinh, "rule": "G1-01", "reason": "x",
+                                   "gate": "G1"})
+
+
+def _cp(content="int f(void){ return 0; }\n", path="src/i2c.c", **them):
+    return {"files": [{"path": path, "content": content, "mode": "create"}],
+            "cites": ["f_00000000000000ab"], "rationale": "theo bước step-2", **them}
+
+
+def test_chua_co_ke_hoach_thi_khong_sinh_ma(du_an):
+    """Grounding của CODE-01 là "G1 approved". Không có kế hoạch thì không có gì đã được duyệt."""
+    from eide.caps.code import generate_module
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    ctx.extra["gateway"] = _GW(_cp())
+    with pytest.raises(EideError) as e:
+        generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert e.value.code == "E2000" and "plan/F-01" in e.value.data["missing"]
+
+
+def test_ke_hoach_chua_qua_cong_G1_thi_khong_sinh_ma(du_an):
+    """Sinh mã cho một kế hoạch đang chờ người là làm ngược thứ tự mà cả APD-08 dựng ra."""
+    from eide.caps.code import generate_module
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _ke_hoach(root, quyet_dinh="ASK")
+    ctx.extra["gateway"] = _GW(_cp())
+    with pytest.raises(EideError) as e:
+        generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert e.value.code == "E3000" and e.value.data["gate"] == "G1"
+
+
+def test_hang_so_khong_nguon_thi_E5003_va_patch_KHONG_duoc_luu(du_an):
+    """tc CODE-01: "Mọi hằng số có eide:fact"; TC-04. Lưu patch rồi mới chặn thì cái đã lưu là
+    một patch chưa qua guard, và `code.merge` sau này chỉ thấy một tệp trông hợp lệ."""
+    from eide.caps.code import generate_module
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _ke_hoach(root)
+    ctx.extra["gateway"] = _GW(_cp("#define BME280_ADDR 0x76\n"))
+    with pytest.raises(EideError) as e:
+        generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert e.value.code == "E5003"
+    assert e.value.data["violations"][0]["rule" if "rule" in e.value.data["violations"][0]
+                                        else "reason"] == "no_fact"
+    assert not (root / ".eide" / "patches").exists(), "patch bị chặn mà vẫn được lưu"
+
+
+def test_hang_so_co_fact_da_duyet_thi_qua_va_luu_patch(du_an):
+    from eide.caps.code import doc_patch, generate_module
+
+    _, ctx, root = du_an
+    _fact(root, "f_00000000000000ab", "0x76", status="verified", tier="gold")
+    _ke_hoach(root)
+    ctx.extra["gateway"] = _GW(_cp("#define A 0x76 /* eide:fact f_00000000000000ab */\n"))
+    out = generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert out["cites"] == ["f_00000000000000ab"]
+    luu = doc_patch(root, out["patch"]["id"])
+    assert luu["step_ref"] == "F-01/step-2"
+    assert luu["patch"]["files"][0]["path"] == "src/i2c.c"
+
+
+def test_KHONG_ghi_vao_repo_truoc_khi_merge(du_an):
+    """Sinh mã và ghi mã là hai quyết định khác nhau, và chỉ quyết định thứ hai mới cần reviewer
+    khác hãng qua cổng G3."""
+    from eide.caps.code import generate_module
+
+    _, ctx, root = du_an
+    _fact(root, "f_00000000000000ab", "0x76", status="verified", tier="gold")
+    _ke_hoach(root)
+    ctx.extra["gateway"] = _GW(_cp("#define A 0x76 /* eide:fact f_00000000000000ab */\n"))
+    generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert not (root / "src" / "i2c.c").exists(), "patch đã ghi thẳng vào repo"
+
+
+def test_missing_facts_cua_coder_duoc_ton_trong(du_an):
+    """PRS-16 §3 dạy coder "dừng và trả missing_facts[]" thay vì bịa. Phạt nó vì trung thực thì
+    lần sau nó bịa cho đủ — cùng bài học với `doc.section`."""
+    from eide.caps.code import generate_module
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _ke_hoach(root)
+    ctx.extra["gateway"] = _GW(_cp(missing_facts=["địa chỉ I2C của BME280"]))
+    with pytest.raises(EideError) as e:
+        generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert e.value.code == "E5003"
+    assert e.value.data["missing_facts"] == ["địa chỉ I2C của BME280"]
+
+
+@pytest.mark.parametrize("duong", [
+    "cmake/arm.cmake", "/etc/passwd", "../ngoai.c", ".eide/policy.sig",
+    "src/../.eide/policy.sig",
+])
+def test_tep_ngoai_pham_vi_bi_chan(du_an, duong):
+    """`src/../.eide/policy.sig` bắt đầu bằng `src/`, nên một phép so tiền tố thô cho nó qua —
+    và tác tử ghi đè được chữ ký chính sách bằng một patch trông hoàn toàn trong phạm vi."""
+    from eide.caps.code import generate_module
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _ke_hoach(root)
+    ctx.extra["gateway"] = _GW(_cp(path=duong))
+    with pytest.raises(EideError) as e:
+        generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert e.value.code == "E8000" and duong in e.value.data["files"]
+
+
+def test_files_allowed_cua_ben_goi_thay_pham_vi_mac_dinh(du_an):
+    from eide.caps.code import generate_module
+
+    _, ctx, root = du_an
+    _ke_hoach(root)
+    ctx.extra["gateway"] = _GW(_cp(path="drivers/i2c.c"))
+    out = generate_module({"step_ref": "F-01/step-2", "files_allowed": ["drivers/"]}, ctx)
+    assert out["patch"]["files"][0]["path"] == "drivers/i2c.c"
+
+
+def test_de_bai_mang_theo_muc_tieu_va_dieu_kien_xong(du_an):
+    """Mô hình phải thấy `goal` và `done_when` của bước, không chỉ thấy mã bước. Gửi mỗi
+    "F-01/step-2" là bắt nó đoán việc cần làm."""
+    from eide.caps.code import generate_module
+
+    _, ctx, root = du_an
+    _ke_hoach(root)
+    gw = _GW(_cp())
+    ctx.extra["gateway"] = gw
+    generate_module({"step_ref": "F-01/step-2"}, ctx)
+    assert "đọc nhiệt độ qua I2C" in gw.de_bai and "trả về mã lỗi 0" in gw.de_bai
+    assert "src/" in gw.de_bai
+
+
+def test_schema_gui_cho_coder_la_CodePatch_cua_PRS16():
+    from eide.caps.code import _schema_codepatch
+    from eide.caps.plan import schema_vai_tro
+
+    assert _schema_codepatch() == schema_vai_tro("CodePatch")
+    assert _schema_codepatch()["required"] == ["files", "cites", "rationale"]
+
+
+def test_tep_kiem_thu_khong_bi_constant_guard_quet(du_an):
+    """Một test khẳng định `bme280_dia_chi() == 0x76` đang KIỂM giá trị, không KHAI nó. Bắt nó
+    trích dẫn cùng fact mà mã đang kiểm cũng trích dẫn thì cả hai lấy số từ một chỗ, và test
+    không còn kiểm gì — nó chỉ xác nhận hai bản sao của cùng một biến bằng nhau.
+
+    Tìm ra bằng gọi mô hình THẬT: coder chú thích đúng trong `src/` rồi bị chặn vì ba lần `0x76`
+    trong tệp test nó tự viết. Xem DEV-064.
+    """
+    _, ctx, _ = du_an
+    assert constant_guard(_patch("int main(void){ return dia_chi() == 0x76 ? 0 : 1; }\n",
+                                 "tests/host/test_bme280.c"), ctx)["verdict"] == "pass"
+    # đối chứng: CÙNG nội dung ấy trong src/ vẫn bị chặn
+    assert constant_guard(_patch("int main(void){ return dia_chi() == 0x76 ? 0 : 1; }\n",
+                                 "src/bme280.c"), ctx)["verdict"] == "block"

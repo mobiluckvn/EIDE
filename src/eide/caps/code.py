@@ -9,10 +9,11 @@ không ai truy được nguồn.
 """
 from __future__ import annotations
 
+import json
 import re
 import time
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from eide.caps.project import EIDE_DIR
@@ -47,6 +48,21 @@ RE_THAP_PHAN = re.compile(r"\b\d{4,}[uUlL]*\b")
 NGUONG_THAP_PHAN = 1000
 
 DUOI_C = {".c", ".h", ".cpp", ".hpp", ".cc", ".cxx", ".hh", ".ino", ".s", ".S"}
+
+# Tệp KIỂM THỬ không bị quét, và đây là một quyết định thiết kế chứ không phải một lỗ hổng.
+#
+# Một test khẳng định `bme280_dia_chi() == 0x76` đang KIỂM giá trị, không KHAI nó. Bắt nó trích
+# dẫn cùng fact mà mã đang kiểm cũng trích dẫn thì cả hai lấy số từ một chỗ, và test không còn
+# kiểm gì nữa — nó chỉ xác nhận rằng hai bản sao của cùng một biến bằng nhau. Viết literal ra là
+# đúng cách viết test.
+#
+# Tìm ra bằng gọi mô hình THẬT (`tests/test_that.py`): coder chú thích đúng trong `src/`, rồi bị
+# chặn vì ba lần `0x76` trong tệp test nó tự viết. Giả lập không thể lộ ra chuyện này vì giả lập
+# trả đúng cái tôi bảo nó trả. Xem DEV-064.
+#
+# Lỗ hổng còn lại — nhét mã điều khiển vào `tests/` để né guard — bị chặn ở chỗ khác: `code.build`
+# dựng theo `CMakeLists` của dự án, và `code.test_host` chỉ chạy trên máy chủ.
+THU_MUC_KHONG_QUET = ("tests/",)
 
 # Bốn lý do chặn. Tách ra vì chúng dẫn tới bốn hành động khác nhau của người đọc, và gộp lại
 # thành "vi phạm" thì người ta phải đọc mã để biết phải làm gì.
@@ -224,6 +240,8 @@ def constant_guard(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         duong = str(f.get("path") or "")
         if Path(duong).suffix not in DUOI_C:
             continue                    # CODE-04 nói "ngữ cảnh phần cứng" — YAML/Markdown thì không
+        if any(duong.replace("\\", "/").startswith(x) for x in THU_MUC_KHONG_QUET):
+            continue
         vi_pham += _quet_tep(duong, str(f.get("content") or ""), can, ctx)
 
     return {"verdict": "block" if vi_pham else "pass", "violations": vi_pham}
@@ -947,3 +965,167 @@ def _bao_test(root: Path, ca: list[dict[str, Any]], t0: float, ctx: Context,
     if (led := ctx.extra.get("ledger")) is not None:
         led.append("tool.report", rep)
     return rep
+
+
+# ---------------------------------------------------------------- CODE-01 generate_module
+
+THU_MUC_PATCH = "patches"
+
+# Bước 4 của hợp đồng: "kiểm tệp trong phạm vi". Mặc định khi bên gọi không nêu `files_allowed` —
+# tác tử được viết vào mã nguồn và test của dự án, không được đụng cấu hình dựng, linker, hay
+# bất cứ thứ gì trong `.eide/`.
+PHAM_VI_MAC_DINH = ("src/", "include/", "tests/")
+CAM_TUYET_DOI = (EIDE_DIR + "/", ".git/", "..")
+
+
+@capability("code.generate_module")
+def generate_module(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-01 — CDS-12.1; PRS-16 §3 (coder) và §4 (CodePatch); CXD-10 (compose);
+    POL-17 G1 (grounding "G1 approved"). tc: "Mọi hằng số có eide:fact", TC-04;
+    lỗi E5001, E5002, E5003; undo `delete_created_files`.
+
+    Năm bước của hợp đồng, và ba trong năm là **từ chối**:
+
+    1. Tiền điều kiện `G1 approved` — kế hoạch của feature phải đã qua cổng G1. Không có kế
+       hoạch, hoặc cổng trả ASK, thì dừng: sinh mã cho một kế hoạch chưa ai duyệt là làm ngược
+       thứ tự mà cả APD-08 dựng ra.
+    2. `memory.compose(coder)` — ngữ cảnh có ngân sách, và **C4 là các fact của dự án**: mô hình
+       không trích được id fact mà nó chưa từng thấy.
+    3. Mô hình sinh CodePatch theo schema PRS-16 §4 (đọc từ `out_schemas.json`, không chép tay).
+    4. `code.constant_guard` — vi phạm thì **E5003**, không phải cảnh báo. Đây là chỗ TC-04 gặp
+       CODE-01, và là lý do cả tầng tri thức tồn tại.
+    5. Kiểm tệp trong phạm vi → E8000 nếu ra ngoài.
+
+    **Không ghi vào repo.** Patch nằm ở `.eide/patches/<id>.json` cho tới khi `code.merge` qua
+    cổng G3. Sinh mã và ghi mã là hai quyết định khác nhau, và chỉ quyết định thứ hai mới cần
+    reviewer khác hãng.
+
+    `missing_facts` của mô hình được TÔN TRỌNG: coder khai nó khi cần một hằng số mà C4 không
+    có, và prompt PRS-16 §3 dạy nó "dừng và trả missing_facts[]" thay vì bịa. Phạt nó vì trung
+    thực thì lần sau nó bịa cho đủ — cùng bài học với `doc.section`.
+    """
+    from eide.caps.memory import compose
+    from eide.caps.plan import doc_plan_feature
+
+    root = _du_an(ctx, params)
+    step_ref = str(params["step_ref"])
+    feature = step_ref.split("/")[0]
+
+    ke_hoach = doc_plan_feature(root, feature)
+    if ke_hoach is None:
+        raise EideError("E2000", f"Chưa có kế hoạch cho `{feature}` — chạy `plan.create` trước "
+                        "(CODE-01 đòi grounding \"G1 approved\")",
+                        exists=[], candidates=[], missing=[f"plan/{feature}"])
+    qd = ke_hoach.get("decision") or {}
+    if qd.get("decision") != "APPROVE":
+        raise EideError("E3000", f"Kế hoạch `{feature}` chưa qua cổng G1 "
+                        f"({qd.get('decision') or 'chưa hỏi'} — {qd.get('reason') or '?'}). "
+                        "CODE-01 đòi grounding \"G1 approved\".",
+                        gate="G1", rule=qd.get("rule"), feature=feature, plan_decision=qd)
+
+    buoc = _tim_buoc(ke_hoach, step_ref)
+    pham_vi = list(params.get("files_allowed") or PHAM_VI_MAC_DINH)
+
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+
+    bundle = compose({"role": "coder", "task_ref": step_ref}, ctx)["bundle"]
+    ngu_canh = "\n\n".join(b["text"] for b in bundle["blocks"] if b["layer"] != "C1")
+    resp = gw.run("coder", _de_bai(step_ref, buoc, pham_vi), _schema_codepatch(),
+                  system_extra=ngu_canh)
+    patch = dict(resp.data)
+
+    if (thieu := patch.get("missing_facts")):
+        raise EideError("E5003", "Coder dừng vì thiếu fact cho hằng số phần cứng: "
+                        + ", ".join(str(x) for x in thieu)
+                        + ". Dùng `kg.request`/`search.*` để bổ sung rồi gọi lại.",
+                        missing_facts=list(thieu), step_ref=step_ref, violations=[])
+
+    if (ngoai := _ngoai_pham_vi(patch, pham_vi)):
+        raise EideError("E8000", f"Patch chạm tệp ngoài phạm vi cho phép: {ngoai}",
+                        files=ngoai, allowed=pham_vi, violations=["path"])
+
+    kq = constant_guard({"patch": patch}, ctx)
+    if kq["verdict"] == "block":
+        raise EideError("E5003", f"{len(kq['violations'])} hằng số phần cứng không có nguồn hợp "
+                        "lệ (TC-04) — patch không được lưu.",
+                        violations=kq["violations"], step_ref=step_ref)
+
+    pid = _luu_patch(root, step_ref, patch, ctx)
+    patch["id"] = pid
+    return {"patch": patch, "cites": list(patch.get("cites") or [])}
+
+
+def _schema_codepatch() -> dict[str, Any]:
+    from eide.caps.plan import schema_vai_tro
+    return schema_vai_tro("CodePatch")
+
+
+def _tim_buoc(ke_hoach: dict[str, Any], step_ref: str) -> dict[str, Any]:
+    """Bước cụ thể trong kế hoạch. Không tìm thấy thì trả rỗng chứ không ném lỗi: `step_ref` có
+    thể trỏ cả một feature (`F-04`), và lúc ấy đề bài là chính feature ấy."""
+    ma = step_ref.split("/", 1)[1] if "/" in step_ref else None
+    ds = ((ke_hoach.get("plan") or {}).get("steps")) or []
+    return next((b for b in ds if str(b.get("id")) == ma), {}) if ma else {}
+
+
+def _de_bai(step_ref: str, buoc: dict[str, Any], pham_vi: list[str]) -> str:
+    d = [f"Viết mã cho bước `{step_ref}`."]
+    if buoc.get("goal"):
+        d.append(f"Mục tiêu: {buoc['goal']}")
+    if buoc.get("done_when"):
+        d.append(f"Xong khi: {buoc['done_when']}")
+    if buoc.get("touches"):
+        d.append(f"Bước này chạm: {', '.join(buoc['touches'])}")
+    d.append("Chỉ được sửa tệp trong: " + ", ".join(pham_vi))
+    return "\n".join(d)
+
+
+def _ngoai_pham_vi(patch: dict[str, Any], pham_vi: list[str]) -> list[str]:
+    """Đường dẫn phải nằm trong phạm vi, và `..` bị TỪ CHỐI chứ không được rút gọn.
+
+    `src/../.eide/policy.sig` bắt đầu bằng `src/`, nên một phép so tiền tố thô cho nó qua — và
+    tác tử ghi đè được chữ ký chính sách bằng một patch trông hoàn toàn trong phạm vi.
+
+    Từ chối thay vì rút gọn rồi so lại, vì một `..` trong đường dẫn của patch không bao giờ là ý
+    định lành: coder được cho danh sách thư mục cho phép, và cách viết đúng luôn là đường dẫn
+    thẳng. Rút gọn rồi cho qua là dạy nó rằng lối vòng cũng chấp nhận được.
+    """
+    ra: list[str] = []
+    for f in patch.get("files") or []:
+        p = str(f.get("path") or "")
+        chuan = PurePosixPath(p.replace("\\", "/"))
+        if p.startswith("/") or any(x == ".." for x in chuan.parts):
+            ra.append(p)
+            continue
+        s = str(chuan)
+        if any(s.startswith(c) for c in CAM_TUYET_DOI) or not any(
+                s == c.rstrip("/") or s.startswith(c) for c in pham_vi):
+            ra.append(p)
+    return ra
+
+
+def _luu_patch(root: Path, step_ref: str, patch: dict[str, Any], ctx: Context) -> str:
+    """Lưu patch tạm — bước 5 của hợp đồng: "không ghi repo cho tới merge"."""
+    import secrets
+    pid = "patch_" + secrets.token_hex(6)
+    f = root / EIDE_DIR / THU_MUC_PATCH / f"{pid}.json"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"id": pid, "step_ref": step_ref, "patch": patch,
+                             "at": datetime.now(UTC).isoformat()},
+                            ensure_ascii=False, indent=1), encoding="utf-8")
+    # `undo.register`, không phải một loại sự kiện mới: API-15 §5 là enum ĐÓNG, và undo của
+    # CODE-01 đúng là `delete_created_files` — tệp patch chính là thứ nó sẽ xóa.
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"patch:{pid}", "kind": "delete_created_files",
+                                     "cap": "code.generate_module", "step_ref": step_ref,
+                                     "files": [x.get("path") for x in (patch.get("files") or [])],
+                                     "cites": patch.get("cites") or []})
+    return pid
+
+
+def doc_patch(root: Path, pid: str) -> dict[str, Any] | None:
+    f = root / EIDE_DIR / THU_MUC_PATCH / f"{pid}.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None

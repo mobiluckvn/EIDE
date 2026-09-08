@@ -335,3 +335,56 @@ def test_trinh_quan_ly_goi_chay_duoc_trong_sandbox(tmp_path):
         err = Path(kq.stderr_ref).read_text(encoding="utf-8")
         assert "not permitted" not in err, err[:500]
         assert kq.exit_code == 0, err[:500]
+
+
+@pytest.mark.llm
+@can_khoa
+def test_coder_that_co_ghi_eide_fact_cho_hang_so_khong(du_an_that):
+    """tc của CODE-01 là **"Mọi hằng số có eide:fact"** — và đó là một câu hỏi về HÀNH VI CỦA
+    MÔ HÌNH, không phải về mã của ta.
+
+    Giả lập trả đúng cái tôi bảo nó trả, nên nó chứng minh `constant_guard` chạy được, chứ không
+    chứng minh prompt PRS-16 §3 dạy được mô hình làm điều nó đòi. Câu duy nhất đáng hỏi ở đây:
+    cho một fact có thật trong ngữ cảnh, coder có chú thích `/* eide:fact f_… */` đúng dạng
+    không, hay nó viết `0x76` trần rồi bị chặn?
+
+    Test chấp nhận HAI kết quả, và cả hai đều đúng:
+      · patch qua được guard — mô hình chú thích đúng;
+      · E5003 kèm `missing_facts` — mô hình dừng và nói thiếu, đúng như prompt dạy.
+    Chỉ một kết quả bị coi là hỏng: viết hằng số trần mà không khai gì, tức bịa cho đủ.
+    """
+    import hashlib
+
+    from eide.caps.code import generate_module
+    from eide.caps.plan import ghi_plan
+    from eide_core import store
+    from eide_core.errors import EideError
+
+    r, ctx, root = du_an_that
+    fid = "f_00000000000000ab"
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id,uri,sha256,kind,tier,license)"
+                  " VALUES (?,?,?,?,?,?)",
+                  ("s1", "bme280.pdf", hashlib.sha256(b"s1").hexdigest(), "pdf_vendor",
+                   "gold", "vendor-doc"))
+        c.execute("INSERT INTO fact (id, subject, predicate, value, source_id, method, tier,"
+                  " confidence, status, layer) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                  (fid, "part:bosch.bme280", "i2c.addr", "0x76", "s1", "parser", "gold",
+                   1.0, "verified", "A"))
+        c.commit()
+    ghi_plan(root, "F-01", {"steps": [{
+        "id": "step-1", "goal": "viết hàm bme280_init đặt địa chỉ I2C của cảm biến",
+        "cap": "code.generate_module", "done_when": "hàm trả 0 khi thành công",
+        "cites": [fid], "touches": ["none"]}]},
+        {"decision": "APPROVE", "rule": "G1-01", "reason": "kế hoạch nhỏ", "gate": "G1"})
+
+    try:
+        out = generate_module({"step_ref": "F-01/step-1"}, ctx)
+    except EideError as e:
+        assert e.code == "E5003", f"lỗi ngoài dự kiến: {e.code} {e}"
+        assert e.data.get("missing_facts"), \
+            ("mô hình viết hằng số phần cứng KHÔNG chú thích nguồn và cũng không khai thiếu — "
+             f"tức bịa cho đủ: {e.data.get('violations')}")
+        return
+    noi_dung = "\n".join(f["content"] for f in out["patch"]["files"])
+    assert "eide:fact" in noi_dung, f"patch qua guard nhưng không có chú thích nào:\n{noi_dung[:400]}"

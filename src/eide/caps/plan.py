@@ -272,9 +272,42 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     gate = ctx.extra.get("gate")
     d = gate.decide("G1", dac_trung, risk="R1", autonomy=ctx.autonomy,
                     tier="T1*", actor=ctx.actor) if gate else None
-    return {"plan": plan,
-            "decision": {"decision": d.decision, "rule": d.rule_id, "reason": d.reason,
-                         "gate": d.gate} if d else {}}
+    quyet_dinh = {"decision": d.decision, "rule": d.rule_id, "reason": d.reason,
+                  "gate": d.gate} if d else {}
+    plan["feature"] = feature
+    ghi_plan(root, feature, plan, quyet_dinh)
+    return {"plan": plan, "decision": quyet_dinh}
+
+
+THU_MUC_PLAN = "plans"
+
+
+def ghi_plan(root: Path, feature: str, plan: dict[str, Any], quyet_dinh: dict[str, Any]) -> Path:
+    """Lưu kế hoạch kèm QUYẾT ĐỊNH CỦA CỔNG vào `.eide/plans/<feature>.json`.
+
+    Không lưu thì `code.generate_module` không thực hiện được tiền điều kiện của chính nó: danh
+    mục ghi grounding của CODE-01 là **"G1 approved"**, mà kết quả của cổng G1 chỉ tồn tại trong
+    giá trị trả về của một lời gọi đã kết thúc. Không có chỗ đọc thì tiền điều kiện ấy hoặc bị bỏ
+    qua, hoặc phải tin bên gọi tự khai — cả hai đều biến một cổng thành lời khuyên.
+
+    Ghi cả khi cổng trả ASK. Một kế hoạch đang chờ người vẫn là dữ liệu; `code.generate_module`
+    đọc `decision` rồi từ chối, chứ không phải không tìm thấy gì rồi đoán.
+    """
+    f = root / EIDE_DIR / THU_MUC_PLAN / f"{feature}.json"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"feature": feature, "plan": plan, "decision": quyet_dinh,
+                             "at": _bay_gio()}, ensure_ascii=False, indent=1), encoding="utf-8")
+    return f
+
+
+def doc_plan_feature(root: Path, feature: str) -> dict[str, Any] | None:
+    f = root / EIDE_DIR / THU_MUC_PLAN / f"{feature}.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+
+
+def _bay_gio() -> str:
+    from datetime import UTC, datetime
+    return datetime.now(UTC).isoformat()
 
 
 def schema_vai_tro(ten: str) -> dict[str, Any]:
