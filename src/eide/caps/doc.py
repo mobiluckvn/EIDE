@@ -20,6 +20,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from eide.caps.project import EIDE_DIR
 from eide_core import store
 from eide_core.errors import EideError
@@ -348,3 +350,179 @@ _SCHEMA_SECTION = {
     "properties": {"markdown": {"type": "string"},
                    "citations": {"type": "array", "items": {"type": "string"}}},
 }
+
+
+# ---------------------------------------------------------------- DOC-05 bringup_guide
+
+
+@capability("doc.bringup_guide")
+def bringup_guide(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-05 — CDS-12.4; BOARD-01 (hộ chiếu board); DDD-14 (`discovery`, `tool_report`,
+    `error_ledger`). tc: TC-77; undo `delete_created_files`.
+
+    Tài liệu này viết cho **người ngồi trước một board chưa từng chạy**, nên nó không được là
+    một bản tóm tắt đẹp: nó phải trả lời đúng thứ tự các câu hỏi thật — cấp nguồn thế nào, cắm
+    probe vào đâu, nạp bằng lệnh gì, làm sao biết đã đúng chip, xem UART ở tốc độ nào, và khi
+    im lặng thì xem chỗ nào trước.
+
+    **Không gọi mô hình.** Mọi mục đều là dữ liệu đã có trong store: hộ chiếu board cho nguồn và
+    bus, manifest ISA cho probe và tốc độ nạp, `discovery` cho những gì đã dò được, `tool_report`
+    cho lần nạp đầu tiên, `error_ledger` cho lỗi đã gặp. Nhờ mô hình viết lại những thứ ấy chỉ
+    thêm một cơ hội để một con số bị đổi.
+
+    Mục nào chưa có dữ liệu thì **nói là chưa có**, kèm năng lực cần chạy để có. Một hướng dẫn
+    bringup nghe trôi chảy mà thiếu số thật là thứ dẫn người ta đi sai rồi mới biết.
+    """
+    root = _root(ctx)
+    board = str(params["board"])
+    from eide.caps.board import doc_net, doc_part
+
+    nets, parts = doc_net(root, board), doc_part(root, board)
+    isa = _isa_du_an(root)
+    man = _manifest(isa)
+
+    d = [f"# Hướng dẫn bringup — {board}", "",
+         f"*Sinh từ store ngày {datetime.now(UTC).date().isoformat()} — {len(nets)} net, "
+         f"{len(parts)} linh kiện. Mọi con số dưới đây lấy từ fact và manifest đã có; chỗ nào "
+         "chưa có dữ liệu đều ghi rõ là chưa có.*", ""]
+    d += _muc_nguon(nets)
+    d += _muc_probe(man, isa)
+    d += _muc_nap(man, isa, root)
+    d += _muc_kiem_id(man, isa)
+    d += _muc_uart(man, nets)
+    d += _muc_loi_thuong_gap(root)
+
+    f = root / EIDE_DIR / "docs" / f"bringup_{re.sub(r'[^0-9A-Za-z]+', '_', board)}.md"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text("\n".join(d), encoding="utf-8")
+    _ghi_doc_artifact(root, f, "bringup_guide")
+    return {"path": str(f)}
+
+
+def _chua_co(viec: str, nang_luc: str) -> list[str]:
+    return [f"*Chưa có dữ liệu: {viec}. Chạy `{nang_luc}` để có.*", ""]
+
+
+def _muc_nguon(nets: dict[str, list[dict[str, str]]]) -> list[str]:
+    from eide.caps.board import RE_DAT, RE_NGUON
+
+    d = ["## 1. Cấp nguồn", ""]
+    ap = sorted(t for t in nets if RE_NGUON.match(t))
+    dat = sorted(t for t in nets if RE_DAT.match(t))
+    if not ap and not dat:
+        return d + _chua_co("chưa biết net nguồn của board", "extract.kicad_netlist")
+    if ap:
+        d.append(f"- Net nguồn: {', '.join(f'`{x}`' for x in ap)}")
+        d.append("  Cấp đúng mức ghi trên net trước khi cắm probe — cấp nhầm 5 V vào một net "
+                 "3V3 hỏng chip trước khi có gì để gỡ.")
+    if dat:
+        d.append(f"- Net đất: {', '.join(f'`{x}`' for x in dat)} — nối đất chung với probe.")
+    return d + [""]
+
+
+def _muc_probe(man: dict[str, Any], isa: str) -> list[str]:
+    d = ["## 2. Cắm probe", ""]
+    dbg = (man.get("debug") or {})
+    if not dbg:
+        return d + _chua_co(f"manifest ISA `{isa}` không mô tả probe", "project.set_target")
+    d.append(f"- Probe dùng được: {', '.join(dbg.get('probes') or []) or 'chưa nêu'}")
+    if (tocdo := dbg.get("speed_khz") or {}):
+        d.append(f"- Tốc độ SWD/JTAG: mặc định {tocdo.get('default')} kHz "
+                 f"(khoảng {tocdo.get('min')}–{tocdo.get('max')} kHz). "
+                 "Dây dài hay board nhiễu thì hạ xuống mức thấp nhất rồi nâng dần — "
+                 "tốc độ quá cao biểu hiện giống hệt chip hỏng.")
+    for ten, mo_ta in (CHAN_GO_LOI.get(isa) or {}).items():
+        d.append(f"- `{ten}` — {mo_ta}")
+    return d + [""]
+
+
+# Chân gỡ lỗi cần nối, theo ISA. Lấy đúng tên trong `board.CHAN_GIU` để hai chỗ không lệch nhau:
+# `board.check_pins` cảnh báo khi ai đó dùng chúng cho việc khác, còn ở đây là lý do vì sao.
+CHAN_GO_LOI = {
+    "armv7e-m": {"SWDIO": "dữ liệu", "SWCLK": "xung nhịp", "NRST": "reset (nên nối)",
+                 "GND": "đất chung — thiếu nó thì probe đọc ra rác chứ không báo lỗi"},
+}
+
+
+def _muc_nap(man: dict[str, Any], isa: str, root: Path) -> list[str]:
+    d = ["## 3. Nạp firmware", ""]
+    fl = man.get("flash") or {}
+    if fl.get("adapters"):
+        d.append(f"- Bộ nạp: **{fl.get('default')}** (còn dùng được: "
+                 f"{', '.join(x for x in fl['adapters'] if x != fl.get('default'))})")
+        d.append(f"- Kiểm lại sau khi nạp: {'có' if fl.get('verify') else 'không'}")
+    else:
+        d += _chua_co(f"manifest ISA `{isa}` không nêu bộ nạp", "project.set_target")
+    if (bao := _lan_nap_dau(root)):
+        d.append(f"- Lần nạp gần nhất trong dự án này: `{bao['tool']}` "
+                 f"{'ĐẠT' if bao['passed'] else 'KHÔNG ĐẠT'} lúc {bao['at']}")
+    return d + [""]
+
+
+def _lan_nap_dau(root: Path) -> dict[str, Any] | None:
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    with store.open_store(db) as c:
+        r = c.execute("SELECT tool, passed, at FROM tool_report WHERE tool IN ('flash','build')"
+                      " ORDER BY at LIMIT 1").fetchone()
+    return {"tool": r[0], "passed": bool(r[1]), "at": r[2]} if r else None
+
+
+def _muc_kiem_id(man: dict[str, Any], isa: str) -> list[str]:
+    d = ["## 4. Kiểm đúng chip", ""]
+    idr = man.get("id_read") or {}
+    if not idr:
+        return d + _chua_co(f"manifest ISA `{isa}` không nêu cách đọc ID", "project.set_target")
+    d.append(f"- Cách đọc: `{idr.get('method')}` — `{idr.get('cmd')}`")
+    if (phu := idr.get("secondary") or {}):
+        d.append(f"- Đường dự phòng: đọc thanh ghi `{phu.get('name')}` tại `{phu.get('reg')}` "
+                 f"(mặt nạ `{phu.get('mask')}`)")
+    d.append("  ID không khớp nghĩa là **đang nạp nhầm chip** — dừng lại, đừng nạp tiếp.")
+    return d + [""]
+
+
+def _muc_uart(man: dict[str, Any], nets: dict[str, list[dict[str, str]]]) -> list[str]:
+    d = ["## 5. Xem UART", ""]
+    se = man.get("serial") or {}
+    if se.get("default_baud"):
+        d.append(f"- Tốc độ mặc định: **{se['default_baud']}** bps")
+        if se.get("auto_baud_list"):
+            d.append(f"- Không ra chữ đọc được thì thử: "
+                     f"{', '.join(str(x) for x in se['auto_baud_list'])}")
+    uart = sorted(t for t in nets if re.search(r"(^|[/_])(TX|RX|UART|USART)", t, re.IGNORECASE))
+    if uart:
+        d.append(f"- Net UART trên board: {', '.join(f'`{x}`' for x in uart)}")
+    return d + [""]
+
+
+def _muc_loi_thuong_gap(root: Path) -> list[str]:
+    """Từ SỔ LỖI của chính dự án, không phải một danh sách chung.
+
+    Một mục "lỗi thường gặp" chép từ Internet thì ai cũng đã đọc rồi. Cái có ích là lỗi mà DỰ ÁN
+    NÀY đã gặp — nó nói đúng board này, đúng toolchain này.
+    """
+    d = ["## 6. Khi không chạy — xem chỗ này trước", ""]
+    db = store.store_path(root)
+    ds: list[tuple[Any, ...]] = []
+    if db.exists():
+        with store.open_store(db) as c:
+            ds = c.execute("SELECT kind, negative_prompt, at FROM error_ledger"
+                           " ORDER BY at DESC LIMIT 10").fetchall()
+    if not ds:
+        return d + ["*Sổ lỗi của dự án còn trống — mục này sẽ dày lên sau mỗi lần gỡ lỗi thật.*",
+                    ""]
+    for kind, nhac, at in ds:
+        d.append(f"- **{kind}** ({str(at)[:10]}): {nhac or '—'}")
+    return d + [""]
+
+
+def _isa_du_an(root: Path) -> str:
+    f = root / EIDE_DIR / "constraints.yaml"
+    cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    return str(((cu.get("target") or {}).get("isa")) or "")
+
+
+def _manifest(isa: str) -> dict[str, Any]:
+    f = spec_dir() / "isa" / f"{isa}.yaml"
+    return (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if isa and f.exists() else {}

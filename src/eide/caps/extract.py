@@ -1215,3 +1215,206 @@ def _html(p: Path) -> list[dict[str, Any]]:
     pr = _P()
     pr.feed(p.read_text(encoding="utf-8", errors="ignore"))
     return pr.ra
+
+
+# ================================================================ EXTRACT-16 kicad_netlist
+
+# Netlist KiCad có hai dạng máy đọc được, và cả hai đều dùng được mà KHÔNG cần `kicad-cli`:
+#   .net  s-expression  (export (components (comp (ref "U1") …)) (nets (net …)))
+#   .xml  kicadxml      cùng cấu trúc, thẻ XML
+# `kicad-cli` chỉ cần khi đầu vào là `.kicad_sch` — tức sơ đồ nguồn chưa xuất netlist.
+DUOI_NETLIST = {".net", ".xml"}
+DUOI_SCHEMATIC = {".kicad_sch", ".sch"}
+
+
+@capability("extract.kicad_netlist")
+def kicad_netlist(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-16 — CDS-12.2; SEC-25 §2 (sandbox). tc: TC-20 ≥ 95%; lỗi E4001.
+
+    Netlist là **nguồn tầng vàng cho một board**: nó do chính người thiết kế mạch xuất ra, nên
+    "chân nào nối vào net nào" ở đây chắc chắn hơn mọi thứ đọc được từ ảnh hay từ README. Đó là
+    lý do fact sinh ra ở đây mang tier `gold` còn `extract.image_schematic` thì không.
+
+    `kicad-cli` chỉ cần khi đầu vào là sơ đồ nguồn (`.kicad_sch`). Một tệp `.net` hay kicadxml
+    đã là netlist rồi — bắt cài cả bộ KiCad để đọc một tệp s-expression là dựng một rào cản
+    không có lý do.
+
+    **Tên board lấy từ tên tệp**, vì `input_schema` của EXTRACT-16 chỉ nhận `file` và đóng
+    `additionalProperties`. Bản đầu nhận thêm `name`, và nó chạy trong test vì test gọi thẳng
+    hàm — nhưng qua router thì `name` bị E1000 chặn trước khi vào đây, tức một tham số không
+    ai dùng được. Xem [DEV-066]: đề nghị CDS-12.2 thêm `name` cho EXTRACT-16, vì tên tệp
+    (`robot.net`) thường không phải tên board (`robot-main`) mà `board.build_passport` hỏi tới.
+    """
+    root = _root(ctx)
+    p = Path(params["file"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+
+    if p.suffix.lower() in DUOI_SCHEMATIC:
+        p = _xuat_netlist(p, ctx)
+    elif p.suffix.lower() not in DUOI_NETLIST:
+        raise EideError("E6001", f"`{p.name}` không phải netlist ({sorted(DUOI_NETLIST)}) hay "
+                        f"sơ đồ KiCad ({sorted(DUOI_SCHEMATIC)})", file=str(p))
+
+    parts, nets = doc_netlist(p)
+    if not nets:
+        raise EideError("E6001", f"Không đọc được net nào từ {p.name} — tệp rỗng hay sai định dạng?",
+                        file=str(p), parts=len(parts))
+
+    sid = _bao_dam_source(root, p, "netlist", "gold")
+    ten = p.stem
+    bid = f"board:{re.sub(r'[^A-Za-z0-9_.-]+', '-', ten).lower()}"
+    pid = f"{bid.split(':', 1)[1]}@1.0.0"
+    facts = _facts_netlist(bid, parts, nets, sid)
+
+    from eide.caps.passport import import_
+    import_({"batch": {"facts": facts, "passport_id": pid,
+                       "kind": "board", "reason": f"extract.kicad_netlist {p.name}",
+                       "header": {"name": ten, "source": p.name, "parts": len(parts)}},
+             "actor": ctx.actor}, ctx)
+    return {"board_passport_id": pid, "nets": len(nets), "parts": len(parts)}
+
+
+def _xuat_netlist(p: Path, ctx: Context) -> Path:
+    """`.kicad_sch` → netlist, qua `kicad-cli` trong sandbox (bước 1 của hợp đồng)."""
+    from eide.caps.env import sandbox as env_sandbox
+    from eide_core import tools
+    exe = tools.which("kicad-cli")
+    if exe is None:
+        raise EideError("E4001", "Đầu vào là sơ đồ nguồn KiCad nên cần `kicad-cli` để xuất "
+                        "netlist. Có sẵn tệp `.net`/`.xml` thì truyền thẳng tệp ấy — không cần "
+                        "cài gì.", missing=["kicad-cli"], remedy="env.install", file=str(p))
+    ra = p.with_suffix(".net")
+    kq = env_sandbox({"cmd": [str(exe), "sch", "export", "netlist", "--format", "kicadxml",
+                              "-o", str(ra), str(p)],
+                      "network": False, "allowed_dirs": [str(p.parent)],
+                      "limits": {"timeout_s": 300}}, ctx)
+    if kq["exit_code"] != 0 or not ra.exists():
+        raise EideError("E4000", f"`kicad-cli` không xuất được netlist từ {p.name}",
+                        exit_code=kq["exit_code"], log=kq["stderr_ref"])
+    return ra
+
+
+def doc_netlist(p: Path) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, str]]]]:
+    """`(parts, nets)` từ một tệp netlist. Nhận cả kicadxml lẫn s-expression."""
+    noi_dung = p.read_text(encoding="utf-8", errors="replace")
+    if noi_dung.lstrip().startswith("<"):
+        return _netlist_xml(noi_dung)
+    return _netlist_sexp(noi_dung)
+
+
+def _netlist_xml(noi_dung: str) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, str]]]]:
+    goc = ET.fromstring(noi_dung)  # noqa: S314 — netlist do người dùng xuất, không phải mạng
+    parts = {}
+    for c in goc.findall(".//components/comp"):
+        ref = c.get("ref") or ""
+        if ref:
+            parts[ref] = {"ref": ref, "value": _text(c, "value"),
+                          "footprint": _text(c, "footprint"), "mpn": _mpn_xml(c)}
+    nets: dict[str, list[dict[str, str]]] = {}
+    for n in goc.findall(".//nets/net"):
+        ten = n.get("name") or f"Net-{n.get('code')}"
+        nets[ten] = [{"ref": nd.get("ref") or "", "pin": nd.get("pin") or ""}
+                     for nd in n.findall("node")]
+    return parts, nets
+
+
+def _mpn_xml(c: ET.Element) -> str | None:
+    for f in c.findall(".//fields/field"):
+        if (f.get("name") or "").lower() in ("mpn", "manufacturer part number", "part number"):
+            return (f.text or "").strip() or None
+    return None
+
+
+# S-expression: đủ cho netlist KiCad, không phải trình phân tích Lisp đầy đủ. Netlist chỉ dùng
+# danh sách lồng và chuỗi trong nháy kép — không có ký tự thoát phức tạp, không có số thực đặc
+# biệt, nên một máy trạng thái nhỏ là đủ và không kéo thêm phụ thuộc nào.
+def _sexp(s: str) -> Any:
+    i, n = 0, len(s)
+    ngan_xep: list[list[Any]] = [[]]
+    while i < n:
+        c = s[i]
+        if c == "(":
+            moi: list[Any] = []
+            ngan_xep[-1].append(moi)
+            ngan_xep.append(moi)
+        elif c == ")":
+            if len(ngan_xep) > 1:
+                ngan_xep.pop()
+        elif c == '"':
+            j = i + 1
+            ra = []
+            while j < n and s[j] != '"':
+                if s[j] == "\\" and j + 1 < n:
+                    j += 1
+                ra.append(s[j])
+                j += 1
+            ngan_xep[-1].append("".join(ra))
+            i = j
+        elif not c.isspace():
+            j = i
+            while j < n and not s[j].isspace() and s[j] not in "()":
+                j += 1
+            ngan_xep[-1].append(s[i:j])
+            i = j - 1
+        i += 1
+    return ngan_xep[0]
+
+
+def _lay(node: list[Any], ten: str) -> list[Any]:
+    return [x for x in node if isinstance(x, list) and x and x[0] == ten]
+
+
+def _gia_tri(node: list[Any], ten: str) -> str | None:
+    ds = _lay(node, ten)
+    return str(ds[0][1]) if ds and len(ds[0]) > 1 else None
+
+
+def _netlist_sexp(noi_dung: str) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, str]]]]:
+    cay = _sexp(noi_dung)
+    goc = cay[0] if cay and isinstance(cay[0], list) else []
+    parts: dict[str, dict[str, Any]] = {}
+    for kh in _lay(goc, "components"):
+        for c in _lay(kh, "comp"):
+            if (ref := _gia_tri(c, "ref")):
+                parts[ref] = {"ref": ref, "value": _gia_tri(c, "value"),
+                              "footprint": _gia_tri(c, "footprint"), "mpn": _mpn_sexp(c)}
+    nets: dict[str, list[dict[str, str]]] = {}
+    for kh in _lay(goc, "nets"):
+        for nt in _lay(kh, "net"):
+            ten = _gia_tri(nt, "name") or f"Net-{_gia_tri(nt, 'code')}"
+            nets[ten] = [{"ref": _gia_tri(nd, "ref") or "", "pin": _gia_tri(nd, "pin") or ""}
+                         for nd in _lay(nt, "node")]
+    return parts, nets
+
+
+def _mpn_sexp(c: list[Any]) -> str | None:
+    for kh in _lay(c, "fields"):
+        for f in _lay(kh, "field"):
+            ten = next((str(x[1]) for x in f if isinstance(x, list) and x and x[0] == "name"
+                        and len(x) > 1), "")
+            if ten.lower() in ("mpn", "manufacturer part number", "part number"):
+                return str(f[-1]) if len(f) > 1 and isinstance(f[-1], str) else None
+    return None
+
+
+def _facts_netlist(bid: str, parts: dict[str, dict[str, Any]],
+                   nets: dict[str, list[dict[str, str]]], sid: str) -> list[dict[str, Any]]:
+    """Mỗi net một fact `net`, mỗi linh kiện một fact `package`.
+
+    Chủ thể của fact `net` là `board:<tên>/net:<tên net>` — nối được về board mà vẫn phân biệt
+    được từng net, nên `board.check_pins` tra thẳng bằng `subject LIKE` thay vì phải giải nén
+    một fact khổng lồ chứa cả sơ đồ.
+    """
+    ra: list[dict[str, Any]] = []
+    for ten, nodes in sorted(nets.items()):
+        ra.append({"subject": f"{bid}/net:{ten}", "predicate": "net",
+                   "value": {"name": ten, "nodes": nodes}, "source_id": sid,
+                   "method": "parser", "tier": "gold", "confidence": 1.0,
+                   "locator": f"net:{ten}"})
+    for ref, pt in sorted(parts.items()):
+        ra.append({"subject": f"{bid}/part:{ref}", "predicate": "package",
+                   "value": {k: v for k, v in pt.items() if v}, "source_id": sid,
+                   "method": "parser", "tier": "gold", "confidence": 1.0,
+                   "locator": f"comp:{ref}"})
+    return ra

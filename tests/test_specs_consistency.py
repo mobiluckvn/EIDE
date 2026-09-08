@@ -84,6 +84,40 @@ def test_vi_du_cua_hop_dong_phai_qua_noi_input_schema_cua_chinh_no():
     assert not loi, "ví dụ mâu thuẫn với input_schema:\n  " + "\n  ".join(loi)
 
 
+def test_hien_thuc_khong_doc_tham_so_ma_input_schema_khong_cho_phep():
+    """Mọi khoá `params["x"]` / `params.get("x")` trong hiện thực phải nằm trong `input_schema`.
+
+    Cả 238 hợp đồng đều đóng `additionalProperties`, nên router chặn bằng E1000 **trước khi**
+    vào handler (API-15 §3). Một tham số handler đọc mà schema không khai là tham số **không ai
+    truyền được**: nó chỉ chạy khi test gọi thẳng hàm, và im lặng biến mất trên đường thật.
+
+    Đó là một lỗi khó thấy đúng vì test vẫn xanh — test gọi thẳng hàm thì không qua router. Đã
+    hỏng thật một lần: `extract.kicad_netlist` nhận `name` để đặt tên board, có test xanh, mà
+    qua router thì E1000; tên board rơi về tên tệp và `board.build_passport` không tìm thấy net.
+    Xem DEV-066. Phép kiểm này là phần làm được ngay của WI-253.
+    """
+    import inspect
+
+    from eide.cli import main  # noqa: F401 — nạp mọi module caps để registry đầy đủ
+
+    cds = {c["id"]: c for c in json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))}
+    loi = []
+    for c in get_registry().list(implemented=True):
+        try:
+            src = inspect.getsource(c.handler)
+        except OSError:                       # handler dựng lúc chạy, không có mã nguồn
+            continue
+        doc = set(re.findall(r'params\[\s*"([A-Za-z_]\w*)"\s*\]', src))
+        doc |= set(re.findall(r'params\.get\(\s*"([A-Za-z_]\w*)"', src))
+        sch = cds[c.spec.id]["input_schema"]
+        if sch.get("additionalProperties") is not False:
+            continue
+        if (thua := doc - set(sch.get("properties") or {})):
+            loi.append(f"{c.spec.id}: đọc {sorted(thua)} — input_schema chỉ cho "
+                       f"{sorted(sch.get('properties') or {})}")
+    assert not loi, "tham số router sẽ chặn bằng E1000 trước khi handler thấy:\n  " + "\n  ".join(loi)
+
+
 def test_ket_qua_sai_output_schema_la_E1004_khong_phai_E6001():
     """API-15 §3 v1.5: lỗi hiện thực có mã RIÊNG, không mượn mã của lỗi dữ liệu (DEV-002).
 

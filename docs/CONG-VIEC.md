@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 8) từ registry — không gõ tay. Còn **107/238** năng lực. Xem
+*Đo 08/09/2026 (lần 9) từ registry — không gõ tay. Còn **103/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -20,6 +20,7 @@ chủ sản phẩm 08/09).
 | P5 | [DEV-064](DEVIATIONS.md) — bỏ `tests/` khỏi phạm vi `constant_guard` | Quyết định thiết kế, tìm ra bằng gọi mô hình thật; cần anh xác nhận trước khi nó thành thói quen |
 | P6 | [DEV-063](DEVIATIONS.md) — bố cục `tests/host` cho `code.test_host` | Quy ước do tôi đặt vì CODE-08 không nói; cần anh chốt trước khi `code.generate_tests` sinh test theo nó |
 | P7 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
+| P7b | [DEV-066](DEVIATIONS.md) — EXTRACT-16 thiếu `name` | Mã đã sửa cho khớp tài liệu (tên board = tên tệp). Chốt có thêm tham số hay giữ nguyên |
 | P8 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
 | P9 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
@@ -89,12 +90,13 @@ viết tài liệu về mình, có trích dẫn tới fact. Đó là bằng ch�
 
 ---
 
-## E. `board.*` — 5 năng lực (M2)
+## E. `board.*` — còn 3 (M2)
 
-`build_passport`, `check_pins`, `constraints`, `mark_lab`, `propose_fix`.
+~~`build_passport`, `check_pins`~~ — **xong 08/09**, cùng `extract.kicad_netlist` và
+`doc.bringup_guide`. **Chuỗi Z-07 nay đủ năng lực cho cả 23 bước.**
 
-Chỗ đứt hiện tại của **Z-07**. Không cần phần cứng — nó làm việc trên BOM và netlist, chứ chưa
-chạm board. `check_pins` dùng lại phép phát hiện xung đột đã có trong `arch.map_hw`.
+Còn `constraints`, `mark_lab`, `propose_fix`. `mark_lab` là T2 "hỏi luôn (một lần)" — nó ghi
+`boards.<id>.lab` vào danh sách đã ký, tức chạm trực tiếp vào cổng G-OPS.
 
 ---
 
