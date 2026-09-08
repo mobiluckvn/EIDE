@@ -47,6 +47,8 @@ c.push(T([2200, 2200, 4000], ['Từ vựng chính sách', 'Enum DDD-14 §2', 'Đ
   ['svd / atdf / edc / binding', 'như nhau', 'không cần ánh xạ'],
 ]));
 c.push(SP());
+c.push(P('**Hai đặc trưng của cổng G1 được SUY RA, không do vai trò khai.** `plan.touches_forbidden` và `plan.arch_change` không phải trường mà planner viết vào Plan; chúng tính từ `Plan.steps[].touches` (PRS-16 §4, enum đóng `isr | linker | clock | dma | power | actuator | none`). `touches_forbidden` đúng khi CÓ bước nào chạm một giá trị khác `none` — G1-01 nói "kế hoạch nhỏ", mà một bước động vào ngắt, linker, clock, DMA, nguồn hay cơ cấu chấp hành thì không còn nhỏ. `arch_change` đúng khi có bước chạm `linker` hoặc `clock`, theo chính lý do của G1-03 ("Đổi kiến trúc (RTOS, clock, linker)"); RTOS không có trong enum nên không suy được từ `touches`. Ghi rõ ở đây vì bản v1.2 dùng hai tên ấy mà không nói chúng đến từ đâu, và một hiện thực đọc chúng như trường mức kế hoạch sẽ thấy cả hai luôn sai — G1-03 thành quy tắc chết. Xem DEVIATIONS DEV-061.'));
+c.push(SP());
 c.push(P('**Đặc trưng chưa được cung cấp luôn được coi là SAI**, dù nó viết dưới dạng thuộc tính (`board.has_actuator`) hay tên trần (`needs_sudo`). Một hiện thực để tên trần vắng mặt mang tính đúng sẽ làm mọi quy tắc chứa `or <tên đó>` khớp vô điều kiện: đo được trên `G-OPS-05` (ưu tiên 5, ASK), nó che hẳn `G-OPS-04` (ưu tiên 10, APPROVE) và không gói nào trong `trusted_packages` được duyệt tự động — cả danh sách gói tin cậy trở nên vô nghĩa mà bốn mươi lăm tình huống §8 vẫn xanh, vì không tình huống nào bỏ trống đặc trưng ấy. Xem DEVIATIONS DEV-033.'));
 c.push(SP());
 c.push(...CODE([

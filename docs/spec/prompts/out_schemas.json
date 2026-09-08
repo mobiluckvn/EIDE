@@ -12,19 +12,19 @@
     "items": {
      "type": "object",
      "required": [
-      "n",
+      "id",
       "goal",
-      "by",
+      "cap",
       "done_when"
      ],
      "properties": {
-      "n": {
-       "type": "integer"
+      "id": {
+       "type": "string"
       },
       "goal": {
        "type": "string"
       },
-      "by": {
+      "cap": {
        "type": "string"
       },
       "done_when": {

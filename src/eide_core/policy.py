@@ -31,6 +31,21 @@ MAX_AUTO_RISK = {"A0": -1, "A1": 1, "A2": 2, "A3": 3, "A4": 3}
 # lời khuyên chung. Ngưỡng cứng chỉ mượn lý do từ dải này — xem `decide` tầng 2, DEVIATIONS DEV-012.
 PRI_CHAN = 5
 
+# Ba khóa danh sách trắng được NIÊM trong `defaults.sig` (POL-17 §3). Một quy tắc nhắc tới một
+# trong ba là một quy tắc "chủ sản phẩm đã ký trước cho việc này".
+KHOA_DANH_SACH = ("trusted_packages", "trusted_sources", "allowed_licenses")
+
+
+def _dua_tren_danh_sach(rule: dict[str, Any]) -> bool:
+    """Quy tắc có dựa trên danh sách trắng đã ký không — ĐỌC TỪ `when`, không liệt kê tay.
+
+    Liệt kê `{"G-OPS-04"}` thì thêm một quy tắc danh-sách-trắng mới vào POL-17 sẽ lặng lẽ không
+    có tác dụng, và không ai biết cho tới lúc cần. Đọc từ điều kiện thì bảng quy tắc vẫn là
+    nguồn duy nhất.
+    """
+    return any(k in str(rule.get("when", "")) for k in KHOA_DANH_SACH)
+
+
 
 @dataclass
 class Decision:
@@ -139,13 +154,39 @@ class PolicyGate:
         # cứng vẫn ra ASK. REJECT thì mạnh hơn ASK nên được giữ nguyên.
         env = self._env(features, level, board)
         r = int(risk[1]) if len(risk) > 1 and risk[1].isdigit() else 1
+        khop = self._match(gate, env)
+
+        # DANH SÁCH TRẮNG ĐÃ KÝ là lối duy nhất cho một hành động R4 — chữ của POL-17 §2, trong
+        # chính mã giả của nó: `MIN_LEVEL = {…, "R4": 5}  # R4: không mức nào đủ (chỉ whitelist)`.
+        # CDS-12.3 nói cùng điều ở cột lớp rủi ro của ENV-03: "R4→T1 theo danh sách trắng", và
+        # POL-17 §8 S33 ("A3; install renode (trusted)" → APPROVE G-OPS-04) là tình huống nghiệm
+        # thu của đúng lối ấy.
+        #
+        # Trước 08/09/2026 hiện thực không có lối này: mọi R4 đều ASK, nên `G-OPS-04` là quy tắc
+        # chết và S33 không thể xảy ra với một năng lực R4 nào. Xem DEV-060.
+        #
+        # Ba điều kiện, hẹp có chủ ý:
+        #   (1) quy tắc khớp là APPROVE — không phải mọi quy tắc, chỉ quy tắc nói "được phép";
+        #   (2) điều kiện của nó DỰA TRÊN một danh sách trắng (đọc từ `when`, không liệt kê tay);
+        #   (3) niêm `defaults.sig` còn đạt — chữ ký của chủ sản phẩm chính là lần hỏi người.
+        #
+        # Điều kiện (3) là DƯ, và nói ra chỗ dư ấy: niêm hỏng thì `_env` bỏ hẳn ba khóa danh sách,
+        # nên `package in trusted_packages` ném TypeError và quy tắc không khớp — lối này đã đóng
+        # trước khi tới đây. Giữ lại vì nó là bất biến quan trọng nhất của cả nhánh, và một lớp
+        # bảo vệ viết ra rõ ràng thì không hỏng lặng lẽ khi `_env` đổi cách xử lý niêm.
+        #
+        # Hạ xuống R2 chứ không hạ thẳng thành APPROVE: mức tự chủ vẫn phải đủ. Ở A1 thì R2 vẫn
+        # vượt mức và vẫn hỏi — đúng như `test_ngưỡng_cứng` của POL-17 đòi.
+        if r >= 4 and self.danh_sach_da_ky and khop and khop["decision"] == APPROVE \
+                and _dua_tren_danh_sach(khop):
+            r = 2
+
         cung = None
         if r >= 4:
             cung = ("HARD-R4", "Hành động lớp R4 không hoàn tác được — luôn hỏi người")
         elif r > MAX_AUTO_RISK[level] and r > 0:
             cung = (f"HARD-{level}", f"Lớp {risk} vượt mức tự chủ {level}")
         if cung:
-            khop = self._match(gate, env)
             # Chỉ mượn lý do của quy tắc NÓI VỀ CHÍNH HÀNH ĐỘNG NÀY. Quy tắc trong dải chặn
             # (priority <= PRI_CHAN) mô tả vì sao hành động này nguy hiểm — "Không hoàn tác",
             # "Công khai", "Hằng số không nguồn". Quy tắc ưu tiên lớn hơn là lời khuyên chung

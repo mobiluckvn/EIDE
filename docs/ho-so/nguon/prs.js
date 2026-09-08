@@ -98,7 +98,7 @@ for (const [role, text] of Object.entries(PROMPTS)) {
 const SCHEMA_LINES = [
   '# Plan',
   '{"type":"object","required":["steps","citations","missing"],"properties":{',
-  ' "steps":{"type":"array","items":{"type":"object","required":["n","goal","by","done_when"],"properties":{"n":{"type":"integer"},"goal":{"type":"string"},"by":{"type":"string"},"done_when":{"type":"string"},"cites":{"type":"array","items":{"type":"string"}},"needs_review":{"type":"boolean"},"touches":{"type":"array","items":{"type":"string","enum":["isr","linker","clock","dma","power","actuator","none"]}}}}},',
+  ' "steps":{"type":"array","items":{"type":"object","required":["id","goal","cap","done_when"],"properties":{"id":{"type":"string"},"goal":{"type":"string"},"cap":{"type":"string"},"done_when":{"type":"string"},"cites":{"type":"array","items":{"type":"string"}},"needs_review":{"type":"boolean"},"touches":{"type":"array","items":{"type":"string","enum":["isr","linker","clock","dma","power","actuator","none"]}}}}},',
   ' "citations":{"type":"array","items":{"type":"string"}},"missing":{"type":"array","items":{"type":"string"}},"risks":{"type":"array","items":{"type":"string"}},',
   ' "estimate":{"type":"object","properties":{"tokens":{"type":"integer"},"tool_rounds":{"type":"integer"}}}}}',
   '# CodePatch',

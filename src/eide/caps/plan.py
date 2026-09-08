@@ -292,24 +292,17 @@ def schema_vai_tro(ten: str) -> dict[str, Any]:
 
 
 def _schema_plan() -> dict[str, Any]:
-    """Plan theo PRS-16 §4, đổi tên hai trường của mỗi bước.
+    """Plan lấy NGUYÊN từ PRS-16 §4, trừ đúng một chỗ nới.
 
-    `n` → `id` và `by` → `cap`, và đây là chỗ DUY NHẤT áp phép đổi tên ấy. Lý do giữ tên của mã
-    chứ không theo tài liệu: `cap` là một mã năng lực có thật, đối chiếu được với registry, còn
-    `by` của tài liệu là chuỗi tự do; `id` là chuỗi nên đặt được `s1`/`step-2` mà `code.*` tham
-    chiếu qua `step_ref`, còn `n` là số nguyên. Ghi lại ở DEV-061 để tài liệu theo sau.
+    Không còn phép đổi tên nào: tài liệu đã dùng `id`/`cap` từ v1.3 (DEV-061 đã duyệt), nên bản
+    trong mã và bản trong tài liệu là một. Trước đó mã dùng `id`/`cap` còn tài liệu dùng `n`/`by`
+    — và chính khoảng cách ấy là chỗ trường `touches` rơi mất mà không ai thấy.
 
-    Mọi trường khác — kể cả `touches` — đi thẳng từ tài liệu, không chép.
+    Chỗ nới: `citations`/`missing` ở mức kế hoạch. Tài liệu để chúng `required`, nhưng
+    `plan.create` bổ sung `missing` từ `plan.sufficiency` SAU khi mô hình trả lời, nên ép mô hình
+    phải có sẵn là ép nó đoán. `_kiem_plan` mới là chỗ kiểm nội dung.
     """
     s = schema_vai_tro("Plan")
-    b = s["properties"]["steps"]["items"]
-    b["properties"]["id"] = {"type": "string"}
-    b["properties"]["cap"] = b["properties"].pop("by", {"type": "string"})
-    b["properties"].pop("n", None)
-    b["required"] = ["id" if x == "n" else "cap" if x == "by" else x for x in b.get("required", [])]
-    # `citations`/`missing` ở mức kế hoạch: tài liệu đòi bắt buộc, nhưng `plan.create` bổ sung
-    # `missing` từ `plan.sufficiency` SAU khi mô hình trả lời, nên ép mô hình phải có sẵn là ép
-    # nó đoán. Giữ `steps` là trường bắt buộc duy nhất; `_kiem_plan` mới là chỗ kiểm nội dung.
     s["required"] = ["steps"]
     return s
 

@@ -107,19 +107,56 @@ def test_dac_trung_cai_du_cho_G_OPS_05():
     assert dac_trung_cai({"tool": "x"}, needs_sudo=True)["needs_sudo"] is True
 
 
-def test_install_goi_tin_cay_van_hoi_nguoi(tmp_path):
-    """`renode` NẰM TRONG `trusted_packages` và `G-OPS-04` là quy tắc APPROVE — nhưng APD-08 §2
-    đặt ngưỡng cứng "mọi R4 luôn hỏi người" ở tầng trước quy tắc cổng, nên vẫn `pending`.
+def test_goi_trong_danh_sach_da_ky_thi_R4_ha_xuong_R2(tmp_path):
+    """DEV-060 đã duyệt: danh sách trắng ĐÃ KÝ là lối duy nhất cho một hành động R4.
 
-    Test này ghim thực tế ấy chứ không ghim mong muốn: ngày nào chủ sản phẩm quyết cho danh sách
-    trắng thắng ngưỡng cứng (DEV-060), test này đỏ và đó đúng là lúc cần đọc lại nó.
+    Chữ ký của chủ sản phẩm CHÍNH LÀ lần hỏi người — POL-17 §3 bắt ký `defaults.sig` mới nạp
+    được ba danh sách. Đưa `renode` vào `trusted_packages` rồi ký là đã trả lời câu "có cho cài
+    gói này không", nên hỏi lại ở mỗi lần cài là hỏi hai lần cùng một câu.
     """
     gate = PolicyGate()
-    r = Router(gate=gate, ledger=Ledger(tmp_path / "l.jsonl"))
-    ctx = Context(project_dir=tmp_path, extra={"gate": gate})
-    run = r.invoke("env.install", {"tool": "renode"}, ctx, features=dac_trung_cai({"tool": "renode"}))
-    assert run.status == "pending"
-    assert "renode" in str(gate.config["trusted_packages"])
+    assert gate.danh_sach_da_ky, "niêm defaults.sig phải đạt thì test này mới nói lên điều gì"
+    assert "renode" in gate.config["trusted_packages"]
+    d = gate.decide("G-OPS", dac_trung_cai({"tool": "renode"}), risk="R4", autonomy="A2", tier="T1")
+    assert (d.decision, d.rule_id) == ("APPROVE", "G-OPS-04")
+
+
+def test_danh_sach_CHUA_KY_thi_R4_van_hoi(tmp_path):
+    """Đối chứng: bỏ chữ ký đi thì lối ấy đóng lại. Nếu không thì ai sửa được `defaults.yaml` là
+    tự cho mình quyền chạy một hành động R4, và cả cơ chế ký thành trang trí."""
+    gate = PolicyGate(sig_path=tmp_path / "khong-co.sig")
+    assert not gate.danh_sach_da_ky
+    d = gate.decide("G-OPS", dac_trung_cai({"tool": "renode"}), risk="R4", autonomy="A2", tier="T1")
+    assert d.decision == "ASK"
+
+
+def test_ha_xuong_R2_chu_khong_duyet_thang(tmp_path):
+    """Hạ R4→R2, không hạ thẳng thành APPROVE: mức tự chủ vẫn phải đủ. Ở A1 (tối đa R1) thì R2
+    vẫn vượt mức và vẫn hỏi — cùng bất biến mà `test_policy_situations` đòi cho G-OPS-04."""
+    gate = PolicyGate()
+    d = gate.decide("G-OPS", dac_trung_cai({"tool": "renode"}), risk="R4", autonomy="A1", tier="T1")
+    assert d.decision == "ASK" and d.rule_id.startswith("HARD-")
+
+
+def test_loi_danh_sach_trang_khong_mo_cho_hanh_dong_R4_khac(tmp_path):
+    """Lối này hẹp có chủ ý: chỉ quy tắc APPROVE dựa trên một danh sách trắng mới đi qua. Xóa
+    flash toàn bộ vẫn là R4 và vẫn hỏi, dù mức tự chủ cao nhất."""
+    gate = PolicyGate()
+    d = gate.decide("G-OPS", {"op": "erase_all", "board": {"lab": True}}, risk="R4", autonomy="A4")
+    assert d.decision == "ASK" and d.rule_id == "G-OPS-02"
+
+
+def test_quy_tac_APPROVE_khong_dua_tren_danh_sach_thi_khong_mo_loi(tmp_path):
+    """Ca phân biệt: `G-OPS-01` cũng là quy tắc APPROVE và cũng khớp, nhưng điều kiện của nó dựa
+    trên board lab chứ không dựa trên một danh sách ĐÃ KÝ. Cho mọi quy tắc APPROVE mở được lối
+    R4 thì "chỉ whitelist" của POL-17 §2 thành "bất cứ quy tắc nào duyệt"."""
+    gate = PolicyGate()
+    dt = {"op": "flash", "board": {"lab": True, "flash_count_hour": 0},
+          "artifact": {"passed_g3": True, "hash_match": True}}
+    assert gate.decide("G-OPS", dt, risk="R3", autonomy="A3").rule_id == "G-OPS-01", \
+        "tiền đề: ở R3 thì G-OPS-01 phải khớp và duyệt — nếu không thì test dưới vô nghĩa"
+    d = gate.decide("G-OPS", dt, risk="R4", autonomy="A3")
+    assert d.decision == "ASK", f"quy tắc không dựa trên danh sách trắng vẫn mở được lối R4: {d}"
 
 
 def test_install_goi_la_bi_hoi_kem_ly_do_cu_the(tmp_path):

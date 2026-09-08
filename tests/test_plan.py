@@ -292,12 +292,12 @@ def test_schema_plan_doc_tu_PRS16_khong_chep_tay():
     `prompts/out_schemas.json`. Chép tay là cách `touches` biến mất lần trước."""
     from eide.caps.plan import _SCHEMA_PLAN, schema_vai_tro
 
-    goc = schema_vai_tro("Plan")["properties"]["steps"]["items"]["properties"]
-    ma = _SCHEMA_PLAN["properties"]["steps"]["items"]["properties"]
-    for ten, sch in goc.items():
-        if ten in ("n", "by"):          # DEV-061: `n`→`id`, `by`→`cap`
-            continue
-        assert ma.get(ten) == sch, f"trường `{ten}` của Plan đã trôi khỏi PRS-16 §4"
+    goc = schema_vai_tro("Plan")["properties"]["steps"]["items"]
+    ma = _SCHEMA_PLAN["properties"]["steps"]["items"]
+    assert ma == goc, "Plan.steps trong mã đã trôi khỏi PRS-16 §4"
+    assert goc["required"] == ["id", "goal", "cap", "done_when"], \
+        "DEV-061 đã đưa `id`/`cap` vào tài liệu — không còn phép đổi tên nào trong mã"
+    ma = ma["properties"]
     assert ma["touches"]["items"]["enum"] == ["isr", "linker", "clock", "dma", "power",
                                               "actuator", "none"]
 

@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 2) từ registry — không gõ tay. Còn **120/238** năng lực. Xem
+*Đo 08/09/2026 (lần 3) từ registry — không gõ tay. Còn **119/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -16,22 +16,21 @@ chủ sản phẩm 08/09).
 | **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
 | P2 | [DEV-054](DEVIATIONS.md) — POL-17 phân biệt hai loại cổng | Chạm cách gác cổng của cả hệ; tôi có bản đề xuất, cần anh duyệt hướng |
 | P3 | [DEV-050](DEVIATIONS.md) — duyệt hàng loạt trong hàng đợi | Đề nghị gom theo *cùng cổng + cùng quy tắc*; cần anh chốt |
-| **P4** | **[DEV-060](DEVIATIONS.md) — `env.install` lớp R4 vs danh sách trắng** | Danh mục ghi "R4→T1 theo danh sách trắng" và `G-OPS-04` là quy tắc APPROVE, nhưng ngưỡng cứng R4 của APD-08 §2 chạy TRƯỚC quy tắc cổng nên `G-OPS-04` không bao giờ khớp. Hiện **mọi lần cài đều hỏi anh**. Chọn: (a) sửa tài liệu cho khớp (đề nghị), hay (b) mở ngoại lệ hẹp trong APD-08 §2 |
-| P5 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
-| P6 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
-| P7 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
+| P4 | [DEV-035](DEVIATIONS.md) — thêm ý định theo nhóm | Đã quyết hoãn tới CHAT-06; nhắc lại để không quên |
+| P5 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
+| P6 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
 ---
 
-## A. Dọn nốt M1 — 1 năng lực còn lại
+## A. Dọn nốt M1 — 1 năng lực còn lại, và nó chờ board
 
-Mốc M1 đang **73/75**. A1 và A2 xong 08/09.
+Mốc M1 đang **74/75**. A1, A2, A3 xong 08/09; chỉ còn `passport.verify_on_board` (khối H).
 
 | # | Năng lực | Ghi chú |
 |---|---|---|
 | ~~A1~~ | ~~`archive.extract_one`, `archive.query`~~ | **Xong 08/09** — 10 test. Tìm qua kho lồng; kho lồng là vật chứa nên không grep byte thô của nó |
 | ~~A2~~ | ~~`env.install` (**R4**), `env.guide_install`~~ | **Xong 08/09** — 20 test. Không sudo ở bất kỳ lệnh nào; công cụ đóng (XC8/IAR/Keil) → E4001 chỉ sang `guide_install`; lệnh cài chạy trong sandbox có mạng. Thực tế cổng khác tài liệu → [DEV-060](DEVIATIONS.md), mục P4 |
-| A3 | `code.constant_guard` | Hook cho `code.*` — hợp lý làm cùng khối B |
+| ~~A3~~ | ~~`code.constant_guard`~~ | **Xong 08/09** — 16 test. Bốn điều kiện của TC-04/TC-06; ranh giới "ngữ cảnh phần cứng" là chỗ quyết định guard dùng được hay bị tắt đi |
 
 > **Làm A2 lộ một lỗi im lặng của sandbox** (đã sửa): hồ sơ `sandbox-exec` không giải liên kết
 > mềm trong đường dẫn, nên tiến trình bên trong **không ghi được vào chính thư mục làm việc của
@@ -48,7 +47,7 @@ Không có nó, luận điểm của đề án dừng ở phần tri thức.
 | # | Nhóm | Năng lực |
 |---|---|---|
 | B1 | Sinh | `generate_module`, `generate_tests`, `modify` |
-| B2 | Dựng và kiểm | `build`, `test_host`, `static`, `size` |
+| B2 | Dựng và kiểm | ~~`build`~~, `test_host`, `static`, ~~`size`~~ — **xong 08/09**: lệnh dựng lấy từ manifest ISA, lỗi phân loại compile/link/size |
 | B3 | Ghép và soát | `integrate`, `review`, `merge`, `revert`, `self_repair` |
 | B4 | Truy vết (M3) | `annotate`, `docs`, `refactor`, `constant_guard` |
 
