@@ -382,3 +382,213 @@ def test_size_khong_co_artifact_tra_E4000(du_an_size):
     with pytest.raises(EideError) as e:
         size({"artifact": "build/khong-co.elf"}, ctx)
     assert e.value.code == "E4000"
+
+
+# ---------- CODE-07 static: ba quy tắc Pack
+
+QUY_TAC = ["no_delay_in_isr", "no_malloc", "no_float_isr_without_fpu"]
+
+
+def _pack(src: str, rules=None, co_fpu=None, duong="src/a.c"):
+    from pathlib import Path as _P
+
+    from eide.caps.code import _quet_pack
+    return _quet_pack(_P(duong), src, QUY_TAC if rules is None else rules, co_fpu)
+
+
+def test_delay_trong_ISR_bi_bat_delay_ngoai_ISR_thi_khong():
+    """tc CODE-07: "Lỗi cố ý bị bắt". Ca phân biệt nằm ở chỗ CÙNG một lời gọi: `HAL_Delay` trong
+    ISR là lỗi chặn, còn trong `main` là chuyện bình thường. Quy tắc không phân biệt được thân
+    hàm thì hoặc bắt cả hai (vô dụng) hoặc bỏ cả hai."""
+    src = ("void TIM2_IRQHandler(void) {\n    HAL_Delay(10);\n}\n"
+           "void app_main(void) {\n    HAL_Delay(100);\n}\n")
+    ds = [f for f in _pack(src) if f["rule"] == "no_delay_in_isr"]
+    assert [f["line"] for f in ds] == [2]
+    assert ds[0]["severity"] == "blocker" and "TIM2_IRQHandler" in ds[0]["message"]
+
+
+def test_dem_ngoac_khong_bi_dau_ngoac_trong_chuoi_cat_som():
+    """`printf("}")` giữa ISR: đếm ngoặc thô sẽ tưởng thân hàm kết thúc ở đó, và nửa sau của ISR
+    không được quét — đúng nửa mà lập trình viên hay để lời gọi chặn."""
+    src = ('void TIM2_IRQHandler(void) {\n'
+           '    printf("}");\n'
+           '    /* } trong chú thích nữa */\n'
+           '    HAL_Delay(1);\n'
+           '}\n')
+    assert [f["line"] for f in _pack(src) if f["rule"] == "no_delay_in_isr"] == [4]
+
+
+@pytest.mark.parametrize("ten", ["TIM2_IRQHandler", "SysTick_Handler", "adc_isr", "uart_ISR"])
+def test_cac_quy_uoc_dat_ten_ISR_deu_nhan_ra(ten):
+    src = f"void {ten}(void) {{\n    HAL_Delay(1);\n}}\n"
+    assert [f["rule"] for f in _pack(src)] == ["no_delay_in_isr"], ten
+
+
+def test_thuoc_tinh_interrupt_cung_la_ISR():
+    """AVR và vài trình dịch không dùng hậu tố tên mà dùng thuộc tính."""
+    src = "__attribute__((interrupt)) void xu_ly(void) {\n    HAL_Delay(1);\n}\n"
+    assert [f["rule"] for f in _pack(src)] == ["no_delay_in_isr"]
+
+
+def test_malloc_bi_bat_o_moi_noi_khong_rieng_ISR():
+    """`no_malloc` là quy tắc CẢ DỰ ÁN, không phải quy tắc ISR: phân mảnh heap không quan tâm
+    chỗ gọi. Manifest xếp nó ngang hàng với hai quy tắc kia chứ không lồng vào."""
+    src = "void app_main(void) {\n    char *p = malloc(16);\n    free(p);\n}\n"
+    assert {f["rule"] for f in _pack(src)} == {"no_malloc"}
+    assert len([f for f in _pack(src) if f["rule"] == "no_malloc"]) == 2
+
+
+def test_so_thuc_trong_ISR_muc_do_theo_viec_CO_BIET_fpu_hay_khong():
+    """`None` (chưa biết) khác `False` (chắc chắn không có FPU) ở MỨC ĐỘ, không ở việc có báo
+    hay không. Gộp hai thứ lại thì hoặc dự án chưa ghim hộ chiếu bị báo lỗi nặng oan, hoặc chip
+    thật sự không FPU được cho qua."""
+    src = "void TIM2_IRQHandler(void) {\n    float x = 1.5f;\n}\n"
+    assert [f["severity"] for f in _pack(src, co_fpu=None)
+            if f["rule"] == "no_float_isr_without_fpu"] == ["minor"]
+    assert [f["severity"] for f in _pack(src, co_fpu=False)
+            if f["rule"] == "no_float_isr_without_fpu"] == ["major"]
+    assert [f for f in _pack(src, co_fpu=True) if f["rule"] == "no_float_isr_without_fpu"] == []
+
+
+def test_quy_tac_khong_co_trong_manifest_thi_khong_chay():
+    """Bật một quy tắc mà Pack của ISA này không khai là áp luật của ISA khác lên nó."""
+    src = "void app_main(void) {\n    char *p = malloc(16);\n}\n"
+    assert _pack(src, rules=["no_delay_in_isr"]) == []
+
+
+def test_doc_cppcheck_tu_stderr_khong_tu_stdout(tmp_path):
+    """cppcheck in ra **stderr**. Đọc nhầm luồng thì mọi dự án đều "sạch" — một phép kiểm luôn
+    xanh là một phép kiểm không tồn tại."""
+    from eide.caps.code import _doc_cppcheck
+
+    err = tmp_path / "e.txt"
+    err.write_text("src/i2c.c:42:5: error: Null pointer dereference: p [nullPointer]\n"
+                   "src/i2c.c:50:1: style: Unused variable: x [unusedVariable]\n", encoding="utf-8")
+    ds = _doc_cppcheck(err, tmp_path / "khong-co.txt")
+    assert [(f["line"], f["rule"], f["severity"]) for f in ds] == [
+        (42, "nullPointer", "major"), (50, "unusedVariable", "minor")]
+
+
+def test_static_thieu_cppcheck_van_giu_phat_hien_cua_Pack(du_an, monkeypatch):
+    """Ném lỗi trắng thì các phát hiện của quy tắc Pack — vốn chạy được mà không cần công cụ nào
+    — bị vứt đi cùng, và người dùng mất thông tin chỉ vì máy thiếu một gói."""
+    from eide.caps.code import static
+    from eide_core.errors import EideError
+
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411RE"}, ctx)
+    (root / "src").mkdir(exist_ok=True)
+    (root / "src" / "irq.c").write_text("void TIM2_IRQHandler(void) {\n  HAL_Delay(1);\n}\n",
+                                        encoding="utf-8")
+    monkeypatch.setattr("eide_core.tools.which", lambda _t: None)
+    with pytest.raises(EideError) as e:
+        static({}, ctx)
+    assert e.value.code == "E4001"
+    assert [f["rule"] for f in e.value.data["partial_findings"]] == ["no_delay_in_isr"]
+
+
+# ---------- CODE-08 test_host
+
+def test_khong_co_tep_test_thi_KHONG_bao_dat(du_an):
+    """Một dự án chưa viết test và một dự án có test đều xanh phải đọc khác nhau."""
+    from eide.caps.code import test_host
+
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411RE"}, ctx)
+    rep = test_host({}, ctx)["report"]
+    assert rep["passed"] is False and rep["metrics"]["total"] == 0
+    assert "không có tệp nào khớp" in rep["metrics"]["reason"]
+
+
+@pytest.fixture
+def du_an_test_host(du_an):
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411RE"}, ctx)
+    (root / "tests" / "host").mkdir(parents=True)
+    (root / "tests" / "mock").mkdir(parents=True)
+    (root / "tests" / "mock" / "hal_mock.c").write_text(
+        "int hal_doc_nhiet_do(void) { return 25; }\n", encoding="utf-8")
+    return r, ctx, root
+
+
+def _viet_test(root, ten: str, than: str) -> None:
+    (root / "tests" / "host" / f"test_{ten}.c").write_text(
+        "int hal_doc_nhiet_do(void);\nint main(void) {\n" + than + "\n}\n", encoding="utf-8")
+
+
+def test_test_dat_thi_passed(du_an_test_host):
+    from eide.caps.code import test_host
+
+    r, ctx, root = du_an_test_host
+    _viet_test(root, "nhiet", "  return hal_doc_nhiet_do() == 25 ? 0 : 1;")
+    rep = test_host({}, ctx)["report"]
+    assert rep["passed"] is True, rep["metrics"]
+    assert rep["metrics"]["cases"][0]["status"] == "passed"
+
+
+def test_test_hong_thi_passed_false(du_an_test_host):
+    """tc CODE-08 nguyên văn: "Test fail → passed=false"."""
+    from eide.caps.code import test_host
+
+    r, ctx, root = du_an_test_host
+    _viet_test(root, "sai", "  return hal_doc_nhiet_do() == 99 ? 0 : 1;")
+    rep = test_host({}, ctx)["report"]
+    assert rep["passed"] is False
+    assert rep["metrics"]["cases"][0]["status"] == "failed"
+    assert rep["metrics"]["cases"][0]["exit_code"] == 1
+
+
+def test_loi_DICH_khac_loi_CHAY(du_an_test_host):
+    """Hai kết quả khác nhau, không gộp: cái đầu là mã không biên dịch được, cái sau là hành vi
+    sai — hai việc phải sửa khác nhau, và `code.self_repair` rẽ theo đó."""
+    from eide.caps.code import test_host
+
+    r, ctx, root = du_an_test_host
+    _viet_test(root, "khong_dich_duoc", "  thieu_dau_cham_phay()")
+    rep = test_host({}, ctx)["report"]
+    assert rep["metrics"]["cases"][0]["status"] == "compile_error"
+
+
+def test_bo_loc_chon_dung_tep(du_an_test_host):
+    from eide.caps.code import test_host
+
+    r, ctx, root = du_an_test_host
+    _viet_test(root, "mot", "  return 0;")
+    _viet_test(root, "hai", "  return 1;")
+    rep = test_host({"filter": "mot"}, ctx)["report"]
+    assert rep["metrics"]["total"] == 1 and rep["passed"] is True
+
+
+def test_doc_junit_khi_co_va_noi_ro_khi_khong(tmp_path):
+    from eide.caps.code import _junit
+
+    f = tmp_path / "o.txt"
+    f.write_text('<testsuite name="t" tests="7" failures="2" errors="1"></testsuite>\n',
+                 encoding="utf-8")
+    assert _junit(f) == {"tests": 7, "failures": 2, "errors": 1, "detail": "JUnit XML"}
+    f.write_text("chay xong\n", encoding="utf-8")
+    assert "mã thoát" in _junit(f)["detail"]
+
+
+def test_nhac_HAL_Delay_trong_chu_thich_khong_phai_vi_pham():
+    """Quét thân ISR cũng phải bỏ chú thích và chuỗi. Không bỏ thì một dòng ghi chú *cấm* dùng
+    delay lại bị báo là dùng delay — và người sửa sẽ xóa chính lời cảnh báo ấy đi."""
+    src = ('void TIM2_IRQHandler(void) {\n'
+           '    /* Không được gọi HAL_Delay ở đây — xem ADR-03 */\n'
+           '    const char *s = "HAL_Delay(1)";\n'
+           '    dat_co();\n'
+           '}\n')
+    assert [f for f in _pack(src) if f["rule"] == "no_delay_in_isr"] == []
+
+
+def test_cau_if_trong_ISR_khong_bi_dem_thanh_mot_ISR_nua():
+    """Một câu `if` cùng dòng với `__attribute__` là ca dễ thành ISR thứ hai: phép nhìn-lui hai
+    dòng sẽ thấy thuộc tính. Cùng một `HAL_Delay` bị báo hai lần thì người đọc đi tìm một ISR
+    không tồn tại. Bất biến giữ được nhờ chính khuôn nhận diện hàm — nó đòi một token KIỂU trước
+    tên, mà `if` chỉ có một token trước ngoặc."""
+    src = ('__attribute__((interrupt)) void h(void) {\n'
+           '    if (co_du_lieu) { HAL_Delay(1); }\n'
+           '}\n')
+    ds = [f for f in _pack(src) if f["rule"] == "no_delay_in_isr"]
+    assert len(ds) == 1, f"báo trùng: {ds}"
+    assert "`h`" in ds[0]["message"]

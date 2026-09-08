@@ -602,3 +602,348 @@ def _ky_hieu_lon(root: Path, map_ref: Any) -> list[dict[str, Any]]:
             gom[ten] = gom.get(ten, 0) + n
     return [{"symbol": k, "bytes": v}
             for k, v in sorted(gom.items(), key=lambda kv: -kv[1])[:SO_KY_HIEU]]
+
+
+# ---------------------------------------------------------------- CODE-07 static
+
+# Nhận diện ISR — bằng TỪ VỰNG, không bằng trình phân tích C. Ba dạng, mỗi dạng là một quy ước
+# thật của một hệ sinh thái:
+#   CMSIS/STM32   void TIM2_IRQHandler(void)      — hậu tố `_IRQHandler` / `_Handler`
+#   AVR (avr-libc) ISR(TIMER1_COMPA_vect)          — macro `ISR(...)`
+#   trình dịch     __attribute__((interrupt)) …    — thuộc tính đứng trước
+RE_TEN_ISR = re.compile(r"\b\w*(?:_IRQHandler|_Handler|_isr|_ISR)\b")
+RE_ISR_MACRO = re.compile(r"^\s*ISR\s*\(", re.MULTILINE)
+RE_THUOC_TINH_ISR = re.compile(r"__attribute__\s*\(\s*\(\s*interrupt|__interrupt\b")
+RE_THUOC_TINH_DAY_DU = re.compile(r"__attribute__\s*\(\((?:[^()]|\([^()]*\))*\)\)")
+
+# Định nghĩa hàm. Khoảng trắng đầu dòng được phép vì `__attribute__((interrupt))` bị xóa thành
+# khoảng trắng trước khi dò.
+#
+# `if (x) {` KHÔNG khớp, và không cần danh sách từ khóa để loại: khuôn đòi một token kiểu
+# (`[A-Za-z_][\w \t\*]*?`) rồi mới tới tên rồi mới tới `(`, mà `if` chỉ có đúng một token trước
+# ngoặc. Bản trước có một `TU_KHOA_C` để chặn chuyện ấy; đã bỏ sau khi kiểm đột biến cho thấy
+# gỡ nó ra không đổi kết quả ở ca nào — một lớp bảo vệ không bao giờ chạy tới thì lần sau ai đọc
+# cũng tin là nó đang bảo vệ.
+RE_HAM = re.compile(r"^[ \t]*[A-Za-z_][\w \t\*]*?\b(\w+)\s*\([^;{]*\)\s*\{", re.MULTILINE)
+
+# Ba quy tắc Pack, tên lấy đúng từ `toolchain.static.rules` của manifest ISA — không đặt tên mới.
+RE_DELAY = re.compile(r"\b(\w*[Dd]elay\w*|_delay_ms|_delay_us|sleep|usleep|vTaskDelay)\s*\(")
+RE_CAP_PHAT = re.compile(r"\b(malloc|calloc|realloc|free|aligned_alloc|strdup)\s*\(")
+RE_SO_THUC = re.compile(r"\b(float|double)\b|\b\d+\.\d+[fF]?\b")
+
+
+@capability("code.static")
+def static(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-07 — CDS-12.1; TGT-19 `toolchain.static` (cmd + rules). tc: "Lỗi cố ý bị bắt";
+    lỗi E4001.
+
+    Hai lớp, và chúng trả lời hai câu khác nhau. `cppcheck` bắt lỗi C nói chung — con trỏ, tràn
+    mảng, biến chưa khởi tạo. **Quy tắc Pack** bắt ba thứ mà một trình phân tích C đa dụng không
+    có lý do gì để coi là lỗi, nhưng trên vi điều khiển thì là lỗi:
+
+    - `no_delay_in_isr` — chờ bận trong ngắt khóa mọi ngắt ưu tiên thấp hơn, và trên một hệ có
+      watchdog thì nó là một lần khởi động lại.
+    - `no_malloc` — cấp phát động trên hệ nhúng dẫn tới phân mảnh không hồi phục được; hệ chạy
+      hàng tháng thì hỏng sau vài tuần, tức sau khi đã xuất xưởng.
+    - `no_float_isr_without_fpu` — số thực không FPU là gọi thư viện phần mềm, hàng trăm chu kỳ
+      trong một chỗ phải đo bằng chục chu kỳ.
+
+    Tên ba quy tắc lấy nguyên từ `toolchain.static.rules` của manifest, không đặt tên mới: một
+    finding mang tên khác tên trong Pack thì không nối được về quy tắc nào cả.
+
+    Thiếu cả `cppcheck` lẫn `clang-tidy` → **E4001, nhưng mang theo `partial_findings`**. Ném
+    lỗi trắng thì các phát hiện của quy tắc Pack — vốn chạy được mà không cần công cụ nào — bị
+    vứt đi cùng, và người dùng mất thông tin chỉ vì máy thiếu một gói.
+    """
+    from eide.caps.env import sandbox as env_sandbox
+
+    root = _du_an(ctx, params)
+    isa = _isa_cua(root)
+    tc_static = (manifest_isa(isa).get("toolchain") or {}).get("static") or {}
+
+    t0 = time.perf_counter()
+    pack = _quy_tac_pack(root, isa, tc_static.get("rules") or [])
+
+    cong_cu = next((c for c in ("cppcheck", "clang-tidy") if tools.which(c)), None)
+    if cong_cu is None:
+        raise EideError("E4001", "Thiếu cppcheck (và clang-tidy) — `env.install`. Các quy tắc "
+                        f"Pack vẫn chạy và tìm được {len(pack)} phát hiện, kèm trong lỗi này.",
+                        missing=["cppcheck"], remedy="env.install", partial_findings=pack)
+
+    lenh = tach_lenh(str(tc_static.get("cmd") or f"{cong_cu} src"))[0]
+    lenh[0] = str(tools.which(lenh[0]) or lenh[0])
+    kq = env_sandbox({"cmd": lenh, "network": False, "allowed_dirs": [str(root)],
+                      "limits": {"timeout_s": 300}}, ctx)
+    ngoai = _doc_cppcheck(Path(kq["stderr_ref"]), Path(kq["stdout_ref"]))
+
+    ds = pack + ngoai
+    rep = {"tool": "static", "passed": not ds, "log_ref": kq["stderr_ref"],
+           "metrics": {"isa": isa, "tool": cong_cu, "findings": ds,
+                       "by_rule": _dem(ds), "pack_rules": tc_static.get("rules") or []},
+           "artifacts": [], "duration_ms": int((time.perf_counter() - t0) * 1000),
+           "started_by": ctx.session_id, "at": datetime.now(UTC).isoformat()}
+    store.ghi_tool_report(store.store_path(root), rep)
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("tool.report", rep)
+    return {"report": rep}
+
+
+def _dem(ds: list[dict[str, Any]]) -> dict[str, int]:
+    ra: dict[str, int] = {}
+    for f in ds:
+        ra[f["rule"]] = ra.get(f["rule"], 0) + 1
+    return ra
+
+
+RE_CPPCHECK = re.compile(r"^(?P<file>[^:]+):(?P<line>\d+):(?:\d+:)?\s*"
+                         r"(?P<sev>error|warning|style|performance|portability|information):\s*"
+                         r"(?P<msg>.+?)(?:\s*\[(?P<id>[\w\-\.]+)\])?$", re.MULTILINE)
+
+
+def _doc_cppcheck(*refs: Path) -> list[dict[str, Any]]:
+    """cppcheck in ra **stderr**, không phải stdout — đọc nhầm luồng thì mọi dự án đều "sạch"."""
+    ra: list[dict[str, Any]] = []
+    for f in refs:
+        if not f.exists():
+            continue
+        for m in RE_CPPCHECK.finditer(f.read_text(encoding="utf-8", errors="replace")):
+            ra.append({"file": m["file"], "line": int(m["line"]),
+                       "severity": "major" if m["sev"] == "error" else "minor",
+                       "rule": m["id"] or f"cppcheck.{m['sev']}", "message": m["msg"].strip()})
+    return ra
+
+
+def _quy_tac_pack(root: Path, isa: str, rules: list[str]) -> list[dict[str, Any]]:
+    """Ba quy tắc Pack trên mọi tệp C của dự án. Chỉ chạy quy tắc có TRONG manifest: bật một quy
+    tắc mà Pack không khai là áp luật của ISA này lên ISA khác."""
+    co_fpu = _co_fpu(root, isa)
+    ra: list[dict[str, Any]] = []
+    for f in sorted(root.rglob("*")):
+        if f.suffix not in DUOI_C or not f.is_file() or EIDE_DIR in f.parts or "build" in f.parts:
+            continue
+        ra += _quet_pack(f.relative_to(root), f.read_text(encoding="utf-8", errors="replace"),
+                         rules, co_fpu)
+    return ra
+
+
+def _quet_pack(duong: Path, noi_dung: str, rules: list[str],
+               co_fpu: bool | None) -> list[dict[str, Any]]:
+    ra: list[dict[str, Any]] = []
+    dong_ds = noi_dung.splitlines()
+
+    if "no_malloc" in rules:
+        for i, dong in enumerate(dong_ds, 1):
+            sach = _bo_chu_thich_va_chuoi(dong)
+            for m in RE_CAP_PHAT.finditer(sach):
+                ra.append(_pf(duong, i, "no_malloc", "major",
+                              f"cấp phát động `{m.group(1)}` — phân mảnh heap trên hệ chạy dài "
+                              "là lỗi xuất hiện sau khi đã xuất xưởng"))
+
+    for ten, dau, cuoi in _than_isr(noi_dung):
+        for i in range(dau, cuoi + 1):
+            sach = _bo_chu_thich_va_chuoi(dong_ds[i - 1])
+            if "no_delay_in_isr" in rules and (m := RE_DELAY.search(sach)):
+                ra.append(_pf(duong, i, "no_delay_in_isr", "blocker",
+                              f"`{m.group(1)}` trong ISR `{ten}` — chờ bận trong ngắt khóa mọi "
+                              "ngắt ưu tiên thấp hơn"))
+            if "no_float_isr_without_fpu" in rules and co_fpu is not True \
+                    and RE_SO_THUC.search(sach):
+                chac = co_fpu is False
+                ra.append(_pf(duong, i, "no_float_isr_without_fpu",
+                              "major" if chac else "minor",
+                              f"số thực trong ISR `{ten}` — "
+                              + ("chip không có FPU nên đây là gọi thư viện phần mềm, hàng trăm "
+                                 "chu kỳ" if chac else
+                                 "chưa biết chip có FPU không (ghim hộ chiếu bằng "
+                                 "`project.set_target` để kết luận chắc)")))
+    return ra
+
+
+def _pf(duong: Path, dong: int, rule: str, sev: str, msg: str) -> dict[str, Any]:
+    return {"file": str(duong), "line": dong, "severity": sev, "rule": rule, "message": msg}
+
+
+def _than_isr(noi_dung: str) -> list[tuple[str, int, int]]:
+    """`(tên, dòng mở, dòng đóng)` của mỗi hàm là ISR. Đếm ngoặc để biết thân hàm kết thúc ở đâu.
+
+    Phép đếm ngoặc bỏ qua ngoặc trong chuỗi và chú thích — không bỏ thì một `printf("}")` cắt
+    thân hàm sớm và nửa sau của ISR không được quét.
+    """
+    ra: list[tuple[str, int, int]] = []
+    dong_ds = noi_dung.splitlines()
+    # `__attribute__((interrupt))` đứng trước tên hàm làm `RE_HAM` không khớp: ngoặc của thuộc
+    # tính bị đọc như ngoặc tham số. Xóa thuộc tính bằng KHOẢNG TRẮNG CÙNG ĐỘ DÀI để mọi vị trí
+    # vẫn trỏ đúng vào văn bản gốc — thay bằng chuỗi rỗng thì số dòng và phép nhìn-lui lệch hết.
+    ban_do = RE_THUOC_TINH_DAY_DU.sub(lambda m: " " * len(m.group(0)), noi_dung)
+    for m in RE_HAM.finditer(ban_do):
+        ten = m.group(1)
+        dau_dong = noi_dung.count("\n", 0, m.start()) + 1
+        # Nhìn trên VĂN BẢN GỐC, từ đầu dòng trước cho tới TÊN hàm — không tới `m.start()`.
+        # Thuộc tính đã bị xóa thành khoảng trắng trong `ban_do` nên nó nằm TRONG khoảng khớp,
+        # không nằm trước nó; lấy tới `m.start()` thì `truoc` rỗng và thuộc tính không bao giờ
+        # thấy được. Chỉ hai dòng: lui xa hơn thì một ISR ở đầu tệp làm mọi hàm sau cũng thành ISR.
+        dong_nay = noi_dung.rfind("\n", 0, m.start()) + 1
+        dau_khoi = noi_dung.rfind("\n", 0, max(0, dong_nay - 1)) + 1
+        truoc = noi_dung[dau_khoi:m.start(1)]
+        la_isr = bool(RE_TEN_ISR.fullmatch(ten) or RE_THUOC_TINH_ISR.search(truoc)
+                      or RE_ISR_MACRO.search(noi_dung[m.start():m.end()]))
+        if not la_isr:
+            continue
+        sau = ban_do.count("\n", 0, m.end() - 1) + 1
+        ra.append((ten, dau_dong, _dong_dong_ngoac(dong_ds, sau)))
+    for m in RE_ISR_MACRO.finditer(noi_dung):
+        dau_dong = noi_dung.count("\n", 0, m.start()) + 1
+        ra.append(("ISR", dau_dong, _dong_dong_ngoac(dong_ds, dau_dong)))
+    return ra
+
+
+def _dong_dong_ngoac(dong_ds: list[str], tu_dong: int) -> int:
+    sau = 0
+    for i in range(tu_dong - 1, len(dong_ds)):
+        sach = _bo_chu_thich_va_chuoi(dong_ds[i])
+        sau += sach.count("{") - sach.count("}")
+        if sau <= 0 and i >= tu_dong - 1 and "{" in "".join(
+                _bo_chu_thich_va_chuoi(d) for d in dong_ds[tu_dong - 1:i + 1]):
+            return i + 1
+    return len(dong_ds)
+
+
+def _co_fpu(root: Path, isa: str) -> bool | None:
+    """`True`/`False`/`None`. `None` = CHƯA BIẾT, và nó khác `False` ở mức nghiêm trọng của
+    finding: chắc chắn không FPU là lỗi, chưa biết thì là lời nhắc."""
+    abi = manifest_isa(isa).get("abi") or {}
+    fpu = str(abi.get("fpu") or "").lower()
+    if fpu in ("none", "no", "false"):
+        return False
+    if fpu in ("yes", "true", "required"):
+        return True
+    chip = _muc_tieu(root).get("chip")          # `optional` → phải hỏi hộ chiếu của chip
+    if not chip:
+        return None
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    with store.open_store(db) as c:
+        r = c.execute("SELECT value FROM fact WHERE predicate='fpu' AND subject LIKE ?"
+                      " ORDER BY id LIMIT 1", (f"%{str(chip).split('@')[0]}%",)).fetchone()
+    if not r:
+        return None
+    return str(r[0]).strip().lower() not in ("none", "0", "false", "no")
+
+
+# ---------------------------------------------------------------- CODE-08 test_host
+
+# Bố cục kiểm thử trên máy chủ. CDS-12.1 CODE-08 nói "biên dịch host với mock ngoại vi
+# (ctypes/CMock); chạy; JUnit → ToolReport" nhưng KHÔNG nói tệp nằm ở đâu, nên quy ước này do
+# hiện thực đặt ra và được ghi ở DEV-063:
+#
+#   tests/host/test_*.c   một tệp = một chương trình test độc lập
+#   tests/mock/*.c        mock ngoại vi, liên kết vào MỌI chương trình test
+#   src/, include/        thư mục include
+#
+# Vì sao mỗi tệp một chương trình chứ không gộp: một test làm hỏng bộ nhớ thì chỉ giết chính nó,
+# và tên tệp trở thành tên ca test mà không cần khung nào. Đó cũng là thành ngữ phổ biến nhất
+# của unit test C nhúng — tệp test `#include` thẳng đơn vị đang kiểm.
+MAU_TEST_HOST = "tests/host/test_*.c"
+THU_MUC_MOCK = "tests/mock"
+TRINH_DICH_HOST = ("cc", "gcc", "clang")
+TIMEOUT_TEST = 120
+
+
+@capability("code.test_host")
+def test_host(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-08 — CDS-12.1. tc: "Test fail → passed=false"; lỗi E4000.
+
+    Chạy trên MÁY CHỦ, không trên chip — nên nó kiểm được logic thuần (bộ lọc, máy trạng thái,
+    phép quy đổi đơn vị) mà không cần board, và đó là cách duy nhất `code.self_repair` có vòng
+    phản hồi trước khi có phần cứng. Cái nó KHÔNG kiểm được là thời gian thực và thanh ghi thật;
+    `sim.*` rồi `bench.*` mới trả lời hai câu ấy.
+
+    Không có tệp test nào thì `passed=false`, không phải `true`. Một dự án chưa viết test và một
+    dự án có test đều xanh phải đọc khác nhau — gộp chúng lại là biến ToolReport thành thứ luôn
+    nói "ổn".
+    """
+    root = _du_an(ctx, params)
+    ds = sorted(root.glob(MAU_TEST_HOST))
+    if (loc := params.get("filter")):
+        ds = [f for f in ds if loc in f.name]
+
+    t0 = time.perf_counter()
+    if not ds:
+        rep = _bao_test(root, [], t0, ctx,
+                        f"không có tệp nào khớp `{MAU_TEST_HOST}`"
+                        + (f" và bộ lọc `{loc}`" if loc else ""))
+        return {"report": rep}
+
+    cc = next((tools.which(c) for c in TRINH_DICH_HOST if tools.which(c)), None)
+    if cc is None:
+        raise EideError("E4001", f"Thiếu trình dịch máy chủ ({', '.join(TRINH_DICH_HOST)})",
+                        missing=list(TRINH_DICH_HOST), remedy="env.install")
+
+    mock = sorted((root / THU_MUC_MOCK).glob("*.c"))
+    ca = [_mot_test(f, root, cc, mock, ctx) for f in ds]
+    return {"report": _bao_test(root, ca, t0, ctx)}
+
+
+def _mot_test(f: Path, root: Path, cc: Any, mock: list[Path], ctx: Context) -> dict[str, Any]:
+    """Dịch rồi chạy một tệp test. Lỗi DỊCH và lỗi CHẠY là hai kết quả khác nhau, không gộp:
+    cái đầu là mã không biên dịch được, cái sau là hành vi sai — hai việc phải sửa khác nhau."""
+    import tempfile
+
+    from eide.caps.env import sandbox as env_sandbox
+
+    ra = Path(tempfile.mkdtemp(prefix="eide-host-")) / f.stem
+    lenh = [str(cc), "-std=c11", "-g", "-O0", "-o", str(ra),
+            f"-I{root / 'src'}", f"-I{root / 'include'}", f"-I{root / THU_MUC_MOCK}",
+            str(f), *[str(m) for m in mock]]
+    d = env_sandbox({"cmd": lenh, "network": False, "allowed_dirs": [str(root)],
+                     "limits": {"timeout_s": TIMEOUT_TEST}}, ctx)
+    if d["exit_code"] != 0 or not ra.exists():
+        return {"name": f.stem, "file": str(f.relative_to(root)), "status": "compile_error",
+                "exit_code": d["exit_code"], "log_ref": d["stderr_ref"]}
+
+    c = env_sandbox({"cmd": [str(ra)], "network": False,
+                     "limits": {"timeout_s": TIMEOUT_TEST}}, ctx)
+    return {"name": f.stem, "file": str(f.relative_to(root)),
+            "status": "passed" if c["exit_code"] == 0 else "failed",
+            "exit_code": c["exit_code"], "log_ref": c["stdout_ref"],
+            **_junit(Path(c["stdout_ref"]))}
+
+
+RE_JUNIT = re.compile(r"<testsuite\b[^>]*>")
+
+
+def _thuoc_tinh(the: str, ten: str) -> int:
+    """Đọc một thuộc tính số của thẻ. Tách hàm vì gộp ba thuộc tính vào MỘT biểu thức chính quy
+    với nhóm tùy chọn thì thứ tự thuộc tính trong tệp quyết định nhóm nào bắt được — và JUnit
+    không quy định thứ tự. Đo được: `failures="2" errors="1"` đọc ra 0 và 0."""
+    m = re.search(rf'\b{ten}="(\d+)"', the)
+    return int(m.group(1)) if m else 0
+
+
+def _junit(stdout: Path) -> dict[str, Any]:
+    """"JUnit → ToolReport" của bước 1: đọc `<testsuite tests= failures= errors=>` nếu chương
+    trình test in ra. Không in thì mã thoát là tất cả những gì có — và nói ra điều đó."""
+    if not stdout.exists():
+        return {"detail": "không có đầu ra"}
+    m = RE_JUNIT.search(stdout.read_text(encoding="utf-8", errors="replace"))
+    if not m:
+        return {"detail": "mã thoát (chương trình test không in JUnit XML)"}
+    the = m.group(0)
+    return {"tests": _thuoc_tinh(the, "tests"), "failures": _thuoc_tinh(the, "failures"),
+            "errors": _thuoc_tinh(the, "errors"), "detail": "JUnit XML"}
+
+
+def _bao_test(root: Path, ca: list[dict[str, Any]], t0: float, ctx: Context,
+              ly_do: str | None = None) -> dict[str, Any]:
+    hong = [c for c in ca if c["status"] != "passed"]
+    rep = {"tool": "test_host", "passed": bool(ca) and not hong,
+           "log_ref": ca[0]["log_ref"] if ca else None,
+           "metrics": {"total": len(ca), "failed": len(hong), "cases": ca,
+                       "reason": ly_do or (f"{len(hong)}/{len(ca)} ca không đạt" if hong else None)},
+           "artifacts": [], "duration_ms": int((time.perf_counter() - t0) * 1000),
+           "started_by": ctx.session_id, "at": datetime.now(UTC).isoformat()}
+    store.ghi_tool_report(store.store_path(root), rep)
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("tool.report", rep)
+    return rep
