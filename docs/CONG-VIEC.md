@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 08/09/2026 (lần 7) từ registry — không gõ tay. Còn **110/238** năng lực. Xem
+*Đo 08/09/2026 (lần 8) từ registry — không gõ tay. Còn **107/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -49,10 +49,10 @@ Không có nó, luận điểm của đề án dừng ở phần tri thức.
 
 | # | Nhóm | Năng lực |
 |---|---|---|
-| B1 | Sinh | ~~`generate_module`, `generate_tests`~~ — **xong 08/09**. Còn `modify` |
+| ~~B1~~ | Sinh | ~~`generate_module`, `generate_tests`, `modify`~~ — **xong 08/09** |
 | ~~B2~~ | Dựng và kiểm | ~~`build`, `test_host`, `static`, `size`~~ — **xong 08/09**. Lệnh dựng và ba quy tắc Pack (`no_delay_in_isr`, `no_malloc`, `no_float_isr_without_fpu`) lấy từ manifest ISA. Bố cục test máy chủ do hiện thực đặt → [DEV-063](DEVIATIONS.md) |
-| B3 | Ghép và soát | ~~`review`, `merge`, `revert`~~ — **xong 08/09**. Bảy đặc trưng của `G3-01` tính lại ở merge; S23…S28 đều có test. Còn `integrate`, `self_repair` |
-| B4 | Truy vết (M3) | `annotate`, `docs`, `refactor`, `constant_guard` |
+| ~~B3~~ | Ghép và soát | ~~`integrate`, `review`, `merge`, `revert`, `self_repair`~~ — **xong 08/09**. Bảy đặc trưng của `G3-01` tính lại ở merge; S23…S28 đều có test |
+| B4 | Truy vết (M3) | `annotate`, `docs`, `refactor` — ~~`constant_guard`~~ xong. **Cả phần M2 của khối B đã xong; ba cái này ở mốc M3** |
 
 **Mở khóa:** Z-05 "thêm tính năng" (hiện 8/16) chạy tới `code.merge`; và `code.build` là điều
 kiện của mọi thứ sau đó.

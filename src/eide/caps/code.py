@@ -1026,7 +1026,6 @@ def generate_module(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     có, và prompt PRS-16 §3 dạy nó "dừng và trả missing_facts[]" thay vì bịa. Phạt nó vì trung
     thực thì lần sau nó bịa cho đủ — cùng bài học với `doc.section`.
     """
-    from eide.caps.memory import compose
     from eide.caps.plan import doc_plan_feature
 
     root = _du_an(ctx, params)
@@ -1053,10 +1052,31 @@ def generate_module(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         from eide_core.gateway import Gateway
         gw = Gateway(ledger=ctx.extra.get("ledger"))
 
-    bundle = compose({"role": "coder", "task_ref": step_ref}, ctx)["bundle"]
+    patch = sinh_patch(root, gw, step_ref, _de_bai(step_ref, buoc, pham_vi), pham_vi, ctx,
+                       ngu_canh_cho=step_ref)
+    return {"patch": patch, "cites": list(patch.get("cites") or [])}
+
+
+def sinh_patch(root: Path, gw: Any, tham_chieu: str, de_bai: str, pham_vi: list[str],
+               ctx: Context, *, ngu_canh_cho: str = "", them: str = "") -> dict[str, Any]:
+    """Một lượt coder → CodePatch → ba phép kiểm → lưu patch tạm.
+
+    Bốn năng lực đi qua đúng đường này — `generate_module`, `modify`, `integrate`,
+    `self_repair` — nên nó nằm ở một chỗ. Bốn bản sao của cùng ba phép kiểm là bốn chỗ để quên
+    một phép, và cái bị quên sẽ là `constant_guard`: nó là phép duy nhất trong ba cái mà bỏ đi
+    thì mọi test khác vẫn xanh.
+
+    Thứ tự ba phép kiểm cũng cố định: `missing_facts` trước (mô hình tự khai thiếu), rồi phạm vi
+    tệp, rồi hằng số. Đảo lại thì một patch ngoài phạm vi bị báo là "hằng số không nguồn", và
+    người đọc đi sửa sai chỗ.
+    """
+    from eide.caps.memory import compose
+    bundle = compose({"role": "coder", "task_ref": ngu_canh_cho or tham_chieu}, ctx)["bundle"]
     ngu_canh = "\n\n".join(b["text"] for b in bundle["blocks"] if b["layer"] != "C1")
-    resp = gw.run("coder", _de_bai(step_ref, buoc, pham_vi), _schema_codepatch(),
-                  system_extra=ngu_canh)
+    if them:
+        ngu_canh += "\n\n" + them
+
+    resp = gw.run("coder", de_bai, _schema_codepatch(), system_extra=ngu_canh)
     patch = dict(resp.data)
     # Ai viết patch này — cần cho HAI hợp đồng sau: CODE-11 đòi grounding "≥ 2 hãng", và quy tắc
     # `G3-01` so `reviewer.vendor != coder.vendor`. Không ghi lại lúc sinh thì lúc merge không
@@ -1068,7 +1088,7 @@ def generate_module(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         raise EideError("E5003", "Coder dừng vì thiếu fact cho hằng số phần cứng: "
                         + ", ".join(str(x) for x in thieu)
                         + ". Dùng `kg.request`/`search.*` để bổ sung rồi gọi lại.",
-                        missing_facts=list(thieu), step_ref=step_ref, violations=[])
+                        missing_facts=list(thieu), step_ref=tham_chieu, violations=[])
 
     if (ngoai := _ngoai_pham_vi(patch, pham_vi)):
         raise EideError("E8000", f"Patch chạm tệp ngoài phạm vi cho phép: {ngoai}",
@@ -1078,11 +1098,10 @@ def generate_module(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if kq["verdict"] == "block":
         raise EideError("E5003", f"{len(kq['violations'])} hằng số phần cứng không có nguồn hợp "
                         "lệ (TC-04) — patch không được lưu.",
-                        violations=kq["violations"], step_ref=step_ref)
+                        violations=kq["violations"], step_ref=tham_chieu)
 
-    pid = _luu_patch(root, step_ref, patch, ctx)
-    patch["id"] = pid
-    return {"patch": patch, "cites": list(patch.get("cites") or [])}
+    patch["id"] = _luu_patch(root, tham_chieu, patch, ctx)
+    return patch
 
 
 def _schema_codepatch() -> dict[str, Any]:
@@ -1575,3 +1594,273 @@ def revert(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         led.append("undo.apply", {"undo_ref": f"commit:{sha}", "kind": "git_revert",
                                   "revert_commit": moi, "reason": ly_do})
     return {"revert_commit": moi}
+
+
+# ---------------------------------------------------------------- CODE-02 modify
+
+
+@capability("code.modify")
+def modify(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-02 — CDS-12.1; CXD-10 (lớp C5 = tệp hiện có, C6 = finding).
+    tc: "Diff chỉ chạm hàm liên quan"; ask "Chạm ISR/linker"; lỗi E5003;
+    undo `delete_created_files`.
+
+    Khác `generate_module` ở một điểm quyết định mọi thứ còn lại: **tệp đã có sẵn**. Mô hình
+    phải thấy nội dung hiện tại, nếu không nó viết lại cả tệp theo trí nhớ về "một driver BME280
+    trông như thế nào" — và mọi thứ người khác đã sửa trong đó biến mất mà không ai thấy trong
+    diff, vì diff so với bản mới chứ không so với ý định.
+
+    `ask_when` của hợp đồng là **"Chạm ISR/linker"**, và phép kiểm chạy trên KẾT QUẢ chứ không
+    trên yêu cầu: người dùng xin "thêm timeout" mà mô hình sửa luôn vector ngắt thì ý định vô
+    hại, hậu quả thì không.
+    """
+    root = _du_an(ctx, {})
+    duong = str(params["file"])
+    f = root / duong
+    if not f.exists():
+        raise EideError("E2000", f"Không có tệp `{duong}` để sửa — `code.generate_module` tạo mã "
+                        "mới, `code.modify` chỉ sửa mã đã có",
+                        exists=[], candidates=[], missing=[duong])
+    if _ngoai_pham_vi({"files": [{"path": duong}]}, list(PHAM_VI_MAC_DINH)):
+        raise EideError("E8000", f"`{duong}` nằm ngoài phạm vi tác tử được sửa",
+                        files=[duong], allowed=list(PHAM_VI_MAC_DINH), violations=["path"])
+
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+
+    hien = f.read_text(encoding="utf-8", errors="replace")
+    patch = sinh_patch(root, gw, f"modify:{duong}",
+                       _de_bai_sua(duong, str(params["intent"]), params.get("findings") or []),
+                       [duong], ctx, ngu_canh_cho=duong,
+                       them=f"# C5 — nội dung hiện tại của {duong}\n```c\n{hien}\n```")
+
+    if _cham_isr_linker(patch) and ctx.actor != "human":
+        raise EideError("E3000", f"Sửa `{duong}` chạm tới ISR hoặc kịch bản liên kết — "
+                        "CODE-02 ask: \"Chạm ISR/linker\". Sai một dòng ở đó thì firmware không "
+                        "khởi động, và triệu chứng không trỏ về chỗ sai.",
+                        rule="CODE-02", gate="*", file=duong, patch_id=patch.get("id"))
+    return {"patch": patch}
+
+
+def _de_bai_sua(duong: str, y_dinh: str, findings: list[dict[str, Any]]) -> str:
+    d = [f"Sửa tệp `{duong}`. Ý định: {y_dinh}",
+         "**Diff tối thiểu**: chỉ chạm hàm liên quan; giữ nguyên phần còn lại của tệp từng dòng "
+         "một. Trả lại TOÀN BỘ nội dung tệp sau khi sửa."]
+    if findings:
+        d.append("Các finding cần xử lý:")
+        d += [f"  - {x.get('file', duong)}:{x.get('line', '?')} [{x.get('severity', '?')}] "
+              f"{x.get('message', '')}" for x in findings]
+    return "\n".join(d)
+
+
+# ---------------------------------------------------------------- CODE-03 integrate
+
+
+@capability("code.integrate")
+def integrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-03 — CDS-12.1; PLAN-04 (`plan.order`); ARCH-06 (`arch.interface_spec`).
+    tc: "Build đạt sau tích hợp"; ask "Xung đột tài nguyên"; lỗi E5003.
+
+    Thứ tự khởi tạo KHÔNG do mô hình nghĩ ra: nó là kết quả của `plan.order`, vốn sắp theo phụ
+    thuộc và theo bậc phần cứng (clock → GPIO → bus → cảm biến → app). Thứ tự ấy là ràng buộc
+    vật lý — cấu hình I2C trước khi bật clock cho nó thì thanh ghi ghi vào hư không — nên hỏi mô
+    hình là mời ảo giác vào chỗ có câu trả lời đúng.
+
+    Xung đột tài nguyên được kiểm TRƯỚC khi gọi mô hình. Sinh mã glue cho hai module cùng đòi
+    một chân rồi mới phát hiện là tiêu một lượt gọi để tạo ra thứ chắc chắn phải bỏ đi.
+    """
+    from eide.caps.plan import order as plan_order
+
+    root = _du_an(ctx, {})
+    mods = list(params["modules"])
+
+    if (xung_dot := _xung_dot_tai_nguyen(root, mods)) and ctx.actor != "human":
+        raise EideError("E3000", f"{len(xung_dot)} xung đột tài nguyên giữa các module "
+                        "(CODE-03 ask: \"Xung đột tài nguyên\") — `arch.map_hw` hoặc "
+                        "`board.propose_fix` trước.",
+                        rule="CODE-03", gate="*", conflicts=xung_dot)
+
+    thu_tu = plan_order({"features": mods}, ctx)["order"]
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+
+    patch = sinh_patch(root, gw, "integrate:" + ",".join(mods),
+                       _de_bai_tich_hop(thu_tu, _giao_dien(root, mods)),
+                       [*PHAM_VI_MAC_DINH, "CMakeLists.txt"], ctx)
+    return {"patch": patch, "init_order": thu_tu}
+
+
+def _de_bai_tich_hop(thu_tu: list[str], giao_dien: dict[str, Any]) -> str:
+    d = ["Sinh mã ghép nối (`main`/`app`) cho các module dưới đây.",
+         "THỨ TỰ KHỞI TẠO — bắt buộc theo đúng dãy này, đã sắp theo phụ thuộc và bậc phần cứng:",
+         "  " + " → ".join(thu_tu)]
+    if giao_dien:
+        d.append("Chữ ký giao diện đã chốt (arch.interface_spec) — gọi đúng, không đổi:")
+        for m, ds in giao_dien.items():
+            for s in ds:
+                d.append(f"  {m}: {s}")
+    d.append("Cập nhật cấu hình dựng nếu cần thêm tệp nguồn.")
+    return "\n".join(d)
+
+
+def _giao_dien(root: Path, mods: list[str]) -> dict[str, list[str]]:
+    """Chữ ký hàm đã chốt ở `arch.interface_spec`. Không có bảng `module` thì trả rỗng và nói ra
+    bằng chỗ vắng — mô hình sẽ tự đặt chữ ký, và `code.build` là chỗ phát hiện lệch."""
+    db = store.store_path(root)
+    if not db.exists():
+        return {}
+    with store.open_store(db) as c:
+        if not c.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='module'"
+                         ).fetchone():
+            return {}
+        rows = c.execute(
+            f"SELECT id, interfaces FROM module WHERE id IN ({','.join('?' * len(mods))})",  # noqa: S608
+            mods).fetchall()
+    ra: dict[str, list[str]] = {}
+    for mid, iface in rows:
+        try:
+            ds = json.loads(iface) if iface else []
+        except json.JSONDecodeError:
+            continue
+        sig = [str(x.get("sig")) for x in ds if isinstance(x, dict) and x.get("sig")]
+        if sig:
+            ra[mid] = sig
+    return ra
+
+
+def _xung_dot_tai_nguyen(root: Path, mods: list[str]) -> list[dict[str, Any]]:
+    """Hai module cùng đòi một tài nguyên phần cứng — bảng `hw_map` của `arch.map_hw`."""
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    with store.open_store(db) as c:
+        if not c.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='hw_map'"
+                         ).fetchone():
+            return []
+        rows = c.execute(
+            f"SELECT module_id, resource FROM hw_map WHERE module_id IN ({','.join('?' * len(mods))})",  # noqa: S608
+            mods).fetchall()
+    theo: dict[str, list[str]] = {}
+    for mid, res in rows:
+        theo.setdefault(str(res), []).append(str(mid))
+    return [{"resource": r, "modules": sorted(set(ms))} for r, ms in sorted(theo.items())
+            if len(set(ms)) > 1]
+
+
+# ---------------------------------------------------------------- CODE-10 self_repair
+
+VONG_TOI_DA = 3               # "round ≤ 3"; "> 3 → give_up" (CODE-10 bước 1, ask "Lần 3")
+
+
+@capability("code.self_repair")
+def self_repair(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-10 — CDS-12.1; CXD-10 (C6 = lỗi đã lọc); DDD-14 `error_ledger`.
+    tc: "Lỗi cú pháp sửa trong 1 vòng; lỗi thiết kế → give_up ở vòng 3"; ask "Lần 3";
+    lỗi E5003.
+
+    Giới hạn ba vòng là điểm chính, không phải phần phụ. Một mô hình sửa mãi không dừng sẽ tiêu
+    hết ngân sách để đi vòng quanh cùng một lỗi thiết kế — và mỗi vòng lại trông như có tiến
+    triển vì thông điệp lỗi đổi. `give_up` thành thật ở vòng ba rẻ hơn nhiều so với vòng thứ
+    mười.
+
+    **C6 là lỗi ĐÃ LỌC**, không phải cả nhật ký. Một bản dựng hỏng in ra hàng trăm dòng, trong
+    đó lỗi thật là hai dòng đầu và phần còn lại là hệ quả; đưa hết vào ngữ cảnh thì mô hình đi
+    sửa hệ quả. `code.build` đã phân loại và cắt 20 dòng đầu — dùng lại đúng phần ấy.
+    """
+    root = _du_an(ctx, {})
+    vong = int(params["round"])
+    patch = params["patch"] or {}
+    rid = str(params["report_id"])
+    bao = _doc_report_id(root, rid)
+    if bao is None:
+        raise EideError("E2000", f"Không có ToolReport `{rid}`", exists=[], candidates=[],
+                        missing=[rid])
+
+    if vong > VONG_TOI_DA:
+        _ghi_error_ledger(root, rid, bao, patch, vong)
+        if (led := ctx.extra.get("ledger")) is not None:
+            led.append("policy.escalate", {"cap": "code.self_repair", "report_id": rid,
+                                           "round": vong, "reason": "quá 3 vòng tự sửa"})
+        return {"patch": patch, "give_up": True}
+
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+
+    moi = sinh_patch(root, gw, f"repair:{rid}:{vong}", _de_bai_sua_loi(bao, vong, patch),
+                     list(PHAM_VI_MAC_DINH), ctx,
+                     them="# C6 — lỗi của lượt trước\n" + _tom_tat_loi(bao))
+    return {"patch": moi, "give_up": False}
+
+
+def _doc_report_id(root: Path, rid: str) -> dict[str, Any] | None:
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    with store.open_store(db) as c:
+        r = c.execute("SELECT tool, passed, metrics FROM tool_report WHERE id=?", (rid,)).fetchone()
+    if not r:
+        return None
+    return {"tool": r[0], "passed": bool(r[1]),
+            "metrics": json.loads(r[2]) if r[2] else {}}
+
+
+def _tom_tat_loi(bao: dict[str, Any]) -> str:
+    """Chỉ phần đã lọc: loại lỗi + 20 dòng `code.build` đã cắt, hoặc findings của `static`, hoặc
+    các ca không đạt của `test_host`."""
+    m = bao.get("metrics") or {}
+    d = [f"Công cụ `{bao['tool']}` báo KHÔNG ĐẠT."]
+    if m.get("error_kind"):
+        d.append(f"Loại lỗi: {m['error_kind']}")
+    for dong in (m.get("error_lines") or [])[:SO_DONG_LOI]:
+        d.append(f"  {dong}")
+    for f in (m.get("findings") or [])[:SO_DONG_LOI]:
+        d.append(f"  {f.get('file')}:{f.get('line')} [{f.get('rule')}] {f.get('message')}")
+    for c in (m.get("cases") or []):
+        if c.get("status") != "passed":
+            d.append(f"  {c.get('file')}: {c.get('status')} (mã thoát {c.get('exit_code')})")
+    if m.get("reason"):
+        d.append(f"  {m['reason']}")
+    return "\n".join(d)
+
+
+def _de_bai_sua_loi(bao: dict[str, Any], vong: int, patch: dict[str, Any]) -> str:
+    d = [f"Vòng tự sửa {vong}/{VONG_TOI_DA}. Sửa patch trước cho hết lỗi mà `{bao['tool']}` báo.",
+         "Sửa ĐÚNG nguyên nhân, không đi vòng: đừng tắt cảnh báo, đừng bỏ phép kiểm, đừng "
+         "chú thích mã lỗi ra ngoài."]
+    if vong >= VONG_TOI_DA:
+        d.append("Đây là vòng cuối. Nếu nguyên nhân là một quyết định THIẾT KẾ chứ không phải "
+                 "một lỗi cục bộ, hãy nói thẳng trong `rationale` thay vì thử một cách khác.")
+    for f in patch.get("files") or []:
+        d.append(f"\n--- {f.get('path')} ---\n{f.get('content') or ''}")
+    return "\n".join(d)
+
+
+def _ghi_error_ledger(root: Path, rid: str, bao: dict[str, Any], patch: dict[str, Any],
+                      vong: int) -> None:
+    """DDD-14 `error_ledger` — bước 1: "> 3 → give_up + error_ledger + leo thang".
+
+    `negative_prompt` là phần có ích nhất: lần sau composer nạp nó vào C6 để mô hình không thử
+    lại đúng con đường đã thất bại ba lần.
+    """
+    import secrets
+    db = store.store_path(root)
+    if not db.exists():
+        return
+    with store.open_store(db) as c:
+        c.execute("INSERT INTO error_ledger (id, role, kind, task_ref, chip, evidence,"
+                  " negative_prompt, ttl_until, at) VALUES (?,?,?,?,?,?,?,?,?)",
+                  ("el_" + secrets.token_hex(6), "coder",
+                   (bao.get("metrics") or {}).get("error_kind") or bao["tool"],
+                   patch.get("id") or rid, _muc_tieu(root).get("chip"),
+                   json.dumps({"report_id": rid, "round": vong,
+                               "metrics": bao.get("metrics") or {}}, ensure_ascii=False),
+                   f"Đã thử {vong - 1} vòng tự sửa cho lỗi `{bao['tool']}` mà không xong — "
+                   "nhiều khả năng là quyết định thiết kế, không phải lỗi cục bộ.",
+                   None, datetime.now(UTC).isoformat()))
+        c.commit()

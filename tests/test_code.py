@@ -611,6 +611,9 @@ class _GW:
         self.vendor = vendor
         self.de_bai = None
         self.vai_tro = None
+        # `system_extra` là nơi ngữ cảnh đi qua (C2/C4/C5/C6). Giả lập không giữ nó thì mọi test
+        # về "mô hình có THẤY thứ này không" đều kiểm nhầm chỗ và luôn xanh.
+        self.ngu_canh = None
 
     def prompt(self, role):
         return f"# vai trò {role}"
@@ -619,7 +622,7 @@ class _GW:
         return self.vendor
 
     def run(self, role, prompt, schema, system_extra=""):
-        self.de_bai, self.vai_tro = prompt, role
+        self.de_bai, self.vai_tro, self.ngu_canh = prompt, role, system_extra
         gw = self
 
         class R:
@@ -1181,3 +1184,209 @@ def test_git_chi_cho_phep_con_lenh_trong_danh_sach(du_an):
         with pytest.raises(EideError) as e:
             git.chay(root, xau)
         assert e.value.code == "E8000"
+
+
+# ---------- CODE-02 modify
+
+def test_modify_dua_noi_dung_HIEN_TAI_cho_mo_hinh(du_an):
+    """Không đưa thì mô hình viết lại cả tệp theo trí nhớ về "một driver BME280 trông như thế
+    nào", và mọi thứ người khác đã sửa trong đó biến mất mà không ai thấy trong diff — vì diff
+    so với bản mới chứ không so với ý định."""
+    from eide.caps.code import modify
+
+    _, ctx, root = du_an
+    (root / "src").mkdir(exist_ok=True)
+    (root / "src" / "bme280.c").write_text("int doc(void){ return 0; } /* cua nguoi khac */\n",
+                                            encoding="utf-8")
+    gw = _GW({"files": [{"path": "src/bme280.c", "content": "int doc(void){ return 1; }\n"}],
+              "cites": [], "rationale": "thêm timeout"})
+    ctx.extra["gateway"] = gw
+    modify({"file": "src/bme280.c", "intent": "thêm timeout"}, ctx)
+    assert "cua nguoi khac" in gw.ngu_canh, "nội dung hiện tại không tới được mô hình"
+    assert "C5" in gw.ngu_canh
+
+
+def test_modify_tep_khong_ton_tai_thi_bao_ro(du_an):
+    from eide.caps.code import modify
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    ctx.extra["gateway"] = _GW(_cp())
+    with pytest.raises(EideError) as e:
+        modify({"file": "src/chua_co.c", "intent": "x"}, ctx)
+    assert e.value.code == "E2000"
+
+
+def test_modify_cham_ISR_thi_hoi_nguoi(du_an):
+    """`ask_when` của CODE-02 là "Chạm ISR/linker", và phép kiểm chạy trên KẾT QUẢ chứ không
+    trên yêu cầu: xin "thêm timeout" mà mô hình sửa luôn vector ngắt thì ý định vô hại, hậu quả
+    thì không."""
+    from eide.caps.code import modify
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    (root / "src").mkdir(exist_ok=True)
+    (root / "src" / "bme280.c").write_text("int doc(void){ return 0; }\n", encoding="utf-8")
+    ctx.extra["gateway"] = _GW({"files": [{"path": "src/bme280.c",
+                                           "content": "void TIM2_IRQHandler(void){ doc(); }\n"}],
+                                "cites": [], "rationale": "thêm timeout"})
+    with pytest.raises(EideError) as e:
+        modify({"file": "src/bme280.c", "intent": "thêm timeout"}, ctx)
+    assert e.value.code == "E3000" and e.value.data["rule"] == "CODE-02"
+
+
+def test_modify_findings_vao_de_bai(du_an):
+    from eide.caps.code import modify
+
+    _, ctx, root = du_an
+    (root / "src").mkdir(exist_ok=True)
+    (root / "src" / "a.c").write_text("int f(void){return 0;}\n", encoding="utf-8")
+    gw = _GW({"files": [{"path": "src/a.c", "content": "int f(void){return 0;}\n"}],
+              "cites": [], "rationale": "x"})
+    ctx.extra["gateway"] = gw
+    modify({"file": "src/a.c", "intent": "sửa", "findings": [
+        {"file": "src/a.c", "line": 1, "severity": "major", "message": "thiếu kiểm lỗi"}]}, ctx)
+    assert "thiếu kiểm lỗi" in gw.de_bai and "src/a.c:1" in gw.de_bai
+
+
+# ---------- CODE-03 integrate
+
+def _module(root, mid, depends=None, interfaces=None, resource=None):
+    from eide_core import store as _s
+    with _s.open_store(_s.store_path(root)) as c:
+        c.execute("INSERT INTO module (id, name, responsibility, depends, interfaces, status)"
+                  " VALUES (?,?,?,?,?,?)",
+                  (mid, mid, "x", json.dumps(depends or []),
+                   json.dumps(interfaces or []), "proposed"))
+        if resource:
+            c.execute("INSERT INTO hw_map (module_id, resource, role, fact_ids) VALUES (?,?,?,?)",
+                      (mid, resource, "bus", "[]"))
+        c.commit()
+
+
+def test_integrate_thu_tu_khoi_tao_tu_plan_order_khong_hoi_mo_hinh(du_an):
+    """Thứ tự khởi tạo là ràng buộc VẬT LÝ — cấu hình I2C trước khi bật clock cho nó thì thanh
+    ghi ghi vào hư không. Hỏi mô hình là mời ảo giác vào chỗ có câu trả lời đúng."""
+    from eide.caps.code import integrate
+
+    _, ctx, root = du_an
+    _module(root, "mod_app", depends=["mod_i2c"])
+    _module(root, "mod_i2c")
+    gw = _GW({"files": [{"path": "src/main.c", "content": "int main(void){return 0;}\n"}],
+              "cites": [], "rationale": "ghép nối"})
+    ctx.extra["gateway"] = gw
+    out = integrate({"modules": ["mod_app", "mod_i2c"]}, ctx)
+    assert out["init_order"] == ["mod_i2c", "mod_app"]
+    assert "mod_i2c → mod_app" in gw.de_bai
+
+
+def test_integrate_xung_dot_tai_nguyen_thi_hoi_TRUOC_khi_goi_mo_hinh(du_an):
+    """Sinh mã glue cho hai module cùng đòi một chân rồi mới phát hiện là tiêu một lượt gọi để
+    tạo ra thứ chắc chắn phải bỏ đi."""
+    from eide.caps.code import integrate
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _module(root, "mod_a", resource="chip:x/periph:I2C1")
+    _module(root, "mod_b", resource="chip:x/periph:I2C1")
+    gw = _GW(_cp())
+    ctx.extra["gateway"] = gw
+    with pytest.raises(EideError) as e:
+        integrate({"modules": ["mod_a", "mod_b"]}, ctx)
+    assert e.value.code == "E3000" and e.value.data["rule"] == "CODE-03"
+    assert e.value.data["conflicts"][0]["modules"] == ["mod_a", "mod_b"]
+    assert gw.de_bai is None, "đã gọi mô hình dù đã biết là xung đột"
+
+
+def test_integrate_chu_ky_giao_dien_da_chot_vao_de_bai(du_an):
+    from eide.caps.code import integrate
+
+    _, ctx, root = du_an
+    _module(root, "mod_i2c", interfaces=[{"sig": "int i2c_init(uint32_t hz);"}])
+    gw = _GW({"files": [{"path": "src/main.c", "content": "int main(void){return 0;}\n"}],
+              "cites": [], "rationale": "x"})
+    ctx.extra["gateway"] = gw
+    integrate({"modules": ["mod_i2c"]}, ctx)
+    assert "int i2c_init(uint32_t hz);" in gw.de_bai
+
+
+# ---------- CODE-10 self_repair
+
+def test_self_repair_vong_4_thi_give_up_va_ghi_error_ledger(du_an):
+    """tc: "lỗi thiết kế → give_up ở vòng 3". Một mô hình sửa mãi không dừng sẽ tiêu hết ngân
+    sách đi vòng quanh cùng một lỗi thiết kế — và mỗi vòng lại trông như có tiến triển vì thông
+    điệp lỗi đổi."""
+    from eide.caps.code import self_repair
+    from eide_core import store as _s
+
+    _, ctx, root = du_an
+    rid = _bao_cao(root, "build", passed=False,
+                   metrics={"error_kind": "link", "error_lines": ["undefined reference"]})
+    gw = _GW(_cp())
+    ctx.extra["gateway"] = gw
+    out = self_repair({"report_id": rid, "patch": _cp(), "round": 4}, ctx)
+    assert out["give_up"] is True and gw.de_bai is None, "give_up mà vẫn gọi mô hình"
+    with _s.open_store(_s.store_path(root)) as c:
+        rows = c.execute("SELECT kind, negative_prompt FROM error_ledger").fetchall()
+    assert rows and rows[0][0] == "link" and "thiết kế" in rows[0][1]
+
+
+def test_self_repair_trong_han_thi_sinh_patch_moi(du_an):
+    from eide.caps.code import self_repair
+
+    _, ctx, root = du_an
+    rid = _bao_cao(root, "build", passed=False,
+                   metrics={"error_kind": "compile",
+                            "error_lines": ["src/a.c:3:1: error: expected ';'"]})
+    gw = _GW(_cp("int f(void){ return 0; }\n"))
+    ctx.extra["gateway"] = gw
+    out = self_repair({"report_id": rid, "patch": _cp(), "round": 1}, ctx)
+    assert out["give_up"] is False and out["patch"]["id"].startswith("patch_")
+    assert "Vòng tự sửa 1/3" in gw.de_bai
+
+
+def test_C6_la_loi_DA_LOC_khong_phai_ca_nhat_ky(du_an):
+    """Một bản dựng hỏng in ra hàng trăm dòng, trong đó lỗi thật là hai dòng đầu và phần còn
+    lại là hệ quả; đưa hết vào ngữ cảnh thì mô hình đi sửa hệ quả."""
+    from eide.caps.code import _tom_tat_loi
+
+    tom = _tom_tat_loi({"tool": "static", "metrics": {"findings": [
+        {"file": "src/a.c", "line": 9, "rule": "no_malloc", "message": "cấp phát động"}]}})
+    assert "no_malloc" in tom and "src/a.c:9" in tom
+    tom2 = _tom_tat_loi({"tool": "test_host", "metrics": {"cases": [
+        {"file": "tests/host/test_a.c", "status": "failed", "exit_code": 1},
+        {"file": "tests/host/test_b.c", "status": "passed", "exit_code": 0}]}})
+    assert "test_a.c" in tom2 and "test_b.c" not in tom2, "ca ĐẠT không được vào C6"
+
+
+def test_self_repair_report_khong_co_thi_bao_ro(du_an):
+    from eide.caps.code import self_repair
+    from eide_core.errors import EideError
+
+    _, ctx, _ = du_an
+    ctx.extra["gateway"] = _GW(_cp())
+    with pytest.raises(EideError) as e:
+        self_repair({"report_id": "tr_khong_co", "patch": {}, "round": 1}, ctx)
+    assert e.value.code == "E2000"
+
+
+def test_bon_nang_luc_sinh_deu_di_qua_constant_guard(du_an):
+    """Bốn bản sao của cùng ba phép kiểm là bốn chỗ để quên một phép, và cái bị quên sẽ là
+    `constant_guard`: nó là phép duy nhất mà bỏ đi thì mọi test khác vẫn xanh."""
+    from eide.caps.code import integrate, modify, self_repair
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    (root / "src").mkdir(exist_ok=True)
+    (root / "src" / "a.c").write_text("int f(void){return 0;}\n", encoding="utf-8")
+    ban = _cp("#define A 0x76\n", path="src/a.c")
+    rid = _bao_cao(root, "build", passed=False, metrics={})
+    _module(root, "mod_x")
+
+    for goi in (lambda: modify({"file": "src/a.c", "intent": "x"}, ctx),
+                lambda: integrate({"modules": ["mod_x"]}, ctx),
+                lambda: self_repair({"report_id": rid, "patch": {}, "round": 1}, ctx)):
+        ctx.extra["gateway"] = _GW(ban)
+        with pytest.raises(EideError) as e:
+            goi()
+        assert e.value.code == "E5003", goi
