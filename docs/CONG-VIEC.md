@@ -184,6 +184,33 @@ tài liệu sinh ra nói về một hệ thống có thật, chứ không phải
 **Lý do đặt E ngay sau B** (đã làm xong): `board.build_passport` là chỗ đứt duy nhất còn lại
 của Z-07. Đóng được một chuỗi trọn vẹn là mốc đáng có — và nó đã đóng.
 
-**Kế tiếp là C.** `doc.generate` là chỗ đứt của P7 (4/8), và bộ tài liệu sinh ra chính là phụ
-lục đề án: sản phẩm tự viết tài liệu về mình, có trích dẫn tới fact. Giờ `code.*` và `board.*`
-đã xong nên tài liệu ấy nói về một hệ thống có thật, không phải về một kế hoạch.
+**Kế tiếp là C** (đã làm xong C1+C2): `doc.generate` là chỗ đứt của P7, và bộ tài liệu sinh ra
+chính là phụ lục đề án — sản phẩm tự viết tài liệu về mình, có trích dẫn tới fact.
+
+---
+
+## Điểm dừng phiên 08/09/2026 — bắt đầu phiên sau từ đây
+
+*Cây làm việc sạch, `make check` 1042 xanh, DEVIATIONS 0 mục Mở. Sáu commit:*
+`ddd5c00`→`064e6a7` *(board.\* 5/5 · đồng bộ nháp · 25 docstring · khối C · đồng bộ v1.3).*
+
+**Làm gì đầu tiên:** `/bat-dau`, rồi **C3** — `doc.api_ref`, `doc.test_report`, `doc.changelog`.
+Ba cái này rẻ và dùng lại nguyên bộ máy vừa dựng cho `doc.generate`: `outlines()` đọc mục lục từ
+`docs/spec/doc/outlines.json`, `_nguon_tri_thuc()` dựng bảng có trích dẫn từ store, `_van_xuoi()`
+gọi vai `writer` quanh bảng. Ba nguồn tri thức đã có sẵn hàm: `code_unit` (api_ref),
+`tool_report` (test_report), `adr` + ledger (changelog).
+
+**Bẫy đã biết, đừng đạp lại:**
+
+- `doc.generate` uỷ quyền `bringup`/`test_report` sang năng lực riêng (`UY_QUYEN` trong `doc.py`).
+  Làm `doc.test_report` xong thì nhớ nó *đã* nằm trong bảng ấy — không phải thêm, chỉ cần hiện thực.
+- Mục lục cho ba loại mới **không có trong `outlines.json`** (nó chỉ phủ URD/SRS/SAD/SDD/STP/BPD,
+  rút từ `H1()` của bộ hồ sơ). Ba tài liệu vận hành này không có bản mẫu trong bộ hồ sơ, nên hoặc
+  chúng tự đặt mục lục trong chính năng lực, hoặc thêm một mục vào `DOC_OUTLINE_NGUON` của
+  `cds.js` — chọn đường nào cũng phải nói rõ, đừng để nó thành một bảng chép tay thứ hai.
+- Ba cổng chặn mới trong `tests/test_specs_consistency.py` sẽ đỏ nếu làm ẩu: docstring phải nêu
+  ĐÚNG mã hợp đồng; không đọc tham số ngoài `input_schema`; không định nghĩa trùng tên hàm.
+
+**Sau C3+C4 là khối D**, và trong đó `extract.pdf_pinout` đáng làm trước: nó sinh fact
+`pin_function` — thứ mở khóa phần "đổi sang chân nào" của `board.propose_fix`, hiện đang trả
+"chưa tra được chân thay thế".
