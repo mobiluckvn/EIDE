@@ -8,6 +8,7 @@ từ chối"*.
 from __future__ import annotations
 
 import hashlib
+import json
 
 import pytest
 
@@ -597,21 +598,33 @@ def test_cau_if_trong_ISR_khong_bi_dem_thanh_mot_ISR_nua():
 # ---------- CODE-01 generate_module
 
 class _GW:
-    """Gateway giả. `compose` cần `prompt(role)` cho lớp C1 (CXD-10 §2); `run` trả CodePatch."""
+    """Gateway giả. `compose` cần `prompt(role)` cho lớp C1 (CXD-10 §2); `run` trả CodePatch.
 
-    def __init__(self, patch):
+    Mang `model_id` và `hang_cua` giống Gateway thật, vì `generate_module` ghi hãng của coder vào
+    patch (CODE-11 đòi "≥ 2 hãng", `G3-01` so `reviewer.vendor != coder.vendor`). Một giả lập
+    thiếu đúng trường mà mã đọc thì nó giấu lỗi thay vì tìm ra lỗi.
+    """
+
+    def __init__(self, patch, model_id="gemini-3.8-flash", vendor="gemini"):
         self.patch = patch
+        self.model_id = model_id
+        self.vendor = vendor
         self.de_bai = None
+        self.vai_tro = None
 
     def prompt(self, role):
         return f"# vai trò {role}"
 
+    def hang_cua(self, model_id):
+        return self.vendor
+
     def run(self, role, prompt, schema, system_extra=""):
-        self.de_bai = prompt
-        assert role == "coder", role
+        self.de_bai, self.vai_tro = prompt, role
+        gw = self
 
         class R:
-            data = self.patch
+            data = gw.patch
+            model_id = gw.model_id
         return R()
 
 
@@ -777,3 +790,165 @@ def test_tep_kiem_thu_khong_bi_constant_guard_quet(du_an):
     # đối chứng: CÙNG nội dung ấy trong src/ vẫn bị chặn
     assert constant_guard(_patch("int main(void){ return dia_chi() == 0x76 ? 0 : 1; }\n",
                                  "src/bme280.c"), ctx)["verdict"] == "block"
+
+
+# ---------- CODE-09 generate_tests
+
+def _feature(root, fid="F-01", **them):
+    ds = [{"id": fid, "title": "đọc nhiệt độ", "status": "failing",
+           "expectation": {"kind": "serial_pattern", "detail": "in ra `T=<số>C` mỗi giây"},
+           **them}]
+    (root / ".eide" / "FEATURES.json").write_text(json.dumps(ds, ensure_ascii=False),
+                                                  encoding="utf-8")
+
+
+def _bo_test(*ds):
+    return {"tests": list(ds)}
+
+
+def test_thieu_kich_ban_thi_E5002(du_an):
+    """tc CODE-09: "Có ít nhất 1 test host và 1 kịch bản". Chỉ một loại thì hoặc bỏ trống nửa hệ
+    thống, hoặc phải chờ board mới biết mình sai."""
+    from eide.caps.code import generate_tests
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _feature(root)
+    ctx.extra["gateway"] = _GW(_bo_test({"path": "a.c", "content": "int main(void){return 0;}",
+                                         "kind": "host"}))
+    with pytest.raises(EideError) as e:
+        generate_tests({"feature": "F-01"}, ctx)
+    assert e.value.code == "E5002" and e.value.data["kinds"] == ["host"]
+
+
+def test_thieu_test_host_cung_E5002(du_an):
+    from eide.caps.code import generate_tests
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _feature(root)
+    ctx.extra["gateway"] = _GW(_bo_test({"path": "s.yaml", "content": "x", "kind": "sim"}))
+    with pytest.raises(EideError) as e:
+        generate_tests({"feature": "F-01"}, ctx)
+    assert e.value.code == "E5002"
+
+
+def test_du_hai_loai_thi_qua_va_duong_dan_ve_dung_thu_muc(du_an):
+    """Mô hình hay trả `test_x.c` trần hoặc `tests/x.c`. Để nguyên thì `code.test_host` không
+    tìm thấy, và vòng sinh-dựng-kiểm đứt ở khớp giữa hai năng lực CÙNG MỘT NHÓM."""
+    from eide.caps.code import MAU_TEST_HOST, generate_tests
+
+    _, ctx, root = du_an
+    _feature(root)
+    ctx.extra["gateway"] = _GW(_bo_test(
+        {"path": "nhiet.c", "content": "int main(void){return 0;}", "kind": "host"},
+        {"path": "tests/kich_ban.yaml", "content": "steps: []", "kind": "sim"}))
+    ds = generate_tests({"feature": "F-01"}, ctx)["tests"]
+    duong = {t["kind"]: t["path"] for t in ds}
+    assert duong["host"] == "tests/host/test_nhiet.c"
+    assert duong["sim"] == "tests/sim/kich_ban.yaml"
+    from pathlib import PurePosixPath
+    assert PurePosixPath(duong["host"]).match(MAU_TEST_HOST), \
+        "đường dẫn phải khớp mẫu mà `code.test_host` đi tìm"
+
+
+def test_de_bai_test_lay_tu_expectation_khong_lay_tu_ma(du_an):
+    """Test sinh từ mã chỉ khẳng định mã làm đúng cái nó đang làm; test sinh từ kỳ vọng mới bắt
+    được lúc mã làm sai. Đó là cả lý do `plan.define_feature` ép kỳ vọng thành đo được."""
+    from eide.caps.code import generate_tests
+
+    _, ctx, root = du_an
+    _feature(root)
+    gw = _GW(_bo_test({"path": "a.c", "content": "x", "kind": "host"},
+                      {"path": "b.yaml", "content": "y", "kind": "hil"}))
+    ctx.extra["gateway"] = gw
+    generate_tests({"feature": "F-01"}, ctx)
+    assert "in ra `T=<số>C` mỗi giây" in gw.de_bai and "serial_pattern" in gw.de_bai
+
+
+def test_feature_khong_co_thi_bao_ro(du_an):
+    from eide.caps.code import generate_tests
+    from eide_core.errors import EideError
+
+    _, ctx, root = du_an
+    _feature(root)
+    with pytest.raises(EideError) as e:
+        generate_tests({"feature": "F-99"}, ctx)
+    assert e.value.code == "E2000"
+
+
+# ---------- CODE-11 review
+
+def _rv(verdict="PASS", findings=None):
+    return {"verdict": verdict, "findings": findings or []}
+
+
+def test_review_khac_hang_thi_independent(du_an):
+    """Grounding của CODE-11 là "≥ 2 hãng": hai mô hình cùng hãng chia nhau dữ liệu huấn luyện
+    và cả những chỗ mù của nhau."""
+    from eide.caps.code import review
+
+    _, ctx, root = du_an
+    ctx.extra["gateway"] = _GW(_rv(), model_id="claude-sonnet-5", vendor="claude")
+    rv = review({"patch": {"id": "patch_1", "by": {"vendor": "gemini"}, "files": []}},
+                ctx)["review"]
+    assert rv["independent"] is True
+    assert rv["vendors"] == {"coder": "gemini", "reviewer": "claude"}
+    assert "note" not in rv
+
+
+def test_review_cung_hang_thi_noi_ra_chu_khong_im(du_an):
+    """Một bản review cùng hãng vẫn có ích, nhưng nó KHÔNG thỏa grounding của CODE-11 — và
+    người đọc cần biết lý do ngay ở đây, không phải mãi tới lúc `G3-01` từ chối."""
+    from eide.caps.code import review
+
+    _, ctx, root = du_an
+    ctx.extra["gateway"] = _GW(_rv(), model_id="gemini-3.1-pro-preview", vendor="gemini")
+    rv = review({"patch": {"id": "p", "by": {"vendor": "gemini"}, "files": []}}, ctx)["review"]
+    assert rv["independent"] is False and "≥ 2 hãng" in rv["note"]
+
+
+def test_max_severity_la_none_khi_khong_co_finding(du_an):
+    """`G3-01` so `review.max_severity in ["minor","nit","none"]`. Trả chuỗi rỗng hay thiếu
+    trường thì quy tắc không khớp, và một patch SẠCH lại không merge được."""
+    from eide.caps.code import review
+
+    _, ctx, root = du_an
+    ctx.extra["gateway"] = _GW(_rv())
+    assert review({"patch": {"id": "p", "files": []}}, ctx)["review"]["max_severity"] == "none"
+
+
+def test_max_severity_lay_muc_NANG_NHAT(du_an):
+    from eide.caps.code import review
+
+    _, ctx, root = du_an
+    ctx.extra["gateway"] = _GW(_rv("FAIL", [
+        {"severity": "nit", "file": "a.c", "line": 1, "message": "x"},
+        {"severity": "blocker", "file": "a.c", "line": 2, "message": "y"},
+        {"severity": "minor", "file": "a.c", "line": 3, "message": "z"}]))
+    assert review({"patch": {"id": "p", "files": []}}, ctx)["review"]["max_severity"] == "blocker"
+
+
+def test_review_duoc_luu_de_merge_doc_lai(du_an):
+    from eide.caps.code import doc_review, review
+
+    _, ctx, root = du_an
+    ctx.extra["gateway"] = _GW(_rv())
+    rv = review({"patch": {"id": "patch_9", "files": []}}, ctx)["review"]
+    luu = doc_review(root, rv["id"])
+    assert luu["patch_id"] == "patch_9" and luu["review"]["verdict"] == "PASS"
+
+
+def test_reviewer_duoc_giao_dung_vai_tro_va_thay_noi_dung_patch(du_an):
+    """Bước 1: "Router chọn reviewer khác hãng coder". Gọi nhầm vai `coder` thì mô hình nhận
+    prompt "hãy viết mã" và sẽ sửa mã thay vì chấm."""
+    from eide.caps.code import review
+
+    _, ctx, root = du_an
+    gw = _GW(_rv())
+    ctx.extra["gateway"] = gw
+    review({"patch": {"id": "p", "rationale": "vì fact f_1",
+                      "files": [{"path": "src/a.c", "content": "int x = 0x40;"}]}}, ctx)
+    assert gw.vai_tro == "reviewer"
+    assert "src/a.c" in gw.de_bai and "int x = 0x40;" in gw.de_bai
+    assert "KHÔNG sửa mã" in gw.de_bai

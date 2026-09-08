@@ -221,6 +221,19 @@ class Gateway:
             raise EideError("E1001", f"Không có prompt cho vai trò {role} (PRS-16 §3)")
         return f.read_text(encoding="utf-8").strip()
 
+    def hang_cua(self, model_id: str) -> str | None:
+        """Nhà cung cấp của một `model_id` cụ thể, tra ngược qua `aliases` của models.yaml.
+
+        `ModelResponse` mang `model_id` chứ không mang nhà cung cấp, mà hai hợp đồng cần đúng
+        thông tin ấy: CODE-11 đòi grounding "≥ 2 hãng" và quy tắc `G3-01` so
+        `reviewer.vendor != coder.vendor`. Tra ngược ở đây, một chỗ, thay vì mỗi năng lực tự
+        đoán hãng từ tiền tố tên mô hình — `claude-sonnet-5` đoán được, `gpt-4o-2024` thì không.
+        """
+        for a in (self.config.get("aliases") or {}).values():
+            if a.get("model") == model_id:
+                return a.get("provider")
+        return None
+
     def ung_vien(self, role: str) -> list[dict[str, Any]]:
         """Danh sách ứng viên đã giải bí danh, theo thứ tự trong models.yaml."""
         r = (self.config.get("roles") or {}).get(role)

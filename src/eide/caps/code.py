@@ -1036,6 +1036,11 @@ def generate_module(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     resp = gw.run("coder", _de_bai(step_ref, buoc, pham_vi), _schema_codepatch(),
                   system_extra=ngu_canh)
     patch = dict(resp.data)
+    # Ai viết patch này — cần cho HAI hợp đồng sau: CODE-11 đòi grounding "≥ 2 hãng", và quy tắc
+    # `G3-01` so `reviewer.vendor != coder.vendor`. Không ghi lại lúc sinh thì lúc merge không
+    # còn chỗ nào biết, và cả hai điều kiện ấy chỉ còn cách tin lời bên gọi.
+    patch["by"] = {"role": "coder", "model_id": resp.model_id,
+                   "vendor": gw.hang_cua(resp.model_id)}
 
     if (thieu := patch.get("missing_facts")):
         raise EideError("E5003", "Coder dừng vì thiếu fact cho hằng số phần cứng: "
@@ -1128,4 +1133,192 @@ def _luu_patch(root: Path, step_ref: str, patch: dict[str, Any], ctx: Context) -
 
 def doc_patch(root: Path, pid: str) -> dict[str, Any] | None:
     f = root / EIDE_DIR / THU_MUC_PATCH / f"{pid}.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+
+
+# ---------------------------------------------------------------- CODE-09 generate_tests
+
+# `kind` theo mô tả output của CODE-09: "path, content, kind host|sim|hil". Ba loại chạy ở ba
+# nơi khác nhau, và thư mục theo đó — cùng quy ước với `code.test_host` (DEV-063).
+LOAI_TEST = {"host": "tests/host/", "sim": "tests/sim/", "hil": "tests/hil/"}
+
+_SCHEMA_TESTS = {
+    "type": "object",
+    "required": ["tests"],
+    "properties": {"tests": {"type": "array", "items": {
+        "type": "object", "required": ["path", "content", "kind"],
+        "properties": {"path": {"type": "string"}, "content": {"type": "string"},
+                       "kind": {"type": "string", "enum": list(LOAI_TEST)},
+                       "covers": {"type": "string"}}}}},
+}
+
+
+@capability("code.generate_tests")
+def generate_tests(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-09 — CDS-12.1; PRS-16 §3; PLAN-01 (`expectation`). tc: "Có ít nhất 1 test host
+    và 1 kịch bản"; lỗi E5002; undo `delete_created_files`.
+
+    Nguồn của test là **`expectation` của Feature**, không phải là mã. Đó là cả điểm của việc
+    `plan.define_feature` ép kỳ vọng thành thứ máy quan sát được: một test sinh từ mã chỉ khẳng
+    định mã làm đúng cái nó đang làm, còn test sinh từ kỳ vọng mới bắt được lúc mã làm sai.
+
+    tc đòi **hai loại**, và đó là một đòi hỏi có lý chứ không phải chỉ tiêu số lượng: test host
+    kiểm được logic thuần ngay hôm nay mà không cần gì; kịch bản `sim`/`hil` kiểm phần chạm
+    ngoại vi, thứ mà host không bao giờ chạm tới. Chỉ có một loại thì hoặc bỏ trống nửa hệ
+    thống, hoặc phải chờ board mới biết mình sai.
+    """
+    from eide.caps.memory import compose
+
+    root = _du_an(ctx, {})
+    feature = str(params["feature"])
+    ft = _doc_feature(root, feature)
+    if ft is None:
+        raise EideError("E2000", f"Không có feature `{feature}` trong FEATURES.json",
+                        exists=[], candidates=[], missing=[feature])
+
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+
+    bundle = compose({"role": "coder", "task_ref": feature}, ctx)["bundle"]
+    ngu_canh = "\n\n".join(b["text"] for b in bundle["blocks"] if b["layer"] != "C1")
+    resp = gw.run("coder", _de_bai_test(feature, ft), _SCHEMA_TESTS, system_extra=ngu_canh)
+
+    ds = [dict(x) for x in (resp.data.get("tests") or [])]
+    for x in ds:
+        x["path"] = _duong_test(str(x.get("path") or ""), str(x.get("kind") or "host"))
+
+    loai = {x["kind"] for x in ds}
+    if "host" not in loai or not (loai & {"sim", "hil"}):
+        raise EideError("E5002", "CODE-09 đòi ít nhất 1 test host VÀ 1 kịch bản sim/hil; "
+                        f"nhận được {sorted(loai) or 'không có test nào'}. Test host kiểm logic "
+                        "thuần ngay hôm nay; kịch bản kiểm phần chạm ngoại vi mà host không "
+                        "bao giờ chạm tới.", kinds=sorted(loai), feature=feature)
+    return {"tests": ds}
+
+
+def _duong_test(duong: str, kind: str) -> str:
+    """Đưa đường dẫn về đúng thư mục của loại. Mô hình hay trả `test_x.c` trần hoặc `tests/x.c`;
+    để nguyên thì `code.test_host` không tìm thấy, và cả vòng sinh-dựng-kiểm đứt ở khớp giữa hai
+    năng lực của cùng một nhóm."""
+    thu_muc = LOAI_TEST.get(kind, LOAI_TEST["host"])
+    ten = PurePosixPath(duong.replace("\\", "/")).name or "test.c"
+    if kind == "host" and not ten.startswith("test_"):
+        ten = "test_" + ten
+    return thu_muc + ten
+
+
+def _doc_feature(root: Path, feature: str) -> dict[str, Any] | None:
+    f = root / EIDE_DIR / "FEATURES.json"
+    if not f.exists():
+        return None
+    ds = json.loads(f.read_text(encoding="utf-8"))
+    ds = ds if isinstance(ds, list) else (ds.get("features") or [])
+    return next((x for x in ds if str(x.get("id")) == feature), None)
+
+
+def _de_bai_test(feature: str, ft: dict[str, Any]) -> str:
+    ky_vong = ft.get("expectation") or {}
+    d = [f"Sinh test cho feature `{feature}`: {ft.get('title') or ''}".rstrip(),
+         f"Kỳ vọng ({ky_vong.get('kind')}): {ky_vong.get('detail')}"]
+    if ft.get("constraints"):
+        d.append("Ràng buộc: " + "; ".join(str(x) for x in ft["constraints"]))
+    d.append("Cần ÍT NHẤT một test `host` (logic thuần, chạy trên máy chủ) và một kịch bản "
+             "`sim` hoặc `hil` (phần chạm ngoại vi).")
+    return "\n".join(d)
+
+
+# ---------------------------------------------------------------- CODE-11 review
+
+
+@capability("code.review")
+def review(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-11 — CDS-12.1; PRS-16 §3 (reviewer) và §4 (Review); models.yaml
+    `roles.reviewer.rule = different_vendor_from(coder)`. Grounding **"≥ 2 hãng"**.
+    tc: TC-24, TC-30; lỗi E5002.
+
+    **Reviewer phải khác hãng với coder**, và đó không phải sự cầu kỳ: hai mô hình cùng hãng
+    chia nhau dữ liệu huấn luyện và cả những chỗ mù của nhau, nên một lỗi mà coder không thấy
+    thì reviewer cùng hãng cũng có xu hướng không thấy. Cả cơ chế review chỉ có giá trị bằng
+    phần độc lập giữa hai bên.
+
+    Không sửa mã — bước 1 của hợp đồng nói thẳng "không sửa mã". Reviewer trả `findings` có
+    tệp:dòng; ai sửa là việc của `code.self_repair`. Trộn hai vai vào một lượt gọi thì mô hình
+    vừa chấm vừa chữa bài của chính nó.
+
+    Hãng của cả hai bên vào ledger (`vendors`) vì `G3-01` đọc đúng cặp ấy khi quyết định merge.
+    """
+    root = _du_an(ctx, {})
+    patch = params["patch"] or {}
+    hang_coder = ((patch.get("by") or {}).get("vendor"))
+
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+
+    from eide.caps.memory import compose
+    bundle = compose({"role": "reviewer", "task_ref": str(patch.get("id") or "")}, ctx)["bundle"]
+    ngu_canh = "\n\n".join(b["text"] for b in bundle["blocks"] if b["layer"] != "C1")
+    resp = gw.run("reviewer", _de_bai_review(patch), _schema_review(), system_extra=ngu_canh)
+    hang_reviewer = gw.hang_cua(resp.model_id)
+
+    rv = dict(resp.data)
+    rv["vendors"] = {"coder": hang_coder, "reviewer": hang_reviewer}
+    # Nói ra khi ĐỘC LẬP không đạt, thay vì lặng lẽ trả một Review trông bình thường. Một bản
+    # review cùng hãng vẫn có ích, nhưng nó KHÔNG thỏa grounding "≥ 2 hãng" của CODE-11, và
+    # `G3-01` sẽ từ chối — người đọc cần biết lý do ngay ở đây chứ không phải ở cổng.
+    rv["independent"] = bool(hang_coder and hang_reviewer and hang_coder != hang_reviewer)
+    if not rv["independent"]:
+        rv["note"] = (f"reviewer ({hang_reviewer}) không khác hãng với coder ({hang_coder}) — "
+                      "chưa thỏa grounding \"≥ 2 hãng\" của CODE-11")
+    rv["max_severity"] = _muc_nang_nhat(rv.get("findings") or [])
+
+    rid = _luu_review(root, patch, rv, ctx)
+    rv["id"] = rid
+    return {"review": rv}
+
+
+MUC_DO = ["nit", "minor", "major", "blocker"]
+
+
+def _muc_nang_nhat(ds: list[dict[str, Any]]) -> str:
+    """`G3-01` so `review.max_severity in ["minor","nit","none"]`, nên `"none"` là giá trị khi
+    KHÔNG có finding nào — không phải chuỗi rỗng, và không phải thiếu trường."""
+    co = [str(f.get("severity")) for f in ds if f.get("severity") in MUC_DO]
+    return max(co, key=MUC_DO.index) if co else "none"
+
+
+def _schema_review() -> dict[str, Any]:
+    from eide.caps.plan import schema_vai_tro
+    return schema_vai_tro("Review")
+
+
+def _de_bai_review(patch: dict[str, Any]) -> str:
+    d = ["Rà patch sau theo checklist nhúng. KHÔNG sửa mã — chỉ nêu findings kèm tệp:dòng."]
+    if patch.get("rationale"):
+        d.append(f"Lý do của coder: {patch['rationale']}")
+    for f in patch.get("files") or []:
+        d.append(f"\n--- {f.get('path')} ---\n{f.get('content') or ''}")
+    return "\n".join(d)
+
+
+def _luu_review(root: Path, patch: dict[str, Any], rv: dict[str, Any], ctx: Context) -> str:
+    import secrets
+    rid = "rv_" + secrets.token_hex(6)
+    f = root / EIDE_DIR / "reviews" / f"{rid}.json"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"id": rid, "patch_id": patch.get("id"), "review": rv,
+                             "at": datetime.now(UTC).isoformat()},
+                            ensure_ascii=False, indent=1), encoding="utf-8")
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("model.call", {"role": "reviewer", "review_id": rid,
+                                  "vendors": rv["vendors"], "verdict": rv.get("verdict"),
+                                  "max_severity": rv["max_severity"]})
+    return rid
+
+
+def doc_review(root: Path, rid: str) -> dict[str, Any] | None:
+    f = root / EIDE_DIR / "reviews" / f"{rid}.json"
     return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
