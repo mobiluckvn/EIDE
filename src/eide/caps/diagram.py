@@ -840,6 +840,185 @@ def _thoat_xml(s: str) -> str:
             .replace('"', "&quot;"))
 
 
+# ---------------------------------------------------------------- DIAGRAM-09 memory_map
+
+# Dòng tiêu đề section trong tệp `.map` của GNU ld: `.text  0x08000000  0x1a2c` — ĐÚNG BA cột.
+# `code.py::RE_MAP` bắt dòng bốn cột (ký hiệu kèm tệp .obj); ở đây cần dòng tổng của cả section,
+# nên nó là một biểu thức khác chứ không phải cùng một cái dùng lỏng tay hơn.
+RE_SECTION_MAP = re.compile(r"^(\.[\w.]+)[ \t]+0x([0-9a-fA-F]+)[ \t]+0x([0-9a-fA-F]+)[ \t]*$",
+                            re.MULTILINE)
+CAO_TOI_DA, CAO_TOI_THIEU = 320, 18      # px cho vùng lớn nhất / nhỏ nhất
+
+
+@capability("diagram.memory_map")
+def memory_map(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-09 — CDS-12.4; PASSPORT-02 (`passport.query`); CODE-06 (`code.size` đọc
+    `.map`). tc: "Vùng đúng địa chỉ"; undo `delete_created_files`.
+
+    **Địa chỉ gốc là thứ dễ sai nhất và khó thấy nhất.** Một bản đồ vẽ nhầm `0x08000000` thành
+    `0x00000000` vẫn xếp hình chữ nhật đẹp như thường; chỉ đến lúc nạp mới biết. Nên vùng lấy
+    thẳng từ fact `memory_size` + `base_address` của hộ chiếu, và mỗi vùng mang theo `fact_ids`
+    để truy ngược.
+
+    **Section xếp theo ĐỊA CHỈ, không theo tên.** `.data` nằm trong flash (ảnh nạp) hay trong RAM
+    (sau khi chép) tùy chip và tùy linker script — quy ước tên đúng ở đa số chip và sai lặng lẽ ở
+    số còn lại. Section rơi ra ngoài mọi vùng thì **nói ra**: đó là dấu hiệu linker script sai
+    hoặc hộ chiếu thiếu vùng, và bỏ nó đi thì bản đồ trông đầy đủ trong khi có một mảnh không
+    biết nằm đâu.
+
+    **Tỷ lệ là điểm của cả lược đồ** (bước 1: "SVG có tỷ lệ"). Vẽ flash 512 kB bằng ram 128 kB
+    thì bản đồ thành một cái bảng, mà thứ người ta nhìn bản đồ để thấy chính là "còn bao nhiêu
+    chỗ". Vùng nhỏ vẫn có chiều cao tối thiểu để còn đọc được nhãn.
+    """
+    root = _root(ctx)
+    part = str(params["passport"]).split("@")[0]
+    vung = _vung_bo_nho(root, part)
+    if not vung:
+        raise EideError("E2000", f"Chưa có fact `memory_size` nào cho `{part}` — chạy "
+                        "`extract.svd` (hoặc `extract.pdf_electrical`) rồi `passport.import`",
+                        exists=[], candidates=["extract.svd", "passport.import"],
+                        missing=[f"memory_size:{part}"])
+
+    sections = _section_linker(root, params.get("linker"), vung)
+    _ty_le(vung)
+    src = _svg_memory_map(part, vung, sections, bool(params.get("linker")))
+    return {"diagram": {"lang": "svg", "src": src, "passport": part,
+                        "regions": vung, "sections": sections}}
+
+
+def _vung_bo_nho(root: Path, part: str) -> list[dict[str, Any]]:
+    """`[{name, base, size, fact_ids}]` từ `memory_size` + `base_address` của hộ chiếu chip.
+
+    Dùng lại đúng phép tra của `arch._gioi_han_bo_nho` về mặt điều kiện `subject` — cùng câu hỏi
+    thì phải cùng câu trả lời — nhưng giữ TÊN VÙNG thật (`sram1`, `ccmram`) thay vì gộp về
+    flash/ram: bản đồ bộ nhớ là chỗ duy nhất phân biệt chúng có ích.
+    """
+    import json
+
+    from eide.caps.req import DON_VI
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    with store.open_store(db) as c:
+        rows = c.execute(
+            "SELECT id, subject, predicate, value, unit FROM fact"
+            " WHERE predicate IN ('memory_size','base_address')"
+            "   AND (subject = ? OR subject LIKE ? OR subject LIKE ?)"
+            "   AND status NOT IN ('superseded','rejected')",
+            (part, f"%:{part}", f"%:{part}/%")).fetchall()
+
+    gom: dict[str, dict[str, Any]] = {}
+    for fid, subj, vt, gt, don_vi in rows:
+        ten = str(subj).rsplit("/", 1)[-1].split(":")[-1].lower()
+        if ten == part.lower():
+            continue
+        d = gom.setdefault(ten, {"name": ten, "base": None, "size": 0, "fact_ids": []})
+        try:
+            gia_tri = json.loads(gt)
+        except (json.JSONDecodeError, TypeError):
+            gia_tri = gt
+        if vt == "memory_size":
+            try:
+                d["size"] = int(float(gia_tri) * (DON_VI.get((don_vi or "").lower())
+                                                  or ("", 1))[1])
+            except (ValueError, TypeError):
+                continue
+        else:
+            d["base"] = _so(gia_tri)
+        d["fact_ids"].append(fid)
+
+    # Chỉ giữ vùng có KÍCH THƯỚC. Một `base_address` lẻ loi không vẽ được thành hình chữ nhật, và
+    # vẽ nó với chiều cao bịa ra là đúng thứ bản đồ này sinh ra để tránh.
+    return sorted((v for v in gom.values() if v["size"] > 0),
+                  key=lambda v: (v["base"] is None, v["base"] or 0))
+
+
+def _so(x: Any) -> int | None:
+    try:
+        return int(str(x), 0) if isinstance(x, str) else int(x)
+    except (ValueError, TypeError):
+        return None
+
+
+def _section_linker(root: Path, linker: str | None,
+                    vung: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """`[{name, base, size, region}]` từ tệp `.map`. `region=""` nghĩa là ngoài mọi vùng."""
+    if not linker:
+        return []
+    f = Path(linker).expanduser()
+    if not f.is_absolute():
+        f = root / f
+    if not f.is_file():
+        return []
+    ra: list[dict[str, Any]] = []
+    for ten, dc, kt in RE_SECTION_MAP.findall(f.read_text(encoding="utf-8", errors="replace")):
+        if (n := int(kt, 16)) <= 0:
+            continue
+        goc = int(dc, 16)
+        ra.append({"name": ten, "base": goc, "size": n, "region": _thuoc_vung(goc, vung)})
+    return ra
+
+
+def _thuoc_vung(dia_chi: int, vung: list[dict[str, Any]]) -> str:
+    for v in vung:
+        if v["base"] is not None and v["base"] <= dia_chi < v["base"] + v["size"]:
+            return str(v["name"])
+    return ""
+
+
+def _ty_le(vung: list[dict[str, Any]]) -> None:
+    """Gán `px` cho từng vùng theo tỷ lệ kích thước thật, có sàn để nhãn còn đọc được."""
+    lon = max((v["size"] for v in vung), default=1) or 1
+    for v in vung:
+        v["px"] = max(CAO_TOI_THIEU, round(CAO_TOI_DA * v["size"] / lon))
+
+
+def _svg_memory_map(part: str, vung: list[dict[str, Any]], sections: list[dict[str, Any]],
+                    co_linker: bool) -> str:
+    le, rong, x = 24, 200, 150
+    cao = sum(v["px"] for v in vung) + le * 2 + 40 * (len(vung) - 1) + 40
+    d = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{x + rong + 300}" height="{cao}" '
+         f'viewBox="0 0 {x + rong + 300} {cao}" font-family="monospace" font-size="12">',
+         f'  <title>Bản đồ bộ nhớ {_thoat_xml(part)}</title>']
+    y = le
+    for v in vung:
+        dung = [s for s in sections if s["region"] == v["name"]]
+        da = sum(s["size"] for s in dung)
+        cao_dung = round(v["px"] * min(da / v["size"], 1)) if v["size"] else 0
+        goc = f'0x{v["base"]:08X}' if v["base"] is not None else "địa chỉ gốc chưa có fact"
+        d += [f'  <rect x="{x}" y="{y}" width="{rong}" height="{v["px"]}" fill="#f4f4f4" '
+              'stroke="#333"/>',
+              f'  <text x="{x - 8}" y="{y + 12}" text-anchor="end">{_thoat_xml(goc)}</text>',
+              f'  <text x="{x + rong + 10}" y="{y + 14}">{_thoat_xml(v["name"])} · '
+              f'{_kb(v["size"])}</text>']
+        if cao_dung:
+            # Tô từ ĐỈNH xuống: nhãn địa chỉ gốc nằm ở đỉnh, nên trục địa chỉ tăng dần
+            # xuống dưới, và phần đã dùng bắt đầu ngay tại địa chỉ gốc. Tô từ đáy lên thì hình
+            # vẫn "đúng bao nhiêu phần trăm" nhưng nói sai chỗ nào đang bị chiếm.
+            d += [f'  <rect x="{x}" y="{y}" width="{rong}" '
+                  f'height="{cao_dung}" fill="#9cc" stroke="none"/>',
+                  f'  <text x="{x + rong + 10}" y="{y + 30}" fill="#357">đã dùng {_kb(da)} '
+                  f'({round(da / v["size"] * 100)}%): '
+                  f'{_thoat_xml(", ".join(s["name"] for s in dung))}</text>']
+        y += v["px"] + 40
+    if not co_linker:
+        d.append(f'  <text x="{x}" y="{y + 10}" fill="#666">Phần đã dùng: chưa có — truyền '
+                 '`linker` (tệp .map của code.build) để thấy .text/.data/.bss</text>')
+    if (lac := [s for s in sections if not s["region"]]):
+        d.append(f'  <text x="{x}" y="{y + 10}" fill="red">⚠ {len(lac)} section ngoài mọi vùng '
+                 f'của hộ chiếu: {_thoat_xml(", ".join(s["name"] for s in lac))} — linker script '
+                 'sai vùng, hoặc hộ chiếu còn thiếu vùng nhớ</text>')
+    d.append("</svg>")
+    return "\n".join(d) + "\n"
+
+
+def _kb(n: int) -> str:
+    """Nhãn dung lượng. `KiB`, không phải `kB` — bảng đơn vị của chính kho (`req.DON_VI`) đọc
+    `kb` là 1000 byte và `kib` là 1024. Ghi "512 kB" cho 524288 byte là tự mâu thuẫn với phép
+    quy đổi mà `arch.memory_budget` và `code.size` đang dùng."""
+    return f"{n / 1024:.0f} KiB" if n >= 1024 else f"{n} B"
+
+
 # ---------------------------------------------------------------- dựng mã lược đồ chung
 
 

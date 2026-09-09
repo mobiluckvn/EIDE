@@ -831,6 +831,145 @@ def test_chua_co_board_nao_thi_bao_E2000(du_an):
     assert "extract.kicad_netlist" in str(run.error)
 
 
+# ---------- DIAGRAM-09 memory_map
+#
+# tc: "Vùng đúng địa chỉ". Bước 1: "Bản đồ bộ nhớ từ fact memory_size/base_address; vùng linker
+# (.text/.data/.bss) từ .map (code.size); SVG có tỷ lệ".
+
+HO_CHIEU = "stm32f411"
+
+MAP_FILE = """\
+Memory Configuration
+
+Linker script and memory map
+
+.text           0x0000000008000000     0x1a2c
+ *(.text*)
+ .text.i2c_init
+                0x0000000008000180       0x9c build/i2c.c.obj
+.data           0x0000000020000000       0x10
+.bss            0x0000000020000010      0x400
+"""
+
+
+def nap_bo_nho(root, vung):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id, uri, sha256, kind, tier)"
+                  " VALUES ('s_mem','ds/stm32f411.pdf','h_mem','pdf_vendor','gold')")
+        for i, (ten, kich, don_vi, goc) in enumerate(vung):
+            c.execute("INSERT OR REPLACE INTO fact (id, subject, predicate, value, unit,"
+                      " source_id, method, tier, confidence, status)"
+                      " VALUES (?,?,?,?,?,'s_mem','parser','gold',1.0,'verified')",
+                      (f"f_mem_{i}", f"chip:{HO_CHIEU}/{ten}", "memory_size",
+                       json.dumps(kich), don_vi))
+            if goc:
+                c.execute("INSERT OR REPLACE INTO fact (id, subject, predicate, value,"
+                          " source_id, method, tier, confidence, status)"
+                          " VALUES (?,?,?,?,'s_mem','parser','gold',1.0,'verified')",
+                          (f"f_goc_{i}", f"chip:{HO_CHIEU}/{ten}", "base_address",
+                           json.dumps(goc)))
+        c.commit()
+
+
+# `KiB`, không phải `kB`: bảng đơn vị của kho (`req.DON_VI`) đọc `kb` là 1000 byte. Một hộ
+# chiếu ghi "512 kB" cho 512 KiB lệch 12 kB — đủ để một firmware vừa khít báo là vừa khít.
+CHIP_512K = [("flash", 512, "KiB", "0x08000000"), ("ram", 128, "KiB", "0x20000000")]
+
+
+def test_TC_vung_dung_dia_chi(du_an):
+    """tc DIAGRAM-09, nguyên văn. Một bản đồ bộ nhớ sai địa chỉ gốc thì mọi thứ vẽ trên nó đều
+    sai, mà nhìn thì không thấy — các hình chữ nhật vẫn xếp đẹp."""
+    r, ctx, root = du_an
+    nap_bo_nho(root, CHIP_512K)
+    dg = r.invoke("diagram.memory_map", {"passport": HO_CHIEU}, ctx).result["diagram"]
+
+    flash = next(v for v in dg["regions"] if v["name"] == "flash")
+    assert flash["base"] == 0x08000000 and flash["size"] == 512 * 1024
+    ram = next(v for v in dg["regions"] if v["name"] == "ram")
+    assert ram["base"] == 0x20000000 and ram["size"] == 128 * 1024
+    assert "0x08000000" in dg["src"] and "0x20000000" in dg["src"]
+
+
+def test_moi_vung_truy_duoc_ve_fact(du_an):
+    """grounding của hợp đồng là "Hộ chiếu": mỗi vùng phải chỉ được ra fact đã dựng nó."""
+    r, ctx, root = du_an
+    nap_bo_nho(root, CHIP_512K)
+    dg = r.invoke("diagram.memory_map", {"passport": HO_CHIEU}, ctx).result["diagram"]
+    assert all(v["fact_ids"] for v in dg["regions"])
+
+
+def test_SVG_co_TY_LE_that(du_an):
+    """"SVG có tỷ lệ" của bước 1. Vẽ flash 512 kB và ram 128 kB bằng nhau là biến một bản đồ
+    thành một bảng — mà cái người ta nhìn bản đồ để thấy chính là "còn bao nhiêu chỗ"."""
+    r, ctx, root = du_an
+    nap_bo_nho(root, CHIP_512K)
+    dg = r.invoke("diagram.memory_map", {"passport": HO_CHIEU}, ctx).result["diagram"]
+
+    cao = {v["name"]: v["px"] for v in dg["regions"]}
+    assert cao["flash"] == pytest.approx(cao["ram"] * 4, rel=0.05)
+
+
+def test_vung_linker_dat_dung_vung_theo_DIA_CHI(du_an):
+    """`.text` ở `0x08000000` thuộc flash, `.bss` ở `0x20000010` thuộc ram — xếp theo ĐỊA CHỈ
+    chứ không theo tên quy ước, vì `.data` nằm ở cả hai nơi tùy chip."""
+    r, ctx, root = du_an
+    nap_bo_nho(root, CHIP_512K)
+    (root / "build").mkdir(parents=True, exist_ok=True)
+    (root / "build" / "fw.map").write_text(MAP_FILE, encoding="utf-8")
+    dg = r.invoke("diagram.memory_map",
+                  {"passport": HO_CHIEU, "linker": "build/fw.map"}, ctx).result["diagram"]
+
+    theo = {s["name"]: s for s in dg["sections"]}
+    assert theo[".text"]["region"] == "flash" and theo[".text"]["size"] == 0x1A2C
+    assert theo[".bss"]["region"] == "ram" and theo[".bss"]["base"] == 0x20000010
+    assert ".text" in dg["src"]
+
+
+def test_vung_linker_ngoai_moi_vung_thi_NOI_RA(du_an):
+    """Một section ở địa chỉ không thuộc vùng nào là dấu hiệu linker script sai hoặc hộ chiếu
+    thiếu vùng. Bỏ nó đi thì bản đồ trông đầy đủ trong khi có một mảnh không biết nằm đâu."""
+    r, ctx, root = du_an
+    nap_bo_nho(root, [("flash", 512, "kB", "0x08000000")])
+    (root / "build").mkdir(parents=True, exist_ok=True)
+    (root / "build" / "fw.map").write_text(MAP_FILE, encoding="utf-8")
+    dg = r.invoke("diagram.memory_map",
+                  {"passport": HO_CHIEU, "linker": "build/fw.map"}, ctx).result["diagram"]
+
+    lac = [s for s in dg["sections"] if not s["region"]]
+    assert {s["name"] for s in lac} == {".data", ".bss"}
+    assert "ngoài mọi vùng" in dg["src"]
+
+
+def test_khong_co_map_thi_van_ve_ban_do_chip(du_an):
+    """`linker` là tùy chọn. Chưa dựng lần nào thì bản đồ chip vẫn có ích — nó trả lời "chip này
+    có bao nhiêu chỗ", câu hỏi đứng trước "đã dùng bao nhiêu"."""
+    r, ctx, root = du_an
+    nap_bo_nho(root, CHIP_512K)
+    dg = r.invoke("diagram.memory_map", {"passport": HO_CHIEU}, ctx).result["diagram"]
+
+    assert dg["sections"] == [] and len(dg["regions"]) == 2
+    assert "chưa có" in dg["src"]
+
+
+def test_chua_co_fact_bo_nho_thi_E2000(du_an):
+    """Không có `memory_size` thì không có bản đồ nào để vẽ — và nói ra tên năng lực cần chạy
+    thì người dùng đi tiếp được ngay."""
+    r, ctx, _ = du_an
+    run = r.invoke("diagram.memory_map", {"passport": "khong-co"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "extract.svd" in str(run.error)
+
+
+def test_memory_map_qua_duoc_lint(du_an):
+    from eide.caps.diagram import lint
+
+    r, ctx, root = du_an
+    nap_bo_nho(root, CHIP_512K)
+    dg = r.invoke("diagram.memory_map", {"passport": HO_CHIEU}, ctx).result["diagram"]
+    assert dg["lang"] == "svg"
+    assert lint({"src": dg["src"], "lang": "svg"}, ctx)["issues"] == []
+
+
 # ---------- DOC-01 generate
 
 VAN = {"markdown": "Mục này mô tả phạm vi và cách đọc bảng bên dưới.", "citations": ["f_1"]}
