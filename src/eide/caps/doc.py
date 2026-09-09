@@ -1412,6 +1412,166 @@ def _vi_du_ho_chieu(ctx: Context, tep: str, ham: list[dict[str, Any]],
     return ra, cits
 
 
+# ---------------------------------------------------------------- DOC-10 changelog
+
+# CON-28 §4: `type ∈ feat|fix|docs|refactor|test|chore|knowledge`. Ba nhóm mà DOC-10 bước 1 nêu
+# là ba LOẠI COMMIT có thật, không phải ba từ khóa đoán từ tiêu đề — nên nhóm đọc từ loại.
+NHOM_COMMIT = {"feat": "Tính năng", "fix": "Sửa lỗi", "knowledge": "Tri thức"}
+THU_TU_NHOM = ["Tính năng", "Sửa lỗi", "Tri thức", "Khác"]
+RE_LOAI_COMMIT = re.compile(r"^(\w+)(?:\(([^)]*)\))?!?:\s*(.+)$")
+RE_TRAILER = re.compile(r"^(Eide-[A-Za-z]+):\s*(.+)$", re.M)
+RE_SINCE = re.compile(r"^since[\s:]+(.+)$", re.I)
+DAU_BAN_GHI, DAU_TRUONG = "\x1e", "\x1f"
+
+
+@capability("doc.changelog")
+def changelog(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-10 — CDS-12.1; CON-28 §4 (loại commit, trailer `Eide-*`); DDD-14 `decision_log`
+    (ledger). tc: TC-77 "changelog từ 10 commit"; undo `none`.
+
+    **Nhóm đọc từ LOẠI COMMIT, không đoán từ tiêu đề.** CON-28 §4 đã quy định
+    `feat|fix|docs|refactor|test|chore|knowledge`, và `code.merge` ghi đúng khuôn ấy — nên
+    `feat/fix/knowledge` của bước 1 là ba loại có thật. Đoán từ chữ trong tiêu đề thì một commit
+    "sửa cách đọc nhiệt độ" rơi vào "Sửa lỗi" hay "Tính năng" tùy người viết.
+
+    **git log + ledger**, không chỉ git: một mẻ fact nhập vào không sinh commit nào — nó chỉ có
+    trong sổ cái. Bỏ nó ra ngoài thì changelog kể thiếu đúng phần tri thức, mà tri thức mới là
+    thứ EIDE tích lũy. Sự kiện `store.write` mang `n_facts` (gộp) và `n_conflicts` (chỗ sinh ra
+    supersede); huy hiệu lấy từ `passport.badges` của hộ chiếu tạo trong khoảng.
+
+    **`Eide-Run` là chỗ nối duy nhất** giữa một dòng changelog và lần chạy đã sinh ra nó, và
+    `Eide-Facts` là chỗ duy nhất nói dòng mã ấy dựa trên fact nào. Hai trailer ấy đã có sẵn từ
+    `code.merge`; ở đây chỉ việc đọc chúng ra.
+
+    Không ghi tệp nào: hợp đồng trả `markdown` và `undo: none`.
+    """
+    root = _root(ctx)
+    pham_vi = str(params["range"]).strip()
+    tu, den, doi_so = _khoang(pham_vi)
+
+    from eide_core import git
+    la_kho = git.la_kho(root)
+    commits = _git_log(root, doi_so) if la_kho else []
+    if tu is None and (moc := [c["at"] for c in commits if c["at"]]):
+        # Dạng `tag..tag`: khoảng lấy từ chính các commit. `..HEAD` nghĩa là "tới bây giờ", nên
+        # KHÔNG chặn trên — một mẻ fact nhập sau commit cuối vẫn thuộc khoảng ấy. Còn
+        # `v0.1..v0.2` thì chặn trên thật, vì mọi thứ sau v0.2 thuộc bản phát hành sau.
+        tu = min(moc)
+        den = None if pham_vi.split("..")[-1].strip() in ("", "HEAD") else max(moc)
+
+    nhom: dict[str, list[str]] = {k: [] for k in THU_TU_NHOM}
+    for c in commits:
+        nhom[c["nhom"]].append(_dong_commit(c))
+    nhom["Tri thức"] += _tri_thuc(root, ctx, tu, den)
+
+    d = [f"# Changelog — {_ten_du_an(root)}", "",
+         f"*Khoảng `{pham_vi}` — {len(commits)} commit, "
+         f"{sum(len(v) for v in nhom.values()) - len(commits)} sự kiện tri thức từ sổ cái.*", ""]
+    if not la_kho:
+        d += ["*Thư mục dự án chưa phải một kho git, nên không có commit nào để kể — "
+              "`code.merge` tạo kho lúc commit lần đầu. Phần dưới chỉ từ sổ cái.*", ""]
+    for ten in THU_TU_NHOM:
+        if nhom[ten]:
+            d += [f"## {ten}", "", *nhom[ten], ""]
+    if not any(nhom.values()):
+        d += ["*Không có thay đổi nào trong khoảng này.*", ""]
+    return {"markdown": "\n".join(d)}
+
+
+def _khoang(pham_vi: str) -> tuple[datetime | None, datetime | None, list[str]]:
+    """`(từ, đến, đối số cho git log)`. Hợp đồng cho đúng hai dạng: `tag..tag` và `since date`.
+
+    Dạng thứ ba là lỗi của bên gọi, và nói ra ngay tốt hơn là đưa một chuỗi lạ cho git rồi in
+    lại thông điệp của git — thông điệp ấy nói về cú pháp revision, không nói về hợp đồng.
+    """
+    if ".." in pham_vi:
+        return None, None, [pham_vi]
+    if (m := RE_SINCE.match(pham_vi)):
+        ngay = m.group(1).strip()
+        try:
+            tu = datetime.fromisoformat(ngay)
+        except ValueError:
+            raise EideError("E1000", f"`since {ngay}` — ngày phải ở dạng ISO (2026-09-01)",
+                            field="range", value=pham_vi) from None
+        return (tu if tu.tzinfo else tu.replace(tzinfo=UTC)), None, [f"--since={ngay}"]
+    raise EideError("E1000", f"`range` phải là `tag..tag` hoặc `since <ngày>`, nhận {pham_vi!r}",
+                    field="range", value=pham_vi)
+
+
+def _git_log(root: Path, doi_so: list[str]) -> list[dict[str, Any]]:
+    from eide_core import git
+    p = git.chay(root, "log", *doi_so,
+                 f"--pretty=format:%H{DAU_TRUONG}%aI{DAU_TRUONG}%s{DAU_TRUONG}%b{DAU_BAN_GHI}",
+                 kiem=False)
+    if p.returncode != 0:
+        raise EideError("E1000", f"git không hiểu khoảng `{' '.join(doi_so)}`: "
+                        f"{p.stderr.strip()[:200]}", field="range", value=doi_so)
+    ra: list[dict[str, Any]] = []
+    for khoi in p.stdout.split(DAU_BAN_GHI):
+        if not khoi.strip():
+            continue
+        sha, ngay, tieu_de, than = (khoi.strip("\n").split(DAU_TRUONG) + ["", "", "", ""])[:4]
+        m = RE_LOAI_COMMIT.match(tieu_de)
+        loai = (m.group(1).lower() if m else "")
+        ra.append({"sha": sha, "at": _moc(ngay), "ngay": ngay[:10],
+                   "loai": loai, "scope": (m.group(2) if m else None),
+                   "mo_ta": (m.group(3) if m else tieu_de),
+                   "nhom": NHOM_COMMIT.get(loai, "Khác"),
+                   "trailer": dict(RE_TRAILER.findall(than))})
+    return ra
+
+
+def _moc(s: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat(s)
+    except (ValueError, TypeError):
+        return None
+
+
+def _dong_commit(c: dict[str, Any]) -> str:
+    d = f"- {c['mo_ta']}"
+    if c["scope"]:
+        d += f" (`{c['scope']}`)"
+    d += f" — `{c['sha'][:8]}`, {c['ngay']}"
+    if (run := c["trailer"].get("Eide-Run")):
+        d += f" · run `{run}`"
+    if (fa := c["trailer"].get("Eide-Facts")):
+        d += f" · fact {fa}"
+    return d
+
+
+def _tri_thuc(root: Path, ctx: Context, tu: datetime | None,
+              den: datetime | None) -> list[str]:
+    """Phần tri thức: mẻ ghi store trong sổ cái + huy hiệu hộ chiếu tạo trong khoảng.
+
+    Không có khoảng (dạng `tag..tag` mà không commit nào) thì KHÔNG kể gì: một khoảng rỗng phải
+    cho ra một changelog rỗng, chứ không phải cả sổ cái.
+    """
+    if tu is None:
+        return []
+    ra: list[str] = []
+    led = ctx.extra.get("ledger")
+    for r in (led.records() if led is not None else []):
+        if r.get("kind") != "store.write" or not _trong_khoang(_moc(r.get("ts", "")), tu, den):
+            continue
+        d = r.get("data") or {}
+        ra.append(f"- Ghi {d.get('n_facts', 0)} fact vào store"
+                  + (f" ({d['n_conflicts']} xung đột)" if d.get("n_conflicts") else "")
+                  + f" — mẻ `{d.get('batch_id', '?')}`"
+                  + (f", {d['reason']}" if d.get("reason") else ""))
+    for pid, badges, tao in _q(root, "SELECT id, badges, created_at FROM passport"
+                                     " WHERE badges IS NOT NULL AND badges != '[]'"):
+        if _trong_khoang(_moc(tao or ""), tu, den):
+            ra.append(f"- Hộ chiếu `{pid}` có huy hiệu {', '.join(json.loads(badges))}")
+    return ra
+
+
+def _trong_khoang(t: datetime | None, tu: datetime | None, den: datetime | None) -> bool:
+    if t is None or tu is None:
+        return False
+    return tu <= t and (den is None or t <= den)
+
+
 # ---------------------------------------------------------------- DOC-06 test_report
 
 

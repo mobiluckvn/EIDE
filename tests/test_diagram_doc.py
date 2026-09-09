@@ -1343,6 +1343,128 @@ def test_khong_goi_mo_hinh(du_an, monkeypatch):
     assert "# Báo cáo kiểm thử" in _bao_cao(du_an, ["tr_1"])
 
 
+# ================================================================ DOC-10 changelog
+#
+# tc: TC-77 ("changelog từ 10 commit"). Bước 1: "git log + ledger (merge, supersede, badge) →
+# nhóm feat/fix/knowledge; liên kết run_id".
+#
+# Nhóm lấy từ CHÍNH loại commit của CON-28 §4 (`feat|fix|docs|refactor|test|chore|knowledge`),
+# không đoán từ chữ trong tiêu đề.
+
+
+def _commit(root, loai, mo_ta, trailer=None, ten_tep=None):
+    from eide_core import git
+    f = ten_tep or f"src/{abs(hash(mo_ta)) % 10**6}.c"
+    (root / f).parent.mkdir(parents=True, exist_ok=True)
+    (root / f).write_text(mo_ta + "\n", encoding="utf-8")
+    return git.commit(root, git.thong_diep(loai, "bme280", mo_ta, trailer or {}), [f])
+
+
+@pytest.fixture
+def kho(du_an):
+    from eide_core import git
+    r, ctx, root = du_an
+    if git.co_git() is None:
+        pytest.skip("máy chưa có git")
+    git.dam_bao_kho(root)
+    _commit(root, "chore", "khởi tạo", ten_tep="src/khoi_tao.c")
+    return r, ctx, root
+
+
+def _cl(kho, pham_vi):
+    r, ctx, _ = kho
+    return r.invoke("doc.changelog", {"range": pham_vi}, ctx).result["markdown"]
+
+
+def test_TC77_changelog_tu_10_commit(kho):
+    """tc TC-77: "changelog từ 10 commit". Mười commit vào thì mười dòng ra — không gộp, không
+    bỏ cái nào vì trông giống nhau."""
+    _, _, root = kho
+    for i in range(10):
+        _commit(root, "feat", f"thêm hàm số {i}")
+    md = _cl(kho, "HEAD~10..HEAD")
+
+    for i in range(10):
+        assert f"thêm hàm số {i}" in md, f"thiếu commit {i}"
+
+
+def test_nhom_theo_LOAI_COMMIT_cua_CON28(kho):
+    """`feat|fix|knowledge` là ba loại commit có thật trong CON-28 §4, không phải ba từ khóa
+    đoán từ tiêu đề. Loại còn lại (`docs`, `refactor`, `test`, `chore`) gom vào "Khác" chứ không
+    biến mất."""
+    _, _, root = kho
+    _commit(root, "feat", "đọc nhiệt độ")
+    _commit(root, "fix", "sai dấu bù nhiệt")
+    _commit(root, "knowledge", "nhập hộ chiếu BME280")
+    _commit(root, "refactor", "tách hàm crc")
+    md = _cl(kho, "HEAD~4..HEAD")
+
+    for tieu_de, noi in [("Tính năng", "đọc nhiệt độ"), ("Sửa lỗi", "sai dấu bù nhiệt"),
+                         ("Tri thức", "nhập hộ chiếu BME280"), ("Khác", "tách hàm crc")]:
+        muc = md.split(f"## {tieu_de}")[1].split("## ")[0]
+        assert noi in muc, f"{noi} không nằm dưới {tieu_de}"
+
+
+def test_lien_ket_run_id_tu_trailer_Eide_Run(kho):
+    """"liên kết run_id" của bước 1. `Eide-Run` là trailer CON-28 §4 mà `code.merge` đã ghi —
+    nhờ nó một dòng changelog lần ngược được về đúng lần chạy đã sinh ra nó."""
+    _, _, root = kho
+    _commit(root, "feat", "đọc độ ẩm", {"Eide-Run": "run_abc123", "Eide-Facts": ["f_1", "f_2"]})
+    md = _cl(kho, "HEAD~1..HEAD")
+
+    assert "run_abc123" in md
+    assert "f_1" in md, "trailer Eide-Facts là chỗ duy nhất nói dòng mã ấy dựa trên fact nào"
+
+
+def test_tri_thuc_lay_ca_tu_LEDGER_chu_khong_chi_tu_git(kho):
+    """Bước 1 nói "git log + ledger". Một mẻ fact nhập vào không sinh commit nào — nó chỉ có
+    trong sổ cái, và bỏ nó ra ngoài thì changelog kể thiếu đúng phần tri thức."""
+    r, ctx, root = kho
+    _commit(root, "feat", "đọc áp suất")
+    r.ledger.append("store.write", {"batch_id": "b_9", "n_facts": 12, "n_conflicts": 1,
+                                    "actor": "agent", "reason": "nhập SVD STM32F411",
+                                    "hash": "a" * 16})
+    md = _cl(kho, "HEAD~1..HEAD")
+
+    tri = md.split("## Tri thức")[1].split("## ")[0]
+    assert "12" in tri and "b_9" in tri
+    assert "nhập SVD STM32F411" in tri
+    assert "1" in tri, "số xung đột phải nêu — một mẻ có xung đột không giống một mẻ sạch"
+
+
+def test_range_khong_dung_dinh_dang_thi_E1000(kho):
+    """`range` có đúng hai dạng trong hợp đồng: `tag..tag` và `since date`. Dạng thứ ba là lỗi
+    của bên gọi, và nói ra ngay tốt hơn là đưa một chuỗi lạ cho git rồi in lại lỗi của git."""
+    r, ctx, _ = kho
+    run = r.invoke("doc.changelog", {"range": "hôm qua tới giờ"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E1000"
+    assert "since" in run.error["message"] and run.error["field"] == "range"
+
+
+def test_since_ngay_cung_chay(kho):
+    """Dạng thứ hai của hợp đồng: `since <ngày>`."""
+    _, _, root = kho
+    _commit(root, "feat", "đọc điểm sương")
+    assert "đọc điểm sương" in _cl(kho, "since 2000-01-01")
+
+
+def test_chua_phai_kho_git_thi_NOI_RO(du_an):
+    """Một changelog rỗng và một dự án chưa có kho git đọc phải khác nhau. Trả chuỗi rỗng là để
+    người dùng đi tìm xem mình gõ sai chỗ nào."""
+    r, ctx, _ = du_an
+    md = r.invoke("doc.changelog", {"range": "since 2000-01-01"}, ctx).result["markdown"]
+    assert "chưa phải một kho git" in md
+
+
+def test_khong_ghi_tep_nao(kho):
+    """`undo: none` và đầu ra là `markdown`, không phải `path` — nên năng lực này không được để
+    lại gì trên đĩa. Hai năng lực cùng nhóm ghi tệp; cái này thì không."""
+    _, _, root = kho
+    _commit(root, "feat", "đọc gió")
+    _cl(kho, "HEAD~1..HEAD")
+    assert not list((root / ".eide" / "docs").glob("changelog*"))
+
+
 def test_chuoi_P7_du_nang_luc():
     """P7 "bộ tài liệu" là chuỗi thứ hai đủ năng lực cho mọi bước. Giữ điều đó khỏi tụt đi trong
     im lặng khi ai đó đổi `chains.json` hoặc gỡ một năng lực."""
