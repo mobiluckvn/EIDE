@@ -142,6 +142,31 @@ def test_lint_khong_phan_tich_thi_khong_bao_bua(du_an):
     assert [x for x in out["issues"] if x["kind"] in (KIND_MO_COI, KIND_LA)] == []
 
 
+def test_canh_CO_NHAN_va_nut_KEM_NHAN_khong_bi_lint_bo_qua(du_an):
+    """Cạnh có nhãn (`-->|I2C|`) và nút viết kèm nhãn (`mcu[STM32F411] --- bme[BME280]`) là hai
+    dạng mermaid phổ biến nhất — `diagram.block` sinh ra dạng thứ nhất, người viết tay dùng dạng
+    thứ hai. Bản trước bỏ sót CẢ HAI, và bỏ sót im lặng: lược đồ hai nút cho ra một nút và không
+    cạnh nào, mà kiểm "nút mồ côi" tự tắt khi chỉ có một nút. Hai phép kiểm đáng giá nhất của
+    `lint` vì thế không chạy trên đúng những lược đồ EIDE tự sinh."""
+    from eide.caps.diagram import _doc_do_thi
+
+    nut, canh = _doc_do_thi(MERMAID_OK, "mermaid")
+    assert nut == {"mcu", "bme"} and canh == [("mcu", "bme")]
+
+    for mui in ("-->|nhãn|", "---|nhãn|", "-.->", "==>", "-->"):
+        n, c = _doc_do_thi(f"flowchart LR\n  a {mui} b\n", "mermaid")
+        assert c == [("a", "b")], mui
+
+
+def test_nut_mo_coi_van_bao_dung_khi_canh_co_nhan(du_an):
+    """Sửa bộ đọc cạnh mà làm hỏng phép kiểm mồ côi thì đổi một lỗi im lặng lấy một lỗi ồn ào."""
+    r, ctx, _ = du_an
+    src = "flowchart LR\n  a[A] -->|x| b[B]\n  c[C]\n"
+    out = r.invoke("diagram.lint", {"src": src, "lang": "mermaid"}, ctx).result
+    assert [x["kind"] for x in out["issues"]] == [KIND_MO_COI]
+    assert "`c`" in out["issues"][0]["message"]
+
+
 # ---------- DIAGRAM-01 render
 
 
@@ -1100,6 +1125,319 @@ def test_chua_co_module_nao_thi_E2000_chu_khong_hoi_mo_hinh(du_an, monkeypatch):
     assert run.status == "failed" and run.error["eide_code"] == "E2000"
     assert "arch.decompose" in run.error["candidates"]
     assert goi == [], "đã hỏi mô hình trong khi biết trước là sẽ bỏ câu trả lời"
+
+
+# ---------- DIAGRAM-11 gantt
+#
+# tc: "Feature passing đánh dấu done". Bước 1: "Từ Plan/FEATURES + ước lượng → Mermaid gantt;
+# cập nhật theo trạng thái".
+
+
+def nap_feature(root, ds):
+    with store.open_store(store.store_path(root)) as c:
+        for fid, title, status, ngay in ds:
+            c.execute("INSERT OR REPLACE INTO feature (id, title, status, updated_at)"
+                      " VALUES (?,?,?,?)", (fid, title, status, ngay))
+        c.commit()
+
+
+def test_TC_feature_passing_danh_dau_done(du_an):
+    """tc DIAGRAM-11, nguyên văn. Trạng thái trên biểu đồ phải là trạng thái THẬT trong store —
+    một Gantt vẽ tay là thứ đẹp lên theo thời gian mà dự án thì không."""
+    r, ctx, root = du_an
+    nap_feature(root, [("F-01", "Đọc nhiệt độ", "passing", "2026-09-08T10:00:00+00:00"),
+                       ("F-02", "Lọc nhiễu", "failing", "2026-09-09T10:00:00+00:00")])
+    dg = r.invoke("diagram.gantt", {}, ctx).result["diagram"]
+
+    dong = {t["id"]: t for t in dg["tasks"]}
+    assert dong["F_01"]["tag"] == "done" and dong["F_02"]["tag"] == "active"
+    assert ":done," in dg["src"] and dg["src"].lstrip().startswith("gantt")
+
+
+def test_uoc_luong_lay_tu_plan_estimate_khong_bia(du_an):
+    """"+ ước lượng" của bước 1 — và ước lượng có sẵn một chỗ tính: `plan.estimate`. Feature nào
+    chưa có kế hoạch thì nhãn NÓI RA là chưa ước lượng, chứ không nhận một con số mặc định rồi
+    để người đọc tưởng đó là ước lượng thật."""
+    from eide.caps.plan import ghi_plan
+
+    r, ctx, root = du_an
+    nap_feature(root, [("F-01", "Đọc nhiệt độ", "failing", "2026-09-09T10:00:00+00:00"),
+                       ("F-02", "Lọc nhiễu", "failing", "2026-09-09T10:00:00+00:00")])
+    ghi_plan(root, "F-01", {"steps": [{"id": "s1", "goal": "g", "cap": "code.generate_module",
+                                       "done_when": "x"},
+                                      {"id": "s2", "goal": "g", "cap": "code.build",
+                                       "done_when": "y"}]}, {"decision": "APPROVE"})
+    dg = r.invoke("diagram.gantt", {}, ctx).result["diagram"]
+
+    t1 = next(t for t in dg["tasks"] if t["id"] == "F_01")
+    t2 = next(t for t in dg["tasks"] if t["id"] == "F_02")
+    assert t1["estimated"] is True and t1["minutes"] > 0
+    assert t2["estimated"] is False and "chưa ước lượng" in t2["label"]
+
+
+def test_plan_id_thi_ve_CAC_BUOC_cua_ke_hoach(du_an):
+    """`plan_id` trỏ một kế hoạch cụ thể; khi ấy thứ đáng vẽ là các bước của nó, không phải danh
+    sách tính năng — người hỏi đang xem một tính năng, không xem cả dự án."""
+    from eide.caps.plan import ghi_plan
+
+    r, ctx, root = du_an
+    ghi_plan(root, "F-01", {"steps": [{"id": "s1", "goal": "sinh driver",
+                                       "cap": "code.generate_module", "done_when": "x"},
+                                      {"id": "s2", "goal": "dựng", "cap": "code.build",
+                                       "done_when": "y"}]}, {"decision": "APPROVE"})
+    dg = r.invoke("diagram.gantt", {"plan_id": "F-01"}, ctx).result["diagram"]
+
+    assert [t["id"] for t in dg["tasks"]] == ["s1", "s2"]
+    assert "sinh driver" in dg["src"] and "code.build" in dg["src"]
+
+
+def test_chua_co_feature_lan_plan_thi_E2000(du_an):
+    """Một Gantt rỗng trông y như một dự án chưa bắt đầu, mà thật ra là chưa ai chạy
+    `arch.to_plan`."""
+    r, ctx, _ = du_an
+    run = r.invoke("diagram.gantt", {}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "arch.to_plan" in run.error["candidates"] or "plan.decompose" in run.error["candidates"]
+
+
+def test_nhan_khong_lam_hong_cu_phap_gantt(du_an):
+    """Tiêu đề tính năng là dữ liệu người dùng: dấu `:` cắt đôi một dòng gantt và dấu ngoặc lệch
+    làm `diagram.lint` báo. Dữ liệu không được phá cú pháp của lược đồ."""
+    from eide.caps.diagram import lint
+
+    r, ctx, root = du_an
+    nap_feature(root, [("F-01", "Đọc (nhiệt: độ", "passing", "2026-09-08T10:00:00+00:00")])
+    dg = r.invoke("diagram.gantt", {}, ctx).result["diagram"]
+
+    assert lint({"src": dg["src"], "lang": "mermaid"}, ctx)["issues"] == []
+    assert ":" not in dg["tasks"][0]["label"]
+
+
+# ---------- DIAGRAM-08 timing
+#
+# tc: "WaveDrom hợp lệ". Bước 1: "Từ fact timing (tsu, th, tCLK) → WaveDrom signal + edge với
+# nhãn giá trị; từ capture LA → chuyển mẫu". grounding: "Fact có nguồn".
+
+
+def nap_timing(root, ds):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id, uri, sha256, kind, tier)"
+                  " VALUES ('s_tim','ds/bme280.pdf','h_tim','pdf_vendor','gold')")
+        for i, (ten, gt) in enumerate(ds):
+            c.execute("INSERT OR REPLACE INTO fact (id, subject, predicate, value, unit,"
+                      " source_id, method, tier, confidence, status, locator)"
+                      " VALUES (?,?,?,?,'s','s_tim','layout_llm','silver',0.7,'verified',?)",
+                      (f"f_t{i}", f"chip:bme280/param:{ten}", "timing", json.dumps(gt),
+                       json.dumps({"page": 27})))
+        c.commit()
+
+
+TIMING = [("tSU", {"min": 100e-9, "typ": None, "max": None}),
+          ("tH", {"min": 50e-9, "typ": None, "max": None}),
+          ("tCLK", {"min": None, "typ": 2.5e-6, "max": None})]
+
+
+def test_TC_wavedrom_hop_le(du_an):
+    """tc DIAGRAM-08. "Hợp lệ" là kiểm được: JSON phải đọc lên được, mỗi tín hiệu phải có `wave`,
+    và `node` phải dài đúng bằng `wave` — lệch một ký tự thì WaveDrom vẽ mũi tên vào chỗ khác."""
+    from eide.caps.diagram import lint
+
+    r, ctx, root = du_an
+    nap_timing(root, TIMING)
+    dg = r.invoke("diagram.timing", {"source": "chip:bme280"}, ctx).result["diagram"]
+
+    d = json.loads(dg["src"])
+    assert d["signal"] and all("wave" in s for s in d["signal"] if s)
+    for s in d["signal"]:
+        if s and s.get("node"):
+            assert len(s["node"]) == len(s["wave"]), s["name"]
+    assert dg["lang"] == "wavedrom"
+    assert lint({"src": dg["src"], "lang": "wavedrom"}, ctx)["issues"] == []
+
+
+def test_moi_nhan_mang_GIA_TRI_va_NGUON(du_an):
+    """grounding "Fact có nguồn". Một giản đồ thời gian không có số thì vô dụng, còn có số mà
+    không truy được nguồn thì nguy hiểm — người ta thiết kế mạch theo nó."""
+    r, ctx, root = du_an
+    nap_timing(root, TIMING)
+    dg = r.invoke("diagram.timing", {"source": "chip:bme280"}, ctx).result["diagram"]
+
+    edge = " ".join(json.loads(dg["src"])["edge"])
+    assert "tSU" in edge and "100 ns" in edge
+    assert "bme280.pdf" in edge, "nhãn phải nêu nguồn"
+    assert set(dg["facts"]) == {"f_t0", "f_t1", "f_t2"}
+
+
+def test_tCLK_thanh_CHU_KY_dong_ho_khong_thanh_mot_mui_ten(du_an):
+    """`tCLK` không phải một khoảng giữa hai mép — nó là chu kỳ của chính tín hiệu clock. Vẽ nó
+    thành một mũi tên như tSU là nói sai một thứ mà người đọc sẽ dùng để chọn tốc độ bus."""
+    r, ctx, root = du_an
+    nap_timing(root, TIMING)
+    d = json.loads(r.invoke("diagram.timing", {"source": "chip:bme280"},
+                            ctx).result["diagram"]["src"])
+
+    clk = next(s for s in d["signal"] if s and s.get("name") == "CLK")
+    assert "2.5 µs" in (clk.get("period_label") or "") or "2.5 µs" in json.dumps(d["head"],
+                                                                                ensure_ascii=False)
+    assert not any("tCLK" in e for e in d["edge"])
+
+
+def test_chon_fact_theo_ID_cung_duoc(du_an):
+    """`source` là "fact ids | dataset_id" — nên một danh sách id phải chạy, không chỉ tên chip."""
+    r, ctx, root = du_an
+    nap_timing(root, TIMING)
+    dg = r.invoke("diagram.timing", {"source": "f_t0, f_t1"}, ctx).result["diagram"]
+    assert set(dg["facts"]) == {"f_t0", "f_t1"}
+
+
+def test_khong_co_fact_timing_thi_E2000(du_an):
+    r, ctx, _ = du_an
+    run = r.invoke("diagram.timing", {"source": "chip:khong-co"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "extract.pdf_electrical" in str(run.error)
+
+
+def test_capture_LA_chua_lam_duoc_thi_NOI_RO(du_an):
+    """"từ capture LA → chuyển mẫu" cần `dataset_id` của `measure.capture_signal` — mốc M5, cần
+    phần cứng thật. Nói thẳng là chưa có, kèm năng lực sẽ tạo ra nó ([DEV-074])."""
+    r, ctx, root = du_an
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR REPLACE INTO measurement (id, kind, target, value, unit, at)"
+                  " VALUES ('m_1','capture','SCL','null','s','2026-09-09T10:00:00+00:00')")
+        c.commit()
+    run = r.invoke("diagram.timing", {"source": "m_1"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "measure.capture_signal" in run.error["candidates"]
+
+
+# ---------- DIAGRAM-07 flow
+#
+# tc: "Nhánh if/else đủ". Bước 1: "Từ mã: CFG đơn giản (if/loop/return) bằng tree-sitter; từ
+# mô tả: writer".
+#
+# Hai đường vào rất khác nhau: từ MÃ thì lưu đồ phải khớp từng nhánh (đọc được, kiểm được);
+# từ MÔ TẢ thì mô hình vẽ, và khi ấy nó chỉ là một bản phác.
+
+PID_C = """\
+#include "pid.h"
+
+static float gioi_han(float x) { return x; }
+
+int pid_step(float sp, float pv, float *out) {
+    float e = sp - pv;
+    if (e > NGUONG) {
+        *out = MAX_OUT;
+        return 1;
+    } else {
+        *out = kp * e;
+    }
+    while (*out < 0) {
+        *out += 1.0f;
+    }
+    return 0;
+}
+"""
+
+
+def _viet_c(root, ten, noi):
+    f = root / "src" / ten
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(noi, encoding="utf-8")
+    return f
+
+
+def test_TC_nhanh_if_else_du(du_an):
+    """tc DIAGRAM-07, nguyên văn. Một lưu đồ thiếu nhánh `else` là lưu đồ của một hàm khác —
+    và đó đúng là nhánh người đọc đi tìm khi gỡ lỗi."""
+    from eide.caps.diagram import lint
+
+    r, ctx, root = du_an
+    _viet_c(root, "pid.c", PID_C)
+    dg = r.invoke("diagram.flow", {"source": "src/pid.c:pid_step"}, ctx).result["diagram"]
+
+    assert dg["source_kind"] == "code"
+    dung = [e for e in dg["edges"] if e["label"] == "đúng"]
+    sai = [e for e in dg["edges"] if e["label"] == "sai"]
+    assert len(dung) >= 1 and len(sai) >= 1
+    assert dung[0]["to"] != sai[0]["to"], "hai nhánh phải đi hai chỗ khác nhau"
+    assert lint({"src": dg["src"], "lang": "mermaid"}, ctx)["issues"] == []
+
+
+def test_if_khong_co_else_van_co_canh_SAI(du_an):
+    """Không có `else` không có nghĩa là không có nhánh sai — nó đi thẳng xuống dưới. Bỏ cạnh
+    ấy đi thì lưu đồ nói rằng điều kiện sai là bế tắc."""
+    r, ctx, root = du_an
+    _viet_c(root, "a.c", "int f(int x) {\n    if (x > 0) {\n        g();\n    }\n    h();\n"
+                         "    return 0;\n}\n")
+    dg = r.invoke("diagram.flow", {"source": "src/a.c:f"}, ctx).result["diagram"]
+
+    assert [e for e in dg["edges"] if e["label"] == "sai"]
+
+
+def test_vong_lap_co_canh_QUAY_LAI(du_an):
+    """`while` mà vẽ thành một mũi tên thẳng thì nó không còn là vòng lặp."""
+    r, ctx, root = du_an
+    _viet_c(root, "pid.c", PID_C)
+    dg = r.invoke("diagram.flow", {"source": "src/pid.c:pid_step"}, ctx).result["diagram"]
+
+    nut = {n["id"]: n for n in dg["nodes"]}
+    lap = [n for n in dg["nodes"] if n["kind"] == "loop"]
+    assert lap, "không nhận ra vòng lặp nào"
+    assert [e for e in dg["edges"] if e["to"] == lap[0]["id"] and nut[e["from"]]["kind"] != "start"]
+
+
+def test_return_khong_noi_tiep_cau_lenh_sau(du_an):
+    """`return` là điểm kết. Nối nó xuống câu lệnh kế tiếp là vẽ một luồng không tồn tại."""
+    r, ctx, root = du_an
+    _viet_c(root, "a.c", "int f(void) {\n    return 1;\n    g();\n}\n")
+    dg = r.invoke("diagram.flow", {"source": "src/a.c:f"}, ctx).result["diagram"]
+
+    ret = next(n for n in dg["nodes"] if n["kind"] == "return")
+    assert not [e for e in dg["edges"] if e["from"] == ret["id"] and "g" in str(e)]
+
+
+def test_ham_khong_co_trong_tep_thi_E2000(du_an):
+    r, ctx, root = du_an
+    _viet_c(root, "a.c", "int f(void) { return 1; }\n")
+    run = r.invoke("diagram.flow", {"source": "src/a.c:khong_co"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "f" in run.error["exists"]
+
+
+def test_mo_ta_tu_do_thi_MO_HINH_ve(du_an, monkeypatch):
+    """"từ mô tả: writer". Không có tệp nào thì không có CFG nào để dựng — và khi ấy lược đồ là
+    một bản phác, nên kết quả nói rõ nó đến từ đâu."""
+    r, ctx, _ = du_an
+    _gia_lap(monkeypatch, {"src": "flowchart TB\n  a([bắt đầu]) --> b[đọc cảm biến]\n"
+                                  "  b --> c([xong])\n"}, mod="diagram")
+    dg = r.invoke("diagram.flow", {"source": "vòng lặp đọc cảm biến rồi ghi thẻ"},
+                  ctx).result["diagram"]
+
+    assert dg["source_kind"] == "description"
+    assert "đọc cảm biến" in dg["src"]
+
+
+def test_mo_hinh_ve_hong_thi_E5002(du_an, monkeypatch):
+    """Trả về một lưu đồ không dựng được rồi để người dùng phát hiện là đẩy lỗi xuống hạ nguồn.
+    DIAGRAM-07 không khai E5002 trong `errors` — [DEV-075]."""
+    r, ctx, _ = du_an
+    _gia_lap(monkeypatch, {"src": "khong phai luoc do\n"}, mod="diagram")
+    run = r.invoke("diagram.flow", {"source": "mô tả gì đó"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+def test_dot_cung_ve_duoc_tu_ma(du_an):
+    """`lang` có hai giá trị trong hợp đồng; CFG là một đồ thị nên nó phải dựng được ở cả hai."""
+    from eide.caps.diagram import lint
+
+    r, ctx, root = du_an
+    _viet_c(root, "pid.c", PID_C)
+    dg = r.invoke("diagram.flow", {"source": "src/pid.c:pid_step", "lang": "dot"},
+                  ctx).result["diagram"]
+
+    assert dg["src"].lstrip().startswith("digraph")
+    assert lint({"src": dg["src"], "lang": "dot"}, ctx)["issues"] == []
 
 
 # ---------- DOC-01 generate

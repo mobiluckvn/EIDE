@@ -122,11 +122,22 @@ def _doc_do_thi(src: str, lang: str) -> tuple[set[str], list[tuple[str, str]]]:
     # 153 cạnh, tức mất đúng một nửa. Hệ quả là số nút sai (kiểm kích thước không bao giờ nổ)
     # và nút "mồ côi" báo bừa. Ngôn ngữ lược đồ vốn theo dòng, nên duyệt theo dòng vừa đúng vừa
     # đơn giản hơn.
-    mui = (r"(?:--[->|][^>]*>|-->|---|===|-\.->)" if lang == "mermaid" else r"->")
+    # Mermaid có nhiều dạng mũi tên, và dạng CÓ NHÃN (`-->|nhãn|`, `---|nhãn|`) chính là dạng mà
+    # `diagram.block`, `diagram.flow` và `diagram.architecture` tự sinh ra. Bản trước bỏ sót
+    # chúng, và bỏ sót một cách IM LẶNG: một lược đồ khối đủ hai nút cho ra 0 cạnh và 1 nút, mà
+    # kiểm "nút mồ côi" tự tắt khi chỉ có 1 nút — nên hai phép kiểm đáng giá nhất của `lint`
+    # không chạy trên đúng những lược đồ EIDE tự sinh, và không có gì báo.
+    mui = (r"(?:-{2,3}|={2,3}|-\.-)[->ox]?\s*(?:\|[^|\n]*\|)?"
+           if lang == "mermaid" else r"->")
+    # …và nút được viết KÈM NHÃN ngay tại chỗ nối: `mcu[STM32F411] ---|I2C| bme[BME280]` là một
+    # dòng mermaid hoàn toàn bình thường, người ta viết tay như thế suốt. Không cho phép phần
+    # nhãn thì cạnh ấy vô hình, và `diagram.lint` — năng lực sinh ra để kiểm lược đồ NGƯỜI viết
+    # — mù đúng với dạng người viết nhiều nhất.
+    nhan = r"(?:[\[({][^\n]*?[\])}]\s*)?" if lang == "mermaid" else r"(?:\[[^\n]*?\]\s*)?"
     khai = (r"^\s*([A-Za-z_][\w]*)\s*[\[({\"]" if lang == "mermaid"
             else r"^\s*([A-Za-z_][\w]*)\s*\[")
     for dong in src.splitlines():
-        for m in re.finditer(rf"([A-Za-z_][\w]*)\s*{mui}\s*([A-Za-z_][\w]*)", dong):
+        for m in re.finditer(rf"([A-Za-z_][\w]*)\s*{nhan}{mui}\s*([A-Za-z_][\w]*)", dong):
             canh.append((m.group(1), m.group(2)))
             nut |= {m.group(1), m.group(2)}
         if (m := re.match(khai, dong)):
@@ -838,6 +849,625 @@ def _svg_pinmap(board: str, mcu: str, package: str, bang: list[dict[str, Any]]) 
 def _thoat_xml(s: str) -> str:
     return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
             .replace('"', "&quot;"))
+
+
+# ---------------------------------------------------------------- DIAGRAM-07 flow
+
+RE_TU_KHOA_C = re.compile(r"\b(if|else|for|while|do|switch|return|break|continue)\b")
+RE_CASE = re.compile(r"\b(case\s+[^:]+|default)\s*:", re.M)
+HINH_NUT = {"start": "([{}])", "end": "([{}])", "decision": "{{{}}}", "loop": "{{{}}}",
+            "switch": "{{{}}}", "return": "[{}]", "stmt": "[{}]"}
+DAI_NHAN = 60
+
+
+@capability("diagram.flow")
+def flow(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-07 — CDS-12.4; SDD-04. tc: "Nhánh if/else đủ"; undo `delete_created_files`.
+
+    **Hai đường vào rất khác nhau, và kết quả nói rõ mình đến từ đường nào** (`source_kind`).
+    Từ MÃ thì lưu đồ là một cách đọc của chính hàm ấy: mọi nhánh có trong mã đều có trong hình,
+    và đó là thứ kiểm được. Từ MÔ TẢ thì mô hình vẽ, và khi ấy nó là một bản phác — người đọc
+    phải biết mình đang cầm cái nào.
+
+    **`if` không có `else` vẫn có cạnh SAI.** Điều kiện sai thì đi thẳng xuống dưới, không phải
+    bế tắc; bỏ cạnh ấy đi là vẽ một hàm khác. Đó đúng là tc của hợp đồng.
+
+    **`return` nối thẳng tới nút kết**, không nối xuống câu lệnh kế tiếp — mã sau `return` không
+    chạy, và một mũi tên tới đó là một luồng không tồn tại.
+
+    Bộ đọc CFG là bộ quét câu lệnh của `doc.api_ref` dùng lại, không phải tree-sitter (xem
+    [DEV-072]): cùng lý do, và cùng phạm vi — họ C.
+    """
+    root = _root(ctx)
+    nguon = str(params["source"]).strip()
+    lang = params.get("lang") or "mermaid"
+    tep, ten_ham = _tach_nguon_flow(root, nguon)
+
+    if tep is None:
+        return {"diagram": _flow_tu_mo_ta(ctx, nguon, lang)}
+
+    than = _than_ham_c(tep, ten_ham)
+    nut, canh = _cfg(than, ten_ham)
+    return {"diagram": {"lang": lang, "src": _ve_cfg(nut, canh, lang),
+                        "source_kind": "code", "nodes": nut, "edges": canh,
+                        "function": ten_ham, "file": str(tep.relative_to(root))
+                        if tep.is_relative_to(root) else str(tep)}}
+
+
+def _tach_nguon_flow(root: Path, nguon: str) -> tuple[Path | None, str]:
+    """`source` = `<đường dẫn>:<hàm>` hay một mô tả? Tách bằng ĐUÔI TỆP, không bằng dấu `:`.
+
+    Một mô tả tiếng Việt có dấu hai chấm là chuyện thường ("vòng lặp chính: đọc rồi ghi"), nên
+    lấy dấu `:` làm dấu hiệu thì mọi mô tả có dấu câu đều bị hiểu là đường dẫn.
+    """
+    from eide.caps.doc import DUOI_C
+    if ":" not in nguon:
+        return None, ""
+    duong, _, ham = nguon.rpartition(":")
+    p = Path(duong.strip()).expanduser()
+    if p.suffix.lower() not in DUOI_C or not re.fullmatch(r"[A-Za-z_]\w*", ham.strip()):
+        return None, ""
+    f = p if p.is_absolute() else root / p
+    if not f.is_file():
+        raise EideError("E2000", f"Không có tệp `{duong}`", exists=[], candidates=[],
+                        missing=[duong])
+    return f, ham.strip()
+
+
+def _than_ham_c(f: Path, ten: str) -> str:
+    """Thân hàm `ten` trong tệp C, đã xóa chú thích và literal (giữ nguyên độ dài để cắt nhãn)."""
+    from eide.caps.doc import RE_HAM, _bo_tien_xu_ly, _cau_lenh_ngoai, _lam_sach
+
+    goc = f.read_text(encoding="utf-8", errors="replace")
+    sach = _bo_tien_xu_ly(_lam_sach(goc))
+    co: list[str] = []
+    for dau, cuoi, ket in _cau_lenh_ngoai(sach):
+        if ket != "{":
+            continue
+        m = RE_HAM.match(sach[dau:cuoi].strip())
+        if not m:
+            continue
+        co.append(m.group("ten"))
+        if m.group("ten") == ten:
+            return sach[cuoi + 1:_dong_ngoac(sach, cuoi)]
+    raise EideError("E2000", f"Không có hàm `{ten}` trong `{f.name}`",
+                    exists=co, candidates=co, missing=[ten])
+
+
+def _dong_ngoac(s: str, mo: int) -> int:
+    """Vị trí `}` khớp với `{` ở `mo`."""
+    sau = 0
+    for i in range(mo, len(s)):
+        if s[i] == "{":
+            sau += 1
+        elif s[i] == "}":
+            sau -= 1
+            if not sau:
+                return i
+    return len(s)
+
+
+def _muc(s: str, i: int) -> int:
+    """Bỏ qua khoảng trắng từ `i`."""
+    while i < len(s) and s[i] in " \t\r\n":
+        i += 1
+    return i
+
+
+def _khoi_hoac_cau(s: str, i: int) -> tuple[str, int]:
+    """Thân của một `if`/`for`/`while`: một khối `{…}` hoặc đúng MỘT câu lệnh."""
+    i = _muc(s, i)
+    if i < len(s) and s[i] == "{":
+        j = _dong_ngoac(s, i)
+        return s[i + 1:j], j + 1
+    j = s.find(";", i)
+    j = len(s) if j < 0 else j
+    return s[i:j], j + 1
+
+
+def _ngoac_tron(s: str, i: int) -> tuple[str, int]:
+    """Nội dung `(...)` bắt đầu từ dấu `(` đầu tiên sau `i`."""
+    i = s.find("(", i)
+    if i < 0:
+        return "", len(s)
+    sau, j = 0, i
+    while j < len(s):
+        if s[j] == "(":
+            sau += 1
+        elif s[j] == ")":
+            sau -= 1
+            if not sau:
+                return s[i + 1:j], j + 1
+        j += 1
+    return s[i + 1:], len(s)
+
+
+def _phan_tich(than: str) -> list[dict[str, Any]]:
+    """Danh sách mục mức trên cùng của một thân hàm: stmt · if · loop · do · switch · return."""
+    ra: list[dict[str, Any]] = []
+    i, n = 0, len(than)
+    while (i := _muc(than, i)) < n:
+        if than[i] in ";{}":
+            if than[i] == "{":                  # khối trần — mở phạm vi, không đổi luồng
+                j = _dong_ngoac(than, i)
+                ra += _phan_tich(than[i + 1:j])
+                i = j + 1
+                continue
+            i += 1
+            continue
+        m = RE_TU_KHOA_C.match(than, i)
+        tu = m.group(1) if m else ""
+        if tu == "if":
+            dk, i = _ngoac_tron(than, i)
+            thi, i = _khoi_hoac_cau(than, i)
+            khac: list[dict[str, Any]] = []
+            j = _muc(than, i)
+            if than[j:j + 4] == "else" and not (than[j + 4:j + 5] or " ").isalnum():
+                nguoc, i = _khoi_hoac_cau(than, j + 4)
+                khac = _phan_tich(nguoc)
+            ra.append({"kind": "if", "cond": dk, "then": _phan_tich(thi), "else": khac})
+        elif tu in ("while", "for"):
+            dk, i = _ngoac_tron(than, i)
+            th, i = _khoi_hoac_cau(than, i)
+            ra.append({"kind": "loop", "cond": f"{tu} ({dk})", "body": _phan_tich(th)})
+        elif tu == "do":
+            th, i = _khoi_hoac_cau(than, i + 2)
+            dk, i = _ngoac_tron(than, i)
+            j = than.find(";", i)
+            i = len(than) if j < 0 else j + 1
+            ra.append({"kind": "do", "cond": f"while ({dk})", "body": _phan_tich(th)})
+        elif tu == "switch":
+            dk, i = _ngoac_tron(than, i)
+            th, i = _khoi_hoac_cau(than, i)
+            ra.append({"kind": "switch", "cond": f"switch ({dk})", "cases": _cac_case(th)})
+        elif tu in ("return", "break", "continue"):
+            j = than.find(";", i)
+            j = len(than) if j < 0 else j
+            ra.append({"kind": tu if tu == "return" else "jump", "text": than[i:j].strip(),
+                       "tu": tu})
+            i = j + 1
+        else:
+            j = _cuoi_cau(than, i)
+            if (t := than[i:j].strip()):
+                ra.append({"kind": "stmt", "text": t})
+            i = j + 1
+    return ra
+
+
+def _cuoi_cau(s: str, i: int) -> int:
+    """Vị trí `;` kết thúc một câu lệnh thường, bỏ qua `;` nằm trong ngoặc (`for(;;)`)."""
+    sau = 0
+    for j in range(i, len(s)):
+        if s[j] in "([":
+            sau += 1
+        elif s[j] in ")]":
+            sau -= 1
+        elif s[j] == ";" and not sau:
+            return j
+        elif s[j] == "{" and not sau:
+            return j
+    return len(s)
+
+
+def _cac_case(than: str) -> list[tuple[str, list[dict[str, Any]]]]:
+    """`[(nhãn, thân)]` cho từng `case`/`default` mức trên cùng của một `switch`."""
+    vt = [(m.start(), m.end(), m.group(0).rstrip(":").strip()) for m in RE_CASE.finditer(than)]
+    ra: list[tuple[str, list[dict[str, Any]]]] = []
+    for k, (_d, c, nhan) in enumerate(vt):
+        het = vt[k + 1][0] if k + 1 < len(vt) else len(than)
+        ra.append((nhan, _phan_tich(than[c:het])))
+    return ra
+
+
+class _Ctx:
+    """Bộ đếm nút và ngăn xếp vòng lặp cho một lượt dựng CFG."""
+
+    def __init__(self) -> None:
+        self.nodes: list[dict[str, str]] = []
+        self.edges: list[dict[str, str]] = []
+        self.n = 0
+        self.lap: list[tuple[str, str]] = []     # (đầu vòng, ra khỏi vòng) cho continue/break
+
+    def nut(self, kind: str, label: str) -> str:
+        self.n += 1
+        i = f"n{self.n}"
+        self.nodes.append({"id": i, "kind": kind, "label": _nhan_cfg(label)})
+        return i
+
+    def canh(self, a: str, b: str, nhan: str = "") -> None:
+        self.edges.append({"from": a, "to": b, "label": nhan})
+
+
+def _cfg(than: str, ten_ham: str) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    ng = _Ctx()
+    dau = ng.nut("start", ten_ham)
+    ket = ng.nut("end", "kết thúc")
+    ng.lap.append((ket, ket))                    # `break`/`continue` ngoài vòng lặp: về nút kết
+    vao = _day(_phan_tich(than), ket, ng, ket)
+    ng.canh(dau, vao)
+    return ng.nodes, ng.edges
+
+
+def _day(items: list[dict[str, Any]], tiep: str, ng: _Ctx, ket: str) -> str:
+    """Dựng ngược từ cuối: mỗi mục biết nút KẾ TIẾP của mình, nên nối được ngay lúc tạo."""
+    cur = tiep
+    for it in reversed(items):
+        cur = _mot(it, cur, ng, ket)
+    return cur
+
+
+def _mot(it: dict[str, Any], tiep: str, ng: _Ctx, ket: str) -> str:
+    loai = it["kind"]
+    if loai == "return":
+        i = ng.nut("return", it["text"])
+        ng.canh(i, ket)                          # về nút KẾT, không xuống câu lệnh sau
+        return i
+    if loai == "jump":
+        i = ng.nut("stmt", it["text"])
+        dau_lap, ra_lap = ng.lap[-1]
+        ng.canh(i, ra_lap if it["tu"] == "break" else dau_lap)
+        return i
+    if loai == "if":
+        dk = ng.nut("decision", it["cond"])
+        ng.canh(dk, _day(it["then"], tiep, ng, ket), "đúng")
+        # Không có `else` thì nhánh sai đi THẲNG XUỐNG DƯỚI — vẫn là một cạnh, không phải bế tắc.
+        ng.canh(dk, _day(it["else"], tiep, ng, ket) if it["else"] else tiep, "sai")
+        return dk
+    if loai == "loop":
+        dk = ng.nut("loop", it["cond"])
+        ng.lap.append((dk, tiep))
+        ng.canh(dk, _day(it["body"], dk, ng, ket), "đúng")
+        ng.lap.pop()
+        ng.canh(dk, tiep, "sai")
+        return dk
+    if loai == "do":
+        dk = ng.nut("loop", it["cond"])
+        ng.lap.append((dk, tiep))
+        vao = _day(it["body"], dk, ng, ket)
+        ng.lap.pop()
+        ng.canh(dk, vao, "đúng")
+        ng.canh(dk, tiep, "sai")
+        return vao                               # thân chạy TRƯỚC rồi mới xét điều kiện
+    if loai == "switch":
+        sw = ng.nut("switch", it["cond"])
+        co_mac_dinh = False
+        for nhan, than in it["cases"]:
+            co_mac_dinh = co_mac_dinh or nhan == "default"
+            ng.lap.append((sw, tiep))
+            ng.canh(sw, _day(than, tiep, ng, ket), nhan)
+            ng.lap.pop()
+        if not co_mac_dinh:
+            ng.canh(sw, tiep, "mặc định")
+        return sw
+    i = ng.nut("stmt", it["text"])
+    ng.canh(i, tiep)
+    return i
+
+
+def _nhan_cfg(s: str) -> str:
+    """Nhãn một nút. Cắt trước, CÂN BẰNG NGOẶC sau — cắt giữa `ghi(0xF4` để lại một ngoặc lẻ,
+    và `diagram.lint` sẽ báo lệch ngoặc trên chính lược đồ mình vừa sinh."""
+    t = re.sub(r"\s+", " ", str(s)).strip()
+    if len(t) > DAI_NHAN:
+        t = t[:DAI_NHAN - 1] + "…"
+    t = t.replace('"', "'").replace("|", "/")
+    for mo, dong in (("(", ")"), ("[", "]"), ("{", "}")):
+        if t.count(mo) != t.count(dong):
+            t = t.replace(mo, " ").replace(dong, " ")
+    return re.sub(r"\s+", " ", t).strip() or "…"
+
+
+def _ve_cfg(nut: list[dict[str, str]], canh: list[dict[str, str]], lang: str) -> str:
+    if lang == "dot":
+        hinh = {"start": "ellipse", "end": "ellipse", "decision": "diamond", "loop": "diamond",
+                "switch": "diamond", "return": "box", "stmt": "box"}
+        d = ["digraph flow {", "  rankdir=TB;"]
+        d += [f'  {n["id"]} [shape={hinh[n["kind"]]}, label="{n["label"]}"];' for n in nut]
+        d += [f'  {e["from"]} -> {e["to"]}'
+              + (f' [label="{e["label"]}"];' if e["label"] else ";") for e in canh]
+        return "\n".join(d) + "\n}\n"
+    d = ["flowchart TB"]
+    d += [f'  {n["id"]}' + HINH_NUT[n["kind"]].format(f'"{n["label"]}"') for n in nut]
+    d += [f'  {e["from"]} -->' + (f'|{e["label"]}| ' if e["label"] else " ") + e["to"]
+          for e in canh]
+    return "\n".join(d) + "\n"
+
+
+def _flow_tu_mo_ta(ctx: Context, mo_ta: str, lang: str) -> dict[str, Any]:
+    """Đường thứ hai của bước 1: "từ mô tả: writer". Kết quả vẫn phải qua `lint`."""
+    mo_dau = {"mermaid": ("flowchart", "graph"), "dot": ("digraph",)}[lang]
+    resp = _gateway(ctx).run(
+        "writer",
+        f"Vẽ lưu đồ ({lang}) cho: {mo_ta}\n"
+        f"Bắt đầu bằng `{mo_dau[0]}`. Nhánh điều kiện phải có ĐỦ cả hai lối ra.\n"
+        "Chỉ mô tả những bước có trong yêu cầu, không thêm bước nào.",
+        _SCHEMA_SEQ)
+    src = (resp.data.get("src") or "").strip() + "\n"
+    loi = ([{"message": f"dòng đầu không phải `{mo_dau[0]}`"}]
+           if not src.lstrip().startswith(mo_dau) else
+           [x for x in lint({"src": src, "lang": lang}, ctx)["issues"]
+            if x["kind"] == KIND_CU_PHAP])
+    if loi:
+        raise EideError("E5002", f"Lưu đồ sinh ra không hợp lệ: {loi[0]['message']}",
+                        source=mo_ta, issues=loi, src=src[:300])
+    nut, canh = _doc_do_thi(src, lang)
+    return {"lang": lang, "src": src, "source_kind": "description",
+            "nodes": [{"id": n, "kind": "stmt", "label": n} for n in sorted(nut)],
+            "edges": [{"from": a, "to": b, "label": ""} for a, b in canh]}
+
+
+# ---------------------------------------------------------------- DIAGRAM-08 timing
+
+# Tham số nào là CHU KỲ chứ không phải một khoảng giữa hai mép. `tCLK` là chu kỳ của chính tín
+# hiệu clock; vẽ nó thành một mũi tên như `tSU` là nói sai một thứ người đọc dùng để chọn tốc độ.
+TEN_CHU_KY = ("tclk", "tsclk", "tscl", "tcyc", "tperiod", "tcy")
+BAC_THOI_GIAN = ((1.0, "s"), (1e-3, "ms"), (1e-6, "µs"), (1e-9, "ns"), (1e-12, "ps"))
+SO_O_SONG = 8               # số ô của một sóng WaveDrom — đủ chỗ cho mép và nhãn, không rối
+
+
+@capability("diagram.timing")
+def timing(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-08 — CDS-12.4; EXTRACT-07 (fact `timing`); MEASURE-01 (`dataset_id`).
+    tc: "WaveDrom hợp lệ"; grounding "Fact có nguồn"; undo `delete_created_files`.
+
+    **Mỗi nhãn mang GIÁ TRỊ và NGUỒN.** Một giản đồ thời gian không có số thì vô dụng; có số mà
+    không truy được nguồn thì nguy hiểm, vì người ta thiết kế mạch theo nó. Nên nhãn cạnh có
+    dạng `tSU ≥ 100 ns [bme280.pdf#p27]`, và `facts` trả về đủ id để lần ngược.
+
+    **`tCLK` thành chu kỳ, không thành mũi tên.** Nó là chu kỳ của chính tín hiệu clock chứ
+    không phải khoảng giữa hai mép; vẽ nó như `tSU` là nói sai đúng con số mà người đọc dùng để
+    chọn tốc độ bus.
+
+    **Capture từ máy phân tích logic chưa làm được**: nó cần `dataset_id` của
+    `measure.capture_signal` — mốc M5, cần phần cứng thật. Nói thẳng bằng E2000 kèm tên năng lực
+    sẽ tạo ra dữ liệu ấy, xem [DEV-074]. Vẽ một dạng sóng "minh họa" thay cho mẫu đo thật là
+    đúng thứ nhóm này sinh ra để tránh.
+    """
+    root = _root(ctx)
+    src = str(params["source"]).strip()
+    if _la_dataset(root, src):
+        raise EideError("E2000", f"`{src}` là một bộ mẫu đo (capture), và chuyển mẫu thành "
+                        "WaveDrom cần `measure.capture_signal` — mốc M5, chờ phần cứng thật "
+                        "(DEV-074). Đường đã làm được: fact `timing` từ datasheet.",
+                        exists=[], candidates=["measure.capture_signal"], missing=[src])
+
+    ds = _fact_timing(root, src)
+    if not ds:
+        raise EideError("E2000", f"Không có fact `timing` nào khớp `{src}` — chạy "
+                        "`extract.pdf_electrical` trên datasheet để có (tsu, th, tCLK)",
+                        exists=[], candidates=["extract.pdf_electrical", "passport.import"],
+                        missing=[f"timing:{src}"])
+
+    chu_ky = next((f for f in ds if f["ten"].lower() in TEN_CHU_KY), None)
+    canh = [f for f in ds if f is not chu_ky]
+    wd = _wavedrom(src, chu_ky, canh)
+    import json
+    return {"diagram": {"lang": "wavedrom", "src": json.dumps(wd, ensure_ascii=False, indent=1),
+                        "wavedrom": wd, "facts": [f["id"] for f in ds], "source": src}}
+
+
+def _la_dataset(root: Path, src: str) -> bool:
+    db = store.store_path(root)
+    if not db.exists():
+        return False
+    with store.open_store(db) as c:
+        try:
+            return c.execute("SELECT 1 FROM measurement WHERE id=?", (src,)).fetchone() is not None
+        except Exception:                       # noqa: BLE001 — store cũ chưa có bảng
+            return False
+
+
+def _fact_timing(root: Path, src: str) -> list[dict[str, Any]]:
+    """Fact `timing` theo danh sách id, hoặc theo tiền tố chủ thể (`chip:bme280`).
+
+    Hai dạng vì hợp đồng ghi "fact ids | dataset_id": id thì chính xác, tiền tố thì tiện — và
+    người gõ tay bao giờ cũng gõ tên chip.
+    """
+    import json
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    ids = [x.strip() for x in re.split(r"[,\s]+", src) if x.strip()]
+    with store.open_store(db) as c:
+        if len(ids) > 1 or (ids and ids[0].startswith("f_")):
+            rows = c.execute(
+                "SELECT id, subject, value, unit, source_id, locator FROM fact"
+                f" WHERE predicate='timing' AND id IN ({','.join('?' * len(ids))})"  # noqa: S608
+                "   AND status NOT IN ('superseded','rejected')", tuple(ids)).fetchall()
+        else:
+            rows = c.execute(
+                "SELECT id, subject, value, unit, source_id, locator FROM fact"
+                " WHERE predicate='timing' AND (subject = ? OR subject LIKE ?)"
+                "   AND status NOT IN ('superseded','rejected') ORDER BY subject",
+                (src, f"{src}/%")).fetchall()
+        nguon = {r[0]: r[1] for r in c.execute("SELECT id, uri FROM source")}
+
+    ra = []
+    for fid, subj, gt, don_vi, sid, loc in rows:
+        try:
+            v = json.loads(gt)
+            vt = json.loads(loc) if loc else {}
+        except (json.JSONDecodeError, TypeError):
+            continue
+        if not isinstance(v, dict):
+            continue
+        ra.append({"id": fid, "ten": str(subj).rsplit(":", 1)[-1],
+                   "min": v.get("min"), "typ": v.get("typ"), "max": v.get("max"),
+                   "unit": don_vi or "s",
+                   "trich_dan": _trich_dan_nguon(nguon.get(sid), vt)})
+    return ra
+
+
+def _trich_dan_nguon(uri: str | None, loc: dict[str, Any]) -> str:
+    if not uri:
+        return ""
+    ten = Path(uri).name
+    return f"[{ten}#p{loc['page']}]" if loc.get("page") else f"[{ten}]"
+
+
+def _nhan_thoi_gian(f: dict[str, Any]) -> str:
+    """`tSU ≥ 100 ns [ds.pdf#p27]`. Ưu tiên `min` vì đó là con số ràng buộc thiết kế."""
+    for khoa, dau in (("min", "≥"), ("typ", "≈"), ("max", "≤")):
+        if isinstance(f.get(khoa), (int, float)):
+            return f"{f['ten']} {dau} {_do_dai(float(f[khoa]))} {f['trich_dan']}".strip()
+    return f"{f['ten']} (chưa có số) {f['trich_dan']}".strip()
+
+
+def _do_dai(giay: float) -> str:
+    for he, ten in BAC_THOI_GIAN:
+        if abs(giay) >= he:
+            gt = giay / he
+            return f"{gt:.10g} {ten}"
+    return f"{giay:g} s"
+
+
+def _wavedrom(chu_the: str, chu_ky: dict[str, Any] | None,
+              canh: list[dict[str, Any]]) -> dict[str, Any]:
+    """Hai tín hiệu (CLK, DATA) và một cạnh cho mỗi tham số thời gian.
+
+    Không cố suy vị trí thật của từng tham số trên trục: datasheet nói `tSU` đo từ đâu tới đâu
+    bằng lời, và đoán vị trí là vẽ ra một khẳng định không có fact. Mỗi tham số vì thế là một
+    cạnh có nhãn đầy đủ giá trị + nguồn, đặt lần lượt trên các mép — đủ để đọc, không giả vờ
+    chính xác hơn dữ liệu.
+    """
+    nut_clk = list("." * SO_O_SONG)
+    nut_data = list("." * SO_O_SONG)
+    edge: list[str] = []
+    ten_nut = "abcdefghijklmnopqrstuvwxyz"
+    for i, f in enumerate(canh):
+        vt = 1 + 2 * i
+        if vt + 1 >= SO_O_SONG:
+            break
+        a, b = ten_nut[2 * i], ten_nut[2 * i + 1]
+        nut_clk[vt] = a
+        nut_data[vt + 1] = b
+        edge.append(f"{a}~>{b} {_nhan_thoi_gian(f)}")
+
+    clk: dict[str, Any] = {"name": "CLK", "wave": "p" + "." * (SO_O_SONG - 1),
+                           "node": "".join(nut_clk)}
+    if chu_ky:
+        clk["period_label"] = _nhan_thoi_gian(chu_ky)
+    data = {"name": "DATA", "wave": "x.3" + "." * (SO_O_SONG - 4) + "x",
+            "data": ["hợp lệ"], "node": "".join(nut_data)}
+    bo_qua = len(canh) - len(edge)
+    tieu_de = (f"Giản đồ thời gian — {chu_the} · {len(canh) + (1 if chu_ky else 0)} fact"
+               + (f" · {clk['period_label']}" if chu_ky else "")
+               + (f" · {bo_qua} tham số không đủ chỗ vẽ" if bo_qua > 0 else ""))
+    return {"signal": [clk, data], "edge": edge,
+            "head": {"text": tieu_de}, "config": {"hscale": 2}}
+
+
+# ---------------------------------------------------------------- DIAGRAM-11 gantt
+
+# Trạng thái trong bảng `feature` → thẻ của mermaid gantt. `failing` là trạng thái KHỞI ĐẦU mà
+# `arch.to_plan` ghi ("chưa đạt"), không phải "đã hỏng" — nên nó là việc đang làm.
+THE_GANTT = {"passing": "done", "failing": "active"}
+NGAY_MAC_DINH = 1440        # phút, dùng làm chỗ giữ chỗ khi chưa có kế hoạch để ước lượng
+
+
+@capability("diagram.gantt")
+def gantt(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-11 — CDS-12.4; PLAN-03/05 (`plans/<feature>.json`, `plan.estimate`);
+    DDD-14 §2 Feature. tc: "Feature passing đánh dấu done"; undo `delete_created_files`.
+
+    **Trạng thái lấy từ store, không vẽ tay** — một Gantt vẽ tay là thứ đẹp lên theo thời gian
+    trong khi dự án thì không. `passing` → `done`, và đó là toàn bộ tc của hợp đồng.
+
+    **Ước lượng lấy từ `plan.estimate`, không có thì NÓI RA.** Mermaid bắt buộc mỗi việc phải có
+    độ dài, nên việc chưa có kế hoạch vẫn phải nhận một con số — và đúng lúc ấy nhãn ghi "chưa
+    ước lượng". Nhận một con số mặc định rồi im lặng là biến chỗ giữ chỗ thành ước lượng, mà
+    người đọc Gantt thì đọc độ dài cột trước khi đọc chữ.
+
+    `plan_id` trỏ một kế hoạch cụ thể thì vẽ CÁC BƯỚC của nó: người hỏi đang xem một tính năng,
+    không xem cả dự án.
+    """
+    from datetime import UTC, datetime
+
+    from eide.caps.plan import doc_plan_feature, estimate
+
+    root = _root(ctx)
+    if (pid := params.get("plan_id")):
+        d = doc_plan_feature(root, str(pid))
+        if not d:
+            raise EideError("E2000", f"Không có kế hoạch nào tên `{pid}` trong `.eide/plans/`",
+                            exists=_ten_plan(root), candidates=["plan.create"],
+                            missing=[f"plan:{pid}"])
+        phut = int((estimate({"plan": d.get("plan") or {}}, ctx)["estimate"] or {})
+                   .get("minutes") or NGAY_MAC_DINH)
+        buoc = list((d.get("plan") or {}).get("steps") or [])
+        moi = max(1, round(phut / max(1, len(buoc))))
+        tasks = [{"id": _ma_gantt(s.get("id") or f"s{i}"),
+                  "label": _nhan_gantt(f"{s.get('goal') or '?'} · {s.get('cap') or ''}"),
+                  "tag": "", "minutes": moi, "estimated": True} for i, s in enumerate(buoc)]
+        tieu_de = f"Kế hoạch {pid}"
+    else:
+        tasks = _task_tu_feature(root, ctx)
+        tieu_de = f"Tiến độ tính năng — {_ten_du_an_dg(root)}"
+
+    if not tasks:
+        raise EideError("E2000", "Chưa có tính năng hay kế hoạch nào để vẽ — chạy `arch.to_plan` "
+                        "(sinh Feature từ ModuleGraph) hoặc `plan.create`",
+                        exists=[], candidates=["arch.to_plan", "plan.create", "plan.decompose"],
+                        missing=["feature"])
+
+    hom_nay = datetime.now(UTC).date().isoformat()
+    d = ["gantt", "    dateFormat YYYY-MM-DD", "    axisFormat %d/%m",
+         f"    title {tieu_de}",
+         "    %% Độ dài lấy từ plan.estimate; việc chưa có kế hoạch ghi rõ trong nhãn.",
+         "    section Công việc"]
+    truoc: str | None = None
+    for t in tasks:
+        bd = hom_nay if truoc is None else f"after {truoc}"
+        the = f"{t['tag']}, " if t["tag"] else ""
+        d.append(f"    {t['label']} :{the}{t['id']}, {bd}, {t['minutes']}m")
+        truoc = t["id"]
+    return {"diagram": {"lang": "mermaid", "src": "\n".join(d) + "\n",
+                        "tasks": tasks, "model_ref": "feature"}}
+
+
+def _task_tu_feature(root: Path, ctx: Context) -> list[dict[str, Any]]:
+    from eide.caps.plan import doc_plan_feature, estimate
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT id, title, status FROM feature ORDER BY updated_at, id").fetchall()
+    ra = []
+    for fid, title, tt in rows:
+        d = doc_plan_feature(root, str(fid))
+        co = bool(d and (d.get("plan") or {}).get("steps"))
+        phut = (int(estimate({"plan": d["plan"]}, ctx)["estimate"]["minutes"]) if co
+                else NGAY_MAC_DINH)
+        ra.append({"id": _ma_gantt(fid), "feature": fid,
+                   "label": _nhan_gantt(title) + ("" if co else " (chưa ước lượng)"),
+                   "tag": THE_GANTT.get(str(tt), ""), "minutes": phut, "estimated": co})
+    return ra
+
+
+def _ten_plan(root: Path) -> list[str]:
+    d = root / EIDE_DIR / "plans"
+    return sorted(f.stem for f in d.glob("*.json")) if d.is_dir() else []
+
+
+def _ma_gantt(x: str) -> str:
+    return re.sub(r"[^0-9A-Za-z]+", "_", str(x))[:40] or "t"
+
+
+def _nhan_gantt(x: str) -> str:
+    """Nhãn một việc trong gantt. Dữ liệu không được phá cú pháp của lược đồ.
+
+    `:` cắt đôi một dòng gantt (nó là dấu ngăn giữa nhãn và thẻ), còn ngoặc lệch làm chính
+    `diagram.lint` báo lỗi trên lược đồ mình vừa sinh. Tiêu đề tính năng là dữ liệu người dùng
+    nhập, nên nó sẽ có cả hai — sớm hay muộn.
+    """
+    return re.sub(r"\s+", " ", re.sub(r"[():\[\]{},]", " ", str(x))).strip() or "việc"
+
+
+def _ten_du_an_dg(root: Path) -> str:
+    import yaml
+    f = root / EIDE_DIR / "constraints.yaml"
+    cu = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}) if f.exists() else {}
+    return str((cu.get("project") or {}).get("name") or root.name)
 
 
 # ---------------------------------------------------------------- DIAGRAM-05 sequence
