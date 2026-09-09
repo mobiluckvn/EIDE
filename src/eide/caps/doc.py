@@ -1412,6 +1412,153 @@ def _vi_du_ho_chieu(ctx: Context, tep: str, ham: list[dict[str, Any]],
     return ra, cits
 
 
+# ---------------------------------------------------------------- DOC-06 test_report
+
+
+@capability("doc.test_report")
+def test_report(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-06 — CDS-12.1; STP-05; DDD-14 §2 `tool_report`, `measurement`, DocArtifact.
+    tc: "Mỗi kết quả có bằng chứng"; undo `delete_created_files`.
+
+    **Bằng chứng là BĂM CỦA TỆP LOG**, không phải bản ghi trong store. Bản ghi nói "đã chạy và
+    đạt"; băm nói "đây đúng là tệp ấy, chưa ai sửa". Người phản biện một đề án hỏi câu thứ hai,
+    và một báo cáo kiểm thử không trả lời được nó thì chỉ là một chuỗi khẳng định.
+
+    Tệp log **đã mất thì nói là mất** — không bỏ dòng đi, cũng không băm bản ghi để lấp chỗ
+    trống. Băm một bản ghi rồi gọi nó là bằng chứng cho ra một con số trông y hệt bằng chứng
+    thật, và từ đó không ai phân biệt được nữa. `measurement` thì khác: DDD-14 cho nó cột `hash`
+    sẵn, nên bằng chứng của nó nằm ngay trong bản ghi.
+
+    **TC là CA TEST, không phải lần chạy.** Một `tool_report` của `code.test_host` gói nhiều ca
+    trong `metrics.cases`; gộp chúng thành một dòng đạt/không đạt là giấu đúng thứ người đọc cần
+    biết — ca nào hỏng.
+
+    **Không gọi mô hình**, cùng lý do với `doc.bringup_guide`: mọi thứ ở đây đã có trong store.
+    `format=docx` ủy quyền sang `report.export` — xem [DEV-073] và [DEV-070].
+    """
+    root = _root(ctx)
+    if (dinh_dang := params.get("format") or "md") != "md":
+        raise EideError("E2000", f"`{dinh_dang}` do `report.export` dựng — REPORT-02 v1.3 là chỗ "
+                        "DUY NHẤT dựng docx/pdf (DEV-070). Sinh ở đây nữa là hai bản dựng cùng "
+                        "một báo cáo, và chúng sẽ lệch (DEV-073)",
+                        exists=["md"], candidates=["report.export"], missing=[])
+
+    ket_qua = _tra_ket_qua(root, list(params["results"]))
+    dong, nguon = _dong_ket_qua(ket_qua)
+    xu = [d for d in dong if d[1] is not None]        # dòng CÓ phán định đạt/không đạt
+    dat = sum(1 for d in xu if d[1])
+    thieu = [d for d in dong if not d[3]]
+
+    ten_da = _ten_du_an(root)
+    d = [f"# Báo cáo kiểm thử — {ten_da}", "",
+         f"*Sinh từ store ngày {datetime.now(UTC).date().isoformat()} — "
+         f"{len(ket_qua)} kết quả, {len(dong)} ca. Mọi dòng dưới đây lấy từ `tool_report` và "
+         "`measurement` đã ghi; không có dòng nào do mô hình viết.*", "",
+         "## Tóm tắt", ""]
+    # Đếm trên các dòng CÓ phán định. Một phép đo không có ngưỡng thì không "đạt" được, và gộp
+    # nó vào mẫu số cho ra một tỷ lệ đẹp hơn sự thật — đúng kiểu con số mà không ai kiểm lại.
+    d += [f"**Kết quả:** {dat}/{len(xu)} ca đạt, {len(xu) - dat}/{len(xu)} không đạt."
+          if xu else "**Kết quả:** không có ca nào có ngưỡng đạt/không đạt.", ""]
+    if (do := len(dong) - len(xu)):
+        d += [f"Ngoài ra {do} phép đo không có ngưỡng đạt/không đạt — giá trị nằm trong bảng, "
+              "việc đối chiếu với ngân sách là của `arch.memory_budget`/`bench.*`.", ""]
+    if thieu:
+        d += [f"**Bằng chứng:** {len(thieu)}/{len(dong)} kết quả thiếu bằng chứng — tệp log "
+              "không còn trên đĩa, nên không băm được. Chạy lại để có bằng chứng mới.", ""]
+    d += ["## Bảng kết quả", "",
+          *_bang(["TC", "Kết quả", "Bằng chứng", "Nguồn kết quả"],
+                 [[tc, mo_ta, f"`{bc[1][:16]}`" if bc else "*thiếu bằng chứng*", f"`{rid}`"]
+                  for tc, _v, mo_ta, bc, rid in dong]), ""]
+    d += _muc_bang_chung(nguon)
+
+    f = root / EIDE_DIR / "docs" / f"test_report_{re.sub(r'[^0-9A-Za-z]+', '_', ten_da)}.md"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text("\n".join(d), encoding="utf-8")
+    _ghi_doc_artifact(root, f, "test_report",
+                      sections=[{"heading": "Bảng kết quả", "source": "tool_report",
+                                 "hash": _bam_muc([str(x) for x in dong])}],
+                      citations=[x[0] for x in ket_qua])
+    return {"path": str(f)}
+
+
+def _tra_ket_qua(root: Path, ids: list[str]) -> list[tuple[str, str, tuple]]:
+    """`(id, loại, bản ghi)` cho từng id, kiểm CẢ DANH SÁCH trước khi ghi tệp nào.
+
+    Một báo cáo thiếu một kết quả trông y như một báo cáo đủ — nên id sai phải dừng ở đây, chứ
+    không lặng lẽ bớt một dòng.
+    """
+    ra: list[tuple[str, str, tuple]] = []
+    thieu: list[str] = []
+    for i in ids:
+        if (r := _q(root, "SELECT id, tool, passed, log_ref, metrics, artifacts FROM tool_report"
+                          " WHERE id=?", (i,))):
+            ra.append((i, "tool_report", r[0]))
+        elif (r := _q(root, "SELECT id, kind, target, value, unit, file_ref, hash FROM measurement"
+                            " WHERE id=?", (i,))):
+            ra.append((i, "measurement", r[0]))
+        else:
+            thieu.append(i)
+    if thieu:
+        raise EideError("E2000", f"Không có kết quả nào mang id {', '.join(thieu)} trong "
+                        "`tool_report` hay `measurement`",
+                        exists=[x for x, _, _ in ra], candidates=[], missing=thieu)
+    return ra
+
+
+def _dong_ket_qua(ket_qua: list[tuple[str, str, tuple]]
+                  ) -> tuple[list[tuple[str, bool | None, str, tuple | None, str]],
+                             dict[str, tuple[str, str]]]:
+    """`(dòng bảng, bằng chứng theo id)`. Dòng: `(TC, đạt|None, mô tả, (tệp, băm)|None, id)`.
+
+    `đạt = None` cho phép đo: nó cho ra một GIÁ TRỊ, không cho ra một phán định. Ngưỡng nằm ở
+    chỗ khác (`arch.memory_budget`, `bench.*`), và ép nó thành "đạt" ở đây là bịa ra một kết
+    luận mà không ai đặt ngưỡng.
+    """
+    dong: list[tuple[str, bool | None, str, tuple | None, str]] = []
+    nguon: dict[str, tuple[str, str]] = {}
+    for rid, loai, r in ket_qua:
+        if loai == "measurement":
+            _, kind, target, value, unit, file_ref, bam = r
+            gt = f"{json.loads(value)}{f' {unit}' if unit else ''}"
+            bc = (file_ref or "—", bam) if bam else None
+            dong.append((f"{kind}/{target or '—'}", None, f"đo được {gt}", bc, rid))
+            if bc:
+                nguon[rid] = bc
+            continue
+        _, tool, passed, log_ref, metrics, _art = r
+        ca = (json.loads(metrics or "{}") or {}).get("cases") or []
+        for c in ca or [None]:
+            bc = _bang_chung((c or {}).get("log_ref") or log_ref)
+            tt = (c or {}).get("status")
+            dat = (tt == "passed") if c else bool(passed)
+            dong.append(((c or {}).get("name") or tool, dat,
+                         "ĐẠT" if dat else f"KHÔNG ĐẠT — {tt or 'xem log'}", bc, rid))
+            if bc:
+                nguon.setdefault(rid + (f"·{c['name']}" if c else ""), bc)
+    return dong, nguon
+
+
+def _bang_chung(duong: str | None) -> tuple[str, str] | None:
+    """`(tên tệp, sha256)` của một tệp log, hoặc None nếu tệp không còn."""
+    if not duong:
+        return None
+    import hashlib
+    f = Path(duong)
+    if not f.is_file():
+        return None
+    return f.name, hashlib.sha256(f.read_bytes()).hexdigest()
+
+
+def _muc_bang_chung(nguon: dict[str, tuple[str, str]]) -> list[str]:
+    """Mục "Nguồn" của một báo cáo kiểm thử là danh sách TỆP BẰNG CHỨNG, không phải danh sách
+    datasheet: thứ người phản biện muốn mở ra xem là chính cái log."""
+    d = ["## Nguồn", ""]
+    if not nguon:
+        return d + ["*Không kết quả nào còn tệp bằng chứng trên đĩa.*", ""]
+    return d + _bang(["Kết quả", "Tệp", "sha256"],
+                     [[f"`{k}`", v[0], f"`{v[1]}`"] for k, v in sorted(nguon.items())]) + [""]
+
+
 def _than_api(tep: str, ham: list[dict[str, Any]], vi_du: dict[str, str],
               co_ho_chieu: bool) -> list[str]:
     """Một mục cho mỗi hàm public. Không có hàm nào thì nói thẳng là không có, kèm lý do."""

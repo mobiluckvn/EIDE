@@ -1160,6 +1160,189 @@ def test_ghi_DocArtifact_va_sinh_lai_cho_cung_id(du_an, monkeypatch):
     assert [s["heading"] for s in json.loads(rows[0][2])] == ["src/bme280.h"]
 
 
+# ================================================================ DOC-06 test_report
+#
+# tc: "Mỗi kết quả có bằng chứng". Bước 1: "Bảng TC ↔ kết quả ↔ bằng chứng (hash); tóm tắt;
+# mục Nguồn".
+#
+# Bằng chứng ở đây là BĂM CỦA TỆP LOG, không phải bản ghi trong store: bản ghi nói "đã chạy",
+# còn băm nói "đây đúng là tệp ấy". Người phản biện một đề án hỏi câu thứ hai.
+
+
+def _log(root, ten, noi):
+    f = root / ".eide" / "logs" / ten
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(noi, encoding="utf-8")
+    return str(f)
+
+
+def nap_tool_report(root, ds):
+    with store.open_store(store.store_path(root)) as c:
+        for rid, tool, dat, log_ref, metrics in ds:
+            c.execute("INSERT OR REPLACE INTO tool_report (id, tool, passed, log_ref, metrics,"
+                      " artifacts, at) VALUES (?,?,?,?,?,'[]','2026-09-09T10:00:00+00:00')",
+                      (rid, tool, int(dat), log_ref, json.dumps(metrics)))
+        c.commit()
+
+
+def nap_measurement(root, ds):
+    with store.open_store(store.store_path(root)) as c:
+        for mid, kind, target, value, unit, file_ref, bam in ds:
+            c.execute("INSERT OR REPLACE INTO measurement (id, kind, target, value, unit,"
+                      " file_ref, hash, at) VALUES (?,?,?,?,?,?,?,'2026-09-09T10:00:00+00:00')",
+                      (mid, kind, target, json.dumps(value), unit, file_ref, bam))
+        c.commit()
+
+
+def _bao_cao(du_an, ket_qua):
+    r, ctx, root = du_an
+    return __import__("pathlib").Path(
+        r.invoke("doc.test_report", {"results": ket_qua}, ctx).result["path"]
+    ).read_text(encoding="utf-8")
+
+
+def test_tc_moi_ket_qua_co_bang_chung(du_an):
+    """tc DOC-06. Mỗi dòng của bảng phải có một băm — không có băm thì "đã chạy và đạt" chỉ là
+    một câu khẳng định, và một báo cáo kiểm thử không có gì ngoài khẳng định thì vô dụng."""
+    _, _, root = du_an
+    lg = _log(root, "build.log", "arm-none-eabi-gcc … 0 errors\n")
+    nap_tool_report(root, [("tr_1", "build", True, lg, {"size_bytes": 20480})])
+    nap_measurement(root, [("m_2", "current", "VDD", 12.5, "mA", "cap/i.csv", "b" * 64)])
+    md = _bao_cao(du_an, ["tr_1", "m_2"])
+
+    import hashlib
+    bam = hashlib.sha256(__import__("pathlib").Path(lg).read_bytes()).hexdigest()[:16]
+    assert bam in md, "kết quả tool_report thiếu băm của log"
+    assert ("b" * 64)[:16] in md, "kết quả đo thiếu băm của chính bản ghi"
+    assert "thiếu bằng chứng" not in md
+
+
+def test_mot_dong_moi_CA_TEST_chu_khong_mot_dong_moi_lan_chay(du_an):
+    """"Bảng TC ↔ kết quả": TC là ca test, không phải lần chạy. Một `tool_report` của
+    `code.test_host` gói nhiều ca; gộp chúng thành một dòng "đạt/không đạt" là giấu đúng thứ
+    người đọc cần — ca NÀO hỏng."""
+    _, _, root = du_an
+    l1, l2 = _log(root, "t1.log", "ok\n"), _log(root, "t2.log", "assert failed\n")
+    nap_tool_report(root, [("tr_1", "test_host", False, l1, {"total": 2, "failed": 1, "cases": [
+        {"name": "test_crc", "file": "tests/test_crc.c", "status": "passed", "log_ref": l1},
+        {"name": "test_filter", "file": "tests/test_filter.c", "status": "failed",
+         "log_ref": l2}]})])
+    md = _bao_cao(du_an, ["tr_1"])
+
+    assert "test_crc" in md and "test_filter" in md
+    dong = [d for d in md.splitlines() if d.startswith("| test_filter")]
+    assert dong and "KHÔNG ĐẠT" in dong[0]
+    assert [d for d in md.splitlines() if d.startswith("| test_crc")][0].count("ĐẠT")
+
+
+def test_tom_tat_dem_dung_va_noi_ro_bao_nhieu_khong_dat(du_an):
+    """"tóm tắt" của bước 1. Người đọc một báo cáo kiểm thử đọc dòng này trước mọi thứ khác."""
+    _, _, root = du_an
+    lg = _log(root, "t.log", "x\n")
+    nap_tool_report(root, [("tr_1", "test_host", False, lg, {"cases": [
+        {"name": "a", "status": "passed", "log_ref": lg},
+        {"name": "b", "status": "failed", "log_ref": lg},
+        {"name": "c", "status": "compile_error", "log_ref": lg}]})])
+    md = _bao_cao(du_an, ["tr_1"])
+
+    assert "1/3" in md and "không đạt" in md.lower()
+
+
+def test_phep_do_khong_duoc_dem_la_DAT(du_an):
+    """Một phép đo cho ra GIÁ TRỊ, không cho ra phán định — ngưỡng nằm ở `arch.memory_budget`
+    và `bench.*`. Đếm nó vào mẫu số "đạt" cho ra một tỷ lệ đẹp hơn sự thật, đúng kiểu con số mà
+    không ai kiểm lại."""
+    _, _, root = du_an
+    lg = _log(root, "t.log", "x\n")
+    nap_tool_report(root, [("tr_1", "test_host", False, lg, {"cases": [
+        {"name": "a", "status": "passed", "log_ref": lg},
+        {"name": "b", "status": "failed", "log_ref": lg}]})])
+    nap_measurement(root, [("m_2", "current", "VDD", 12.5, "mA", "cap/i.csv", "b" * 64)])
+    md = _bao_cao(du_an, ["tr_1", "m_2"])
+
+    assert "1/2 ca đạt" in md, "phép đo bị đếm vào mẫu số đạt/không đạt"
+    assert "1 phép đo không có ngưỡng" in md
+    dong = [d for d in md.splitlines() if d.startswith("| current/VDD")]
+    assert dong and "ĐẠT" not in dong[0] and "12.5 mA" in dong[0]
+
+
+def test_bang_chung_mat_thi_NOI_RA_chu_khong_bo_dong(du_an):
+    """Tệp log đã bị xóa thì KHÔNG có băm — và cách xử lý đúng là nói ra, không phải bỏ dòng ấy
+    đi cũng không phải băm bản ghi để lấp chỗ trống. Băm một bản ghi rồi gọi nó là bằng chứng
+    thì con số trông y hệt một bằng chứng thật, mà không ai phân biệt được nữa."""
+    _, _, root = du_an
+    nap_tool_report(root, [("tr_1", "build", True, str(root / ".eide" / "logs" / "mat.log"), {})])
+    md = _bao_cao(du_an, ["tr_1"])
+
+    assert "thiếu bằng chứng" in md
+    assert "| build" in md, "bỏ dòng là giấu, không phải sạch"
+    assert "1/1" in md.split("thiếu bằng chứng")[0][-120:] or "1 kết quả" in md
+
+
+def test_id_khong_co_thi_E2000_truoc_khi_ghi_gi(du_an):
+    """Kiểm cả danh sách trước: một báo cáo thiếu một kết quả trông y như một báo cáo đủ."""
+    r, ctx, root = du_an
+    run = r.invoke("doc.test_report", {"results": ["tr_khong_co"]}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert run.error["missing"] == ["tr_khong_co"]
+    assert not list((root / ".eide" / "docs").glob("test_report*"))
+
+
+def test_docx_uy_quyen_cho_report_export(du_an):
+    """`format: docx` có trong `input_schema` của DOC-06, nhưng REPORT-02 v1.3 nói nó là "chỗ
+    DUY NHẤT dựng docx/pdf" ([DEV-070]). Hai tài liệu nói khác nhau — [DEV-073]. Dựng docx ở đây
+    nữa là hai bản dựng cùng một báo cáo, và chúng sẽ lệch."""
+    r, ctx, root = du_an
+    lg = _log(root, "b.log", "x\n")
+    nap_tool_report(root, [("tr_1", "build", True, lg, {})])
+    run = r.invoke("doc.test_report", {"results": ["tr_1"], "format": "docx"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert run.error["candidates"] == ["report.export"]
+
+
+def test_muc_Nguon_liet_ke_tep_bang_chung(du_an):
+    """"mục Nguồn" của một báo cáo kiểm thử là danh sách tệp bằng chứng, không phải danh sách
+    datasheet: thứ người phản biện muốn mở ra xem là chính cái log."""
+    _, _, root = du_an
+    lg = _log(root, "build.log", "ok\n")
+    nap_tool_report(root, [("tr_1", "build", True, lg, {})])
+    md = _bao_cao(du_an, ["tr_1"])
+
+    nguon = md.split("## Nguồn")[1]
+    assert "build.log" in nguon and "tr_1" in nguon
+
+
+def test_ghi_DocArtifact_loai_test_report(du_an):
+    """DDD-14 §2 DocArtifact — và `doc.generate` đã ủy quyền loại `test_report` sang đây, nên
+    hai bên phải ghi cùng một loại vào store."""
+    r, ctx, root = du_an
+    lg = _log(root, "b.log", "x\n")
+    nap_tool_report(root, [("tr_1", "build", True, lg, {})])
+    p = r.invoke("doc.test_report", {"results": ["tr_1"]}, ctx).result["path"]
+
+    with store.open_store(store.store_path(root)) as c:
+        rows = c.execute("SELECT type, citations FROM doc_artifact WHERE path=?", (p,)).fetchall()
+    assert rows and rows[0][0] == "test_report"
+    assert json.loads(rows[0][1]) == ["tr_1"]
+
+
+def test_khong_goi_mo_hinh(du_an, monkeypatch):
+    """Cùng lý do với `doc.bringup_guide`: mọi thứ trong báo cáo này đều đã có trong store, và
+    nhờ mô hình viết lại chúng chỉ thêm một cơ hội để một con số bị đổi."""
+    class _G:
+        def run(self, *a, **k):
+            raise AssertionError("không được gọi mô hình")
+
+    import eide.caps.doc as m
+    monkeypatch.setattr(m, "_gateway", lambda ctx: _G())
+    _, _, root = du_an
+    lg = _log(root, "b.log", "x\n")
+    nap_tool_report(root, [("tr_1", "build", True, lg, {})])
+    assert "# Báo cáo kiểm thử" in _bao_cao(du_an, ["tr_1"])
+
+
 def test_chuoi_P7_du_nang_luc():
     """P7 "bộ tài liệu" là chuỗi thứ hai đủ năng lực cho mọi bước. Giữ điều đó khỏi tụt đi trong
     im lặng khi ai đó đổi `chains.json` hoặc gỡ một năng lực."""
