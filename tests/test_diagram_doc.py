@@ -655,6 +655,182 @@ def test_module_chua_co_fsm_thi_chi_sang_arch_state_machine(du_an):
     assert e.value.code == "E2000" and "arch.state_machine" in str(e.value)
 
 
+# ---------- DIAGRAM-03 pinmap
+#
+# tc: "PB6→SCL BME280 đúng". Bước 1: "Từ HwMap + BoardPassport: bảng chân (MCU pin, AF, net,
+# linh kiện, hướng); SVG chip outline (package từ fact) với nhãn chân; xung đột tô đỏ".
+#
+# Bảng chân là chỗ người ta cầm đi hàn. Một dòng sai ở đây tốn một buổi dò mạch, nên mọi ô đều
+# phải truy được về một fact — chân nào không tra được thì để trống, không đoán.
+
+BOARD = "robot-main"
+
+
+def nap_net(root, board, nets):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id, uri, sha256, kind, tier)"
+                  " VALUES ('s_net','robot.net','h_net','netlist','gold')")
+        for i, (ten, nodes) in enumerate(nets.items()):
+            c.execute("INSERT OR REPLACE INTO fact (id, subject, predicate, value, source_id,"
+                      " method, tier, confidence, status)"
+                      " VALUES (?,?,?,?,'s_net','parser','gold',1.0,'verified')",
+                      (f"f_net_{i}", f"board:{board}/net:{ten}", "net",
+                       json.dumps({"name": ten, "nodes": nodes})))
+        c.commit()
+
+
+def nap_part(root, board, parts):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id, uri, sha256, kind, tier)"
+                  " VALUES ('s_net','robot.net','h_net','netlist','gold')")
+        for ref, v in parts.items():
+            c.execute("INSERT OR REPLACE INTO fact (id, subject, predicate, value, source_id,"
+                      " method, tier, confidence, status)"
+                      " VALUES (?,?,?,?,'s_net','parser','gold',1.0,'verified')",
+                      (f"f_part_{ref}", f"board:{board}/part:{ref}", "package", json.dumps(v)))
+        c.commit()
+
+
+def nap_pin_function(root, bang):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id, uri, sha256, kind, tier)"
+                  " VALUES ('s_pin','ds/stm32f411.pdf','h_pin','pdf_vendor','gold')")
+        for chan, fs in bang.items():
+            c.execute("INSERT OR REPLACE INTO fact (id, subject, predicate, value, source_id,"
+                      " method, tier, confidence, status)"
+                      " VALUES (?,?,?,?,'s_pin','parser','gold',1.0,'verified')",
+                      (f"f_pin_{chan}", f"chip:stm32f411/pin:{chan}", "pin_function",
+                       json.dumps({"pin": chan, "functions": fs})))
+        c.commit()
+
+
+def _board_day_du(du_an):
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411CEU6"}, ctx)
+    nap_net(root, BOARD, {
+        "/I2C1_SCL": [{"ref": "U1", "pin": "42"}, {"ref": "U2", "pin": "4"},
+                      {"ref": "R1", "pin": "1"}],
+        "/I2C1_SDA": [{"ref": "U1", "pin": "43"}, {"ref": "U2", "pin": "6"},
+                      {"ref": "R2", "pin": "1"}],
+        "GND": [{"ref": "U2", "pin": "5"}]})
+    nap_part(root, BOARD, {"U1": {"ref": "U1", "value": "STM32F411CEU6", "mpn": "STM32F411CEU6",
+                                  "footprint": "Package_QFP:LQFP-48"},
+                           "U2": {"ref": "U2", "value": "BME280", "mpn": "BME280",
+                                  "footprint": "Sensor:LGA-8"},
+                           "R1": {"ref": "R1", "value": "4k7"},
+                           "R2": {"ref": "R2", "value": "4k7"}})
+    nap_pin_function(root, {"PB6": ["I2C1_SCL", "TIM4_CH1"], "PB7": ["I2C1_SDA", "TIM4_CH2"]})
+
+
+def test_TC_PB6_SCL_BME280_dung(du_an):
+    """tc DIAGRAM-03, nguyên văn. Ba mảnh dữ liệu ở ba chỗ khác nhau — net từ netlist, tên chân
+    từ hộ chiếu chip, tên linh kiện từ fact `package` — và giá trị của bảng này nằm đúng ở chỗ
+    nối được cả ba lại."""
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+
+    scl = next(x for x in out["table"] if x["af"] == "I2C1_SCL")
+    assert scl["pin"] == "PB6"
+    assert scl["net"] == "/I2C1_SCL"
+    assert "BME280" in scl["part"]
+    assert scl["fact_ids"], "mỗi dòng phải truy được về fact"
+
+
+def test_chan_khong_tra_duoc_ten_thi_DE_TRONG_chu_khong_doan(du_an):
+    """Không có hộ chiếu chân thì không biết chân 42 tên là gì. Bảng vẫn có dòng — kết nối là
+    thật — nhưng ô `pin` ghi số chân vật lý và `af` để trống. Đoán một tên chân ở đây là làm
+    người ta hàn nhầm."""
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("DELETE FROM fact WHERE predicate='pin_function'")
+        c.commit()
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+
+    scl = next(x for x in out["table"] if x["net"] == "/I2C1_SCL")
+    assert scl["pin"] == "U1.42" and scl["af"] == ""
+
+
+def test_net_nguon_va_dat_khong_vao_bang_chan_tin_hieu(du_an):
+    """`GND` không phải một chân chức năng — để nó lẫn vào bảng thì bảng dài gấp đôi mà không
+    thêm thông tin nào, và người đọc mất chỗ cần nhìn."""
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+
+    assert "GND" not in [x["net"] for x in out["table"]]
+
+
+def test_huong_suy_tu_VAI_TRO_trong_HwMap_khong_tu_ten_tin_hieu(du_an):
+    """SCL do bên CHỦ phát; MCU là chủ hay tớ thì `hw_map.role` mới biết. Suy hướng chỉ từ tên
+    tín hiệu là đúng trong đa số thiết kế và sai lặng lẽ trong số còn lại."""
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+    assert all(x["dir"] == "" for x in out["table"]), "chưa có HwMap mà đã dám nói hướng"
+
+    nap_module(root, [{"id": "mod_i2c", "name": "i2c_bus", "depends": []}])
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR REPLACE INTO hw_map (module_id, resource, role, fact_ids)"
+                  " VALUES ('mod_i2c','chip:stm32f411/periph:I2C1','master',?)",
+                  (json.dumps(["f_pin_PB6"]),))
+        c.commit()
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+
+    scl = next(x for x in out["table"] if x["af"] == "I2C1_SCL")
+    assert scl["dir"] == "ra" and scl["module"] == "mod_i2c"
+    sda = next(x for x in out["table"] if x["af"] == "I2C1_SDA")
+    assert sda["dir"] == "hai chiều", "SDA hai chiều kể cả khi MCU là chủ"
+
+
+def test_xung_dot_TO_DO_chu_khong_bi_bo(du_an):
+    """"xung đột tô đỏ" của bước 1 — và xung đột lấy từ chính `board.check_pins`, không viết
+    một phép kiểm thứ hai: hai phép kiểm cùng một việc sẽ nói khác nhau đúng lúc quan trọng."""
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    nap_net(root, BOARD, {"/I2C1_SCL": [{"ref": "U1", "pin": "42"}, {"ref": "U2", "pin": "4"}],
+                          "/LED": [{"ref": "U1", "pin": "42"}]})
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+
+    xd = [x for x in out["table"] if x["conflict"]]
+    assert xd, "chân 42 nằm trên hai net mà bảng không đánh dấu"
+    assert "red" in out["diagram"]["src"]
+
+
+def test_luoc_do_la_SVG_va_qua_duoc_lint(du_an):
+    """CON-28 §6: lược đồ là văn bản. SVG *là* văn bản — nó vào git dưới dạng khác biệt đọc
+    được và `diagram.lint` kiểm được — nên "SVG chip outline" của bước 1 không mâu thuẫn với
+    bất biến của nhóm."""
+    from eide.caps.diagram import lint
+
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+
+    assert out["diagram"]["lang"] == "svg"
+    assert out["diagram"]["src"].lstrip().startswith("<svg")
+    assert "PB6" in out["diagram"]["src"] and "BME280" in out["diagram"]["src"]
+    assert lint({"src": out["diagram"]["src"], "lang": "svg"}, ctx)["issues"] == []
+
+
+def test_package_tu_FACT_chu_khong_mac_dinh(du_an):
+    """"package từ fact" của bước 1: số chân của hình vẽ lấy từ footprint đã trích, không phải
+    một hình 48 chân vẽ sẵn cho mọi chip."""
+    r, ctx, root = du_an
+    _board_day_du(du_an)
+    out = r.invoke("diagram.pinmap", {"board": BOARD}, ctx).result
+    assert "LQFP-48" in out["diagram"]["src"]
+
+
+def test_chua_co_board_nao_thi_bao_E2000(du_an):
+    """Vẽ bản đồ chân của một board chưa có netlist là vẽ từ hư không."""
+    r, ctx, _ = du_an
+    run = r.invoke("diagram.pinmap", {"board": "khong-co"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "extract.kicad_netlist" in str(run.error)
+
+
 # ---------- DOC-01 generate
 
 VAN = {"markdown": "Mục này mô tả phạm vi và cách đọc bảng bên dưới.", "citations": ["f_1"]}

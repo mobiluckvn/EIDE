@@ -580,6 +580,266 @@ def _state_plantuml(states, dau, chuyen, bo_qua) -> str:
     return "\n".join(d) + "\n@enduml\n"
 
 
+# ---------------------------------------------------------------- DIAGRAM-03 pinmap
+
+# Net nguồn/đất: có mặt trên gần như mọi chân mà không mang thông tin chức năng nào. Để chúng
+# lẫn vào bảng chân thì bảng dài gấp đôi và chỗ cần nhìn bị đẩy xuống dưới.
+RE_NGUON_DAT = re.compile(r"^/?(GND|VSS|AGND|DGND|\+?\d+V\d*|VCC|VDD|VBAT|AVDD|3V3|5V)$", re.I)
+
+# Hướng của một tín hiệu bus, khi và chỉ khi biết MCU là bên CHỦ. Đây là quy ước của chính chuẩn
+# bus, không phải phỏng đoán về board này — nhưng nó phụ thuộc vai trò, nên không có vai trò
+# trong HwMap thì cột hướng để TRỐNG. SDA hai chiều kể cả khi MCU là chủ (tớ kéo ACK).
+HUONG_BUS = {"SCL": "ra", "SCK": "ra", "SDA": "hai chiều", "MOSI": "ra", "MISO": "vào",
+             "TX": "ra", "RX": "vào", "NSS": "ra", "CS": "ra"}
+
+
+@capability("diagram.pinmap")
+def pinmap(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-03 — CDS-12.4; ARCH-03 (HwMap); BOARD-01/02 (hộ chiếu board, `check_pins`).
+    tc: "PB6→SCL BME280 đúng"; undo `delete_created_files`.
+
+    **Ba mảnh ở ba chỗ, và giá trị nằm ở chỗ nối được cả ba**: net từ netlist (chân số mấy nối
+    đi đâu), tên chân từ hộ chiếu chip (`pin_function`: chân nào làm được chức năng gì), tên
+    linh kiện từ fact `package`. Không mảnh nào tự nó nói được "PB6 là SCL của BME280".
+
+    **Không tra được thì để trống.** Chưa có hộ chiếu chân thì chân 42 vẫn là chân 42 — dòng vẫn
+    có (kết nối là thật), nhưng ô `pin` ghi số vật lý và `af` rỗng. Bảng chân là thứ người ta
+    cầm đi hàn; một tên chân đoán ra ở đây tốn của người đọc cả buổi dò mạch.
+
+    **Hướng suy từ VAI TRÒ trong HwMap, không từ tên tín hiệu.** SCL do bên chủ phát, nên MCU là
+    chủ hay tớ mới quyết định hướng — và điều đó nằm ở `hw_map.role`. Không có HwMap thì cột
+    hướng trống chứ không lấy quy ước phổ biến làm sự thật.
+
+    **Xung đột lấy từ chính `board.check_pins`**, không viết phép kiểm thứ hai: hai phép kiểm
+    cùng một việc sẽ nói khác nhau đúng lúc quan trọng, và người đọc không biết tin cái nào.
+
+    Lược đồ là **SVG** theo bước 1 — và SVG *là* văn bản, nên bất biến CON-28 §6 của cả nhóm vẫn
+    giữ: nó vào git dưới dạng khác biệt đọc được và `diagram.lint` kiểm được nó.
+    """
+    from eide.caps.board import _bid, doc_net, doc_part
+
+    root = _root(ctx)
+    board = params.get("board") or _board_duy_nhat(root)
+    nets = doc_net(root, board)
+    if not nets:
+        from eide.caps.board import _cac_board
+        co = _cac_board(root)
+        raise EideError("E2000", f"Chưa có net nào cho board `{board}` — chạy "
+                        "`extract.kicad_netlist` trước"
+                        + (f" (board đang có net: {', '.join(co)})" if co else ""),
+                        exists=co, candidates=["extract.kicad_netlist", *co],
+                        missing=[f"net:{board}"])
+
+    parts = doc_part(root, board)
+    chuc_nang = _chan_chuc_nang(root)
+    mcu = _ref_mcu(root, parts, chuc_nang)
+    xung_dot = {x["pin"] for x in _xung_dot_chan(ctx, board)}
+    vai = _vai_tro_hw_map(root)
+
+    bang = _bang_chan(nets, parts, chuc_nang, mcu, vai, xung_dot,
+                      set(params.get("module_ids") or []))
+    goi = (parts.get(mcu) or {}) if mcu else {}
+    src = _svg_pinmap(board, mcu or "?", str(goi.get("footprint") or ""), bang)
+    return {"diagram": {"lang": "svg", "src": src, "board": board, "mcu": mcu or "",
+                        "model_ref": _bid(board)},
+            "table": bang}
+
+
+def _board_duy_nhat(root: Path) -> str:
+    """`board` là tùy chọn trong hợp đồng. Đúng MỘT board có net thì dùng nó; nhiều hơn thì hỏi
+    — chọn bừa một trong hai board là vẽ bản đồ chân của board kia."""
+    from eide.caps.board import _cac_board
+    co = _cac_board(root)
+    if len(co) == 1:
+        return co[0]
+    raise EideError("E2000", "Không nêu `board` mà store có "
+                    + (f"{len(co)} board: {', '.join(co)}" if co else "chưa board nào"),
+                    exists=co, candidates=co or ["extract.kicad_netlist"], missing=["board"])
+
+
+def _chan_chuc_nang(root: Path) -> dict[str, dict[str, Any]]:
+    """`{TÊN CHÂN: {functions, fact_id, chip}}` từ fact `pin_function` của hộ chiếu chip."""
+    import json
+    db = store.store_path(root)
+    if not db.exists():
+        return {}
+    ra: dict[str, dict[str, Any]] = {}
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT id, subject, value FROM fact WHERE predicate='pin_function'"
+                         "  AND status NOT IN ('superseded','rejected')").fetchall()
+    for fid, subj, gt in rows:
+        try:
+            v = json.loads(gt)
+        except (json.JSONDecodeError, TypeError):
+            continue
+        ten = str((v.get("pin") if isinstance(v, dict) else None)
+                  or str(subj).rsplit(":", 1)[-1]).upper()
+        fs = [str(x).upper() for x in
+              ((v.get("functions") or v.get("af") or []) if isinstance(v, dict) else [])]
+        ra[ten] = {"functions": fs, "fact_id": fid,
+                   "chip": str(subj).split("/")[0].split(":", 1)[-1]}
+    return ra
+
+
+def _chuan(s: str) -> str:
+    return re.sub(r"[^0-9a-z]+", "", str(s).lower())
+
+
+def _ref_mcu(root: Path, parts: dict[str, dict[str, Any]],
+             chuc_nang: dict[str, dict[str, Any]]) -> str | None:
+    """Ref của MCU trên board — từ chip ĐÃ GHIM của dự án, hoặc từ chip của hộ chiếu chân.
+
+    Không đoán bằng "linh kiện nằm trên nhiều net nhất": trên board của test ấy là con cảm biến
+    chứ không phải MCU, và đoán sai chỗ này thì cả bảng chân đảo ngược.
+    """
+    import yaml
+    ung_vien = []
+    f = root / EIDE_DIR / "constraints.yaml"
+    if f.exists():
+        cu = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        if (chip := (cu.get("target") or {}).get("chip")):
+            ung_vien.append(_chuan(chip))
+    ung_vien += [_chuan(v["chip"]) for v in chuc_nang.values() if v.get("chip")]
+
+    for ref, pt in sorted(parts.items()):
+        ten = _chuan(pt.get("mpn") or pt.get("value") or "")
+        if len(ten) >= 5 and any(ten.startswith(u) or u.startswith(ten) for u in ung_vien if u):
+            return ref
+    return None
+
+
+def _vai_tro_hw_map(root: Path) -> dict[str, tuple[str, str]]:
+    """`{NGOẠI VI: (module_id, role)}` từ HwMap — ví dụ `I2C1 → (mod_i2c, master)`."""
+    import json
+    ra: dict[str, tuple[str, str]] = {}
+    db = store.store_path(root)
+    if not db.exists():
+        return ra
+    with store.open_store(db) as c:
+        try:
+            rows = c.execute("SELECT module_id, resource, role FROM hw_map").fetchall()
+        except Exception:                       # noqa: BLE001 — store cũ chưa có bảng
+            return ra
+    for mid, tn, role in rows:
+        ra[str(tn).rsplit(":", 1)[-1].upper()] = (mid, str(role or ""))
+        _ = json
+    return ra
+
+
+def _xung_dot_chan(ctx: Context, board: str) -> list[dict[str, Any]]:
+    """Xung đột từ `board.check_pins`. Nó có thể lỗi (thiếu dữ liệu) mà bản đồ chân vẫn vẽ
+    được — bảng không có cột đỏ vẫn hơn không có bảng."""
+    from eide.caps.board import check_pins
+    try:
+        return list(check_pins({"board": board}, ctx)["conflicts"])
+    except EideError:
+        return []
+
+
+def _bang_chan(nets: dict[str, list[dict[str, str]]], parts: dict[str, dict[str, Any]],
+               chuc_nang: dict[str, dict[str, Any]], mcu: str | None,
+               vai: dict[str, tuple[str, str]], xung_dot: set[str],
+               loc_module: set[str]) -> list[dict[str, Any]]:
+    """Một dòng cho mỗi net TÍN HIỆU có MCU tham gia."""
+    ra: list[dict[str, Any]] = []
+    for ten, nodes in sorted(nets.items()):
+        if RE_NGUON_DAT.match(ten.strip()):
+            continue
+        nut_mcu = next((n for n in nodes if n.get("ref") == mcu), None)
+        if nut_mcu is None:
+            continue
+        chan, af, fids = _tra_chan(ten, chuc_nang)
+        mid, huong = _module_va_huong(af or ten, vai)
+        if loc_module and mid not in loc_module:
+            continue
+        ra.append({
+            "pin": chan or f"{mcu}.{nut_mcu.get('pin', '?')}",
+            "af": af, "net": ten,
+            "part": ", ".join(_nhan_part(n["ref"], parts) for n in nodes
+                              if n.get("ref") and n["ref"] != mcu) or "—",
+            "part_pin": ", ".join(f"{n['ref']}.{n.get('pin', '?')}" for n in nodes
+                                  if n.get("ref") and n["ref"] != mcu),
+            "dir": huong, "module": mid,
+            "conflict": bool(xung_dot & {f"{mcu}.{nut_mcu.get('pin', '')}", (chan or "").upper()}),
+            "fact_ids": fids,
+        })
+    return ra
+
+
+def _tra_chan(net: str, chuc_nang: dict[str, dict[str, Any]]) -> tuple[str, str, list[str]]:
+    """`(tên chân, AF, fact ids)` — tra TÊN NET ngược về chân qua `pin_function`.
+
+    Netlist chỉ cho số chân (`U1.42`); tên `PB6` nằm trong hộ chiếu chip. Chỗ nối hai thứ ấy là
+    TÊN TÍN HIỆU: net `/I2C1_SCL` khớp chức năng `I2C1_SCL` của chân PB6.
+    """
+    tin_hieu = net.strip("/").upper()
+    for chan, v in sorted(chuc_nang.items()):
+        for f in v["functions"]:
+            if f == tin_hieu:
+                return chan, f, [v["fact_id"]]
+    return "", "", []
+
+
+def _module_va_huong(tin_hieu: str, vai: dict[str, tuple[str, str]]) -> tuple[str, str]:
+    """`(module, hướng)`. Hướng CHỈ khi HwMap nói MCU là `master` trên ngoại vi ấy."""
+    t = tin_hieu.strip("/").upper()
+    ngoai_vi, _, hau = t.partition("_")
+    mid, role = vai.get(ngoai_vi, ("", ""))
+    if role != "master":
+        return mid, ""
+    return mid, HUONG_BUS.get(hau or t, "")
+
+
+def _nhan_part(ref: str, parts: dict[str, dict[str, Any]]) -> str:
+    pt = parts.get(ref) or {}
+    ten = pt.get("mpn") or pt.get("value")
+    return f"{ref} · {ten}" if ten else ref
+
+
+def _svg_pinmap(board: str, mcu: str, package: str, bang: list[dict[str, Any]]) -> str:
+    """Hình chip với nhãn chân, chân xung đột tô đỏ. Kích thước theo SỐ DÒNG thật.
+
+    Vẽ tay chứ không qua bộ dựng ngoài: bước 1 đòi SVG, và bắt nó cần `mmdc` thì năng lực này
+    hỏng đúng lúc cần nhất — trên máy chưa cài gì. Không có ký tự `<`/`>` nào trong nhãn (chúng
+    phá XML), và mọi nhãn đều đi qua `_thoat_xml`.
+    """
+    cao_dong, le, rong_chip = 26, 20, 180
+    cao = max(len(bang), 1) * cao_dong + 2 * le + 20
+    x_chip, x_part = le + 130, le + 130 + rong_chip + 150
+    d = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{x_part + 260}" height="{cao}" '
+         f'viewBox="0 0 {x_part + 260} {cao}" font-family="monospace" font-size="12">',
+         f'  <title>Bản đồ chân {_thoat_xml(board)}</title>',
+         f'  <rect x="{x_chip}" y="{le}" width="{rong_chip}" height="{max(len(bang), 1) * cao_dong}" '
+         'fill="none" stroke="#333" stroke-width="2"/>',
+         f'  <text x="{x_chip + rong_chip // 2}" y="{le - 6}" text-anchor="middle">'
+         f'{_thoat_xml(mcu)}{f" · {_thoat_xml(package)}" if package else ""}</text>']
+    for i, h in enumerate(bang):
+        y = le + i * cao_dong + cao_dong // 2 + 4
+        # Màu KHÔNG phải kênh duy nhất: thêm dấu ⚠ trước tên chân. Một bản đồ chân chỉ phân
+        # biệt bằng đỏ thì người mù màu đọc ra một bảng không có xung đột nào.
+        mau = "red" if h["conflict"] else "#333"
+        nhan_chan = ("⚠ " if h["conflict"] else "") + h["pin"]
+        d += [f'  <text x="{x_chip - 8}" y="{y}" text-anchor="end" fill="{mau}">'
+              f'{_thoat_xml(nhan_chan)}</text>',
+              f'  <line x1="{x_chip + rong_chip}" y1="{y - 4}" x2="{x_part - 8}" y2="{y - 4}" '
+              f'stroke="{mau}"/>',
+              f'  <text x="{x_chip + rong_chip + 8}" y="{y - 8}" fill="{mau}">'
+              f'{_thoat_xml(h["net"] + (" · " + h["dir"] if h["dir"] else ""))}</text>',
+              f'  <text x="{x_part}" y="{y}" fill="{mau}">{_thoat_xml(h["part"])}</text>']
+        if h["af"]:
+            d.append(f'  <text x="{x_chip + 6}" y="{y}" fill="#666">{_thoat_xml(h["af"])}</text>')
+    if not bang:
+        d.append(f'  <text x="{x_chip + 6}" y="{le + 20}" fill="#666">chưa có net tín hiệu '
+                 'nào của MCU</text>')
+    d.append("</svg>")
+    return "\n".join(d) + "\n"
+
+
+def _thoat_xml(s: str) -> str:
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
 # ---------------------------------------------------------------- dựng mã lược đồ chung
 
 
