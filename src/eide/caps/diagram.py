@@ -840,6 +840,142 @@ def _thoat_xml(s: str) -> str:
             .replace('"', "&quot;"))
 
 
+# ---------------------------------------------------------------- DIAGRAM-05 sequence
+
+# Participant khai tường minh, và participant khai NGẦM ngay trong mũi tên. Mermaid cho phép cả
+# hai; chỉ kiểm dòng `participant` thì hàng rào có một cửa mở, và mô hình đi qua đúng cửa ấy.
+RE_PARTICIPANT = re.compile(r"^\s*(?:participant|actor)\s+([A-Za-z_]\w*)", re.M)
+RE_MUI_TEN_SEQ = re.compile(r"^\s*([A-Za-z_]\w*)\s*(?:-{1,2}>>?|<-{1,2}|x-{1,2}>|-{1,2}\)\s*)"
+                            r"\s*([A-Za-z_]\w*)\s*:", re.M)
+MO_DAU_SEQ = {"mermaid": "sequenceDiagram", "plantuml": "@startuml"}
+
+_SCHEMA_SEQ = {"type": "object", "required": ["src"],
+               "properties": {"src": {"type": "string"}}}
+
+
+def _gateway(ctx: Context) -> Any:
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+    return gw
+
+
+@capability("diagram.sequence")
+def sequence(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-05 — CDS-12.4; SDD-04; ARCH-02 (ModuleGraph), ARCH-03 (HwMap), ARCH-07
+    (`module.fsm`); CXD-10 (`memory.compose` vai `writer`). tc: "Participant khớp module";
+    lỗi E5002; undo `delete_created_files`.
+
+    **Lược đồ duy nhất của nhóm do mô hình sinh — nên là lược đồ duy nhất cần hàng rào.** Bước 1
+    nói thẳng "writer sinh", và đúng như thế: một kịch bản là một câu chuyện về thứ tự, mà thứ
+    tự thì không nằm sẵn trong store như `module.depends` hay `module.fsm`. Nhưng cái giá của
+    việc để mô hình viết là nó thêm được một module nghe rất hợp lý mà ModuleGraph không có —
+    và lược đồ tuần tự trông thuyết phục hơn mọi lược đồ khác, nên đây là lỗi đắt nhất của cả
+    nhóm `diagram.*`.
+
+    Vì thế **mọi participant phải có thật**: module (ARCH-02), ngoại vi trong HwMap (ARCH-03),
+    hoặc một ISR nhận ra được theo đúng quy ước tên mà `code.static` dùng. Không khớp → E5002
+    kèm danh sách tên bịa, chứ không lặng lẽ vẽ ra.
+
+    **Chưa có module nào thì E2000 TRƯỚC KHI hỏi mô hình**: "participant khớp module" không kiểm
+    được, nên câu trả lời chắc chắn bị bỏ — hỏi rồi mới phát hiện là tiêu tiền cho một câu trả
+    lời đã biết là sẽ vứt.
+    """
+    from eide.caps.arch import _doc_module
+
+    root = _root(ctx)
+    lang = params.get("lang") or "mermaid"
+    scenario = str(params["scenario"])
+    mods = _doc_module(root, None)
+    if not mods:
+        raise EideError("E2000", "Chưa có module nào — chạy `arch.decompose` trước; "
+                        "\"participant khớp module\" không kiểm được trên một ModuleGraph rỗng",
+                        exists=[], candidates=["arch.decompose"], missing=["module"])
+
+    cho_phep, ngoai_vi = _participant_hop_le(root, mods)
+    from eide.caps.memory import compose
+    b = compose({"role": "writer", "task_ref": scenario}, ctx)["bundle"]
+    ngu_canh = "\n\n".join(x["text"] for x in b["blocks"] if x["layer"] != "C1")
+
+    resp = _gateway(ctx).run(
+        "writer",
+        f"Vẽ sơ đồ tuần tự ({lang}) cho kịch bản: {scenario}\n"
+        f"CHỈ được dùng những participant sau, đúng định danh: {', '.join(sorted(cho_phep))}\n"
+        + (f"Ngoại vi kèm địa chỉ đã biết: {ngoai_vi}\n" if ngoai_vi else "")
+        + "Thông điệp là lời gọi hàm hoặc giao dịch bus; giao dịch bus phải ghi địa chỉ lấy từ "
+          "danh sách trên, không tự nghĩ ra địa chỉ nào.\n"
+        f"Bắt đầu bằng `{MO_DAU_SEQ[lang]}`.",
+        _SCHEMA_SEQ, system_extra=ngu_canh)
+
+    src = (resp.data.get("src") or "").strip() + "\n"
+    if not src.strip().startswith(MO_DAU_SEQ[lang]):
+        raise EideError("E5002", f"Mô hình không trả về sơ đồ tuần tự {lang} — dòng đầu là "
+                        f"`{src.strip().splitlines()[0][:40] if src.strip() else ''}`, chờ "
+                        f"`{MO_DAU_SEQ[lang]}`", scenario=scenario, src=src[:300])
+    if (loi := [x for x in lint({"src": src, "lang": lang}, ctx)["issues"]
+                if x["kind"] == KIND_CU_PHAP]):
+        raise EideError("E5002", f"Sơ đồ tuần tự sinh ra không hợp lệ: {loi[0]['message']}",
+                        scenario=scenario, issues=loi, src=src[:300])
+
+    ds = _participant_seq(src)
+    # ISR không nằm trong bảng nào của store — nó là một hàm trong mã, và bảng duy nhất biết nó
+    # là quy ước đặt tên. Nhận theo TỪ VỰNG, đúng bảng `code.static` dùng.
+    if (la := sorted(x for x in set(ds) - cho_phep if not _la_isr(x))):
+        raise EideError("E5002", f"{len(la)} participant không có trong ModuleGraph/HwMap: "
+                        f"{', '.join(la)} — lược đồ đang kể một hệ thống khác với hệ thống đã "
+                        "thiết kế", scenario=scenario, unknown=la,
+                        allowed=sorted(cho_phep), src=src[:300])
+    return {"diagram": {"lang": lang, "src": src, "scenario": scenario,
+                        "participants": ds, "model_ref": "module"}}
+
+
+def _participant_hop_le(root: Path, mods: list[dict[str, Any]]) -> tuple[set[str], str]:
+    """`(tập tên cho phép, mô tả ngoại vi kèm địa chỉ)` — module, ngoại vi trong HwMap, ISR."""
+    import json
+    cho_phep = {str(m["id"]) for m in mods} | {str(m["name"]) for m in mods if m.get("name")}
+    ngoai_vi: dict[str, str] = {}
+    db = store.store_path(root)
+    if db.exists():
+        with store.open_store(db) as c:
+            try:
+                for (tn,) in c.execute("SELECT DISTINCT resource FROM hw_map"):
+                    ngoai_vi[str(tn).rsplit(":", 1)[-1].upper()] = ""
+            except Exception:                   # noqa: BLE001 — store cũ chưa có bảng
+                pass
+            for subj, gt in c.execute(
+                    "SELECT subject, value FROM fact WHERE predicate IN ('address','base_address')"
+                    "  AND status NOT IN ('superseded','rejected')"):
+                ten = str(subj).rsplit(":", 1)[-1].upper()
+                if ten in ngoai_vi:
+                    try:
+                        ngoai_vi[ten] = str(json.loads(gt))
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+    return cho_phep | set(ngoai_vi), ", ".join(
+        f"{k} ({v})" if v else k for k, v in sorted(ngoai_vi.items()))
+
+
+def _participant_seq(src: str) -> list[str]:
+    """Tên participant theo thứ tự xuất hiện — cả khai tường minh lẫn khai ngầm trong mũi tên."""
+    ra: list[str] = []
+    for ten in RE_PARTICIPANT.findall(src):
+        if ten not in ra:
+            ra.append(ten)
+    for a, b in RE_MUI_TEN_SEQ.findall(src):
+        for x in (a, b):
+            if x not in ra:
+                ra.append(x)
+    return ra
+
+
+# ISR nhận ra bằng TỪ VỰNG, đúng bảng mà `code.static` dùng (CMSIS/STM32, avr-libc). Đặt ở đây
+# một tham chiếu chứ không chép lại: hai bảng cùng nghĩa sẽ lệch nhau.
+def _la_isr(ten: str) -> bool:
+    from eide.caps.code import RE_TEN_ISR
+    return bool(RE_TEN_ISR.fullmatch(ten))
+
+
 # ---------------------------------------------------------------- DIAGRAM-09 memory_map
 
 # Dòng tiêu đề section trong tệp `.map` của GNU ld: `.text  0x08000000  0x1a2c` — ĐÚNG BA cột.

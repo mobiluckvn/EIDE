@@ -970,6 +970,138 @@ def test_memory_map_qua_duoc_lint(du_an):
     assert lint({"src": dg["src"], "lang": "svg"}, ctx)["issues"] == []
 
 
+# ---------- DIAGRAM-05 sequence
+#
+# tc: "Participant khớp module". Bước 1: "Từ Plan/FSM/kịch bản sim: participant = module/ISR/
+# ngoại vi; thông điệp = gọi hàm/giao dịch bus (với địa chỉ fact); writer sinh; lint".
+#
+# Đây là lược đồ DUY NHẤT của nhóm do mô hình sinh — và chính vì thế nó là lược đồ duy nhất cần
+# một hàng rào: mọi participant phải là một thứ CÓ THẬT trong ModuleGraph, HwMap, hoặc là một
+# ISR nhận ra được theo quy ước tên.
+
+SEQ_OK = {"src": "sequenceDiagram\n"
+                 "    participant mod_app as app\n"
+                 "    participant mod_i2c as i2c_bus\n"
+                 "    mod_app->>mod_i2c: bme280_read_temp()\n"
+                 "    mod_i2c-->>mod_app: 25.4\n"}
+
+
+def _hai_module(root):
+    nap_module(root, [{"id": "mod_app", "name": "app", "depends": ["mod_i2c"]},
+                      {"id": "mod_i2c", "name": "i2c_bus", "depends": []}])
+
+
+def test_TC_participant_khop_module(du_an, monkeypatch):
+    """tc DIAGRAM-05, nguyên văn. Lược đồ tuần tự là thứ người ta đọc để hiểu hệ thống chạy ra
+    sao; một participant không có thật biến nó thành mô tả của một hệ thống khác."""
+    r, ctx, root = du_an
+    _hai_module(root)
+    _gia_lap(monkeypatch, SEQ_OK, mod="diagram")
+    dg = r.invoke("diagram.sequence", {"scenario": "F-04"}, ctx).result["diagram"]
+
+    assert set(dg["participants"]) == {"mod_app", "mod_i2c"}
+    assert dg["lang"] == "mermaid" and dg["src"].lstrip().startswith("sequenceDiagram")
+    assert dg["model_ref"] == "module"
+
+
+def test_participant_BIA_thi_E5002(du_an, monkeypatch):
+    """Mô hình thêm một module nghe rất hợp lý mà ModuleGraph không có. Đây là lỗi đắt nhất của
+    cả nhóm `diagram.*`, vì lược đồ tuần tự trông thuyết phục hơn mọi lược đồ khác."""
+    r, ctx, root = du_an
+    _hai_module(root)
+    _gia_lap(monkeypatch, {"src": "sequenceDiagram\n"
+                                  "    participant mod_app as app\n"
+                                  "    participant mod_bia as bo_loc_kalman\n"
+                                  "    mod_app->>mod_bia: loc()\n"}, mod="diagram")
+    run = r.invoke("diagram.sequence", {"scenario": "F-04"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+    assert run.error["unknown"] == ["mod_bia"]
+
+
+def test_participant_NGAM_trong_thong_diep_cung_bi_kiem(du_an, monkeypatch):
+    """Mermaid cho phép khai participant ngay trong mũi tên. Chỉ kiểm dòng `participant` thì
+    hàng rào có một cửa mở, và mô hình đi qua đúng cửa ấy."""
+    r, ctx, root = du_an
+    _hai_module(root)
+    _gia_lap(monkeypatch, {"src": "sequenceDiagram\n"
+                                  "    participant mod_app as app\n"
+                                  "    mod_app->>mod_la: doc()\n"}, mod="diagram")
+    run = r.invoke("diagram.sequence", {"scenario": "F-04"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+    assert run.error["unknown"] == ["mod_la"]
+
+
+def test_ngoai_vi_va_ISR_duoc_lam_participant(du_an, monkeypatch):
+    """"participant = module/ISR/ngoại vi" — cả ba, không chỉ module. Ngoại vi lấy từ HwMap;
+    ISR nhận ra theo quy ước tên của CMSIS/AVR mà `code.static` đã dùng."""
+    r, ctx, root = du_an
+    _hai_module(root)
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR REPLACE INTO hw_map (module_id, resource, role, fact_ids)"
+                  " VALUES ('mod_i2c','chip:stm32f411/periph:I2C1','master','[]')")
+        c.commit()
+    _gia_lap(monkeypatch, {"src": "sequenceDiagram\n"
+                                  "    participant TIM2_IRQHandler\n"
+                                  "    participant I2C1\n"
+                                  "    participant mod_i2c as i2c_bus\n"
+                                  "    TIM2_IRQHandler->>mod_i2c: bao_den_ky()\n"
+                                  "    mod_i2c->>I2C1: doc thanh ghi 0xFA\n"}, mod="diagram")
+    dg = r.invoke("diagram.sequence", {"scenario": "F-04"}, ctx).result["diagram"]
+
+    assert set(dg["participants"]) == {"TIM2_IRQHandler", "I2C1", "mod_i2c"}
+
+
+def test_cu_phap_hong_thi_E5002_chu_khong_tra_ve_luoc_do_hong(du_an, monkeypatch):
+    """"writer sinh; lint" — lint là bước 1 chứ không phải việc của người gọi. Trả về một lược
+    đồ không dựng được rồi để người dùng phát hiện là đẩy lỗi xuống hạ nguồn."""
+    r, ctx, root = du_an
+    _hai_module(root)
+    _gia_lap(monkeypatch, {"src": "flowchart LR\n  mod_app --> mod_i2c\n"}, mod="diagram")
+    run = r.invoke("diagram.sequence", {"scenario": "F-04"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+    assert "sequenceDiagram" in str(run.error) or run.error.get("issues")
+
+
+def test_plantuml_cung_kiem_participant(du_an, monkeypatch):
+    """`lang` có hai giá trị trong hợp đồng, và hàng rào phải đứng ở cả hai — không thì đổi một
+    tham số là đi vòng được nó."""
+    r, ctx, root = du_an
+    _hai_module(root)
+    _gia_lap(monkeypatch, {"src": "@startuml\nparticipant mod_app\nparticipant mod_bia\n"
+                                  "mod_app -> mod_bia : loc()\n@enduml\n"}, mod="diagram")
+    run = r.invoke("diagram.sequence", {"scenario": "F-04", "lang": "plantuml"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+    assert run.error["unknown"] == ["mod_bia"]
+
+
+def test_chua_co_module_nao_thi_E2000_chu_khong_hoi_mo_hinh(du_an, monkeypatch):
+    """Không có ModuleGraph thì "participant khớp module" không kiểm được, và một lược đồ không
+    kiểm được là thứ năng lực này tồn tại để tránh. Hỏi mô hình trước rồi mới phát hiện là tiêu
+    tiền cho một câu trả lời chắc chắn bị bỏ."""
+    goi: list[int] = []
+
+    class _R:
+        def __init__(self, d): self.data = d
+
+    class _G:
+        def run(self, *a, **k):
+            goi.append(1)
+            return _R(SEQ_OK)
+
+    import eide.caps.diagram as m
+    monkeypatch.setattr(m, "_gateway", lambda ctx: _G())
+    r, ctx, _ = du_an
+    run = r.invoke("diagram.sequence", {"scenario": "F-04"}, ctx)
+
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "arch.decompose" in run.error["candidates"]
+    assert goi == [], "đã hỏi mô hình trong khi biết trước là sẽ bỏ câu trả lời"
+
+
 # ---------- DOC-01 generate
 
 VAN = {"markdown": "Mục này mô tả phạm vi và cách đọc bảng bên dưới.", "citations": ["f_1"]}
