@@ -191,29 +191,74 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 09/09/2026 — bắt đầu phiên sau từ đây
 
-*Cây làm việc sạch, `make check` 1121 xanh, DEVIATIONS 4 mục Mở (DEV-072/073/075 đề nghị sửa tài
-liệu; DEV-074 là nợ hiện thực chờ M5). Bảy commit:* `59c07e0`→`d9c65db` *(doc.api_ref ·
-doc.test_report · doc.changelog · tiến độ · diagram.pinmap · diagram.memory_map ·
-diagram.sequence · khối C4). Cả khối C phần M2 đã đóng: `doc.*` 9/12, `diagram.*` 12/14 — số còn
-lại đều ở M3.*
+*Cây làm việc sạch, `make check` 1121 xanh, DEVIATIONS 4 mục Mở. Tám commit:*
+`59c07e0`→`883aaca` *(doc.api_ref · doc.test_report · doc.changelog · diagram.pinmap ·
+diagram.memory_map · diagram.sequence · khối C4 · hai lần cập nhật tiến độ).*
 
-**Làm gì đầu tiên:** `/bat-dau`, rồi **khối D** — `extract.*` còn 11 ở M2. Trong đó
-**`extract.pdf_pinout` đáng làm trước**: nó sinh fact `pin_function`, thứ mà ba năng lực vừa
-dựng đang chờ — `board.propose_fix` hiện trả "chưa tra được chân thay thế", `diagram.pinmap` để
-trống cột `pin` khi không tra được tên chân, và `arch.map_hw` gán ngoại vi mò theo tên module.
-Làm nó xong là ba chỗ ấy có dữ liệu thật cùng lúc.
+**Cả khối C phần M2 đã đóng**: `doc.*` 9/12, `diagram.*` 12/14 — số còn lại của cả hai nhóm đều
+ở M3. 151/238 năng lực (63%), M2 55/99.
 
-**Bẫy đã biết, đừng đạp lại:**
+**Quyết định chủ sản phẩm 09/09:** làm tiếp **khối D**; bốn mục DEVIATIONS để `Mở`, gộp vào đợt
+đồng bộ tài liệu sau (không chạy `/dong-bo-tai-lieu` bây giờ).
+
+---
+
+### Làm gì đầu tiên: `extract.pdf_pinout` (EXTRACT-09)
+
+Đã đọc hợp đồng và khảo sát mã ở cuối phiên 09/09 — chép lại đây để phiên sau vào việc ngay,
+**chưa viết dòng mã nào**.
+
+**Vì sao nó trước:** nó sinh fact `pin_function`, thứ mà ba năng lực vừa dựng đang cùng chờ —
+`board.propose_fix` hiện trả *"chưa tra được chân thay thế"*, `diagram.pinmap` để trống cột
+`pin` khi không tra được tên chân, `arch.map_hw` gán ngoại vi mò theo tên module. Làm xong là ba
+chỗ ấy có dữ liệu thật cùng lúc.
+
+**Hợp đồng:** vào `{file, part}` (cả hai bắt buộc), ra `{batch_id}`; `errors: []`; undo
+`supersede_facts`; R1/T1; ask_when *"Từ hình"*; tc **"PB6 có I2C1_SCL AF4"**.
+Bước 1: *"Bảng pinout (Pin, Name, Type) hoặc hình package (vision) → pin_function; package"*.
+
+**Thiết kế đã chốt qua khảo sát:**
+
+- **Đường bảng làm bằng MÃ, không gọi mô hình.** Khác `extract.pdf_register_map` (ở đó cột
+  "Bits" có mười cách viết nên mô hình là đúng chỗ). Ở đây số AF đến từ **vị trí cột** trong
+  bảng "Alternate function mapping" (AF0…AF15) — đọc chỉ số cột là việc xác định, và chính tc
+  của hợp đồng ("AF4") kiểm cái đó. Hỏi mô hình một thứ đếm được là mở đường cho nó đếm sai.
+- **Hai loại bảng, hai bộ nhận dạng theo tiêu đề cột** (cùng khuôn `_diem_bang`/`COT_THANH_GHI`
+  của EXTRACT-07): (a) bảng định nghĩa chân — Pin/Pin number/Name/Signal/Type/I/O; (b) bảng ánh
+  xạ chức năng thay thế — hàng tiêu đề có `AF0`…`AF15`. Không nhận ra tiêu đề thì **bỏ bảng**,
+  không đoán.
+- **Hình dạng fact:** `pin_function`, subject `chip:<part>/pin:PB6`,
+  value `{"pin": "PB6", "functions": [...], "af": {"I2C1_SCL": 4}, "type": "I/O"}`.
+  Giữ `functions` là **mảng chuỗi** — `board._chan_thay_the` và `diagram._chan_chuc_nang` đều
+  đọc `v.get("functions") or v.get("af")`, nên đổi kiểu của `functions` là làm hỏng hai chỗ ấy
+  trong im lặng. Số AF đi vào khóa `af` riêng.
+- Thêm fact `package` (subject `chip:<part>`) khi đọc được tên vỏ (LQFP/QFN/TSSOP/BGA + số
+  chân). `pin_function` và `package` đều nằm trong enum `VI_TU` của `passport.py` — không phải
+  xin thêm vị từ.
+- `tier: silver`, `locator` = `{page, bbox}` lấy từ khối (KHÔNG hỏi mô hình), rồi
+  `passport.import` trả `batch_id`.
+- Không thấy bảng pinout nào → **E2000** kèm `candidates`, nói rõ đường hình cần vision. E2000
+  là lỗi tiền điều kiện của khung, không phải mã mới, nên không cần mục sai khác cho nó.
+- **Đường "hình package (vision)" chưa làm được** → dự kiến mở [DEV-076] dạng *nợ hiện thực*,
+  cùng hình dạng DEV-074: nó cần `extract.ocr`/`extract.image_*` (M2, chưa hiện thực), và
+  `ask_when: "Từ hình"` chỉ có nghĩa khi đường ấy tồn tại.
+
+**Chỗ còn phải quyết ở phiên sau:** test dùng PDF THẬT có bảng kẻ khung (đúng chuẩn của kho —
+xem `pdf_toi_thieu`/`_pdf_tho` trong `tests/test_extract_m1.py`, phần vẽ đường kẻ `m`/`l`/`S`),
+hay giả lập `pdf_layout` như test của `extract.pdf_electrical`. Nên thử đường PDF thật trước:
+`extract.pdf_layout` đã có, và một bảng AF thật là thứ duy nhất chứng minh được tc.
+
+---
+
+### Bẫy đã biết, đừng đạp lại
 
 - **Chạy test bằng `.venv-arm/bin/python`, không phải `python` trên PATH.** Venv là 3.11 còn
   `python` hệ thống mới hơn: một f-string lồng dùng lại dấu nháy (`f"{d["k"]}"`) chạy được ở
   ngoài và là LỖI CÚ PHÁP trong venv — pytest xanh, `make check` đỏ ở bước ruff.
 - `Router.invoke` biến `EideError` của handler thành run `failed` (`run.error["eide_code"]`);
   chỉ E1000 từ lớp kiểm `input_schema` mới ném ra ngoài.
-- Bảng đơn vị của kho (`req.DON_VI`) đọc `kb` là **1000** byte, `kib` là 1024. Ghi "512 kB" cho
-  524288 byte là tự mâu thuẫn với `arch.memory_budget` và `code.size` — lệch 12 kB, đủ để một
-  firmware vừa khít báo là vừa khít.
-- Nhãn lấy từ dữ liệu phải đi qua bộ lọc trước khi vào mã lược đồ: `:` cắt đôi một dòng gantt,
+- Bảng đơn vị của kho (`req.DON_VI`) đọc `kb` là **1000** byte, `kib` là 1024.
+- Nhãn lấy từ dữ liệu phải qua bộ lọc trước khi vào mã lược đồ: `:` cắt đôi một dòng gantt,
   ngoặc lệch làm `diagram.lint` báo lỗi trên chính lược đồ mình vừa sinh, và nhãn bị CẮT giữa
   chừng là nguồn ngoặc lệch phổ biến nhất (cắt trước, cân bằng sau).
 - Ba cổng chặn trong `tests/test_specs_consistency.py` vẫn nguyên: docstring nêu ĐÚNG mã hợp
