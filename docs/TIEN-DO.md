@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 09/09/2026 (lần 14). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 09/09/2026 (lần 15). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,7 +12,7 @@
 
 ## 1. Một dòng
 
-**145/238 năng lực (61%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 1077 test xanh trên
+**151/238 năng lực (63%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 1121 test xanh trên
 cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
@@ -27,7 +27,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
-| M2 | 49/99 · 49% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
+| M2 | 55/99 · 56% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
@@ -40,10 +40,11 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 ## 3. Theo nhóm năng lực
 
 **Đủ hoặc gần đủ** — `arch` 11/11 · `chat` 8/8 · `req` 8/8 · `plan` 7/7 · `policy` 7/7 ·
-`ingest` 3/3 · `kg` 8/9 · `view` 9/13 · `tool` 7/10 · **`board` 5/5**
+`ingest` 3/3 · `kg` 8/9 · `board` 5/5 · **`diagram` 12/14** · **`doc` 9/12** · `view` 9/13 ·
+`tool` 7/10
 
 **Mới một phần** — `extract` 10/21 · `project` 6/9 · `memory` 6/8 · `search` 6/9 ·
-`env` 6/7 · `code` 13/16 · `passport` 4/8 · `diagram` 6/14 · `doc` 9/12 · `archive` 4/4 · `registry` 1/5 ·
+`env` 6/7 · `code` 13/16 · `passport` 4/8 · `archive` 4/4 · `registry` 1/5 ·
 `report` 1/4
 
 **Chưa bắt đầu** — `code` (16, M2) · `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) ·
@@ -98,11 +99,11 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1077** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1121** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 73 tổng, **2 Mở** ([DEV-072], [DEV-073] — cả hai đều đề nghị sửa tài liệu, chờ chủ sản phẩm) |
+| Mục DEVIATIONS | 75 tổng, **4 Mở** ([DEV-072], [DEV-073], [DEV-075] đề nghị sửa tài liệu; [DEV-074] là nợ hiện thực chờ mốc M5) |
 | Tài liệu | 35 tệp ở **v1.3**, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.

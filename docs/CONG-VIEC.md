@@ -77,14 +77,14 @@ mà không nối về fact thì EIDE chỉ là một trình sinh mã nữa.
 
 ---
 
-## C. `doc.*` + `diagram.*` — C1+C3 xong; còn 6 ở M2 (+5 ở M3: `slides`, `sync`, `translate`, `from_image`, `diagram.sync`)
+## C. `doc.*` + `diagram.*` — **XONG phần M2**; còn 5 ở M3 (`slides`, `sync`, `translate`, `from_image`, `diagram.sync`)
 
 | # | Việc | Giá trị |
 |---|---|---|
 | ~~C1~~ | ~~`doc.generate`, `doc.embed_diagram`~~ | **Xong 08/09** — khép chuỗi **P7 (8/8)**. Bảng số liệu dựng bằng mã, văn xuôi do mô hình viết quanh bảng |
-| C2 | `sequence`, `pinmap`, `memory_map` — ~~`architecture`, `state`~~ xong 08/09 | Lược đồ cho chính bộ tài liệu ấy |
+| ~~C2~~ | ~~`sequence`, `pinmap`, `memory_map`, `architecture`, `state`~~ | **Xong 09/09** — `pinmap` nối netlist ↔ hộ chiếu chân ↔ linh kiện; `memory_map` xếp section theo địa chỉ |
 | ~~C3~~ | ~~`api_ref`, `test_report`, `changelog`, `bringup_guide`~~ | **Xong 09/09** — `doc.*` 9/12; ba loại còn lại (`translate`, `slides`, `sync`) đều ở M3 |
-| C4 | `diagram.flow`, `gantt`, `timing` | Còn lại |
+| ~~C4~~ | ~~`diagram.flow`, `gantt`, `timing`~~ | **Xong 09/09** — kèm một lỗi im lặng của `diagram.lint`: cạnh có nhãn và nút kèm nhãn đều vô hình với nó |
 
 **Đã đạt điều đáng làm sớm:** `eide doc generate --type SRS` nay cho ra **chính bộ tài liệu
 dùng làm phụ lục đề án** — sản phẩm tự viết tài liệu về mình, bảng số liệu dựng từ store, mục
@@ -173,8 +173,8 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 
 ```
 A1+A2 (xong)  →  B1+B2 (xong)  →  E board.* (xong, Z-07 đóng)
-              →  C1+C3 (bộ tài liệu tự sinh + tài liệu vận hành — xong, P7 đóng)
-              →  C2+C4 · D (extract còn lại)  ←  ĐANG Ở ĐÂY
+              →  C1+C2+C3+C4 (cả khối C phần M2 — xong, P7 đóng)
+              →  D (extract còn lại)  ←  ĐANG Ở ĐÂY
               →  F (mô phỏng)  →  H (phần cứng, cuối cùng)
 ```
 
@@ -191,31 +191,33 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 09/09/2026 — bắt đầu phiên sau từ đây
 
-*Cây làm việc sạch, `make check` 1077 xanh, DEVIATIONS 2 mục Mở (DEV-072, DEV-073 — cả hai đề
-nghị sửa tài liệu, chờ chủ sản phẩm). Ba commit:* `59c07e0`→`bd70673` *(api_ref · test_report ·
-changelog — khối C3 đóng, `doc.*` lên 9/12).*
+*Cây làm việc sạch, `make check` 1121 xanh, DEVIATIONS 4 mục Mở (DEV-072/073/075 đề nghị sửa tài
+liệu; DEV-074 là nợ hiện thực chờ M5). Bảy commit:* `59c07e0`→`d9c65db` *(doc.api_ref ·
+doc.test_report · doc.changelog · tiến độ · diagram.pinmap · diagram.memory_map ·
+diagram.sequence · khối C4). Cả khối C phần M2 đã đóng: `doc.*` 9/12, `diagram.*` 12/14 — số còn
+lại đều ở M3.*
 
-**Làm gì đầu tiên:** `/bat-dau`, rồi **C2** — `diagram.sequence`, `diagram.pinmap`,
-`diagram.memory_map`. Cùng khuôn với `diagram.architecture`/`state` đã có: sinh từ mô hình ĐÃ
-KIỂM (`module`, `hw_map`, hộ chiếu) chứ không hỏi mô hình, rồi cho qua chính `diagram.lint`.
-`pinmap` và `memory_map` đọc từ `hw_map` và fact `memory_size`/`base_address` — hai thứ đã có
-trong store từ khối `arch.*`.
-
-**Ba loại `doc.*` còn lại đều ở M3** (`translate`, `slides`, `sync`), nên `doc.*` dừng ở 9/12 là
-đúng lịch, không phải bỏ dở.
+**Làm gì đầu tiên:** `/bat-dau`, rồi **khối D** — `extract.*` còn 11 ở M2. Trong đó
+**`extract.pdf_pinout` đáng làm trước**: nó sinh fact `pin_function`, thứ mà ba năng lực vừa
+dựng đang chờ — `board.propose_fix` hiện trả "chưa tra được chân thay thế", `diagram.pinmap` để
+trống cột `pin` khi không tra được tên chân, và `arch.map_hw` gán ngoại vi mò theo tên module.
+Làm nó xong là ba chỗ ấy có dữ liệu thật cùng lúc.
 
 **Bẫy đã biết, đừng đạp lại:**
 
-- `Router.invoke` biến `EideError` của handler thành một run `failed` (đọc `run.error["eide_code"]`),
-  CHỈ E1000 từ lớp kiểm `input_schema` mới ném ra ngoài. Viết `pytest.raises` cho lỗi handler là
-  test đỏ vì lý do sai.
-- Bộ đọc header C của `doc.api_ref` đã được thử trên SDK macOS thật (`_bo_macro_bao`,
-  `_cat_args`, `RE_HAM`). Nếu chạm vào nó, chạy lại `_ham_public` trên `sys/stat.h`, `dirent.h`,
-  `pthread.h`, `unistd.h`, `math.h` — bốn lỗi đã bắt được ở đó không tệp tự chế nào lộ ra.
-- Ba cổng chặn trong `tests/test_specs_consistency.py` vẫn nguyên: docstring phải nêu ĐÚNG mã
-  hợp đồng; không đọc tham số ngoài `input_schema`; không định nghĩa trùng tên hàm ở mức cao nhất.
+- **Chạy test bằng `.venv-arm/bin/python`, không phải `python` trên PATH.** Venv là 3.11 còn
+  `python` hệ thống mới hơn: một f-string lồng dùng lại dấu nháy (`f"{d["k"]}"`) chạy được ở
+  ngoài và là LỖI CÚ PHÁP trong venv — pytest xanh, `make check` đỏ ở bước ruff.
+- `Router.invoke` biến `EideError` của handler thành run `failed` (`run.error["eide_code"]`);
+  chỉ E1000 từ lớp kiểm `input_schema` mới ném ra ngoài.
+- Bảng đơn vị của kho (`req.DON_VI`) đọc `kb` là **1000** byte, `kib` là 1024. Ghi "512 kB" cho
+  524288 byte là tự mâu thuẫn với `arch.memory_budget` và `code.size` — lệch 12 kB, đủ để một
+  firmware vừa khít báo là vừa khít.
+- Nhãn lấy từ dữ liệu phải đi qua bộ lọc trước khi vào mã lược đồ: `:` cắt đôi một dòng gantt,
+  ngoặc lệch làm `diagram.lint` báo lỗi trên chính lược đồ mình vừa sinh, và nhãn bị CẮT giữa
+  chừng là nguồn ngoặc lệch phổ biến nhất (cắt trước, cân bằng sau).
+- Ba cổng chặn trong `tests/test_specs_consistency.py` vẫn nguyên: docstring nêu ĐÚNG mã hợp
+  đồng; không đọc tham số ngoài `input_schema`; không định nghĩa trùng tên hàm ở mức cao nhất.
 
-**Sau C2+C4 là khối D**, và trong đó `extract.pdf_pinout` đáng làm trước: nó sinh fact
-`pin_function` — thứ mở khóa phần "đổi sang chân nào" của `board.propose_fix`, hiện đang trả
-"chưa tra được chân thay thế". Nó cũng là nguồn dữ liệu của `diagram.pinmap` ở C2, nên làm C2
-trước thì `pinmap` sẽ có sẵn chỗ cắm dữ liệu vào.
+**Sau D là F (mô phỏng)**, rồi H (phần cứng, cuối cùng). Chuỗi Z-10 vẫn 1/10 và sẽ ở đó tới lúc
+có board — đúng lịch, không phải chậm.
