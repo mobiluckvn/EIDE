@@ -539,3 +539,143 @@ def test_o_nao_nghia_la_ap_dung(o, ap_dung):
     """Bốn cách viết "có" và năm cách viết "không" — đều gặp trong errata sheet thật."""
     from eide.caps.extract import _co_danh_dau
     assert _co_danh_dau(o) is ap_dung
+
+
+# ================================================================ EXTRACT-20 readme_goal
+#
+# tc: "Z-07 sinh F-01…F-08". README là thứ ĐẦU TIÊN đọc được trong một zip dự án lạ, và nó nói
+# thứ mà không tệp SVD nào nói: dự án này ĐỂ LÀM GÌ. R0 vì nó không ghi gì vào store — nó đề
+# xuất, còn `plan.define_feature` mới là chỗ cấp id và ghi FEATURES.json.
+
+README_ROBOT = """# Balancing robot
+Robot hai bánh tự cân bằng dùng STM32F411 và MPU-6050.
+
+## Tính năng
+- Đọc góc nghiêng từ IMU qua I2C ở 200 Hz
+- Vòng PID giữ thân robot thẳng đứng
+- Điều khiển hai động cơ bước qua driver A4988
+- Báo trạng thái qua UART 115200
+- Dừng khẩn khi nghiêng quá 45 độ
+"""
+
+GOAL_MO_HINH = {
+    "goal": "Robot hai bánh tự cân bằng trên STM32F411 với IMU MPU-6050",
+    "features": [
+        {"title": "Đọc góc nghiêng từ IMU 200 Hz",
+         "expectation": {"kind": "serial_pattern", "detail": "angle=.* xuất hiện 200 lần/giây"},
+         "priority_guess": "must"},
+        {"title": "Vòng PID giữ thăng bằng",
+         "expectation": {"kind": "measurement", "detail": "|góc| < 5 độ trong 30 giây"},
+         "priority_guess": "must"},
+        {"title": "Điều khiển hai động cơ bước",
+         "expectation": {"kind": "probe_reg", "detail": "TIM2_CR1.CEN = 1 khi chạy"},
+         "priority_guess": "must"},
+        {"title": "Báo trạng thái qua UART",
+         "expectation": {"kind": "serial_pattern", "detail": "^STATUS "},
+         "priority_guess": "should"},
+        {"title": "Dừng khẩn khi nghiêng quá 45 độ",
+         "expectation": {"kind": "serial_pattern", "detail": "^EMERGENCY_STOP"},
+         "priority_guess": "must"},
+    ],
+    "bom_hints": ["STM32F411", "MPU-6050", "A4988", "MPU-6050"],
+}
+
+
+def _gia_lap_theo_schema(monkeypatch, ctx, goal, feature=None):
+    """Một gateway giả trả lời theo SCHEMA được hỏi — `readme_goal` và `plan.define_feature` gọi
+    hai schema khác nhau, và test nối hai năng lực phải đi qua cả hai."""
+    class _R:
+        def __init__(self, d): self.data = d
+
+    class _G:
+        def run(self, role, prompt, schema=None, **k):
+            props = (schema or {}).get("properties") or {}
+            if "expectation" in props:
+                return _R(feature or {"title": prompt[-40:],
+                                      "expectation": {"kind": "serial_pattern", "detail": "x"}})
+            return _R(goal)
+
+        def prompt(self, role):        # `memory.compose` dựng lớp C1 từ prompt vai trò
+            return f"# {role}"
+    import eide.caps.extract as m
+    monkeypatch.setattr(m, "_gateway", lambda c: _G())
+    ctx.extra["gateway"] = _G()
+
+
+def test_readme_thanh_goal_va_feature_quan_sat_duoc(du_an, monkeypatch):
+    """tc EXTRACT-20: 5–10 Feature, mỗi cái có kỳ vọng QUAN SÁT ĐƯỢC."""
+    r, ctx, _ = du_an
+    _gia_lap_theo_schema(monkeypatch, ctx, GOAL_MO_HINH)
+    out = r.invoke("extract.readme_goal", {"text": README_ROBOT}, ctx).result
+    assert "cân bằng" in out["goal"]
+    assert 5 <= len(out["features"]) <= 10
+    from eide.caps.plan import DANG_KY_VONG
+    assert all(f["expectation"]["kind"] in DANG_KY_VONG for f in out["features"])
+
+
+def test_Z07_sinh_F01_den_F08(du_an, monkeypatch):
+    """tc nguyên văn: "Z-07 sinh F-01…F-08". Id do `plan.define_feature` cấp, không phải năng
+    lực này — nên đây là test NỐI hai đầu: đề xuất từ README đi qua được cổng "kỳ vọng phải máy
+    quan sát được" của PLAN-01 mà không phải sửa tay."""
+    r, ctx, root = du_an
+    tam = dict(GOAL_MO_HINH)
+    tam["features"] = GOAL_MO_HINH["features"] * 2      # 10 đề xuất
+    _gia_lap_theo_schema(monkeypatch, ctx, tam)
+    out = r.invoke("extract.readme_goal", {"text": README_ROBOT}, ctx).result
+
+    ids = []
+    for f in out["features"][:8]:
+        _gia_lap_theo_schema(monkeypatch, ctx, tam, feature=f)
+        ids.append(r.invoke("plan.define_feature", {"text": f["title"]}, ctx).result["feature"]["id"])
+    assert ids == [f"F-{i:02d}" for i in range(1, 9)]
+
+
+def test_ky_vong_khong_quan_sat_duoc_thi_bo(du_an, monkeypatch):
+    """Mô hình rất sẵn lòng viết một câu nghe như đo được mà không đo được. Giữ nó lại thì
+    `plan.define_feature` mới là chỗ nổ — xa chỗ sai, và người đọc lỗi ở đó không biết nó đến từ
+    một dòng trong README."""
+    r, ctx, _ = du_an
+    xau = {**GOAL_MO_HINH, "features": [
+        *GOAL_MO_HINH["features"],
+        {"title": "Robot trông mượt mà", "expectation": {"kind": "cam_nhan", "detail": "mượt"}},
+        {"title": "Không có kỳ vọng"},
+    ]}
+    _gia_lap_theo_schema(monkeypatch, ctx, xau)
+    out = r.invoke("extract.readme_goal", {"text": README_ROBOT}, ctx).result
+    assert len(out["features"]) == 5
+    assert all("trông mượt" not in f["title"] for f in out["features"])
+
+
+def test_bom_hints_bo_trung_giu_thu_tu(du_an, monkeypatch):
+    """`bom_hints` đi thẳng vào `extract.bom` làm gợi ý tra cứu. Trùng lặp ở đó thành hai dòng
+    BOM cho cùng một linh kiện."""
+    r, ctx, _ = du_an
+    _gia_lap_theo_schema(monkeypatch, ctx, GOAL_MO_HINH)
+    out = r.invoke("extract.readme_goal", {"text": README_ROBOT}, ctx).result
+    assert out["bom_hints"] == ["STM32F411", "MPU-6050", "A4988"]
+
+
+def test_khong_ghi_gi_vao_store(du_an, monkeypatch):
+    """`undo: none` vì không có gì để hoàn tác: năng lực này ĐỀ XUẤT, không khẳng định. Một câu
+    trong README không phải một fact phần cứng — nó là ý định của người viết."""
+    r, ctx, root = du_an
+    _gia_lap_theo_schema(monkeypatch, ctx, GOAL_MO_HINH)
+    r.invoke("extract.readme_goal", {"text": README_ROBOT}, ctx)
+    with store.open_store(store.store_path(root)) as c:
+        assert c.execute("SELECT COUNT(*) FROM fact").fetchone()[0] == 0
+
+
+def test_mo_hinh_khong_ra_goal_bao_E5002(du_an, monkeypatch):
+    r, ctx, _ = du_an
+    _gia_lap_theo_schema(monkeypatch, ctx, {"goal": "", "features": [], "bom_hints": []})
+    run = r.invoke("extract.readme_goal", {"text": README_ROBOT}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+def test_text_rong_khong_goi_mo_hinh(du_an, monkeypatch):
+    """Không có gì để đọc thì không hỏi mô hình: nó sẽ bịa ra một dự án, và bịa có sức thuyết
+    phục vì không có gì để đối chiếu."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    run = r.invoke("extract.readme_goal", {"text": "   "}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"

@@ -1492,6 +1492,82 @@ def _fact_errata(m: dict[str, Any], goc: str, pe: list[str], sid: str) -> dict[s
             "confidence": m["confidence"], "layer": "B"}
 
 
+# ---------------------------------------------------------------- EXTRACT-20 readme_goal
+
+
+_SCHEMA_GOAL = {
+    "type": "object", "required": ["goal", "features"],
+    "properties": {
+        "goal": {"type": "string"},
+        "features": {"type": "array", "items": {
+            "type": "object", "required": ["title", "expectation"],
+            "properties": {
+                "title": {"type": "string"},
+                "expectation": {
+                    "type": "object", "required": ["kind", "detail"],
+                    "properties": {"kind": {"type": "string"}, "detail": {"type": "string"}}},
+                "priority_guess": {"type": "string"}}}},
+        "bom_hints": {"type": "array", "items": {"type": "string"}},
+    },
+}
+
+
+@capability("extract.readme_goal")
+def readme_goal(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-20 — CDS-12.2; Z-07 bước `req.elicit(README)`; PLAN-01 (kỳ vọng quan sát
+    được). tc: "Z-07 sinh F-01…F-08". R0, `undo: none`.
+
+    README là thứ đầu tiên đọc được trong một zip dự án lạ, và nó nói điều mà không tệp SVD nào
+    nói: dự án này ĐỂ LÀM GÌ. Nhưng nó là **ý định của người viết**, không phải fact phần cứng —
+    nên năng lực này không ghi gì vào store và không có gì để hoàn tác. Nó đề xuất; `passport`
+    khẳng định; `plan.define_feature` cấp id F-nn và ghi FEATURES.json.
+
+    Kỳ vọng của mỗi feature bị lọc theo `plan.DANG_KY_VONG` NGAY TẠI ĐÂY, dùng chung hằng số với
+    PLAN-01 chứ không chép lại: mô hình rất sẵn lòng viết một câu nghe như đo được mà không đo
+    được ("robot chạy mượt"). Giữ nó lại thì `plan.define_feature` mới là chỗ nổ — xa chỗ sai, và
+    người đọc lỗi ở đó không biết nó đến từ một dòng trong README.
+
+    "5–10 Feature" của bước 1 đi vào PROMPT, không thành bộ cắt ở đầu ra: một README liệt kê 14
+    tính năng thì cắt còn 10 là im lặng đánh rơi bốn cái, và bịa thêm cho đủ 5 còn tệ hơn.
+    """
+    from eide.caps.plan import DANG_KY_VONG
+
+    text = str(params["text"] or "").strip()
+    if not text:
+        raise EideError("E5002", "README rỗng: không có gì để đọc. Không hỏi mô hình vì nó sẽ "
+                        "bịa ra một dự án, và bịa có sức thuyết phục khi không có gì đối chiếu",
+                        reason="empty_text")
+
+    resp = _gateway(ctx).run(
+        "librarian",
+        "Đọc README sau và trả về: mục tiêu dự án một câu; 5–10 tính năng, MỖI tính năng kèm "
+        "kỳ vọng quan sát được bằng máy — `kind` phải là một trong "
+        f"{list(DANG_KY_VONG)} và `detail` là mẫu chuỗi/thanh ghi/phép đo cụ thể; danh sách tên "
+        "linh kiện nhắc tới. Chỉ dùng thông tin CÓ trong văn bản.\n" + text[:12_000],
+        _SCHEMA_GOAL)
+
+    goal = str(resp.data.get("goal") or "").strip()
+    feats = [f for f in (resp.data.get("features") or [])
+             if (f.get("expectation") or {}).get("kind") in DANG_KY_VONG]
+    if not goal or not feats:
+        raise EideError("E5002", "Không rút được mục tiêu hoặc tính năng nào có kỳ vọng quan sát "
+                        f"được từ README ({len(resp.data.get('features') or [])} đề xuất, "
+                        f"{len(feats)} đạt)", n_features=len(feats))
+
+    return {"goal": goal, "features": feats, "bom_hints": _bo_trung(resp.data.get("bom_hints"))}
+
+
+def _bo_trung(xs: Any) -> list[str]:
+    """Giữ THỨ TỰ xuất hiện. `bom_hints` đi thẳng vào `extract.bom` làm gợi ý tra cứu, và trùng
+    lặp ở đó thành hai dòng BOM cho cùng một linh kiện."""
+    ra: list[str] = []
+    for x in (xs or []):
+        t = str(x).strip()
+        if t and t not in ra:
+            ra.append(t)
+    return ra
+
+
 # ---------------------------------------------------------------- EXTRACT-19 office
 
 

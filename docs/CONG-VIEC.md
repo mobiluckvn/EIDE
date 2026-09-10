@@ -100,7 +100,8 @@ Nguồn truy ngược về từng `source`. Đó là bằng chứng mạnh hơn 
 | ~~D1b~~ | ~~`pdf_errata`~~ | **Xong 10/09** — 21 test. Lớp phủ K2′ (`layer = "B"`), rev từ vị trí cột `Rev A`/`Rev Z`; cạnh CONFLICTS_WITH → [DEV-077](DEVIATIONS.md) chờ anh chọn hướng |
 | D2 | `bom`, `bom_enrich`, `dt_binding` | ~~`kicad_netlist`~~ xong 08/09 |
 | D3 | `image_board`, `image_schematic`, `ocr` | đọc ảnh (cần mô hình vision). Mở khoá nốt nhánh hình của `pdf_pinout` — [DEV-076](DEVIATIONS.md) |
-| D4 | `pdf_formula`, `readme_goal` | hai cái lẻ còn lại của nhóm |
+| ~~D4a~~ | ~~`readme_goal`~~ | **Xong 10/09** — 7 test. Lọc kỳ vọng theo `plan.DANG_KY_VONG` ngay tại chỗ; không ghi store (R0, `undo: none`) |
+| D4b | `pdf_formula` | công thức → skill dự án (K5), chạm `tool.*` |
 
 **Đã mở khóa:** `extract.pdf_pinout` sinh fact `pin_function`, nên `board.propose_fix` nay nêu
 được ĐỔI SANG CHÂN NÀO thay vì "chưa tra được chân thay thế", `diagram.pinmap` điền được cột
