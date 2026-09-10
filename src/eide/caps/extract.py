@@ -1492,6 +1492,250 @@ def _fact_errata(m: dict[str, Any], goc: str, pe: list[str], sid: str) -> dict[s
             "confidence": m["confidence"], "layer": "B"}
 
 
+# ---------------------------------------------------------------- EXTRACT-17 bom
+
+
+DUOI_BOM = {".csv": "csv", ".tsv": "csv", ".xlsx": "xlsx", ".xlsm": "xlsx",
+            ".net": "schematic", ".xml": "schematic", ".kicad_sch": "schematic", ".sch": "schematic",
+            ".md": "readme", ".txt": "readme", ".rst": "readme",
+            ".png": "image", ".jpg": "image", ".jpeg": "image", ".webp": "image"}
+
+# Tên cột của BOM ngoài đời. Khớp theo Ô đã chuẩn hóa, không theo chuỗi con: "Description" chứa
+# "ref" nếu so chuỗi con, và khi ấy cột mô tả thành cột tham chiếu.
+COT_BOM = {
+    "ref": ("ref", "refs", "reference", "references", "designator", "designators", "refdes",
+            "ref des", "part reference"),
+    "mpn": ("mpn", "manufacturer part number", "mfr part number", "mfg part number",
+            "part number", "partnumber", "p/n", "pn", "mfr. no.", "mpn / part number"),
+    "value": ("value", "val", "description", "comment", "part"),
+    "qty": ("qty", "quantity", "qnty", "count", "amount"),
+    "footprint": ("footprint", "package", "case", "pattern"),
+}
+
+# Hậu tố đóng gói/băng, CHỈ nhận khi tách bằng dấu — xem `_mpn_goc` và DEV-078.
+HAU_TO_GOI = re.compile(r"[-/](TR|T|T&R|R|REEL|CUT|CT|ND|CT-ND|TR-ND|13|E4|G4)$", re.I)
+
+
+@capability("extract.bom")
+def bom(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-17 — CDS-12.2; KAD-07 §5.1 K3/K4; DDD-14 Fact. tc: "BOM 12 linh kiện đúng
+    ref/MPN". ask "Mâu thuẫn giữa nguồn"; `undo: supersede_facts`.
+
+    BOM là danh sách **MUA**: một dòng sai gói là một lô hàng không hàn được lên mạch. Đó là lý
+    do gộp trùng ở đây theo **MPN đầy đủ** chứ không theo phần gốc — `STM32F411CEU6` (UFQFPN) và
+    `STM32F411CET6` (LQFP) là hai mã hàng, dù cùng một die. Phần gốc vẫn được tính và để riêng ở
+    `mpn_base` cho `extract.bom_enrich` tra cứu. Khác hợp đồng ở chỗ này: xem [DEV-078].
+
+    Bốn đường vào, mỗi đường dùng lại thứ đã có: `schematic` qua `doc_netlist` (cùng bộ đọc với
+    EXTRACT-16), `csv` qua thư viện chuẩn, `xlsx` qua `_xlsx` của EXTRACT-19, `readme` qua mô
+    hình — README không có bảng nên đó là chỗ mô hình đúng việc, khác ba đường kia vốn đã có cấu
+    trúc. Đường `image` cần `extract.image_board`/`ocr` (M2, chưa hiện thực): [DEV-079].
+
+    Dòng không có MPN vẫn vào BOM nếu có `value` + `footprint` — điện trở 10k/0603 không có MPN
+    trong sơ đồ là chuyện bình thường, và bỏ chúng đi thì BOM thiếu quá nửa số dòng. Dòng không
+    có cả hai thì vào `unmatched` chứ không bị nuốt: một linh kiện biến mất khỏi BOM là lỗi
+    người ta chỉ phát hiện khi hàng về thiếu.
+    """
+    root = _root(ctx)
+    ngts = [Path(s).expanduser() for s in (params["sources"] or [])]
+    if not ngts:
+        raise EideError("E5002", "`sources` rỗng", n_sources=0)
+    thieu = [str(p) for p in ngts if not p.is_file()]
+    if thieu:
+        raise EideError("E2000", f"Không có tệp: {', '.join(thieu)}",
+                        exists=[], candidates=[], missing=thieu)
+
+    dong: list[dict[str, Any]] = []
+    chua_khop: list[str] = []
+    for p in ngts:
+        loai = params.get("kind") or DUOI_BOM.get(p.suffix.lower())
+        if loai == "image":
+            raise EideError(
+                "E2000", f"Đọc BOM từ ảnh ({p.name}) cần đường vision, hiện chưa có hiện thực "
+                "(DEV-079)", exists=[], missing=["vision"],
+                candidates=["extract.image_board", "extract.ocr"])
+        if loai is None:
+            chua_khop.append(f"{p.name}: không nhận ra định dạng BOM")
+            continue
+        d, u = _doc_nguon_bom(p, loai, ctx)
+        dong += d
+        chua_khop += u
+
+    ds = _gop_bom(dong)
+    if not ds:
+        raise EideError("E5002", "Không rút được dòng BOM nào từ "
+                        f"{len(ngts)} nguồn ({len(chua_khop)} mục không khớp)",
+                        n_sources=len(ngts), unmatched=len(chua_khop))
+
+    _ghi_fact_bom(root, ngts[0], ds, ctx)
+    return {"bom": ds, "unmatched": chua_khop}
+
+
+def _doc_nguon_bom(p: Path, loai: str, ctx: Context) -> tuple[list[dict[str, Any]], list[str]]:
+    if loai == "schematic":
+        return _bom_netlist(p)
+    if loai in ("csv", "xlsx"):
+        return _bom_bang(p, loai)
+    return _bom_readme(p, ctx)
+
+
+def _bom_netlist(p: Path) -> tuple[list[dict[str, Any]], list[str]]:
+    if p.suffix.lower() in DUOI_SCHEMATIC and p.suffix.lower() != ".xml":
+        return [], [f"{p.name}: cần `extract.kicad_netlist` xuất netlist trước"]
+    try:
+        parts, _nets = doc_netlist(p)
+    except (ET.ParseError, ValueError) as e:
+        return [], [f"{p.name}: không đọc được netlist ({e})"]
+    ra, u = [], []
+    for i, (ref, c) in enumerate(sorted(parts.items()), 1):
+        d = _dong_bom(ref, c.get("mpn"), c.get("value"), c.get("footprint"), None,
+                      {"file": p.name, "row": i})
+        (ra if d else u).append(d or f"{p.name}:{ref}: không có MPN lẫn value")
+    return ra, u
+
+
+def _bom_bang(p: Path, loai: str) -> tuple[list[dict[str, Any]], list[str]]:
+    if loai == "csv":
+        import csv as _csv
+        hang = [r for r in _csv.reader(p.read_text(encoding="utf-8-sig").splitlines()) if any(r)]
+    else:
+        hang = [h for k in _xlsx(p) for h in (k.get("content") or [])]
+    if not hang:
+        return [], [f"{p.name}: không có hàng nào"]
+
+    cot = _cot_bom(hang[0])
+    if "ref" not in cot and "mpn" not in cot:
+        return [], [f"{p.name}: không nhận ra cột ref lẫn MPN trong tiêu đề {hang[0]}"]
+
+    def o(h: list[Any], k: str) -> str:
+        i = cot.get(k)
+        return str(h[i]).strip() if i is not None and i < len(h) else ""
+
+    ra, u = [], []
+    for i, h in enumerate(hang[1:], 2):
+        d = _dong_bom(o(h, "ref"), o(h, "mpn"), o(h, "value"), o(h, "footprint"),
+                      _so(o(h, "qty")), {"file": p.name, "row": i})
+        (ra if d else u).append(d or f"{p.name}:{i}: {o(h, 'ref') or 'dòng'} không có MPN lẫn value")
+    return ra, u
+
+
+_SCHEMA_BOM = {
+    "type": "object", "required": ["items"],
+    "properties": {"items": {"type": "array", "items": {
+        "type": "object", "required": ["mpn"],
+        "properties": {"mpn": {"type": "string"}, "ref": {"type": "string"},
+                       "value": {"type": "string"}, "qty": {"type": ["number", "null"]}}}}},
+}
+
+
+def _bom_readme(p: Path, ctx: Context) -> tuple[list[dict[str, Any]], list[str]]:
+    resp = _gateway(ctx).run(
+        "librarian",
+        "Liệt kê linh kiện phần cứng nhắc tới trong văn bản sau: mã linh kiện (mpn), số lượng "
+        "nếu có nêu, ký hiệu trên sơ đồ nếu có. Chỉ lấy thứ CÓ trong văn bản, không suy đoán "
+        "linh kiện phụ trợ.\n" + p.read_text(encoding="utf-8", errors="replace")[:12_000],
+        _SCHEMA_BOM)
+    ra, u = [], []
+    for i, it in enumerate((resp.data.get("items") or []), 1):
+        d = _dong_bom(it.get("ref") or "", it.get("mpn"), it.get("value"), None,
+                      _so(str(it.get("qty") or "")), {"file": p.name, "row": i})
+        (ra if d else u).append(d or f"{p.name}: mục {i} không có MPN")
+    return ra, u
+
+
+def _cot_bom(hang0: list[Any]) -> dict[str, int]:
+    """`{vai_trò: chỉ_số_cột}` từ hàng tiêu đề. Khớp theo Ô đã chuẩn hóa (bỏ dấu câu, gộp khoảng
+    trắng) chứ không theo chuỗi con: "Description" chứa "ref" nếu so chuỗi con, và khi ấy cột mô
+    tả thành cột tham chiếu — rồi mọi dòng BOM mang một `ref` là cả một câu."""
+    ra: dict[str, int] = {}
+    for i, x in enumerate(hang0):
+        t = re.sub(r"\s+", " ", str(x or "").strip().lower())
+        for vai, ten in COT_BOM.items():
+            if vai not in ra and t in ten:
+                ra[vai] = i
+                break
+    return ra
+
+
+def _dong_bom(ref: Any, mpn: Any, gia_tri: Any, footprint: Any, qty: int | None,
+              loc: dict[str, Any]) -> dict[str, Any] | None:
+    """Một ô `ref` có thể chứa nhiều ký hiệu ("R3,R4") — đó là cách viết BOM đã gộp sẵn."""
+    refs = [t for t in re.split(r"[,;/\s]+", str(ref or "").strip()) if t]
+    mpn, gia_tri = str(mpn or "").strip(), str(gia_tri or "").strip()
+    fp = str(footprint or "").strip()
+    if not mpn and not gia_tri:
+        return None
+    return {"ref": refs, "mpn": mpn, "value": gia_tri, "footprint": fp,
+            "qty": qty, "source_locator": {**loc, "also": []}}
+
+
+def _mpn_goc(mpn: str) -> str:
+    """Bỏ hậu tố đóng gói/băng — CHỈ khi nó tách bằng dấu.
+
+    `LM358DR2G` có `G` là mã mạ chân, nhưng cắt nó thì cũng cắt chữ cái cuối của bất kỳ mã hàng
+    nào kết thúc bằng G, và một MPN cắt cụt tra ra linh kiện khác hoặc không ra gì. Dấu `-` là
+    thứ duy nhất phân biệt được "hậu tố" với "phần mã hàng" mà không cần một bảng mã của từng
+    nhà sản xuất.
+    """
+    return HAU_TO_GOI.sub("", str(mpn or "").strip())
+
+
+def _gop_bom(dong: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Gộp theo MPN đầy đủ; không có MPN thì theo (value, footprint).
+
+    `qty` = số ký hiệu DUY NHẤT, không phải tổng các cột qty: cùng một linh kiện xuất hiện ở hai
+    nguồn (sơ đồ và bảng mua hàng) là hai lần MÔ TẢ, không phải hai con hàng. Chỉ khi không nguồn
+    nào cho ký hiệu — README nói "hai driver A4988" — mới dùng số lượng khai báo.
+    """
+    gom: dict[tuple[str, str], dict[str, Any]] = {}
+    for d in dong:
+        khoa = (d["mpn"].upper(), "") if d["mpn"] else ("", f"{d['value']}|{d['footprint']}".upper())
+        if (cu := gom.get(khoa)) is None:
+            gom[khoa] = dict(d, ref=list(d["ref"]))
+            continue
+        for r in d["ref"]:
+            if r not in cu["ref"]:
+                cu["ref"].append(r)
+        cu["source_locator"]["also"].append({k: v for k, v in d["source_locator"].items()
+                                             if k != "also"})
+        for k in ("value", "footprint"):
+            cu[k] = cu[k] or d[k]
+        if d["qty"] and not cu["qty"]:
+            cu["qty"] = d["qty"]
+
+    ra = []
+    for d in gom.values():
+        d["qty"] = len(d["ref"]) or d["qty"] or 1
+        d["mpn_base"] = _mpn_goc(d["mpn"])
+        ra.append(d)
+    return ra
+
+
+def _ghi_fact_bom(root: Path, goc: Path, ds: list[dict[str, Any]], ctx: Context) -> None:
+    """`undo: supersede_facts` chỉ có nghĩa nếu có fact để thay.
+
+    IRI `board:<tên>/part:<ref>` — CÙNG chỗ mà `extract.kicad_netlist` ghi `package`, nên hai
+    nguồn nói về một linh kiện gặp nhau ở một nút thay vì hai. Dòng không có ký hiệu (đến từ
+    README) không sinh fact: không có `ref` thì không có chỗ nào trên bản vẽ để gắn nó vào, và
+    một fact `board:…/part:` rỗng là một nút không ai tra được.
+    """
+    sid = _bao_dam_source(root, goc, "bom", "silver")
+    bid = f"board:{re.sub(r'[^A-Za-z0-9_.-]+', '-', goc.stem).lower()}"
+    facts = [{"subject": f"{bid}/part:{r}", "predicate": "other",
+              "value": {"kind": "bom", "mpn": d["mpn"], "value": d["value"],
+                        "footprint": d["footprint"], "qty": d["qty"]},
+              "source_id": sid, "locator": d["source_locator"], "method": "parser",
+              "tier": "silver", "confidence": 1.0}
+             for d in ds for r in d["ref"]]
+    if not facts:
+        return
+    from eide.caps.passport import import_
+    import_({"batch": {"facts": facts, "passport_id": f"{bid.split(':', 1)[1]}@1.0.0",
+                       "kind": "board", "reason": f"extract.bom {goc.name}",
+                       "header": {"name": goc.stem, "source": goc.name}},
+             "actor": ctx.actor}, ctx)
+
+
 # ---------------------------------------------------------------- EXTRACT-05 dt_binding
 
 

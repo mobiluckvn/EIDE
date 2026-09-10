@@ -812,3 +812,176 @@ def test_trich_binding_hai_lan_khong_nhan_doi(du_an, monkeypatch, tmp_path):
     r.invoke("extract.dt_binding", {"file": p}, ctx)
     r.invoke("extract.dt_binding", {"file": p}, ctx)
     assert len(_facts(root, "other")) == 3
+
+
+# ================================================================ EXTRACT-17 bom
+#
+# tc: "BOM 12 linh kiện đúng ref/MPN". BOM là danh sách MUA: một dòng sai gói là một lô hàng
+# không hàn được. Nên năng lực này gộp theo MPN ĐẦY ĐỦ chứ không theo phần gốc — xem DEV-078.
+
+NETLIST_XML = """<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <components>
+    <comp ref="U1"><value>STM32F411CEU6</value><footprint>UFQFPN-48</footprint>
+      <fields><field name="MPN">STM32F411CEU6</field></fields></comp>
+    <comp ref="U2"><value>BME280</value><footprint>LGA-8</footprint>
+      <fields><field name="MPN">BME280</field></fields></comp>
+    <comp ref="U3"><value>A4988</value><footprint>QFN-28</footprint>
+      <fields><field name="MPN">A4988SETTR-T</field></fields></comp>
+    <comp ref="U4"><value>A4988</value><footprint>QFN-28</footprint>
+      <fields><field name="MPN">A4988SETTR-T</field></fields></comp>
+    <comp ref="R1"><value>10k</value><footprint>0603</footprint></comp>
+    <comp ref="R2"><value>10k</value><footprint>0603</footprint></comp>
+    <comp ref="C1"><value>100n</value><footprint>0402</footprint></comp>
+  </components>
+  <nets><net code="1" name="SCL"><node ref="U1" pin="92"/><node ref="U2" pin="6"/></net></nets>
+</export>
+"""
+
+CSV_BOM = """Supplier Ref Description,Reference,MPN,Value,Qty,Footprint
+vi dieu khien chinh,U1,STM32F411CEU6,STM32F411,1,UFQFPN-48
+cam bien,U2,BME280,Sensor,1,LGA-8
+dien tro keo,"R3,R4",RC0603FR-0710KL,10k,2,0603
+chua ro,X9,,,1,
+"""
+
+
+def _tep(tmp_path, ten, noi):
+    p = tmp_path / ten
+    p.write_text(noi, encoding="utf-8")
+    return str(p)
+
+
+def test_bom_tu_netlist_dung_ref_va_MPN(du_an, monkeypatch, tmp_path):
+    """tc EXTRACT-17: "BOM … đúng ref/MPN". Bảy linh kiện, năm dòng sau khi gộp trùng."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = _tep(tmp_path, "robot.net", NETLIST_XML)
+    out = r.invoke("extract.bom", {"sources": [p], "kind": "schematic"}, ctx).result
+
+    theo_ref = {tuple(d["ref"]): d for d in out["bom"]}
+    assert theo_ref[("U1",)]["mpn"] == "STM32F411CEU6"
+    assert theo_ref[("U3", "U4")]["qty"] == 2        # hai con A4988 gộp một dòng
+    assert theo_ref[("R1", "R2")]["value"] == "10k"  # không có MPN thì gộp theo value+footprint
+    assert len(out["bom"]) == 5
+
+
+def test_gop_theo_MPN_day_du_khong_theo_phan_goc(du_an, monkeypatch, tmp_path):
+    """DEV-078: hợp đồng nói "chuẩn hóa MPN (bỏ hậu tố gói), gộp trùng", nhưng gộp theo phần gốc
+    thì `STM32F411CEU6` (UFQFPN) và `STM32F411CET6` (LQFP) thành MỘT dòng đặt hàng — và lô hàng
+    về không hàn được lên mạch. Phần gốc vẫn được tính, để riêng ở `mpn_base` cho `bom_enrich`
+    tra cứu."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    hai_goi = NETLIST_XML.replace(
+        '<comp ref="C1"><value>100n</value><footprint>0402</footprint></comp>',
+        '<comp ref="U5"><value>A4988</value><footprint>QFN-28</footprint>'
+        '<fields><field name="MPN">A4988SETTR</field></fields></comp>')
+    out = r.invoke("extract.bom", {"sources": [_tep(tmp_path, "b.net", hai_goi)],
+                                   "kind": "schematic"}, ctx).result
+    # `A4988SETTR-T` (băng cuộn) và `A4988SETTR` (khay) có CÙNG `mpn_base` — gộp theo phần gốc
+    # thì hai mã đặt hàng khác nhau thành một dòng, và bên mua nhận về dạng đóng gói mình không
+    # dùng được. Đây là chỗ duy nhất `_mpn_goc` chạm tới, nên nó là chỗ duy nhất kiểm được.
+    mpn = sorted(d["mpn"] for d in out["bom"] if d.get("mpn"))
+    assert mpn == ["A4988SETTR", "A4988SETTR-T", "BME280", "STM32F411CEU6"]
+    assert len({d["mpn_base"] for d in out["bom"] if d.get("mpn")}) == 3
+    a4988 = next(d for d in out["bom"] if d["mpn"] == "A4988SETTR-T")
+    assert a4988["mpn_base"] == "A4988SETTR"
+
+
+def test_bom_tu_csv_nhan_cot_theo_ten_gan_dung(du_an, monkeypatch, tmp_path):
+    """"Reference" không phải "ref", "Qty" không phải "qty" — mọi BOM ngoài đời đặt tên cột một
+    kiểu. Khớp gần đúng ở đây là bắt buộc, không phải tiện nghi."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    out = r.invoke("extract.bom", {"sources": [_tep(tmp_path, "bom.csv", CSV_BOM)]}, ctx).result
+    d = {tuple(x["ref"]): x for x in out["bom"]}
+    assert d[("U1",)]["mpn"] == "STM32F411CEU6"
+    assert d[("R3", "R4")]["qty"] == 2       # ô "R3,R4" là HAI ref trong một ô
+    assert "X9" in " ".join(out["unmatched"])
+
+
+def test_locator_tung_dong(du_an, monkeypatch, tmp_path):
+    """Bước 3 của hợp đồng: "Gắn locator từng dòng". Một BOM 200 dòng mà không nói dòng nào đến
+    từ đâu thì lúc hai nguồn lệch nhau không ai truy được."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    out = r.invoke("extract.bom", {"sources": [_tep(tmp_path, "bom.csv", CSV_BOM)]}, ctx).result
+    loc = out["bom"][0]["source_locator"]
+    assert loc["file"] == "bom.csv" and loc["row"] == 2      # dòng 1 là tiêu đề
+
+
+def test_hai_nguon_gop_lai(du_an, monkeypatch, tmp_path):
+    """`sources` là một MẢNG: BOM thật hay đến từ sơ đồ cộng thêm một bảng mua hàng."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    out = r.invoke("extract.bom", {"sources": [_tep(tmp_path, "robot.net", NETLIST_XML),
+                                               _tep(tmp_path, "bom.csv", CSV_BOM)]}, ctx).result
+    u1 = next(d for d in out["bom"] if "U1" in d["ref"])
+    assert u1["ref"] == ["U1"]
+    assert u1["qty"] == 1                       # cùng ref + cùng MPN ở hai nguồn: KHÔNG cộng dồn
+    assert len(u1["source_locator"]["also"]) == 1
+    # `qty` = số ký hiệu DUY NHẤT. Cộng thêm mỗi lần một nguồn nhắc lại nó thì một BOM đọc từ
+    # sơ đồ + bảng mua hàng sẽ đặt gấp đôi số linh kiện.
+    assert all(d["qty"] == len(d["ref"]) for d in out["bom"] if d["ref"])
+
+
+def test_readme_di_qua_mo_hinh(du_an, monkeypatch, tmp_path):
+    """README không có bảng: đó là chỗ mô hình đúng việc — khác netlist và csv vốn đã có cấu
+    trúc."""
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, {"items": [{"mpn": "MPU-6050", "qty": 1, "ref": "U7"},
+                                             {"mpn": "A4988", "qty": 2}]})
+    p = _tep(tmp_path, "README.md", "# Robot\nDùng MPU-6050 và hai driver A4988.\n")
+    out = r.invoke("extract.bom", {"sources": [p], "kind": "readme"}, ctx).result
+    assert {d["mpn"] for d in out["bom"]} == {"MPU-6050", "A4988"}
+    assert next(d for d in out["bom"] if d["mpn"] == "A4988")["qty"] == 2
+
+
+def test_anh_chua_lam_duoc_bao_E2000(du_an, monkeypatch, tmp_path):
+    """Đường ảnh cần `extract.image_board`/`ocr` (M2, chưa hiện thực) — DEV-079. Nói thẳng ra
+    thay vì trả BOM rỗng như thể tấm ảnh không có linh kiện nào."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = tmp_path / "board.png"
+    p.write_bytes(b"\x89PNG\r\n\x1a\n")
+    run = r.invoke("extract.bom", {"sources": [str(p)], "kind": "image"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+    assert "extract.image_board" in run.error["candidates"]
+
+
+def test_khong_nguon_nao_doc_duoc_bao_E5002(du_an, monkeypatch, tmp_path):
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = _tep(tmp_path, "rong.csv", "cot_la,cot_khac\n1,2\n")
+    run = r.invoke("extract.bom", {"sources": [p]}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+def test_bom_ghi_fact_de_hoan_tac_duoc(du_an, monkeypatch, tmp_path):
+    """`undo: supersede_facts` chỉ có nghĩa nếu có fact để thay. Mỗi ref một fact dưới
+    `board:<tên>/part:<ref>` — cùng IRI mà `extract.kicad_netlist` dùng, nên hai nguồn nói về
+    cùng một linh kiện gặp nhau ở một chỗ thay vì hai."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    r.invoke("extract.bom", {"sources": [_tep(tmp_path, "robot.net", NETLIST_XML)],
+                             "kind": "schematic"}, ctx)
+    f = _facts(root, "other")
+    assert f["board:robot/part:U1"]["value"]["mpn"] == "STM32F411CEU6"
+    assert f["board:robot/part:U1"]["value"]["kind"] == "bom"
+
+
+@pytest.mark.parametrize(("mpn", "goc"), [
+    ("A4988SETTR-T", "A4988SETTR"),          # hậu tố băng, tách bằng dấu — bỏ được
+    ("STM32F411CEU6-TR", "STM32F411CEU6"),
+    ("BME280", "BME280"),
+    ("LM358DR2G", "LM358DR2G"),              # dính liền: KHÔNG cắt, xem dưới
+    ("RC0603FR-0710KL", "RC0603FR-0710KL"),  # `-0710KL` là phần mã hàng, không phải hậu tố
+    ("", ""),
+])
+def test_bo_hau_to_dong_goi_chi_khi_tach_bang_dau(mpn, goc):
+    """Chỉ bỏ hậu tố TÁCH BẰNG DẤU. `LM358DR2G` có `G` là mã mạ chân, nhưng cắt nó đi thì cũng
+    cắt luôn chữ cái cuối của một mã hàng bất kỳ kết thúc bằng G — và một MPN cắt cụt tra ra
+    linh kiện khác, hoặc không ra gì. Xem DEV-078."""
+    from eide.caps.extract import _mpn_goc
+    assert _mpn_goc(mpn) == goc

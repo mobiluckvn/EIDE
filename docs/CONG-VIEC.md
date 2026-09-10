@@ -99,7 +99,8 @@ Nguồn truy ngược về từng `source`. Đó là bằng chứng mạnh hơn 
 | ~~D1a~~ | ~~`pdf_pinout`~~ | **Xong 10/09** — 19 test, PDF thật có bảng kẻ khung. Số AF đọc từ **vị trí cột**, không gọi mô hình. Nhánh hình package → [DEV-076](DEVIATIONS.md) |
 | ~~D1b~~ | ~~`pdf_errata`~~ | **Xong 10/09** — 21 test. Lớp phủ K2′ (`layer = "B"`), rev từ vị trí cột `Rev A`/`Rev Z`; cạnh CONFLICTS_WITH → [DEV-077](DEVIATIONS.md) chờ anh chọn hướng |
 | ~~D2a~~ | ~~`dt_binding`~~ | **Xong 10/09** — 8 test. Đọc CẢ HAI dạng binding (Zephyr `required: true` trong thuộc tính; dt-schema Linux `required: [...]` cấp cao) |
-| D2b | `bom`, `bom_enrich` | ~~`kicad_netlist`~~ xong 08/09 |
+| ~~D2b~~ | ~~`bom`~~ | **Xong 10/09** — 10 test. Bốn đường vào (netlist · csv · xlsx · readme); gộp theo MPN đầy đủ → [DEV-078](DEVIATIONS.md); đường ảnh → [DEV-079](DEVIATIONS.md) |
+| D2c | `bom_enrich` | mỗi MPN: `search.registry` → `search.vendor` → web; thiếu thì `kg.request` |
 | D3 | `image_board`, `image_schematic`, `ocr` | đọc ảnh (cần mô hình vision). Mở khoá nốt nhánh hình của `pdf_pinout` — [DEV-076](DEVIATIONS.md) |
 | ~~D4a~~ | ~~`readme_goal`~~ | **Xong 10/09** — 7 test. Lọc kỳ vọng theo `plan.DANG_KY_VONG` ngay tại chỗ; không ghi store (R0, `undo: none`) |
 | D4b | `pdf_formula` | công thức → skill dự án (K5), chạm `tool.*` |
