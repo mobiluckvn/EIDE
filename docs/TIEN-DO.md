@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 10/09/2026 (lần 16). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 10/09/2026 (lần 17). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,8 +12,8 @@
 
 ## 1. Một dòng
 
-**158/238 năng lực (66%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1; M2 lên 62/99 (63%).
-1205 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+**165/238 năng lực (69%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1; M2 lên 69/99 (69%).
+1239 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
 chính sách, tra tri thức có nguồn, ra kết luận truy nguyên được. Phần còn thiếu là **tay
@@ -27,7 +27,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
-| M2 | 62/99 · 63% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
+| M2 | 69/99 · 69% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
@@ -42,10 +42,10 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 *Số đo từ registry, không gõ tay (`eide spec`).*
 
 **Đủ** — `arch` 11/11 · `archive` 7/7 (gồm `ingest.*`) · `board` 5/5 · `chat` 8/8 · `plan` 7/7 ·
-`policy` 7/7 · `req` 8/8
+`policy` 7/7 · `req` 8/8 · **`project` 9/9** · **`view` 13/13**
 
 **Gần đủ** — `kg` 8/9 · `env` 6/7 · `diagram` 12/14 · `code` 13/16 · **`extract` 17/21** ·
-`doc` 9/12 · `view` 9/13 · `tool` 7/10 · `project` 6/9 · `memory` 6/8 · `search` 6/9
+`doc` 9/12 · `tool` 7/10 · `memory` 6/8 · `search` 6/9
 
 **Mới một phần** — `passport` 4/8 · `registry` 1/5 · `report` 1/4
 
@@ -102,11 +102,11 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1205** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1239** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 80 tổng, **9 Mở** — 5 đề nghị sửa tài liệu ([DEV-072], [DEV-073], [DEV-075], [DEV-078], [DEV-080]); 4 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ khối D3 vision, [DEV-077] chờ chủ sản phẩm chọn hướng) |
+| Mục DEVIATIONS | 81 tổng, **10 Mở** (bản nháp đồng bộ đã sinh: `docs/sync/2026-09-10-*.md`) — 5 đề nghị sửa tài liệu ([DEV-072], [DEV-073], [DEV-075], [DEV-078], [DEV-080]); 4 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ khối D3 vision, [DEV-077] chờ chủ sản phẩm chọn hướng) |
 | Tài liệu | 35 tệp ở **v1.3**, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
@@ -114,7 +114,7 @@ Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó đ�
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1205 test, giả lập) hỏi *"mã có đúng
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1239 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:

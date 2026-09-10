@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 10/09/2026 (lần 13) từ registry — không gõ tay. Còn **80/238** năng lực. Xem
+*Đo 10/09/2026 (lần 14) từ registry — không gõ tay. Còn **73/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -194,12 +194,11 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 10/09/2026 — bắt đầu phiên sau từ đây
 
-*Cây làm việc sạch, `make check` **1205 xanh trên cả arm64 lẫn x86_64**, DEVIATIONS 9 mục Mở.
-Bảy commit, mỗi commit một năng lực:* `e52589d` EXTRACT-09 · `37b1380` EXTRACT-10 · `9e7d8c8`
-EXTRACT-20 · `4940246` EXTRACT-05 · `4e781ff` EXTRACT-17 · EXTRACT-18 · EXTRACT-11.
+*Cây làm việc sạch, `make check` **1239 xanh trên cả arm64 lẫn x86_64**, DEVIATIONS 10 mục Mở
+(bản nháp đồng bộ đã sinh trong `docs/sync/`). Mười bốn năng lực, mỗi cái một commit.*
 
-**Khối D đóng phần không cần thị giác**: `extract.*` 17/21, **158/238 năng lực (66%)**, M2
-62/99. Ba cái còn lại của nhóm (`ocr`, `image_schematic`, `image_board`) đều chờ đường ảnh.
+**165/238 (69%), M2 69/99.** Ba nhóm đóng trọn trong phiên: `extract.*` phần không cần thị giác
+(7 năng lực), **`project.*` 9/9**, **`view.*` 13/13**.
 
 ### Việc đã xong trong phiên và điều mỗi cái dạy được
 
