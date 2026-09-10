@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 10/09/2026 (lần 14) từ registry — không gõ tay. Còn **73/238** năng lực. Xem
+*Đo 10/09/2026 (lần 15) từ registry — không gõ tay. Còn **62/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -194,33 +194,40 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 10/09/2026 — bắt đầu phiên sau từ đây
 
-*Cây làm việc sạch, `make check` **1239 xanh trên cả arm64 lẫn x86_64**, DEVIATIONS 10 mục Mở
-(bản nháp đồng bộ đã sinh trong `docs/sync/`). Mười bốn năng lực, mỗi cái một commit.*
+*Cây làm việc sạch, `make check` **1301 xanh trên cả arm64 lẫn x86_64**, DEVIATIONS còn **3 mục
+Mở** — cả ba là nợ hiện thực, không mục nào chờ chủ sản phẩm.*
 
-**165/238 (69%), M2 69/99.** Ba nhóm đóng trọn trong phiên: `extract.*` phần không cần thị giác
-(7 năng lực), **`project.*` 9/9**, **`view.*` 13/13**.
+**176/238 (74%), M2 80/99 (81%).** Hai mươi hai năng lực trong phiên, mỗi cái một commit.
 
-### Việc đã xong trong phiên và điều mỗi cái dạy được
+### Mốc đạt được: M2 chỉ còn thứ bị chặn từ bên ngoài
 
-| Năng lực | Điều đáng nhớ |
-|---|---|
-| `pdf_pinout` | Số AF là **vị trí cột**, không phải thứ hỏi mô hình. Nối lại `board.propose_fix` ↔ `diagram.pinmap` ↔ `arch.map_hw` |
-| `pdf_errata` | Errata là **lớp phủ K2′** (`layer = "B"`), không sửa lõi. T2 nên mọi lần đều qua người |
-| `readme_goal` | README là **ý định**, không phải fact — R0, không ghi store |
-| `dt_binding` | Hai dạng binding (Zephyr / dt-schema Linux) phải đọc được cả hai |
-| `bom` | BOM là danh sách **mua**: hai dạng đóng gói là hai dòng, không gộp |
-| `bom_enrich` | Hộ chiếu đã qua G-FACT thắng mọi URL chưa ai mở |
-| `pdf_formula` | Một **thủ tục** không phải một fact — nó thành K5 skill |
+Mười chín mục M2 còn lại chia đúng hai nhóm: **16 cần board thật** (`discover.*` 8, `target.*` 5,
+`bench.*` 3) và **3 cần đường ảnh cho Gateway** (`extract.ocr`, `image_schematic`, `image_board`).
+Mọi thứ của M2 làm được trên máy này đã xong.
 
-**Kiểm đột biến bắt được 6 test "xanh vì lý do khác"** trong chính phiên này (bảng tiêu đề
-pinout · `compatible` trong dt-schema · ba lỗ của BOM · undo của skill). Đó là lý do bước ấy
-không bỏ được: một bộ test đủ màu xanh vẫn có thể không kiểm gì.
+### Đã xong trong phiên
 
-### Chỗ phải quyết trước khi làm tiếp
+| Khối | Năng lực | Điều đáng nhớ |
+|---|---|---|
+| D `extract.*` | `pdf_pinout`, `pdf_errata`, `readme_goal`, `dt_binding`, `bom`, `bom_enrich`, `pdf_formula` | Số AF và rev đọc từ **vị trí cột**; errata là lớp phủ K2′; BOM gộp theo MPN đầy đủ |
+| G `project.*` | `clone`, `archive`, `rollback` → **9/9** | Bản sao không mang ledger/decision_log/run |
+| G `view.*` | `coverage_map`, `impact_map`, `rag_compare`, `timeline` → **13/13** | `impact_map` gọi `kg.impact` chứ không tính lại |
+| G `tool.*` | `compose`, `promote`, `deprecate` → **10/10** | `compose` hợp hiệu ứng; `promote` chỉ ĐỀ XUẤT |
+| G `memory.*`/`passport.*` | `error_ledger`, `forget`, `diff`, `upgrade` | Vòng *lỗi → negative_prompt → C1*; `diff` so theo (subject, predicate) |
+| G lẻ | `kg.evidence`, `report.explain`, `env.install_pack`, `search.docs_mcp` | ISA mới vào bằng GÓI, không sửa core |
+| Tài liệu | DEV-077 + đợt duyệt 7 mục | DDD-14 **v1.4** (`fact.conflicts_with` + migration 0006), CDS-12 **v1.4**, API-15 **v1.7** |
 
-Ba hướng, xem §8 [TIEN-DO.md](TIEN-DO.md): **(1)** mở đường ảnh cho Gateway để đóng trọn khối D;
-**(2)** khối G rải rác (~20 năng lực M2, không bị chặn bởi gì); **(3)** khối F mô phỏng (cần cài
-Renode/QEMU). Tôi nghiêng **(2)** nếu mục tiêu là nâng M2 nhanh, **(1)** nếu muốn khối D trọn vẹn.
+### Điều kiểm đột biến dạy được trong phiên này
+
+Nó bắt **17 test "xanh vì lý do khác lý do nó được viết ra"**, và ba lần chỉ ra vấn đề thật
+trong mã chứ không chỉ trong test:
+
+- Phép kiểm working tree của `project.rollback` bị git che (git cũng khuyên "stash") — trường
+  hợp git KHÔNG chặn mới đáng sợ: tệp mới chưa commit trôi sang nhánh `auto/rollback`.
+- Dòng khôi phục `FEATURES.json` là thừa, nhưng chỉ đúng khi git theo dõi tệp ấy → thêm
+  `state.features_restored`.
+- `tool.promote` "không tự áp dụng" chỉ được kiểm ở registry, chưa kiểm `docs/spec/` — mà ghi
+  thẳng vào đó mới là điều đáng sợ.
 
 ### Bẫy đã biết, đừng đạp lại
 

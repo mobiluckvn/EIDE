@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 10/09/2026 (lần 17). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 10/09/2026 (lần 18). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,8 +12,12 @@
 
 ## 1. Một dòng
 
-**165/238 năng lực (69%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1; M2 lên 69/99 (69%).
-1239 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+**176/238 năng lực (74%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 lên 80/99 (81%).
+1301 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+
+**Mốc M2 nay chỉ còn 19 mục, và không mục nào làm được trên máy này**: `discover.*` (8),
+`target.*` (5), `bench.*` (3) cần **board thật**; `extract.ocr`/`image_*` (3) cần **đường ảnh
+cho Gateway** (mục P4 trong [CONG-VIEC.md](CONG-VIEC.md)). Mọi thứ của M2 không bị chặn đã xong.
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
 chính sách, tra tri thức có nguồn, ra kết luận truy nguyên được. Phần còn thiếu là **tay
@@ -27,7 +31,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
-| M2 | 69/99 · 69% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
+| M2 | 80/99 · 81% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
@@ -41,13 +45,14 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 
 *Số đo từ registry, không gõ tay (`eide spec`).*
 
-**Đủ** — `arch` 11/11 · `archive` 7/7 (gồm `ingest.*`) · `board` 5/5 · `chat` 8/8 · `plan` 7/7 ·
-`policy` 7/7 · `req` 8/8 · **`project` 9/9** · **`view` 13/13**
+**Đủ (11 nhóm)** — `arch` 11/11 · `archive` 7/7 (gồm `ingest.*`) · `board` 5/5 · `chat` 8/8 ·
+`plan` 7/7 · `policy` 7/7 · `req` 8/8 · **`project` 9/9** · **`view` 13/13** · **`tool` 10/10** ·
+**`memory` 8/8** · **`kg` 9/9** · **`env` 7/7**
 
-**Gần đủ** — `kg` 8/9 · `env` 6/7 · `diagram` 12/14 · `code` 13/16 · **`extract` 17/21** ·
-`doc` 9/12 · `tool` 7/10 · `memory` 6/8 · `search` 6/9
+**Gần đủ** — `diagram` 12/14 · `code` 13/16 · **`extract` 17/21** · `doc` 9/12 · `search` 7/9 ·
+`passport` 6/8
 
-**Mới một phần** — `passport` 4/8 · `registry` 1/5 · `report` 1/4
+**Mới một phần** — `registry` 1/5 (M4) · `report` 2/4
 
 **Chưa bắt đầu** — `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) · `debug` (6, M3) ·
 `bench` (3, M2) · `measure` (3, M5). Tất cả đều cần **board thật hoặc trình mô phỏng chưa cài**
@@ -102,7 +107,7 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1239** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1301** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
@@ -114,7 +119,7 @@ Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó đ�
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1239 test, giả lập) hỏi *"mã có đúng
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1301 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
@@ -171,23 +176,26 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 
 ## 8. Việc tiếp theo đề xuất
 
-**Khối D `extract.*` đã đóng phần không cần thị giác** (10/09): `pdf_pinout`, `pdf_errata`,
-`readme_goal`, `dt_binding`, `bom`, `bom_enrich`, `pdf_formula` — bảy năng lực, 84 test. Ba cái
-còn lại của nhóm (`ocr`, `image_schematic`, `image_board`) **đều cần đường ảnh**, mà
-`Gateway.run` hiện chỉ nhận văn bản: `models.yaml` khai vai trò `cartographer` với
-`inputs: [image]` nhưng không có tham số nào để truyền ảnh xuống port. Mở đường ấy là việc hạ
-tầng, không phải việc của một năng lực — và nó cũng mở khoá nốt hai nhánh đang treo
-([DEV-076] hình pinout, [DEV-079] BOM từ ảnh).
+**Khối G đã đóng phần M2** (10/09): `project.*` 9/9, `view.*` 13/13, `tool.*` 10/10,
+`memory.*` 8/8, `kg.*` 9/9, `env.*` 7/7, cùng `passport.diff/upgrade`, `report.explain`,
+`search.docs_mcp`. Cộng với khối D trước đó, **M2 lên 80/99**.
+
+Mười chín mục M2 còn lại chia làm đúng hai nhóm, và cả hai đều chờ một điều kiện bên ngoài:
+
+| Nhóm | Số | Chặn bởi |
+|---|---|---|
+| `discover.*` 8 · `target.*` 5 · `bench.*` 3 | 16 | **Board thật** — quyết định chủ sản phẩm 08/09 là để cuối cùng |
+| `extract.ocr` · `image_schematic` · `image_board` | 3 | **Đường ảnh cho Gateway** — `models.yaml` khai vai trò `cartographer` với `inputs: [image]` nhưng `Gateway.run` chỉ nhận văn bản. Mở nó cũng gỡ nốt [DEV-076] và [DEV-079] |
 
 Ba hướng đi tiếp, theo thứ tự tôi đề xuất:
 
-1. **Đường ảnh cho Gateway** → đóng trọn khối D (3 năng lực + 2 nhánh treo). Chạm lõi, cần khoá
-   mô hình có thị giác để kiểm đường thật.
-2. **Khối G rải rác** (~20 năng lực M2 ở `view.*`, `tool.*`, `project.*`, `memory.*`,
-   `passport.diff/upgrade`, `kg.evidence`, `env.install_pack`, `report.explain`) — không chặn
-   bởi gì cả, kiểm được ngay, và nâng M2 nhanh nhất.
-3. **Khối F mô phỏng** (`sim.*`, `debug.*`, 12 năng lực M3) — cần cài Renode/QEMU. `sim_first`
-   bắt mô phỏng chạy trước phần cứng, nên nó phải xong trước khi board có ý nghĩa.
+1. **Đường ảnh cho Gateway** → đóng nốt 3 năng lực M2 cuối cùng làm được trên máy, và gỡ hai
+   nhánh đang treo. Chạm lõi, cần khoá mô hình có thị giác để kiểm đường thật.
+2. **Khối F mô phỏng** (`sim.*` 7 + `debug.*` 6, mốc M3) — cần cài Renode/QEMU. `sim_first` bắt
+   mô phỏng chạy trước phần cứng, nên khối này phải xong trước khi board có ý nghĩa; nó cũng là
+   cách kiểm `code.*` mà không cần board.
+3. **`code.*` phần M3** (`annotate`, `docs`, `refactor`) và `doc.*`/`diagram.*` phần M3 — không
+   bị chặn bởi gì, nhưng giá trị thấp hơn hai hướng trên.
 
-`discover.*`/`target.*`/`measure.*`/`bench.*` vẫn để cuối: chúng cần board thật, và làm sớm thì
-cũng không kiểm được.
+`registry.*` và `search.registry/reference_projects` (mốc M4) để sau: chúng cần một registry
+thật để pull, và đó là hạ tầng ngoài phạm vi đề án.
