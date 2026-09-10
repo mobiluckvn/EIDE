@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 09/09/2026 (lần 15). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 10/09/2026 (lần 16). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,8 +12,8 @@
 
 ## 1. Một dòng
 
-**151/238 năng lực (63%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1. 1121 test xanh trên
-cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+**158/238 năng lực (66%). Mốc M0 đóng 22/22; M1 đạt 74/75 (99%), còn 1; M2 lên 62/99 (63%).
+1205 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
 chính sách, tra tri thức có nguồn, ra kết luận truy nguyên được. Phần còn thiếu là **tay
@@ -27,7 +27,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
-| M2 | 55/99 · 56% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
+| M2 | 62/99 · 63% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
 | M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
@@ -39,16 +39,19 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 
 ## 3. Theo nhóm năng lực
 
-**Đủ hoặc gần đủ** — `arch` 11/11 · `chat` 8/8 · `req` 8/8 · `plan` 7/7 · `policy` 7/7 ·
-`ingest` 3/3 · `kg` 8/9 · `board` 5/5 · **`diagram` 12/14** · **`doc` 9/12** · `view` 9/13 ·
-`tool` 7/10
+*Số đo từ registry, không gõ tay (`eide spec`).*
 
-**Mới một phần** — `extract` 10/21 · `project` 6/9 · `memory` 6/8 · `search` 6/9 ·
-`env` 6/7 · `code` 13/16 · `passport` 4/8 · `archive` 4/4 · `registry` 1/5 ·
-`report` 1/4
+**Đủ** — `arch` 11/11 · `archive` 7/7 (gồm `ingest.*`) · `board` 5/5 · `chat` 8/8 · `plan` 7/7 ·
+`policy` 7/7 · `req` 8/8
 
-**Chưa bắt đầu** — `code` (16, M2) · `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) ·
-`debug` (6, M3) · `bench` (3, M2) · `measure` (3, M5)
+**Gần đủ** — `kg` 8/9 · `env` 6/7 · `diagram` 12/14 · `code` 13/16 · **`extract` 17/21** ·
+`doc` 9/12 · `view` 9/13 · `tool` 7/10 · `project` 6/9 · `memory` 6/8 · `search` 6/9
+
+**Mới một phần** — `passport` 4/8 · `registry` 1/5 · `report` 1/4
+
+**Chưa bắt đầu** — `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) · `debug` (6, M3) ·
+`bench` (3, M2) · `measure` (3, M5). Tất cả đều cần **board thật hoặc trình mô phỏng chưa cài**
+— đúng thứ tự chủ sản phẩm đã chốt 08/09.
 
 ---
 
@@ -99,11 +102,11 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1121** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1205** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 75 tổng, **4 Mở** ([DEV-072], [DEV-073], [DEV-075] đề nghị sửa tài liệu; [DEV-074] là nợ hiện thực chờ mốc M5) |
+| Mục DEVIATIONS | 80 tổng, **9 Mở** — 5 đề nghị sửa tài liệu ([DEV-072], [DEV-073], [DEV-075], [DEV-078], [DEV-080]); 4 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ khối D3 vision, [DEV-077] chờ chủ sản phẩm chọn hướng) |
 | Tài liệu | 35 tệp ở **v1.3**, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
@@ -111,7 +114,7 @@ Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó đ�
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1042 test, giả lập) hỏi *"mã có đúng
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1205 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
@@ -141,13 +144,13 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
    cột Markdown. Chủ sản phẩm duyệt một danh sách và tin nó đầy đủ.
 4. **`_doc_do_thi` mất một nửa số cạnh** — 305 dòng cạnh chỉ ra 153 cạnh, nên kiểm kích thước
    lược đồ không bao giờ nổ.
-6. **Ngưỡng cứng R4 chặn cả lối danh sách trắng mà bốn tài liệu đều mô tả.** APD-08 ghi "hành
+5. **Ngưỡng cứng R4 chặn cả lối danh sách trắng mà bốn tài liệu đều mô tả.** APD-08 ghi "hành
    động lớp R4 không tự động — *trừ danh sách trắng do người ký*"; POL-17 §2 viết
    `MIN_LEVEL["R4"] = 5  # chỉ whitelist`; POL-17 §8 S33 và CDS-12.3 ENV-03 nói cùng điều. Hiện
    thực chặn cứng mọi R4, nên `G-OPS-04` là quy tắc chết và không gói tin cậy nào cài được tự
    động. Nằm im vì `tests/situations.py` dịch S33 với `risk="R2"` — trong khi năng lực DUY NHẤT
    có `op=install` là R4. Fixture chọn một lớp rủi ro không xảy ra được, và S33 xanh nhờ thế.
-5. **Sandbox không ghi được vào chính thư mục làm việc của nó** (tìm ra 08/09 khi cho `brew`
+6. **Sandbox không ghi được vào chính thư mục làm việc của nó** (tìm ra 08/09 khi cho `brew`
    chạy qua `env.sandbox`). Hồ sơ `sandbox-exec` ghi `(subpath "/var/folders/…")` trong khi
    `subpath` so khớp trên đường dẫn ĐÃ GIẢI liên kết mềm — mà `/var` là liên kết mềm tới
    `/private/var`. Hệ quả: với mọi `out_dir` dưới thư mục tạm, tiến trình trong sandbox không
@@ -168,21 +171,23 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 
 ## 8. Việc tiếp theo đề xuất
 
-**Ưu tiên 1 — `code.*` (16 năng lực, M2).** Đây là mắt xích duy nhất giữa "tác tử hiểu và lập
-kế hoạch" với "có firmware chạy được". Nó mở khóa Z-05 (thêm tính năng) và là phần lõi nhất
-còn thiếu của luận điểm đề án.
+**Khối D `extract.*` đã đóng phần không cần thị giác** (10/09): `pdf_pinout`, `pdf_errata`,
+`readme_goal`, `dt_binding`, `bom`, `bom_enrich`, `pdf_formula` — bảy năng lực, 84 test. Ba cái
+còn lại của nhóm (`ocr`, `image_schematic`, `image_board`) **đều cần đường ảnh**, mà
+`Gateway.run` hiện chỉ nhận văn bản: `models.yaml` khai vai trò `cartographer` với
+`inputs: [image]` nhưng không có tham số nào để truyền ảnh xuống port. Mở đường ấy là việc hạ
+tầng, không phải việc của một năng lực — và nó cũng mở khoá nốt hai nhánh đang treo
+([DEV-076] hình pinout, [DEV-079] BOM từ ảnh).
 
-**Ưu tiên 2 — `doc.generate` + `diagram.*` còn lại.** Khép chuỗi P7, và cho ra chính bộ tài
-liệu dùng làm phụ lục đề án — tức sản phẩm tự viết tài liệu về mình.
+Ba hướng đi tiếp, theo thứ tự tôi đề xuất:
 
-**Ưu tiên 3 — dọn nốt M1**: chỉ còn `code.constant_guard` (làm cùng khối `code.*`) và
-`passport.verify_on_board` (chờ board).
+1. **Đường ảnh cho Gateway** → đóng trọn khối D (3 năng lực + 2 nhánh treo). Chạm lõi, cần khoá
+   mô hình có thị giác để kiểm đường thật.
+2. **Khối G rải rác** (~20 năng lực M2 ở `view.*`, `tool.*`, `project.*`, `memory.*`,
+   `passport.diff/upgrade`, `kg.evidence`, `env.install_pack`, `report.explain`) — không chặn
+   bởi gì cả, kiểm được ngay, và nâng M2 nhanh nhất.
+3. **Khối F mô phỏng** (`sim.*`, `debug.*`, 12 năng lực M3) — cần cài Renode/QEMU. `sim_first`
+   bắt mô phỏng chạy trước phần cứng, nên nó phải xong trước khi board có ý nghĩa.
 
-`search.web` đã xong 08/09 — hiện thực **không buộc nhà cung cấp nào**: `models.yaml →
-search.providers` liệt kê ứng viên theo thứ tự và dùng cái đầu tiên có đủ cấu hình. SearXNG
-đứng đầu vì tự dựng được, **không cần khóa và không tốn tiền** — hoàn thiện M1 không buộc phải
-mua gì. Chưa cấu hình gì thì E4001 liệt kê từng lựa chọn kèm biến môi trường, và chỉ sang
-`search.vendor` như đường đi được ngay.
-
-`discover.*`/`target.*`/`sim.*` để sau: chúng cần board thật hoặc trình mô phỏng chưa cài, nên
-làm sớm cũng không kiểm được.
+`discover.*`/`target.*`/`measure.*`/`bench.*` vẫn để cuối: chúng cần board thật, và làm sớm thì
+cũng không kiểm được.
