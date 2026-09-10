@@ -103,7 +103,7 @@ Nguồn truy ngược về từng `source`. Đó là bằng chứng mạnh hơn 
 | ~~D2c~~ | ~~`bom_enrich`~~ | **Xong 10/09** — 7 test. Hộ chiếu trong store thắng ứng viên tải về; `search.registry` (M4) chưa có nên chuỗi bắt đầu từ `search.vendor`; thiếu thì mở `kg.request`, một MPN một yêu cầu |
 | D3 | `image_board`, `image_schematic`, `ocr` | đọc ảnh (cần mô hình vision). Mở khoá nốt nhánh hình của `pdf_pinout` — [DEV-076](DEVIATIONS.md) |
 | ~~D4a~~ | ~~`readme_goal`~~ | **Xong 10/09** — 7 test. Lọc kỳ vọng theo `plan.DANG_KY_VONG` ngay tại chỗ; không ghi store (R0, `undo: none`) |
-| D4b | `pdf_formula` | công thức → skill dự án (K5), chạm `tool.*` |
+| ~~D4b~~ | ~~`pdf_formula`~~ | **Xong 10/09** — 7 test. Công thức → **K5 skill** (`.eide/skills/*.md`, front-matter `applies_to`), KHÔNG thành fact; E5002 khi mô hình không trả mã C → [DEV-080](DEVIATIONS.md) |
 
 **Đã mở khóa:** `extract.pdf_pinout` sinh fact `pin_function`, nên `board.propose_fix` nay nêu
 được ĐỔI SANG CHÂN NÀO thay vì "chưa tra được chân thay thế", `diagram.pinmap` điền được cột

@@ -14,6 +14,7 @@ PDF trong test là PDF THẬT (`tests/pdf_gia_lap.py`), có đường kẻ khung
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -1104,3 +1105,125 @@ def test_bom_rong_khong_phai_loi(du_an, monkeypatch):
     _khong_goi_mang(monkeypatch)
     out = r.invoke("extract.bom_enrich", {"bom": []}, ctx).result
     assert out == {"bom": [], "requests": []}
+
+
+# ================================================================ EXTRACT-11 pdf_formula
+#
+# tc: "skill có mã C tham chiếu và trang". Công thức bù nhiệt của một cảm biến KHÔNG phải fact
+# phần cứng — nó là một thủ tục. Bước 1 nói thẳng "không thành fact": đưa một đoạn thuật toán
+# vào bảng `fact` thì `passport.query` trả về một khối văn bản không có `subject` nào tra được.
+
+PDF_CONG_THUC = [
+    (72, 740, "4.2.3 Temperature compensation", 14.0),
+    (72, 700, "The output must be compensated using the calibration data:", 9.0),
+    (72, 680, "var1 = (t_fine / 2.0) - 64000.0", 9.0),
+    (72, 660, "p = 1048576.0 - adc_P", 9.0),
+    (72, 640, "p = (p - (var2 / 4096.0)) * 6250.0 / var1", 9.0),
+]
+
+SKILL_MO_HINH = {
+    "title": "Bù nhiệt cho BME280",
+    "summary": "Chuyển giá trị ADC thô thành áp suất bằng dữ liệu hiệu chuẩn trong NVM.",
+    "code_c": ("double bme280_compensate_P(int32_t adc_P, int32_t t_fine)\n"
+               "{\n"
+               "    double var1 = ((double)t_fine / 2.0) - 64000.0;\n"
+               "    return (1048576.0 - adc_P) * 6250.0 / var1;\n"
+               "}"),
+    "notes": ["var1 = 0 thì phải trả 0, chia cho 0 làm treo vòng đọc"],
+}
+
+
+def test_skill_co_ma_C_tham_chieu_va_trang(du_an, monkeypatch, tmp_path):
+    """tc EXTRACT-11 nguyên văn: "skill có mã C tham chiếu và trang"."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, SKILL_MO_HINH)
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    out = r.invoke("extract.pdf_formula",
+                   {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"},
+                   ctx).result
+
+    sp = Path(out["skill_path"])
+    assert sp.is_file()
+    noi = sp.read_text(encoding="utf-8")
+    assert "```c" in noi and "bme280_compensate_P" in noi
+    assert "trang 1" in noi        # trích dẫn trang, không phải "xem datasheet"
+
+
+def test_front_matter_applies_to(du_an, monkeypatch, tmp_path):
+    """K5 trong gói có front-matter `applies_to` (BEN/PKG/GPI §gói). Thiếu nó thì skill không
+    bao giờ được chọn vào ngữ cảnh cho đúng con chip."""
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, SKILL_MO_HINH)
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    out = r.invoke("extract.pdf_formula",
+                   {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"},
+                   ctx).result
+    import yaml
+    fm = yaml.safe_load(Path(out["skill_path"]).read_text(encoding="utf-8").split("---")[1])
+    assert fm["applies_to"] == ["chip:bosch.bme280"]
+    assert fm["source"]["file"] == "bme280.pdf" and fm["source"]["pages"] == [1]
+
+
+def test_khong_sinh_fact(du_an, monkeypatch, tmp_path):
+    """Bước 1: "không thành fact". Một thủ tục không có `subject` để tra, và nhét nó vào bảng
+    `fact` là làm hỏng chính thứ làm nên giá trị của bảng ấy."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, SKILL_MO_HINH)
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    r.invoke("extract.pdf_formula",
+             {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"}, ctx)
+    with store.open_store(store.store_path(root)) as c:
+        assert c.execute("SELECT COUNT(*) FROM fact").fetchone()[0] == 0
+
+
+def test_dang_ky_undo_xoa_tep(du_an, monkeypatch, tmp_path):
+    """`undo: delete_created_files` — skill là tệp sinh ra, nên phải gỡ lại được."""
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, SKILL_MO_HINH)
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    r.invoke("extract.pdf_formula",
+             {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"}, ctx)
+    # Lọc theo `undo_ref` chứ không chỉ theo `kind`: `project.create` cũng đăng ký
+    # `delete_created_files`, nên đếm theo kind thì test này xanh cả khi năng lực không đăng ký
+    # gì — kiểm đột biến bắt được đúng chỗ ấy.
+    ref = [(e.get("data") or {}).get("undo_ref", "") for e in r.ledger.records()
+           if (e.get("data") or {}).get("kind") == "delete_created_files"]
+    assert any(x.startswith("skill:") for x in ref), ref
+
+
+def test_khong_thay_muc_bao_E2000(du_an, monkeypatch, tmp_path):
+    """Không tìm thấy mục thì báo, không đưa cả tài liệu cho mô hình: một skill "bù nhiệt" viết
+    từ chương đặt hàng trông vẫn rất thuyết phục."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    run = r.invoke("extract.pdf_formula",
+                   {"file": p, "section": "Chuong khong ton tai", "part": "bosch.bme280"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+
+
+def test_mo_hinh_khong_ra_ma_C_bao_E5002(du_an, monkeypatch, tmp_path):
+    """Một skill không có mã thì không dùng được: `code.generate_module` không có gì để chép,
+    và người đọc vẫn phải mở datasheet. Xem DEV-080 (hợp đồng khai `errors: []`)."""
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, {**SKILL_MO_HINH, "code_c": ""})
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    run = r.invoke("extract.pdf_formula",
+                   {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+def test_chay_lai_ghi_de_cung_mot_tep(du_an, monkeypatch, tmp_path):
+    """Cùng (part, section) → cùng một skill. Sinh `…-2.md` mỗi lần chạy lại thì thư mục skill
+    đầy những bản gần giống nhau và không ai biết bản nào đang được nạp."""
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, SKILL_MO_HINH)
+    p = str(pdf_toi_thieu(tmp_path / "bme280.pdf", PDF_CONG_THUC))
+    a = r.invoke("extract.pdf_formula",
+                 {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"},
+                 ctx).result["skill_path"]
+    b = r.invoke("extract.pdf_formula",
+                 {"file": p, "section": "Temperature compensation", "part": "bosch.bme280"},
+                 ctx).result["skill_path"]
+    assert a == b
+    assert len(list(Path(a).parent.glob("*.md"))) == 1

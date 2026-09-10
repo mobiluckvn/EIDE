@@ -1736,6 +1736,133 @@ def _ghi_fact_bom(root: Path, goc: Path, ds: list[dict[str, Any]], ctx: Context)
              "actor": ctx.actor}, ctx)
 
 
+# ---------------------------------------------------------------- EXTRACT-11 pdf_formula
+
+
+_SCHEMA_SKILL = {
+    "type": "object", "required": ["title", "code_c"],
+    "properties": {"title": {"type": "string"}, "summary": {"type": "string"},
+                   "code_c": {"type": "string"},
+                   "notes": {"type": "array", "items": {"type": "string"}}},
+}
+
+EIDE_DIR = ".eide"
+THU_MUC_SKILL = "skills"
+
+
+@capability("extract.pdf_formula")
+def pdf_formula(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-11 — CDS-12.2; KAD-07 §5.1 K5 (kỹ năng và thủ tục) và §5.3 E6 (skill là
+    Markdown ≤ 600 token, front-matter `applies_to`). tc: "skill có mã C tham chiếu và trang";
+    `undo: delete_created_files`.
+
+    **"Không thành fact"** — bước 1 nói thẳng, và đó là ranh giới quan trọng nhất ở đây. Công
+    thức bù nhiệt của một cảm biến không phải fact phần cứng: nó là một THỦ TỤC. Một fact có
+    `subject` để tra và một giá trị để đối chiếu; một đoạn thuật toán thì không, nên nhét nó vào
+    bảng `fact` là làm hỏng chính thứ khiến bảng ấy có ích. Nó thành **K5 — skill dự án**.
+
+    Chỉ đưa cho mô hình ĐÚNG MỤC được nêu, không đưa cả tài liệu: một skill "bù nhiệt" viết từ
+    chương đặt hàng trông vẫn rất thuyết phục, và không ai đọc lại một skill để kiểm.
+
+    Cùng `(part, section)` ghi đè cùng một tệp. Sinh `…-2.md` mỗi lần chạy lại thì thư mục skill
+    đầy những bản gần giống nhau và không ai biết bản nào đang được nạp vào ngữ cảnh.
+    """
+    root = _root(ctx)
+    part, muc = params["part"], params["section"]
+    p = Path(params["file"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+
+    khoi = pdf_layout({"file": str(p)}, ctx)["blocks"]
+    phan, trang = _khoi_cua_muc(khoi, muc)
+    if not phan:
+        raise EideError("E2000", f"Không thấy mục `{muc}` trong {p.name}. Không đưa cả tài liệu "
+                        "cho mô hình: một thủ tục viết từ nhầm chương vẫn trông thuyết phục",
+                        exists=[str(x.get("content") or "") for x in _tieu_de(khoi)][:20],
+                        candidates=["extract.pdf_layout"], missing=[muc])
+
+    resp = _gateway(ctx).run(
+        "librarian",
+        f"Rút công thức/thuật toán trong mục dưới đây thành một kỹ năng dùng được: tiêu đề, tóm "
+        f"tắt ngắn, và HÀM C hoàn chỉnh hiện thực đúng công thức ấy (kiểu dữ liệu rõ ràng, không "
+        f"phụ thuộc thư viện ngoài). Chỉ dùng công thức CÓ trong văn bản. Ngắn gọn — cả skill "
+        f"dưới 600 token.\n\n### {muc}\n" + "\n".join(phan)[:12_000],
+        _SCHEMA_SKILL)
+
+    ma = str(resp.data.get("code_c") or "").strip()
+    if not ma:
+        raise EideError("E5002", f"Mô hình không trả mã C cho mục `{muc}` — một skill không có "
+                        "mã thì `code.generate_module` không có gì để chép và người đọc vẫn phải "
+                        "mở datasheet (DEV-080)", section=muc)
+
+    sp = _ghi_skill(root, part, muc, resp.data, ma, p, trang)
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"skill:{sp.name}",
+                                     "kind": "delete_created_files", "deadline": ""})
+    return {"skill_path": str(sp)}
+
+
+def _tieu_de(khoi: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [b for b in khoi if b.get("type") == "heading"]
+
+
+def _khoi_cua_muc(khoi: list[dict[str, Any]], muc: str) -> tuple[list[str], list[int]]:
+    """Văn bản từ tiêu đề khớp `muc` tới tiêu đề kế tiếp, kèm các trang nó trải qua.
+
+    Cắt theo tiêu đề chứ không theo số trang: một mục có thể bắt đầu giữa trang, và lấy trọn
+    trang thì nửa đầu là phần cuối của mục trước — mà mô hình không có cách nào biết điều đó.
+    """
+    dau = None
+    for i, b in enumerate(khoi):
+        if b.get("type") == "heading" and _chuan_khop(muc, str(b.get("content") or "")):
+            dau = i
+            break
+    if dau is None:
+        return [], []
+
+    van, trang = [], []
+    for b in khoi[dau:]:
+        if b is not khoi[dau] and b.get("type") == "heading":
+            break
+        van.append(str(b.get("content") or ""))
+        if (t := b.get("page")) and t not in trang:
+            trang.append(t)
+    return van, trang
+
+
+def _chuan_khop(muc: str, tieu_de: str) -> bool:
+    """Tiêu đề trong PDF mang số mục ("4.2.3 Temperature compensation") còn bên gọi thường chỉ
+    nêu tên. So theo TỪ để số mục không làm hỏng phép khớp."""
+    a, b = set(_chuan(muc)), set(_chuan(tieu_de))
+    return bool(a) and a <= b
+
+
+def _ghi_skill(root: Path, part: str, muc: str, d: dict[str, Any], ma: str, nguon: Path,
+               trang: list[int]) -> Path:
+    import yaml
+    thu_muc = root / EIDE_DIR / THU_MUC_SKILL
+    thu_muc.mkdir(parents=True, exist_ok=True)
+    ten = re.sub(r"[^a-z0-9]+", "-", f"{part}-{muc}".lower()).strip("-")[:80]
+    sp = thu_muc / f"{ten}.md"
+
+    fm = yaml.safe_dump({
+        "title": d.get("title") or muc,
+        "applies_to": [part if part.startswith("chip:") else f"chip:{part}"],
+        "kind": "skill",
+        "source": {"file": nguon.name, "section": muc, "pages": trang or [1]},
+    }, allow_unicode=True, sort_keys=False).strip()
+
+    ghi_chu = "".join(f"- {x}\n" for x in (d.get("notes") or []))
+    trang_txt = ", ".join(f"trang {t}" for t in (trang or [1]))
+    sp.write_text(
+        f"---\n{fm}\n---\n\n# {d.get('title') or muc}\n\n{d.get('summary') or ''}\n\n"
+        f"```c\n{ma}\n```\n\n"
+        + (f"## Lưu ý\n\n{ghi_chu}\n" if ghi_chu else "")
+        + f"## Nguồn\n\n`{nguon.name}` — mục *{muc}*, {trang_txt}.\n",
+        encoding="utf-8")
+    return sp
+
+
 # ---------------------------------------------------------------- EXTRACT-18 bom_enrich
 
 
