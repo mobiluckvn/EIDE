@@ -1736,6 +1736,99 @@ def _ghi_fact_bom(root: Path, goc: Path, ds: list[dict[str, Any]], ctx: Context)
              "actor": ctx.actor}, ctx)
 
 
+# ---------------------------------------------------------------- EXTRACT-18 bom_enrich
+
+
+@capability("extract.bom_enrich")
+def bom_enrich(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-18 — CDS-12.2; SEARCH-01/02 (chuỗi giảm cấp), KG-08 (`kg.request`);
+    TGT-19 §8 bảng nguồn hãng. tc: "A4988 gắn datasheet Allegro". `undo: none`.
+
+    Một BOM chỉ có mã hàng thì mua được nhưng không lập trình được. Bước này nối mỗi dòng với hộ
+    chiếu đã có hoặc với datasheet của hãng — và cái gì không tra ra thì thành một
+    `AcquisitionRequest` CÓ TÊN trong hàng đợi, chứ không phải một dòng lặng lẽ thiếu nguồn.
+
+    **Hộ chiếu trong store thắng mọi ứng viên tải về**: nó đã qua G-FACT, còn ứng viên mới chỉ là
+    một URL chưa ai mở. Chỉ khi không có hộ chiếu mới đi tra.
+
+    Tra theo `mpn_base` chứ không theo mã đầy đủ: URL của hãng lập theo mã gốc — `A4988SETTR-T`
+    không có trang riêng, `A4988` thì có. Đây là lý do EXTRACT-17 giữ `mpn_base` lại sau khi gộp
+    ([DEV-078]).
+
+    Chuỗi giảm cấp của bước 1 là `search.registry → search.vendor → web`. `search.registry`
+    thuộc mốc **M4** (chưa hiện thực), nên hiện chuỗi bắt đầu từ `search.vendor`; thứ tự giữ
+    nguyên để khi registry có thì chỉ cần chèn vào đầu. `search.web` chỉ chạy khi đã cấu hình
+    nhà cung cấp — chưa cấu hình thì nó ném E4001 và ta đi tiếp xuống `kg.request`, vì thiếu một
+    khoá tìm kiếm không phải lý do để cả BOM hỏng.
+
+    Dòng không có MPN (điện trở 10k/0603) KHÔNG sinh yêu cầu: không có gì để đi tìm, và làm ngập
+    hàng đợi của người bằng những việc không ai làm được là cách nhanh nhất để họ thôi đọc nó.
+    """
+    from eide.caps.kg import request as kg_request
+    from eide.caps.search import vendor, web
+
+    root = _root(ctx)
+    ra: list[dict[str, Any]] = []
+    yeu_cau: list[str] = []
+    for d in (params["bom"] or []):
+        d = dict(d)
+        ma = str(d.get("mpn_base") or d.get("mpn") or "").strip()
+        if not ma:
+            ra.append(d)
+            continue
+
+        if (pid := _ho_chieu_khop(root, ma)):
+            d["passport"] = pid
+        elif (ung := _ung_vien_datasheet(ma, ctx, vendor, web)):
+            d["datasheet"] = ung
+        elif not _da_yeu_cau(root, ma):
+            d["request_id"] = kg_request(
+                {"need": f"datasheet hoặc hộ chiếu cho {ma}", "part": ma}, ctx)["request_id"]
+            yeu_cau.append(d["request_id"])
+        ra.append(d)
+    return {"bom": ra, "requests": yeu_cau}
+
+
+def _ho_chieu_khop(root: Path, ma: str) -> str | None:
+    """Hộ chiếu có id dạng `<tên>@<phiên bản>`. So theo phần tên, không phân biệt hoa thường."""
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT id FROM passport").fetchall()
+    ten = ma.lower()
+    for (pid,) in rows:
+        goc = str(pid).split("@", 1)[0].lower()
+        if goc == ten or ten.startswith(goc):
+            return pid
+    return None
+
+
+def _ung_vien_datasheet(ma: str, ctx: Context, vendor: Any, web: Any) -> dict[str, Any] | None:
+    """Ứng viên PDF đầu tiên từ hãng; không có thì thử web. Chỉ LIỆT KÊ, không tải — `search.fetch`
+    mới là chỗ đi qua cổng G-SRC."""
+    for goi, kwargs in ((vendor, {"part": ma}), (web, {"query": f"{ma} datasheet"})):
+        try:
+            kq = goi(kwargs, ctx)
+        except EideError:
+            continue                      # chưa cấu hình nhà cung cấp tìm kiếm: đi tiếp
+        for u in (kq.get("candidates") or []):
+            if str(u.get("kind") or "").lower() in ("pdf", "datasheet", "doc"):
+                return u
+    return None
+
+
+def _da_yeu_cau(root: Path, ma: str) -> bool:
+    """Một MPN chỉ cần một yêu cầu. Chạy lại `bom_enrich` sau khi thêm một dòng là chuyện thường,
+    và mở thêm một yêu cầu trùng mỗi lần thì hàng đợi "chờ anh" thành danh sách không ai đọc."""
+    db = store.store_path(root)
+    if not db.exists():
+        return False
+    with store.open_store(db) as c:
+        return c.execute("SELECT 1 FROM acq_request WHERE part=? AND state NOT IN"
+                         " ('CLOSED','REJECTED') LIMIT 1", (ma,)).fetchone() is not None
+
+
 # ---------------------------------------------------------------- EXTRACT-05 dt_binding
 
 

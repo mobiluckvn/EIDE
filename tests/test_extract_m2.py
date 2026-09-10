@@ -985,3 +985,122 @@ def test_bo_hau_to_dong_goi_chi_khi_tach_bang_dau(mpn, goc):
     linh kiện khác, hoặc không ra gì. Xem DEV-078."""
     from eide.caps.extract import _mpn_goc
     assert _mpn_goc(mpn) == goc
+
+
+# ================================================================ EXTRACT-18 bom_enrich
+#
+# tc: "A4988 gắn datasheet Allegro". Một BOM chỉ có mã hàng thì mua được nhưng không LẬP TRÌNH
+# được: bước này nối mỗi dòng với hộ chiếu đã có hoặc với datasheet của hãng, và cái gì không
+# tra ra thì thành một yêu cầu thu nhận có tên chứ không im lặng biến mất.
+
+BOM_ROBOT = [
+    {"ref": ["U3", "U4"], "mpn": "A4988SETTR-T", "mpn_base": "A4988SETTR", "value": "A4988",
+     "footprint": "QFN-28", "qty": 2, "source_locator": {"file": "robot.net", "row": 3}},
+    {"ref": ["R1", "R2"], "mpn": "", "mpn_base": "", "value": "10k", "footprint": "0603",
+     "qty": 2, "source_locator": {"file": "robot.net", "row": 5}},
+]
+
+
+def _khong_goi_mang(monkeypatch):
+    """`search.vendor` gọi HEAD để ước lượng kích thước. Danh sách ứng viên KHÔNG phụ thuộc vào
+    nó (hợp đồng SEARCH-02: "không gọi được mạng thì vẫn trả ứng viên"), nên test chặn ở đây."""
+    import eide.caps.search as s
+    monkeypatch.setattr(s, "_head", lambda uri: {})
+
+
+def test_A4988_gan_datasheet_Allegro(du_an, monkeypatch):
+    """tc EXTRACT-18 nguyên văn: "A4988 gắn datasheet Allegro"."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    out = r.invoke("extract.bom_enrich", {"bom": BOM_ROBOT}, ctx).result
+
+    a = next(d for d in out["bom"] if d["mpn"] == "A4988SETTR-T")
+    assert "allegromicro.com" in a["datasheet"]["domain"]
+    assert a["datasheet"]["kind"] == "pdf"
+
+
+def test_tra_theo_mpn_base_khong_theo_ma_dat_hang(du_an, monkeypatch):
+    """Tra bằng `mpn_base`, không bằng mã đặt hàng đầy đủ: hậu tố băng (`-T`) là chuyện của kho
+    hàng, không có trang tài liệu nào mang nó. Đây là lý do EXTRACT-17 giữ `mpn_base` lại sau
+    khi gộp — xem DEV-078.
+
+    (Việc rút tiếp mã die từ `A4988SETTR` là của `search.vendor` và bảng nguồn TGT-19 §8, không
+    phải của bước này — nên test kiểm THAM SỐ truyền đi, không kiểm URL trả về.)
+    """
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    da_hoi = []
+    import eide.caps.search as s
+    that = s.vendor
+    monkeypatch.setattr(s, "vendor", lambda p, c: (da_hoi.append(p["part"]), that(p, c))[1])
+
+    r.invoke("extract.bom_enrich", {"bom": BOM_ROBOT}, ctx)
+    assert da_hoi == ["A4988SETTR"]         # không phải "A4988SETTR-T", và không hỏi cho R1/R2
+
+
+def test_dong_khong_co_MPN_khong_sinh_yeu_cau(du_an, monkeypatch):
+    """Một điện trở 10k/0603 không có datasheet để đi tìm. Sinh yêu cầu thu nhận cho nó là làm
+    ngập hàng đợi của người bằng những việc không ai làm được."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    out = r.invoke("extract.bom_enrich", {"bom": BOM_ROBOT}, ctx).result
+    assert out["requests"] == []
+    rr = next(d for d in out["bom"] if d["ref"] == ["R1", "R2"])
+    assert "datasheet" not in rr
+
+
+def test_khong_tra_ra_thi_mo_kg_request(du_an, monkeypatch):
+    """"thiếu → kg.request" của bước 1: cái gì không tra ra phải thành một yêu cầu CÓ TÊN trong
+    hàng đợi, không phải một dòng BOM lặng lẽ thiếu nguồn."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    la = [{"ref": ["U9"], "mpn": "ZZZ9999", "mpn_base": "ZZZ9999", "value": "?", "footprint": "",
+           "qty": 1, "source_locator": {"file": "x.csv", "row": 2}}]
+    out = r.invoke("extract.bom_enrich", {"bom": la}, ctx).result
+    assert len(out["requests"]) == 1
+    with store.open_store(store.store_path(root)) as c:
+        row = c.execute("SELECT part, state FROM acq_request").fetchone()
+    assert row == ("ZZZ9999", "REQUESTED")
+
+
+def test_khong_mo_hai_yeu_cau_cho_cung_mot_MPN(du_an, monkeypatch):
+    """Chạy lại `bom_enrich` sau khi thêm một dòng BOM là chuyện thường. Mở thêm một yêu cầu
+    trùng mỗi lần thì hàng đợi "chờ anh" thành một danh sách không ai đọc nữa."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    la = [{"ref": ["U9"], "mpn": "ZZZ9999", "mpn_base": "ZZZ9999", "value": "?", "footprint": "",
+           "qty": 1, "source_locator": {"file": "x.csv", "row": 2}}]
+    r.invoke("extract.bom_enrich", {"bom": la}, ctx)
+    out = r.invoke("extract.bom_enrich", {"bom": la}, ctx).result
+    with store.open_store(store.store_path(root)) as c:
+        assert c.execute("SELECT COUNT(*) FROM acq_request").fetchone()[0] == 1
+    assert out["requests"] == []
+
+
+def test_ho_chieu_da_co_thi_gan_thang(du_an, monkeypatch):
+    """Hộ chiếu trong store thắng mọi ứng viên tải về: nó đã qua G-FACT, còn ứng viên mới chỉ là
+    một URL."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT INTO passport (id, kind, header, created_at)"
+                  " VALUES ('a4988@1.0.0','chip','{\"name\":\"A4988\"}','2026-09-10T00:00:00Z')")
+        c.commit()
+    out = r.invoke("extract.bom_enrich", {"bom": BOM_ROBOT}, ctx).result
+    a = next(d for d in out["bom"] if d["mpn"] == "A4988SETTR-T")
+    assert a["passport"] == "a4988@1.0.0"
+
+
+def test_bom_rong_khong_phai_loi(du_an, monkeypatch):
+    """`errors: []` — không có gì để làm giàu thì không có gì sai."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    _khong_goi_mang(monkeypatch)
+    out = r.invoke("extract.bom_enrich", {"bom": []}, ctx).result
+    assert out == {"bom": [], "requests": []}
