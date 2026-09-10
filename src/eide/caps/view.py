@@ -750,3 +750,249 @@ def _graphviz(d: Path, dot: str, dinh_dang: str) -> Path:
     except (OSError, subprocess.SubprocessError) as e:
         raise EideError("E4004", f"Graphviz không dựng được {dinh_dang}: {e}") from e
     return ra
+
+
+# ---------------------------------------------------------------- VIEW-05 coverage_map
+
+
+MAU_STALE = "#C5221F"
+# Nhóm nguồn của VIEW-10, theo `source.kind` — bước 1 nêu ba nhóm.
+NHOM_NGUON = {
+    "datasheet": ("pdf", "docx", "svd", "atdf", "edc", "header", "binding"),
+    "errata": ("errata",),
+    "community": ("web", "html", "md", "readme", "docs_mcp", "registry"),
+}
+
+
+@capability("view.coverage_map")
+def coverage_map(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: VIEW-05 — CDS-12.4; KAD-07 §6.9. tc: TC-78 "số khớp store". R0, `undo: none`.
+
+    Bản đồ phủ trả lời "đã biết bao nhiêu về con chip này", và nó chỉ có giá trị khi từng con số
+    đếm lại được từ store — nên không có ước lượng, không có nội suy: `registers_total` là số
+    thanh ghi CÓ TRONG hộ chiếu, không phải số thanh ghi con chip thật sự có. Nói "phủ 60%" khi
+    mẫu số cũng do chính ta đếm là một con số tự khen.
+
+    `requested` nối sang `AcquisitionRequest`: một ngoại vi trống mà đã có người đi tìm tài liệu
+    khác hẳn một ngoại vi trống mà chưa ai chạm tới — đó là khác biệt giữa "đang chờ" và "chưa
+    biết", và người nhìn bản đồ này cần phân biệt hai thứ ấy để quyết định làm gì.
+
+    Hộ chiếu chưa nạp không phải lỗi (`errors: []`): nó là "chưa biết gì", và trả về rỗng để màn
+    hình Hộ chiếu chip vẫn mở được cho một dự án mới tinh.
+    """
+    pid = params["passport"]
+    part = pid.split("@", 1)[0]
+    db = _db(ctx)
+    with store.open_store(db) as c:
+        if not c.execute("SELECT 1 FROM passport WHERE id=?", (pid,)).fetchone():
+            return {"heatmap": {}}
+        rows = c.execute(
+            "SELECT f.subject, f.status FROM fact f JOIN passport_fact pf ON pf.fact_id = f.id"
+            " WHERE pf.passport_id = ? AND f.status NOT IN ('superseded','rejected')",
+            (pid,)).fetchall()
+        # Yêu cầu thu nhận lọc theo `part` của CHÍNH hộ chiếu này. Đếm tất cả thì bản đồ phủ của
+        # một con chip hiện cả những ngoại vi mà người ta đang đi tìm tài liệu cho con chip khác.
+        acq = c.execute("SELECT peripheral, COUNT(*) FROM acq_request"
+                        " WHERE state NOT IN ('CLOSED','REJECTED') AND peripheral IS NOT NULL"
+                        "   AND part = ? GROUP BY peripheral", (part,)).fetchall()
+
+    heat: dict[str, dict[str, Any]] = {}
+
+    def _o(pe: str) -> dict[str, Any]:
+        return heat.setdefault(pe, {"registers_total": 0, "with_facts": 0, "reviewed": 0,
+                                    "requested": 0})
+
+    reg: dict[str, dict[str, set[str]]] = {}
+    for subj, st in rows:
+        pe = _ten_periph(subj)
+        if not pe:
+            continue
+        _o(pe)
+        if (r := _ten_reg(subj)):
+            d = reg.setdefault(pe, {"tat_ca": set(), "reviewed": set()})
+            d["tat_ca"].add(r)
+            if st in ("reviewed", "verified"):
+                d["reviewed"].add(r)
+
+    for pe, d in reg.items():
+        _o(pe).update(registers_total=len(d["tat_ca"]), with_facts=len(d["tat_ca"]),
+                      reviewed=len(d["reviewed"]))
+    for pe, n in acq:
+        _o(str(pe))["requested"] = n
+    return {"heatmap": heat}
+
+
+def _ten_periph(subj: str) -> str | None:
+    """Tên NGẮN của ngoại vi (`I2C1`), không phải IRI của nó.
+
+    Khác `_tien_to_periph` của VIEW-01, vốn trả về cả IRI để làm khoá gom cụm. Bản đồ phủ dùng
+    tên ngắn vì nó là thứ người đọc tra: cột trái của bản đồ ghi `I2C1`, không ghi
+    `chip:st.stm32f411ce/periph:I2C1`.
+    """
+    for p in str(subj).split("/"):
+        if p.startswith("periph:"):
+            return p[7:]
+    return None
+
+
+def _ten_reg(subj: str) -> str | None:
+    for p in str(subj).split("/"):
+        if p.startswith("reg:"):
+            return p[4:]
+    return None
+
+
+# ---------------------------------------------------------------- VIEW-06 impact_map
+
+
+@capability("view.impact_map")
+def impact_map(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: VIEW-06 — CDS-12.4; KG-03 `kg.impact`, REQ-08 `req.change_impact`. tc: "Khớp
+    kg.impact". R0, `undo: none`.
+
+    Khung nhìn **không tính lại** ảnh hưởng theo cách riêng: nó gọi đúng hai năng lực đã có và
+    vẽ kết quả. Hai câu trả lời khác nhau cho cùng một câu hỏi tệ hơn không có câu nào — người
+    dùng sẽ tin cái nào trông nghiêm trọng hơn.
+
+    `delta` có hai dạng theo hợp đồng của REQ-08: `{fact_id}` hoặc `{req_id, old, new}`. Dạng
+    nào thì gọi năng lực của dạng ấy; không đoán chéo.
+    """
+    delta = params["delta"] or {}
+    if delta.get("fact_id"):
+        from eide.caps.kg import impact as kg_impact
+        kq = kg_impact({"fact_id": delta["fact_id"]}, ctx)
+        goc, anh_huong = delta["fact_id"], {
+            "code_units": kq.get("stale_code_units") or [], "features": kq.get("features") or [],
+            "docs": kq.get("docs") or [], "diagrams": kq.get("diagrams") or []}
+    else:
+        from eide.caps import req as req_mod
+        kq = req_mod.change_impact({"delta": delta}, ctx)
+        goc = delta.get("req_id") or "delta"
+        anh_huong = {k: (kq.get("impact") or {}).get(k) or []
+                     for k in ("modules", "code_units", "tests", "docs", "diagrams", "features")}
+
+    nodes = [{"id": goc, "type": "delta", "stale": False, "color": MAU_TIER["gold"]}]
+    edges = []
+    for loai, ds in anh_huong.items():
+        for x in ds:
+            # Mọi thứ hạ nguồn một thay đổi ĐỀU stale — đó chính là định nghĩa của kết quả này.
+            # Tô màu là toàn bộ nội dung khung nhìn: một đồ thị không phân biệt được cái gì đã cũ
+            # thì chỉ là một đồ thị.
+            nodes.append({"id": x, "type": loai, "stale": True, "color": MAU_STALE})
+            edges.append({"from": goc, "to": x, "kind": "IMPACTS"})
+    return {"graph": {"nodes": nodes, "edges": edges, "delta": delta}}
+
+
+# ---------------------------------------------------------------- VIEW-10 rag_compare
+
+
+_SCHEMA_KHAC_BIET = {"type": "object", "required": ["differences"],
+                     "properties": {"differences": {"type": "array",
+                                                    "items": {"type": "string"}}}}
+
+
+@capability("view.rag_compare")
+def rag_compare(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: VIEW-10 — CDS-12.4; VIEW-07 `rag_ask`; KG-02 `kg.conflicts`. tc: "Chỉ ra errata
+    khác datasheet". R0, `undo: none`.
+
+    Lý do năng lực này tồn tại: hỏi "I2C1 chạy tối đa bao nhiêu" mà chỉ đọc datasheet thì được
+    400 kHz, còn errata nói rev A không quá 100 kHz. Một câu trả lời GỘP sẽ chọn một trong hai
+    và giấu cái kia — và cái bị giấu thường là cái quan trọng, vì errata sinh ra để nói điều
+    datasheet nói sai.
+
+    Nhóm nào không có tài liệu thì **bỏ khỏi bảng**, không để ô trống: im lặng không phải một ý
+    kiến, mà một ô trống cạnh hai ô có chữ đọc như "nhóm này không đồng ý".
+
+    Chỉ một nhóm trả lời được thì không hỏi mô hình về khác biệt — hỏi nó "nêu khác biệt" giữa
+    một thứ với chính nó là mời nó bịa ra một khác biệt.
+    """
+    q = params["question"]
+    ds = []
+    for nhom in NHOM_NGUON:
+        kq = rag_ask({"question": q, "scope": [nhom]}, ctx)
+        if kq.get("not_found") or not (kq.get("answer") or "").strip():
+            continue
+        ds.append({"group": nhom, "answer": kq["answer"], "citations": kq.get("citations") or [],
+                   "trace_id": kq.get("trace_id"), "differences": []})
+
+    if len(ds) > 1:
+        resp = _gateway(ctx).run(
+            "writer",
+            "Các nguồn dưới đây trả lời cùng một câu hỏi. Nêu KHÁC BIỆT giữa chúng, mỗi khác "
+            "biệt một câu và nêu rõ nhóm nguồn nào nói gì. Giống nhau thì không liệt kê.\n\n"
+            f"Câu hỏi: {q}\n\n"
+            + "\n\n".join(f"[{d['group']}] {d['answer']}" for d in ds),
+            _SCHEMA_KHAC_BIET)
+        kb = [str(x) for x in (resp.data.get("differences") or [])]
+        # Khác biệt gắn vào TỪNG nhóm được nhắc tên: `output_schema` của VIEW-10 chỉ có một khoá
+        # `comparison`, và một danh sách khác biệt trôi nổi ở mức trên thì người đọc phải tự dò
+        # xem câu nào nói về nhóm nào.
+        for d in ds:
+            d["differences"] = [x for x in kb if d["group"].lower() in x.lower()] or kb
+    return {"comparison": ds}
+
+
+# ---------------------------------------------------------------- VIEW-12 timeline
+
+
+@capability("view.timeline")
+def timeline(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: VIEW-12 — CDS-12.4; MEMORY-05 `memory.ledger`; DDD-14 §2 DecisionLog,
+    CapabilityRun. tc: "Sự kiện khớp ledger". R0, `undo: none`.
+
+    Bốn nguồn vì mỗi nguồn giữ một mảnh khác nhau và không nguồn nào thay được nguồn kia: nhật
+    ký có chuỗi băm (nên nó là thứ duy nhất chứng minh được rằng không ai sửa lịch sử),
+    `decision_log` có câu trả lời của NGƯỜI và thời điểm hoàn tác, `capability_run` có kết cục
+    của từng lời gọi.
+
+    Bộ lọc `by: policy|human` trả lời câu hỏi thật đầu tiên khi một thứ trong dự án khác với trí
+    nhớ của người dùng: *việc gì đã tự chạy, việc gì tôi đã duyệt*.
+    """
+    loc = params.get("filter") or {}
+    khoang = params.get("range") or {}
+    ds: list[dict[str, Any]] = []
+
+    led = ctx.extra.get("ledger")
+    for e in (led.records() if led is not None else []):
+        ds.append({"at": e.get("ts") or "", "kind": e.get("kind"), "source": "ledger",
+                   "by": (e.get("data") or {}).get("by") or e.get("actor") or "agent",
+                   "id": e.get("hash", "")[:12], "data": e.get("data") or {}})
+
+    db = store.store_path(_root(ctx))
+    if db.exists():
+        with store.open_store(db) as c:
+            for r in c.execute("SELECT id, at, action_cap, gate, decision, by, human_answer,"
+                               " undone_at FROM decision_log").fetchall():
+                ds.append({"at": r[1] or "", "kind": f"gate.{str(r[4]).lower()}",
+                           "source": "decision_log", "by": r[5] or "agent", "id": r[0],
+                           "data": {"cap": r[2], "gate": r[3], "human_answer": r[6],
+                                    "undone_at": r[7]}})
+            for r in c.execute("SELECT id, started_at, cap, actor, status, finished_at"
+                               " FROM capability_run").fetchall():
+                ds.append({"at": r[1] or "", "kind": "cap.run", "source": "capability_run",
+                           "by": r[3] or "agent", "id": r[0],
+                           "data": {"cap": r[2], "status": r[4], "finished_at": r[5]}})
+
+    ds = [e for e in ds if _qua_loc_thoi_gian(e, khoang) and _qua_loc_su_kien(e, loc)]
+    ds.sort(key=lambda e: (e["at"], e["source"], e["id"]))
+    return {"events": ds}
+
+
+def _qua_loc_thoi_gian(e: dict[str, Any], khoang: dict[str, Any]) -> bool:
+    at = e.get("at") or ""
+    if (t := khoang.get("from")) and at < t:
+        return False
+    return not ((t := khoang.get("to")) and at > t)
+
+
+def _qua_loc_su_kien(e: dict[str, Any], loc: dict[str, Any]) -> bool:
+    """`by: policy` nghĩa là "máy tự quyết" — mọi thứ không phải người. Viết thành `!= human`
+    chứ không phải `== policy`: `by` mang tên người thật hoặc `agent`, và so bằng một chuỗi cố
+    định sẽ lọc ra rỗng ở mọi kho có người dùng đã ký tên."""
+    if (kinds := loc.get("kinds")) and e["kind"] not in kinds:
+        return False
+    by = loc.get("by")
+    if by == "human":
+        return e["by"] == "human"
+    return not (by == "policy" and e["by"] == "human")

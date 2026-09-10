@@ -125,12 +125,12 @@ board có ý nghĩa. Nó cũng là cách kiểm `code.*` mà không cần board.
 
 ---
 
-## G. Còn lại — **17 năng lực** (rải rác) · ĐANG LÀM
+## G. Còn lại — **13 năng lực** (rải rác) · ĐANG LÀM
 
 | # | Nhóm | Trạng thái |
 |---|---|---|
 | ~~G1~~ | ~~`project.clone`, `project.archive`, `project.rollback`~~ | **Xong 10/09** — 19 test. Bản sao KHÔNG mang theo ledger/decision_log/run; rollback chặn working tree bẩn trước khi đụng git. Kiểu sự kiện ledger còn thiếu → [DEV-081](DEVIATIONS.md) |
-| G2 | `view.*` 4 (M2) | `coverage_map`, `impact_map`, `rag_compare`, `timeline` |
+| ~~G2~~ | ~~`view.*` 4 (M2)~~ | **Xong 10/09** — 15 test. `view.*` đóng **13/13**. `impact_map` gọi `kg.impact`/`req.change_impact` chứ không tính lại; `rag_compare` bỏ nhóm nguồn im lặng khỏi bảng; `timeline` gom bốn nguồn |
 | G3 | `tool.*` 3 | `compose`, `deprecate`, `promote` |
 | G4 | `memory.*` 2 · `passport.diff/upgrade` 2 | |
 | G5 | lẻ | `kg.evidence` · `env.install_pack` · `report.explain` · `search.docs_mcp` |
