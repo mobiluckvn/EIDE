@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS fact (
   confirmed_by TEXT,
   confirmed_at TEXT,
   supersedes TEXT REFERENCES fact(id),
-  layer TEXT NOT NULL DEFAULT 'C'
+  layer TEXT NOT NULL DEFAULT 'C',
+  conflicts_with TEXT
 );
 CREATE INDEX IF NOT EXISTS ix_fact_0 ON fact (subject, predicate, status);
 CREATE INDEX IF NOT EXISTS ix_fact_1 ON fact (source_id);

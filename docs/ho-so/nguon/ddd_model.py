@@ -19,7 +19,12 @@ entity("Fact", "fact", "Bản ghi tri thức bất biến có nguồn (KAD-07)",
  ("locator", O, "TEXT", 0, "JSON {page,bbox,xpath,line}", None), ("method", S, "TEXT NOT NULL", 1, "Cách trích", ["parser","layout_llm","vision_llm","manual","inferred","measured"]),
  ("tier", S, "TEXT NOT NULL", 1, "", ["gold","silver","bronze"]), ("confidence", N, "REAL NOT NULL", 1, "0–1", None),
  ("status", S, "TEXT NOT NULL", 1, "", ["normalized","reviewed","verified","rejected","superseded","conflict"]), ("confirmed_by", S, "TEXT", 0, "policy|<user>", None),
- ("confirmed_at", DT, "TEXT", 0, "", None), ("supersedes", S, "TEXT REFERENCES fact(id)", 0, "Fact bị thay", None), ("layer", S, "TEXT NOT NULL DEFAULT 'C'", 1, "Lớp lưu trữ", ["A","B","C"])],
+ ("confirmed_at", DT, "TEXT", 0, "", None), ("supersedes", S, "TEXT REFERENCES fact(id)", 0, "Fact bị thay", None), ("layer", S, "TEXT NOT NULL DEFAULT 'C'", 1, "Lớp lưu trữ", ["A","B","C"]),
+ # v1.4 (DEV-077): cạnh CONFLICTS_WITH của KAD-07 §6.3 tới nay chỉ SUY được — cùng (subject,
+ # predicate) khác giá trị. Errata phủ định datasheet theo cách phép suy ấy không thấy: mục
+ # errata là `predicate: other` với subject riêng, nên nó không bao giờ trùng cặp khoá với fact
+ # nó phủ định. Trường này là chỗ KHAI cạnh ấy; hai đường cùng tồn tại.
+ ("conflicts_with", A, "TEXT", 0, "JSON fact ids mà fact này phủ định (KAD-07 §6.3)", None)],
  indexes=("(subject, predicate, status)", "(source_id)", "(status)"), layer="L-A/L-B/L-C")
 entity("Passport", "passport", "Hộ chiếu chip/board/ISA: tập fact có phiên bản", [
  ("id", S, "TEXT PRIMARY KEY", 1, "ns.part@semver, ví dụ st.stm32f411ce@1.2.0", None), ("kind", S, "TEXT NOT NULL", 1, "", ["chip","board","isa","part"]),
@@ -121,6 +126,12 @@ MIGRATIONS = [
  # sót khỏi store chính. Xem DEVIATIONS DEV-006.
  ("0003b_m1_session", "M1", "session/session.sqlite riêng: session (M2 SessionMemory, MEM-11 §2); không commit vào git; không migration trong store chính"),
  ("0004_m2_engineering_hw", "M2", "module, hw_map, adr, doc_artifact, discovery, measurement; code_unit.module_id; user_version=4"),
- ("0005_m3_debug", "M3", "debug_session; user_version=5"),
+ # Bảng này mô tả các migration ĐÃ CÓ trong kho, không phải kế hoạch. `debug_session` là bảng
+ # của mốc M3 và chưa có migration nào dựng nó; số 0005 đã dùng cho `module.layer` (DEV-069,
+ # duyệt 08/09/2026). Ghi một dòng chưa tồn tại vào đây thì `eide migrate` và tài liệu nói hai
+ # điều khác nhau về cùng một store.
+ ("0005_m2_module_layer", "M2", "cột module.layer (DEV-069); user_version=5"),
+ ("0006_m2_fact_conflicts", "M2", "cột fact.conflicts_with (DEV-077); user_version=6"),
+ ("(M3) debug_session", "M3", "chưa có migration — bảng của mốc M3"),
  ("0006_rename_eide", "M1", "Đổi thư mục .hkw → .eide (giữ symlink đọc); không đổi schema"),
 ]

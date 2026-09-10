@@ -174,15 +174,20 @@ def _chen(c: Any, f: dict[str, Any], status: str, supersedes: str | None, actor:
     fid = "f_" + secrets.token_hex(8)
     c.execute(
         "INSERT INTO fact (id, subject, predicate, value, unit, source_id, locator, method,"
-        " tier, confidence, status, confirmed_by, confirmed_at, supersedes, layer)"
-        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        " tier, confidence, status, confirmed_by, confirmed_at, supersedes, layer,"
+        " conflicts_with)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (fid, f["subject"], f["predicate"], json.dumps(f["value"], ensure_ascii=False),
          f.get("unit"), f["source_id"],
          json.dumps(f["locator"], ensure_ascii=False) if f.get("locator") else None,
          f["method"], f["tier"], float(f.get("confidence", 1.0)), status,
          actor if status == "verified" else None,
          datetime.now(UTC).isoformat() if status == "verified" else None,
-         supersedes, f.get("layer", "C")))
+         supersedes, f.get("layer", "C"),
+         # DDD-14 §2 v1.4 (DEV-077): cạnh CONFLICTS_WITH khai được, không chỉ suy được. Cổng ghi
+         # này là chỗ DUY NHẤT vào store, nên trường mới phải đi qua đây — nếu không thì không
+         # năng lực trích xuất nào khai nổi một cạnh.
+         json.dumps(f["conflicts_with"], ensure_ascii=False) if f.get("conflicts_with") else None))
     return fid
 
 

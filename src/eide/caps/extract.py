@@ -1349,9 +1349,9 @@ def pdf_errata(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             exists=[], missing=["bảng tóm tắt errata"], candidates=["extract.pdf_layout"],
             n_tables=n_bang)
 
-    _van_xuoi_errata(khoi, muc, ctx)
-    sid = _bao_dam_source(root, p, "pdf", "silver")
     iri_goc = part if part.startswith("chip:") else f"chip:{part}"
+    _van_xuoi_errata(khoi, muc, ctx, _fact_ung_vien(root, iri_goc))
+    sid = _bao_dam_source(root, p, "pdf", "silver")
     pe = _ngoai_vi_da_biet(root, iri_goc)
     facts = [_fact_errata(m, iri_goc, pe, sid) for m in muc]
 
@@ -1414,12 +1414,24 @@ _SCHEMA_ERRATA = {
     "properties": {"items": {"type": "array", "items": {
         "type": "object", "required": ["title"],
         "properties": {"title": {"type": "string"}, "description": {"type": "string"},
-                       "workaround": {"type": "string"}, "silicon": {"type": "string"}}}}},
+                       "workaround": {"type": "string"}, "silicon": {"type": "string"},
+                       # DDD-14 §2 v1.4 (DEV-077): id fact mà mục errata này PHỦ ĐỊNH. Mô hình
+                       # CHỌN trong danh sách ứng viên mã đưa cho nó, không tự nghĩ ra id —
+                       # `f_` + 16 hex là thứ mô hình sinh ra dễ như sinh một câu.
+                       "contradicts": {"type": "array", "items": {"type": "string"}}}}}},
 }
 
 
-def _van_xuoi_errata(khoi: list[dict[str, Any]], muc: list[dict[str, Any]], ctx: Context) -> None:
-    """Mô tả và cách vòng tránh nằm ở văn xuôi — đúng chỗ của mô hình. Ghép theo TIÊU ĐỀ.
+def _van_xuoi_errata(khoi: list[dict[str, Any]], muc: list[dict[str, Any]], ctx: Context,
+                     ung_vien: list[tuple[str, str, str]] | None = None) -> None:
+    """Mô tả, cách vòng tránh và **fact bị phủ định** — ba thứ nằm ở văn xuôi, đúng chỗ của mô
+    hình. Ghép theo TIÊU ĐỀ.
+
+    `ung_vien` là danh sách fact hiện hành của con chip (id, subject, predicate). Mô hình CHỌN
+    trong đó chứ không tự nghĩ ra id: `f_` + 16 hex là thứ nó sinh ra dễ như sinh một câu, và
+    một cạnh CONFLICTS_WITH trỏ vào hư không làm `kg.conflicts` báo xung đột không tra được.
+    Không có ứng viên nào thì KHÔNG hỏi — một câu hỏi "cái nào bị phủ định" trên danh sách rỗng
+    không có câu trả lời đúng, mà mô hình vẫn sẽ tìm cách trả lời.
 
     Mô hình không trả gì (hoặc chưa cấu hình) thì các mục vẫn giữ nguyên tiêu đề và rev đọc từ
     bảng: điều kiện áp dụng là phần không được mất, còn workaround thiếu thì người vẫn tra được
@@ -1429,15 +1441,21 @@ def _van_xuoi_errata(khoi: list[dict[str, Any]], muc: list[dict[str, Any]], ctx:
                     if b.get("type") in ("text", "heading"))
     if not van.strip():
         return
+    ds = ung_vien or []
+    phan_ung_vien = ("\n\nCác fact ứng viên (chỉ chọn id TRONG danh sách này cho `contradicts`; "
+                     "không mục nào phủ định fact nào thì để trống):\n"
+                     + "\n".join(f"- {fid}: {subj} / {pred}" for fid, subj, pred in ds[:60])
+                     ) if ds else ""
     try:
         resp = _gateway(ctx).run(
             "librarian",
             "Rút từng mục errata từ văn bản sau: tiêu đề nguyên văn, mô tả ngắn, cách vòng "
             "tránh (workaround), phiên bản silicon nếu có nêu. KHÔNG suy đoán phiên bản: nếu "
-            "văn bản không nói thì bỏ trống.\n" + van[:12_000],
+            "văn bản không nói thì bỏ trống.\n" + van[:12_000] + phan_ung_vien,
             _SCHEMA_ERRATA)
     except EideError:
         return
+    hop_le = {fid for fid, _s, _p in ds}
     for it in (resp.data.get("items") or []):
         for m in muc:
             if _cung_tieu_de(m["title"], it.get("title") or ""):
@@ -1445,6 +1463,8 @@ def _van_xuoi_errata(khoi: list[dict[str, Any]], muc: list[dict[str, Any]], ctx:
                     if it.get(k):
                         m[k] = it[k]
                         m["method"] = "layout_llm"
+                if (cw := [x for x in (it.get("contradicts") or []) if x in hop_le]):
+                    m["conflicts_with"] = cw
                 break
 
 
@@ -1460,6 +1480,22 @@ def _cung_tieu_de(a: str, b: str) -> bool:
     if not x or not y:
         return False
     return len(x & y) / len(x | y) >= 0.6 or x <= y or y <= x
+
+
+def _fact_ung_vien(root: Path, goc: str) -> list[tuple[str, str, str]]:
+    """Fact hiện hành của CHÍNH con chip này — tập mà mô hình được phép chọn trong đó.
+
+    Giới hạn theo `goc` chứ không lấy cả store: một mục errata của STM32F411 không thể phủ định
+    một fact của BME280, và đưa thừa vào danh sách chỉ làm mô hình dễ chọn nhầm hơn.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    with store.open_store(db) as c:
+        return [(r[0], r[1], r[2]) for r in c.execute(
+            "SELECT id, subject, predicate FROM fact WHERE subject LIKE ?"
+            "   AND predicate != 'other' AND status NOT IN ('superseded','rejected')"
+            " ORDER BY subject LIMIT 200", (f"{goc}%",)).fetchall()]
 
 
 def _ngoai_vi_da_biet(root: Path, goc: str) -> list[str]:
@@ -1487,9 +1523,12 @@ def _fact_errata(m: dict[str, Any], goc: str, pe: list[str], sid: str) -> dict[s
     for k in ("section", "description", "workaround"):
         if m.get(k):
             gt[k] = m[k]
-    return {"subject": subject, "predicate": "other", "value": gt, "source_id": sid,
-            "locator": m["locator"], "method": m["method"], "tier": "silver",
-            "confidence": m["confidence"], "layer": "B"}
+    f = {"subject": subject, "predicate": "other", "value": gt, "source_id": sid,
+         "locator": m["locator"], "method": m["method"], "tier": "silver",
+         "confidence": m["confidence"], "layer": "B"}
+    if m.get("conflicts_with"):
+        f["conflicts_with"] = m["conflicts_with"]
+    return f
 
 
 # ---------------------------------------------------------------- EXTRACT-17 bom

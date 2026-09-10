@@ -127,14 +127,21 @@ def dung(conn: sqlite3.Connection, digest: str = "") -> DoThi:
     Chỉ đọc fact `status` hiện hành: fact đã bị thay (`superseded`) vẫn ở lại store để truy
     nguyên, nhưng đưa chúng vào đồ thị thì `kg.conflicts` sẽ báo mâu thuẫn giữa một fact và
     chính bản cũ của nó — mâu thuẫn giả, và là loại làm người ta ngừng đọc cảnh báo.
+
+    **Cạnh `CONFLICTS_WITH` đến từ hai đường** (DDD-14 §2 v1.4, DEV-077). Đường SUY —
+    `mau_thuan()` ghép fact cùng (subject, predicate) khác giá trị — bắt loại mâu thuẫn không ai
+    nhận ra. Đường KHAI — cột `fact.conflicts_with` — bắt loại mà chỉ người đọc tài liệu mới
+    biết: errata phủ định datasheet có subject và predicate khác hẳn fact nó phủ định, nên phép
+    suy mù trước nó.
     """
     g = DoThi(digest=digest)
     facts = conn.execute(
-        "SELECT id, subject, predicate, value, source_id, supersedes, tier, status FROM fact"
+        "SELECT id, subject, predicate, value, source_id, supersedes, tier, status,"
+        " conflicts_with FROM fact"
     ).fetchall()
     hien_hanh = [r for r in facts if (r[7] or "current") not in ("superseded", "rejected")]
 
-    for fid, subject, _pred, _val, source_id, supersedes, _tier, _st in hien_hanh:
+    for fid, subject, _pred, _val, source_id, supersedes, _tier, _st, _cw in hien_hanh:
         g.them_nut(fid, "fact")
         # HAS: chuỗi tổ tiên của subject
         chuoi = to_tien(subject)
@@ -165,6 +172,15 @@ def dung(conn: sqlite3.Connection, digest: str = "") -> DoThi:
 
     for a, b in mau_thuan(hien_hanh):
         g.them_canh(a, "CONFLICTS_WITH", b)
+
+    # Đường KHAI. Chỉ nối tới fact CÓ THẬT và đang hiện hành: một cạnh trỏ vào id không tồn tại
+    # (hoặc vào bản đã bị thay) làm `kg.conflicts` báo một xung đột không tra được — tệ hơn hẳn
+    # việc thiếu cạnh, vì người ta phải đi tìm một thứ không có ở đâu cả.
+    co_that = {r[0] for r in hien_hanh}
+    for fid, *_rest in hien_hanh:
+        for b in _json_list(_rest[7]):
+            if b in co_that and b != fid:
+                g.them_canh(fid, "CONFLICTS_WITH", b)
     return g
 
 

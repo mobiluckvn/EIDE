@@ -1,0 +1,26 @@
+-- DDD-14 §2 Fact v1.4 — thêm `conflicts_with` (DEVIATIONS DEV-077, chủ sản phẩm duyệt
+-- 10/09/2026). user_version=6.
+--
+-- VÌ SAO CẦN CỘT NÀY. Cạnh `CONFLICTS_WITH` của KAD-07 §6.3 tới nay chỉ SUY được: `kg.mau_thuan`
+-- ghép các fact cùng (subject, predicate) mà khác giá trị. Phép suy ấy đúng cho trường hợp phổ
+-- biến nhất — hai lần trích cùng một thanh ghi ra hai địa chỉ khác nhau — nhưng nó mù trước
+-- đúng loại mâu thuẫn quan trọng nhất: **errata phủ định datasheet**.
+--
+-- Mục errata theo CDS-12.2 EXTRACT-10 là `predicate: other` với subject riêng
+-- (`…/periph:I2C1/errata:2.4.1`), nên nó không bao giờ trùng cặp khoá với fact nó phủ định
+-- (`…/periph:I2C1` + `timing`). Hai vế của cùng một câu trong hợp đồng — "predicate other" và
+-- "liên kết CONFLICTS_WITH nếu mâu thuẫn datasheet" — loại trừ nhau chừng nào cạnh chỉ suy được.
+-- Cột này là chỗ KHAI cạnh ấy.
+--
+-- Hai đường cùng tồn tại, và đó là chủ ý: suy bắt được mâu thuẫn mà không ai nhận ra, khai bắt
+-- được mâu thuẫn mà chỉ người đọc tài liệu mới biết. `kg.dung` bỏ qua id không tồn tại và id trỏ
+-- tới fact đã `superseded`/`rejected` — một cạnh treo làm `kg.conflicts` báo xung đột không tra
+-- được, tệ hơn hẳn việc thiếu cạnh.
+--
+-- `ALTER TABLE ADD COLUMN` chứ không dựng lại bảng, cùng lý do với 0005: SQLite thêm cột vào
+-- cuối, `test_migration_khop_schema_sql` so TẬP tên cột chứ không so thứ tự, còn dựng lại `fact`
+-- thì phải tạm bỏ khóa ngoại của `passport_fact` và `fact.supersedes` đang trỏ vào chính nó.
+--
+-- Không giá trị mặc định: `NULL` nghĩa là "fact này không khai mâu thuẫn với ai", đúng cho toàn
+-- bộ dữ liệu đã có. Suy ngược cho fact cũ là bịa ra một quan hệ chưa ai khẳng định.
+ALTER TABLE fact ADD COLUMN conflicts_with TEXT;

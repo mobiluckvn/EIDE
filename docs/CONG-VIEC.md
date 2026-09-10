@@ -18,8 +18,8 @@ chạy `/dong-bo-tai-lieu` theo CLAUDE.md (≥ 5 mục Mở).*
 | # | Việc | Vì sao chặn |
 |---|---|---|
 | **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
-| **P2** | **[DEV-077](DEVIATIONS.md) — cạnh `CONFLICTS_WITH` cho errata** | Hai vế của CDS-12.2 EXTRACT-10 loại trừ nhau: `predicate: other` thì không bao giờ trùng (subject, predicate) với fact datasheet, mà đó là điều kiện duy nhất để `kg.dung` sinh cạnh ấy. Chọn: thêm trường quan hệ vào DDD-14 (chạm store) hay sửa câu ở CDS-12.2 (tôi nghiêng phương án này) |
-| P3 | `/dong-bo-tai-lieu` cho **9 mục Mở** | Đủ ngưỡng CLAUDE.md. Năm mục đề nghị sửa tài liệu ([DEV-072], [073], [075], [078], [080]) gộp được một đợt; bốn mục còn lại là nợ hiện thực, để nguyên |
+| ~~P2~~ | ~~[DEV-077](DEVIATIONS.md) — cạnh `CONFLICTS_WITH`~~ | **Anh chốt 10/09: thêm trường.** DDD-14 §2 Fact v1.4 có `conflicts_with`; migration `0006`; `kg.dung` dựng cạnh từ hai đường (suy + khai); `extract.pdf_errata` nối được cạnh mà hợp đồng đòi. Xong |
+| P3 | Duyệt **2 bản nháp đồng bộ** trong `docs/sync/` | CDS (9 mục) và API (1 mục). Năm mục đề nghị sửa tài liệu ([DEV-072], [073], [075], [078], [080]) gộp một đợt lên v1.4; bốn mục còn lại là nợ hiện thực, để nguyên |
 | P4 | **Đường ảnh cho Gateway** | `models.yaml` khai vai trò `cartographer` với `inputs: [image]` nhưng `Gateway.run` chỉ nhận văn bản. Mở nó là việc hạ tầng + cần khoá mô hình có thị giác (tốn token) — xem §8 của [TIEN-DO.md](TIEN-DO.md) |
 | P5 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
 | P6 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |

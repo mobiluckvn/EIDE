@@ -118,6 +118,10 @@
     "C"
    ],
    "description": "Lớp lưu trữ"
+  },
+  "conflicts_with": {
+   "type": "array",
+   "description": "JSON fact ids mà fact này phủ định (KAD-07 §6.3)"
   }
  },
  "additionalProperties": false
