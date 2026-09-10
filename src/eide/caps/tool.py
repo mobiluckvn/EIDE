@@ -297,6 +297,17 @@ def run(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     d = _thu_muc(ctx) / tool_id
     da_test = (d / "last_test.json").exists()
 
+    # TOOL-10 bước 1: "chuỗi cũ gọi → gợi ý replaced_by". Kiểm TRƯỚC cổng: một công cụ đã khai
+    # tử bị G-TOOL từ chối vì lý do khác (chưa đủ lần dùng chẳng hạn) thì người gọi nhận một câu
+    # trả lời đúng-nhưng-lạc-đề, và không biết rằng đã có bản thay.
+    if (kt := d / "deprecated.json").exists():
+        dp = json.loads(kt.read_text(encoding="utf-8"))
+        thay = dp.get("replaced_by")
+        raise EideError("E2000", f"`{tool_id}` đã khai tử ({dp.get('reason')})"
+                        + (f" — dùng `{thay}` thay thế" if thay else ""),
+                        exists=[], missing=[tool_id],
+                        candidates=[thay] if thay else [], deprecated=dp)
+
     gate = ctx.extra.get("gate")
     if gate is not None:
         dac_trung = {"tool": {"tested": da_test, "effects_ok": da_test, "risk": spec.risk,
@@ -442,4 +453,229 @@ def repair(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"code_path": str(d / "tool.py"), "give_up": False}
 
 
-__all__ = ["MAU_CONG_CU", "need", "register", "repair", "run", "search", "test", "write"]
+# ---------------------------------------------------------------- TOOL-09 compose
+
+
+MAU_GHEP = '''"""{purpose}
+
+Công cụ GHÉP — sinh bởi `tool.compose` (CDS-12.3 TOOL-09). Nó gọi từng bước qua `ctx.invoke`
+chứ KHÔNG nhúng mã của chúng: nhúng là tạo bản sao thứ hai, và sửa công cụ gốc thì bản ghép vẫn
+chạy mã cũ trong khi cả hai đều mang tên riêng.
+"""
+from typing import Any
+
+SPEC = {spec}
+BUOC = {buoc}
+WIRING = {wiring}
+
+
+def run(args: dict[str, Any], ctx: Any = None) -> dict[str, Any]:
+    if ctx is None or not hasattr(ctx, "invoke"):
+        raise RuntimeError("công cụ ghép cần ctx.invoke để gọi từng bước")
+    gia_tri = dict(args)
+    for tid in BUOC:
+        vao = {{k: gia_tri[v] for k, v in WIRING.get(tid, {{}}).items() if v in gia_tri}}
+        gia_tri.update(ctx.invoke(tid, vao or gia_tri))
+    return gia_tri
+'''
+
+
+@capability("tool.compose")
+def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: TOOL-09 — CDS-12.3; TOOL-05 (hiệu ứng → lớp rủi ro); POL-17 G-TOOL.
+    tc: "Effects gồm hardware → risk R3"; lỗi E1000; undo `delete_created_files`.
+
+    **Hiệu ứng của bản ghép là HỢP của các bước.** Lấy hiệu ứng bước đầu — hay tệ hơn, để trống
+    — thì một chuỗi có bước chạm phần cứng đi qua cổng G-TOOL như một công cụ chỉ đọc tệp. Lớp
+    rủi ro suy ra từ hợp ấy, nên `read_fs + hardware` cho R3 chứ không phải R0.
+
+    **Kiểm schema lúc GHÉP, không lúc chạy.** Một chuỗi hỏng ở bước ba chỉ lộ ra sau khi bước
+    một và hai đã gây hiệu ứng — mà hiệu ứng thì không hoàn tác được bằng một thông báo lỗi.
+
+    Bản ghép thừa hưởng `acceptance` của thành phần đầu (đầu vào của chuỗi là đầu vào của nó):
+    một công cụ không có test là công cụ `tool.register` từ chối, và khi ấy cả việc ghép thành
+    vô ích.
+    """
+    ten = params["name"]
+    ds = list(params["tool_ids"] or [])
+    wiring = dict(params["wiring"] or {})
+    if len(ds) < 2:
+        raise EideError("E1000", "Ghép cần ít nhất hai công cụ", tool_ids=ds)
+
+    specs = [_doc_spec(ctx, t) for t in ds]
+    _kiem_noi_khop(specs, wiring)
+
+    hieu_ung = sorted({e for s in specs for e in s.effects})
+    ghep = ToolSpec(name=ten, purpose=f"Ghép {' → '.join(ds)}",
+                    input_schema=specs[0].input_schema,
+                    output_schema=specs[-1].output_schema,
+                    effects=hieu_ung,
+                    deps=sorted({d for s in specs for d in s.deps}),
+                    acceptance=list(specs[0].acceptance))
+
+    d = _thu_muc(ctx) / ten
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "spec.json").write_text(json_gon(ghep.as_dict()) + "\n", encoding="utf-8")
+    (d / "tool.py").write_text(MAU_GHEP.format(
+        purpose=ghep.purpose, spec=json_gon(ghep.as_dict()),
+        buoc=json_gon(ds), wiring=json_gon({t: wiring for t in ds[1:]})), encoding="utf-8")
+    (d / "test_tool.py").write_text(mau_test(ghep), encoding="utf-8")
+
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"tool:{ten}",
+                                     "kind": "delete_created_files", "deadline": ""})
+    return {"tool_id": ten}
+
+
+def _kiem_noi_khop(specs: list[ToolSpec], wiring: dict[str, Any]) -> None:
+    """`wiring` ánh xạ output→input giữa hai bước liền nhau. Kiểm cả TÊN lẫn KIỂU.
+
+    Chỉ kiểm tên thì `{"s": "y"}` nối một số vào một tham số chuỗi trót lọt, và lỗi nổ ở giữa
+    chuỗi — sau khi bước trước đã chạy.
+    """
+    for truoc, sau in zip(specs, specs[1:], strict=False):
+        ra = (truoc.output_schema.get("properties") or {})
+        vao = (sau.input_schema.get("properties") or {})
+        for khoa_vao, khoa_ra in wiring.items():
+            if khoa_ra not in ra:
+                raise EideError("E1000", f"`{truoc.name}` không có đầu ra `{khoa_ra}`",
+                                have=sorted(ra), want=khoa_ra)
+            if khoa_vao not in vao:
+                continue
+            a, b = ra[khoa_ra].get("type"), vao[khoa_vao].get("type")
+            if a and b and a != b:
+                raise EideError("E1000", f"Kiểu không khớp: {truoc.name}.{khoa_ra} là {a}, "
+                                f"{sau.name}.{khoa_vao} cần {b}", got=a, want=b)
+        thieu = [k for k in (sau.input_schema.get("required") or []) if k not in wiring]
+        if thieu:
+            raise EideError("E1000", f"`{sau.name}` cần {thieu} mà `wiring` không nối",
+                            missing=thieu)
+
+
+# ---------------------------------------------------------------- TOOL-10 deprecate
+
+
+@capability("tool.deprecate")
+def deprecate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: TOOL-10 — CDS-12.3; CXD-10 §4.2 (C0). tc: "Không còn trong caps.list mặc định";
+    undo `restore_config`.
+
+    Khai tử **không phải xóa**: mã và lịch sử ở lại. Một chuỗi cũ trong nhật ký vẫn nhắc tới
+    công cụ ấy, và người đọc nhật ký sáu tháng sau cần mở được mã để hiểu chuyện gì đã xảy ra.
+    Cái bị lấy đi chỉ là chỗ đứng trong danh sách gợi ý — tức là quyền được mô hình nhìn thấy.
+
+    `replaced_by` đi vào chính thông điệp lỗi khi ai đó gọi lại: báo "không có năng lực này" cho
+    một thứ vừa bị thay là bắt người dùng đi tìm, còn nêu tên bản thay là trả lời đúng câu họ
+    đang hỏi.
+    """
+    tool_id = params["tool_id"]
+    d = _thu_muc(ctx) / tool_id
+    if not (d / "spec.json").exists():
+        raise EideError("E2000", f"Không có công cụ `{tool_id}`", exists=[], candidates=[],
+                        missing=[tool_id])
+
+    (d / "deprecated.json").write_text(json_gon({
+        "tool_id": tool_id, "reason": params["reason"],
+        "replaced_by": params.get("replaced_by"),
+        "at": datetime.now(UTC).isoformat(), "by": ctx.actor}) + "\n", encoding="utf-8")
+
+    reg = ctx.extra.get("registry") or get_registry()
+    reg.bo_dang_ky_tam(f"user.{_doc_spec(ctx, tool_id).name}")
+
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"deprecate:{tool_id}",
+                                     "kind": "restore_config", "deadline": ""})
+    return {"ok": True}
+
+
+# ---------------------------------------------------------------- TOOL-08 promote
+
+
+LAN_DUNG_TOI_THIEU = 3      # bước 1: "uses ≥ 3 thành công"
+LAN_BENCH = 3               # "bench.run mini (acceptance × 3 lần)"
+
+
+@capability("tool.promote")
+def promote(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: TOOL-08 — CDS-12.3; BEN-21 (bench mini); PKG-22 (.hkp kind=tool). Mức **T2**, ask
+    "Luôn"; lỗi E3000; `undo: none`. tc: "Đề xuất không tự áp dụng; sau duyệt registry có năng
+    lực mới".
+
+    Năng lực này **trả về một đề xuất và không đụng gì tới registry**. Tự đổi `user.crc16`
+    thành `hkw.crc16` là để một công cụ do mô hình viết mang tên của namespace mà người dùng
+    tin — và người dùng phân biệt hai namespace ấy chính vì một bên đã qua tay người.
+
+    Ba điều kiện của bước 1 kiểm TRƯỚC khi tốn công chạy bench: `uses ≥ 3` thành công, không vi
+    phạm hiệu ứng, đã có test. Thăng cấp một công cụ mới chạy một lần là đề nghị người khác tin
+    vào thứ chính ta chưa tin.
+
+    Bench mini chạy `acceptance` **ba lần**, không một lần: một công cụ đọc trạng thái ngoài
+    (giờ, tệp tạm, bộ đếm) có thể đúng lần đầu rồi sai lần sau — và đó đúng là loại không nên
+    mang tên namespace chung.
+    """
+    tool_id, ns = params["tool_id"], params["target_ns"]
+    spec = _doc_spec(ctx, tool_id)
+    d = _thu_muc(ctx) / tool_id
+
+    kiem = (d / "last_test.json")
+    da_test = kiem.exists() and json.loads(kiem.read_text(encoding="utf-8")).get("effects_ok")
+    dung = _dem_dung(d)
+    thieu = ([] if da_test else ["chưa qua tool.test (hoặc effects_ok=false)"]) + \
+            ([] if dung >= LAN_DUNG_TOI_THIEU else [f"mới {dung}/{LAN_DUNG_TOI_THIEU} lần dùng"])
+    if thieu:
+        raise EideError("E3000", f"`{tool_id}` chưa đủ điều kiện thăng cấp: {'; '.join(thieu)}",
+                        gate="G-TOOL", uses_ok=dung, tested=bool(da_test))
+
+    bench = _bench_mini(spec, d)
+    if bench["passed"] < bench["runs"]:
+        raise EideError("E3000", f"Bench mini không ổn định: {bench['passed']}/{bench['runs']} "
+                        "lần đạt — một công cụ chạy khác nhau giữa các lần thì không mang tên "
+                        "namespace chung được", bench=bench)
+
+    dang = "hkp" if "hardware" in spec.effects or "system" in spec.effects else "pr"
+    return {"proposal": {
+        "kind": dang, "target_id": f"{ns}.{spec.name}", "from_id": f"user.{spec.name}",
+        "risk": spec.risk, "tier": spec.tier, "effects": list(spec.effects),
+        "uses_ok": dung, "bench": bench,
+        "files": [str(d / "tool.py"), str(d / "spec.json"), str(d / "test_tool.py")],
+        "review": "Pack owner duyệt (T2); sau duyệt: đổi id user.* → <ns>.*, cập nhật Danh mục "
+                  "và CDS",
+        "note": "Đề xuất KHÔNG tự áp dụng — registry chưa đổi gì (TOOL-08 tc)"}}
+
+
+def _bench_mini(spec: ToolSpec, d: Path) -> dict[str, Any]:
+    """Chạy `acceptance` ba lần trong tiến trình con, đếm số lần đạt.
+
+    Không gọi `bench.run` (BENCH-01, mốc M2 chưa hiện thực): "bench mini" của TOOL-08 là chính
+    các ca `acceptance` chạy lặp, không phải bộ benchmark theo board của BEN-21. Chờ `bench.run`
+    để làm được việc này là chờ một thứ nặng hơn hẳn thứ đang cần.
+    """
+    import subprocess
+    dat = 0
+    for _ in range(LAN_BENCH):
+        ok = True
+        for ca in (spec.acceptance or [{}]):
+            ma = ("import json, sys\n"
+                  f"sys.path.insert(0, {str(d)!r})\n"
+                  "import tool\n"
+                  f"print(json.dumps(tool.run(json.loads({json.dumps(ca.get('args') or {})!r}))))\n")
+            p = subprocess.run([sys.executable, "-c", ma], capture_output=True,  # noqa: S603
+                               text=True, timeout=60, check=False)
+            if p.returncode != 0:
+                ok = False
+                break
+            if (cho := ca.get("expect")) is not None:
+                try:
+                    ra = json.loads(p.stdout.strip().splitlines()[-1])
+                except (json.JSONDecodeError, IndexError):
+                    ok = False
+                    break
+                if any(ra.get(k) != v for k, v in cho.items()):
+                    ok = False
+                    break
+        dat += int(ok)
+    return {"runs": LAN_BENCH, "passed": dat, "cases": len(spec.acceptance or [])}
+
+
+__all__ = ["MAU_CONG_CU", "compose", "deprecate", "need", "promote", "register", "repair",
+           "run", "search", "test", "write"]
