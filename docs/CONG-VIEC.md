@@ -96,12 +96,15 @@ Nguồn truy ngược về từng `source`. Đó là bằng chứng mạnh hơn 
 
 | # | Việc |
 |---|---|
-| D1 | `pdf_errata`, `pdf_pinout` — hai loại bảng còn thiếu của datasheet |
+| ~~D1a~~ | ~~`pdf_pinout`~~ | **Xong 10/09** — 19 test, PDF thật có bảng kẻ khung. Số AF đọc từ **vị trí cột**, không gọi mô hình. Nhánh hình package → [DEV-076](DEVIATIONS.md) |
+| D1b | `pdf_errata` — loại bảng còn thiếu của datasheet |
 | D2 | `bom`, `bom_enrich`, `dt_binding` — ~~`kicad_netlist`~~ xong 08/09 |
 | D3 | `image_board`, `image_schematic`, `ocr` — đọc ảnh (cần mô hình vision) |
 
-**Mở khóa:** `extract.pdf_pinout` sinh fact `pin_function` — thiếu nó thì `board.propose_fix`
-nêu được phương án đổi chân nhưng không nêu được đổi sang chân nào.
+**Đã mở khóa:** `extract.pdf_pinout` sinh fact `pin_function`, nên `board.propose_fix` nay nêu
+được ĐỔI SANG CHÂN NÀO thay vì "chưa tra được chân thay thế", `diagram.pinmap` điền được cột
+`pin`, và `arch.map_hw` thôi phải gán ngoại vi theo tên module. `tests/test_extract_m2.py::
+test_board_tra_duoc_chan_thay_the_sau_khi_trich` giữ đường nối ấy khỏi đứt trong im lặng.
 
 ---
 

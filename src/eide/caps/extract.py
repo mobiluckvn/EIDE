@@ -1067,6 +1067,226 @@ def _fact_dien(m: dict[str, Any], goc: str, sid: str, b: dict[str, Any]) -> dict
             "method": "layout_llm", "tier": "silver", "confidence": 0.7}
 
 
+# ---------------------------------------------------------------- EXTRACT-09 pdf_pinout
+
+
+# Tên chân. Hẹp có chủ ý: bảng pinout xen lẫn hàng "Reserved", "NC", ghi chú đánh số và cả dòng
+# tổng kết. Nhận bừa thì hộ chiếu có một chân tên "Note" và `board.check_pins` đi tìm nó trên
+# board thật, rồi báo thiếu một chân chưa bao giờ tồn tại.
+RE_CHAN = re.compile(r"(P[A-Z]\d{1,2}|GPIO\d{1,2}|IO\d{1,2})", re.I)
+RE_AF = re.compile(r"AF\s*(\d{1,2})", re.I)
+RE_GOI = re.compile(r"\b(LQFP|UFQFPN|UFBGA|TFBGA|WLCSP|VFQFPN|QFN|VQFN|TSSOP|SSOP|SOIC|SOP|"
+                    r"PDIP|DIP|BGA)[\s-]?(\d{2,3})\b", re.I)
+
+COT_TEN = ("name", "pin name", "signal", "signal name", "pad name", "port", "pin/port")
+COT_SO = ("pin", "pin number", "pin no", "pin no.", "no", "no.", "number", "pin#")
+COT_KIEU = ("type", "i/o", "i/o type", "pin type", "i/o structure", "structure")
+
+# Hệ số tin cậy theo LOẠI bảng, nhân với tỉ lệ cột đọc được (cùng khuôn `_fact_tu_reg`). Bảng
+# chức năng thay thế mang ba mẩu độc lập kiểm chéo được nhau — tên chân, tên hàm, số AF từ vị
+# trí cột — nên nó đáng tin hơn hẳn một bảng chỉ liệt kê tên chân với số thứ tự.
+CONF_AF = 0.9
+CONF_CHAN = 0.75
+
+
+@capability("extract.pdf_pinout")
+def pdf_pinout(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-09 — CDS-12.2; POL-17 G-FACT; DDD-14 Fact. tc: "PB6 có I2C1_SCL AF4".
+
+    **Đường bảng làm bằng MÃ, không gọi mô hình** — đây là chỗ khác `extract.pdf_register_map`
+    một cách có chủ ý. Ở bảng thanh ghi, cột "Bits" có mười cách viết nên mô hình là đúng chỗ.
+    Ở đây số AF đến từ **vị trí cột** trong bảng "Alternate function mapping" (AF0…AF15): đọc
+    chỉ số cột là việc xác định, và chính `tc` của hợp đồng ("AF4") kiểm đúng cái đó. Hỏi mô
+    hình một thứ đếm được là mở đường cho nó đếm sai — mà một chân gán nhầm AF không hỏng lúc
+    biên dịch, nó hỏng lúc I2C im lặng trên board.
+
+    Hai loại bảng, hai bộ nhận dạng theo TIÊU ĐỀ CỘT, cùng khuôn `_diem_bang`/`COT_THANH_GHI`
+    của EXTRACT-07: (a) bảng định nghĩa chân — Pin/Name/Type; (b) bảng chức năng thay thế — hàng
+    tiêu đề có `AF0`…`AF15`. Không nhận ra tiêu đề thì **bỏ bảng**, không đoán.
+
+    Hai loại bảng nói về cùng một chân thì ra **một** fact. Hai fact cùng subject + cùng vị từ
+    với value khác nhau là một mâu thuẫn tự tạo: G-FACT-04 đưa nó vào hàng đợi hỏi người, cho
+    một câu hỏi mà không ai trả lời được vì cả hai đều đúng.
+
+    Đường "hình package (vision)" của bước 1 **chưa hiện thực** — nó cần `extract.ocr`/
+    `extract.image_*` (M2, chưa có). Không thấy bảng nào thì E2000 nói thẳng điều đó kèm
+    `candidates`, thay vì trả rỗng như thể tài liệu không có pinout. Xem DEV-076.
+    """
+    root = _root(ctx)
+    part = params["part"]
+    p = Path(params["file"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+
+    khoi = pdf_layout({"file": str(p)}, ctx)["blocks"]
+    chan: dict[str, dict[str, Any]] = {}
+    n_bang = 0
+    for b in khoi:
+        if b.get("type") != "table":
+            continue
+        n_bang += 1
+        noi = b.get("content") or []
+        if not noi or not isinstance(noi[0], list):
+            continue
+        if (caf := _cot_af(noi[0])):
+            _doc_bang_af(noi, caf, b, chan)
+        elif (cc := _cot_chan(noi[0])):
+            _doc_bang_chan(noi, cc, b, chan)
+
+    if not chan:
+        raise EideError(
+            "E2000",
+            f"Không thấy bảng pinout hay bảng chức năng thay thế nào trong {p.name} "
+            f"({n_bang} bảng đã xét). Pinout ở dạng HÌNH gói chip cần đường vision, hiện chưa "
+            "có hiện thực (DEV-076)",
+            exists=[], missing=["bảng pinout"],
+            candidates=["extract.ocr", "extract.image_board"], n_tables=n_bang)
+
+    sid = _bao_dam_source(root, p, "pdf", "silver")
+    iri_goc = part if part.startswith("chip:") else f"chip:{part}"
+    facts = [_fact_chan(iri_goc, ten, d, sid) for ten, d in sorted(chan.items())]
+    if (pk := _fact_goi(khoi, iri_goc, sid)):
+        facts.append(pk)
+
+    from eide.caps.passport import import_
+    kq = import_({"batch": {"facts": facts, "passport_id": f"{part}@1.0.0", "kind": "chip",
+                            "reason": f"extract.pdf_pinout {p.name}",
+                            "header": {"name": part, "source": p.name}},
+                  "actor": ctx.actor}, ctx)
+    return {"batch_id": kq["batch_id"]}
+
+
+def _cot_af(hang0: list[Any]) -> dict[int, int]:
+    """`{chỉ_số_cột: số_AF}` từ hàng tiêu đề. Cần ≥ 2 cột AF: một ô lẻ ghi "AF" ở đâu đó trong
+    một bảng khác không làm nên một bảng chức năng thay thế."""
+    ra = {i: int(m.group(1)) for i, o in enumerate(hang0)
+          if (m := RE_AF.fullmatch(str(o or "").strip()))}
+    return ra if len(ra) >= 2 else {}
+
+
+def _cot_chan(hang0: list[Any]) -> dict[str, int]:
+    """`{"ten": i, "kieu": j}` từ hàng tiêu đề. Không có cột TÊN thì không nhận bảng: số thứ tự
+    chân mà không có tên chân thì chẳng năng lực nào hạ nguồn tra được gì."""
+    o = [str(x or "").strip().lower() for x in hang0]
+    ra: dict[str, int] = {}
+    for i, t in enumerate(o):
+        if "ten" not in ra and t in COT_TEN:
+            ra["ten"] = i
+        elif "kieu" not in ra and (t in COT_KIEU or t.startswith("i/o")):
+            ra["kieu"] = i
+        elif "so" not in ra and t in COT_SO:
+            ra["so"] = i
+    return ra if "ten" in ra else {}
+
+
+def _ham(o: Any) -> list[str]:
+    """Một ô AF thật có thể chứa hai hàm ngăn bằng `/` hay `,`, và ô trống hay được in là `-`.
+
+    Chú thích dạng `(1)` bị cắt TRƯỚC khi lọc ký tự, không sau: lọc trước thì `TIM4_CH1(1)`
+    thành `TIM4_CH11` — một tên hàm không tồn tại, trông vẫn hợp lệ.
+    """
+    t = re.sub(r"\(\d+\)", "", str(o or ""))
+    ra = []
+    for phan in re.split(r"[/,]", t):
+        ten = re.sub(r"[^A-Za-z0-9_]+", "", phan.strip())
+        if ten and ten not in ra:
+            ra.append(ten)
+    return ra
+
+
+def _hang_af(hang: list[Any], cot_af: dict[int, int]) -> dict[str, int]:
+    """`{tên_hàm: số_AF}` cho một hàng — số lấy từ CHỈ SỐ CỘT, không từ tên."""
+    ra: dict[str, int] = {}
+    for i, so in sorted(cot_af.items()):
+        for f in _ham(hang[i] if i < len(hang) else ""):
+            ra.setdefault(f, so)
+    return ra
+
+
+def _ten_chan(o: Any) -> str | None:
+    m = RE_CHAN.fullmatch(str(o or "").strip())
+    return m.group(1).upper() if m else None
+
+
+def _gom(chan: dict[str, dict[str, Any]], ten: str, b: dict[str, Any], conf: float) -> dict[str, Any]:
+    """Một chân = một mục, dù nó xuất hiện trong mấy bảng.
+
+    `locator` theo nguồn có confidence CAO NHẤT chứ không theo bảng gặp trước: người mở fact ra
+    kiểm muốn tới thẳng bảng chứa số AF, không tới bảng chỉ ghi tên chân với số thứ tự.
+    """
+    d = chan.setdefault(ten, {"pin": ten, "functions": [], "af": {}, "confidence": 0.0,
+                              "locator": None})
+    if conf > d["confidence"]:
+        d["confidence"] = conf
+        d["locator"] = {"page": b.get("page"), "bbox": b.get("bbox")}
+    return d
+
+
+def _diem_cot(hang0: list[Any], nhan: int) -> float:
+    return min(1.0, nhan / max(1, len(hang0)))
+
+
+def _doc_bang_af(noi: list[list[Any]], cot_af: dict[int, int], b: dict[str, Any],
+                 chan: dict[str, dict[str, Any]]) -> None:
+    d_bang = _diem_cot(noi[0], len(cot_af) + 1)
+    for hang in noi[1:]:
+        if not isinstance(hang, list) or not (ten := _ten_chan(hang[0] if hang else "")):
+            continue
+        af = _hang_af(hang, cot_af)
+        if not af:
+            continue
+        d = _gom(chan, ten, b, round(CONF_AF * d_bang, 3))
+        for f, so in af.items():
+            d["af"].setdefault(f, so)
+        d["functions"] = [f for f, _ in sorted(d["af"].items(), key=lambda kv: (kv[1], kv[0]))]
+
+
+def _doc_bang_chan(noi: list[list[Any]], cot: dict[str, int], b: dict[str, Any],
+                   chan: dict[str, dict[str, Any]]) -> None:
+    d_bang = _diem_cot(noi[0], len(cot))
+    for hang in noi[1:]:
+        if not isinstance(hang, list) or cot["ten"] >= len(hang):
+            continue
+        if not (ten := _ten_chan(hang[cot["ten"]])):
+            continue
+        d = _gom(chan, ten, b, round(CONF_CHAN * d_bang, 3))
+        i = cot.get("kieu")
+        if i is not None and i < len(hang) and (kieu := str(hang[i] or "").strip()):
+            d.setdefault("type", kieu)
+
+
+def _fact_chan(goc: str, ten: str, d: dict[str, Any], sid: str) -> dict[str, Any]:
+    gt = {"pin": ten, "functions": d["functions"], "af": d["af"]}
+    if d.get("type"):
+        gt["type"] = d["type"]
+    return {"subject": f"{goc}/pin:{ten}", "predicate": "pin_function", "value": gt,
+            "source_id": sid, "locator": d["locator"], "method": "parser", "tier": "silver",
+            "confidence": d["confidence"]}
+
+
+def _fact_goi(khoi: list[dict[str, Any]], goc: str, sid: str) -> dict[str, Any] | None:
+    """Fact `package` khi tài liệu nói ĐÚNG MỘT tên vỏ.
+
+    Nhiều tên vỏ khác nhau trong cùng một PDF là chuyện thường (datasheet họ chip phục vụ cả
+    LQFP48 lẫn UFQFPN48), và `part` không cho biết bản nào đang cầm. Chọn bừa một cái là quyết
+    hộ người dùng chân nào TỒN TẠI trên con chip của họ — nên khi mơ hồ thì không sinh fact.
+    """
+    thay: dict[str, dict[str, Any]] = {}
+    for b in khoi:
+        if b.get("type") not in ("text", "heading"):
+            continue
+        for m in RE_GOI.finditer(str(b.get("content") or "")):
+            ten = (m.group(1) + m.group(2)).upper()
+            thay.setdefault(ten, {"page": b.get("page"), "bbox": b.get("bbox")})
+    if len(thay) != 1:
+        return None
+    ten, loc = next(iter(thay.items()))
+    return {"subject": goc, "predicate": "package",
+            "value": {"name": ten, "pins": int(re.sub(r"\D", "", ten))},
+            "source_id": sid, "locator": loc, "method": "parser", "tier": "silver",
+            "confidence": CONF_CHAN}
+
+
 # ---------------------------------------------------------------- EXTRACT-19 office
 
 

@@ -22,6 +22,7 @@ from eide_core import store
 from eide_core.ledger import Ledger
 from eide_core.policy import PolicyGate
 from eide_core.router import Context, Router
+from pdf_gia_lap import pdf_tho, pdf_toi_thieu
 
 pdfplumber = pytest.importorskip("pdfplumber", reason="extract.pdf_* cần pdfplumber")
 
@@ -46,47 +47,9 @@ def _gia_lap(monkeypatch, data):
 
 
 # ---------------------------------------------------------------- dựng PDF thật
-
-
-def pdf_toi_thieu(p: Path, dong: list[tuple[float, float, str, float]]) -> Path:
-    """Viết một PDF hợp lệ tối thiểu. `dong` = [(x, y, chữ, cỡ)].
-
-    Tự viết thay vì thêm reportlab: cần đúng một trang có chữ ở toạ độ biết trước, và một thư
-    viện sinh PDF là một phụ thuộc nữa cho một việc 30 dòng làm được. Toạ độ PDF gốc ở góc dưới
-    trái, nên y lớn là ở trên.
-    """
-    lenh = []
-    for x, y, chu, co in dong:
-        an = chu.replace("\\", r"\\").replace("(", r"\(").replace(")", r"\)")
-        lenh.append(f"BT /F1 {co} Tf {x} {y} Td ({an}) Tj ET")
-    return _pdf_tho(p, "\n".join(lenh).encode("latin-1"))
-
-
-def _pdf_tho(p: Path, noi: bytes) -> Path:
-    """Bọc một luồng nội dung PDF thành tệp hợp lệ. Tách khỏi `pdf_toi_thieu` để phần vẽ đường
-    kẻ (toán tử `m`/`l`/`S`) dùng lại được — bảng có khung là dạng phổ biến nhất trong datasheet
-    hãng, nên nó phải kiểm được."""
-    obj = [
-        b"<< /Type /Catalog /Pages 2 0 R >>",
-        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
-        b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
-        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-        b"<< /Length " + str(len(noi)).encode() + b" >>\nstream\n" + noi + b"\nendstream",
-    ]
-    ra = bytearray(b"%PDF-1.4\n")
-    vi = []
-    for i, o in enumerate(obj, 1):
-        vi.append(len(ra))
-        ra += f"{i} 0 obj\n".encode() + o + b"\nendobj\n"
-    xref = len(ra)
-    ra += f"xref\n0 {len(obj) + 1}\n0000000000 65535 f \n".encode()
-    for v in vi:
-        ra += f"{v:010d} 00000 n \n".encode()
-    ra += (f"trailer\n<< /Size {len(obj) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n"
-           .encode())
-    p.write_bytes(bytes(ra))
-    return p
+#
+# `pdf_toi_thieu`/`pdf_tho` nay nằm ở `tests/pdf_gia_lap.py` — `test_extract_m2.py` cần đúng
+# chúng, và hai bản chép tay của một bộ dựng PDF là hai bản sẽ lệch.
 
 
 @pytest.fixture
@@ -150,7 +113,7 @@ def pdf_co_ke(p: Path) -> Path:
             an = o.replace("(", r"\(").replace(")", r"\)")
             lenh.append(f"BT /F1 9 Tf {cot[j] + 3} {hang_y[i] + 2} Td ({an}) Tj ET")
     lenh.append("BT /F1 16 Tf 72 740 Td (8.4 I2C register map) Tj ET")
-    return _pdf_tho(p, "\n".join(lenh).encode("latin-1"))
+    return pdf_tho(p, "\n".join(lenh).encode("latin-1"))
 
 
 def test_bang_co_ke_nhan_dang_la_table_co_bbox(du_an, tmp_path):
