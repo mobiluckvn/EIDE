@@ -12,7 +12,7 @@ from typing import Any
 
 import yaml
 
-from eide_core import store, whitelist
+from eide_core import git, store, whitelist
 from eide_core.errors import EideError
 from eide_core.memory import SessionMemory
 from eide_core.paths import project_dir_default, spec_dir, user_config
@@ -468,10 +468,14 @@ def list_projects(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         a = yaml.safe_load((e / "autonomy.yaml").read_text(encoding="utf-8")) if (e / "autonomy.yaml").exists() else {}
         f = json.loads((e / "FEATURES.json").read_text(encoding="utf-8")) if (e / "FEATURES.json").exists() else {"features": []}
         feats = f.get("features", [])
+        # `archived` là cờ mà tc của PROJECT-05 đòi ("project.list gắn cờ archived"). Nó đọc từ
+        # `constraints.yaml` chứ không từ sự tồn tại của tệp zip: một dự án có thể được đóng gói
+        # nhiều lần, và gói cũ nằm lại trong `archive/` không nói gì về trạng thái hiện tại.
         out.append({"id": p.name, "path": str(p), "created": (c.get("project") or {}).get("created"),
                     "last_open": datetime.fromtimestamp(e.stat().st_mtime, UTC).isoformat(),
                     "board": (c.get("target") or {}).get("board"), "passing": sum(1 for x in feats if x.get("status") == "passing"),
-                    "total": len(feats), "autonomy": a.get("autonomy")})
+                    "total": len(feats), "autonomy": a.get("autonomy"),
+                    "archived": bool((c.get("project") or {}).get("archived"))})
     out.sort(key=lambda x: x["last_open"], reverse=True)
     return {"projects": out}
 
@@ -570,3 +574,254 @@ def _ghim(root: Path, ten: str, ban: str | None, kind: str = "chip") -> tuple[st
             khop = [r for r in rows if ban and r.endswith("@" + ban)] or rows
             return khop[-1], True          # bản mới nhất theo thứ tự id
     return f"{ten}@{ban}" if ban else f"{ten}@?", False
+
+
+# ---------------------------------------------------------------- PROJECT-04 clone
+
+
+# `keep` của hợp đồng: bốn nhóm, mặc định chỉ tri thức.
+NHOM_GIU = ("knowledge", "code", "docs", "features")
+# Bảng tri thức đi theo bản sao. `fact` có khoá ngoại tới `source`, và một fact không có nguồn
+# là một fact không kiểm được — nên `source` đi cùng dù hợp đồng chỉ nêu "fact, passport".
+BANG_TRI_THUC = ("source", "fact", "passport", "passport_fact")
+# Thư mục không bao giờ đóng gói: dựng lại được từ store, và là phần lớn nhất.
+KHONG_DONG_GOI = ("index", "cache")
+
+
+@capability("project.clone")
+def clone(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-04 — CDS-12.3; DDD-14; API-15 §7. tc: "Bản sao có cùng số fact, ledger
+    rỗng"; lỗi E2001, E2000; undo `delete_created_files`.
+
+    Phần dễ sai nhất không phải chép cái gì, mà **không chép cái gì**: ledger, session, index,
+    `decision_log`, `run`. Cách viết tự nhiên nhất — chép cả thư mục `.eide/` — làm đúng điều
+    ngược lại. Một bản sao mang theo `decision_log` của bản gốc khiến `policy.learn_thresholds`
+    học từ những quyết định chưa từng xảy ra trong dự án này, và mỗi dòng ấy trỏ về `run_id`
+    không tồn tại ở đây.
+
+    Nên store mới được **dựng lại từ migration** rồi chép sang đúng bốn bảng tri thức, chứ không
+    sao chép tệp `store.sqlite`. Chép tệp thì mọi bảng đi theo, kể cả bảng thêm vào sau này mà
+    không ai nhớ phải loại trừ.
+
+    `keep` mặc định `["knowledge"]`: mã và tài liệu không đi theo trừ khi nêu. Sao chép cả mã
+    theo mặc định thì "clone để thử một hướng khác" biến thành "nhân đôi một dự án đang dở".
+    """
+    src = Path(params["src"]).expanduser()
+    if not (src / EIDE_DIR).is_dir():
+        raise EideError("E2000", f"Không có dự án ở {src}", exists=[], candidates=[],
+                        missing=[str(src)])
+    giu = set(params.get("keep") or ["knowledge"])
+    workspace = src.parent
+    ten = slugify(params["new_name"])
+    dich = workspace / ten
+    if (dich / EIDE_DIR).is_dir() or dich.exists():
+        raise EideError("E2001", f"Dự án '{ten}' đã tồn tại", options=["reuse", "clone", "new"],
+                        path=str(dich))
+
+    goc_cfg = yaml.safe_load((src / EIDE_DIR / "constraints.yaml").read_text(encoding="utf-8")) or {}
+    tao = create({"text": f"bản sao của {src.name}", "name": params["new_name"],
+                  "dir": str(workspace)}, ctx)
+    eide = dich / EIDE_DIR
+
+    # constraints: giữ `target` (chip/board đã ghim là tri thức của dự án), thay phần định danh
+    cfg = dict(goc_cfg)
+    cfg["project"] = {**(goc_cfg.get("project") or {}), "id": ten, "name": params["new_name"],
+                      "created": datetime.now(UTC).isoformat(), "cloned_from": src.name}
+    (eide / "constraints.yaml").write_text(
+        yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+    n_fact = 0
+    if "knowledge" in giu:
+        n_fact = _chep_tri_thuc(src, dich, ctx)
+    if "features" in giu and (f := src / EIDE_DIR / "FEATURES.json").exists():
+        (eide / "FEATURES.json").write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
+    if "code" in giu:
+        _chep_ma(src, dich)
+    if "docs" in giu:
+        for d in ("docs", "diagrams"):
+            _chep_cay(src / EIDE_DIR / d, eide / d)
+
+    if (led := ctx.extra.get("ledger")) is not None:
+        # Không có kiểu sự kiện nào cho việc này trong 25 kiểu của API-15 §7 — xem DEV-081.
+        led.append("report", {"kind": "project.clone", "src": str(src), "dst": str(dich),
+                              "keep": sorted(giu), "n_facts": n_fact})
+        led.append("undo.register", {"undo_ref": f"clone:{ten}",
+                                     "kind": "delete_created_files", "deadline": ""})
+    return {"project_id": tao["project_id"], "path": str(dich)}
+
+
+def _chep_tri_thuc(src: Path, dich: Path, ctx: Context) -> int:
+    """Store mới dựng từ migration, rồi chép sang đúng bốn bảng tri thức."""
+    cu, moi = store.store_path(src), store.store_path(dich)
+    if not cu.exists():
+        return 0
+    store.migrate(moi, ledger=ctx.extra.get("ledger"))
+    n = 0
+    with store.open_store(moi) as c:
+        c.execute("ATTACH DATABASE ? AS goc", (str(cu),))
+        for bang in BANG_TRI_THUC:
+            cot = [r[1] for r in c.execute(f"PRAGMA table_info({bang})").fetchall()]  # noqa: S608
+            if not cot:
+                continue
+            ds = ", ".join(cot)
+            c.execute(f"INSERT INTO {bang} ({ds}) SELECT {ds} FROM goc.{bang}")  # noqa: S608
+        n = c.execute("SELECT COUNT(*) FROM fact").fetchone()[0]
+        c.commit()
+        c.execute("DETACH DATABASE goc")
+    store.write_seal(moi, ctx.extra.get("ledger"))
+    return n
+
+
+def _chep_ma(src: Path, dich: Path) -> None:
+    """Mọi thứ ngoài `.eide/` và `.git/`. Bản sao là một dự án MỚI: mang theo lịch sử git của
+    bản gốc thì hai dự án có chung commit và `code.revert` ở bên này quay lui cả bên kia."""
+    for p in src.iterdir():
+        if p.name in (EIDE_DIR, ".git"):
+            continue
+        _chep_cay(p, dich / p.name) if p.is_dir() else _chep_tep(p, dich / p.name)
+
+
+def _chep_cay(src: Path, dich: Path) -> None:
+    if not src.is_dir():
+        return
+    for p in src.rglob("*"):
+        if p.is_file():
+            _chep_tep(p, dich / p.relative_to(src))
+
+
+def _chep_tep(src: Path, dich: Path) -> None:
+    dich.parent.mkdir(parents=True, exist_ok=True)
+    dich.write_bytes(src.read_bytes())
+
+
+# ---------------------------------------------------------------- PROJECT-05 archive
+
+
+@capability("project.archive")
+def archive(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-05 — CDS-12.3. tc: "Zip mở lại được; project.list gắn cờ archived"; lỗi
+    E2000; undo `restore_config`; ask "Xóa thật sự (R4)".
+
+    `ask_when` nói rõ việc XÓA là hành động khác, ở lớp rủi ro khác — nên đóng gói **không đụng
+    gì tới bản gốc**. Nó chỉ tạo một tệp zip và bật một cờ.
+
+    `index/` và `cache/` không vào gói: chúng dựng lại được từ store và là phần lớn nhất — một
+    kho lưu trữ 800 MB vì mang theo cache là một kho không ai lưu.
+    """
+    root = Path(params["project"]).expanduser()
+    if not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", f"Không có dự án ở {root}", exists=[], candidates=[],
+                        missing=[str(root)])
+
+    import zipfile
+    thu_muc = root.parent / "archive"
+    thu_muc.mkdir(parents=True, exist_ok=True)
+    dich = thu_muc / f"{root.name}-{datetime.now(UTC).date().isoformat()}.zip"
+    with zipfile.ZipFile(dich, "w", zipfile.ZIP_DEFLATED) as z:
+        for p in sorted(root.rglob("*")):
+            if not p.is_file():
+                continue
+            rel = p.relative_to(root)
+            if rel.parts[0] == ".git" or (rel.parts[:1] == (EIDE_DIR,)
+                                          and len(rel.parts) > 1 and rel.parts[1] in KHONG_DONG_GOI):
+                continue
+            z.write(p, str(rel))
+
+    cfg_p = root / EIDE_DIR / "constraints.yaml"
+    cfg = yaml.safe_load(cfg_p.read_text(encoding="utf-8")) if cfg_p.exists() else {}
+    cfg.setdefault("project", {})["archived"] = datetime.now(UTC).isoformat()
+    cfg_p.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("report", {"kind": "project.archive", "project": str(root),
+                              "archived_path": str(dich)})
+        led.append("undo.register", {"undo_ref": f"archive:{root.name}",
+                                     "kind": "restore_config", "deadline": ""})
+    return {"archived_path": str(dich)}
+
+
+# ---------------------------------------------------------------- PROJECT-07 rollback
+
+
+@capability("project.rollback")
+def rollback(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-07 — CDS-12.3; CON-28 §4 (tag `known-good/<date>`); API-15 §3 E7001.
+    tc: "Sau sửa hỏng → rollback → build đạt"; undo `restore_config`.
+
+    Không nêu `tag` thì lấy **known-good gần nhất** — đó là mặc định trong `input_schema`, và nó
+    là lý do năng lực này dùng được trong lúc hoảng. Kho chưa có known-good nào thì nói thẳng
+    (E2000) chứ không quay về commit đầu tiên: "trạng thái tốt gần nhất" mà chưa ai từng đánh
+    dấu là tốt thì không tồn tại.
+
+    Working tree bẩn → **E7001 trước khi đụng gì**. Quay lui khi còn thay đổi chưa commit là
+    cách nhanh nhất để mất chúng, mà người gọi rollback đang hoảng chứ không đang cẩn thận.
+
+    `FEATURES.json` khôi phục từ chính tag ấy: để lại bản `passing` của lần hỏng thì bảng tiến
+    độ nói dự án đang chạy tốt trong khi mã vừa bị quay lui — và đó là bảng người ta nhìn để
+    quyết định làm gì tiếp.
+
+    "Build kiểm" của bước 1 chạy khi có toolchain; thiếu nó thì `state["build"]` ghi rõ là đã bỏ
+    qua chứ không im lặng — một rollback báo thành công mà chưa dựng lần nào là một lời hứa suông.
+    """
+    root = _root(ctx)
+    if not git.la_kho(root):
+        raise EideError("E2000", f"{root.name} không phải kho git — không có gì để quay lui",
+                        exists=[], candidates=[], missing=["git repo"])
+    if git.co_thay_doi(root):
+        raise EideError("E7001", "Working tree còn thay đổi chưa commit: quay lui bây giờ sẽ mất "
+                        "chúng. Commit hoặc `git stash` trước", root=str(root))
+
+    tag = params.get("tag") or _known_good_gan_nhat(root)
+    if not tag:
+        raise EideError("E2000", "Chưa có tag `known-good/*` nào trong kho — chưa lần merge nào "
+                        "đánh dấu một trạng thái tốt", exists=[], candidates=["code.merge"],
+                        missing=["known-good tag"])
+    if git.chay(root, "rev-parse", "--verify", "--quiet", tag, kiem=False).returncode != 0:
+        raise EideError("E2000", f"Không có tag `{tag}`", missing=[tag], candidates=[],
+                        exists=_cac_tag(root))
+
+    git.chay(root, "checkout", "-B", "auto/rollback", tag)
+    commit = git.chay(root, "rev-parse", "HEAD").stdout.strip()
+
+    # `FEATURES.json` về theo cả cây — `checkout -B <tag>` đã làm việc đó, một lệnh `checkout
+    # <tag> -- FEATURES.json` sau đó không thêm gì. Nhưng nó chỉ về NẾU git theo dõi tệp ấy, và
+    # `.eide/.gitignore` mặc định chỉ loại `store/ session/ index/`. Ai đó thêm cả `.eide/` vào
+    # `.gitignore` là đủ để bảng tiến độ của lần hỏng nằm lại sau khi mã đã quay lui — im lặng.
+    # Nên trạng thái nói rõ, thay vì hứa một điều không xảy ra.
+    theo_doi = git.chay(root, "ls-files", "--error-unmatch", f"{EIDE_DIR}/FEATURES.json",
+                        kiem=False).returncode == 0
+    f = root / EIDE_DIR / "FEATURES.json"
+    feats = (json.loads(f.read_text(encoding="utf-8")).get("features") or []) if f.exists() else []
+    state = {"commit": commit, "tag": tag, "features": len(feats),
+             "features_restored": theo_doi, "build": _thu_dung(ctx)}
+
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("report", {"kind": "project.rollback", "tag": tag, "commit": commit})
+        led.append("undo.register", {"undo_ref": f"rollback:{commit[:12]}",
+                                     "kind": "restore_config", "deadline": ""})
+    return {"state": state}
+
+
+def _cac_tag(root: Path) -> list[str]:
+    r = git.chay(root, "tag", "--list", "known-good/*", kiem=False)
+    return [x for x in r.stdout.split() if x]
+
+
+def _known_good_gan_nhat(root: Path) -> str | None:
+    """Sắp theo thời điểm TẠO tag, không theo tên: `known-good/2026-09-10.2` và
+    `known-good/2026-09-10` sắp theo chuỗi cho ra thứ tự sai ngay khi một ngày merge hai lần."""
+    r = git.chay(root, "tag", "--list", "known-good/*", "--sort=-creatordate", kiem=False)
+    ds = [x for x in r.stdout.splitlines() if x.strip()]
+    return ds[0].strip() if ds else None
+
+
+def _thu_dung(ctx: Context) -> str:
+    """Dựng thử sau khi quay lui. Thiếu toolchain không phải lỗi của rollback — nói rõ và đi tiếp."""
+    from eide.caps.code import build as code_build
+    try:
+        kq = code_build({}, ctx)
+    except EideError as e:
+        return f"bỏ qua ({e.code})"
+    except Exception as e:                                  # noqa: BLE001
+        return f"bỏ qua ({type(e).__name__})"
+    return "ok" if kq.get("ok") else "lỗi"

@@ -125,11 +125,16 @@ board có ý nghĩa. Nó cũng là cách kiểm `code.*` mà không cần board.
 
 ---
 
-## G. Còn lại — 20 năng lực (rải rác) · **ứng viên tiếp theo**
+## G. Còn lại — **17 năng lực** (rải rác) · ĐANG LÀM
 
-`view.*` 4 (M2) · `tool.*` 3 · `project.*` 3 · `registry.*` 4 (M4) · `report.*` 3 ·
-`memory.*` 2 · `passport.diff/upgrade` 2 · `kg.evidence` · `env.install_pack` ·
-`search.docs_mcp`/`reference_projects`/`registry`.
+| # | Nhóm | Trạng thái |
+|---|---|---|
+| ~~G1~~ | ~~`project.clone`, `project.archive`, `project.rollback`~~ | **Xong 10/09** — 19 test. Bản sao KHÔNG mang theo ledger/decision_log/run; rollback chặn working tree bẩn trước khi đụng git. Kiểu sự kiện ledger còn thiếu → [DEV-081](DEVIATIONS.md) |
+| G2 | `view.*` 4 (M2) | `coverage_map`, `impact_map`, `rag_compare`, `timeline` |
+| G3 | `tool.*` 3 | `compose`, `deprecate`, `promote` |
+| G4 | `memory.*` 2 · `passport.diff/upgrade` 2 | |
+| G5 | lẻ | `kg.evidence` · `env.install_pack` · `report.explain` · `search.docs_mcp` |
+| G6 | `registry.*` 4 (M4) · `search.registry`/`reference_projects` (M4) | để sau — mốc M4 |
 
 Sau khi khối D đóng phần không cần thị giác, đây là **nhóm không bị chặn bởi gì cả**: không cần
 board, không cần trình mô phỏng, không cần khoá mô hình mới. Nó cũng là đường nâng M2 nhanh
