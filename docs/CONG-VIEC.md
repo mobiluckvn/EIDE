@@ -92,14 +92,15 @@ Nguồn truy ngược về từng `source`. Đó là bằng chứng mạnh hơn 
 
 ---
 
-## D. `extract.*` còn lại — 10 ở M2 (+1 ở M5: `image_scope`)
+## D. `extract.*` còn lại — **8 ở M2** (+1 ở M5: `image_scope`) · ĐANG LÀM
 
-| # | Việc |
-|---|---|
+| # | Việc | Ghi chú |
+|---|---|---|
 | ~~D1a~~ | ~~`pdf_pinout`~~ | **Xong 10/09** — 19 test, PDF thật có bảng kẻ khung. Số AF đọc từ **vị trí cột**, không gọi mô hình. Nhánh hình package → [DEV-076](DEVIATIONS.md) |
-| D1b | `pdf_errata` — loại bảng còn thiếu của datasheet |
-| D2 | `bom`, `bom_enrich`, `dt_binding` — ~~`kicad_netlist`~~ xong 08/09 |
-| D3 | `image_board`, `image_schematic`, `ocr` — đọc ảnh (cần mô hình vision) |
+| ~~D1b~~ | ~~`pdf_errata`~~ | **Xong 10/09** — 21 test. Lớp phủ K2′ (`layer = "B"`), rev từ vị trí cột `Rev A`/`Rev Z`; cạnh CONFLICTS_WITH → [DEV-077](DEVIATIONS.md) chờ anh chọn hướng |
+| D2 | `bom`, `bom_enrich`, `dt_binding` | ~~`kicad_netlist`~~ xong 08/09 |
+| D3 | `image_board`, `image_schematic`, `ocr` | đọc ảnh (cần mô hình vision). Mở khoá nốt nhánh hình của `pdf_pinout` — [DEV-076](DEVIATIONS.md) |
+| D4 | `pdf_formula`, `readme_goal` | hai cái lẻ còn lại của nhóm |
 
 **Đã mở khóa:** `extract.pdf_pinout` sinh fact `pin_function`, nên `board.propose_fix` nay nêu
 được ĐỔI SANG CHÂN NÀO thay vì "chưa tra được chân thay thế", `diagram.pinmap` điền được cột

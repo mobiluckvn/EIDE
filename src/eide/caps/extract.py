@@ -1287,6 +1287,211 @@ def _fact_goi(khoi: list[dict[str, Any]], goc: str, sid: str) -> dict[str, Any] 
             "confidence": CONF_CHAN}
 
 
+# ---------------------------------------------------------------- EXTRACT-10 pdf_errata
+
+
+RE_REV = re.compile(r"rev\.?\s*([A-Za-z0-9]+)$|^revision\s+([A-Za-z0-9]+)$", re.I)
+COT_TIEU_DE_ERRATA = ("errata title", "title", "description", "summary", "errata", "limitation",
+                      "designation", "subject")
+COT_MUC = ("section", "id", "no", "no.", "num", "number", "ref", "reference")
+# Ô "không áp dụng" trong bảng tóm tắt errata. `-` nghĩa là bản silicon ấy đã sửa lỗi này; tính
+# nó vào là dán nhãn lỗi cho một con chip không có lỗi ấy.
+O_KHONG = ("", "-", "–", "—", "n/a", "na", "no", "fixed", "not applicable", "none")
+CONF_ERRATA = 0.8
+
+
+@capability("extract.pdf_errata")
+def pdf_errata(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-10 — CDS-12.2; KAD-07 §5.1 K2′ và §5.2 R1; POL-17 G-FACT; DDD-14 Fact.
+    tc: "Errata I2C → fact có rev". Mức T2, ask "Luôn".
+
+    Errata là **lớp phủ K2′** của KAD-07: nó không sửa lõi K2 mà nằm cạnh, ở lớp lưu trữ L-B
+    (`fact.layer = "B"`), và mang theo ĐIỀU KIỆN áp dụng. Quy tắc R1 nói thẳng: fact vàng của
+    hãng không bao giờ bị ghi đè bởi tầng thấp hơn — lõi giữ nguyên để tái lập. Nên năng lực này
+    chỉ THÊM fact, không đụng gì tới fact SVD đã có.
+
+    Một errata không có `rev` là một errata không dùng được: người đọc không biết con chip trên
+    bàn mình có dính hay không. Vì thế rev đọc từ **vị trí cột** của bảng tóm tắt ("Rev A",
+    "Rev Z"), bằng mã — cùng lý do với số AF ở EXTRACT-09. Mô hình chỉ được hỏi phần văn xuôi:
+    mô tả và cách vòng tránh. Mô hình im lặng thì mục errata vẫn vào store với tiêu đề và rev
+    (`method: parser`); thiếu workaround là thiếu tiện lợi, thiếu rev là fact vô dụng.
+
+    Mỗi mục errata một `subject` riêng (`…/errata:<mục>`): `passport._gop_mot` gộp theo
+    (subject, predicate), nên dồn mọi mục vào một subject sẽ biến mục thứ hai thành `conflict` —
+    một xung đột tự tạo, và G-FACT sẽ hỏi người "hai errata này cái nào đúng?" khi cả hai đều
+    đúng. Ngoại vi trong `subject` lấy từ chính store chứ không đoán từ tiêu đề: đoán thì một
+    dòng "Note on ADC and DMA" sinh ra hai ngoại vi, một trong hai có thể không có trên chip này.
+
+    Cạnh `CONFLICTS_WITH` mà bước 1 nêu **chưa nối được** — xem DEV-077.
+    """
+    root = _root(ctx)
+    part = params["part"]
+    p = Path(params["file"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+
+    khoi = pdf_layout({"file": str(p)}, ctx)["blocks"]
+    muc: list[dict[str, Any]] = []
+    n_bang = 0
+    for b in khoi:
+        if b.get("type") != "table":
+            continue
+        n_bang += 1
+        noi = b.get("content") or []
+        if noi and isinstance(noi[0], list) and (c := _cot_errata(noi[0])):
+            muc += _doc_bang_errata(noi, c, b)
+
+    if not muc:
+        raise EideError(
+            "E2000",
+            f"Không thấy bảng tóm tắt errata nào trong {p.name} ({n_bang} bảng đã xét). "
+            "Bảng tóm tắt là nơi DUY NHẤT nói mục errata áp dụng cho bản silicon nào",
+            exists=[], missing=["bảng tóm tắt errata"], candidates=["extract.pdf_layout"],
+            n_tables=n_bang)
+
+    _van_xuoi_errata(khoi, muc, ctx)
+    sid = _bao_dam_source(root, p, "pdf", "silver")
+    iri_goc = part if part.startswith("chip:") else f"chip:{part}"
+    pe = _ngoai_vi_da_biet(root, iri_goc)
+    facts = [_fact_errata(m, iri_goc, pe, sid) for m in muc]
+
+    from eide.caps.passport import import_
+    kq = import_({"batch": {"facts": facts, "passport_id": f"{part}@1.0.0", "kind": "chip",
+                            "reason": f"extract.pdf_errata {p.name}",
+                            "header": {"name": part, "source": p.name}},
+                  "actor": ctx.actor}, ctx)
+    return {"batch_id": kq["batch_id"]}
+
+
+def _cot_errata(hang0: list[Any]) -> dict[str, Any]:
+    """`{"tieu_de": i, "muc": j, "rev": {cột: "A"}}`. Không có cột rev thì không phải bảng tóm
+    tắt errata — bỏ, không đoán."""
+    o = [str(x or "").strip().lower() for x in hang0]
+    rev = {i: (m.group(1) or m.group(2)).upper() for i, t in enumerate(o)
+           if (m := RE_REV.search(t))}
+    if not rev:
+        return {}
+    ra: dict[str, Any] = {"rev": rev}
+    for i, t in enumerate(o):
+        if i in rev:
+            continue
+        if "tieu_de" not in ra and t in COT_TIEU_DE_ERRATA:
+            ra["tieu_de"] = i
+        elif "muc" not in ra and t in COT_MUC:
+            ra["muc"] = i
+    return ra if "tieu_de" in ra else {}
+
+
+def _co_danh_dau(o: Any) -> bool:
+    """Bốn cách viết "có" (A, X, x, yes) và năm cách viết "không" — đều gặp trong errata sheet
+    thật. Mặc định của ô không nhận ra là CÓ đánh dấu: bỏ sót một errata nguy hiểm hơn là thừa
+    một cảnh báo, và người duyệt ở G-FACT còn nhìn thấy nó."""
+    return str(o or "").strip().lower() not in O_KHONG
+
+
+def _doc_bang_errata(noi: list[list[Any]], cot: dict[str, Any],
+                     b: dict[str, Any]) -> list[dict[str, Any]]:
+    d_bang = min(1.0, (len(cot["rev"]) + len(cot) - 1) / max(1, len(noi[0])))
+    ra = []
+    for hang in noi[1:]:
+        if not isinstance(hang, list) or cot["tieu_de"] >= len(hang):
+            continue
+        tieu_de = str(hang[cot["tieu_de"]] or "").strip()
+        if not tieu_de:
+            continue
+        rev = [r for i, r in sorted(cot["rev"].items())
+               if i < len(hang) and _co_danh_dau(hang[i])]
+        i = cot.get("muc")
+        ra.append({"title": tieu_de,
+                   "section": str(hang[i] or "").strip() if i is not None and i < len(hang) else "",
+                   "rev": rev, "locator": {"page": b.get("page"), "bbox": b.get("bbox")},
+                   "confidence": round(CONF_ERRATA * d_bang, 3), "method": "parser"})
+    return ra
+
+
+_SCHEMA_ERRATA = {
+    "type": "object", "required": ["items"],
+    "properties": {"items": {"type": "array", "items": {
+        "type": "object", "required": ["title"],
+        "properties": {"title": {"type": "string"}, "description": {"type": "string"},
+                       "workaround": {"type": "string"}, "silicon": {"type": "string"}}}}},
+}
+
+
+def _van_xuoi_errata(khoi: list[dict[str, Any]], muc: list[dict[str, Any]], ctx: Context) -> None:
+    """Mô tả và cách vòng tránh nằm ở văn xuôi — đúng chỗ của mô hình. Ghép theo TIÊU ĐỀ.
+
+    Mô hình không trả gì (hoặc chưa cấu hình) thì các mục vẫn giữ nguyên tiêu đề và rev đọc từ
+    bảng: điều kiện áp dụng là phần không được mất, còn workaround thiếu thì người vẫn tra được
+    trong PDF gốc nhờ `locator`.
+    """
+    van = "\n".join(str(b.get("content") or "") for b in khoi
+                    if b.get("type") in ("text", "heading"))
+    if not van.strip():
+        return
+    try:
+        resp = _gateway(ctx).run(
+            "librarian",
+            "Rút từng mục errata từ văn bản sau: tiêu đề nguyên văn, mô tả ngắn, cách vòng "
+            "tránh (workaround), phiên bản silicon nếu có nêu. KHÔNG suy đoán phiên bản: nếu "
+            "văn bản không nói thì bỏ trống.\n" + van[:12_000],
+            _SCHEMA_ERRATA)
+    except EideError:
+        return
+    for it in (resp.data.get("items") or []):
+        for m in muc:
+            if _cung_tieu_de(m["title"], it.get("title") or ""):
+                for k in ("description", "workaround", "silicon"):
+                    if it.get(k):
+                        m[k] = it[k]
+                        m["method"] = "layout_llm"
+                break
+
+
+def _chuan(s: str) -> list[str]:
+    return [t for t in re.split(r"[^a-z0-9]+", str(s).lower()) if t]
+
+
+def _cung_tieu_de(a: str, b: str) -> bool:
+    """Mô hình hay rút gọn tiêu đề ("I2C analog filter may provide wrong value" → "I2C analog
+    filter"). So theo TỪ chứ không so chuỗi: chuỗi khác nhau một dấu phẩy là hai mục khác nhau,
+    và khi ấy mọi workaround đều rơi mất trong im lặng."""
+    x, y = set(_chuan(a)), set(_chuan(b))
+    if not x or not y:
+        return False
+    return len(x & y) / len(x | y) >= 0.6 or x <= y or y <= x
+
+
+def _ngoai_vi_da_biet(root: Path, goc: str) -> list[str]:
+    """Tên ngoại vi mà store ĐÃ có fact — nguồn duy nhất để nối errata vào đúng nút đồ thị."""
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT DISTINCT subject FROM fact WHERE subject LIKE ?",
+                         (f"{goc}/periph:%",)).fetchall()
+    ra = {str(s).split("/periph:", 1)[1].split("/")[0] for (s,) in rows}
+    return sorted(ra, key=len, reverse=True)
+
+
+def _fact_errata(m: dict[str, Any], goc: str, pe: list[str], sid: str) -> dict[str, Any]:
+    tu = set(_chuan(m["title"]))
+    duoi = next((x for x in pe if x.lower() in tu), None)
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "-", m.get("section") or m["title"])[:60].strip("-")
+    subject = f"{goc}/periph:{duoi}/errata:{slug}" if duoi else f"{goc}/errata:{slug}"
+
+    dk: dict[str, Any] = {"rev": m["rev"]}
+    if m.get("silicon"):
+        dk["silicon"] = m["silicon"]
+    gt = {"kind": "errata", "title": m["title"], "conditions": dk}
+    for k in ("section", "description", "workaround"):
+        if m.get(k):
+            gt[k] = m[k]
+    return {"subject": subject, "predicate": "other", "value": gt, "source_id": sid,
+            "locator": m["locator"], "method": m["method"], "tier": "silver",
+            "confidence": m["confidence"], "layer": "B"}
+
+
 # ---------------------------------------------------------------- EXTRACT-19 office
 
 

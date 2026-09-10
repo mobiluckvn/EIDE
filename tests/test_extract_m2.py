@@ -1,11 +1,13 @@
 """Nhóm extract.* mốc M2 — CDS-12.2; KAD-07 §3; DDD-14 §2 Fact.
 
-EXTRACT-09 `extract.pdf_pinout`. tc nguyên văn: **"PB6 có I2C1_SCL AF4"**.
+EXTRACT-09 `extract.pdf_pinout` (tc: **"PB6 có I2C1_SCL AF4"**) và EXTRACT-10
+`extract.pdf_errata` (tc: **"Errata I2C → fact có rev"**).
 
-Bảng "Alternate function mapping" trong datasheet thật là một lưới: số AF đến từ **vị trí cột**,
-không từ tên hàm. Nên phần đọc bảng ở đây làm bằng MÃ chứ không gọi mô hình — khác
-`extract.pdf_register_map`, nơi cột "Bits" có mười cách viết nên mô hình là đúng chỗ. Hỏi mô
-hình một thứ đếm được là mở đường cho nó đếm sai, và chính tc của hợp đồng ("AF4") kiểm cái đó.
+Cả hai đọc một LƯỚI: số AF đến từ vị trí cột `AF0…AF15`, rev bị ảnh hưởng đến từ vị trí cột
+`Rev A`/`Rev Z`. Nên phần ấy làm bằng MÃ chứ không gọi mô hình — khác `extract.pdf_register_map`,
+nơi cột "Bits" có mười cách viết nên mô hình là đúng chỗ. Hỏi mô hình một thứ đếm được là mở
+đường cho nó đếm sai, và chính `tc` của hai hợp đồng ("AF4", "có rev") kiểm đúng cái đó. Văn
+xuôi thì ngược lại: cách vòng tránh của một mục errata do mô hình đọc.
 
 PDF trong test là PDF THẬT (`tests/pdf_gia_lap.py`), có đường kẻ khung.
 """
@@ -310,3 +312,230 @@ def test_khong_ghi_de_hop_dong_input_schema(du_an, monkeypatch, pdf_af):
     with pytest.raises(EideError) as e:
         r.invoke("extract.pdf_pinout", {"file": pdf_af, "part": PART, "blocks": []}, ctx)
     assert e.value.code == "E1000"
+
+
+# ================================================================ EXTRACT-10 pdf_errata
+#
+# tc: "Errata I2C → fact có rev". Errata là lớp phủ **K2′** của KAD-07 §5.1: nó KHÔNG ghi đè
+# fact lõi (quy tắc R1 — "lõi giữ nguyên để tái lập"), nó nằm cạnh, ở lớp lưu trữ L-B, và mang
+# theo ĐIỀU KIỆN áp dụng. Một errata không có rev là một errata không dùng được: người đọc không
+# biết con chip trên bàn mình có dính hay không.
+
+BANG_ERRATA = [["Section", "Errata title", "Rev A", "Rev Z"],
+               ["2.4.1", "I2C analog filter may provide wrong value", "A", "A"],
+               ["2.5.2", "SPI CRC error in slave mode", "A", "-"]]
+
+
+def _gia_lap_mo_hinh(monkeypatch, data):
+    class _R:
+        def __init__(self, d): self.data = d
+
+    class _G:
+        def run(self, *a, **k): return _R(data)
+    import eide.caps.extract as m
+    monkeypatch.setattr(m, "_gateway", lambda ctx: _G())
+
+
+MO_HINH_HAI_MUC = {"items": [
+    {"title": "I2C analog filter may provide wrong value",
+     "description": "Bộ lọc tương tự có thể cho giá trị sai khi SCL bị kéo xuống",
+     "workaround": "Tắt bộ lọc tương tự, dùng bộ lọc số"},
+    {"title": "SPI CRC error in slave mode", "workaround": "Không dùng CRC phần cứng ở chế độ tớ"},
+]}
+
+
+def _fact_vang_I2C1(ctx, root):
+    """Một fact vàng như `extract.svd` sinh ra — nền để kiểm hai điều: errata nối vào ĐÚNG nút
+    ngoại vi, và lõi K2 không bị lớp phủ ghi đè (KAD-07 R1)."""
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id, uri, sha256, kind, tier)"
+                  " VALUES ('src_svd','stm32f411.svd','h_svd','svd','gold')")
+        c.commit()
+    from eide.caps.passport import import_
+    import_({"batch": {"facts": [{"subject": f"chip:{PART}/periph:I2C1",
+                                  "predicate": "base_address", "value": 1073765376,
+                                  "source_id": "src_svd", "method": "parser", "tier": "gold",
+                                  "confidence": 1.0}],
+                       "passport_id": f"{PART}@1.0.0", "kind": "chip",
+                       "header": {"name": PART}}, "actor": "test"}, ctx)
+
+
+def _chay_errata(r, ctx, file, part=PART):
+    """EXTRACT-10 là **T2** và `ask_when` = "Luôn" ⇒ Router XẾP HÀNG CHỜ, không chạy ngay.
+
+    Đó là hợp đồng chứ không phải trở ngại của test, và nó đúng: một mục errata gán nhầm rev
+    thay đổi cách người ta chọn con chip cho cả lô sản xuất. Duyệt rồi mới có fact — cùng khuôn
+    `extract.pdf_electrical` ở `test_extract_m1.py`.
+    """
+    run = r.invoke("extract.pdf_errata", {"file": file, "part": part}, ctx)
+    assert run.status == "pending", "EXTRACT-10 là T2, phải hỏi người mọi lần"
+    return r.quyet_dinh(run.run_id, "approve", ctx_goi_y=ctx)
+
+
+def test_errata_I2C_ra_fact_co_rev(du_an, monkeypatch, tmp_path):
+    """tc EXTRACT-10 nguyên văn: "Errata I2C → fact có rev"."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    out = _chay_errata(r, ctx, p).result
+    assert out["batch_id"]
+
+    f = _facts(root, "other")
+    i2c = [v for k, v in f.items() if "I2C" in v["value"]["title"]]
+    assert len(i2c) == 1
+    assert i2c[0]["value"]["conditions"]["rev"] == ["A", "Z"]
+
+
+def test_rev_lay_tu_o_danh_dau_khong_phai_moi_cot_deu_tinh(du_an, monkeypatch, tmp_path):
+    """"-" ở cột Rev Z nghĩa là bản Z đã sửa. Tính cả nó vào là dán nhãn lỗi cho một con chip
+    không có lỗi ấy — và người ta sẽ đi tìm cách vòng tránh cho một thứ không tồn tại."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    spi = [v for v in _facts(root, "other").values() if "SPI" in v["value"]["title"]]
+    assert spi[0]["value"]["conditions"]["rev"] == ["A"]
+
+
+def test_rev_khong_hoi_mo_hinh(du_an, monkeypatch, tmp_path):
+    """Mô hình trả rev bịa cũng không lọt: rev đến từ VỊ TRÍ CỘT trong bảng tóm tắt, cùng lý do
+    với số AF ở EXTRACT-09."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, {"items": [
+        {"title": "I2C analog filter may provide wrong value", "rev": ["Y"],
+         "conditions": {"rev": ["Y"]}, "workaround": "x"}]})
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    i2c = [v for v in _facts(root, "other").values() if "I2C" in v["value"]["title"]]
+    assert i2c[0]["value"]["conditions"]["rev"] == ["A", "Z"]
+
+
+def test_fact_errata_nam_o_lop_phu_B(du_an, monkeypatch, tmp_path):
+    """KAD-07 §5.1: K2′ là **lớp phủ**, lưu ở L-B — `fact.layer = "B"`, không phải "C" mặc định.
+
+    Đây không phải chi tiết hình thức: quy tắc R1 nói lõi K2 (SVD của hãng) **không bao giờ bị
+    ghi đè** bởi tầng thấp hơn, và cái phân biệt "lớp phủ" với "fact dự án" chính là cột này.
+    """
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    with store.open_store(store.store_path(root)) as c:
+        lop = {x[0] for x in c.execute("SELECT DISTINCT layer FROM fact WHERE predicate='other'")}
+    assert lop == {"B"}
+
+
+def test_moi_muc_errata_mot_subject_rieng(du_an, monkeypatch, tmp_path):
+    """Hai mục errata của cùng một chip phải có subject KHÁC nhau.
+
+    `passport._gop_mot` gộp theo (subject, predicate): dồn mọi mục vào một subject thì mục thứ
+    hai vào store với `status = conflict` — một xung đột tự tạo, và G-FACT sẽ hỏi người một câu
+    hỏi vô nghĩa ("hai errata này cái nào đúng?") trong khi cả hai đều đúng.
+    """
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    f = _facts(root, "other")
+    assert len(f) == 2
+    assert all(v["status"] != "conflict" for v in f.values())
+
+
+def test_subject_nam_duoi_ngoai_vi_khi_store_da_biet_no(du_an, monkeypatch, tmp_path):
+    """Nối errata vào ĐÚNG nút ngoại vi khi store đã có nó — nhờ vậy `kg.neighborhood` hỏi
+    "biết gì về I2C1" là thấy cả errata.
+
+    Ngoại vi lấy từ chính store chứ không đoán bằng biểu thức chính quy trên tiêu đề: đoán thì
+    một dòng "Note on ADC and DMA" sinh ra hai ngoại vi, một trong hai có thể không tồn tại trên
+    con chip này.
+    """
+    r, ctx, root = du_an
+    _fact_vang_I2C1(ctx, root)
+
+    _gia_lap_mo_hinh(monkeypatch, {"items": [{"title": "I2C1 analog filter may provide wrong value",
+                                              "workaround": "tắt bộ lọc"}]})
+    bang = [["Section", "Errata title", "Rev A"],
+            ["2.4.1", "I2C1 analog filter may provide wrong value", "A"]]
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", bang, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    assert any(k.startswith(f"chip:{PART}/periph:I2C1/errata:") for k in _facts(root, "other"))
+
+
+def test_khong_ghi_de_fact_loi_cua_hang(du_an, monkeypatch, tmp_path):
+    """KAD-07 §5.2 R1: "Fact tầng vàng của hãng (K1, K2) **không bao giờ bị ghi đè**". Sau khi
+    nạp errata, fact vàng của SVD phải còn nguyên và vẫn hiện hành."""
+    r, ctx, root = du_an
+    _fact_vang_I2C1(ctx, root)
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+
+    g = _facts(root, "base_address")
+    assert g[f"chip:{PART}/periph:I2C1"]["tier"] == "gold"
+    assert g[f"chip:{PART}/periph:I2C1"]["value"] == 1073765376
+
+
+def test_workaround_tu_mo_hinh_ghep_theo_tieu_de(du_an, monkeypatch, tmp_path):
+    """Bảng tóm tắt cho điều kiện áp dụng; cách vòng tránh nằm ở VĂN XUÔI, nơi mô hình là đúng
+    chỗ — đúng ranh giới đã dùng ở `pdf_register_map`."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    i2c = [v for v in _facts(root, "other").values() if "I2C" in v["value"]["title"]]
+    assert "bộ lọc số" in i2c[0]["value"]["workaround"]
+
+
+def test_mo_hinh_khong_tra_gi_van_con_fact_co_rev(du_an, monkeypatch, tmp_path):
+    """Điều kiện áp dụng là phần KHÔNG được mất. Mô hình im lặng (hoặc chưa cấu hình) thì mục
+    errata vẫn vào store với tiêu đề và rev — thiếu workaround là thiếu tiện lợi, thiếu rev là
+    fact vô dụng."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, {"items": []})
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    f = _facts(root, "other")
+    assert len(f) == 2
+    assert all(v["value"]["conditions"]["rev"] for v in f.values())
+    assert all(v["method"] == "parser" for v in f.values())
+
+
+def test_bang_khong_phai_errata_thi_bo_qua(du_an, monkeypatch, tmp_path):
+    """Không có cột rev thì không phải bảng tóm tắt errata — bỏ, không đoán."""
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_toi_thieu(tmp_path / "k.pdf", [(72, 700, "x", 10.0)]))
+    _bo_qua_bo_cuc(monkeypatch, [_khoi([["Section", "Errata title"],
+                                        ["2.4.1", "I2C analog filter"]])])
+    run = _chay_errata(r, ctx, p)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+
+
+def test_khong_co_bang_errata_bao_E2000(du_an, monkeypatch, tmp_path):
+    r, ctx, _ = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_toi_thieu(tmp_path / "m.pdf", [(72, 700, "khong co bang", 10.0)]))
+    _bo_qua_bo_cuc(monkeypatch, [])
+    run = _chay_errata(r, ctx, p)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+
+
+def test_trich_errata_hai_lan_khong_nhan_doi(du_an, monkeypatch, tmp_path):
+    """`undo: supersede_facts` — bản sau thay bản trước. Errata sheet lên rev mới là chuyện
+    thường xuyên hơn cả datasheet."""
+    r, ctx, root = du_an
+    _gia_lap_mo_hinh(monkeypatch, MO_HINH_HAI_MUC)
+    p = str(pdf_bang_ke(tmp_path / "er.pdf", BANG_ERRATA, tieu_de="Device limitations"))
+    _chay_errata(r, ctx, p)
+    _chay_errata(r, ctx, p)
+    assert len(_facts(root, "other")) == 2
+
+
+@pytest.mark.parametrize(("o", "ap_dung"), [
+    ("A", True), ("X", True), ("x", True), ("yes", True),
+    ("-", False), ("", False), ("n/a", False), ("fixed", False), ("no", False),
+])
+def test_o_nao_nghia_la_ap_dung(o, ap_dung):
+    """Bốn cách viết "có" và năm cách viết "không" — đều gặp trong errata sheet thật."""
+    from eide.caps.extract import _co_danh_dau
+    assert _co_danh_dau(o) is ap_dung
