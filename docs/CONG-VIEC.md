@@ -125,7 +125,7 @@ board có ý nghĩa. Nó cũng là cách kiểm `code.*` mà không cần board.
 
 ---
 
-## G. Còn lại — **6 năng lực** (rải rác) · ĐANG LÀM
+## ~~G. Rải rác~~ — **XONG phần M2** (còn 6 mục M4: `registry.*` 4 · `search.registry`/`reference_projects`)
 
 | # | Nhóm | Trạng thái |
 |---|---|---|
@@ -133,7 +133,7 @@ board có ý nghĩa. Nó cũng là cách kiểm `code.*` mà không cần board.
 | ~~G2~~ | ~~`view.*` 4 (M2)~~ | **Xong 10/09** — 15 test. `view.*` đóng **13/13**. `impact_map` gọi `kg.impact`/`req.change_impact` chứ không tính lại; `rag_compare` bỏ nhóm nguồn im lặng khỏi bảng; `timeline` gom bốn nguồn |
 | ~~G3~~ | ~~`tool.*` 3~~ | **Xong 10/09** — 16 test. `tool.*` đóng **10/10**. `compose` hợp hiệu ứng (hardware → R3) và gọi `ctx.invoke`, không nhúng mã; `promote` chỉ ĐỀ XUẤT — `docs/spec/` không đổi một byte; `deprecate` giữ mã, chỉ lấy đi chỗ trong danh sách gợi ý |
 | ~~G4~~ | ~~`memory.*` 2 · `passport.diff/upgrade` 2~~ | **Xong 10/09** — 16 test. `error_ledger` khép vòng *lỗi → negative_prompt → C1 lần sau*; `forget` không chạm M4; `diff` so theo (subject, predicate) chứ không theo fact id; `upgrade` hạ feature dùng fact đổi xuống `failing` |
-| G5 | lẻ | `kg.evidence` · `env.install_pack` · `report.explain` · `search.docs_mcp` |
+| ~~G5~~ | ~~lẻ~~ | **Xong 10/09** — 17 test. `kg.evidence` bỏ id treo; `report.explain` ép trích dẫn có mặt và cắt 150 từ; `env.install_pack` kiểm chữ ký, ISA mới vào bằng GÓI không sửa core; `search.docs_mcp` 5 đoạn, E8002 khi sensitive + query chứa nội dung dự án |
 | G6 | `registry.*` 4 (M4) · `search.registry`/`reference_projects` (M4) | để sau — mốc M4 |
 
 Sau khi khối D đóng phần không cần thị giác, đây là **nhóm không bị chặn bởi gì cả**: không cần

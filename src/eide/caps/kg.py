@@ -352,3 +352,59 @@ def request(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if (led := ctx.extra.get("ledger")) is not None:
         led.append("acq.state", {"acq_id": rid, "from": None, "to": "REQUESTED", "by": "agent"})
     return {"request_id": rid}
+
+
+# ---------------------------------------------------------------- KG-09 evidence
+
+
+@capability("kg.evidence")
+def evidence(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: KG-09 — CDS-12.2; KAD-07 §6.3 (cạnh EVIDENCED_BY); DDD-14 §2 Feature/ToolReport/
+    Measurement. R0, `errors: []`, `undo: none`. tc: "Feature passing có ≥ 1 evidence".
+
+    Trả lời đúng một câu: *sao biết điều này là đúng*. Với một feature, bằng chứng là
+    ToolReport/Measurement mà nó trích dẫn; với một fact, bằng chứng là NGUỒN của nó — và đó là
+    toàn bộ cơ sở để tin một con số phần cứng.
+
+    **Id trỏ vào hư không thì bỏ**, không trả ra: `feature.evidence` là JSON tự do nên một id
+    sai vẫn ghi được vào đó. Một dòng bằng chứng không mở được là thứ khiến người ta thôi tin cả
+    bảng — tệ hơn hẳn một bảng ngắn hơn.
+
+    Chưa có bằng chứng không phải lỗi (`errors: []`): đó là trạng thái bình thường của một
+    feature đang `failing`, và ném ở đây thì màn hình tiến độ không mở được.
+    """
+    ma = params["id"]
+    db = _store(ctx)
+    ra: list[dict[str, Any]] = []
+    with store.open_store(db) as c:
+        if ma.startswith("f_"):
+            row = c.execute("SELECT source_id, tier, method, locator FROM fact WHERE id=?",
+                            (ma,)).fetchone()
+            if row and (src := c.execute(
+                    "SELECT id, uri, kind, tier FROM source WHERE id=?", (row[0],)).fetchone()):
+                ra.append({"kind": "source", "id": src[0],
+                           "detail": {"uri": src[1], "source_kind": src[2], "tier": src[3],
+                                      "method": row[2], "locator": row[3]}})
+            return {"evidence": ra}
+
+        f = c.execute("SELECT evidence FROM feature WHERE id=?", (ma,)).fetchone()
+        if not f:
+            return {"evidence": ra}
+        for e in dothi._json_list(f[0]):
+            ra += _mot_bang_chung(c, e)
+    return {"evidence": ra}
+
+
+def _mot_bang_chung(c: Any, eid: str) -> list[dict[str, Any]]:
+    if (r := c.execute("SELECT id, tool, passed, log_ref, at FROM tool_report WHERE id=?",
+                       (eid,)).fetchone()):
+        return [{"kind": "tool_report", "id": r[0],
+                 "detail": {"tool": r[1], "passed": bool(r[2]), "log_ref": r[3], "at": r[4]}}]
+    if (r := c.execute("SELECT id, kind, target, value, unit, at FROM measurement WHERE id=?",
+                       (eid,)).fetchone()):
+        return [{"kind": "measurement", "id": r[0],
+                 "detail": {"measure_kind": r[1], "target": r[2], "value": r[3], "unit": r[4],
+                            "at": r[5]}}]
+    if (r := c.execute("SELECT id, kind, badges FROM passport WHERE id=?", (eid,)).fetchone()):
+        return [{"kind": "badge", "id": r[0], "detail": {"passport_kind": r[1], "badges": r[2]}}]
+    return []

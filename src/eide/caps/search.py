@@ -757,3 +757,150 @@ def _la_trang_hang(dom: str) -> bool:
             if dom == d or dom.endswith("." + d):
                 return True
     return False
+
+
+# ---------------------------------------------------------------- SEARCH-03 docs_mcp
+
+
+TRAN_DOAN = 5           # bước 1: "giới hạn 5 đoạn"
+HANG_CO_DOCS_MCP = ("espressif", "nordic")
+
+
+@capability("search.docs_mcp")
+def docs_mcp(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: SEARCH-03 — CDS-12.2; KAD-07 §5.3 E9 (Docs MCP của hãng); SEC-25 §3 (dự án nhạy
+    cảm); API-15 §MCP. R0, `undo: none`; lỗi E4004, E8002. tc: TC-19.
+
+    **Năm đoạn, không hơn.** Ngữ cảnh là tài nguyên có hạn (CXD-10 §3): mười đoạn tài liệu hãng
+    đẩy chính fact của dự án ra khỏi ngân sách, và fact của dự án mới là thứ không thay được.
+
+    **E8002 khi dự án nhạy cảm VÀ truy vấn chứa nội dung dự án** — hai vế, không phải một. Chặn
+    mọi truy vấn của một dự án nhạy cảm là tắt hẳn năng lực, mà hỏi "esp_timer dùng thế nào"
+    thì không rò rỉ gì. Cái phải chặn là gửi tên module nội bộ, tên dự án, tên feature ra ngoài.
+
+    Mỗi đoạn lưu thành `Source` kind `docs_mcp`, tầng **bạc** (KAD-07 §5.3 E9): tài liệu hãng
+    qua MCP là nguồn tốt nhưng không phải tệp máy đọc được đã ký, nên nó không tự duyệt ở G-FACT.
+    Không có `source` thì fact rút từ đoạn ấy sau này chẳng trỏ về đâu được.
+    """
+    q = params["query"]
+    vendor = params.get("vendor")
+    root = _root(ctx)
+    _kiem_nhay_cam(root, q)
+
+    client = _docs_mcp_client(ctx, vendor)
+    if client is None:
+        raise EideError("E4004", "Chưa cấu hình docs MCP server nào — thêm `docs_mcp` vào "
+                        "`models.yaml` (hoặc `.eide/models.yaml`) với lệnh khởi động server của "
+                        f"hãng ({', '.join(HANG_CO_DOCS_MCP)})",
+                        candidates=["search.vendor", "search.web"], vendor=vendor)
+    try:
+        doan = client.tim(q, vendor)[:TRAN_DOAN]
+    except EideError:
+        raise
+    except Exception as e:                                        # noqa: BLE001
+        raise EideError("E4004", f"Docs MCP không trả lời: {e}", vendor=vendor) from e
+
+    ra = []
+    for d in doan:
+        sid = _ghi_source_mcp(root, d, vendor, ctx)
+        ra.append({"text": str(d.get("text") or "")[:4000], "url": d.get("url"),
+                   "date": d.get("date"), "sdk_version": d.get("sdk_version"),
+                   "source_id": sid})
+    return {"snippets": ra}
+
+
+def _kiem_nhay_cam(root: Path, q: str) -> None:
+    """SEC-25 §3: dự án `sensitive` không được gửi nội dung của chính nó ra ngoài."""
+    import yaml as _yaml
+    p = root / ".eide" / "constraints.yaml"
+    if not p.is_file():
+        return
+    cfg = _yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    if not cfg.get("sensitive"):
+        return
+    du_an = (cfg.get("project") or {})
+    tu_rieng = {str(du_an.get("name") or ""), str(du_an.get("id") or "")}
+    tu_rieng |= {str(x) for x in (cfg.get("modules") or [])}
+    ql = q.lower()
+    lo = sorted({t for t in tu_rieng if t and len(t) > 3 and t.lower() in ql})
+    if lo:
+        raise EideError("E8002", "Dự án đánh dấu nhạy cảm và truy vấn chứa nội dung của nó "
+                        f"({', '.join(lo)}) — hỏi bằng thuật ngữ chung của hãng, đừng gửi tên "
+                        "nội bộ ra ngoài", leaked=lo)
+
+
+def _docs_mcp_client(ctx: Context, vendor: str | None) -> Any:
+    """Client MCP tới docs server của hãng, dựng từ cấu hình.
+
+    Trả `None` khi chưa cấu hình — bên gọi biến nó thành E4004 kèm cách cấu hình. Đọc cấu hình
+    chứ không viết cứng địa chỉ: hãng đổi endpoint là chuyện của họ, và sửa YAML rẻ hơn sửa mã.
+    """
+    import yaml as _yaml
+    cfg: dict[str, Any] = {}
+    for p in (Path(ctx.project_dir or ".") / ".eide" / "models.yaml", spec_dir() / "models.yaml"):
+        if p.is_file():
+            cfg = _yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+            if cfg.get("docs_mcp"):
+                break
+    khai = (cfg.get("docs_mcp") or {}).get(vendor or "", None)
+    if not khai:
+        return None
+    return _McpStdio(khai, ledger=ctx.extra.get("ledger"))
+
+
+class _McpStdio:
+    """MCP client tối thiểu qua stdio: `initialize` → `tools/call`.
+
+    Đủ cho SEARCH-03 và không hơn — một client MCP đầy đủ là việc của một thư viện, còn ở đây
+    ta chỉ cần gọi đúng một tool tìm kiếm và đọc kết quả.
+    """
+
+    def __init__(self, khai: dict[str, Any], ledger: Any = None) -> None:
+        self.cmd = list(khai.get("command") or [])
+        self.tool = khai.get("tool") or "search"
+        self.ledger = ledger
+
+    def tim(self, query: str, vendor: str | None) -> list[dict[str, Any]]:
+        import subprocess
+        if not self.cmd:
+            raise EideError("E4004", "Cấu hình `docs_mcp` thiếu `command`")
+        goi = [
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+             "params": {"protocolVersion": "2024-11-05", "capabilities": {},
+                        "clientInfo": {"name": "eide", "version": "1"}}},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+             "params": {"name": self.tool, "arguments": {"query": query}}},
+        ]
+        p = subprocess.run(self.cmd, input="\n".join(json.dumps(x) for x in goi) + "\n",  # noqa: S603
+                           capture_output=True, text=True, timeout=60, check=False)
+        if p.returncode != 0:
+            raise EideError("E4004", f"docs MCP thoát mã {p.returncode}: {p.stderr[:300]}")
+        for dong in reversed(p.stdout.splitlines()):
+            try:
+                d = json.loads(dong)
+            except json.JSONDecodeError:
+                continue
+            if d.get("id") == 2:
+                noi = (d.get("result") or {}).get("content") or []
+                return [x for x in noi if isinstance(x, dict)]
+        raise EideError("E4004", "docs MCP không trả kết quả cho `tools/call`")
+
+
+def _ghi_source_mcp(root: Path, d: dict[str, Any], vendor: str | None, ctx: Context) -> str:
+    import hashlib
+    noi = str(d.get("text") or "")
+    h = hashlib.sha256(noi.encode("utf-8")).hexdigest()
+    sid = "src_" + h[:16]
+    db = store.store_path(root)
+    with store.open_store(db) as c:
+        if c.execute("SELECT 1 FROM source WHERE id=?", (sid,)).fetchone():
+            return sid
+        c.execute("INSERT INTO source (id, uri, sha256, kind, tier, domain, fetched_at, meta)"
+                  " VALUES (?,?,?,?,?,?,?,?)",
+                  (sid, d.get("url") or f"mcp://{vendor}/{h[:8]}", h, "docs_mcp", "silver",
+                   vendor, datetime.now(UTC).isoformat(),
+                   json.dumps({"date": d.get("date"), "sdk_version": d.get("sdk_version")},
+                              ensure_ascii=False)))
+        c.commit()
+    store.write_seal(db, ctx.extra.get("ledger"))
+    return sid

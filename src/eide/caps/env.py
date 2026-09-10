@@ -1,6 +1,7 @@
 """Namespace env.* — CDS-12.3; TGT-19 (manifest ISA, toolchain); PLATFORM.md."""
 from __future__ import annotations
 
+import json
 import platform
 import re
 import sys
@@ -345,3 +346,84 @@ def _huong_dan_tu_manifest(ten: str, os_key: str, ten_os: str) -> dict[str, Any]
                           "Cài xong thì chạy `env.check` rồi `env.lock` để ghim phiên bản."],
                 "links": []}
     return None
+
+
+# ---------------------------------------------------------------- ENV-06 install_pack
+
+
+TEP_MANIFEST = "manifest.json"
+TEP_CHU_KY = "manifest.sig"
+
+
+def _kho_pack() -> Path:
+    """Kho gói cục bộ (`~/.eide/packs`). Hàm riêng để test thay được — và để đường dẫn ấy chỉ
+    nằm ở MỘT chỗ."""
+    from eide_core.paths import user_config
+    return user_config() / "packs"
+
+
+@capability("env.install_pack")
+def install_pack(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: ENV-06 — CDS-12.3; PKG-22 (manifest, chữ ký); TGT-19 (ISA profile). Lỗi E4004;
+    undo `delete_created_files`. tc: "TC-48 thêm ISA không sửa core".
+
+    `tc` là một bài kiểm về **kiến trúc**, không về một lệnh cài: một ISA mới phải vào được hệ
+    thống bằng cách thả gói vào thư mục pack, không bằng cách sửa một bảng trong `src/`. Nếu
+    phải sửa mã thì mọi ISA cộng đồng đều phải chờ một bản phát hành của EIDE — và cả ý tưởng
+    "pack" mất nghĩa.
+
+    **Kiểm chữ ký trước khi chép.** Một gói ISA quyết định lệnh dựng và cách nạp chip; chạy một
+    gói đã bị sửa là để người khác chọn tham số cho `target.flash`. Chữ ký ở đây là băm nội dung
+    các tệp trong manifest — đủ để bắt sửa đổi, và PKG-22 sẽ thay bằng chữ ký khoá công khai khi
+    registry có thật.
+
+    `registry.pull` là mốc M4 nên chưa tải được gói từ xa: gói phải đã nằm trong kho cục bộ.
+    Không có thì E4004 nói thẳng kèm năng lực cần chạy, chứ không im lặng trả rỗng như thể đã
+    cài xong.
+    """
+    from eide.caps.project import EIDE_DIR, _root
+    isa = params["isa"]
+    nguon = _kho_pack() / isa
+    if not (nguon / TEP_MANIFEST).is_file():
+        raise EideError("E4004", f"Chưa có gói ISA `{isa}` trong kho cục bộ ({_kho_pack()}). "
+                        "Tải về trước rồi cài", candidates=["registry.pull", "registry.search"],
+                        exists=[p.name for p in _kho_pack().glob("*")] if _kho_pack().is_dir() else [],
+                        missing=[isa])
+
+    man = json.loads((nguon / TEP_MANIFEST).read_text(encoding="utf-8"))
+    _kiem_chu_ky(nguon, man, isa)
+
+    root = _root(ctx)
+    dich = root / EIDE_DIR / "packs" / isa
+    dich.mkdir(parents=True, exist_ok=True)
+    da_cai = []
+    for ten in [TEP_MANIFEST, *man.get("files", [])]:
+        src = nguon / ten
+        if not src.is_file():
+            raise EideError("E4004", f"Gói `{isa}` khai `{ten}` nhưng tệp không có",
+                            missing=[ten], candidates=["registry.pull"], exists=[])
+        (dich / ten).parent.mkdir(parents=True, exist_ok=True)
+        (dich / ten).write_bytes(src.read_bytes())
+        da_cai.append(str(dich / ten))
+
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"pack:{isa}",
+                                     "kind": "delete_created_files", "deadline": ""})
+    return {"installed": da_cai}
+
+
+def _kiem_chu_ky(nguon: Path, man: dict[str, Any], isa: str) -> None:
+    import hashlib
+    sig = nguon / TEP_CHU_KY
+    if not sig.is_file():
+        raise EideError("E4004", f"Gói `{isa}` không có `{TEP_CHU_KY}` — không kiểm được toàn "
+                        "vẹn, và một gói ISA quyết định lệnh dựng lẫn cách nạp chip",
+                        missing=[TEP_CHU_KY], candidates=["registry.pull"], exists=[])
+    h = hashlib.sha256()
+    for ten in sorted(man.get("files") or []):
+        p = nguon / ten
+        if p.is_file():
+            h.update(p.read_bytes())
+    if h.hexdigest() != sig.read_text(encoding="utf-8").strip():
+        raise EideError("E4004", f"Chữ ký gói `{isa}` không khớp nội dung — gói đã bị sửa sau "
+                        "khi ký", missing=[], candidates=["registry.pull"], exists=[])
