@@ -237,11 +237,24 @@ def test_khong_muc_DEVIATIONS_nao_roi_khoi_bao_cao_dong_bo():
             "| DEV-900 | 2026-01-01 | POL-17 §2 | a.py | công thức `1/(1+|bm25|)` sai dấu "
             "| vì `|` là dấu ngăn cột | sửa | Mở |\n"
             "| DEV-901 | 2026-01-01 | CDS-12.1 CODE-01 | b.py | không có ký tự lạ | vì thế "
-            "| sửa | Đã cập nhật tài liệu v1.3 |\n", encoding="utf-8")
+            "| sửa | Đã cập nhật tài liệu v1.3 |\n"
+            # Dấu ống ĐÃ THOÁT (`\\|`) là ký tự văn bản, không phải dấu ngăn cột. Nó có thật
+            # trong kho (DEV-073: enum `docx\\|md`), và cắt ở đó làm LỆCH mọi cột phía sau —
+            # trạng thái vẫn đọc đúng vì lấy từ cột cuối, nên phiên bản trước của test này xanh
+            # trong khi báo cáo gửi chủ sản phẩm ghi nửa câu vào ô "Tài liệu" và nửa còn lại vào
+            # ô "Mã nguồn".
+            "| DEV-902 | 2026-01-01 | CDS-12.1 DOC-06 enum `docx\\|md` | c.py | sai khác 902 "
+            "| lý do 902 | đề xuất 902 | Mở |\n", encoding="utf-8")
         dbt.ROOT = Path(d)
         try:
             ds = {r["ma"]: r["trang_thai"] for r in dbt.doc_deviations()}
+            cot = {r["ma"]: r for r in dbt.doc_deviations()}
         finally:
             dbt.ROOT = goc
-    assert ds == {"DEV-900": "Mở", "DEV-901": "Đã cập nhật tài liệu v1.3"}, \
+    assert ds == {"DEV-900": "Mở", "DEV-901": "Đã cập nhật tài liệu v1.3", "DEV-902": "Mở"}, \
         f"`|` trong nội dung làm lệch cột trạng thái: {ds}"
+
+    d902 = cot["DEV-902"]
+    assert d902["tai_lieu"] == "CDS-12.1 DOC-06 enum `docx|md`", d902["tai_lieu"]
+    assert d902["ma_nguon"] == "c.py", d902["ma_nguon"]
+    assert d902["de_xuat"] == "đề xuất 902", d902["de_xuat"]

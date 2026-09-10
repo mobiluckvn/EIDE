@@ -38,13 +38,37 @@ NGUON = {
 KHONG_PHAI_TAI_LIEU = {"PLATFORM.md", "CLAUDE.md"}
 
 
+def _tach_cot(dong: str) -> list[str]:
+    """Tách một hàng bảng Markdown, TÔN TRỌNG dấu ống đã thoát (`\\|`).
+
+    `\\|` là một ký tự văn bản, không phải dấu ngăn cột — Markdown quy định thế, và kho có nó
+    thật: DEV-073 nói về `enum \\`docx\\|md\\``. Cắt ở đó làm lệch mọi cột phía sau. Trạng thái
+    vẫn đúng (nó lấy từ cột cuối), nên hỏng này KHÔNG làm test cũ đỏ và không làm mục nào biến
+    mất — nó chỉ khiến báo cáo gửi chủ sản phẩm ghi nửa câu vào ô "Tài liệu / mục" và nửa còn
+    lại xuống ô "Mã nguồn". Một bảng đọc được nhưng sai chỗ khó phát hiện hơn một bảng vỡ.
+    """
+    return [x.strip().replace(r"\|", "|") for x in re.split(r"(?<!\\)\|", dong.strip().strip("|"))]
+
+
+def _phien_ban_dich(ds: list[dict]) -> str:
+    """Phiên bản đích lấy từ CHÍNH các đề xuất, không viết cứng.
+
+    Bản trước ghi cứng "v1.3" — đúng vào lúc bộ hồ sơ đã ở v1.3 và mọi đề xuất đang nhắm v1.4.
+    Một bản nháp bảo chủ sản phẩm nâng tài liệu lên đúng phiên bản nó đang đứng là một bản nháp
+    không ai làm được, và cái sai ấy nằm ở dòng đầu tiên người đọc nhìn thấy.
+    """
+    pb = {m for d in ds for m in re.findall(r"\bv(\d+\.\d+)\b", d["de_xuat"])}
+    return "v" + max(pb, key=lambda x: tuple(int(i) for i in x.split("."))) if pb \
+        else "(nêu trong từng mục)"
+
+
 def doc_deviations() -> list[dict]:
     t = (ROOT / "docs" / "DEVIATIONS.md").read_text(encoding="utf-8")
     ra = []
     for dong in t.splitlines():
         if not dong.startswith("| DEV-"):
             continue
-        c = [x.strip() for x in dong.strip("|").split("|")]
+        c = _tach_cot(dong)
         if len(c) < 8:
             continue
         # Trạng thái lấy từ cột CUỐI, không phải `c[7]`. Nhiều mục có `|` trong nội dung (công
@@ -90,16 +114,18 @@ def main() -> int:
         if doc.startswith("("):
             continue
         p = thu_muc / f"{ngay}-{doc}.md"
+        pb = _phien_ban_dich(ds)
         dong = [
             f"# Đồng bộ tài liệu {doc} — bản nháp {ngay}",
             "",
-            f"Nguồn sinh phải sửa: `docs/ho-so/nguon/{NGUON.get(doc, '?')}`  ·  phiên bản đích: **v1.3**",
+            f"Nguồn sinh phải sửa: `docs/ho-so/nguon/{NGUON.get(doc, '?')}`  ·  "
+            f"phiên bản đích: **{pb}**",
             "",
             "Bản nháp này do `scripts/dong_bo_tai_lieu.py` sinh từ `docs/DEVIATIONS.md`. "
             "Nó **không** sửa docx và **không** sửa `docs/spec/`. Sau khi chủ sản phẩm duyệt: "
             "sửa nguồn sinh → `scripts/sinh_tai_lieu.sh "
             f"{NGUON.get(doc, '?').split('.')[0].split(' ')[0]}` → đổi trạng thái mục thành "
-            "`Đã cập nhật tài liệu v1.3`.",
+            f"`Đã cập nhật tài liệu {pb}`.",
             "",
         ]
         for d in sorted(ds, key=lambda x: x["ma"]):
@@ -112,7 +138,7 @@ def main() -> int:
                 "",
                 f"**Vì sao:** {d['ly_do']}",
                 "",
-                f"**Nội dung đề xuất cho v1.3:** {d['de_xuat']}",
+                f"**Nội dung đề xuất:** {d['de_xuat']}",
                 "",
                 f"**Mã liên quan:** {d['ma_nguon']}",
                 "",
