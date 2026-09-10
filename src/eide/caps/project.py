@@ -642,9 +642,10 @@ def clone(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             _chep_cay(src / EIDE_DIR / d, eide / d)
 
     if (led := ctx.extra.get("ledger")) is not None:
-        # Không có kiểu sự kiện nào cho việc này trong 25 kiểu của API-15 §7 — xem DEV-081.
-        led.append("report", {"kind": "project.clone", "src": str(src), "dst": str(dich),
-                              "keep": sorted(giu), "n_facts": n_fact})
+        # API-15 §7 v1.7 có kiểu `project.state` cho cả họ clone/archive/rollback (DEV-081, chủ
+        # sản phẩm duyệt 10/09/2026). Trước đó phải mượn `report`.
+        led.append("project.state", {"op": "clone", "project": str(dich), "ref": str(src),
+                                     "detail": {"keep": sorted(giu), "n_facts": n_fact}})
         led.append("undo.register", {"undo_ref": f"clone:{ten}",
                                      "kind": "delete_created_files", "deadline": ""})
     return {"project_id": tao["project_id"], "path": str(dich)}
@@ -733,8 +734,8 @@ def archive(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     cfg_p.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
     if (led := ctx.extra.get("ledger")) is not None:
-        led.append("report", {"kind": "project.archive", "project": str(root),
-                              "archived_path": str(dich)})
+        led.append("project.state", {"op": "archive", "project": str(root), "ref": str(dich),
+                                     "detail": {"archived_at": cfg["project"]["archived"]}})
         led.append("undo.register", {"undo_ref": f"archive:{root.name}",
                                      "kind": "restore_config", "deadline": ""})
     return {"archived_path": str(dich)}
@@ -796,7 +797,9 @@ def rollback(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
              "features_restored": theo_doi, "build": _thu_dung(ctx)}
 
     if (led := ctx.extra.get("ledger")) is not None:
-        led.append("report", {"kind": "project.rollback", "tag": tag, "commit": commit})
+        led.append("project.state", {"op": "rollback", "project": str(root), "ref": tag,
+                                     "detail": {"commit": commit,
+                                                "features_restored": theo_doi}})
         led.append("undo.register", {"undo_ref": f"rollback:{commit[:12]}",
                                      "kind": "restore_config", "deadline": ""})
     return {"state": state}

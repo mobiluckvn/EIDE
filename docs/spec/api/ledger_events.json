@@ -83,5 +83,10 @@
   "kind": "store.migrate",
   "fields": "{from_version, to_version}",
   "source": ""
+ },
+ {
+  "kind": "project.state",
+  "fields": "{op: clone|archive|rollback, project, ref, detail}",
+  "source": "ProjectService"
  }
 ]

@@ -411,7 +411,8 @@
     kind: delete_created_files
   milestone: M2
   impl: eide.extract:pdf_formula
-  errors: []
+  errors:
+  - E5002
   example:
     file: bme280-ds.pdf
     section: 4.2.3

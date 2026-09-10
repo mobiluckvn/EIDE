@@ -222,7 +222,6 @@
       format:
         type: string
         enum:
-        - docx
         - md
     required:
     - results

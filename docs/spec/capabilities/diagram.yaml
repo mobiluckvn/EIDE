@@ -284,7 +284,8 @@
     kind: delete_created_files
   milestone: M2
   impl: eide.diagram:flow
-  errors: []
+  errors:
+  - E5002
   example:
     source: src/control/pid.c:pid_step
     lang: mermaid

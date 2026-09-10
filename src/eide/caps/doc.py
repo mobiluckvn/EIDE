@@ -1594,15 +1594,13 @@ def test_report(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     biết — ca nào hỏng.
 
     **Không gọi mô hình**, cùng lý do với `doc.bringup_guide`: mọi thứ ở đây đã có trong store.
-    `format=docx` ủy quyền sang `report.export` — xem [DEV-073] và [DEV-070].
+
+    `format` chỉ còn `md` từ CDS-12.1 v1.4 ([DEV-073], chủ sản phẩm duyệt 10/09/2026): docx/pdf
+    dựng ở `report.export` và chỉ ở đó (DEV-070) — hai bản dựng cùng một báo cáo thì chúng sẽ
+    lệch, và không có cách nào biết bản nào đúng. Nhánh ủy quyền E2000 trước đây nay là mã chết:
+    lớp kiểm `input_schema` của Router chặn `format` lạ bằng E1000 trước khi vào đây.
     """
     root = _root(ctx)
-    if (dinh_dang := params.get("format") or "md") != "md":
-        raise EideError("E2000", f"`{dinh_dang}` do `report.export` dựng — REPORT-02 v1.3 là chỗ "
-                        "DUY NHẤT dựng docx/pdf (DEV-070). Sinh ở đây nữa là hai bản dựng cùng "
-                        "một báo cáo, và chúng sẽ lệch (DEV-073)",
-                        exists=["md"], candidates=["report.export"], missing=[])
-
     ket_qua = _tra_ket_qua(root, list(params["results"]))
     dong, nguon = _dong_ket_qua(ket_qua)
     xu = [d for d in dong if d[1] is not None]        # dòng CÓ phán định đạt/không đạt

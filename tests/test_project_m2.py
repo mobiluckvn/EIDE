@@ -142,12 +142,11 @@ def test_ghi_ledger_kem_nguon(du_an):
     "tri thức trong dự án này từ đâu ra" khi nhìn một bản sao ba tháng sau."""
     r, ctx, root, ws = du_an
     r.invoke("project.clone", {"src": str(root), "new_name": "co-nguon"}, ctx)
-    # API-15 §7 không có kiểu sự kiện nào cho việc này (25 kiểu, không kiểu nào là
-    # `project.clone`), nên hiện thực mượn `report` và ghi loại vào `data.kind` — cùng cách tạm
-    # mà DEV-013 và DEV-031 đã dùng. Xem DEV-081.
+    # API-15 §7 v1.7 thêm kiểu `project.state` cho cả họ clone/archive/rollback (DEV-081, duyệt
+    # 10/09/2026); trước đó hiện thực phải mượn `report`.
     ds = [e for e in r.ledger.records()
-          if e["kind"] == "report" and (e.get("data") or {}).get("kind") == "project.clone"]
-    assert ds and ds[-1]["data"]["src"] == str(root)
+          if e["kind"] == "project.state" and (e.get("data") or {}).get("op") == "clone"]
+    assert ds and ds[-1]["data"]["ref"] == str(root)
 
 
 # ================================================================ PROJECT-05 archive

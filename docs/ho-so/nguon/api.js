@@ -175,6 +175,11 @@ const LED = [
  ['error', 'ErrorLedgerEntry', 'Mọi thành phần'],
  ['session.open / session.summary', '{session_id, project} / {session_id, summary}', ''],
  ['store.migrate', '{from_version, to_version}', ''],
+ // `project.clone`/`archive`/`rollback` (CDS-12.3 PROJECT-04/05/07) đều đổi trạng thái một dự án
+ // ở mức VẬT THỂ, và bước 3 của PROJECT-04 nói thẳng "ghi ledger project.clone với nguồn" — mà
+ // không kiểu nào trong bảng này ghi được. Một kiểu cho cả họ chứ không ba kiểu riêng: chúng
+ // luôn được đọc CÙNG NHAU khi dựng lại lịch sử một dự án. DEVIATIONS DEV-081.
+ ['project.state', '{op: clone|archive|rollback, project, ref, detail}', 'ProjectService'],
 ];
 c.push(T([2400, 5200, 1700], ['Loại sự kiện', 'Trường', 'Nguồn'], LED, { size: 19 }));
 fs.writeFileSync('api/ledger_events.json', JSON.stringify(LED.map(l => ({ kind: l[0], fields: l[1], source: l[2] })), null, 1));

@@ -2074,17 +2074,21 @@ def test_id_khong_co_thi_E2000_truoc_khi_ghi_gi(du_an):
     assert not list((root / ".eide" / "docs").glob("test_report*"))
 
 
-def test_docx_uy_quyen_cho_report_export(du_an):
-    """`format: docx` có trong `input_schema` của DOC-06, nhưng REPORT-02 v1.3 nói nó là "chỗ
-    DUY NHẤT dựng docx/pdf" ([DEV-070]). Hai tài liệu nói khác nhau — [DEV-073]. Dựng docx ở đây
-    nữa là hai bản dựng cùng một báo cáo, và chúng sẽ lệch."""
+def test_docx_khong_con_la_lua_chon(du_an):
+    """[DEV-073] đã duyệt 10/09/2026: CDS-12.1 v1.4 bỏ `docx` khỏi enum `format` của DOC-06, vì
+    REPORT-02 là "chỗ DUY NHẤT dựng docx/pdf" (DEV-070).
+
+    Sau khi hợp đồng sửa, phép chặn chuyển từ HANDLER lên lớp kiểm `input_schema` của Router:
+    E1000 thay cho E2000. Đó là chỗ đúng hơn — bên gọi biết ngay tham số không hợp lệ thay vì
+    gọi xong mới nhận một lỗi tiền điều kiện.
+    """
+    from eide_core.errors import EideError as _E
     r, ctx, root = du_an
     lg = _log(root, "b.log", "x\n")
     nap_tool_report(root, [("tr_1", "build", True, lg, {})])
-    run = r.invoke("doc.test_report", {"results": ["tr_1"], "format": "docx"}, ctx)
-
-    assert run.status == "failed" and run.error["eide_code"] == "E2000"
-    assert run.error["candidates"] == ["report.export"]
+    with pytest.raises(_E) as e:
+        r.invoke("doc.test_report", {"results": ["tr_1"], "format": "docx"}, ctx)
+    assert e.value.code == "E1000"
 
 
 def test_muc_Nguon_liet_ke_tep_bang_chung(du_an):
