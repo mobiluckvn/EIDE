@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import json
+import secrets
 import sqlite3
 import unicodedata
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -256,9 +257,16 @@ def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
     co_du_an = bool(root and (root / EIDE_DIR).is_dir())
 
-    # C1 — prompt vai trò, đứng đầu, cache được (CXD-10 §2)
+    # C1 — prompt vai trò, đứng đầu, cache được (CXD-10 §2). Kèm `negative_prompt` còn hạn của
+    # CHÍNH vai trò ấy (MEM-11 §6, MEMORY-06 tc): ghi một lỗi mà không ai đọc lại thì nó chỉ là
+    # một dòng nhật ký. Vòng khép kín là *lỗi → negative_prompt → ngữ cảnh lần sau*.
     gw = ctx.extra.get("gateway") or Gateway(ledger=ctx.extra.get("ledger"))
-    b.add("C1", gw.prompt(role), [f"prompts/{role}.md"], cacheable=True)
+    prompt_vai_tro = gw.prompt(role)
+    nhac = _loi_can_tranh(root, role) if co_du_an else []
+    if nhac:
+        prompt_vai_tro += "\n\nTránh (từ sổ lỗi):\n" + "\n".join(f"- {x}" for x in nhac)
+    b.add("C1", prompt_vai_tro, [f"prompts/{role}.md"] + [f"error_ledger:{role}"] * bool(nhac),
+          cacheable=True)
 
     # C0 — chỉ các vai trò CXD-10 §4.1 liệt kê
     if role in ("intent", "planner", "architect", "librarian"):
@@ -476,3 +484,164 @@ def ledger(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                             exists=[], candidates=[], missing=["project"])
         led = Ledger(root / ".eide" / "ledger.jsonl")
     return {"hash": led.append(kind, params["data"], actor=ctx.actor)["hash"]}
+
+
+# ---------------------------------------------------------------- MEMORY-06 error_ledger
+
+
+TTL_NGAY = 30            # MEM-11 §6: "TTL 30 ngày"
+TRAN_TOKEN_NHAC = 40     # "negative_prompt ≤ 40 token"
+SO_NHAC_TOI_DA = 5
+
+_SCHEMA_NHAC = {"type": "object", "required": ["negative_prompt"],
+                "properties": {"negative_prompt": {"type": "string"}}}
+
+
+@capability("memory.error_ledger")
+def error_ledger(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: MEMORY-06 — CDS-12.6; MEM-11 §6; DDD-14 §2 ErrorLedgerEntry. `undo: none`.
+    tc: "negative_prompt xuất hiện trong C1 của coder lần sau".
+
+    Sổ lỗi chỉ có nghĩa nếu có chỗ ĐỌC nó. Ghi một lỗi rồi không ai nhìn lại thì nó là một dòng
+    nhật ký; vòng khép kín là *lỗi → negative_prompt → ngữ cảnh lần sau* — và `memory.compose`
+    là nơi khép vòng ấy, nên trường này đi thẳng vào C1 của đúng vai trò đã sai.
+
+    **≤ 40 token** là ràng buộc thật, không phải mong muốn: lời nhắc này xuất hiện ở MỌI lượt
+    sau đó, nên một câu dài đẩy thứ khác ra khỏi ngân sách ngữ cảnh mãi mãi. Cắt ở đây chứ không
+    dặn mô hình — nó rất sẵn lòng viết một đoạn văn.
+
+    **TTL 30 ngày**: không có hạn thì một lỗi của tháng trước còn dạy mô hình tránh một thứ đã
+    sửa từ lâu, và nó không bao giờ tự biến mất.
+    """
+    root = _goc(ctx)
+    kind, evidence = params["kind"], params["evidence"]
+    role = params.get("role") or ""
+    nhac = _sinh_nhac(ctx, role, kind, evidence, params.get("chip"))
+
+    eid = "e_" + secrets.token_hex(6)
+    now = datetime.now(UTC)
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT INTO error_ledger (id, role, kind, task_ref, chip, evidence,"
+                  " negative_prompt, ttl_until, at) VALUES (?,?,?,?,?,?,?,?,?)",
+                  (eid, role or None, kind, params.get("task_ref"), params.get("chip"),
+                   evidence[:2000], nhac, (now + timedelta(days=TTL_NGAY)).isoformat(),
+                   now.isoformat()))
+        c.commit()
+    store.write_seal(store.store_path(root), ctx.extra.get("ledger"))
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("error", {"id": eid, "role": role, "kind": kind, "task_ref": params.get("task_ref"),
+                             "chip": params.get("chip"), "evidence": evidence[:300],
+                             "negative_prompt": nhac, "at": now.isoformat()})
+    return {"id": eid, "negative_prompt": nhac}
+
+
+def _sinh_nhac(ctx: Context, role: str, kind: str, evidence: str, chip: str | None) -> str:
+    """Một câu "đừng làm X" từ bằng chứng. Mô hình viết, MÃ cắt.
+
+    Không cấu hình được mô hình thì vẫn phải có lời nhắc: rút gọn chính bằng chứng. Một sổ lỗi
+    im lặng khi thiếu khóa API là một sổ lỗi rỗng đúng lúc dự án đang chạy ngoại tuyến.
+    """
+    from eide_core.composer import uoc_token
+    from eide_core.gateway import Gateway
+    tho = f"Tránh lặp lại: {evidence.strip()}"
+    try:
+        gw = ctx.extra.get("gateway") or Gateway(ledger=ctx.extra.get("ledger"))
+        resp = gw.run("intent",
+                      f"Viết MỘT câu ngắn (≤ 40 token) dặn vai trò `{role or 'agent'}` đừng lặp "
+                      f"lại lỗi sau. Câu mệnh lệnh, cụ thể, không giải thích.\n"
+                      f"Loại lỗi: {kind}\nChip: {chip or '—'}\nBằng chứng: {evidence[:1500]}",
+                      _SCHEMA_NHAC)
+        tho = (resp.data.get("negative_prompt") or tho).strip() or tho
+    except EideError:
+        pass
+    while uoc_token(tho) > TRAN_TOKEN_NHAC and " " in tho:
+        tho = tho.rsplit(" ", 1)[0]
+    return tho
+
+
+def _loi_can_tranh(root: Path, role: str) -> list[str]:
+    """`negative_prompt` còn hạn của đúng vai trò ấy, mới nhất trước.
+
+    Lọc theo vai trò vì lỗi của `librarian` không dạy được gì cho `coder` — trộn chúng làm ngữ
+    cảnh mỗi vai trò đầy những điều không liên quan, và thứ không liên quan trong C1 thì tốn chỗ
+    ở mọi lượt.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    now = datetime.now(UTC).isoformat()
+    try:
+        with store.open_store(db) as c:
+            rows = c.execute(
+                "SELECT negative_prompt FROM error_ledger WHERE role = ?"
+                "   AND negative_prompt IS NOT NULL AND (ttl_until IS NULL OR ttl_until > ?)"
+                " ORDER BY at DESC LIMIT ?", (role, now, SO_NHAC_TOI_DA)).fetchall()
+    except EideError:
+        return []
+    return [r[0] for r in rows if r[0]]
+
+
+# ---------------------------------------------------------------- MEMORY-07 forget
+
+
+PHAM_VI_QUEN = ("cache", "session", "preference", "run")
+
+
+@capability("memory.forget")
+def forget(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: MEMORY-07 — CDS-12.6; MEM-11 §4.3; KAD-07 §6.7. Lỗi E1000; `undo: none`;
+    ask "Xóa tri thức đã duyệt (R4)". tc: TC-MM-07.
+
+    **"Không chạm M4"** — bước 1 nói thẳng, và đó là ranh giới của cả năng lực. M4 là tri thức
+    đã qua G-FACT: bảng `fact`, `passport`. Một lệnh "quên cache" mà xoá luôn hộ chiếu là mất
+    thứ tốn hàng giờ để dựng lại, trong khi người gõ lệnh đang nghĩ tới một thư mục tạm. Bốn
+    phạm vi hợp lệ đều là thứ dựng lại được hoặc thuộc về phiên làm việc.
+
+    `run` đang chạy → E1000: xoá nó để lại một tiến trình không còn chỗ ghi kết quả, mà nó vẫn
+    đang gây hiệu ứng.
+    """
+    root = _goc(ctx)
+    scope = params["scope"]
+    key = params.get("key")
+    if scope == "cache":
+        return {"removed": _xoa_thu_muc(root / EIDE_DIR / "cache", key)}
+    if scope == "session":
+        return {"removed": _xoa_thu_muc(root / EIDE_DIR / "session", key)}
+
+    db = store.store_path(root)
+    with store.open_store(db) as c:
+        if scope == "preference":
+            cur = (c.execute("DELETE FROM preference WHERE key = ?", (key,)) if key
+                   else c.execute("DELETE FROM preference"))
+            n = cur.rowcount
+        else:
+            dang = c.execute("SELECT COUNT(*) FROM run WHERE state IN ('running','asked')"
+                             + (" AND id = ?" if key else ""),
+                             (key,) if key else ()).fetchone()[0]
+            if dang:
+                raise EideError("E1000", f"{dang} run đang chạy — dừng chúng trước khi quên "
+                                "(xoá một run đang chạy để lại tiến trình không có chỗ ghi "
+                                "kết quả)", running=dang)
+            cur = (c.execute("DELETE FROM run WHERE id = ?", (key,)) if key
+                   else c.execute("DELETE FROM run"))
+            n = cur.rowcount
+        c.commit()
+    store.write_seal(db, ctx.extra.get("ledger"))
+    return {"removed": int(n)}
+
+
+def _xoa_thu_muc(d: Path, key: str | None) -> int:
+    """Xoá TỆP trong thư mục, giữ lại chính thư mục: `.eide/cache/` biến mất thì lần ghi sau
+    phải tự tạo lại, và không phải chỗ nào cũng nhớ làm điều đó."""
+    if not d.is_dir():
+        return 0
+    n = 0
+    for p in sorted(d.rglob("*"), key=lambda x: len(x.parts), reverse=True):
+        if key and key not in p.name:
+            continue
+        if p.is_file():
+            p.unlink()
+            n += 1
+        elif p.is_dir() and not any(p.iterdir()):
+            p.rmdir()
+    return n

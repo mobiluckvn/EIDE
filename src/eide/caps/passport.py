@@ -351,3 +351,149 @@ def export(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         import yaml
         f.write_text(yaml.safe_dump(d, allow_unicode=True, sort_keys=False), encoding="utf-8")
     return {"file": str(f)}
+
+
+# ---------------------------------------------------------------- PASSPORT-04 diff
+
+
+@capability("passport.diff")
+def diff(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PASSPORT-04 — CDS-12.2; KAD-07 §5.4 (ghim phiên bản); UC-B13. R0, `undo: none`;
+    lỗi E2000. tc: "Đổi 1 offset → changed 1".
+
+    So theo **(subject, predicate)**, không so theo `fact.id`: id là danh tính của một BẢN GHI,
+    còn câu hỏi ở đây là danh tính của một KHẲNG ĐỊNH. Hai lần trích cùng một thanh ghi từ hai
+    bản SVD cho hai id khác nhau dù nội dung y hệt — so theo id thì mọi fact đều "added" và
+    "removed", và bảng khác biệt trở thành vô dụng đúng lúc nó cần nhất.
+
+    Chỉ đọc fact hiện hành: bản đã `superseded` ở lại store để truy nguyên, nhưng đưa vào phép
+    so thì một hộ chiếu trích lại hai lần trông như đã đổi.
+    """
+    root = _root(ctx)
+    a, b = params["a"], params["b"]
+    with store.open_store(store.store_path(root)) as c:
+        for pid in (a, b):
+            if not c.execute("SELECT 1 FROM passport WHERE id=?", (pid,)).fetchone():
+                raise EideError("E2000", f"Không có hộ chiếu `{pid}`", exists=[], candidates=[],
+                                missing=[pid])
+        ma = _fact_theo_khoa(c, a)
+        mb = _fact_theo_khoa(c, b)
+
+    them = [{"subject": s, "predicate": p, "value": v, "fact_id": fid}
+            for (s, p), (v, fid) in sorted(mb.items()) if (s, p) not in ma]
+    bot = [{"subject": s, "predicate": p, "value": v, "fact_id": fid}
+           for (s, p), (v, fid) in sorted(ma.items()) if (s, p) not in mb]
+    doi = [{"subject": s, "predicate": p, "old": ma[(s, p)][0], "new": v,
+            "old_fact_id": ma[(s, p)][1], "new_fact_id": fid}
+           for (s, p), (v, fid) in sorted(mb.items())
+           if (s, p) in ma and ma[(s, p)][0] != v]
+    return {"added": them, "removed": bot, "changed": doi}
+
+
+def _fact_theo_khoa(c: Any, pid: str) -> dict[tuple[str, str], tuple[Any, str]]:
+    rows = c.execute(
+        "SELECT f.subject, f.predicate, f.value, f.id FROM fact f"
+        "  JOIN passport_fact pf ON pf.fact_id = f.id"
+        " WHERE pf.passport_id = ? AND f.status NOT IN ('superseded','rejected')",
+        (pid,)).fetchall()
+    ra: dict[tuple[str, str], tuple[Any, str]] = {}
+    for subj, pred, gt, fid in rows:
+        try:
+            v = json.loads(gt)
+        except (json.JSONDecodeError, TypeError):
+            v = gt
+        ra[(subj, pred)] = (v, fid)
+    return ra
+
+
+# ---------------------------------------------------------------- PASSPORT-05 upgrade
+
+
+@capability("passport.upgrade")
+def upgrade(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PASSPORT-05 — CDS-12.2; KAD-07 §5.4; KG-03 `kg.impact`; UC-B13. Mức **T2**, ask
+    "Luôn (ảnh hưởng mã)"; lỗi E2000; undo `restore_config`. tc: "Feature dùng fact đổi →
+    failing".
+
+    Nâng hộ chiếu là việc **làm cũ đi một phần mã đang chạy**, nên nó không bao giờ tự động —
+    đó là lý do T2 chứ không phải sự thận trọng thừa.
+
+    Một feature `passing` dựa trên hằng số vừa đổi thì nó KHÔNG còn passing; nó chỉ chưa được
+    kiểm lại. Để nguyên nhãn cũ là nói dối đúng ở chỗ người ta tin nhất — bảng tiến độ. Nên
+    năng lực này hạ chúng xuống `failing` và trả về danh sách để người biết phải chạy lại gì.
+
+    `registry.pull` (mốc M4) chưa có, nên bản mới phải đã nằm trong store. Không có thì E2000
+    nói thẳng kèm năng lực cần chạy, chứ không ghim một phiên bản không tồn tại.
+    """
+    root = _root(ctx)
+    pid = params["id"]
+    ten = pid.split("@", 1)[0]
+    moi = f"{ten}@{params['version']}"
+
+    with store.open_store(store.store_path(root)) as c:
+        if not c.execute("SELECT 1 FROM passport WHERE id=?", (moi,)).fetchone():
+            raise EideError("E2000", f"Chưa có hộ chiếu `{moi}` trong store — tải về trước "
+                            "(registry.pull, mốc M4) rồi nâng",
+                            exists=[r[0] for r in c.execute(
+                                "SELECT id FROM passport WHERE id LIKE ?", (f"{ten}@%",))],
+                            candidates=["registry.pull", "passport.import"], missing=[moi])
+
+    kb = diff({"a": pid, "b": moi}, ctx)
+    doi = [x["old_fact_id"] for x in kb["changed"]] + [x["fact_id"] for x in kb["removed"]]
+
+    from eide.caps.kg import impact as kg_impact
+    cu: list[str] = []
+    for fid in doi:
+        try:
+            cu += kg_impact({"fact_id": fid}, ctx).get("stale_code_units") or []
+        except EideError:
+            continue
+    cu = sorted(set(cu))
+
+    feats = _ha_feature(root, cu)
+    _ghim_moi(root, ten, params["version"])
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("undo.register", {"undo_ref": f"upgrade:{pid}",
+                                     "kind": "restore_config", "deadline": ""})
+    return {"impact": {"stale_code_units": cu, "features_to_recheck": feats,
+                       "changed": len(kb["changed"]), "added": len(kb["added"]),
+                       "removed": len(kb["removed"]), "pinned": moi}}
+
+
+def _ha_feature(root: Path, code_units: list[str]) -> list[str]:
+    """Feature nào trích dẫn một CodeUnit đã cũ thì về `failing` — "cần tái kiểm", không phải
+    "hỏng". Hai chữ ấy khác nhau, nhưng FEATURES.json chỉ có ba trạng thái và `failing` là cái
+    duy nhất nói đúng rằng bằng chứng cũ không còn giá trị."""
+    from eide.caps.project import EIDE_DIR
+    f = root / EIDE_DIR / "FEATURES.json"
+    if not f.exists() or not code_units:
+        return []
+    d = json.loads(f.read_text(encoding="utf-8"))
+    doi: list[str] = []
+    for x in d.get("features") or []:
+        if set(x.get("evidence") or []) & set(code_units) and x.get("status") == "passing":
+            x["status"] = "failing"
+            x["recheck_reason"] = "hộ chiếu nâng phiên bản: fact bị trích dẫn đã đổi"
+            doi.append(x.get("id"))
+    if doi:
+        f.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    return doi
+
+
+def _ghim_moi(root: Path, ten: str, ban: str) -> None:
+    """Ghim vào `constraints.yaml`. Nâng mà không ghim thì lần mở dự án sau vẫn đọc bản cũ, và
+    bảng ảnh hưởng vừa tính ra chẳng thay đổi gì."""
+    import yaml
+
+    from eide.caps.project import EIDE_DIR
+    p = root / EIDE_DIR / "constraints.yaml"
+    cfg = yaml.safe_load(p.read_text(encoding="utf-8")) if p.exists() else {}
+    target = cfg.setdefault("target", {})
+    pins = target.setdefault("pins", {})
+    for k, v in list(pins.items()):
+        if str(v).split("@", 1)[0] == ten:
+            pins[k] = f"{ten}@{ban}"
+            break
+    else:
+        pins["chip"] = f"{ten}@{ban}"
+    p.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
