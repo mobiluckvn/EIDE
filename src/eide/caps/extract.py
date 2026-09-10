@@ -1492,6 +1492,96 @@ def _fact_errata(m: dict[str, Any], goc: str, pe: list[str], sid: str) -> dict[s
             "confidence": m["confidence"], "layer": "B"}
 
 
+# ---------------------------------------------------------------- EXTRACT-05 dt_binding
+
+
+@capability("extract.dt_binding")
+def dt_binding(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-05 — CDS-12.2; KAD-07 §5.1 K4 (ngoại vi ngoài, tầng bạc) và §6.1 (subject
+    IRI `<ns.part>`); DDD-14 Fact. tc: "Thuộc tính required đúng".
+
+    Binding device tree là hộ chiếu của một **ngoại vi ngoài**: nó nói con BME280 cần khai những
+    thuộc tính nào, và thiếu một thuộc tính bắt buộc thì bản dựng Zephyr đỏ ở chỗ chẳng liên quan
+    gì tới nó. Parser thuần, không mô hình: YAML đã có cấu trúc, hỏi mô hình một cây đã phân tích
+    được là thêm một chỗ để sai.
+
+    **Hai định dạng, cùng một ý.** Zephyr đặt `required: true` TRONG từng thuộc tính; dt-schema
+    của Linux đặt `required:` thành một DANH SÁCH ở cấp cao. Đọc được một mà không đọc được cái
+    kia thì năng lực chỉ dùng cho nửa số binding ngoài đời.
+
+    `compatible: "bosch,bme280"` → IRI `chip:bosch.bme280`, đúng khuôn `<ns.part>` của KAD-07
+    §6.1. Giữ nguyên dấu phẩy thì cùng một cảm biến có hai IRI khác nhau tuỳ nó được nạp từ
+    binding hay từ datasheet, và không truy vấn nào nối được hai bên.
+
+    Tầng **bạc** theo KAD-07 §5.1: binding do cộng đồng/hệ điều hành soạn, không phải tài liệu
+    hãng — nên nó qua G-FACT chứ không tự duyệt như SVD.
+    """
+    root = _root(ctx)
+    p = Path(params["file"]).expanduser()
+    if not p.is_file():
+        raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+
+    import yaml
+    try:
+        d = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except (yaml.YAMLError, UnicodeDecodeError) as e:
+        raise EideError("E4004", f"Không đọc được binding {p.name}: {e}", file=str(p)) from e
+    if not isinstance(d, dict):
+        raise EideError("E4004", f"Binding {p.name} không phải một ánh xạ YAML", file=str(p))
+
+    props = d.get("properties") if isinstance(d.get("properties"), dict) else {}
+    if not (compat := _compatible(d, props)):
+        raise EideError("E2000", f"Binding {p.name} không có `compatible` — không biết nó nói về "
+                        "thiết bị nào, và một fact không có chủ thể thì không tra được bằng gì",
+                        exists=[], candidates=[], missing=["compatible"])
+
+    bat_buoc = {str(x) for x in (d.get("required") or []) if isinstance(d.get("required"), list)}
+    sid = _bao_dam_source(root, p, "binding", "silver")
+    goc = f"chip:{compat}"
+    facts = [f for ten, dac in props.items()
+             if (f := _fact_dtprop(str(ten), dac, goc, sid, bat_buoc, p))]
+    if not facts:
+        raise EideError("E2000", f"Binding {p.name} không khai thuộc tính nào",
+                        exists=[], candidates=[], missing=["properties"])
+
+    from eide.caps.passport import import_
+    kq = import_({"batch": {"facts": facts, "passport_id": f"{compat}@1.0.0", "kind": "chip",
+                            "reason": f"extract.dt_binding {p.name}",
+                            "header": {"name": compat, "source": p.name}},
+                  "actor": ctx.actor}, ctx)
+    return {"batch_id": kq["batch_id"]}
+
+
+def _compatible(d: dict[str, Any], props: dict[str, Any]) -> str:
+    """Zephyr khai `compatible` ở cấp cao; dt-schema của Linux giấu nó trong
+    `properties.compatible.enum|const`. Chuẩn hóa `bosch,bme280` → `bosch.bme280`."""
+    x = d.get("compatible")
+    if not x:
+        c = props.get("compatible") or {}
+        x = (c.get("const") if isinstance(c, dict) else None) or \
+            (next(iter(c.get("enum") or []), None) if isinstance(c, dict) else None)
+    if isinstance(x, list):
+        x = next(iter(x), None)
+    ten = str(x or "").strip().strip('"')
+    return ten.replace(",", ".") if ten else ""
+
+
+def _fact_dtprop(ten: str, dac: Any, goc: str, sid: str, bat_buoc: set[str],
+                 p: Path) -> dict[str, Any] | None:
+    """`compatible` không thành fact riêng: nó LÀ chủ thể, không phải một thuộc tính của chủ thể."""
+    if ten == "compatible":
+        return None
+    dac = dac if isinstance(dac, dict) else {}
+    gt: dict[str, Any] = {"name": ten, "required": bool(dac.get("required")) or ten in bat_buoc}
+    for k, khoa in (("type", "type"), ("enum", "enum"), ("description", "description"),
+                    ("const", "const"), ("default", "default")):
+        if dac.get(k) is not None:
+            gt[khoa] = dac[k]
+    return {"subject": f"{goc}/dtprop:{ten}", "predicate": "other", "value": gt,
+            "source_id": sid, "locator": {"file": p.name}, "method": "parser",
+            "tier": "silver", "confidence": 1.0}
+
+
 # ---------------------------------------------------------------- EXTRACT-20 readme_goal
 
 

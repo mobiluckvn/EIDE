@@ -679,3 +679,136 @@ def test_text_rong_khong_goi_mo_hinh(du_an, monkeypatch):
     _khong_mo_hinh(monkeypatch)
     run = r.invoke("extract.readme_goal", {"text": "   "}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+# ================================================================ EXTRACT-05 dt_binding
+#
+# tc: "Thuộc tính required đúng". Binding device tree là hộ chiếu của **K4 — ngoại vi ngoài**
+# (cảm biến, driver): nó nói con BME280 cần những thuộc tính nào để khai trong devicetree, và
+# thiếu một thuộc tính bắt buộc thì bản dựng Zephyr đỏ ở chỗ chẳng liên quan gì tới nó.
+
+BINDING_ZEPHYR = """
+description: Bosch BME280 temperature and humidity sensor
+compatible: "bosch,bme280"
+include: [sensor-device.yaml, i2c-device.yaml]
+properties:
+  reg:
+    type: array
+    required: true
+    description: Địa chỉ I2C
+  odr:
+    type: string
+    required: false
+    enum:
+      - "1"
+      - "2"
+      - "4"
+  int-gpios:
+    type: phandle-array
+    required: false
+"""
+
+BINDING_LINUX = """
+$id: http://devicetree.org/schemas/iio/bosch,bme280.yaml#
+title: Bosch BME280
+properties:
+  compatible:
+    enum:
+      - bosch,bme280
+  reg:
+    maxItems: 1
+  vdd-supply:
+    description: nguồn 3V3
+required:
+  - compatible
+  - reg
+"""
+
+
+def _binding(tmp_path, noi, ten="bosch,bme280.yaml"):
+    p = tmp_path / ten
+    p.write_text(noi, encoding="utf-8")
+    return str(p)
+
+
+def test_thuoc_tinh_required_dung_zephyr(du_an, monkeypatch, tmp_path):
+    """tc EXTRACT-05 nguyên văn: "Thuộc tính required đúng" — dạng Zephyr, `required` nằm TRONG
+    từng thuộc tính."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    r.invoke("extract.dt_binding", {"file": _binding(tmp_path, BINDING_ZEPHYR)}, ctx)
+    f = _facts(root, "other")
+    assert f["chip:bosch.bme280/dtprop:reg"]["value"]["required"] is True
+    assert f["chip:bosch.bme280/dtprop:int-gpios"]["value"]["required"] is False
+
+
+def test_thuoc_tinh_required_dung_linux(du_an, monkeypatch, tmp_path):
+    """Dạng dt-schema của Linux: `required` là một DANH SÁCH ở cấp cao, không nằm trong thuộc
+    tính. Hai định dạng, cùng một ý — đọc được một cái mà không đọc được cái kia thì năng lực
+    chỉ dùng được cho nửa số binding ngoài đời."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    r.invoke("extract.dt_binding", {"file": _binding(tmp_path, BINDING_LINUX)}, ctx)
+    f = _facts(root, "other")
+    assert f["chip:bosch.bme280/dtprop:reg"]["value"]["required"] is True
+    assert f["chip:bosch.bme280/dtprop:vdd-supply"]["value"]["required"] is False
+    # `compatible` LÀ chủ thể, không phải một thuộc tính của chủ thể. Ở dạng Linux nó nằm trong
+    # `properties`, nên không loại ra thì hộ chiếu có một thuộc tính tên `compatible` trỏ về
+    # chính mình — và `required: [compatible, reg]` làm nó trông như một thứ phải khai.
+    assert "chip:bosch.bme280/dtprop:compatible" not in f
+
+
+def test_compatible_thanh_IRI_theo_quy_uoc_ns_part(du_an, monkeypatch, tmp_path):
+    """`bosch,bme280` → `chip:bosch.bme280`: đúng khuôn `<ns.part>` mà KAD-07 §6.1 quy định cho
+    subject IRI. Giữ nguyên dấu phẩy thì cùng một cảm biến có hai IRI khác nhau tuỳ nó được nạp
+    từ binding hay từ datasheet, và không câu truy vấn nào nối được hai bên."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    r.invoke("extract.dt_binding", {"file": _binding(tmp_path, BINDING_ZEPHYR)}, ctx)
+    assert all(k.startswith("chip:bosch.bme280/") for k in _facts(root, "other"))
+
+
+def test_enum_giu_nguyen_trong_fact(du_an, monkeypatch, tmp_path):
+    """Bước 1 nêu "thuộc tính bắt buộc/enum": tập giá trị hợp lệ là thứ `code.generate_module`
+    cần để không sinh ra một `odr = 3` mà driver từ chối."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    r.invoke("extract.dt_binding", {"file": _binding(tmp_path, BINDING_ZEPHYR)}, ctx)
+    assert _facts(root, "other")["chip:bosch.bme280/dtprop:odr"]["value"]["enum"] == ["1", "2", "4"]
+
+
+def test_khong_co_compatible_bao_E2000(du_an, monkeypatch, tmp_path):
+    """Không có `compatible` thì không biết binding này nói về THIẾT BỊ NÀO — và một fact không
+    biết chủ thể của nó thì không tra được bằng gì."""
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = _binding(tmp_path, "description: x\nproperties:\n  reg:\n    type: array\n")
+    run = r.invoke("extract.dt_binding", {"file": p}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"
+
+
+def test_yaml_hong_bao_E4004(du_an, monkeypatch, tmp_path):
+    r, ctx, _ = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = _binding(tmp_path, "compatible: [khong dong ngoac\n  - x\n")
+    run = r.invoke("extract.dt_binding", {"file": p}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E4004"
+
+
+def test_binding_la_tang_bac_khong_phai_vang(du_an, monkeypatch, tmp_path):
+    """KAD-07 §5.1: K4 (ngoại vi ngoài) là **bạc** — binding do cộng đồng/hệ điều hành soạn, không
+    phải tài liệu hãng, nên nó qua G-FACT chứ không tự duyệt như SVD."""
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    r.invoke("extract.dt_binding", {"file": _binding(tmp_path, BINDING_ZEPHYR)}, ctx)
+    v = _facts(root, "other")["chip:bosch.bme280/dtprop:reg"]
+    assert v["tier"] == "silver" and v["method"] == "parser"
+
+
+def test_trich_binding_hai_lan_khong_nhan_doi(du_an, monkeypatch, tmp_path):
+    r, ctx, root = du_an
+    _khong_mo_hinh(monkeypatch)
+    p = _binding(tmp_path, BINDING_ZEPHYR)
+    r.invoke("extract.dt_binding", {"file": p}, ctx)
+    r.invoke("extract.dt_binding", {"file": p}, ctx)
+    assert len(_facts(root, "other")) == 3
