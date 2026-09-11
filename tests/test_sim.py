@@ -18,7 +18,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import stat
+import struct
 from pathlib import Path
 
 import pytest
@@ -836,6 +838,107 @@ def test_kich_ban_khong_co_plant_thi_chua_quet_duoc(du_an):
     with pytest.raises(EideError) as e:
         sweep({"scenario": "sim/f-04.yaml", "ranges": {"kp": [1, 2, 1]}}, ctx)
     assert e.value.code == "E2000" and e.value.data["missing"] == ["init.plant"]
+
+
+# ============================================ đường chạy engine THẬT (DEV-086)
+
+QEMU_AVR = shutil.which("qemu-system-avr")
+
+# ELF AVR dựng BẰNG TAY, vì máy phát triển không có `avr-gcc` và cả nhóm `sim.*` thì không
+# được phép chờ một chuỗi công cụ để có lấy một lượt chạy engine thật. 98 byte, và mọi thứ
+# trong đó đều là thứ QEMU thật sự đọc: ELF32 little-endian, `e_machine = 0x53` (EM_AVR), một
+# đoạn PT_LOAD nạp tại địa chỉ 0.
+#
+# Firmware làm đúng ba việc, viết thẳng bằng mã máy ATmega328P:
+#
+#   ldi r17, 0x08        18 E0          TXEN0 — bật bộ phát
+#   sts 0xC1, r17        10 93 C1 00    UCSR0B
+#   ldi r16, 'E'         05 E4
+#   sts 0xC6, r16        00 93 C6 00    UDR0 — một ký tự ra UART
+#   rjmp .-2             FF CF          lặp vô hạn; firmware nhúng không thoát
+MA_AVR = bytes.fromhex("18E0" "1093C100" "05E4" "0093C600" "FFCF")
+
+
+def _elf_avr(ma: bytes = MA_AVR) -> bytes:
+    ehdr, phdr = 52, 32
+    return (
+        b"\x7fELF" + bytes([1, 1, 1, 0]) + bytes(8)
+        + struct.pack("<HHIIIIIHHHHHH", 2, 0x53, 1, 0, ehdr, 0, 5, ehdr, phdr, 1, 40, 0, 0)
+        + struct.pack("<IIIIIIII", 1, ehdr + phdr, 0, 0, len(ma), len(ma), 5, 2)
+        + ma)
+
+
+@pytest.mark.skipif(QEMU_AVR is None, reason="cần qemu-system-avr (brew install qemu)")
+def test_duong_engine_THAT_chay_firmware_AVR_that(du_an, monkeypatch):
+    """DEV-086 — lượt chạy đầu tiên của nhóm `sim.*` KHÔNG dùng shim.
+
+    Mọi bài `sim.run` khác trong tệp này thay engine bằng một script shell in ra đúng dòng
+    UART mà kịch bản chờ. Chúng kiểm được phần thuộc về EIDE — dựng dòng lệnh, chạy trong
+    sandbox, đọc log, chấm bảng expect — nhưng chúng không thể sai theo cách một engine thật
+    sai được, vì shim luôn ngoan. Bài này chạy `qemu-system-avr` thật trên máy ảo `arduino-uno`
+    (= ATmega328P) với một ELF AVR thật, và ký tự trong `captured.uart` là ký tự firmware ghi
+    vào UDR0 chứ không phải chuỗi một script `echo` ra.
+
+    Trước 11/09/2026 bài này không viết được: `avr8.yaml` khai `sim: {engine: simavr}` mà
+    simavr không có công thức brew, và không có `fallback` thì EIDE không được phép dùng
+    `qemu-system-avr` vốn có sẵn. Một dòng trong manifest là khác nhau giữa "44 test xanh trên
+    một đường chưa ai chạy" và "đường ấy đã chạy".
+    """
+    from eide.caps import sim as sim_mod
+    from eide.caps.sim import run
+
+    _, ctx, root = du_an
+    # Biên 20 s là chỗ cho Renode khởi động. QEMU lên trong chớp mắt, mà nó KHÔNG tự dừng nên
+    # cả lượt chạy dài đúng bằng hạn — để nguyên thì bài này một mình chiếm 21 s của `make
+    # check`. Hạ biên không đổi thứ đang kiểm: bài này kiểm engine chạy được, không kiểm hằng số.
+    monkeypatch.setattr(sim_mod, "BIEN_THOI_GIAN_S", 3)
+
+    d = root / "sim"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "platform.json").write_text(json.dumps({
+        "chip": "chip:atmel.atmega328p", "board": None, "isa": "avr8",
+        "engine": "qemu", "exe": QEMU_AVR,
+        "memory": {"FLASH": 32768, "RAM": 2048},
+        "modeled": [{"name": "USART0", "base": 0xC0, "model": "qemu.avr-usart", "kind": "uart"}],
+        "unsupported": [], "files": []}, ensure_ascii=False), encoding="utf-8")
+
+    (root / "build").mkdir(parents=True, exist_ok=True)
+    (root / "build" / "fw.elf").write_bytes(_elf_avr())
+    _kich_ban(root, [{"kind": "uart", "pattern": "E"}], duration_s=1)
+
+    rep = run({"artifact": "build/fw.elf", "scenario": "sim/f-04.yaml"}, ctx)["report"]
+
+    assert rep["metrics"]["engine"] == "qemu"
+    # QEMU không tự dừng (`TU_DUNG["qemu"] = False`): hết giờ LÀ cách lượt chạy kết thúc, không
+    # phải E4004. Đây là chỗ duy nhất nhánh ấy được một engine thật chứng minh.
+    assert rep["metrics"]["terminated_by"] == "timeout"
+    # Khẳng định trên DÒNG chứ không phải "có chữ E ở đâu đó": một lượt chạy thật in cả biểu
+    # ngữ lẫn lời than của engine, và `"E" in " ".join(...)` thì xanh cho gần như mọi thứ.
+    assert "E" in rep["captured"]["uart"], rep["captured"]["uart"]
+    assert rep["metrics"]["expect"][0]["status"] == "passed"
+    assert rep["passed"] is True
+
+
+@pytest.mark.skipif(QEMU_AVR is None, reason="cần qemu-system-avr (brew install qemu)")
+def test_manifest_avr8_that_cho_qemu_lam_duong_lui(du_an):
+    """`fallback` đọc từ `docs/spec/isa/avr8.yaml` THẬT, không từ một bản chép trong test.
+
+    Và đường lui ấy chỉ mở cho chip QEMU thật sự mang máy ảo: ATmega328P đi tiếp, ATtiny1616
+    thì E4001. "Engine dùng được" là kết luận về CẶP (engine, chip) — gán một máy ảo gần giống
+    thì firmware chạy trên một con chip khác chip nó được dịch cho, rồi báo ĐẠT.
+    """
+    from eide.caps.sim import chon_engine
+
+    man = yaml.safe_load(Path("docs/spec/isa/avr8.yaml").read_text(encoding="utf-8"))
+    assert man["sim"] == {"engine": "simavr", "fallback": "qemu"}
+
+    eng = chon_engine("avr8", man, "ATmega328P")
+    assert eng["engine"] == "qemu" and eng["requested"] == "simavr" and eng["fallback"] is True
+    assert Path(eng["exe"]).name == "qemu-system-avr"
+
+    with pytest.raises(EideError) as e:
+        chon_engine("avr8", man, "ATtiny1616")
+    assert e.value.code == "E4001"
 
 
 # ================================================================ hợp đồng nhóm

@@ -11,5 +11,5 @@ flash: {adapters: [avrdude, pymcuprog], default: avrdude, cmd: {avrdude: "avrdud
 debug: {adapter: none, probes: [avrisp2, arduino]}
 id_read: {method: signature, cmd: "avrdude -c {programmer} -p {part} -P {port} -v", regex: "signature = (0x[0-9a-f]+ 0x[0-9a-f]+ 0x[0-9a-f]+)", table: id_tables/avr.yaml}
 serial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200]}
-sim: {engine: simavr}
+sim: {engine: simavr, fallback: qemu}
 skills: [skills/avr8/timers.md, skills/avr8/twi.md]
