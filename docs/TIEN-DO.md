@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 10/09/2026 (lần 18). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 11/09/2026 (lần 19). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,16 +12,20 @@
 
 ## 1. Một dòng
 
-**176/238 năng lực (74%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 lên 80/99 (81%).
-1301 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+**182/238 năng lực (76%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 giữ 80/99 (81%); M3 mở màn
+6/29. 1346 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
-**Mốc M2 nay chỉ còn 19 mục, và không mục nào làm được trên máy này**: `discover.*` (8),
-`target.*` (5), `bench.*` (3) cần **board thật**; `extract.ocr`/`image_*` (3) cần **đường ảnh
-cho Gateway** (mục P4 trong [CONG-VIEC.md](CONG-VIEC.md)). Mọi thứ của M2 không bị chặn đã xong.
+**Phiên 11/09 mở khối F1 — nhóm `sim.*` đóng phần M3 (6/6; `compare_hil` là M4).** Chuỗi Z-05
+"thêm tính năng" nhờ đó lên **14/16** và chỗ đứt dời từ `sim.run` sang `target.flash`, tức sang
+phần cần phần cứng.
+
+Mốc M2 vẫn còn 19 mục và không mục nào làm được trên máy này: `discover.*` (8), `target.*` (5),
+`bench.*` (3) cần **board thật**; `extract.ocr`/`image_*` (3) cần **đường ảnh cho Gateway**
+(mục P4 trong [CONG-VIEC.md](CONG-VIEC.md)).
 
 Điều này nghĩa là: **xương sống đã chạy thật đầu-cuối** — một câu tiếng Việt đi qua cổng
 chính sách, tra tri thức có nguồn, ra kết luận truy nguyên được. Phần còn thiếu là **tay
-chân**: sinh mã, nạp board, mô phỏng.
+chân**: nạp board, đo, gỡ lỗi trên phần cứng.
 
 ---
 
@@ -32,7 +36,7 @@ chân**: sinh mã, nạp board, mô phỏng.
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
 | M2 | 80/99 · 81% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
-| M3 | 0/29 | Gỡ lỗi trên phần cứng thật |
+| M3 | 6/29 · 21% | Mô phỏng và gỡ lỗi — `sim.*` xong, `debug.*` kế tiếp |
 | M4 | 0/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
 
@@ -50,13 +54,13 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 **`memory` 8/8** · **`kg` 9/9** · **`env` 7/7**
 
 **Gần đủ** — `diagram` 12/14 · `code` 13/16 · **`extract` 17/21** · `doc` 9/12 · `search` 7/9 ·
-`passport` 6/8
+`passport` 6/8 · **`sim` 6/7** (phần M3 đóng trọn; `compare_hil` là M4, cần báo cáo HIL thật)
 
 **Mới một phần** — `registry` 1/5 (M4) · `report` 2/4
 
-**Chưa bắt đầu** — `discover` (12, M2) · `target` (9, M2) · `sim` (7, M3) · `debug` (6, M3) ·
-`bench` (3, M2) · `measure` (3, M5). Tất cả đều cần **board thật hoặc trình mô phỏng chưa cài**
-— đúng thứ tự chủ sản phẩm đã chốt 08/09.
+**Chưa bắt đầu** — `discover` (12, M2) · `target` (9, M2) · `debug` (6, M3) · `bench` (3, M2) ·
+`measure` (3, M5). Tất cả đều cần **board thật** — đúng thứ tự chủ sản phẩm đã chốt 08/09.
+`debug.*` thì cần một engine mô phỏng chạy được, xem [DEV-086](DEVIATIONS.md).
 
 ---
 
@@ -67,16 +71,20 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 | Chuỗi | Tiến độ | Đứt tại |
 |---|---|---|
 | **Z-07** dự án từ zip | **23/23** | ✓ **đủ năng lực cho mọi bước** |
-| **Z-01** dự án từ ý tưởng | 11/14 | `search.reference_projects` (M4) |
-| **Z-05** thêm tính năng | 13/16 | `sim.run` (M3) — cả nhóm `code.*` của M2 đã xong |
+| **Z-01** dự án từ ý tưởng | 12/14 | `search.reference_projects` (M4) |
+| **Z-05** thêm tính năng | **14/16** | `target.flash` — **chỗ đứt nay ở phần cứng**, không còn ở mô phỏng |
 | **P7** bộ tài liệu | **8/8** | ✓ **đủ năng lực cho mọi bước** |
 | **Z-10** dò board và nạp | 1/10 | `discover.ports` (M2) — cần phần cứng |
 
 **Hai chuỗi đã trọn vẹn.** Z-07 đủ năng lực cho cả 23 bước — chuỗi đầu tiên trọn vẹn: zip → trích → hộ chiếu board → yêu cầu → kế hoạch → sinh mã → dựng → merge → hướng dẫn bringup. `tests/test_board.py::test_chuoi_Z07_du_nang_luc` giữ điều đó khỏi tụt đi trong im lặng.
 P7 đóng nốt bằng `diagram.architecture`, `diagram.state`, `doc.generate`, `doc.embed_diagram`
 — sản phẩm nay TỰ SINH ĐƯỢC bộ tài liệu về chính nó, bảng số liệu dựng từ store và có mục
-Nguồn truy ngược. Ba chuỗi còn lại đứt ở đúng chỗ dự kiến: chúng cần `sim.*`, `discover.*`,
-`search.reference_projects` — tức M3 trở đi hoặc phần cứng.
+Nguồn truy ngược. Ba chuỗi còn lại đứt ở đúng chỗ dự kiến: chúng cần `target.*`, `discover.*`,
+`search.reference_projects` — tức **phần cứng hoặc registry**, không còn thứ nào chờ mô phỏng.
+
+**Z-05 là chuỗi đổi nhiều nhất trong phiên 11/09.** Trước đó nó dừng ở `sim.run`; nay nó đi
+tiếp qua `sim.scenario → sim.run → code.merge` và chỉ dừng ở `target.flash`. Nói cách khác:
+vòng *sinh mã → dựng → mô phỏng → ghép* đã liền, và cái còn thiếu là cắm board.
 
 ---
 
@@ -107,11 +115,11 @@ ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1301** xanh, arm64 + x86_64 (`make check`) |
+| Test Python | **1346** xanh, arm64 + x86_64 (`make check`) |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
 | Test Swift | 29 |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 81 tổng, **10 Mở** (bản nháp đồng bộ đã sinh: `docs/sync/2026-09-10-*.md`) — 5 đề nghị sửa tài liệu ([DEV-072], [DEV-073], [DEV-075], [DEV-078], [DEV-080]); 4 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ khối D3 vision, [DEV-077] chờ chủ sản phẩm chọn hướng) |
+| Mục DEVIATIONS | 86 tổng, **8 Mở** — 7 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ engine mô phỏng chạy được); **1 chờ chủ sản phẩm** ([DEV-086] — thêm `fallback: qemu` cho `avr8.yaml`) |
 | Tài liệu | 35 tệp ở **v1.3**, khớp nguồn sinh từng khối (`make check`) |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
@@ -119,7 +127,7 @@ Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó đ�
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
 
-**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1301 test, giả lập) hỏi *"mã có đúng
+**Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1346 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
 đã tìm ra hai lỗi mà lớp thứ nhất không thể thấy:
@@ -138,7 +146,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Sáu lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -162,6 +170,22 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
    ghi được vào đâu cả, kể cả `./a.txt`. **Không test nào thấy vì chưa test nào GHI** — cả bộ
    chỉ xem mã thoát của lệnh chỉ-đọc. Đây gần như chắc chắn cũng là lý do bốn bộ dựng lược đồ
    ngoài Graphviz (mục I2 của [CONG-VIEC.md](CONG-VIEC.md)) chưa nhánh nào chạy được.
+7. **Ba hằng số thời gian chờ của sandbox chưa bao giờ có hiệu lực** (11/09). Bảy chỗ gọi trong
+   `code.*`, `env.install` và `extract.*` truyền `limits={"timeout_s": …}`, nhưng `Sandbox` đọc
+   khóa `wall_s`; `{**MẶC_ĐỊNH, **limits}` nuốt khóa lạ không một lời. Nên `TIMEOUT_DUNG = 600`,
+   `TIMEOUT_CAI = 900`, `TIMEOUT_TEST = 120` đều là số trang trí, và MỌI lệnh chạy dưới hạn mặc
+   định 300 s — kể cả `brew install gcc-arm-embedded`, vốn tải vài trăm MB và bị giết ở phút thứ
+   năm với thông báo "quá thời gian 300 s" cho một lệnh mà mã nguồn nói rõ là được 900 s. Không
+   test nào thấy vì **không test nào chạy đủ lâu để chạm hạn**. Vá bằng cách để `Sandbox` từ
+   chối khóa lạ (E1000) thay vì gộp im lặng — cùng hình dạng với lỗi số 5: một cấu hình trông
+   như đang có hiệu lực.
+8. **`project.set_target` mất ISA với chính dạng tên chip mà bộ hồ sơ dùng** (11/09).
+   `family_patterns` neo đầu chuỗi (`^STM32F[2-4]`) nên nó khớp `STM32F411CE` — ví dụ của
+   PROJECT-06 — nhưng không khớp `st.stm32f411ce`, vốn là dạng IRI mà `extract.svd` sinh ra cho
+   **mọi** hộ chiếu chip và cũng là ví dụ của SIM-01. Ghim bằng dạng IRI cho ra `isa: null`
+   trong `constraints.yaml` mà không báo gì, rồi `code.build` dừng ở "chưa ghim ISA" — một câu
+   đúng về triệu chứng và sai về nguyên nhân. Test cũ có ghim đúng dạng ấy, nhưng chỉ khẳng
+   định phần hộ chiếu nên nhánh ISA không ai nhìn.
 
 ---
 
@@ -171,16 +195,24 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 |---|---|
 | **WI-257** ký danh sách trắng | `trusted_sources` (POL-17, ĐÃ KÝ) ghi `github.com/cmsis-svd` nhưng SVD thật phục vụ từ `raw.githubusercontent.com` — **nguồn SVD tầng vàng phổ biến nhất vẫn rơi vào ASK ở cổng G-SRC**. Bảng nguồn hãng TGT-19 §8 đã thêm tên miền ấy (nó mô tả *nơi tài liệu thật sự nằm*), nhưng danh sách trắng thì khác: nó quyết định *cho tải hay không*, và sửa nó cần chữ ký của chủ sản phẩm |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
+| **[DEV-086]** thêm `fallback: qemu` cho `avr8.yaml` | Sửa `docs/spec/` nên cần anh duyệt. Đo 11/09: **không engine mô phỏng nào trong bộ hồ sơ chạy được trên máy này** — `simavr` không có công thức brew, Renode không có cask, và `qemu-system-arm` thì không mang máy ảo nào cho họ STM32F4. Nhưng `qemu-system-avr` **đã có sẵn** và mang đúng `arduino-uno` = ATmega328P, khớp `family_patterns` của `avr8.yaml`. Một dòng trong `tgt_sim.js`, cùng khuôn với `armv7e-m.yaml`, là đủ để cả nhóm `sim.*` có một đường chạy engine THẬT kiểm được |
 
 ---
 
 ## 8. Việc tiếp theo đề xuất
 
-**Khối G đã đóng phần M2** (10/09): `project.*` 9/9, `view.*` 13/13, `tool.*` 10/10,
-`memory.*` 8/8, `kg.*` 9/9, `env.*` 7/7, cùng `passport.diff/upgrade`, `report.explain`,
-`search.docs_mcp`. Cộng với khối D trước đó, **M2 lên 80/99**.
+**Khối F1 đã đóng phần M3 của `sim.*`** (11/09): `build_platform`, `mock_peripheral`,
+`model_plant`, `scenario`, `run`, `sweep` — 44 test. `compare_hil` là M4 vì nó cần một báo cáo
+HIL thật, tức cần board.
 
-Mười chín mục M2 còn lại chia làm đúng hai nhóm, và cả hai đều chờ một điều kiện bên ngoài:
+Điều đáng nói nhất của khối này không phải sáu năng lực mà là **một bất biến**: không kỳ vọng
+nào được coi là ĐẠT nếu không có kênh quan sát cho nó. Một dòng `expect` mà engine hiện có không
+nhìn thấy được trả `unverified` kèm lý do, và một kịch bản có dù một dòng `unverified` thì
+`passed = false`. Cái giá phải trả là nhiều kịch bản hôm nay sẽ không bao giờ xanh. Đổi lại:
+`sim_first` dùng chính con số ấy để cho phép nạp firmware lên board, nên một `passed=true` dựa
+trên những dòng chưa ai kiểm là đúng thứ cơ chế ấy sinh ra để chặn.
+
+Mười chín mục M2 còn lại vẫn chia làm đúng hai nhóm, cả hai chờ điều kiện bên ngoài:
 
 | Nhóm | Số | Chặn bởi |
 |---|---|---|
@@ -189,11 +221,12 @@ Mười chín mục M2 còn lại chia làm đúng hai nhóm, và cả hai đề
 
 Ba hướng đi tiếp, theo thứ tự tôi đề xuất:
 
-1. **Đường ảnh cho Gateway** → đóng nốt 3 năng lực M2 cuối cùng làm được trên máy, và gỡ hai
+1. **[DEV-086] rồi chạy engine thật** → một dòng anh duyệt, rồi khối `sim.*` có đường chạy engine
+   thi hành được trên máy này (ATmega328P trên `qemu-system-avr`). Đó là điều kiện để đóng
+   [DEV-083] (kênh `var`/`gpio`) và [DEV-084] (đồng mô phỏng plant), và cũng là thứ mở đường cho
+   `debug.*` — cả sáu năng lực `debug.*` đều đứng trên một lượt chạy mô phỏng quan sát được.
+2. **Đường ảnh cho Gateway** → đóng nốt 3 năng lực M2 cuối cùng làm được trên máy, và gỡ hai
    nhánh đang treo. Chạm lõi, cần khoá mô hình có thị giác để kiểm đường thật.
-2. **Khối F mô phỏng** (`sim.*` 7 + `debug.*` 6, mốc M3) — cần cài Renode/QEMU. `sim_first` bắt
-   mô phỏng chạy trước phần cứng, nên khối này phải xong trước khi board có ý nghĩa; nó cũng là
-   cách kiểm `code.*` mà không cần board.
 3. **`code.*` phần M3** (`annotate`, `docs`, `refactor`) và `doc.*`/`diagram.*` phần M3 — không
    bị chặn bởi gì, nhưng giá trị thấp hơn hai hướng trên.
 

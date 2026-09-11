@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 10/09/2026 (lần 15) từ registry — không gõ tay. Còn **62/238** năng lực. Xem
+*Đo 11/09/2026 (lần 16) từ registry — không gõ tay. Còn **56/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -12,11 +12,12 @@ chủ sản phẩm 08/09).
 ## Việc chờ CHỦ SẢN PHẨM (không phải việc của tôi)
 
 *Đợt đồng bộ 10/09 đã đóng **7 mục** (DEV-072, 073, 075, 077, 078, 080, 081): CDS-12 lên **v1.4**,
-DDD-14 lên **v1.4**, API-15 lên **v1.7**. `docs/DEVIATIONS.md` còn **3 mục Mở**, cả ba là nợ hiện
-thực chờ mốc sau — không mục nào chờ anh.*
+DDD-14 lên **v1.4**, API-15 lên **v1.7**. Phiên 11/09 thêm **5 mục Mở** (DEV-082…086), bốn là nợ
+hiện thực của khối mô phỏng và **một chờ anh** — mục P0 ngay dưới.*
 
 | # | Việc | Vì sao chặn |
 |---|---|---|
+| **P0** | **[DEV-086](DEVIATIONS.md) — thêm `fallback: qemu` cho `isa/avr8.yaml`** | Sửa `docs/spec/` nên cần anh duyệt. Đo 11/09: **không engine mô phỏng nào trong bộ hồ sơ chạy được trên máy này**. `simavr` không có công thức brew, Renode không có cask, `qemu-system-arm` không mang máy ảo nào cho STM32F4. Nhưng `qemu-system-avr` đã có sẵn và mang đúng `arduino-uno` = ATmega328P — khớp `family_patterns: ["^ATmega", …]` của `avr8.yaml`. Một dòng trong `docs/ho-so/nguon/tgt_sim.js`, cùng khuôn với `armv7e-m.yaml` (vốn đã có `fallback: qemu`). Đổi lại: khối `sim.*` có đường chạy engine **thật** kiểm được, và đó là điều kiện để đóng DEV-083 + DEV-084 và để bắt đầu `debug.*` |
 | **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
 | ~~P2~~ | ~~[DEV-077](DEVIATIONS.md) — cạnh `CONFLICTS_WITH`~~ | **Anh chốt 10/09: thêm trường.** DDD-14 §2 Fact v1.4 có `conflicts_with`; migration `0006`; `kg.dung` dựng cạnh từ hai đường (suy + khai); `extract.pdf_errata` nối được cạnh mà hợp đồng đòi. Xong |
 | ~~P3~~ | ~~Duyệt bản nháp đồng bộ~~ | **Anh duyệt 10/09.** Sáu mục đã đóng: CDS-12.1/12.2/12.4 lên **v1.4** (DEV-072, 073, 075, 078, 080), API-15 lên **v1.7** (DEV-081 — kiểu sự kiện `project.state`). Còn **3 mục Mở**, cả ba là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision) |
@@ -113,15 +114,39 @@ test đối chứng hai chiều (`test_boards_KHONG_duoc_nap_khi_niem_vo`).
 
 ---
 
-## F. `sim.*` + `debug.*` — 12 năng lực (M3)
+## ~~F1. `sim.*`~~ — **6/6 phần M3, xong 11/09**; còn F2 `debug.*` (6, M3)
 
-| # | Việc | Chặn bởi |
+| # | Việc | Trạng thái |
 |---|---|---|
-| F1 | `sim.build_platform`, `sim.run`, `mock_peripheral`, `model_plant` | Cần Renode/QEMU/simavr — **cài được, chưa cài** |
-| F2 | `debug.hypothesize`, `experiment`, `ask_at`, `log_stats`, `propose_fix` | Cần F1 |
+| ~~F1~~ | ~~`build_platform`, `mock_peripheral`, `model_plant`, `scenario`, `run`, `sweep`~~ | **Xong 11/09** — 44 test. `compare_hil` là M4 (cần báo cáo HIL thật). Chuỗi Z-05 lên **14/16**, chỗ đứt dời sang `target.flash` |
+| F2 | `debug.hypothesize`, `experiment`, `ask_at`, `log_stats`, `propose_fix`, `summarize` | Cần một lượt chạy mô phỏng **quan sát được** — tức cần [DEV-086](DEVIATIONS.md) (mục P0) rồi [DEV-083](DEVIATIONS.md) |
 
-**`defaults.sim_first` bắt mô phỏng chạy TRƯỚC phần cứng**, nên khối này phải xong trước khi
-board có ý nghĩa. Nó cũng là cách kiểm `code.*` mà không cần board.
+**Bất biến của khối F1, và nó là phần đáng nhớ hơn cả sáu năng lực**: không kỳ vọng nào được coi
+là ĐẠT nếu không có kênh quan sát cho nó. Một `expect` mà engine hiện có không nhìn thấy được
+(`var` qua monitor, `gpio`, tín hiệu plant) trả `unverified` kèm lý do, và một kịch bản có dù một
+dòng `unverified` thì `report.passed = false`. Ba trạng thái chứ không phải hai, vì "firmware làm
+sai" và "EIDE chưa nhìn thấy được" là hai câu khác nhau: gộp thành `failed` thì người ta đi sửa
+một chỗ không hỏng, gộp thành `passed` thì một firmware chưa ai quan sát đi thẳng lên board.
+
+**Điều khối này chưa làm được, và vì sao.** Không engine nào trong bộ hồ sơ chạy được trên máy
+phát triển (xem P0), nên **đường chạy engine thật chưa lần nào được thi hành** — cùng hình dạng
+với mục I2. Bốn nợ hiện thực đã ghi: [DEV-082] (bảng tên chương trình và máy ảo nằm trong mã),
+[DEV-083] (kênh `var`/`gpio`), [DEV-084] (đồng mô phỏng plant ↔ chip), [DEV-085] (UART ra console
+nên `within_s` chỉ kết luận được khi `within_s ≥ duration_s`).
+
+**Nền tảng (PLATFORM.md quy tắc 7): mac — kiểm thật trên arm64.** Phần mã của nhóm là đa nền
+tảng theo đúng ba quy tắc đầu (`pathlib`, argv dạng danh sách, `tools.which` cho mọi engine, và
+`tools.which` đã tự thử `.exe`/`.cmd` trên Windows). Hai chỗ còn phụ thuộc nền tảng đều KHÔNG
+thuộc nhóm này: (a) mọi lượt chạy engine đi qua `eide_core.sandbox`, mà `sandbox.py` `import
+resource` và dùng `preexec_fn` — cả hai chỉ có trên Unix, nên `sim.run`/`sim.sweep` chưa chạy
+được trên Windows cho tới khi lõi sandbox có nhánh Windows (nợ sẵn có, không phải của F1);
+(b) tên tệp thi hành của engine trên Windows chưa ai kiểm vì chưa máy nào có engine.
+
+**Điều khối này làm được thật:** `sim.model_plant` sinh ra một mô hình con lắc ngược RK4 và
+TC-SM-03 **đo trên chính mô-đun ấy** — không điều khiển đổ sau 0,21 s; PID tham chiếu đưa nhiễu
+5° về dưới 1° trong 0,10 s. `sim.sweep` quét lưới trên cùng mô hình ấy, đúng ví dụ
+`{"kp": [1,10,1]}` của SIM-06. `sim.mock_peripheral` sinh mock BME280 từ fact và test **nạp mô-đun
+sinh ra rồi nói chuyện I2C với nó**: `Write([0xD0])` → `Read(1) == [0x60]`, đúng TC-SM-02.
 
 ---
 
@@ -175,9 +200,11 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 ```
 A1+A2 (xong)  →  B1+B2 (xong)  →  E board.* (xong, Z-07 đóng)
               →  C1..C4 (xong, P7 đóng)  →  D phần không cần ảnh (xong 10/09)
-              →  ??? ←  ĐANG Ở ĐÂY: G (rải rác, không bị chặn)  hoặc
+              →  G rải rác (xong 10/09, M2 đóng phần làm được)
+              →  F1 sim.* (xong 11/09, Z-05 lên 14/16)
+              →  ??? ←  ĐANG Ở ĐÂY: P0 [DEV-086] anh duyệt → F2 debug.*  hoặc
                         D3 (cần đường ảnh cho Gateway — mục P4)  hoặc
-                        F (mô phỏng, cần cài Renode/QEMU)
+                        B4 code.* phần M3 (không bị chặn, giá trị thấp hơn)
               →  H (phần cứng, cuối cùng)
 ```
 
@@ -192,45 +219,48 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 10/09/2026 — bắt đầu phiên sau từ đây
+## Điểm dừng phiên 11/09/2026 — bắt đầu phiên sau từ đây
 
-*Cây làm việc sạch, `make check` **1301 xanh trên cả arm64 lẫn x86_64**, DEVIATIONS còn **3 mục
-Mở** — cả ba là nợ hiện thực, không mục nào chờ chủ sản phẩm.*
+*Cây làm việc sạch, `make check` **1346 xanh**, DEVIATIONS còn **8 mục Mở** — 7 là nợ hiện thực,
+**1 chờ chủ sản phẩm** ([DEV-086], mục P0).*
 
-**176/238 (74%), M2 80/99 (81%).** Hai mươi hai năng lực trong phiên, mỗi cái một commit.
+**182/238 (76%), M3 mở màn 6/29.** Sáu năng lực `sim.*` trong phiên, cộng hai lỗi im lặng.
 
-### Mốc đạt được: M2 chỉ còn thứ bị chặn từ bên ngoài
+### Mốc đạt được: vòng sinh mã → dựng → mô phỏng → ghép đã liền
 
-Mười chín mục M2 còn lại chia đúng hai nhóm: **16 cần board thật** (`discover.*` 8, `target.*` 5,
-`bench.*` 3) và **3 cần đường ảnh cho Gateway** (`extract.ocr`, `image_schematic`, `image_board`).
-Mọi thứ của M2 làm được trên máy này đã xong.
+Chuỗi Z-05 "thêm tính năng" lên **14/16** và chỗ đứt dời từ `sim.run` sang `target.flash`. Không
+chuỗi chuẩn nào còn chờ mô phỏng nữa — ba chuỗi dở dang đều đứt ở phần cứng hoặc registry.
 
 ### Đã xong trong phiên
 
 | Khối | Năng lực | Điều đáng nhớ |
 |---|---|---|
-| D `extract.*` | `pdf_pinout`, `pdf_errata`, `readme_goal`, `dt_binding`, `bom`, `bom_enrich`, `pdf_formula` | Số AF và rev đọc từ **vị trí cột**; errata là lớp phủ K2′; BOM gộp theo MPN đầy đủ |
-| G `project.*` | `clone`, `archive`, `rollback` → **9/9** | Bản sao không mang ledger/decision_log/run |
-| G `view.*` | `coverage_map`, `impact_map`, `rag_compare`, `timeline` → **13/13** | `impact_map` gọi `kg.impact` chứ không tính lại |
-| G `tool.*` | `compose`, `promote`, `deprecate` → **10/10** | `compose` hợp hiệu ứng; `promote` chỉ ĐỀ XUẤT |
-| G `memory.*`/`passport.*` | `error_ledger`, `forget`, `diff`, `upgrade` | Vòng *lỗi → negative_prompt → C1*; `diff` so theo (subject, predicate) |
-| G lẻ | `kg.evidence`, `report.explain`, `env.install_pack`, `search.docs_mcp` | ISA mới vào bằng GÓI, không sửa core |
-| Tài liệu | DEV-077 + đợt duyệt 7 mục | DDD-14 **v1.4** (`fact.conflicts_with` + migration 0006), CDS-12 **v1.4**, API-15 **v1.7** |
+| F1 `sim.*` | `build_platform`, `mock_peripheral`, `model_plant`, `scenario`, `run`, `sweep` → **6/6 phần M3** | Bất biến: **không expect nào ĐẠT nếu không có kênh quan sát cho nó** — ba trạng thái `passed`/`failed`/`unverified`, và một dòng `unverified` kéo cả lượt chạy xuống `passed=false` |
+| Lõi | `Sandbox` từ chối khóa `limits` lạ | Ba hằng số thời gian chờ (600/900/120 s) chưa bao giờ có hiệu lực — xem lỗi im lặng số 7 trong [TIEN-DO.md](TIEN-DO.md) |
+| `project.*` | `_isa_tu_chip` nhận cả dạng IRI hộ chiếu | Ghim `st.stm32f411ce` từng cho `isa: null` im lặng — lỗi im lặng số 8 |
+| Tài liệu | DEV-082…DEV-086 | Bốn nợ hiện thực của khối mô phỏng, một mục chờ anh duyệt |
 
-### Điều kiểm đột biến dạy được trong phiên này
+### Điều phiên này dạy được
 
-Nó bắt **17 test "xanh vì lý do khác lý do nó được viết ra"**, và ba lần chỉ ra vấn đề thật
-trong mã chứ không chỉ trong test:
-
-- Phép kiểm working tree của `project.rollback` bị git che (git cũng khuyên "stash") — trường
-  hợp git KHÔNG chặn mới đáng sợ: tệp mới chưa commit trôi sang nhánh `auto/rollback`.
-- Dòng khôi phục `FEATURES.json` là thừa, nhưng chỉ đúng khi git theo dõi tệp ấy → thêm
-  `state.features_restored`.
-- `tool.promote` "không tự áp dụng" chỉ được kiểm ở registry, chưa kiểm `docs/spec/` — mà ghi
-  thẳng vào đó mới là điều đáng sợ.
+- **Có `qemu` không có nghĩa là chạy được chip này.** QEMU chỉ chạy những bo mạch đã biên dịch
+  sẵn vào nó; máy gần nhất với STM32F411 là `netduinoplus2`, vốn là STM32F405. Gán tạm nó thì
+  firmware chạy trên một con chip khác chip nó được dịch cho — rồi báo ĐẠT. Nên "engine dùng
+  được" là kết luận về **cặp (engine, chip)**, không phải về engine.
+- **Một hằng số trông như đang có hiệu lực là thứ chỉ lộ ra ở lần chạy thật đầu tiên.**
+  `timeout_s` vs `wall_s`: bảy chỗ gọi, ba hằng số, không test nào chạy đủ lâu để chạm hạn. Vá
+  bằng cách để lớp dưới TỪ CHỐI khóa lạ, không phải bằng cách sửa bảy chỗ gọi — sửa bảy chỗ thì
+  chỗ thứ tám vẫn im lặng như cũ.
+- **Hai dạng tên cho cùng một con chip sống cạnh nhau trong cùng bộ hồ sơ.** SIM-01 viết
+  `st.stm32f411ce`, PROJECT-06 viết `STM32F411CE`, và `family_patterns` chỉ khớp dạng thứ hai.
+  Test cũ có ghim đúng dạng thứ nhất nhưng chỉ khẳng định phần hộ chiếu, nên nhánh ISA không ai
+  nhìn suốt năm ngày.
 
 ### Bẫy đã biết, đừng đạp lại
 
+- **`limits` của sandbox dùng khóa `wall_s`, không phải `timeout_s`.** Nay truyền sai tên là
+  E1000 ngay, nhưng nhớ tên đúng vẫn rẻ hơn đọc lỗi.
+- **Engine mô phỏng chưa lần nào chạy thật trên máy này** (P0). Test của `sim.run`/`sim.sweep`
+  dùng shim; đường engine thật vẫn chờ [DEV-086].
 - **Chạy test bằng `.venv-arm/bin/python`, không phải `python` trên PATH.** Venv là 3.11 còn
   `python` hệ thống mới hơn: một f-string lồng dùng lại dấu nháy chạy được ở ngoài và là LỖI CÚ
   PHÁP trong venv — pytest xanh, `make check` đỏ ở bước ruff.
