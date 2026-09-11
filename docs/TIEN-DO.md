@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 11/09/2026 (lần 19). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 11/09/2026 (lần 20). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -13,11 +13,25 @@
 ## 1. Một dòng
 
 **182/238 năng lực (76%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 giữ 80/99 (81%); M3 mở màn
-6/29. 1346 test xanh trên cả arm64 lẫn x86_64. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+6/29. 1352 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
 
 **Phiên 11/09 mở khối F1 — nhóm `sim.*` đóng phần M3 (6/6; `compare_hil` là M4).** Chuỗi Z-05
 "thêm tính năng" nhờ đó lên **14/16** và chỗ đứt dời từ `sim.run` sang `target.flash`, tức sang
 phần cần phần cứng.
+
+**Phiên 11/09 đợt 2 không thêm năng lực nào, và đó là chủ ý: cả ba việc đều là "thứ tưởng đã
+đúng".** Số năng lực đứng yên ở 182, nhưng ba đường mã trước đó chưa ai chạy thì nay đã chạy:
+
+- **`sim.*` chạy engine THẬT lần đầu** ([DEV-086](DEVIATIONS.md), chủ sản phẩm duyệt).
+  `qemu-system-avr -M arduino-uno` chạy một ELF AVR qua chính `sim.run` và cho
+  `captured.uart == ["E"]` — ký tự firmware ghi vào UDR0, không phải chuỗi một shim echo ra.
+- **Phần Swift vào `make check`** (WI-260). Trước đó `make check` chỉ gọi phía Python, nên gói
+  Swift đỏ hai bài suốt năm ngày mà "xanh" của dự án vẫn nói về toàn kho.
+- **`search.rank` thôi dùng danh sách trắng TẢI VỀ làm thước đo chất lượng**
+  ([DEV-087](DEVIATIONS.md)). Lộ ra khi ký WI-257.
+
+Ba việc, cùng một hình dạng: **một cơ chế trông như đang có hiệu lực.** Cùng họ với ba hằng số
+thời gian chờ của sandbox (lỗi im lặng số 7) và với ngưỡng cứng R4 (số 5).
 
 Mốc M2 vẫn còn 19 mục và không mục nào làm được trên máy này: `discover.*` (8), `target.*` (5),
 `bench.*` (3) cần **board thật**; `extract.ocr`/`image_*` (3) cần **đường ảnh cho Gateway**
@@ -109,18 +123,29 @@ eide project new "đo nhiệt độ bằng STM32F411 và BME280"
 Ngoài ra: **MCP server** (dùng được từ Claude Code/Cursor), **plugin GEditor** (Swift, panel
 ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
+**Và từ 11/09 đợt 2, một lượt mô phỏng THẬT** — `qemu-system-avr -M arduino-uno` (= ATmega328P)
+chạy một ELF AVR qua chính `sim.run`, qua chính sandbox SEC-25, trả `captured.uart == ["E"]`.
+ELF ấy dựng bằng tay trong test, 98 byte, năm lệnh mã máy (TXEN0 → UCSR0B, `'E'` → UDR0,
+`rjmp .-2`): máy phát triển không có `avr-gcc`, và cả nhóm `sim.*` thì không được phép chờ một
+chuỗi công cụ để có lấy một lượt chạy thật. Đổi lại bài chạy trong 4 giây và không cần cài gì.
+
+Điều ấy đáng ghi vì nó đổi hạng của 44 test còn lại: trước hôm nay chúng đều đứng trên một shim
+luôn ngoan, nên chúng kiểm được phần thuộc về EIDE mà không thể sai theo cách một engine thật
+sai được. Nay nhánh `TU_DUNG["qemu"] = False` — *hết giờ LÀ cách lượt chạy kết thúc, không phải
+E4004* — đã có một engine thật chứng minh.
+
 ---
 
 ## 6. Chất lượng
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1346** xanh, arm64 + x86_64 (`make check`) |
-| Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) |
-| Test Swift | 29 |
+| Test Python | **1352** xanh, arm64 + x86_64 (`make check-py`) |
+| Test Swift | **2699** xanh (`make check-swift`, nay nằm trong `make check` — WI-260). Trong đó **29** là EIDEKit, phần thuộc EIDE; còn lại là GEditor, ứng dụng chủ |
+| Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **1 engine mô phỏng** (`qemu-system-avr`, nằm trong `make check`, tự bỏ qua nếu máy không có) |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 86 tổng, **8 Mở** — 7 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ engine mô phỏng chạy được); **1 chờ chủ sản phẩm** ([DEV-086] — thêm `fallback: qemu` cho `avr8.yaml`) |
-| Tài liệu | 35 tệp ở **v1.3**, khớp nguồn sinh từng khối (`make check`) |
+| Mục DEVIATIONS | 87 tổng, **7 Mở** — tất cả là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ kênh quan sát). **Không còn mục nào chờ chủ sản phẩm** |
+| Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`). Phiên này: **TGT-19 v1.2**, **SIM-20 v1.1** |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
 Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó được viết ra" — trong đó có test
@@ -146,7 +171,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Mười lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -186,6 +211,27 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
    trong `constraints.yaml` mà không báo gì, rồi `code.build` dừng ở "chưa ghim ISA" — một câu
    đúng về triệu chứng và sai về nguyên nhân. Test cũ có ghim đúng dạng ấy, nhưng chỉ khẳng
    định phần hộ chiếu nên nhánh ISA không ai nhìn.
+9. **"Xanh" của dự án nói về nửa kho** (11/09 đợt 2). `make check` gọi lint + spec + pytest +
+   secrets + gen — toàn phía Python. Gói Swift đứng ở `make geditor`, một lệnh phải nhớ gõ tay.
+   Từ 06/09 (lần dọn GEditor vào `apps/`) tới 11/09, `swift test` đỏ **hai bài** mà cổng chính
+   vẫn xanh. Cả hai là test mục rữa: một bài đòi sách trợ giúp rơi về tiếng Việt trong khi mã
+   cố ý rơi về tiếng Anh kèm bốn dòng giải thích, và `de` thì nay đã có sách; một bài leo ba
+   cấp thư mục để tìm tệp YAML thật, mà ba cấp ấy sau lần dọn chỉ còn **một** tệp. Bài thứ hai
+   đáng nhớ hơn: nó không hỏng, nó **hết việc** — và một bài test hết ngữ liệu thì im lặng y
+   như một bài test sai. Vá bằng cách đưa `check-swift` vào `check`, vì một cổng phải tự chạy
+   thì mới là cổng.
+10. **Danh sách trắng TẢI VỀ bị dùng làm thước đo CHẤT LƯỢNG** (11/09 đợt 2,
+    [DEV-087](DEVIATIONS.md)). `search.rank` cộng "+2 domain tin cậy" bằng cách tra
+    `trusted_sources` — danh sách bảy tên miền trả lời câu *"có được tải tự động không"*, cần
+    chữ ký chủ sản phẩm để đổi. Xếp hạng thì hỏi câu khác hẳn: *"nguồn này đáng tin tới đâu"*,
+    vốn là việc của bảng 12 hãng trong TGT-19 §8. Hệ quả: **một hãng vắng mặt trong danh sách
+    tải-về thì vĩnh viễn không được +2, kể cả trên trang datasheet của chính nó.** Điều giữ nó
+    im lặng là một biên MỘT điểm: `allegromicro.com` thắng diễn đàn nhờ +2 *khớp mã linh kiện*,
+    trong khi docstring của cả `_tang_du_kien` lẫn bài test đều ghi "trang hãng thắng vì TẦNG
+    khác nhau" — và tầng thì đang NGƯỢC (mirror gold, trang hãng silver, vì TGT-19 §8 xếp SVD
+    trên PDF). Thêm đúng một tên miền vào danh sách trắng (WI-257) là biên ấy mất, và câu nói
+    sai bốn ngày mới lộ. Cùng họ với [DEV-058] (thang điểm FTS đảo ngược mà thứ hạng vẫn đúng
+    nhờ `ORDER BY`): một bài test xanh vì lý do khác với lý do nó được viết ra.
 
 ---
 
@@ -193,9 +239,9 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 
 | Việc | Vì sao cần người |
 |---|---|
-| **WI-257** ký danh sách trắng | `trusted_sources` (POL-17, ĐÃ KÝ) ghi `github.com/cmsis-svd` nhưng SVD thật phục vụ từ `raw.githubusercontent.com` — **nguồn SVD tầng vàng phổ biến nhất vẫn rơi vào ASK ở cổng G-SRC**. Bảng nguồn hãng TGT-19 §8 đã thêm tên miền ấy (nó mô tả *nơi tài liệu thật sự nằm*), nhưng danh sách trắng thì khác: nó quyết định *cho tải hay không*, và sửa nó cần chữ ký của chủ sản phẩm |
+| **WI-257** — chạy `eide policy sign` | **Dữ liệu đã sửa, chỉ còn chữ ký.** `defaults.yaml` nay có `raw.githubusercontent.com`; mã, test và [DEV-087](DEVIATIONS.md) đã xong. Nhưng `eide policy sign` **cố ý là LỆNH chứ không phải năng lực** — trong 238 năng lực không có `policy.sign`, vì năng lực thì Router gọi được, tức tác tử gọi được, tức tác tử tự cấp quyền cho chính nó. Tình huống S47 nói thẳng: *"tác tử tự thêm một tên miền vào `trusted_sources`" → REJECT G-WL-02*. Chưa ký thì PolicyGate **bỏ hẳn ba danh sách** và mọi thứ rơi về ASK — đo được: 19 test đỏ, tất cả cùng một nguyên nhân. Đã kiểm trên bản sao đã ký (`EIDE_SPEC_DIR`, không đụng niêm thật): **1352 xanh**. Lệnh: `.venv-arm/bin/python -m eide.cli policy sign --by "Vũ Trí Công"` |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
-| **[DEV-086]** thêm `fallback: qemu` cho `avr8.yaml` | Sửa `docs/spec/` nên cần anh duyệt. Đo 11/09: **không engine mô phỏng nào trong bộ hồ sơ chạy được trên máy này** — `simavr` không có công thức brew, Renode không có cask, và `qemu-system-arm` thì không mang máy ảo nào cho họ STM32F4. Nhưng `qemu-system-avr` **đã có sẵn** và mang đúng `arduino-uno` = ATmega328P, khớp `family_patterns` của `avr8.yaml`. Một dòng trong `tgt_sim.js`, cùng khuôn với `armv7e-m.yaml`, là đủ để cả nhóm `sim.*` có một đường chạy engine THẬT kiểm được |
+| ~~**[DEV-086]**~~ | ~~thêm `fallback: qemu` cho `avr8.yaml`~~ — **anh duyệt 11/09, đã xong.** TGT-19 lên v1.2, SIM-20 lên v1.1, và nhóm `sim.*` có lượt chạy engine thật đầu tiên (§5) |
 
 ---
 
@@ -219,16 +265,32 @@ Mười chín mục M2 còn lại vẫn chia làm đúng hai nhóm, cả hai ch�
 | `discover.*` 8 · `target.*` 5 · `bench.*` 3 | 16 | **Board thật** — quyết định chủ sản phẩm 08/09 là để cuối cùng |
 | `extract.ocr` · `image_schematic` · `image_board` | 3 | **Đường ảnh cho Gateway** — `models.yaml` khai vai trò `cartographer` với `inputs: [image]` nhưng `Gateway.run` chỉ nhận văn bản. Mở nó cũng gỡ nốt [DEV-076] và [DEV-079] |
 
-Ba hướng đi tiếp, theo thứ tự tôi đề xuất:
+Bốn hướng đi tiếp, theo thứ tự tôi đề xuất:
 
-1. **[DEV-086] rồi chạy engine thật** → một dòng anh duyệt, rồi khối `sim.*` có đường chạy engine
-   thi hành được trên máy này (ATmega328P trên `qemu-system-avr`). Đó là điều kiện để đóng
-   [DEV-083] (kênh `var`/`gpio`) và [DEV-084] (đồng mô phỏng plant), và cũng là thứ mở đường cho
-   `debug.*` — cả sáu năng lực `debug.*` đều đứng trên một lượt chạy mô phỏng quan sát được.
-2. **Đường ảnh cho Gateway** → đóng nốt 3 năng lực M2 cuối cùng làm được trên máy, và gỡ hai
-   nhánh đang treo. Chạm lõi, cần khoá mô hình có thị giác để kiểm đường thật.
-3. **`code.*` phần M3** (`annotate`, `docs`, `refactor`) và `doc.*`/`diagram.*` phần M3 — không
-   bị chặn bởi gì, nhưng giá trị thấp hơn hai hướng trên.
+1. **Chuỗi công cụ ARM, rồi dựng thật một lần.** `arm-none-eabi-gcc` **không có trên máy này**:
+   `tests/test_code.py` dựng shim shell cho `arm-none-eabi-size`, `nghiem_thu_sprint2.sh` 18 bước
+   không có bước nào biên dịch, và `test_that.py` (lớp gọi thật) có URL hãng, Graphviz, mô hình,
+   trình quản lý gói — **không có biên dịch**. Nghĩa là câu "vòng sinh mã → dựng → mô phỏng →
+   ghép đã liền" (§4) đúng ở mức **phủ năng lực**, chưa đúng ở mức **đã thi hành**: `sim.*` nay
+   đã chạy thật, `code.build` thì chưa. Đây là mắt xích trung tâm của luận điểm đề án — *sinh mã
+   có nối về fact* — nên nó đáng một lượt chạy thật hơn bất cứ năng lực mới nào.
+   `brew install --cask gcc-arm-embedded` theo đúng `install.macos` của `armv7e-m.yaml`.
+2. **[DEV-083] kênh `var`/`gpio`** → nay là việc làm được, không còn là việc chờ. Trước 11/09 nó
+   chặn vì *không engine nào chạy được*; giờ `qemu-system-avr` chạy và QEMU có sẵn gdbstub
+   (`-s -S`), nên đọc biến là nối một client giao thức GDB-remote — không cần `avr-gdb`, vốn cũng
+   không có trên máy. Đóng được nó là mở đường cho cả sáu năng lực `debug.*`, vốn đều đứng trên
+   một lượt chạy mô phỏng **quan sát được**.
+3. **Đường ảnh cho Gateway** → đóng nốt 3 năng lực M2 cuối cùng làm được trên máy, và gỡ hai
+   nhánh đang treo ([DEV-076], [DEV-079]). Chạm lõi, cần khoá mô hình có thị giác để kiểm đường
+   thật.
+4. **`code.*` phần M3** (`annotate`, `docs`, `refactor`) và `doc.*`/`diagram.*` phần M3 — không
+   bị chặn bởi gì, nhưng giá trị thấp hơn ba hướng trên.
+
+Còn một món nợ cùng hình dạng với cả ba lỗi của phiên này, đã ghi ở mục I2 của
+[CONG-VIEC.md](CONG-VIEC.md): **bốn bộ dựng lược đồ ngoài Graphviz chưa nhánh nào được thi
+hành** (`mmdc`, `plantuml`, `d2`, `7z` đều chưa cài). Một đường mã chưa lần nào chạy thật là một
+đường mã chưa ai biết có đúng không, bất kể bao nhiêu test giả lập xanh — đó chính là câu đã
+đúng với `sim.*` cho tới hôm nay.
 
 `registry.*` và `search.registry/reference_projects` (mốc M4) để sau: chúng cần một registry
 thật để pull, và đó là hạ tầng ngoài phạm vi đề án.

@@ -1,6 +1,6 @@
 # Danh sách công việc EIDE
 
-*Đo 11/09/2026 (lần 16) từ registry — không gõ tay. Còn **56/238** năng lực. Xem
+*Đo 11/09/2026 đợt 2 (lần 17) từ registry — không gõ tay. Còn **56/238** năng lực. Xem
 [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
@@ -12,13 +12,16 @@ chủ sản phẩm 08/09).
 ## Việc chờ CHỦ SẢN PHẨM (không phải việc của tôi)
 
 *Đợt đồng bộ 10/09 đã đóng **7 mục** (DEV-072, 073, 075, 077, 078, 080, 081): CDS-12 lên **v1.4**,
-DDD-14 lên **v1.4**, API-15 lên **v1.7**. Phiên 11/09 thêm **5 mục Mở** (DEV-082…086), bốn là nợ
-hiện thực của khối mô phỏng và **một chờ anh** — mục P0 ngay dưới.*
+DDD-14 lên **v1.4**, API-15 lên **v1.7**. Phiên 11/09 thêm DEV-082…086, và đợt 2 cùng ngày đóng
+**DEV-086** (TGT-19 **v1.2**, SIM-20 **v1.1**) cùng **DEV-087** (anh duyệt tại chỗ).*
+
+**Còn đúng một việc chờ anh, và nó là một lệnh: `eide policy sign`** (mục P1). Bốn mục còn lại
+trong bảng đều là việc dài hơi hoặc đã xong.
 
 | # | Việc | Vì sao chặn |
 |---|---|---|
-| **P0** | **[DEV-086](DEVIATIONS.md) — thêm `fallback: qemu` cho `isa/avr8.yaml`** | Sửa `docs/spec/` nên cần anh duyệt. Đo 11/09: **không engine mô phỏng nào trong bộ hồ sơ chạy được trên máy này**. `simavr` không có công thức brew, Renode không có cask, `qemu-system-arm` không mang máy ảo nào cho STM32F4. Nhưng `qemu-system-avr` đã có sẵn và mang đúng `arduino-uno` = ATmega328P — khớp `family_patterns: ["^ATmega", …]` của `avr8.yaml`. Một dòng trong `docs/ho-so/nguon/tgt_sim.js`, cùng khuôn với `armv7e-m.yaml` (vốn đã có `fallback: qemu`). Đổi lại: khối `sim.*` có đường chạy engine **thật** kiểm được, và đó là điều kiện để đóng DEV-083 + DEV-084 và để bắt đầu `debug.*` |
-| **P1** | **WI-257 — ký danh sách trắng** | `trusted_sources` không có `raw.githubusercontent.com`, mà đó là nơi SVD tầng vàng thật sự nằm. **Mọi tải SVD hiện rơi vào ASK.** Sửa `defaults.yaml` rồi `eide policy sign` |
+| ~~P0~~ | ~~[DEV-086](DEVIATIONS.md) — thêm `fallback: qemu` cho `isa/avr8.yaml`~~ | **Anh duyệt 11/09, đã xong.** TGT-19 lên **v1.2**, SIM-20 lên **v1.1**. Nhóm `sim.*` nay có lượt chạy engine THẬT: `qemu-system-avr -M arduino-uno` chạy một ELF AVR qua chính `sim.run` và trả `captured.uart == ["E"]` — ELF dựng bằng tay trong test (98 byte), nên không cần `avr-gcc` vốn không có trên máy |
+| **P1** | **WI-257 — CHỈ CÒN MỘT LỆNH: `eide policy sign`** | Dữ liệu đã sửa 11/09: `defaults.yaml` nay có `raw.githubusercontent.com` (nơi SVD tầng vàng thật sự nằm; G-SRC-01 khớp CHÍNH XÁC nên `github.com/cmsis-svd` không phủ được). **Chữ ký thì tôi không ký thay được** — `eide policy sign` cố ý là LỆNH chứ không phải năng lực, để tác tử không tự cấp quyền cho mình (tình huống S47 → REJECT G-WL-02). Chưa ký thì PolicyGate **bỏ hẳn ba danh sách** và mọi thứ rơi về ASK: 19 test đỏ, tất cả cùng một nguyên nhân. Đã kiểm trên bản sao đã ký: **1352 xanh**. Lệnh: `.venv-arm/bin/python -m eide.cli policy sign --by "Vũ Trí Công"` |
 | ~~P2~~ | ~~[DEV-077](DEVIATIONS.md) — cạnh `CONFLICTS_WITH`~~ | **Anh chốt 10/09: thêm trường.** DDD-14 §2 Fact v1.4 có `conflicts_with`; migration `0006`; `kg.dung` dựng cạnh từ hai đường (suy + khai); `extract.pdf_errata` nối được cạnh mà hợp đồng đòi. Xong |
 | ~~P3~~ | ~~Duyệt bản nháp đồng bộ~~ | **Anh duyệt 10/09.** Sáu mục đã đóng: CDS-12.1/12.2/12.4 lên **v1.4** (DEV-072, 073, 075, 078, 080), API-15 lên **v1.7** (DEV-081 — kiểu sự kiện `project.state`). Còn **3 mục Mở**, cả ba là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision) |
 | P4 | **Đường ảnh cho Gateway** | `models.yaml` khai vai trò `cartographer` với `inputs: [image]` nhưng `Gateway.run` chỉ nhận văn bản. Mở nó là việc hạ tầng + cần khoá mô hình có thị giác (tốn token) — xem §8 của [TIEN-DO.md](TIEN-DO.md) |
@@ -119,7 +122,7 @@ test đối chứng hai chiều (`test_boards_KHONG_duoc_nap_khi_niem_vo`).
 | # | Việc | Trạng thái |
 |---|---|---|
 | ~~F1~~ | ~~`build_platform`, `mock_peripheral`, `model_plant`, `scenario`, `run`, `sweep`~~ | **Xong 11/09** — 44 test. `compare_hil` là M4 (cần báo cáo HIL thật). Chuỗi Z-05 lên **14/16**, chỗ đứt dời sang `target.flash` |
-| F2 | `debug.hypothesize`, `experiment`, `ask_at`, `log_stats`, `propose_fix`, `summarize` | Cần một lượt chạy mô phỏng **quan sát được** — tức cần [DEV-086](DEVIATIONS.md) (mục P0) rồi [DEV-083](DEVIATIONS.md) |
+| F2 | `debug.hypothesize`, `experiment`, `ask_at`, `log_stats`, `propose_fix`, `summarize` | Cần một lượt chạy mô phỏng **quan sát được**. [DEV-086] đã xong 11/09, nên chỉ còn [DEV-083](DEVIATIONS.md) — và nó nay là việc LÀM ĐƯỢC chứ không còn là việc chờ: QEMU có sẵn gdbstub (`-s -S`), nên đọc biến là nối một client giao thức GDB-remote, không cần `avr-gdb` (cũng không có trên máy) |
 
 **Bất biến của khối F1, và nó là phần đáng nhớ hơn cả sáu năng lực**: không kỳ vọng nào được coi
 là ĐẠT nếu không có kênh quan sát cho nó. Một `expect` mà engine hiện có không nhìn thấy được
@@ -188,7 +191,8 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 | # | Việc | Ghi chú |
 |---|---|---|
 | I1 | **WI-253** — sinh test hợp đồng tự động cho 238 năng lực | `validate_specs.py` đã có; cần sinh test từ `input_schema`/`errors`. Bắt được lỗi E1000/E1004 mà không phải viết tay từng cái |
-| I2 | Mở rộng `make check-net` cho `mmdc`/`plantuml`/`d2`/`7z` | Hiện chỉ Graphviz chạy thật; bốn bộ dựng còn lại vẫn chưa nhánh nào được thi hành. **Thử lại sau khi sửa sandbox 08/09** — chúng ghi tệp ra, mà đúng chỗ ấy trước đây bị chặn |
+| I2 | Mở rộng `make check-net` cho `mmdc`/`plantuml`/`d2`/`7z` | Hiện chỉ Graphviz chạy thật; bốn bộ dựng còn lại vẫn chưa nhánh nào được thi hành (đo 11/09: cả bốn đều **chưa cài**). **Thử lại sau khi sửa sandbox 08/09** — chúng ghi tệp ra, mà đúng chỗ ấy trước đây bị chặn. Cùng hình dạng với [DEV-086], nay đã có tiền lệ gỡ được |
+| I7 | **Chuỗi công cụ ARM — dựng thật một lần** | `arm-none-eabi-gcc` chưa cài; `test_code.py` dùng shim shell, `nghiem_thu_sprint2.sh` không có bước biên dịch, `test_that.py` không có test gọi thật nào cho `code.build`. Nên "vòng sinh mã → dựng → mô phỏng → ghép đã liền" đúng ở mức phủ năng lực, chưa đúng ở mức đã thi hành. Sau [DEV-086], đây là mắt xích trung tâm duy nhất còn chưa chạy thật |
 | I3 | Thêm test `llm` cho `plan.*`, `tool.write`, `extract.pdf_register_map` | Ba nhóm sinh còn lại chưa có test gọi thật |
 | I4 | **M5**: schema manifest ISA + TC-48 + rv32imac/xtensa/pic16 | [DEV-055](DEVIATIONS.md). Kèm món nợ M0: `avr8.yaml` chưa test nào chạm tới |
 | I5 | `scripts/nghiem_thu_sprint3.sh` | Khi khối B xong |
@@ -203,7 +207,10 @@ A1+A2 (xong)  →  B1+B2 (xong)  →  E board.* (xong, Z-07 đóng)
               →  C1..C4 (xong, P7 đóng)  →  D phần không cần ảnh (xong 10/09)
               →  G rải rác (xong 10/09, M2 đóng phần làm được)
               →  F1 sim.* (xong 11/09, Z-05 lên 14/16)
-              →  ??? ←  ĐANG Ở ĐÂY: P0 [DEV-086] anh duyệt → F2 debug.*  hoặc
+              →  P0 [DEV-086] (xong 11/09 đợt 2 — sim.* chạy engine THẬT)
+              →  ??? ←  ĐANG Ở ĐÂY: I7 chuỗi công cụ ARM (mắt xích trung tâm
+                        DUY NHẤT còn chưa chạy thật)  hoặc
+                        F2 debug.* qua [DEV-083] (nay làm được: QEMU có gdbstub)  hoặc
                         D3 (cần đường ảnh cho Gateway — mục P4)  hoặc
                         B4 code.* phần M3 (không bị chặn, giá trị thấp hơn)
               →  H (phần cứng, cuối cùng)
@@ -220,17 +227,56 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 11/09/2026 — bắt đầu phiên sau từ đây
+## Điểm dừng phiên 11/09/2026 **đợt 2** — bắt đầu phiên sau từ đây
 
-*Cây làm việc sạch, `make check` **1346 xanh**, DEVIATIONS còn **8 mục Mở** — 7 là nợ hiện thực,
-**1 chờ chủ sản phẩm** ([DEV-086], mục P0).*
+*`make check`: **1352 test Python + 2699 test Swift** xanh (sau khi anh ký — xem P1). DEVIATIONS
+còn **7 mục Mở**, tất cả là nợ hiện thực; **không còn mục nào chờ chủ sản phẩm**.*
 
-**182/238 (76%), M3 mở màn 6/29.** Sáu năng lực `sim.*` trong phiên, cộng hai lỗi im lặng.
+**182/238 (76%) — số năng lực ĐỨNG YÊN, và đó là chủ ý.** Đợt 2 không thêm năng lực nào; nó làm
+cho ba đường mã đã có chạy được thật, cộng hai lỗi im lặng (số 9 và 10).
+
+### Mốc đạt được: `sim.*` chạy engine thật, và cổng kiểm nay phủ cả kho
+
+`qemu-system-avr -M arduino-uno` chạy một ELF AVR qua chính `sim.run`, qua chính sandbox, trả
+`captured.uart == ["E"]`. Trước hôm nay cả 44 test của nhóm đều đứng trên một shim luôn ngoan.
+
+`make check` nay gọi cả phần Swift. Trước hôm nay nó chỉ gọi phía Python, và gói Swift đỏ hai
+bài suốt năm ngày trong im lặng.
+
+### Đã xong trong đợt 2
+
+| Khối | Việc | Điều đáng nhớ |
+|---|---|---|
+| [DEV-086] | `fallback: qemu` cho `avr8.yaml`; TGT-19 **v1.2**, SIM-20 **v1.1** | ELF AVR **dựng bằng tay** trong test — 98 byte, năm lệnh mã máy — nên đường engine thật kiểm được mà không cần `avr-gcc`. Nhánh `TU_DUNG["qemu"] = False` lần đầu có engine thật chứng minh |
+| WI-260 | `check-swift` vào `make check`; sửa 2 bài Swift mục rữa | `check-ca-hai` tách thành `check-py` ×2 kiến trúc + `check-swift` ×1 |
+| WI-257 | `raw.githubusercontent.com` vào `trusted_sources` | Dữ liệu + mã + test xong; **chữ ký là việc của anh** — S47 nói thẳng tác tử tự thêm tên miền là REJECT G-WL-02 |
+| [DEV-087] | `search.rank` đọc bảng nguồn hãng, không đọc danh sách trắng tải về | Xóa `_domain_tin_cay` và `_trusted` (mã chết); phép canh biên dấu chấm chuyển sang `_la_trang_hang`, nơi lỗ hổng nay thật sự nằm |
+
+### Điều đợt 2 dạy được
+
+- **Một cổng phải tự chạy thì mới là cổng.** `make geditor` tồn tại, đúng, và vô dụng — vì nó
+  phải nhớ gõ. Cùng bài học với ba hằng số `timeout_s` của đợt 1: thứ trông như đang có hiệu lực.
+- **Một bài test hết ngữ liệu im lặng y như một bài test sai.** `YAMLRealFilesTests` không hỏng,
+  nó *hết việc*: ba cấp thư mục sau lần dọn chỉ còn một tệp YAML. Ngưỡng cũ `>= 2` quá thấp để
+  báo động — nó vẫn xanh khi ngữ liệu tụt từ vài chục xuống hai.
+- **Sửa một thứ đúng làm lộ một thứ sai.** Thêm một tên miền vào danh sách trắng làm mất một
+  biên MỘT điểm, và biên ấy là thứ duy nhất giữ cho tc SEARCH-04 xanh suốt bốn ngày *vì lý do
+  khác với lý do nó được viết ra*. Không thêm tên miền ấy thì không ai biết.
+- **Ranh giới "tác tử không tự cấp quyền" là thật, không phải trang trí.** Tôi làm được mọi phần
+  của WI-257 trừ đúng một lệnh, và đó là thiết kế đang hoạt động đúng.
+
+---
+
+## Điểm dừng phiên 11/09/2026 **đợt 1** (giữ lại làm lịch sử)
 
 ### Mốc đạt được: vòng sinh mã → dựng → mô phỏng → ghép đã liền
 
 Chuỗi Z-05 "thêm tính năng" lên **14/16** và chỗ đứt dời từ `sim.run` sang `target.flash`. Không
 chuỗi chuẩn nào còn chờ mô phỏng nữa — ba chuỗi dở dang đều đứt ở phần cứng hoặc registry.
+
+> **Đọc lại sau đợt 2:** câu "vòng đã liền" đúng ở mức **phủ năng lực**, chưa đúng ở mức **đã
+> thi hành**. Đợt 2 cho `sim.*` chạy engine thật, nhưng `code.build` thì `arm-none-eabi-gcc`
+> vẫn chưa có trên máy — xem mục I7.
 
 ### Đã xong trong phiên
 
@@ -260,8 +306,15 @@ chuỗi chuẩn nào còn chờ mô phỏng nữa — ba chuỗi dở dang đề
 
 - **`limits` của sandbox dùng khóa `wall_s`, không phải `timeout_s`.** Nay truyền sai tên là
   E1000 ngay, nhưng nhớ tên đúng vẫn rẻ hơn đọc lỗi.
-- **Engine mô phỏng chưa lần nào chạy thật trên máy này** (P0). Test của `sim.run`/`sim.sweep`
-  dùng shim; đường engine thật vẫn chờ [DEV-086].
+- ~~**Engine mô phỏng chưa lần nào chạy thật trên máy này**~~ — **hết đúng từ 11/09 đợt 2.**
+  `qemu-system-avr` + `arduino-uno` chạy được; xem `test_duong_engine_THAT_chay_firmware_AVR_that`.
+  Phần còn lại của nhóm vẫn dùng shim, và điều đó vẫn ổn: shim kiểm phần thuộc về EIDE, engine
+  thật kiểm phần thuộc về engine.
+- **`qemu-system-arm` KHÔNG có máy ảo cho họ STM32F4.** Đừng gán tạm `netduinoplus2` (STM32F405)
+  để "cho chạy" — đó là chạy firmware trên một con chip khác chip nó được dịch cho, rồi báo ĐẠT.
+- **`BIEN_THOI_GIAN_S = 20` cộng vào MỌI lượt chạy engine**, mà QEMU không tự dừng nên hết giờ
+  chính là cách lượt chạy kết thúc. Một test engine thật để nguyên hằng số ấy sẽ một mình chiếm
+  21 giây của `make check`; hạ nó bằng `monkeypatch` không đổi thứ đang kiểm.
 - **Chạy test bằng `.venv-arm/bin/python`, không phải `python` trên PATH.** Venv là 3.11 còn
   `python` hệ thống mới hơn: một f-string lồng dùng lại dấu nháy chạy được ở ngoài và là LỖI CÚ
   PHÁP trong venv — pytest xanh, `make check` đỏ ở bước ruff.

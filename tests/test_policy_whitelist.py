@@ -138,6 +138,43 @@ def test_defaults_sig_di_kem_ban_cai_van_khop():
     assert dat, f"{ly_do} — chạy: eide policy sign --by '<tên>'"
 
 
+SVD_CMSIS = {"source": {
+    "domain": "raw.githubusercontent.com", "license": "Apache-2.0", "size_mb": 1.2,
+    "kind": "svd", "hash_match": True}}
+
+
+def test_SVD_tang_vang_duoc_duyet_sau_khi_ky(cfg, tmp_path):
+    """WI-257. Nguồn SVD tầng vàng phổ biến nhất phải qua được G-SRC-01, không rơi vào ASK.
+
+    `github.com/cmsis-svd` mô tả nơi kho ĐƯỢC TRÔNG THẤY; tệp thì phục vụ từ
+    `raw.githubusercontent.com` — đúng tên miền mà `sources/vendors.yaml` khai trong `template`
+    của cmsis-svd. G-SRC-01 khớp CHÍNH XÁC (`source.domain in trusted_sources`), không khớp hậu
+    tố và không cắt đường dẫn, nên trước 11/09/2026 mọi lượt tải SVD tầng vàng đều vào hàng đợi
+    hỏi người: một cổng hỏi về đúng thứ nó được dựng lên để cho qua. Hỏi sai chỗ đủ nhiều lần
+    thì người duyệt học cách bấm bừa, và lúc ấy cổng mất tác dụng ở cả những lần hỏi đúng.
+
+    Ký vào một niêm TẠM của bài test, không đụng `defaults.sig` của bản cài: chữ ký là việc của
+    chủ sản phẩm (`eide policy sign` cố ý là LỆNH chứ không phải năng lực, để tác tử không tự
+    cấp quyền cho mình — tình huống S47 → REJECT G-WL-02). Bài này chỉ trả lời "sau khi ký thì
+    mục mới có tác dụng không", còn "đã ký chưa" thì `test_defaults_sig_di_kem_ban_cai_van_khop`
+    trả lời.
+    """
+    assert "raw.githubusercontent.com" in cfg["trusted_sources"]
+
+    sig = tmp_path / "tam.sig"
+    whitelist.ky(cfg, sig, "test", None)
+    g = PolicyGate(config=cfg, sig_path=sig)
+    assert g.danh_sach_da_ky is True, g.ly_do_chua_ky
+
+    d = g.decide("G-SRC", SVD_CMSIS, risk="R1")
+    assert (d.decision, d.rule_id) == ("APPROVE", "G-SRC-01"), f"{d.rule_id}: {d.reason}"
+
+    # Đối chứng: một tên miền khác trên cùng dịch vụ KHÔNG được ăn theo. Khớp chính xác nghĩa là
+    # `gist.githubusercontent.com` vẫn phải hỏi người — thêm một mục không mở toang một họ.
+    la = {"source": {**SVD_CMSIS["source"], "domain": "gist.githubusercontent.com"}}
+    assert g.decide("G-SRC", la, risk="R1").rule_id == "G-SRC-99"
+
+
 def test_chua_ky_thi_quyet_dinh_noi_ra_ly_do_that(tmp_path):
     """Quy tắc bắt hết phải nói ra rằng cổng đang chạy THIẾU danh sách trắng (POL-17 §3, v1.2).
 

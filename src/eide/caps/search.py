@@ -165,15 +165,25 @@ def rank(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     Trả `reasons` cho từng ứng viên, không chỉ con số. Bảng xếp hạng chỉ có điểm thì khi nó chọn
     sai, người dùng không biết sửa gì — còn "+2 vì tên miền tin cậy; KHÔNG được +2 vì tiêu đề
     không chứa mã linh kiện" thì họ thấy ngay là mình gõ nhầm mã.
+
+    **"Tên miền tin cậy" đọc từ BẢNG NGUỒN HÃNG (TGT-19 §8), không từ `trusted_sources`**
+    (DEV-087, chủ sản phẩm duyệt 11/09/2026). Hai danh sách trả lời hai câu khác nhau:
+    `trusted_sources` nói *"có được tải tự động không"* — bảy tên miền, đổi thì cần chữ ký chủ
+    sản phẩm — còn xếp hạng hỏi *"nguồn này đáng tin tới đâu"*, vốn là việc của bảng 12 hãng.
+
+    Trộn hai câu ấy thì một hãng vắng mặt trong danh sách trắng TẢI VỀ vĩnh viễn không được +2,
+    kể cả trên trang datasheet của chính nó: `allegromicro.com` chưa bao giờ nhận điểm ấy, và
+    tc SEARCH-04 xanh suốt nhờ +2 KHỚP MÃ chứ không nhờ tầng như docstring nó tự nhận. Biên một
+    điểm ấy mất ngay khi `raw.githubusercontent.com` vào danh sách trắng (WI-257) — một mirror
+    cộng đồng lên trên trang hãng, vì nó được cộng điểm cho một phẩm chất nó không có.
     """
     part = (params.get("part") or "").lower()
-    tin_cay = _trusted(ctx)
     ra = []
     for c in params["candidates"]:
         diem = DIEM_TIER.get(c.get("tier_expected", "bronze"), 1.0)
         vi = [f"+{diem:g} tầng dự kiến {c.get('tier_expected', 'bronze')}"]
         for co, khoa, ly in (
-            (_domain_tin_cay(c.get("domain") or "", tin_cay), "domain", "tên miền tin cậy"),
+            (_la_trang_hang(c.get("domain") or ""), "domain", "tên miền hãng"),
             (bool(c.get("sha256") or c.get("signature_valid")), "hash", "có hash/chữ ký"),
             (bool(c.get("license") or c.get("license_hint")), "license", "giấy phép rõ"),
             (bool(part) and part in (c.get("title") or c.get("uri") or "").lower(),
@@ -186,32 +196,6 @@ def rank(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         ra.append({**c, "score": round(diem, 2), "reasons": vi})
     ra.sort(key=lambda x: -x["score"])
     return {"ranked": ra}
-
-
-def _domain_tin_cay(domain: str, tin_cay: list[str]) -> bool:
-    """Khớp theo HẬU TỐ tên miền, không so bằng — nhưng chặn ở biên dấu chấm.
-
-    So bằng thì `raw.githubusercontent.com` và `www.st.com` đều trượt, và mọi tải về rơi vào
-    G-SRC-99 (ASK): người dùng bấm duyệt liên tục rồi thôi đọc, đúng thứ POL-17 muốn tránh.
-
-    Nhưng hậu tố ngây thơ (`endswith("st.com")`) thì `evil-st.com` cũng khớp — lỗ hổng kinh
-    điển. Phải là `== t` hoặc `endswith("." + t)`.
-    """
-    d = domain.lower().removeprefix("www.")
-    for t in tin_cay:
-        t = t.lower().split("/")[0]          # `github.com/cmsis-svd` → `github.com`
-        if d == t or d.endswith("." + t):
-            return True
-    return False
-
-
-def _trusted(ctx: Context) -> list[str]:
-    g = ctx.extra.get("gate")
-    cfg = getattr(g, "config", None) if g is not None else None
-    if isinstance(cfg, dict) and cfg.get("trusted_sources"):
-        return list(cfg["trusted_sources"])
-    d = yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8")) or {}
-    return list(d.get("trusted_sources") or [])
 
 
 def _chuan_hoa_domain(uri: str) -> str:
@@ -749,11 +733,22 @@ def _la_trang_hang(dom: str) -> bool:
     """Tên miền có trong bảng nguồn hãng TGT-19 §8 (`sources/vendors.yaml`).
 
     Đọc từ spec, không chép tay — cùng bảng mà `search.vendor` dùng, nên thêm một hãng là hai
-    năng lực cùng biết.
+    năng lực cùng biết. Từ DEV-087, đây cũng là chỗ quyết "+2 tên miền hãng" của `search.rank`:
+    một câu hỏi về CHẤT LƯỢNG nguồn, khác hẳn câu hỏi của `trusted_sources` (có được tải tự
+    động không).
+
+    Khớp theo HẬU TỐ, không so bằng: `docs.nordicsemi.com` phải nhận ra là Nordic, và bỏ `www.`
+    vì bảng ghi `st.com` chứ không ghi cả hai biến thể — bắt người soạn bảng liệt kê từng biến
+    thể là mời họ liệt kê thiếu.
+
+    Nhưng hậu tố ngây thơ (`endswith("st.com")`) thì `evil-st.com` cũng khớp — lỗ hổng kinh
+    điển, và ở đây nó cho một trang giả +2 điểm tin cậy. Phải chặn ở BIÊN DẤU CHẤM: `== d` hoặc
+    `endswith("." + d)`.
     """
+    dom = dom.lower().removeprefix("www.")
     for v in bang_hang():
         for d in (v.get("domains") or []):
-            d = d.split("/")[0].lower()
+            d = d.split("/")[0].lower()      # `github.com/cmsis-svd` → `github.com`
             if dom == d or dom.endswith("." + d):
                 return True
     return False

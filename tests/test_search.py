@@ -16,7 +16,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import pytest
 
 from eide.caps.search import (
-    _domain_tin_cay,
+    _la_trang_hang,
     _nhan_dien_license,
     _ten_tep,
     bang_hang,
@@ -244,23 +244,49 @@ def test_reasons_noi_ro_tung_diem(du_an):
     """Bảng xếp hạng chỉ có điểm thì khi nó chọn sai, người dùng không biết sửa gì."""
     r, ctx, _ = du_an
     out = r.invoke("search.rank", {"candidates": [_uv(domain="st.com")]}, ctx).result["ranked"]
-    assert any("tên miền tin cậy" in x for x in out[0]["reasons"])
+    assert any("tên miền hãng" in x for x in out[0]["reasons"])
 
 
-@pytest.mark.parametrize(("domain", "tin"), [
+def test_diem_domain_KHONG_doc_danh_sach_trang_tai_ve(du_an):
+    """DEV-087. `trusted_sources` trả lời "có được tải tự động không"; xếp hạng hỏi "đáng tin tới
+    đâu". Trộn hai câu ấy thì trang datasheet của chính hãng thua một mirror cộng đồng, chỉ vì
+    hãng ấy không nằm trong danh sách trắng TẢI VỀ.
+
+    `allegromicro.com` là ca đúng: có trong bảng nguồn hãng TGT-19 §8, KHÔNG có trong
+    `trusted_sources`. Trước DEV-087 nó không bao giờ nhận +2.
+    """
+    import yaml as _yaml
+
+    from eide_core.paths import spec_dir
+    tc = _yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8"))
+    assert "allegromicro.com" not in tc["trusted_sources"]
+
+    r, ctx, _ = du_an
+    out = r.invoke("search.rank",
+                   {"candidates": [_uv(domain="allegromicro.com")]}, ctx).result["ranked"]
+    assert any("tên miền hãng" in x for x in out[0]["reasons"]), out[0]["reasons"]
+
+
+@pytest.mark.parametrize(("domain", "hang"), [
     ("st.com", True),
-    ("www.st.com", True),
-    ("raw.githubusercontent.com", False),      # không nằm trong trusted_sources mặc định
-    ("github.com", True),
+    ("www.st.com", True),                      # bảng ghi `st.com`, không ghi cả hai biến thể
+    ("docs.nordicsemi.com", True),             # tên miền con của một hãng vẫn là hãng ấy
+    ("raw.githubusercontent.com", True),       # bảng TGT-19 §8 kê nó ở ST/Nordic/Espressif
+    ("allegromicro.com", True),
     ("evil-st.com", False),                    # hậu tố ngây thơ sẽ nhận nhầm cái này
     ("st.com.evil.net", False),
     ("notst.com", False),
+    ("forum.arduino.cc", False),
 ])
-def test_hau_to_ten_mien_chan_o_bien_dau_cham(domain, tin):
-    """So bằng thì `www.st.com` trượt và mọi tải về rơi vào G-SRC-99 (ASK) — người dùng bấm
-    duyệt liên tục rồi thôi đọc. Nhưng hậu tố ngây thơ thì `evil-st.com` khớp `st.com`: lỗ hổng
-    kinh điển. Phải là `== t` hoặc `endswith("." + t)`."""
-    assert _domain_tin_cay(domain, ["st.com", "github.com/cmsis-svd"]) is tin
+def test_hau_to_ten_mien_chan_o_bien_dau_cham(domain, hang):
+    """Biên dấu chấm — nay canh ở `_la_trang_hang`, vì từ DEV-087 chính nó quyết "+2 tên miền
+    hãng" của `search.rank`.
+
+    So bằng thì `www.st.com` và `docs.nordicsemi.com` đều trượt, và một trang hãng thật tụt
+    hạng dưới diễn đàn. Nhưng hậu tố ngây thơ thì `evil-st.com` khớp `st.com` — lỗ hổng kinh
+    điển, và ở đây nó tặng một trang giả đúng +2 điểm mà trang hãng thật được hưởng.
+    """
+    assert _la_trang_hang(domain) is hang
 
 
 # ---------- SEARCH-06 search.fetch: cổng G-SRC lần đầu chạy

@@ -19,7 +19,12 @@ thresholds:
   bench_bc_min: 0.9
   fail_retries: 2
   budget_warn_pct: 20
-trusted_sources: [st.com, microchip.com, nordicsemi.com, espressif.com, bosch-sensortec.com, github.com/cmsis-svd]
+# `raw.githubusercontent.com` thêm 11/09/2026 (WI-257). `github.com/cmsis-svd` mô tả nơi kho
+# SVD tầng vàng ĐƯỢC TRÔNG THẤY, còn tệp thì phục vụ từ `raw.githubusercontent.com` — đúng tên
+# miền mà `sources/vendors.yaml` khai trong `template` của cmsis-svd. G-SRC-01 khớp CHÍNH XÁC
+# (`source.domain in trusted_sources`, không khớp hậu tố), nên trước hôm nay mọi lượt tải SVD
+# tầng vàng đều rơi vào ASK: một cổng hỏi người về đúng thứ nó được dựng lên để cho qua.
+trusted_sources: [st.com, microchip.com, nordicsemi.com, espressif.com, bosch-sensortec.com, github.com/cmsis-svd, raw.githubusercontent.com]
 trusted_packages: [gcc-arm-none-eabi, avr-gcc, renode, probe-rs, openocd, esptool, simavr, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli]
 allowed_licenses: [MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, CC-BY-4.0, vendor-doc]
 # Danh sách thứ tư mà POL-17 §3 gọi là `lab_boards` nhưng §4 đặt tên `boards` (DEV-030).
