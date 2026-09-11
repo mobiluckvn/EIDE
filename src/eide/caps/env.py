@@ -226,7 +226,7 @@ def install(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     lenh = [str(duong_dan) if i == 0 else x.format(pkg=goi) for i, x in enumerate(mau)]
 
     t0 = time.perf_counter()
-    kq = sandbox({"cmd": lenh, "network": True, "limits": {"timeout_s": TIMEOUT_CAI}}, ctx)
+    kq = sandbox({"cmd": lenh, "network": True, "limits": {"wall_s": TIMEOUT_CAI}}, ctx)
     ma = kq["exit_code"]
 
     exe = tools.which(ten)

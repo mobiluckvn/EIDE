@@ -456,7 +456,7 @@ def build(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     for lenh in tach_lenh(str(tc["cmd"])):
         kq = env_sandbox({"cmd": lenh, "network": False,
                           "allowed_dirs": [str(root)],
-                          "limits": {"timeout_s": TIMEOUT_DUNG}}, ctx)
+                          "limits": {"wall_s": TIMEOUT_DUNG}}, ctx)
         ma, log_ref, err_ref = kq["exit_code"], kq["stdout_ref"], kq["stderr_ref"]
         if ma != 0:
             break
@@ -550,7 +550,7 @@ def size(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     t0 = time.perf_counter()
     kq = env_sandbox({"cmd": [str(duong), str(art)], "network": False,
-                      "allowed_dirs": [str(root)], "limits": {"timeout_s": 60}}, ctx)
+                      "allowed_dirs": [str(root)], "limits": {"wall_s": 60}}, ctx)
     if kq["exit_code"] != 0:
         raise EideError("E4000", f"`{ten_size}` trả mã {kq['exit_code']} trên {art}",
                         exit_code=kq["exit_code"], log=kq["stderr_ref"])
@@ -713,7 +713,7 @@ def static(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     lenh = tach_lenh(str(tc_static.get("cmd") or f"{cong_cu} src"))[0]
     lenh[0] = str(tools.which(lenh[0]) or lenh[0])
     kq = env_sandbox({"cmd": lenh, "network": False, "allowed_dirs": [str(root)],
-                      "limits": {"timeout_s": 300}}, ctx)
+                      "limits": {"wall_s": 300}}, ctx)
     ngoai = _doc_cppcheck(Path(kq["stderr_ref"]), Path(kq["stdout_ref"]))
 
     ds = pack + ngoai
@@ -937,13 +937,13 @@ def _mot_test(f: Path, root: Path, cc: Any, mock: list[Path], ctx: Context) -> d
             f"-I{root / 'src'}", f"-I{root / 'include'}", f"-I{root / THU_MUC_MOCK}",
             str(f), *[str(m) for m in mock]]
     d = env_sandbox({"cmd": lenh, "network": False, "allowed_dirs": [str(root)],
-                     "limits": {"timeout_s": TIMEOUT_TEST}}, ctx)
+                     "limits": {"wall_s": TIMEOUT_TEST}}, ctx)
     if d["exit_code"] != 0 or not ra.exists():
         return {"name": f.stem, "file": str(f.relative_to(root)), "status": "compile_error",
                 "exit_code": d["exit_code"], "log_ref": d["stderr_ref"]}
 
     c = env_sandbox({"cmd": [str(ra)], "network": False,
-                     "limits": {"timeout_s": TIMEOUT_TEST}}, ctx)
+                     "limits": {"wall_s": TIMEOUT_TEST}}, ctx)
     return {"name": f.stem, "file": str(f.relative_to(root)),
             "status": "passed" if c["exit_code"] == 0 else "failed",
             "exit_code": c["exit_code"], "log_ref": c["stdout_ref"],

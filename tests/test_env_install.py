@@ -37,7 +37,7 @@ def test_sandbox_ghi_duoc_vao_thu_muc_lam_viec(tmp_path):
     chỉ-đọc.
     """
     kq = Sandbox(out_dir=tmp_path / "sb").run(
-        ["/bin/sh", "-c", "echo xin_chao > ./a.txt && cat ./a.txt"], limits={"timeout_s": 30})
+        ["/bin/sh", "-c", "echo xin_chao > ./a.txt && cat ./a.txt"], limits={"wall_s": 30})
     assert kq.exit_code == 0, Path(kq.stderr_ref).read_text(encoding="utf-8")
     assert "xin_chao" in Path(kq.stdout_ref).read_text(encoding="utf-8")
 
@@ -53,7 +53,7 @@ def test_sandbox_home_ghi_duoc(tmp_path):
     """
     kq = Sandbox(out_dir=tmp_path / "sb").run(
         ["/bin/sh", "-c", 'd="$HOME/probe-$$-'f'{os.getpid()}"'"; mkdir \"$d\" && echo home_ok"],
-        limits={"timeout_s": 30})
+        limits={"wall_s": 30})
     assert kq.exit_code == 0, Path(kq.stderr_ref).read_text(encoding="utf-8")
 
 
@@ -75,7 +75,7 @@ def test_sandbox_ghi_duoc_khi_out_dir_qua_lien_ket_mem(tmp_path):
     lien_ket.symlink_to(that)
     try:
         kq = Sandbox(out_dir=lien_ket / "sb").run(
-            ["/bin/sh", "-c", "echo qua_lien_ket > ./a.txt && cat ./a.txt"], limits={"timeout_s": 30})
+            ["/bin/sh", "-c", "echo qua_lien_ket > ./a.txt && cat ./a.txt"], limits={"wall_s": 30})
         assert kq.exit_code == 0, Path(kq.stderr_ref).read_text(encoding="utf-8")
         assert "qua_lien_ket" in Path(kq.stdout_ref).read_text(encoding="utf-8")
     finally:
@@ -92,7 +92,7 @@ def test_sandbox_van_chan_ghi_ngoai_vung(tmp_path):
     ngoai = Path(__file__).resolve().parent / ".probe-sandbox.tmp"
     ngoai.unlink(missing_ok=True)
     kq = Sandbox(out_dir=tmp_path / "sb").run(
-        ["/bin/sh", "-c", f"echo x > {ngoai}"], limits={"timeout_s": 30})
+        ["/bin/sh", "-c", f"echo x > {ngoai}"], limits={"wall_s": 30})
     ton_tai = ngoai.exists()
     ngoai.unlink(missing_ok=True)
     assert kq.exit_code != 0 and not ton_tai

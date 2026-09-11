@@ -209,3 +209,26 @@ def test_vi_du_trong_hop_dong_qua_duoc_schema(tmp_path):
     from eide_core.registry import get_registry
     spec = get_registry().get("env.sandbox").spec
     jsonschema.validate(json.loads(spec.example), spec.input_schema)
+
+
+def test_gioi_han_ten_la_la_loi_chu_khong_bi_bo_qua(tmp_path):
+    """`{**MẶC_ĐỊNH, **limits}` nuốt mọi khóa lạ, và nuốt im lặng là chỗ hỏng.
+
+    Bảy chỗ gọi trong `code.*`, `env.install` và `extract.*` từng truyền `timeout_s` — một tên
+    không có trong bảng SEC-25 §2 — nên `TIMEOUT_DUNG = 600`, `TIMEOUT_CAI = 900` và
+    `TIMEOUT_TEST = 120` không có tác dụng nào cả: mọi lệnh chạy dưới hạn mặc định 300 s.
+    `brew install gcc-arm-embedded` vì thế bị giết ở phút thứ năm, và E4004 báo "quá thời gian
+    300 s" cho một lệnh mà mã nguồn nói rõ là được 900 s.
+
+    Không test nào thấy vì không test nào chạy đủ lâu để chạm hạn — một hằng số trông như đang
+    có hiệu lực là thứ chỉ lộ ra ở lần chạy thật đầu tiên, trên máy người khác.
+    """
+    from eide_core.errors import EideError
+    from eide_core.sandbox import Sandbox
+
+    sb = Sandbox(out_dir=tmp_path / "out")
+    with pytest.raises(EideError) as e:
+        sb.run(["/bin/echo", "x"], limits={"timeout_s": 900})
+    assert e.value.code == "E1000" and e.value.data["extra"] == ["timeout_s"]
+    # tên đúng thì vẫn chạy
+    assert sb.run(["/bin/echo", "x"], limits={"wall_s": 30}).exit_code == 0

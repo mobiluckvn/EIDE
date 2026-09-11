@@ -324,14 +324,14 @@ def test_trinh_quan_ly_goi_chay_duoc_trong_sandbox(tmp_path):
     mgr = tools.which("brew") or tools.which("apt-get")
     sb = Sandbox(out_dir=tmp_path / "sb")
 
-    kq = sb.run([str(mgr), "--version"], limits={"timeout_s": 120}, network=True)
+    kq = sb.run([str(mgr), "--version"], limits={"wall_s": 120}, network=True)
     assert kq.exit_code == 0, Path(kq.stderr_ref).read_text(encoding="utf-8")[:500]
     assert Path(kq.stdout_ref).read_text(encoding="utf-8").strip()
 
     if mgr.name == "brew":
         # `list` đọc cả prefix lẫn cache trong $HOME — nặng hơn `--version` một bậc, và chính là
         # nhánh đã ném "Operation not permitted" khi hồ sơ sandbox còn sai.
-        kq = sb.run([str(mgr), "list", "--versions"], limits={"timeout_s": 300}, network=True)
+        kq = sb.run([str(mgr), "list", "--versions"], limits={"wall_s": 300}, network=True)
         err = Path(kq.stderr_ref).read_text(encoding="utf-8")
         assert "not permitted" not in err, err[:500]
         assert kq.exit_code == 0, err[:500]

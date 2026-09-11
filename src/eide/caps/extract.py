@@ -2382,7 +2382,7 @@ def _xuat_netlist(p: Path, ctx: Context) -> Path:
     kq = env_sandbox({"cmd": [str(exe), "sch", "export", "netlist", "--format", "kicadxml",
                               "-o", str(ra), str(p)],
                       "network": False, "allowed_dirs": [str(p.parent)],
-                      "limits": {"timeout_s": 300}}, ctx)
+                      "limits": {"wall_s": 300}}, ctx)
     if kq["exit_code"] != 0 or not ra.exists():
         raise EideError("E4000", f"`kicad-cli` không xuất được netlist từ {p.name}",
                         exit_code=kq["exit_code"], log=kq["stderr_ref"])

@@ -71,6 +71,18 @@ class Sandbox:
             allowed_dirs: list[str] | None = None, network: bool = False) -> KetQua:
         if not cmd or not isinstance(cmd, list):
             raise EideError("E1000", "cmd phải là danh sách chuỗi (không dùng shell)")
+        # Khóa lạ trong `limits` là LỖI, không phải thứ bỏ qua.
+        #
+        # Trước khi có phép kiểm này, bảy chỗ gọi trong `code.*`, `env.install` và
+        # `extract.*` truyền `{"timeout_s": ...}` — một tên không có trong bảng — nên
+        # `TIMEOUT_DUNG = 600`, `TIMEOUT_CAI = 900` và `TIMEOUT_TEST = 120` KHÔNG có tác dụng
+        # nào cả: mọi lệnh đều chạy dưới hạn mặc định 300 s. `brew install gcc-arm-embedded`
+        # vì thế bị giết giữa chừng ở phút thứ năm, và triệu chứng là E4004 "quá thời gian
+        # 300 s" cho một lệnh mà mã nguồn nói rõ là được 900 s. Gộp im lặng làm một hằng số
+        # trông như đang có hiệu lực, và không test nào thấy vì không test nào chạy đủ lâu.
+        if (la := sorted(set(limits or {}) - set(GIOI_HAN_MAC_DINH))):
+            raise EideError("E1000", f"Giới hạn không có trong SEC-25 §2: {la} — "
+                            f"chỉ nhận {sorted(GIOI_HAN_MAC_DINH)}", extra=la)
         gh = {**GIOI_HAN_MAC_DINH, **(limits or {})}
         doc_duoc = _kiem_allowed_dirs(allowed_dirs or [])
 
