@@ -192,6 +192,7 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 | I3 | Thêm test `llm` cho `plan.*`, `tool.write`, `extract.pdf_register_map` | Ba nhóm sinh còn lại chưa có test gọi thật |
 | I4 | **M5**: schema manifest ISA + TC-48 + rv32imac/xtensa/pic16 | [DEV-055](DEVIATIONS.md). Kèm món nợ M0: `avr8.yaml` chưa test nào chạm tới |
 | I5 | `scripts/nghiem_thu_sprint3.sh` | Khi khối B xong |
+| ~~I6~~ | ~~**WI-260** — phần Swift vào `make check`~~ | **Xong 11/09.** `check-swift` nằm trong `check`; bỏ qua có báo khi máy không có `swift`. Hai bài đỏ từ 06/09 đã sửa: `HelpBookTests` đòi rơi về tiếng Việt trong khi mã cố ý rơi về **tiếng Anh** và `de` nay đã có sách; `YAMLRealFilesTests` leo ba cấp ra `apps/geditor` nên còn **1** tệp YAML — nay leo theo mốc `.git` và chạy trên **35** tệp thật của kho |
 
 ---
 

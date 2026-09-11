@@ -141,6 +141,7 @@ phải trả giá.
 | **WI-257** | **Người:** ký danh sách trắng nguồn/gói/board lab | **Chặn**: PolicyGate đang chạy bằng `defaults.yaml` tạm (DEV-001), nên G-SRC/G-PKG mới là giả định |
 | **WI-259** | **Hoãn sang M5:** ISA rv32imac, xtensa-esp32, pic16/18 + schema manifest + TC-48 | **DEV-055.** Chủ sản phẩm quyết 07/09/2026 gộp về một mốc. ⚠️ Trong gói này có một món **nợ M0 chứ không phải việc tương lai**: `avr8.yaml` đã nằm trong kho từ Sprint 1 nhưng **không test nào chạm tới** — sai cú pháp hay thiếu khóa đều không ai báo. Cùng loại hỏng im lặng với DEV-052/053. Việc (1) của gói M5 (schema + nạp mọi tệp trong `docs/spec/isa/`) đóng luôn nợ này |
 | **WI-258** | **Người:** XÁC NHẬN đỏ PTIT chính thức + ngôn ngữ lược đồ GEditor | Không còn chặn: dùng `#B8121F` theo UXD-13 §7 (tài liệu tự ghi "gần đúng, xác nhận với bộ nhận diện chính thức"). Đổi một chỗ ở `uxd.js` là cả mockup lẫn Swift theo |
+| **WI-260** | **Xong 11/09:** phần Swift vào `make check` (`check-swift`), và hai bài mục rữa trong `apps/geditor` | `make check` chỉ gọi phía Python, `make geditor` thì phải nhớ gõ tay — nên từ 06/09 tới 11/09 gói Swift đỏ hai bài mà "xanh" của dự án vẫn nói toàn kho. `check-ca-hai` tách thành `check-py` ×2 kiến trúc + `check-swift` ×1 |
 
 ## Định nghĩa "xong" của sprint
 

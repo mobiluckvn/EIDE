@@ -7,7 +7,7 @@ PY ?= $(shell [ -x .venv-arm/bin/python ] && echo .venv-arm/bin/python || \
               ([ -x .venv-x86/bin/python ] && echo .venv-x86/bin/python || echo python3))
 export PYTHONPATH := src
 
-.PHONY: setup setup-ca-hai check check-ca-hai test lint check-spec check-secrets spec doctor geditor clean
+.PHONY: setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor clean
 
 setup:            ## cài môi trường phát triển theo kiến trúc máy
 	bash scripts/setup-mac.sh
@@ -42,16 +42,34 @@ check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
 	@command -v node >/dev/null && node scripts/gen_spec_tu_nguon.js --kiem \
 	 || echo "bỏ qua check-gen: không có node (cần để đối chiếu docs/spec với docs/ho-so/nguon)"
 
-check: lint check-spec test check-secrets check-gen   ## tất cả — phải xanh trước khi commit
+# Phần Swift nằm trong `check` chứ không đứng riêng. Từ 06/09 tới 11/09/2026 nó đỏ hai bài mà
+# không ai thấy, vì `make check` chỉ gọi phía Python còn `make geditor` thì phải nhớ gõ tay —
+# và "xanh" của dự án khi ấy là một câu nói về nửa kho. Cùng lý do với `check-gen`: một cổng
+# phải tự chạy thì mới là cổng. Thiếu `swift` (Windows, máy CI không có Xcode) thì bỏ qua có
+# báo, không làm đỏ — cùng khuôn với cách `check-gen` xử lý khi thiếu `node`.
+check-swift:      ## build + test phần Swift, bỏ qua có báo nếu máy không có swift
+	@command -v swift >/dev/null \
+	 && $(MAKE) geditor \
+	 || echo "bỏ qua check-swift: không có swift (cần Xcode/toolchain để dựng apps/geditor)"
+
+check-py: lint check-spec test check-secrets check-gen   ## chỉ phía Python — phần phụ thuộc venv theo kiến trúc
+
+check: check-py check-swift   ## tất cả — phải xanh trước khi commit
 
 # Một năng lực chỉ được ghi "Xong" khi cột Nền tảng trong SPRINT ghi nền tảng đã chạy test
 # THẬT (PLATFORM.md quy tắc 7). Trên máy Apple Silicon, đây là lệnh sinh ra bằng chứng ấy
 # cho cả hai kiến trúc Mac.
+#
+# Chạy `check-py` hai lần nhưng `check-swift` MỘT lần: hai lượt ở đây là để kiểm hai venv
+# Python theo kiến trúc (DEV-005), còn gói Swift thì `swift build` tự chọn kiến trúc máy —
+# ép nó qua Rosetta chỉ dựng lại 2699 bài bằng một trình dịch khác để hỏi một câu không ai hỏi.
 check-ca-hai:     ## chạy check trên cả arm64 và x86_64
 	@echo "######## arm64 ########"
-	@$(MAKE) check PY=.venv-arm/bin/python
+	@$(MAKE) check-py PY=.venv-arm/bin/python
 	@echo "######## x86_64 (Rosetta 2) ########"
-	@arch -x86_64 $(MAKE) check PY=.venv-x86/bin/python
+	@arch -x86_64 $(MAKE) check-py PY=.venv-x86/bin/python
+	@echo "######## Swift (một lượt, không theo kiến trúc venv) ########"
+	@$(MAKE) check-swift
 
 spec:             ## trạng thái hiện thực so với spec
 	$(PY) scripts/spec_status.py

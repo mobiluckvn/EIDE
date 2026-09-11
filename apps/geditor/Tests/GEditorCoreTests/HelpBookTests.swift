@@ -22,10 +22,38 @@ final class HelpBookTests: XCTestCase {
         )
     }
 
-    func testNGONNGUchuaDICHroiVEtiengVIET() {
-        XCTAssertEqual(HelpContent.book(language: "de").language, "vi")
-        XCTAssertFalse(HelpContent.isTranslated("de"))
+    func testNGONNGUchuaDICHroiVEtiengANH() throws {
+        // Mã ngôn ngữ chưa có sách được LẤY RA từ chính tập đã dịch, không viết cứng. Bài cũ
+        // viết cứng `"de"` làm đại diện cho "chưa dịch"; tiếng Đức dịch xong thì bài quay ra
+        // khẳng định điều ngược với mã, và nó đỏ vì một lý do không liên quan gì tới điều nó
+        // định giữ. Một hằng số trông như còn hiệu lực là thứ chỉ lộ ra khi nó đã sai.
+        let ungVien = ["ja", "ko", "th", "hi", "id", "ms", "ur", "zh-Hant"]
+        let chuaDich = try XCTUnwrap(
+            ungVien.first { !HelpContent.isTranslated($0) },
+            "Mọi ngôn ngữ trong danh sách ứng viên đều đã có sách — viết lại bài này bằng một mã khác")
+
+        // Rơi về TIẾNG ANH, không phải tiếng Việt: bản gốc là tiếng Việt nên rơi về nó là lựa
+        // chọn tự nhiên của người viết mã và là lựa chọn vô dụng với người đọc (HelpContent §book).
+        XCTAssertEqual(HelpContent.book(language: chuaDich).language, "en")
+
+        // Còn ngôn ngữ ĐÃ dịch thì phải ra đúng sách của nó, không rơi đi đâu cả.
         XCTAssertTrue(HelpContent.isTranslated("vi"))
+        XCTAssertEqual(HelpContent.book(language: "vi").language, "vi")
+        XCTAssertTrue(HelpContent.isTranslated("de"))
+        XCTAssertEqual(HelpContent.book(language: "de").language, "de")
+    }
+
+    /// Đối chứng: `translatedLanguages` phải kể ĐÚNG những mã mà `book(language:)` có sách riêng.
+    ///
+    /// Hai chỗ ấy là hai bản chép tay của cùng một sự thật — thêm một thứ tiếng mà quên thứ kia
+    /// thì popup hoặc mời người dùng chọn một mục rồi hiện tiếng khác, hoặc giấu mất một cuốn
+    /// sách đã dịch xong. Không có bài này thì cả hai lỗi đều im lặng.
+    func testTAPdaDICHkhopVOIsachTHATcó() {
+        for ma in HelpContent.translatedLanguages {
+            XCTAssertEqual(
+                HelpContent.book(language: ma).language, ma,
+                "«\(ma)» có trong translatedLanguages nhưng book(language:) không trả sách của nó")
+        }
     }
 
     // MARK: - Đối chứng âm: bộ soát phải ĐỎ được
