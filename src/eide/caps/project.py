@@ -498,13 +498,23 @@ def _root(ctx: Context) -> Path:
 # tạo bản thứ hai của cùng một sự thật, và hai bản sẽ trôi khỏi nhau ngay lần thêm ISA sau —
 # đúng loại lỗi mà DEV-043/DEV-046 đã ghi.
 def _isa_tu_chip(chip: str) -> str | None:
-    """Khớp tên chip với `family_patterns` trong các manifest ISA."""
+    """Khớp tên chip với `family_patterns` trong các manifest ISA.
+
+    Thử CẢ HAI dạng tên mà bộ hồ sơ dùng cho cùng một con chip. `family_patterns` neo đầu chuỗi
+    (`^STM32F[2-4]`) nên nó khớp `STM32F411CE` — dạng ví dụ của PROJECT-06 — nhưng không khớp
+    `st.stm32f411ce`, vốn là dạng IRI mà `extract.svd` sinh ra cho mọi hộ chiếu chip và cũng là
+    dạng ví dụ của SIM-01. Trước khi thử cả hai, ghim một chip bằng dạng IRI cho ra `isa: null`
+    trong `constraints.yaml` mà không báo gì, rồi `code.build` sau đó dừng ở "chưa ghim ISA" —
+    một câu đúng về triệu chứng và sai về nguyên nhân.
+    """
     import re as _re
-    for f in sorted((spec_dir() / "isa").glob("*.yaml")):
-        d = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
-        for pat in (d.get("family_patterns") or []):
-            if _re.search(pat, chip, _re.I):
-                return d.get("id") or f.stem
+    ten = chip[len("chip:"):] if chip.startswith("chip:") else chip
+    for ung_vien in (ten, ten.rsplit(".", 1)[-1]):
+        for f in sorted((spec_dir() / "isa").glob("*.yaml")):
+            d = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+            for pat in (d.get("family_patterns") or []):
+                if _re.search(pat, ung_vien, _re.I):
+                    return d.get("id") or f.stem
     return None
 
 
