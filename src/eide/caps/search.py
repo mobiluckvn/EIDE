@@ -899,3 +899,85 @@ def _ghi_source_mcp(root: Path, d: dict[str, Any], vendor: str | None, ctx: Cont
         c.commit()
     store.write_seal(db, ctx.extra.get("ledger"))
     return sid
+
+
+# ---------------------------------------------------------------- SEARCH-01 registry
+
+
+@capability("search.registry")
+def registry(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: SEARCH-01 — CDS-12.2. R0, `undo: none`.
+    tc: "Seed 640 chip → tìm thấy"; lỗi: "registry không tới được → trả rỗng + cảnh báo".
+
+    Mở rộng `registry.search` bằng bộ lọc `kind`. Hai năng lực chứ không một, vì chúng trả lời
+    cho hai người khác nhau: `registry.*` là góc quản trị kho gói, `search.*` là góc người đang
+    đi tìm tri thức và không quan tâm gói là đơn vị gì.
+
+    **Registry không tới được thì trả RỖNG kèm cảnh báo, không ném** — hợp đồng viết đúng thế.
+    Một máy chưa từng publish thì chưa có `index.json`, và đó là trạng thái bình thường. Ném ở
+    đây biến `search.*` thành thứ chỉ dùng được sau khi đã dựng hạ tầng.
+    """
+    from eide.caps.registry import _doc_index, _kho
+
+    idx = _doc_index()
+    canh_bao = None if idx else (f"registry chưa có gói nào ({_kho()}) — `registry.publish` "
+                                 "để thêm, hoặc đặt EIDE_REGISTRY trỏ vào kho khác")
+    loai = params.get("kind") or "any"
+    q = str(params["query"]).lower().strip()
+
+    ra = []
+    for g in idx:
+        if loai != "any" and g.get("kind") != loai:
+            continue
+        ten = str(g.get("id", "")).lower()
+        if q and q not in ten and not any(q in str(x).lower() for x in (g.get("keywords") or [])):
+            continue
+        ra.append({"id": g.get("id"), "kind": g.get("kind"), "badges": g.get("badges") or [],
+                   # Điểm theo BADGE: một hộ chiếu `verified_on_board` đáng tin hơn một hộ chiếu
+                   # trùng tên hơn một ký tự. Badge là thứ đắt nhất để có trong cả hệ thống —
+                   # nó đòi một lần nạp firmware lên board thật.
+                   "score": round(1.0 + 0.5 * len(g.get("badges") or []), 2)})
+    ra.sort(key=lambda x: (-x["score"], x["id"] or ""))
+    return {"candidates": ra, **({"warning": canh_bao} if canh_bao else {})}
+
+
+# ---------------------------------------------------------------- SEARCH-09 reference_projects
+
+
+@capability("search.reference_projects")
+def reference_projects(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: SEARCH-09 — CDS-12.2. R0, `undo: none`.
+
+    Mẫu dự án tham chiếu cho một ý tưởng ("robot cân bằng…"). Tìm trong registry những gói
+    `kind=template`, xếp theo số từ khoá của ý tưởng khớp được.
+
+    **Khớp theo TỪ, không gọi mô hình.** Một ý tưởng người dùng gõ vào là vài chữ tiếng Việt;
+    trả tiền cho một lượt embedding để xếp hạng năm cái mẫu là trả tiền cho độ chính xác không
+    ai đo được. Khi registry có hàng nghìn mẫu thì đổi sang RAG — `view.rag_index` đã có sẵn.
+
+    Không có mẫu nào → `candidates: []` kèm cảnh báo, đúng như `search.registry`. Chuỗi Z-01
+    dùng năng lực này ở bước 2 và nó phải đi tiếp được khi registry rỗng: một dự án mới vẫn
+    dựng được mà không cần mẫu nào.
+    """
+    from eide.caps.registry import _doc_index, _kho
+
+    idx = [g for g in _doc_index() if g.get("kind") == "template"]
+    # CHỈ `idea` — SEARCH-09 `input_schema` khai `additionalProperties: false`, nên một tham số
+    # `query` sẽ bị Router chặn bằng E1000 trước khi tới đây.
+    y = str(params.get("idea") or "").lower()
+    tu = {t for t in re.findall(r"\w+", y) if len(t) > 2}
+
+    ra = []
+    for g in idx:
+        kho_tu = " ".join([str(g.get("id", "")), *(g.get("keywords") or [])]).lower()
+        n = sum(1 for t in tu if t in kho_tu)
+        if n or not tu:
+            ra.append({"id": g.get("id"), "kind": "template", "matched": n,
+                       "badges": g.get("badges") or [],
+                       "score": round(n + 0.5 * len(g.get("badges") or []), 2)})
+    ra.sort(key=lambda x: (-x["score"], x["id"] or ""))
+    kq: dict[str, Any] = {"candidates": ra}
+    if not idx:
+        kq["warning"] = (f"registry chưa có mẫu dự án nào ({_kho()}). Dự án mới vẫn dựng được "
+                         "mà không cần mẫu — bước này không chặn chuỗi Z-01.")
+    return kq

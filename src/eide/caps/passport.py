@@ -497,3 +497,100 @@ def _ghim_moi(root: Path, ten: str, ban: str) -> None:
     else:
         pins["chip"] = f"{ten}@{ban}"
     p.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
+# ---------------------------------------------------------------- PASSPORT-08 resolve_address
+
+# Khoảng cách tối đa từ địa chỉ hỏi tới `base_address` của một ngoại vi để còn coi là "thuộc
+# ngoại vi ấy". 4 KiB là cỡ vùng thanh ghi của một ngoại vi trên phần lớn MCU ARM (một trang),
+# và nó cũng là bước nhảy giữa hai ngoại vi liền nhau trong bản đồ bộ nhớ STM32.
+#
+# Không mở rộng hơn: đoán xa hơn một trang thì một địa chỉ RAM bất kỳ sẽ "thuộc về" ngoại vi
+# cuối cùng trước nó, và một câu trả lời sai ở đây tệ hơn im lặng — người ta đang hover chuột
+# lên một con số để tin nó.
+CUA_SO_NGOAI_VI = 0x1000
+
+
+@capability("passport.resolve_address")
+def resolve_address(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PASSPORT-08 — CDS-12.2. R0, `errors: []`, `undo: none`. tc: TC-40.
+
+    Địa chỉ → tên ngoại vi/thanh ghi. Đây là năng lực NHỎ NHẤT của cả sản phẩm mà cũng đúng
+    tinh thần nhất: một con số trong khung hex của GEditor hay trong tệp `.map` trả lời được câu
+    *"ai nói thế, và ở trang nào"*.
+
+    **Ba tầng tra, dừng ở tầng đầu tiên có câu trả lời.** Khớp CHÍNH XÁC một `base_address` hay
+    `address` là chắc chắn; không có thì tìm ngoại vi có base GẦN NHẤT còn ở dưới địa chỉ hỏi và
+    cách không quá một trang — đó là cách đọc một bản đồ bộ nhớ. Xa hơn thế thì trả rỗng.
+
+    **Chỉ fact `reviewed`/`verified`.** Hover chuột là chỗ người ta tin ngay, không ai dừng lại
+    đọc `status`. Trả một fact `normalized` ở đó là khẳng định một con số chưa ai duyệt — cùng
+    lý do `code.annotate` không gợi ý chúng.
+
+    `errors: []` nghĩa là không ném: một địa chỉ không tra được là một câu trả lời hợp lệ
+    (`subject: null`), không phải một lỗi. Người ta hover lên đủ thứ.
+    """
+    root = _root(ctx)
+    so = _so_dia_chi(params["address"])
+    phan = params.get("part")
+
+    dieu = "status IN ('reviewed','verified')"
+    tham: list[Any] = []
+    if phan:
+        dieu += " AND (subject = ? OR subject LIKE ?)"
+        tham += [str(phan), f"%{phan}%"]
+
+    db = store.store_path(root)
+    if not db.exists():
+        return {"subject": None, "facts": []}
+    with store.open_store(db) as c:
+        rows = c.execute(
+            f"SELECT id, subject, predicate, value, unit, source_id FROM fact WHERE {dieu}",
+            tham).fetchall()
+
+    khop: list[dict[str, Any]] = []
+    gan: list[tuple[int, dict[str, Any]]] = []
+    for fid, subj, pred, val, unit, sid in rows:
+        gt = json.loads(val) if val else None
+        v = _so_dia_chi(gt)
+        if v is None:
+            continue
+        m = {"id": fid, "subject": subj, "predicate": pred, "value": gt,
+             "unit": unit, "source_id": sid}
+        if so is not None and v == so:
+            khop.append(m)
+        elif (so is not None and pred in ("base_address", "address")
+              and 0 < so - v <= CUA_SO_NGOAI_VI):
+            gan.append((so - v, m))
+
+    if khop:
+        return {"subject": khop[0]["subject"], "facts": khop}
+    if gan:
+        gan.sort(key=lambda x: x[0])
+        # `offset` kèm theo để người đọc biết đây là SUY RA, không phải khớp thẳng — và biết
+        # suy xa bao nhiêu. Một câu trả lời gần đúng mà không nói là gần đúng thì đọc y hệt một
+        # câu trả lời chính xác.
+        d, m = gan[0]
+        return {"subject": m["subject"], "facts": [{**m, "offset": d, "match": "nearest_base"}]}
+    return {"subject": None, "facts": []}
+
+
+def _so_dia_chi(x: Any) -> int | None:
+    """`"0x40005400"`, `1073763328`, `"0x40005400u"` → cùng một số. Không đọc được thì None.
+
+    KHÔNG trả 0 khi hỏng: `0x00000000` là một địa chỉ hợp lệ (vector table trên Cortex-M), và
+    lẫn nó với "không đọc được" là cách một phép tra bỏ sót đúng thứ nó canh.
+    """
+    if isinstance(x, bool):
+        return None
+    if isinstance(x, int):
+        return x
+    if isinstance(x, float):
+        return int(x)
+    s = str(x or "").strip().rstrip("uUlL")
+    if not s:
+        return None
+    try:
+        return int(s, 0)
+    except ValueError:
+        return None

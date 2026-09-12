@@ -301,3 +301,74 @@ def test_khong_co_ban_moi_bao_E2000(du_an):
     sau = r.quyet_dinh(run.run_id, "approve", ctx_goi_y=ctx)
     assert sau.status == "failed" and sau.error["eide_code"] == "E2000"
     assert "registry.pull" in sau.error.get("candidates", [])
+
+
+# ---------- PASSPORT-08 resolve_address (M3): địa chỉ → ngoại vi/thanh ghi
+
+def test_resolve_address_khop_CHINH_XAC(du_an):
+    """tc PASSPORT-08: TC-40. `0x40005400`, `1073763328`, `0x40005400u` là cùng một địa chỉ —
+    bắt người hover phải gõ đúng ký pháp của fact là bắt sai chỗ."""
+    from eide.caps.passport import resolve_address
+
+    _, ctx, root = du_an
+    _fact_dc(root, "f_ra00000000001", "chip:st.stm32f411/periph:I2C1", "base_address",
+             "0x40005400")
+    for dang in ("0x40005400", "1073763328", "0x40005400u"):
+        kq = resolve_address({"address": dang}, ctx)
+        assert kq["subject"] == "chip:st.stm32f411/periph:I2C1", dang
+        assert kq["facts"][0]["id"] == "f_ra00000000001"
+
+
+def test_resolve_address_suy_ra_ngoai_vi_GAN_NHAT(du_an):
+    """Một địa chỉ rơi giữa vùng thanh ghi phải suy ra ngoại vi chứa nó — đó là cách người ta
+    đọc một bản đồ bộ nhớ. Kèm `offset` để người đọc biết đây là SUY RA."""
+    from eide.caps.passport import resolve_address
+
+    _, ctx, root = du_an
+    _fact_dc(root, "f_ra00000000002", "chip:x/periph:I2C1", "base_address", "0x40005400")
+    kq = resolve_address({"address": "0x40005410"}, ctx)
+    assert kq["subject"] == "chip:x/periph:I2C1"
+    assert kq["facts"][0]["offset"] == 0x10 and kq["facts"][0]["match"] == "nearest_base"
+
+
+def test_resolve_address_KHONG_suy_qua_xa(du_an):
+    """Đoán xa hơn một trang thì một địa chỉ RAM bất kỳ sẽ "thuộc về" ngoại vi cuối cùng trước
+    nó — và một câu trả lời sai ở đây tệ hơn im lặng."""
+    from eide.caps.passport import resolve_address
+
+    _, ctx, root = du_an
+    _fact_dc(root, "f_ra00000000003", "chip:x/periph:I2C1", "base_address", "0x40005400")
+    assert resolve_address({"address": "0x20000000"}, ctx) == {"subject": None, "facts": []}
+
+
+def test_resolve_address_KHONG_tra_fact_chua_duyet(du_an):
+    """Hover chuột là chỗ người ta tin ngay, không ai dừng lại đọc `status`."""
+    from eide.caps.passport import resolve_address
+
+    _, ctx, root = du_an
+    _fact_dc(root, "f_ra00000000004", "chip:x", "base_address", "0xDEAD", status="normalized")
+    assert resolve_address({"address": "0xDEAD"}, ctx)["facts"] == []
+
+
+def test_resolve_address_khong_tra_duoc_KHONG_phai_loi(du_an):
+    """`errors: []` — người ta hover lên đủ thứ."""
+    from eide.caps.passport import resolve_address
+
+    _, ctx, _ = du_an
+    assert resolve_address({"address": "0x12345678"}, ctx) == {"subject": None, "facts": []}
+
+
+def _fact_dc(root, fid, subject, pred, val, status="verified"):
+    import hashlib
+    import json as _json
+
+    from eide_core import store
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id,uri,sha256,kind,tier,license)"
+                  " VALUES (?,?,?,?,?,?)",
+                  ("s_ra", "u", hashlib.sha256(b"s_ra").hexdigest(), "svd", "gold", "vendor-doc"))
+        c.execute("INSERT INTO fact (id,subject,predicate,value,source_id,method,tier,"
+                  "confidence,status,layer) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                  (fid, subject, pred, _json.dumps(val), "s_ra", "parser", "gold", 1.0,
+                   status, "A"))
+        c.commit()

@@ -256,31 +256,22 @@ class Daemon:
     def hex_resolve(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{address}` → `{subject, facts[]}` — khung nhị phân của GEditor hỏi "0x40005400 là gì".
 
-        Đây là năng lực nhỏ nhất mà cũng đúng tinh thần sản phẩm nhất: một con số trong khung
-        hex trả lời được câu "ai nói thế, và ở trang nào". Tra theo GIÁ TRỊ đã chuẩn hoá, nên
-        `0x40005400`, `1073763328` và `0x40005400u` ra cùng một kết quả.
-        """
-        import json as _json
-        import sqlite3 as _sq
+        Alias của `passport.resolve_address` (PASSPORT-08), KHÔNG tự tra store.
 
-        from eide.caps.code import _khop_gia_tri
-        from eide_core import store as _store
-        if not self.ctx.project_dir:
+        Bản đầu (12/09 sáng) tự mở store và tự so giá trị ngay trong daemon — chạy đúng, nhưng
+        đặt sai tầng: cùng một phép tra sẽ có HAI hiện thực, một cho panel và một cho năng lực,
+        và hai phép tra cho cùng một câu hỏi là hai phép tra sẽ lệch nhau đúng lúc quan trọng.
+        Phiên bản trong năng lực còn làm được thứ bản daemon không có — suy ra ngoại vi gần nhất
+        khi địa chỉ rơi giữa một vùng thanh ghi, đúng cách người ta đọc bản đồ bộ nhớ.
+
+        Đi qua Router nên vẫn có cổng, nhật ký, và `event.run.progress` như mọi lời gọi khác.
+        """
+        run = self.router.invoke("passport.resolve_address",
+                                 {"address": str(p.get("address", "")),
+                                  **({"part": p["part"]} if p.get("part") else {})}, self.ctx)
+        if run.status != "done":
             return {"subject": None, "facts": []}
-        db = _store.store_path(self.ctx.project_dir)
-        if not db.exists():
-            return {"subject": None, "facts": []}
-        dia_chi = str(p.get("address", ""))
-        ra = []
-        with _sq.connect(db) as c:
-            for fid, subj, pred, val, st in c.execute(
-                    "SELECT id, subject, predicate, value, status FROM fact"
-                    " WHERE status IN ('reviewed','verified')").fetchall():
-                gt = _json.loads(val) if val else None
-                if _khop_gia_tri(dia_chi, gt):
-                    ra.append({"id": fid, "subject": subj, "predicate": pred,
-                               "value": gt, "status": st})
-        return {"subject": ra[0]["subject"] if ra else None, "facts": ra}
+        return run.result or {"subject": None, "facts": []}
 
     def chat_send(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{text}` → `{intent_id, run_id?}` — ô lệnh của UXD-13 U1.
