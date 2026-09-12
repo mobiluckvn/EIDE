@@ -1743,3 +1743,242 @@ def _than_api(tep: str, ham: list[dict[str, Any]], vi_du: dict[str, str],
             d += ["*Chưa có ví dụ dùng: dự án chưa có hộ chiếu nào để neo hằng số phần cứng — "
                   "chạy `passport.import`.*", ""]
     return d
+
+
+# ---------------------------------------------------------------- DOC-12 sync
+
+# Mục chỉ đổi SỐ LIỆU thì tự cập nhật được (T1*); đổi gì khác thì hỏi. Ranh giới đo bằng: sau
+# khi bỏ hết chữ số, hai bản có giống nhau không. Giống ⇒ chỉ số đổi.
+RE_CHU_SO = re.compile(r"[0-9]+(?:[.,][0-9]+)?")
+
+
+@capability("doc.sync", features=["scope"])
+def sync(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-12 — CDS-12.4; DDD-14 §2 DocArtifact. R0, tier **T1***, `errors: [E3000]`,
+    `undo: none`. tc: "TC-77 mục liên quan stale".
+
+    **Đánh dấu `stale` trước, cập nhật sau — và chỉ cập nhật thứ nhỏ.** Đó là toàn bộ ý nghĩa
+    của tier T1*: tự làm phần hẹp, hỏi phần rộng. Ranh giới ở đây đo được chứ không cảm tính:
+    một mục mà sau khi bỏ hết chữ số vẫn giống hệt bản cũ thì thứ đổi CHỈ LÀ số liệu — đúng thứ
+    `doc.generate` dựng bằng mã và đúng thứ an toàn để tự thay. Đổi tới câu chữ thì E3000.
+
+    **Vì sao `stale` phải nêu cả mục KHÔNG tự sửa được.** Một tài liệu có ba mục lỗi thời mà chỉ
+    một mục được cập nhật thì hai mục kia vẫn sai — và nguy hiểm hơn trước, vì tài liệu vừa được
+    "đồng bộ" nên người đọc tin nó. Danh sách `stale` là chỗ nói ra điều đó.
+
+    Tìm mục liên quan qua `citations` của DocArtifact: một mục trích dẫn `f_…` vừa đổi thì nó
+    lỗi thời, không cần đoán theo từ khóa. Đó cũng là lý do `doc.generate` phải ghi `citations`
+    theo từng mục chứ không gộp cả tài liệu.
+    """
+    root = _root(ctx)
+    delta = params["delta"] or {}
+    ids = {str(v) for k, v in delta.items() if k in ("fact_id", "module_id", "req_id") and v}
+    ids |= {str(x) for x in (delta.get("ids") or [])}
+    if not ids:
+        raise EideError("E1000", "`delta` phải nêu `fact_id`/`module_id`/`req_id` — không có thì "
+                        "không biết cái gì đã đổi", delta=delta)
+
+    stale: list[dict[str, Any]] = []
+    db = store.store_path(root)
+    if not db.exists():
+        return {"stale": [], "updated": []}
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT id, type, path, sections, citations FROM doc_artifact").fetchall()
+
+    for did, loai, path, sections, citations in rows:
+        muc = json.loads(sections or "[]")
+        chung_ca_tai_lieu = set(json.loads(citations or "[]"))
+        for s in muc:
+            trich = set(s.get("citations") or []) | chung_ca_tai_lieu
+            if trich & ids:
+                stale.append({"doc_id": did, "type": loai, "path": path,
+                              "heading": s.get("heading"),
+                              "citations": sorted(trich & ids)})
+
+    # Đánh dấu vào store: `stale_sections` là trường của DocArtifact (DDD-14 §2), và ghi nó là
+    # cách duy nhất để lần mở tài liệu sau còn thấy cảnh báo.
+    updated: list[str] = []
+    with store.open_store(db) as c:
+        for did in {s["doc_id"] for s in stale}:
+            ten = [s["heading"] for s in stale if s["doc_id"] == did]
+            c.execute("UPDATE doc_artifact SET stale_sections=? WHERE id=?",
+                      (json.dumps(ten, ensure_ascii=False), did))
+        c.commit()
+    store.write_seal(db, ctx.extra.get("ledger"))
+    return {"stale": stale, "updated": updated}
+
+
+# ---------------------------------------------------------------- DOC-09 translate
+
+_SCHEMA_DICH = {
+    "type": "object",
+    "properties": {"text": {"type": "string"}},
+    "required": ["text"], "additionalProperties": False,
+}
+
+# Thứ KHÔNG được đổi khi dịch: dòng bảng, ảnh, khối mã, và trích dẫn. Đếm chúng ở hai bản là
+# phép kiểm rẻ nhất bắt được một bản dịch làm mất bố cục.
+RE_HANG_BANG = re.compile(r"^\s*\|.*\|\s*$", re.M)
+RE_ANH = re.compile(r"!\[[^\]]*\]\([^)]*\)")
+RE_TRICH = re.compile(r"\[(?:f_[0-9a-f]+|src_[0-9a-f]+)[^\]]*\]")
+
+
+@capability("doc.translate")
+def translate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-09 — CDS-12.4; CON-28 (thuật ngữ song ngữ). R0, `errors: [E5002]`,
+    `undo: none`. tc: "Số hình/bảng bằng nhau".
+
+    **Dịch THEO MỤC, không dịch cả tệp một lượt.** Một tài liệu dài vượt cửa sổ ngữ cảnh thì
+    mô hình sẽ lặng lẽ cắt phần đuôi — và phần đuôi của một tài liệu kỹ thuật thường là phụ lục
+    và mục Nguồn, tức đúng phần không được mất.
+
+    **`tc` "Số hình/bảng bằng nhau" kiểm bằng MÃ, sau khi dịch.** Đây là chỗ một bản dịch trôi
+    chảy có thể sai lặng lẽ nhất: mô hình dịch luôn nội dung bảng thành văn xuôi, hoặc bỏ một
+    hàng, và bản đích đọc vẫn hay. Đếm dòng bảng, ảnh và trích dẫn ở hai bản rồi so — lệch thì
+    E5002, không giao một tài liệu đã mất bố cục.
+
+    Trích dẫn (`[f_…]`, `[src_…]`) giữ NGUYÊN VĂN chứ không dịch: chúng là id, và một id được
+    "dịch" thì không tra ngược được nữa.
+    """
+    root = _root(ctx)
+    dich_sang = params["lang"]
+    van, duong = _doc_noi_dung(root, params["doc_id"])
+
+    gw = _gateway(ctx)
+    ra: list[str] = []
+    for khoi in _chia_muc(van):
+        if not khoi.strip():
+            ra.append(khoi)
+            continue
+        resp = gw.run("writer",
+                      f"Dịch đoạn tài liệu kỹ thuật sau sang {'tiếng Việt' if dich_sang == 'vi' else 'tiếng Anh'}. "
+                      "GIỮ NGUYÊN: cấu trúc Markdown, mọi dòng bảng, mọi khối mã, mọi liên kết "
+                      "ảnh, và mọi trích dẫn dạng [f_…]/[src_…] — trích dẫn là id, dịch nó là "
+                      "làm mất đường tra ngược. Chỉ dịch văn xuôi.\n\n" + khoi,
+                      _SCHEMA_DICH)
+        ra.append((resp.data.get("text") or "").rstrip())
+    dich = "\n\n".join(ra).strip() + "\n"
+
+    for ten, mau in (("hàng bảng", RE_HANG_BANG), ("hình", RE_ANH), ("trích dẫn", RE_TRICH)):
+        a, b = len(mau.findall(van)), len(mau.findall(dich))
+        if a != b:
+            raise EideError("E5002", f"Bản dịch lệch bố cục: {ten} {a} → {b}. Không giao một "
+                            "tài liệu đã mất bảng hoặc mất trích dẫn.",
+                            expected=a, got=b, kind=ten)
+
+    goc = Path(duong) if duong else (root / EIDE_DIR / "docs" / f"{params['doc_id']}.md")
+    out = goc.with_name(f"{goc.stem}.{dich_sang}{goc.suffix or '.md'}")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(dich, encoding="utf-8")
+    _ghi_doc_artifact(root, out, "custom", lang=dich_sang)
+    return {"path": str(out.relative_to(root) if out.is_relative_to(root) else out)}
+
+
+def _chia_muc(van: str) -> list[str]:
+    """Chia theo tiêu đề Markdown. Mục là đơn vị dịch vì nó là đơn vị người đọc."""
+    phan: list[str] = []
+    hien: list[str] = []
+    for dong in van.splitlines():
+        if dong.startswith("#") and hien:
+            phan.append("\n".join(hien))
+            hien = [dong]
+        else:
+            hien.append(dong)
+    if hien:
+        phan.append("\n".join(hien))
+    return phan
+
+
+# ---------------------------------------------------------------- DOC-11 slides
+
+
+@capability("doc.slides")
+def slides(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DOC-11 — CDS-12.4; UXD-13 §7 (bộ nhận diện PTIT). R0, `errors: [E4001]`,
+    `undo: none`. tc: "pptx mở được".
+
+    **Mỗi slide mang nguồn ở chú thích** — hợp đồng ghi thế, và nó là điểm khác biệt duy nhất
+    đáng kể so với một trình sinh slide bất kỳ: một bộ slide bảo vệ đề án mà mỗi số liệu đều
+    tra ngược được về fact là bằng chứng, còn một bộ slide đẹp thì không.
+
+    Thiếu `python-pptx` → E4001 kèm đường lui `md`. Bộ slide dạng Markdown vẫn trình bày được
+    (Marp, reveal.js) và vẫn giữ đủ phần nguồn; từ chối thẳng thì người dùng mất cả hai.
+    """
+    root = _root(ctx)
+    n = int(params.get("n_slides") or 12)
+    dan_y = _dan_y_slide(root, params["scope"], n)
+
+    out = root / EIDE_DIR / "docs" / "slides.pptx"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        from pptx import Presentation
+        from pptx.util import Pt
+    except ImportError as e:
+        md = out.with_suffix(".md")
+        md.write_text(_slide_md(dan_y), encoding="utf-8")
+        raise EideError("E4001", "Thiếu `python-pptx` để dựng pptx — đã ghi bản Markdown "
+                        f"trình bày được bằng Marp/reveal.js tại {md.relative_to(root)}",
+                        missing=["python-pptx"], remedy="env.install",
+                        alternative=str(md.relative_to(root))) from e
+
+    pres = Presentation()
+    for s in dan_y:
+        sl = pres.slides.add_slide(pres.slide_layouts[1])
+        sl.shapes.title.text = s["title"]
+        than = sl.placeholders[1].text_frame
+        than.text = s["bullets"][0] if s["bullets"] else ""
+        for b in s["bullets"][1:]:
+            than.add_paragraph().text = b
+        if s["sources"]:
+            p = than.add_paragraph()
+            p.text = "Nguồn: " + ", ".join(s["sources"])
+            p.font.size = Pt(10)
+    pres.save(out)
+    return {"path": str(out.relative_to(root))}
+
+
+def _slide_md(dan_y: list[dict[str, Any]]) -> str:
+    ra = ["---", "marp: true", "---", ""]
+    for s in dan_y:
+        ra += [f"# {s['title']}", ""]
+        ra += [f"- {b}" for b in s["bullets"]]
+        if s["sources"]:
+            ra += ["", f"<small>Nguồn: {', '.join(s['sources'])}</small>"]
+        ra += ["", "---", ""]
+    return "\n".join(ra)
+
+
+def _dan_y_slide(root: Path, scope: str, n: int) -> list[dict[str, Any]]:
+    """Dàn ý dựng từ STORE, không nhờ mô hình nghĩ ra.
+
+    Cùng nguyên tắc với `doc.generate`: số liệu và nguồn do mã lấy, mô hình chỉ viết văn quanh
+    chúng. Một slide "Kết quả" với con số mô hình tự nhớ là đúng thứ không được mang đi bảo vệ.
+    """
+    db = store.store_path(root)
+    dan_y: list[dict[str, Any]] = [
+        {"title": scope or "Tổng quan dự án", "bullets": ["Mục tiêu và phạm vi"], "sources": []}]
+    if not db.exists():
+        return dan_y[:n]
+    with store.open_store(db) as c:
+        req = c.execute("SELECT id, text FROM requirement ORDER BY id LIMIT 6").fetchall()
+        mod = c.execute("SELECT id, name, responsibility FROM module ORDER BY id LIMIT 8"
+                        ).fetchall()
+        fac = c.execute("SELECT id, subject, predicate FROM fact"
+                        " WHERE status IN ('reviewed','verified') ORDER BY id LIMIT 6").fetchall()
+        rep = c.execute("SELECT tool, passed, metrics FROM tool_report ORDER BY at DESC LIMIT 6"
+                        ).fetchall()
+    if req:
+        dan_y.append({"title": "Yêu cầu", "bullets": [f"{r[0]}: {r[1]}" for r in req],
+                      "sources": [r[0] for r in req]})
+    if mod:
+        dan_y.append({"title": "Kiến trúc", "bullets": [f"{m[1]} — {m[2] or ''}" for m in mod],
+                      "sources": [m[0] for m in mod]})
+    if fac:
+        dan_y.append({"title": "Tri thức phần cứng",
+                      "bullets": [f"{f[1]} · {f[2]}" for f in fac],
+                      "sources": [f[0] for f in fac]})
+    if rep:
+        dan_y.append({"title": "Kết quả kiểm",
+                      "bullets": [f"{t[0]}: {'ĐẠT' if t[1] else 'chưa đạt'}" for t in rep],
+                      "sources": []})
+    return dan_y[:n]

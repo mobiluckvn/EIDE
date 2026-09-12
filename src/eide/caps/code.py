@@ -1983,3 +1983,215 @@ def _fact_da_duyet(root: Path) -> list[tuple[str, str, str, Any]]:
             "SELECT id, subject, predicate, value FROM fact"
             " WHERE status IN ('reviewed','verified') ORDER BY id").fetchall()
     return [(r[0], r[1], r[2], json.loads(r[3]) if r[3] else None) for r in rows]
+
+
+# ---------------------------------------------------------------- CODE-15 docs
+
+_SCHEMA_README = {
+    "type": "object",
+    "properties": {"markdown": {"type": "string"}},
+    "required": ["markdown"], "additionalProperties": False,
+}
+
+
+@capability("code.docs")
+def docs(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-15 — CDS-12.1; DOC-03 (`doc.style_check`). R2, `errors: [E5002]`,
+    `undo: none`. tc: "style_check 0 lỗi".
+
+    **API dựng bằng MÃ, văn xuôi do mô hình viết quanh nó** — cùng khuôn `doc.generate` và
+    `report.explain`. Danh sách hàm, tham số và fact trích dẫn lấy từ header và từ `code_unit`;
+    mô hình chỉ nối chúng thành câu. Để mô hình tự đọc mã rồi nhớ lại chữ ký hàm là mời nó bịa
+    ra một hàm trông rất giống thật.
+
+    **`tc` là "style_check 0 lỗi", nên phép kiểm ấy chạy ở đây** — không giao một README mà
+    chính bộ soát của dự án còn chê. Còn lỗi sau một lần sửa → E5002.
+
+    Trích dẫn fact là phần bắt buộc, không phải trang trí: một README module driver nói "địa chỉ
+    0x76" mà không nêu fact nào thì nó vừa tạo ra một nguồn sự thật thứ hai, cạnh tranh với
+    store — đúng thứ `code.constant_guard` tồn tại để chặn.
+    """
+    root = _du_an(ctx, params)
+    ten_mod = params["module"]
+    mo_ta = _mo_ta_module(root, ten_mod)
+    if not mo_ta["files"]:
+        raise EideError("E2000", f"Không thấy tệp nào của module `{ten_mod}`",
+                        exists=[], candidates=["code.generate_module"], missing=[ten_mod])
+
+    from eide.caps.doc import _gateway
+    gw = _gateway(ctx)
+    resp = gw.run("writer",
+                  "Viết README cho module firmware dưới đây, tiếng Việt, Markdown. Dùng ĐÚNG "
+                  "danh sách API trong dữ kiện — không thêm hàm nào, không đổi chữ ký. Mọi hằng "
+                  "số phần cứng nêu trong bài phải kèm trích dẫn fact dạng [f_…] có trong dữ "
+                  "kiện.\n\n" + json.dumps(mo_ta, ensure_ascii=False),
+                  _SCHEMA_README)
+    van = (resp.data.get("markdown") or "").strip()
+
+    # Trích dẫn phải CÓ MẶT — mô hình bỏ sót là chuyện thường, và một README không tra ngược
+    # được thì nó là nguồn sự thật thứ hai.
+    thieu = [f for f in mo_ta["facts"] if f["id"] not in van]
+    if thieu:
+        van += "\n\n## Nguồn\n\n" + "\n".join(
+            f"- `{f['id']}` — {f['subject']} · {f['predicate']}" for f in thieu) + "\n"
+
+    out = root / "src" / ten_mod / "README.md"
+    if not out.parent.is_dir():
+        out = root / "docs" / f"{ten_mod}.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(van + ("\n" if not van.endswith("\n") else ""), encoding="utf-8")
+
+    from eide.caps.doc import style_check
+    loi = style_check({"path": str(out)}, ctx).get("issues") or []
+    if loi:
+        raise EideError("E5002", f"README của `{ten_mod}` còn {len(loi)} lỗi văn phong — "
+                        "xem `doc.style_check`", issues=loi[:10], path=str(out))
+    return {"path": str(out.relative_to(root) if out.is_relative_to(root) else out)}
+
+
+RE_HAM_C = re.compile(
+    r"^\s*(?!#)(?:static\s+|inline\s+|extern\s+)*"
+    r"([A-Za-z_][\w \t*]*?)\s+([A-Za-z_]\w*)\s*\(([^;{)]*)\)\s*[;{]", re.M)
+
+
+def _mo_ta_module(root: Path, ten: str) -> dict[str, Any]:
+    """API + fact của một module, dựng từ header và `code_unit` — không nhờ mô hình đọc mã."""
+    thu_muc = [root / "src" / ten, root / "src", root]
+    tep: list[Path] = []
+    for d in thu_muc:
+        if d.is_dir():
+            tep = [f for f in sorted(d.rglob("*.h")) + sorted(d.rglob("*.c"))
+                   if ten.lower() in str(f).lower()]
+            if tep:
+                break
+    api = []
+    for f in tep:
+        van = f.read_text(encoding="utf-8", errors="replace")
+        for kieu, ham, tham in RE_HAM_C.findall(van):
+            api.append({"file": f.name, "returns": kieu.strip(), "name": ham,
+                        "params": " ".join(tham.split())})
+
+    facts: list[dict[str, Any]] = []
+    db = store.store_path(root)
+    if db.exists():
+        ids: set[str] = set()
+        for f in tep:
+            ids.update(RE_CHU_THICH.findall(f.read_text(encoding="utf-8", errors="replace")))
+        if ids:
+            with store.open_store(db) as c:
+                q = ",".join("?" * len(ids))
+                facts = [{"id": r[0], "subject": r[1], "predicate": r[2],
+                          "value": json.loads(r[3]) if r[3] else None}
+                         for r in c.execute(
+                             f"SELECT id, subject, predicate, value FROM fact WHERE id IN ({q})",
+                             sorted(ids)).fetchall()]
+    return {"module": ten, "files": [str(f.relative_to(root)) for f in tep],
+            "api": api[:60], "facts": facts}
+
+
+# ---------------------------------------------------------------- CODE-16 refactor
+
+_SCHEMA_REFACTOR = {
+    "type": "object",
+    "properties": {
+        "files": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"path": {"type": "string"}, "content": {"type": "string"}},
+            "required": ["path", "content"], "additionalProperties": False}},
+        "rationale": {"type": "string"},
+    },
+    "required": ["files"], "additionalProperties": False,
+}
+
+
+@capability("code.refactor")
+def refactor(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-16 — CDS-12.1; G3 (`code.review`); CODE-08 `test_host`. R2,
+    `errors: [E5003]`, `undo: none`. tc: "Test trước/sau pass như nhau".
+
+    **Bất biến là KHÔNG ĐỔI HÀNH VI, và nó được KIỂM chứ không được hứa.** Hợp đồng viết "bắt
+    buộc test host trước/sau giống nhau" — nên năng lực này chạy `code.test_host` hai lần và so
+    kết quả từng bài. Một bản tái cấu trúc làm đổi một bài test là một bản tái cấu trúc đã đổi
+    hành vi, dù văn xuôi giải thích có hay tới đâu.
+
+    **So theo TỪNG BÀI, không so theo tổng số bài đạt.** Hai bài cùng đổi trạng thái ngược chiều
+    nhau giữ nguyên tổng — và đó đúng là hình dạng của một lỗi tái cấu trúc: sửa một chỗ, làm
+    hỏng chỗ khác, con số tổng không nhúc nhích.
+
+    Không có bài test nào chạy được TRƯỚC khi sửa → E5003 và không sửa gì. Tái cấu trúc mà không
+    có lưới an toàn thì thứ duy nhất ta biết sau đó là mã đã khác đi.
+
+    Trả `patch` chứ không ghi đè: `undo: none` vì nó không đổi gì trên đĩa — người gọi đưa
+    `patch` qua `code.modify` (đi qua G3) như mọi thay đổi mã khác.
+    """
+    root = _du_an(ctx, params)
+    pham_vi = [str(x) for x in (params["scope"] or [])]
+    if not pham_vi:
+        raise EideError("E1000", "`scope` rỗng — nêu tệp hoặc thư mục cần tái cấu trúc")
+
+    truoc = _ket_qua_test(ctx)
+    if not truoc:
+        raise EideError("E5003", "Không có bài test máy chủ nào chạy được TRƯỚC khi sửa — tái "
+                        "cấu trúc mà không có lưới an toàn thì thứ duy nhất ta biết sau đó là "
+                        "mã đã khác đi. Viết test bằng `code.generate_tests` trước.",
+                        reason="no_baseline")
+
+    tep = _tep_trong_pham_vi(root, pham_vi)
+    goc = {str(f.relative_to(root)): f.read_text(encoding="utf-8", errors="replace")
+           for f in tep}
+    from eide.caps.doc import _gateway
+    resp = _gateway(ctx).run(
+        "coder",
+        "Tái cấu trúc mã dưới đây theo quy ước đã nêu. TUYỆT ĐỐI KHÔNG đổi hành vi quan sát "
+        "được: không đổi chữ ký hàm công khai, không đổi giá trị hằng số, không đổi thứ tự tác "
+        "động lên thanh ghi. Giữ nguyên mọi chú thích `eide:fact`.\n\n"
+        + json.dumps({"rules": params.get("rules") or [], "files": goc}, ensure_ascii=False),
+        _SCHEMA_REFACTOR)
+
+    sua = {f["path"]: f["content"] for f in (resp.data.get("files") or [])}
+    la = sorted(set(sua) - set(goc))
+    if la:
+        raise EideError("E5003", f"Bản tái cấu trúc chạm tệp ngoài `scope`: {la}",
+                        reason="out_of_scope", files=la)
+
+    # Chạy test trên bản SỬA bằng cách ghi tạm, chạy, rồi trả lại — không để lại dấu vết trên
+    # cây mã của người dùng dù kết quả thế nào.
+    try:
+        for p, noi_dung in sua.items():
+            (root / p).write_text(noi_dung, encoding="utf-8")
+        sau = _ket_qua_test(ctx)
+    finally:
+        for p, noi_dung in goc.items():
+            (root / p).write_text(noi_dung, encoding="utf-8")
+
+    doi = sorted(k for k in set(truoc) | set(sau) if truoc.get(k) != sau.get(k))
+    if doi:
+        raise EideError("E5003", f"Tái cấu trúc làm đổi kết quả {len(doi)} bài test: "
+                        f"{doi[:5]} — đây là đổi HÀNH VI, không phải tái cấu trúc.",
+                        reason="behaviour_changed", changed=doi,
+                        before={k: truoc.get(k) for k in doi[:5]},
+                        after={k: sau.get(k) for k in doi[:5]})
+
+    return {"patch": {"files": [{"path": p, "content": c} for p, c in sorted(sua.items())],
+                      "rationale": resp.data.get("rationale") or "",
+                      "tests_unchanged": sorted(truoc)}}
+
+
+def _ket_qua_test(ctx: Context) -> dict[str, str]:
+    """`{tên bài: trạng thái}` từ `code.test_host`. Rỗng khi không chạy được bài nào."""
+    try:
+        rep = test_host({}, ctx)["report"]
+    except EideError:
+        return {}
+    return {c["name"]: c["status"] for c in (rep.get("metrics", {}).get("cases") or [])}
+
+
+def _tep_trong_pham_vi(root: Path, pham_vi: list[str]) -> list[Path]:
+    ra: list[Path] = []
+    for x in pham_vi:
+        p = root / x
+        if p.is_dir():
+            ra += sorted(p.rglob("*.c")) + sorted(p.rglob("*.h"))
+        elif p.is_file():
+            ra.append(p)
+    return ra

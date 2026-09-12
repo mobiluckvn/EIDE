@@ -1805,3 +1805,109 @@ def _ve(nut: list[dict[str, str]], canh: list[tuple[str, str, str]], lang: str,
     d += [f'  {n["id"]}["{n["label"]}"]' for n in nut]
     d += [f"  {a} -->" + (f"|{nh}| " if nh else " ") + b for a, b, nh in canh]
     return "\n".join(d) + "\n"
+
+
+# ---------------------------------------------------------------- DIAGRAM-14 sync
+
+# Trạng thái và chuyển trong lược đồ Mermaid `stateDiagram-v2`:  A --> B : nhãn
+RE_CHUYEN_MM = re.compile(r"^\s*(\w+)\s*-->\s*(\w+)\s*(?::\s*(.*))?$", re.M)
+# Bảng chuyển trong mã C: `case ST_IDLE:` … `state = ST_RUN;`
+RE_CASE_C = re.compile(r"\bcase\s+([A-Z][A-Z0-9_]*)\s*:")
+RE_GAN_TRANG_THAI = re.compile(r"\b(?:state|st|fsm)\w*\s*=\s*([A-Z][A-Z0-9_]*)\s*;", re.I)
+
+# Lệch bao nhiêu thì thôi tự áp. "Lệch lớn" của hợp đồng đo bằng TỈ LỆ chứ không bằng số tuyệt
+# đối: thiếu 2 trạng thái trong một FSM 3 trạng thái là viết lại, còn trong FSM 30 trạng thái
+# là quên hai nhánh.
+TI_LE_LECH_LON = 0.34
+
+
+@capability("diagram.sync", features=["scope"])
+def sync(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-14 — CDS-12.4. R0, tier **T1***, `errors: [E3000]`, `undo: none`.
+    tc: TC-73.
+
+    **So lược đồ với MÃ, không so với trí nhớ.** Trạng thái trong `stateDiagram-v2` đối chiếu
+    với `case ST_…:` và các phép gán `state = ST_…;` trong mã. Đây là chỗ một tài liệu kỹ thuật
+    nói dối êm ái nhất: lược đồ vẽ đúng hồi thiết kế, mã đi tiếp, và không ai sửa hình.
+
+    **`check` là mặc định, và đó là chủ ý.** Hợp đồng cho ba hướng (`check`/`to_code`/
+    `from_code`) nhưng chỉ `check` không đổi gì. Mặc định vào một hướng ghi là để một lời gọi
+    thiếu tham số đi sửa mã.
+
+    **Lệch LỚN thì E3000 thay vì tự áp** — tier T1* nghĩa là tự làm phần hẹp. Ranh giới đo bằng
+    TỈ LỆ: thiếu 2 trạng thái trong FSM 3 trạng thái là viết lại cả máy trạng thái, còn trong
+    FSM 30 trạng thái là quên hai nhánh. Một ngưỡng tuyệt đối sẽ đúng ở một cỡ và sai ở cỡ kia.
+
+    `to_code`/`from_code` trả `diff` và `applied: false` kèm lý do: sinh patch cho mã C cần
+    tree-sitter (hợp đồng nêu đích danh), và viết một bộ sinh patch bằng regex cho ngôn ngữ có
+    tiền xử lý là cách chắc chắn làm hỏng mã người khác. Xem DEV-090.
+    """
+    root = _root(ctx)
+    huong = params.get("direction") or "check"
+    db = store.store_path(root)
+    with store.open_store(db) as c:
+        r = c.execute("SELECT id, kind, lang, src, source_ref FROM diagram WHERE id=?",
+                      (params["diagram_id"],)).fetchone()
+    if not r:
+        raise EideError("E2000", f"Không có lược đồ `{params['diagram_id']}`",
+                        exists=[], candidates=["diagram.state"], missing=[params["diagram_id"]])
+    did, kind, _lang, src, _ref = r
+
+    trong_hinh = _trang_thai_tu_hinh(src) if kind == "state" else _nut_tu_hinh(src)
+    trong_ma = _trang_thai_tu_ma(root) if kind == "state" else _module_tu_store(root)
+
+    thieu_ma = sorted(trong_hinh - trong_ma)      # hình có, mã không
+    thieu_hinh = sorted(trong_ma - trong_hinh)    # mã có, hình không
+    diff = {"kind": kind, "in_diagram_only": thieu_ma, "in_code_only": thieu_hinh,
+            "n_diagram": len(trong_hinh), "n_code": len(trong_ma)}
+
+    lech = len(thieu_ma) + len(thieu_hinh)
+    mau = max(len(trong_hinh | trong_ma), 1)
+    diff["drift_ratio"] = round(lech / mau, 3)
+    diff["stale"] = lech > 0
+
+    with store.open_store(db) as c:
+        c.execute("UPDATE diagram SET stale=? WHERE id=?", (1 if lech else 0, did))
+        c.commit()
+    store.write_seal(db, ctx.extra.get("ledger"))
+
+    if huong == "check":
+        return {"diff": diff, "applied": False}
+
+    if diff["drift_ratio"] > TI_LE_LECH_LON:
+        raise EideError("E3000", f"Lệch {diff['drift_ratio']:.0%} giữa lược đồ và mã — quá lớn "
+                        f"để tự áp ({huong}). Người xem `diff` rồi quyết.",
+                        gate_id="G3", diff=diff, direction=huong)
+    return {"diff": diff, "applied": False,
+            "reason": "Sinh patch cho mã C cần tree-sitter (DIAGRAM-14 nêu đích danh); "
+                      "chưa hiện thực — xem DEVIATIONS DEV-090. `diff` ở trên là thật và đủ "
+                      "để sửa tay."}
+
+
+def _trang_thai_tu_hinh(src: str) -> set[str]:
+    ra: set[str] = set()
+    for a, b, _ in RE_CHUYEN_MM.findall(src or ""):
+        ra.update({a, b})
+    return {x for x in ra if x not in ("[*]",)}
+
+
+def _nut_tu_hinh(src: str) -> set[str]:
+    return set(re.findall(r"^\s*(\w+)\s*[\[(\{]", src or "", re.M))
+
+
+def _trang_thai_tu_ma(root: Path) -> set[str]:
+    """Trạng thái thấy trong mã: nhãn `case` và vế phải của phép gán trạng thái."""
+    ra: set[str] = set()
+    for f in sorted((root / "src").rglob("*.c")) + sorted((root / "src").rglob("*.h")):
+        van = f.read_text(encoding="utf-8", errors="replace")
+        ra.update(RE_CASE_C.findall(van))
+        ra.update(RE_GAN_TRANG_THAI.findall(van))
+    return ra
+
+
+def _module_tu_store(root: Path) -> set[str]:
+    db = store.store_path(root)
+    if not db.exists():
+        return set()
+    with store.open_store(db) as c:
+        return {r[0] for r in c.execute("SELECT name FROM module").fetchall()}

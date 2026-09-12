@@ -200,6 +200,12 @@ def test_planner_vao_cuoc_khi_khong_mau_nao_khop(du_an, monkeypatch):
 
     Gọi QUA ROUTER chứ không gọi thẳng hàm — `plan.create` là T1* và hỏi cổng G1 bên trong, nên
     một kế hoạch thiếu tri thức hay đổi kiến trúc dừng ở đó chứ không lặng lẽ thành chuỗi.
+
+    **Ý định phải KHÔNG trùng tên một năng lực nào**, vì `_chuoi_toi_thieu` xét "ý định-là-năng-
+    lực" TRƯỚC planner. Bản đầu bài này dùng `code.refactor` làm ví dụ cho "không mẫu nào khớp"
+    — đúng, cho tới 12/09/2026 khi `code.refactor` được hiện thực: từ lúc ấy lối tắt kia bắt
+    được nó, planner không vào cuộc nữa, và bài đỏ vì một tiền đề đã bốc hơi chứ không vì mã
+    hỏng. Nay dùng một tên KHÔNG BAO GIỜ là năng lực, nên tiền đề không hết hạn được nữa.
     """
     class _GW:
         def prompt(self, role): return f"# {role}"
@@ -214,8 +220,10 @@ def test_planner_vao_cuoc_khi_khong_mau_nao_khop(du_an, monkeypatch):
     r, ctx, root = du_an
     ctx.extra["gateway"] = _GW()
     out = r.invoke("chat.orchestrate",
-                   {"intent": {"intent": "code.refactor", "slots": {"feature": "gọn lại I2C"}},
+                   {"intent": {"intent": "lam_gon_ma_i2c", "slots": {"feature": "gọn lại I2C"}},
                     "grounded": {}}, ctx).result
+    from eide_core.registry import get_registry
+    assert "lam_gon_ma_i2c" not in get_registry(), "tiền đề của bài này: KHÔNG phải năng lực"
     bc = doc_bao_cao(root, out["run_id"])
     assert bc["nguon_chuoi"] == "planner", bc["nguon_chuoi"]
     # Bước có `cap` chưa hiện thực bị bỏ — nhưng chuỗi vẫn chạy phần làm được.
