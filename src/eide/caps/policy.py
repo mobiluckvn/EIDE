@@ -107,6 +107,20 @@ def emergency_stop(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if gate is not None:
         gate.stop()
     cancelled = list(ctx.extra.get("cancel_running", lambda: [])())
+
+    # VÀO SỔ CÁI. API-15 §5 khai kiểu `stop`, và tới 12/09/2026 không chỗ nào phát nó — nên
+    # thao tác AN TOÀN QUAN TRỌNG NHẤT của cả sản phẩm là thao tác duy nhất không để lại dấu
+    # vết. Ai đó bấm dừng khẩn cấp lúc 2 giờ sáng, ba việc R3 bị huỷ giữa chừng, và sáng hôm sau
+    # không có cách nào biết chuyện đã xảy ra: `_STATE` là bộ nhớ tiến trình, `gate.stop()`
+    # không ghi gì, và những việc bị huỷ thì chỉ còn một `cap.run.finish` trạng thái `cancelled`
+    # không nói vì sao.
+    #
+    # Ghi SAU khi đã dừng, không phải trước: dừng là việc gấp, và một lần ghi đĩa hỏng không
+    # được phép chắn nó. Sổ cái thiếu một dòng thì tệ; tác tử không dừng được thì tệ hơn.
+    if (led := ctx.extra.get("ledger")) is not None:
+        led.append("stop", {"cancelled": cancelled, "n_cancelled": len(cancelled),
+                            "by": ctx.actor or "human"},
+                   actor=ctx.actor or "human")
     return {"stopped": True, "cancelled": cancelled}
 
 
@@ -129,6 +143,23 @@ def set_autonomy(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         cfg["autonomy"] = level
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+    # VÀO SỔ CÁI. API-15 §5 khai `autonomy.change {from, to, by, reason}`, và tới 12/09/2026
+    # không chỗ nào phát nó: mức tự chủ đổi bằng một lần ghi tệp YAML, không để lại dấu vết nào
+    # trong chuỗi băm.
+    #
+    # Đó là lỗ hổng cùng họ với `gate.decision` (lỗi im lặng số 12) và nghiêm trọng vì cùng lý
+    # do: `autonomy.yaml` KHÔNG nằm trong `content_digest` của niêm phong. Nâng A2 → A4 rồi hạ
+    # lại là một thao tác không cơ chế nào ghi lại — trong khi đó chính là thao tác cho phép
+    # tác tử tự nạp firmware. Một dòng trong sổ cái là thứ duy nhất làm nó truy được.
+    if (led := ctx.extra.get("ledger")) is not None:
+        # Không có trường `reason`: POLICY-01 `input_schema` khai `additionalProperties: false`
+        # với đúng ba khoá `level`/`board`/`by`, nên đọc thêm một khoá là viết một nhánh mà
+        # Router chặn bằng E1000 trước khi tới đây.
+        led.append("autonomy.change",
+                   {"from": current, "to": level, "by": by,
+                    **({"board": params["board"]} if params.get("board") else {})},
+                   actor=by if by == "human" else "agent")
     return {"effective": level}
 
 

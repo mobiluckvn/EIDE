@@ -128,6 +128,11 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     (eide / "constraints.yaml").write_text(yaml.safe_dump(constraints, allow_unicode=True, sort_keys=False), encoding="utf-8")
     # models.yaml: chép bản mặc định để dự án đổi mô hình được mà không đụng vào spec (SDD-04 §6)
     (eide / "models.yaml").write_text((spec_dir() / "models.yaml").read_text(encoding="utf-8"), encoding="utf-8")
+    # roles.yaml: DDD-14 §yaml khai nó ở mốc M0 nhưng tới 12/09/2026 không chỗ nào sinh ra.
+    # Nó là chỗ dự án ĐỔI ĐƯỢC ngân sách ngữ cảnh và trần skill của từng vai trò — hôm nay hai
+    # thứ ấy chỉ đọc từ bản cài, nên một dự án muốn cho `librarian` nhiều chỗ hơn phải sửa
+    # `docs/spec/`, tức sửa thứ dùng chung cho mọi dự án.
+    (eide / "roles.yaml").write_text(_roles_mac_dinh(), encoding="utf-8")
     (eide / "FEATURES.json").write_text(json.dumps({"features": []}, ensure_ascii=False, indent=2), encoding="utf-8")
     (eide / "PROGRESS.md").write_text(f"# {name}\n\n- {time.strftime('%Y-%m-%d %H:%M')} — tạo dự án từ lệnh: \"{params['text']}\"\n", encoding="utf-8")
     (eide / ".gitignore").write_text("store/\nsession/\nindex/\n", encoding="utf-8")
@@ -838,3 +843,37 @@ def _thu_dung(ctx: Context) -> str:
     except Exception as e:                                  # noqa: BLE001
         return f"bỏ qua ({type(e).__name__})"
     return "ok" if kq.get("ok") else "lỗi"
+
+# Trần skill mỗi vai trò — KAD-07 §5 ("≤ 5 skill mỗi lượt"). Vai trò nào không nêu thì lấy 5.
+SKILLS_MAX = {"coder": 5, "architect": 3, "librarian": 3, "debugger": 5, "writer": 2,
+              "reviewer": 3, "planner": 3, "cartographer": 2, "intent": 1}
+
+
+def _roles_mac_dinh() -> str:
+    """`roles.yaml` cho một dự án mới — DDD-14 §yaml: `{skills_max, tools[], budget, prompt}`.
+
+    **Ghép từ ba nguồn trong spec, không gõ tay:** ngân sách từ `context/budgets.json`, tên tệp
+    prompt từ `prompts/*.md`, danh sách vai trò từ `models.yaml`. Gõ tay ở đây nghĩa là một bản
+    chép thứ hai của ba bảng ấy, và nó sẽ trôi khỏi bản gốc ngay lần đầu ai đó sửa một con số —
+    đúng loại lỗi DEV-043 và DEV-046 đã ghi.
+
+    `tools` để RỖNG có chủ ý. DDD-14 khai trường ấy, nhưng hôm nay quyền gọi năng lực do
+    PolicyGate quyết theo lớp rủi ro và mức tự chủ, không theo vai trò — thêm một danh sách thứ
+    hai ở đây sẽ tạo ra hai nguồn sự thật cho cùng một câu hỏi. Trường có mặt để dự án ghi đè
+    khi cần; rỗng nghĩa là "theo chính sách", không nghĩa là "không được gọi gì".
+    """
+    from eide_core.composer import cau_hinh
+    mo = yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8")) or {}
+    ns = (cau_hinh() or {}).get("budget") or {}
+    ra: dict[str, Any] = {}
+    for ten in (mo.get("roles") or {}):
+        b = ns.get(ten) or {}
+        ra[ten] = {
+            "skills_max": SKILLS_MAX.get(ten, 5),
+            "tools": [],
+            "budget": {"input": b.get("total"),
+                       "output": (mo["roles"][ten] or {}).get("max_output")},
+            "prompt": f"prompts/{ten}.md" if (spec_dir() / "prompts" / f"{ten}.md").exists()
+                      else None,
+        }
+    return yaml.safe_dump({"roles": ra}, allow_unicode=True, sort_keys=False)

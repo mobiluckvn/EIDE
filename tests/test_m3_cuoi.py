@@ -372,3 +372,154 @@ def test_refactor_cham_tep_ngoai_scope_thi_E5003(du_an, monkeypatch):
     with pytest.raises(EideError) as e:
         mc.refactor({"scope": ["src/a.c"]}, ctx)
     assert e.value.data["reason"] == "out_of_scope"
+
+
+# ---------------------------------------------------------------- ba món nợ, đóng 12/09
+
+
+def test_doi_muc_tu_chu_VAO_so_cai(du_an):
+    """`autonomy.yaml` KHÔNG nằm trong `content_digest` của niêm phong. Nâng A2 → A4 rồi hạ lại
+    là thao tác cho phép tác tử tự nạp firmware — mà tới 12/09 nó không để lại dấu vết nào
+    trong chuỗi băm. Cùng họ với `gate.decision` (lỗi im lặng số 12)."""
+    from eide.caps.policy import set_autonomy
+
+    r, ctx, _ = du_an
+    set_autonomy({"level": "A1", "by": "human"}, ctx)
+    ds = [x for x in r.ledger.records() if x["kind"] == "autonomy.change"]
+    assert ds, "đổi mức tự chủ phải vào sổ cái"
+    assert ds[-1]["data"]["to"] == "A1" and ds[-1]["data"]["by"] == "human"
+    assert r.ledger.verify() == (True, 0)
+
+
+def test_roles_yaml_duoc_SINH_RA_khi_tao_du_an(du_an):
+    """DDD-14 §yaml khai `roles.yaml` ở mốc M0 nhưng tới 12/09 không chỗ nào sinh ra."""
+    import yaml as _yaml
+
+    _, _, root = du_an
+    f = root / ".eide" / "roles.yaml"
+    assert f.is_file()
+    d = _yaml.safe_load(f.read_text(encoding="utf-8"))["roles"]
+    assert "coder" in d and "librarian" in d
+    for ten, c in d.items():
+        assert set(c) == {"skills_max", "tools", "budget", "prompt"}, (ten, sorted(c))
+
+
+def test_roles_yaml_ghep_tu_SPEC_chu_khong_go_tay(du_an):
+    """Gõ tay ở đây nghĩa là một bản chép thứ hai của ba bảng spec, và nó sẽ trôi khỏi bản gốc
+    ngay lần đầu ai đó sửa một con số — đúng loại lỗi DEV-043 và DEV-046 đã ghi."""
+    import yaml as _yaml
+
+    from eide_core.composer import cau_hinh
+
+    _, _, root = du_an
+    d = _yaml.safe_load((root / ".eide" / "roles.yaml").read_text(encoding="utf-8"))["roles"]
+    ns = cau_hinh()["budget"]
+    for ten, c in d.items():
+        assert c["budget"]["input"] == ns[ten]["total"], ten
+
+
+def test_du_an_NOI_duoc_ngan_sach_ma_khong_dung_spec(du_an):
+    """Đây là lý do `roles.yaml` tồn tại: một dự án muốn cho `librarian` nhiều chỗ hơn thì
+    không phải sửa `docs/spec/`, tức sửa thứ dùng chung cho mọi dự án."""
+    import yaml as _yaml
+
+    from eide_core.composer import ContextBundle, cau_hinh
+
+    _, _, root = du_an
+    f = root / ".eide" / "roles.yaml"
+    d = _yaml.safe_load(f.read_text(encoding="utf-8"))
+    goc = cau_hinh()["budget"]["librarian"]["total"]
+    d["roles"]["librarian"]["budget"]["input"] = goc + 5000
+    f.write_text(_yaml.safe_dump(d, allow_unicode=True), encoding="utf-8")
+
+    assert ContextBundle(role="librarian").budget["total"] == goc, "không có dự án thì dùng bản cài"
+    assert ContextBundle(role="librarian", project_dir=root).budget["total"] == goc + 5000
+
+
+def test_roles_yaml_HONG_khong_lam_hong_luot_goi(du_an):
+    """Ngân sách là thứ tinh chỉnh; chạy được hay không thì không nên phụ thuộc vào nó."""
+    from eide_core.composer import ContextBundle, cau_hinh
+
+    _, _, root = du_an
+    (root / ".eide" / "roles.yaml").write_text("{{{ không phải yaml", encoding="utf-8")
+    assert (ContextBundle(role="coder", project_dir=root).budget["total"]
+            == cau_hinh()["budget"]["coder"]["total"])
+
+
+def test_sync_from_code_THEM_trang_thai_thieu_va_GIU_phan_nguoi_ve(du_an):
+    """DEV-090, hướng rẻ hơn. Một lược đồ người vẽ mang thông tin mã không có — nhãn tiếng Việt
+    trên cạnh, thứ tự đọc. Sinh lại tất cả là ném đi phần người làm để lấy phần máy đọc được."""
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    _luoc_do(root, "dg_fc", "stateDiagram-v2\n  ST_IDLE --> ST_RUN : bấm nút\n")
+    _ma_c(root, "switch(s){case ST_IDLE: case ST_RUN: case ST_ERR:}")
+
+    kq = sync({"diagram_id": "dg_fc", "direction": "from_code"}, ctx)
+    assert kq["applied"] is True
+    assert "bấm nút" in kq["src"], "nhãn người viết phải còn"
+    assert "ST_ERR" in kq["src"], "trạng thái mã có mà hình thiếu phải được thêm"
+
+
+def test_sync_from_code_KHONG_tu_xoa_trang_thai_hinh_co_ma_khong_co(du_an):
+    """Nó có thể là một nhánh CHƯA viết chứ không phải một nhánh đã bỏ. Xoá tự động là để một
+    lần chạy `from_code` lặng lẽ làm mất phần thiết kế đi trước mã."""
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    _luoc_do(root, "dg_fc2", "stateDiagram-v2\n  ST_IDLE --> ST_SAP_LAM\n  ST_IDLE --> ST_RUN\n")
+    _ma_c(root, "switch(s){case ST_IDLE: case ST_RUN:}")
+    kq = sync({"diagram_id": "dg_fc2", "direction": "from_code"}, ctx)
+    assert "ST_SAP_LAM" in kq["src"]
+    assert "ST_SAP_LAM" in kq["diff"]["in_diagram_only"], "nhưng phải NÊU nó trong diff"
+
+
+def test_sync_from_code_bo_co_stale(du_an):
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    _luoc_do(root, "dg_fc3", "stateDiagram-v2\n  ST_IDLE --> ST_RUN\n")
+    _ma_c(root, "switch(s){case ST_IDLE: case ST_RUN: case ST_X:}")
+    sync({"diagram_id": "dg_fc3", "direction": "from_code"}, ctx)
+    with store.open_store(store.store_path(root)) as c:
+        (st, sw) = c.execute("SELECT stale, synced_with FROM diagram WHERE id='dg_fc3'").fetchone()
+    assert st == 0 and sw == "code"
+
+
+def test_dung_KHAN_CAP_vao_so_cai(du_an):
+    """Thao tác an toàn quan trọng nhất của cả sản phẩm là thao tác duy nhất không để lại dấu
+    vết — tới 12/09. Ai đó bấm dừng lúc 2 giờ sáng, ba việc R3 bị huỷ, và sáng hôm sau không có
+    cách nào biết chuyện đã xảy ra."""
+    from eide.caps.policy import emergency_stop
+
+    r, ctx, _ = du_an
+    ctx.extra["cancel_running"] = lambda: ["cr_1", "cr_2"]
+    emergency_stop({}, ctx)
+
+    ds = [x for x in r.ledger.records() if x["kind"] == "stop"]
+    assert ds, "dừng khẩn cấp phải vào sổ cái"
+    assert ds[-1]["data"]["n_cancelled"] == 2 and ds[-1]["data"]["cancelled"] == ["cr_1", "cr_2"]
+    assert r.ledger.verify() == (True, 0)
+
+
+def test_moi_kieu_su_kien_API15_deu_co_cho_phat_TRU_thu_can_board():
+    """Cổng chặn cho cả lớp lỗi này. Ba lần liên tiếp — `gate.decision`, `autonomy.change`,
+    `stop` — một kiểu sự kiện được khai trong API-15 §5 mà không chỗ nào phát, và cả ba đều
+    nằm đúng chỗ truy vết quan trọng nhất. Bài này để lần thứ tư đỏ ngay."""
+    import re as _re
+    from pathlib import Path as _P
+
+    from eide_core.ledger import event_kinds
+
+    ma = "\n".join(p.read_text(encoding="utf-8", errors="replace")
+                   for p in _P("src").rglob("*.py"))
+    can_board = {"discover.result"}
+    thieu = []
+    for k in sorted(event_kinds()):
+        if k in can_board:
+            continue
+        e = _re.escape(k)
+        mau = rf"""append\(\s*["']{e}["']|_log\(\s*["']{e}["']|KIND\s*=\s*["']{e}["']"""
+        if not _re.search(mau, ma):
+            thieu.append(k)
+    assert not thieu, f"kiểu sự kiện khai trong API-15 §5 mà không chỗ nào phát: {thieu}"

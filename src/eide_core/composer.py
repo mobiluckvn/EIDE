@@ -21,6 +21,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from eide_core.errors import EideError
@@ -80,12 +81,25 @@ class ContextBundle:
     compressions: list[str] = field(default_factory=list)
     model_id: str = ""
 
+    project_dir: Path | None = None
+
     @property
     def budget(self) -> dict[str, Any]:
+        """Ngân sách của vai trò — bản của DỰ ÁN thắng bản của bản cài.
+
+        `.eide/roles.yaml` (DDD-14 §yaml) là chỗ một dự án nới ngân sách cho một vai trò mà
+        KHÔNG đụng vào `docs/spec/` — thứ dùng chung cho mọi dự án. Cùng khuôn với `models.yaml`
+        đã làm từ M0: chép bản mặc định vào dự án, rồi đọc bản dự án trước.
+
+        Ghi đè chỉ trường `total`: các lớp C0…C7 là cấu trúc của CXD-10 §3, không phải chỗ để
+        mỗi dự án tự nghĩ ra một cách chia khác — nới TỔNG thì hợp lý, đổi tỉ lệ giữa các lớp
+        thì làm `vua_ngan_sach` cắt sai thứ tự.
+        """
         b = cau_hinh()["budget"].get(self.role)
         if b is None:
             raise EideError("E1001", f"Vai trò {self.role} không có ngân sách trong CXD-10 §3")
-        return b
+        rieng = _ngan_sach_du_an(self.project_dir, self.role)
+        return {**b, "total": rieng} if rieng else b
 
     @property
     def total_tokens(self) -> int:
@@ -182,3 +196,24 @@ class ContextBundle:
 def output_max(role: str) -> int:
     c = cau_hinh()["output_max"]
     return int(c.get(role, c["_mac_dinh"]))
+
+def _ngan_sach_du_an(root: Path | None, role: str) -> int | None:
+    """`budget.input` của vai trò trong `.eide/roles.yaml`, hoặc None.
+
+    Không có tệp, tệp hỏng, hay không có vai trò ấy → None và dùng bản cài. Một tệp cấu hình
+    sai cú pháp KHÔNG được làm hỏng mọi lượt gọi mô hình: ngân sách là thứ tinh chỉnh, còn chạy
+    được hay không thì không nên phụ thuộc vào nó.
+    """
+    if root is None:
+        return None
+    f = Path(root) / ".eide" / "roles.yaml"
+    if not f.is_file():
+        return None
+    try:
+        import yaml
+        d = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+    except Exception:  # noqa: BLE001 — xem giải thích ngay trên
+        return None
+    v = ((d.get("roles") or {}).get(role) or {}).get("budget") or {}
+    n = v.get("input")
+    return int(n) if isinstance(n, (int, float)) and n > 0 else None

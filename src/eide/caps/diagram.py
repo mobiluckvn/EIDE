@@ -1880,10 +1880,23 @@ def sync(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         raise EideError("E3000", f"Lệch {diff['drift_ratio']:.0%} giữa lược đồ và mã — quá lớn "
                         f"để tự áp ({huong}). Người xem `diff` rồi quyết.",
                         gate_id="G3", diff=diff, direction=huong)
+
+    if huong == "from_code":
+        # MÃ là nguồn, lược đồ đi theo. Hướng này rẻ hơn hẳn `to_code` vì đích là Mermaid —
+        # một ngôn ngữ ta sinh ra được trọn vẹn bằng mã, không phải C với tiền xử lý và macro.
+        # Đó cũng là lý do nó làm được trước: DEV-090 chỉ còn nợ chiều ngược lại.
+        moi_src = _cap_nhat_hinh(src, kind, trong_ma)
+        with store.open_store(db) as c:
+            c.execute("UPDATE diagram SET src=?, stale=0, synced_with=?, at=? WHERE id=?",
+                      (moi_src, "code", datetime.now(UTC).isoformat(), did))
+            c.commit()
+        store.write_seal(db, ctx.extra.get("ledger"))
+        return {"diff": diff, "applied": True, "src": moi_src}
+
     return {"diff": diff, "applied": False,
             "reason": "Sinh patch cho mã C cần tree-sitter (DIAGRAM-14 nêu đích danh); "
                       "chưa hiện thực — xem DEVIATIONS DEV-090. `diff` ở trên là thật và đủ "
-                      "để sửa tay."}
+                      "để sửa tay. Hướng `from_code` thì đã có."}
 
 
 def _trang_thai_tu_hinh(src: str) -> set[str]:
@@ -2034,3 +2047,28 @@ def _luu_diagram(root: Path, did: str, kind: str, lang: str, src: str, ctx: Cont
                   (did, kind, lang, src, 1 if stale else 0, datetime.now(UTC).isoformat()))
         c.commit()
     store.write_seal(db, ctx.extra.get("ledger"))
+
+def _cap_nhat_hinh(src: str, kind: str, trong_ma: set[str]) -> str:
+    """Lược đồ mới: GIỮ mọi chuyển/cạnh còn hợp lệ, THÊM trạng thái mã có mà hình thiếu.
+
+    **Không sinh lại từ đầu.** Một lược đồ người vẽ mang thông tin mã không có — nhãn tiếng
+    Việt trên cạnh, thứ tự đọc từ trái sang phải, ghi chú. Sinh lại tất cả là ném đi phần người
+    làm để lấy phần máy đọc được, và lần sau không ai dùng `from_code` nữa.
+
+    **Không tự xoá trạng thái hình có mà mã không có.** Nó có thể là một nhánh chưa viết chứ
+    không phải một nhánh đã bỏ — và `diff.in_diagram_only` đã nêu tên chúng cho người quyết.
+    Xoá tự động ở đây là để một lần chạy `from_code` lặng lẽ làm mất phần thiết kế đi trước mã.
+    """
+    if kind != "state":
+        return src
+    dong = src.rstrip("\n").split("\n")
+    trong_hinh = _trang_thai_tu_hinh(src)
+    them = sorted(trong_ma - trong_hinh)
+    if not them:
+        return src
+    # Nối vào một trạng thái đã có để lược đồ vẫn liền mạch; không có thì để đứng riêng, và
+    # `diagram.lint` sẽ gọi tên chúng là nút mồ côi — đúng thứ người vẽ cần thấy.
+    neo = sorted(trong_hinh)[0] if trong_hinh else None
+    for t in them:
+        dong.append(f"  {neo} --> {t}" if neo else f"  {t}")
+    return "\n".join(dong) + "\n"
