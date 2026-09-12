@@ -14,8 +14,10 @@ sao cạnh này đổi", và `diagram.lint` kiểm được nội dung. Một PN
 """
 from __future__ import annotations
 
+import hashlib
 import re
 import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -1911,3 +1913,124 @@ def _module_tu_store(root: Path) -> set[str]:
         return set()
     with store.open_store(db) as c:
         return {r[0] for r in c.execute("SELECT name FROM module").fetchall()}
+
+
+# ---------------------------------------------------------------- DIAGRAM-12 from_image
+
+_SCHEMA_DO_THI = {
+    "type": "object",
+    "properties": {
+        "nodes": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"id": {"type": "string"}, "label": {"type": "string"},
+                           "shape": {"type": "string"}},
+            "required": ["id", "label"], "additionalProperties": False}},
+        "edges": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"from": {"type": "string"}, "to": {"type": "string"},
+                           "label": {"type": "string"}},
+            "required": ["from", "to"], "additionalProperties": False}},
+        "confidence": {"type": "number"},
+        "unreadable": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["nodes", "edges", "confidence"], "additionalProperties": False,
+}
+
+# Dưới ngưỡng này thì lược đồ vào trạng thái CHỜ DUYỆT thay vì dùng ngay — `ask_when` của
+# DIAGRAM-12 là "Độ tin cậy thấp". 0,6 chứ không 0,5: một lược đồ vẽ tay đọc đúng một nửa thì
+# phần sai nằm rải rác chứ không gom lại, nên nó tệ hơn không có lược đồ nào.
+NGUONG_TIN = 0.6
+
+
+@capability("diagram.from_image")
+def from_image(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: DIAGRAM-12 — CDS-12.4; vai trò `cartographer` (vision). R0, `errors: [E5002]`,
+    ask "Độ tin cậy thấp", `undo: none`.
+
+    Ảnh sơ đồ (kể cả vẽ tay) → mã Mermaid/DOT. Đây là năng lực dễ trông có vẻ chạy tốt nhất
+    trong cả sản phẩm, và vì thế là chỗ cần thận trọng nhất: mô hình luôn trả về MỘT đồ thị nào
+    đó, kể cả khi nó chỉ đọc được ba nút trong hai mươi.
+
+    **Vì thế `confidence` là trường BẮT BUỘC trong schema, không phải trường tuỳ chọn.** Buộc mô
+    hình tự chấm, rồi so với ngưỡng bằng mã — dưới {NGUONG_TIN} thì lược đồ ghi ra với
+    `stale = 1` và `needs_review`, chứ không dùng ngay. `unreadable[]` đi kèm cùng lý do với
+    `extract.image_schematic`.
+
+    Sinh mã bằng MÃ, không nhờ mô hình viết Mermaid. Mô hình trả `{nodes, edges}` — một cấu trúc
+    nó khó sai — còn cú pháp lược đồ thì ta dựng, nên không bao giờ có chuyện nhận về một đoạn
+    Mermaid không phân tích được. Cùng khuôn với `diagram.state`/`diagram.flow`.
+    """
+    root = _root(ctx)
+    from eide.caps.extract import _doc_anh
+    anh = _doc_anh(root, params["image"])
+    ngon_ngu = params.get("target_lang") or "mermaid"
+
+    gw = ctx.extra.get("gateway")
+    if gw is None:
+        from eide_core.gateway import Gateway
+        gw = Gateway(ledger=ctx.extra.get("ledger"))
+    resp = gw.run(
+        "cartographer",
+        "Đọc sơ đồ trong ảnh (có thể vẽ tay) thành một đồ thị. `nodes` là các khối, `edges` là "
+        "các mũi tên nối chúng. `confidence` 0–1 là mức tự tin của CHÍNH BẠN về việc đã đọc "
+        "đúng và đủ — hãy chấm thấp nếu ảnh mờ hoặc còn khối không đọc được, và liệt kê chúng "
+        "vào `unreadable`. Một đồ thị thiếu nửa số nút mà chấm 0,9 là sai hơn cả đọc sai.",
+        _SCHEMA_DO_THI, anh=[anh])
+
+    nut = list(resp.data.get("nodes") or [])
+    canh = list(resp.data.get("edges") or [])
+    if not nut:
+        raise EideError("E5002", "Mô hình không đọc được khối nào trong ảnh",
+                        image=params["image"])
+    tin = round(float(resp.data.get("confidence") or 0.0), 3)
+
+    # Cạnh trỏ tới một nút không tồn tại là dấu hiệu rõ nhất của một lượt đọc hỏng — bỏ nó và
+    # HẠ điểm tin, chứ không im lặng sửa. `diagram.lint` sẽ bắt được, nhưng lúc ấy đã muộn hơn.
+    co = {n["id"] for n in nut}
+    treo = [e for e in canh if e.get("from") not in co or e.get("to") not in co]
+    canh = [e for e in canh if e not in treo]
+    if treo:
+        tin = round(min(tin, NGUONG_TIN - 0.01), 3)
+
+    src = _sinh_ma_do_thi(nut, canh, ngon_ngu)
+    did = "dg_" + hashlib.sha256((params["image"] + src).encode()).hexdigest()[:16]
+    can_duyet = tin < NGUONG_TIN
+    _luu_diagram(root, did, "from_image", ngon_ngu, src, ctx, stale=can_duyet)
+
+    return {"diagram": {"id": did, "lang": ngon_ngu, "src": src,
+                        "nodes": len(nut), "edges": len(canh),
+                        "dangling_edges": treo,
+                        "unreadable": list(resp.data.get("unreadable") or []),
+                        "needs_review": can_duyet},
+            "confidence": tin}
+
+
+def _sinh_ma_do_thi(nut: list[dict[str, Any]], canh: list[dict[str, Any]], lang: str) -> str:
+    """`{nodes, edges}` → mã lược đồ. Dựng bằng MÃ nên luôn phân tích được."""
+    def sach(x: str) -> str:
+        return re.sub(r"[^\w]", "_", str(x))[:40] or "n"
+
+    if lang == "dot":
+        d = ["digraph G {", '  rankdir="LR";']
+        d += [f'  {sach(n["id"])} [label="{n.get("label", n["id"])}"];' for n in nut]
+        d += [f'  {sach(e["from"])} -> {sach(e["to"])}'
+              + (f' [label="{e["label"]}"]' if e.get("label") else "") + ";" for e in canh]
+        return "\n".join([*d, "}"]) + "\n"
+    d = ["flowchart LR"]
+    d += [f'  {sach(n["id"])}["{n.get("label", n["id"])}"]' for n in nut]
+    d += [f'  {sach(e["from"])} -->' + (f'|{e["label"]}|' if e.get("label") else "")
+          + f' {sach(e["to"])}' for e in canh]
+    return "\n".join(d) + "\n"
+
+
+def _luu_diagram(root: Path, did: str, kind: str, lang: str, src: str, ctx: Context,
+                 *, stale: bool = False) -> None:
+    db = store.store_path(root)
+    if not db.exists():
+        return
+    with store.open_store(db) as c:
+        c.execute("INSERT OR REPLACE INTO diagram (id, kind, lang, src, stale, at)"
+                  " VALUES (?,?,?,?,?,?)",
+                  (did, kind, lang, src, 1 if stale else 0, datetime.now(UTC).isoformat()))
+        c.commit()
+    store.write_seal(db, ctx.extra.get("ledger"))

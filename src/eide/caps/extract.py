@@ -16,6 +16,7 @@ thì không sinh fact, `derivedFrom` không giải được thì báo lỗi ch�
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import xml.etree.ElementTree as ET
@@ -24,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from eide.caps.archive import bam_tep
-from eide_core import store
+from eide_core import store, tools
 from eide_core.errors import EideError
 from eide_core.registry import capability
 from eide_core.router import Context
@@ -2512,3 +2513,319 @@ def _facts_netlist(bid: str, parts: dict[str, dict[str, Any]],
                    "method": "parser", "tier": "gold", "confidence": 1.0,
                    "locator": f"comp:{ref}"})
     return ra
+
+
+# ================================================================ D3 — đường ẢNH
+#
+# Bốn năng lực dưới đây là nhóm DUY NHẤT trong `extract.*` nhìn thấy hình. Ba điều chung, và cả
+# ba đến thẳng từ hợp đồng:
+#
+# 1. **`method = vision_llm`.** G-FACT-02 loại riêng phương pháp ấy khỏi tự duyệt, nên mọi fact
+#    sinh ra ở đây vào hàng đợi hỏi người — `tier = T2`, `ask_when: "Luôn"`. Đó không phải sự
+#    thận trọng thừa: một tên chân đọc nhầm từ ảnh schematic trông y hệt một tên chân đọc đúng.
+# 2. **bbox là BẰNG CHỨNG.** Mỗi thứ đọc được kèm toạ độ trong ảnh, để người duyệt mở hình ra
+#    và nhìn đúng chỗ. Một đề xuất không có bbox thì người duyệt phải tin hoặc tự dò lại từ đầu.
+# 3. **Không đọc được thì NÓI RA.** `unreadable[]` là một phần của hợp đồng EXTRACT-13, không
+#    phải một chỗ để trống. Một schematic mờ trả về 3 net và im lặng về 20 net còn lại thì
+#    người đọc tưởng bo mạch chỉ có 3 net.
+
+# Ảnh to hơn ngần này thì từ chối — hãng đặt trần ~5 MB cho ảnh inline, và một ảnh 20 MB gửi đi
+# chỉ để nhận lại lỗi HTTP là một lượt gọi tốn tiền mà không ai học được gì.
+TRAN_ANH_MB = 5
+
+MIME_ANH = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+            ".webp": "image/webp", ".gif": "image/gif"}
+
+
+def _doc_anh(root: Path, duong: str) -> dict[str, str]:
+    """Tệp ảnh → `{media_type, data}` base64, dạng chung của cả Gemini lẫn Claude."""
+    import base64
+
+    f = Path(duong).expanduser()
+    if not f.is_absolute():
+        f = root / f
+    if not f.is_file():
+        raise EideError("E2000", f"Không có tệp ảnh {f}", exists=[], candidates=[],
+                        missing=[str(f)])
+    mime = MIME_ANH.get(f.suffix.lower())
+    if mime is None:
+        raise EideError("E1000", f"Đuôi `{f.suffix}` không phải ảnh — nhận "
+                        f"{sorted(MIME_ANH)}", file=str(f))
+    b = f.read_bytes()
+    if len(b) > TRAN_ANH_MB * 1024 * 1024:
+        raise EideError("E1000", f"Ảnh {len(b) / 1024**2:.1f} MB vượt trần {TRAN_ANH_MB} MB — "
+                        "thu nhỏ trước khi gửi", file=str(f), size_mb=round(len(b) / 1024**2, 1))
+    return {"media_type": mime, "data": base64.b64encode(b).decode("ascii")}
+
+
+_SCHEMA_OCR = {
+    "type": "object",
+    "properties": {"text_blocks": {"type": "array", "items": {
+        "type": "object",
+        "properties": {"text": {"type": "string"},
+                       "bbox": {"type": "array", "items": {"type": "number"}},
+                       "confidence": {"type": "number"}},
+        "required": ["text"], "additionalProperties": False}}},
+    "required": ["text_blocks"], "additionalProperties": False,
+}
+
+
+@capability("extract.ocr")
+def ocr(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-12 — CDS-12.2. R1, `errors: [E4001]`, `undo: none`.
+
+    Hai đường, ưu tiên `tesseract` nếu máy có: OCR cục bộ **không tốn token và không gửi ảnh ra
+    ngoài**, và một trang datasheet scan là tài liệu có thể đang dưới NDA. Chỉ khi không có mới
+    gọi vai trò `cartographer`.
+
+    **`confidence − 0,1`** đúng như bước 1 của hợp đồng, ở CẢ HAI đường. Chữ đọc từ ảnh luôn
+    kém chắc hơn chữ đọc từ PDF có lớp text, và trừ đi ở đây là chỗ duy nhất phép trừ ấy không
+    bị quên.
+    """
+    root = _root(ctx)
+    f = Path(params["file"])
+    if not f.is_absolute():
+        f = root / f
+
+    if tools.which("tesseract"):
+        return {"text_blocks": _ocr_tesseract(root, f, params.get("lang") or "vie+eng", ctx)}
+
+    anh = _doc_anh(root, str(f))
+    resp = _gateway(ctx).run(
+        "cartographer",
+        "Đọc TOÀN BỘ chữ trong ảnh. Mỗi khối văn bản một mục, kèm `bbox` [x0,y0,x1,y1] theo tỉ "
+        "lệ 0–1 của ảnh. Không diễn giải, không tóm tắt — chép đúng chữ nhìn thấy.",
+        _SCHEMA_OCR, anh=[anh])
+    kh = []
+    for b in (resp.data.get("text_blocks") or []):
+        kh.append({**b, "method": "vision_llm",
+                   "confidence": round(max(0.0, float(b.get("confidence") or 0.8) - 0.1), 3)})
+    return {"text_blocks": kh}
+
+
+def _ocr_tesseract(root: Path, f: Path, lang: str, ctx: Context) -> list[dict[str, Any]]:
+    """Đường cục bộ. TSV của tesseract cho bbox theo pixel; quy về tỉ lệ 0–1 để trùng dạng với
+    đường vision — hai đường trả hai hệ toạ độ là hai chỗ bên gọi phải nhớ."""
+    from eide.caps.env import chay_sandbox
+
+    duong = str(tools.which("tesseract"))
+    r = chay_sandbox([duong, str(f), "stdout", "-l", lang, "tsv"], ctx, network=False,
+                     allowed_dirs=[str(root)], cwd=str(root),
+                     them_path=[str(Path(duong).parent)], limits={"wall_s": 120})
+    if r["exit_code"] != 0:
+        raise EideError("E4001", f"`tesseract` trả mã {r['exit_code']} — nhật ký: "
+                        f"{r['stderr_ref']}", missing=["tesseract"], log=r["stderr_ref"])
+    dong = Path(r["stdout_ref"]).read_text(encoding="utf-8", errors="replace").splitlines()
+    if not dong:
+        return []
+    cot = dong[0].split("\t")
+    ra = []
+    for d in dong[1:]:
+        o = dict(zip(cot, d.split("\t"), strict=False))
+        van = (o.get("text") or "").strip()
+        if not van:
+            continue
+        try:
+            x, y, w, h = (int(o[k]) for k in ("left", "top", "width", "height"))
+            c = float(o.get("conf") or 0) / 100.0
+        except (KeyError, ValueError):
+            continue
+        ra.append({"text": van, "bbox": [x, y, x + w, y + h], "method": "parser",
+                   "confidence": round(max(0.0, c - 0.1), 3)})
+    return ra
+
+
+_SCHEMA_NET = {
+    "type": "object",
+    "properties": {
+        "nets": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"name": {"type": "string"},
+                           "pins": {"type": "array", "items": {"type": "string"}},
+                           "bbox": {"type": "array", "items": {"type": "number"}},
+                           "confidence": {"type": "number"}},
+            "required": ["name", "pins"], "additionalProperties": False}},
+        "unreadable": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"reason": {"type": "string"},
+                           "bbox": {"type": "array", "items": {"type": "number"}}},
+            "required": ["reason"], "additionalProperties": False}},
+    },
+    "required": ["nets"], "additionalProperties": False,
+}
+
+
+@capability("extract.image_schematic")
+def image_schematic(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-13 — CDS-12.2; POL-17 G-FACT-02. R1, tier **T2**, `errors: [E5002]`,
+    ask "Luôn (đề xuất)", `undo: none`.
+
+    **Luôn là ĐỀ XUẤT, không bao giờ là kết luận.** T2 nghĩa là mọi lần gọi đều hỏi người, và
+    fact ghi ra mang `method=vision_llm` + `status=normalized` — G-FACT-02 loại riêng
+    `vision_llm` khỏi tự duyệt. Một tên chân đọc nhầm từ ảnh trông y hệt một tên chân đọc đúng,
+    và nó sẽ đi thẳng vào `code.generate_module` nếu ta để nó tự duyệt.
+
+    **`unreadable[]` là một phần của hợp đồng.** Một schematic mờ trả về 3 net rồi im lặng về 20
+    net còn lại thì người đọc tưởng bo mạch chỉ có 3 net — tệ hơn hẳn việc nói "chỗ này không
+    đọc được".
+
+    Đối chiếu tên chân với hộ chiếu ghim: chân nào không có trong hộ chiếu thì đánh dấu, chứ
+    không loại bỏ. Mô hình có thể đọc đúng một chân mà hộ chiếu chưa trích.
+    """
+    root = _root(ctx)
+    anh = _doc_anh(root, params["image"])
+    goi_y = params.get("part_hint") or ""
+
+    resp = _gateway(ctx).run(
+        "cartographer",
+        "Đọc sơ đồ nguyên lý trong ảnh. Liệt kê các NET (đường nối) cùng danh sách chân nối vào "
+        "chúng, dạng `U1.PB6` hoặc `R3.1`. Mỗi net kèm `bbox` [x0,y0,x1,y1] tỉ lệ 0–1.\n"
+        "**Chỗ nào không đọc được thì ghi vào `unreadable` kèm lý do — ĐỪNG đoán.** Một net bịa "
+        "ra nguy hiểm hơn một net thiếu.\n"
+        + (f"Gợi ý linh kiện chính: {goi_y}\n" if goi_y else ""),
+        _SCHEMA_NET, anh=[anh])
+
+    nets = list(resp.data.get("nets") or [])
+    if not nets and not (resp.data.get("unreadable") or []):
+        raise EideError("E5002", "Mô hình không đọc được net nào và cũng không nói chỗ nào "
+                        "không đọc được — không dùng được kết quả này", image=params["image"])
+
+    chan_ho_chieu = _chan_trong_ho_chieu(root)
+    for n in nets:
+        n["method"] = "vision_llm"
+        n["status"] = "normalized"
+        n["confidence"] = round(float(n.get("confidence") or 0.5), 3)
+        n["pins_unknown"] = [p for p in (n.get("pins") or [])
+                             if chan_ho_chieu and p.split(".")[-1].upper() not in chan_ho_chieu]
+
+    pid = "prop_" + hashlib.sha256(
+        (params["image"] + json.dumps(nets, ensure_ascii=False)).encode()).hexdigest()[:16]
+    return {"proposal_id": pid, "nets": nets,
+            "unreadable": list(resp.data.get("unreadable") or [])}
+
+
+def _chan_trong_ho_chieu(root: Path) -> set[str]:
+    db = store.store_path(root)
+    if not db.exists():
+        return set()
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT subject FROM fact WHERE predicate = 'pin_function'").fetchall()
+    return {str(r[0]).rsplit(":", 1)[-1].upper() for r in rows}
+
+
+_SCHEMA_BOARD = {
+    "type": "object",
+    "properties": {"parts": {"type": "array", "items": {
+        "type": "object",
+        "properties": {"label": {"type": "string"}, "mpn_guess": {"type": "string"},
+                       "bbox": {"type": "array", "items": {"type": "number"}},
+                       "ports": {"type": "array", "items": {"type": "string"}},
+                       "confidence": {"type": "number"}},
+        "required": ["label"], "additionalProperties": False}}},
+    "required": ["parts"], "additionalProperties": False,
+}
+
+
+@capability("extract.image_board")
+def image_board(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-14 — CDS-12.2. R1, tier **T2**, `errors: [E5002]`, ask "Luôn".
+
+    Đọc nhãn in trên chip rồi đối chiếu với hộ chiếu đã có (`passport.list`). Nhãn trên chip
+    thật thường bị cắt — `STM32F411` in đầy đủ nhưng `CEU6` ở dòng dưới nhỏ xíu — nên `mpn_guess`
+    là ĐOÁN, và `matched_passport` cho biết đoán ấy có trùng hộ chiếu nào trong dự án không.
+
+    Trùng thì tin hơn nhiều: người dùng đã trích datasheet của đúng con chip ấy, nên nhãn đọc
+    được khớp với thứ họ đang làm — chứ không phải với một con chip cùng họ.
+    """
+    root = _root(ctx)
+    anh = _doc_anh(root, params["image"])
+    resp = _gateway(ctx).run(
+        "cartographer",
+        "Đọc ảnh chụp bo mạch. Liệt kê linh kiện nhìn thấy: `label` là chữ IN TRÊN linh kiện "
+        "(chép đúng, kể cả khi cụt), `mpn_guess` là mã hàng đầy đủ nếu đoán được, `bbox` tỉ lệ "
+        "0–1, `ports` là các cổng/đầu nối nhận ra được. Đọc được chữ nào chép chữ ấy — đừng "
+        "suy ra mã hàng từ hình dáng linh kiện.",
+        _SCHEMA_BOARD, anh=[anh])
+
+    ds = list(resp.data.get("parts") or [])
+    if not ds:
+        raise EideError("E5002", "Mô hình không đọc được linh kiện nào trong ảnh",
+                        image=params["image"])
+    co = _ho_chieu_da_co(root)
+    for p in ds:
+        p["method"] = "vision_llm"
+        p["confidence"] = round(float(p.get("confidence") or 0.5), 3)
+        mpn = str(p.get("mpn_guess") or p.get("label") or "").upper().replace("-", "")
+        p["matched_passport"] = next(
+            (x for x in co if mpn and (mpn in x.upper().replace("-", "")
+                                       or x.upper().replace("-", "") in mpn)), None)
+    return {"parts": ds}
+
+
+def _ho_chieu_da_co(root: Path) -> list[str]:
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    with store.open_store(db) as c:
+        return [r[0] for r in c.execute("SELECT id FROM passport").fetchall()]
+
+
+_SCHEMA_SCOPE = {
+    "type": "object",
+    "properties": {
+        "values": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"name": {"type": "string"}, "value": {"type": "number"},
+                           "unit": {"type": "string"}},
+            "required": ["name", "value"], "additionalProperties": False}},
+        "scales": {"type": "object",
+                   "properties": {"time_per_div": {"type": "string"},
+                                  "volt_per_div": {"type": "string"}},
+                   "additionalProperties": False},
+        "note": {"type": "string"},
+    },
+    "required": ["values"], "additionalProperties": False,
+}
+
+
+@capability("extract.image_scope")
+def image_scope(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: EXTRACT-15 — CDS-12.2; DDD-14 §2 Measurement. R1, tier **T2**, `errors: []`,
+    ask "Luôn". Mốc M5.
+
+    **Tạo `Measurement`, KHÔNG tạo fact** — bước 1 của hợp đồng nói thẳng, và đó là ranh giới
+    quan trọng nhất của năng lực này. Một giá trị đọc từ ảnh màn hình dao động ký là một QUAN
+    SÁT, không phải một sự thật về con chip: nó đúng cho lần đo ấy, trên board ấy, với đầu dò
+    đặt ở chỗ ấy. Thành fact thì `code.constant_guard` sẽ cho phép mã trích dẫn nó như thể
+    datasheet nói thế.
+
+    `confidence` thấp và ghi thẳng vào bản ghi. Đọc một con số từ lưới ô trên ảnh chụp màn hình
+    có sai số của cả người chụp lẫn mô hình, và giấu điều đó đi là mời người ta tin một con số
+    không ai đo lại.
+    """
+    root = _root(ctx)
+    anh = _doc_anh(root, params["image"])
+    loai = params.get("kind") or "oscilloscope"
+    resp = _gateway(ctx).run(
+        "cartographer",
+        f"Ảnh chụp màn hình thiết bị đo ({loai}). Đọc thang đo (time/div, volt/div) và các giá "
+        "trị hiện trên màn hình. Chỉ chép con số NHÌN THẤY — nếu phải suy từ số ô trên lưới thì "
+        "ghi vào `note` rằng đó là ước lượng.",
+        _SCHEMA_SCOPE, anh=[anh])
+
+    mid = "m_" + hashlib.sha256(
+        (params["image"] + json.dumps(resp.data, ensure_ascii=False)).encode()).hexdigest()[:16]
+    do = {"id": mid, "kind": "custom", "value": resp.data.get("values") or [],
+          "scales": resp.data.get("scales") or {}, "note": resp.data.get("note"),
+          "method": "vision_llm", "confidence": 0.3, "source_image": params["image"],
+          "at": datetime.now(UTC).isoformat()}
+
+    db = store.store_path(root)
+    if db.exists():
+        with store.open_store(db) as c:
+            c.execute("INSERT OR REPLACE INTO measurement (id, kind, value, at) "
+                      "VALUES (?,?,?,?)",
+                      (mid, "custom", json.dumps(do, ensure_ascii=False), do["at"]))
+            c.commit()
+        store.write_seal(db, ctx.extra.get("ledger"))
+    return {"measurement": do}

@@ -69,7 +69,8 @@ class ModelPort:
         return True
 
     def generate(self, model: str, system: str, user: str, schema: dict[str, Any], *,
-                 temperature: float = 0.0, max_output: int = 4096) -> ModelResponse:
+                 temperature: float = 0.0, max_output: int = 4096,
+                 anh: list[dict[str, str]] | None = None) -> ModelResponse:
         raise NotImplementedError
 
 
@@ -115,12 +116,18 @@ class GeminiPort(ModelPort):
     def co_khoa(self) -> bool:
         return bool(self.api_key)
 
-    def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096):
+    def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096,
+                 anh: list[dict[str, str]] | None = None):
         if not self.api_key:
             raise GatewayError("no_key", "Thiếu GEMINI_API_KEY (xem .env.example)")
+        phan: list[dict[str, Any]] = [{"text": user}]
+        # Ảnh đi TRƯỚC văn bản. Cả hai hãng đều khuyến nghị thế, và lý do thực dụng: câu hỏi
+        # nhắc tới "hình dưới đây" thì hình phải đã ở trong ngữ cảnh khi mô hình đọc tới câu ấy.
+        for a in (anh or []):
+            phan.insert(-1, {"inlineData": {"mimeType": a["media_type"], "data": a["data"]}})
         body = {
             "systemInstruction": {"parts": [{"text": system}]},
-            "contents": [{"role": "user", "parts": [{"text": user}]}],
+            "contents": [{"role": "user", "parts": phan}],
             "generationConfig": {"temperature": temperature, "maxOutputTokens": max_output,
                                  "responseMimeType": "application/json",
                                  "responseSchema": _gemini_schema(schema)},
@@ -149,13 +156,19 @@ class ClaudePort(ModelPort):
     def co_khoa(self) -> bool:
         return bool(self.api_key)
 
-    def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096):
+    def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096,
+                 anh: list[dict[str, str]] | None = None):
         if not self.api_key:
             raise GatewayError("no_key", "Thiếu ANTHROPIC_API_KEY (xem .env.example)")
+        noi_dung: list[dict[str, Any]] = [
+            {"type": "image", "source": {"type": "base64", "media_type": a["media_type"],
+                                         "data": a["data"]}}
+            for a in (anh or [])]
+        noi_dung.append({"type": "text", "text": user})
         # Claude không có `responseSchema`; đầu ra có cấu trúc đi qua một tool bắt buộc.
         body = {
             "model": model, "max_tokens": max_output, "temperature": temperature,
-            "system": system, "messages": [{"role": "user", "content": user}],
+            "system": system, "messages": [{"role": "user", "content": noi_dung}],
             "tools": [{"name": "tra_ket_qua", "description": "Trả kết quả đúng schema.",
                        "input_schema": schema}],
             "tool_choice": {"type": "tool", "name": "tra_ket_qua"},
@@ -187,8 +200,12 @@ class EchoPort(ModelPort):
         self.tra_loi = list(tra_loi or [])
         self.goi: list[dict[str, Any]] = []
 
-    def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096):
-        self.goi.append({"model": model, "system": system, "user": user, "schema": schema})
+    def generate(self, model, system, user, schema, *, temperature=0.0, max_output=4096,
+                 anh=None):
+        # GHI LẠI `anh`: một cổng giả nuốt mất ảnh thì mọi test đường ảnh đều xanh mà không
+        # test nào chứng minh được ảnh đã tới cổng.
+        self.goi.append({"model": model, "system": system, "user": user, "schema": schema,
+                         "anh": list(anh or [])})
         if not self.tra_loi:
             raise GatewayError("refusal", "EchoPort hết câu trả lời đã nạp")
         x = self.tra_loi.pop(0)
@@ -263,8 +280,25 @@ class Gateway:
 
     # ---- API chính
     def run(self, role: str, user: str, schema: dict[str, Any], *,
-            system_extra: str = "") -> ModelResponse:
-        """Chạy một vai trò. Thử từng ứng viên; chỉ lui khi lỗi thuộc `policy.fallback_on`."""
+            system_extra: str = "", anh: list[dict[str, str]] | None = None) -> ModelResponse:
+        """Chạy một vai trò. Thử từng ứng viên; chỉ lui khi lỗi thuộc `policy.fallback_on`.
+
+        `anh` là danh sách `{media_type, data}` với `data` mã hoá base64 — dạng chung của cả
+        Gemini (`inlineData`) lẫn Claude (`source.base64`), nên người gọi không phải biết đang
+        nói chuyện với hãng nào.
+
+        **Vai trò KHÔNG khai `inputs: [image]` mà lại được truyền ảnh là lỗi lập trình, không
+        phải một yêu cầu để chiều.** `models.yaml` khai vai trò nào nhìn được — chỉ `cartographer`
+        — và một vai trò văn bản nhận ảnh sẽ hoặc bị hãng từ chối, hoặc tệ hơn: lặng lẽ bỏ qua
+        ảnh rồi trả lời như thể đã nhìn. Cái thứ hai là lý do phép kiểm này ném chứ không cảnh
+        báo.
+        """
+        if anh:
+            vao = ((self.config.get("roles") or {}).get(role) or {}).get("inputs") or ["text"]
+            if "image" not in vao:
+                raise GatewayError(
+                    "bad_role", f"Vai trò `{role}` không khai `inputs: [image]` trong models.yaml "
+                    f"(chỉ {vao}) — nhưng được truyền {len(anh)} ảnh. Dùng `cartographer`.")
         # Giải vai trò TRƯỚC mọi thứ khác: một vai trò lạ là lỗi lập trình, và báo nó bằng
         # "vượt ngân sách" hay "offline_mode" sẽ gửi người đi sai hướng.
         ds = self.ung_vien(role)
@@ -300,7 +334,8 @@ class Gateway:
             try:
                 resp = port.generate(uv["model"], system, user, schema,
                                      temperature=float(cfg.get("temperature", 0.0)),
-                                     max_output=int(cfg.get("max_output", 4096)))
+                                     max_output=int(cfg.get("max_output", 4096)),
+                                     anh=anh)
             except GatewayError as e:
                 loi = e
                 self._log(role, uv["model"], system, user, None, error_kind=e.kind)
