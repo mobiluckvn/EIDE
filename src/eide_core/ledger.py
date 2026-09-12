@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections.abc import Callable
 from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
@@ -51,6 +52,13 @@ class Ledger:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._last_hash = GENESIS
         self._seq = 0
+        # Người quan sát — gọi SAU khi bản ghi đã xuống đĩa và chuỗi băm đã nối.
+        #
+        # Đây là chỗ duy nhất trong hệ thống thấy được MỌI việc đã xảy ra, nên nó là chỗ đúng để
+        # daemon phái sinh sự kiện `event.*` (API-15 §1) cho panel. Cách còn lại — rắc lời gọi
+        # "phát sự kiện" vào từng năng lực — thì mỗi năng lực mới là một chỗ có thể quên, và
+        # panel sẽ im lặng bỏ sót đúng việc vừa thêm.
+        self._quan_sat: list[Callable[[dict[str, Any]], None]] = []
         if self.path.exists():
             for line in self.path.read_text(encoding="utf-8").splitlines():
                 if line.strip():
@@ -67,7 +75,19 @@ class Ledger:
         with self.path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
         self._last_hash = rec["hash"]
+        # Người quan sát KHÔNG được làm hỏng việc ghi sổ. Một panel đã đóng ống dẫn, một
+        # `BrokenPipeError` từ stdout — không lý do nào trong số đó đáng để mất một dòng sổ cái.
+        # Sổ cái là bằng chứng; thông báo cho giao diện thì không.
+        for f in self._quan_sat:
+            try:
+                f(rec)
+            except Exception:  # noqa: BLE001 — xem giải thích ngay trên
+                pass
         return rec
+
+    def theo_doi(self, f: Callable[[dict[str, Any]], None]) -> None:
+        """Đăng ký một người quan sát. Gọi sau khi bản ghi đã an toàn trên đĩa."""
+        self._quan_sat.append(f)
 
     def verify(self) -> tuple[bool, int]:
         """Kiểm chuỗi hash; trả (ok, seq lỗi đầu tiên hoặc 0)."""

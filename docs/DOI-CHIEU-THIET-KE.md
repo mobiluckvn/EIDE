@@ -14,7 +14,7 @@ cho thấy đúng chuyện ấy đang xảy ra.
 
 ## 1. Một dòng
 
-**Chín trên mười trục đã trên 60%.** 197/238 năng lực (83%), 34/57 phương thức JSON-RPC (60%),
+**Chín trên mười trục đã trên 60%.** 197/238 năng lực (83%), 47/57 phương thức JSON-RPC (82%),
 11/15 công cụ MCP (73%). Trục thấp nhất là mã kiểm thử TC (61%) và quy tắc chính sách (80%) —
 và cả hai thấp vì cùng một lý do: **phần cần board thật chưa kiểm được.**
 
@@ -22,7 +22,7 @@ Bản đầu của tệp này (sáng 12/09) ghi RPC 21% và MCP 27%. Cả hai co
 sai đáng ghi lại: phép đo grep tên phương thức trong mã nguồn, mà `mcp/server.py` ánh xạ
 **generic** (`ten.replace("_", ".", 1)`) nên không tên tool nào xuất hiện nguyên văn. Đo lại
 bằng cách GỌI `dung_tool()` cho 11, không phải 4. Bài học: *đếm bằng grep thì đo được cái viết
-ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy — và đã nâng lên 34 cùng ngày.
+ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy — và đã nâng lên **47** cùng ngày.
 
 ---
 
@@ -39,7 +39,7 @@ ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy �
 | 7 | **Vai trò mô hình** (SDD §6) | 9 | **8** | 89% | thiếu `cartographer` — cần thị giác |
 | 8 | **Mã kiểm thử TC** (STP-05) | 72 | **44** | 61% | 28 mã chưa xuất hiện trong test nào |
 | 9 | **Công cụ MCP** (API-15) | 15 | **11** | 73% | 4 cái thiếu đều là `target.*`/`discover.*` — chờ board |
-| 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **34** | 60% | 23 thiếu = 16 `event.*` (chưa có kênh đẩy) + 7 chờ board |
+| 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **47** | 82% | 10 thiếu: 7 chờ board, 3 chờ hàng đợi chạy nền |
 
 Ngoài mười trục trên, ba trục phụ:
 
@@ -107,37 +107,51 @@ hành trên một thao tác thật** — chúng mới chỉ chạy qua 48 tình 
 
 ---
 
-## 4. Trục 10 — JSON-RPC, từ 12 lên 34 trong một ngày
+## 4. Trục 10 — JSON-RPC, từ 12 lên 47 trong một ngày
 
-Sáng 12/09 daemon phục vụ **12/57**. Chiều cùng ngày: **34/57**. 22 phương thức thêm vào đều là
-**lớp vỏ mỏng trên năng lực đã có** — không một dòng logic nghiệp vụ mới.
+Sáng 12/09: **12/57**. Cuối ngày: **47/57**. Ba đợt, và đợt cuối là đợt đáng kể nhất.
 
-```
-Alias qua Router (12):  project.open · view.kg_map · view.focus · view.provenance
-                        view.coverage · view.impact · view.timeline · view.rag_ask
-                        view.rag_trace · passport.query · passport.browse · log.stats
-Có logic riêng (10):    project.close · diagram.open · diagram.save · doc.open
-                        hex.resolve · chat.send · chat.answer · chat.history
-                        debug.ask · log.register
-```
+| Đợt | Thêm | Là gì |
+|---|---|---|
+| 1 | 22 | Bề mặt panel — 12 alias qua Router, 10 cái có logic riêng |
+| 2 | 13 | Kênh sự kiện phái sinh từ **sổ cái** |
+| 3 | 3 | Ba sự kiện phái sinh từ **kết quả lời gọi** |
 
-**Alias đi QUA `Router.invoke`, không gọi thẳng handler.** Đường tắt sẽ nhanh hơn và sẽ bỏ qua
-cổng chính sách, nhật ký, và cửa sổ hoàn tác — cả ba. Test
-`test_alias_view_di_QUA_router_nen_co_ghi_nhat_ky` canh đúng điều đó.
+### Kênh sự kiện — một chỗ móc, mọi năng lực
 
-### 23 phương thức còn thiếu
+Sự kiện `event.*` KHÔNG được rắc vào từng năng lực. `Ledger` nhận một móc quan sát, daemon
+đăng ký vào đó, và 13 trong 16 sự kiện phái sinh từ bản ghi sổ cái.
+
+Lý do chọn thế: **sổ cái là chỗ duy nhất thấy được mọi việc đã xảy ra.** Một móc ở đó phủ cả
+197 năng lực hiện có lẫn mọi năng lực thêm sau. Cách kia — mỗi năng lực tự phát sự kiện — thì
+mỗi năng lực mới là một chỗ có thể quên, và panel sẽ im lặng bỏ sót đúng việc vừa thêm.
+
+**Hệ quả kèm theo đáng giá hơn chính kênh này: một sự kiện panel nhìn thấy là một sự kiện ĐÃ
+NẰM TRONG CHUỖI BĂM.** Không có đường nào để giao diện hiện một việc mà sổ cái không có — và
+`test_moi_su_kien_deu_CO_trong_so_cai` canh đúng điều đó.
+
+Ba sự kiện còn lại phái sinh từ kết quả lời gọi, vì sổ cái không mang đủ dữ kiện: `store.write`
+biết có ghi vào store nhưng không biết MỤC NÀO của tài liệu vừa lỗi thời — thứ panel cần để tô
+xám đúng chỗ.
+
+Hai chi tiết đáng ghi:
+
+- **`gate.decision` chỉ thành `event.gate.opened` khi nó THẬT SỰ mở một mục chờ.** Báo một việc
+  máy đã tự làm xong như "có mục cần anh duyệt" sẽ dạy người dùng bỏ qua thông báo — đúng thứ
+  hỏng mà cả POL-17 lo.
+- **Người quan sát hỏng không được làm hỏng sổ cái.** Một panel đã đóng ống dẫn, một
+  `BrokenPipeError` — không lý do nào đáng để mất một dòng sổ cái. Sổ cái là bằng chứng; thông
+  báo cho giao diện thì không.
+
+### 10 phương thức còn thiếu
 
 | Nhóm | Số | Vì sao |
 |---|---|---|
-| **Sự kiện đẩy** (`event.*`) | 16 | Daemon là stdio request/response; chưa có kênh đẩy. Đây là việc HẠ TẦNG, không phải việc năng lực |
-| `serial.*` · `discover.status` | 5 | Chờ board |
-| `job.status` · `job.cancel` | 2 | Chờ hàng đợi chạy nền — hôm nay mọi lời gọi là đồng bộ |
+| `serial.*` · `discover.status` · `event.serial.line` · `event.discover.changed` | 7 | Chờ board |
+| `job.status` · `job.cancel` · `event.job.progress` | 3 | Chờ hàng đợi chạy nền — hôm nay mọi lời gọi là đồng bộ |
 
-> **Bất đối xứng vẫn còn, chỉ nhỏ đi:** `EideRpcGenerated.swift` có đủ 57 phương thức và
-> `make check` xác nhận nó khớp spec, trong khi daemon trả lời 34. Cổng `check-gen` không bắt
-> được vì nó so *bản sinh với spec*, không so *daemon với spec*. Từ 12/09 có
-> `test_moi_phuong_thuc_dang_ky_deu_CO_trong_spec` canh chiều ngược lại (daemon không bịa ra
-> phương thức ngoài spec), nhưng chiều "spec có mà daemon thiếu" vẫn là một con số đọc bằng tay.
+> **Bất đối xứng đã gần khép:** `EideRpcGenerated.swift` có đủ 57, daemon trả lời 47. Mười cái
+> lệch còn lại đều là thứ không thể làm nếu không có vật ở ngoài.
 
 ### 4.1 Công cụ MCP — 11/15
 
@@ -233,10 +247,10 @@ Ba thứ, cả ba đã ghi DEVIATIONS:
 1. **Tầng tri thức và tầng tác tử: xong.** M0 100%, M1 99%, 17/27 nhóm năng lực đủ, hai chuỗi
    chuẩn trọn vẹn, và cả ba mắt xích trung tâm (`code.build`, `sim.run`, `constant_guard`) đã
    chạy THẬT chứ không chỉ xanh trong test.
-2. **Tầng giao tiếp: đã dùng được, trừ kênh sự kiện.** 34/57 RPC (22 cái thêm trong ngày 12/09),
-   11/15 MCP, 1/23 màn hình. Thứ còn thiếu đáng kể duy nhất là **16 phương thức `event.*`** —
-   một việc hạ tầng (kênh đẩy), không phải việc năng lực. Tác tử ngoài qua MCP thì đã dùng được
-   trọn tầng tri thức — đây là việc rẻ nhất còn
+2. **Tầng giao tiếp: dùng được.** 47/57 RPC, 11/15 MCP, 1/23 màn hình. Kênh sự kiện đã có và
+   phái sinh từ sổ cái, nên panel không thể hiện một việc mà chuỗi băm không có. Mười phương
+   thức thiếu đều chờ board hoặc hàng đợi chạy nền. Tác tử ngoài qua MCP đã dùng được trọn tầng
+   tri thức — đây là việc rẻ nhất còn
    lại và là việc duy nhất còn lại **không cần vật gì ở ngoài**.
 3. **Tầng phần cứng: chưa bắt đầu, đúng kế hoạch.** 29 năng lực, 5/6 lớp R3, 10 quy tắc cổng và
    28 mã TC đều nằm chờ một bo mạch. Đây không phải nợ — đây là quyết định 08/09 — nhưng nó có

@@ -23,6 +23,31 @@ from eide_core.undo import UndoService
 API_VERSION = "1.2"
 
 
+# Sổ cái ghi gì → panel nhận sự kiện nào (API-15 §1 `event.*`).
+#
+# Phái sinh từ SỔ CÁI chứ không rắc lời gọi "phát sự kiện" vào từng năng lực, và đó là quyết
+# định thiết kế chính của kênh này: sổ cái là chỗ duy nhất thấy được MỌI việc đã xảy ra, nên
+# một chỗ móc ở đó phủ cả 197 năng lực hiện có lẫn mọi năng lực thêm sau. Cách kia thì mỗi năng
+# lực mới là một chỗ có thể quên, và panel sẽ im lặng bỏ sót đúng việc vừa thêm.
+#
+# Hệ quả kèm theo — đáng giá hơn chính kênh này: một sự kiện panel nhìn thấy là một sự kiện ĐÃ
+# NẰM TRONG CHUỖI BĂM. Không có đường nào để giao diện hiện một việc mà sổ cái không có.
+SU_KIEN: dict[str, str] = {
+    "cap.run.start": "event.run.progress",
+    "cap.run.finish": "event.run.progress",
+    "gate.decision": "event.gate.opened",
+    "undo.register": "event.undo.registered",
+    "undo.expire": "event.undo.expired",
+    "autonomy.change": "event.autonomy.changed",
+    "stop": "event.autonomy.changed",
+    "store.write": "event.knowledge.changed",
+    "acq.state": "event.knowledge.changed",
+    "question": "event.chat.question",
+    "answer": "event.chat.restated",
+    "report": "event.chat.report",
+    "error": "event.notice",
+}
+
 # Tên RPC → id năng lực. Sáu cái lệch tên, và lệch có lý do: tên RPC ngắn cho plugin gõ
 # (`view.coverage`), tên năng lực nói rõ nó trả cái gì (`view.coverage_map`). Bảng này là chỗ
 # DUY NHẤT giữ ánh xạ ấy — hai chỗ thì một chỗ sẽ quên khi đổi tên.
@@ -41,12 +66,20 @@ ALIAS: dict[str, str] = {
     "log.stats": "debug.log_stats",
 }
 
+
 class Daemon:
-    def __init__(self, project: Path | None = None) -> None:
+    def __init__(self, project: Path | None = None,
+                 phat: Callable[[str, dict[str, Any]], None] | None = None) -> None:
         self.gate = PolicyGate()
         self.ledger = Ledger((project / ".eide" / "store" / "ledger.jsonl") if project else user_log() / "ledger.jsonl")
         self.router = Router(gate=self.gate, ledger=self.ledger)
         self.ctx = Context(project_dir=project, extra={"gate": self.gate})
+        # `phat` do lớp vận chuyển đưa vào (`serve_stdio`). Không có thì daemon chạy y như cũ —
+        # CLI và test gọi `handle()` trực tiếp không cần kênh đẩy, và bắt chúng dựng một cái
+        # giả chỉ để im lặng là thêm nghi thức không đổi lấy gì.
+        self.phat = phat
+        if phat is not None:
+            self.ledger.theo_doi(self._tu_so_cai)
         self.methods: dict[str, Callable[[dict[str, Any]], Any]] = {
             "plane.hello": self.hello, "caps.list": self.caps_list, "caps.describe": self.caps_describe,
             "caps.invoke": self.caps_invoke, "queue.list": self.queue_list, "autonomy.get": self.autonomy_get,
@@ -64,6 +97,82 @@ class Daemon:
             "chat.history": self.chat_history, "debug.ask": self.debug_ask,
             "log.register": self.log_register,
         }
+
+    # ---- ba sự kiện KHÔNG suy được từ sổ cái
+
+    def _id_cho(self) -> list[str]:
+        """Id các mục đang chờ — HỢP của hàng đợi bền và hàng đợi phiên này.
+
+        `cho_con_lai` đọc từ store, vì hàng đợi phải sống qua lần tắt máy (UXD-13 U2). Nhưng một
+        mục ASK có thể sinh ra khi CHƯA CÓ store để ghi vào: `project.create` bị cổng chặn thì
+        dự án còn chưa tồn tại. Mục ấy có thật, đang chờ, và chỉ nằm trong RAM — bỏ nó khỏi phép
+        so là để panel không bao giờ biết về đúng loại mục chờ đến sớm nhất.
+
+        `cho_con_lai` trả DICT (`run_id`), không phải đối tượng. Bản đầu viết `r.id` và lặng lẽ
+        không bao giờ chạy tới, vì danh sách luôn rỗng ở đúng tình huống nói trên.
+        """
+        ben = [r["run_id"] for r in self.router.cho_con_lai(self.ctx)]
+        ram = [r.run_id for r in self.router.queue]
+        return list(dict.fromkeys(ben + ram))
+
+    def _sau_loi_goi(self, ten: str, kq: Any) -> None:
+        """Sự kiện phái sinh từ KẾT QUẢ một lời gọi, không từ bản ghi sổ cái.
+
+        Ba cái này khác mười ba cái kia ở chỗ sổ cái không mang đủ dữ kiện: `store.write` biết
+        có ghi vào store, nhưng không biết MỤC NÀO của tài liệu vừa thành lỗi thời — thứ panel
+        cần để tô xám đúng chỗ. Đọc từ kết quả là cách duy nhất, và nó vẫn an toàn: kết quả ấy
+        đến từ một lượt chạy ĐÃ có `cap.run.finish` trong chuỗi băm.
+
+        `event.queue.changed` thì ngược lại — nó không thuộc về một năng lực nào, nó là trạng
+        thái của daemon. So chiều dài hàng đợi trước/sau mỗi lời gọi là phép đo rẻ nhất và
+        không bỏ sót đường nào: mục chờ sinh ra từ `caps.invoke`, từ `chat.send`, hay từ một nút
+        giữa chuỗi đều đi qua cùng một hàng đợi.
+        """
+        if self.phat is None:
+            return
+        if ten in ("doc.sync", "caps.invoke") and isinstance(kq, dict):
+            for s in (kq.get("stale") or []):
+                if isinstance(s, dict) and s.get("doc_id"):
+                    self.phat("event.doc.stale",
+                              {"id": s["doc_id"], "sections": [s.get("heading")]})
+        if ten in ("diagram.save", "caps.invoke") and isinstance(kq, dict):
+            d = kq.get("sync_diff") or kq.get("diff")
+            if isinstance(d, dict) and d.get("stale"):
+                self.phat("event.diagram.stale",
+                          {"id": kq.get("id"), "node_ids": d.get("in_code_only", [])})
+
+    def _hang_doi_doi(self, truoc: list[str]) -> None:
+        sau = self._id_cho()
+        them_moi = [x for x in sau if x not in truoc]
+        bot = [x for x in truoc if x not in sau]
+        if self.phat is not None and (them_moi or bot):
+            self.phat("event.queue.changed",
+                      {"kind": "ask", "added": them_moi, "removed": bot})
+
+    # ---- kênh sự kiện (API-15 §1 `event.*`)
+
+    def _tu_so_cai(self, rec: dict[str, Any]) -> None:
+        """Một bản ghi sổ cái → một thông báo cho panel, nếu có ánh xạ.
+
+        Bản ghi KHÔNG có ánh xạ thì im lặng bỏ qua — 26 kiểu sự kiện sổ cái không phải cái nào
+        cũng đáng làm phiền giao diện (`model.call`, `context.bundle`, `session.open` là nhật ký
+        vận hành, không phải thứ người dùng cần thấy).
+        """
+        ten = SU_KIEN.get(rec.get("kind", ""))
+        if ten is None or self.phat is None:
+            return
+        d = dict(rec.get("data") or {})
+        # `gate.decision` chỉ thành `event.gate.opened` khi nó THẬT SỰ mở một mục chờ. Một quyết
+        # định APPROVE là việc máy tự làm xong; báo nó như "có mục cần anh duyệt" sẽ dạy người
+        # dùng bỏ qua thông báo — đúng thứ hỏng mà cả POL-17 lo.
+        if rec["kind"] == "gate.decision" and d.get("decision") != "ASK":
+            return
+        self.phat(ten, {**d, "at": rec.get("ts"), "seq": rec.get("seq")})
+
+    def _thong_bao(self, muc: str, van: str, ref: str | None = None) -> None:
+        """`event.notice` — cảnh báo chung, dùng cho thứ không đến từ sổ cái."""
+        if self.phat is not None:
+            self.phat("event.notice", {"level": muc, "text": van, **({"ref": ref} if ref else {})})
 
     # ---- bề mặt panel
 
@@ -315,7 +424,13 @@ class Daemon:
             name = msg["method"]
             if name not in self.methods:
                 return _err(rid, -32601, f"Phương thức không có: {name}")
-            return {"jsonrpc": "2.0", "id": rid, "result": self.methods[name](msg.get("params") or {})}
+            # Chụp hàng đợi TRƯỚC khi chạy: một mục chờ có thể sinh ra ở giữa chuỗi, và so
+            # trước/sau là cách duy nhất bắt được mọi đường sinh ra nó.
+            cho_truoc = self._id_cho() if self.phat else []
+            kq = self.methods[name](msg.get("params") or {})
+            self._sau_loi_goi(name, kq)
+            self._hang_doi_doi(cho_truoc)
+            return {"jsonrpc": "2.0", "id": rid, "result": kq}
         except EideError as e:
             return {"jsonrpc": "2.0", "id": rid, "error": e.to_rpc()}
         except (KeyError, TypeError) as e:
@@ -333,7 +448,22 @@ def _err(rid: Any, code: int, message: str, eide_code: str | None = None) -> dic
 
 
 def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:
-    d = Daemon(project)
+    """Vòng lặp stdio. Thông báo `event.*` đi CÙNG ống dẫn với câu trả lời.
+
+    JSON-RPC 2.0 phân biệt hai loại bằng trường `id`: câu trả lời có, thông báo không. Nên một
+    ống dẫn là đủ, và đó là lý do kênh sự kiện không cần thêm socket hay cổng nào — điều quan
+    trọng với một daemon chạy làm tiến trình con của editor.
+
+    Thông báo phát ra TRONG lúc xử lý một lời gọi (sổ cái ghi giữa chừng) nên nó có thể xen vào
+    trước câu trả lời của chính lời gọi ấy. Đúng như thế: panel thấy `event.run.progress` rồi
+    mới thấy kết quả, và đó là thứ tự người dùng cần.
+    """
+    def phat(ten: str, p: dict[str, Any]) -> None:
+        out.write(json.dumps({"jsonrpc": "2.0", "method": ten, "params": p},
+                             ensure_ascii=False) + "\n")
+        out.flush()
+
+    d = Daemon(project, phat=phat)
     for line in inp:
         line = line.strip()
         if not line:
