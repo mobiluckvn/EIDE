@@ -1,6 +1,6 @@
 # Đối chiếu mã ↔ thiết kế
 
-*Đo 12/09/2026 từ `docs/spec/` và `src/`, không gõ tay. Mọi con số dưới đây sinh lại được bằng
+*Đo 13/09/2026 từ `docs/spec/` và `src/`, không gõ tay. Mọi con số dưới đây sinh lại được bằng
 cách chạy lại phép đo ghi kèm từng bảng.*
 
 `TIEN-DO.md` trả lời **"đi được bao xa"** bằng một trục duy nhất: số năng lực. Tệp này hỏi khác:
@@ -14,9 +14,11 @@ cho thấy đúng chuyện ấy đang xảy ra.
 
 ## 1. Một dòng
 
-**Chín trên mười trục đã trên 60%.** 204/238 năng lực (86%), 50/57 phương thức JSON-RPC (88%),
-11/15 công cụ MCP (73%). Trục thấp nhất là mã kiểm thử TC (61%) và quy tắc chính sách (80%) —
-và cả hai thấp vì cùng một lý do: **phần cần board thật chưa kiểm được.**
+**Bốn trục đã 100%, và trục thấp nhất giờ là mã kiểm thử TC (63%).** 209/238 năng lực (88%),
+50/57 phương thức JSON-RPC (88%), 49/49 quy tắc chính sách, 25/26 kiểu sự kiện sổ cái.
+
+**Mọi thứ còn thiếu trên mười trục đều quy về một nguyên nhân: chưa có bo mạch.** 29 năng lực,
+7 phương thức RPC, 1 kiểu sự kiện, 2 trong 3 mã lỗi, và phần lớn 27 mã TC.
 
 Bản đầu của tệp này (sáng 12/09) ghi RPC 21% và MCP 27%. Cả hai con số ấy SAI, và cách chúng
 sai đáng ghi lại: phép đo grep tên phương thức trong mã nguồn, mà `mcp/server.py` ánh xạ
@@ -33,11 +35,11 @@ ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy �
 | 1 | **Năng lực** (CDS-12) | 238 | **204** | **86%** | 34 còn lại: 29 chờ board, 5 chờ mô hình thị giác |
 | 2 | **Thực thể dữ liệu** (DDD-14 §2) | 27 | **27** | **100%** | migration 0001–0007 phủ trọn |
 | 3 | **Schema JSON** (`data/json/`) | 27 | **27** | **100%** | khớp 1–1 với thực thể |
-| 4 | **Kiểu sự kiện ledger** (API-15 §5) | 26 | **23** | 88% | thiếu `autonomy.change`, `discover.result`, `gate.decision` |
-| 5 | **Mã lỗi** (API-15 §3) | 29 | **25** | 86% | chưa ném: E1003, E4003, E6002, E7000 |
-| 6 | **Quy tắc chính sách** (POL-17 §2) | 49 | **39** | 80% | 10 quy tắc chưa tình huống nào chạm |
-| 7 | **Vai trò mô hình** (SDD §6) | 9 | **8** | 89% | thiếu `cartographer` — cần thị giác |
-| 8 | **Mã kiểm thử TC** (STP-05) | 72 | **44** | 61% | 28 mã chưa xuất hiện trong test nào |
+| 4 | **Kiểu sự kiện ledger** (API-15 §5) | 26 | **25** | 96% | chỉ thiếu `discover.result` — cần board |
+| 5 | **Mã lỗi** (API-15 §3) | 29 | **26** | 90% | chưa ném: E1003 (chưa có REST), E4003 (board), E6002 |
+| 6 | **Quy tắc chính sách** (POL-17 §2) | 49 | **49** | **100%** | 10 cái ngoài bảng §8 nay có test riêng |
+| 7 | **Vai trò mô hình** (SDD §6) | 9 | **9** | **100%** | `cartographer` dùng ở đường ảnh |
+| 8 | **Mã kiểm thử TC** (STP-05) | 72 | **45** | 63% | 27 mã còn lại phần lớn cần board/đo |
 | 9 | **Công cụ MCP** (API-15) | 15 | **11** | 73% | 4 cái thiếu đều là `target.*`/`discover.*` — chờ board |
 | 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **50** | 88% | **7 thiếu, cả 7 là `serial.*`/`discover.*` — chỉ còn phần cứng** |
 

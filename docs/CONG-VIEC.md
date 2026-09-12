@@ -1,13 +1,15 @@
 # Danh sách công việc EIDE
 
-*Đo 12/09/2026 (lần 18) từ registry — không gõ tay. Còn **41/238** năng lực, và **không mục
-nào trong số đó làm được trên máy này**. Xem [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng
-thái; tệp này trả lời **làm gì tiếp**.*
+*Đo 13/09/2026 (lần 19) từ registry — không gõ tay. Còn **29/238** năng lực, và **cả 29 đều
+cần một bo mạch**. Xem [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời
+**làm gì tiếp**.*
 
-> **Bước ngoặt của ngày 12/09: phần mềm đã hết việc làm một mình.** Trước hôm nay, danh sách
-> này luôn có ít nhất một việc chỉ cần thời gian. Từ hôm nay thì không: 41 năng lực còn lại
-> chia đúng bốn nhóm, và cả bốn chờ **một vật ở ngoài** — 29 chờ bo mạch, 5 chờ khoá mô hình
-> có thị giác, 6 chờ một registry, 1 chờ báo cáo HIL thật.
+> **13/09: danh sách này chỉ còn MỘT hạng mục.** Ngày 12/09 nó còn bốn nhóm chờ bốn thứ khác
+> nhau. Nay registry đã dựng cục bộ ([DEV-091]) và đường ảnh đã mở, nên **29 năng lực còn lại
+> đều chờ đúng một vật: một bo mạch.** Cùng với chúng là 7 phương thức JSON-RPC, 1 kiểu sự
+> kiện sổ cái, 2 mã lỗi và phần lớn 27 mã TC còn lại.
+>
+> Không còn mục nào chờ thời gian, chờ một thư viện, hay chờ một quyết định.
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
 nhất và kiểm được ngay thì làm trước; cái gì cần phần cứng để lại **cuối cùng** (quyết định của
@@ -236,7 +238,54 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 12/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+## Điểm dừng phiên 13/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+
+*Cây làm việc SẠCH. `make check`: **1503 test Python + 2699 test Swift** xanh. DEVIATIONS **9
+Mở** — 7 nợ hiện thực, **2 chờ chủ sản phẩm** ([DEV-088] SEC-25 §2/§3, [DEV-089] trường
+`package` cho `toolchain.tools[]`).*
+
+### Trạng thái: 209/238 (88%), 21/27 nhóm đủ
+
+| Trục (xem [`DOI-CHIEU-THIET-KE.md`](DOI-CHIEU-THIET-KE.md)) | |
+|---|---|
+| Năng lực | 209/238 · **88%** |
+| JSON-RPC | 50/57 · 88% |
+| Kiểu sự kiện sổ cái | 25/26 · 96% |
+| Mã lỗi | 26/29 · 90% |
+| **Quy tắc chính sách** | **49/49 · 100%** |
+| **Vai trò mô hình** | **9/9 · 100%** |
+| Công cụ MCP | 11/15 · 73% |
+| Mã kiểm thử TC | 45/72 · 63% |
+
+### Ba phiên vừa qua đóng những gì
+
+| Phiên | Đóng |
+|---|---|
+| 11/09 | `sim.*` chạy engine thật; `code.build` dựng firmware thật; Swift vào `make check` |
+| 12/09 | `debug.*` 6/6 · `doc.*` 12/12 · `report.*` 4/4 · `registry.*` 5/5 cục bộ · đường ảnh 5 năng lực · JSON-RPC 12→50 |
+| 13/09 | 10 quy tắc chính sách chưa ai chạm · E7000 · ba món nợ (`roles.yaml`, `autonomy.change`, `stop`) |
+
+### Việc phiên sau
+
+| # | Việc | Cần |
+|---|---|---|
+| 1 | **Anh xem [DEV-088] và [DEV-089]** | duyệt / ký |
+| 2 | **Cắm một bo mạch** (Nucleo F411 / ESP32-C3) rồi làm khối H | **board** |
+| 3 | `make check-llm` với `GEMINI_API_KEY` — bài `test_duong_anh_di_toi_HANG_va_ve` đã viết, chưa lần nào chạy | khoá mô hình |
+| 4 | [DEV-090] `diagram.sync to_code` | `tree-sitter` (phụ thuộc mới) |
+| 5 | 22 màn hình UI còn lại của UXD-13 | việc Swift, không chặn gì |
+
+### Bẫy mới, đừng đạp lại
+
+- **`board` là tham số riêng của `PolicyGate.decide`, KHÔNG phải một đặc trưng.** Truyền nhầm
+  vào `features` thì `_env` ném `TypeError: 'str' object is not a mapping`.
+- **`GEN-01` không bao giờ khớp ở R0** — APD-08 §4.1 tầng 2 cho R0 tự chạy trước khi bảng quy
+  tắc được hỏi. Không phải lỗ hổng; xem test.
+- **`TOOL-04` bị `TOOL-03` (ưu tiên 1) chặn** khi thiếu `tested`/`effects_ok`.
+- **Đếm bằng grep thì đo được cái VIẾT RA, không đo được cái CHẠY.** `mcp/server.py` ánh xạ
+  generic nên không tên tool nào xuất hiện nguyên văn — tôi đã báo sai 4/15 thay vì 11/15.
+
+## Điểm dừng phiên 12/09/2026 (lịch sử)
 
 *Cây làm việc SẠCH. `make check`: **1414 test Python + 2699 test Swift** xanh. DEVIATIONS **10
 Mở** — 8 là nợ hiện thực, **2 chờ chủ sản phẩm** ([DEV-088] SEC-25 §2/§3, [DEV-089] phần sai
