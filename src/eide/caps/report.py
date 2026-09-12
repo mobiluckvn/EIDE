@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from eide_core import store
+from eide_core import store, tools
 from eide_core.errors import EideError
 from eide_core.registry import capability
 from eide_core.router import Context
@@ -192,3 +192,158 @@ def _tra_su_kien(ctx: Context, ma: str) -> dict[str, Any] | None:
                     "text": f"Sự kiện `{e['kind']}` lúc {e.get('ts')}: "
                             f"{json.dumps(d, ensure_ascii=False)[:400]}"}
     return None
+
+
+# ---------------------------------------------------------------- REPORT-02 export
+
+# Định dạng đích → công cụ ngoài cần có. `md` không cần gì: `doc.generate` đã trả Markdown.
+CONG_CU_XUAT = {"docx": "pandoc", "pdf": "pandoc"}
+
+
+@capability("report.export")
+def export(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: REPORT-02 — CDS-12.5; DOC-01 (`doc.generate`); DEV-070. R1, `undo: none`.
+    tc: "docx mở được, có mục Nguồn"; lỗi E5002, E4001 (thiếu công cụ dựng).
+
+    **Đây là chỗ DUY NHẤT dựng docx/pdf** — DEV-070 chốt thế, và lý do là để chỉ có một nơi
+    biết về định dạng nhị phân. `doc.generate` trả Markdown kèm mục Nguồn tự động; năng lực này
+    chỉ chuyển định dạng. Hai nơi cùng dựng docx là hai nơi cùng phải sửa khi mẫu đổi, và nơi
+    thứ hai sẽ quên.
+
+    **Mục Nguồn kiểm ở ĐÂY chứ không tin `doc.generate`.** Nó là thứ phân biệt một báo cáo truy
+    nguyên được với một tờ giấy: `tc` của hợp đồng đòi "có mục Nguồn", nên phép kiểm phải chạy
+    trên chính tệp sắp giao, sau mọi bước chuyển đổi. Một bộ chuyển nuốt mất mục cuối là chuyện
+    có thật, và nó im lặng.
+
+    Thiếu công cụ → **E4001 TRƯỚC khi sinh tài liệu**, không phải sau. Để `pandoc` tự báo
+    "command not found" thì người dùng đã trả tiền cho một lượt gọi mô hình rồi mới biết là
+    không xuất được.
+    """
+    dinh_dang = params["type"]
+    if (cc := CONG_CU_XUAT.get(dinh_dang)) and not tools.which(cc):
+        raise EideError("E4001", f"Thiếu `{cc}` để xuất `{dinh_dang}` — `env.install` hoặc xuất "
+                        "`md` rồi tự chuyển", missing=[cc], remedy="env.install",
+                        alternative="type=md")
+
+    from eide.caps.doc import generate as doc_generate
+    root = _du_an(ctx)
+    kq = doc_generate({"type": "custom", "scope": params["scope"]}, ctx)
+    nguon_md = Path(kq["path"])
+    if not nguon_md.is_absolute():
+        nguon_md = root / nguon_md
+
+    van = nguon_md.read_text(encoding="utf-8")
+    if not RE_MUC_NGUON.search(van):
+        raise EideError("E5002", f"Tài liệu sinh ra không có mục Nguồn — không xuất. {nguon_md}",
+                        path=str(nguon_md))
+
+    if dinh_dang == "md":
+        return {"file": str(nguon_md.relative_to(root) if nguon_md.is_relative_to(root)
+                            else nguon_md)}
+
+    ra = nguon_md.with_suffix("." + dinh_dang)
+    from eide.caps.env import chay_sandbox
+    r = chay_sandbox([str(tools.which(cc)), str(nguon_md), "-o", str(ra)], ctx,
+                     network=False, allowed_dirs=[str(root)], cwd=str(root),
+                     them_path=[str(Path(str(tools.which(cc))).parent)],
+                     limits={"wall_s": 120})
+    if r["exit_code"] != 0 or not ra.exists():
+        raise EideError("E4001", f"`{cc}` trả mã {r['exit_code']} khi dựng {dinh_dang} — "
+                        f"nhật ký: {r['stderr_ref']}", missing=[cc], log=r["stderr_ref"])
+    return {"file": str(ra.relative_to(root) if ra.is_relative_to(root) else ra)}
+
+
+# "## Nguồn" / "## Nguồn truy ngược" — mục mà `doc.generate` gắn tự động (DOC-01).
+RE_MUC_NGUON = __import__("re").compile(r"^#{1,6}\s*Ngu[ồo]n", __import__("re").M)
+
+
+def _du_an(ctx: Context) -> Path:
+    root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if not root or not (root / ".eide").is_dir():
+        raise EideError("E2000", "Cần một dự án đang mở",
+                        exists=[], candidates=[], missing=["project"])
+    return root
+
+
+# ---------------------------------------------------------------- REPORT-03 human_ai_matrix
+
+# Pha của vòng đời, suy từ NAMESPACE của năng lực. Bảng này là chỗ duy nhất trong mã nói "năng
+# lực nào thuộc pha nào"; nó theo đúng thứ tự các tập của CDS-12.
+PHA_THEO_NS = {
+    "project": "Khởi tạo", "ingest": "Tri thức", "archive": "Tri thức", "extract": "Tri thức",
+    "kg": "Tri thức", "passport": "Tri thức", "search": "Tri thức", "board": "Tri thức",
+    "req": "Yêu cầu", "arch": "Kiến trúc", "plan": "Kế hoạch",
+    "code": "Hiện thực", "env": "Hiện thực", "tool": "Hiện thực",
+    "sim": "Xác minh", "debug": "Xác minh", "target": "Xác minh", "discover": "Xác minh",
+    "bench": "Xác minh", "measure": "Xác minh",
+    "doc": "Tài liệu", "diagram": "Tài liệu", "report": "Tài liệu", "view": "Tài liệu",
+    "policy": "Quản trị", "memory": "Quản trị", "chat": "Quản trị", "registry": "Quản trị",
+}
+
+
+@capability("report.human_ai_matrix")
+def human_ai_matrix(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: REPORT-03 — CDS-12.5; DDD-14 §2 DecisionLog + CapabilityRun. R0, `errors: []`,
+    `undo: none`. tc: "Tổng khớp thống kê".
+
+    Ma trận này trả lời câu mà một đề án tác tử PHẢI trả lời được: **máy làm gì, người làm gì,
+    và tri thức đến từ đâu** — theo từng pha, đo từ sổ, không từ trí nhớ.
+
+    **Đếm từ `capability_run` chứ không từ `decision_log`.** Một lời gọi có thể không qua cổng
+    nào (R0 chạy thẳng), nên đếm theo cổng sẽ bỏ sót đúng phần việc tự động nhất — tức bỏ sót
+    đúng thứ ma trận này đi tìm. `decision_log` dùng cho cột NGƯỜI: chỗ nào cổng hỏi và người
+    trả lời.
+
+    **`tc` "Tổng khớp thống kê" kiểm được, và nó là lý do có trường `total`.** Tổng các ô phải
+    bằng số lời gọi đã đếm; lệch nghĩa là một pha bị rơi khỏi bảng — thường vì một namespace mới
+    chưa có trong `PHA_THEO_NS`, và nó sẽ rơi vào "Khác" chứ không biến mất.
+    """
+    root = _du_an(ctx)
+    r = params.get("range") or {}
+    dieu, tham = "", []
+    if r.get("from"):
+        dieu, tham = " WHERE started_at >= ?", [r["from"]]
+    if r.get("to"):
+        dieu = (dieu + " AND" if dieu else " WHERE") + " started_at <= ?"
+        tham.append(r["to"])
+
+    o: dict[str, dict[str, int]] = collections.defaultdict(
+        lambda: {"ai": 0, "human": 0, "knowledge": 0, "total": 0})
+    tong = 0
+    with store.open_store(store.store_path(root)) as c:
+        for cap, actor in c.execute(
+                f"SELECT cap, actor FROM capability_run{dieu}", tham).fetchall():
+            ns = str(cap).split(".")[0]
+            pha = PHA_THEO_NS.get(ns, "Khác")
+            o[pha]["total"] += 1
+            tong += 1
+            if actor == "human":
+                o[pha]["human"] += 1
+            else:
+                o[pha]["ai"] += 1
+            # "Tri thức" là cột thứ ba của ma trận: lời gọi nào SINH RA hoặc ĐỘNG tới fact.
+            if ns in ("extract", "kg", "passport", "ingest", "archive", "search"):
+                o[pha]["knowledge"] += 1
+        nguoi_tra_loi = c.execute(
+            "SELECT count(*) FROM decision_log WHERE by = 'human'").fetchone()[0]
+
+    ten = root / ".eide" / "docs" / "ma-tran-nguoi-ai.xlsx"
+    ten.parent.mkdir(parents=True, exist_ok=True)
+    _xuat_ma_tran(ten, o, tong, nguoi_tra_loi)
+    return {"file": str(ten.relative_to(root))}
+
+
+def _xuat_ma_tran(f: Path, o: dict[str, dict[str, int]], tong: int, nguoi: int) -> None:
+    from openpyxl import Workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Người–AI"
+    ws.append(["Pha", "AI tự làm", "Người làm", "Chạm tri thức", "Tổng"])
+    for pha in sorted(o):
+        d = o[pha]
+        ws.append([pha, d["ai"], d["human"], d["knowledge"], d["total"]])
+    ws.append([])
+    ws.append(["TỔNG", sum(d["ai"] for d in o.values()), sum(d["human"] for d in o.values()),
+               sum(d["knowledge"] for d in o.values()), tong])
+    ws.append(["Lượt người trả lời ở cổng", nguoi])
+    wb.save(f)

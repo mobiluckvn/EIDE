@@ -1522,3 +1522,87 @@ def test_bon_nang_luc_sinh_deu_di_qua_constant_guard(du_an):
         with pytest.raises(EideError) as e:
             goi()
         assert e.value.code == "E5003", goi
+
+
+# ---------- CODE-14 annotate: chiều ngược của constant_guard
+
+def _fact_duyet(root, fid: str, subject: str, predicate: str, value, status="verified") -> None:
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id,uri,sha256,kind,tier,license)"
+                  " VALUES (?,?,?,?,?,?)",
+                  ("s_ann", "u", hashlib.sha256(b"s_ann").hexdigest(), "svd", "gold",
+                   "vendor-doc"))
+        c.execute("INSERT INTO fact (id,subject,predicate,value,source_id,method,tier,"
+                  "confidence,status,layer) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                  (fid, subject, predicate, json.dumps(value), "s_ann", "parser", "gold",
+                   1.0, status, "A"))
+        c.commit()
+
+
+def _viet(root, ten: str, noi_dung: str) -> str:
+    (root / "src").mkdir(parents=True, exist_ok=True)
+    (root / "src" / ten).write_text(noi_dung, encoding="utf-8")
+    return f"src/{ten}"
+
+
+def test_annotate_tc_dia_chi_ra_dung_fact(du_an):
+    """tc CODE-14 nguyên văn: "0x40005400 → f_1a2b"."""
+    from eide.caps.code import annotate
+
+    _, ctx, root = du_an
+    _fact_duyet(root, "f_1a2b0000000000", "chip:st.stm32f411/periph:I2C1", "base_address",
+                "0x40005400")
+    f = _viet(root, "a.c", "#define I2C1_BASE 0x40005400\n")
+    g = annotate({"file": f}, ctx)["suggestions"]
+    assert len(g) == 1
+    assert g[0]["fact_id"] == "f_1a2b0000000000" and g[0]["line"] == 1
+    assert g[0]["annotation"] == "/* eide:fact f_1a2b0000000000 */"
+
+
+def test_annotate_khop_TEN_thi_tin_hon_khop_moi_gia_tri(du_an):
+    """Một địa chỉ `0x40` khớp giá trị với hàng chục fact trong cùng một chip; chỉ khi TÊN trong
+    mã cũng chạm vào subject thì gợi ý mới gần như chắc chắn."""
+    from eide.caps.code import annotate
+
+    _, ctx, root = du_an
+    _fact_duyet(root, "f_aa00000000000a", "chip:st.stm32f411/periph:I2C1", "base_address",
+                "0x40005400")
+    f = _viet(root, "b.c", "#define I2C1_BASE 0x40005400\n#define KHAC 0x40005400\n")
+    g = annotate({"file": f}, ctx)["suggestions"]
+    assert [s["confidence"] for s in g] == [0.95, 0.4], g
+    assert g[0]["match"] == "gia_tri+ten" and g[1]["match"] == "gia_tri"
+
+
+def test_annotate_bo_qua_dong_DA_co_chu_thich(du_an):
+    """Gợi ý lại một dòng đã nối rồi là nhiễu — và nếu fact ta gợi ý khác fact đang có, người
+    đọc sẽ tưởng có mâu thuẫn trong khi chỉ là ta chưa nhìn."""
+    from eide.caps.code import annotate
+
+    _, ctx, root = du_an
+    _fact_duyet(root, "f_bb00000000000b", "chip:x/periph:I2C1", "base_address", "0x40005400")
+    f = _viet(root, "c.c", "#define I2C1_BASE 0x40005400 /* eide:fact f_bb00000000000b */\n")
+    assert annotate({"file": f}, ctx)["suggestions"] == []
+
+
+def test_annotate_KHONG_goi_y_fact_chua_duyet(du_an):
+    """Gợi ý một fact `normalized` là bảo người ta viết đúng dòng mà `constant_guard` sẽ chặn
+    ngay lần sau."""
+    from eide.caps.code import annotate
+
+    _, ctx, root = du_an
+    _fact_duyet(root, "f_cc00000000000c", "chip:x/periph:I2C1", "base_address", "0x40005400",
+                status="normalized")
+    f = _viet(root, "d.c", "#define I2C1_BASE 0x40005400\n")
+    assert annotate({"file": f}, ctx)["suggestions"] == []
+
+
+def test_annotate_KHONG_sua_tep(du_an):
+    """Hợp đồng: "người/coder áp dụng qua code.modify". `undo: none` là hệ quả, không phải
+    thiếu sót — tự chèn chú thích là thay người khẳng định con số ấy ĐÚNG LÀ fact kia."""
+    from eide.caps.code import annotate
+
+    _, ctx, root = du_an
+    _fact_duyet(root, "f_dd00000000000d", "chip:x/periph:I2C1", "base_address", "0x40005400")
+    f = _viet(root, "e.c", goc := "#define I2C1_BASE 0x40005400\n")
+    annotate({"file": f}, ctx)
+    assert (root / f).read_text(encoding="utf-8") == goc

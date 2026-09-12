@@ -1884,3 +1884,102 @@ def _ghi_error_ledger(root: Path, rid: str, bao: dict[str, Any], patch: dict[str
                    "nhiều khả năng là quyết định thiết kế, không phải lỗi cục bộ.",
                    None, datetime.now(UTC).isoformat()))
         c.commit()
+
+
+# ---------------------------------------------------------------- CODE-14 annotate
+
+# Điểm tin cậy của một gợi ý. Ba mức, và khoảng cách giữa chúng có ý: khớp cả giá trị lẫn TÊN
+# (`BME280_ADDR` ↔ fact về `bme280`) gần như chắc chắn đúng; khớp mỗi giá trị thì một địa chỉ
+# `0x40` có thể là mười thứ khác nhau trong cùng một chip.
+DIEM_KHOP = {"gia_tri+ten": 0.95, "gia_tri+ngu_canh": 0.7, "gia_tri": 0.4}
+
+# Dưới ngưỡng này thì không gợi ý. `0.4` (chỉ khớp giá trị, không khớp tên) được GIỮ LẠI có chủ
+# ý — nó vẫn đáng hiện, chỉ là kèm điểm thấp để người đọc biết phải tự kiểm. Cắt nó đi thì
+# những hằng số khó nhất, vốn là những hằng số đáng nối nhất, không bao giờ được gợi ý.
+NGUONG_GOI_Y = 0.35
+
+
+@capability("code.annotate")
+def annotate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-14 — CDS-12.1; PRS-16 §3. R2, `errors: []`, `undo: none`.
+    tc: "0x40005400 → f_1a2b".
+
+    **Chiều ngược của `code.constant_guard`.** Guard hỏi *"hằng số này có nguồn chưa"* và CHẶN;
+    năng lực này hỏi *"hằng số này có lẽ là fact nào"* và ĐỀ XUẤT. Cùng một phép so literal ↔
+    `fact.value`, dùng lại nguyên `_khop_gia_tri` — hai phép so khác nhau cho cùng một câu hỏi
+    là hai phép so sẽ lệch nhau đúng lúc quan trọng.
+
+    **Chỉ ĐỀ XUẤT, không sửa tệp.** Hợp đồng viết rõ "người/coder áp dụng qua `code.modify`", và
+    `undo: none` là hệ quả chứ không phải thiếu sót: năng lực này không đổi gì thì không có gì
+    để hoàn tác. Tự chèn chú thích vào mã người viết là thay họ khẳng định rằng con số ấy ĐÚNG
+    LÀ fact kia — mà điểm 0,4 nghĩa là chính ta cũng chưa chắc.
+
+    **Bỏ qua literal ĐÃ có chú thích.** Gợi ý lại một dòng đã nối rồi là nhiễu, và tệ hơn: nếu
+    fact ta gợi ý khác fact đang có, người đọc sẽ tưởng có mâu thuẫn trong khi chỉ là ta chưa
+    nhìn.
+
+    Điểm tin cậy phân ba mức vì một địa chỉ `0x40` khớp giá trị với hàng chục fact trong cùng
+    một chip; chỉ khi TÊN trong mã (`BME280_ADDR`) cũng chạm vào subject của fact thì gợi ý mới
+    gần như chắc chắn.
+    """
+    root = _du_an(ctx, params)
+    f = Path(params["file"])
+    if not f.is_absolute():
+        f = root / f
+    if not f.exists():
+        return {"suggestions": []}
+
+    facts = _fact_da_duyet(root)
+    ra: list[dict[str, Any]] = []
+    for i, dong in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+        if RE_CHU_THICH.search(dong):
+            continue
+        sach = _bo_chu_thich_va_chuoi(dong)
+        ten_trong_dong = {t.lower() for t in RE_TEN_HOA.findall(sach)}
+        for lit in _literal(sach):
+            for fid, subject, predicate, value in facts:
+                if not _khop_gia_tri(lit, value):
+                    continue
+                muc = _muc_khop(subject, predicate, ten_trong_dong, sach)
+                diem = DIEM_KHOP[muc]
+                if diem < NGUONG_GOI_Y:
+                    continue
+                ra.append({"line": i, "literal": lit, "fact_id": fid,
+                           "confidence": diem, "match": muc,
+                           "subject": subject, "predicate": predicate,
+                           "annotation": f"/* eide:fact {fid} */"})
+    # Cùng một literal khớp nhiều fact thì giữ thứ tự điểm giảm dần — người đọc xem cái đầu
+    # trước, và cái đầu phải là cái đáng tin nhất.
+    ra.sort(key=lambda s: (s["line"], -s["confidence"], s["fact_id"]))
+    return {"suggestions": ra}
+
+
+def _muc_khop(subject: str, predicate: str, ten_trong_dong: set[str], dong: str) -> str:
+    """Mức khớp giữa một fact và một dòng mã đã khớp GIÁ TRỊ.
+
+    "Tên" ở đây là phần cuối của subject IRI (`chip:st.stm32f411/periph:I2C1` → `i2c1`) so với
+    các định danh CHỮ HOA trên dòng. Dùng phần cuối chứ không cả IRI: cả IRI thì không tên nào
+    trong mã khớp nổi, còn phần cuối lại đúng là thứ lập trình viên đặt tên theo.
+    """
+    duoi = str(subject).rsplit(":", 1)[-1].rsplit("/", 1)[-1].lower()
+    duoi_goc = re.sub(r"[^a-z0-9]", "", duoi)
+    for t in ten_trong_dong:
+        goc = re.sub(r"[^a-z0-9]", "", t)
+        if duoi_goc and (duoi_goc in goc or goc in duoi_goc):
+            return "gia_tri+ten"
+    if str(predicate).lower() in dong.lower():
+        return "gia_tri+ngu_canh"
+    return "gia_tri"
+
+
+def _fact_da_duyet(root: Path) -> list[tuple[str, str, str, Any]]:
+    """Fact `reviewed`/`verified` — đúng tập mà `constant_guard` cho đi qua.
+
+    Gợi ý một fact `normalized` là gợi ý người ta nối mã vào một con số chưa ai duyệt, và lần
+    sau chính `constant_guard` sẽ chặn đúng dòng ta vừa bảo họ viết.
+    """
+    with store.open_store(store.store_path(root)) as c:
+        rows = c.execute(
+            "SELECT id, subject, predicate, value FROM fact"
+            " WHERE status IN ('reviewed','verified') ORDER BY id").fetchall()
+    return [(r[0], r[1], r[2], json.loads(r[3]) if r[3] else None) for r in rows]
