@@ -14,7 +14,7 @@ cho thấy đúng chuyện ấy đang xảy ra.
 
 ## 1. Một dòng
 
-**Chín trên mười trục đã trên 60%.** 197/238 năng lực (83%), 47/57 phương thức JSON-RPC (82%),
+**Chín trên mười trục đã trên 60%.** 204/238 năng lực (86%), 50/57 phương thức JSON-RPC (88%),
 11/15 công cụ MCP (73%). Trục thấp nhất là mã kiểm thử TC (61%) và quy tắc chính sách (80%) —
 và cả hai thấp vì cùng một lý do: **phần cần board thật chưa kiểm được.**
 
@@ -30,7 +30,7 @@ ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy �
 
 | # | Trục thiết kế | Spec mô tả | Mã đạt | % | Nhận xét |
 |---|---|---|---|---|---|
-| 1 | **Năng lực** (CDS-12) | 238 | **197** | **83%** | 41 còn lại đều chờ vật ở ngoài |
+| 1 | **Năng lực** (CDS-12) | 238 | **204** | **86%** | 34 còn lại: 29 chờ board, 5 chờ mô hình thị giác |
 | 2 | **Thực thể dữ liệu** (DDD-14 §2) | 27 | **27** | **100%** | migration 0001–0007 phủ trọn |
 | 3 | **Schema JSON** (`data/json/`) | 27 | **27** | **100%** | khớp 1–1 với thực thể |
 | 4 | **Kiểu sự kiện ledger** (API-15 §5) | 26 | **23** | 88% | thiếu `autonomy.change`, `discover.result`, `gate.decision` |
@@ -39,13 +39,14 @@ ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy �
 | 7 | **Vai trò mô hình** (SDD §6) | 9 | **8** | 89% | thiếu `cartographer` — cần thị giác |
 | 8 | **Mã kiểm thử TC** (STP-05) | 72 | **44** | 61% | 28 mã chưa xuất hiện trong test nào |
 | 9 | **Công cụ MCP** (API-15) | 15 | **11** | 73% | 4 cái thiếu đều là `target.*`/`discover.*` — chờ board |
-| 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **47** | 82% | 10 thiếu: 7 chờ board, 3 chờ hàng đợi chạy nền |
+| 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **50** | 88% | **7 thiếu, cả 7 là `serial.*`/`discover.*` — chỉ còn phần cứng** |
 
 Ngoài mười trục trên, ba trục phụ:
 
 | Trục | Spec | Mã | Ghi chú |
 |---|---|---|---|
 | Manifest ISA (TGT-19 §2) | 6 họ | **2** (`armv7e-m`, `avr8`) | 4 còn lại là mốc M5, quyết định 07/09 |
+| Registry (PKG-22) | kho từ xa | **thư mục cục bộ** | `EIDE_REGISTRY`; định dạng `.hkp` và chữ ký là thật — xem [DEV-091](DEVIATIONS.md) |
 | Dàn ý tài liệu (`doc/outlines.json`) | 6 loại | **6** | `doc.generate` đọc động từ spec, không chép tay |
 | Màn hình UI (UXD-13, 23 màn) | 23 | **1** | panel EIDEKit 1474 dòng — xem §5 |
 

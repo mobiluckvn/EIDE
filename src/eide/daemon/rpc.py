@@ -6,8 +6,11 @@ project.list. Tên/tham số/kết quả bám openrpc.json; test_specs_consisten
 from __future__ import annotations
 
 import json
+import secrets
+import threading
 from collections.abc import Callable
 from dataclasses import asdict
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, TextIO
 
@@ -48,6 +51,24 @@ SU_KIEN: dict[str, str] = {
     "error": "event.notice",
 }
 
+# Năng lực NẶNG — `caps.invoke` trả `job_id` thay vì chờ (API-15: "tool nặng trả job_id trong
+# result"). Danh sách theo đúng năm nhóm mà `job.status` kể tên: build, flash, extract, render,
+# install.
+#
+# Ranh giới "nặng" đo bằng THỜI GIAN NGƯỜI PHẢI CHỜ, không bằng độ phức tạp: `code.build` gọi
+# cmake mất vài chục giây, `env.install` tải vài trăm MB, `extract.svd` phân tích một tệp XML
+# 5 MB. Một panel treo trong ngần ấy thời gian là một panel người dùng nghĩ là đã chết.
+CAP_NANG: frozenset[str] = frozenset({
+    "code.build", "code.test_host", "code.static",
+    "env.install", "env.install_pack", "env.sandbox",
+    "extract.svd", "extract.atdf", "extract.pdf_register_map", "extract.pdf_pinout",
+    "extract.pdf_errata", "extract.pdf_electrical",
+    "diagram.render", "view.export_map", "report.export",
+    "sim.run", "sim.sweep", "sim.build_platform",
+    "registry.seed", "registry.pull",
+    "target.flash", "target.erase_fuse", "discover.ports", "discover.bus_scan",
+})
+
 # Tên RPC → id năng lực. Sáu cái lệch tên, và lệch có lý do: tên RPC ngắn cho plugin gõ
 # (`view.coverage`), tên năng lực nói rõ nó trả cái gì (`view.coverage_map`). Bảng này là chỗ
 # DUY NHẤT giữ ánh xạ ấy — hai chỗ thì một chỗ sẽ quên khi đổi tên.
@@ -80,6 +101,9 @@ class Daemon:
         self.phat = phat
         if phat is not None:
             self.ledger.theo_doi(self._tu_so_cai)
+        # Việc chạy nền. Khóa vì `job.status` đọc từ luồng RPC còn luồng việc thì ghi.
+        self._jobs: dict[str, dict[str, Any]] = {}
+        self._khoa = threading.Lock()
         self.methods: dict[str, Callable[[dict[str, Any]], Any]] = {
             "plane.hello": self.hello, "caps.list": self.caps_list, "caps.describe": self.caps_describe,
             "caps.invoke": self.caps_invoke, "queue.list": self.queue_list, "autonomy.get": self.autonomy_get,
@@ -96,7 +120,88 @@ class Daemon:
             "chat.send": self.chat_send, "chat.answer": self.chat_answer,
             "chat.history": self.chat_history, "debug.ask": self.debug_ask,
             "log.register": self.log_register,
+            "job.status": self.job_status, "job.cancel": self.job_cancel,
         }
+
+    # ---- việc chạy nền (API-15: "tool nặng trả job_id trong result")
+
+    def _chay_nen(self, cap_id: str, args: dict[str, Any]) -> dict[str, Any]:
+        """Khởi động một việc nặng và trả `job_id` NGAY.
+
+        Luồng riêng chứ không tiến trình riêng: các năng lực nặng ở đây đều dành phần lớn thời
+        gian CHỜ một tiến trình con (`cmake`, `qemu`, `brew`) hoặc chờ I/O, nên GIL không chắn
+        đường. Tiến trình riêng thì phải tuần tự hoá `Context` và mở một store thứ hai — đắt hơn
+        nhiều mà không nhanh hơn cho đúng loại việc này.
+        """
+        jid = "job_" + secrets.token_hex(6)
+        with self._khoa:
+            self._jobs[jid] = {"state": "running", "progress": 0, "log_tail": [],
+                               "cap": cap_id, "result": None, "cancel": False,
+                               "at": datetime.now(UTC).isoformat()}
+
+        def chay() -> None:
+            try:
+                run = self.router.invoke(cap_id, args, self.ctx)
+                with self._khoa:
+                    j = self._jobs[jid]
+                    if j["cancel"]:
+                        j["state"] = "cancelled"
+                    else:
+                        j["state"] = "done" if run.status == "done" else run.status
+                        j["result"] = asdict(run)
+                        j["progress"] = 100
+            except Exception as e:  # noqa: BLE001 — một việc nền hỏng KHÔNG được giết daemon
+                with self._khoa:
+                    self._jobs[jid].update(state="failed",
+                                           log_tail=[f"{type(e).__name__}: {e}"[:400]])
+            finally:
+                self._bao_job(jid)
+
+        threading.Thread(target=chay, name=f"eide-{jid}", daemon=True).start()
+        self._bao_job(jid)
+        return {"status": "running", "job_id": jid, "cap": cap_id}
+
+    def _bao_job(self, jid: str) -> None:
+        if self.phat is None:
+            return
+        with self._khoa:
+            j = dict(self._jobs.get(jid) or {})
+        self.phat("event.job.progress", {"job_id": jid, "pct": j.get("progress", 0),
+                                         "log_tail": j.get("log_tail") or [],
+                                         "state": j.get("state")})
+
+    def job_status(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{job_id}` → `{state, progress, log_tail[], result?}`."""
+        with self._khoa:
+            j = self._jobs.get(p["job_id"])
+            if j is None:
+                raise EideError("E2000", f"Không có việc `{p['job_id']}`",
+                                exists=sorted(self._jobs), candidates=[], missing=[p["job_id"]])
+            return {"state": j["state"], "progress": j["progress"],
+                    "log_tail": list(j["log_tail"]),
+                    **({"result": j["result"]} if j["result"] is not None else {})}
+
+    def job_cancel(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{job_id}` → trạng thái sau khi xin hủy.
+
+        **Hủy là HỢP TÁC, không phải cưỡng chế** — và nói thẳng điều đó quan trọng hơn là giả vờ
+        ngược lại. Python không giết an toàn được một luồng đang chạy, còn giết tiến trình con
+        giữa chừng thì để lại một thư mục `build/` nửa vời mà lần dựng sau tưởng là hợp lệ. Cờ
+        `cancel` được đặt; việc đang chạy vẫn chạy hết, nhưng KẾT QUẢ bị bỏ và trạng thái là
+        `cancelled`.
+
+        Việc đã xong thì không hủy được nữa — trả nguyên trạng thái, không giả vờ đã hủy.
+        """
+        with self._khoa:
+            j = self._jobs.get(p["job_id"])
+            if j is None:
+                raise EideError("E2000", f"Không có việc `{p['job_id']}`",
+                                exists=sorted(self._jobs), candidates=[], missing=[p["job_id"]])
+            if j["state"] == "running":
+                j["cancel"] = True
+                j["log_tail"] = [*j["log_tail"], "đã xin hủy — việc đang chạy sẽ chạy hết, "
+                                                 "kết quả bị bỏ"]
+        return self.job_status(p)
 
     # ---- ba sự kiện KHÔNG suy được từ sổ cái
 
@@ -366,6 +471,14 @@ class Daemon:
         return get_registry().describe(p["id"])
 
     def caps_invoke(self, p: dict[str, Any]) -> dict[str, Any]:
+        """Đường gọi duy nhất. Năng lực NẶNG trả `job_id` thay vì chờ (API-15 §1).
+
+        Chỉ chạy nền khi daemon có kênh đẩy: không có `phat` thì panel không nghe được
+        `event.job.progress`, và trả một `job_id` mà người gọi phải tự hỏi vòng là tệ hơn chờ.
+        CLI và test gọi `handle()` trực tiếp vì thế vẫn đồng bộ như cũ.
+        """
+        if p["id"] in CAP_NANG and self.phat is not None:
+            return self._chay_nen(p["id"], p.get("params", {}))
         run = self.router.invoke(p["id"], p.get("params", {}), self.ctx, p.get("features"))
         return asdict(run)
 

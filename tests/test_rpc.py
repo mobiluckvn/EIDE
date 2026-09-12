@@ -286,3 +286,84 @@ def test_ba_su_kien_phai_sinh_tu_KET_QUA_deu_co_trong_spec():
         (spec_dir() / "api" / "openrpc.json").read_text(encoding="utf-8"))["methods"]}
     for t in ("event.doc.stale", "event.diagram.stale", "event.queue.changed"):
         assert t in spec
+
+
+# ---------- việc chạy nền (API-15: "tool nặng trả job_id trong result")
+
+def test_nang_luc_NANG_tra_job_id_thay_vi_cho(du_an_rpc, monkeypatch):
+    """Một panel treo vài chục giây là một panel người dùng nghĩ là đã chết."""
+    import time
+
+    d, root = du_an_rpc
+    thu = []
+    d.phat = lambda ten, p: thu.append((ten, p))
+    (root / "a.log").write_text("INFO x\n", encoding="utf-8")
+
+    import eide.daemon.rpc as m
+    monkeypatch.setattr(m, "CAP_NANG", frozenset({"debug.log_stats"}))
+    r = _goi(d, "caps.invoke", {"id": "debug.log_stats", "params": {"file": "a.log"}})["result"]
+    assert r["status"] == "running" and r["job_id"].startswith("job_")
+
+    for _ in range(100):
+        st = _goi(d, "job.status", {"job_id": r["job_id"]})["result"]
+        if st["state"] != "running":
+            break
+        time.sleep(0.02)
+    assert st["state"] == "done" and st["progress"] == 100
+    assert any(t == "event.job.progress" for t, _ in thu)
+
+
+def test_KHONG_co_kenh_day_thi_van_dong_bo(du_an_rpc, monkeypatch):
+    """Trả một `job_id` mà người gọi phải tự hỏi vòng là tệ hơn chờ. CLI và test gọi `handle()`
+    trực tiếp vì thế vẫn đồng bộ như cũ."""
+    import eide.daemon.rpc as m
+
+    d, root = du_an_rpc
+    (root / "b.log").write_text("INFO x\n", encoding="utf-8")
+    monkeypatch.setattr(m, "CAP_NANG", frozenset({"debug.log_stats"}))
+    assert d.phat is None
+    r = _goi(d, "caps.invoke", {"id": "debug.log_stats", "params": {"file": "b.log"}})["result"]
+    assert "job_id" not in r and r["status"] == "done"
+
+
+def test_huy_la_HOP_TAC_va_noi_thang_the(du_an_rpc, monkeypatch):
+    """Python không giết an toàn được một luồng đang chạy, còn giết tiến trình con giữa chừng
+    thì để lại một `build/` nửa vời mà lần dựng sau tưởng là hợp lệ. Nói thẳng quan trọng hơn
+    giả vờ ngược lại."""
+
+    d, _ = du_an_rpc
+    d.phat = lambda ten, p: None
+    with d._khoa:
+        d._jobs["job_test01"] = {"state": "running", "progress": 0, "log_tail": [],
+                                 "cap": "code.build", "result": None, "cancel": False,
+                                 "at": "2026-09-12T00:00:00Z"}
+    st = _goi(d, "job.cancel", {"job_id": "job_test01"})["result"]
+    assert st["state"] == "running", "vẫn đang chạy — hủy là xin, không phải giết"
+    assert any("xin hủy" in x for x in st["log_tail"])
+
+
+def test_viec_DA_XONG_thi_khong_gia_vo_da_huy(du_an_rpc):
+    d, _ = du_an_rpc
+    d.phat = lambda ten, p: None
+    with d._khoa:
+        d._jobs["job_test02"] = {"state": "done", "progress": 100, "log_tail": [],
+                                 "cap": "x", "result": {"ok": 1}, "cancel": False,
+                                 "at": "2026-09-12T00:00:00Z"}
+    assert _goi(d, "job.cancel", {"job_id": "job_test02"})["result"]["state"] == "done"
+
+
+def test_job_khong_ton_tai_thi_E2000(du_an_rpc):
+    d, _ = du_an_rpc
+    r = _goi(d, "job.status", {"job_id": "job_khongco"})
+    assert r["error"]["data"]["eide_code"] == "E2000"
+
+
+def test_moi_cap_NANG_deu_la_nang_luc_co_that():
+    """Một id gõ sai trong `CAP_NANG` thì năng lực ấy lặng lẽ chạy đồng bộ mãi mãi — và không
+    ai thấy, vì nó vẫn trả kết quả đúng."""
+    from eide.daemon.rpc import CAP_NANG
+    from eide_core.registry import get_registry
+
+    reg = get_registry()
+    la = [c for c in CAP_NANG if c not in reg]
+    assert not la, la
