@@ -23,6 +23,24 @@ from eide_core.undo import UndoService
 API_VERSION = "1.2"
 
 
+# Tên RPC → id năng lực. Sáu cái lệch tên, và lệch có lý do: tên RPC ngắn cho plugin gõ
+# (`view.coverage`), tên năng lực nói rõ nó trả cái gì (`view.coverage_map`). Bảng này là chỗ
+# DUY NHẤT giữ ánh xạ ấy — hai chỗ thì một chỗ sẽ quên khi đổi tên.
+ALIAS: dict[str, str] = {
+    "project.open": "project.open",
+    "view.kg_map": "view.kg_map",
+    "view.focus": "view.kg_focus",
+    "view.provenance": "view.provenance",
+    "view.coverage": "view.coverage_map",
+    "view.impact": "view.impact_map",
+    "view.timeline": "view.timeline",
+    "view.rag_ask": "view.rag_ask",
+    "view.rag_trace": "view.rag_trace",
+    "passport.query": "passport.query",
+    "passport.browse": "passport.list",
+    "log.stats": "debug.log_stats",
+}
+
 class Daemon:
     def __init__(self, project: Path | None = None) -> None:
         self.gate = PolicyGate()
@@ -34,7 +52,199 @@ class Daemon:
             "caps.invoke": self.caps_invoke, "queue.list": self.queue_list, "autonomy.get": self.autonomy_get,
             "autonomy.set": self.autonomy_set, "stop": self.stop, "project.list": self.project_list,
             "gate.decide": self.gate_decide, "undo.list": self.undo_list, "undo.apply": self.undo_apply,
+            # ---- bề mặt panel (UXD-13): API-15 gọi phần lớn nhóm này là "alias caps.invoke để
+            # plugin gọi ngắn". Alias chứ không hiện thực lại: mỗi phương thức đi qua ĐÚNG
+            # `Router.invoke` như mọi lời gọi khác, nên cùng cổng chính sách, cùng nhật ký, cùng
+            # hoàn tác. Một đường tắt gọi thẳng handler sẽ nhanh hơn và sẽ bỏ qua cả ba thứ ấy.
+            **{ten: self._alias(cap) for ten, cap in ALIAS.items()},
+            "project.close": self.project_close,
+            "diagram.open": self.diagram_open, "diagram.save": self.diagram_save,
+            "doc.open": self.doc_open, "hex.resolve": self.hex_resolve,
+            "chat.send": self.chat_send, "chat.answer": self.chat_answer,
+            "chat.history": self.chat_history, "debug.ask": self.debug_ask,
+            "log.register": self.log_register,
         }
+
+    # ---- bề mặt panel
+
+    def _alias(self, cap_id: str):
+        """Một phương thức RPC gọi thẳng một năng lực, qua Router.
+
+        Trả `result` chứ không trả cả `CapabilityRun` như `caps.invoke`: panel gọi `view.kg_map`
+        muốn một đồ thị để vẽ, không muốn một bản ghi lượt chạy. Nhưng lượt chạy VẪN được ghi —
+        chỉ là không trả về. Trạng thái `pending` thì trả nguyên bản ghi, vì lúc ấy thứ panel
+        cần đúng là `run_id` để hiện thẻ câu hỏi.
+        """
+        def goi(p: dict[str, Any]) -> dict[str, Any]:
+            run = self.router.invoke(cap_id, p.get("params", p) or {}, self.ctx)
+            if run.status != "done":
+                return asdict(run)
+            return run.result or {}
+        return goi
+
+    def project_close(self, p: dict[str, Any]) -> dict[str, Any]:
+        """API-15: `project.close` — đóng SessionMemory, KHÔNG đóng dự án.
+
+        Không có năng lực `project.close` trong CDS-12, và đó là đúng: đóng một phiên là việc
+        của vòng đời tiến trình, không phải một hành động lên tri thức. Nên nó sống ở đây.
+        """
+        from eide_core.memory import SessionMemory
+        if not self.ctx.project_dir:
+            return {}
+        phien = SessionMemory.gan_nhat(Path(self.ctx.project_dir))
+        if phien is None:
+            return {}
+        phien.dong(ledger=self.ledger)
+        return {"closed": True}
+
+    def diagram_open(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{src, lang}` → `{id, lint[]}` — GEditor vẽ, EIDE soát.
+
+        Ranh giới ấy là của UXD-13: render chạy trong editor (nhanh, không rời máy), còn phán
+        xét "lược đồ này có nút mồ côi không" thì cần tri thức của dự án.
+        """
+        run = self.router.invoke("diagram.lint",
+                                 {"src": p.get("src", ""), "lang": p.get("lang", "mermaid")},
+                                 self.ctx)
+        kq = run.result or {}
+        return {"id": p.get("id") or kq.get("id"), "lint": kq.get("issues", kq.get("lint", []))}
+
+    def diagram_save(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{id, src}` → `{lint[], sync_diff?}`.
+
+        `sync_diff` chỉ có khi lược đồ đã lưu trong store — `diagram.sync` so nó với mã. Lược đồ
+        mới gõ trong editor chưa có id thì không so được với gì, và nói ra bằng cách vắng mặt
+        trường ấy thật hơn là trả một diff rỗng trông như "không lệch".
+        """
+        lint = self.diagram_open(p).get("lint", [])
+        ra: dict[str, Any] = {"lint": lint}
+        if p.get("id"):
+            run = self.router.invoke("diagram.sync",
+                                     {"diagram_id": p["id"], "direction": "check"}, self.ctx)
+            if run.status == "done" and run.result:
+                ra["sync_diff"] = run.result.get("diff")
+        return ra
+
+    def doc_open(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{path}` → `{sections[], stale[]}` — panel mở tài liệu thì thấy ngay mục nào lỗi thời."""
+        import json as _json
+        import sqlite3 as _sq
+
+        from eide_core import store as _store
+        if not self.ctx.project_dir:
+            return {"sections": [], "stale": []}
+        db = _store.store_path(self.ctx.project_dir)
+        if not db.exists():
+            return {"sections": [], "stale": []}
+        duong = str(p.get("path", ""))
+        with _sq.connect(db) as c:
+            r = c.execute("SELECT sections, stale_sections FROM doc_artifact"
+                          " WHERE path = ? OR id = ?", (duong, duong)).fetchone()
+        if not r:
+            return {"sections": [], "stale": []}
+        return {"sections": _json.loads(r[0] or "[]"), "stale": _json.loads(r[1] or "[]")}
+
+    def hex_resolve(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{address}` → `{subject, facts[]}` — khung nhị phân của GEditor hỏi "0x40005400 là gì".
+
+        Đây là năng lực nhỏ nhất mà cũng đúng tinh thần sản phẩm nhất: một con số trong khung
+        hex trả lời được câu "ai nói thế, và ở trang nào". Tra theo GIÁ TRỊ đã chuẩn hoá, nên
+        `0x40005400`, `1073763328` và `0x40005400u` ra cùng một kết quả.
+        """
+        import json as _json
+        import sqlite3 as _sq
+
+        from eide.caps.code import _khop_gia_tri
+        from eide_core import store as _store
+        if not self.ctx.project_dir:
+            return {"subject": None, "facts": []}
+        db = _store.store_path(self.ctx.project_dir)
+        if not db.exists():
+            return {"subject": None, "facts": []}
+        dia_chi = str(p.get("address", ""))
+        ra = []
+        with _sq.connect(db) as c:
+            for fid, subj, pred, val, st in c.execute(
+                    "SELECT id, subject, predicate, value, status FROM fact"
+                    " WHERE status IN ('reviewed','verified')").fetchall():
+                gt = _json.loads(val) if val else None
+                if _khop_gia_tri(dia_chi, gt):
+                    ra.append({"id": fid, "subject": subj, "predicate": pred,
+                               "value": gt, "status": st})
+        return {"subject": ra[0]["subject"] if ra else None, "facts": ra}
+
+    def chat_send(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{text}` → `{intent_id, run_id?}` — ô lệnh của UXD-13 U1.
+
+        Đi trọn đường DPS-09: hiểu ý → neo vào dự án → điền mặc định → dựng chuỗi. Không tắt
+        bước nào, vì mỗi bước có một cổng riêng: `chat.ground` là chỗ một lệnh nói về con chip
+        không có trong dự án bị chặn, và bỏ nó đi thì Orchestrator lập kế hoạch cho một phần
+        cứng tưởng tượng.
+
+        Trả `run_id` NGAY cả khi chuỗi còn đang chạy — hợp đồng ghi "kết quả đến qua sự kiện",
+        mà kênh sự kiện thì daemon chưa có (16 phương thức `event.*`, xem DOI-CHIEU §4). Cho tới
+        khi có, panel hỏi lại bằng `caps.invoke` hoặc `queue.list`; `run_id` là thứ nối hai đầu.
+        """
+        y = self.router.invoke("chat.parse_intent", {"text": p["text"]}, self.ctx)
+        if y.status != "done":
+            return asdict(y)
+        intent = (y.result or {}).get("intent") or {}
+        neo = self.router.invoke("chat.ground", {"intent": intent}, self.ctx)
+        grounded = (neo.result or {}).get("grounded", {}) if neo.status == "done" else {}
+        ra: dict[str, Any] = {"intent_id": (y.result or {}).get("intent_id") or intent.get("intent")}
+        chuoi = self.router.invoke("chat.orchestrate",
+                                   {"intent": intent, "grounded": grounded}, self.ctx)
+        if chuoi.status == "done" and chuoi.result:
+            ra["run_id"] = chuoi.result.get("run_id")
+        else:
+            ra["run"] = asdict(chuoi)
+        return ra
+
+    def chat_answer(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{question_id, option?, text?}` — thẻ câu hỏi gộp của UXD-13 U1.
+
+        Một câu hỏi gộp là một mục ASK đang chờ ở cổng, nên trả lời nó CHÍNH LÀ `gate.decide`.
+        Giữ hai tên vì hai chỗ người dùng đứng khác nhau — ô trò chuyện và hàng đợi — nhưng chỉ
+        một đường đi xuống, nếu không sẽ có hai sổ quyết định.
+        """
+        chon = str(p.get("option") or p.get("text") or "approve").lower()
+        quyet = "approve" if chon in ("approve", "duyệt", "có", "yes", "ok") else "reject"
+        run = self.router.quyet_dinh(p["question_id"], quyet, by="human",
+                                     note=str(p.get("text") or ""), ctx_goi_y=self.ctx)
+        return asdict(run)
+
+    def chat_history(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{limit?}` → `{turns[]}` từ `session.turns` (MEM-11 §2)."""
+        from eide_core.memory import SessionMemory
+        if not self.ctx.project_dir:
+            return {"turns": []}
+        phien = SessionMemory.gan_nhat(Path(self.ctx.project_dir))
+        if phien is None:
+            return {"turns": []}
+        luot = list(getattr(phien, "turns", []) or [])
+        n = int(p.get("limit") or 50)
+        return {"turns": luot[-n:]}
+
+    def debug_ask(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{path, range, question}` → `{answer, session_id}` — hỏi tại dòng trong khung log."""
+        run = self.router.invoke("debug.ask_at",
+                                 {"file": p["path"], "range": p.get("range") or {},
+                                  "question": p["question"]}, self.ctx)
+        if run.status != "done":
+            return asdict(run)
+        kq = run.result or {}
+        return {"answer": (kq.get("diagnosis") or {}).get("summary", ""),
+                "session_id": kq.get("session_id")}
+
+    def log_register(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{path}` → `{}` — GEditor báo nó đang mở tệp log nào.
+
+        Chỉ ghi nhận, không đọc tệp: hợp đồng ghi "GEditor tính stats native", nên phía Python
+        không nên mở một tệp 1 GB chỉ để biết nó tồn tại. Đăng ký là để `debug.ask` sau đó nhận
+        đường dẫn tương đối mà vẫn tra đúng tệp.
+        """
+        self._log_dang_mo = str(p.get("path", ""))
+        return {}
 
     # ---- phương thức
     def hello(self, p: dict[str, Any]) -> dict[str, Any]:

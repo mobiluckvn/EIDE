@@ -14,13 +14,15 @@ cho thấy đúng chuyện ấy đang xảy ra.
 
 ## 1. Một dòng
 
-**Trục năng lực đi trước rất xa các trục còn lại.** 197/238 năng lực (83%) nhưng chỉ 12/57
-phương thức JSON-RPC (21%) và 4/15 công cụ MCP (27%). Nói cách khác: **lõi tác tử gần xong, còn
-bề mặt để người và IDE nói chuyện với nó thì mới một phần năm.**
+**Chín trên mười trục đã trên 60%.** 197/238 năng lực (83%), 34/57 phương thức JSON-RPC (60%),
+11/15 công cụ MCP (73%). Trục thấp nhất là mã kiểm thử TC (61%) và quy tắc chính sách (80%) —
+và cả hai thấp vì cùng một lý do: **phần cần board thật chưa kiểm được.**
 
-Điều đó không phải sai sót ngẫu nhiên — nó là hệ quả trực tiếp của thứ tự làm việc đã chọn
-(năng lực trước, giao diện sau) và của quyết định 08/09 để phần cứng lại cuối. Nhưng nó cần
-được nói ra, vì đọc `TIEN-DO.md` một mình sẽ tưởng sản phẩm đã dùng được từ GEditor.
+Bản đầu của tệp này (sáng 12/09) ghi RPC 21% và MCP 27%. Cả hai con số ấy SAI, và cách chúng
+sai đáng ghi lại: phép đo grep tên phương thức trong mã nguồn, mà `mcp/server.py` ánh xạ
+**generic** (`ten.replace("_", ".", 1)`) nên không tên tool nào xuất hiện nguyên văn. Đo lại
+bằng cách GỌI `dung_tool()` cho 11, không phải 4. Bài học: *đếm bằng grep thì đo được cái viết
+ra, không đo được cái chạy.* Trục RPC thì đúng là 12 lúc ấy — và đã nâng lên 34 cùng ngày.
 
 ---
 
@@ -36,8 +38,8 @@ bề mặt để người và IDE nói chuyện với nó thì mới một phầ
 | 6 | **Quy tắc chính sách** (POL-17 §2) | 49 | **39** | 80% | 10 quy tắc chưa tình huống nào chạm |
 | 7 | **Vai trò mô hình** (SDD §6) | 9 | **8** | 89% | thiếu `cartographer` — cần thị giác |
 | 8 | **Mã kiểm thử TC** (STP-05) | 72 | **44** | 61% | 28 mã chưa xuất hiện trong test nào |
-| 9 | **Công cụ MCP** (API-15) | 15 | **4** | 27% | 11 cái còn lại: 4 chờ phần cứng, 7 chỉ thiếu lớp vỏ |
-| 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **12** | **21%** | **trục tụt xa nhất** — xem §4 |
+| 9 | **Công cụ MCP** (API-15) | 15 | **11** | 73% | 4 cái thiếu đều là `target.*`/`discover.*` — chờ board |
+| 10 | **Phương thức JSON-RPC** (API-15 §1) | 57 | **34** | 60% | 23 thiếu = 16 `event.*` (chưa có kênh đẩy) + 7 chờ board |
 
 Ngoài mười trục trên, ba trục phụ:
 
@@ -105,48 +107,48 @@ hành trên một thao tác thật** — chúng mới chỉ chạy qua 48 tình 
 
 ---
 
-## 4. Trục 10 — khoảng cách lớn nhất giữa thiết kế và mã
+## 4. Trục 10 — JSON-RPC, từ 12 lên 34 trong một ngày
 
-**57 phương thức trong `openrpc.json`, daemon phục vụ 12.**
+Sáng 12/09 daemon phục vụ **12/57**. Chiều cùng ngày: **34/57**. 22 phương thức thêm vào đều là
+**lớp vỏ mỏng trên năng lực đã có** — không một dòng logic nghiệp vụ mới.
 
 ```
-CÓ (12):  plane.hello · project.list · caps.list · caps.describe · caps.invoke
-          queue.list · gate.decide · undo.list · undo.apply · autonomy.get
-          autonomy.set · stop
+Alias qua Router (12):  project.open · view.kg_map · view.focus · view.provenance
+                        view.coverage · view.impact · view.timeline · view.rag_ask
+                        view.rag_trace · passport.query · passport.browse · log.stats
+Có logic riêng (10):    project.close · diagram.open · diagram.save · doc.open
+                        hex.resolve · chat.send · chat.answer · chat.history
+                        debug.ask · log.register
 ```
 
-45 phương thức còn thiếu chia ba nhóm:
+**Alias đi QUA `Router.invoke`, không gọi thẳng handler.** Đường tắt sẽ nhanh hơn và sẽ bỏ qua
+cổng chính sách, nhật ký, và cửa sổ hoàn tác — cả ba. Test
+`test_alias_view_di_QUA_router_nen_co_ghi_nhat_ky` canh đúng điều đó.
 
-| Nhóm | Số | Ví dụ | Vì sao thiếu |
-|---|---|---|---|
-| **Sự kiện đẩy** (`event.*`) | 16 | `event.run.progress`, `event.gate.opened`, `event.queue.changed` | Daemon hiện là stdio request/response; chưa có kênh đẩy |
-| **Bề mặt panel** | 19 | `view.*` (8), `passport.query`, `doc.open`, `diagram.open`, `log.stats`, `hex.resolve` | **Năng lực ĐÃ CÓ, chỉ thiếu lớp vỏ RPC** |
-| **Cần phần cứng** | 10 | `serial.*` (4), `discover.status`, `job.*` | Chờ board |
+### 23 phương thức còn thiếu
 
-**Nhóm thứ hai là phần đáng làm nhất và rẻ nhất.** `view.rag_ask`, `passport.query`,
-`log.stats` đều đã hiện thực đầy đủ ở tầng năng lực và có test; thiếu đúng một lớp vỏ mỏng để
-panel gọi được. Mười chín phương thức ấy là khoảng cách giữa "lõi chạy tốt" và "dùng được từ
-GEditor".
-
-> **Bất đối xứng đáng chú ý:** `scripts/gen_rpc_swift.py` sinh `EideRpcGenerated.swift` từ
-> `openrpc.json` với **đủ cả 57 phương thức và 29 mã lỗi** — và `make check` xác nhận nó khớp.
-> Nghĩa là phía Swift đã sẵn sàng gọi 57 phương thức mà phía Python mới trả lời 12. Cổng
-> `check-gen` không bắt được điều này vì nó so *bản sinh với spec*, không so *daemon với spec*.
-
-### 4.1 Công cụ MCP — cùng hình dạng
-
-`mcp_tools.json` khai 15 công cụ; `src/eide/mcp/server.py` phục vụ 4 (`caps_list`,
-`caps_describe`, `caps_invoke`, `chat_command`).
-
-| Thiếu | Số | Chặn bởi |
+| Nhóm | Số | Vì sao |
 |---|---|---|
-| `passport_query`, `kg_conflicts`, `kg_impact`, `kg_request`, `code_review`, `report_export`, `view_rag_ask` | **7** | **không gì cả** — cả bảy năng lực tương ứng đã hiện thực và có test |
-| `target_flash`, `target_serial`, `target_probe_read`, `discover_ports` | 4 | board |
+| **Sự kiện đẩy** (`event.*`) | 16 | Daemon là stdio request/response; chưa có kênh đẩy. Đây là việc HẠ TẦNG, không phải việc năng lực |
+| `serial.*` · `discover.status` | 5 | Chờ board |
+| `job.status` · `job.cancel` | 2 | Chờ hàng đợi chạy nền — hôm nay mọi lời gọi là đồng bộ |
 
-Bảy công cụ nhóm đầu là đường ngắn nhất để một tác tử ngoài (Claude Code, Cursor) dùng được
-tầng tri thức của EIDE — tra hộ chiếu, hỏi RAG có trích dẫn, xem xung đột tri thức. Hôm nay
-tác tử ngoài gọi được `caps_invoke` nên vẫn chạm tới chúng, chỉ là qua một lớp gián tiếp không
-có mô tả công cụ riêng, tức mô hình phải tự biết tên năng lực mới gọi đúng.
+> **Bất đối xứng vẫn còn, chỉ nhỏ đi:** `EideRpcGenerated.swift` có đủ 57 phương thức và
+> `make check` xác nhận nó khớp spec, trong khi daemon trả lời 34. Cổng `check-gen` không bắt
+> được vì nó so *bản sinh với spec*, không so *daemon với spec*. Từ 12/09 có
+> `test_moi_phuong_thuc_dang_ky_deu_CO_trong_spec` canh chiều ngược lại (daemon không bịa ra
+> phương thức ngoài spec), nhưng chiều "spec có mà daemon thiếu" vẫn là một con số đọc bằng tay.
+
+### 4.1 Công cụ MCP — 11/15
+
+`mcp_tools.json` khai 15; server phơi ra **11**. Bốn cái thiếu — `target_flash`,
+`target_probe_read`, `target_serial`, `discover_ports` — đều chờ board, và server **cố ý bỏ
+chúng**: một tool trỏ tới năng lực chưa hiện thực sẽ trả E1001 cho mọi lời gọi nhưng vẫn ăn một
+suất trong trần 20 tool và vẫn chiếm chỗ trong phần mô tả mà mô hình phải đọc. `bo_qua()` cho
+biết cái nào bị bỏ, để không ai tưởng danh sách đã đủ.
+
+Nghĩa là **một tác tử ngoài (Claude Code, Cursor) hôm nay đã dùng được toàn bộ tầng tri thức của
+EIDE**: tra hộ chiếu, xem xung đột, hỏi RAG có trích dẫn, soát mã, xuất báo cáo.
 
 ---
 
@@ -231,8 +233,10 @@ Ba thứ, cả ba đã ghi DEVIATIONS:
 1. **Tầng tri thức và tầng tác tử: xong.** M0 100%, M1 99%, 17/27 nhóm năng lực đủ, hai chuỗi
    chuẩn trọn vẹn, và cả ba mắt xích trung tâm (`code.build`, `sim.run`, `constant_guard`) đã
    chạy THẬT chứ không chỉ xanh trong test.
-2. **Tầng giao tiếp: mới một phần năm.** 12/57 RPC, 4/15 MCP, 1/23 màn hình. Mười chín phương
-   thức và bảy công cụ MCP trong số thiếu chỉ cần một lớp vỏ mỏng trên năng lực đã có — đây là việc rẻ nhất còn
+2. **Tầng giao tiếp: đã dùng được, trừ kênh sự kiện.** 34/57 RPC (22 cái thêm trong ngày 12/09),
+   11/15 MCP, 1/23 màn hình. Thứ còn thiếu đáng kể duy nhất là **16 phương thức `event.*`** —
+   một việc hạ tầng (kênh đẩy), không phải việc năng lực. Tác tử ngoài qua MCP thì đã dùng được
+   trọn tầng tri thức — đây là việc rẻ nhất còn
    lại và là việc duy nhất còn lại **không cần vật gì ở ngoài**.
 3. **Tầng phần cứng: chưa bắt đầu, đúng kế hoạch.** 29 năng lực, 5/6 lớp R3, 10 quy tắc cổng và
    28 mã TC đều nằm chờ một bo mạch. Đây không phải nợ — đây là quyết định 08/09 — nhưng nó có

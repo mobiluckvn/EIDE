@@ -18,9 +18,13 @@ def test_create_structure_and_ledger(tmp_path, workspace):
     for name in ["store", "session", "index", "docs", "diagrams", "PROGRESS.md", "FEATURES.json", "constraints.yaml", "autonomy.yaml", "models.yaml", ".gitignore"]:
         assert (e / name).exists(), name
     kinds = [x["kind"] for x in r.ledger.records()]
+    # `gate.decision` nằm GIỮA start và finish: mọi lời gọi đều đi qua cổng, và từ 12/09/2026
+    # quyết định ấy vào chuỗi băm chứ không chỉ vào bảng `decision_log`. Điều đó là bắt buộc
+    # chứ không phải thêm cho đủ: `store.BANG_VAN_HANH` loại `decision_log` khỏi niêm phong với
+    # lý do "mọi quyết định cũng vào nhật ký `gate.decision`" — mà tới hôm ấy câu này chưa đúng.
     # `undo.register` đi sau `cap.run.finish`: project.create có undo=delete_created_files nên
     # Router đưa nó vào cửa sổ hoàn tác ngay (POL-17 §5, xem test_policy_undo_escalate.py).
-    assert kinds == ["cap.run.start", "cap.run.finish", "undo.register"]
+    assert kinds == ["cap.run.start", "gate.decision", "cap.run.finish", "undo.register"]
     assert run.undo == "delete_created_files"
 
 

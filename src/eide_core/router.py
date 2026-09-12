@@ -346,17 +346,37 @@ class Router:
 
     def _ghi_decision_log(self, run_id: str, cap_id: str, reg: Any, d: Any,
                           ctx: Context, features: dict[str, Any]) -> None:
-        """Ghi một dòng `decision_log` — DDD-14 §2.
+        """Ghi một quyết định cổng vào CẢ HAI nơi — nhật ký `gate.decision` và bảng
+        `decision_log` (API-15 §5; DDD-14 §2).
 
-        Nhật ký sự kiện đã có `gate.decision`, nhưng nó CHỈ THÊM: hai cột `human_answer` và
-        `undone_at` là những thứ được điền SAU, khi người trả lời một mục ASK hoặc hoàn tác một
-        việc đã APPROVE. Một bản ghi chỉ-thêm không mang được cập nhật ấy, nên DDD-14 dựng riêng
-        một bảng — và POLICY-06 học ngưỡng đọc đúng hai cột đó ("tỷ lệ người APPROVE khi máy
-        ASK", "tỷ lệ người UNDO khi máy APPROVE", POL-17 §7).
+        **Hai nơi, và cả hai đều cần.** Nhật ký CHỈ THÊM và là chuỗi băm nối tiếp, nên nó chứng
+        minh được rằng không quyết định nào bị xoá. Bảng thì sửa được, và phải sửa được: hai cột
+        `human_answer` và `undone_at` được điền SAU — khi người trả lời một mục ASK hoặc hoàn tác
+        một việc đã APPROVE — và POLICY-06 học ngưỡng đọc đúng hai cột đó (POL-17 §7).
 
-        Bảng nằm trong store của dự án, nên không có dự án thì không ghi. Không phải thiếu sót:
-        một quyết định ngoài dự án (ví dụ `project.create`) chưa có store nào để thuộc về.
+        **Vì sao phần nhật ký là bắt buộc chứ không phải trang trí.** `store.BANG_VAN_HANH` loại
+        `decision_log` khỏi niêm phong nội dung, và lý do ghi ngay trong `store.py` là *"mọi
+        quyết định cũng vào nhật ký `gate.decision`, và nhật ký là chuỗi băm nối tiếp — mạnh hơn
+        một niêm phong đơn"*. Tới 12/09/2026, câu ấy KHÔNG ĐÚNG: không chỗ nào phát sự kiện ấy.
+        Nghĩa là `decision_log` vừa nằm ngoài niêm, vừa không có trong nhật ký — **sửa bảng để
+        giấu một quyết định thì không cơ chế nào phát hiện**, đúng thứ mà lý do loại trừ kia hứa
+        là phát hiện được. Hai chú thích trong mã (ở đây và ở `store.py`) cùng khẳng định một cơ
+        chế chưa ai viết: lỗi im lặng số 12.
+
+        Phát nhật ký TRƯỚC khi ghi bảng, và không nuốt lỗi ở bước ấy: nếu chuỗi băm không nhận
+        được quyết định thì thà hỏng to còn hơn chạy tiếp với một sổ cái thiếu dòng.
+
+        Bảng nằm trong store của dự án, nên không có dự án thì không ghi BẢNG. Nhật ký thì vẫn
+        ghi — nó không thuộc về dự án nào, và một quyết định ngoài dự án (`project.create` chẳng
+        hạn) vẫn là một quyết định cần truy được.
         """
+        if self.ledger is not None:
+            self._log("gate.decision", {
+                "run_id": run_id, "gate": d.gate, "action_cap": cap_id,
+                "risk": reg.spec.risk_class, "decision": d.decision, "by": ctx.actor,
+                "rule": d.rule_id, "reason": d.reason,
+                "autonomy_level": ctx.autonomy or self.gate.config.get("autonomy", ""),
+            })
         if not ctx.project_dir:
             return
         db = store.store_path(ctx.project_dir)
