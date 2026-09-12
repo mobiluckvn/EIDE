@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 11/09/2026 (lần 21, đợt 3). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 12/09/2026 (lần 22). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,8 +12,24 @@
 
 ## 1. Một dòng
 
-**182/238 năng lực (76%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 giữ 80/99 (81%); M3 mở màn
-6/29. 1356 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13.**
+**197/238 năng lực (83%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 giữ 80/99 (81%); M3 lên
+19/29 (66%). 1414 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3:
+13/13.**
+
+**Phiên 12/09 đóng MỌI năng lực còn làm được trên máy này.** 15 năng lực trong một phiên —
+`debug.*` 6/6, `report.*` 4/4, `doc.*` 12/12, cộng `code.annotate`/`docs`/`refactor` và
+`diagram.sync`. Từ đây, **41 năng lực còn lại đều bị chặn bởi thứ không tồn tại ở đây**, không
+phải bởi thời gian:
+
+| Chặn bởi | Số | Nhóm |
+|---|---|---|
+| **Board thật** | 29 | `discover` 12 · `target` 9 · `bench` 3 · `measure` 3 · `passport` 2 |
+| **Mô hình thị giác** | 5 | `extract.ocr`/`image_*` 4 · `diagram.from_image` |
+| **Registry thật** | 6 | `registry.*` 4 · `search.registry`/`reference_projects` |
+| **Báo cáo HIL thật** | 1 | `sim.compare_hil` |
+
+Nói cách khác: phần mềm đã hết việc làm một mình. Mọi bước tiếp theo cần một vật ở ngoài —
+một bo mạch, một khoá mô hình có thị giác, hay một registry.
 
 **Mốc lớn nhất của ngày 11/09 nằm ở đợt 3: `code.build` dựng ra firmware THẬT.** Mắt xích trung
 tâm của luận điểm đề án — *sinh mã có nối về fact* — nay đã thi hành đầu-cuối: lệnh dựng đọc từ
@@ -57,8 +73,8 @@ chân**: nạp board, đo, gỡ lỗi trên phần cứng.
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
 | **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
 | M2 | 80/99 · 81% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
-| M3 | 6/29 · 21% | Mô phỏng và gỡ lỗi — `sim.*` xong, `debug.*` kế tiếp |
-| M4 | 0/9 | Registry chia sẻ, benchmark |
+| M3 | **19/29 · 66%** | Mô phỏng và gỡ lỗi — `sim.*` 6/6 và `debug.*` 6/6 đều xong |
+| M4 | 2/9 | Registry chia sẻ, benchmark |
 | M5 | 0/4 | ISA mở rộng (RISC-V, Xtensa, PIC) — xem [DEV-055](DEVIATIONS.md) |
 
 **M1 còn đúng 1 năng lực**: `passport.verify_on_board` (R3) — **cần board thật**, không mô
@@ -70,19 +86,16 @@ phỏng được phần "nạp firmware rồi đọc lại ID".
 
 *Số đo từ registry, không gõ tay (`eide spec`).*
 
-**Đủ (11 nhóm)** — `arch` 11/11 · `archive` 7/7 (gồm `ingest.*`) · `board` 5/5 · `chat` 8/8 ·
-`plan` 7/7 · `policy` 7/7 · `req` 8/8 · **`project` 9/9** · **`view` 13/13** · **`tool` 10/10** ·
-**`memory` 8/8** · **`kg` 9/9** · **`env` 7/7**
+**Đủ (17 nhóm)** — `arch` 11/11 · `archive` 7/7 · `board` 5/5 · `chat` 8/8 · `code` 16/16 · `debug` 6/6 · `doc` 12/12 · `env` 7/7 · `kg` 9/9 · `memory` 8/8 · `plan` 7/7 · `policy` 7/7 · `project` 9/9 · `report` 4/4 · `req` 8/8 · `tool` 10/10 · `view` 13/13
 
-**Gần đủ** — `diagram` 12/14 · `code` 13/16 · **`extract` 17/21** · `doc` 9/12 · `search` 7/9 ·
-`passport` 6/8 · **`sim` 6/7** (phần M3 đóng trọn; `compare_hil` là M4, cần báo cáo HIL thật)
+**Gần đủ** — `diagram` 13/14 (còn 1: mô hình thị giác) · `sim` 6/7 (còn 1: báo cáo HIL thật (M4)) · `extract` 17/21 (còn 4: mô hình thị giác) · `search` 7/9 (còn 2: registry thật (M4)) · `passport` 6/8 (còn 2: board thật)
 
-**Mới một phần** — `registry` 1/5 (M4) · `report` 2/4
+**Mới một phần** — `registry` 1/5 (registry thật (M4))
 
-**Chưa bắt đầu** — `discover` (12, M2) · `target` (9, M2) · `debug` (6, M3) · `bench` (3, M2) ·
-`measure` (3, M5). Tất cả đều cần **board thật** — đúng thứ tự chủ sản phẩm đã chốt 08/09.
-`debug.*` thì cần một engine mô phỏng chạy được, xem [DEV-086](DEVIATIONS.md).
+**Chưa bắt đầu** — `bench` (3, board thật) · `discover` (12, board thật) · `measure` (3, board thật) · `target` (9, board thật)
 
+Mọi nhóm chưa đủ đều chờ **một vật ở ngoài**, không chờ thời gian: bo mạch, khoá mô hình có
+thị giác, hay một registry. Đây là điểm khác biệt so với mọi lần cập nhật trước.
 ---
 
 ## 4. Năm chuỗi chuẩn — chỗ đứt
@@ -189,7 +202,7 @@ tối thiểu**, vì EIDE không sinh scaffold — `code.build` dựng theo `CMa
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1356** xanh, arm64 + x86_64 (`make check-py`) |
+| Test Python | **1414** xanh, arm64 + x86_64 (`make check-py`) |
 | Test Swift | **2699** xanh (`make check-swift`, nay nằm trong `make check` — WI-260). Trong đó **29** là EIDEKit, phần thuộc EIDE; còn lại là GEditor, ứng dụng chủ |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **1 engine mô phỏng** (`qemu-system-avr`) · **2 chuỗi công cụ ARM** (`arm-none-eabi-gcc` + `cmake`/`ninja`). Ba nhóm sau nằm trong `make check` và tự bỏ qua nếu máy không có công cụ |
 | Nghiệm thu Sprint 1 / 2 / 3 | 17/17 · 18/18 · **13/13** |

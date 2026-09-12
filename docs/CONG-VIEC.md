@@ -1,7 +1,13 @@
 # Danh sách công việc EIDE
 
-*Đo 11/09/2026 đợt 2 (lần 17) từ registry — không gõ tay. Còn **56/238** năng lực. Xem
-[`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
+*Đo 12/09/2026 (lần 18) từ registry — không gõ tay. Còn **41/238** năng lực, và **không mục
+nào trong số đó làm được trên máy này**. Xem [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng
+thái; tệp này trả lời **làm gì tiếp**.*
+
+> **Bước ngoặt của ngày 12/09: phần mềm đã hết việc làm một mình.** Trước hôm nay, danh sách
+> này luôn có ít nhất một việc chỉ cần thời gian. Từ hôm nay thì không: 41 năng lực còn lại
+> chia đúng bốn nhóm, và cả bốn chờ **một vật ở ngoài** — 29 chờ bo mạch, 5 chờ khoá mô hình
+> có thị giác, 6 chờ một registry, 1 chờ báo cáo HIL thật.
 
 Sắp theo **thứ tự nên làm**, không theo số hiệu. Nguyên tắc sắp xếp: cái gì mở khóa nhiều thứ
 nhất và kiểm được ngay thì làm trước; cái gì cần phần cứng để lại **cuối cùng** (quyết định của
@@ -124,7 +130,7 @@ test đối chứng hai chiều (`test_boards_KHONG_duoc_nap_khi_niem_vo`).
 | # | Việc | Trạng thái |
 |---|---|---|
 | ~~F1~~ | ~~`build_platform`, `mock_peripheral`, `model_plant`, `scenario`, `run`, `sweep`~~ | **Xong 11/09** — 44 test. `compare_hil` là M4 (cần báo cáo HIL thật). Chuỗi Z-05 lên **14/16**, chỗ đứt dời sang `target.flash` |
-| F2 | `debug.hypothesize`, `experiment`, `ask_at`, `log_stats`, `propose_fix`, `summarize` | Cần một lượt chạy mô phỏng **quan sát được**. [DEV-086] đã xong 11/09, nên chỉ còn [DEV-083](DEVIATIONS.md) — và nó nay là việc LÀM ĐƯỢC chứ không còn là việc chờ: QEMU có sẵn gdbstub (`-s -S`), nên đọc biến là nối một client giao thức GDB-remote, không cần `avr-gdb` (cũng không có trên máy) |
+| ~~F2~~ | ~~`debug.*` — 6 năng lực~~ | **Xong 12/09 — 6/6, và không cần [DEV-083] như đã tưởng.** Hoá ra chỉ `experiment` cần board (nó trả `pending` đúng như hợp đồng ghi), còn năm cái kia đứng trên log và store: `log_stats` tính bằng mã, `hypothesize`/`ask_at` gọi mô hình với ngữ cảnh ghép từ bốn nguồn, `save_session` lưu cả giả thuyết đã bị bác, `propose_fix` phân ba hướng sửa. Migration 0007 dựng bảng `debug_session` — bảng cuối cùng của bộ hồ sơ chưa có migration |
 
 **Bất biến của khối F1, và nó là phần đáng nhớ hơn cả sáu năng lực**: không kỳ vọng nào được coi
 là ĐẠT nếu không có kênh quan sát cho nó. Một `expect` mà engine hiện có không nhìn thấy được
@@ -230,7 +236,47 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 11/09/2026 **đợt 3** — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+## Điểm dừng phiên 12/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+
+*Cây làm việc SẠCH. `make check`: **1414 test Python + 2699 test Swift** xanh. DEVIATIONS **10
+Mở** — 8 là nợ hiện thực, **2 chờ chủ sản phẩm** ([DEV-088] SEC-25 §2/§3, [DEV-089] phần sai
+tầng của `env.install`).*
+
+### Đã xong: 15 năng lực, và đó là MỌI thứ còn làm được ở đây
+
+**197/238 (83%).** `code` 16/16 · `debug` 6/6 · `doc` 12/12 · `report` 4/4 — **17 nhóm đủ**.
+
+| Khối | Năng lực | Bất biến đáng nhớ |
+|---|---|---|
+| `debug.*` | 6/6 | Ba trạng thái chứ không hai: `experiment` không có board lab thì **pending**, không đoán. Và lớp rủi ro xét theo năng lực BÊN TRONG — `probe_read` R0, `flash` R3 |
+| `report.*` | `export`, `human_ai_matrix` | Mục Nguồn kiểm trên chính tệp SẮP GIAO; ma trận đếm từ `capability_run` chứ không `decision_log`, vì R0 chạy thẳng không qua cổng nào |
+| `code.*` | `annotate`, `docs`, `refactor` | `refactor` KIỂM "không đổi hành vi" bằng cách chạy test trước/sau và so TỪNG BÀI — so tổng thì hai bài đổi ngược chiều giữ nguyên tổng |
+| `doc.*` | `sync`, `translate`, `slides` | Bản dịch mất một hàng bảng là bản dịch không giao được — `tc` ấy kiểm bằng mã sau khi dịch |
+| `diagram.sync` | 1 | Lệch LỚN thì E3000, ranh giới đo bằng **tỉ lệ** — ngưỡng tuyệt đối đúng ở một cỡ FSM và sai ở cỡ kia |
+
+### Việc phiên sau — không còn việc nào chỉ cần thời gian
+
+| # | Việc | Chặn bởi |
+|---|---|---|
+| 1 | **Anh xem [DEV-088]** (SEC-25 §2/§3) và **[DEV-089]** (thêm trường `package` cho `toolchain.tools[]`) | chữ ký / duyệt |
+| 2 | `discover.*` 12 · `target.*` 9 · `bench.*` 3 · `measure.*` 3 · `passport.verify_on_board` | **một bo mạch** (Nucleo F411 / ESP32-C3) |
+| 3 | `extract.ocr`/`image_*` 4 · `diagram.from_image` | **khoá mô hình có thị giác** + đường ảnh cho Gateway (mục P4) |
+| 4 | `registry.*` 4 · `search.registry`/`reference_projects` | **một registry thật** — hạ tầng ngoài phạm vi đề án |
+| 5 | [DEV-090] `diagram.sync` hai hướng GHI | `tree-sitter` (phụ thuộc mới, cần ghi lý do vào `pyproject.toml`) |
+| 6 | [DEV-083] kênh `var`/`gpio` qua gdbstub | không chặn gì nữa — `debug.*` đã xong mà không cần nó; giờ nó chỉ làm `sim.run` quan sát được nhiều hơn |
+
+### Bẫy mới, đừng đạp lại
+
+- **Ledger chỉ nhận 26 kiểu sự kiện của API-15 §5.** `debug.session` không có trong đó — dùng
+  `store.write`. Thêm kiểu mới là sửa `docs/spec/`, cần DEVIATIONS và chữ ký.
+- **`memory.error_ledger` có `additionalProperties: false` và KHÔNG nhận `negative_prompt`** —
+  trường ấy do chính nó sinh. Nhét sẵn vào là hai nơi cùng viết một trường.
+- **Một bài test có thể đỏ vì TIỀN ĐỀ hết hạn.** `test_planner_vao_cuoc_khi_khong_mau_nao_khop`
+  dùng `code.refactor` làm ví dụ "ý định không khớp năng lực nào" — đúng cho tới lúc nó được
+  hiện thực. Khi thêm một năng lực, hãy nghĩ xem có bài nào đang dùng tên nó làm ví dụ cho
+  "không tồn tại" không.
+
+## Điểm dừng phiên 11/09/2026 **đợt 3** (lịch sử)
 
 *Cây làm việc SẠCH. `make check`: **1354 test Python + 2699 test Swift** xanh. DEVIATIONS **9 Mở**
 — trong đó **2 mục mới cần anh xem**: [DEV-088] (sửa SEC-25 §2/§3) và [DEV-089] (cần ký lại
