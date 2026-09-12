@@ -363,3 +363,40 @@ def test_de_xuat_neu_ro_nguong_nao_va_bang_chung_bao_nhieu(tmp_path, workspace):
     assert p["from"] == 0.85 and p["to"] == 0.8, "nới = hạ ngưỡng tự duyệt"
     assert p["evidence_n"] == 25 and p["rate"] == 1.0
     assert "25" in p["ly_do"]
+
+
+# ---------- E7000: "quá cửa sổ" KHÁC "chưa từng có" (đóng 12/09/2026)
+
+def test_qua_cua_so_hoan_tac_thi_E7000_chu_khong_phai_E2000(tmp_path, workspace):
+    """Hai trường hợp khác nhau, và gộp chúng làm một là gửi người dùng đi sai hướng.
+
+    `E7000`: việc ĐÃ xảy ra, đã từng hoàn tác được, cửa sổ đã đóng — người dùng cần biết để đi
+    tìm cách sửa khác (revert tay, nạp lại bản cũ), chứ không phải để kiểm lại xem mình gõ đúng
+    id chưa. `E2000`: id chưa từng có — lúc ấy mới nên bảo họ xem lại danh sách.
+
+    Tới 12/09/2026 cả hai đều là E2000, và `E7000` khai trong API-15 §3 không chỗ nào ném —
+    cùng họ với ba kiểu sự kiện sổ cái vừa vá (lỗi im lặng 12–14).
+    """
+    from eide_core.errors import EideError
+    from eide_core.ledger import Ledger
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+    from eide_core.undo import UndoService
+
+    led = Ledger(tmp_path / "l.jsonl")
+    r = Router(gate=PolicyGate(), ledger=led)
+
+    # Một mục đã đăng ký rồi HẾT HẠN: `list()` phát `undo.expire` khi quá hạn.
+    u = UndoService(led, {"undo_window": {"facts": "1h"}})
+    u.register("r_het_han", "supersede_facts", cap="kg.add_fact",
+               at="2020-01-01T00:00:00+00:00")
+    assert u.list() == [], "mục quá hạn phải rụng khỏi danh sách"
+
+    with pytest.raises(EideError) as e:
+        r.hoan_tac("r_het_han", by="human", ctx=Context(project_dir=workspace))
+    assert e.value.code == "E7000" and e.value.data["undo_ref"] == "r_het_han"
+
+    # Id chưa từng có thì vẫn là E2000 — phân biệt được mới có nghĩa.
+    with pytest.raises(EideError) as e2:
+        r.hoan_tac("r_chua_tung_co", by="human", ctx=Context(project_dir=workspace))
+    assert e2.value.code == "E2000"

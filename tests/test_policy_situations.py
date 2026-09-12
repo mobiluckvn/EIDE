@@ -182,3 +182,120 @@ def test_decide_khong_tu_no_khi_thieu_dac_trung(tmp_path):
     d = r.invoke("policy.decide", {"action": {"gate": "G-SRC", "risk": "R1", "features": {}}},
                  Context()).result["decision"]
     assert d["decision"] == "ASK"
+
+
+# ---------- 10 quy tắc KHÔNG tình huống nào của POL-17 §8 chạm tới (đo 12/09/2026)
+#
+# Bảng 48 tình huống của §8 là bộ kiểm của TÀI LIỆU, và nó không phủ hết 49 quy tắc. Mười quy
+# tắc dưới đây vì thế chưa bao giờ được chạy — không phải vì chúng sai, mà vì không ai hỏi tới.
+#
+# Một quy tắc chưa bao giờ chạy là một quy tắc chưa ai biết có khớp được không: `when` của nó là
+# một biểu thức, và một biểu thức sai chính tả (`board.lab` vs `boards.lab`) thì lặng lẽ không
+# bao giờ đúng — quy tắc thành quy tắc chết, y hệt `G-OPS-04` trong lỗi im lặng số 5.
+#
+# Test ở đây gọi thẳng `PolicyGate.decide` với đúng đặc trưng mà `when` cần, nên nó không đụng
+# `docs/spec/` — thêm tình huống vào bảng §8 là sửa tài liệu, cần chủ sản phẩm duyệt.
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize(("quy_tac", "cong", "dac_trung", "rui_ro", "mong"), [
+    # Giấy phép lạ → hỏi người. Không có nó thì một nguồn `unknown` tự tải về.
+    ("G-SRC-05", "G-SRC",
+     {"source": {"domain": "st.com", "license": "GPL-3.0", "size_mb": 1,
+                 "kind": "svd", "hash_match": True}}, "R1", "ASK"),
+    # Xoá toàn chip / đốt fuse — ưu tiên 1, tức thắng mọi quy tắc APPROVE khác.
+    ("G-OPS-02", "G-OPS", {"op": "erase_all"}, "R3", "ASK"),
+    ("G-OPS-02", "G-OPS", {"op": "fuse"}, "R3", "ASK"),
+    # Board chưa đánh dấu lab thì mọi thao tác chạm phần cứng đều hỏi.
+    ("G-OPS-06", "G-OPS", {"op": "flash", "board": {"lab": False}}, "R3", "ASK"),
+    # Kỳ vọng QUAN SÁT ĐƯỢC mà không đạt → REJECT, không phải ASK: máy đã nhìn thấy nó sai.
+    ("G4-02", "G4", {"expect": {"machine_observable": True, "all_passed": False}}, "R1",
+     "REJECT"),
+    # Gói mang tri thức dự án → hỏi trước khi phát hành.
+    ("G5-03", "G5", {"pkg": {"contains_project_knowledge": True}}, "R2", "ASK"),
+    # Quy tắc bắt hết của G5.
+    ("G5-99", "G5", {"pkg": {}}, "R2", "ASK"),
+    # Xoá/ghi đè cả dự án — ưu tiên 1.
+    ("GEN-03", "*", {"action": {"is_delete_project": True}}, "R2", "ASK"),
+    ("GEN-03", "*", {"action": {"is_overwrite_project": True}}, "R2", "ASK"),
+])
+def test_quy_tac_chua_tinh_huong_nao_cham_van_KHOP_duoc(quy_tac, cong, dac_trung, rui_ro, mong):
+    """Mỗi quy tắc phải khớp được ít nhất một lần. Không khớp = quy tắc chết."""
+    g = PolicyGate()
+    d = g.decide(cong, dac_trung, risk=rui_ro, autonomy="A3", actor="agent")
+    assert d.rule_id == quy_tac, f"mong {quy_tac}, nhận {d.rule_id}: {d.reason}"
+    assert d.decision == mong
+
+
+def test_GEN_02_qua_so_lan_thu_lai_thi_hoi_nguoi():
+    """`action.fail_count >= thresholds.fail_retries` — một tác tử thử mãi một việc hỏng là một
+    tác tử đang đốt token vào một chỗ không tự sửa được."""
+    g = PolicyGate()
+    n = int((g.config.get("thresholds") or {}).get("fail_retries", 2))
+    d = g.decide("*", {"action": {"fail_count": n}}, risk="R1", autonomy="A3", actor="agent")
+    assert d.rule_id == "GEN-02" and d.decision == "ASK"
+    # Dưới ngưỡng thì KHÔNG chặn — nếu không, lần thử thứ nhất đã phải hỏi người.
+    assert g.decide("*", {"action": {"fail_count": n - 1}}, risk="R1", autonomy="A3",
+                    actor="agent").rule_id != "GEN-02"
+
+
+def test_GEN_01_nang_luc_khai_ask_when_thi_hoi():
+    """`cap.ask_when_matched` — hợp đồng của từng năng lực tự nói khi nào phải hỏi, và cổng phải
+    tôn trọng điều ấy mà không cần biết năng lực nào.
+
+    **Ở R0 thì KHÔNG hỏi**, và đó không phải lỗ hổng: APD-08 §4.1 tầng 2 cho R0 (chỉ đọc) tự
+    chạy TRƯỚC khi bảng quy tắc được hỏi tới. Một năng lực chỉ đọc mà khai `ask_when` thì hoặc
+    nó không thật sự chỉ đọc — và lớp rủi ro mới là chỗ sai — hoặc `ask_when` của nó nói về một
+    thứ không đáng chặn. Bài này ghim cả hai vế để lần sau ai đổi ngưỡng cứng còn thấy.
+    """
+    g = PolicyGate()
+    assert g.decide("*", {"cap": {"ask_when_matched": True}}, risk="R0", autonomy="A3",
+                    actor="agent").rule_id == "R0"
+    for rr in ("R1", "R2"):
+        d = g.decide("*", {"cap": {"ask_when_matched": True}}, risk=rr, autonomy="A3",
+                     actor="agent")
+        assert d.rule_id == "GEN-01" and d.decision == "ASK", rr
+
+
+def test_TOOL_04_cong_cu_R3_da_dung_nhieu_lan_tren_board_lab_thi_tu_chay():
+    """Quy tắc APPROVE duy nhất trong mười cái — và nó cần BA điều kiện cùng lúc. Thiếu một
+    điều kiện mà vẫn duyệt là chỗ một công cụ tự viết được chạy lên phần cứng."""
+    g = PolicyGate()
+    tool = {"risk": "R3", "uses_ok": 3, "tested": True, "effects_ok": True}
+    du = {"tool": tool, "board": {"lab": True}}
+    assert g.decide("G-TOOL", du, risk="R3", autonomy="A3",
+                    actor="agent").rule_id == "TOOL-04"
+    for thieu in ({"tool": {**tool, "uses_ok": 2}, "board": {"lab": True}},
+                  {"tool": tool, "board": {"lab": False}},
+                  # Chưa test / chưa soát hiệu ứng thì TOOL-03 (ưu tiên 1) REJECT trước — một
+                  # công cụ tác tử tự viết chưa ai chạy thử không được chạm phần cứng, dù nó đã
+                  # dùng trót lọt bao nhiêu lần trên board lab.
+                  {"tool": {**tool, "tested": False}, "board": {"lab": True}}):
+        assert g.decide("G-TOOL", thieu, risk="R3", autonomy="A3",
+                        actor="agent").rule_id != "TOOL-04"
+
+
+def test_MOI_quy_tac_trong_rules_yaml_deu_khop_duoc_it_nhat_mot_lan():
+    """Cổng chặn cho cả lớp: một quy tắc không bao giờ khớp là một quy tắc chết, và nó chết
+    LẶNG LẼ — bảng vẫn có nó, báo cáo vẫn đếm nó.
+
+    Bài này không tự dựng đặc trưng cho từng quy tắc (bất khả); nó kiểm rằng mọi quy tắc đều
+    được MỘT trong hai nguồn chạm tới: 48 tình huống của POL-17 §8, hoặc các bài ngay trên.
+    """
+    import json
+    import pathlib
+
+    import yaml
+
+    from eide_core.paths import spec_dir
+
+    rl = yaml.safe_load((spec_dir() / "policy" / "rules.yaml").read_text(encoding="utf-8"))["rules"]
+    sit = [json.loads(x) for x in
+           (spec_dir() / "policy" / "situations.jsonl").read_text(encoding="utf-8").splitlines()
+           if x.strip()]
+    phu = {s["expected"].split()[-1] for s in sit}
+    ma_test = pathlib.Path(__file__).read_text(encoding="utf-8")
+    thieu = [r["id"] for r in rl
+             if r["id"] not in phu and f'"{r["id"]}"' not in ma_test]
+    assert not thieu, f"quy tắc không tình huống NÀO và không test nào chạm: {thieu}"

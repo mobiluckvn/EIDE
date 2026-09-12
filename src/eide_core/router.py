@@ -223,10 +223,26 @@ class Router:
         thành công — một nút "hoàn tác" bấm xong mà không hoàn tác gì là thứ tệ hơn không có nút.
         """
         u = UndoService(self.ledger, getattr(self.gate, "config", None))
-        muc = next((m for m in u.list() if m["undo_ref"] == undo_ref), None)
+        con_han = u.list()
+        muc = next((m for m in con_han if m["undo_ref"] == undo_ref), None)
         if muc is None:
+            # HAI trường hợp khác nhau, và gộp chúng làm một là gửi người dùng đi sai hướng.
+            #
+            # `E7000 UNDO_EXPIRED`: việc ĐÃ xảy ra, đã từng hoàn tác được, và cửa sổ đã đóng —
+            # người dùng cần biết để đi tìm cách sửa khác (revert tay, nạp lại bản cũ), không
+            # phải để kiểm lại xem mình gõ đúng id chưa.
+            # `E2000`: id chưa từng có. Đây mới là lúc bảo họ xem lại danh sách.
+            #
+            # Trước 12/09/2026 cả hai đều là E2000, và `E7000` khai trong API-15 §3 không chỗ
+            # nào ném — cùng họ với ba kiểu sự kiện sổ cái vừa vá (lỗi im lặng 12–14).
+            if any(r["kind"] == "undo.expire" and (r["data"] or {}).get("undo_ref") == undo_ref
+                   for r in self.ledger.records()):
+                raise EideError("E7000", f"Quá cửa sổ hoàn tác cho `{undo_ref}` — việc đã làm "
+                                "vẫn còn nguyên, nhưng phải sửa bằng cách khác",
+                                undo_ref=undo_ref)
             raise EideError("E2000", f"Không có mục hoàn tác còn hạn: {undo_ref}",
-                            exists=[m["undo_ref"] for m in u.list()], candidates=[], missing=[undo_ref])
+                            exists=[m["undo_ref"] for m in con_han], candidates=[],
+                            missing=[undo_ref])
         ham = self.undo_handlers.get(muc["kind"])
         if ham is None:
             ket_qua = {"applied": False, "kind": muc["kind"],
