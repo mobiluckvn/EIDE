@@ -51,3 +51,10 @@ Bộ hồ sơ v1.2 (05/09/2026). Tài liệu docx nằm trong `ho-so/`; đặc t
 ## Quy ước trích dẫn trong mã
 
 Docstring của mỗi năng lực bắt đầu bằng dòng `Spec: <CAP-CODE> — CDS-12.x; POL-17 <rule ids>; DDD-14 <entity>`.
+
+## Đối chiếu mã ↔ thiết kế
+
+[`DOI-CHIEU-THIET-KE.md`](DOI-CHIEU-THIET-KE.md) — bộ hồ sơ mô tả bao nhiêu THỨ và mã đã
+chạm tới bao nhiêu, trên **mười trục** chứ không riêng trục năng lực. Đọc cùng
+[`TIEN-DO.md`](TIEN-DO.md): tệp kia trả lời "đi được bao xa", tệp này trả lời "còn
+thiếu mặt nào".

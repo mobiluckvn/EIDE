@@ -64,6 +64,10 @@ Mốc M2 vẫn còn 19 mục và không mục nào làm được trên máy này
 chính sách, tra tri thức có nguồn, ra kết luận truy nguyên được. Phần còn thiếu là **tay
 chân**: nạp board, đo, gỡ lỗi trên phần cứng.
 
+> **Bảng này đo MỘT trục: số năng lực.** Đối chiếu đầy đủ trên mười trục — RPC, MCP, mã
+> lỗi, quy tắc cổng, mã TC, màn hình UI — ở [`DOI-CHIEU-THIET-KE.md`](DOI-CHIEU-THIET-KE.md),
+> và bức tranh ở đó khác hẳn: **trục năng lực 83%, trục JSON-RPC 21%.**
+
 ---
 
 ## 2. Theo mốc
