@@ -68,7 +68,21 @@ class Sandbox:
     ledger: Ledger | None = None
 
     def run(self, cmd: list[str], *, limits: dict[str, Any] | None = None,
-            allowed_dirs: list[str] | None = None, network: bool = False) -> KetQua:
+            allowed_dirs: list[str] | None = None, network: bool = False,
+            cwd: str | Path | None = None, them_path: list[str] | None = None) -> KetQua:
+        """Chạy `cmd` cách ly. `cwd` mặc định là một thư mục tạm riêng của lần chạy.
+
+        **`cwd` chỉ nhận thư mục ĐÃ nằm trong `allowed_dirs`.** Không có ràng buộc ấy thì tham số
+        này là một lối vòng qua chính SEC-25 §2: người gọi chdir vào bất cứ đâu rồi đọc ghi bằng
+        đường dẫn tương đối. Có ràng buộc thì nó không cấp thêm quyền nào — chỉ đổi chỗ đứng
+        trong phạm vi quyền đã cấp.
+
+        Vì sao cần: `toolchain.build.cmd` của TGT-19 viết `cmake -S . -B build`, và `artifact`
+        thì khai `build/*.elf` — cả hai là đường dẫn TƯƠNG ĐỐI so với gốc dự án. Chạy ở thư mục
+        tạm thì `.` là một thư mục rỗng, và `cmake` báo "does not appear to contain
+        CMakeLists.txt" — một câu đúng về chỗ nó đang đứng và vô nghĩa với người đọc. Xem
+        DEVIATIONS DEV-085, phương án (a).
+        """
         if not cmd or not isinstance(cmd, list):
             raise EideError("E1000", "cmd phải là danh sách chuỗi (không dùng shell)")
         # Khóa lạ trong `limits` là LỖI, không phải thứ bỏ qua.
@@ -90,16 +104,17 @@ class Sandbox:
         out.mkdir(parents=True, exist_ok=True)
         # Thư mục làm việc TẠM RIÊNG mỗi lần chạy (SEC-25 §2): công cụ ngoài không được thấy
         # thư mục dự án, và hai lần chạy không được giẫm lên nhau.
-        cwd = Path(tempfile.mkdtemp(prefix="eide-sandbox-", dir=out))
-        f_out = out / f"{cwd.name}.stdout.txt"
-        f_err = out / f"{cwd.name}.stderr.txt"
+        tam = Path(tempfile.mkdtemp(prefix="eide-sandbox-", dir=out))
+        f_out = out / f"{tam.name}.stdout.txt"
+        f_err = out / f"{tam.name}.stderr.txt"
+        lam_viec = _kiem_cwd(cwd, doc_duoc) if cwd is not None else tam
 
-        muc, lenh = self._boc(cmd, cwd, doc_duoc, network)
+        muc, lenh = self._boc(cmd, lam_viec, doc_duoc, network, ho_so_o=tam)
         vi_pham: list[str] = []
         t0 = time.perf_counter()
         with f_out.open("wb") as fo, f_err.open("wb") as fe:
-            p = subprocess.Popen(lenh, cwd=cwd, stdout=fo, stderr=fe,  # noqa: S603 — cmd dạng danh sách
-                                 env=_moi_truong(), preexec_fn=_dat_gioi_han(gh))
+            p = subprocess.Popen(lenh, cwd=lam_viec, stdout=fo, stderr=fe,  # noqa: S603 — cmd dạng danh sách
+                                 env=_moi_truong(them_path), preexec_fn=_dat_gioi_han(gh))
             canh = _CanhRSS(p.pid, gh["rss_mb"])
             canh.start()
             try:
@@ -133,10 +148,15 @@ class Sandbox:
 
     # ---- nội bộ
     def _boc(self, cmd: list[str], cwd: Path, doc_duoc: list[Path],
-             network: bool) -> tuple[str, list[str]]:
-        """Chọn mức cách ly cao nhất có trên máy này (SEC-25 §2)."""
+             network: bool, *, ho_so_o: Path | None = None) -> tuple[str, list[str]]:
+        """Chọn mức cách ly cao nhất có trên máy này (SEC-25 §2).
+
+        `ho_so_o` là nơi ĐẶT tệp hồ sơ sandbox, tách khỏi `cwd`: khi người gọi chỉ định `cwd` là
+        gốc dự án thì viết `.eide-sandbox.sb` vào đó là rải rác tệp nội bộ của EIDE vào cây mã
+        của người dùng — và tệ hơn, một tệp mà `git status` sẽ hỏi.
+        """
         if platform.system() == "Darwin" and shutil.which("sandbox-exec"):
-            hs = cwd / ".eide-sandbox.sb"
+            hs = (ho_so_o or cwd) / ".eide-sandbox.sb"
             hs.write_text(_ho_so_macos(cwd, doc_duoc, network), encoding="utf-8")
             return "sandbox-exec", ["/usr/bin/sandbox-exec", "-f", str(hs), *cmd]
         if platform.system() == "Linux" and shutil.which("bwrap"):
@@ -160,14 +180,32 @@ class Sandbox:
             "exit_code": rc, "duration_ms": int((time.perf_counter() - t0) * 1000)})
 
 
-def _moi_truong() -> dict[str, str]:
+def _moi_truong(them_path: list[str] | None = None) -> dict[str, str]:
     """Môi trường tối thiểu — dựng lại từ đầu (SEC-25 §2, §3).
 
     `HOME` trỏ vào thư mục tạm hệ thống chứ không vào thư mục nhà thật: công cụ ngoài không đọc
     thấy `~/.ssh`, `~/.aws`, `~/.config` của người dùng. Nó phải GHI ĐƯỢC — `brew` tạo
     `$HOME/Library` ngay đầu mỗi lệnh — và hồ sơ sandbox mở quyền ghi cho đúng thư mục ấy.
+
+    **`them_path` — vì sao PATH tối thiểu không đủ cho một bản dựng.** SEC-25 §3 dựng lại `PATH`
+    thành `/usr/bin:/bin:/usr/sbin:/sbin`, và chuỗi công cụ nhúng thì không nằm ở đó: Homebrew ở
+    `/opt/homebrew/bin`, `~/.cargo/bin`, `/usr/local/bin`. Giải `argv[0]` thành đường dẫn tuyệt
+    đối chữa được lệnh ĐẦU TIÊN, nhưng không chữa được việc **công cụ tự gọi công cụ**: `cmake`
+    tìm `ninja` qua PATH và báo "unable to find a build program corresponding to Ninja", `make`
+    tìm `gcc` cũng thế. Không có tham số này thì `code.build` không thể thành công trên bất kỳ
+    máy nào có toolchain ngoài bốn thư mục hệ thống — tức trên mọi máy macOS.
+
+    Bên gọi truyền vào ĐÚNG thư mục của những công cụ mà manifest ISA khai và `env.check` đã tìm
+    thấy, không truyền cả `PATH` của người dùng: khác nhau giữa "cho phép chạy chuỗi công cụ đã
+    khai" và "cho phép chạy bất cứ thứ gì người dùng từng cài".
     """
-    return {"PATH": PATH_HE_THONG, "HOME": tempfile.gettempdir(), "LANG": "C.UTF-8",
+    duong = PATH_HE_THONG
+    if them_path:
+        # Thư mục của công cụ đứng TRƯỚC, nhưng trùng lặp thì bỏ: một PATH dài không sai, nhưng
+        # nó làm nhật ký khó đọc và làm phép so trong test thành phụ thuộc thứ tự cài đặt.
+        rieng = [d for d in dict.fromkeys(them_path) if d and d not in PATH_HE_THONG.split(os.pathsep)]
+        duong = os.pathsep.join([*rieng, PATH_HE_THONG])
+    return {"PATH": duong, "HOME": tempfile.gettempdir(), "LANG": "C.UTF-8",
             "LC_ALL": "C.UTF-8", "TMPDIR": tempfile.gettempdir()}
 
 
@@ -244,6 +282,28 @@ def _kiem_allowed_dirs(ds: list[str]) -> list[Path]:
             raise EideError("E8000", f"allowed_dirs không phải thư mục: {d}", violations=["path"])
         ra.append(p)
     return ra
+
+
+def _kiem_cwd(cwd: str | Path, doc_duoc: list[Path]) -> Path:
+    """Thư mục làm việc do người gọi chỉ định — phải nằm TRONG `allowed_dirs`.
+
+    Đây là chỗ giữ cho tham số `cwd` không thành một lối vòng qua SEC-25 §2. Hồ sơ sandbox cấp
+    quyền GHI cho thư mục làm việc (`_ho_so_macos`), nên nhận một `cwd` bất kỳ là nhận luôn việc
+    cấp quyền ghi cho một thư mục chưa ai xét. Buộc nó nằm trong `allowed_dirs` thì quyền không
+    rộng ra: người gọi vốn đã phải khai thư mục ấy, và khai là chỗ `_kiem_allowed_dirs` đã chặn
+    `..` cùng liên kết mềm ra ngoài.
+    """
+    if ".." in Path(cwd).parts:
+        raise EideError("E8000", f"cwd chứa '..': {cwd}", violations=["path"])
+    p = Path(cwd).expanduser().resolve()
+    if not p.is_dir():
+        raise EideError("E8000", f"cwd không phải thư mục: {cwd}", violations=["path"])
+    if not any(p == d or d in p.parents for d in doc_duoc):
+        raise EideError("E8000",
+                        f"cwd `{p}` không nằm trong allowed_dirs {[str(d) for d in doc_duoc]} — "
+                        "khai nó vào allowed_dirs trước",
+                        violations=["path"], cwd=str(p))
+    return p
 
 
 def _ho_so_macos(cwd: Path, doc_duoc: list[Path], network: bool) -> str:

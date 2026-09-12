@@ -435,8 +435,8 @@ def build(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     "command not found" thì người dùng nhận một dòng lỗi shell thay vì câu "cài arm-none-eabi-gcc
     rồi chạy lại", và `code.self_repair` sẽ tưởng mã sai mà đi sửa mã.
     """
+    from eide.caps.env import chay_sandbox
     from eide.caps.env import check as env_check
-    from eide.caps.env import sandbox as env_sandbox
 
     root = _du_an(ctx, params)
     isa = _isa_cua(root)
@@ -445,18 +445,38 @@ def build(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if not tc.get("cmd"):
         raise EideError("E2000", f"Manifest ISA `{isa}` không có `toolchain.build.cmd` (TGT-19)")
 
-    thieu = [r["tool"] for r in env_check({"isa": isa}, ctx)["report"] if not r["ok"]]
+    bao_cao = env_check({"isa": isa}, ctx)["report"]
+    thieu = [r["tool"] for r in bao_cao if not r["ok"]]
     if thieu:
         raise EideError("E4001", f"Thiếu công cụ để dựng {isa}: {', '.join(thieu)} — "
                         "`env.install` hoặc `env.guide_install`",
                         missing=thieu, isa=isa, remedy="env.install")
 
+    # Thư mục của ĐÚNG những công cụ manifest ISA khai, để `cmake` gọi được `ninja` và `make`
+    # gọi được `gcc` bên trong sandbox. Không mở cả `PATH` của người dùng: cho phép chạy chuỗi
+    # công cụ đã khai khác với cho phép chạy bất cứ thứ gì máy này từng cài. Xem DEV-088.
+    bin_cong_cu = [str(Path(d).parent) for r in bao_cao if (d := tools.which(r["tool"]))]
+
     t0 = time.perf_counter()
     ma, log_ref, err_ref = 0, None, None
     for lenh in tach_lenh(str(tc["cmd"])):
-        kq = env_sandbox({"cmd": lenh, "network": False,
-                          "allowed_dirs": [str(root)],
-                          "limits": {"wall_s": TIMEOUT_DUNG}}, ctx)
+        # ĐƯỜNG DẪN TUYỆT ĐỐI, không tên trần. Sandbox dựng lại `PATH` thành
+        # `/usr/bin:/bin:/usr/sbin:/sbin` (SEC-25 §3), mà `cmake`/`ninja`/`make` do người dùng
+        # cài thì nằm ở `/opt/homebrew/bin` (macOS), `/usr/local/bin`, hay `~/.cargo/bin`. Truyền
+        # tên trần thì lệnh chết ngay ở `execvp()` với "No such file or directory" — một câu nói
+        # về `cmake` mà nghe như nói về tệp nguồn, và `phan_loai_loi` xếp nó vào `unknown`.
+        #
+        # `env.install` và `code.static` đã giải sẵn như thế; `code.build` thì không, và vì
+        # KHÔNG TEST NÀO TỪNG DỰNG THÀNH CÔNG nên chỗ này chưa bao giờ chạy tới. Hệ quả: trên
+        # đúng nền tảng thứ tự 1 của PLATFORM.md, `code.build` không thể thành công.
+        lenh[0] = str(tools.which(lenh[0]) or lenh[0])
+        # Chạy Ở GỐC DỰ ÁN. `build.cmd` của TGT-19 viết `cmake -S . -B build`, và `artifact`
+        # khai `build/*.elf` — đều tương đối so với gốc dự án. Ở thư mục tạm thì `.` rỗng và
+        # `cmake` báo "does not appear to contain CMakeLists.txt": đúng về chỗ nó đứng, vô nghĩa
+        # với người đọc. `root` đã nằm trong `allowed_dirs` nên không quyền nào rộng thêm ra.
+        kq = chay_sandbox(lenh, ctx, network=False, allowed_dirs=[str(root)],
+                          limits={"wall_s": TIMEOUT_DUNG}, cwd=str(root),
+                          them_path=bin_cong_cu)
         ma, log_ref, err_ref = kq["exit_code"], kq["stdout_ref"], kq["stderr_ref"]
         if ma != 0:
             break

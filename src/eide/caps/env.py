@@ -72,12 +72,30 @@ def sandbox(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     ngữ cảnh mô hình. Vượt giới hạn → `violations[]` kèm mã thoát; quá thời gian → E4004 (lỗi
     riêng, không gộp vào E8000 vì cách xử lý khác nhau: một bên nới hạn, một bên xem lại lệnh).
     """
+    return chay_sandbox(params["cmd"], ctx, limits=params.get("limits"),
+                        allowed_dirs=params.get("allowed_dirs"),
+                        network=bool(params.get("network")))
+
+
+def chay_sandbox(cmd: list[str], ctx: Context, *, limits: dict[str, Any] | None = None,
+                 allowed_dirs: list[str] | None = None, network: bool = False,
+                 cwd: str | None = None, them_path: list[str] | None = None) -> dict[str, Any]:
+    """Ruột của `env.sandbox`, gọi được từ trong nhà với thêm `cwd`.
+
+    `cwd` KHÔNG nằm trong `input_schema` của ENV-07, và cố ý không đưa vào: hợp đồng là thứ tác
+    tử gọi được qua Router, mà "chạy ở thư mục nào" là quyết định của người hiện thực một năng
+    lực chứ không phải thứ để mô hình chọn. `code.build` cần nó vì `toolchain.build.cmd` của
+    TGT-19 viết đường dẫn tương đối so với gốc dự án; các bên gọi khác giữ nguyên thư mục tạm.
+
+    Nới `input_schema` thì đụng `docs/spec/` — cần một mục DEVIATIONS và chữ ký chủ sản phẩm cho
+    một thứ không bên ngoài nào cần. Tách hàm rẻ hơn và nói đúng hơn về phạm vi.
+    """
     root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
     out = (root / ".eide" / "cache" / "sandbox") if root and (root / ".eide").is_dir() \
         else (user_cache() / "sandbox")
     sb = Sandbox(out_dir=out, ledger=ctx.extra.get("ledger"))
-    kq = sb.run(params["cmd"], limits=params.get("limits"),
-                allowed_dirs=params.get("allowed_dirs"), network=bool(params.get("network")))
+    kq = sb.run(cmd, limits=limits, allowed_dirs=allowed_dirs, network=network, cwd=cwd,
+                them_path=them_path)
     return {"exit_code": kq.exit_code, "stdout_ref": kq.stdout_ref,
             "stderr_ref": kq.stderr_ref, "violations": kq.violations}
 

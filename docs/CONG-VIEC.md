@@ -192,7 +192,7 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 |---|---|---|
 | I1 | **WI-253** — sinh test hợp đồng tự động cho 238 năng lực | `validate_specs.py` đã có; cần sinh test từ `input_schema`/`errors`. Bắt được lỗi E1000/E1004 mà không phải viết tay từng cái |
 | I2 | Mở rộng `make check-net` cho `mmdc`/`plantuml`/`d2`/`7z` | Hiện chỉ Graphviz chạy thật; bốn bộ dựng còn lại vẫn chưa nhánh nào được thi hành (đo 11/09: cả bốn đều **chưa cài**). **Thử lại sau khi sửa sandbox 08/09** — chúng ghi tệp ra, mà đúng chỗ ấy trước đây bị chặn. Cùng hình dạng với [DEV-086], nay đã có tiền lệ gỡ được |
-| I7 | **Chuỗi công cụ ARM — dựng thật một lần** | `arm-none-eabi-gcc` chưa cài; `test_code.py` dùng shim shell, `nghiem_thu_sprint2.sh` không có bước biên dịch, `test_that.py` không có test gọi thật nào cho `code.build`. Nên "vòng sinh mã → dựng → mô phỏng → ghép đã liền" đúng ở mức phủ năng lực, chưa đúng ở mức đã thi hành. Sau [DEV-086], đây là mắt xích trung tâm duy nhất còn chưa chạy thật |
+| ~~I7~~ | ~~**Chuỗi công cụ ARM — dựng thật một lần**~~ | **Xong 11/09 đợt 3.** `arm-none-eabi-gcc` 16.2.0 cài bằng **công thức** (không phải cask — cask là `.pkg` cần mật khẩu admin). `code.build` nay dựng ra firmware `armv7e-m` thật và `code.size` đọc số thật từ `arm-none-eabi-size`. Phải sửa **ba tầng** trong lõi mới chạy được — xem [DEV-088](DEVIATIONS.md) |
 | I3 | Thêm test `llm` cho `plan.*`, `tool.write`, `extract.pdf_register_map` | Ba nhóm sinh còn lại chưa có test gọi thật |
 | I4 | **M5**: schema manifest ISA + TC-48 + rv32imac/xtensa/pic16 | [DEV-055](DEVIATIONS.md). Kèm món nợ M0: `avr8.yaml` chưa test nào chạm tới |
 | I5 | `scripts/nghiem_thu_sprint3.sh` | Khi khối B xong |
@@ -227,7 +227,56 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 11/09/2026 **đợt 2** — bắt đầu phiên sau từ đây
+## Điểm dừng phiên 11/09/2026 **đợt 3** — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+
+*Cây làm việc SẠCH. `make check`: **1354 test Python + 2699 test Swift** xanh. DEVIATIONS **9 Mở**
+— trong đó **2 mục mới cần anh xem**: [DEV-088] (sửa SEC-25 §2/§3) và [DEV-089] (cần ký lại
+`trusted_packages`).*
+
+### Đã xong trong đợt 3: `code.build` dựng ra firmware THẬT
+
+Mắt xích trung tâm của đề án — *sinh mã có nối về fact* — nay đã chạy đầu-cuối:
+`code.build` → ELF `elf32-littlearm`, `architecture: armv7e-m` → `code.size` đọc số thật
+(text 28 B, bss 4 B, flash_pct < 1% của 512 KB). Lệnh dựng lấy từ `docs/spec/isa/armv7e-m.yaml`,
+chạy trong sandbox KHÔNG MẠNG.
+
+**Phải sửa ba tầng trong lõi mới chạy được, và cả ba đều chưa ai chạm tới bao giờ** — vì không
+test nào từng dựng THÀNH CÔNG (`test_code.py` chỉ kiểm nhánh hỏng). Xem [DEV-088](DEVIATIONS.md):
+
+1. `execvp() of 'cmake' failed` — `code.build` truyền **tên trần** vào sandbox, mà `PATH` ở đó là
+   bốn thư mục hệ thống. `code.static` và `env.install` đã giải `which()` sẵn; `code.build` thì
+   không, và nó là cái quan trọng nhất.
+2. `does not appear to contain CMakeLists.txt` — sandbox chạy ở thư mục **tạm**, trong khi
+   `build.cmd` viết `-S .` và `artifact: build/*.elf`, đều tương đối so với gốc dự án. Thêm tham
+   số `cwd` cho `Sandbox.run`, **ràng buộc phải nằm trong `allowed_dirs`** để không thành lối
+   vòng qua SEC-25 §2.
+3. `unable to find a build program corresponding to Ninja` — **công cụ tự gọi công cụ**. Giải
+   `argv[0]` chữa được lệnh đầu tiên, không chữa được `cmake → ninja` hay `make → gcc`. Thêm
+   `them_path`: đúng thư mục của những công cụ manifest ISA khai, không mở cả `PATH` người dùng.
+
+### Việc ĐẦU TIÊN của phiên sau
+
+| # | Việc | Ghi chú |
+|---|---|---|
+| 1 | **Anh xem [DEV-088] và [DEV-089]** | DEV-088 đề xuất SEC-25 v1.x nói rõ hai điều lõi vừa làm. DEV-089 cần **ký lại** `trusted_packages`: nó ghi `gcc-arm-none-eabi` (tên gói **apt**) trong khi Homebrew và manifest đều dùng `arm-none-eabi-gcc` — nên `env.install` cho trình dịch ARM rơi vào ASK. Đúng hình dạng WI-257, ở nhóm gói |
+| 2 | **`nghiem_thu_sprint3.sh`** (mục I5) | Nay viết được: đã có `code.build` thật + `sim.*` engine thật. Đó là kịch bản nghiệm thu đầu tiên đi hết từ ý tưởng tới firmware chạy được |
+| 3 | [DEV-083] kênh `var`/`gpio` → mở khoá `debug.*` (6 năng lực) | QEMU có gdbstub (`-s -S`); không cần `avr-gdb` |
+
+### Bẫy mới, đừng đạp lại
+
+- **Công thức `arm-none-eabi-gcc` của Homebrew KHÔNG kèm newlib.** `<stdint.h>` sẽ
+  `include_next` sang một libc không tồn tại, và `ld` đi tìm `-lc`. Firmware bare-metal phải
+  dịch với `-ffreestanding` và liên kết với `-nostdlib`. Cask `gcc-arm-embedded` có newlib nhưng
+  là `.pkg` — **cần mật khẩu admin**, nên `env.install` (cấm sudo) không dùng được nó.
+- **`CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY`** là bắt buộc cho toolchain bare-metal: phép
+  thử trình dịch của CMake mặc định LINK một chương trình, việc không làm được khi không có libc.
+- **Test có hạn giờ ngắn thì đua với bộ lập lịch.**
+  `test_engine_khong_tu_dung_thi_het_gio_la_ket_thuc_binh_thuong` cho cả lượt chạy đúng 1 giây và
+  đỏ rải rác khi chạy cùng cả bộ — dưới tải, shim chưa kịp in thì đã bị giết. Nay để 3 giây.
+
+---
+
+## Điểm dừng phiên 11/09/2026 **đợt 2**
 
 *`make check`: **1352 test Python + 2699 test Swift** xanh (sau khi anh ký — xem P1). DEVIATIONS
 còn **7 mục Mở**, tất cả là nợ hiện thực; **không còn mục nào chờ chủ sản phẩm**.*

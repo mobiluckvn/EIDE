@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 import pytest
 
@@ -268,6 +269,137 @@ def test_build_chua_ghim_ISA_thi_noi_ro(du_an):
     with pytest.raises(EideError) as e:
         build({}, ctx)
     assert e.value.code == "E2000" and "isa" in e.value.data.get("missing", [])
+
+
+# ---------- CODE-05 build: đường chạy chuỗi công cụ THẬT (mục I7)
+
+ARM_GCC = __import__("shutil").which("arm-none-eabi-gcc")
+
+# Dự án CMake tối thiểu cho Cortex-M4. EIDE **không sinh** những tệp này: `code.build` dựng theo
+# `CMakeLists` CỦA DỰ ÁN, và lệnh dựng thì lấy từ `toolchain.build.cmd` của manifest ISA. Nên để
+# kiểm đường dựng thật, bài test phải mang theo một dự án thật.
+#
+# Ba dòng dưới đây trông như chi tiết vặt nhưng mỗi dòng là một lần dựng đã hỏng:
+#   - `CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY` — phép thử trình dịch của CMake mặc định
+#     LINK một chương trình, việc không làm được khi không có libc khởi động được.
+#   - `-ffreestanding` — công thức brew `arm-none-eabi-gcc` KHÔNG kèm newlib, nên `<stdint.h>`
+#     của GCC `include_next` sang một libc không tồn tại.
+#   - `-nostdlib` — không có nó thì `ld` đi tìm `-lc` và dừng, dù mã không gọi hàm thư viện nào.
+CMAKE_ARM = """\
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_C_FLAGS_INIT "-mcpu=cortex-m4 -mthumb -ffreestanding -ffunction-sections")
+"""
+
+LINKER_LD = """\
+MEMORY { FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 512K
+         RAM  (rwx) : ORIGIN = 0x20000000, LENGTH = 128K }
+ENTRY(Reset_Handler)
+SECTIONS {
+  .isr_vector : { KEEP(*(.isr_vector)) } > FLASH
+  .text : { *(.text*) *(.rodata*) } > FLASH
+  .bss  : { *(.bss*) *(COMMON) } > RAM
+  _estack = ORIGIN(RAM) + LENGTH(RAM);
+}
+"""
+
+MAIN_C = """\
+/* Hằng số phần cứng có chú thích fact — đúng dạng `code.constant_guard` đòi. */
+#define BME280_ADDR 0x76u /* eide:fact f_bme280_addr */
+volatile unsigned int dem;
+extern unsigned int _estack;
+void Reset_Handler(void) { for (;;) { dem += BME280_ADDR; } }
+__attribute__((section(".isr_vector"), used))
+void *const vectors[2] = { (void *)&_estack, (void *)Reset_Handler };
+"""
+
+CMAKELISTS = """\
+cmake_minimum_required(VERSION 3.22)
+project(fw C)
+add_executable(fw.elf src/main.c)
+target_link_options(fw.elf PRIVATE
+  -T${CMAKE_SOURCE_DIR}/stm32f411.ld -nostartfiles -nostdlib -Wl,--gc-sections
+  -Wl,-Map=${CMAKE_BINARY_DIR}/fw.map)
+"""
+
+
+def _du_an_cmake(root) -> None:
+    (root / "cmake").mkdir(parents=True, exist_ok=True)
+    (root / "src").mkdir(parents=True, exist_ok=True)
+    (root / "cmake" / "arm.cmake").write_text(CMAKE_ARM, encoding="utf-8")
+    (root / "stm32f411.ld").write_text(LINKER_LD, encoding="utf-8")
+    (root / "src" / "main.c").write_text(MAIN_C, encoding="utf-8")
+    (root / "CMakeLists.txt").write_text(CMAKELISTS, encoding="utf-8")
+
+
+@pytest.mark.skipif(ARM_GCC is None, reason="cần arm-none-eabi-gcc (brew install arm-none-eabi-gcc)")
+def test_dung_THAT_ra_firmware_armv7e_m(du_an):
+    """CODE-05 chạy chuỗi công cụ THẬT — không shim.
+
+    Mọi bài `code.build` khác trong tệp này kiểm nhánh HỎNG: thiếu công cụ → E4001, chưa ghim
+    ISA → E2000. Nhánh THÀNH CÔNG thì tới 11/09/2026 chưa lần nào được thi hành — `test_code.py`
+    dựng shim shell cho `arm-none-eabi-size`, `nghiem_thu_sprint2.sh` không có bước biên dịch, và
+    `test_that.py` (lớp gọi thật) không có test nào cho `code.build`. Mà đây là mắt xích trung
+    tâm của luận điểm đề án: không có nó, "sinh mã có nối về fact" dừng ở phần tri thức.
+
+    Bài này đi trọn đường: lệnh dựng đọc từ `docs/spec/isa/armv7e-m.yaml` (không từ bảng trong
+    mã), chạy trong sandbox KHÔNG MẠNG, và thứ rơi ra là một ELF mà `objdump` đọc được là
+    `armv7e-m` — đúng ISA mà manifest khai, không phải kiến trúc của máy đang chạy test.
+    """
+    import subprocess
+
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411RE"}, ctx)
+    _du_an_cmake(root)
+
+    from eide.caps.code import build
+    rep = build({}, ctx)["report"]
+
+    assert rep["passed"] is True, rep["metrics"]
+    assert rep["metrics"]["isa"] == "armv7e-m" and rep["metrics"]["exit_code"] == 0
+    assert rep["artifacts"] and rep["artifacts"][0].endswith("fw.elf")
+    # `map` của manifest (`build/*.map`) phải trỏ tới tệp có thật — `code.size` và
+    # `diagram.memory_map` đều đứng trên nó.
+    assert rep["metrics"]["map"] and Path(rep["metrics"]["map"]).exists()
+
+    elf = Path(rep["artifacts"][0])
+    assert elf.read_bytes()[:4] == b"\x7fELF"
+    mo_ta = subprocess.run(["arm-none-eabi-objdump", "-f", str(elf)],
+                           capture_output=True, text=True, check=True).stdout
+    assert "elf32-littlearm" in mo_ta, mo_ta
+    assert "armv7e-m" in mo_ta, mo_ta
+
+
+@pytest.mark.skipif(ARM_GCC is None, reason="cần arm-none-eabi-gcc")
+def test_size_doc_so_THAT_tu_arm_none_eabi_size(du_an):
+    """CODE-06 trên một ELF thật, `arm-none-eabi-size` thật — không shim.
+
+    Các bài `size` khác dựng shim in ra một bảng Berkeley cố định, nên chúng kiểm được phép
+    phân tích và ngưỡng 85% mà không kiểm được rằng EIDE gọi đúng công cụ với đúng tham số.
+    """
+    r, ctx, root = du_an
+    r.invoke("project.set_target", {"chip": "STM32F411RE"}, ctx)
+    _du_an_cmake(root)
+    # STM32F411RE: 512 KB Flash, 128 KB RAM. Không có hai fact này thì `passed` là False dù
+    # firmware bé tí — và đó là hành vi ĐÚNG: "chưa biết giới hạn thì không kết luận đạt".
+    _flash_ram(root, "STM32F411RE", 512 * 1024, 128 * 1024)
+
+    from eide.caps.code import build, size
+    art = build({}, ctx)["report"]["artifacts"][0]
+    rep = size({"artifact": art}, ctx)["report"]
+
+    m = rep["metrics"]
+    # Firmware tối thiểu: vài chục byte text, 4 byte bss. Khẳng định "có số và số hợp lý" chứ
+    # không khẳng định con số chính xác — nó đổi theo phiên bản trình dịch.
+    assert m["text"] > 0 and m["text"] < 4096, m
+    assert m["bss"] >= 4, m
+    assert m["flash"] == m["text"] + m["data"], m
+    # Phần trăm tính được ⇒ mới có quyền kết luận. Firmware vài chục byte trên 512 KB thì tỉ lệ
+    # gần 0, tức xa ngưỡng 85% — bài này kiểm đường ĐI tới kết luận, không kiểm ngưỡng.
+    assert m["flash_pct"] is not None and m["flash_pct"] < 1, m
+    assert rep["passed"] is True, m
 
 
 # ---------- CODE-06 size

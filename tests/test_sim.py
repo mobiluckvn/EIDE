@@ -729,7 +729,12 @@ def test_engine_khong_tu_dung_thi_het_gio_la_ket_thuc_binh_thuong(du_an, tmp_pat
     _artifact(root)
     _kich_ban(root, [{"kind": "uart", "pattern": "IMU ok"}])
     monkeypatch.setitem(sim.QEMU_MACHINE, "^stm32f411", {"machine": "gia-lap", "nap": "-kernel"})
-    monkeypatch.setattr(sim, "BIEN_THOI_GIAN_S", 0)
+    # Biên 0 cho cả lượt chạy đúng `duration_s` = 1 giây, và bài này thỉnh thoảng đỏ khi chạy
+    # cùng cả bộ: dưới tải, tiến trình chưa kịp qua `sandbox-exec` + khởi động shell để chạy
+    # `echo` thì đã bị giết, nên `captured.uart` rỗng và dòng expect trượt. Thứ bài này kiểm là
+    # "hết giờ KHÔNG phải lỗi", không phải "hết giờ nhanh cỡ nào" — nên 3 giây vẫn kiểm đúng
+    # điều ấy (`sleep 30` vẫn bị cắt) mà không còn đua với bộ lập lịch.
+    monkeypatch.setattr(sim, "BIEN_THOI_GIAN_S", 2)
     _dat_path(monkeypatch, tmp_path / "bin")
     _shim(tmp_path / "bin", "qemu-system-arm", "echo 'IMU ok'; sleep 30")
 

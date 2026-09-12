@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 11/09/2026 (lần 20). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 11/09/2026 (lần 21, đợt 3). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -13,7 +13,14 @@
 ## 1. Một dòng
 
 **182/238 năng lực (76%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 giữ 80/99 (81%); M3 mở màn
-6/29. 1352 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+6/29. 1354 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+
+**Mốc lớn nhất của ngày 11/09 nằm ở đợt 3: `code.build` dựng ra firmware THẬT.** Mắt xích trung
+tâm của luận điểm đề án — *sinh mã có nối về fact* — nay đã thi hành đầu-cuối: lệnh dựng đọc từ
+`docs/spec/isa/armv7e-m.yaml`, chạy trong sandbox không mạng, và thứ rơi ra là một ELF mà
+`objdump` đọc là `architecture: armv7e-m`. Phải sửa **ba tầng** trong lõi sandbox mới chạy được,
+và cả ba chưa ai chạm tới bao giờ vì **không test nào từng dựng THÀNH CÔNG** — xem §5 và
+[DEV-088](DEVIATIONS.md).
 
 **Phiên 11/09 mở khối F1 — nhóm `sim.*` đóng phần M3 (6/6; `compare_hil` là M4).** Chuỗi Z-05
 "thêm tính năng" nhờ đó lên **14/16** và chỗ đứt dời từ `sim.run` sang `target.flash`, tức sang
@@ -134,17 +141,39 @@ luôn ngoan, nên chúng kiểm được phần thuộc về EIDE mà không th�
 sai được. Nay nhánh `TU_DUNG["qemu"] = False` — *hết giờ LÀ cách lượt chạy kết thúc, không phải
 E4004* — đã có một engine thật chứng minh.
 
+**Và từ đợt 3, một bản dựng THẬT.** `code.build` chạy `cmake`/`ninja`/`arm-none-eabi-gcc` 16.2
+trong sandbox không mạng và cho ra ELF `elf32-littlearm`, `architecture: armv7e-m` — đúng ISA
+manifest khai, không phải kiến trúc của máy đang chạy test. `code.size` đọc số thật từ
+`arm-none-eabi-size` (text 28 B, bss 4 B) và tính được `flash_pct` so với 512 KB của STM32F411RE.
+
+**Ba tầng lỗi phải sửa mới tới được đó, và không tầng nào từng được thi hành:**
+
+1. `execvp() of 'cmake' failed` — `code.build` truyền **tên trần** vào sandbox, mà `PATH` ở đó
+   là bốn thư mục hệ thống (SEC-25 §3). `code.static` và `env.install` đều đã giải `which()`
+   sẵn; `code.build` thì không — và nó là cái quan trọng nhất.
+2. `does not appear to contain CMakeLists.txt` — sandbox chạy ở thư mục **tạm**, trong khi
+   `build.cmd` viết `cmake -S . -B build` và `artifact: build/*.elf`, đều tương đối so với gốc
+   dự án. Lõi nay nhận `cwd`, **ràng buộc phải nằm trong `allowed_dirs`** để tham số ấy không
+   thành một lối vòng qua chính SEC-25 §2.
+3. `unable to find a build program corresponding to Ninja` — **công cụ tự gọi công cụ.** Giải
+   `argv[0]` chữa được lệnh đầu tiên, không chữa được `cmake → ninja` hay `make → gcc`. Lõi nay
+   nhận `them_path`: đúng thư mục của những công cụ manifest ISA khai và `env.check` đã tìm
+   thấy — khác với mở cả `PATH` của người dùng.
+
+Tầng thứ ba là chỗ đáng nhớ nhất: hai tầng đầu còn có thể đoán ra khi đọc mã, tầng thứ ba thì
+chỉ lộ khi một chương trình thật đi tìm một chương trình thật khác. Xem [DEV-088](DEVIATIONS.md).
+
 ---
 
 ## 6. Chất lượng
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1352** xanh, arm64 + x86_64 (`make check-py`) |
+| Test Python | **1354** xanh, arm64 + x86_64 (`make check-py`) |
 | Test Swift | **2699** xanh (`make check-swift`, nay nằm trong `make check` — WI-260). Trong đó **29** là EIDEKit, phần thuộc EIDE; còn lại là GEditor, ứng dụng chủ |
-| Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **1 engine mô phỏng** (`qemu-system-avr`, nằm trong `make check`, tự bỏ qua nếu máy không có) |
+| Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **1 engine mô phỏng** (`qemu-system-avr`) · **2 chuỗi công cụ ARM** (`arm-none-eabi-gcc` + `cmake`/`ninja`). Ba nhóm sau nằm trong `make check` và tự bỏ qua nếu máy không có công cụ |
 | Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
-| Mục DEVIATIONS | 87 tổng, **7 Mở** — tất cả là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ kênh quan sát). **Không còn mục nào chờ chủ sản phẩm** |
+| Mục DEVIATIONS | 89 tổng, **9 Mở** — 7 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ kênh quan sát); **2 chờ chủ sản phẩm**: [DEV-088] (SEC-25 §2/§3) và [DEV-089] (ký lại `trusted_packages`) |
 | Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`). Phiên này: **TGT-19 v1.2**, **SIM-20 v1.1** |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
@@ -171,7 +200,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Mười lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Mười một lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -232,6 +261,16 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     trên PDF). Thêm đúng một tên miền vào danh sách trắng (WI-257) là biên ấy mất, và câu nói
     sai bốn ngày mới lộ. Cùng họ với [DEV-058] (thang điểm FTS đảo ngược mà thứ hạng vẫn đúng
     nhờ `ORDER BY`): một bài test xanh vì lý do khác với lý do nó được viết ra.
+11. **`code.build` chưa bao giờ dựng được trên bất kỳ máy nào** (11/09 đợt 3,
+    [DEV-088](DEVIATIONS.md)). Ba tầng nối nhau, và mỗi tầng chỉ lộ sau khi tầng trước được vá:
+    tên trần trong sandbox `PATH` bốn thư mục → thư mục làm việc tạm trong khi `build.cmd` viết
+    đường dẫn tương đối → và cuối cùng `cmake` đi tìm `ninja` qua `PATH`, thứ mà giải `argv[0]`
+    không chạm tới được. Điều giữ cả ba im lặng là một chỗ trống rất cụ thể: **`test_code.py`
+    kiểm đủ nhánh HỎNG của `code.build` — thiếu công cụ → E4001, chưa ghim ISA → E2000 — và
+    không có nhánh THÀNH CÔNG.** Một bộ test chỉ biết nói "hỏng đúng cách" thì cũng nói thế trên
+    một năng lực chưa bao giờ chạy đúng lần nào. Đây là lỗi đắt nhất trong mười một cái: nó nằm
+    ở mắt xích trung tâm của luận điểm đề án, và nó sống sót qua cả Sprint 2 lẫn hai đợt trước
+    của chính ngày 11/09.
 
 ---
 
@@ -240,6 +279,8 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
 | Việc | Vì sao cần người |
 |---|---|
 | **WI-257** — chạy `eide policy sign` | **Dữ liệu đã sửa, chỉ còn chữ ký.** `defaults.yaml` nay có `raw.githubusercontent.com`; mã, test và [DEV-087](DEVIATIONS.md) đã xong. Nhưng `eide policy sign` **cố ý là LỆNH chứ không phải năng lực** — trong 238 năng lực không có `policy.sign`, vì năng lực thì Router gọi được, tức tác tử gọi được, tức tác tử tự cấp quyền cho chính nó. Tình huống S47 nói thẳng: *"tác tử tự thêm một tên miền vào `trusted_sources`" → REJECT G-WL-02*. Chưa ký thì PolicyGate **bỏ hẳn ba danh sách** và mọi thứ rơi về ASK — đo được: 19 test đỏ, tất cả cùng một nguyên nhân. Đã kiểm trên bản sao đã ký (`EIDE_SPEC_DIR`, không đụng niêm thật): **1352 xanh**. Lệnh: `.venv-arm/bin/python -m eide.cli policy sign --by "Vũ Trí Công"` |
+| **[DEV-089]** ký lại `trusted_packages` | Danh sách ghi `gcc-arm-none-eabi` — tên gói **apt**. Homebrew và `armv7e-m.yaml` đều dùng `arm-none-eabi-gcc`, nên `env.install` cho trình dịch ARM rơi vào **ASK**, còn mục đang có thì APPROVE một gói không tồn tại trên máy nào. Đúng hình dạng WI-257, ở nhóm gói. Nằm trong niêm nên phải `eide policy sign` lại |
+| **[DEV-088]** SEC-25 §2/§3 | Lõi sandbox nay nhận `cwd` và `them_path` — hai thứ SEC-25 không khai. Không có chúng thì `code.build` **không thể thành công trên bất kỳ máy nào**. Đề xuất §3 ghi rõ `PATH` gồm cả thư mục chuỗi công cụ đã khai trong manifest ISA |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
 | ~~**[DEV-086]**~~ | ~~thêm `fallback: qemu` cho `avr8.yaml`~~ — **anh duyệt 11/09, đã xong.** TGT-19 lên v1.2, SIM-20 lên v1.1, và nhóm `sim.*` có lượt chạy engine thật đầu tiên (§5) |
 
@@ -267,14 +308,10 @@ Mười chín mục M2 còn lại vẫn chia làm đúng hai nhóm, cả hai ch�
 
 Bốn hướng đi tiếp, theo thứ tự tôi đề xuất:
 
-1. **Chuỗi công cụ ARM, rồi dựng thật một lần.** `arm-none-eabi-gcc` **không có trên máy này**:
-   `tests/test_code.py` dựng shim shell cho `arm-none-eabi-size`, `nghiem_thu_sprint2.sh` 18 bước
-   không có bước nào biên dịch, và `test_that.py` (lớp gọi thật) có URL hãng, Graphviz, mô hình,
-   trình quản lý gói — **không có biên dịch**. Nghĩa là câu "vòng sinh mã → dựng → mô phỏng →
-   ghép đã liền" (§4) đúng ở mức **phủ năng lực**, chưa đúng ở mức **đã thi hành**: `sim.*` nay
-   đã chạy thật, `code.build` thì chưa. Đây là mắt xích trung tâm của luận điểm đề án — *sinh mã
-   có nối về fact* — nên nó đáng một lượt chạy thật hơn bất cứ năng lực mới nào.
-   `brew install --cask gcc-arm-embedded` theo đúng `install.macos` của `armv7e-m.yaml`.
+1. ~~**Chuỗi công cụ ARM, rồi dựng thật một lần.**~~ **XONG 11/09 đợt 3** — xem §5. Việc kế
+   thừa từ nó: **`scripts/nghiem_thu_sprint3.sh`** (mục I5 của [CONG-VIEC.md](CONG-VIEC.md)), nay
+   viết được lần đầu vì đã có cả `code.build` thật lẫn `sim.*` engine thật — một kịch bản nghiệm
+   thu đi hết từ một câu tiếng Việt tới một firmware chạy được trên máy ảo.
 2. **[DEV-083] kênh `var`/`gpio`** → nay là việc làm được, không còn là việc chờ. Trước 11/09 nó
    chặn vì *không engine nào chạy được*; giờ `qemu-system-avr` chạy và QEMU có sẵn gdbstub
    (`-s -S`), nên đọc biến là nối một client giao thức GDB-remote — không cần `avr-gdb`, vốn cũng
