@@ -13,7 +13,7 @@
 ## 1. Một dòng
 
 **182/238 năng lực (76%). M0 đóng 22/22; M1 đạt 74/75 (99%); M2 giữ 80/99 (81%); M3 mở màn
-6/29. 1354 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18 bước ĐẠT.**
+6/29. 1356 test Python + 2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13.**
 
 **Mốc lớn nhất của ngày 11/09 nằm ở đợt 3: `code.build` dựng ra firmware THẬT.** Mắt xích trung
 tâm của luận điểm đề án — *sinh mã có nối về fact* — nay đã thi hành đầu-cuối: lệnh dựng đọc từ
@@ -163,16 +163,36 @@ manifest khai, không phải kiến trúc của máy đang chạy test. `code.si
 Tầng thứ ba là chỗ đáng nhớ nhất: hai tầng đầu còn có thể đoán ra khi đọc mã, tầng thứ ba thì
 chỉ lộ khi một chương trình thật đi tìm một chương trình thật khác. Xem [DEV-088](DEVIATIONS.md).
 
+**`scripts/nghiem_thu_sprint3.sh` — 13/13 ĐẠT.** Nếu Sprint 2 chứng minh chuỗi *tri thức*, kịch
+bản này chứng minh nửa còn lại — **từ tri thức tới firmware chạy được** — và nó không dùng một
+shim nào:
+
+```
+eide project new "điều khiển LED và đọc BME280 trên STM32F411"
+  → ghim đích: ISA suy ra armv7e-m từ docs/spec/isa/*.yaml
+  → env.check: cả năm công cụ sẵn sàng
+  → code.build: ELF elf32-littlearm, architecture armv7e-m  ← KHÔNG phải kiến trúc máy chạy
+  → code.size:  text 28 B · bss 4 B · flash_pct 0,01% của 512 KB
+  → constant_guard: 0x76 không chú thích fact → BLOCK
+  → sim.run trên qemu-system-avr -M arduino-uno → captured.uart khớp kỳ vọng
+  → sổ cái 17 bản ghi liên tục (có tool.report của build/size/sim)
+  → niêm store khớp sau khi dựng và đo
+```
+
+Nó **bỏ qua có báo** khi máy thiếu công cụ thay vì báo đỏ: một máy chưa cài `arm-none-eabi-gcc`
+thì câu trả lời đúng là "chưa kiểm được", không phải "hỏng". Và nó **mang theo một dự án CMake
+tối thiểu**, vì EIDE không sinh scaffold — `code.build` dựng theo `CMakeLists` CỦA DỰ ÁN.
+
 ---
 
 ## 6. Chất lượng
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1354** xanh, arm64 + x86_64 (`make check-py`) |
+| Test Python | **1356** xanh, arm64 + x86_64 (`make check-py`) |
 | Test Swift | **2699** xanh (`make check-swift`, nay nằm trong `make check` — WI-260). Trong đó **29** là EIDEKit, phần thuộc EIDE; còn lại là GEditor, ứng dụng chủ |
 | Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **1 engine mô phỏng** (`qemu-system-avr`) · **2 chuỗi công cụ ARM** (`arm-none-eabi-gcc` + `cmake`/`ninja`). Ba nhóm sau nằm trong `make check` và tự bỏ qua nếu máy không có công cụ |
-| Nghiệm thu Sprint 1 / Sprint 2 | 17/17 · 18/18 |
+| Nghiệm thu Sprint 1 / 2 / 3 | 17/17 · 18/18 · **13/13** |
 | Mục DEVIATIONS | 89 tổng, **9 Mở** — 7 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ kênh quan sát); **2 chờ chủ sản phẩm**: [DEV-088] (SEC-25 §2/§3) và [DEV-089] (ký lại `trusted_packages`) |
 | Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`). Phiên này: **TGT-19 v1.2**, **SIM-20 v1.1** |
 

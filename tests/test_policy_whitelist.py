@@ -175,6 +175,54 @@ def test_SVD_tang_vang_duoc_duyet_sau_khi_ky(cfg, tmp_path):
     assert g.decide("G-SRC", la, risk="R1").rule_id == "G-SRC-99"
 
 
+def test_moi_cong_cu_ISA_khai_deu_trong_danh_sach_trang(cfg):
+    """DEV-089. Chuỗi công cụ mà manifest ISA đòi phải cài được mà không hỏi người từng cái một.
+
+    Trước 11/09/2026: **7 trên 8** công cụ trong `docs/spec/isa/*.yaml` vắng mặt khỏi
+    `trusted_packages` — kể cả `cmake` và `ninja`, vốn được TGT-19 §3 kể tên trong chính danh
+    sách mặc định. Chỉ `avr-gcc` khớp. Hệ quả: `env.install` hỏi người ở gần như mọi công cụ,
+    và một cổng hỏi quá nhiều là một cổng người ta bấm qua cho xong.
+
+    Ngoại lệ có lý do: `arm-none-eabi-size`, `arm-none-eabi-objcopy`, `avr-size` là **chương
+    trình**, không phải **gói** — trên Homebrew cả ba đến từ `arm-none-eabi-binutils` (và
+    `avr-gcc`). `trusted_packages` kể tên GÓI, nên kể tên chương trình vào đó là sai tầng. Đó là
+    phần còn Mở của DEV-089: `env.install` hiện dùng `tool` làm luôn tên gói, và hai thứ ấy
+    không phải một.
+    """
+    import yaml as _yaml
+
+    from eide_core.paths import spec_dir
+    tu_binutils = {"arm-none-eabi-size", "arm-none-eabi-objcopy", "avr-size"}
+    thieu = []
+    for f in sorted((spec_dir() / "isa").glob("*.yaml")):
+        man = _yaml.safe_load(f.read_text(encoding="utf-8"))
+        tc = man.get("toolchain") or {}
+        tens = [(tc.get("compiler") or {}).get("name")] + [
+            t.get("name") for t in (tc.get("tools") or [])]
+        for ten in [t for t in tens if t and t not in tu_binutils]:
+            if ten not in cfg["trusted_packages"]:
+                thieu.append(f"{man['id']}:{ten}")
+    assert not thieu, f"công cụ ISA vắng khỏi trusted_packages: {thieu}"
+
+
+def test_danh_sach_goi_khong_tut_khoi_muc_TGT19_da_ghi(cfg):
+    """`defaults.yaml` từng chỉ có 12/24 gói mà TGT-19 §3 kể — đúng một nửa, và không có gì báo.
+
+    Danh sách trắng là thứ chỉ lộ ra khi nó THIẾU: thừa một gói thì không ai thấy, thiếu một gói
+    thì một lần cài rơi vào ASK và người dùng bấm duyệt. Bài này đọc thẳng câu văn của TGT-19
+    trong nguồn sinh, nên nó đỏ khi hai bên trôi khỏi nhau theo BẤT KỲ chiều nào.
+    """
+    import pathlib
+    import re
+
+    src = pathlib.Path("docs/ho-so/nguon/tgt_sim.js").read_text(encoding="utf-8")
+    m = re.search(r"danh sách mặc định: ([^.]+)\.", src)
+    assert m, "không tìm thấy câu 'danh sách mặc định' trong TGT-19 §3"
+    tai_lieu = [x.strip() for x in m.group(1).split(",")]
+    thieu = [x for x in tai_lieu if x not in cfg["trusted_packages"]]
+    assert not thieu, f"TGT-19 §3 kể nhưng defaults.yaml không có: {thieu}"
+
+
 def test_chua_ky_thi_quyet_dinh_noi_ra_ly_do_that(tmp_path):
     """Quy tắc bắt hết phải nói ra rằng cổng đang chạy THIẾU danh sách trắng (POL-17 §3, v1.2).
 

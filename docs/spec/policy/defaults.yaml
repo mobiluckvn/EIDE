@@ -25,7 +25,16 @@ thresholds:
 # (`source.domain in trusted_sources`, không khớp hậu tố), nên trước hôm nay mọi lượt tải SVD
 # tầng vàng đều rơi vào ASK: một cổng hỏi người về đúng thứ nó được dựng lên để cho qua.
 trusted_sources: [st.com, microchip.com, nordicsemi.com, espressif.com, bosch-sensortec.com, github.com/cmsis-svd, raw.githubusercontent.com]
-trusted_packages: [gcc-arm-none-eabi, avr-gcc, renode, probe-rs, openocd, esptool, simavr, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli]
+# Danh sách mặc định của TGT-19 §3, đủ 24 gói (trước 11/09/2026 tệp này chỉ có 12 — đúng một
+# nửa, nên `env.install cmake` hay `env.install cppcheck` đều rơi vào ASK dù tài liệu ghi chúng
+# là gói tin cậy). Cộng hai tên của chuỗi công cụ ARM trên Homebrew: `gcc-arm-none-eabi` là tên
+# gói của **apt**, còn Homebrew — và `toolchain.compiler.name` của `isa/armv7e-m.yaml` — dùng
+# `arm-none-eabi-gcc`. Một danh sách phẳng dùng chung cho ba trình quản lý gói thì phải kể cả
+# ba cách đặt tên, nếu không nền tảng nào không được kể sẽ trượt trong im lặng. Xem DEV-089.
+# MỘT DÒNG, không xuống dòng: bộ đọc YAML của GEditor chưa hiểu dãy flow trải nhiều dòng, và
+# `YAMLRealFilesTests` chạy trên chính tệp này. Bản nháp đầu viết ba dòng cho dễ đọc và làm bài
+# ấy đỏ ngay — đúng việc nó sinh ra để làm. Mọi danh sách khác trong tệp cũng một dòng.
+trusted_packages: [gcc-arm-none-eabi, arm-none-eabi-gcc, arm-none-eabi-binutils, avr-gcc, avrdude, riscv-none-elf-gcc, esp-idf, cmake, ninja, probe-rs, openocd, esptool, pymcuprog, picotool, renode, simavr, qemu, cppcheck, clang-tidy, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli, sigrok-cli, docling]
 allowed_licenses: [MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, CC-BY-4.0, vendor-doc]
 # Danh sách thứ tư mà POL-17 §3 gọi là `lab_boards` nhưng §4 đặt tên `boards` (DEV-030).
 # Để RỖNG có chủ ý: đánh dấu board lab đòi người xác nhận hai điều mà chỉ người cầm board mới

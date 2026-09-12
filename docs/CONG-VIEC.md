@@ -15,16 +15,18 @@ chủ sản phẩm 08/09).
 DDD-14 lên **v1.4**, API-15 lên **v1.7**. Phiên 11/09 thêm DEV-082…086, và đợt 2 cùng ngày đóng
 **DEV-086** (TGT-19 **v1.2**, SIM-20 **v1.1**) cùng **DEV-087** (anh duyệt tại chỗ).*
 
-**Còn đúng một việc chờ anh, và nó là một lệnh: `eide policy sign`** (mục P1). Bốn mục còn lại
-trong bảng đều là việc dài hơi hoặc đã xong.
+**Không còn việc nào chờ anh ở mức chặn.** WI-257 và DEV-089 đã ký xong (12/09). Còn lại trong
+bảng là việc dài hơi: [DEV-088] chờ anh xem để đưa vào SEC-25, đường ảnh cho Gateway, đỏ PTIT,
+và một board thật.
 
 | # | Việc | Vì sao chặn |
 |---|---|---|
 | ~~P0~~ | ~~[DEV-086](DEVIATIONS.md) — thêm `fallback: qemu` cho `isa/avr8.yaml`~~ | **Anh duyệt 11/09, đã xong.** TGT-19 lên **v1.2**, SIM-20 lên **v1.1**. Nhóm `sim.*` nay có lượt chạy engine THẬT: `qemu-system-avr -M arduino-uno` chạy một ELF AVR qua chính `sim.run` và trả `captured.uart == ["E"]` — ELF dựng bằng tay trong test (98 byte), nên không cần `avr-gcc` vốn không có trên máy |
-| **P1** | **WI-257 — CHỈ CÒN MỘT LỆNH: `eide policy sign`** | Dữ liệu đã sửa 11/09: `defaults.yaml` nay có `raw.githubusercontent.com` (nơi SVD tầng vàng thật sự nằm; G-SRC-01 khớp CHÍNH XÁC nên `github.com/cmsis-svd` không phủ được). **Chữ ký thì tôi không ký thay được** — `eide policy sign` cố ý là LỆNH chứ không phải năng lực, để tác tử không tự cấp quyền cho mình (tình huống S47 → REJECT G-WL-02). Chưa ký thì PolicyGate **bỏ hẳn ba danh sách** và mọi thứ rơi về ASK: 19 test đỏ, tất cả cùng một nguyên nhân. Đã kiểm trên bản sao đã ký: **1352 xanh**. Lệnh: `.venv-arm/bin/python -m eide.cli policy sign --by "Vũ Trí Công"` |
+| ~~P1~~ | ~~WI-257 — ký danh sách trắng~~ | **Xong 11/09, và ký lại 12/09 cho [DEV-089].** `trusted_sources` thêm `raw.githubusercontent.com`; `trusted_packages` từ 12 lên **26 gói** — đủ 24 mục TGT-19 §3 kể cộng `arm-none-eabi-gcc`/`-binutils`. Đo được trước khi sửa: **7/8** công cụ mà manifest ISA khai đều vắng khỏi danh sách trắng, nên `env.install` hỏi người ở gần như mọi công cụ của chuỗi dựng. Băm hiện tại `5c1f3da12712…` |
 | ~~P2~~ | ~~[DEV-077](DEVIATIONS.md) — cạnh `CONFLICTS_WITH`~~ | **Anh chốt 10/09: thêm trường.** DDD-14 §2 Fact v1.4 có `conflicts_with`; migration `0006`; `kg.dung` dựng cạnh từ hai đường (suy + khai); `extract.pdf_errata` nối được cạnh mà hợp đồng đòi. Xong |
 | ~~P3~~ | ~~Duyệt bản nháp đồng bộ~~ | **Anh duyệt 10/09.** Sáu mục đã đóng: CDS-12.1/12.2/12.4 lên **v1.4** (DEV-072, 073, 075, 078, 080), API-15 lên **v1.7** (DEV-081 — kiểu sự kiện `project.state`). Còn **3 mục Mở**, cả ba là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision) |
 | P4 | **Đường ảnh cho Gateway** | `models.yaml` khai vai trò `cartographer` với `inputs: [image]` nhưng `Gateway.run` chỉ nhận văn bản. Mở nó là việc hạ tầng + cần khoá mô hình có thị giác (tốn token) — xem §8 của [TIEN-DO.md](TIEN-DO.md) |
+| **P7** | **[DEV-088](DEVIATIONS.md) — SEC-25 §2/§3** | Lõi sandbox nay nhận `cwd` và `them_path`; không có chúng thì `code.build` không thể thành công trên bất kỳ máy nào. Đề xuất §3 ghi rõ `PATH` gồm cả thư mục chuỗi công cụ đã khai trong manifest ISA, §2 ghi rõ thư mục làm việc có thể là gốc dự án khi năng lực đã khai `allowed_dirs` chứa nó |
 | P5 | WI-258 — xác nhận đỏ PTIT | Đang dùng `#B8121F` theo UXD-13 §7 |
 | P6 | Chuẩn bị **một board** (Nucleo F411 / ESP32-C3) | Cho khối H cuối cùng |
 
@@ -195,7 +197,8 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 | ~~I7~~ | ~~**Chuỗi công cụ ARM — dựng thật một lần**~~ | **Xong 11/09 đợt 3.** `arm-none-eabi-gcc` 16.2.0 cài bằng **công thức** (không phải cask — cask là `.pkg` cần mật khẩu admin). `code.build` nay dựng ra firmware `armv7e-m` thật và `code.size` đọc số thật từ `arm-none-eabi-size`. Phải sửa **ba tầng** trong lõi mới chạy được — xem [DEV-088](DEVIATIONS.md) |
 | I3 | Thêm test `llm` cho `plan.*`, `tool.write`, `extract.pdf_register_map` | Ba nhóm sinh còn lại chưa có test gọi thật |
 | I4 | **M5**: schema manifest ISA + TC-48 + rv32imac/xtensa/pic16 | [DEV-055](DEVIATIONS.md). Kèm món nợ M0: `avr8.yaml` chưa test nào chạm tới |
-| I5 | `scripts/nghiem_thu_sprint3.sh` | Khi khối B xong |
+| ~~I5~~ | ~~`scripts/nghiem_thu_sprint3.sh`~~ | **Xong 12/09 — 13/13 ĐẠT.** Chuỗi HIỆN THỰC bằng công cụ thật: ghim ISA → dựng ELF `armv7e-m` → đo ngân sách (flash_pct 0,01% của 512 KB) → chặn hằng số không nguồn → **mô phỏng thật trên `qemu-system-avr`** → sổ cái 17 bản ghi liên tục → niêm store khớp. Bỏ qua có báo khi máy thiếu công cụ, không báo đỏ |
+| I8 | **Bộ đọc YAML của GEditor chưa hiểu dãy flow trải nhiều dòng** | Tìm ra 12/09 bởi chính `YAMLRealFilesTests` vừa sửa ở WI-260: một bản nháp `defaults.yaml` viết `trusted_packages` thành ba dòng làm nó đỏ ngay — dù YAML ấy hợp lệ và Python đọc được. Đã né bằng cách giữ một dòng (đúng quy ước của chính tệp), nhưng bộ đọc vẫn thiếu tính năng. **Không phải sai khác spec** — đây là khoảng trống của ứng dụng chủ. Đáng ghi vì nó là bằng chứng bài test ấy sống: nó bắt được một lỗi thật trong vòng một ngày kể từ lúc được nối lại ngữ liệu |
 | ~~I6~~ | ~~**WI-260** — phần Swift vào `make check`~~ | **Xong 11/09.** `check-swift` nằm trong `check`; bỏ qua có báo khi máy không có `swift`. Hai bài đỏ từ 06/09 đã sửa: `HelpBookTests` đòi rơi về tiếng Việt trong khi mã cố ý rơi về **tiếng Anh** và `de` nay đã có sách; `YAMLRealFilesTests` leo ba cấp ra `apps/geditor` nên còn **1** tệp YAML — nay leo theo mốc `.git` và chạy trên **35** tệp thật của kho |
 
 ---
@@ -258,9 +261,11 @@ test nào từng dựng THÀNH CÔNG (`test_code.py` chỉ kiểm nhánh hỏng)
 
 | # | Việc | Ghi chú |
 |---|---|---|
-| 1 | **Anh xem [DEV-088] và [DEV-089]** | DEV-088 đề xuất SEC-25 v1.x nói rõ hai điều lõi vừa làm. DEV-089 cần **ký lại** `trusted_packages`: nó ghi `gcc-arm-none-eabi` (tên gói **apt**) trong khi Homebrew và manifest đều dùng `arm-none-eabi-gcc` — nên `env.install` cho trình dịch ARM rơi vào ASK. Đúng hình dạng WI-257, ở nhóm gói |
-| 2 | **`nghiem_thu_sprint3.sh`** (mục I5) | Nay viết được: đã có `code.build` thật + `sim.*` engine thật. Đó là kịch bản nghiệm thu đầu tiên đi hết từ ý tưởng tới firmware chạy được |
-| 3 | [DEV-083] kênh `var`/`gpio` → mở khoá `debug.*` (6 năng lực) | QEMU có gdbstub (`-s -S`); không cần `avr-gdb` |
+| ~~1~~ | ~~[DEV-089] ký lại `trusted_packages`~~ | **Xong 12/09.** Hoá ra lớn hơn một cái tên: `defaults.yaml` chỉ có **12/24** gói mà TGT-19 §3 kể — thiếu cả `cmake`, `ninja`, `cppcheck`, `avrdude`. Đo được: **7/8** công cụ mà manifest ISA khai đều vắng, chỉ `avr-gcc` khớp. Nay đủ 24 + `arm-none-eabi-gcc`/`-binutils`, đã ký (`5c1f3da12712…`), và **hai bài test giữ cả hai chiều** khỏi trôi lại |
+| ~~2~~ | ~~`nghiem_thu_sprint3.sh`~~ | **Xong 12/09 — 13/13 ĐẠT.** Xem mục I5 |
+| **1** | **Anh xem [DEV-088]** | Đề xuất SEC-25 v1.x nói rõ hai điều lõi đã làm: `PATH` gồm cả thư mục chuỗi công cụ đã khai, và thư mục làm việc có thể là gốc dự án khi năng lực đã khai `allowed_dirs` chứa nó |
+| **2** | **[DEV-089] phần còn Mở** | `env.install` dùng `tool` làm luôn tên GÓI, nhưng `arm-none-eabi-size`/`objcopy` là **chương trình** đến từ gói `arm-none-eabi-binutils`. Đề xuất TGT-19 v1.x thêm trường `package` cho `toolchain.tools[]` |
+| **3** | [DEV-083] kênh `var`/`gpio` → mở khoá `debug.*` (6 năng lực) | QEMU có gdbstub (`-s -S`); không cần `avr-gdb` |
 
 ### Bẫy mới, đừng đạp lại
 
