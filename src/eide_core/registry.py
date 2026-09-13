@@ -272,10 +272,23 @@ class Registry:
 
     # ---- chuyển spec sang YAML/MCP (API-15 §MCP: sinh từ registry)
     def describe(self, cap_id: str) -> dict[str, Any]:
+        """Hợp đồng đầy đủ của một năng lực — `caps.describe` của API-15 §1.
+
+        `ui` lấy từ thuộc tính SUY ra (`man_hinh`), không lấy trường thô. `spec.__dict__` chỉ
+        có `ui` như đã khai trong hợp đồng, mà `cds.json` không khai cho năng lực nào (0/238,
+        DEV-046) — nên bản đầu trả `ui: ""` cho cả 238 năng lực, trong khi `caps.list` cùng lúc
+        trả tên màn đầy đủ vì nó đọc `c.spec.man_hinh`.
+
+        Hai phương thức nói hai thứ khác nhau về cùng một năng lực là thứ không ai nghi cho tới
+        lúc một bên được dùng để quyết định điều gì: panel định tuyến theo `caps.list` nên vẫn
+        chạy, còn bất cứ ai hỏi `caps.describe` — MCP, một IDE khác, một bài test — đều nhận
+        được câu trả lời rằng năng lực này không thuộc màn hình nào.
+        """
         reg = self.get(cap_id)
         d = reg.spec.__dict__.copy()
         d["implemented"] = reg.implemented
         d["gate"] = reg.spec.gate
+        d["ui"] = reg.spec.man_hinh
         return d
 
     @staticmethod

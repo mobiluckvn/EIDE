@@ -111,7 +111,12 @@ public final class EidePanel: NSView {
         noiManChuyenDe()
         hoiThoai.onGui = { [weak self] text in self?.gui(text) }
         thanhTuChu.onDungKhan = { [weak self] in self?.dungKhan() }
-        Task { await lamMoi() }
+        Task {
+            await client.theoDoi { [weak self] ten, p in
+                Task { @MainActor in self?.nhanSuKien(ten, p) }
+            }
+            await lamMoi()
+        }
     }
 
     @available(*, unavailable)
@@ -354,6 +359,7 @@ public final class EidePanel: NSView {
     /// Gọi một năng lực rồi đưa `result` cho khung nhìn. Lỗi đi vào hội thoại — một màn chuyên
     /// đề im lặng khi gọi hỏng là màn người dùng bấm lại lần thứ ba.
     private func chay(_ id: String, _ params: [String: Any],
+                      khiLoi: ((String) -> Void)? = nil,
                       _ xong: @escaping ([String: Any]) -> Void) {
         Task {
             do {
@@ -361,15 +367,38 @@ public final class EidePanel: NSView {
                 await MainActor.run {
                     if (r["status"] as? String) == "done" {
                         xong((r["result"] as? [String: Any]) ?? [:])
+                    } else if let kl = khiLoi {
+                        kl(Self.docLoi(r))
                     } else {
                         self.hienKetQua(r)
                     }
                 }
             } catch {
-                await MainActor.run { self.hienLoi(error) }
+                await MainActor.run {
+                    if let kl = khiLoi { kl("\(error)") } else { self.hienLoi(error) }
+                }
             }
             await lamMoi()
         }
+    }
+
+    /// Lỗi của một CapabilityRun thành một câu người đọc được.
+    ///
+    /// E2000 (`GROUNDING_FAILED`) chiếm phần lớn lỗi mà một màn vừa mở gặp phải: năng lực cần
+    /// một dự án có store, và dự án vừa tạo thì chưa có. Đó KHÔNG phải hỏng — đó là thứ tự
+    /// công việc. Hiện nó dưới dạng lỗi đỏ là dạy người dùng rằng phần mềm này hay lỗi.
+    static func docLoi(_ r: [String: Any]) -> String {
+        guard let e = r["error"] as? [String: Any] else {
+            return "chưa chạy được (trạng thái \((r["status"] as? String) ?? "?"))."
+        }
+        let ma = (e["eide_code"] as? String) ?? ""
+        let tin = (e["message"] as? String) ?? ""
+        if ma == "E2000" {
+            let thieu = ((e["missing"] as? [String]) ?? []).joined(separator: ", ")
+            return tin + (thieu.isEmpty ? "" : " (thiếu: \(thieu))")
+                 + " — nạp tài liệu hoặc dựng tri thức trước rồi mở lại màn này."
+        }
+        return ma.isEmpty ? tin : "\(ma): \(tin)"
     }
 
     private func khungCua(_ man: String) -> KhungNhinEide? {
@@ -395,7 +424,7 @@ public final class EidePanel: NSView {
             (v as? RagAskView)?.dienSan(thamSo)
         }
         v.chuaNap("Đang hỏi `\(id)`…")
-        _napLanDau(v, id: id, thamSo: thamSo)
+        _napLanDau(v, id: id, tenMan: ten, thamSo: thamSo)
     }
 
     /// `/FlowMap`, `/Models` — mở màn bằng chính TÊN của nó.
@@ -474,44 +503,119 @@ public final class EidePanel: NSView {
         case cho(String)
     }
 
-    /// Quyết định từ HỢP ĐỒNG, tách thuần để test được mà không cần daemon.
+    /// Năng lực được phép chạy KHI MỞ MÀN — danh sách khai báo, không suy ra.
     ///
-    /// Cùng lý do với `duongVao`: đây là chỗ một quyết định về hành vi sống, và một quyết định
+    /// ## Vì sao một danh sách, sau khi tôi vừa viết rằng danh sách gõ tay là sai
+    ///
+    /// Bản đầu của `tuChay` suy tính "chỉ đọc" từ ba trường hợp đồng: `risk == R0`,
+    /// `undo == "none"`, `required` rỗng. Chạy thử trên registry thật thì **19 năng lực thỏa cả
+    /// ba**, và trong đó có `policy.emergency_stop` — mở một màn ra là dừng khẩn cả hệ thống.
+    ///
+    /// Lỗ hổng nằm ở chỗ `undo: none` mang HAI nghĩa khác hẳn nhau:
+    ///
+    /// - *không có gì để hoàn tác vì không thay đổi gì* — `project.status`, `env.detect`;
+    /// - *có thay đổi, nhưng không hoàn tác được* — `policy.emergency_stop` (T3),
+    ///   `policy.learn_thresholds` (T2, `ask_when: Luôn`), `kg.build` (ghi vào store).
+    ///
+    /// Thêm `tier == T1` loại được hai cái đầu, nhưng `code.build` và `kg.build` vẫn lọt: cả
+    /// hai là R0/T1/undo-none, và một cái chạy cmake vài chục giây còn cái kia ghi store.
+    /// **CDS-12 không có trường nào nói năng lực có tác dụng phụ hay không** (xem DEV-095), nên
+    /// suy tiếp là đoán — và đoán sai ở đây nghĩa là một cú gõ `/` làm dừng cả hệ thống.
+    ///
+    /// Tiêu chí vào danh sách là HAI: chỉ đọc, **và rẻ**. `view.rag_ask` chỉ đọc nhưng gọi mô
+    /// hình — mở một màn ra mà tốn tiền là thứ người dùng không đồng ý trước.
+    ///
+    /// Nên: danh sách này là một quyết định THIẾT KẾ của panel, đúng như `bangMan`, và
+    /// `tuChay` ở dưới vẫn chạy như một CHỐT THỨ HAI — hợp đồng vẫn có quyền phủ quyết danh
+    /// sách, chỉ không còn được tin là đủ để tự mình cho phép.
+    public static let napAnToan: Set<String> = [
+        "project.status",       // màn 2 Tổng quan
+        "passport.list",        // màn 5 Hộ chiếu chip
+        "passport.query",       // màn 5 — truy vấn SQL, rẻ và chỉ đọc
+        "view.kg_map",          // màn 7 Bản đồ tri thức
+        "view.timeline",        // màn 7 (dòng thời gian)
+        "view.conflict_board",  // màn 7 (bảng xung đột)
+        "kg.conflicts",         // màn 7
+        "env.detect",           // màn 21 Môi trường
+        "project.list",
+        "policy.undo_window",   // hàng đợi "đã làm — hoàn tác được"
+        "report.progress",
+    ]
+
+    /// Năng lực nạp mặc định của mỗi màn, khi lệnh người gõ không tự chạy được.
+    public static func napMacDinh(choMan tien: String) -> String? {
+        switch tien {
+        case "Main": return "project.status"
+        case "Passport": return "passport.list"
+        case "Graph": return "view.kg_map"
+        case "Env": return "env.detect"
+        default: return nil
+        }
+    }
+
+    /// Chốt thứ hai: hợp đồng có quyền phủ quyết danh sách.
+    ///
+    /// Tách thuần để test được mà không cần daemon — cùng lý do với `duongVao`: một quyết định
     /// chỉ tồn tại bên trong một `Task` bất đồng bộ là quyết định không ai kiểm được.
     public static func tuChay(hopDong: [String: Any], id: String,
                               coThamSo: Bool) -> NapLanDau {
         let risk = (hopDong["risk"] as? String) ?? "?"
+        let tier = (hopDong["tier"] as? String) ?? "?"
         let undo = (hopDong["undo"] as? String) ?? "none"
+        let hoi = (hopDong["ask_when"] as? String) ?? ""
         let can = ((hopDong["input_schema"] as? [String: Any])?["required"] as? [String]) ?? []
 
         if !can.isEmpty {
             return .cho("`\(id)` cần \(can.map { "`\($0)`" }.joined(separator: ", "))"
                         + (coThamSo ? " — điền rồi Enter." : " — chưa chạy."))
         }
+        if !napAnToan.contains(id) {
+            return .cho("`\(id)` không nằm trong nhóm chỉ-đọc nên không tự chạy lúc mở màn — "
+                      + "gõ lệnh để chạy.")
+        }
         if undo != "none" {
             return .cho("`\(id)` có thay đổi hoàn tác được (`\(undo)`) nên không tự chạy lúc "
                       + "mở màn — gõ lệnh để chạy.")
         }
-        if risk != "R0" {
-            return .cho("`\(id)` là \(risk), không tự chạy lúc mở màn — gõ lệnh để chạy.")
+        if risk != "R0" || tier != "T1" || !(hoi.isEmpty || hoi == "—") {
+            return .cho("`\(id)` là \(risk)/\(tier), không tự chạy lúc mở màn — gõ lệnh để chạy.")
         }
         return .chay
     }
 
-    private func _napLanDau(_ v: KhungNhinEide, id: String, thamSo: String) {
+    private func _napLanDau(_ v: KhungNhinEide, id: String, tenMan ten: String,
+                           thamSo: String) {
         Task {
             guard let hd = try? await client.goi(.capsDescribe, ["id": id]) else {
                 return await MainActor.run {
                     v.chuaNap("Không đọc được hợp đồng của `\(id)`.")
                 }
             }
-            let quyet = Self.tuChay(hopDong: hd, id: id, coThamSo: !thamSo.isEmpty)
-            guard case .chay = quyet else {
-                if case .cho(let vi) = quyet { return await MainActor.run { v.chuaNap(vi) } }
-                return
+            if case .chay = Self.tuChay(hopDong: hd, id: id, coThamSo: !thamSo.isEmpty) {
+                return self.chay(id, [:],
+                                 khiLoi: { v.chuaNap($0) }) { r in v.capNhat(ketQua: r) }
             }
-            self.chay(id, [:]) { r in v.capNhat(ketQua: r) }
+
+            // Lệnh người gõ không tự chạy được — nhưng màn vẫn có thể nạp bằng năng lực mặc
+            // định của NÓ. Gõ `/board.check_pins` mà thiếu tham số thì màn Hộ chiếu mạch vẫn
+            // nên hiện những gì nó biết, chứ không đứng trắng chờ một tham số.
+            if let md = Self.napMacDinh(choMan: _tienCuaMan(ten)), md != id,
+               let hd2 = try? await client.goi(.capsDescribe, ["id": md]),
+               case .chay = Self.tuChay(hopDong: hd2, id: md, coThamSo: false) {
+                return self.chay(md, [:],
+                                 khiLoi: { v.chuaNap($0) }) { r in v.capNhat(ketQua: r) }
+            }
+
+            if case .cho(let vi) = Self.tuChay(hopDong: hd, id: id,
+                                               coThamSo: !thamSo.isEmpty) {
+                await MainActor.run { v.chuaNap(vi) }
+            }
         }
+    }
+
+    /// Tên màn trong `screens.json` → tiền tố trong `bangMan`.
+    private func _tienCuaMan(_ ten: String) -> String {
+        bangMan.first { ten.hasPrefix($0.tien) }?.tien ?? ten
     }
 
     @objc private func dongMan() {
@@ -746,6 +850,54 @@ public final class EidePanel: NSView {
         await MainActor.run {
             self.manHinhCua = bang
             self.hoiThoai.oLenh.napNangLuc(ds + themMan)
+        }
+    }
+
+    /// Thông báo `event.*` từ daemon — API-15 §1 (16 phương thức) và §5 (sổ cái).
+    ///
+    /// **Trước hôm nay không ai nghe kênh này.** `hienCauHoi` là `public`, có test, và chưa
+    /// từng được gọi: daemon phát `event.chat.question` mỗi lần một năng lực cần người chọn,
+    /// và thẻ câu hỏi gộp của U3 không bao giờ hiện ra. Người dùng thấy việc dừng lại mà không
+    /// thấy câu hỏi — đúng loại im lặng mà U2 ("làm rồi báo cáo, NHÌN THẤY ĐƯỢC") cấm.
+    ///
+    /// Ba nhóm, ba cách xử lý khác nhau:
+    ///
+    /// - **Hỏi người** (`event.chat.question`) — hiện thẻ ngay; đây là thứ đang chặn công việc.
+    /// - **Trạng thái đổi** (`queue.changed`, `gate.opened`, `undo.*`, `autonomy.changed`) —
+    ///   đọc lại từ daemon. Panel không tự suy trạng thái mới từ nội dung sự kiện: GPI-23 §1
+    ///   nói nó là client thuần, và một bản sao trạng thái dựng từ sự kiện sẽ trôi khỏi sự thật
+    ///   sau đúng một thông điệp bị mất.
+    /// - **Tri thức đổi** (`knowledge.changed`, `doc.stale`, `diagram.stale`) — nạp lại MÀN
+    ///   ĐANG MỞ nếu nó hiện thứ vừa đổi. Một màn hộ chiếu mở sẵn trong lúc `extract.svd` chạy
+    ///   xong mà vẫn hiện số fact cũ là một màn nói sai.
+    @MainActor
+    func nhanSuKien(_ ten: String, _ p: [String: Any]) {
+        switch ten {
+        case "event.chat.question":
+            hienCauHoi(p)
+        case "event.notice":
+            let muc = (p["level"] as? String) ?? "info"
+            let tin = (p["message"] as? String) ?? (p["text"] as? String) ?? ""
+            hoiThoai.themLuot(by: muc == "error" ? .loi : .heThong, text: tin)
+        case "event.chat.report":
+            hoiThoai.themLuot(by: .tacTu, text: (p["text"] as? String) ?? "(báo cáo)")
+        case "event.queue.changed", "event.gate.opened", "event.undo.registered",
+             "event.undo.expired", "event.autonomy.changed":
+            Task { await lamMoi() }
+        case "event.knowledge.changed", "event.doc.stale", "event.diagram.stale":
+            _napLaiManDangMo()
+        default:
+            break   // run.progress, job.progress, serial.line — chưa có chỗ hiện tử tế
+        }
+    }
+
+    /// Nạp lại màn đang mở, nếu nó tự nạp được.
+    private func _napLaiManDangMo() {
+        guard let k = bangMan.first(where: { !$0.v.isHidden }),
+              let md = Self.napMacDinh(choMan: k.tien) else { return }
+        let v = k.v
+        chay(md, [:], khiLoi: { [weak v] in v?.chuaNap($0) }) { [weak v] r in
+            v?.capNhat(ketQua: r)
         }
     }
 

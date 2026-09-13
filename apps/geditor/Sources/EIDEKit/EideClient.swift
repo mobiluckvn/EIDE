@@ -54,6 +54,18 @@ public actor EideClient {
         self.transport = transport
     }
 
+    /// Thông báo `event.*` từ daemon — `(tên phương thức, params)`.
+    ///
+    /// Panel cần chúng để hiện thẻ câu hỏi gộp (U3) và làm mới hàng đợi khi tác tử tự làm việc
+    /// (U2). Đặt ở đây vì `goi` là chỗ duy nhất đọc ống dẫn: một kênh sự kiện riêng sẽ phải
+    /// tranh cùng một `FileHandle`, và hai bên cùng đọc một ống là cách mất thông điệp.
+    private var onSuKien: ((String, [String: Any]) -> Void)?
+
+    /// Đăng ký người nghe. `EideClient` là actor nên trường không gán thẳng từ ngoài được —
+    /// và đó là điều tốt: kênh sự kiện chỉ có MỘT người nghe, đặt qua một hàm thì chỗ nào
+    /// giành mất nó cũng nhìn thấy được.
+    public func theoDoi(_ f: @escaping (String, [String: Any]) -> Void) { onSuKien = f }
+
     /// Gọi một phương thức. `method` là kiểu sinh từ openrpc.json, nên không gõ nhầm được tên.
     @discardableResult
     public func goi(_ method: EideMethod, _ params: [String: Any] = [:]) async throws -> [String: Any] {
@@ -65,9 +77,34 @@ public actor EideClient {
         }
         try await transport.send(data)
 
-        let line = try await transport.receiveLine()
-        guard let obj = try? JSONSerialization.jsonObject(with: line) as? [String: Any] else {
-            throw Failure.duLieuSai(String(data: line, encoding: .utf8) ?? "<không phải UTF-8>")
+        // Đọc tới khi gặp câu trả lời CỦA CHÍNH lời gọi này.
+        //
+        // API-15 §2 cho thông báo `event.*` đi cùng ống với câu trả lời, và `serve_stdio` phát
+        // chúng NGAY TRONG lúc xử lý — nên `caps.invoke` sinh hai `event.run.progress` trước
+        // khi trả kết quả. Bản đầu đọc đúng một dòng rồi coi nó là câu trả lời: nó nhận lấy
+        // thông báo đầu tiên, thấy không có `result`, và trả về `[:]`.
+        //
+        // Hệ quả im lặng hoàn hảo: **mọi lời gọi `caps.invoke` từ panel đều trả rỗng** — không
+        // lỗi, không treo, chỉ một từ điển trống. Màn hình hiện "chưa có dữ liệu" cho mọi thứ.
+        // Các test cũ không bắt được vì chúng gọi `plane.hello` và `caps.list`, hai phương thức
+        // không sinh sự kiện nào.
+        //
+        // JSON-RPC 2.0 phân biệt hai loại bằng trường `id`: câu trả lời có, thông báo không.
+        var obj: [String: Any] = [:]
+        while true {
+            let line = try await transport.receiveLine()
+            guard let o = try? JSONSerialization.jsonObject(with: line) as? [String: Any] else {
+                throw Failure.duLieuSai(String(data: line, encoding: .utf8) ?? "<không phải UTF-8>")
+            }
+            if let ten = o["method"] as? String, o["id"] == nil {
+                onSuKien?(ten, (o["params"] as? [String: Any]) ?? [:])
+                continue
+            }
+            // Câu trả lời của một lời gọi CŨ (ví dụ lần trước bị huỷ giữa chừng) thì bỏ qua:
+            // gán nó cho lời gọi này là trả dữ liệu của một câu hỏi khác.
+            if let i = o["id"] as? Int, i != soThuTu { continue }
+            obj = o
+            break
         }
         if let e = obj["error"] as? [String: Any] {
             let code = e["code"] as? Int ?? -1

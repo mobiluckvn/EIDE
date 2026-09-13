@@ -147,16 +147,33 @@ final class EideNapLanDauPremiseTests: XCTestCase {
     }
 
     func testNANGLUCcoTACdongKHONGtuChay() async throws {
-        // Ba hình dạng "không được tự chạy", mỗi cái vướng một điều kiện khác nhau:
-        //   `req.trace_matrix` — R0 và không tham số, nhưng GHI TỆP (undo != none);
-        //   `board.check_pins` — R0 và không ghi gì, nhưng thiếu tham số bắt buộc;
-        //   `target.flash`     — R3, và vướng cả ba.
+        // Bốn hình dạng "không được tự chạy", mỗi cái vướng một điều kiện khác nhau:
+        //   `req.trace_matrix`      — R0, không tham số, nhưng GHI TỆP (undo != none);
+        //   `board.check_pins`      — R0, không ghi gì, nhưng thiếu tham số bắt buộc;
+        //   `target.flash`          — R3, vướng cả ba;
+        //   `policy.emergency_stop` — R0, undo none, KHÔNG tham số. Thỏa cả ba điều kiện suy
+        //                             từ hợp đồng, và nó DỪNG KHẨN cả hệ thống. Đây là lý do
+        //                             `napAnToan` tồn tại; nếu nó lọt, một cú gõ "/" làm dừng
+        //                             mọi việc đang chạy.
         let c = try moClient()
-        for id in ["req.trace_matrix", "board.check_pins", "target.flash"] {
+        for id in ["req.trace_matrix", "board.check_pins", "target.flash",
+                   "policy.emergency_stop", "code.build", "kg.build"] {
             let hd = try await c.goi(.capsDescribe, ["id": id])
             guard case .cho = EidePanel.tuChay(hopDong: hd, id: id, coThamSo: false) else {
                 return XCTFail("\(id) KHÔNG được tự chạy lúc mở màn nhưng quy tắc cho phép")
             }
+        }
+    }
+
+    func testDANHsachChiDOCkhopVOIhopDONGthat() async throws {
+        // Mọi tên trong `napAnToan` phải là năng lực CÓ THẬT và thỏa chốt hợp đồng. Một tên gõ
+        // sai ở đó thì màn tương ứng lặng lẽ không bao giờ nạp — mã chết kiểu khác.
+        let c = try moClient()
+        for id in EidePanel.napAnToan.sorted() {
+            let hd = try await c.goi(.capsDescribe, ["id": id])
+            XCTAssertEqual(EidePanel.tuChay(hopDong: hd, id: id, coThamSo: false), .chay,
+                           "\(id) trong napAnToan nhưng hợp đồng chặn: risk=\(hd["risk"] ?? "?") "
+                         + "tier=\(hd["tier"] ?? "?") undo=\(hd["undo"] ?? "?")")
         }
     }
 }

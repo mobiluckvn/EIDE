@@ -258,3 +258,31 @@ def test_khong_muc_DEVIATIONS_nao_roi_khoi_bao_cao_dong_bo():
     assert d902["tai_lieu"] == "CDS-12.1 DOC-06 enum `docx|md`", d902["tai_lieu"]
     assert d902["ma_nguon"] == "c.py", d902["ma_nguon"]
     assert d902["de_xuat"] == "đề xuất 902", d902["de_xuat"]
+
+
+def test_caps_describe_va_caps_list_noi_cung_mot_man_hinh():
+    """`caps.describe` và `caps.list` phải đồng ý về màn hình của một năng lực.
+
+    `describe` từng trả `spec.__dict__`, tức trường `ui` THÔ — mà `cds.json` không khai `ui`
+    cho năng lực nào (0/238, DEV-046), nên nó trả `""` cho cả 238 cái. Cùng lúc `caps.list`
+    đọc `c.spec.man_hinh` và trả tên màn đầy đủ.
+
+    Hai phương thức nói hai thứ khác nhau về cùng một năng lực là thứ không ai nghi cho tới lúc
+    một bên được dùng để quyết định điều gì. Panel định tuyến theo `caps.list` nên vẫn chạy;
+    ai hỏi `describe` — MCP, một IDE khác, một bài test E2E — đều được trả lời rằng năng lực
+    này không thuộc màn hình nào.
+    """
+    from eide_core.registry import get_registry
+
+    r = get_registry()
+    lech = []
+    for c in r.list():
+        d = r.describe(c.spec.id)
+        if d["ui"] != c.spec.man_hinh:
+            lech.append((c.spec.id, d["ui"], c.spec.man_hinh))
+    assert not lech, f"describe và list lệch nhau ở {len(lech)} năng lực: {lech[:5]}"
+
+    # Và phải có ÍT NHẤT một năng lực có màn hình — nếu không, phép so trên luôn đúng một cách
+    # rỗng tuếch (cả hai cùng trả "" cho tất cả).
+    co_man = [c.spec.id for c in r.list() if r.describe(c.spec.id)["ui"]]
+    assert len(co_man) > 150, f"chỉ {len(co_man)} năng lực có màn hình — bảng UXD-13 §2 hỏng?"

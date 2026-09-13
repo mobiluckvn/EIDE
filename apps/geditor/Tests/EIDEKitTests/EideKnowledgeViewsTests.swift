@@ -207,19 +207,46 @@ final class EideKnowledgeViewsTests: XCTestCase {
 /// Quy tắc chữa nó đọc ba trường của hợp đồng, không đọc một danh sách gõ tay.
 final class EideNapLanDauTests: XCTestCase {
 
-    private func hd(_ risk: String, _ undo: String, _ can: [String]) -> [String: Any] {
-        ["risk": risk, "undo": undo, "input_schema": ["required": can]]
+    private func hd(_ risk: String, _ tier: String, _ undo: String,
+                    _ can: [String], ask: String = "—") -> [String: Any] {
+        ["risk": risk, "tier": tier, "undo": undo, "ask_when": ask,
+         "input_schema": ["required": can]]
     }
 
     func testNANGLUCchiDOCthiTUchayKHImoMAN() {
-        // `project.status`: R0, không hoàn tác, không tham số.
-        XCTAssertEqual(EidePanel.tuChay(hopDong: hd("R0", "none", []),
+        // `project.status`: R0/T1, không hoàn tác, không tham số, có trong danh sách chỉ-đọc.
+        XCTAssertEqual(EidePanel.tuChay(hopDong: hd("R0", "T1", "none", []),
                                         id: "project.status", coThamSo: false), .chay)
+    }
+
+    func testDUNGKHANkhongDUOCtuChayLUCmoMAN() {
+        // Lỗ hổng của bản đầu: `policy.emergency_stop` là R0, `undo: none`, không tham số —
+        // thỏa CẢ BA điều kiện suy từ hợp đồng. Mở một màn ra là dừng khẩn cả hệ thống.
+        //
+        // `undo: none` mang hai nghĩa khác hẳn nhau: "không có gì để hoàn tác vì không thay đổi
+        // gì" và "có thay đổi, nhưng không hoàn tác được". Dừng khẩn là nghĩa thứ hai.
+        guard case .cho(let vi) = EidePanel.tuChay(
+            hopDong: hd("R0", "T3", "none", []),
+            id: "policy.emergency_stop", coThamSo: false) else {
+            return XCTFail("dừng khẩn KHÔNG được tự chạy lúc mở màn")
+        }
+        XCTAssertTrue(vi.contains("chỉ-đọc"), vi)
+    }
+
+    func testCHAYcmakeVAghiSTOREcungKHONGtuChay() {
+        // `code.build` (chạy cmake vài chục giây) và `kg.build` (ghi vào store) đều là
+        // R0/T1/undo-none/không-tham-số — thêm `tier` cũng không loại được chúng.
+        for id in ["code.build", "kg.build", "code.static", "code.test_host"] {
+            guard case .cho = EidePanel.tuChay(hopDong: hd("R0", "T1", "none", []),
+                                               id: id, coThamSo: false) else {
+                return XCTFail("\(id) không được tự chạy lúc mở màn")
+            }
+        }
     }
 
     func testCOthamSObatBUOCthiKHONGdoanDIENvaoDAU() {
         // Đoán chuỗi sau id thuộc trường nào của `input_schema` là tự nghĩ ra hành vi.
-        guard case .cho(let vi) = EidePanel.tuChay(hopDong: hd("R0", "none", ["board"]),
+        guard case .cho(let vi) = EidePanel.tuChay(hopDong: hd("R0", "T1", "none", ["board"]),
                                                    id: "board.check_pins", coThamSo: false) else {
             return XCTFail("phải chờ khi thiếu tham số bắt buộc")
         }
@@ -227,30 +254,36 @@ final class EideNapLanDauTests: XCTestCase {
         XCTAssertTrue(vi.contains("chưa chạy"), vi)
     }
 
-    func testCOhoanTACnghiaLAcoTHAYdoi_khongTUchay() {
-        // Đây là điều kiện bắt được `req.trace_matrix`: R0, không tham số bắt buộc, nhưng
-        // `undo: delete_created_files` — tức nó GHI TỆP. Một màn vừa mở ra mà đã ghi tệp vào
-        // dự án của người ta là thứ không ai lường trước.
+    func testHOPDONGvanCOquyenPHUquyetDANHsach() {
+        // Danh sách khai báo không phải lời cuối: nếu một ngày `project.status` mọc `undo`
+        // hoặc đổi lớp rủi ro, hợp đồng chặn nó lại dù tên vẫn nằm trong `napAnToan`.
         guard case .cho(let vi) = EidePanel.tuChay(
-            hopDong: hd("R0", "delete_created_files", []),
-            id: "req.trace_matrix", coThamSo: false) else {
-            return XCTFail("năng lực có undo phải chờ")
+            hopDong: hd("R0", "T1", "delete_created_files", []),
+            id: "project.status", coThamSo: false) else {
+            return XCTFail("hợp đồng phải phủ quyết được danh sách")
         }
         XCTAssertTrue(vi.contains("hoàn tác được"), vi)
+
+        guard case .cho = EidePanel.tuChay(hopDong: hd("R2", "T1", "none", []),
+                                           id: "project.status", coThamSo: false) else {
+            return XCTFail("R2 phải bị chặn dù có trong danh sách")
+        }
     }
 
-    func testRUIROtuR1TROlenKHONGtuChay() {
-        for r in ["R1", "R2", "R3", "R4"] {
-            guard case .cho = EidePanel.tuChay(hopDong: hd(r, "none", []),
-                                               id: "x", coThamSo: false) else {
-                return XCTFail("\(r) không được tự chạy lúc mở màn")
-            }
+    func testASKWHENkhongRONGthiKHONGtuChay() {
+        // `policy.learn_thresholds` có `ask_when: Luôn` — một năng lực đã nói trước rằng nó
+        // cần hỏi người thì không được chạy vì một cú mở màn.
+        guard case .cho = EidePanel.tuChay(
+            hopDong: hd("R0", "T1", "none", [], ask: "Luôn"),
+            id: "project.status", coThamSo: false) else {
+            return XCTFail("ask_when khác rỗng phải chặn")
         }
     }
 
     func testHOPDONGthieuTRUONGthiNGHIENGveANtoan() {
-        // Không đọc được `risk` thì coi như không phải R0. Mặc định phải là KHÔNG chạy.
-        guard case .cho = EidePanel.tuChay(hopDong: [:], id: "x", coThamSo: false) else {
+        // Không đọc được `risk`/`tier` thì mặc định phải là KHÔNG chạy.
+        guard case .cho = EidePanel.tuChay(hopDong: [:], id: "project.status",
+                                           coThamSo: false) else {
             return XCTFail("hợp đồng rỗng phải chờ, không chạy")
         }
     }
@@ -258,11 +291,22 @@ final class EideNapLanDauTests: XCTestCase {
     func testTHUtuKIEMtra_thieuThamSOnoiTRUOCloaiRUIro() {
         // Một năng lực R3 thiếu tham số: câu hữu ích là "cần gì", không phải "R3 nên không chạy".
         guard case .cho(let vi) = EidePanel.tuChay(
-            hopDong: hd("R3", "reflash_known_good", ["artifact", "target"]),
+            hopDong: hd("R3", "T3", "reflash_known_good", ["artifact", "target"]),
             id: "target.flash", coThamSo: false) else {
             return XCTFail("phải chờ")
         }
         XCTAssertTrue(vi.contains("`artifact`"), vi)
         XCTAssertTrue(vi.contains("`target`"), vi)
+    }
+
+    func testMOImanCOnapMACdinhDEUnamTRONGdanhSACHchiDOC() {
+        // Nếu một màn khai năng lực nạp mà năng lực ấy không chỉ-đọc, chốt thứ hai sẽ chặn và
+        // màn lặng lẽ không bao giờ nạp được — mã chết kiểu khác.
+        for m in ["Main", "Passport", "Graph", "Env"] {
+            let md = EidePanel.napMacDinh(choMan: m)
+            XCTAssertNotNil(md, "\(m) mất năng lực nạp mặc định")
+            XCTAssertTrue(EidePanel.napAnToan.contains(md!),
+                          "\(m) nạp bằng `\(md!)` nhưng nó không nằm trong napAnToan")
+        }
     }
 }

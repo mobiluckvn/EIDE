@@ -12,8 +12,8 @@
 
 ## 1. Một dòng
 
-**209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1512 test Python +
-2785 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình.**
+**209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1513 test Python +
+2814 test Swift xanh (trong đó 15 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình.**
 
 **Từ 13/09, MỌI thứ còn thiếu quy về một nguyên nhân: chưa có bo mạch.** Giao diện đã đủ 23
 màn — số ấy đo lại mỗi lần chạy test (`EideManDayDuTests` đọc thẳng `docs/spec/ui/screens.json`),
@@ -248,7 +248,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Mười sáu lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Hai mươi lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -359,6 +359,37 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     Double, NSNumber lẫn String, và thay mọi chỗ đọc số từ kết quả `caps.invoke` trong cả sáu
     tệp khung nhìn. Bắt được vì một bài test dựng dữ liệu đúng hình dạng dữ liệu thật — chứ
     không phải hình dạng thuận tay người viết test.
+17. **Màn mở ra khẳng định điều nó chưa kiểm** (13/09). `hienKhung` chỉ hiện khung nhìn, không
+    hỏi daemon câu nào, nên gõ `/project.status` cho ra màn Tổng quan hiện *"Chưa mở dự án
+    nào"* — trong khi dự án đang mở. Câu ấy không thiếu, nó **sai**. Chữa bằng một trạng thái
+    thứ ba: U9 kể ba trạng thái rỗng/lỗi/chờ, nhưng một màn vừa mở không thuộc cái nào — nó
+    *chưa hỏi*.
+18. **Client nuốt mất mọi câu trả lời của `caps.invoke`** (13/09). `serve_stdio` phát `event.*`
+    ngay trong lúc xử lý, trên cùng ống dẫn; `EideClient.goi` đọc đúng MỘT dòng rồi coi nó là
+    câu trả lời. Nó nhận lấy thông báo đầu tiên, thấy không có `result`, và trả về `[:]`.
+
+    Đây là lỗi đắt nhất trong bốn cái của ngày 13/09: **mọi lời gọi năng lực từ panel đều trả
+    rỗng** — không lỗi, không treo, chỉ một từ điển trống, và mọi màn hình hiện "chưa có dữ
+    liệu". Nó sống sót vì test client cũ chỉ gọi `plane.hello` và `caps.list`, hai phương thức
+    duy nhất trong 57 cái **không sinh sự kiện nào**. Và trớ trêu nhất: chính chú thích của tôi
+    trong `serve_stdio` viết *"panel thấy `event.run.progress` rồi mới thấy kết quả, và đó là
+    thứ tự người dùng cần"* — mô tả đúng một hành vi mà phía kia không xử lý được.
+19. **Kênh sự kiện chưa từng có người nghe** (13/09). `EidePanel.hienCauHoi` là `public`, có
+    test, và không chỗ nào gọi nó. Daemon phát `event.chat.question` mỗi lần một năng lực cần
+    người chọn, nên thẻ câu hỏi gộp của U3 không bao giờ hiện ra: người dùng thấy việc dừng lại
+    mà không thấy câu hỏi.
+20. **`caps.describe` và `caps.list` nói hai thứ khác nhau về cùng một năng lực** (13/09).
+    `describe` trả `spec.__dict__`, tức trường `ui` THÔ — mà `cds.json` không khai `ui` cho năng
+    lực nào (0/238, DEV-046) — nên nó trả `""` cho cả 238 cái, trong khi `caps.list` đọc
+    `spec.man_hinh` và trả tên màn đầy đủ. Panel định tuyến theo `caps.list` nên vẫn chạy; ai
+    hỏi `describe` — MCP, một IDE khác, một bài test E2E — đều được trả lời rằng năng lực này
+    không thuộc màn hình nào.
+
+**Bốn cái cuối cùng có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được
+test kỹ**. Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi
+sống trong khoảng giữa chúng, nơi không bài test đơn vị nào đi qua. Đó là lý do bộ E2E
+(`EideE2ETests`) ra đời ngày 13/09: nó gọi daemon thật, chạy năng lực thật, rồi đưa kết quả
+thật vào khung nhìn thật — và nó bắt được cả bốn trong một buổi.
 
 ---
 
