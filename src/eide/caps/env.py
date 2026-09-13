@@ -240,7 +240,15 @@ def install(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         raise EideError("E4001", f"`{mgr}` không ghim được phiên bản; bỏ `version` để cài bản mới "
                         f"nhất, hoặc cài tay bản {ban} theo `env.guide_install`.",
                         tool=ten, version=ban, manager=mgr, alternative="env.guide_install")
-    goi = f"{ten}@{ban}" if ban else ten
+    # Tên GÓI, không phải tên CHƯƠNG TRÌNH — TGT-19 v1.3 `toolchain.*.package` (DEV-089).
+    #
+    # Hai thứ ấy không phải một, và chỗ khác nhau là chỗ hỏng: `arm-none-eabi-size` và
+    # `arm-none-eabi-objcopy` là hai CHƯƠNG TRÌNH đến từ MỘT gói `arm-none-eabi-binutils`
+    # (brew) hay `binutils-arm-none-eabi` (apt). `brew install arm-none-eabi-size` không tồn
+    # tại, và trước 13/09/2026 đó chính là lệnh EIDE chạy — hỏng bằng một thông báo của trình
+    # quản lý gói chứ không bằng một câu EIDE giải thích được.
+    ten_goi = _ten_goi(ten, os_key)
+    goi = f"{ten_goi}@{ban}" if ban else ten_goi
     lenh = [str(duong_dan) if i == 0 else x.format(pkg=goi) for i, x in enumerate(mau)]
 
     t0 = time.perf_counter()
@@ -252,9 +260,10 @@ def install(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     dat = ma == 0 and exe is not None
 
     rep = {"tool": "install", "passed": dat, "log_ref": kq.get("stdout_ref"),
-           "metrics": {"package": ten, "manager": mgr, "exit_code": ma,
+           "metrics": {"package": ten_goi, "tool": ten, "manager": mgr, "exit_code": ma,
                        "found": str(exe) if exe else None, "version": ver,
-                       "trusted": ten in _goi_tin_cay(ctx)},
+                       # Danh sách trắng kể tên GÓI (POL-17 §3), nên đối chiếu bằng tên gói.
+                       "trusted": ten_goi in _goi_tin_cay(ctx)},
            "artifacts": [], "duration_ms": int((time.perf_counter() - t0) * 1000),
            "started_by": ctx.session_id, "at": datetime.now(UTC).isoformat()}
     if root := (Path(ctx.project_dir).expanduser() if ctx.project_dir else None):
@@ -445,3 +454,25 @@ def _kiem_chu_ky(nguon: Path, man: dict[str, Any], isa: str) -> None:
     if h.hexdigest() != sig.read_text(encoding="utf-8").strip():
         raise EideError("E4004", f"Chữ ký gói `{isa}` không khớp nội dung — gói đã bị sửa sau "
                         "khi ký", missing=[], candidates=["registry.pull"], exists=[])
+
+def _ten_goi(ten: str, os_key: str) -> str:
+    """Tên chương trình → tên GÓI trên hệ điều hành này, theo `toolchain.*.package` của TGT-19.
+
+    Quét mọi manifest ISA vì người gọi chỉ đưa tên công cụ, không đưa ISA — và một công cụ có
+    thể thuộc nhiều ISA (`cmake` dùng chung). Không manifest nào khai `package` cho nó thì tên
+    chương trình CHÍNH LÀ tên gói, đúng với phần lớn trường hợp (`cmake`, `ninja`, `avrdude`).
+
+    Đọc từ spec chứ không chép bảng vào Python: thêm một ISA là thêm một tệp YAML, và một bản
+    chép thứ hai ở đây sẽ không biết về nó — đúng bài học DEV-043/DEV-046.
+    """
+    from eide_core.paths import spec_dir
+    for f in sorted((spec_dir() / "isa").glob("*.yaml")):
+        try:
+            man = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError:
+            continue
+        tc = man.get("toolchain") or {}
+        for muc in [tc.get("compiler") or {}, *(tc.get("tools") or [])]:
+            if muc.get("name") == ten and isinstance(muc.get("package"), dict):
+                return str(muc["package"].get(os_key) or ten)
+    return ten

@@ -1893,10 +1893,16 @@ def sync(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         store.write_seal(db, ctx.extra.get("ledger"))
         return {"diff": diff, "applied": True, "src": moi_src}
 
-    return {"diff": diff, "applied": False,
-            "reason": "Sinh patch cho mã C cần tree-sitter (DIAGRAM-14 nêu đích danh); "
-                      "chưa hiện thực — xem DEVIATIONS DEV-090. `diff` ở trên là thật và đủ "
-                      "để sửa tay. Hướng `from_code` thì đã có."}
+    # to_code: LƯỢC ĐỒ là nguồn, mã đi theo. Sinh patch bằng CÂY CÚ PHÁP, không bằng regex —
+    # xem `_patch_them_case` và DEV-090.
+    patch = _patch_them_case(root, thieu_ma)
+    if patch is None:
+        return {"diff": diff, "applied": False,
+                "reason": "Không tìm thấy `switch` nào trên biến trạng thái trong `src/` để "
+                          "chèn nhánh mới. `diff` ở trên là thật và đủ để sửa tay."}
+    return {"diff": diff, "applied": False, "patch": patch,
+            "reason": "Patch sinh bằng tree-sitter, CHƯA áp: mọi thay đổi mã đi qua "
+                      "`code.modify` và cổng G3, không qua đường riêng."}
 
 
 def _trang_thai_tu_hinh(src: str) -> set[str]:
@@ -2072,3 +2078,87 @@ def _cap_nhat_hinh(src: str, kind: str, trong_ma: set[str]) -> str:
     for t in them:
         dong.append(f"  {neo} --> {t}" if neo else f"  {t}")
     return "\n".join(dong) + "\n"
+
+# Tên biến trạng thái mà `_patch_them_case` nhận ra trong `switch (…)`. Hẹp có chủ ý: một
+# `switch` trên mã lỗi hay trên ký tự không phải máy trạng thái, và chèn `case ST_…` vào đó là
+# làm hỏng một hàm không liên quan.
+BIEN_TRANG_THAI = re.compile(r"^(?:\w*_)?(?:state|st|fsm|mode)\w*$", re.I)
+
+
+def _patch_them_case(root: Path, thieu: list[str]) -> dict[str, Any] | None:
+    """Patch thêm nhánh `case` cho các trạng thái lược đồ có mà mã chưa có — DIAGRAM-14 `to_code`.
+
+    **Dùng CÂY CÚ PHÁP, không dùng regex**, và đó là toàn bộ lý do năng lực này chờ một phụ
+    thuộc mới. Mã C có tiền xử lý: `#ifdef` quanh một nhánh `case`, một macro sinh ra nhãn
+    trạng thái, một `switch` lồng — mỗi thứ đủ để phép thay thế bằng biểu thức chính quy cắt
+    nhầm chỗ, và triệu chứng sẽ là firmware không biên dịch được ở một dòng không liên quan.
+
+    **Chèn TRƯỚC `default:` nếu có**, nếu không thì trước dấu `}` đóng `switch`. Đặt sau
+    `default` là viết một nhánh không bao giờ chạy tới — trình dịch không báo, và người đọc thì
+    thấy nhánh ấy nằm đó nên tin là nó có tác dụng.
+
+    **Thân nhánh chỉ có `break;` kèm `TODO`.** Sinh thân thật là đoán hành vi của một trạng thái
+    mà lược đồ chỉ mới đặt tên — và một thân bịa ra trông y hệt một thân đã viết.
+
+    Trả `None` khi không tìm được `switch` nào trên biến trạng thái: nói ra thật hơn là chèn
+    vào một `switch` bất kỳ.
+    """
+    if not thieu:
+        return None
+    try:
+        import tree_sitter_c
+        from tree_sitter import Language, Parser
+    except ImportError:
+        return None
+
+    bo_doc = Parser(Language(tree_sitter_c.language()))
+    for f in sorted((root / "src").rglob("*.c")):
+        byte = f.read_bytes()
+        cay = bo_doc.parse(byte)
+        nut = _tim_switch(cay.root_node, byte)
+        if nut is None:
+            continue
+        than = next((c for c in nut.children if c.type == "compound_statement"), None)
+        if than is None:
+            continue
+        # Vị trí chèn: trước `default:` nếu có, nếu không thì trước `}` cuối.
+        moc = next((c for c in than.children if c.type == "case_statement"
+                    and not any(g.type == "value" for g in c.children)
+                    and byte[c.start_byte:c.start_byte + 7] == b"default"), None)
+        chen_tai = (moc or than.children[-1]).start_byte
+        thut = _thut_le(byte, chen_tai)
+        them_ma = "".join(
+            f"{thut}case {t}:\n{thut}    break;  /* TODO: thân nhánh — lược đồ mới đặt tên "
+            f"trạng thái này (diagram.sync to_code) */\n" for t in thieu)
+        moi = byte[:chen_tai].decode("utf-8", "replace") + them_ma \
+            + byte[chen_tai:].decode("utf-8", "replace")
+        return {"files": [{"path": str(f.relative_to(root)), "content": moi}],
+                "added_states": list(thieu),
+                "rationale": f"Thêm {len(thieu)} nhánh `case` vào `switch` trạng thái trong "
+                             f"{f.relative_to(root)} theo lược đồ."}
+    return None
+
+
+def _tim_switch(nut: Any, byte: bytes) -> Any | None:
+    """`switch` đầu tiên có điều kiện là một biến TRẠNG THÁI."""
+    if nut.type == "switch_statement":
+        # tree-sitter-c gói điều kiện `switch` trong `parenthesized_expression`, không phải
+        # `condition_clause` (cái ấy là của `if`/`while`). Nhận cả hai: tên nút là chi tiết của
+        # ngữ pháp, và một bản tree-sitter-c khác có thể đổi nó.
+        dk = next((c for c in nut.children
+                   if c.type in ("parenthesized_expression", "condition_clause")), None)
+        if dk is not None:
+            ten = byte[dk.start_byte:dk.end_byte].decode("utf-8", "replace").strip("() \t")
+            if BIEN_TRANG_THAI.match(ten.split(".")[-1].split("->")[-1]):
+                return nut
+    for con in nut.children:
+        if (r := _tim_switch(con, byte)) is not None:
+            return r
+    return None
+
+
+def _thut_le(byte: bytes, vi_tri: int) -> str:
+    """Thụt lề của dòng chứa `vi_tri` — patch phải trông như phần mã quanh nó."""
+    dau = byte.rfind(b"\n", 0, vi_tri) + 1
+    dong = byte[dau:vi_tri].decode("utf-8", "replace")
+    return dong[:len(dong) - len(dong.lstrip())] or "        "

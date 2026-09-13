@@ -10,7 +10,19 @@ const m = metaNew('EIDE-SEC-25', 'Thiết kế an toàn', 'THIẾT KẾ AN TOÀN
   [['1.1', '07/09/2026', 'Vũ Trí Công',
     '§2: nói rõ giới hạn RAM trên macOS canh bằng RSS ở tiến trình CHA (chu kỳ 0,2 s, vượt → '
     + 'SIGKILL) chứ không bằng `RLIMIT_AS` — đo được rằng `RLIMIT_AS` ở bất kỳ giá trị nào cũng '
-    + 'làm hỏng chính lời gọi exec trên macOS. Ba giới hạn còn lại giữ nguyên (DEV-017).']]);
+    + 'làm hỏng chính lời gọi exec trên macOS. Ba giới hạn còn lại giữ nguyên (DEV-017).'],
+   ['1.2', '13/09/2026', 'Vũ Trí Công',
+    '§2 nói rõ hai điều mà bản v1.1 loại trừ nhưng hiện thực BUỘC phải có, nếu không `code.build` '
+    + 'không thể thành công trên bất kỳ máy nào (DEV-088, chủ sản phẩm duyệt 13/09/2026). '
+    + '(a) **Thư mục làm việc**: mặc định vẫn là thư mục tạm riêng, nhưng người gọi chỉ định được '
+    + 'một thư mục khác qua `cwd` — bắt buộc nằm trong `allowed_dirs`, nên nó không cấp thêm quyền '
+    + 'nào mà chỉ đổi chỗ đứng trong phạm vi đã cấp. Cần vì `toolchain.build.cmd` của TGT-19 viết '
+    + '`cmake -S . -B build` và `artifact: build/*.elf`, đều là đường dẫn TƯƠNG ĐỐI so với gốc dự án. '
+    + '(b) **`PATH`**: ngoài bốn thư mục hệ thống, thêm thư mục của những công cụ mà manifest ISA '
+    + 'khai và `env.check` đã tìm thấy. Giải `argv[0]` thành đường dẫn tuyệt đối chữa được lệnh ĐẦU '
+    + 'TIÊN nhưng không chữa được việc CÔNG CỤ TỰ GỌI CÔNG CỤ: `cmake` tìm `ninja` qua `PATH`, '
+    + '`make` tìm `gcc` cũng thế. Đây là cho phép chạy CHUỖI CÔNG CỤ ĐÃ KHAI, khác hẳn cho phép chạy '
+    + 'bất cứ thứ gì người dùng từng cài — `PATH` của người dùng vẫn không được truyền vào.']]);
 const c = [];
 c.push(H1('1. Phạm vi và mô hình đe dọa'));
 c.push(P('Bản đầu chạy trên một PC của kỹ sư, có Internet, dùng LLM đám mây; kẻ tấn công không phải người dùng máy mà là **nội dung không tin cậy** đi vào hệ thống: tệp trong zip (PDF, ảnh, header, script), trang web tìm được, gói công cụ tải về, và chính đầu ra của mô hình (mã, lệnh). Bảng dưới liệt kê mối đe dọa theo OWASP Top 10 cho ứng dụng LLM [51] và biện pháp; mỗi biện pháp có test ở §8.'));
@@ -26,7 +38,7 @@ c.push(T([600, 2800, 3200, 2700], ['#', 'Mối đe dọa', 'Kịch bản trong E
 ]));
 c.push(SP());
 c.push(H1('2. Sandbox'));
-c.push(P('Mọi extractor, bộ render lược đồ, lệnh cài đặt và công cụ ngoài chạy trong `Sandbox.run(cmd|callable, limits)` trên tiến trình con: `resource` giới hạn CPU 60 s, tệp mở 256, kích thước ghi 2 GB (cả ba dùng được trên Linux và macOS), RAM 1 GB (xem đoạn dưới về macOS); wall-clock 300 s (cấu hình theo loại); thư mục làm việc tạm riêng, chỉ được đọc `allowed_dirs` (tài liệu nguồn) và ghi `out_dir`; biến môi trường tối thiểu (không PATH của người dùng, không khóa API); trên macOS dùng `sandbox-exec` profile khi có, trên Linux `bwrap` nếu có, nếu không thì tiến trình con + giới hạn `resource` (ghi ledger mức cách ly). Archive: độ sâu ≤ 5, tổng giải nén ≤ 2 GB, tỷ lệ nén > 100:1 → dừng, chuẩn hóa đường dẫn và từ chối `..`/tuyệt đối/symlink ra ngoài. Đầu ra sandbox là tệp/JSON, được kiểm schema trước khi vào store.'));
+c.push(P('Mọi extractor, bộ render lược đồ, lệnh cài đặt và công cụ ngoài chạy trong `Sandbox.run(cmd|callable, limits)` trên tiến trình con: `resource` giới hạn CPU 60 s, tệp mở 256, kích thước ghi 2 GB (cả ba dùng được trên Linux và macOS), RAM 1 GB (xem đoạn dưới về macOS); wall-clock 300 s (cấu hình theo loại); thư mục làm việc tạm riêng theo mặc định — người gọi chỉ định được một thư mục khác qua `cwd`, và thư mục ấy **bắt buộc nằm trong `allowed_dirs`** (không có ràng buộc ấy thì `cwd` là lối vòng: chdir vào bất cứ đâu rồi đọc ghi bằng đường dẫn tương đối); chỉ được đọc `allowed_dirs` (tài liệu nguồn) và ghi `out_dir`; biến môi trường tối thiểu (không PATH của người dùng, không khóa API) — `PATH` = `/usr/bin:/bin:/usr/sbin:/sbin` **cộng thư mục của những công cụ mà manifest ISA khai và `env.check` đã tìm thấy**;  trên macOS dùng `sandbox-exec` profile khi có, trên Linux `bwrap` nếu có, nếu không thì tiến trình con + giới hạn `resource` (ghi ledger mức cách ly). Archive: độ sâu ≤ 5, tổng giải nén ≤ 2 GB, tỷ lệ nén > 100:1 → dừng, chuẩn hóa đường dẫn và từ chối `..`/tuyệt đối/symlink ra ngoài. Đầu ra sandbox là tệp/JSON, được kiểm schema trước khi vào store.'));
 c.push(SP());
 c.push(P('**Ranh giới của sandbox.** Nó dành cho **công cụ ngoài chạy trên dữ liệu không tin được** — trình giải nén, trình dịch PDF, bộ dựng lược đồ, lệnh cài đặt: đầu vào đến từ nơi khác và có thể được dựng để làm hại. Nó KHÔNG dành cho **công cụ do EIDE gọi với tham số cố định trên chính kho của người dùng** — `git` khi commit vào `auto/<feature>`, `sqlite` khi ghi store. Hai loại ấy khác nhau ở chỗ ai chọn đầu vào, không ở chỗ chương trình nằm trong hay ngoài Python. Đưa `git` vào sandbox thì hoặc phải mở quyền ghi cho cả thư mục dự án — tức bỏ lớp bảo vệ cho mọi công cụ khác dùng chung sandbox — hoặc `git` không làm được việc của nó, vốn chính là ghi vào thư mục ấy. Bù lại, những công cụ loại hai đi qua một danh sách con lệnh cho phép (không `push`, không `clean`, không `reset`), để việc thêm một lệnh nguy hiểm sau này là một thay đổi PHẢI ĐỌC chứ không phải một dòng lọt qua. Xem DEVIATIONS DEV-065.'));
 c.push(SP());

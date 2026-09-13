@@ -327,3 +327,63 @@ def test_guide_install_khong_bi_cong_hoi_vi_la_R0_T3(tmp_path):
     r = Router(gate=gate, ledger=Ledger(tmp_path / "l.jsonl"))
     run = r.invoke("env.guide_install", {"tool": "xc8"}, Context(extra={"gate": gate}))
     assert run.status == "done" and run.result["links"]
+
+
+# ---------- DEV-089: tên CHƯƠNG TRÌNH khác tên GÓI (TGT-19 v1.3 `package`)
+
+def test_ten_chuong_trinh_khac_ten_goi_thi_cai_dung_GOI():
+    """`arm-none-eabi-size` và `arm-none-eabi-objcopy` là hai CHƯƠNG TRÌNH đến từ MỘT gói.
+    `brew install arm-none-eabi-size` không tồn tại — và trước 13/09/2026 đó chính là lệnh EIDE
+    chạy, hỏng bằng một thông báo của trình quản lý gói chứ không bằng một câu EIDE giải thích
+    được."""
+    from eide.caps.env import _ten_goi
+
+    assert _ten_goi("arm-none-eabi-size", "macos") == "arm-none-eabi-binutils"
+    assert _ten_goi("arm-none-eabi-size", "linux") == "binutils-arm-none-eabi"
+    assert _ten_goi("arm-none-eabi-objcopy", "macos") == "arm-none-eabi-binutils"
+    assert _ten_goi("avr-size", "macos") == "avr-gcc"
+    assert _ten_goi("avr-size", "linux") == "binutils-avr"
+
+
+def test_khong_khai_package_thi_ten_chuong_trinh_CHINH_LA_ten_goi():
+    """Đúng với phần lớn trường hợp — `cmake`, `ninja`, `avrdude`. Khai `package` cho tất cả là
+    thêm một bảng phải bảo trì mà không đổi lấy gì."""
+    from eide.caps.env import _ten_goi
+
+    for t in ("cmake", "ninja", "avrdude", "cong-cu-la-hoac"):
+        assert _ten_goi(t, "macos") == t
+
+
+def test_ten_goi_doc_tu_SPEC_chu_khong_chep_bang_vao_python():
+    """Thêm một ISA là thêm một tệp YAML; một bản chép thứ hai trong Python sẽ không biết về nó
+    — đúng bài học DEV-043/DEV-046."""
+    import yaml as _yaml
+
+    from eide.caps.env import _ten_goi
+    from eide_core.paths import spec_dir
+
+    khai = {}
+    for f in (spec_dir() / "isa").glob("*.yaml"):
+        tc = (_yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("toolchain") or {}
+        for muc in [tc.get("compiler") or {}, *(tc.get("tools") or [])]:
+            if isinstance(muc.get("package"), dict):
+                khai[muc["name"]] = muc["package"]
+    assert khai, "không manifest nào khai `package` — TGT-19 v1.3 chưa sinh lại?"
+    for ten, bang in khai.items():
+        for os_key, goi in bang.items():
+            assert _ten_goi(ten, os_key) == goi, (ten, os_key)
+
+
+def test_danh_sach_trang_doi_chieu_bang_ten_GOI():
+    """POL-17 §3 kể tên GÓI. Đối chiếu bằng tên chương trình thì `arm-none-eabi-size` không bao
+    giờ khớp, dù `arm-none-eabi-binutils` đã nằm trong danh sách đã ký."""
+    import yaml as _yaml
+
+    from eide.caps.env import _ten_goi
+    from eide_core.paths import spec_dir
+
+    tc = _yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(
+        encoding="utf-8"))["trusted_packages"]
+    assert "arm-none-eabi-binutils" in tc
+    assert _ten_goi("arm-none-eabi-size", "macos") in tc
+    assert "arm-none-eabi-size" not in tc, "danh sách trắng kể GÓI, không kể chương trình"

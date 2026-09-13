@@ -4,7 +4,7 @@ abi: {endian: little, word: 8, fpu: none, align: 1}
 interrupts: {model: vector_table, priority_bits: 0}
 toolchain:
   compiler: {name: avr-gcc, min: "12.0", check: "avr-gcc --version"}
-  tools: [{name: avrdude, min: "7.0"}, {name: avr-size}]
+  tools: [{name: avrdude, min: "7.0"}, {name: avr-size, package: {macos: avr-gcc, linux: binutils-avr}}]
   install: {macos: ["brew tap osx-cross/avr && brew install avr-gcc avrdude"], linux: ["apt install gcc-avr avr-libc avrdude"], windows: ["winget install AVRDudes.AVRDUDE"]}
   build: {cmd: "make -C . MCU={mcu} F_CPU={f_cpu}", artifact: "build/*.elf"}
 flash: {adapters: [avrdude, pymcuprog], default: avrdude, cmd: {avrdude: "avrdude -c {programmer} -p {part} -P {port} -U flash:w:{hex}:i"}, verify: true}

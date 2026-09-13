@@ -523,3 +523,82 @@ def test_moi_kieu_su_kien_API15_deu_co_cho_phat_TRU_thu_can_board():
         if not _re.search(mau, ma):
             thieu.append(k)
     assert not thieu, f"kiểu sự kiện khai trong API-15 §5 mà không chỗ nào phát: {thieu}"
+
+
+# ---------------------------------------------------------------- DEV-090: to_code
+
+
+def test_to_code_sinh_patch_bang_CAY_CU_PHAP(du_an):
+    """DIAGRAM-14 `to_code`. Chèn TRƯỚC `default:` — đặt sau nó là viết một nhánh không bao giờ
+    chạy tới, mà trình dịch không báo và người đọc thì tin là nó có tác dụng."""
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    # Lược đồ 4 trạng thái, mã có 3 → lệch 1/4 = 25%, dưới ngưỡng 34% của `TI_LE_LECH_LON`.
+    # Lệch lớn hơn thì E3000 chặn trước, và đó là hành vi đúng — xem test riêng ở trên.
+    _luoc_do(root, "dg_tc", "stateDiagram-v2\n  ST_IDLE --> ST_RUN\n  ST_RUN --> ST_WAIT\n"
+                            "  ST_WAIT --> ST_ERR\n")
+    _ma_c(root, "void f(void){\n    switch (state) {\n"
+                "        case ST_IDLE:\n            break;\n"
+                "        case ST_RUN:\n            break;\n"
+                "        case ST_WAIT:\n            break;\n"
+                "        default:\n            break;\n    }\n}\n")
+
+    kq = sync({"diagram_id": "dg_tc", "direction": "to_code"}, ctx)
+    assert kq["applied"] is False, "patch phải đi qua code.modify và cổng G3, không tự áp"
+    noi_dung = kq["patch"]["files"][0]["content"]
+    assert "case ST_ERR:" in noi_dung
+    assert noi_dung.index("case ST_ERR:") < noi_dung.index("default:"), "phải chèn TRƯỚC default"
+    assert "TODO" in noi_dung, "thân bịa ra trông y hệt thân đã viết — phải đánh dấu"
+
+
+def test_to_code_KHONG_cham_switch_khong_phai_may_trang_thai(du_an):
+    """Một `switch` trên mã lỗi hay trên ký tự không phải máy trạng thái. Chèn `case ST_…` vào
+    đó là làm hỏng một hàm không liên quan."""
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    # `switch` trên mã lỗi, KHÔNG phải máy trạng thái. Mã vẫn có ba nhãn ST_ (ngoài switch) để
+    # lệch ở dưới ngưỡng — bài này kiểm chỗ CHÈN, không kiểm cổng lệch.
+    _luoc_do(root, "dg_tc2", "stateDiagram-v2\n  ST_IDLE --> ST_RUN\n  ST_RUN --> ST_WAIT\n"
+                             "  ST_WAIT --> ST_X\n")
+    # Ba phép GÁN trạng thái (thứ `_trang_thai_tu_ma` đọc được — nó không đọc phép so sánh),
+    # để lệch ở dưới ngưỡng; `switch` duy nhất thì trên `err`.
+    _ma_c(root, "int g(int err){\n    state = ST_IDLE;\n    state = ST_RUN;\n"
+                "    state = ST_WAIT;\n"
+                "    switch (err) {\n        case 1: return 2;\n    }\n    return 0;\n}\n")
+    kq = sync({"diagram_id": "dg_tc2", "direction": "to_code"}, ctx)
+    assert "patch" not in kq and "Không tìm thấy" in kq["reason"]
+
+
+def test_to_code_giu_THUT_LE_cua_ma_quanh_no(du_an):
+    """Patch phải trông như phần mã quanh nó — nếu không, lần `code.review` sau sẽ báo lỗi văn
+    phong cho một thay đổi EIDE tự sinh."""
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    _luoc_do(root, "dg_tc3", "stateDiagram-v2\n  ST_A --> ST_C\n  ST_C --> ST_D\n"
+                             "  ST_D --> ST_B\n")
+    _ma_c(root, "void f(void){\n  switch (fsm_mode) {\n    case ST_A:\n      break;\n"
+                "    case ST_C:\n      break;\n    case ST_D:\n      break;\n  }\n}\n")
+    noi_dung = sync({"diagram_id": "dg_tc3", "direction": "to_code"}, ctx)["patch"]["files"][0]["content"]
+    assert "\n    case ST_B:\n" in noi_dung, noi_dung
+
+
+def test_to_code_patch_van_PHAN_TICH_duoc_bang_tree_sitter(du_an):
+    """Bất biến cuối: mã sau khi vá phải còn là C hợp lệ. Một bộ sinh patch làm hỏng cú pháp thì
+    tệ hơn hẳn không có nó."""
+    import tree_sitter_c
+    from tree_sitter import Language, Parser
+
+    from eide.caps.diagram import sync
+
+    _, ctx, root = du_an
+    _luoc_do(root, "dg_tc4", "stateDiagram-v2\n  ST_IDLE --> ST_RUN\n  ST_RUN --> ST_WAIT\n"
+                             "  ST_WAIT --> ST_ERR\n")
+    _ma_c(root, "void f(void){\n    switch (state) {\n        case ST_IDLE:\n"
+                "            break;\n        case ST_RUN:\n            break;\n"
+                "        case ST_WAIT:\n            break;\n    }\n}\n")
+    noi_dung = sync({"diagram_id": "dg_tc4", "direction": "to_code"}, ctx)["patch"]["files"][0]["content"]
+    cay = Parser(Language(tree_sitter_c.language())).parse(noi_dung.encode())
+    assert not cay.root_node.has_error, noi_dung

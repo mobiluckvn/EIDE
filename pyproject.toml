@@ -28,6 +28,18 @@ dependencies = [
   # x86 rồi hỏng lúc import. Bản < 44 phát hành bánh xe universal2 nên chạy cả hai kiến trúc.
   # Bỏ trần này thì `make check-ca-hai` gãy ở nhánh Intel (PLATFORM.md §ma trận).
   "cryptography<44",
+  # `diagram.sync direction=to_code` — sinh patch cho mã C từ một lược đồ (DIAGRAM-14 bước 1
+  # nêu đích danh tree-sitter). Chủ sản phẩm duyệt 13/09/2026, DEV-090.
+  #
+  # VÌ SAO KHÔNG dùng regex. Mã C có tiền xử lý: `#ifdef` quanh một nhánh `case`, một macro
+  # sinh ra nhãn trạng thái, một `switch` lồng — mỗi thứ đủ để phép thay thế bằng biểu thức
+  # chính quy cắt nhầm chỗ, và triệu chứng là firmware không biên dịch được ở một dòng không
+  # liên quan. Một bộ sinh patch làm hỏng mã người khác thì tệ hơn hẳn việc không có nó: cổng
+  # G3 xét DIFF chứ không xét việc diff ấy được dựng bằng gì.
+  #
+  # Import TRỄ như `pdfplumber`/`openpyxl`: ai không gọi `to_code` không phải trả giá nạp.
+  "tree-sitter>=0.24",
+  "tree-sitter-c>=0.23",
 ]
 # CLI dùng argparse (stdlib) — ít phụ thuộc, chạy ngay trên ba nền tảng. pydantic thêm ở Sprint 2 khi có DDD store.
 

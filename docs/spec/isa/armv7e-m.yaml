@@ -3,8 +3,8 @@ family_patterns: ["^STM32F[2-4]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]
 abi: {endian: little, word: 32, fpu: optional, align: 8}
 interrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}
 toolchain:
-  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version"}
-  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size}, {name: arm-none-eabi-objcopy}]
+  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version", package: {macos: arm-none-eabi-gcc, linux: gcc-arm-none-eabi}}
+  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}, {name: arm-none-eabi-objcopy, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}]
   install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}
   build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}
   static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}
