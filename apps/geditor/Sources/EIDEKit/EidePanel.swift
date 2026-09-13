@@ -27,11 +27,24 @@ public final class EidePanel: NSView {
     private let hoiThoai = ChatView()
     private let hangDoi = ReviewQueueView()
 
+    // Ba màn chuyên đề đã dựng — UXD-13 màn 5, 7, 10. Chúng chiếm chỗ hội thoại chứ không đè
+    // lên thanh tự chủ hay hàng đợi: U2 nói hai thứ ấy LUÔN hiện, kể cả khi người đang đọc một
+    // màn khác — nhất là lúc ấy, vì đó là lúc tác tử vẫn đang chạy sau lưng.
+    private let hoChieu = PassportView()
+    private let hoiDap = RagAskView()
+    private let taiLieu = DocView()
+    private let thanhMan = NSStackView()
+    private let tenMan = NSTextField(labelWithString: "")
+
+    /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
+    private var manHinhCua: [String: String] = [:]
+
     public init(client: EideClient) {
         self.client = client
         super.init(frame: .zero)
         dungGiaoDien()
         noiHangDoi()
+        noiManChuyenDe()
         hoiThoai.onGui = { [weak self] text in self?.gui(text) }
         thanhTuChu.onDungKhan = { [weak self] in self?.dungKhan() }
         Task { await lamMoi() }
@@ -81,10 +94,139 @@ public final class EidePanel: NSView {
         }
     }
 
+    /// Nối ba màn chuyên đề vào daemon — mỗi nút là một năng lực (U5), không nút nào tự tính.
+    ///
+    /// Kết quả `view.provenance` và `view.rag_trace` đi vào HỘI THOẠI chứ không vào màn đang mở:
+    /// chúng là câu trả lời cho "vì sao con số này đúng", và câu trả lời ấy cần ở lại sau khi
+    /// người đóng màn. Một chuỗi truy nguồn biến mất cùng lúc với thứ nó giải thích thì người
+    /// đọc không đối chiếu được.
+    private func noiManChuyenDe() {
+        hoChieu.onTra = { [weak self] part in
+            self?.chay("passport.query", ["part": part]) { r in self?.hoChieu.capNhat(ketQua: r) }
+        }
+        hoChieu.onXemNguon = { [weak self] fid in
+            self?.chay("view.provenance", ["fact_id": fid]) { r in
+                let chuoi = (r["chain"] as? [[String: Any]]) ?? []
+                self?.hoiThoai.themLuot(by: .tacTu, text: Self.docChuoiNguon(fid, chuoi))
+            }
+        }
+        hoiDap.onHoi = { [weak self] q in
+            self?.chay("view.rag_ask", ["question": q]) { r in self?.hoiDap.capNhat(ketQua: r) }
+        }
+        hoiDap.onXemVet = { [weak self] tid in
+            self?.chay("view.rag_trace", ["trace_id": tid]) { r in
+                let n = ((r["chunks"] as? [[String: Any]]) ?? []).count
+                let duong = ((r["graph_path"] as? [String]) ?? []).joined(separator: " → ")
+                self?.hoiThoai.themLuot(by: .tacTu,
+                                        text: "Vết truy hồi \(tid): \(n) đoạn văn bản"
+                                            + (duong.isEmpty ? "" : "; đường đi trong đồ thị: \(duong)"))
+            }
+        }
+        taiLieu.onMoMuc = { [weak self] noi in
+            self?.hoiThoai.themLuot(by: .heThong, text: "Mục \(noi) — mở tệp trong GEditor.")
+        }
+    }
+
+    /// Chuỗi truy nguồn thành một đoạn đọc được. Mỗi mắt xích là *tài liệu → chỗ → cách lấy*;
+    /// thiếu "cách lấy" (`method`) thì người đọc không biết con số đến từ máy đọc PDF hay từ
+    /// một lần đo trên board, mà hai thứ ấy sai theo hai kiểu khác hẳn nhau.
+    private static func docChuoiNguon(_ fid: String, _ chuoi: [[String: Any]]) -> String {
+        guard !chuoi.isEmpty else {
+            return "Fact \(fid) không có chuỗi nguồn nào — đây là lỗi dữ liệu, không phải fact yếu."
+        }
+        let dong = chuoi.map { m -> String in
+            let nguon = (m["source"] as? String) ?? "?"
+            let noi = (m["locator"] as? String).map { " \($0)" } ?? ""
+            let cach = (m["method"] as? String).map { " [\($0)]" } ?? ""
+            let xn = (m["confirmed_by"] as? String).map { " ✓\($0)" } ?? ""
+            return "  • \(nguon)\(noi)\(cach)\(xn)"
+        }
+        return "Nguồn của \(fid):\n" + dong.joined(separator: "\n")
+    }
+
+    /// Gọi một năng lực rồi đưa `result` cho khung nhìn. Lỗi đi vào hội thoại — một màn chuyên
+    /// đề im lặng khi gọi hỏng là màn người dùng bấm lại lần thứ ba.
+    private func chay(_ id: String, _ params: [String: Any],
+                      _ xong: @escaping ([String: Any]) -> Void) {
+        Task {
+            do {
+                let r = try await client.goi(.capsInvoke, ["id": id, "params": params])
+                await MainActor.run {
+                    if (r["status"] as? String) == "done" {
+                        xong((r["result"] as? [String: Any]) ?? [:])
+                    } else {
+                        self.hienKetQua(r)
+                    }
+                }
+            } catch {
+                await MainActor.run { self.hienLoi(error) }
+            }
+            await lamMoi()
+        }
+    }
+
+    private func khungCua(_ man: String) -> NSView? {
+        // So bằng TIỀN TỐ: bảng UXD-13 §2 ghi tên màn kèm chú thích tiếng Việt trong ngoặc
+        // ("Passport (Hộ chiếu chip)"), và so bằng dấu bằng thì không bao giờ khớp.
+        if man.hasPrefix("Passport") { return hoChieu }
+        if man.hasPrefix("Graph") { return hoiDap }
+        if man.hasPrefix("Doc") { return taiLieu }
+        return nil
+    }
+
+    /// Mở một màn chuyên đề: nó chiếm chỗ hội thoại, thanh tự chủ và hàng đợi ở nguyên.
+    private func hienKhung(_ v: NSView, ten: String, thamSo: String) {
+        for k in [hoChieu as NSView, hoiDap, taiLieu] { k.isHidden = (k !== v) }
+        hoiThoai.isHidden = true
+        thanhMan.isHidden = false
+        tenMan.stringValue = ten
+        if !thamSo.isEmpty {
+            // Điền sẵn ô nhập của màn, KHÔNG tự bấm Enter: người gõ "/passport.query stm32"
+            // có thể muốn sửa lại trước khi tra, và một màn tự chạy ngay lúc mở là một màn
+            // người dùng không kiểm soát được.
+            (v as? PassportView)?.dienSan(thamSo)
+            (v as? RagAskView)?.dienSan(thamSo)
+        }
+    }
+
+    @objc private func dongMan() {
+        for k in [hoChieu as NSView, hoiDap, taiLieu] { k.isHidden = true }
+        thanhMan.isHidden = true
+        hoiThoai.isHidden = false
+    }
+
+    /// Kết quả `chat.send`: `{intent_id, run_id?}`. Trọn đường DPS-09 đã chạy, không phải mỗi
+    /// bước hiểu ý — nên câu báo phải nói VIỆC ĐANG CHẠY, không nói "tôi hiểu là…".
+    private func hienChuoi(_ r: [String: Any]) {
+        if let run = r["run"] as? [String: Any] {
+            return hienKetQua(run)   // chuỗi không dựng được: đã có cổng chặn hoặc lỗi
+        }
+        let y = (r["intent_id"] as? String) ?? "?"
+        if let rid = r["run_id"] as? String {
+            hoiThoai.themLuot(by: .tacTu, text: "Đang chạy: \(y) (run \(rid)).")
+        } else {
+            hoiThoai.themLuot(by: .cho, text: "Đã hiểu \(y), chưa dựng được chuỗi việc.")
+        }
+    }
+
     private func dungGiaoDien() {
         wantsLayer = true
         layer?.backgroundColor = EideToken.Mau.bg.cgColor
-        for v in [thanhTuChu, hoiThoai, hangDoi] {
+
+        tenMan.font = NSFont.boldSystemFont(ofSize: 12)
+        tenMan.textColor = EideToken.Mau.text
+        let nutDong = NSButton(title: "← Hội thoại", target: self, action: #selector(dongMan))
+        nutDong.bezelStyle = .inline
+        nutDong.font = EideToken.fontUI
+        thanhMan.orientation = .horizontal
+        thanhMan.alignment = .centerY
+        thanhMan.spacing = EideToken.space[1]
+        thanhMan.addArrangedSubview(nutDong)
+        thanhMan.addArrangedSubview(tenMan)
+        thanhMan.isHidden = true
+        for k in [hoChieu as NSView, hoiDap, taiLieu] { k.isHidden = true }
+
+        for v in [thanhTuChu, hoiThoai, hangDoi, thanhMan, hoChieu, hoiDap, taiLieu] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -104,25 +246,105 @@ public final class EidePanel: NSView {
             hangDoi.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -g),
             hangDoi.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
             hangDoi.heightAnchor.constraint(equalToConstant: 120),
+
+            thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
+            thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
         ])
+
+        // Ba màn chuyên đề dùng ĐÚNG khung của hội thoại, chỉ lùi xuống dưới thanh tiêu đề màn.
+        // Cùng khung thì không màn nào âm thầm rộng hơn màn khác rồi che mất hàng đợi.
+        for k in [hoChieu as NSView, hoiDap, taiLieu] {
+            NSLayoutConstraint.activate([
+                k.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: g),
+                k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+                k.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -g),
+                k.bottomAnchor.constraint(equalTo: hangDoi.topAnchor, constant: -g),
+            ])
+        }
     }
 
     // MARK: - hành động
 
-    /// U1: ô lệnh là giao diện chính. Lệnh đi qua `chat.parse_intent` như mọi đường vào khác —
-    /// panel không tự hiểu lệnh, vì GPI-23 §1 nói nó là client thuần.
+    /// U1: ô lệnh là giao diện chính. Hai đường vào, và chúng khác nhau về BẢN CHẤT:
+    ///
+    /// - **Câu tiếng Việt** → `chat.send`. Đây là đường DPS-09 đầy đủ: hiểu ý → neo vào dự án →
+    ///   điền mặc định → dựng chuỗi. Panel KHÔNG gọi `chat.parse_intent` trực tiếp: đó mới là
+    ///   bước 1 trong 4, và dừng ở đó thì người dùng đọc được "Tôi hiểu là: project.create
+    ///   (92%)" rồi không có gì chạy cả — một giao diện hiểu mọi thứ và không làm gì.
+    /// - **`/ns.name …`** → mở MÀN HÌNH của năng lực ấy. Danh sách gợi ý "/" đúng là danh sách
+    ///   màn hình mở được: `CommandBox` lọc bỏ mọi năng lực có `ui` rỗng, và UXD-13 U1 nói "mọi
+    ///   màn hình khác mở được từ lệnh". Ném `/passport.query st.stm32f411` vào bộ đoán ý là
+    ///   bắt mô hình ép một id chính xác vào 19 intent của DPS-09 §4.1 — trong đó không có id
+    ///   nào của 238 năng lực, nên năng lực người vừa CHỌN không bao giờ tới lượt.
+    ///
+    /// Panel vẫn là client thuần (GPI-23 §1): nó không hiểu lệnh, chỉ chuyển đúng thứ người đã
+    /// chọn từ một danh sách do daemon cấp.
     private func gui(_ text: String) {
         hoiThoai.themLuot(by: .nguoi, text: text)
-        Task {
-            do {
-                let r = try await client.goi(.capsInvoke,
-                                             ["id": "chat.parse_intent", "params": ["text": text]])
-                await MainActor.run { self.hienKetQua(r) }
-            } catch {
-                await MainActor.run { self.hienLoi(error) }
+        switch Self.duongVao(text) {
+        case .moMan(let id, let thamSo):
+            return moManHinh(id: id, thamSo: thamSo)
+        case .chuoiViec(let t):
+            Task {
+                do {
+                    let r = try await client.goi(.chatSend, ["text": t])
+                    await MainActor.run { self.hienChuoi(r) }
+                } catch {
+                    await MainActor.run { self.hienLoi(error) }
+                }
+                await lamMoi()
             }
-            await lamMoi()
+        case .khongCoGi:
+            break
         }
+    }
+
+    /// Một dòng trong ô lệnh đi về đâu.
+    ///
+    /// Tách thành hàm THUẦN vì đây đúng là chỗ một lỗi im lặng đã sống: panel từng ném cả
+    /// `/passport.query st.stm32f411` vào `chat.parse_intent`, và vì `parse_intent` luôn trả về
+    /// *một* intent nào đó với *một* độ tin cậy nào đó, màn hình luôn hiện "Tôi hiểu là: …" —
+    /// trông y như đang chạy. Một hàm thuần thì test được mà không cần daemon, nên lần sau ai
+    /// đổi đường đi sẽ phải đổi một bài test nói rõ vì sao nó thế.
+    public enum DuongVao: Equatable {
+        /// Câu tiếng Việt → `chat.send` (trọn DPS-09), KHÔNG phải `chat.parse_intent`.
+        case chuoiViec(String)
+        /// `/ns.name [tham số]` → mở màn hình của năng lực ấy.
+        case moMan(id: String, thamSo: String)
+        case khongCoGi
+    }
+
+    public static func duongVao(_ text: String) -> DuongVao {
+        let t = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !t.isEmpty else { return .khongCoGi }
+        guard t.hasPrefix("/") else { return .chuoiViec(t) }
+        let phan = t.dropFirst().split(separator: " ", maxSplits: 1).map(String.init)
+        guard let id = phan.first, !id.isEmpty else { return .khongCoGi }
+        return .moMan(id: id,
+                      thamSo: phan.count > 1
+                          ? phan[1].trimmingCharacters(in: .whitespaces) : "")
+    }
+
+    /// `/ns.name [tham số]` → mở màn hình của năng lực, với tham số làm giá trị ban đầu.
+    ///
+    /// Không tự suy tham số thành `params`: mỗi năng lực có `input_schema` riêng, và đoán xem
+    /// chuỗi sau id nên vào trường nào là đúng kiểu tự nghĩ ra hành vi. Màn hình có ô nhập của
+    /// nó — `PassportView` có ô "Mã linh kiện", `RagAskView` có ô câu hỏi — nên tham số đi vào
+    /// ô ấy và người bấm Enter là người quyết định chạy.
+    private func moManHinh(id: String, thamSo: String) {
+        guard let man = manHinhCua[id] else {
+            // U9: lỗi phải nói được hành động tiếp theo. Một id gõ sai không được im lặng.
+            hoiThoai.themLuot(by: .loi,
+                              text: "Không có năng lực `\(id)` có màn hình. Gõ \"/\" để xem danh sách.")
+            return
+        }
+        guard let v = khungCua(man) else {
+            hoiThoai.themLuot(by: .heThong,
+                              text: "Màn \"\(man)\" chưa dựng — `\(id)` thuộc màn ấy. "
+                                  + "Ba màn đã có: Passport, Graph → RagAsk, Doc.")
+            return
+        }
+        hienKhung(v, ten: man, thamSo: thamSo)
     }
 
     /// U6: dừng khẩn ở mọi nơi, hạ A0 dưới 1 giây. Không hỏi lại — một nút dừng có hộp thoại
@@ -179,7 +401,13 @@ public final class EidePanel: NSView {
             guard let id = c["id"] as? String, c["implemented"] as? Bool == true else { return nil }
             return .init(id: id, mota: c["desc"] as? String ?? "", manHinh: c["ui"] as? String ?? "")
         }
-        await MainActor.run { self.hoiThoai.oLenh.napNangLuc(ds) }
+        // Cùng một bảng cho gợi ý "/" VÀ cho việc mở màn: nếu tách hai bảng thì có ngày người
+        // chọn được một năng lực trong menu rồi panel bảo "không có năng lực ấy".
+        let bang = Dictionary(ds.map { ($0.id, $0.manHinh) }, uniquingKeysWith: { a, _ in a })
+        await MainActor.run {
+            self.manHinhCua = bang
+            self.hoiThoai.oLenh.napNangLuc(ds)
+        }
     }
 
     /// Hiện một thẻ câu hỏi gộp — UXD-13 U3, từ sự kiện `event.chat.question`.

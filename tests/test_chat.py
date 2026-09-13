@@ -446,3 +446,39 @@ def test_tc59_bo_50_cau_lenh_that(tmp_path):
     # lượng lặng lẽ trôi xuống. Chạy lại một lần trước khi kết luận là có trôi thật.
     assert big_dung >= 48, (f"is_big đúng {big_dung}/{len(ds)} — tụt so với mức đã đo (48/50). "
                             "Chạy lại một lần trước khi kết luận: câu 34 dao động.")
+
+
+def test_lenh_gach_cheo_KHONG_the_di_qua_bo_doan_y():
+    """Premise của đường vào "/" trong panel — vì sao nó KHÔNG gọi `chat.parse_intent`.
+
+    Ô lệnh UXD-13 U1 gợi ý năng lực bằng "/", và `CommandBox` lọc bỏ mọi năng lực có `ui` rỗng
+    — nên menu ấy là danh sách MÀN HÌNH mở được. Người chọn một mục trong menu là người đã nói
+    chính xác họ muốn gì; không còn gì để đoán.
+
+    Panel từng ném cả dòng `/passport.query st.stm32f411` vào `chat.parse_intent`. Bài test này
+    ghi lại con số khiến việc ấy không bao giờ tới đích: enum DPS-09 §4.1 có 19 intent, và
+    trong 199 năng lực xuất hiện ở menu "/" thì đúng MỘT cái (`sim.run`) có intent trùng tên.
+    198 cái còn lại, mô hình buộc phải ép vào một intent khác hoặc `unknown`.
+
+    Triệu chứng im lặng hoàn hảo: `parse_intent` luôn trả *một* intent với *một* độ tin cậy,
+    nên màn hình luôn hiện "Tôi hiểu là: …" — trông y như đang chạy.
+
+    Test này KHÔNG đòi hai tập rời nhau (chúng chồng nhau ở 4 chỗ: project.create, project.open,
+    sim.run, target.flash). Nó chốt rằng phần chồng còn quá nhỏ để gộp hai đường vào làm một.
+    Nếu enum một ngày phủ được phần lớn menu, test đỏ ở đây là lời mời xem lại
+    `EidePanel.duongVao`: lúc ấy nhập hai đường lại là việc nên làm.
+    """
+    from eide_core.registry import get_registry
+
+    hop_le = set(intent_schema()["properties"]["intent"]["enum"])
+    co_man = [c.spec.id for c in get_registry().list() if c.spec.man_hinh]
+    assert len(co_man) > 150, "menu '/' bỗng ngắn đi — bảng màn hình UXD-13 §2 có thể đã hỏng"
+
+    phu = [i for i in co_man if i in hop_le]
+    assert len(phu) / len(co_man) < 0.5, (
+        f"enum intent nay phủ {len(phu)}/{len(co_man)} năng lực trong menu '/' — "
+        "xem lại EidePanel.duongVao: đường '/' có thể đi qua parse_intent được rồi")
+
+    # Ba màn đã dựng: không màn nào tới được bằng đường đoán ý.
+    for i in ("passport.query", "view.rag_ask", "doc.generate"):
+        assert i not in hop_le, f"{i} vào enum intent rồi — xem lại đường vào của ô lệnh"
