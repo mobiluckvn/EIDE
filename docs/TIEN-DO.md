@@ -13,7 +13,7 @@
 ## 1. Một dòng
 
 **209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1513 test Python +
-2814 test Swift xanh (trong đó 15 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình.**
+2852 test Swift xanh (trong đó 20 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình, 199/199 năng lực có màn hiện được kết quả.**
 
 **Từ 13/09, MỌI thứ còn thiếu quy về một nguyên nhân: chưa có bo mạch.** Giao diện đã đủ 23
 màn — số ấy đo lại mỗi lần chạy test (`EideManDayDuTests` đọc thẳng `docs/spec/ui/screens.json`),

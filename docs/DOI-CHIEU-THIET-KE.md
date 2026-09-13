@@ -238,39 +238,26 @@ Hai vòng ấy chạy thật, không cần phần cứng.
 Dựng đủ 23 màn **không** có nghĩa là mọi năng lực đã hiện được. Ba phép đo dưới đây chạy trên
 mã nguồn và registry thật, không liệt kê theo trí nhớ.
 
-**(a) Năng lực có màn hình nhưng chưa hiện được: 84/199.** Đo bằng cách lấy các khoá cấp 1 mà
-mã khung nhìn thật sự đọc từ `ketQua`, rồi đối chiếu với `output_schema` của từng năng lực
-thuộc màn ấy.
+**(a) Năng lực có màn hình hiện được kết quả: 199/199.** Đo bằng cách lấy các khoá cấp 1 mà mã
+khung nhìn (và `EidePanel.docKetQua`) thật sự đọc, rồi đối chiếu với `output_schema` của từng
+năng lực thuộc màn ấy. Con số này nay là một **bài test có chốt** (`EideDoPhuUITests`), không
+phải một dòng trong tài liệu — một dòng trong tài liệu thì đúng được đúng một ngày.
 
-| Màn | Năng lực | Hiện được | Còn câm |
-|---|---:|---:|---:|
-| Ingest | 29 | 8 | **21** |
-| ReqArch | 19 | 14 | 5 |
-| Chat | 16 | 6 | 10 |
-| Doc | 16 | 12 | 4 |
-| Code | 14 | 11 | 3 |
-| DiagramView | 13 | 3 | **10** |
-| Discovery | 12 | 10 | 2 |
-| Graph → RagAsk | 12 | 2 | **10** |
-| ToolForge | 10 | 9 | 1 |
-| PlanDiff | 9 | 7 | 2 |
-| Passport | 9 | 4 | 5 |
-| Env · Sim · Board · Debug | 26 | 17 | 9 |
-| Registry · Bench · LogAssist | 11 | 11 | 0 |
-| Main · ReviewQueue | 3 | 1 | 2 |
-| **Tổng** | **199** | **115** | **84** |
+Lần đo đầu tiên (sáng 13/09) cho **115/199**, và ba nhóm câm lớn nhất đều là *một khung nhìn
+chưa dựng*:
 
-Ba nhóm nợ lớn nhất, và cả ba là *một khung nhìn chưa dựng*, không phải một lỗi:
+| Nhóm | Trước | Việc đã làm |
+|---|---:|---|
+| Ingest (`extract.*`, `archive.*`) | 8/29 | `IngestView` hiện kết quả trích xuất: lô fact kèm `low_confidence`, hằng số không nguồn, BOM thiếu MPN, linh kiện đoán từ ảnh, giấy phép nguồn tải về |
+| Graph (`view.*`) | 2/12 | **`KgMapView`** — nửa bản đồ của màn 7, trước đó chỉ có nửa hỏi đáp |
+| DiagramView (`diagram.*`) | 3/13 | `DiagramView` đọc `{diagram}`: `lang`, `src`, `stale` — người sửa lược đồ sửa MÃ, không sửa tấm ảnh |
+| Chat (`chat.*`, `policy.*`) | 6/16 | `EidePanel.docKetQua` — tám năng lực cố ý không có khung nhìn riêng, vì kết quả của chúng là một câu nói với người |
+| 12 màn còn lại | 96/129 | thêm khoá lẻ: `targets`, `constraints`, `suggestions`, `fsm`, `acceptance`, `impact`, `firmware`, `platform_dir`… |
 
-- **Ingest 21** — mỗi `extract.*` trả một hình dạng riêng (`svd`, `atdf`, `pdf_*`, `bom`,
-  `office`, `image_*`). `IngestView` hiện phân loại và trùng lặp; nó không hiện *kết quả trích
-  xuất*, và đó là 15 năng lực.
-- **DiagramView 10** — `diagram.block/flow/state/sequence/timing/…` đều trả `{path, lint}`
-  giống `render`, nhưng chúng còn trả `src` (mã lược đồ) mà màn chưa hiện. Thiếu chính chỗ
-  người sửa lược đồ.
-- **Graph 10** — **màn 7 mới dựng một nửa.** Tên nó là "Graph → RagAsk": nửa hỏi-đáp đã có
-  (`RagAskView`), nửa **bản đồ tri thức** (`view.kg_map`, `kg_focus`, `coverage_map`,
-  `impact_map`, `conflict_board`, `timeline`, `export_map`) thì chưa.
+Hai năng lực duy nhất còn "câm" — `kg.conflicts` và `project.list` — **không** thiếu khung
+nhìn: bảng UXD-13 §2 không gán màn nào cho chúng, nên không có chỗ để hiện. Đó là khoảng trống
+của tài liệu, nằm trong [DEV-094](DEVIATIONS.md), và nội dung của `kg.conflicts` thì `KgMapView`
+hiện được rồi.
 
 **(b) Phím tắt: 2/10.** UXD-13 §6 khai mười tổ hợp; `EIDEKit` hiện thực `⌘⇧.` (dừng khẩn) và
 `1–9` (chọn phương án thẻ câu hỏi). Tám cái còn thiếu: `⌘L` (vào ô lệnh), `⌘K` (bảng lệnh),
