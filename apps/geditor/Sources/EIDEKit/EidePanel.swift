@@ -27,14 +27,36 @@ public final class EidePanel: NSView {
     private let hoiThoai = ChatView()
     private let hangDoi = ReviewQueueView()
 
-    // Ba màn chuyên đề đã dựng — UXD-13 màn 5, 7, 10. Chúng chiếm chỗ hội thoại chứ không đè
-    // lên thanh tự chủ hay hàng đợi: U2 nói hai thứ ấy LUÔN hiện, kể cả khi người đang đọc một
-    // màn khác — nhất là lúc ấy, vì đó là lúc tác tử vẫn đang chạy sau lưng.
+    // Các màn chuyên đề của UXD-13 §2. Chúng chiếm chỗ hội thoại chứ không đè lên thanh tự chủ
+    // hay hàng đợi: U2 nói hai thứ ấy LUÔN hiện, kể cả khi người đang đọc một màn khác — nhất
+    // là lúc ấy, vì đó là lúc tác tử vẫn đang chạy sau lưng.
     private let hoChieu = PassportView()
     private let hoiDap = RagAskView()
     private let taiLieu = DocView()
+    private let tongQuan = ProjectStatusView()
+    private let nhapTaiLieu = IngestView()
+    private let hoChieuMach = BoardView()
+    private let yeuCau = ReqArchView()
     private let thanhMan = NSStackView()
     private let tenMan = NSTextField(labelWithString: "")
+
+    /// Tiền tố tên màn trong `screens.json` → khung nhìn.
+    ///
+    /// So bằng TIỀN TỐ vì bảng UXD-13 §2 ghi tên kèm chú thích tiếng Việt trong ngoặc
+    /// ("Passport (Hộ chiếu chip)"), và so bằng dấu bằng thì không bao giờ khớp.
+    ///
+    /// Một BẢNG chứ không phải một chuỗi `if`: với hai chục màn, mỗi chỗ cần duyệt qua tất cả
+    /// (ẩn hết, tìm một cái, mở một cái) sẽ là một danh sách chép tay, và danh sách chép tay
+    /// thứ tư là chỗ có người quên thêm màn mới.
+    private lazy var bangMan: [(tien: String, v: NSView)] = [
+        ("Passport", hoChieu),
+        ("Graph", hoiDap),
+        ("Doc", taiLieu),
+        ("Main", tongQuan),
+        ("Ingest", nhapTaiLieu),
+        ("Board", hoChieuMach),
+        ("ReqArch", yeuCau),
+    ]
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
     private var manHinhCua: [String: String] = [:]
@@ -125,6 +147,57 @@ public final class EidePanel: NSView {
         taiLieu.onMoMuc = { [weak self] noi in
             self?.hoiThoai.themLuot(by: .heThong, text: "Mục \(noi) — mở tệp trong GEditor.")
         }
+
+        // Màn 2 — `project.status` gộp cả `target.detect` vào một lần đọc: hai lời gọi cho một
+        // khung nhìn thì có lúc chúng lệch nhau một nhịp, và người đọc thấy "đích: nucleo-f411"
+        // bên cạnh một danh sách tính năng của dự án khác.
+        // Không có năng lực nào nhận một mã TÍNH NĂNG làm tham số — `req.change_impact` nhận
+        // `delta{req_id|fact_id}`, và tính năng thì không phải yêu cầu. Nên nút này KHÔNG gọi
+        // gì cả; nó đưa mã sang ô lệnh để người chọn tiếp. Gọi bừa một năng lực gần đúng rồi
+        // hiện kết quả của nó dưới tiêu đề "ảnh hưởng của F-06" là bịa ra một câu trả lời.
+        tongQuan.onMoTinhNang = { [weak self] ma in
+            self?.hoiThoai.themLuot(
+                by: .heThong,
+                text: "Tính năng \(ma). Chưa có năng lực nào tra thẳng theo mã tính năng — "
+                    + "thử `/req.trace_matrix` hoặc hỏi \"tính năng \(ma) còn thiếu gì\".")
+        }
+
+        nhapTaiLieu.onTrichXuat = { [weak self] tep in
+            // `ingest.classify` đã nói tệp này đi bộ trích nào; bấm vào là CHẠY bộ ấy. Panel
+            // không tự chọn extractor — đó là kết luận của năng lực, không phải của giao diện.
+            self?.chay("ingest.index_text", ["files": [tep]]) { r in
+                self?.nhapTaiLieu.capNhat(ketQua: r)
+            }
+        }
+
+        hoChieuMach.onXemChan = { [weak self] xung in
+            let chan = (xung["pin"] as? String) ?? "?"
+            self?.chay("board.propose_fix", ["conflict": xung]) { r in
+                self?.hienJson("Đề xuất sửa \(chan)", r)
+            }
+        }
+
+        yeuCau.onMoYeuCau = { [weak self] ma in
+            // REQ-08 nhận `delta{req_id, old, new | fact_id}` — bọc đúng một tầng, không phẳng.
+            self?.chay("req.change_impact", ["delta": ["req_id": ma]]) { r in
+                self?.hienJson("Ảnh hưởng của \(ma)", r)
+            }
+        }
+    }
+
+    /// Kết quả không có màn riêng thì đọc vào hội thoại dưới dạng khóa–giá trị.
+    ///
+    /// Thà một đoạn thô còn hơn một khung nhìn đoán mò: `req.change_impact` trả ra thứ mà tôi
+    /// chưa dựng chỗ hiện tử tế, và bịa một bố cục cho nó là cách nhanh nhất để hiện sai.
+    private func hienJson(_ ten: String, _ r: [String: Any]) {
+        let dong = r.keys.sorted().map { k -> String in
+            let v = r[k]
+            if let a = v as? [Any] { return "  \(k): \(a.count) mục" }
+            return "  \(k): \(EideKnowledgeFormat.giaTri(v))"
+        }
+        hoiThoai.themLuot(by: .tacTu,
+                          text: dong.isEmpty ? "\(ten): không có gì."
+                                             : "\(ten):\n" + dong.joined(separator: "\n"))
     }
 
     /// Chuỗi truy nguồn thành một đoạn đọc được. Mỗi mắt xích là *tài liệu → chỗ → cách lấy*;
@@ -166,17 +239,12 @@ public final class EidePanel: NSView {
     }
 
     private func khungCua(_ man: String) -> NSView? {
-        // So bằng TIỀN TỐ: bảng UXD-13 §2 ghi tên màn kèm chú thích tiếng Việt trong ngoặc
-        // ("Passport (Hộ chiếu chip)"), và so bằng dấu bằng thì không bao giờ khớp.
-        if man.hasPrefix("Passport") { return hoChieu }
-        if man.hasPrefix("Graph") { return hoiDap }
-        if man.hasPrefix("Doc") { return taiLieu }
-        return nil
+        bangMan.first { man.hasPrefix($0.tien) }?.v
     }
 
     /// Mở một màn chuyên đề: nó chiếm chỗ hội thoại, thanh tự chủ và hàng đợi ở nguyên.
     private func hienKhung(_ v: NSView, ten: String, thamSo: String) {
-        for k in [hoChieu as NSView, hoiDap, taiLieu] { k.isHidden = (k !== v) }
+        for k in bangMan { k.v.isHidden = (k.v !== v) }
         hoiThoai.isHidden = true
         thanhMan.isHidden = false
         tenMan.stringValue = ten
@@ -190,7 +258,7 @@ public final class EidePanel: NSView {
     }
 
     @objc private func dongMan() {
-        for k in [hoChieu as NSView, hoiDap, taiLieu] { k.isHidden = true }
+        for k in bangMan { k.v.isHidden = true }
         thanhMan.isHidden = true
         hoiThoai.isHidden = false
     }
@@ -224,9 +292,9 @@ public final class EidePanel: NSView {
         thanhMan.addArrangedSubview(nutDong)
         thanhMan.addArrangedSubview(tenMan)
         thanhMan.isHidden = true
-        for k in [hoChieu as NSView, hoiDap, taiLieu] { k.isHidden = true }
+        for k in bangMan { k.v.isHidden = true }
 
-        for v in [thanhTuChu, hoiThoai, hangDoi, thanhMan, hoChieu, hoiDap, taiLieu] {
+        for v in [thanhTuChu, hoiThoai, hangDoi, thanhMan] as [NSView] + bangMan.map(\.v) {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -251,9 +319,9 @@ public final class EidePanel: NSView {
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
         ])
 
-        // Ba màn chuyên đề dùng ĐÚNG khung của hội thoại, chỉ lùi xuống dưới thanh tiêu đề màn.
-        // Cùng khung thì không màn nào âm thầm rộng hơn màn khác rồi che mất hàng đợi.
-        for k in [hoChieu as NSView, hoiDap, taiLieu] {
+        // Mọi màn chuyên đề dùng ĐÚNG khung của hội thoại, chỉ lùi xuống dưới thanh tiêu đề
+        // màn. Cùng khung thì không màn nào âm thầm rộng hơn màn khác rồi che mất hàng đợi.
+        for k in bangMan.map(\.v) {
             NSLayoutConstraint.activate([
                 k.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: g),
                 k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
