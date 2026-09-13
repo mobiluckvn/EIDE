@@ -50,7 +50,7 @@ Ngoài mười trục trên, ba trục phụ:
 | Manifest ISA (TGT-19 §2) | 6 họ | **2** (`armv7e-m`, `avr8`) | 4 còn lại là mốc M5, quyết định 07/09 |
 | Registry (PKG-22) | kho từ xa | **thư mục cục bộ** | `EIDE_REGISTRY`; định dạng `.hkp` và chữ ký là thật — xem [DEV-091](DEVIATIONS.md) |
 | Dàn ý tài liệu (`doc/outlines.json`) | 6 loại | **6** | `doc.generate` đọc động từ spec, không chép tay |
-| Màn hình UI (UXD-13, 23 màn) | 23 | **1** | panel EIDEKit 1474 dòng — xem §5 |
+| Màn hình UI (UXD-13, 23 màn) | 23 | **3** | panel EIDEKit 1474 dòng phủ ba màn — xem §5 |
 
 ---
 
@@ -169,18 +169,30 @@ EIDE**: tra hộ chiếu, xem xung đột, hỏi RAG có trích dẫn, soát mã
 
 ---
 
-## 5. Trục UI — 23 màn hình, 1 panel
+## 5. Trục UI — 23 màn hình, 3 đã có
 
 UXD-13 mô tả 23 màn hình và kho có 24 mockup HTML trong `docs/ui/`. Phía Swift, `EIDEKit` có
-**1474 dòng / 8 tệp**: `EidePanel`, `EideClient`, `EideCommandBox`, `EideQuestionCard`,
-`EideViews`, cộng hai tệp sinh tự động.
+**1474 dòng / 8 tệp** và ba lớp khung nhìn — tức **ba màn hình**, không phải một:
 
-Đó là **màn hình số 1 (Chat)** của UXD-13 — ô lệnh, thẻ ý hiểu, thẻ câu hỏi, khung trả lời. 22
-màn còn lại (Main, Knowledge, Code, Board, Debug, Bench, Docs…) chưa có.
+| Màn | UXD-13 | Lớp Swift |
+|---|---|---|
+| 1 | Chat (mặc định) | `ChatView` — ô lệnh, thẻ ý hiểu, thẻ câu hỏi gộp |
+| 3 | ReviewQueue ("chờ tôi" / "đã làm") | `ReviewQueueView` — nối `gate.decide` và `undo.apply` |
+| 23 | Main shell (thanh tự chủ) | `AutonomyBar` — mức tự chủ, dừng khẩn ⌘⇧. |
 
-**Đánh giá thẳng:** với một đề án thạc sĩ, một panel chạy thật cộng 24 mockup là đủ để chứng
-minh luận điểm — luận điểm nằm ở tầng tác tử, không ở tầng giao diện. Nhưng nếu bảo vệ có câu
-hỏi "sản phẩm dùng thế nào", thì thứ trình diễn được hôm nay là **CLI và MCP**, không phải IDE.
+*Bản đo ngày 12/09 ghi 1/23. Sai, và sai cùng kiểu với con số MCP: tôi đếm theo tệp và theo
+tên màn hình trong `screens.json`, mà `screens.json` ghi tên tiếng Việt ("Chat (mặc định)")
+còn Swift đặt tên lớp theo chức năng (`ChatView`). **Đếm bằng grep thì đo được cái viết ra,
+không đo được cái chạy** — lần thứ hai trong hai ngày.*
+
+**Ba màn ấy không phải ba màn bất kỳ.** Chúng là bộ ba mà UXD-13 §U2 đòi phải LUÔN nhìn thấy:
+mức tự chủ đang ở đâu, máy đang hỏi gì, và máy vừa tự làm gì mà mình rút lại được. Hai mươi màn
+còn lại đều là khung nhìn chuyên đề (Passport, Board, Sim, Bench…) — thiếu chúng thì người dùng
+mất tiện lợi, thiếu ba màn này thì mất khả năng kiểm soát.
+
+**Đánh giá thẳng:** với một đề án thạc sĩ, ba màn chạy thật cộng 24 mockup là đủ để chứng minh
+luận điểm — luận điểm nằm ở tầng tác tử, không ở tầng giao diện. Nhưng nếu bảo vệ có câu hỏi
+"sản phẩm dùng thế nào", thứ trình diễn được hôm nay vẫn là **CLI và MCP** trước, panel sau.
 
 ---
 
