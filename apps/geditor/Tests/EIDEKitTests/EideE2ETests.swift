@@ -472,3 +472,283 @@ final class ThuSuKienChung: @unchecked Sendable {
     func them(_ t: String) { khoa.lock(); _ds.append(t); khoa.unlock() }
     var ds: [String] { khoa.lock(); defer { khoa.unlock() }; return _ds }
 }
+
+/// Quét TOÀN BỘ năng lực đã hiện thực qua daemon thật.
+///
+/// Bài test này không kiểm từng năng lực làm đúng việc của nó — đó là việc của 1513 test
+/// Python. Nó kiểm ba tính chất mà **mọi** năng lực phải có khi nhìn từ phía panel, và cả ba
+/// đều là hình dạng của một lỗi đã xảy ra thật:
+///
+/// 1. **Không bao giờ trả rỗng.** `[:]` là dấu vết của lỗi im lặng số 18 — client nuốt câu trả
+///    lời. Một từ điển trống không phải câu trả lời, nó là sự vắng mặt của câu trả lời.
+/// 2. **Không chạy được thì phải có MÃ.** API-15 §3 có 13 mã lỗi; một năng lực hỏng mà không
+///    nói mã là một năng lực panel không biết phải khuyên người dùng làm gì.
+/// 3. **Không treo.** Mỗi lời gọi có hạn giờ; một năng lực treo làm panel treo theo.
+///
+/// Gọi với `params` RỖNG là an toàn có chủ đích: năng lực cần tham số dừng ở cổng kiểm schema
+/// (E1000) mà KHÔNG chạy, năng lực R2 trở lên dừng ở PolicyGate (`pending`) mà cũng không
+/// chạy. Nên phép quét này không đụng vào tệp, phần cứng, hay ví tiền của ai.
+final class EideQuetToanBoTests: XCTestCase {
+
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    /// Không gọi trong phép quét, và mỗi cái một lý do CỤ THỂ.
+    ///
+    /// Lần chạy đầu tiên của bài test này khởi động thật 20 việc nặng — `caps.invoke` trả
+    /// `running` kèm `job_id` và chúng chạy nền. Với `code.build` thì vô hại; với `env.install`
+    /// thì phép quét vừa tải gói về máy người khác. Một bài test có tác dụng phụ ngoài ý muốn
+    /// là đúng thứ `tool.test` của chính sản phẩm này sinh ra để chặn.
+    ///
+    /// Phần còn lại của nhóm nặng VẪN được gọi và huỷ ngay bằng `job.cancel` — nhờ thế phép
+    /// quét cũng là chỗ duy nhất kiểm `job_id` và `job.cancel` chạy thật.
+    private static let khongGoi: Set<String> = [
+        // Thành công của nó là dừng khẩn cả phiên: mọi năng lực sau đó trả E3002 và phép quét
+        // đo một hệ thống đã tắt.
+        "policy.emergency_stop",
+        // Tải gói về máy — có mạng và có ghi đĩa.
+        "env.install", "env.install_pack",
+        // Chạy tiến trình con trong sandbox.
+        "env.sandbox",
+        // Đẩy gói ra ngoài / kéo từ mạng về.
+        "registry.publish", "registry.seed", "registry.pull",
+    ]
+
+    func testMOInangLUCdaHIENthucTRAveMOTcauTRAloiDOCduoc() async throws {
+        let fm = FileManager.default
+        var py: String?
+        for v in [".venv-arm", ".venv-x86"] where py == nil {
+            let p = Self.gocKho.appendingPathComponent("\(v)/bin/python")
+            if fm.isExecutableFile(atPath: p.path) { py = p.path }
+        }
+        guard let py else { throw XCTSkip("chưa có venv") }
+        fm.changeCurrentDirectoryPath(Self.gocKho.path)
+
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"]))
+        defer { Task { await c.dong() } }
+
+        let ds = try await c.goi(.capsList, [:])
+        let caps = ((ds["capabilities"] as? [[String: Any]]) ?? (ds["caps"] as? [[String: Any]]))
+            ?? []
+        XCTAssertGreaterThan(caps.count, 200, "caps.list trả quá ít: \(caps.count)")
+
+        let lam = caps.filter { ($0["implemented"] as? Bool) == true }
+            .compactMap { $0["id"] as? String }
+            .filter { !Self.khongGoi.contains($0) }
+            .sorted()
+        XCTAssertGreaterThan(lam.count, 190, "chỉ \(lam.count) năng lực đã hiện thực")
+
+        var rong: [String] = []
+        var khongMa: [String] = []
+        var xong = 0
+        var choNguoi = 0
+        var nang = 0
+
+        for id in lam {
+            let r: [String: Any]
+            do {
+                r = try await c.goi(.capsInvoke, ["id": id, "params": [:]])
+            } catch let e as EideClient.Failure {
+                // Lỗi ở tầng giao thức vẫn phải mang mã API-15.
+                if e.maEide == nil { khongMa.append("\(id): \(e)") }
+                continue
+            }
+            if r.isEmpty { rong.append(id); continue }
+            switch (r["status"] as? String) ?? "?" {
+            case "done": xong += 1
+            case "pending": choNguoi += 1
+            case "running":
+                // Năng lực NẶNG trả `job_id` thay vì chờ (API-15 §1). Huỷ ngay: phép quét chỉ
+                // muốn biết chỗ nối có hoạt động, không muốn chạy cmake trên máy ai.
+                nang += 1
+                if let jid = (r["job_id"] as? String) ?? (r["result"] as? [String: Any])?["job_id"] as? String {
+                    _ = try? await c.goi(.jobCancel, ["job_id": jid])
+                } else {
+                    khongMa.append("\(id): running nhưng không có job_id")
+                }
+            default:
+                guard let e = r["error"] as? [String: Any],
+                      let ma = e["eide_code"] as? String, ma.hasPrefix("E") else {
+                    khongMa.append("\(id): \((r["status"] as? String) ?? "?")")
+                    continue
+                }
+            }
+        }
+
+        // Không im lặng về cái bị bỏ: một phép quét giấu phần nó không chạm tới thì đọc lên
+        // như thể đã phủ hết.
+        print("""
+
+        QUÉT TOÀN BỘ: \(lam.count) năng lực gọi thật
+          chạy xong          \(xong)
+          chờ người (cổng)   \(choNguoi)
+          nặng → job_id      \(nang)  (đã huỷ ngay bằng job.cancel)
+          lỗi có mã          \(lam.count - xong - choNguoi - nang - rong.count - khongMa.count)
+          TRẢ RỖNG           \(rong.count)
+          KHÔNG CÓ MÃ        \(khongMa.count)
+          KHÔNG GỌI          \(Self.khongGoi.count)  \(Self.khongGoi.sorted())
+        """)
+
+        XCTAssertTrue(rong.isEmpty,
+                      "năng lực trả RỖNG — dấu vết lỗi im lặng #18: \(rong.prefix(10))")
+        XCTAssertTrue(khongMa.isEmpty,
+                      "năng lực hỏng mà không nói mã: \(khongMa.prefix(10))")
+    }
+}
+
+/// Mỗi khung nhìn phải đọc được `output_schema` THẬT của năng lực nó phục vụ.
+///
+/// Đây là bài test bắt đúng hai lỗi đã xảy ra: `DocView` bản đầu đọc `{sections[], stale[]}` mà
+/// không hợp đồng nào có, `SimView` đọc `report.expectations` trong khi tên thật là
+/// `metrics.expect`. Cả hai lần, test đơn vị vẫn xanh — vì chúng dựng đúng cái sai mà mã đọc.
+///
+/// Cách làm: lấy `output_schema` từ `caps.describe` (daemon thật), **sinh** một object theo
+/// đúng schema ấy, đưa vào khung nhìn, rồi kiểm khung nhìn KHÔNG rơi vào trạng thái rỗng. Một
+/// khung nhìn đọc sai tên khoá sẽ không thấy gì và hiện "chưa có dữ liệu" — im lặng, và trông
+/// y hệt lúc thật sự chưa có gì.
+///
+/// Ưu điểm so với chạy năng lực thật: không cần một dự án đầy tri thức, không cần board, không
+/// tốn tiền mô hình — mà vẫn đối chiếu với hợp đồng do daemon phát ra, không phải hợp đồng tôi
+/// chép lại vào test.
+final class EideKhungNhinDocSchemaTests: XCTestCase {
+
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    /// Sinh một giá trị mẫu theo JSON Schema. Mảng có ĐÚNG MỘT phần tử: khung nhìn nào đọc
+    /// được sẽ hiện một dòng, khung nhìn nào đọc sai tên sẽ hiện không dòng nào.
+    private func mau(_ s: [String: Any], sau: Int = 0) -> Any {
+        guard sau < 4 else { return [:] }
+        switch (s["type"] as? String) ?? "object" {
+        case "array":
+            let it = (s["items"] as? [String: Any]) ?? ["type": "object"]
+            return [mau(it, sau: sau + 1)]
+        case "string":
+            if let e = s["enum"] as? [String], let d = e.first { return d }
+            return "x"
+        case "integer": return 1
+        case "number": return 1.0
+        case "boolean": return true
+        default:
+            guard let props = s["properties"] as? [String: Any], !props.isEmpty else {
+                // **Object tự do** — `{"type":"object"}` không kèm `properties`. Đo 13/09:
+                // 181 chỗ như thế trong `output_schema` của 238 hợp đồng, và 46 trong số đó
+                // đặt cấu trúc thật vào `description` (`"features, gates_open, undo_items,
+                // cost_today, autonomy, target"`). Phần còn lại thì máy không kiểm được gì.
+                //
+                // Đọc `description` khi có: nó là hợp đồng viết bằng tiếng người, và bỏ qua nó
+                // sẽ khiến bài test báo "khung nhìn điếc" cho một khung nhìn hoàn toàn đúng —
+                // một dương tính giả còn tệ hơn không kiểm, vì nó dạy người ta bỏ qua test.
+                if let mo = s["description"] as? String {
+                    let khoa = Self.tachKhoa(mo)
+                    if !khoa.isEmpty {
+                        var ra: [String: Any] = [:]
+                        for (k, mang) in khoa {
+                            ra[k] = mang ? [["id": "x", "name": "x", "count": 1]]
+                                         : "x"
+                        }
+                        return ra
+                    }
+                }
+                return ["id": "x", "name": "x", "status": "x", "count": 1]
+            }
+            var ra: [String: Any] = [:]
+            for (k, v) in props {
+                ra[k] = mau((v as? [String: Any]) ?? [:], sau: sau + 1)
+            }
+            return ra
+        }
+    }
+
+    /// Tách tên khoá từ mô tả tự do của schema: `"top_patterns[], time_span, gaps[], levels{}"`
+    /// → `[("top_patterns", true), ("time_span", false), ("gaps", true), ("levels", false)]`.
+    ///
+    /// Chỉ nhận định danh kiểu `snake_case` — mô tả cũng chứa tiếng Việt ("dự án, board, hộ
+    /// chiếu"), và những chữ ấy không phải tên khoá.
+    static func tachKhoa(_ mo: String) -> [(String, Bool)] {
+        var ra: [(String, Bool)] = []
+        for phan in mo.split(whereSeparator: { ",;".contains($0) }) {
+            let s = phan.trimmingCharacters(in: .whitespaces)
+            let mang = s.contains("[]")
+            let ten = s.replacingOccurrences(of: "[]", with: "")
+                       .replacingOccurrences(of: "{}", with: "")
+                       .trimmingCharacters(in: .whitespaces)
+            guard !ten.isEmpty, ten.count > 1,
+                  ten.allSatisfy({ $0.isLowercase && $0.isASCII || $0 == "_" || $0.isNumber })
+            else { continue }
+            ra.append((ten, mang))
+        }
+        return ra
+    }
+
+    /// Màn → năng lực mà khung nhìn của nó hiện kết quả.
+    private let bang: [(ten: String, cap: String, dung: () -> ManHinhCoSo)] = [
+        ("Main", "project.status", { ProjectStatusView() }),
+        ("Ingest", "ingest.classify", { IngestView() }),
+        ("Board", "board.check_pins", { BoardView() }),
+        ("ReqArch", "req.detect_conflict", { ReqArchView() }),
+        ("DiagramView", "diagram.render", { DiagramView() }),
+        ("PlanDiff", "plan.sufficiency", { PlanDiffView() }),
+        ("Code", "code.constant_guard", { CodeView() }),
+        ("Sim", "sim.sweep", { SimView() }),
+        ("Discovery", "discover.ports", { DiscoveryView() }),
+        ("LogAssist", "debug.log_stats", { LogAssistView() }),
+        ("Debug", "target.observe", { DebugView() }),
+        ("Bench", "bench.badge", { BenchView() }),
+        ("ToolForge", "tool.write", { ToolForgeView() }),
+        ("Registry", "registry.search", { RegistryView() }),
+        ("Env", "env.check", { EnvView() }),
+    ]
+
+    func testMOIkhungNHINdocDUOCschemaCUAnangLUCcuaNO() async throws {
+        let fm = FileManager.default
+        var py: String?
+        for v in [".venv-arm", ".venv-x86"] where py == nil {
+            let p = Self.gocKho.appendingPathComponent("\(v)/bin/python")
+            if fm.isExecutableFile(atPath: p.path) { py = p.path }
+        }
+        guard let py else { throw XCTSkip("chưa có venv") }
+        fm.changeCurrentDirectoryPath(Self.gocKho.path)
+
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"]))
+        defer { Task { await c.dong() } }
+
+        var diec: [String] = []
+        for m in bang {
+            let hd = try await c.goi(.capsDescribe, ["id": m.cap])
+            guard let os = hd["output_schema"] as? [String: Any] else {
+                diec.append("\(m.cap): không có output_schema"); continue
+            }
+            guard let du = mau(os) as? [String: Any] else {
+                diec.append("\(m.cap): output_schema không phải object"); continue
+            }
+            let v = m.dung()
+            v.capNhat(ketQua: du)
+
+            // Khung nhìn "nghe được" schema nếu nó hiện ÍT NHẤT một dòng dữ liệu, hoặc viết
+            // được một dòng tóm tắt. Rỗng cả hai = nó không nhận ra gì trong thứ vừa đưa.
+            if v.soDong == 0 && v.tomTat.stringValue.isEmpty {
+                diec.append("\(m.ten) (\(m.cap)): không đọc được khoá nào trong "
+                          + "\((os["properties"] as? [String: Any])?.keys.sorted() ?? [])")
+            }
+        }
+        XCTAssertTrue(diec.isEmpty, "khung nhìn điếc với hợp đồng của chính nó:\n"
+                                  + diec.joined(separator: "\n"))
+    }
+
+    func testBANGmanPHUmoiKHUNGnhinDAdung() {
+        // Mười lăm màn ở trên + 3 màn tri thức (Passport/RagAsk/Doc, không kế thừa ManHinhCoSo)
+        // + Models và FlowMap (nạp bằng phương thức RPC, không phải năng lực) = 20 màn chuyên
+        // đề. Nếu thêm màn mới mà quên bảng này thì nó không bao giờ được đối chiếu schema.
+        XCTAssertEqual(bang.count + 3 + 2, 20,
+                       "bảng đối chiếu schema lệch với số màn chuyên đề")
+    }
+}
