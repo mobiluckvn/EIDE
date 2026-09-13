@@ -45,6 +45,11 @@ public final class EidePanel: NSView {
     private let logSerial = LogAssistView()
     private let goLoi = DebugView()
     private let doSuc = BenchView()
+    private let xuongCongCu = ToolForgeView()
+    private let khoGoi = RegistryView()
+    private let moHinh = ModelsView()
+    private let moiTruong = EnvView()
+    private let hanhTrinh = FlowMapView()
     private let thanhMan = NSStackView()
     private let tenMan = NSTextField(labelWithString: "")
 
@@ -72,6 +77,11 @@ public final class EidePanel: NSView {
         ("LogAssist", logSerial),
         ("Debug", goLoi),
         ("Bench", doSuc),
+        ("ToolForge", xuongCongCu),
+        ("Registry", khoGoi),
+        ("Models", moHinh),
+        ("Env", moiTruong),
+        ("FlowMap", hanhTrinh),
     ]
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
@@ -244,6 +254,32 @@ public final class EidePanel: NSView {
 
         moPhong.onXemKichBan = { [weak self] duong in
             self?.hoiThoai.themLuot(by: .heThong, text: "Kịch bản: \(duong)")
+        }
+
+        xuongCongCu.onChayThu = { [weak self] tid in
+            // TOOL-03 chạy công cụ trong sandbox — SEC-25 §2: không mạng, chỉ thư mục cho phép.
+            self?.chay("tool.test", ["tool_id": tid]) { r in
+                self?.xuongCongCu.capNhat(ketQua: r)
+            }
+        }
+
+        khoGoi.onNap = { [weak self] goi in
+            // REGISTRY-02 nhận `id` dạng `id@ver`, không phải `package`.
+            self?.chay("registry.pull", ["id": goi]) { r in
+                self?.khoGoi.capNhat(ketQua: r)
+            }
+        }
+
+        moiTruong.onCai = { [weak self] cc in
+            // KHÔNG gọi `env.install` thẳng: cài công cụ là R2 và đi qua cổng. Hỏi cách cài
+            // trước (`env.guide_install`) thì người đọc được việc sắp xảy ra rồi mới quyết.
+            self?.chay("env.guide_install", ["tool": cc]) { r in
+                self?.moiTruong.capNhat(ketQua: r)
+            }
+        }
+
+        hanhTrinh.onMoMuc = { [weak self] gid in
+            self?.chay2(.gateDecide, ["gate_id": gid, "decision": "approve"])
         }
 
         yeuCau.onMoYeuCau = { [weak self] ma in
