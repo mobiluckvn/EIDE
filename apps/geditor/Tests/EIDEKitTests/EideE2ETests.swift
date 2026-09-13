@@ -752,3 +752,145 @@ final class EideKhungNhinDocSchemaTests: XCTestCase {
                        "bảng đối chiếu schema lệch với số màn chuyên đề")
     }
 }
+
+/// Năng lực nạp mặc định của mỗi màn phải được CHÍNH khung nhìn ấy đọc được.
+///
+/// Lỗi im lặng số 21, và nó là của tôi: `napMacDinh` chọn theo trực giác — "màn Passport thì
+/// nạp `passport.list`" — mà không kiểm khung nhìn đọc gì. `passport.list` trả `{passports}`,
+/// `PassportView` đọc `{facts}`. Mở màn Hộ chiếu ra là tự chạy, không thấy `facts`, và hiện
+/// *"Không có fact nào cho mã này"* — một khẳng định SAI về tri thức của dự án, phát ra sau khi
+/// vừa nhận được một danh sách hộ chiếu đầy đủ.
+///
+/// Cùng hình dạng với lỗi #17 (màn khẳng định điều chưa kiểm), chỉ khác là lần này khung nhìn
+/// ĐÃ hỏi — nó chỉ không hiểu câu trả lời.
+final class EideNapMacDinhTests: XCTestCase {
+
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    /// Khoá cấp 1 mà mỗi khung nhìn đọc từ `ketQua`, lấy bằng cách đọc chính mã nguồn.
+    ///
+    /// Đọc mã thay vì liệt kê tay: một danh sách gõ tay sẽ lệch đi ngay lần đầu ai đó thêm một
+    /// trường, và lệch theo hướng làm test xanh.
+    private func khoaDoc(_ tep: String) throws -> Set<String> {
+        let f = Self.gocKho
+            .appendingPathComponent("apps/geditor/Sources/EIDEKit/\(tep).swift")
+        let s = try String(contentsOf: f, encoding: .utf8)
+        var ra: Set<String> = []
+        var i = s.startIndex
+        while let m = s.range(of: "ketQua[\"", range: i..<s.endIndex) {
+            guard let h = s.range(of: "\"", range: m.upperBound..<s.endIndex) else { break }
+            ra.insert(String(s[m.upperBound..<h.lowerBound]))
+            i = h.upperBound
+        }
+        return ra
+    }
+
+    /// Màn → tệp chứa khung nhìn của nó. Đủ 20 màn chuyên đề.
+    private let tepCuaMan: [String: String] = [
+        "Main": "EideWorkbenchViews", "Ingest": "EideWorkbenchViews",
+        "Board": "EideWorkbenchViews", "ReqArch": "EideWorkbenchViews",
+        "Passport": "EideKnowledgeViews", "Graph": "EideKnowledgeViews",
+        "Doc": "EideKnowledgeViews",
+        "DiagramView": "EideCodeViews", "PlanDiff": "EideCodeViews",
+        "Code": "EideCodeViews", "Sim": "EideCodeViews",
+        "Discovery": "EideHardwareViews", "LogAssist": "EideHardwareViews",
+        "Debug": "EideHardwareViews", "Bench": "EideHardwareViews",
+        "ToolForge": "EideSystemViews", "Registry": "EideSystemViews",
+        "Models": "EideSystemViews", "Env": "EideSystemViews",
+        "FlowMap": "EideSystemViews",
+    ]
+
+    private func moClient() throws -> EideClient {
+        let fm = FileManager.default
+        for v in [".venv-arm", ".venv-x86"] {
+            let p = Self.gocKho.appendingPathComponent("\(v)/bin/python")
+            if fm.isExecutableFile(atPath: p.path) {
+                fm.changeCurrentDirectoryPath(Self.gocKho.path)
+                return EideClient(transport:
+                    try EideStdioTransport(eide: [p.path, "-m", "eide.cli"]))
+            }
+        }
+        throw XCTSkip("chưa có venv")
+    }
+
+    func testMOInapMACdinhDEUduocKHUNGnhinCUAmanDOCduoc() async throws {
+        let c = try moClient()
+        defer { Task { await c.dong() } }
+
+        var cam: [String] = []
+        for (man, f) in tepCuaMan.sorted(by: { $0.key < $1.key }) {
+            guard let md = EidePanel.napMacDinh(choMan: man) else { continue }
+            let hd = try await c.goi(.capsDescribe, ["id": md])
+            let props = Set((((hd["output_schema"] as? [String: Any])?["properties"]
+                              as? [String: Any]) ?? [:]).keys)
+            let doc = try khoaDoc(f)
+            if props.isDisjoint(with: doc) {
+                cam.append("\(man): nạp `\(md)` trả \(props.sorted()) — "
+                         + "khung nhìn trong \(f) không đọc khoá nào trong số đó")
+            }
+        }
+        XCTAssertTrue(cam.isEmpty, "màn tự nạp một thứ nó không đọc được:\n"
+                                 + cam.joined(separator: "\n"))
+    }
+
+    func testMOImucTRONGnapAnToanDEUhienDUOCleNMANcuaNO() async throws {
+        // Không chỉ `napMacDinh`: bất kỳ mục nào trong `napAnToan` cũng có thể được người gõ
+        // thẳng (`/view.timeline`), và lúc ấy nó tự chạy rồi để màn hiện rỗng. Một năng lực
+        // "an toàn để tự chạy" mà không ai hiện được kết quả thì an toàn một cách vô ích.
+        let c = try moClient()
+        defer { Task { await c.dong() } }
+
+        let ds = try await c.goi(.capsList, [:])
+        let manCua = Dictionary(
+            (((ds["capabilities"] as? [[String: Any]]) ?? (ds["caps"] as? [[String: Any]])) ?? [])
+                .compactMap { c -> (String, String)? in
+                    guard let i = c["id"] as? String else { return nil }
+                    return (i, (c["ui"] as? String) ?? "")
+                }, uniquingKeysWith: { a, _ in a })
+
+        var xau: [String] = []
+        for id in EidePanel.napAnToan.sorted() {
+            let man = manCua[id] ?? ""
+            guard let tien = tepCuaMan.keys.first(where: { man.hasPrefix($0) }) else {
+                xau.append("\(id): màn \"\(man)\" không có khung nhìn")
+                continue
+            }
+            let hd = try await c.goi(.capsDescribe, ["id": id])
+            let props = Set((((hd["output_schema"] as? [String: Any])?["properties"]
+                              as? [String: Any]) ?? [:]).keys)
+            if props.isDisjoint(with: try khoaDoc(tepCuaMan[tien]!)) {
+                xau.append("\(id): trả \(props.sorted()), màn \(tien) không đọc khoá nào")
+            }
+        }
+        XCTAssertTrue(xau.isEmpty, "napAnToan chứa năng lực không hiện được:\n"
+                                 + xau.joined(separator: "\n"))
+    }
+
+    func testDANHsachNOui_MOIdongDEUlaNANGluccoTHATvaCHUAhienDUOC() async throws {
+        // `noUI` là đơn đặt hàng UI còn nợ, không phải một ghi chú. Hai điều phải đúng: mỗi
+        // dòng là một năng lực CÓ THẬT, và nó CHƯA hiện được — nếu một ngày khung nhìn đọc
+        // được nó, dòng ấy phải chuyển lên `napAnToan` chứ không nằm lại đây.
+        let c = try moClient()
+        defer { Task { await c.dong() } }
+
+        for m in EidePanel.noUI {
+            let hd = try await c.goi(.capsDescribe, ["id": m.cap])
+            XCTAssertEqual(hd["id"] as? String, m.cap, "`\(m.cap)` không phải năng lực có thật")
+            let props = Set((((hd["output_schema"] as? [String: Any])?["properties"]
+                              as? [String: Any]) ?? [:]).keys)
+            XCTAssertTrue(props.contains(m.tra),
+                          "`\(m.cap)` không còn trả `\(m.tra)` — cập nhật danh sách nợ")
+
+            let man = (hd["ui"] as? String) ?? ""
+            guard let tien = tepCuaMan.keys.first(where: { man.hasPrefix($0) }) else { continue }
+            XCTAssertTrue(props.isDisjoint(with: try khoaDoc(tepCuaMan[tien]!)),
+                          "`\(m.cap)` NAY hiện được rồi — chuyển nó lên napAnToan")
+        }
+        XCTAssertFalse(EidePanel.noUI.isEmpty)
+    }
+}

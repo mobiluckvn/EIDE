@@ -529,25 +529,50 @@ public final class EidePanel: NSView {
     /// `tuChay` ở dưới vẫn chạy như một CHỐT THỨ HAI — hợp đồng vẫn có quyền phủ quyết danh
     /// sách, chỉ không còn được tin là đủ để tự mình cho phép.
     public static let napAnToan: Set<String> = [
-        "project.status",       // màn 2 Tổng quan
-        "passport.list",        // màn 5 Hộ chiếu chip
-        "passport.query",       // màn 5 — truy vấn SQL, rẻ và chỉ đọc
-        "view.kg_map",          // màn 7 Bản đồ tri thức
-        "view.timeline",        // màn 7 (dòng thời gian)
-        "view.conflict_board",  // màn 7 (bảng xung đột)
-        "kg.conflicts",         // màn 7
-        "env.detect",           // màn 21 Môi trường
-        "project.list",
-        "policy.undo_window",   // hàng đợi "đã làm — hoàn tác được"
-        "report.progress",
+        "project.status",       // màn 2  → `report`  — ProjectStatusView đọc
+        "passport.query",       // màn 5  → `facts`   — PassportView đọc
+        "env.detect",           // màn 21 → `env`     — EnvView đọc
+    ]
+
+    /// Năng lực chỉ-đọc nhưng **chưa có khung nhìn nào đọc được đầu ra của chúng**.
+    ///
+    /// Bản đầu của `napAnToan` có 11 mục, chọn theo trực giác "màn này thì nạp năng lực kia".
+    /// Đo lại bằng cách đối chiếu `output_schema` với khoá mà mã khung nhìn thật sự đọc: **chỉ
+    /// 4 mục dùng được**. Bảy mục còn lại tự chạy xong rồi để khung nhìn hiện rỗng — tệ hơn là
+    /// hiện SAI, vì `PassportView` nhận một danh sách hộ chiếu đầy đủ, không thấy khoá `facts`,
+    /// và kết luận *"Không có fact nào cho mã này"*.
+    ///
+    /// Danh sách này không phải rác cần dọn: nó là **đơn đặt hàng UI còn nợ**. Mỗi dòng là một
+    /// khung nhìn chưa dựng, và ngày dựng xong thì mục ấy chuyển lên `napAnToan`.
+    public static let noUI: [(cap: String, tra: String, canGi: String)] = [
+        ("passport.list", "passports",
+         "danh sách hộ chiếu đã ghim — PassportView chỉ hiện fact của MỘT hộ chiếu"),
+        ("view.kg_map", "graph",
+         "đồ thị tri thức: màn 7 mới dựng nửa hỏi-đáp, chưa dựng nửa bản đồ"),
+        ("view.timeline", "events", "dòng thời gian tri thức — chưa có khung nhìn"),
+        ("view.conflict_board", "rows", "bảng xung đột fact — chưa có khung nhìn"),
+        ("kg.conflicts", "conflicts", "cùng bảng xung đột; bảng UXD-13 §2 không gán màn nào"),
+        ("project.list", "projects", "danh sách dự án — bảng §2 không gán màn nào"),
+        ("report.progress", "md",
+         "báo cáo tiến độ dạng Markdown — DocView đọc `issues`/`stale`, không đọc `md`"),
     ]
 
     /// Năng lực nạp mặc định của mỗi màn, khi lệnh người gõ không tự chạy được.
+    /// Năng lực nạp mặc định của mỗi màn — phải là thứ CHÍNH khung nhìn ấy đọc được.
+    ///
+    /// `Passport` từng nạp `passport.list`: nó trả `{passports}`, `PassportView` đọc `{facts}`,
+    /// nên mở màn ra là hiện *"Không có fact nào cho mã này"* sau khi vừa nhận một danh sách
+    /// hộ chiếu đầy đủ. Cùng hình dạng với lỗi #17, chỉ khác là lần này khung nhìn ĐÃ hỏi — nó
+    /// chỉ không hiểu câu trả lời. `EideNapMacDinhTests` giữ điều này bằng cách đọc chính mã
+    /// nguồn khung nhìn, không bằng một danh sách gõ tay.
+    ///
+    /// `Graph` không có mặc định: `RagAskView` chỉ hiểu `{answer, citations}`, và không năng
+    /// lực chỉ-đọc nào trả hình dạng ấy — hỏi đáp thì phải có câu hỏi trước. Để trống là câu
+    /// trả lời đúng, tự nạp một thứ màn không đọc được mới là sai.
     public static func napMacDinh(choMan tien: String) -> String? {
         switch tien {
         case "Main": return "project.status"
-        case "Passport": return "passport.list"
-        case "Graph": return "view.kg_map"
+        case "Passport": return "passport.query"
         case "Env": return "env.detect"
         default: return nil
         }

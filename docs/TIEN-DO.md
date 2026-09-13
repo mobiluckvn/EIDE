@@ -248,7 +248,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Hai mươi lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Hai mươi mốt lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -384,6 +384,22 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     `spec.man_hinh` và trả tên màn đầy đủ. Panel định tuyến theo `caps.list` nên vẫn chạy; ai
     hỏi `describe` — MCP, một IDE khác, một bài test E2E — đều được trả lời rằng năng lực này
     không thuộc màn hình nào.
+
+21. **Màn tự nạp một thứ nó không đọc được** (13/09). Màn Hộ chiếu nạp mặc định bằng
+    `passport.list`; năng lực ấy trả `{passports}`, còn `PassportView` đọc `{facts}`. Mở màn ra
+    là hiện *"Không có fact nào cho mã này"* — **sau khi vừa nhận một danh sách hộ chiếu đầy
+    đủ**. Màn Graph cũng thế: nạp `view.kg_map` (trả `{graph}`) rồi `RagAskView` kết luận
+    "Không tìm thấy gì trong tri thức của dự án".
+
+    Cùng hình dạng với lỗi 17, chỉ khác một điểm quan trọng: lần này khung nhìn **đã hỏi** — nó
+    chỉ không hiểu câu trả lời. Và nguyên nhân là của tôi: `napMacDinh` chọn theo trực giác
+    "màn này thì nạp năng lực kia" mà không kiểm khung nhìn đọc gì. Đo lại cả danh sách
+    `napAnToan` 11 mục: **chỉ 4 dùng được**; 5 câm, 2 trỏ vào màn không có khung nhìn. Bảy mục
+    ấy nay nằm trong `EidePanel.noUI` — một đơn đặt hàng UI, không phải rác cần dọn.
+
+    `EideNapMacDinhTests` giữ điều này bằng cách **đọc chính mã nguồn khung nhìn** để lấy tập
+    khoá nó dùng, rồi giao với `output_schema` do daemon phát ra. Một danh sách gõ tay sẽ lệch
+    đi ngay lần đầu ai đó thêm một trường — và lệch theo hướng làm test xanh.
 
 **Bốn cái cuối cùng có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được
 test kỹ**. Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi

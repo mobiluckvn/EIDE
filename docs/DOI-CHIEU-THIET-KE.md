@@ -233,6 +233,64 @@ Với một đề án thạc sĩ, phần trình diễn mạnh nhất vẫn là v
 (màn 5 → 7 → 10) cộng vòng "yêu cầu → kiến trúc → kế hoạch → mã → mô phỏng" (8 → 11 → 12 → 13).
 Hai vòng ấy chạy thật, không cần phần cứng.
 
+### 5.1 Rà soát: phần UI còn nợ (đo 13/09/2026)
+
+Dựng đủ 23 màn **không** có nghĩa là mọi năng lực đã hiện được. Ba phép đo dưới đây chạy trên
+mã nguồn và registry thật, không liệt kê theo trí nhớ.
+
+**(a) Năng lực có màn hình nhưng chưa hiện được: 84/199.** Đo bằng cách lấy các khoá cấp 1 mà
+mã khung nhìn thật sự đọc từ `ketQua`, rồi đối chiếu với `output_schema` của từng năng lực
+thuộc màn ấy.
+
+| Màn | Năng lực | Hiện được | Còn câm |
+|---|---:|---:|---:|
+| Ingest | 29 | 8 | **21** |
+| ReqArch | 19 | 14 | 5 |
+| Chat | 16 | 6 | 10 |
+| Doc | 16 | 12 | 4 |
+| Code | 14 | 11 | 3 |
+| DiagramView | 13 | 3 | **10** |
+| Discovery | 12 | 10 | 2 |
+| Graph → RagAsk | 12 | 2 | **10** |
+| ToolForge | 10 | 9 | 1 |
+| PlanDiff | 9 | 7 | 2 |
+| Passport | 9 | 4 | 5 |
+| Env · Sim · Board · Debug | 26 | 17 | 9 |
+| Registry · Bench · LogAssist | 11 | 11 | 0 |
+| Main · ReviewQueue | 3 | 1 | 2 |
+| **Tổng** | **199** | **115** | **84** |
+
+Ba nhóm nợ lớn nhất, và cả ba là *một khung nhìn chưa dựng*, không phải một lỗi:
+
+- **Ingest 21** — mỗi `extract.*` trả một hình dạng riêng (`svd`, `atdf`, `pdf_*`, `bom`,
+  `office`, `image_*`). `IngestView` hiện phân loại và trùng lặp; nó không hiện *kết quả trích
+  xuất*, và đó là 15 năng lực.
+- **DiagramView 10** — `diagram.block/flow/state/sequence/timing/…` đều trả `{path, lint}`
+  giống `render`, nhưng chúng còn trả `src` (mã lược đồ) mà màn chưa hiện. Thiếu chính chỗ
+  người sửa lược đồ.
+- **Graph 10** — **màn 7 mới dựng một nửa.** Tên nó là "Graph → RagAsk": nửa hỏi-đáp đã có
+  (`RagAskView`), nửa **bản đồ tri thức** (`view.kg_map`, `kg_focus`, `coverage_map`,
+  `impact_map`, `conflict_board`, `timeline`, `export_map`) thì chưa.
+
+**(b) Phím tắt: 2/10.** UXD-13 §6 khai mười tổ hợp; `EIDEKit` hiện thực `⌘⇧.` (dừng khẩn) và
+`1–9` (chọn phương án thẻ câu hỏi). Tám cái còn thiếu: `⌘L` (vào ô lệnh), `⌘K` (bảng lệnh),
+`⌘1…⌘9` (chuyển màn), `⌘⇧Q` (hàng đợi), `⌘Z` trong hàng đợi, `Esc` (đóng panel trượt),
+`⌘⏎` trong DiagramView, `F` trong bản đồ. *(`⌘L`/`⌘K`/`⌘Z` có trong GEditor nhưng là phím của
+trình soạn thảo, việc khác.)*
+
+**(c) Sự kiện: 11/16 có chỗ hiện.** Năm cái còn lại — `chat.restated` (thẻ ý hiểu chưa dựng),
+`run.progress` và `job.progress` (chưa có chỗ hiện tiến độ), `discover.changed` và `serial.line`
+(cần board). Bốn cái đầu không cần phần cứng.
+
+**Một lỗi thật lộ ra trong lúc rà soát ([số 21](TIEN-DO.md)):** màn Hộ chiếu tự nạp
+`passport.list`, năng lực ấy trả `{passports}`, còn `PassportView` đọc `{facts}` — nên mở màn
+ra là hiện *"Không có fact nào cho mã này"* **sau khi vừa nhận một danh sách hộ chiếu đầy đủ**.
+Màn Graph cũng thế với `view.kg_map`. Nguyên nhân: `napMacDinh` chọn theo trực giác "màn này
+thì nạp năng lực kia" mà không kiểm khung nhìn đọc gì. Đã sửa, và `EideNapMacDinhTests` nay
+đọc chính mã nguồn khung nhìn để đối chiếu — không bằng một danh sách gõ tay.
+
+---
+
 *Ghi ngày 13/09: dựng các màn này làm lộ [lỗi im lặng số 15](TIEN-DO.md) — ô lệnh gọi
 `chat.parse_intent` thay vì `chat.send`, tức panel chưa bao giờ chạy được một việc nào. Bốn
 màn có từ trước không phát hiện ra, vì cả bốn chỉ ĐỌC trạng thái; lỗi chỉ lộ khi có một màn

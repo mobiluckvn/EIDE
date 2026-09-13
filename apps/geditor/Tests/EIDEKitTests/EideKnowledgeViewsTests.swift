@@ -302,11 +302,30 @@ final class EideNapLanDauTests: XCTestCase {
     func testMOImanCOnapMACdinhDEUnamTRONGdanhSACHchiDOC() {
         // Nếu một màn khai năng lực nạp mà năng lực ấy không chỉ-đọc, chốt thứ hai sẽ chặn và
         // màn lặng lẽ không bao giờ nạp được — mã chết kiểu khác.
-        for m in ["Main", "Passport", "Graph", "Env"] {
+        for m in ["Main", "Passport", "Env"] {
             let md = EidePanel.napMacDinh(choMan: m)
             XCTAssertNotNil(md, "\(m) mất năng lực nạp mặc định")
             XCTAssertTrue(EidePanel.napAnToan.contains(md!),
                           "\(m) nạp bằng `\(md!)` nhưng nó không nằm trong napAnToan")
+        }
+    }
+
+    func testMANgraphCOYkhongCOnapMACdinh() {
+        // `RagAskView` chỉ hiểu `{answer, citations}`, và không năng lực chỉ-đọc nào trả hình
+        // dạng ấy — hỏi đáp thì phải có câu hỏi trước. Để trống là câu trả lời đúng; bản đầu
+        // nạp `view.kg_map` (trả `{graph}`) và màn hiện "Không tìm thấy gì trong tri thức của
+        // dự án" — một khẳng định SAI sau khi vừa nhận cả đồ thị tri thức.
+        XCTAssertNil(EidePanel.napMacDinh(choMan: "Graph"))
+    }
+
+    func testDANHsachNOuiKHONGrongVAkhongTRUNGnapAnToan() {
+        // `noUI` là đơn đặt hàng UI còn nợ. Một mục vừa nằm trong `noUI` vừa trong `napAnToan`
+        // nghĩa là hai danh sách nói ngược nhau về cùng một năng lực.
+        XCTAssertFalse(EidePanel.noUI.isEmpty)
+        for m in EidePanel.noUI {
+            XCTAssertFalse(EidePanel.napAnToan.contains(m.cap),
+                           "`\(m.cap)` vừa nợ UI vừa nằm trong napAnToan")
+            XCTAssertFalse(m.canGi.isEmpty, "`\(m.cap)` nợ mà không nói nợ cái gì")
         }
     }
 }
