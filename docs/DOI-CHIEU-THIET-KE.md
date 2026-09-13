@@ -50,7 +50,7 @@ Ngoài mười trục trên, ba trục phụ:
 | Manifest ISA (TGT-19 §2) | 6 họ | **2** (`armv7e-m`, `avr8`) | 4 còn lại là mốc M5, quyết định 07/09 |
 | Registry (PKG-22) | kho từ xa | **thư mục cục bộ** | `EIDE_REGISTRY`; định dạng `.hkp` và chữ ký là thật — xem [DEV-091](DEVIATIONS.md) |
 | Dàn ý tài liệu (`doc/outlines.json`) | 6 loại | **6** | `doc.generate` đọc động từ spec, không chép tay |
-| Màn hình UI (UXD-13, 23 màn) | 23 | **3** | panel EIDEKit 1474 dòng phủ ba màn — xem §5 |
+| Màn hình UI (UXD-13, 23 màn) | 23 | **6** | panel EIDEKit 2265 dòng phủ sáu màn — xem §5 |
 
 ---
 
@@ -169,30 +169,45 @@ EIDE**: tra hộ chiếu, xem xung đột, hỏi RAG có trích dẫn, soát mã
 
 ---
 
-## 5. Trục UI — 23 màn hình, 3 đã có
+## 5. Trục UI — 23 màn hình, 6 đã có
 
 UXD-13 mô tả 23 màn hình và kho có 24 mockup HTML trong `docs/ui/`. Phía Swift, `EIDEKit` có
-**1474 dòng / 8 tệp** và ba lớp khung nhìn — tức **ba màn hình**, không phải một:
+**2265 dòng / 9 tệp** và sáu lớp khung nhìn — tức **sáu màn hình**:
 
 | Màn | UXD-13 | Lớp Swift |
 |---|---|---|
 | 1 | Chat (mặc định) | `ChatView` — ô lệnh, thẻ ý hiểu, thẻ câu hỏi gộp |
 | 3 | ReviewQueue ("chờ tôi" / "đã làm") | `ReviewQueueView` — nối `gate.decide` và `undo.apply` |
+| 5 | Passport (Hộ chiếu chip) | `PassportView` — fact + tầng + nút "nguồn"; hiện cả `latency_ms` |
+| 7 | Graph → RagAsk | `RagAskView` — **chặn câu trả lời không trích dẫn** |
+| 10 | Doc (Tài liệu) | `DocView` — `style_issues`, `uncited`, mục lỗi thời lên tiêu đề |
 | 23 | Main shell (thanh tự chủ) | `AutonomyBar` — mức tự chủ, dừng khẩn ⌘⇧. |
+
+Ba màn thêm ngày 13/09 là ba màn cho thấy đúng luận điểm đề án: **tri thức có trích dẫn**,
+**truy nguồn được**, **tài liệu sinh từ chính tri thức ấy**. Chúng dùng chung một bất biến,
+và bất biến ấy là lý do chọn đúng ba màn này: *không khung nhìn nào được hiện một con số mà
+không hiện nguồn của nó.*
 
 *Bản đo ngày 12/09 ghi 1/23. Sai, và sai cùng kiểu với con số MCP: tôi đếm theo tệp và theo
 tên màn hình trong `screens.json`, mà `screens.json` ghi tên tiếng Việt ("Chat (mặc định)")
 còn Swift đặt tên lớp theo chức năng (`ChatView`). **Đếm bằng grep thì đo được cái viết ra,
 không đo được cái chạy** — lần thứ hai trong hai ngày.*
 
-**Ba màn ấy không phải ba màn bất kỳ.** Chúng là bộ ba mà UXD-13 §U2 đòi phải LUÔN nhìn thấy:
-mức tự chủ đang ở đâu, máy đang hỏi gì, và máy vừa tự làm gì mà mình rút lại được. Hai mươi màn
-còn lại đều là khung nhìn chuyên đề (Passport, Board, Sim, Bench…) — thiếu chúng thì người dùng
-mất tiện lợi, thiếu ba màn này thì mất khả năng kiểm soát.
+**Sáu màn ấy chia làm hai bộ ba.** Bộ thứ nhất (1, 3, 23) là thứ UXD-13 §U2 đòi phải LUÔN nhìn
+thấy: mức tự chủ đang ở đâu, máy đang hỏi gì, và máy vừa tự làm gì mà mình rút lại được — thiếu
+chúng thì mất khả năng kiểm soát. Bộ thứ hai (5, 7, 10) là thứ cho thấy sản phẩm này khác một
+trình soạn thảo có ghép mô hình ngôn ngữ ở chỗ nào: mọi con số đều dẫn được về nguồn của nó.
+Mười bảy màn còn lại là khung nhìn chuyên đề (Board, Sim, Bench, Discovery…) và phần lớn chúng
+chưa có gì để hiện, vì dữ liệu ấy đến từ một bo mạch chưa cắm.
 
-**Đánh giá thẳng:** với một đề án thạc sĩ, ba màn chạy thật cộng 24 mockup là đủ để chứng minh
-luận điểm — luận điểm nằm ở tầng tác tử, không ở tầng giao diện. Nhưng nếu bảo vệ có câu hỏi
-"sản phẩm dùng thế nào", thứ trình diễn được hôm nay vẫn là **CLI và MCP** trước, panel sau.
+**Đánh giá thẳng:** sáu màn chạy thật cộng 24 mockup là đủ cho một đề án thạc sĩ — luận điểm
+nằm ở tầng tác tử, không ở tầng giao diện. Với ba màn mới, panel đã trình diễn được trọn một
+vòng "hỏi → có nguồn → thành tài liệu"; nhưng cho các nhóm năng lực khác thì **CLI và MCP** vẫn
+là đường trình diễn trước, panel sau.
+
+*Ghi ngày 13/09: nối ba màn này làm lộ [lỗi im lặng số 15](TIEN-DO.md) — ô lệnh gọi
+`chat.parse_intent` thay vì `chat.send`, tức panel chưa bao giờ chạy được một việc nào. Bốn
+màn đã có từ trước đó không phát hiện ra, vì cả bốn chỉ ĐỌC trạng thái.*
 
 ---
 
@@ -262,7 +277,7 @@ Ba thứ, cả ba đã ghi DEVIATIONS:
 1. **Tầng tri thức và tầng tác tử: xong.** M0 100%, M1 99%, 17/27 nhóm năng lực đủ, hai chuỗi
    chuẩn trọn vẹn, và cả ba mắt xích trung tâm (`code.build`, `sim.run`, `constant_guard`) đã
    chạy THẬT chứ không chỉ xanh trong test.
-2. **Tầng giao tiếp: dùng được.** 47/57 RPC, 11/15 MCP, 1/23 màn hình. Kênh sự kiện đã có và
+2. **Tầng giao tiếp: dùng được.** 50/57 RPC, 11/15 MCP, 6/23 màn hình. Kênh sự kiện đã có và
    phái sinh từ sổ cái, nên panel không thể hiện một việc mà chuỗi băm không có. Mười phương
    thức thiếu đều chờ board hoặc hàng đợi chạy nền. Tác tử ngoài qua MCP đã dùng được trọn tầng
    tri thức — đây là việc rẻ nhất còn

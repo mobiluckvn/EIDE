@@ -12,11 +12,13 @@
 
 ## 1. Một dòng
 
-**209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1503 test Python +
-2699 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13.**
+**209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1512 test Python +
+2714 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 6/23 màn hình.**
 
-**Từ 13/09, MỌI thứ còn thiếu đều quy về một nguyên nhân: chưa có bo mạch.** Không còn mục nào
-chờ thời gian, chờ một thư viện, hay chờ một quyết định. Đo trên mười trục của
+**Từ 13/09, mọi thứ còn thiếu quy về hai thứ: chưa có bo mạch, và 17 màn hình chuyên đề chưa
+dựng.** Không còn mục nào chờ thời gian, chờ một thư viện, hay chờ một quyết định — mười bảy
+màn kia là một lựa chọn phạm vi của chủ sản phẩm (13/09: dựng ba màn đắt giá nhất trước), và
+phần lớn chúng dù dựng xong cũng chưa có gì để hiện cho tới khi có board. Đo trên mười trục của
 [`DOI-CHIEU-THIET-KE.md`](DOI-CHIEU-THIET-KE.md):
 
 | Còn thiếu | Chặn bởi |
@@ -26,6 +28,7 @@ chờ thời gian, chờ một thư viện, hay chờ một quyết định. Đo
 | 1 kiểu sự kiện sổ cái (`discover.result`) | board |
 | 2 trong 3 mã lỗi chưa ném (`E4003` cần board; `E1003` cần một bề mặt REST chưa có) | board |
 | phần lớn 27 mã TC còn lại | board / máy đo |
+| 17 màn hình UXD-13 (Board, Sim, Bench, Discovery, ToolForge…) | phạm vi (13/09) + board |
 
 **21 trong 27 nhóm năng lực đã đủ.** Sáu nhóm chưa đủ: `passport` 7/8, `sim` 6/7, và bốn nhóm
 phần cứng chưa bắt đầu.
@@ -245,7 +248,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Mười một lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Mười lăm lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -316,6 +319,31 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     một năng lực chưa bao giờ chạy đúng lần nào. Đây là lỗi đắt nhất trong mười một cái: nó nằm
     ở mắt xích trung tâm của luận điểm đề án, và nó sống sót qua cả Sprint 2 lẫn hai đợt trước
     của chính ngày 11/09.
+12. **`gate.decision` không bao giờ được phát** (12/09). Router ghi quyết định vào bảng
+    `decision_log`, và `store.py` loại bảng ấy khỏi niêm `content_digest` với lý do ghi thẳng
+    trong chú thích: *"mọi quyết định cũng đi vào sổ cái"*. Nó không đi. Một bảng nằm ngoài
+    niêm vì tin vào một đường ghi không tồn tại.
+13–14. **`autonomy.change` và `stop` cũng vậy** (12/09). Hai hành động an toàn nhất trong cả
+    sản phẩm — đổi mức tự chủ và dừng khẩn — không để lại vết nào trong chuỗi băm. Sau lần thứ
+    ba của cùng một hình dạng lỗi, tôi thôi sửa từng cái và dựng một cổng cho cả lớp:
+    `test_moi_kieu_su_kien_API15_deu_co_cho_phat_TRU_thu_can_board` bắt mọi `kind` khai trong
+    API-15 §5 mà không có chỗ nào phát ra.
+15. **Ô lệnh chưa bao giờ chạy một việc nào** (13/09). Panel gọi `chat.parse_intent` — bước 1
+    trong 4 bước DPS-09 — nên người gõ "Tạo dự án robot" đọc được *"Tôi hiểu là: project.create
+    (92%)"* rồi hết. Không chuỗi nào dựng, không việc nào chạy. UXD-13 §ô lệnh ghi hành động là
+    `chat.send`, `chat.send` đã nằm sẵn trong daemon lẫn enum RPC sinh tự động, và panel chỉ
+    đơn giản không gọi nó.
+
+    Nhánh thứ hai của cùng lỗi ấy đo được bằng một con số: menu "/" liệt kê **199** năng lực có
+    màn hình, người chọn một cái, rồi cú Enter ném `/passport.query st.stm32f411` vào bộ đoán ý
+    — nơi enum DPS-09 §4.1 có 19 intent và đúng **một** (`sim.run`) trùng tên với một trong 199
+    năng lực ấy. 198 cái còn lại không có đường nào tới đích.
+
+    Điều giữ nó im lặng là một tính chất của chính bộ đoán ý: **`parse_intent` luôn trả về *một*
+    intent với *một* độ tin cậy**, kể cả cho một chuỗi nó không hiểu. Nên màn hình luôn hiện
+    "Tôi hiểu là: …", và một giao diện hiểu mọi thứ mà không làm gì trông giống hệt một giao
+    diện đang làm việc. Bốn màn có từ trước không phát hiện ra vì cả bốn chỉ ĐỌC trạng thái;
+    lỗi chỉ lộ khi có một màn phải GỌI một năng lực.
 
 ---
 
