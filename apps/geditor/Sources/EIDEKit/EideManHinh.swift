@@ -142,6 +142,36 @@ open class ManHinhCoSo: NSView {
     }
 }
 
+/// Đọc một số từ JSON mà không quan tâm nó tới dưới dạng nào.
+///
+/// JSON không phân biệt số nguyên với số thực, và các cầu nối thì phân biệt: `JSONSerialization`
+/// trả `NSNumber`, một `47.2` cạnh một `128004` trong cùng object có thể khiến cả hai thành
+/// `Double`, và `as? Int` im lặng trả `nil` — đúng nghĩa là một số bị đọc thành 0 mà không có
+/// lỗi nào. Với `after_line` của `debug.log_stats` thì 0 nghĩa là "mở log ở dòng 0", tức chỉ
+/// người dùng tới một chỗ không phải chỗ hệ thống treo.
+public enum EideSo {
+
+    public static func nguyen(_ v: Any?) -> Int? {
+        switch v {
+        case let i as Int: return i
+        case let d as Double: return Int(d)
+        case let n as NSNumber: return n.intValue
+        case let s as String: return Int(s)
+        default: return nil
+        }
+    }
+
+    public static func thuc(_ v: Any?) -> Double? {
+        switch v {
+        case let d as Double: return d
+        case let i as Int: return Double(i)
+        case let n as NSNumber: return n.doubleValue
+        case let s as String: return Double(s)
+        default: return nil
+        }
+    }
+}
+
 // MARK: - Cách đọc những thứ nhiều màn cùng gặp
 
 /// Mức nghiêm trọng dùng chung cho `board.check_pins`, `arch.review`, `code.static`,

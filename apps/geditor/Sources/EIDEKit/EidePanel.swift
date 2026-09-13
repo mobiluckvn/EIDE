@@ -41,6 +41,10 @@ public final class EidePanel: NSView {
     private let keHoach = PlanDiffView()
     private let maNguon = CodeView()
     private let moPhong = SimView()
+    private let doBoard = DiscoveryView()
+    private let logSerial = LogAssistView()
+    private let goLoi = DebugView()
+    private let doSuc = BenchView()
     private let thanhMan = NSStackView()
     private let tenMan = NSTextField(labelWithString: "")
 
@@ -64,6 +68,10 @@ public final class EidePanel: NSView {
         ("PlanDiff", keHoach),
         ("Code", maNguon),
         ("Sim", moPhong),
+        ("Discovery", doBoard),
+        ("LogAssist", logSerial),
+        ("Debug", goLoi),
+        ("Bench", doSuc),
     ]
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
@@ -200,6 +208,38 @@ public final class EidePanel: NSView {
                 by: .heThong,
                 text: "\(tep):\(dong) — hằng số không trỏ fact nào. `/code.annotate` để tìm fact "
                     + "khớp, hoặc `/kg.request` nếu tri thức chưa có.")
+        }
+
+        // KHÔNG gọi `board.mark_lab` từ đây. BOARD-05 đòi `no_actuator`, `current_limited` và
+        // `by` — hai lời cam kết về phần cứng cộng tên người cam kết, để rồi ghi vào
+        // `autonomy.yaml` và KÝ (POL-17 §3). Đánh dấu lab là mở quyền TỰ NẠP FIRMWARE; một
+        // panel tự điền `no_actuator: true` thay người là tác tử tự cấp cho mình quyền ấy —
+        // cùng hình dạng với `policy sign`, thứ cố ý không phải năng lực.
+        doBoard.onChonBoard = { [weak self] bid in
+            self?.hoiThoai.themLuot(
+                by: .heThong,
+                text: "Board \(bid). Muốn tự nạp firmware thì phải đánh dấu lab, và việc đó cần "
+                    + "anh xác nhận hai điều về phần cứng (không cơ cấu chấp hành, có hạn dòng) "
+                    + "kèm tên anh — chạy `eide` CLI, panel không tự khẳng định thay anh được.")
+        }
+
+        logSerial.onMoDong = { [weak self] n in
+            self?.hoiThoai.themLuot(by: .heThong, text: "Log dòng \(n) — mở trong GEditor.")
+        }
+
+        goLoi.onChayThiNghiem = { [weak self] tn, dich in
+            // DEBUG-04 nhận `experiment{cap, args, expect}` và `target` — cả hai bắt buộc. Thí
+            // nghiệm có thể chạm phần cứng, nên nó đi qua cổng như mọi việc R3 khác; panel
+            // không tự quyết định gì, chỉ chuyển nguyên object mà `hypothesize` đã sinh ra.
+            guard !dich.isEmpty else {
+                self?.hoiThoai.themLuot(
+                    by: .cho,
+                    text: "Thí nghiệm này chưa có đích (`target`) — cần board đang cắm.")
+                return
+            }
+            self?.chay("debug.experiment", ["experiment": tn, "target": dich]) { r in
+                self?.goLoi.capNhat(ketQua: r)
+            }
         }
 
         moPhong.onXemKichBan = { [weak self] duong in

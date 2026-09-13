@@ -103,7 +103,7 @@ public final class PassportView: NSView {
         let facts = (ketQua["facts"] as? [[String: Any]]) ?? []
         let cit = (ketQua["citations"] as? [[String: Any]]) ?? []
         let tiers = (ketQua["tiers"] as? [String: Any]) ?? [:]
-        let ms = (ketQua["latency_ms"] as? Int) ?? 0
+        let ms = EideSo.nguyen(ketQua["latency_ms"]) ?? 0
 
         if facts.isEmpty {
             tomTat.stringValue = ketQua.isEmpty
@@ -113,9 +113,9 @@ public final class PassportView: NSView {
             return
         }
 
-        let vang = (tiers["gold"] as? Int) ?? 0
-        let bac = (tiers["silver"] as? Int) ?? 0
-        let dong = (tiers["bronze"] as? Int) ?? 0
+        let vang = EideSo.nguyen(tiers["gold"]) ?? 0
+        let bac = EideSo.nguyen(tiers["silver"]) ?? 0
+        let dong = EideSo.nguyen(tiers["bronze"]) ?? 0
         tomTat.stringValue = "\(facts.count) fact · vàng \(vang) · bạc \(bac) · đồng \(dong)"
             + " · \(cit.count) nguồn · \(ms) ms"
         tomTat.textColor = ms > 200 ? EideToken.Mau.warn : EideToken.Mau.muted
@@ -305,7 +305,7 @@ public final class RagAskView: NSView {
         let id = (t["source_id"] as? String) ?? (t["id"] as? String) ?? ""
         let uri = (t["uri"] as? String) ?? ""
         let tang = (t["tier"] as? String) ?? ""
-        let trang = (t["page"] as? Int).map { " · tr.\($0)" } ?? ""
+        let trang = EideSo.nguyen(t["page"]).map { " · tr.\($0)" } ?? ""
         let v = NSTextField(labelWithString:
             "[\(id)] \(EideKnowledgeFormat.tenNgan(uri))\(trang)"
             + (tang.isEmpty ? "" : " · \(tang)"))
@@ -400,7 +400,7 @@ public final class DocView: NSView {
         let loiThoi = (ketQua["stale"] as? [[String: Any]]) ?? []
         let daSua = (ketQua["updated"] as? [String]) ?? []
         // Sau `doc.generate` mới chỉ có CON SỐ; danh sách chi tiết phải gọi `doc.style_check`.
-        let soLoiKhai = (ketQua["style_issues"] as? Int) ?? 0
+        let soLoiKhai = EideSo.nguyen(ketQua["style_issues"]) ?? 0
 
         if ketQua.isEmpty {
             tieuDe.stringValue = "Tài liệu"

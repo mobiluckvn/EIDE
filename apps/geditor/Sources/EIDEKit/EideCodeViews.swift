@@ -71,7 +71,7 @@ public final class DiagramView: ManHinhCoSo {
         for e in loi.sorted(by: { EideMuc.diem(($0["severity"] as? String) ?? "")
                                 < EideMuc.diem(($1["severity"] as? String) ?? "") }) {
             let muc = (e["severity"] as? String) ?? "warning"
-            let dong = (e["line"] as? Int) ?? 0
+            let dong = EideSo.nguyen(e["line"]) ?? 0
             let tin = (e["message"] as? String) ?? ""
             themDong(dong > 0 ? "dòng \(dong)" : EideMuc.ten(muc), tin, mau: EideMuc.mau(muc),
                      nut: dong > 0, ma: String(dong), bam: #selector(moDong(_:)))
@@ -164,8 +164,8 @@ public final class PlanDiffView: ManHinhCoSo {
         if duTriThuc == false { d.append("THIẾU TRI THỨC (\(soThieu))") }
         else if duTriThuc == true { d.append("đủ tri thức") }
         if let u = uoc {
-            let usd = (u["cost_usd"] as? Double) ?? 0
-            let phut = (u["minutes"] as? Int) ?? 0
+            let usd = EideSo.thuc(u["cost_usd"]) ?? 0
+            let phut = EideSo.nguyen(u["minutes"]) ?? 0
             d.append(String(format: "~%.2f USD · ~%d phút", usd, phut))
             if !trongNganSach { d.append("VƯỢT NGÂN SÁCH") }
         }
@@ -225,7 +225,7 @@ public final class PlanDiffView: ManHinhCoSo {
     }
 
     private func _hienRaSoat(_ r: [String: Any]) {
-        let diem = (r["score"] as? Double) ?? (r["score"] as? Int).map(Double.init) ?? -1
+        let diem = EideSo.thuc(r["score"]) ?? EideSo.nguyen(r["score"]).map(Double.init) ?? -1
         let dat = r["passed"] as? Bool
         let y = (r["findings"] as? [[String: Any]]) ?? []
         var p: [String] = []
@@ -315,7 +315,7 @@ public final class CodeView: ManHinhCoSo {
 
         for v in vp {
             let tep = (v["file"] as? String) ?? "?"
-            let dong = (v["line"] as? Int) ?? 0
+            let dong = EideSo.nguyen(v["line"]) ?? 0
             let hang = (v["literal"] as? String) ?? EideKnowledgeFormat.giaTri(v["literal"])
             let ly = (v["reason"] as? String) ?? ""
             themDong("\(EideKnowledgeFormat.tenNgan(tep)):\(dong)",
@@ -419,9 +419,9 @@ public final class SimView: ManHinhCoSo {
             let mt = (r["metrics"] as? [String: Any]) ?? [:]
             let ky = (mt["expect"] as? [[String: Any]]) ?? []
             soKyVong = ky.count
-            soDat = (mt["n_passed"] as? Int)
+            soDat = EideSo.nguyen(mt["n_passed"])
                 ?? ky.filter { (($0["status"] as? String) ?? "") == "passed" }.count
-            soChuaKiem = (mt["n_unverified"] as? Int)
+            soChuaKiem = EideSo.nguyen(mt["n_unverified"])
                 ?? ky.filter { (($0["status"] as? String) ?? "") == "unverified" }.count
             let sai = soKyVong - soDat - soChuaKiem
 

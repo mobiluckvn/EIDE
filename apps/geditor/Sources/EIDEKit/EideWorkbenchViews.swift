@@ -52,7 +52,7 @@ public final class ProjectStatusView: ManHinhCoSo {
         let tinhNang = (bc["features"] as? [[String: Any]]) ?? []
         let cong = (bc["gates_open"] as? [[String: Any]]) ?? []
         let hoanTac = (bc["undo_items"] as? [[String: Any]]) ?? []
-        chiPhiHomNay = (bc["cost_today"] as? Double) ?? Double((bc["cost_today"] as? Int) ?? 0)
+        chiPhiHomNay = EideSo.thuc(bc["cost_today"]) ?? Double(EideSo.nguyen(bc["cost_today"]) ?? 0)
         let tuChu = (bc["autonomy"] as? String) ?? ""
         let dich = bc["target"]
 
@@ -177,7 +177,7 @@ public final class IngestView: ManHinhCoSo {
             let loai = (c["kind"] as? String) ?? "?"
             let tang = (c["tier"] as? String) ?? ""
             let bo = (c["extractor"] as? String) ?? ""
-            let tin = (c["confidence"] as? Double) ?? 1
+            let tin = EideSo.thuc(c["confidence"]) ?? 1
             let yeu = tin < Self.nguongTin
             soTep += 1
             let duongDi = bo.isEmpty ? "không sinh fact — giữ làm ngữ cảnh" : "→ \(bo)"
@@ -257,7 +257,7 @@ public final class BoardView: ManHinhCoSo {
         let bang = (ketQua["table"] as? [[String: Any]]) ?? []
         let canhBao = (ketQua["warnings"] as? [String]) ?? []
         let hcId = (ketQua["board_passport_id"] as? String) ?? ""
-        soNet = (ketQua["nets"] as? Int) ?? 0
+        soNet = EideSo.nguyen(ketQua["nets"]) ?? 0
         // `conflicts` có mặt (kể cả rỗng) nghĩa là phép kiểm ĐÃ chạy. Vắng mặt thì chưa.
         daKiemChan = ketQua["conflicts"] != nil
 
@@ -450,17 +450,17 @@ public final class ReqArchView: ManHinhCoSo {
         if let tasks = b["tasks"] as? [[String: Any]] {
             for t in tasks {
                 let ten = (t["name"] as? String) ?? (t["task"] as? String) ?? "?"
-                let ck = (t["period"] as? Double).map { "chu kỳ \(Int($0)) µs" } ?? ""
-                let w = (t["wcet_est"] as? Double).map { "WCET ~\(Int($0)) µs" } ?? ""
-                let p = (t["prio"] as? Int).map { "ưu tiên \($0)" } ?? ""
+                let ck = EideSo.thuc(t["period"]).map { "chu kỳ \(Int($0)) µs" } ?? ""
+                let w = EideSo.thuc(t["wcet_est"]).map { "WCET ~\(Int($0)) µs" } ?? ""
+                let p = EideSo.nguyen(t["prio"]).map { "ưu tiên \($0)" } ?? ""
                 themDong(ten, [ck, w, p].filter { !$0.isEmpty }.joined(separator: " · "))
             }
         }
         for (k, v) in b where !["tasks", "utilization", "schedulable", "ok", "limits"].contains(k) {
             guard let m = v as? [String: Any] else { continue }
-            let ram = (m["ram"] as? Int).map { "RAM \($0) B" } ?? ""
-            let flash = (m["flash"] as? Int).map { "Flash \($0) B" } ?? ""
-            let stack = (m["stack"] as? Int).map { "stack \($0) B" } ?? ""
+            let ram = EideSo.nguyen(m["ram"]).map { "RAM \($0) B" } ?? ""
+            let flash = EideSo.nguyen(m["flash"]).map { "Flash \($0) B" } ?? ""
+            let stack = EideSo.nguyen(m["stack"]).map { "stack \($0) B" } ?? ""
             let phan = [ram, flash, stack].filter { !$0.isEmpty }.joined(separator: " · ")
             if !phan.isEmpty { themDong(k, phan) }
         }
