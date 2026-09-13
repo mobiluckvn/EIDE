@@ -52,13 +52,46 @@ c.push(P('**rv32imac và xtensa-esp32 chuyển từ M2 sang M5** (quyết địn
 c.push(SP());
 c.push(H1('3. Manifest toolchain và kiểm/cài'));
 c.push(P('env.check chạy `check` của từng tool trong sandbox, so `min` theo semver, ghi `hash` của nhị phân khi có; env.install chọn lệnh theo OS và trình quản lý gói có sẵn (thứ tự: brew → pipx → winget/apt → tải chính hãng có băm), luôn không sudo trước; gói phải thuộc `trusted_packages` (POL-17) — danh sách mặc định: gcc-arm-none-eabi, avr-gcc, avrdude, riscv-none-elf-gcc, esp-idf, cmake, ninja, probe-rs, openocd, esptool, pymcuprog, picotool, renode, simavr, qemu, cppcheck, clang-tidy, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli, sigrok-cli, docling. `tools.lock` ghi {tool, version, path, sha256?, installed_by, at}; env.lock phát hiện trôi phiên bản và đề nghị khóa lại.'));
+// Bảng §4 là NGUỒN của cả hai: bảng in trong tài liệu và `isa/probes.yaml` mà
+// `discover.ports` đọc. Một mảng, hai đầu ra — không có bản chép tay thứ hai để trôi đi
+// (bài học DEV-043/DEV-046, và cùng khuôn với `sources/vendors.yaml` ở §8).
+const PROBES = [
+  { id: 'stlink-v2', ten: 'ST-Link V2', vid: '0483', pids: ['3748'],
+    kind: 'swd', tools: ['probe-rs', 'openocd'],
+    driver: 'macOS: không cần; Linux: udev 60-openocd; Windows: ST driver' },
+  { id: 'stlink-v2-1', ten: 'ST-Link V2-1 / V3', vid: '0483',
+    pids: ['374B', '374E', '374F', '3753'], kind: 'swd+vcp',
+    tools: ['probe-rs', 'openocd'], driver: 'VCP xuất hiện như tty.usbmodem' },
+  { id: 'jlink', ten: 'J-Link', vid: '1366', pids: ['0101', '0105', '1015'],
+    kind: 'swd/jtag', tools: ['probe-rs', 'openocd'],
+    driver: 'Driver SEGGER trên Windows' },
+  { id: 'cmsis-dap', ten: 'CMSIS-DAP (DAPLink, picoprobe)', vid: '0D28', pids: ['0204'],
+    vid2: '2E8A', pids2: ['000C'], kind: 'swd', tools: ['probe-rs'],
+    driver: 'HID/bulk; không driver' },
+  { id: 'esp-usb-jtag', ten: 'ESP USB-JTAG (ESP32-C3/S3)', vid: '303A', pids: ['1001'],
+    kind: 'jtag+serial', tools: ['esptool', 'openocd'], driver: 'Linux udev' },
+  { id: 'cp210x', ten: 'CP210x', vid: '10C4', pids: ['EA60'], kind: 'serial',
+    tools: [], driver: '—' },
+  { id: 'ch340', ten: 'CH340', vid: '1A86', pids: ['7523'], kind: 'serial',
+    tools: [], driver: 'Driver CH340 macOS cũ' },
+  { id: 'ftdi', ten: 'FTDI', vid: '0403', pids: ['6001'], kind: 'serial',
+    tools: [], driver: '—' },
+  { id: 'avrisp2', ten: 'AVRISP mkII', vid: '03EB', pids: ['2104'], kind: 'isp',
+    tools: ['avrdude'], driver: 'libusb' },
+  { id: 'arduino-uno', ten: 'Arduino Uno (16U2)', vid: '2341', pids: ['0043'],
+    kind: 'serial+bootloader', tools: ['avrdude'], driver: '—' },
+  { id: 'pickit4', ten: 'PICkit 4', vid: '04D8', pids: ['9012'], kind: 'icsp',
+    tools: ['ipecmd'], driver: 'MPLAB' },
+];
+
 c.push(H1('4. Bảng VID/PID probe và cổng'));
-c.push(T([1800, 1800, 2700, 3000], ['Thiết bị', 'VID:PID', 'Loại / công cụ', 'Ghi chú driver'], [
-  ['ST-Link V2', '0483:3748', 'swd, probe-rs/openocd', 'macOS: không cần; Linux: udev 60-openocd; Windows: ST driver'], ['ST-Link V2-1 / V3', '0483:374B / 0483:374E, 374F, 3753', 'swd + VCP (cổng serial đi kèm)', 'VCP xuất hiện như tty.usbmodem'],
-  ['J-Link', '1366:0101, 0105, 1015', 'swd/jtag, probe-rs/openocd', 'Driver SEGGER trên Windows'], ['CMSIS-DAP (DAPLink, picoprobe)', '0D28:0204, 2E8A:000C', 'swd, probe-rs', 'HID/bulk; không driver'],
-  ['ESP USB-JTAG (ESP32-C3/S3)', '303A:1001', 'jtag + serial, esptool/openocd', 'Linux udev'], ['CP210x / CH340 / FTDI (serial)', '10C4:EA60 / 1A86:7523 / 0403:6001', 'serial', 'Driver CH340 macOS cũ'],
-  ['AVRISP mkII', '03EB:2104', 'isp, avrdude', 'libusb'], ['Arduino Uno (16U2)', '2341:0043', 'serial + bootloader arduino', '—'], ['PICkit 4', '04D8:9012', 'icsp, ipecmd', 'MPLAB'],
-]));
+c.push(T([1800, 1800, 2700, 3000], ['Thiết bị', 'VID:PID', 'Loại / công cụ', 'Ghi chú driver'],
+  PROBES.map(p => [
+    p.ten,
+    p.vid + ':' + p.pids.join(', ') + (p.vid2 ? ', ' + p.vid2 + ':' + p.pids2.join(', ') : ''),
+    p.kind + (p.tools.length ? ', ' + p.tools.join('/') : ''),
+    p.driver,
+  ])));
 c.push(SP());
 c.push(H1('5. Đọc ID chip theo họ'));
 c.push(T([1600, 3400, 4300], ['Họ', 'Lệnh / thanh ghi', 'Đối chiếu'], [
@@ -118,6 +151,24 @@ c.push(...refParas(H1));
 build(m, c, 'EIDE-TGT-19_ISA_toolchain_adapter_discovery.docx');
 // Bảng §8 sinh ra bản máy đọc được cho `search.vendor`. Cùng một nguồn với bảng in trong
 // tài liệu, nên không có bản chép tay thứ hai để trôi (bài học DEV-043/DEV-046).
+// Bảng §4 → bản máy đọc được cho `discover.ports`/`discover.probe`. Mỗi mục một dòng
+// `vid:pid` đã tách sẵn, vì phía Python so khớp từng cặp chứ không phân tích lại chuỗi in.
+fs.mkdirSync('isa', { recursive: true });
+fs.writeFileSync('isa/probes.yaml',
+  '# Sinh từ EIDE-TGT-19 §4 "Bảng VID/PID probe và cổng". KHÔNG sửa tay.\n'
+  + '# Nguồn: docs/ho-so/nguon/tgt_sim.js (mảng PROBES) — sinh lại bằng `node tgt_sim.js`.\n'
+  + 'probes:\n'
+  + PROBES.map(p => {
+      const cap = p.pids.map(x => p.vid + ':' + x)
+        .concat(p.vid2 ? p.pids2.map(x => p.vid2 + ':' + x) : []);
+      return '  - id: ' + p.id + '\n'
+        + '    name: "' + p.ten + '"\n'
+        + '    usb: [' + cap.map(x => '"' + x + '"').join(', ') + ']\n'
+        + '    kind: ' + p.kind + '\n'
+        + '    tools: [' + p.tools.join(', ') + ']\n'
+        + '    driver_note: "' + p.driver + '"\n';
+    }).join(''));
+
 fs.mkdirSync('sources', { recursive: true });
 fs.writeFileSync('sources/vendors.yaml', `# Sinh từ EIDE-TGT-19 §8 "Nguồn tài liệu hãng (search.vendor)". KHÔNG sửa tay.
 vendors:

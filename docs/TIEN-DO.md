@@ -12,10 +12,13 @@
 
 ## 1. Một dòng
 
-**209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1513 test Python +
-2863 test Swift xanh (trong đó 20 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình, 199/199 năng lực hiện được kết quả, 10/10 phím tắt, 14/16 sự kiện.**
+**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1539 test
+Python + 2863 test Swift xanh (trong đó 20 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình, 199/199 năng lực hiện được kết quả, 10/10 phím tắt, 14/16 sự kiện.**
 
-**Từ 13/09, MỌI thứ còn thiếu quy về một nguyên nhân: chưa có bo mạch.** Giao diện đã đủ 23
+**Từ 14/09, MỌI thứ còn thiếu quy về một nguyên nhân: chưa có bo mạch.** Rà lại 29 năng lực
+chưa hiện thực thì **bảy cái không chặn bởi gì cả** — chúng chỉ HỎI máy tính xem đang thấy gì,
+và câu trả lời "không thấy board nào" có giá trị đúng bằng câu "thấy một nucleo-f411". Bảy cái
+ấy đã xong (14/09); 22 cái còn lại thì cần board, công cụ ngoài, hoặc thiết bị đo. Giao diện đã đủ 23
 màn — số ấy đo lại mỗi lần chạy test (`EideManDayDuTests` đọc thẳng `docs/spec/ui/screens.json`),
 không phải một dòng gõ tay. Không còn mục nào chờ thời gian, chờ một thư viện, hay chờ một
 quyết định. Đo trên mười trục của
@@ -23,7 +26,7 @@ quyết định. Đo trên mười trục của
 
 | Còn thiếu | Chặn bởi |
 |---|---|
-| 29 năng lực (`discover` 12 · `target` 9 · `bench` 3 · `measure` 3 · `passport.verify_on_board` · `sim.compare_hil`) | board |
+| 22 năng lực (`discover` 8 · `target` 8 · `measure` 3 · `bench.run` · `passport.verify_on_board` · `sim.compare_hil`) | board · công cụ ngoài (probe-rs/openocd) · thiết bị đo |
 | 7 phương thức JSON-RPC (`serial.*`, `discover.status` và hai sự kiện của chúng) | board |
 | 1 kiểu sự kiện sổ cái (`discover.result`) | board |
 | 2 trong 3 mã lỗi chưa ném (`E4003` cần board; `E1003` cần một bề mặt REST chưa có) | board |

@@ -22,10 +22,23 @@ from eide_core.sandbox import Sandbox
 
 @capability("env.detect")
 def detect(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
-    """Spec: ENV-01 — CDS-12.3; TGT-19 §discover. OS/arch/python/shell; cổng và probe do discover.* bổ sung (Sprint 2)."""
+    """Spec: ENV-01 — CDS-12.3 (`steps`: "platform + discover.ports/probe"); TGT-19 §4.
+
+    **`ports` nay là cổng THẬT, không phải mảng rỗng.** Bản Sprint 1 trả `ports: []` với ghi
+    chú "discover.* bổ sung (Sprint 2)" — có chủ ý, nhưng hệ quả thì không: màn Môi trường hiện
+    *"không thấy cổng nào"* trên một máy đang cắm ba cổng, và đó là một khẳng định về thế giới
+    phát ra từ chỗ chưa nhìn. Cùng họ với những lỗi im lặng khác của dự án này.
+
+    `probes` vẫn rỗng và điều đó ĐÚNG ở hiện tại: `discover.probe` cần `probe-rs`/`openocd`,
+    chưa hiện thực (mốc M2). Khác biệt giữa hai trường là khác biệt giữa "chưa ai viết" và
+    "viết rồi, không thấy gì" — và nó nằm ở chỗ `discover.ports` đã chạy được.
+    """
+    from eide.caps.discover import _liet_ke_cong
+
     return {"env": {"os": tools.os_name(), "os_version": platform.mac_ver()[0] or platform.release(),
                     "arch": tools.arch(), "python": sys.version.split()[0],
-                    "shell": platform.uname().system, "ports": [], "probes": []}}
+                    "shell": platform.uname().system,
+                    "ports": _liet_ke_cong(), "probes": []}}
 
 
 def _ver_ok(found: str | None, minimum: str | None) -> bool:
