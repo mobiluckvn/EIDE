@@ -398,6 +398,64 @@ public final class EidePanel: NSView {
         _napLanDau(v, id: id, thamSo: thamSo)
     }
 
+    /// `/FlowMap`, `/Models` — mở màn bằng chính TÊN của nó.
+    ///
+    /// Ba màn trong bảng UXD-13 §2 không có năng lực nào trỏ tới, nên `/ns.name` không với tới
+    /// được (đo 13/09, xem DEV-094):
+    ///
+    /// - **FlowMap** khai `nang_luc: []` — cố ý, nó hiện trạng thái của chính dòng công việc
+    ///   chứ không hiện kết quả của một năng lực nào.
+    /// - **Models** khai `policy` và `gateway` — hai chuỗi không khớp quy ước nào của bảng
+    ///   (`ns.*` hoặc `ns.name` đầy đủ), nên khớp được 0 năng lực.
+    /// - **Trạng thái/khung** khai `policy.set_autonomy`, nhưng năng lực ấy đã bị màn 1 nhận
+    ///   trước qua mẫu `policy.*`, và bảng lấy màn ĐẦU TIÊN.
+    ///
+    /// U1 nói "mọi màn hình khác mở được từ lệnh" — không nói phải qua một năng lực. Không có
+    /// lối này thì `ModelsView` và `FlowMapView` là mã chết: dựng xong, có test, và không cách
+    /// nào mở ra.
+    private func _moTheoTenMan(_ ten: String, thamSo: String) -> Bool {
+        let t = ten.lowercased()
+        guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
+        for v in bangMan { v.v.isHidden = (v.v !== k.v) }
+        hoiThoai.isHidden = true
+        thanhMan.isHidden = false
+        tenMan.stringValue = k.tien
+        k.v.chuaNap("Đang đọc trạng thái…")
+        _napManKhongNangLuc(k.tien, k.v)
+        return true
+    }
+
+    /// Ba màn ấy nạp bằng PHƯƠNG THỨC RPC, không bằng `caps.invoke`.
+    ///
+    /// `queue.list` và `autonomy.get` là phương thức của daemon chứ không phải năng lực trong
+    /// registry — `caps.describe("queue.list")` trả lỗi "năng lực không tồn tại". Nên quy tắc
+    /// `tuChay` không áp dụng được ở đây, và đó là đúng: hai phương thức này chỉ đọc trạng thái
+    /// daemon đang giữ sẵn, không chạy gì cả.
+    private func _napManKhongNangLuc(_ tien: String, _ v: KhungNhinEide) {
+        Task {
+            switch tien {
+            case "FlowMap":
+                let doi = try? await client.goi(.queueList, [:])
+                let tc = try? await client.goi(.autonomyGet, [:])
+                var g: [String: Any] = doi ?? [:]
+                g["autonomy"] = tc?["autonomy"]
+                g["stopped"] = tc?["stopped"]
+                await MainActor.run { v.capNhat(ketQua: g) }
+            case "Models":
+                // Chi phí nằm trong `project.status`; mức tự chủ trong `autonomy.get`.
+                let tc = try? await client.goi(.autonomyGet, [:])
+                let r = try? await client.goi(.capsInvoke,
+                                              ["id": "project.status", "params": [:]])
+                var g: [String: Any] = (r?["result"] as? [String: Any]) ?? [:]
+                g["autonomy"] = tc?["autonomy"]
+                g["stopped"] = tc?["stopped"]
+                await MainActor.run { v.capNhat(ketQua: g) }
+            default:
+                await MainActor.run { v.chuaNap("Màn \(tien) chưa có nguồn dữ liệu.") }
+            }
+        }
+    }
+
     /// Hỏi hợp đồng TRƯỚC khi quyết định có tự chạy hay không.
     ///
     /// Ba điều kiện, và cả ba đều đọc từ `caps.describe` chứ không từ một danh sách tôi tự gõ:
@@ -599,6 +657,9 @@ public final class EidePanel: NSView {
     /// nó — `PassportView` có ô "Mã linh kiện", `RagAskView` có ô câu hỏi — nên tham số đi vào
     /// ô ấy và người bấm Enter là người quyết định chạy.
     private func moManHinh(id: String, thamSo: String) {
+        // Thử TÊN MÀN trước khi báo không có: ba màn trong bảng UXD-13 §2 không có năng lực
+        // nào trỏ tới chúng, nên không lệnh `/ns.name` nào mở được — xem `_moTheoTenMan`.
+        if manHinhCua[id] == nil, _moTheoTenMan(id, thamSo: thamSo) { return }
         guard let man = manHinhCua[id] else {
             // U9: lỗi phải nói được hành động tiếp theo. Một id gõ sai không được im lặng.
             hoiThoai.themLuot(by: .loi,
@@ -671,9 +732,20 @@ public final class EidePanel: NSView {
         // Cùng một bảng cho gợi ý "/" VÀ cho việc mở màn: nếu tách hai bảng thì có ngày người
         // chọn được một năng lực trong menu rồi panel bảo "không có năng lực ấy".
         let bang = Dictionary(ds.map { ($0.id, $0.manHinh) }, uniquingKeysWith: { a, _ in a })
+
+        // Ba màn không có năng lực nào trỏ tới (DEV-094) vào menu bằng chính TÊN màn. Mở được
+        // mà tìm không ra thì cũng như không mở được: menu "/" là chỗ duy nhất người dùng biết
+        // panel có những gì.
+        let coNangLuc = Set(ds.map(\.manHinh))
+        let man = await MainActor.run { self.bangMan.map(\.tien) }
+        let themMan = man.filter { tien in !coNangLuc.contains { $0.hasPrefix(tien) } }
+            .map { CommandBox.NangLuc(id: $0,
+                                      mota: "màn hình (không phải năng lực)",
+                                      manHinh: $0) }
+
         await MainActor.run {
             self.manHinhCua = bang
-            self.hoiThoai.oLenh.napNangLuc(ds)
+            self.hoiThoai.oLenh.napNangLuc(ds + themMan)
         }
     }
 

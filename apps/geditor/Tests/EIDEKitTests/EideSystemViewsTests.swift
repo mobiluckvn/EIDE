@@ -245,3 +245,45 @@ final class EideManDayDuTests: XCTestCase {
         XCTAssertTrue(thua.isEmpty, "tiền tố không khớp màn nào trong screens.json: \(thua)")
     }
 }
+
+/// Mọi màn phải MỞ ĐƯỢC bằng ít nhất một đường.
+///
+/// `EideManDayDuTests` kiểm màn nào đã có khung nhìn. Bài này kiểm chuyện khác hẳn và dễ bỏ
+/// sót hơn: khung nhìn ấy có với tới được không. Ba màn trong bảng UXD-13 §2 không có năng lực
+/// nào trỏ tới — `FlowMap` khai `nang_luc: []`, `Models` khai `policy`/`gateway` (không khớp
+/// quy ước `ns.*` hay `ns.name`), `Trạng thái/khung` khai `policy.set_autonomy` nhưng màn 1 đã
+/// nhận năng lực ấy trước qua mẫu `policy.*`. Không có lối mở theo tên màn thì `ModelsView` và
+/// `FlowMapView` là mã chết: dựng xong, có test, và không cách nào mở ra.
+final class EideMoManTests: XCTestCase {
+
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    private func bangMan() throws -> [(ten: String, caps: [String])] {
+        let f = Self.gocKho.appendingPathComponent("docs/spec/ui/screens.json")
+        let ds = try JSONSerialization.jsonObject(with: try Data(contentsOf: f))
+            as? [[String: Any]] ?? []
+        return ds.map { (($0["man_hinh"] as? String) ?? "",
+                         ($0["nang_luc"] as? [String]) ?? []) }
+    }
+
+    func testBAmanKHONGcoNangLUCnaoTROtoi() throws {
+        // Ghi lại đúng con số đã đo. Nếu bảng UXD-13 được sửa để cả ba màn có năng lực, test
+        // này đỏ — và đó là tin tốt: lúc ấy lối mở theo tên màn thành dư thừa, xem lại DEV-094.
+        let trong = try bangMan().filter { $0.caps.isEmpty }.map(\.ten)
+        XCTAssertEqual(trong, ["FlowMap"], "màn khai nang_luc rỗng đổi rồi: \(trong)")
+    }
+
+    func testMOImanTRONGbangMOduocBANGtenCUAno() {
+        // Tên trong `tienManDaDung` chính là thứ người gõ sau dấu "/". Không trùng nhau và
+        // không rỗng — hai điều kiện để `_moTheoTenMan` khớp đúng một màn.
+        let ten = EidePanel.tienManDaDung
+        XCTAssertEqual(Set(ten).count, ten.count, "có tên màn trùng nhau")
+        XCTAssertFalse(ten.contains(where: \.isEmpty))
+        for t in ten { XCTAssertFalse(t.contains(" ") && t != "Trạng thái/khung", t) }
+    }
+}
