@@ -790,19 +790,24 @@ final class EideNapMacDinhTests: XCTestCase {
         return ra
     }
 
-    /// Màn → tệp chứa khung nhìn của nó. Đủ 20 màn chuyên đề.
-    private let tepCuaMan: [String: String] = [
-        "Main": "EideWorkbenchViews", "Ingest": "EideWorkbenchViews",
-        "Board": "EideWorkbenchViews", "ReqArch": "EideWorkbenchViews",
-        "Passport": "EideKnowledgeViews", "Graph": "EideKnowledgeViews",
-        "Doc": "EideKnowledgeViews",
-        "DiagramView": "EideCodeViews", "PlanDiff": "EideCodeViews",
-        "Code": "EideCodeViews", "Sim": "EideCodeViews",
-        "Discovery": "EideHardwareViews", "LogAssist": "EideHardwareViews",
-        "Debug": "EideHardwareViews", "Bench": "EideHardwareViews",
-        "ToolForge": "EideSystemViews", "Registry": "EideSystemViews",
-        "Models": "EideSystemViews", "Env": "EideSystemViews",
-        "FlowMap": "EideSystemViews",
+    /// Màn → các tệp chứa khung nhìn của nó. Đủ 20 màn chuyên đề.
+    ///
+    /// Màn 7 có HAI tệp vì nó có hai nửa: `RagAskView` (hỏi đáp) trong `EideKnowledgeViews`,
+    /// `KgMapView` (bản đồ) trong tệp riêng. Bảng này từng map một màn về một tệp, và nó báo
+    /// đỏ ngay hôm nửa thứ hai ra đời — đúng việc của nó.
+    private let tepCuaMan: [String: [String]] = [
+        "Main": ["EideWorkbenchViews"], "Ingest": ["EideWorkbenchViews"],
+        "Board": ["EideWorkbenchViews"], "ReqArch": ["EideWorkbenchViews"],
+        "Passport": ["EideKnowledgeViews"],
+        "Graph": ["EideKnowledgeViews", "EideKgMapView"],
+        "Doc": ["EideKnowledgeViews"],
+        "DiagramView": ["EideCodeViews"], "PlanDiff": ["EideCodeViews"],
+        "Code": ["EideCodeViews"], "Sim": ["EideCodeViews"],
+        "Discovery": ["EideHardwareViews"], "LogAssist": ["EideHardwareViews"],
+        "Debug": ["EideHardwareViews"], "Bench": ["EideHardwareViews"],
+        "ToolForge": ["EideSystemViews"], "Registry": ["EideSystemViews"],
+        "Models": ["EideSystemViews"], "Env": ["EideSystemViews"],
+        "FlowMap": ["EideSystemViews"],
     ]
 
     private func moClient() throws -> EideClient {
@@ -828,7 +833,7 @@ final class EideNapMacDinhTests: XCTestCase {
             let hd = try await c.goi(.capsDescribe, ["id": md])
             let props = Set((((hd["output_schema"] as? [String: Any])?["properties"]
                               as? [String: Any]) ?? [:]).keys)
-            let doc = try khoaDoc(f)
+            let doc = try f.reduce(into: Set<String>()) { $0.formUnion(try khoaDoc($1)) }
             if props.isDisjoint(with: doc) {
                 cam.append("\(man): nạp `\(md)` trả \(props.sorted()) — "
                          + "khung nhìn trong \(f) không đọc khoá nào trong số đó")
@@ -863,7 +868,10 @@ final class EideNapMacDinhTests: XCTestCase {
             let hd = try await c.goi(.capsDescribe, ["id": id])
             let props = Set((((hd["output_schema"] as? [String: Any])?["properties"]
                               as? [String: Any]) ?? [:]).keys)
-            if props.isDisjoint(with: try khoaDoc(tepCuaMan[tien]!)) {
+            let doc = try tepCuaMan[tien]!.reduce(into: Set<String>()) {
+                $0.formUnion(try khoaDoc($1))
+            }
+            if props.isDisjoint(with: doc) {
                 xau.append("\(id): trả \(props.sorted()), màn \(tien) không đọc khoá nào")
             }
         }
@@ -888,9 +896,92 @@ final class EideNapMacDinhTests: XCTestCase {
 
             let man = (hd["ui"] as? String) ?? ""
             guard let tien = tepCuaMan.keys.first(where: { man.hasPrefix($0) }) else { continue }
-            XCTAssertTrue(props.isDisjoint(with: try khoaDoc(tepCuaMan[tien]!)),
+            let doc = try tepCuaMan[tien]!.reduce(into: Set<String>()) {
+                $0.formUnion(try khoaDoc($1))
+            }
+            XCTAssertTrue(props.isDisjoint(with: doc),
                           "`\(m.cap)` NAY hiện được rồi — chuyển nó lên napAnToan")
         }
         XCTAssertFalse(EidePanel.noUI.isEmpty)
+    }
+}
+
+/// Đo độ phủ UI: bao nhiêu năng lực có màn hình thật sự HIỆN được kết quả.
+///
+/// Con số này từng là một dòng trong tài liệu rà soát, và một dòng trong tài liệu thì đúng được
+/// đúng một ngày. Bài test đọc mã nguồn khung nhìn, hỏi daemon về `output_schema`, và đối chiếu
+/// — nên nó đỏ ngay hôm một năng lực mới được thêm mà không ai hiện kết quả của nó.
+///
+/// Nó **không** đòi 100%: tám năng lực màn Chat cố ý không có khung nhìn riêng (kết quả của
+/// `chat.ground` là một câu nói với người, không phải một bảng), và panel đọc chúng qua
+/// `EidePanel.docKetQua`. Ngưỡng là một cái CHỐT: nó chặn tụt lùi, không hợp thức hoá hiện
+/// trạng — nâng nó lên mỗi lần thật sự làm thêm.
+final class EideDoPhuUITests: XCTestCase {
+
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    /// Mọi khoá cấp 1 mà TẤT CẢ khung nhìn đọc từ `ketQua`, cộng khoá panel đọc trong
+    /// `docKetQua` — hai chỗ hiện kết quả, và cả hai đều tính.
+    private func khoaHienDuoc() throws -> Set<String> {
+        let src = Self.gocKho.appendingPathComponent("apps/geditor/Sources/EIDEKit")
+        var ra: Set<String> = []
+        for f in try FileManager.default.contentsOfDirectory(atPath: src.path)
+            where f.hasSuffix(".swift") {
+            let s = try String(contentsOf: src.appendingPathComponent(f), encoding: .utf8)
+            for mau in ["ketQua[\"", "kq[\""] {
+                var i = s.startIndex
+                while let m = s.range(of: mau, range: i..<s.endIndex) {
+                    guard let h = s.range(of: "\"", range: m.upperBound..<s.endIndex) else { break }
+                    ra.insert(String(s[m.upperBound..<h.lowerBound]))
+                    i = h.upperBound
+                }
+            }
+        }
+        return ra
+    }
+
+    func testDOphuUIkhongTUTlui() async throws {
+        let fm = FileManager.default
+        var py: String?
+        for v in [".venv-arm", ".venv-x86"] where py == nil {
+            let p = Self.gocKho.appendingPathComponent("\(v)/bin/python")
+            if fm.isExecutableFile(atPath: p.path) { py = p.path }
+        }
+        guard let py else { throw XCTSkip("chưa có venv") }
+        fm.changeCurrentDirectoryPath(Self.gocKho.path)
+
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"]))
+        defer { Task { await c.dong() } }
+
+        let doc = try khoaHienDuoc()
+        let ds = try await c.goi(.capsList, [:])
+        let caps = ((ds["capabilities"] as? [[String: Any]])
+                    ?? (ds["caps"] as? [[String: Any]])) ?? []
+
+        var coMan = 0, hien = 0
+        var cam: [String] = []
+        for cap in caps {
+            guard let id = cap["id"] as? String,
+                  let man = cap["ui"] as? String, !man.isEmpty else { continue }
+            coMan += 1
+            let hd = try await c.goi(.capsDescribe, ["id": id])
+            let props = Set((((hd["output_schema"] as? [String: Any])?["properties"]
+                              as? [String: Any]) ?? [:]).keys)
+            if props.isDisjoint(with: doc) { cam.append(id) } else { hien += 1 }
+        }
+
+        print("\nĐỘ PHỦ UI: \(hien)/\(coMan) năng lực có màn hình hiện được kết quả")
+        if !cam.isEmpty { print("  còn câm: \(cam.sorted().joined(separator: ", "))") }
+
+        // Chốt ở mức ĐÃ ĐO (13/09/2026: 199/199). Hạ ngưỡng cho khỏi phiền là cách một chỉ số
+        // chất lượng lặng lẽ trôi xuống — cùng lý do `test_chat.py` không hạ sàn TC-59.
+        XCTAssertGreaterThanOrEqual(hien, 199,
+                                    "độ phủ UI tụt so với mức đã đo; còn câm: \(cam.sorted())")
+        XCTAssertGreaterThan(coMan, 190)
     }
 }

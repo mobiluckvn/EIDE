@@ -271,7 +271,32 @@ public final class PlanDiffView: ManHinhCoSo {
                      bam: #selector(duyet(_:)))
         }
 
+        if let f = ketQua["feature"] as? [String: Any] { _hienTinhNang(f) }
+
         if soDong == 0 { noiRong("Kế hoạch rỗng — không có bước nào.") }
+    }
+
+    /// `plan.define_feature` `{feature{id, title, expectation, constraints[], touches[]}}`.
+    ///
+    /// **`expectation` phải MÁY QUAN SÁT ĐƯỢC** — hợp đồng PLAN-01 nói thẳng điều đó trong mô
+    /// tả trường. Một tính năng có kỳ vọng kiểu "chạy mượt" sẽ đi hết chuỗi tới `sim.scenario`
+    /// rồi mới hỏng, vì không có gì để chấm.
+    private func _hienTinhNang(_ f: [String: Any]) {
+        let ma = (f["id"] as? String) ?? "?"
+        let ten = (f["title"] as? String) ?? ""
+        let ky = (f["expectation"] as? String) ?? ""
+        themDong("\(ma) \(ten)",
+                 ky.isEmpty ? "KHÔNG có kỳ vọng đo được — `sim.scenario` sẽ không chấm được gì"
+                            : ky,
+                 mau: ky.isEmpty ? EideToken.Mau.bad : EideToken.Mau.ok)
+        if let rb = f["constraints"] as? [Any], !rb.isEmpty {
+            themDong(" · ràng buộc",
+                     rb.map { EideKnowledgeFormat.giaTri($0) }.joined(separator: "; "))
+        }
+        if let ch = f["touches"] as? [Any], !ch.isEmpty {
+            themDong(" · chạm vào",
+                     ch.map { EideKnowledgeFormat.giaTri($0) }.joined(separator: ", "))
+        }
     }
 
     private func _hienRaSoat(_ r: [String: Any]) {
@@ -380,7 +405,41 @@ public final class CodeView: ManHinhCoSo {
                      mau: boCuoc == true ? EideToken.Mau.warn : nil)
         }
 
+        _hienDeXuatVaTest(ketQua)
+
         if soDong == 0 { noiRong("Không có vi phạm, không có báo cáo công cụ nào để hiện.") }
+    }
+
+    /// `code.annotate` `{suggestions[]}`, `code.generate_tests` `{tests[]}`,
+    /// `code.revert` `{revert_commit}`.
+    private func _hienDeXuatVaTest(_ ketQua: [String: Any]) {
+        for s in (ketQua["suggestions"] as? [[String: Any]]) ?? [] {
+            // CODE-14 là phép ngược của `constant_guard`: tìm fact khớp cho một hằng số trần.
+            // `confidence` quyết định người có được bấm "gắn" hay phải tự kiểm — một fact gán
+            // nhầm còn tệ hơn một hằng số không nguồn, vì nó trông như đã được duyệt.
+            let dong = EideSo.nguyen(s["line"]) ?? 0
+            let hang = EideKnowledgeFormat.giaTri(s["literal"])
+            let fid = (s["fact_id"] as? String) ?? ""
+            let tin = EideSo.thuc(s["confidence"]) ?? 0
+            themDong("dòng \(dong): \(hang)",
+                     (fid.isEmpty ? "không tìm được fact nào khớp"
+                                  : "khớp \(fid)")
+                        + String(format: " · tin cậy %.0f%%", tin * 100)
+                        + (tin < 0.7 ? " — tự kiểm trước khi gắn" : ""),
+                     mau: fid.isEmpty || tin < 0.7 ? EideToken.Mau.warn : EideToken.Mau.ok)
+        }
+        for k in (ketQua["tests"] as? [[String: Any]]) ?? [] {
+            let loai = (k["kind"] as? String) ?? "?"
+            let duong = (k["path"] as? String) ?? "?"
+            // `kind` là host | sim | hil — ba mức bằng chứng rất khác nhau, và `hil` là mức duy
+            // nhất chạm phần cứng thật.
+            themDong(EideKnowledgeFormat.tenNgan(duong),
+                     "test \(loai)" + (loai == "hil" ? " — cần board thật" : ""),
+                     mau: loai == "hil" ? EideToken.Mau.warn : nil)
+        }
+        if let rc = ketQua["revert_commit"] as? String {
+            themDong("đã revert", rc, mau: EideToken.Mau.ok)
+        }
     }
 
     private func _hienBaoCao(_ r: [String: Any]) {
@@ -521,7 +580,45 @@ public final class SimView: ManHinhCoSo {
             themDong("tốt nhất", mo.joined(separator: " · "), mau: EideToken.Mau.ok)
         }
 
+        _hienNenTang(ketQua)
+
         if soDong == 0 { noiRong("Mô phỏng không trả về kỳ vọng nào để hiện.") }
+    }
+
+    /// `sim.build_platform` `{platform_dir, engine, coverage}`, `sim.mock_peripheral`
+    /// `{mock_path, params}`, `sim.model_plant` `{model_path, params_used, provisional}`.
+    private func _hienNenTang(_ ketQua: [String: Any]) {
+        if let d = ketQua["platform_dir"] as? String {
+            let en = (ketQua["engine"] as? String) ?? "?"
+            themDong("nền mô phỏng", "\(en) · \(d)", mau: EideToken.Mau.info)
+            if let cv = ketQua["coverage"] as? [String: Any], !cv.isEmpty {
+                // SIM-01 `coverage` nói engine mô phỏng được NHỮNG GÌ của con chip. Đây là chỗ
+                // quyết định `unverified` sẽ nhiều hay ít về sau, nên hiện nó lúc dựng nền rẻ
+                // hơn hẳn để người phát hiện lúc chạy kịch bản.
+                for (k, v) in cv.sorted(by: { $0.key < $1.key }) {
+                    themDong("  \(k)", EideKnowledgeFormat.giaTri(v))
+                }
+            }
+        }
+        if let m = ketQua["mock_path"] as? String {
+            themDong("ngoại vi giả", m, mau: EideToken.Mau.info)
+        }
+        if let m = ketQua["model_path"] as? String {
+            themDong("mô hình vật lý", m, mau: EideToken.Mau.info)
+        }
+        if let tt = ketQua["provisional"] as? [Any], !tt.isEmpty {
+            // SIM-03 đánh dấu tham số TẠM — số chưa đo được trên vật thật. Một mô hình chạy
+            // bằng số tạm vẫn cho ra đồ thị đẹp, và đồ thị ấy không nói gì về board thật.
+            themDong("tham số TẠM",
+                     tt.map { EideKnowledgeFormat.giaTri($0) }.joined(separator: ", ")
+                        + " — chưa đo trên vật thật",
+                     mau: EideToken.Mau.warn)
+        }
+        if let p = ketQua["params_used"] as? [String: Any], !p.isEmpty {
+            for (k, v) in p.sorted(by: { $0.key < $1.key }).prefix(10) {
+                themDong("  \(k)", EideKnowledgeFormat.giaTri(v))
+            }
+        }
     }
 
     private func _hienBatDuoc(_ r: [String: Any]) {

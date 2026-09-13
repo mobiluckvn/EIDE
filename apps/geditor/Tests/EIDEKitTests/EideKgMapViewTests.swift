@@ -163,3 +163,71 @@ final class EideKgMapViewTests: XCTestCase {
         XCTAssertTrue(chu(v).contains("chưa có fact"), chu(v))
     }
 }
+
+/// Tám năng lực màn Chat — chúng cố ý KHÔNG có khung nhìn riêng.
+///
+/// Kết quả của `chat.ground` hay `policy.set_autonomy` là một câu nói với người, không phải
+/// một bảng để đọc; hội thoại đúng là chỗ của chúng. Nhưng bản đầu của `hienKetQua` chỉ đọc
+/// `intent`, nên mọi năng lực khác chạy xong đều hiện *"Tôi hiểu là: ? (tin cậy 0%)"* — một
+/// câu vừa vô nghĩa vừa sai, xuất hiện đúng lúc một việc vừa chạy thành công.
+final class EideDocKetQuaTests: XCTestCase {
+
+    func testINTENTnoiCAdoTINcayVAviecLON() {
+        let s = EidePanel.docKetQua(["intent": [
+            "intent": "project.create", "confidence": 0.92, "is_big": true,
+        ]])
+        XCTAssertTrue(s.contains("project.create"), s)
+        XCTAssertTrue(s.contains("92%"), s)
+        XCTAssertTrue(s.contains("việc lớn"), s)
+    }
+
+    func testGROUNDthieuTHInoiRAthieuGI() {
+        // `missing` là thứ chặn chuỗi đi tiếp — nói "đã neo" lúc còn thiếu là nói sai.
+        let s = EidePanel.docKetQua(["grounded": ["chip": "st.stm32f411",
+                                                  "missing": ["board"]]])
+        XCTAssertTrue(s.contains("Chưa neo được"), s)
+        XCTAssertTrue(s.contains("board"), s)
+    }
+
+    func testQUYENtamKHONGroHANbiNOIRA() {
+        // Quyền tạm mà không rõ hạn là quyền vĩnh viễn trên thực tế.
+        let s = EidePanel.docKetQua(["permission_id": "p_1"])
+        XCTAssertTrue(s.contains("KHÔNG rõ hạn"), s)
+
+        let t = EidePanel.docKetQua(["permission_id": "p_1", "expires_at": "2026-09-14T00:00:00Z"])
+        XCTAssertTrue(t.contains("hết hạn"), t)
+    }
+
+    func testLEOthangKHONGkenhNAOnhanLAmotVANde() {
+        let s = EidePanel.docKetQua(["notified": []])
+        XCTAssertTrue(s.contains("người sẽ không biết"), s)
+    }
+
+    func testNOInguongCANky() {
+        // POL-17 §3: nới lỏng ngưỡng phải có chữ ký người.
+        let s = EidePanel.docKetQua(["proposals": [["rule": "G3", "to": 5]]])
+        XCTAssertTrue(s.contains("cần anh ký"), s)
+    }
+
+    func testMUCtuCHUhienMUCcoHIEUluc() {
+        // `effective` có thể khác mức vừa xin — đó chính là lý do trường này tồn tại.
+        XCTAssertTrue(EidePanel.docKetQua(["effective": "A2"]).contains("A2"))
+    }
+
+    func testKETquaLAkhongCOkhoaNAObietTHIvanNOIduocGIdo() {
+        let s = EidePanel.docKetQua(["file": "a.xlsx", "gaps": [1, 2, 3]])
+        XCTAssertTrue(s.contains("a.xlsx"), s)
+        XCTAssertTrue(s.contains("3 mục"), s)
+        XCTAssertEqual(EidePanel.docKetQua([:]), "Xong.")
+    }
+
+    func testKHONGconCAUvoNGHIAtoiHIEUla() {
+        // Bài test giữ đúng lỗi đã sửa: một năng lực không trả `intent` thì tuyệt đối không
+        // được hiện "Tôi hiểu là: ?".
+        for kq: [String: Any] in [["run_id": "r1"], ["effective": "A2"], ["notified": ["chat"]],
+                                  ["text": "xong"], [:]] {
+            XCTAssertFalse(EidePanel.docKetQua(kq).contains("Tôi hiểu là: ?"),
+                           "\(kq) → \(EidePanel.docKetQua(kq))")
+        }
+    }
+}

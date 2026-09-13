@@ -124,6 +124,65 @@ public final class PassportView: NSView, KhungNhinEide {
             bang.addArrangedSubview(_dongFact(f))
             soDong += 1
         }
+        _hienThemCuaHoChieu(ketQua)
+    }
+
+    /// Bốn năng lực `passport.*` khác cùng đổ về màn này, và `view.provenance` nữa.
+    ///
+    /// `passport.list` `{passports[]}`, `passport.diff` `{added, removed, changed}`,
+    /// `passport.upgrade` `{impact{stale_code_units, features_to_recheck}}`,
+    /// `passport.verify_on_board` `{badge, log_hash}`, `view.provenance` `{chain[]}`.
+    private func _hienThemCuaHoChieu(_ ketQua: [String: Any]) {
+        for h in (ketQua["passports"] as? [[String: Any]]) ?? [] {
+            let id = (h["id"] as? String) ?? (h["part"] as? String) ?? "?"
+            let ver = (h["version"] as? String).map { "@\($0)" } ?? ""
+            let n = EideSo.nguyen(h["facts"]).map { "\($0) fact" } ?? ""
+            bang.addArrangedSubview(_nhanMo("\(id)\(ver)" + (n.isEmpty ? "" : " · \(n)")))
+            soDong += 1
+        }
+
+        // `passport.diff` — nâng cấp hộ chiếu là đổi nền tri thức dưới chân mã đã sinh. Cột
+        // `changed` đắt nhất: một địa chỉ thanh ghi đổi giá trị thì mọi hằng số trỏ vào nó
+        // thành sai, mà mã vẫn biên dịch được.
+        let doi = (ketQua["changed"] as? [Any]) ?? []
+        let them = (ketQua["added"] as? [Any]) ?? []
+        let bo = (ketQua["removed"] as? [Any]) ?? []
+        if !doi.isEmpty || !them.isEmpty || !bo.isEmpty {
+            bang.addArrangedSubview(_nhanMo(
+                "khác biệt: +\(them.count) · −\(bo.count) · ĐỔI GIÁ TRỊ \(doi.count)"))
+            soDong += 1
+            for d in doi.prefix(20) {
+                bang.addArrangedSubview(_nhanMo("  ⚠︎ " + EideKnowledgeFormat.giaTri(d)))
+                soDong += 1
+            }
+        }
+
+        if let ah = ketQua["impact"] as? [String: Any] {
+            let ma = (ah["stale_code_units"] as? [Any])?.count ?? 0
+            let tn = (ah["features_to_recheck"] as? [Any])?.count ?? 0
+            bang.addArrangedSubview(_nhanMo(
+                "nâng cấp ảnh hưởng: \(ma) đơn vị mã lỗi thời · \(tn) tính năng phải kiểm lại"))
+            soDong += 1
+        }
+
+        if let hh = ketQua["badge"] as? [String: Any] {
+            // PASSPORT-06 gắn huy hiệu SAU KHI đo trên board thật — `log_hash` là bằng chứng,
+            // và một huy hiệu không kèm băm log thì không truy lại được.
+            let bam = (ketQua["log_hash"] as? String) ?? ""
+            bang.addArrangedSubview(_nhanMo(
+                "huy hiệu \(EideKnowledgeFormat.giaTri(hh["kind"] ?? hh["badge"]))"
+                + (bam.isEmpty ? " — KHÔNG có băm log, không truy lại được"
+                               : " · log \(bam)")))
+            soDong += 1
+        }
+
+        for m in (ketQua["chain"] as? [[String: Any]]) ?? [] {
+            let nguon = (m["source"] as? String) ?? "?"
+            let noi = (m["locator"] as? String).map { " \($0)" } ?? ""
+            let cach = (m["method"] as? String).map { " [\($0)]" } ?? ""
+            bang.addArrangedSubview(_nhanMo("  • \(nguon)\(noi)\(cach)"))
+            soDong += 1
+        }
     }
 
     private func _dongFact(_ f: [String: Any]) -> NSView {
@@ -449,6 +508,24 @@ public final class DocView: NSView, KhungNhinEide {
                                          phu: "\(_tenLoi(kind))\(van.isEmpty ? "" : " — \(van)")",
                                          mau: nang ? EideToken.Mau.bad : EideToken.Mau.muted,
                                          di: noi))
+            soMuc += 1
+        }
+
+        for (ten, v) in [("changelog", ketQua["markdown"]), ("báo cáo", ketQua["md"]),
+                         ("giải thích", ketQua["text"])] {
+            guard let s = v as? String, !s.isEmpty else { continue }
+            let dong = s.split(separator: "\n", omittingEmptySubsequences: false)
+            cot.addArrangedSubview(_nhanMo("\(ten) · \(dong.count) dòng"))
+            soMuc += 1
+            for l in dong.prefix(30) {
+                cot.addArrangedSubview(_nhanMo("  " + String(l)))
+                soMuc += 1
+            }
+        }
+        if let h = EideSo.nguyen(ketQua["figure_no"]) {
+            // DOC-07 chèn lược đồ vào tài liệu và đánh số hình — số hình là thứ các mục khác
+            // trỏ tới, nên nó phải hiện ra để người viết dẫn đúng.
+            cot.addArrangedSubview(_nhanMo("đã chèn lược đồ — Hình \(h)"))
             soMuc += 1
         }
 

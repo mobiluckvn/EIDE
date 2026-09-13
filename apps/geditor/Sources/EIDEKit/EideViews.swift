@@ -236,6 +236,22 @@ public final class ReviewQueueView: NSView {
     /// Số nút hành động đang hiện — cho test đếm mà không phải dựng cả cửa sổ.
     public private(set) var soNut = 0
 
+    /// Kết quả `kg.review_facts` — duyệt hàng loạt fact ở cổng G-FACT.
+    ///
+    /// **`rejected` không được gộp vào `asked`.** KG-06 tách riêng ba con số: đã duyệt, còn
+    /// hỏi, và **bị TỪ CHỐI** — nhánh REJECT của G-FACT, ví dụ fact tầng đồng không được vào
+    /// tri thức dù người bấm duyệt. Gộp "từ chối" vào "còn hỏi" khiến người dùng chờ một câu
+    /// hỏi không bao giờ tới, cho một fact đã bị chính sách loại.
+    public func capNhatDuyetLoat(_ ketQua: [String: Any]) {
+        let duyet = EideSo.nguyen(ketQua["reviewed"]) ?? 0
+        let hoi = EideSo.nguyen(ketQua["asked"]) ?? 0
+        let tuChoi = EideSo.nguyen(ketQua["rejected"]) ?? 0
+        guard duyet + hoi + tuChoi > 0 else { return }
+        choCot.addArrangedSubview(_nhanMo(
+            "duyệt loạt: \(duyet) đã vào tri thức · \(hoi) còn hỏi"
+            + (tuChoi > 0 ? " · \(tuChoi) BỊ CHÍNH SÁCH TỪ CHỐI" : "")))
+    }
+
     public func capNhat(cho: [[String: Any]], hoanTac: [[String: Any]]) {
         choNhan.stringValue = "Chờ anh (\(cho.count))"
         hoanTacNhan.stringValue = "Đã làm — hoàn tác được (\(hoanTac.count))"

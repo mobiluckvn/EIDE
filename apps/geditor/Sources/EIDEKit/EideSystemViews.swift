@@ -124,6 +124,14 @@ public final class ToolForgeView: ManHinhCoSo {
                      mau: t["last_ok"] == nil ? EideToken.Mau.warn : nil)
         }
 
+        if let ok = ketQua["ok"] as? Bool {
+            // TOOL-10 vô hiệu hoá một công cụ nhưng GIỮ lịch sử: những lần chạy cũ vẫn phải
+            // truy được, vì kết quả của chúng đã đi vào tri thức dự án.
+            themDong("vô hiệu hoá công cụ", ok ? "xong — lịch sử chạy vẫn giữ"
+                                               : "KHÔNG vô hiệu hoá được",
+                     mau: ok ? EideToken.Mau.ok : EideToken.Mau.bad)
+        }
+
         if soDong == 0 { noiRong("Không có công cụ, bản khai hay tác dụng nào để hiện.") }
     }
 
@@ -391,6 +399,10 @@ public final class EnvView: ManHinhCoSo {
 
         for (i, b) in buoc.enumerated() { themDong("bước \(i + 1)", b) }
         for l in lien { themDong("liên kết", l, mau: EideToken.Mau.info) }
+
+        for c in (ketQua["installed"] as? [Any]) ?? [] {
+            themDong("đã cài", EideKnowledgeFormat.giaTri(c), mau: EideToken.Mau.ok)
+        }
 
         if soDong == 0 { noiRong("Môi trường đọc được nhưng không có công cụ nào trong manifest.") }
     }

@@ -559,9 +559,14 @@ public final class EidePanel: NSView {
     /// `tuChay` ở dưới vẫn chạy như một CHỐT THỨ HAI — hợp đồng vẫn có quyền phủ quyết danh
     /// sách, chỉ không còn được tin là đủ để tự mình cho phép.
     public static let napAnToan: Set<String> = [
-        "project.status",       // màn 2  → `report`  — ProjectStatusView đọc
-        "passport.query",       // màn 5  → `facts`   — PassportView đọc
-        "env.detect",           // màn 21 → `env`     — EnvView đọc
+        "project.status",       // màn 2  → `report`     — ProjectStatusView
+        "passport.query",       // màn 5  → `facts`      — PassportView
+        "passport.list",        // màn 5  → `passports`  — PassportView
+        "view.kg_map",          // màn 7  → `graph`      — KgMapView
+        "view.timeline",        // màn 7  → `events`     — KgMapView
+        "view.conflict_board",  // màn 7  → `rows`       — KgMapView
+        "report.progress",      // màn 10 → `md`         — DocView
+        "env.detect",           // màn 21 → `env`        — EnvView
     ]
 
     /// Năng lực chỉ-đọc nhưng **chưa có khung nhìn nào đọc được đầu ra của chúng**.
@@ -574,17 +579,15 @@ public final class EidePanel: NSView {
     ///
     /// Danh sách này không phải rác cần dọn: nó là **đơn đặt hàng UI còn nợ**. Mỗi dòng là một
     /// khung nhìn chưa dựng, và ngày dựng xong thì mục ấy chuyển lên `napAnToan`.
+    /// Cập nhật 13/09 (đợt hai): năm mục đã chuyển lên `napAnToan` sau khi `KgMapView` ra đời
+    /// và `PassportView`/`DocView` đọc thêm khoá. Hai mục còn lại KHÔNG phải nợ khung nhìn —
+    /// chúng là hai năng lực **bảng UXD-13 §2 không gán màn nào**, nên không có chỗ để hiện.
+    /// Đó là một khoảng trống của TÀI LIỆU, và nó nằm trong [DEV-094](DEVIATIONS.md).
     public static let noUI: [(cap: String, tra: String, canGi: String)] = [
-        ("passport.list", "passports",
-         "danh sách hộ chiếu đã ghim — PassportView chỉ hiện fact của MỘT hộ chiếu"),
-        ("view.kg_map", "graph",
-         "đồ thị tri thức: màn 7 mới dựng nửa hỏi-đáp, chưa dựng nửa bản đồ"),
-        ("view.timeline", "events", "dòng thời gian tri thức — chưa có khung nhìn"),
-        ("view.conflict_board", "rows", "bảng xung đột fact — chưa có khung nhìn"),
-        ("kg.conflicts", "conflicts", "cùng bảng xung đột; bảng UXD-13 §2 không gán màn nào"),
-        ("project.list", "projects", "danh sách dự án — bảng §2 không gán màn nào"),
-        ("report.progress", "md",
-         "báo cáo tiến độ dạng Markdown — DocView đọc `issues`/`stale`, không đọc `md`"),
+        ("kg.conflicts", "conflicts",
+         "bảng UXD-13 §2 không gán màn nào; nội dung thì `KgMapView` hiện được — xem DEV-094"),
+        ("project.list", "projects",
+         "danh sách dự án: bảng §2 không gán màn nào, và panel mở dự án qua `project.open`"),
     ]
 
     /// Năng lực nạp mặc định của mỗi màn, khi lệnh người gõ không tự chạy được.
@@ -855,10 +858,8 @@ public final class EidePanel: NSView {
         let status = r["status"] as? String ?? "?"
         switch status {
         case "done":
-            let intent = ((r["result"] as? [String: Any])?["intent"] as? [String: Any])
-            let ten = intent?["intent"] as? String ?? "?"
-            let tin = intent?["confidence"] as? Double ?? 0
-            hoiThoai.themLuot(by: .tacTu, text: "Tôi hiểu là: \(ten) (tin cậy \(Int(tin * 100))%).")
+            hoiThoai.themLuot(by: .tacTu,
+                              text: Self.docKetQua((r["result"] as? [String: Any]) ?? [:]))
         case "pending":
             let d = r["decision"] as? [String: Any]
             hoiThoai.themLuot(by: .cho,
@@ -868,6 +869,71 @@ public final class EidePanel: NSView {
             hoiThoai.themLuot(by: .loi,
                               text: "\(e?["eide_code"] as? String ?? "lỗi"): \(e?["message"] as? String ?? "")")
         }
+    }
+
+    /// Kết quả của một năng lực KHÔNG có khung nhìn riêng, thành một câu đọc được.
+    ///
+    /// Bản đầu chỉ đọc `intent`, nên mọi năng lực khác chạy xong đều hiện *"Tôi hiểu là: ?
+    /// (tin cậy 0%)"* — một câu vừa vô nghĩa vừa sai, và nó xuất hiện đúng vào lúc một việc
+    /// vừa chạy thành công.
+    ///
+    /// Tám năng lực của màn Chat đổ về đây, và chúng là nhóm duy nhất cố ý KHÔNG có khung nhìn
+    /// riêng: kết quả của `chat.ground` hay `policy.set_autonomy` là một câu nói với người,
+    /// không phải một bảng để đọc. Hội thoại đúng là chỗ của chúng.
+    static func docKetQua(_ kq: [String: Any]) -> String {
+        // `chat.parse_intent` — ý hiểu, kèm độ tin cậy vì DPS-09 §4.1 coi < 0,6 là `unknown`.
+        if let y = kq["intent"] as? [String: Any] {
+            let ten = (y["intent"] as? String) ?? "?"
+            let tin = EideSo.thuc(y["confidence"]) ?? 0
+            let lon = (y["is_big"] as? Bool) ?? false
+            return "Tôi hiểu là: \(ten) (tin cậy \(Int(tin * 100))%)"
+                 + (lon ? " — việc lớn, tôi sẽ dựng kế hoạch trước." : ".")
+        }
+        // `chat.ground` — neo ý hiểu vào dự án. `missing` là thứ chặn chuỗi đi tiếp.
+        if let g = kq["grounded"] as? [String: Any] {
+            let thieu = (g["missing"] as? [Any]) ?? []
+            return thieu.isEmpty
+                ? "Đã neo vào dự án: " + g.keys.sorted().joined(separator: ", ") + "."
+                : "Chưa neo được — thiếu "
+                  + thieu.map { EideKnowledgeFormat.giaTri($0) }.joined(separator: ", ") + "."
+        }
+        // `chat.orchestrate` — chuỗi đã dựng và đang chạy.
+        if let rid = kq["run_id"] as? String { return "Đang chạy chuỗi \(rid)." }
+        // `chat.restate` / `chat.decline` — cả hai trả `text`, và `decline` là một lời TỪ CHỐI
+        // có lý do; hiện nó như một câu bình thường thì người không biết việc đã dừng.
+        if let van = kq["text"] as? String { return van }
+        // `memory.compose` — gói ngữ cảnh C0..C7 cho một lượt gọi mô hình.
+        if let b = kq["bundle"] as? [String: Any] {
+            let tk = EideSo.nguyen((b["tokens"] as? [String: Any])?["total"] ?? b["tokens"])
+            return "Đã gộp ngữ cảnh" + (tk.map { " — \($0) token" } ?? "") + "."
+        }
+        // `policy.permit` — quyền TẠM, và thời hạn là phần quan trọng nhất của nó.
+        if let pid = kq["permission_id"] as? String {
+            let han = (kq["expires_at"] as? String) ?? ""
+            return "Đã cấp quyền tạm \(pid)"
+                 + (han.isEmpty ? " — KHÔNG rõ hạn, đây là điều nên xem lại." : ", hết hạn \(han).")
+        }
+        // `policy.escalate` — leo thang lên người qua những kênh nào.
+        if let k = kq["notified"] as? [Any] {
+            return k.isEmpty
+                ? "Đã leo thang nhưng KHÔNG kênh nào nhận — người sẽ không biết."
+                : "Đã báo qua: " + k.map { EideKnowledgeFormat.giaTri($0) }
+                    .joined(separator: ", ") + "."
+        }
+        // `policy.learn_thresholds` — đề xuất NỚI ngưỡng; POL-17 §3 đòi ký nên nó chỉ là đề nghị.
+        if let dx = kq["proposals"] as? [Any] {
+            return dx.isEmpty ? "Không có ngưỡng nào đáng đổi."
+                              : "\(dx.count) đề xuất đổi ngưỡng — nới lỏng thì cần anh ký."
+        }
+        // `policy.set_autonomy` — mức THỰC SỰ có hiệu lực, có thể khác mức vừa xin.
+        if let m = kq["effective"] as? String { return "Mức tự chủ đang có hiệu lực: \(m)." }
+
+        if kq.isEmpty { return "Xong." }
+        return "Xong — " + kq.keys.sorted().prefix(6).map { k in
+            let v = kq[k]
+            if let a = v as? [Any] { return "\(k): \(a.count) mục" }
+            return "\(k): \(EideKnowledgeFormat.giaTri(v))"
+        }.joined(separator: " · ")
     }
 
     private func hienLoi(_ error: Error) {

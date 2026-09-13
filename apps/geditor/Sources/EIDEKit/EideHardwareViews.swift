@@ -130,6 +130,9 @@ public final class DiscoveryView: ManHinhCoSo {
         if let k = dongHo { _hienDongHo(k) }
         if !cauHinh.isEmpty { themDong("cấu hình sinh ra", cauHinh, mau: EideToken.Mau.info) }
 
+        if let fw = ketQua["firmware"] as? [String: Any] { _hienFirmware(fw) }
+        if let ch = EideSo.nguyen(ketQua["chosen"]) { _hienTocDo(ch, ketQua) }
+
         if soDong == 0 {
             noiRong("Không thấy cổng, probe hay thiết bị nào. Kiểm cáp, nguồn, và chế độ boot.")
         }
@@ -178,6 +181,35 @@ public final class DiscoveryView: ManHinhCoSo {
                         + (lech > 0.02 ? String(format: " · LỆCH %.1f%%", lech * 100) : ""),
                      mau: lech > 0.02 ? EideToken.Mau.bad : nil)
         }
+    }
+
+    /// `discover.firmware_probe` `{firmware{banner, version, bootloader, known_good_match}}`.
+    ///
+    /// **`known_good_match` là câu trả lời cho "board này còn nguyên không".** Firmware đang
+    /// chạy khớp một bản đã biết tốt nghĩa là có chỗ lui — TARGET-02 `reflash_known_good` dựa
+    /// vào đúng điều đó. Không khớp thì mọi thao tác nạp sau này là một chiều.
+    private func _hienFirmware(_ fw: [String: Any]) {
+        let ban = (fw["banner"] as? String) ?? ""
+        let ver = (fw["version"] as? String) ?? ""
+        let boot = (fw["bootloader"] as? String) ?? ""
+        let khop = (fw["known_good_match"] as? String) ?? ""
+        themDong("firmware đang chạy",
+                 [ban, ver, boot.isEmpty ? "" : "bootloader \(boot)"]
+                    .filter { !$0.isEmpty }.joined(separator: " · "))
+        themDong(" · bản đã biết tốt",
+                 khop.isEmpty ? "KHÔNG khớp bản nào — nạp firmware sẽ không có chỗ lui"
+                              : khop,
+                 mau: khop.isEmpty ? EideToken.Mau.warn : EideToken.Mau.ok)
+    }
+
+    /// `discover.link_speed` `{chosen, tried[], limit}`.
+    private func _hienTocDo(_ chon: Int, _ ketQua: [String: Any]) {
+        let thu = (ketQua["tried"] as? [Any]) ?? []
+        let tran = EideSo.nguyen(ketQua["limit"])
+        themDong("tốc độ liên kết",
+                 "\(chon)" + (tran.map { " · trần \($0)" } ?? "")
+                    + (thu.isEmpty ? "" : " · đã thử \(thu.count) mức"),
+                 mau: tran != nil && chon < tran! ? EideToken.Mau.warn : EideToken.Mau.ok)
     }
 
     @objc private func chonBoard(_ s: NSButton) {
@@ -389,6 +421,18 @@ public final class DebugView: ManHinhCoSo {
         else if let m = bc as? [String: Any] { _hienBangChung(m) }
 
         if let p = dx { _hienDeXuat(p) }
+
+        if let pid = ketQua["id"] as? String {
+            // DEBUG-05 lưu phiên để mở lại sau — một phiên gỡ lỗi kéo dài nhiều ngày, và mã
+            // phiên là thứ duy nhất nối các lần lại với nhau.
+            themDong("phiên đã lưu", pid, mau: EideToken.Mau.info)
+        }
+        if let ok = ketQua["ok"] as? Bool {
+            // TARGET-06 GHI vào thanh ghi/RAM — `ok: false` ở đây không phải "chưa xong", nó
+            // là "đã thử và phần cứng từ chối".
+            themDong("ghi qua probe", ok ? "thành công" : "PHẦN CỨNG TỪ CHỐI",
+                     mau: ok ? EideToken.Mau.ok : EideToken.Mau.bad)
+        }
 
         if soDong == 0 { noiRong("Phiên gỡ lỗi chưa có giả thuyết hay bằng chứng nào.") }
     }

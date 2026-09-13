@@ -73,6 +73,18 @@ public final class ProjectStatusView: ManHinhCoSo {
 
         if let t = _moTaDich(dich) { themDong("Đích", t, mau: EideToken.Mau.info) }
 
+        // `target.detect` trả `targets[]` — NHIỀU đích, khác hẳn `report.target` (đích đang
+        // ghim). Cắm hai board cùng lúc là chuyện thường ở bàn thí nghiệm, và một màn chỉ hiện
+        // một cái sẽ nạp firmware lên cái người dùng không nghĩ tới.
+        for t in (ketQua["targets"] as? [[String: Any]]) ?? [] {
+            let lab = ((t["lab"] as? Bool) ?? false) ? " · LAB (tự nạp được)" : ""
+            themDong((t["id"] as? String) ?? (t["chip_id"] as? String) ?? "?",
+                     [(t["kind"] as? String) ?? "", (t["port"] as? String) ?? "",
+                      (t["probe"] as? String) ?? ""].filter { !$0.isEmpty }
+                        .joined(separator: " · ") + lab,
+                     mau: EideToken.Mau.info)
+        }
+
         for f in tinhNang {
             let ma = (f["id"] as? String) ?? (f["code"] as? String) ?? "?"
             let ten = (f["name"] as? String) ?? (f["title"] as? String) ?? ""
@@ -167,6 +179,8 @@ public final class IngestView: ManHinhCoSo {
         let chuThich = (ketQua["text_blocks"] as? [[String: Any]]) ?? []
         let linhKienAnh = (ketQua["parts"] as? [[String: Any]]) ?? []
         let nguon = (ketQua["source_id"] as? String) ?? ""
+        let doDuoc = ketQua["measurement"] as? [String: Any]
+        let kyNang = (ketQua["skill_path"] as? String) ?? ""
 
         if ketQua.isEmpty {
             tomTat.stringValue = ""
@@ -231,7 +245,8 @@ public final class IngestView: ManHinhCoSo {
                        tinhNang: tinhNang, donVi: donVi, khongNguon: khongNguon,
                        chuThich: chuThich, linhKienAnh: linhKienAnh, nguon: nguon,
                        giayPhep: (ketQua["license"] as? String) ?? "",
-                       bam: EideSo.nguyen(ketQua["size_bytes"]))
+                       bam: EideSo.nguyen(ketQua["size_bytes"]),
+                       doDuoc: doDuoc, kyNang: kyNang)
 
         if soDong == 0 { noiRong("Không có tệp nào được nhận diện.") }
     }
@@ -250,7 +265,22 @@ public final class IngestView: ManHinhCoSo {
                                 tinhNang: [[String: Any]], donVi: Int?,
                                 khongNguon: [[String: Any]], chuThich: [[String: Any]],
                                 linhKienAnh: [[String: Any]], nguon: String,
-                                giayPhep: String, bam: Int?) {
+                                giayPhep: String, bam: Int?,
+                                doDuoc: [String: Any]?, kyNang: String) {
+        if let m = doDuoc {
+            // EXTRACT-15 đọc SỐ ĐO từ ảnh chụp màn hình máy hiện sóng. Một con số đọc từ ảnh
+            // không phải một phép đo — nó là phép đọc lại một phép đo, và sai số của người
+            // chụp, của thang chia, của nén ảnh đều nằm trong đó.
+            let mo = m.sorted { $0.key < $1.key }
+                .map { "\($0.key)=\(EideKnowledgeFormat.giaTri($0.value))" }
+                .joined(separator: " · ")
+            themDong("số đo đọc từ ảnh", mo + " — từ ẢNH, không phải phép đo trực tiếp",
+                     mau: EideToken.Mau.warn)
+        }
+        if !kyNang.isEmpty {
+            // EXTRACT-13 biến công thức trong datasheet thành một skill chạy được.
+            themDong("skill sinh từ công thức", kyNang, mau: EideToken.Mau.info)
+        }
         if !lo.isEmpty || soFact != nil {
             let n = soFact ?? 0
             themDong("lô trích xuất \(lo)",
@@ -432,7 +462,42 @@ public final class BoardView: ManHinhCoSo {
             themDong(net, phan, nut: !chan.isEmpty, ma: chan, bam: #selector(xemChan(_:)))
         }
 
+        _hienRangBuoc(ketQua)
+
         if soDong == 0 { noiRong("Hộ chiếu mạch rỗng — netlist chưa có net nào dùng được.") }
+    }
+
+    /// `board.constraints` `{constraints}`, `board.mark_lab` `{lab}`,
+    /// `board.propose_fix` `{options[]{change, cost, touches_code}}`.
+    private func _hienRangBuoc(_ ketQua: [String: Any]) {
+        if let rb = ketQua["constraints"] as? [String: Any] {
+            // K6 của BOARD-03 đi thẳng vào Coder: mọi lần sinh mã sau này đều chịu ràng buộc
+            // này. Chân reserved là chỗ đắt nhất — dùng nhầm một chân SWD là mất luôn đường
+            // nạp, và lỗi ấy chỉ lộ ra sau khi đã nạp.
+            if let chan = rb["reserved_pins"] as? [Any], !chan.isEmpty {
+                themDong("chân KHÔNG được dùng",
+                         chan.map { EideKnowledgeFormat.giaTri($0) }.joined(separator: ", "),
+                         mau: EideToken.Mau.warn)
+            }
+            for (k, v) in rb.sorted(by: { $0.key < $1.key }) where k != "reserved_pins" {
+                themDong(k, EideKnowledgeFormat.giaTri(v))
+            }
+        }
+        if let lab = ketQua["lab"] as? Bool {
+            themDong("đánh dấu lab", lab ? "BẬT — board này tự nạp firmware được"
+                                         : "tắt — nạp firmware vẫn cần người duyệt",
+                     mau: lab ? EideToken.Mau.warn : EideToken.Mau.muted)
+        }
+        for o in (ketQua["options"] as? [[String: Any]]) ?? [] {
+            // BOARD-04 nói rõ `touches_code`: một cách sửa đụng vào mã thì rẻ hơn hàn lại, và
+            // đó là thông tin quyết định người chọn cách nào.
+            let doi = (o["change"] as? String) ?? "?"
+            let gia = EideKnowledgeFormat.giaTri(o["cost"])
+            let cham = (o["touches_code"] as? Bool) ?? false
+            themDong("cách sửa", "\(doi) · giá \(gia)"
+                        + (cham ? " · ĐỤNG MÃ (rẻ hơn hàn lại)" : " · chỉ phần cứng"),
+                     mau: cham ? EideToken.Mau.info : EideToken.Mau.warn)
+        }
     }
 
     /// Chân → object xung đột của chính nó. Dòng bảng chân không có xung đột thì không gọi
@@ -562,7 +627,62 @@ public final class ReqArchView: ManHinhCoSo {
             themDong(tu, "lỗ hổng truy vết — thiếu \(thieu)", mau: EideToken.Mau.warn)
         }
 
+        _hienGiaoDienVaFsm(ketQua)
+
         if soDong == 0 { noiRong("Không có yêu cầu, module hay phát hiện nào để hiện.") }
+    }
+
+    /// `arch.interface_spec` `{interfaces}`, `arch.state_machine` `{fsm}`,
+    /// `req.acceptance` `{acceptance[]}`, `req.change_impact` `{impact}`.
+    private func _hienGiaoDienVaFsm(_ ketQua: [String: Any]) {
+        if let gd = ketQua["interfaces"] as? [[String: Any]] {
+            for i in gd {
+                let mo = (i["module"] as? String) ?? "?"
+                let ham = ((i["functions"] as? [Any]) ?? []).count
+                let tin = ((i["messages"] as? [Any]) ?? []).count
+                themDong(mo, "\(ham) hàm · \(tin) thông điệp")
+            }
+        }
+        if let fsm = ketQua["fsm"] as? [String: Any] {
+            let tt = ((fsm["states"] as? [Any]) ?? []).count
+            let ch = ((fsm["transitions"] as? [Any]) ?? []).count
+            let bb = (fsm["invariants"] as? [Any]) ?? []
+            themDong("máy trạng thái",
+                     "\(tt) trạng thái · \(ch) chuyển · bắt đầu "
+                        + EideKnowledgeFormat.giaTri(fsm["initial"]))
+            // ARCH-07 trả `invariants[]` — những điều PHẢI đúng ở mọi trạng thái. Một FSM
+            // không có bất biến nào là một FSM chưa ai nghĩ về chỗ nó có thể hỏng.
+            themDong(" · bất biến",
+                     bb.isEmpty ? "KHÔNG có — chưa ai nêu điều gì phải luôn đúng"
+                                : bb.map { EideKnowledgeFormat.giaTri($0) }
+                                    .joined(separator: "; "),
+                     mau: bb.isEmpty ? EideToken.Mau.warn : nil)
+        }
+        for a in (ketQua["acceptance"] as? [[String: Any]]) ?? [] {
+            // REQ-07 đòi `observable kind` — cách MÁY kiểm được tiêu chí này. Thiếu nó thì
+            // "nghiệm thu" quay về một người gật đầu, và đó đúng là thứ `sim.*`/`target.observe`
+            // sinh ra để thay thế.
+            let ma = (a["req_id"] as? String) ?? "?"
+            let quan = (a["observable"] as? String) ?? (a["kind"] as? String) ?? ""
+            let khi = [(a["given"] as? String), (a["when"] as? String), (a["then"] as? String)]
+                .compactMap { $0 }.joined(separator: " → ")
+            themDong(ma, khi + (quan.isEmpty ? " · KHÔNG nói máy kiểm bằng gì"
+                                             : " · máy kiểm bằng \(quan)"),
+                     mau: quan.isEmpty ? EideToken.Mau.warn : nil)
+        }
+        if let ah = ketQua["impact"] as? [String: Any] {
+            // REQ-08: đổi một yêu cầu thì kéo theo gì. Danh sách rỗng ở đây KHÔNG có nghĩa là
+            // an toàn — nó có thể nghĩa là truy vết chưa dựng xong.
+            let phan = ["modules", "code_units", "tests", "docs", "diagrams", "features"]
+                .compactMap { k -> String? in
+                    guard let n = (ah[k] as? [Any])?.count, n > 0 else { return nil }
+                    return "\(n) \(k)"
+                }
+            themDong("ảnh hưởng",
+                     phan.isEmpty ? "không thấy gì bị ảnh hưởng — kiểm lại ma trận truy vết"
+                                  : phan.joined(separator: " · "),
+                     mau: phan.isEmpty ? EideToken.Mau.warn : EideToken.Mau.info)
+        }
     }
 
     private func _hienNganSach(_ b: [String: Any]) {
