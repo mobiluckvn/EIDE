@@ -37,6 +37,10 @@ public final class EidePanel: NSView {
     private let nhapTaiLieu = IngestView()
     private let hoChieuMach = BoardView()
     private let yeuCau = ReqArchView()
+    private let luocDo = DiagramView()
+    private let keHoach = PlanDiffView()
+    private let maNguon = CodeView()
+    private let moPhong = SimView()
     private let thanhMan = NSStackView()
     private let tenMan = NSTextField(labelWithString: "")
 
@@ -56,6 +60,10 @@ public final class EidePanel: NSView {
         ("Ingest", nhapTaiLieu),
         ("Board", hoChieuMach),
         ("ReqArch", yeuCau),
+        ("DiagramView", luocDo),
+        ("PlanDiff", keHoach),
+        ("Code", maNguon),
+        ("Sim", moPhong),
     ]
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
@@ -177,11 +185,45 @@ public final class EidePanel: NSView {
             }
         }
 
+        luocDo.onMoDong = { [weak self] n in
+            self?.hoiThoai.themLuot(by: .heThong, text: "Lỗi lược đồ ở dòng \(n).")
+        }
+
+        keHoach.onDuyet = { [weak self] gid in
+            // Duyệt ở đây ĐI QUA ĐÚNG `gate.decide` như nút ở hàng đợi. Hai đường duyệt khác
+            // nhau là hai chỗ phải cùng ghi sổ cái, và cái thứ hai là cái người ta quên.
+            self?.chay2(.gateDecide, ["gate_id": gid, "decision": "approve"])
+        }
+
+        maNguon.onMoViPham = { [weak self] tep, dong in
+            self?.hoiThoai.themLuot(
+                by: .heThong,
+                text: "\(tep):\(dong) — hằng số không trỏ fact nào. `/code.annotate` để tìm fact "
+                    + "khớp, hoặc `/kg.request` nếu tri thức chưa có.")
+        }
+
+        moPhong.onXemKichBan = { [weak self] duong in
+            self?.hoiThoai.themLuot(by: .heThong, text: "Kịch bản: \(duong)")
+        }
+
         yeuCau.onMoYeuCau = { [weak self] ma in
             // REQ-08 nhận `delta{req_id, old, new | fact_id}` — bọc đúng một tầng, không phẳng.
             self?.chay("req.change_impact", ["delta": ["req_id": ma]]) { r in
                 self?.hienJson("Ảnh hưởng của \(ma)", r)
             }
+        }
+    }
+
+    /// Gọi thẳng một phương thức RPC (không qua `caps.invoke`) rồi làm mới.
+    private func chay2(_ m: EideMethod, _ p: [String: Any]) {
+        Task {
+            do {
+                let r = try await client.goi(m, p)
+                await MainActor.run { self.hienKetQua(r) }
+            } catch {
+                await MainActor.run { self.hienLoi(error) }
+            }
+            await lamMoi()
         }
     }
 
