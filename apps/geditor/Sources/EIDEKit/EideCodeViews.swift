@@ -46,6 +46,12 @@ public final class DiagramView: ManHinhCoSo {
         }
 
         duongDanAnh = (ketQua["path"] as? String) ?? ""
+        // Mười năng lực `diagram.block/architecture/sequence/state/flow/timing/memory_map/
+        // kg_view/gantt/from_image` đều trả `{diagram}` — một Diagram của DDD-14 mang `lang`,
+        // `src` và `path`. Không đọc nó thì cả mười cái vẽ xong rồi màn hình không hiện gì:
+        // đúng nhóm năng lực đông nhất của màn này.
+        let lg = ketQua["diagram"] as? [String: Any]
+        let tinFromAnh = EideSo.thuc(ketQua["confidence"])
         // Hai năng lực, hai tên khóa, cùng một danh sách: `render` gọi là `lint`, `lint` gọi là
         // `issues`. Gộp ở đây chứ không bắt panel nhớ cái nào của ai.
         let loi = (ketQua["lint"] as? [[String: Any]]) ?? (ketQua["issues"] as? [[String: Any]]) ?? []
@@ -77,10 +83,54 @@ public final class DiagramView: ManHinhCoSo {
                      nut: dong > 0, ma: String(dong), bam: #selector(moDong(_:)))
         }
 
+        if let d = lg { _hienLuocDo(d, tin: tinFromAnh) }
         if let k = khac { _hienKhac(k) }
 
         if soDong == 0 && !duongDanAnh.isEmpty {
             noiRong("Lược đồ sạch: \(duongDanAnh)")
+        }
+    }
+
+    /// Một `Diagram` của DDD-14: `{id, kind, lang, src, path, model_ref, stale}`.
+    ///
+    /// **`src` hiện ra, không chỉ `path`.** Người dùng màn này sửa lược đồ, và thứ họ sửa là mã
+    /// Mermaid/PlantUML chứ không phải tấm ảnh. Một màn chỉ nói "đã vẽ: hinh.svg" bắt họ đi mở
+    /// tệp khác để biết máy vừa viết gì.
+    ///
+    /// **`stale` là cảnh báo, không phải nhãn.** `diagram.sync` đánh dấu lược đồ lỗi thời khi
+    /// mã đổi; một lược đồ lỗi thời trông y hệt một lược đồ đúng, và nó đang mô tả sai hệ thống.
+    private func _hienLuocDo(_ d: [String: Any], tin: Double?) {
+        let loai = (d["kind"] as? String) ?? ""
+        let ngonNgu = (d["lang"] as? String) ?? ""
+        let ma = (d["src"] as? String) ?? ""
+        let duong = (d["path"] as? String) ?? ""
+        let neo = (d["model_ref"] as? String) ?? ""
+        let loiThoi = (d["stale"] as? Bool) ?? false
+
+        if duongDanAnh.isEmpty && !duong.isEmpty { duongDanAnh = duong }
+
+        themDong([loai, ngonNgu].filter { !$0.isEmpty }.joined(separator: " · "),
+                 duong.isEmpty ? "chưa render ra tệp" : duong,
+                 mau: duong.isEmpty ? EideToken.Mau.warn : EideToken.Mau.info)
+
+        if loiThoi {
+            themDong("LỖI THỜI", "mã hoặc kiến trúc đã đổi sau khi vẽ — lược đồ này đang mô tả "
+                               + "sai hệ thống; chạy `/diagram.sync` trước khi dùng",
+                     mau: EideToken.Mau.bad)
+        }
+        if !neo.isEmpty { themDong("neo vào", neo) }
+        if let t = tin {
+            // DIAGRAM-12 dựng lược đồ TỪ ẢNH — một phép đoán, và ngưỡng tin cậy của nó quyết
+            // định lược đồ có được ghi vào dự án hay chỉ để người xem.
+            themDong("dựng từ ảnh", String(format: "tin cậy %.0f%%", t * 100)
+                        + (t < 0.6 ? " — quá thấp để ghi vào dự án" : ""),
+                     mau: t < 0.6 ? EideToken.Mau.warn : nil)
+        }
+        if !ma.isEmpty {
+            let dong = ma.split(separator: "\n", omittingEmptySubsequences: false)
+            themDong("mã lược đồ", "\(dong.count) dòng")
+            for l in dong.prefix(40) { themDong("  ", String(l)) }
+            if dong.count > 40 { noiRong("… và \(dong.count - 40) dòng nữa.") }
         }
     }
 

@@ -144,7 +144,29 @@ public final class IngestView: ManHinhCoSo {
         let moi = (ketQua["new"] as? [String]) ?? []
         let trung = (ketQua["dup"] as? [[String: Any]]) ?? []
         let muc = (ketQua["entries"] as? [[String: Any]]) ?? []
-        let daChiMuc = ketQua["indexed"] as? Int
+        let daChiMuc = EideSo.nguyen(ketQua["indexed"])
+        // Kết quả TRÍCH XUẤT — 15 năng lực `extract.*` cùng đổ về màn này, và phần lớn chúng
+        // trả một `batch_id` với số fact sinh ra. Không hiện thì cả nhóm extract chạy trong im
+        // lặng: người thả một PDF vào, thấy dòng "đã phân loại", rồi không bao giờ biết 42 fact
+        // thanh ghi có ra đời hay không.
+        let lo = (ketQua["batch_id"] as? String) ?? ""
+        let soFact = EideSo.nguyen(ketQua["n_facts"])
+        let yeu = EideSo.nguyen(ketQua["low_confidence"]) ?? 0
+        let linhKien = (ketQua["part"] as? String) ?? ""
+        let tepGiai = (ketQua["files"] as? [String]) ?? []
+        let boQua = (ketQua["skipped"] as? [[String: Any]]) ?? []
+        let khop = (ketQua["matches"] as? [[String: Any]]) ?? []
+        let khoi = (ketQua["blocks"] as? [[String: Any]]) ?? []
+        let mucLuc = (ketQua["toc"] as? [[String: Any]]) ?? []
+        let bom = (ketQua["bom"] as? [[String: Any]]) ?? []
+        let khongKhop = (ketQua["unmatched"] as? [String]) ?? []
+        let mucTieu = (ketQua["goal"] as? String) ?? ""
+        let tinhNang = (ketQua["features"] as? [[String: Any]]) ?? []
+        let donVi = EideSo.nguyen(ketQua["code_units"])
+        let khongNguon = (ketQua["unsourced"] as? [[String: Any]]) ?? []
+        let chuThich = (ketQua["text_blocks"] as? [[String: Any]]) ?? []
+        let linhKienAnh = (ketQua["parts"] as? [[String: Any]]) ?? []
+        let nguon = (ketQua["source_id"] as? String) ?? ""
 
         if ketQua.isEmpty {
             tomTat.stringValue = ""
@@ -203,7 +225,105 @@ public final class IngestView: ManHinhCoSo {
         }
         if muc.count > 50 { noiRong("… và \(muc.count - 50) mục nữa (hiện 50 đầu).") }
 
+        _hienTrichXuat(lo: lo, soFact: soFact, yeu: yeu, linhKien: linhKien,
+                       tepGiai: tepGiai, boQua: boQua, khop: khop, khoi: khoi,
+                       mucLuc: mucLuc, bom: bom, khongKhop: khongKhop, mucTieu: mucTieu,
+                       tinhNang: tinhNang, donVi: donVi, khongNguon: khongNguon,
+                       chuThich: chuThich, linhKienAnh: linhKienAnh, nguon: nguon,
+                       giayPhep: (ketQua["license"] as? String) ?? "",
+                       bam: EideSo.nguyen(ketQua["size_bytes"]))
+
         if soDong == 0 { noiRong("Không có tệp nào được nhận diện.") }
+    }
+
+    /// Kết quả của nhóm `extract.*`, `archive.*` và `search.fetch`.
+    ///
+    /// **`low_confidence` đi CÙNG `n_facts`, không tách ra chỗ khác.** EXTRACT-06 đếm riêng số
+    /// fact đọc được với độ tin cậy thấp, và đó là con số quyết định người có phải mở PDF ra
+    /// đối chiếu hay không. Hiện "42 fact" mà nuốt mất "9 trong đó chưa chắc" là mời người tin
+    /// cả 42.
+    private func _hienTrichXuat(lo: String, soFact: Int?, yeu: Int, linhKien: String,
+                                tepGiai: [String], boQua: [[String: Any]],
+                                khop: [[String: Any]], khoi: [[String: Any]],
+                                mucLuc: [[String: Any]], bom: [[String: Any]],
+                                khongKhop: [String], mucTieu: String,
+                                tinhNang: [[String: Any]], donVi: Int?,
+                                khongNguon: [[String: Any]], chuThich: [[String: Any]],
+                                linhKienAnh: [[String: Any]], nguon: String,
+                                giayPhep: String, bam: Int?) {
+        if !lo.isEmpty || soFact != nil {
+            let n = soFact ?? 0
+            themDong("lô trích xuất \(lo)",
+                     "\(n) fact" + (linhKien.isEmpty ? "" : " cho \(linhKien)")
+                        + (yeu > 0 ? " · \(yeu) CHƯA CHẮC — cần anh xem" : ""),
+                     mau: yeu > 0 ? EideToken.Mau.warn : EideToken.Mau.ok)
+        }
+        if !tepGiai.isEmpty {
+            themDong("giải nén", "\(tepGiai.count) tệp", mau: EideToken.Mau.info)
+            for f in tepGiai.prefix(20) { themDong("  ", f) }
+            if tepGiai.count > 20 { noiRong("… và \(tepGiai.count - 20) tệp nữa.") }
+        }
+        for s in boQua {
+            // ARCHIVE-02 bỏ qua tệp vì zip-slip, quá sâu, hoặc quá lớn — ba lý do rất khác
+            // nhau, và cái đầu là một cuộc tấn công chứ không phải một giới hạn.
+            let ten = (s["path"] as? String) ?? "?"
+            let vi = (s["reason"] as? String) ?? ""
+            themDong("bỏ qua: \(ten)", vi, mau: EideToken.Mau.warn)
+        }
+        for m in khop.prefix(20) {
+            themDong((m["path"] as? String) ?? "?", (m["snippet"] as? String) ?? "")
+        }
+        if !khoi.isEmpty {
+            let loaiKhoi = Dictionary(grouping: khoi, by: { ($0["type"] as? String) ?? "?" })
+                .map { "\($0.value.count) \($0.key)" }.sorted().joined(separator: " · ")
+            themDong("bố cục", "\(khoi.count) khối — \(loaiKhoi)")
+        }
+        if !mucLuc.isEmpty { themDong("mục lục", "\(mucLuc.count) mục") }
+        if !bom.isEmpty {
+            themDong("BOM", "\(bom.count) linh kiện"
+                        + (khongKhop.isEmpty ? "" : " · \(khongKhop.count) KHÔNG khớp"),
+                     mau: khongKhop.isEmpty ? EideToken.Mau.ok : EideToken.Mau.warn)
+            for b in bom.prefix(15) {
+                let r = (b["ref"] as? String) ?? "?"
+                let mpn = (b["mpn"] as? String) ?? "(chưa rõ mã)"
+                themDong("  \(r)", mpn + ((b["value"] as? String).map { " · \($0)" } ?? ""),
+                         mau: b["mpn"] == nil ? EideToken.Mau.warn : nil)
+            }
+        }
+        for u in khongKhop.prefix(10) {
+            themDong("không khớp linh kiện", u, mau: EideToken.Mau.warn)
+        }
+        if !mucTieu.isEmpty { themDong("mục tiêu đọc được", mucTieu, mau: EideToken.Mau.info) }
+        for f in tinhNang.prefix(15) {
+            themDong((f["title"] as? String) ?? "?",
+                     (f["expectation"] as? String) ?? "chưa có kỳ vọng đo được",
+                     mau: f["expectation"] == nil ? EideToken.Mau.warn : nil)
+        }
+        if let d = donVi {
+            themDong("hằng số trong mã", "\(d) đơn vị"
+                        + (khongNguon.isEmpty ? "" : " · \(khongNguon.count) KHÔNG NGUỒN"),
+                     mau: khongNguon.isEmpty ? EideToken.Mau.ok : EideToken.Mau.bad)
+        }
+        for u in khongNguon.prefix(15) {
+            let f = (u["file"] as? String) ?? "?"
+            let l = EideSo.nguyen(u["line"]) ?? 0
+            themDong("\(EideKnowledgeFormat.tenNgan(f)):\(l)",
+                     "\(EideKnowledgeFormat.giaTri(u["literal"])) — không trỏ fact nào",
+                     mau: EideToken.Mau.bad)
+        }
+        if !chuThich.isEmpty { themDong("OCR", "\(chuThich.count) khối chữ đọc được") }
+        for p in linhKienAnh.prefix(15) {
+            let nh = (p["label"] as? String) ?? "?"
+            let dd = (p["mpn_guess"] as? String) ?? "chưa đoán được mã"
+            themDong(nh, dd + " · từ ẢNH, cần người xác nhận", mau: EideToken.Mau.warn)
+        }
+        if !nguon.isEmpty {
+            // SEARCH-09 tải về kèm license — một nguồn không rõ giấy phép không được vào kho.
+            themDong("nguồn tải về \(nguon)",
+                     (giayPhep.isEmpty ? "KHÔNG rõ giấy phép" : "giấy phép \(giayPhep)")
+                        + (bam.map { " · \($0) byte" } ?? ""),
+                     mau: giayPhep.isEmpty ? EideToken.Mau.bad : nil)
+        }
     }
 
     private func _tenTang(_ t: String) -> String {

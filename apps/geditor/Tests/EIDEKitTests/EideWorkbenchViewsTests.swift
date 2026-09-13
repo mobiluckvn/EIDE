@@ -220,3 +220,115 @@ final class EideWorkbenchViewsTests: XCTestCase {
         XCTAssertLessThan(EideMuc.diem("error"), EideMuc.diem("info"))
     }
 }
+
+/// Màn 4 hiện KẾT QUẢ TRÍCH XUẤT, không chỉ kết quả phân loại.
+///
+/// Mười lăm năng lực `extract.*` cùng đổ về màn này. Trước khi có `_hienTrichXuat`, cả nhóm
+/// chạy trong im lặng: người thả một PDF vào, thấy dòng "đã phân loại", rồi không bao giờ biết
+/// 42 fact thanh ghi có ra đời hay không.
+final class EideIngestTrichXuatTests: XCTestCase {
+
+    private func chu(_ m: ManHinhCoSo) -> String {
+        let hang = m.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }
+        return (m.cot.arrangedSubviews.compactMap { ($0 as? NSTextField)?.stringValue }
+                + hang.compactMap { ($0 as? NSTextField)?.stringValue }
+                + hang.compactMap { ($0 as? NSButton)?.title }).joined(separator: " ")
+    }
+
+    func testLOtrichXUAThienSOfactVAsoCHUAchac() {
+        // "42 fact" mà nuốt mất "9 trong đó chưa chắc" là mời người tin cả 42.
+        let v = IngestView()
+        v.capNhat(ketQua: ["batch_id": "b_31", "n_facts": 42, "low_confidence": 9])
+        let s = chu(v)
+        XCTAssertTrue(s.contains("42 fact"), s)
+        XCTAssertTrue(s.contains("9 CHƯA CHẮC"), s)
+    }
+
+    func testSVDhienDUNGlinhKIEN() {
+        let v = IngestView()
+        v.capNhat(ketQua: ["batch_id": "b_1", "n_facts": 1_204, "part": "st.stm32f411"])
+        XCTAssertTrue(chu(v).contains("st.stm32f411"), chu(v))
+    }
+
+    func testHANGsoKHONGnguonTRONGmaHIENrõ() {
+        // `extract.code_constants` tìm hằng số phần cứng không trỏ fact nào — cùng bất biến với
+        // `code.constant_guard`, chỉ khác là bắt từ lúc đọc mã có sẵn.
+        let v = IngestView()
+        v.capNhat(ketQua: [
+            "code_units": 12,
+            "unsourced": [["file": "src/drv.c", "line": 88, "literal": "0x76"]],
+        ])
+        let s = chu(v)
+        XCTAssertTrue(s.contains("KHÔNG NGUỒN"), s)
+        XCTAssertTrue(s.contains("drv.c:88"), s)
+    }
+
+    func testNGUONtaiVEkhongROgiayPHEPbiTOdo() {
+        let v = IngestView()
+        v.capNhat(ketQua: ["source_id": "src_9", "sha256": "ab", "size_bytes": 1024])
+        XCTAssertTrue(chu(v).contains("KHÔNG rõ giấy phép"), chu(v))
+    }
+
+    func testBOMthieuMPNduocDANHdau() {
+        let v = IngestView()
+        v.capNhat(ketQua: [
+            "bom": [["ref": "U2", "mpn": "BME280"], ["ref": "R5", "value": "330"]],
+            "unmatched": ["R5"],
+        ])
+        let s = chu(v)
+        XCTAssertTrue(s.contains("2 linh kiện"), s)
+        XCTAssertTrue(s.contains("chưa rõ mã"), s)
+    }
+
+    func testLINHkienTUanhLUONnoiLAcanNGUOIxacNHAN() {
+        // `extract.image_board` đoán từ ảnh — mô hình thị giác không phải datasheet.
+        let v = IngestView()
+        v.capNhat(ketQua: ["parts": [["label": "U3", "mpn_guess": "MPU6050"]]])
+        XCTAssertTrue(chu(v).contains("cần người xác nhận"), chu(v))
+    }
+}
+
+/// Màn 9 hiện MÃ lược đồ, không chỉ đường dẫn ảnh.
+final class EideDiagramMaTests: XCTestCase {
+
+    private func chu(_ m: ManHinhCoSo) -> String {
+        let hang = m.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }
+        return (m.cot.arrangedSubviews.compactMap { ($0 as? NSTextField)?.stringValue }
+                + hang.compactMap { ($0 as? NSTextField)?.stringValue }).joined(separator: " ")
+    }
+
+    func testHIENmaNGUONcuaLUOCdo() {
+        // Người dùng màn này sửa lược đồ, và thứ họ sửa là mã Mermaid chứ không phải tấm ảnh.
+        let v = DiagramView()
+        v.capNhat(ketQua: ["diagram": [
+            "kind": "state", "lang": "mermaid", "path": "docs/hinh/fsm.svg",
+            "src": "stateDiagram-v2\n  [*] --> IDLE\n  IDLE --> RUN",
+        ]])
+        let s = chu(v)
+        XCTAssertTrue(s.contains("mermaid"), s)
+        XCTAssertTrue(s.contains("IDLE --> RUN"), s)
+        XCTAssertEqual(v.duongDanAnh, "docs/hinh/fsm.svg")
+    }
+
+    func testLUOCdoLOIthoiLAcanhBAOnang() {
+        // Một lược đồ lỗi thời trông y hệt một lược đồ đúng, và nó đang mô tả sai hệ thống.
+        let v = DiagramView()
+        v.capNhat(ketQua: ["diagram": ["kind": "block", "stale": true, "src": "x"]])
+        XCTAssertTrue(chu(v).contains("LỖI THỜI"), chu(v))
+        XCTAssertTrue(chu(v).contains("mô tả sai hệ thống"), chu(v))
+    }
+
+    func testDUNGtuANHtinCAYthapNOIRAkhongGHIduocVAOduAn() {
+        let v = DiagramView()
+        v.capNhat(ketQua: ["diagram": ["kind": "block", "src": "x"], "confidence": 0.41])
+        XCTAssertTrue(chu(v).contains("quá thấp để ghi vào dự án"), chu(v))
+    }
+
+    func testLUOCdoCHUArenderNOIRA() {
+        let v = DiagramView()
+        v.capNhat(ketQua: ["diagram": ["kind": "flow", "lang": "mermaid", "src": "x"]])
+        XCTAssertTrue(chu(v).contains("chưa render ra tệp"), chu(v))
+    }
+}

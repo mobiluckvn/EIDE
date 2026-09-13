@@ -32,6 +32,7 @@ public final class EidePanel: NSView {
     // là lúc ấy, vì đó là lúc tác tử vẫn đang chạy sau lưng.
     private let hoChieu = PassportView()
     private let hoiDap = RagAskView()
+    private let banDo = KgMapView()
     private let taiLieu = DocView()
     private let tongQuan = ProjectStatusView()
     private let nhapTaiLieu = IngestView()
@@ -82,6 +83,19 @@ public final class EidePanel: NSView {
         ("Models", moHinh),
         ("Env", moiTruong),
         ("FlowMap", hanhTrinh),
+    ]
+
+    /// Màn 7 có HAI khung nhìn, và năng lực người gõ quyết định mở cái nào.
+    ///
+    /// Tên màn có hai vế trả lời hai câu hỏi khác nhau: *"cho tôi biết điều này"* (`RagAskView`)
+    /// và *"cho tôi thấy tri thức đang có hình gì"* (`KgMapView`). Bảng `bangMan` map một tiền
+    /// tố về một khung nhìn, nên nó không đủ — trước khi có ngoại lệ này, gõ
+    /// `/view.coverage_map` cho ra màn hỏi đáp, và màn ấy kết luận "Không tìm thấy gì trong
+    /// tri thức của dự án" sau khi vừa nhận cả bản đồ độ phủ.
+    private static let nangLucBanDo: Set<String> = [
+        "view.kg_map", "view.kg_focus", "view.conflict_board", "view.coverage_map",
+        "view.impact_map", "view.timeline", "view.rag_index", "view.rag_compare",
+        "view.doc_side_by_side", "view.rag_trace",
     ]
 
     /// Tiền tố tên của mọi màn panel dựng được, phơi ra để test đối chiếu thẳng với
@@ -191,6 +205,20 @@ public final class EidePanel: NSView {
                                             + (duong.isEmpty ? "" : "; đường đi trong đồ thị: \(duong)"))
             }
         }
+        banDo.onMoNut = { [weak self] nut in
+            // VIEW-02: bản đồ lân cận từ một nút, KÈM đường đi tới nguồn — đó là câu trả lời
+            // cho "vì sao tin fact này".
+            self?.chay("view.kg_focus", ["node": nut],
+                       khiLoi: { [weak self] in self?.banDo.chuaNap($0) }) { r in
+                self?.banDo.capNhat(ketQua: r)
+            }
+        }
+        banDo.onMoXungDot = { [weak self] cid in
+            self?.hoiThoai.themLuot(
+                by: .heThong,
+                text: "Mâu thuẫn \(cid) — duyệt ở hàng đợi, hoặc `/kg.resolve_conflict`.")
+        }
+
         taiLieu.onMoMuc = { [weak self] noi in
             self?.hoiThoai.themLuot(by: .heThong, text: "Mục \(noi) — mở tệp trong GEditor.")
         }
@@ -401,8 +429,9 @@ public final class EidePanel: NSView {
         return ma.isEmpty ? tin : "\(ma): \(tin)"
     }
 
-    private func khungCua(_ man: String) -> KhungNhinEide? {
-        bangMan.first { man.hasPrefix($0.tien) }?.v
+    private func khungCua(_ man: String, id: String = "") -> KhungNhinEide? {
+        if Self.nangLucBanDo.contains(id) { return banDo }
+        return bangMan.first { man.hasPrefix($0.tien) }?.v
     }
 
     /// Mở một màn chuyên đề: nó chiếm chỗ hội thoại, thanh tự chủ và hàng đợi ở nguyên.
@@ -413,6 +442,7 @@ public final class EidePanel: NSView {
     /// nhìn chưa hỏi hệ thống câu nào.
     private func hienKhung(_ v: KhungNhinEide, ten: String, id: String, thamSo: String) {
         for k in bangMan { k.v.isHidden = (k.v !== v) }
+        banDo.isHidden = (banDo !== v)
         hoiThoai.isHidden = true
         thanhMan.isHidden = false
         tenMan.stringValue = ten
@@ -645,6 +675,7 @@ public final class EidePanel: NSView {
 
     @objc private func dongMan() {
         for k in bangMan { k.v.isHidden = true }
+        banDo.isHidden = true
         thanhMan.isHidden = true
         hoiThoai.isHidden = false
     }
@@ -679,8 +710,10 @@ public final class EidePanel: NSView {
         thanhMan.addArrangedSubview(tenMan)
         thanhMan.isHidden = true
         for k in bangMan { k.v.isHidden = true }
+        banDo.isHidden = true
 
-        for v in [thanhTuChu, hoiThoai, hangDoi, thanhMan] as [NSView] + bangMan.map(\.v) {
+        for v in [thanhTuChu, hoiThoai, hangDoi, thanhMan] as [NSView]
+                 + bangMan.map(\.v) + [banDo] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -707,7 +740,7 @@ public final class EidePanel: NSView {
 
         // Mọi màn chuyên đề dùng ĐÚNG khung của hội thoại, chỉ lùi xuống dưới thanh tiêu đề
         // màn. Cùng khung thì không màn nào âm thầm rộng hơn màn khác rồi che mất hàng đợi.
-        for k in bangMan.map(\.v) {
+        for k in bangMan.map(\.v) + [banDo] {
             NSLayoutConstraint.activate([
                 k.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: g),
                 k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
@@ -795,7 +828,7 @@ public final class EidePanel: NSView {
                               text: "Không có năng lực `\(id)` có màn hình. Gõ \"/\" để xem danh sách.")
             return
         }
-        guard let v = khungCua(man) else {
+        guard let v = khungCua(man, id: id) else {
             hoiThoai.themLuot(by: .heThong,
                               text: "Màn \"\(man)\" chưa dựng — `\(id)` thuộc màn ấy. "
                                   + "Ba màn đã có: Passport, Graph → RagAsk, Doc.")
