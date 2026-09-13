@@ -61,7 +61,7 @@ public final class EidePanel: NSView {
     /// Một BẢNG chứ không phải một chuỗi `if`: với hai chục màn, mỗi chỗ cần duyệt qua tất cả
     /// (ẩn hết, tìm một cái, mở một cái) sẽ là một danh sách chép tay, và danh sách chép tay
     /// thứ tư là chỗ có người quên thêm màn mới.
-    private lazy var bangMan: [(tien: String, v: NSView)] = [
+    private lazy var bangMan: [(tien: String, v: KhungNhinEide)] = [
         ("Passport", hoChieu),
         ("Graph", hoiDap),
         ("Doc", taiLieu),
@@ -372,12 +372,17 @@ public final class EidePanel: NSView {
         }
     }
 
-    private func khungCua(_ man: String) -> NSView? {
+    private func khungCua(_ man: String) -> KhungNhinEide? {
         bangMan.first { man.hasPrefix($0.tien) }?.v
     }
 
     /// Mở một màn chuyên đề: nó chiếm chỗ hội thoại, thanh tự chủ và hàng đợi ở nguyên.
-    private func hienKhung(_ v: NSView, ten: String, thamSo: String) {
+    ///
+    /// **Màn mở ra phải nói đúng thứ nó biết.** Trước khi có `_napLanDau`, gõ `/project.status`
+    /// cho ra màn Tổng quan hiện *"Chưa mở dự án nào — gõ tạo dự án…"* trong khi dự án đang mở.
+    /// Câu ấy không thiếu, nó SAI: một khẳng định về trạng thái hệ thống, phát ra từ một khung
+    /// nhìn chưa hỏi hệ thống câu nào.
+    private func hienKhung(_ v: KhungNhinEide, ten: String, id: String, thamSo: String) {
         for k in bangMan { k.v.isHidden = (k.v !== v) }
         hoiThoai.isHidden = true
         thanhMan.isHidden = false
@@ -388,6 +393,66 @@ public final class EidePanel: NSView {
             // người dùng không kiểm soát được.
             (v as? PassportView)?.dienSan(thamSo)
             (v as? RagAskView)?.dienSan(thamSo)
+        }
+        v.chuaNap("Đang hỏi `\(id)`…")
+        _napLanDau(v, id: id, thamSo: thamSo)
+    }
+
+    /// Hỏi hợp đồng TRƯỚC khi quyết định có tự chạy hay không.
+    ///
+    /// Ba điều kiện, và cả ba đều đọc từ `caps.describe` chứ không từ một danh sách tôi tự gõ:
+    ///
+    /// - **`risk == "R0"`** — lớp rủi ro của POL-17. R1 trở lên là có tác động ra ngoài.
+    /// - **`undo == "none"`** — không có gì để hoàn tác nghĩa là không có gì bị thay đổi. Đây
+    ///   là điều kiện bắt được `req.trace_matrix`: nó là R0, không tham số bắt buộc, nhưng
+    ///   `undo: delete_created_files` — tức nó GHI TỆP. Một màn vừa mở ra mà đã ghi tệp vào dự
+    ///   án của người ta là thứ không ai lường trước.
+    /// - **`required` rỗng** — còn thiếu tham số thì đoán điền vào đâu là tự nghĩ ra hành vi.
+    ///
+    /// Không thỏa thì màn nói rõ nó đang chờ gì, thay vì khẳng định một điều chưa kiểm.
+    /// Mở màn thì chạy luôn, hay chờ người?
+    public enum NapLanDau: Equatable {
+        case chay
+        case cho(String)
+    }
+
+    /// Quyết định từ HỢP ĐỒNG, tách thuần để test được mà không cần daemon.
+    ///
+    /// Cùng lý do với `duongVao`: đây là chỗ một quyết định về hành vi sống, và một quyết định
+    /// chỉ tồn tại bên trong một `Task` bất đồng bộ là quyết định không ai kiểm được.
+    public static func tuChay(hopDong: [String: Any], id: String,
+                              coThamSo: Bool) -> NapLanDau {
+        let risk = (hopDong["risk"] as? String) ?? "?"
+        let undo = (hopDong["undo"] as? String) ?? "none"
+        let can = ((hopDong["input_schema"] as? [String: Any])?["required"] as? [String]) ?? []
+
+        if !can.isEmpty {
+            return .cho("`\(id)` cần \(can.map { "`\($0)`" }.joined(separator: ", "))"
+                        + (coThamSo ? " — điền rồi Enter." : " — chưa chạy."))
+        }
+        if undo != "none" {
+            return .cho("`\(id)` có thay đổi hoàn tác được (`\(undo)`) nên không tự chạy lúc "
+                      + "mở màn — gõ lệnh để chạy.")
+        }
+        if risk != "R0" {
+            return .cho("`\(id)` là \(risk), không tự chạy lúc mở màn — gõ lệnh để chạy.")
+        }
+        return .chay
+    }
+
+    private func _napLanDau(_ v: KhungNhinEide, id: String, thamSo: String) {
+        Task {
+            guard let hd = try? await client.goi(.capsDescribe, ["id": id]) else {
+                return await MainActor.run {
+                    v.chuaNap("Không đọc được hợp đồng của `\(id)`.")
+                }
+            }
+            let quyet = Self.tuChay(hopDong: hd, id: id, coThamSo: !thamSo.isEmpty)
+            guard case .chay = quyet else {
+                if case .cho(let vi) = quyet { return await MainActor.run { v.chuaNap(vi) } }
+                return
+            }
+            self.chay(id, [:]) { r in v.capNhat(ketQua: r) }
         }
     }
 
@@ -546,7 +611,7 @@ public final class EidePanel: NSView {
                                   + "Ba màn đã có: Passport, Graph → RagAsk, Doc.")
             return
         }
-        hienKhung(v, ten: man, thamSo: thamSo)
+        hienKhung(v, ten: man, id: id, thamSo: thamSo)
     }
 
     /// U6: dừng khẩn ở mọi nơi, hạ A0 dưới 1 giây. Không hỏi lại — một nút dừng có hộp thoại

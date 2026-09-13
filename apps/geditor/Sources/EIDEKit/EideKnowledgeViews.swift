@@ -24,7 +24,7 @@ import AppKit
 // MARK: - Màn 5: Hộ chiếu chip
 
 /// Bảng fact của một hộ chiếu, kèm tầng tin cậy và nguồn.
-public final class PassportView: NSView {
+public final class PassportView: NSView, KhungNhinEide {
 
     public override func accessibilityRole() -> NSAccessibility.Role? { .group }
     public override func accessibilityLabel() -> String? { "Hộ chiếu chip" }
@@ -174,7 +174,7 @@ public final class PassportView: NSView {
 // MARK: - Màn 7: Hỏi đáp có trích dẫn
 
 /// Ô hỏi RAG. **Câu trả lời KHÔNG có trích dẫn thì không hiện.**
-public final class RagAskView: NSView {
+public final class RagAskView: NSView, KhungNhinEide {
 
     public override func accessibilityRole() -> NSAccessibility.Role? { .group }
     public override func accessibilityLabel() -> String? { "Hỏi đáp có trích dẫn" }
@@ -328,7 +328,7 @@ public final class RagAskView: NSView {
 /// `uncited` được tô đậm hơn các `kind` khác. Nó là "câu có số liệu kỹ thuật không có [cite]"
 /// (DOC-08 bước 1) — tức đúng thứ bất biến của cả ba màn này cấm, chỉ khác là lần này con số
 /// không nguồn nằm trong một tệp sắp gửi cho người khác đọc.
-public final class DocView: NSView {
+public final class DocView: NSView, KhungNhinEide {
 
     public override func accessibilityRole() -> NSAccessibility.Role? { .group }
     public override func accessibilityLabel() -> String? { "Tài liệu dự án" }
@@ -560,4 +560,27 @@ public enum EideKnowledgeFormat {
         }
         return tier == "gold" ? EideToken.Mau.ok : EideToken.Mau.muted
     }
+}
+
+
+// MARK: - Trạng thái "chưa nạp" của ba màn tri thức
+
+/// Ba lớp trên viết trước `ManHinhCoSo` nên không thừa kế `chuaNap`, nhưng chúng KHÔNG có vấn
+/// đề mà `chuaNap` sinh ra để chữa: cả ba có ô nhập của riêng mình, nên câu lúc rỗng vốn đã là
+/// một lời mời ("Gõ mã linh kiện rồi Enter", "Gõ câu hỏi rồi Enter") chứ không phải một khẳng
+/// định về trạng thái hệ thống. `ProjectStatusView` thì khác: nó mở ra và nói *"Chưa mở dự án
+/// nào"* — một câu về hệ thống, phát ra từ một màn chưa hỏi hệ thống câu nào.
+///
+/// Ba hàm dưới chuyển tiếp thẳng, và chúng tồn tại để panel gọi được `chuaNap` trên mọi khung
+/// nhìn mà không phải nhớ cái nào là ngoại lệ.
+extension PassportView {
+    public func chuaNap(_ viSao: String) { capNhat(ketQua: [:]) }
+}
+
+extension RagAskView {
+    public func chuaNap(_ viSao: String) { capNhat(ketQua: [:]) }
+}
+
+extension DocView {
+    public func chuaNap(_ viSao: String) { capNhat(ketQua: [:]) }
 }

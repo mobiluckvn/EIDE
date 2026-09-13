@@ -15,7 +15,18 @@ import AppKit
 ///
 /// Lớp này cố ý KHÔNG biết gì về daemon. Nó nhận một `[String: Any]` — đúng thứ `caps.invoke`
 /// trả về — và biến thành các dòng. Panel giữ phần nối dây; màn giữ phần *hiện cái gì*.
-open class ManHinhCoSo: NSView {
+/// Thứ panel cần biết về một khung nhìn: nó nhận được kết quả `caps.invoke`.
+///
+/// Ba màn tri thức (`PassportView`, `RagAskView`, `DocView`) viết trước `ManHinhCoSo` nên
+/// không kế thừa nó. Một giao thức chung cho phép panel đối xử với cả 20 màn như nhau mà không
+/// phải ép kiểu từng cái — và ép kiểu từng cái là chỗ, hôm thêm màn thứ 21, có người quên.
+public protocol KhungNhinEide: NSView {
+    func capNhat(ketQua: [String: Any])
+    /// Chưa hỏi daemon lần nào — khác hẳn "đã hỏi và không có gì".
+    func chuaNap(_ viSao: String)
+}
+
+open class ManHinhCoSo: NSView, KhungNhinEide {
 
     /// Tên màn, hiện ở đầu. Lớp con đặt trong `init`.
     public let tieuDe = NSTextField(labelWithString: "")
@@ -139,6 +150,18 @@ open class ManHinhCoSo: NSView {
     open func capNhat(ketQua: [String: Any]) {
         xoaThan()
         noiRong("Màn này chưa nối năng lực nào.")
+    }
+
+    /// Trạng thái thứ BA: chưa hỏi, khác hẳn "đã hỏi và không có gì".
+    ///
+    /// U9 kể ba trạng thái rỗng/lỗi/chờ, nhưng một màn vừa mở ra không thuộc cái nào trong ba:
+    /// nó chưa hỏi daemon lần nào. Trước khi có hàm này, `ProjectStatusView` mở ra là hiện
+    /// *"Chưa mở dự án nào"* — một câu KHẲNG ĐỊNH về trạng thái hệ thống, phát ra từ một màn
+    /// chưa từng hỏi hệ thống câu nào. Sai, không phải thiếu.
+    public func chuaNap(_ viSao: String) {
+        xoaThan()
+        tomTat.stringValue = ""
+        noiRong(viSao)
     }
 }
 

@@ -105,3 +105,58 @@ final class EideClientTests: XCTestCase {
         await c.dong()
     }
 }
+
+/// Premise của quy tắc `EidePanel.tuChay` — kiểm với daemon THẬT, không giả lập.
+///
+/// `EideNapLanDauTests` kiểm bản thân quy tắc bằng hợp đồng dựng tay. Bài này kiểm điều kiện
+/// làm quy tắc ấy có ích: những năng lực nào thật sự thỏa ba điều kiện, và những năng lực nào
+/// thì không. Một giả lập viết theo hiểu biết của tôi sẽ đồng ý với tôi, kể cả khi cả hai cùng
+/// sai — đó là lý do `EideClientTests` gọi tiến trình Python thật, và bài này đi cùng nó.
+final class EideNapLanDauPremiseTests: XCTestCase {
+
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    private func moClient() throws -> EideClient {
+        let fm = FileManager.default
+        for v in [".venv-arm", ".venv-x86"] {
+            let p = Self.gocKho.appendingPathComponent("\(v)/bin/python")
+            if fm.isExecutableFile(atPath: p.path) {
+                fm.changeCurrentDirectoryPath(Self.gocKho.path)
+                return EideClient(transport:
+                    try EideStdioTransport(eide: [p.path, "-m", "eide.cli"]))
+            }
+        }
+        throw XCTSkip("chưa có .venv-arm/.venv-x86 — chạy `make setup` ở gốc kho")
+    }
+
+    func testNANGLUCchiDOCthatSuTUchayDUOC() async throws {
+        // Nếu một ngày `project.status` thôi là R0, hoặc mọc thêm tham số bắt buộc, thì màn
+        // Tổng quan lặng lẽ quay về trạng thái "mở ra là rỗng" — đúng lỗi quy tắc này chữa.
+        let c = try moClient()
+        for id in ["project.status", "passport.query", "env.detect"] {
+            let hd = try await c.goi(.capsDescribe, ["id": id])
+            XCTAssertEqual(EidePanel.tuChay(hopDong: hd, id: id, coThamSo: false), .chay,
+                           "\(id) thôi tự chạy được: risk=\(hd["risk"] ?? "?") "
+                         + "undo=\(hd["undo"] ?? "?")")
+        }
+    }
+
+    func testNANGLUCcoTACdongKHONGtuChay() async throws {
+        // Ba hình dạng "không được tự chạy", mỗi cái vướng một điều kiện khác nhau:
+        //   `req.trace_matrix` — R0 và không tham số, nhưng GHI TỆP (undo != none);
+        //   `board.check_pins` — R0 và không ghi gì, nhưng thiếu tham số bắt buộc;
+        //   `target.flash`     — R3, và vướng cả ba.
+        let c = try moClient()
+        for id in ["req.trace_matrix", "board.check_pins", "target.flash"] {
+            let hd = try await c.goi(.capsDescribe, ["id": id])
+            guard case .cho = EidePanel.tuChay(hopDong: hd, id: id, coThamSo: false) else {
+                return XCTFail("\(id) KHÔNG được tự chạy lúc mở màn nhưng quy tắc cho phép")
+            }
+        }
+    }
+}
