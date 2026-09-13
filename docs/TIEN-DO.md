@@ -13,12 +13,12 @@
 ## 1. Một dòng
 
 **209/238 năng lực (88%). M0 22/22; M1 74/75; M2 83/99; M3 21/29; M4 8/9. 1512 test Python +
-2714 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 6/23 màn hình.**
+2785 test Swift xanh. Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình.**
 
-**Từ 13/09, mọi thứ còn thiếu quy về hai thứ: chưa có bo mạch, và 17 màn hình chuyên đề chưa
-dựng.** Không còn mục nào chờ thời gian, chờ một thư viện, hay chờ một quyết định — mười bảy
-màn kia là một lựa chọn phạm vi của chủ sản phẩm (13/09: dựng ba màn đắt giá nhất trước), và
-phần lớn chúng dù dựng xong cũng chưa có gì để hiện cho tới khi có board. Đo trên mười trục của
+**Từ 13/09, MỌI thứ còn thiếu quy về một nguyên nhân: chưa có bo mạch.** Giao diện đã đủ 23
+màn — số ấy đo lại mỗi lần chạy test (`EideManDayDuTests` đọc thẳng `docs/spec/ui/screens.json`),
+không phải một dòng gõ tay. Không còn mục nào chờ thời gian, chờ một thư viện, hay chờ một
+quyết định. Đo trên mười trục của
 [`DOI-CHIEU-THIET-KE.md`](DOI-CHIEU-THIET-KE.md):
 
 | Còn thiếu | Chặn bởi |
@@ -28,7 +28,7 @@ phần lớn chúng dù dựng xong cũng chưa có gì để hiện cho tới k
 | 1 kiểu sự kiện sổ cái (`discover.result`) | board |
 | 2 trong 3 mã lỗi chưa ném (`E4003` cần board; `E1003` cần một bề mặt REST chưa có) | board |
 | phần lớn 27 mã TC còn lại | board / máy đo |
-| 17 màn hình UXD-13 (Board, Sim, Bench, Discovery, ToolForge…) | phạm vi (13/09) + board |
+| 4 màn hình chỉ hiện được trạng thái rỗng (Discovery, Debug probe, Bench, phần `target.*` của LogAssist) | board — khung nhìn đã dựng đủ theo hợp đồng |
 
 **21 trong 27 nhóm năng lực đã đủ.** Sáu nhóm chưa đủ: `passport` 7/8, `sim` 6/7, và bốn nhóm
 phần cứng chưa bắt đầu.
@@ -248,7 +248,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Mười lăm lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Mười sáu lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -344,6 +344,21 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     "Tôi hiểu là: …", và một giao diện hiểu mọi thứ mà không làm gì trông giống hệt một giao
     diện đang làm việc. Bốn màn có từ trước không phát hiện ra vì cả bốn chỉ ĐỌC trạng thái;
     lỗi chỉ lộ khi có một màn phải GỌI một năng lực.
+16. **`as? Int` trả `nil` trong im lặng** (13/09, phía Swift). `debug.log_stats` trả
+    `gaps: [{after_line: 128004, before_line: 128005, gap_s: 47.2}]`. Swift thấy một `Double`
+    trong cùng object nên suy cả dictionary thành `[String: Double]`, và `as? Int` trên
+    `after_line` trả `nil` — không lỗi, không cảnh báo, chỉ một số 0.
+
+    Triệu chứng là thứ đáng sợ hơn một lần crash: màn hình hiện "khoảng lặng 47,2 giây giữa
+    dòng 0 và dòng 0", và người dùng mở log ở dòng 0 — một chỗ không phải chỗ hệ thống treo.
+    Con số 47,2 thì đúng, nên cả dòng đọc lên hoàn toàn đáng tin.
+
+    Nguyên nhân gốc không phải Swift mà là **JSON không phân biệt số nguyên với số thực, còn
+    các cầu nối thì có**: `JSONSerialization` trả `NSNumber`, một `47.2` đứng cạnh một
+    `128004` đủ để kiểu của cả hai đổi. Sửa bằng `EideSo.nguyen`/`thuc` chịu được cả Int,
+    Double, NSNumber lẫn String, và thay mọi chỗ đọc số từ kết quả `caps.invoke` trong cả sáu
+    tệp khung nhìn. Bắt được vì một bài test dựng dữ liệu đúng hình dạng dữ liệu thật — chứ
+    không phải hình dạng thuận tay người viết test.
 
 ---
 

@@ -201,3 +201,47 @@ final class EideSystemViewsTests: XCTestCase {
         }
     }
 }
+
+/// Đối chiếu số màn đã dựng với bảng nguồn `docs/spec/ui/screens.json`.
+///
+/// Con số "23/23 màn" chỉ có nghĩa nếu nó được ĐO lại mỗi lần chạy test. Một dòng trong tài
+/// liệu tiến độ đúng được đúng một ngày — đã xảy ra thật ngày 08/09 (cộng dồn thay vì đo lại,
+/// lệch 2) và ngày 12/09 (đếm bằng grep, báo 1/23 trong khi thật là 3/23). Bài test này đọc
+/// thẳng bảng nguồn, nên nó đỏ ngay hôm UXD-13 thêm màn thứ 24.
+final class EideManDayDuTests: XCTestCase {
+
+    /// Tests/EIDEKitTests → Tests → apps/geditor → apps → EIDE
+    private static var gocKho: URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+    }
+
+    private func tenMan() throws -> [String] {
+        let f = Self.gocKho.appendingPathComponent("docs/spec/ui/screens.json")
+        let d = try Data(contentsOf: f)
+        let ds = try JSONSerialization.jsonObject(with: d) as? [[String: Any]] ?? []
+        return ds.compactMap { $0["man_hinh"] as? String }
+    }
+
+    func testMOImanTRONGscreensJsonDEUcoKhungNhin() throws {
+        let man = try tenMan()
+        XCTAssertEqual(man.count, 23, "bảng UXD-13 §2 đổi số màn")
+
+        let thieu = man.filter { ten in
+            !EidePanel.tienManDaDung.contains { ten.hasPrefix($0) }
+        }
+        XCTAssertTrue(thieu.isEmpty, "chưa dựng khung nhìn cho: \(thieu)")
+    }
+
+    func testKHONGcoTIENtoTHUAtrongBANGman() throws {
+        // Chiều ngược lại: một tiền tố không khớp màn nào nghĩa là panel giữ một khung nhìn
+        // không ai mở tới được — mã chết trông y như mã đang chạy.
+        let man = try tenMan()
+        let thua = EidePanel.tienManDaDung.filter { tien in
+            !man.contains { $0.hasPrefix(tien) }
+        }
+        XCTAssertTrue(thua.isEmpty, "tiền tố không khớp màn nào trong screens.json: \(thua)")
+    }
+}

@@ -84,6 +84,22 @@ public final class EidePanel: NSView {
         ("FlowMap", hanhTrinh),
     ]
 
+    /// Tiền tố tên của mọi màn panel dựng được, phơi ra để test đối chiếu thẳng với
+    /// `docs/spec/ui/screens.json`.
+    ///
+    /// Rộng hơn `bangMan` đúng ba mục: `Chat`, `ReviewQueue` và `Trạng thái/khung` là ba màn
+    /// LUÔN HIỆN (U2), không mở bằng "/" nên không nằm trong bảng màn chuyên đề. Hai mươi cái
+    /// còn lại thì có.
+    ///
+    /// Con số "23/23 màn" chỉ có nghĩa nếu nó được ĐO lại mỗi lần chạy test. Một dòng trong tài
+    /// liệu tiến độ thì đúng đúng một ngày; một bài test đối chiếu với bảng nguồn thì đỏ ngay
+    /// hôm UXD-13 thêm màn thứ 24.
+    public static let tienManDaDung: [String] = [
+        "Chat", "Main", "ReviewQueue", "Ingest", "Passport", "Board", "Graph", "ReqArch",
+        "DiagramView", "Doc", "PlanDiff", "Code", "Sim", "Discovery", "LogAssist", "Debug",
+        "ToolForge", "Bench", "Registry", "Models", "Env", "FlowMap", "Trạng thái/khung",
+    ]
+
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
     private var manHinhCua: [String: String] = [:]
 
