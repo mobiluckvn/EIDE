@@ -259,15 +259,23 @@ nhìn: bảng UXD-13 §2 không gán màn nào cho chúng, nên không có chỗ
 của tài liệu, nằm trong [DEV-094](DEVIATIONS.md), và nội dung của `kg.conflicts` thì `KgMapView`
 hiện được rồi.
 
-**(b) Phím tắt: 2/10.** UXD-13 §6 khai mười tổ hợp; `EIDEKit` hiện thực `⌘⇧.` (dừng khẩn) và
-`1–9` (chọn phương án thẻ câu hỏi). Tám cái còn thiếu: `⌘L` (vào ô lệnh), `⌘K` (bảng lệnh),
-`⌘1…⌘9` (chuyển màn), `⌘⇧Q` (hàng đợi), `⌘Z` trong hàng đợi, `Esc` (đóng panel trượt),
-`⌘⏎` trong DiagramView, `F` trong bản đồ. *(`⌘L`/`⌘K`/`⌘Z` có trong GEditor nhưng là phím của
-trình soạn thảo, việc khác.)*
+**(b) Phím tắt: 10/10** — nhưng với một điều kiện, và điều kiện ấy là phần đáng đọc.
+UXD-13 §6 viết cho một EIDE chiếm cả cửa sổ; thực tế nó là panel trong GEditor, nơi `⌘L` đã là
+"Đi tới dòng…" và `⌘Z` đã là "Hoàn tác" của trình soạn thảo. Panel chỉ nhận phím khi first
+responder nằm trong cây của nó — ngoài panel, GEditor giữ nguyên mọi phím. Cướp `⌘Z` ở mức cửa
+sổ nghĩa là người đang sửa mã bấm nó và thấy một mục hàng đợi bị hoàn tác thay vì dòng vừa gõ.
+Xem [DEV-096](DEVIATIONS.md).
 
-**(c) Sự kiện: 11/16 có chỗ hiện.** Năm cái còn lại — `chat.restated` (thẻ ý hiểu chưa dựng),
-`run.progress` và `job.progress` (chưa có chỗ hiện tiến độ), `discover.changed` và `serial.line`
-(cần board). Bốn cái đầu không cần phần cứng.
+**(c) Sự kiện: 14/16 có chỗ hiện.** Hai cái còn lại — `discover.changed` và `serial.line` —
+cần board. Hai thẻ cuối của UXD-13 §4 nay đã có: **thẻ ý hiểu** (`event.chat.restated`, kèm
+nút "Sửa ý hiểu" điền văn bản vào ô lệnh) và **thẻ tiến độ chuỗi** (`event.run.progress` +
+`event.job.progress`, chip theo năm trạng thái, gộp theo `run_id`, kèm nút Huỷ gọi
+`job.cancel`).
+
+Hai thẻ này là hai chỗ duy nhất trong cả giao diện trả lời câu hỏi *"máy đang làm gì lúc này"*
+— mọi khung nhìn khác hiện **kết quả**, tức thứ đã xong. Giữa lúc một chuỗi 17 bước đang chạy,
+panel từng đứng yên; U2 nói "làm rồi báo cáo, NHÌN THẤY ĐƯỢC", và phần "nhìn thấy được" không
+chỉ nói về lúc xong.
 
 **Một lỗi thật lộ ra trong lúc rà soát ([số 21](TIEN-DO.md)):** màn Hộ chiếu tự nạp
 `passport.list`, năng lực ấy trả `{passports}`, còn `PassportView` đọc `{facts}` — nên mở màn

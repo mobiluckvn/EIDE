@@ -236,6 +236,24 @@ public final class ReviewQueueView: NSView {
     /// Số nút hành động đang hiện — cho test đếm mà không phải dựng cả cửa sổ.
     public private(set) var soNut = 0
 
+    /// Mục "đã làm" gần nhất còn hoàn tác được — cho ⌘Z của UXD-13 §6.
+    ///
+    /// Trả `false` khi không có gì để hoàn tác, và panel chuyển phím lại cho GEditor (nơi ⌘Z
+    /// là "Hoàn tác" của trình soạn thảo). Nuốt phím rồi không làm gì là cách tệ nhất: người
+    /// dùng bấm hai lần, rồi ba lần, rồi tưởng ứng dụng treo.
+    ///
+    /// **Hoàn tác cái GẦN NHẤT, không phải cái đang chọn.** UXD-13 §6 ghi "hoàn tác mục đã
+    /// chọn", nhưng danh sách này chưa có khái niệm chọn — và cái gần nhất là thứ người vừa
+    /// thấy máy làm, tức thứ họ định rút lại khi bấm ⌘Z. Xem DEV-096.
+    @discardableResult
+    public func hoanTacMucDau() -> Bool {
+        guard let uref = _urefGanNhat else { return false }
+        onHoanTac?(uref)
+        return true
+    }
+
+    private var _urefGanNhat: String?
+
     /// Kết quả `kg.review_facts` — duyệt hàng loạt fact ở cổng G-FACT.
     ///
     /// **`rejected` không được gộp vào `asked`.** KG-06 tách riêng ba con số: đã duyệt, còn
@@ -253,6 +271,9 @@ public final class ReviewQueueView: NSView {
     }
 
     public func capNhat(cho: [[String: Any]], hoanTac: [[String: Any]]) {
+        _urefGanNhat = hoanTac.first.flatMap {
+            ($0["undo_ref"] as? String) ?? ($0["id"] as? String)
+        }
         choNhan.stringValue = "Chờ anh (\(cho.count))"
         hoanTacNhan.stringValue = "Đã làm — hoàn tác được (\(hoanTac.count))"
         for c in [choCot, hoanTacCot] {

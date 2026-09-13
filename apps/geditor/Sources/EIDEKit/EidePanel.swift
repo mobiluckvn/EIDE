@@ -117,6 +117,9 @@ public final class EidePanel: NSView {
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
     private var manHinhCua: [String: String] = [:]
 
+    /// `run_id`/`job_id` → thẻ tiến độ đang hiện. Xem `hienTienDo`.
+    private var theTienDo: [String: RunProgressCard] = [:]
+
     public init(client: EideClient) {
         self.client = client
         super.init(frame: .zero)
@@ -999,6 +1002,10 @@ public final class EidePanel: NSView {
         switch ten {
         case "event.chat.question":
             hienCauHoi(p)
+        case "event.chat.restated":
+            hienYHieu(p)
+        case "event.run.progress", "event.job.progress":
+            hienTienDo(p)
         case "event.notice":
             let muc = (p["level"] as? String) ?? "info"
             let tin = (p["message"] as? String) ?? (p["text"] as? String) ?? ""
@@ -1011,7 +1018,7 @@ public final class EidePanel: NSView {
         case "event.knowledge.changed", "event.doc.stale", "event.diagram.stale":
             _napLaiManDangMo()
         default:
-            break   // run.progress, job.progress, serial.line — chưa có chỗ hiện tử tế
+            break   // discover.changed, serial.line — cần board
         }
     }
 
@@ -1023,6 +1030,135 @@ public final class EidePanel: NSView {
         chay(md, [:], khiLoi: { [weak v] in v?.chuaNap($0) }) { [weak v] r in
             v?.capNhat(ketQua: r)
         }
+    }
+
+    // MARK: - Phím tắt (UXD-13 §6)
+
+    /// Mười tổ hợp phím của UXD-13 §6 — nhưng chỉ khi người đang làm việc TRONG panel.
+    ///
+    /// ## Vì sao có điều kiện ấy
+    ///
+    /// UXD-13 §6 viết cho một EIDE chiếm cả cửa sổ (mockup là 1440×900). Thực tế nó là một
+    /// panel trong GEditor, nơi hai phím đã có chủ: `⌘L` là "Đi tới dòng…" và `⌘Z` là "Hoàn
+    /// tác" của trình soạn thảo. Cướp chúng ở mức cửa sổ nghĩa là người đang sửa mã bấm `⌘Z` và
+    /// thấy một mục hàng đợi bị hoàn tác thay vì dòng vừa gõ — một trong những cách tệ nhất để
+    /// một tính năng mới làm hỏng một thói quen cũ.
+    ///
+    /// Nên: panel chỉ nhận phím khi first responder nằm trong cây của nó. Ngoài panel, GEditor
+    /// giữ nguyên mọi phím. Đây là một sai khác có chủ ý với §6 — xem DEV-096.
+    public override func performKeyEquivalent(with su: NSEvent) -> Bool {
+        guard _dangLamViecTrongPanel else { return false }
+        let cmd = su.modifierFlags.contains(.command)
+        let shift = su.modifierFlags.contains(.shift)
+        let phim = su.charactersIgnoringModifiers ?? ""
+
+        switch (cmd, shift, phim) {
+        case (true, false, "l"):
+            hoiThoai.oLenh.vaoO()
+            return true
+        case (true, false, "k"):
+            // "Bảng lệnh: tìm năng lực/màn hình" — chính là menu "/" của ô lệnh, nên ⌘K điền
+            // sẵn dấu gạch chéo thay vì dựng một bảng thứ hai làm cùng một việc.
+            hoiThoai.oLenh.dienSan("/")
+            return true
+        case (true, true, "q"), (true, true, "Q"):
+            dongMan()
+            hangDoi.window?.makeFirstResponder(hangDoi)
+            return true
+        case (true, false, "z"):
+            return hangDoi.hoanTacMucDau()
+        case (true, false, "\r"):
+            // ⌘⏎ trong DiagramView: render. Chỉ khi màn lược đồ đang mở — cùng phím ở màn khác
+            // không được làm một việc khác, vì người dùng học phím theo việc chứ không theo màn.
+            guard !luocDo.isHidden else { return false }
+            chay("diagram.render", [:], khiLoi: { [weak self] in self?.luocDo.chuaNap($0) }) {
+                [weak self] r in self?.luocDo.capNhat(ketQua: r)
+            }
+            return true
+        case (false, false, "f"), (false, false, "F"):
+            // "F trong bản đồ: tìm nút" — chỉ khi bản đồ đang mở VÀ con trỏ không ở ô nhập,
+            // nếu không thì gõ chữ "f" vào câu hỏi sẽ mở hộp tìm.
+            guard !banDo.isHidden, !_dangGoTrongONhap else { return false }
+            hoiThoai.oLenh.dienSan("/view.kg_focus ")
+            return true
+        default:
+            break
+        }
+
+        // ⌘1…⌘9 — chín màn đầu của bảng UXD-13 §2, đúng thứ tự bảng.
+        if cmd, !shift, let n = Int(phim), (1...9).contains(n) {
+            let ten = Self.tienManDaDung
+            guard n <= ten.count else { return false }
+            _ = _moTheoTenMan(ten[n - 1], thamSo: "")
+            return true
+        }
+        return false
+    }
+
+    public override func keyDown(with su: NSEvent) {
+        // Esc: đóng màn chuyên đề (UXD-13 §6). `performKeyEquivalent` không nhận Esc, nên nó
+        // đi đường `keyDown`.
+        if su.keyCode == 53 {
+            dongMan()
+            return
+        }
+        super.keyDown(with: su)
+    }
+
+    private var _dangLamViecTrongPanel: Bool {
+        guard let fr = window?.firstResponder as? NSView else { return false }
+        return fr === self || fr.isDescendant(of: self)
+    }
+
+    private var _dangGoTrongONhap: Bool {
+        (window?.firstResponder as? NSText) != nil
+            || (window?.firstResponder as? NSTextView) != nil
+    }
+
+    /// Thẻ ý hiểu — UXD-13 §4 RestateCard, từ `event.chat.restated` `{intent_id, text}`.
+    ///
+    /// Nút "Sửa ý hiểu" điền văn bản vào ô lệnh (UXD-13 §3), KHÔNG tự gửi lại: người sửa xong
+    /// mới là người quyết định gửi. Tự gửi một câu vừa được sửa dở là chạy một việc không ai
+    /// đặt hàng.
+    @MainActor
+    func hienYHieu(_ p: [String: Any]) {
+        let van = (p["text"] as? String) ?? ""
+        let buoc = ((p["steps"] as? [Any]) ?? []).map { EideKnowledgeFormat.giaTri($0) }
+        let the = RestateCard(text: van, buoc: buoc,
+                              intentId: (p["intent_id"] as? String) ?? "")
+        the.onSua = { [weak self] t in self?.hoiThoai.oLenh.dienSan(t) }
+        hoiThoai.themThe(the)
+    }
+
+    /// Thẻ tiến độ chuỗi — UXD-13 §4 RunProgress.
+    ///
+    /// **Một thẻ cho mỗi `run_id`, không phải một thẻ cho mỗi thông điệp.** Daemon phát một
+    /// `event.run.progress` khi mỗi nút bắt đầu và một khi mỗi nút xong; một chuỗi 17 bước sinh
+    /// 34 thông điệp, và 34 thẻ chồng nhau thì không ai đọc được cái nào.
+    @MainActor
+    func hienTienDo(_ p: [String: Any]) {
+        let id = (p["run_id"] as? String) ?? (p["job_id"] as? String) ?? ""
+        guard !id.isEmpty else { return }
+        if let the = theTienDo[id] { return the.capNhat(p) }
+
+        let the = RunProgressCard(runId: id)
+        the.onHuy = { [weak self] rid in
+            // `job.cancel` cho việc nặng; chuỗi thường thì dừng khẩn là đường duy nhất API-15
+            // có — nói thẳng điều đó thay vì im lặng không làm gì.
+            if p["job_id"] != nil {
+                self?.chay2(.jobCancel, ["job_id": rid])
+            } else {
+                self?.hoiThoai.themLuot(
+                    by: .heThong,
+                    text: "Chuỗi \(rid) chỉ dừng được bằng dừng khẩn (⌘⇧.) — API-15 chưa có "
+                        + "phương thức huỷ riêng cho một chuỗi.")
+            }
+        }
+        the.onXemNut = { [weak self] cap in
+            self?.chay2(.capsDescribe, ["id": cap])
+        }
+        theTienDo[id] = the
+        hoiThoai.themThe(the)
     }
 
     /// Hiện một thẻ câu hỏi gộp — UXD-13 U3, từ sự kiện `event.chat.question`.

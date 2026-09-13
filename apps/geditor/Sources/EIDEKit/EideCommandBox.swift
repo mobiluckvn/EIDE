@@ -90,6 +90,23 @@ public final class CommandBox: NSView, NSTextViewDelegate {
 
     /// Nạp danh sách từ `caps.list`. Lọc ở đây chứ không ở nơi gọi: quy tắc "có `ui` và đã hiện
     /// thực" là quy tắc của MENU, và để nó ở một chỗ thì không có bản sao nào trôi đi.
+    /// Điền sẵn ô lệnh và đưa con trỏ về cuối — KHÔNG gửi.
+    ///
+    /// Dùng cho "Sửa ý hiểu" (UXD-13 §3) và cho lệnh gợi ý ở trạng thái rỗng. Tự gửi một câu
+    /// vừa được điền là chạy một việc người dùng chưa đọc xong.
+    public func dienSan(_ t: String) {
+        van.string = t
+        van.setSelectedRange(NSRange(location: van.string.count, length: 0))
+        capNhatCao()
+        van.window?.makeFirstResponder(van)
+    }
+
+    /// Đưa con trỏ vào ô lệnh — ⌘L của UXD-13 §6.
+    @discardableResult
+    public func vaoO() -> Bool {
+        van.window?.makeFirstResponder(van) ?? false
+    }
+
     public func napNangLuc(_ ds: [NangLuc]) {
         tatCa = ds.filter { !$0.manHinh.isEmpty }.sorted { $0.id < $1.id }
     }
