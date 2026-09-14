@@ -1,0 +1,16 @@
+id: rv32imac
+family_patterns: ["^ESP32-?C[0-9]", "^ESP32-?H[0-9]", "^GD32V", "^CH32V", "^RV32", "^FE310"]
+abi: {endian: little, word: 32, fpu: none, align: 4}
+interrupts: {model: clint, vector_table: "0x80000000", priority_bits: 0}
+toolchain:
+  compiler: {name: riscv64-elf-gcc, min: "13.0", check: "riscv64-elf-gcc --version", package: {macos: riscv64-elf-gcc, linux: gcc-riscv64-unknown-elf}}
+  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: riscv64-elf-size, package: {macos: riscv64-elf-binutils, linux: binutils-riscv64-unknown-elf}}, {name: riscv64-elf-objcopy, package: {macos: riscv64-elf-binutils, linux: binutils-riscv64-unknown-elf}}]
+  install: {macos: ["brew tap riscv-software-src/riscv", "brew install riscv64-elf-gcc cmake ninja"], linux: ["apt install gcc-riscv64-unknown-elf cmake ninja-build"], windows: ["winget install Kitware.CMake"]}
+  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/riscv.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map", march: "rv32imac_zicsr", mabi: ilp32}
+  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}
+flash: {adapters: [esptool, openocd], default: esptool, verify: true, cmd: {esptool: "esptool.py --port {port} write_flash 0x0 {bin}"}}
+debug: {adapter: openocd, probes: [esp-usb-jtag, ftdi, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}
+id_read: {method: chip_id, cmd: "esptool.py --port {port} chip_id", regex: "Chip is ([A-Za-z0-9-]+)", table: id_tables/esp.yaml}
+serial: {default_baud: 115200, auto_baud_list: [9600, 115200, 230400, 460800, 921600]}
+sim: {engine: qemu, cmd: "qemu-system-riscv32 -M virt -nographic -bios none -kernel {artifact}", uart: "0x10000000", platform_template: qemu/riscv32-virt.j2}
+skills: [skills/rv32imac/interrupts.md, skills/rv32imac/uart.md]

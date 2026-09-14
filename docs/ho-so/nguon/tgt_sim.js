@@ -43,7 +43,7 @@ c.push(T([1300, 1700, 1500, 1500, 1500, 1800], ['ISA', 'Chip mẫu', 'Toolchain'
   ['armv7e-m (M0)', 'STM32F411, nRF52840, LPC55', 'arm-none-eabi-gcc 13.2, cmake/ninja', 'probe-rs / OpenOCD', 'ST-Link, J-Link, CMSIS-DAP / IDCODE + DBGMCU', 'Renode (.repl), fallback QEMU'],
   ['armv6-m', 'RP2040, STM32F0, SAMD21', 'như trên', 'probe-rs / picotool (RP2040 UF2)', 'CMSIS-DAP, picoprobe / IDCODE', 'Renode'],
   ['avr8 (M0)', 'ATmega328P, ATtiny1616', 'avr-gcc 12, avrdude 7', 'avrdude (arduino, usbasp, jtag2updi, pymcuprog UPDI)', 'AVRISP mkII, Arduino bootloader / signature bytes', 'simavr [52], fallback QEMU (qemu-system-avr)'],
-  ['rv32imac (M5)', 'GD32VF103, ESP32-C3 (rv32imc)', 'riscv-none-elf-gcc 13', 'OpenOCD / esptool (ESP)', 'FTDI JTAG, ESP USB-JTAG / DTM IDCODE, esptool chip_id', 'Renode, QEMU riscv32 [53]'],
+  ['rv32imac', 'GD32VF103, ESP32-C3 (rv32imc), CH32V', 'riscv64-elf-gcc 13+ (multilib) hoặc riscv-none-elf-gcc', 'OpenOCD / esptool (ESP)', 'FTDI JTAG, ESP USB-JTAG / DTM IDCODE, esptool chip_id', 'QEMU riscv32 (-M virt) [53]'],
   ['xtensa-esp32 (M5)', 'ESP32, ESP32-S3', 'ESP-IDF 5.x (idf.py)', 'esptool / idf.py flash', 'ESP USB-JTAG / esptool chip_id', 'QEMU xtensa (esp32)'],
   ['pic16/pic18 (M5)', 'PIC16F18855', 'XC8 (đóng, guide_install)', 'pymcuprog (UPDI không), MPLAB IPECMD', 'PICkit 4/5 / Device ID', 'MPLAB sim (không tự động hóa)'],
 ]));
@@ -233,6 +233,40 @@ vendors:
 fs.mkdirSync('isa', { recursive: true });
 fs.writeFileSync('isa/armv7e-m.yaml', `id: armv7e-m\nfamily_patterns: ["^STM32F[2-4]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]\nabi: {endian: little, word: 32, fpu: optional, align: 8}\ninterrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}\ntoolchain:\n  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version", package: {macos: arm-none-eabi-gcc, linux: gcc-arm-none-eabi}}\n  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}, {name: arm-none-eabi-objcopy, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}]\n  install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}\n  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}\n  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}\nflash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}\ndebug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}\nid_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}\nsim: {engine: renode, platform_template: renode/cortex-m.repl.j2, fallback: qemu}\nskills: [skills/armv7e-m/interrupts.md, skills/armv7e-m/clock.md, skills/armv7e-m/i2c.md]\n`);
 fs.writeFileSync('isa/avr8.yaml', `id: avr8\nfamily_patterns: ["^ATmega", "^ATtiny", "^AVR(64|128)"]\nabi: {endian: little, word: 8, fpu: none, align: 1}\ninterrupts: {model: vector_table, priority_bits: 0}\ntoolchain:\n  compiler: {name: avr-gcc, min: "12.0", check: "avr-gcc --version"}\n  tools: [{name: avrdude, min: "7.0"}, {name: avr-size, package: {macos: avr-gcc, linux: binutils-avr}}]\n  install: {macos: ["brew tap osx-cross/avr && brew install avr-gcc avrdude"], linux: ["apt install gcc-avr avr-libc avrdude"], windows: ["winget install AVRDudes.AVRDUDE"]}\n  build: {cmd: "make -C . MCU={mcu} F_CPU={f_cpu}", artifact: "build/*.elf"}\nflash: {adapters: [avrdude, pymcuprog], default: avrdude, cmd: {avrdude: "avrdude -c {programmer} -p {part} -P {port} -U flash:w:{hex}:i"}, verify: true}\ndebug: {adapter: none, probes: [avrisp2, arduino]}\nid_read: {method: signature, cmd: "avrdude -c {programmer} -p {part} -P {port} -v", regex: "signature = (0x[0-9a-f]+ 0x[0-9a-f]+ 0x[0-9a-f]+)", table: id_tables/avr.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200]}\nsim: {engine: simavr, fallback: qemu}\nskills: [skills/avr8/timers.md, skills/avr8/twi.md]\n`);
+
+// rv32imac — mốc M5 mở phần đầu (14/09/2026). Manifest này KHÁC hai cái trên ở một điểm đáng
+// nói ra: nó khai `riscv64-elf-gcc` (bản multilib của Homebrew) chứ không `riscv-none-elf-gcc`
+// mà bảng §2 nêu trước đây. Lý do là thứ đo được: bản multilib CÓ trên máy phát triển và dựng
+// được rv32imac bằng `-march=rv32imac_zicsr -mabi=ilp32`, còn `riscv-none-elf-gcc` thì không
+// có công thức brew nào. Cùng hình dạng với DEV-086 (avr8 phải khai `fallback: qemu` mới dùng
+// được engine duy nhất chạy được trên máy này).
+//
+// `build.cmd` dùng cmake cùng khuôn `armv7e-m`, KHÔNG phải một dòng `gcc` có placeholder:
+// `code.build` chạy lệnh trong manifest NGUYÊN VĂN (nó chỉ giải `argv[0]` thành đường tuyệt
+// đối), nên `{march}`/`{sources}` sẽ đi thẳng vào dòng lệnh dưới dạng chữ. `march`/`mabi` giữ
+// lại làm dữ liệu cho tệp toolchain cmake đọc.
+//
+// `sim.platform` là `-M virt` — máy ảo RISC-V chung của QEMU, KHÔNG phải esp32c3. QEMU của
+// Espressif có máy ảo ấy nhưng không nằm trong `qemu` của brew. Nên chuỗi dựng→mô phỏng chạy
+// thật với mã rv32 chung; firmware ESP32-C3 dùng ESP-IDF thì cần `xtensa-esp32`/ESP-IDF, vẫn
+// ở M5. Khai đúng thứ chạy được, không khai thứ mong muốn.
+fs.writeFileSync('isa/rv32imac.yaml', `id: rv32imac
+family_patterns: ["^ESP32-?C[0-9]", "^ESP32-?H[0-9]", "^GD32V", "^CH32V", "^RV32", "^FE310"]
+abi: {endian: little, word: 32, fpu: none, align: 4}
+interrupts: {model: clint, vector_table: "0x80000000", priority_bits: 0}
+toolchain:
+  compiler: {name: riscv64-elf-gcc, min: "13.0", check: "riscv64-elf-gcc --version", package: {macos: riscv64-elf-gcc, linux: gcc-riscv64-unknown-elf}}
+  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: riscv64-elf-size, package: {macos: riscv64-elf-binutils, linux: binutils-riscv64-unknown-elf}}, {name: riscv64-elf-objcopy, package: {macos: riscv64-elf-binutils, linux: binutils-riscv64-unknown-elf}}]
+  install: {macos: ["brew tap riscv-software-src/riscv", "brew install riscv64-elf-gcc cmake ninja"], linux: ["apt install gcc-riscv64-unknown-elf cmake ninja-build"], windows: ["winget install Kitware.CMake"]}
+  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/riscv.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map", march: "rv32imac_zicsr", mabi: ilp32}
+  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}
+flash: {adapters: [esptool, openocd], default: esptool, verify: true, cmd: {esptool: "esptool.py --port {port} write_flash 0x0 {bin}"}}
+debug: {adapter: openocd, probes: [esp-usb-jtag, ftdi, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}
+id_read: {method: chip_id, cmd: "esptool.py --port {port} chip_id", regex: "Chip is ([A-Za-z0-9-]+)", table: id_tables/esp.yaml}
+serial: {default_baud: 115200, auto_baud_list: [9600, 115200, 230400, 460800, 921600]}
+sim: {engine: qemu, cmd: "qemu-system-riscv32 -M virt -nographic -bios none -kernel {artifact}", uart: "0x10000000", platform_template: qemu/riscv32-virt.j2}
+skills: [skills/rv32imac/interrupts.md, skills/rv32imac/uart.md]
+`);
 }
 
 // ================= SIM-20 =================

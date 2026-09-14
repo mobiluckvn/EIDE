@@ -879,6 +879,24 @@ QEMU_MACHINE: dict[str, dict[str, str]] = {
     "^ATmega2560": {"machine": "arduino-mega-2560-v3", "nap": "-bios"},
     "^ATmega1280": {"machine": "arduino-mega", "nap": "-bios"},
     "^ATmega168": {"machine": "arduino-duemilanove", "nap": "-bios"},
+    # RISC-V: máy ảo `virt` — CHUNG cho mọi rv32, không phải mô hình của con chip nào.
+    #
+    # Khác hẳn bốn dòng trên: `arduino-uno` LÀ một ATmega328P có ngoại vi đúng như silicon, nên
+    # một `expect` về thanh ghi TWI chấm được. `virt` thì chỉ có CPU, bộ nhớ và một UART 16550
+    # ở 0x10000000 — nó không có I2C của ESP32-C3, không có ADC, không có Wi-Fi. Mọi `expect`
+    # chạm ngoại vi thật sẽ ra `unverified`, và đó là câu trả lời ĐÚNG chứ không phải thiếu sót
+    # của bảng này.
+    #
+    # Đường mô phỏng ESP32-C3 THẬT là bản QEMU riêng của Espressif (`qemu-system-riscv32` có
+    # máy `esp32c3`), không nằm trong gói `qemu` của Homebrew. Khai `virt` cho phép chạy chuỗi
+    # dựng→mô phỏng với mã rv32 chung; khai máy `esp32c3` khi chưa có bản QEMU ấy thì `sim.run`
+    # chết ở `-M esp32c3: unsupported machine type` sau khi đã dựng xong nền tảng.
+    "^ESP32-?C[0-9]": {"machine": "virt", "nap": "-kernel"},
+    "^ESP32-?H[0-9]": {"machine": "virt", "nap": "-kernel"},
+    "^GD32V": {"machine": "virt", "nap": "-kernel"},
+    "^CH32V": {"machine": "virt", "nap": "-kernel"},
+    "^RV32": {"machine": "virt", "nap": "-kernel"},
+    "^FE310": {"machine": "sifive_e", "nap": "-kernel"},
 }
 
 # Engine có tự dừng khi hết thời gian mô phỏng hay không.

@@ -308,7 +308,6 @@ def test_moi_bo_dung_dac_trung_deu_duoc_router_goi():
     hàm gốc, và một bài test mất dấu thì báo xanh cho đúng thứ nó sinh ra để bắt.
     """
     import re
-    from pathlib import Path
 
     from eide_core.paths import repo_root
 

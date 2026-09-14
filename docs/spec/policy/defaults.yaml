@@ -34,7 +34,7 @@ trusted_sources: [st.com, microchip.com, nordicsemi.com, espressif.com, bosch-se
 # MỘT DÒNG, không xuống dòng: bộ đọc YAML của GEditor chưa hiểu dãy flow trải nhiều dòng, và
 # `YAMLRealFilesTests` chạy trên chính tệp này. Bản nháp đầu viết ba dòng cho dễ đọc và làm bài
 # ấy đỏ ngay — đúng việc nó sinh ra để làm. Mọi danh sách khác trong tệp cũng một dòng.
-trusted_packages: [gcc-arm-none-eabi, arm-none-eabi-gcc, arm-none-eabi-binutils, avr-gcc, avrdude, riscv-none-elf-gcc, esp-idf, cmake, ninja, probe-rs, openocd, esptool, pymcuprog, picotool, renode, simavr, qemu, cppcheck, clang-tidy, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli, sigrok-cli, docling]
+trusted_packages: [gcc-arm-none-eabi, arm-none-eabi-gcc, arm-none-eabi-binutils, avr-gcc, avrdude, riscv-none-elf-gcc, riscv64-elf-gcc, riscv64-elf-binutils, esp-idf, cmake, ninja, probe-rs, openocd, esptool, pymcuprog, picotool, renode, simavr, qemu, cppcheck, clang-tidy, mermaid-cli, plantuml, graphviz, d2, wavedrom-cli, sigrok-cli, docling]
 allowed_licenses: [MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, CC-BY-4.0, vendor-doc]
 # Danh sách thứ tư mà POL-17 §3 gọi là `lab_boards` nhưng §4 đặt tên `boards` (DEV-030).
 # Để RỖNG có chủ ý: đánh dấu board lab đòi người xác nhận hai điều mà chỉ người cầm board mới

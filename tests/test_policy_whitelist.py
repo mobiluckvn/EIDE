@@ -192,7 +192,11 @@ def test_moi_cong_cu_ISA_khai_deu_trong_danh_sach_trang(cfg):
     import yaml as _yaml
 
     from eide_core.paths import spec_dir
-    tu_binutils = {"arm-none-eabi-size", "arm-none-eabi-objcopy", "avr-size"}
+    # Công cụ đến từ một gói binutils, không phải gói riêng: danh sách trắng liệt kê GÓI CÀI
+    # (`arm-none-eabi-binutils`), còn manifest liệt kê TỆP THI HÀNH. Bắt danh sách trắng kể tên
+    # từng tệp là bắt người ký duyệt lại mỗi lần một gói tách nhị phân.
+    tu_binutils = {"arm-none-eabi-size", "arm-none-eabi-objcopy", "avr-size",
+                   "riscv64-elf-size", "riscv64-elf-objcopy"}
     thieu = []
     for f in sorted((spec_dir() / "isa").glob("*.yaml")):
         man = _yaml.safe_load(f.read_text(encoding="utf-8"))

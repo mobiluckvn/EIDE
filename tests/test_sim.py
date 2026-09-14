@@ -960,3 +960,65 @@ def test_ca_sau_nang_luc_M3_da_gan_hien_thuc():
     assert xong == {"sim.build_platform", "sim.mock_peripheral", "sim.model_plant",
                     "sim.scenario", "sim.run", "sim.sweep"}
     assert reg.get("sim.compare_hil").spec.milestone == "M4"
+
+
+# ---------------------------------------------------------------- rv32imac (M5, 14/09/2026)
+
+
+def test_manifest_rv32imac_khop_ho_risc_v():
+    """TGT-19 §2 mở phần đầu của mốc M5: manifest `rv32imac`.
+
+    `family_patterns` phải bắt được ESP32-C3 ở CẢ HAI cách viết — Espressif dùng "ESP32-C3" trên
+    tài liệu thương mại và "esp32c3" trong tên tệp SVD, và một dự án gõ theo cách nào cũng phải
+    ghim được ISA. Đo 14/09: `project.set_target` với `chip: "esp32-c3"` cho `isa: rv32imac`.
+    """
+    import re
+
+    from eide_core.paths import spec_dir
+
+    d = yaml.safe_load((spec_dir() / "isa" / "rv32imac.yaml").read_text(encoding="utf-8"))
+    assert d["id"] == "rv32imac"
+    mau = d["family_patterns"]
+    for chip in ("ESP32-C3", "esp32c3", "ESP32-C6", "GD32VF103", "CH32V307"):
+        assert any(re.search(p, chip, re.I) for p in mau), f"{chip} không khớp manifest nào"
+    # KHÔNG được bắt nhầm họ Xtensa: ESP32 và ESP32-S3 là Xtensa, không phải RISC-V, và ghim
+    # nhầm ISA nghĩa là dựng firmware bằng trình dịch của kiến trúc khác.
+    for chip in ("ESP32", "ESP32-S3"):
+        assert not any(re.search(p, chip, re.I) for p in mau), f"{chip} là Xtensa, không rv32"
+
+
+def test_manifest_rv32imac_khai_dung_thu_chay_duoc():
+    """Manifest phải khai thứ CÓ THẬT trên máy, không khai thứ mong muốn.
+
+    Bảng §2 trước đây ghi `riscv-none-elf-gcc` — không có công thức brew nào. `riscv64-elf-gcc`
+    (multilib) thì có, và dựng được rv32imac bằng `-march=rv32imac_zicsr -mabi=ilp32`. Cùng hình
+    dạng với DEV-086: khai `fallback: qemu` cho avr8 mới dùng được engine duy nhất chạy được.
+    """
+    from eide_core.paths import spec_dir
+
+    d = yaml.safe_load((spec_dir() / "isa" / "rv32imac.yaml").read_text(encoding="utf-8"))
+    assert d["toolchain"]["compiler"]["name"] == "riscv64-elf-gcc"
+    b = d["toolchain"]["build"]
+    assert b["march"] == "rv32imac_zicsr" and b["mabi"] == "ilp32"
+    # `code.build` chạy lệnh NGUYÊN VĂN (chỉ giải argv[0] thành đường tuyệt đối), nên một
+    # placeholder `{march}` sẽ đi thẳng vào dòng lệnh dưới dạng chữ.
+    assert "{" not in b["cmd"], f"build.cmd còn placeholder chưa giải: {b['cmd']}"
+    assert d["sim"]["engine"] == "qemu"
+
+
+def test_qemu_co_may_ao_cho_risc_v_va_noi_ro_gioi_han():
+    """`QEMU_MACHINE` phải có mục RISC-V, và nó là `virt` — máy ảo CHUNG.
+
+    Khác `arduino-uno`: `virt` chỉ có CPU, bộ nhớ và một UART 16550, không có I2C của ESP32-C3.
+    Mọi `expect` chạm ngoại vi thật sẽ ra `unverified`, và đó là câu trả lời ĐÚNG. Bài test chốt
+    điều đó để không ai đổi `virt` thành `esp32c3` mà quên rằng bản QEMU của Homebrew không có
+    máy ấy — `sim.run` sẽ chết sau khi đã dựng xong nền tảng.
+    """
+    import re
+
+    from eide.caps.sim import QEMU_MACHINE, QEMU_THEO_ISA
+
+    assert QEMU_THEO_ISA["rv32imac"] == "qemu-system-riscv32"
+    khop = [v for k, v in QEMU_MACHINE.items() if re.search(k, "ESP32-C3", re.I)]
+    assert khop and khop[0]["machine"] == "virt"
+    assert khop[0]["nap"] == "-kernel", "virt nạp bằng -kernel, không phải -bios"
