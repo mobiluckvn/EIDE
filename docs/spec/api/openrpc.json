@@ -86,6 +86,26 @@
    }
   },
   {
+   "name": "session.state",
+   "summary": "Đọc M2 của phiên đang mở (MEM-11 §2). `permits`/`board` rỗng cho tới khi SessionMemory lưu chúng — DEV-110",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{session_id, opened_at, autonomy_effective, stopped, turns, undo_items, permits[], board?}"
+    }
+   }
+  },
+  {
    "name": "chat.send",
    "summary": "Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện",
    "params": [

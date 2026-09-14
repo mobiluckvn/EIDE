@@ -128,6 +128,7 @@ public final class EidePanel: NSView {
         "Chat", "Main", "ReviewQueue", "Ingest", "Passport", "Board", "Graph", "ReqArch",
         "DiagramView", "Doc", "PlanDiff", "Code", "Sim", "Discovery", "LogAssist", "Debug",
         "ToolForge", "Bench", "Registry", "Models", "Env", "FlowMap", "Trạng thái/khung",
+        "XungDot", "LamRo", "NhatKy",
     ]
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
@@ -163,6 +164,7 @@ public final class EidePanel: NSView {
             self?.chayTuONhap("chat.clarify", ["gaps": dap.map { ["key": $0.key, "answer": $0.value] }])
         }
         oNhap.onChonTep = { [weak self] nhan in self?.chonTep(nhan) }
+        oNhap.onLayGoiY = { [weak self] nguon, nhan in self?.layGoiY(nguon, nhan) }
         Task {
             await client.theoDoi { [weak self] ten, p in
                 Task { @MainActor in self?.nhanSuKien(ten, p) }
@@ -605,6 +607,54 @@ public final class EidePanel: NSView {
         }
     }
 
+    /// Gợi ý cho một ô nhập — gọi năng lực nguồn rồi rút danh sách giá trị.
+    ///
+    /// Mỗi nguồn trả một hình dạng khác nhau (`passport.list` → `{passports[]}` với `id`;
+    /// `project.status` → `{report.features}`), nên phép rút nằm ở đây, một chỗ, thay vì bắt
+    /// `EideONhap` biết về hợp đồng của từng năng lực.
+    ///
+    /// Lỗi thì trả rỗng, KHÔNG báo: gợi ý là tiện ích. Một hộp thoại lỗi bật lên chỉ vì chưa
+    /// nạp được danh sách chip, trong lúc người dùng đang gõ, là tệ hơn hẳn việc không có gợi ý.
+    private func layGoiY(_ nguon: String, _ nhan: @escaping ([String]) -> Void) {
+        Task {
+            guard let r = try? await client.goi(.capsInvoke, ["id": nguon, "params": [:]]),
+                  (r["status"] as? String) == "done",
+                  let kq = r["result"] as? [String: Any] else {
+                nhan([])
+                return
+            }
+            nhan(Self.rutGoiY(nguon, kq))
+        }
+    }
+
+    /// `{kết quả năng lực}` → danh sách giá trị gợi ý. Thuần và tĩnh để test được.
+    static func rutGoiY(_ nguon: String, _ kq: [String: Any]) -> [String] {
+        switch nguon {
+        case "passport.list":
+            // `{passports[]}` — mỗi mục có `id` dạng `chip:st.stm32f411ce@1.0.0`. Người dùng gõ
+            // phần PART (`st.stm32f411ce`), không gõ cả IRI lẫn phiên bản — đo 14/09: truy vấn
+            // với `part: "chip:espressif.esp32c3"` trả rỗng vì tiền tố `chip:` không được bỏ.
+            return ((kq["passports"] as? [Any]) ?? []).compactMap {
+                guard let id = ($0 as? [String: Any])?["id"] as? String
+                    ?? ($0 as? String) else { return nil }
+                return id.split(separator: "@").first.map {
+                    String($0).replacingOccurrences(of: "chip:", with: "")
+                }
+            }
+        case "project.status":
+            let bc = (kq["report"] as? [String: Any]) ?? kq
+            return ((bc["features"] as? [Any]) ?? []).compactMap {
+                ($0 as? [String: Any])?["id"] as? String ?? $0 as? String
+            }
+        case "env.detect":
+            // ISA không nằm trong `env.detect`; nó nằm trong manifest. Trả rỗng thay vì rút bừa
+            // một trường nghe giống — một gợi ý sai tệ hơn không gợi ý.
+            return []
+        default:
+            return []
+        }
+    }
+
     /// Nút "Chọn tệp…" của ô nhập. Panel mở hộp thoại chứ không phải view — để `EideONhap` test
     /// được mà không bật một hộp thoại hệ thống giữa lượt chạy test.
     private func chonTep(_ nhan: @escaping (String) -> Void) {
@@ -662,6 +712,17 @@ public final class EidePanel: NSView {
                 var g: [String: Any] = doi ?? [:]
                 g["autonomy"] = tc?["autonomy"]
                 g["stopped"] = tc?["stopped"]
+                await MainActor.run { v.capNhat(ketQua: g) }
+            case "Main":
+                // Màn Tổng quan gom HAI nguồn: `project.status` (năng lực) và `session.state`
+                // (phương thức daemon, M2). Gộp ở đây vì chúng trả lời cùng một câu hỏi —
+                // "dự án này đang ở đâu" — và bắt người dùng mở hai màn để ghép lại là bắt họ
+                // làm việc của giao diện.
+                let r = try? await client.goi(.capsInvoke,
+                                              ["id": "project.status", "params": [:]])
+                let ph = try? await client.goi(.sessionState, [:])
+                var g: [String: Any] = (r?["result"] as? [String: Any]) ?? [:]
+                if let ph { g["session"] = ph }
                 await MainActor.run { v.capNhat(ketQua: g) }
             case "Models":
                 // Chi phí nằm trong `project.status`; mức tự chủ trong `autonomy.get`.
@@ -730,6 +791,9 @@ public final class EidePanel: NSView {
         "view.conflict_board",  // màn 7  → `rows`       — KgMapView
         "report.progress",      // màn 10 → `md`         — DocView
         "env.detect",           // màn 21 → `env`        — EnvView
+        // Thêm 15/09 cùng hai màn mới. Cả hai đã đối chiếu `output_schema` với khoá mà khung
+        // nhìn thật sự đọc — đúng phép đo đã rút `napAnToan` từ 11 mục xuống 4 hồi 13/09:
+        "kg.conflicts",         // Xung đột → `conflicts`, `resource_ready` — XungDotView
     ]
 
     /// Năng lực chỉ-đọc nhưng **chưa có khung nhìn nào đọc được đầu ra của chúng**.
@@ -747,8 +811,9 @@ public final class EidePanel: NSView {
     /// chúng là hai năng lực **bảng UXD-13 §2 không gán màn nào**, nên không có chỗ để hiện.
     /// Đó là một khoảng trống của TÀI LIỆU, và nó nằm trong [DEV-094](DEVIATIONS.md).
     public static let noUI: [(cap: String, tra: String, canGi: String)] = [
-        ("kg.conflicts", "conflicts",
-         "bảng UXD-13 §2 không gán màn nào; nội dung thì `KgMapView` hiện được — xem DEV-094"),
+        // `kg.conflicts` ĐÃ RA KHỎI danh sách này 15/09: nó có màn riêng ("Xung đột tri thức",
+        // DEV-109). Một mục ở đây là một món nợ UI, và trả nợ thì phải gỡ tên khỏi sổ — để lại
+        // thì lần rà sau người ta đi dựng một màn đã có.
         ("project.list", "projects",
          "danh sách dự án: bảng §2 không gán màn nào, và panel mở dự án qua `project.open`"),
     ]
@@ -816,7 +881,6 @@ public final class EidePanel: NSView {
 
     public static func napMacDinh(choMan tien: String) -> String? {
         switch tien {
-        case "Main": return "project.status"
         case "Passport": return "passport.query"
         case "Env": return "env.detect"
         // Nhật ký nạp LỊCH SỬ bằng một lời gọi, không chờ kênh đẩy. Kênh đẩy chỉ mang sự kiện
@@ -827,6 +891,8 @@ public final class EidePanel: NSView {
         // xung đột nào đang chờ mình. Đây là màn mà "mở ra đã có dữ liệu" quan trọng nhất:
         // một xung đột không ai biết là một xung đột không ai giải.
         case "XungDot": return "kg.conflicts"
+        // Màn "Làm rõ yêu cầu" KHÔNG tự nạp: `chat.parse_intent` cần `text`, và đoán một câu
+        // để tự chạy là bịa ra yêu cầu của người dùng. Màn mở ra nói câu mời gõ ở ô lệnh.
         case "Models": return "view.timeline"
         default: return nil
         }

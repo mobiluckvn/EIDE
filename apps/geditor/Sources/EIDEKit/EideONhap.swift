@@ -32,6 +32,12 @@ public final class EideONhap: NSView {
     /// Người bấm nút chọn tệp — panel mở `NSOpenPanel` (view không tự mở để test được).
     public var onChonTep: ((@escaping (String) -> Void) -> Void)?
 
+    /// Ô cần gợi ý → panel gọi năng lực nguồn và trả về danh sách.
+    ///
+    /// Panel làm việc gọi, không phải view: danh sách `part` đến từ `passport.list` của ĐÚNG dự
+    /// án đang mở, và view không biết gì về client.
+    public var onLayGoiY: ((String, @escaping ([String]) -> Void) -> Void)?
+
     private var capId = ""
     private var truong: [(ten: String, kieu: String, batBuoc: Bool, o: NSView)] = []
     private let hang = NSStackView()
@@ -180,12 +186,37 @@ public final class EideONhap: NSView {
             t.widthAnchor.constraint(equalToConstant: 300).isActive = true
             if case let .goiY(nguon) = dk {
                 t.toolTip = "Gợi ý lấy từ \(nguon)"
+                // Hỏi gợi ý NGAY khi dựng ô, không đợi người gõ. Người dùng không biết mã linh
+                // kiện trông thế nào cho tới khi thấy một cái — và `st.stm32f411ce` không phải
+                // thứ đoán ra được. Danh sách tới sau thì ô tự có gợi ý; không tới thì ô vẫn gõ
+                // tay được, chỉ mất tiện.
+                _xinGoiY(cho: t, ten: ten, nguon: nguon)
             }
             o = t
         }
         if !(dk == .chonTep) { dong.addArrangedSubview(o) }
         o.setAccessibilityLabel(ten)
         return (dong, o)
+    }
+
+    /// Xin danh sách gợi ý cho một ô và gắn vào nó.
+    ///
+    /// Gắn bằng `placeholderString` + `toolTip` chứ không bằng một menu thả xuống: tập giá trị
+    /// ở đây là MỞ (một dự án có thể tra một chip chưa có hộ chiếu), nên một danh sách đóng sẽ
+    /// chặn đúng trường hợp người dùng cần nhất. Gợi ý là gợi ý, không phải ràng buộc.
+    private func _xinGoiY(cho o: NSTextField, ten: String, nguon: String) {
+        onLayGoiY?(nguon) { [weak o] ds in
+            Task { @MainActor in
+                guard let o, !ds.isEmpty else { return }
+                o.placeholderString = ds.count == 1
+                    ? "ví dụ: \(ds[0])"
+                    : "ví dụ: \(ds.prefix(3).joined(separator: ", "))"
+                    + (ds.count > 3 ? " … (\(ds.count) mục)" : "")
+                // Một giá trị duy nhất thì ĐIỀN SẴN: dự án chỉ có một hộ chiếu chip thì bắt
+                // người dùng gõ lại tên nó là nghi thức thừa.
+                if ds.count == 1 && o.stringValue.isEmpty { o.stringValue = ds[0] }
+            }
+        }
     }
 
     @objc private func bamChonTep(_ sender: NSButton) {

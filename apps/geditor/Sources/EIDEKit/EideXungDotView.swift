@@ -39,6 +39,16 @@ public final class XungDotView: ManHinhCoSo {
         xoaThan()
         dangCho.removeAll()
 
+        // `kg.resolve_conflict` trả `{current}` — giá trị hiện hành SAU khi giải. Người vừa bấm
+        // "Chọn A" mà màn không đổi gì thì họ không biết cú bấm có ăn không, và sẽ bấm lại.
+        if let cur = ketQua["current"] as? String, !cur.isEmpty {
+            themDong("đã giải — giá trị hiện hành", cur, mau: EideToken.Mau.ok)
+            noiRong("Fact bên kia được đánh dấu `superseded`, KHÔNG xoá: KAD-07 §6.7 giữ cả hai "
+                    + "để về sau còn truy được vì sao đã chọn thế. Mở lại màn để xem danh sách "
+                    + "xung đột còn lại.")
+            return
+        }
+
         let ds = (ketQua["conflicts"] as? [Any])?.compactMap { $0 as? [String: Any] } ?? []
         // `resource_ready: false` nghĩa là xung đột TÀI NGUYÊN (chân, ngoại vi dùng chung) chưa
         // kiểm được — thiếu hộ chiếu mạch. Nói ra, vì "0 xung đột" khi chưa kiểm được là câu

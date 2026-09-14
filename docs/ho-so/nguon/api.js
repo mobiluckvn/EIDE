@@ -40,6 +40,7 @@ c.push(P('Socket: `~/.eide/run/eided.sock` (macOS/Linux), named pipe trên Windo
 const RPC = [
  ['plane.hello', '{plugin_version, client}', '{api_version, daemon_version, project?, capabilities_hash}', 'Handshake; từ chối khi major khác'],
  ['project.list / project.open / project.close', '{} / {path|id} / {}', '{projects[]} / {project, state_summary} / {}', 'Mở dự án = M2 SessionMemory mới'],
+ ['session.state', '{}', '{session_id, opened_at, autonomy_effective, stopped, turns, undo_items, permits[], board?}', 'Đọc M2 của phiên đang mở (MEM-11 §2). `permits`/`board` rỗng cho tới khi SessionMemory lưu chúng — DEV-110'],
  ['chat.send', '{text, attachments?[]}', '{intent_id, run_id?}', 'Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện'],
  ['chat.answer', '{question_id, option?, text?}', '{}', 'Trả lời câu hỏi gộp'],
  ['chat.history', '{limit?, before?}', '{turns[]}', 'Từ session.turns'],
@@ -83,6 +84,8 @@ const EV = [
  ['event.chat.intent', '{intent_id, text, caps[]}', 'Tác tử hiểu ý định thành chuỗi năng lực nào'],
 ];
 c.push(T([3000, 3800, 2500], ['Sự kiện', 'Payload', 'Dùng cho'], EV, { size: 19 }));
+c.push(SP());
+c.push(P('**`session.state`** (v1.x, DEV-110) — đọc M2 của phiên đang mở: `{session_id, opened_at, autonomy_effective, stopped, turns, undo_items, permits[], board}`. MEM-11 §2 kể M2 gồm cả *quyền theo phiên (R4)* và *target đang cắm*; hai trường ấy có trong payload nhưng RỖNG cho tới khi `SessionMemory` lưu chúng — giao diện hiện đúng thứ có thật và nói ra phần chưa có, thay vì vẽ một bảng từ dữ liệu không tồn tại.'));
 c.push(SP());
 c.push(H1('3. MCP server (cho Claude Code, Cursor, VS Code)'));
 c.push(P('Tool MCP được sinh từ registry lúc khởi động: ba tool chung `caps_list`, `caps_describe`, `caps_invoke` + `chat_command` + tối đa 16 tool "nhanh" (một tool = một năng lực hay dùng, schema chính là input_schema của năng lực) để tổng ≤ 20 tool/phiên (ACI). Danh sách nhanh mặc định in ra từ chính literal sinh `api/mcp_tools.json` (xem cuối tài liệu), nên hai chỗ không thể trôi khỏi nhau: ' + quick.map(x => x.replace('.', '_')).join(', ') + '. Tool R3/R4 trả `{status:"pending", gate_id}` khi ASK. Tên tool dùng dấu gạch dưới (MCP không cho dấu chấm). Tệp `api/mcp_tools.json` là đầu ra sinh tự động; kiểm bằng SchemaCompiler mẫu số chung trước khi phơi.'));

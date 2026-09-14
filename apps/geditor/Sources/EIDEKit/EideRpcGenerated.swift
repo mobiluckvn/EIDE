@@ -102,6 +102,8 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case serialOpen = "serial.open"
     /// Sự kiện serial.line
     case serialWrite = "serial.write"
+    /// Đọc M2 của phiên đang mở (MEM-11 §2). `permits`/`board` rỗng cho tới khi SessionMemory lưu chúng — DEV-110
+    case sessionState = "session.state"
     /// Dừng khẩn < 1 s
     case stop = "stop"
     /// Hoàn tác việc tự làm
@@ -226,5 +228,5 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
 }
 
 /// Số phương thức và mã lỗi lúc sinh — test hợp đồng đối chiếu với spec (API-15 §8).
-public let eideSoPhuongThuc = 62
+public let eideSoPhuongThuc = 63
 public let eideSoMaLoi = 29

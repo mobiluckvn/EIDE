@@ -66,6 +66,33 @@
   ]
  },
  {
+  "so": "2b",
+  "man_hinh": "NhatKy (Nhật ký hoạt động)",
+  "noi_dung": "Dòng thời gian MỌI sự kiện sổ cái, lọc theo nhóm; bấm một dòng → mở màn chuyên đề; trạng thái chuỗi băm",
+  "nang_luc": [
+   "view.timeline"
+  ]
+ },
+ {
+  "so": "7b",
+  "man_hinh": "XungDot (Xung đột tri thức)",
+  "noi_dung": "Hai bên đặt CÙNG HÀNG, mỗi bên kèm nguồn/tầng/độ tin; chọn A, chọn B, hoặc cả hai có điều kiện",
+  "nang_luc": [
+   "kg.conflicts",
+   "kg.resolve_conflict"
+  ]
+ },
+ {
+  "so": "8b",
+  "man_hinh": "LamRo (Làm rõ yêu cầu)",
+  "noi_dung": "Câu tác tử nói lại cách nó hiểu KÈM chuỗi bước sẽ chạy; câu hỏi gộp có phương án và mặc định; nút \"Đúng — làm đi\" / \"Sửa ý hiểu\"",
+  "nang_luc": [
+   "chat.restate",
+   "chat.clarify",
+   "chat.parse_intent"
+  ]
+ },
+ {
   "so": "8",
   "man_hinh": "ReqArch (Yêu cầu & kiến trúc)",
   "noi_dung": "ReqSet; khả thi; issue; ADR; HwMap; ngân sách",

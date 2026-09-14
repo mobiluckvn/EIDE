@@ -205,7 +205,7 @@ class Daemon:
             # `Router.invoke` như mọi lời gọi khác, nên cùng cổng chính sách, cùng nhật ký, cùng
             # hoàn tác. Một đường tắt gọi thẳng handler sẽ nhanh hơn và sẽ bỏ qua cả ba thứ ấy.
             **{ten: self._alias(cap) for ten, cap in ALIAS.items()},
-            "project.close": self.project_close,
+            "project.close": self.project_close, "session.state": self.session_state,
             "diagram.open": self.diagram_open, "diagram.save": self.diagram_save,
             "doc.open": self.doc_open, "hex.resolve": self.hex_resolve,
             "chat.send": self.chat_send, "chat.answer": self.chat_answer,
@@ -395,6 +395,40 @@ class Daemon:
                 return asdict(run)
             return run.result or {}
         return goi
+
+    def session_state(self, p: dict[str, Any]) -> dict[str, Any]:
+        """API-15 `session.state` — đọc M2 của phiên đang mở (MEM-11 §2).
+
+        **Trả cả hai trường chưa có dữ liệu, và trả chúng RỖNG.** MEM-11 §2 kể M2 gồm "quyền
+        theo phiên (R4)" và "target đang cắm"; `SessionMemory` hôm nay chưa lưu cái nào. Ba
+        cách xử lý, và hai cách đầu tệ hơn:
+
+        - Bỏ hẳn hai khoá: giao diện không biết chúng tồn tại, và khoảng trống biến mất khỏi
+          tầm nhìn — cùng khuôn với DEV-093, nơi một thiếu sót nằm im vì không ai hỏi tới.
+        - Bịa dữ liệu (đọc `discover.ports` gọi đó là "board đang cắm"): board dò được KHÁC
+          board đã gắn vào phiên, và trộn hai thứ là nói sai về quyền đang có hiệu lực.
+        - Trả rỗng kèm khoá: giao diện hiện đúng thứ có thật và nói ra phần chưa có. Xem DEV-110.
+        """
+        from eide_core.memory import SessionMemory
+        if not self.ctx.project_dir:
+            return {"session_id": None, "permits": [], "board": None, "turns": 0,
+                    "undo_items": 0, "thieu": ["dự án"]}
+        phien = SessionMemory.gan_nhat(Path(self.ctx.project_dir))
+        if phien is None:
+            return {"session_id": None, "permits": [], "board": None, "turns": 0,
+                    "undo_items": 0, "thieu": ["phiên"]}
+        return {
+            "session_id": phien.session_id,
+            "opened_at": phien.opened_at,
+            "autonomy_effective": phien.autonomy_effective,
+            "stopped": phien.stopped,
+            "turns": len(phien.turns),
+            "undo_items": len(phien.undo_items),
+            # Hai trường MEM-11 §2 kể mà lõi chưa lưu — DEV-110.
+            "permits": [],
+            "board": None,
+            "thieu": ["permits", "board"],
+        }
 
     def project_close(self, p: dict[str, Any]) -> dict[str, Any]:
         """API-15: `project.close` — đóng SessionMemory, KHÔNG đóng dự án.

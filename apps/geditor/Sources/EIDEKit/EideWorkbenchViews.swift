@@ -45,7 +45,17 @@ public final class ProjectStatusView: ManHinhCoSo {
         let bc = (ketQua["report"] as? [String: Any]) ?? ketQua
         if bc.isEmpty {
             tomTat.stringValue = ""
-            noiRong("Chưa mở dự án nào — gõ \"tạo dự án cho chip STM32F411\" ở ô lệnh.")
+            // Hai tình huống, hai câu. `report` rỗng mà CÓ phiên nghĩa là dự án đã mở, chỉ chưa
+            // có tính năng nào — khác hẳn chưa mở dự án. Nói nhầm câu ở đây là gửi người dùng
+            // đi tạo dự án thứ hai trong lúc dự án thứ nhất đang mở.
+            if ketQua["session"] != nil {
+                noiRong("Dự án đã mở nhưng chưa có tính năng nào — gõ yêu cầu ở ô lệnh, "
+                        + "hoặc chạy `/req.elicit` để bắt đầu từ ý tưởng.")
+                _hienPhien(ketQua)
+            } else {
+                noiRong("Chưa mở dự án nào — Tệp → Mở dự án EIDE…, hoặc gõ "
+                        + "\"tạo dự án cho chip STM32F411\" ở ô lệnh.")
+            }
             return
         }
 
@@ -72,6 +82,7 @@ public final class ProjectStatusView: ManHinhCoSo {
         tomTat.textColor = soFailing > 0 ? EideToken.Mau.warn : EideToken.Mau.muted
 
         if let t = _moTaDich(dich) { themDong("Đích", t, mau: EideToken.Mau.info) }
+        _hienPhien(ketQua)
 
         // `target.detect` trả `targets[]` — NHIỀU đích, khác hẳn `report.target` (đích đang
         // ghim). Cắm hai board cùng lúc là chuyện thường ở bàn thí nghiệm, và một màn chỉ hiện
@@ -128,6 +139,44 @@ public final class ProjectStatusView: ManHinhCoSo {
 
 /// `ingest.classify` `{classification[]{file, kind, tier, extractor, confidence}}`,
 /// `ingest.hash_dedupe` `{new[], dup[]}`, `archive.list` `{entries[]}`.
+extension ProjectStatusView {
+
+    /// Trạng thái PHIÊN (M2) — `session.state`, USECASE §4 mục 7.
+    ///
+    /// MEM-11 §2 định nghĩa M2 là thứ sống từ lúc mở tới lúc đóng dự án: lịch sử lượt, quyền
+    /// theo phiên (R4), target đang cắm, mức tự chủ hiệu lực, việc hoàn tác được. Trước 15/09
+    /// giao diện không hiện gì về nó — người dùng không có cách nào biết phiên này đã cấp
+    /// những quyền gì.
+    ///
+    /// **Hai trường rỗng được NÓI RA, không giấu đi.** `permits` và `board` có trong hợp đồng
+    /// nhưng `SessionMemory` chưa lưu (DEV-110). Im lặng bỏ chúng thì khoảng trống biến mất
+    /// khỏi tầm nhìn — đúng khuôn DEV-093, nơi một thiếu sót nằm im vì không ai hỏi tới.
+    func _hienPhien(_ ketQua: [String: Any]) {
+        guard let s = ketQua["session"] as? [String: Any] else { return }
+        if let id = s["session_id"] as? String {
+            var ct = id
+            if let n = EideSo.nguyen(s["turns"]), n > 0 { ct += " · \(n) lượt" }
+            if let u = EideSo.nguyen(s["undo_items"]), u > 0 { ct += " · \(u) hoàn tác được" }
+            themDong("phiên", ct)
+        }
+        let quyen = (s["permits"] as? [Any])?.compactMap { $0 as? String } ?? []
+        if !quyen.isEmpty {
+            // Quyền R4 theo phiên là thứ nguy hiểm nhất còn hiệu lực trong một phiên: nó cho
+            // tác tử làm một việc KHÔNG HOÀN TÁC ĐƯỢC mà không hỏi lại.
+            themDong("quyền R4 đang có hiệu lực", quyen.joined(separator: " · "),
+                     mau: EideToken.Mau.warn)
+        }
+        if let b = s["board"] as? String, !b.isEmpty {
+            themDong("board đã gắn vào phiên", b, mau: EideToken.Mau.info)
+        }
+        let thieu = (s["thieu"] as? [Any])?.compactMap { $0 as? String } ?? []
+        if thieu.contains("permits") || thieu.contains("board") {
+            noiRong("Quyền R4 theo phiên và board đã gắn CHƯA được lưu — MEM-11 §2 kể chúng "
+                    + "trong M2 nhưng `SessionMemory` chưa có hai trường ấy. Xem DEV-110.")
+        }
+    }
+}
+
 public final class IngestView: ManHinhCoSo {
 
     public var onTrichXuat: ((String) -> Void)?
@@ -628,12 +677,63 @@ public final class ReqArchView: ManHinhCoSo {
         }
 
         _hienGiaoDienVaFsm(ketQua)
+        _hienSoSanhPhuongAn(ketQua)
 
         if soDong == 0 { noiRong("Không có yêu cầu, module hay phát hiện nào để hiện.") }
     }
 
     /// `arch.interface_spec` `{interfaces}`, `arch.state_machine` `{fsm}`,
     /// `req.acceptance` `{acceptance[]}`, `req.change_impact` `{impact}`.
+    /// `arch.compare` → `{comparison{matrix, scores, recommendation}}` — UC-B10.
+    ///
+    /// ## Vì sao bảng đánh đổi phải hiện ĐỦ, không chỉ hiện khuyến nghị
+    ///
+    /// `arch.compare` là **T1\*** — tác tử tự làm khi hàm quyết định có bằng chứng, không thì
+    /// hỏi. Nghĩa là khuyến nghị của nó là một đề xuất, và người chọn. Hiện mỗi dòng
+    /// "khuyến nghị: RTOS" thì người không có gì để không đồng ý: họ hoặc gật, hoặc phải đi hỏi
+    /// lại từ đầu.
+    ///
+    /// Nên hiện cả **ma trận** (phương án × tiêu chí) và **điểm**, với phương án được khuyến
+    /// nghị đánh dấu — nhưng không sắp nó lên đầu. Sắp theo điểm là để người đọc thấy khoảng
+    /// cách giữa các phương án: hai phương án 8,5 và 8,4 là một lựa chọn khác hẳn 8,5 và 4,0.
+    private func _hienSoSanhPhuongAn(_ ketQua: [String: Any]) {
+        guard let ss = ketQua["comparison"] as? [String: Any] else { return }
+
+        let diem = (ss["scores"] as? [String: Any]) ?? [:]
+        let kn = (ss["recommendation"] as? String)
+            ?? ((ss["recommendation"] as? [String: Any])?["option"] as? String)
+
+        if let kn {
+            themDong("khuyến nghị", kn + " — anh quyết, tác tử chỉ đề xuất (T1*)",
+                     mau: EideToken.Mau.info)
+        }
+        // Ma trận: mỗi hàng một phương án, mỗi cột một tiêu chí.
+        let mt = (ss["matrix"] as? [Any])?.compactMap { $0 as? [String: Any] } ?? []
+        for hang in mt {
+            let ten = (hang["option"] as? String) ?? (hang["name"] as? String) ?? "?"
+            let d = EideSo.thuc(diem[ten]) ?? EideSo.thuc(hang["score"])
+            var ct = hang.filter { $0.key != "option" && $0.key != "name" && $0.key != "score" }
+                .sorted { $0.key < $1.key }
+                .map { "\($0.key): \($0.value)" }
+                .joined(separator: " · ")
+            if let d { ct = String(format: "%.1f điểm · ", d) + ct }
+            themDong((ten == kn ? "★ " : "  ") + ten, ct,
+                     mau: ten == kn ? EideToken.Mau.ok : nil)
+        }
+        if mt.isEmpty && !diem.isEmpty {
+            // Có điểm mà không có ma trận: vẫn hiện điểm, vì con số so sánh được là thứ tối
+            // thiểu người cần để không đồng ý một cách có căn cứ.
+            for (ten, d) in diem.sorted(by: { "\($0.key)" < "\($1.key)" }) {
+                themDong((ten == kn ? "★ " : "  ") + ten,
+                         EideSo.thuc(d).map { String(format: "%.1f điểm", $0) } ?? "\(d)",
+                         mau: ten == kn ? EideToken.Mau.ok : nil)
+            }
+        }
+        if mt.isEmpty && diem.isEmpty && kn == nil {
+            noiRong("`arch.compare` trả về một so sánh rỗng — không có phương án nào để cân.")
+        }
+    }
+
     private func _hienGiaoDienVaFsm(_ ketQua: [String: Any]) {
         if let gd = ketQua["interfaces"] as? [[String: Any]] {
             for i in gd {

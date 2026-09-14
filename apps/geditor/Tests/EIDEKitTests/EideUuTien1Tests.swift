@@ -279,3 +279,29 @@ final class EideUuTien1Tests: XCTestCase {
         return ([m.tomTat.stringValue] + quet(m.cot)).joined(separator: "\n")
     }
 }
+
+extension EideUuTien1Tests {
+
+    @MainActor
+    func testSAUkhiGIAIhienGIAtriHIENhanh() {
+        // `kg.resolve_conflict` trả `{current}`. Người vừa bấm "Chọn A" mà màn không đổi gì thì
+        // họ không biết cú bấm có ăn không — và sẽ bấm lại, tạo một mục chờ thứ hai cho cùng
+        // một xung đột.
+        let v = XungDotView()
+        v.capNhat(ketQua: ["current": "0x40005400"])
+        let chu = _chuDeTest(v)
+        XCTAssertTrue(chu.contains("0x40005400"), chu)
+        XCTAssertTrue(chu.contains("superseded"), "phải nói bên kia KHÔNG bị xoá: \(chu)")
+    }
+
+    @MainActor
+    func _chuDeTest(_ m: ManHinhCoSo) -> String {
+        func quet(_ v: NSView) -> [String] {
+            var ra: [String] = []
+            if let t = v as? NSTextField { ra.append(t.stringValue) }
+            for c in v.subviews { ra += quet(c) }
+            return ra
+        }
+        return ([m.tomTat.stringValue] + quet(m.cot)).joined(separator: "\n")
+    }
+}

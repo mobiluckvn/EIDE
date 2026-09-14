@@ -233,7 +233,8 @@ final class EideManDayDuTests: XCTestCase {
 
     func testMOImanTRONGscreensJsonDEUcoKhungNhin() throws {
         let man = try tenMan()
-        XCTAssertEqual(man.count, 23, "bảng UXD-13 §2 đổi số màn")
+        XCTAssertEqual(man.count, 26, "bảng UXD-13 §2 đổi số màn — 23 gốc + NhatKy (DEV-107), "
+                       + "XungDot và LamRo (DEV-109)")
 
         let thieu = man.filter { ten in
             !EidePanel.tienManDaDung.contains { ten.hasPrefix($0) }

@@ -836,6 +836,9 @@ final class EideNapMacDinhTests: XCTestCase {
         "ToolForge": ["EideSystemViews"], "Registry": ["EideSystemViews"],
         "Models": ["EideSystemViews"], "Env": ["EideSystemViews"],
         "FlowMap": ["EideSystemViews"],
+        "NhatKy": ["EideNhatKyView"],
+        "XungDot": ["EideXungDotView"],
+        "LamRo": ["EideLamRoView"],
     ]
 
     private func moClient() throws -> EideClient {

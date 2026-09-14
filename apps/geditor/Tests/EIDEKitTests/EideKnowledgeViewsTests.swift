@@ -302,12 +302,31 @@ final class EideNapLanDauTests: XCTestCase {
     func testMOImanCOnapMACdinhDEUnamTRONGdanhSACHchiDOC() {
         // Nếu một màn khai năng lực nạp mà năng lực ấy không chỉ-đọc, chốt thứ hai sẽ chặn và
         // màn lặng lẽ không bao giờ nạp được — mã chết kiểu khác.
-        for m in ["Main", "Passport", "Env"] {
+        // "Main" KHÔNG còn trong danh sách: từ 15/09 nó nạp bằng một nhánh riêng gom HAI
+        // nguồn — `project.status` (năng lực) và `session.state` (phương thức daemon, M2). Hai
+        // thứ ấy trả lời cùng một câu hỏi "dự án này đang ở đâu", và bắt người dùng mở hai màn
+        // để ghép lại là bắt họ làm việc của giao diện.
+        for m in ["Passport", "Env", "NhatKy", "XungDot", "Models"] {
             let md = EidePanel.napMacDinh(choMan: m)
             XCTAssertNotNil(md, "\(m) mất năng lực nạp mặc định")
             XCTAssertTrue(EidePanel.napAnToan.contains(md!),
                           "\(m) nạp bằng `\(md!)` nhưng nó không nằm trong napAnToan")
         }
+    }
+
+    func testMANmainNAPbangNHANHrieng() {
+        // Không có `napMacDinh` KHÔNG có nghĩa là không nạp được — `_napManKhongNangLuc` có một
+        // nhánh riêng cho Main. Bài test canh đúng điều ấy để lần sau ai xoá nhánh kia thì đỏ ở
+        // đây, thay vì màn Tổng quan lặng lẽ rỗng.
+        XCTAssertNil(EidePanel.napMacDinh(choMan: "Main"))
+        let f = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("Sources/EIDEKit/EidePanel.swift")
+        let src = (try? String(contentsOf: f, encoding: .utf8)) ?? ""
+        XCTAssertTrue(src.contains("case \"Main\":"),
+                      "Main không có `napMacDinh` và cũng không có nhánh nạp riêng")
+        XCTAssertTrue(src.contains(".sessionState"), "nhánh Main phải gọi `session.state`")
     }
 
     func testMANgraphCOYkhongCOnapMACdinh() {

@@ -299,8 +299,8 @@ nếu thành công thường. **Thất bại được nhớ kỹ hơn thành cô
 | ~~1~~ | ~~Không có màn cho **UC-B2/B3**~~ — **XONG 15/09**: màn "Làm rõ yêu cầu", nhóm THIẾT KẾ ([DEV-109]) | B2, B3 | ~~1~~ |
 | ~~2~~ | ~~**UC-C9** xung đột tri thức chưa có màn~~ — **XONG 15/09**: màn "Xung đột tri thức", hai cột song song ([DEV-109]) | C9 | ~~1~~ |
 | ~~3~~ | ~~**UC-F7** chi phí đọc cấu hình thay vì sổ cái~~ — **XONG 15/09**: `ModelsView` gom `model.call` từ `view.timeline`; [DEV-093] đóng | F7 | ~~1~~ |
-| 4 | Ô nhập chưa có **gợi ý** cho `part`/`feature` dù bảng `DAC_BIET` đã khai | C10, E4 | 2 |
+| ~~4~~ | ~~Ô nhập chưa có gợi ý~~ — **XONG 15/09**: `passport.list`/`project.status` nạp gợi ý; một giá trị duy nhất thì điền sẵn, nhiều thì gợi ý chứ không chọn hộ | C10, E4 | ~~2~~ |
 | 5 | **UC-A6/A7** nhân bản, lưu trữ, rollback chưa có đường vào UI | A6, A7 | 3 |
-| 6 | **UC-B10** so sánh phương án chưa có bảng đánh đổi | B10 | 2 |
-| 7 | Chưa hiện **M2 phiên**: quyền R4 đang có hiệu lực, board đang cắm | F1 | 2 |
+| ~~6~~ | ~~**UC-B10** chưa có bảng đánh đổi~~ — **XONG 15/09**: ma trận + điểm + đánh dấu khuyến nghị, nói rõ người quyết (T1*) | B10 | ~~2~~ |
+| ~~7~~ | ~~Chưa hiện **M2 phiên**~~ — **XONG 15/09**: `session.state` + màn Tổng quan; hai trường lõi chưa lưu được NÓI RA ([DEV-110]) | F1 | ~~2~~ |
 | 8 | Chưa có chỗ xem **ngân sách token còn lại** trước khi chạy việc nặng | F7 | 3 |
