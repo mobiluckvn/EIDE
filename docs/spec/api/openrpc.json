@@ -1128,6 +1128,101 @@
      "type": "null"
     }
    }
+  },
+  {
+   "name": "event.gate.decided",
+   "summary": "Cổng tự quyết APPROVE/REJECT — không vào hàng đợi",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{gate, rule, decision, cap, reason}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.model.call",
+   "summary": "Chi phí; KHÔNG mang nội dung prompt",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{role, model, tokens_in, tokens_out, cost_usd, ms}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.tool.report",
+   "summary": "build/size/sim/install chạy xong",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{tool, passed, exit_code, duration_ms, log_ref}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.project.changed",
+   "summary": "Đổi dự án hoặc đích đã ghim",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{id, state, target?}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
+  },
+  {
+   "name": "event.chat.intent",
+   "summary": "Tác tử hiểu ý định thành chuỗi năng lực nào",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{intent_id, text, caps[]}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "null"
+    }
+   }
   }
  ]
 }

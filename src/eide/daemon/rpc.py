@@ -16,7 +16,7 @@ from typing import Any, TextIO
 
 from eide import __version__
 from eide_core.errors import EideError, error_table
-from eide_core.ledger import Ledger
+from eide_core.ledger import Ledger, TheoDoiTep
 from eide_core.paths import user_log
 from eide_core.policy import PolicyGate
 from eide_core.registry import get_registry
@@ -39,17 +39,50 @@ SU_KIEN: dict[str, str] = {
     "cap.run.start": "event.run.progress",
     "cap.run.finish": "event.run.progress",
     "gate.decision": "event.gate.opened",
+    "gate.human": "event.queue.changed",
     "undo.register": "event.undo.registered",
+    "undo.apply": "event.undo.registered",
     "undo.expire": "event.undo.expired",
     "autonomy.change": "event.autonomy.changed",
     "stop": "event.autonomy.changed",
+    "policy.escalate": "event.notice",
+    "policy.sign": "event.notice",
     "store.write": "event.knowledge.changed",
+    "store.migrate": "event.knowledge.changed",
     "acq.state": "event.knowledge.changed",
+    "discover.result": "event.discover.changed",
+    "project.state": "event.project.changed",
+    "model.call": "event.model.call",
+    "tool.report": "event.tool.report",
     "question": "event.chat.question",
     "answer": "event.chat.restated",
     "report": "event.chat.report",
+    "intent": "event.chat.intent",
     "error": "event.notice",
 }
+
+# Số bản ghi sổ cái phát lại ngay khi giao diện mở.
+#
+# Mở EIDE lên sau khi tác tử đã chạy mà thấy màn hình trắng thì "giám sát" chỉ đúng với ai ngồi
+# canh từ đầu. 200 là một phiên làm việc: phiên AVR ngày 14/09 có 105 sự kiện, phiên ESP32-C3
+# khoảng gấp đôi. Toàn bộ sổ cái thì với một dự án đã trích 8.169 fact là hàng nghìn dòng và
+# vài giây dựng màn — đắt cho một thứ không ai đọc hết.
+PHAT_LAI_KHI_MO = 200
+
+# Ba kiểu sổ cái KHÔNG lên giao diện, và không phải vì quên.
+#
+# `context.bundle` và phần `prompt` của `model.call` mang nội dung gửi cho mô hình — có thể là
+# mã nguồn của người dùng. Sổ cái đã che khoá API (`che_bi_mat`), nhưng che khoá khác với không
+# gửi mã nguồn ra một cửa sổ có thể đang chia sẻ màn hình. Màn chi phí cần con số token và vai
+# trò, không cần văn bản.
+#
+# `session.open` / `session.summary` là nhật ký vận hành của chính daemon, không phải việc tác
+# tử làm cho dự án.
+KHONG_LEN_UI: frozenset[str] = frozenset({"context.bundle", "session.open", "session.summary"})
+
+# Trường bị lược khỏi `event.*` trước khi đẩy lên giao diện — cùng lý do với `KHONG_LEN_UI`,
+# nhưng ở mức trường chứ không mức bản ghi: `model.call` vẫn phải lên UI để người thấy chi phí.
+TRUONG_KHONG_DAY: frozenset[str] = frozenset({"prompt", "system", "user", "context", "messages"})
 
 # Năng lực NẶNG — `caps.invoke` trả `job_id` thay vì chờ (API-15: "tool nặng trả job_id trong
 # result"). Danh sách theo đúng năm nhóm mà `job.status` kể tên: build, flash, extract, render,
@@ -99,8 +132,27 @@ class Daemon:
         # CLI và test gọi `handle()` trực tiếp không cần kênh đẩy, và bắt chúng dựng một cái
         # giả chỉ để im lặng là thêm nghi thức không đổi lấy gì.
         self.phat = phat
+        # Theo dõi TỆP sổ cái, không chỉ lời gọi của chính daemon này.
+        #
+        # Đây là mắt xích làm cho giám sát có nghĩa (GIAM-SAT-UI §0.1): tác tử chạy qua CLI, một
+        # phiên khác, hay một tiến trình nền — tất cả ghi vào CÙNG `ledger.jsonl` của dự án, và
+        # trước 14/09/2026 cửa sổ EIDE không thấy gì trong số đó. Đo được: 28 lời gọi, 105 sự
+        # kiện, giao diện đứng yên.
+        #
+        # `theo_doi()` in-process vẫn giữ, và giữ có lý do: nó chạy NGAY khi bản ghi xuống đĩa,
+        # còn người theo dõi tệp chậm nhất một chu kỳ. Việc của chính daemon vì thế hiện tức
+        # thì; việc của tiến trình khác hiện sau ~0,4 s. `TheoDoiTep` lọc trùng theo `seq` nên
+        # không có bản ghi nào lên giao diện hai lần.
+        # Phát lại lịch sử CHỈ khi có dự án. Không có dự án thì sổ cái là `~/.eide/ledger.jsonl`
+        # dùng chung cho mọi lời gọi ngoài dự án của mọi dự án — phát lại 200 dòng của nó là đổ
+        # lịch sử dự án KHÁC vào cửa sổ đang mở, và đổ trước cả phản hồi RPC đầu tiên. Đo được
+        # ngay khi thêm tính năng này: `serve_stdio` trả về ba dòng `event.*` của phiên trước rồi
+        # mới tới câu trả lời cho lời gọi hiện tại.
+        self._tail: TheoDoiTep | None = None
         if phat is not None:
             self.ledger.theo_doi(self._tu_so_cai)
+            self._tail = self.ledger.theo_doi_tep(
+                self._tu_so_cai, phat_lai=PHAT_LAI_KHI_MO if project else 0)
         # Việc chạy nền. Khóa vì `job.status` đọc từ luồng RPC còn luồng việc thì ghi.
         self._jobs: dict[str, dict[str, Any]] = {}
         self._khoa = threading.Lock()
@@ -263,16 +315,25 @@ class Daemon:
         cũng đáng làm phiền giao diện (`model.call`, `context.bundle`, `session.open` là nhật ký
         vận hành, không phải thứ người dùng cần thấy).
         """
-        ten = SU_KIEN.get(rec.get("kind", ""))
-        if ten is None or self.phat is None:
+        kind = rec.get("kind", "")
+        if kind in KHONG_LEN_UI or self.phat is None:
             return
-        d = dict(rec.get("data") or {})
+        ten = SU_KIEN.get(kind)
+        if ten is None:
+            return
+        d = {k: v for k, v in (rec.get("data") or {}).items() if k not in TRUONG_KHONG_DAY}
         # `gate.decision` chỉ thành `event.gate.opened` khi nó THẬT SỰ mở một mục chờ. Một quyết
         # định APPROVE là việc máy tự làm xong; báo nó như "có mục cần anh duyệt" sẽ dạy người
         # dùng bỏ qua thông báo — đúng thứ hỏng mà cả POL-17 lo.
-        if rec["kind"] == "gate.decision" and d.get("decision") != "ASK":
-            return
-        self.phat(ten, {**d, "at": rec.get("ts"), "seq": rec.get("seq")})
+        #
+        # Nhưng "không phải mục chờ" KHÁC "không đáng cho người biết": ở mức tự chủ cao, thứ
+        # người cần giám sát nhất chính là những gì tác tử **tự duyệt**. Nên APPROVE và REJECT
+        # đi lên bằng `event.gate.decided` — cùng dữ liệu, khác tên, và giao diện xếp chúng vào
+        # dòng thời gian thay vì vào hàng đợi. Trước 14/09/2026 chúng bị bỏ hẳn.
+        if kind == "gate.decision" and d.get("decision") != "ASK":
+            ten = "event.gate.decided"
+        self.phat(ten, {**d, "kind": kind, "at": rec.get("ts"), "seq": rec.get("seq"),
+                        "actor": rec.get("actor")})
 
     def _thong_bao(self, muc: str, van: str, ref: str | None = None) -> None:
         """`event.notice` — cảnh báo chung, dùng cho thứ không đến từ sổ cái."""

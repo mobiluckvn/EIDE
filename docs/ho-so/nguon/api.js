@@ -73,6 +73,14 @@ const EV = [
  ['event.discover.changed', 'Discovery', 'Cắm/rút board'], ['event.serial.line', '{port, ts, line}', ''],
  ['event.job.progress', '{job_id, pct, log_tail[]}', ''], ['event.knowledge.changed', '{facts_added, facts_superseded, conflicts, stale_code_units[]}', 'Sau extract/review'],
  ['event.doc.stale', '{id, sections[]}', ''], ['event.diagram.stale', '{id, node_ids[]}', ''], ['event.notice', '{level, text, ref?}', 'Cảnh báo chung'],
+ // v1.x — năm sự kiện GIÁM SÁT (DEV-107). Mười sáu sự kiện trên chỉ kể những thứ ĐÒI người
+ // làm gì đó; năm cái dưới kể những thứ tác tử TỰ làm xong, và ở mức tự chủ cao thì đó mới là
+ // phần người cần nhìn. Đo 14/09/2026: 13 trong 26 kiểu sổ cái không có đường nào lên giao diện.
+ ['event.gate.decided', '{gate, rule, decision, cap, reason}', 'Cổng tự quyết APPROVE/REJECT — không vào hàng đợi'],
+ ['event.model.call', '{role, model, tokens_in, tokens_out, cost_usd, ms}', 'Chi phí; KHÔNG mang nội dung prompt'],
+ ['event.tool.report', '{tool, passed, exit_code, duration_ms, log_ref}', 'build/size/sim/install chạy xong'],
+ ['event.project.changed', '{id, state, target?}', 'Đổi dự án hoặc đích đã ghim'],
+ ['event.chat.intent', '{intent_id, text, caps[]}', 'Tác tử hiểu ý định thành chuỗi năng lực nào'],
 ];
 c.push(T([3000, 3800, 2500], ['Sự kiện', 'Payload', 'Dùng cho'], EV, { size: 19 }));
 c.push(SP());

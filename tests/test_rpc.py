@@ -206,11 +206,16 @@ def test_moi_su_kien_deu_CO_trong_so_cai(tmp_path, workspace):
     assert seqs <= so_cai, sorted(seqs - so_cai)
 
 
-def test_quyet_dinh_APPROVE_KHONG_bao_la_muc_cho(tmp_path, workspace):
+def test_quyet_dinh_APPROVE_KHONG_bao_la_muc_cho_NHUNG_van_len_dong_thoi_gian(tmp_path, workspace):
     """`gate.decision` chỉ thành `event.gate.opened` khi nó THẬT SỰ mở một mục chờ.
 
     Báo một việc máy đã tự làm xong như "có mục cần anh duyệt" sẽ dạy người dùng bỏ qua thông
     báo — đúng thứ hỏng mà cả POL-17 lo.
+
+    Nhưng "không phải mục chờ" KHÁC "không đáng cho người biết": ở mức tự chủ cao, thứ người cần
+    giám sát nhất chính là những gì tác tử **tự duyệt**. Nên APPROVE/REJECT đi lên bằng
+    `event.gate.decided` — cùng dữ liệu, khác tên, và giao diện xếp chúng vào dòng thời gian
+    thay vì vào hàng đợi. Trước 14/09/2026 chúng bị bỏ hẳn (GIAM-SAT-UI, khoảng trống #6).
     """
     thu = []
     d = Daemon(project=None, phat=lambda ten, p: thu.append((ten, p)))
@@ -220,6 +225,11 @@ def test_quyet_dinh_APPROVE_KHONG_bao_la_muc_cho(tmp_path, workspace):
     cong = [p for ten, p in thu if ten == "event.gate.opened"]
     assert cong == [], f"APPROVE không được báo là mục chờ: {cong}"
     assert any(ten == "event.run.progress" for ten, _ in thu)
+
+    quyet = [p for ten, p in thu if ten == "event.gate.decided"]
+    assert quyet, "APPROVE phải lên dòng thời gian, không được biến mất"
+    assert quyet[0]["decision"] == "APPROVE"
+    assert quyet[0].get("rule"), "phải nói quy tắc nào đã quyết, để người còn truy lại được"
 
 
 def test_nguoi_quan_sat_HONG_khong_lam_hong_so_cai(tmp_path):
@@ -237,14 +247,51 @@ def test_nguoi_quan_sat_HONG_khong_lam_hong_so_cai(tmp_path):
     assert len(led.records()) == 1 and led.verify() == (True, 0)
 
 
-def test_kieu_so_cai_KHONG_anh_xa_thi_im_lang():
-    """26 kiểu sự kiện sổ cái không phải cái nào cũng đáng làm phiền giao diện — `model.call`,
-    `context.bundle`, `session.open` là nhật ký vận hành."""
-    from eide.daemon.rpc import SU_KIEN
+def test_noi_dung_gui_cho_mo_hinh_KHONG_len_giao_dien():
+    """`model.call` nay LÊN giao diện — người phải thấy tác tử tiêu bao nhiêu token — nhưng
+    **không mang theo nội dung**.
+
+    Sổ cái đã che khoá API (`che_bi_mat`), nhưng che khoá khác với không gửi mã nguồn của người
+    dùng ra một cửa sổ có thể đang chia sẻ màn hình. Màn chi phí cần con số và vai trò.
+    `context.bundle` thì bị chặn ở mức bản ghi vì nó KHÔNG có gì ngoài nội dung.
+    """
+    from eide.daemon.rpc import KHONG_LEN_UI, SU_KIEN
     from eide_core.ledger import event_kinds
 
-    assert "model.call" not in SU_KIEN and "context.bundle" not in SU_KIEN
+    assert SU_KIEN["model.call"] == "event.model.call"
+    assert "context.bundle" in KHONG_LEN_UI
     assert set(SU_KIEN) <= event_kinds(), sorted(set(SU_KIEN) - event_kinds())
+
+    thu = []
+    d = Daemon(project=None, phat=lambda ten, p: thu.append((ten, p)))
+    d.ledger.append("model.call", {"role": "librarian", "model": "x", "tokens_in": 900,
+                                   "cost_usd": 0.01,
+                                   "prompt": "mã nguồn riêng của người dùng"})
+    goi = [p for ten, p in thu if ten == "event.model.call"]
+    assert goi and goi[0]["tokens_in"] == 900 and goi[0]["cost_usd"] == 0.01
+    assert "prompt" not in goi[0], "nội dung gửi mô hình không được ra giao diện"
+
+    thu.clear()
+    d.ledger.append("context.bundle", {"chunks": ["mã nguồn"]})
+    assert thu == [], "`context.bundle` không có gì ngoài nội dung — chặn cả bản ghi"
+
+
+def test_KHONG_phat_lai_lich_su_khi_KHONG_co_du_an(workspace):
+    """Không có dự án thì sổ cái là `~/.eide/ledger.jsonl` — dùng chung cho MỌI dự án.
+
+    Phát lại 200 dòng của nó là đổ lịch sử dự án khác vào cửa sổ vừa mở, và đổ trước cả phản
+    hồi RPC đầu tiên. Đo được ngay khi thêm tính năng phát lại: `serve_stdio` trả ba dòng
+    `event.*` của phiên trước rồi mới tới câu trả lời cho lời gọi hiện tại.
+    """
+    from eide.daemon.rpc import PHAT_LAI_KHI_MO
+
+    thu = []
+    d = Daemon(project=None, phat=lambda ten, p: thu.append((ten, p)))
+    assert thu == [], f"daemon không dự án phát lại {len(thu)} sự kiện cũ"
+    assert d._tail is not None and d._tail.phat_lai == 0
+
+    co = Daemon(project=workspace, phat=lambda ten, p: None)
+    assert co._tail is not None and co._tail.phat_lai == PHAT_LAI_KHI_MO
 
 
 def test_moi_ten_su_kien_phat_ra_deu_CO_trong_openrpc():
@@ -367,3 +414,54 @@ def test_moi_cap_NANG_deu_la_nang_luc_co_that():
     reg = get_registry()
     la = [c for c in CAP_NANG if c not in reg]
     assert not la, la
+
+
+def test_GIAO_DIEN_thay_viec_cua_TIEN_TRINH_KHAC(workspace):
+    """Bất biến của cả tính năng giám sát (GIAM-SAT-UI §0.1).
+
+    Dựng đúng hình dạng thật: một `Daemon` đóng vai cửa sổ EIDE đang mở, và một `Router` riêng
+    đóng vai tác tử chạy qua CLI — hai đối tượng khác nhau, cùng một tệp `ledger.jsonl`. Trước
+    14/09/2026 daemon chỉ nghe chính nó, nên phiên AVR chạy 28 lời gọi và ghi 105 sự kiện trong
+    khi giao diện không hiện một dòng nào.
+    """
+    import time
+
+    from eide_core.ledger import Ledger
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+
+    thu = []
+    giao_dien = Daemon(project=workspace, phat=lambda ten, p: thu.append((ten, p)))
+    try:
+        so_tac_tu = Ledger(workspace / ".eide" / "store" / "ledger.jsonl")
+        tac_tu = Router(gate=PolicyGate(), ledger=so_tac_tu)
+        tac_tu.invoke("kg.conflicts", {}, Context(project_dir=workspace))
+
+        het = time.monotonic() + 5
+        while time.monotonic() < het and not any(t == "event.run.progress" for t, _ in thu):
+            time.sleep(0.05)
+
+        tien_do = [p for t, p in thu if t == "event.run.progress"]
+        assert tien_do, "giao diện phải thấy việc tác tử chạy ở tiến trình khác"
+        assert any(p.get("cap") == "kg.conflicts" for p in tien_do), [p.get("cap") for p in tien_do]
+    finally:
+        if giao_dien._tail is not None:
+            giao_dien._tail.dung()
+
+
+def test_moi_ten_su_kien_trong_SU_KIEN_deu_CO_trong_openrpc():
+    """Năm sự kiện giám sát mới (`event.gate.decided`, `event.model.call`, `event.tool.report`,
+    `event.project.changed`, `event.chat.intent`) phải có trong `openrpc.json`.
+
+    CLAUDE.md cấm thêm tên phương thức JSON-RPC mà không qua spec; và một sự kiện daemon phát ra
+    nhưng spec không khai là một sự kiện không plugin nào biết mà đón.
+    """
+    import json
+
+    from eide.daemon.rpc import SU_KIEN
+    from eide_core.paths import spec_dir
+
+    khai = {m["name"] for m in json.loads(
+        (spec_dir() / "api" / "openrpc.json").read_text(encoding="utf-8"))["methods"]}
+    phat = set(SU_KIEN.values()) | {"event.gate.decided"}
+    assert phat <= khai, sorted(phat - khai)
