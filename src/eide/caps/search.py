@@ -230,10 +230,16 @@ def dac_trung_nguon(candidate: dict[str, Any]) -> dict[str, Any]:
     Bản đầu tôi gọi `gate.decide` ngay trong `search.fetch` — thành gác hai lần, và lần của
     Router chạy trước với đặc trưng rỗng nên mọi lời gọi đều rơi vào G-SRC-99 (ASK).
 
-    Bên gọi truyền kết quả hàm này qua `router.invoke(..., features=...)`. Đặt ở đây để chỉ có
-    MỘT cách dựng: hai chỗ tự map `candidate → source.*` là hai chỗ sẽ quên một trường, và
-    trường quên thì `_Ns` trả None ⇒ không khớp quy tắc APPROVE nào ⇒ hỏi người. An toàn, nhưng
-    hỏi vì lý do sai thì người duyệt học cách bấm bừa.
+    Router gọi hàm này qua `@capability("search.fetch", dac_trung=…)`, và bên gọi vẫn chồng
+    thêm được qua `router.invoke(..., features=…)` khi nó biết gì hơn (`hash_match` chẳng hạn).
+    Đặt ở đây để chỉ có MỘT cách dựng: hai chỗ tự map `candidate → source.*` là hai chỗ sẽ quên
+    một trường, và trường quên thì `_Ns` trả None ⇒ không khớp quy tắc APPROVE nào ⇒ hỏi người.
+    An toàn, nhưng hỏi vì lý do sai thì người duyệt học cách bấm bừa.
+
+    **Từ 14/09/2026 Router mới gọi nó.** Trước đó hàm này viết xong mà KHÔNG ai gọi: cổng G-SRC
+    với 8 quy tắc luôn được hỏi trên đặc trưng rỗng, nên chỉ G-SRC-99 (mặc định ASK) khớp — một
+    SVD Apache-2.0 từ `raw.githubusercontent.com` vẫn dừng ở "License không rõ". Đúng thứ câu
+    trên cảnh báo, và nó đã xảy ra suốt.
 
     Không truyền gì cũng an toàn: mọi đặc trưng là None thì G-SRC-99 bắt hết và ra ASK.
     """
@@ -259,7 +265,16 @@ def dac_trung_nguon(candidate: dict[str, Any]) -> dict[str, Any]:
 # ---------------------------------------------------------------- SEARCH-06 fetch
 
 
-@capability("search.fetch")
+def _dac_trung_fetch(params: dict[str, Any]) -> dict[str, Any]:
+    """Router gọi hàm này; nó chỉ bóc `candidate` ra rồi giao cho `dac_trung_nguon`.
+
+    Một hàm có TÊN thay vì `lambda`: bộ dò của `test_moi_bo_dung_dac_trung_deu_duoc_router_goi`
+    tìm tên hàm trong mã nguồn, và một lambda thì không có tên để tìm.
+    """
+    return dac_trung_nguon(params.get("candidate") or {})
+
+
+@capability("search.fetch", dac_trung=_dac_trung_fetch)
 def fetch(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: SEARCH-06 — CDS-12.2; POL-17 G-SRC; SEC-25 §4. Lỗi: E3000, E3001, E8001, E4004.
 

@@ -178,6 +178,8 @@ class Registered:
     spec: CapabilitySpec
     handler: Handler | None = None
     features_provided: list[str] = field(default_factory=list)
+    # Hàm dựng đặc trưng cổng TỪ THAM SỐ của chính lời gọi. Xem `capability(..., dac_trung=)`.
+    dac_trung: Callable[[dict[str, Any]], dict[str, Any]] | None = None
 
     @property
     def implemented(self) -> bool:
@@ -242,10 +244,12 @@ class Registry:
         return seen
 
     # ---- gắn hiện thực
-    def bind(self, cap_id: str, handler: Handler, features: list[str] | None = None) -> None:
+    def bind(self, cap_id: str, handler: Handler, features: list[str] | None = None,
+             dac_trung: Callable[[dict[str, Any]], dict[str, Any]] | None = None) -> None:
         reg = self.get(cap_id)
         reg.handler = handler
         reg.features_provided = features or []
+        reg.dac_trung = dac_trung
 
     def register_user_tool(self, spec: CapabilitySpec, handler: Handler) -> None:
         """tool.register (TOOL-06): năng lực tạm `user.<tên>`, mức T1*, cổng G-TOOL."""
@@ -310,23 +314,47 @@ def get_registry() -> Registry:
             importlib.import_module(f"eide.caps.{m.name}")
     except ModuleNotFoundError:
         pass
-    for cap_id, (fn, feats) in _PENDING.items():
-        reg.bind(cap_id, fn, feats)
+    for cap_id, (fn, feats, dt) in _PENDING.items():
+        reg.bind(cap_id, fn, feats, dt)
     return reg
 
 
-_PENDING: dict[str, tuple[Handler, list[str]]] = {}
+_PENDING: dict[str, tuple[Handler, list[str],
+                          Callable[[dict[str, Any]], dict[str, Any]] | None]] = {}
 
 
-def capability(cap_id: str, features: list[str] | None = None) -> Callable[[Handler], Handler]:
+def capability(cap_id: str, features: list[str] | None = None,
+               dac_trung: Callable[[dict[str, Any]], dict[str, Any]] | None = None
+               ) -> Callable[[Handler], Handler]:
     """Gắn hàm hiện thực vào năng lực có trong spec.
 
     @capability("project.create", features=["name_conflict"])
     def create(params: dict, ctx: Context) -> dict: ...
+
+    `dac_trung` là hàm dựng đặc trưng cho cổng TỪ THAM SỐ của lời gọi, và Router gọi nó trước
+    khi hỏi PolicyGate.
+
+    ## Vì sao nó phải nằm ở đây, không nằm ở bên gọi
+
+    Bản đầu để bên gọi tự dựng: `search.py` có `dac_trung_nguon`, `env.py` có `dac_trung_cai`,
+    cả hai viết đầy đủ với docstring giải thích — và **không một chỗ nào trong sản phẩm gọi
+    chúng** (đo 14/09/2026). Hệ quả: cổng G-SRC với 8 quy tắc và G-OPS với 7 quy tắc luôn được
+    hỏi trên đặc trưng RỖNG, nên chỉ quy tắc mặc định `*-99` (ASK) khớp. G-SRC-01 — quy tắc
+    APPROVE cho nguồn hãng có license hợp lệ — chưa bao giờ chạy; G-SRC-03 (REJECT khi hash
+    lệch) cũng thế.
+
+    Nó an toàn theo nghĩa hẹp (luôn hỏi người) nhưng hỏng theo nghĩa quan trọng: một SVD
+    Apache-2.0 từ `raw.githubusercontent.com` — domain nằm trong `trusted_sources`, license nằm
+    trong `allowed_licenses` — vẫn dừng ở "License không rõ/không cho phép". Chính docstring của
+    `dac_trung_nguon` đã cảnh báo điều sẽ xảy ra: *"hỏi vì lý do sai thì người duyệt học cách
+    bấm bừa"*.
+
+    Đặt bộ dựng cạnh năng lực và để Router gọi nó thì không bên gọi nào phải nhớ — và CLI,
+    daemon, chuỗi đều nhận cùng một quyết định cho cùng một lời gọi.
     """
 
     def deco(fn: Handler) -> Handler:
-        _PENDING[cap_id] = (fn, features or [])
+        _PENDING[cap_id] = (fn, features or [], dac_trung)
         return fn
 
     return deco

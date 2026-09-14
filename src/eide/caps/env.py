@@ -200,7 +200,8 @@ def dac_trung_cai(params: dict[str, Any], *, needs_sudo: bool = False) -> dict[s
     return {"op": "install", "package": params.get("tool"), "needs_sudo": bool(needs_sudo)}
 
 
-@capability("env.install", features=["op", "package", "needs_sudo"])
+@capability("env.install", features=["op", "package", "needs_sudo"],
+            dac_trung=dac_trung_cai)
 def install(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: ENV-03 — CDS-12.3; TGT-19 §toolchain; POL-17 G-OPS-04/05; SEC-25 §2, §5.
     tc S33/S34, TC-46; lỗi E3000, E4000, E4004; undo `delete_created_files`.

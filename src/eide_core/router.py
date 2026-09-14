@@ -67,6 +67,22 @@ class Router:
         if not reg.implemented:
             raise EideError("E1001", f"Năng lực {cap_id} có trong spec nhưng chưa hiện thực (xem docs/SPRINT-01.md)")
         self.registry.validate_input(cap_id, params)
+
+        # Đặc trưng cho cổng: năng lực tự dựng từ THAM SỐ của chính lời gọi (xem
+        # `capability(..., dac_trung=)`), rồi bên gọi chồng thêm nếu nó biết gì hơn.
+        #
+        # Thứ tự ấy quan trọng: bên gọi thắng vì nó có ngữ cảnh mà năng lực không thấy —
+        # `needs_sudo` của `env.install` chẳng hạn, chỉ biết được sau khi dò máy. Nhưng KHÔNG
+        # bên gọi nào phải nhớ dựng cái cơ bản: trước 14/09/2026 thì phải, và kết quả là hai
+        # bộ dựng đặc trưng (`dac_trung_nguon`, `dac_trung_cai`) viết xong mà không ai gọi —
+        # cổng G-SRC 8 quy tắc và G-OPS 7 quy tắc chạy trên đặc trưng rỗng suốt từ đầu.
+        if reg.dac_trung is not None:
+            try:
+                features = {**reg.dac_trung(params), **features}
+            except Exception:
+                # Bộ dựng hỏng KHÔNG được làm hỏng lời gọi: thiếu đặc trưng thì cổng rơi về
+                # quy tắc mặc định (ASK) — an toàn, và đó đúng là hành vi cũ.
+                pass
         run_id = uuid.uuid4().hex[:12]
         t0 = time.perf_counter()
         d = self.gate.decide(reg.spec.gate, {"cap": {"id": cap_id, "risk": reg.spec.risk_class}, **features},

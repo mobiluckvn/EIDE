@@ -286,3 +286,78 @@ def test_caps_describe_va_caps_list_noi_cung_mot_man_hinh():
     # rỗng tuếch (cả hai cùng trả "" cho tất cả).
     co_man = [c.spec.id for c in r.list() if r.describe(c.spec.id)["ui"]]
     assert len(co_man) > 150, f"chỉ {len(co_man)} năng lực có màn hình — bảng UXD-13 §2 hỏng?"
+
+
+def test_moi_bo_dung_dac_trung_deu_duoc_router_goi():
+    """Bộ dựng đặc trưng phải được GẮN vào năng lực, không chỉ tồn tại.
+
+    Lỗi im lặng số 22 (đo 14/09/2026): `search.dac_trung_nguon` và `env.dac_trung_cai` viết đầy
+    đủ, có docstring giải thích bài học, và **không một chỗ nào trong sản phẩm gọi chúng**. Hệ
+    quả: cổng G-SRC (8 quy tắc) và G-OPS (7 quy tắc) luôn được hỏi trên đặc trưng RỖNG, nên chỉ
+    quy tắc mặc định `*-99` (ASK) khớp.
+
+    Cụ thể đo được: một SVD Apache-2.0 từ `raw.githubusercontent.com` — domain nằm trong
+    `trusted_sources`, license nằm trong `allowed_licenses` — vẫn dừng ở G-SRC-05 "License không
+    rõ/không cho phép". G-SRC-01, quy tắc APPROVE duy nhất cho nguồn hãng, chưa bao giờ chạy;
+    G-SRC-03 (REJECT khi hash lệch) cũng thế.
+
+    Nó an toàn theo nghĩa hẹp — luôn hỏi người — nhưng chính docstring của `dac_trung_nguon` đã
+    nói ra cái giá: *"hỏi vì lý do sai thì người duyệt học cách bấm bừa"*.
+
+    Dò TĨNH trên mã nguồn chứ không dò closure: một `lambda` bọc ngoài làm phép dò động mất dấu
+    hàm gốc, và một bài test mất dấu thì báo xanh cho đúng thứ nó sinh ra để bắt.
+    """
+    import re
+    from pathlib import Path
+
+    from eide_core.paths import repo_root
+
+    caps_dir = repo_root() / "src" / "eide" / "caps"
+    khai, dung = set(), set()
+    for f in sorted(caps_dir.glob("*.py")):
+        van = f.read_text(encoding="utf-8")
+        khai |= set(re.findall(r"^def (dac_trung_\w+)", van, re.M))
+        # Hai cách dùng hợp lệ, và bộ dò phải nhận CẢ HAI:
+        #
+        # · `@capability(..., dac_trung=ten_ham)` — Router gọi trước khi hỏi cổng. Dùng khi
+        #   hiện vật đã nằm sẵn trong tham số (`search.fetch` có `candidate`).
+        # · gọi thẳng trong thân năng lực rồi tự `gate.decide` — như `code.merge` với
+        #   `dac_trung_G3`, vì đặc trưng G3 phải tính từ `reports`, `review_id` và cây làm việc,
+        #   những thứ Router không có. Cùng mô hình với G-FACT/G1 (DEV-054).
+        dung |= set(re.findall(r"dac_trung=(\w+)", van))
+        dung |= set(re.findall(r"(dac_trung_\w+)\s*\(", van))
+
+    assert khai, "không tìm thấy bộ dựng đặc trưng nào — đổi tên rồi?"
+    chua = sorted(khai - dung)
+    assert not chua, (f"bộ dựng đặc trưng viết rồi mà không năng lực nào dùng: {chua} — "
+                      "cổng của chúng sẽ chạy trên đặc trưng rỗng")
+
+    # Và chúng phải tới được Router thật, không chỉ xuất hiện trong mã.
+    from eide_core.registry import get_registry
+
+    r = get_registry()
+    for i in ("search.fetch", "env.install"):
+        assert r.get(i).dac_trung is not None, f"{i} mất bộ dựng đặc trưng"
+
+
+def test_cong_G_SRC_duyet_duoc_nguon_hang_hop_le():
+    """G-SRC-01 phải APPROVE được một nguồn hãng đúng chuẩn.
+
+    Một cổng mà quy tắc APPROVE không bao giờ khớp thì nó không phải cổng, nó là một cái chặn.
+    Bài test dựng đúng đặc trưng mà `dac_trung_nguon` sinh ra cho một SVD hãng và đòi PolicyGate
+    trả APPROVE — nếu ai đó đổi quy tắc hay đổi bộ dựng làm hai bên lệch nhau, chỗ này đỏ.
+    """
+    from eide.caps.search import dac_trung_nguon
+    from eide_core.policy import PolicyGate
+
+    dt = dac_trung_nguon({
+        "uri": "https://raw.githubusercontent.com/espressif/svd/main/svd/esp32c3.svd",
+        "kind": "svd", "license_hint": "Apache-2.0", "size_est": 1_366_305,
+    })
+    assert dt["source"]["domain"] == "raw.githubusercontent.com"
+    assert dt["source"]["license"] == "Apache-2.0"
+
+    d = PolicyGate().decide("G-SRC", {"cap": {"id": "search.fetch", "risk": "R1"}, **dt},
+                            risk="R1", autonomy="A2", tier="T1", actor="agent")
+    assert d.decision == "APPROVE", f"{d.rule_id}: {d.reason}"
+    assert d.rule_id == "G-SRC-01"
