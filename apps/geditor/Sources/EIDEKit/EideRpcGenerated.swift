@@ -36,6 +36,8 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case docOpen = "doc.open"
     /// Kể cả STOP
     case eventAutonomyChanged = "event.autonomy.changed"
+    /// Tác tử hiểu ý định thành chuỗi năng lực nào
+    case eventChatIntent = "event.chat.intent"
     /// Thẻ câu hỏi gộp
     case eventChatQuestion = "event.chat.question"
     /// Thẻ báo cáo cuối
@@ -46,17 +48,25 @@ public enum EideMethod: String, CaseIterable, Sendable {
     /// Cắm/rút board
     case eventDiscoverChanged = "event.discover.changed"
     case eventDocStale = "event.doc.stale"
+    /// Cổng tự quyết APPROVE/REJECT — không vào hàng đợi
+    case eventGateDecided = "event.gate.decided"
     /// Mục ASK mới
     case eventGateOpened = "event.gate.opened"
     case eventJobProgress = "event.job.progress"
     /// Sau extract/review
     case eventKnowledgeChanged = "event.knowledge.changed"
+    /// Chi phí; KHÔNG mang nội dung prompt
+    case eventModelCall = "event.model.call"
     /// Cảnh báo chung
     case eventNotice = "event.notice"
+    /// Đổi dự án hoặc đích đã ghim
+    case eventProjectChanged = "event.project.changed"
     case eventQueueChanged = "event.queue.changed"
     /// Dòng tiến độ chuỗi
     case eventRunProgress = "event.run.progress"
     case eventSerialLine = "event.serial.line"
+    /// build/size/sim/install chạy xong
+    case eventToolReport = "event.tool.report"
     case eventUndoExpired = "event.undo.expired"
     case eventUndoRegistered = "event.undo.registered"
     /// Người quyết định mục ASK
@@ -216,5 +226,5 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
 }
 
 /// Số phương thức và mã lỗi lúc sinh — test hợp đồng đối chiếu với spec (API-15 §8).
-public let eideSoPhuongThuc = 57
+public let eideSoPhuongThuc = 62
 public let eideSoMaLoi = 29

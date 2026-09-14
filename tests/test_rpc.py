@@ -276,22 +276,59 @@ def test_noi_dung_gui_cho_mo_hinh_KHONG_len_giao_dien():
     assert thu == [], "`context.bundle` không có gì ngoài nội dung — chặn cả bản ghi"
 
 
-def test_KHONG_phat_lai_lich_su_khi_KHONG_co_du_an(workspace):
-    """Không có dự án thì sổ cái là `~/.eide/ledger.jsonl` — dùng chung cho MỌI dự án.
+def test_daemon_KHONG_TU_phat_lai_lich_su_vi_no_TREO_ong(workspace, tmp_path):
+    """Kênh đẩy chỉ mang sự kiện THỜI GIAN THỰC. Lịch sử đi bằng `view.timeline`.
 
-    Phát lại 200 dòng của nó là đổ lịch sử dự án khác vào cửa sổ vừa mở, và đổ trước cả phản
-    hồi RPC đầu tiên. Đo được ngay khi thêm tính năng phát lại: `serve_stdio` trả ba dòng
-    `event.*` của phiên trước rồi mới tới câu trả lời cho lời gọi hiện tại.
+    Bản đầu (14/09/2026) cho daemon phát lại 200 bản ghi ngay trong `__init__`, và nó **treo
+    daemon**: stdio là ống có đệm hữu hạn — 64 KB trên macOS — còn client chỉ đọc khi đang chờ
+    trả lời một lời gọi. Phát một khối lớn trước khi client gửi gì là ghi vào ống không ai đọc,
+    và `write` chặn vĩnh viễn ngay đó. Triệu chứng nhìn từ ngoài: cửa sổ mở lên rồi đứng im,
+    không lỗi, không thông báo.
+
+    Đo được: dự án AVR 108 sự kiện ≈ 55,7 KB (sát ngưỡng); dự án ESP32-C3 ≈ 82 KB — vượt.
     """
     from eide.daemon.rpc import PHAT_LAI_KHI_MO
+    from eide_core.ledger import Ledger
+
+    assert PHAT_LAI_KHI_MO == 0, "phát lại tự động treo ống — xem docstring"
+
+    # Sổ cái đã có sẵn 50 bản ghi TRƯỚC khi daemon mở.
+    so = Ledger(workspace / ".eide" / "store" / "ledger.jsonl")
+    for i in range(50):
+        so.append("cap.run.start", {"run_id": f"r{i}", "cap": "kg.build"})
 
     thu = []
-    d = Daemon(project=None, phat=lambda ten, p: thu.append((ten, p)))
-    assert thu == [], f"daemon không dự án phát lại {len(thu)} sự kiện cũ"
-    assert d._tail is not None and d._tail.phat_lai == 0
+    d = Daemon(project=workspace, phat=lambda ten, p: thu.append((ten, p)))
+    try:
+        assert thu == [], f"daemon vừa mở đã đẩy {len(thu)} sự kiện vào ống chưa ai đọc"
+        assert d._tail is not None and d._tail.phat_lai == 0
+    finally:
+        if d._tail is not None:
+            d._tail.dung()
 
-    co = Daemon(project=workspace, phat=lambda ten, p: None)
-    assert co._tail is not None and co._tail.phat_lai == PHAT_LAI_KHI_MO
+
+def test_KHOI_LICH_SU_du_lon_de_lam_day_ong_stdio(workspace):
+    """Bài test giữ CON SỐ, không giữ nguyên tắc — vì nguyên tắc thì ai cũng đồng ý, còn con số
+    mới là thứ quyết định nó có hỏng hay không.
+
+    Nếu một ngày ai đó bật lại phát lại tự động, bài này nói ngay nó sẽ đẩy bao nhiêu byte vào
+    một ống 64 KB.
+    """
+    import json as _json
+
+    from eide_core.ledger import Ledger
+
+    so = Ledger(workspace / ".eide" / "store" / "ledger.jsonl")
+    for i in range(200):
+        so.append("cap.run.start", {"run_id": f"r{i}", "cap": "extract.atdf",
+                                    "actor": "agent", "args_hash": "44136fa355b3678a",
+                                    "decision": {"decision": "APPROVE", "gate": "*",
+                                                 "rule": "R0", "reason": "Lớp R0 chỉ đọc"}})
+    n = sum(len(_json.dumps({"jsonrpc": "2.0", "method": "event.run.progress",
+                             "params": r}, ensure_ascii=False)) + 1
+            for r in so.records()[-200:])
+    assert n > 65536, (f"200 bản ghi chỉ {n} byte — nếu ngưỡng ống đổi thì xem lại quyết định "
+                       "ở PHAT_LAI_KHI_MO")
 
 
 def test_moi_ten_su_kien_phat_ra_deu_CO_trong_openrpc():
@@ -465,3 +502,113 @@ def test_moi_ten_su_kien_trong_SU_KIEN_deu_CO_trong_openrpc():
         (spec_dir() / "api" / "openrpc.json").read_text(encoding="utf-8"))["methods"]}
     phat = set(SU_KIEN.values()) | {"event.gate.decided"}
     assert phat <= khai, sorted(phat - khai)
+
+
+def test_cap_run_finish_MANG_TEN_nang_luc(tmp_path):
+    """Dòng "xong" trên nhật ký phải nói XONG CÁI GÌ.
+
+    `cap.run.start` mang `cap`, `cap.run.finish` thì không — nên trên dòng thời gian, mỗi việc
+    hiện hai dòng: "kg.conflicts bắt đầu" rồi "? xong". Đo 14/09/2026 bằng đúng đường thật
+    (một daemon + một CLI, cùng sổ cái): dòng kết thúc in ra `None`.
+
+    Ghép theo `run_id` ở phía giao diện thì vẫn hỏng khi phát lại cắt mất dòng `start` — mà
+    phát lại cắt ở 200 bản ghi cuối, tức chuyện thường. Chỗ đúng để sửa là nguồn.
+    """
+    from eide_core.ledger import Ledger
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+
+    led = Ledger(tmp_path / "l.jsonl")
+    r = Router(gate=PolicyGate(), ledger=led)
+    r.invoke("kg.conflicts", {}, Context())
+
+    finish = [x for x in led.records() if x["kind"] == "cap.run.finish"]
+    assert finish, "không có bản ghi finish nào"
+    assert finish[-1]["data"].get("cap") == "kg.conflicts", finish[-1]["data"]
+
+
+def test_moi_nhanh_ket_thuc_deu_mang_cap(tmp_path, workspace):
+    """Bốn nhánh kết thúc — done, failed, pending (ASK), rejected — và cả bốn đều phải nói tên
+    năng lực. Sửa ba nhánh rồi quên một nhánh là đúng khuôn lỗi im lặng: đường phổ biến thì
+    đúng, còn đường hiếm thì hiện `?` và không ai để ý."""
+    import re
+
+    from eide_core.paths import repo_root
+
+    src = (repo_root() / "src" / "eide_core" / "router.py").read_text(encoding="utf-8")
+    ghi = re.findall(r'_log\("cap\.run\.finish",\s*\{([^}]*)', src)
+    assert ghi, "không tìm thấy chỗ ghi cap.run.finish"
+    thieu = [g for g in ghi if '"cap"' not in g]
+    assert not thieu, f"{len(thieu)} nhánh kết thúc không mang `cap`: {thieu}"
+
+
+def test_daemon_DOC_autonomy_cua_DU_AN_khong_phai_mac_dinh(workspace):
+    """Giao diện và CLI phải áp CÙNG một chính sách trên cùng một dự án.
+
+    `Daemon` dựng `PolicyGate()` trần, đọc `docs/spec/policy/defaults.yaml` toàn cục. Trong một
+    dự án thì sai: mức tự chủ nằm ở `.eide/autonomy.yaml`. CLI đã đọc đúng từ đầu
+    (`cli._autonomy_cua_du_an`); daemon thì không.
+
+    Đo 14/09/2026 trên dự án AVR: tệp ghi `autonomy: A2`, `eide caps invoke` áp A2, còn cửa sổ
+    EIDE hiện mức "—" và quyết định theo mặc định. Hai nguồn sự thật cho cùng một câu hỏi, và
+    cái người dùng NHÌN THẤY là cái sai.
+    """
+    import yaml as _yaml
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "autonomy.yaml").write_text(
+        _yaml.safe_dump({"autonomy": "A3", "thresholds": {"download_max_mb": 7}}),
+        encoding="utf-8")
+
+    d = Daemon(project=workspace)
+    assert d.autonomy_get({})["autonomy"] == "A3"
+    assert d.gate.config["thresholds"]["download_max_mb"] == 7, \
+        "ngưỡng của dự án cũng phải có hiệu lực, không riêng mức tự chủ"
+
+
+def test_daemon_va_CLI_doc_CUNG_mot_cach(workspace):
+    """Hai phép đọc `autonomy.yaml` — một trong `cli.py`, một trong `rpc.py` — phải cho cùng
+    kết quả. Hai bản sao là hai chỗ sẽ trôi, và chỗ trôi sẽ là chỗ giao diện nói khác CLI."""
+    import yaml as _yaml
+
+    from eide.cli import _autonomy_cua_du_an
+    from eide.daemon.rpc import _autonomy_du_an
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "autonomy.yaml").write_text(
+        _yaml.safe_dump({"autonomy": "A1"}), encoding="utf-8")
+    assert _autonomy_du_an(workspace) == _autonomy_cua_du_an(workspace)
+
+
+def test_autonomy_yaml_HONG_thi_daemon_van_chay(workspace):
+    """Một `autonomy.yaml` sai cú pháp làm daemon chết lúc khởi động nghĩa là người dùng mất cả
+    giao diện vì một dòng YAML — và không có cách nào biết vì sao, vì daemon chết trước khi kịp
+    nói gì. Rơi về mặc định thì an toàn hơn hẳn: mặc định là mức THẤP."""
+    from eide.daemon.rpc import _autonomy_du_an
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "autonomy.yaml").write_text("{ đây: không: phải: yaml", encoding="utf-8")
+    assert _autonomy_du_an(workspace) is None
+    d = Daemon(project=workspace)
+    assert d.autonomy_get({}) is not None, "daemon phải chạy được"
+
+
+def test_khong_co_du_an_thi_khong_doc_gi(tmp_path):
+    from eide.daemon.rpc import _autonomy_du_an
+
+    assert _autonomy_du_an(None) is None
+    assert _autonomy_du_an(tmp_path) is None, "thư mục không có .eide/ thì cũng None"
+
+
+def test_daemon_dung_NIEM_cua_du_an(workspace):
+    """`eide policy sign -p <dự án>` ghi ra `.eide/policy.sig`. Daemon đọc niêm toàn cục thì
+    chữ ký của chủ sản phẩm trên dự án ấy không có hiệu lực — và bốn danh sách trắng bị bỏ,
+    mọi thứ rơi về ASK (POL-17 §3)."""
+    d = Daemon(project=workspace)
+    assert d.gate is not None
+    # Không khẳng định niêm ĐẠT (dự án test chưa ký) — khẳng định nó nhìn đúng TỆP.
+    import inspect
+
+    from eide.daemon.rpc import Daemon as _D
+    src = inspect.getsource(_D.__init__)
+    assert "policy.sig" in src, "daemon phải trỏ vào niêm của dự án"

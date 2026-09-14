@@ -18,8 +18,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Khác `MainWindowController.showEidePanel` ở CHỖ ĐỨNG chứ không ở nội dung: cùng một
     /// `EidePanel`, nhưng một bên là dải 420 px dưới đáy trình soạn thảo, một bên là cửa sổ
     /// riêng của sản phẩm. Mockup §2 mô tả cái thứ hai.
+    @MainActor
     @objc func moCuaSoEide() {
         if let w = eideWindow { return w.hien() }
+        // Mở kèm dự án ngay từ đầu, không mở rỗng rồi mới nạp: daemon quyết `ctx.project_dir`
+        // lúc khởi động, nên mở rỗng trước nghĩa là dựng một daemon để vứt đi ngay sau đó.
+        if let d = Self.duAnMoSan() {
+            return moDuAnEide(duong: d)
+        }
         guard let c = EideDaemonLauncher.moClient() else {
             let a = NSAlert()
             a.messageText = "Chưa chạy được EIDE"
@@ -31,6 +37,147 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let w = EideWindowController(client: c)
         eideWindow = w
         w.hien()
+    }
+
+    /// Dự án EIDE mở sẵn lúc khởi động, hoặc nil.
+    ///
+    /// Hai nguồn, theo thứ tự: biến môi trường `EIDE_PROJECT` (chỉ đích danh — dùng khi mở từ
+    /// dòng lệnh hoặc khi kiểm thử), rồi **dự án gần nhất**. Mở lại dự án gần nhất là thứ người
+    /// dùng mong đợi ở một IDE; mở lên một cửa sổ trống sau khi hôm qua vừa làm việc cả buổi là
+    /// bắt họ đi tìm lại đường vào mỗi sáng.
+    ///
+    /// Kiểm `EideDuAn.kiem` trước khi trả về: dự án gần nhất có thể đã bị xoá hoặc đổi tên, và
+    /// khởi động lên một hộp thoại lỗi thì tệ hơn là khởi động lên một cửa sổ trống.
+    @MainActor
+    static func duAnMoSan() -> String? {
+        if let d = ProcessInfo.processInfo.environment["EIDE_PROJECT"], !d.isEmpty {
+            return EideDuAn.kiem(d).loi == nil ? d : nil
+        }
+        return EideDuAn.ganDay().first { EideDuAn.kiem($0).loi == nil }
+    }
+
+    /// **Tệp → Mở dự án EIDE…** — GIAM-SAT-UI §0.2.
+    ///
+    /// Chọn một thư mục có `.eide/`. Khác "Mở thư mục làm Workspace" ở trên: workspace là cây
+    /// tệp cho trình soạn thảo, dự án EIDE là chỗ có store, sổ cái, chính sách và hộ chiếu.
+    @MainActor
+    @objc func moDuAnEide(_ sender: Any?) {
+        let p = NSOpenPanel()
+        p.canChooseDirectories = true
+        p.canChooseFiles = false
+        p.allowsMultipleSelection = false
+        p.prompt = "Mở dự án"
+        p.message = "Chọn thư mục dự án EIDE (thư mục có `.eide/`)"
+        // Mở sẵn ở `~/eide` — `defaults.project_dir` của POL-17, tức chỗ `project.create` đặt
+        // dự án mới. Người vừa bảo tác tử tạo dự án sẽ tìm nó ở đúng đó.
+        let mac_dinh = NSHomeDirectory() + "/eide"
+        if FileManager.default.fileExists(atPath: mac_dinh) {
+            p.directoryURL = URL(fileURLWithPath: mac_dinh)
+        }
+        guard p.runModal() == .OK, let u = p.url else { return }
+        moDuAnEide(duong: u.path)
+    }
+
+    /// Mở một dự án theo đường dẫn — dùng chung cho hộp thoại và menu gần đây.
+    /// Mở một dự án theo đường dẫn.
+    ///
+    /// `diTru: true` cho dự án VỪA TẠO: `project.create` không chạy migration, nên store chưa
+    /// có bảng nào — và hàng đợi cần store để mục ASK sống qua các phiên. Đo 14/09 trên luồng
+    /// AVR: mục chờ đầu tiên biến mất, `eide queue list` trả rỗng, và không có gì báo lý do.
+    @MainActor
+    func moDuAnEide(duong: String, diTru: Bool = false) {
+        if diTru { Self.diTruStore(duong) }
+        // Kiểm TRƯỚC khi mở cửa sổ: `eide daemon -p <không phải dự án>` vẫn chạy và vẫn trả lời
+        // RPC, chỉ trả rỗng cho mọi thứ — người dùng khi ấy nhìn một cửa sổ đầy màn trống mà
+        // không có gì nói cho họ biết đã chọn nhầm.
+        if let loi = EideDuAn.kiem(duong).loi {
+            let a = NSAlert()
+            a.messageText = "Không mở được dự án"
+            a.informativeText = loi
+            a.runModal()
+            return
+        }
+        if eideWindow == nil {
+            guard let c = EideDaemonLauncher.moClient(duAn: duong) else {
+                bao(khongChayDuoc: ())
+                return
+            }
+            let w = EideWindowController(client: c)
+            eideWindow = w
+            EideDuAn.nhoDaMo(duong)
+            w.hien()
+            return
+        }
+        if let loi = eideWindow?.moDuAn(duong) {
+            let a = NSAlert()
+            a.messageText = "Không mở được dự án"
+            a.informativeText = loi
+            a.runModal()
+            return
+        }
+        eideWindow?.hien()
+    }
+
+    /// Chạy `eide migrate -p <dự án>` cho một dự án vừa tạo.
+    ///
+    /// Đồng bộ và chờ: nó mất vài chục ms, và mở daemon trước khi store có bảng thì hàng đợi
+    /// im lặng nuốt mục chờ đầu tiên. Lỗi thì bỏ qua — `EideDuAn.kiem` ngay sau đây sẽ bắt và
+    /// nói ra bằng câu của nó.
+    @MainActor
+    static func diTruStore(_ duong: String) {
+        guard let eide = EideDaemonLauncher.timEide() else { return }
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: eide[0])
+        p.arguments = Array(eide.dropFirst()) + ["migrate", "-p", duong]
+        p.standardOutput = Pipe()
+        p.standardError = Pipe()
+        if let goc = EideDaemonLauncher.gocKho() {
+            p.currentDirectoryURL = URL(fileURLWithPath: goc)
+        }
+        try? p.run()
+        p.waitUntilExit()
+    }
+
+    /// **Tệp → Dự án EIDE gần đây** — dựng menu con ngay lúc bấm.
+    ///
+    /// Dựng lúc bấm chứ không lúc khởi động: danh sách đổi mỗi lần mở một dự án, và một menu
+    /// dựng sẵn từ lúc mở app sẽ thiếu đúng dự án người vừa làm việc.
+    @objc func duAnEideGanDay(_ sender: Any?) {
+        let ds = EideDuAn.ganDay()
+        let m = NSMenu()
+        if ds.isEmpty {
+            // Nói ra thay vì hiện một menu rỗng: menu rỗng trông như hỏng.
+            let x = m.addItem(withTitle: "Chưa mở dự án EIDE nào", action: nil, keyEquivalent: "")
+            x.isEnabled = false
+        }
+        for d in ds {
+            let it = m.addItem(withTitle: EideDuAn.nhan(d, trong: ds),
+                               action: #selector(moDuAnGanDay(_:)), keyEquivalent: "")
+            it.target = self
+            it.representedObject = d
+            it.toolTip = d
+        }
+        if let it = sender as? NSMenuItem {
+            it.submenu = m
+            // Bấm thẳng vào mục cha (thay vì rê chuột) thì hiện menu tại vị trí con trỏ.
+            if let sk = NSApp.currentEvent, sk.type == .leftMouseDown || sk.type == .keyDown {
+                m.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            }
+        }
+    }
+
+    @MainActor
+    @objc private func moDuAnGanDay(_ sender: NSMenuItem) {
+        guard let d = sender.representedObject as? String else { return }
+        moDuAnEide(duong: d)
+    }
+
+    private func bao(khongChayDuoc: Void) {
+        let a = NSAlert()
+        a.messageText = "Chưa chạy được EIDE"
+        a.informativeText = "Không tìm thấy `eide`. Chạy `make setup` trong kho EIDE, "
+            + "hoặc đặt EIDE_PYTHON trỏ tới python của venv."
+        a.runModal()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -476,6 +623,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             ("Mở…", #selector(MainWindowController.openDocument(_:)), "o"),
             ("Mở thư mục làm Workspace…", #selector(MainWindowController.openFolderAsWorkspace(_:)), "O"),
             ("Mở gần đây", #selector(MainWindowController.showRecentDocumentsMenu(_:)), ""),
+            ("-", nil, ""),
+            // Mở DỰ ÁN EIDE — khác hẳn "mở thư mục làm workspace" ở trên. Workspace là cây tệp
+            // cho trình soạn thảo; dự án EIDE là một thư mục có `.eide/` với store, sổ cái,
+            // chính sách và hộ chiếu. Không có đường này thì daemon chạy không thuộc dự án nào
+            // và mọi màn có dữ liệu đều rỗng — rỗng vì KHÔNG CÓ DỰ ÁN, chứ không phải vì chưa
+            // có dữ liệu (GIAM-SAT-UI §0.2).
+            ("Mở dự án EIDE…", #selector(AppDelegate.moDuAnEide(_:)), "E"),
+            ("Dự án EIDE gần đây", #selector(AppDelegate.duAnEideGanDay(_:)), ""),
             ("-", nil, ""),
             ("Lưu", #selector(MainWindowController.saveDocument(_:)), "s"),
             ("Lưu thành…", #selector(MainWindowController.saveDocumentAs(_:)), "S"),

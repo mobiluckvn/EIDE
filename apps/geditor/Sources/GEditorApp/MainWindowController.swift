@@ -29,6 +29,7 @@ final class MainWindowController: NSWindowController {
     // Khung EIDE (DEV-098) — sidebar trái và vùng nội dung đổi giữa trình soạn thảo với màn.
     var sidebarEide: NSTableView?
     private var nguonSidebar: NguonSidebarEide?
+    private var dieuHuongEide: EideDieuHuong?
     private var khungEideGoc: NSView?
     private var vungSoanThao: NSView?
     private var vachEide: NSBox?
@@ -794,23 +795,14 @@ final class MainWindowController: NSWindowController {
     /// bên trái, và vùng còn lại đổi giữa *trình soạn thảo* với *màn EIDE đang chọn*.
     private func dungKhungEide(quanh soanThao: NSView) -> NSView {
         let goc = NSView()
-        let bang = NSTableView()
-        bang.headerView = nil
-        bang.rowHeight = 26
-        // Nguồn dữ liệu tách thành một đối tượng riêng: `MainWindowController` đã là delegate
-        // của hàng chục thứ khác, và nhét thêm hai protocol bảng vào đó làm mọi lời gọi
-        // `tableView(_:viewFor:)` của các bảng KHÁC trong cửa sổ phải tự phân biệt bằng `===`.
-        nguonSidebar = NguonSidebarEide { [weak self] h in self?.chonManEide(h) }
-        bang.dataSource = nguonSidebar
-        bang.delegate = nguonSidebar
-        bang.selectionHighlightStyle = .regular
-        bang.setAccessibilityLabel("Màn hình EIDE")
-        bang.addTableColumn(NSTableColumn(identifier: .init("man")))
-        sidebarEide = bang
-
-        let cuon = NSScrollView()
-        cuon.documentView = bang
-        cuon.hasVerticalScroller = true
+        // Điều hướng gộp 5 NHÓM theo giai đoạn công việc (THIET-KE-UI sheet 2), thay danh sách
+        // 22 mục phẳng theo thứ tự bảng UXD-13 §2. Thứ tự tài liệu không phải thứ tự làm việc:
+        // "Dò board" từng đứng giữa "Mô phỏng" và "Log & serial", "Nhật ký" ở cuối cùng.
+        let dh = EideDieuHuong(frame: .zero)
+        dh.onChon = { [weak self] tien in self?.chonManEide(tien: tien) }
+        dieuHuongEide = dh
+        // Mã nguồn là MỘT MÀN của EIDE (DEV-098), và nó nằm trong nhóm "MÃ & CHẠY".
+        let cuon = dh
         cuon.translatesAutoresizingMaskIntoConstraints = false
 
         let vach = NSBox()
@@ -843,33 +835,33 @@ final class MainWindowController: NSWindowController {
         vachEide = vach
 
         DispatchQueue.main.async { [weak self] in
-            guard let self, let b = self.sidebarEide else { return }
-            b.reloadData()
-            // Mở ra ở màn "Mã nguồn": người dùng vừa mở một tệp, và đưa họ tới một màn khác
-            // là làm mất chính thứ họ vừa bấm vào.
-            b.selectRowIndexes([Self.chiSoManMaNguon], byExtendingSelection: false)
+            // Mở ra ở màn "Mã nguồn": người dùng vừa mở một tệp, và đưa họ tới một màn khác là
+            // làm mất chính thứ họ vừa bấm vào.
+            self?.dieuHuongEide?.chon("Code")
         }
         return goc
     }
 
-    /// Chỉ số màn "Mã nguồn" trong sidebar — `EideWindowController.manTrenSidebar` là nguồn.
-    static let chiSoManMaNguon = 10
-
-    /// Chọn một màn: `Mã nguồn` hiện trình soạn thảo, các màn khác hiện panel EIDE.
-    func chonManEide(_ hang: Int) {
-        let ds = EideWindowController.manTrenSidebar
-        guard hang >= 0, hang < ds.count, let goc = khungEideGoc,
-              let soanThao = vungSoanThao, let vach = vachEide else { return }
-
-        if hang == Self.chiSoManMaNguon {
-            eidePanel?.removeFromSuperview()
+    /// Chọn một màn theo TIỀN TỐ, không theo chỉ số hàng.
+    ///
+    /// Bản cũ nhận `hang: Int` và tra `EideWindowController.manTrenSidebar[hang]`. Chỉ số hàng
+    /// là thứ đổi mỗi lần thêm một màn hoặc một tiêu đề nhóm — và khi nó đổi, cú bấm vào "Mô
+    /// phỏng" mở ra "Dò board" mà không ai báo gì. Tên màn thì không đổi.
+    func chonManEide(tien: String) {
+        guard let goc = khungEideGoc, let soanThao = vungSoanThao, let vach = vachEide else {
+            return
+        }
+        // "Mã nguồn" là MỘT MÀN của EIDE (DEV-098) và nội dung của nó là trình soạn thảo.
+        if tien == "Code" {
+            eidePanel?.isHidden = true
             soanThao.isHidden = false
             return
         }
         guard let p = eidePanel else {
-            // Không tìm thấy `eide` — nói ra ngay tại chỗ người vừa bấm, và quay về màn Mã
-            // nguồn để cửa sổ không đứng trắng.
-            sidebarEide?.selectRowIndexes([Self.chiSoManMaNguon], byExtendingSelection: false)
+            // Không tìm thấy `eide` — nói ra ngay tại chỗ người vừa bấm, và quay về Mã nguồn để
+            // cửa sổ không đứng trắng.
+            dieuHuongEide?.chon("Code")
+            soanThao.isHidden = false
             let a = NSAlert()
             a.messageText = "Chưa chạy được EIDE"
             a.informativeText = "Không tìm thấy `eide`. Chạy `make setup` trong kho, hoặc đặt "
@@ -889,8 +881,7 @@ final class MainWindowController: NSWindowController {
             ])
         }
         p.isHidden = false
-        let m = ds[hang]
-        if m.tien == "Chat" { p.dongManChuyenDe() } else { p.moMan(m.tien) }
+        p.moMan(tien)
     }
 
     // MARK: - Gắn từng panel khi người dùng mở nó lần đầu
@@ -972,9 +963,104 @@ final class MainWindowController: NSWindowController {
     /// `lazy` là cố ý: dựng panel nghĩa là mở một tiến trình `eide daemon`, và người không dùng
     /// EIDE không nên phải trả giá ấy chỉ vì mở GEditor.
     lazy var eidePanel: EidePanel? = {
-        guard let c = EideDaemonLauncher.moClient() else { return nil }
-        return EidePanel(client: c)
+        // Mở KÈM dự án. `ctx.project_dir` của daemon quyết lúc nó khởi động, nên một panel dựng
+        // không dự án sẽ hiện màn trống cho tới khi ai đó dựng lại nó — và trước 14/09/2026 thì
+        // không có đường nào dựng lại (GIAM-SAT-UI §0.2).
+        let duAn = AppDelegate.duAnMoSan()
+        guard let c = EideDaemonLauncher.moClient(duAn: duAn) else { return nil }
+        if let duAn { EideDuAn.nhoDaMo(duAn) }
+        let p = EidePanel(client: c)
+        p.datTenDuAn(duAn.map { ($0 as NSString).lastPathComponent })
+        p.onChonDuAn = { [weak self] in self?.moMenuDuAn() }
+        return p
     }()
+
+    /// Menu dự án — bấm vào tên dự án trên thanh trên.
+    ///
+    /// Ba nhóm mục, theo đúng thứ tự người dùng cần: **dự án gần đây** (một cú bấm), **mở thư
+    /// mục khác**, **tạo dự án mới**. Tạo đặt cuối vì nó là việc hiếm nhất — nhưng vẫn phải có
+    /// mặt ở đây, vì người mới mở EIDE lần đầu không có dự án nào để chọn.
+    @MainActor
+    func moMenuDuAn() {
+        let m = NSMenu()
+        let ds = EideDuAn.ganDay()
+        if ds.isEmpty {
+            let x = m.addItem(withTitle: "Chưa có dự án nào", action: nil, keyEquivalent: "")
+            x.isEnabled = false
+        }
+        for d in ds {
+            let it = m.addItem(withTitle: EideDuAn.nhan(d, trong: ds),
+                               action: #selector(chonDuAnTuMenu(_:)), keyEquivalent: "")
+            it.target = self
+            it.representedObject = d
+            it.toolTip = d
+        }
+        m.addItem(.separator())
+        let mo = m.addItem(withTitle: "Mở dự án khác…", action: #selector(moDuAnKhac),
+                           keyEquivalent: "")
+        mo.target = self
+        let tao = m.addItem(withTitle: "Tạo dự án mới…", action: #selector(taoDuAnMoi),
+                            keyEquivalent: "")
+        tao.target = self
+        m.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+    }
+
+    @MainActor
+    @objc private func chonDuAnTuMenu(_ sender: NSMenuItem) {
+        guard let d = sender.representedObject as? String else { return }
+        (NSApp.delegate as? AppDelegate)?.moDuAnEide(duong: d)
+    }
+
+    @MainActor
+    @objc private func moDuAnKhac() {
+        (NSApp.delegate as? AppDelegate)?.moDuAnEide(nil)
+    }
+
+    /// **Tạo dự án mới** — PROJECT-01, từ MỘT CÂU tiếng Việt.
+    ///
+    /// Không phải biểu mẫu "tên / đường dẫn / chip": hợp đồng nhận `{text}` và tự suy ra cả ba
+    /// nếu câu có nhắc. Bắt người dùng quyết ba thứ trước khi biết mình muốn gì là dựng một rào
+    /// ở đúng bước đầu tiên.
+    @MainActor
+    @objc private func taoDuAnMoi() {
+        guard let p = eidePanel else { return }
+        let a = NSAlert()
+        a.messageText = "Tạo dự án EIDE mới"
+        a.informativeText = "Mô tả việc anh muốn làm, bằng một câu tiếng Việt. "
+            + "EIDE suy ra tên dự án và chip từ câu ấy."
+        let o = NSTextField(frame: NSRect(x: 0, y: 0, width: 420, height: 24))
+        o.placeholderString = "ví dụ: đọc cảm biến BME280 qua I2C trên ESP32-C3"
+        a.accessoryView = o
+        a.addButton(withTitle: "Tạo")
+        a.addButton(withTitle: "Huỷ")
+        a.window.initialFirstResponder = o
+        guard a.runModal() == .alertFirstButtonReturn else { return }
+        let cau = o.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cau.isEmpty else {
+            // Câu rỗng thì KHÔNG gọi: `project.create` sẽ tạo một dự án tên "" ở đâu đó, và
+            // người dùng có một thư mục rác mà không biết vì sao.
+            let b = NSAlert()
+            b.messageText = "Chưa có mô tả"
+            b.informativeText = "Gõ một câu mô tả việc anh muốn làm rồi thử lại."
+            b.runModal()
+            return
+        }
+        p.taoDuAn(cau) { [weak self] duong, loi in
+            Task { @MainActor in
+                if let loi {
+                    let b = NSAlert()
+                    b.messageText = "Không tạo được dự án"
+                    b.informativeText = loi
+                    b.runModal()
+                    return
+                }
+                guard let duong else { return }
+                // Dự án mới CHƯA có store — `project.create` không chạy migration. Mở ngay thì
+                // hàng đợi không lưu được và mục ASK đầu tiên biến mất (đo 14/09 trên luồng AVR).
+                (NSApp.delegate as? AppDelegate)?.moDuAnEide(duong: duong, diTru: true)
+            }
+        }
+    }
     private var eideHeight: NSLayoutConstraint!
 
     private func attachEidePanel() -> Bool {

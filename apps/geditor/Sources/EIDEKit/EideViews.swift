@@ -12,8 +12,39 @@ public final class AutonomyBar: NSView {
 
     public var onDungKhan: (() -> Void)?
 
+    /// Người đổi mức tự chủ — APD-08 §2 (A0…A4).
+    ///
+    /// Đây là núm điều khiển CHÍNH của cả chính sách tự chủ, và trước 14/09/2026 giao diện
+    /// không có nó: muốn đổi A2 ↔ A3 phải sửa `.eide/autonomy.yaml` bằng tay rồi khởi động lại
+    /// daemon. Một cơ chế chỉ dùng được bằng cách sửa tệp cấu hình là một cơ chế người dùng
+    /// không dùng — và khi ấy mức mặc định thành mức duy nhất.
+    public var onDoiMuc: ((String) -> Void)?
+
+    /// Người bấm vào tên dự án — mở menu chọn/tạo dự án.
+    ///
+    /// **Điểm vào đầu tiên của cả sản phẩm.** Trước 14/09 nó chỉ nằm trong menu Tệp, và một
+    /// người mới mở EIDE lên không có cách nào biết mình phải vào đó: cửa sổ hiện 21 màn trống
+    /// mà không nói rằng chúng trống VÌ CHƯA CÓ DỰ ÁN. Đặt lên thanh luôn hiện, cạnh mức tự
+    /// chủ, vì đó là hai thứ trả lời câu "tôi đang ở đâu và tác tử được phép làm gì".
+    public var onChonDuAn: (() -> Void)?
+
+    private let nutDuAn = NSButton()
     private let nhan = NSTextField(labelWithString: "…")
     private let nutDung = NSButton()
+    private let chonMuc = NSPopUpButton()
+    private let bangTin = NSTextField(labelWithString: "")
+
+    /// Năm mức của APD-08 §2, kèm một câu nói mức ấy cho phép tác tử làm gì.
+    ///
+    /// Câu giải thích không phải trang trí: "A3" tự nó không nói gì, và người chọn một mức mà
+    /// không biết nó mở ra cái gì thì hoặc chọn bừa, hoặc không dám chọn.
+    public static let MUC: [(ma: String, mo: String)] = [
+        ("A0", "A0 — dừng, không tự làm gì"),
+        ("A1", "A1 — chỉ đọc và tra cứu"),
+        ("A2", "A2 — tự ghi tri thức và sinh mã"),
+        ("A3", "A3 — thêm: cài công cụ, nạp board lab"),
+        ("A4", "A4 — tự chủ tối đa trong lớp rủi ro cho phép"),
+    ]
 
     public init() {
         super.init(frame: .zero)
@@ -22,6 +53,12 @@ public final class AutonomyBar: NSView {
 
         nhan.font = EideToken.fontUI
         nhan.textColor = .white
+        nutDuAn.title = "Chưa mở dự án ▾"
+        nutDuAn.bezelStyle = .rounded
+        nutDuAn.font = EideToken.fontUI
+        nutDuAn.target = self
+        nutDuAn.action = #selector(bamDuAn)
+        nutDuAn.setAccessibilityLabel("Dự án đang mở — bấm để chọn hoặc tạo dự án")
         nutDung.title = "■ Dừng khẩn"
         nutDung.font = EideToken.fontUI
         nutDung.bezelStyle = .rounded
@@ -33,17 +70,46 @@ public final class AutonomyBar: NSView {
         nutDung.keyEquivalentModifierMask = [.command, .shift]
         nutDung.setAccessibilityLabel("Dừng khẩn, phím tắt Command Shift chấm")
 
-        for v in [nhan, nutDung] {
+        for (i, m) in Self.MUC.enumerated() {
+            chonMuc.addItem(withTitle: m.mo)
+            chonMuc.item(at: i)?.representedObject = m.ma
+        }
+        chonMuc.target = self
+        chonMuc.action = #selector(doiMuc)
+        chonMuc.bezelStyle = .rounded
+        chonMuc.setAccessibilityLabel("Mức tự chủ")
+
+        // Băng tin leo thang: mặc định ẩn. Nó chỉ hiện khi tác tử ĐANG DỪNG CHỜ người, và đó
+        // phải là thứ khác hẳn một dòng lẫn trong hội thoại — `policy.escalate` nghĩa là công
+        // việc đã dừng lại, không phải một ghi chú.
+        bangTin.font = EideToken.fontUI
+        bangTin.textColor = .white
+        bangTin.isHidden = true
+        bangTin.setAccessibilityLabel("Tác tử đang chờ người")
+
+        for v in [nutDuAn, nhan, nutDung, chonMuc, bangTin] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
         let s = EideToken.space[2]
         NSLayoutConstraint.activate([
-            nhan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
+            nutDuAn.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
+            nutDuAn.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            nhan.leadingAnchor.constraint(equalTo: nutDuAn.trailingAnchor, constant: s),
             nhan.centerYAnchor.constraint(equalTo: centerYAnchor),
+
             nutDung.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -s),
             nutDung.centerYAnchor.constraint(equalTo: centerYAnchor),
-            nhan.trailingAnchor.constraint(lessThanOrEqualTo: nutDung.leadingAnchor, constant: -s),
+
+            chonMuc.trailingAnchor.constraint(equalTo: nutDung.leadingAnchor, constant: -s),
+            chonMuc.centerYAnchor.constraint(equalTo: centerYAnchor),
+            chonMuc.widthAnchor.constraint(lessThanOrEqualToConstant: 300),
+
+            nhan.trailingAnchor.constraint(lessThanOrEqualTo: bangTin.leadingAnchor, constant: -s),
+            bangTin.trailingAnchor.constraint(lessThanOrEqualTo: chonMuc.leadingAnchor,
+                                              constant: -s),
+            bangTin.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 
@@ -52,13 +118,67 @@ public final class AutonomyBar: NSView {
 
     @objc private func dung() { onDungKhan?() }
 
+    @objc private func bamDuAn() { onChonDuAn?() }
+
+    /// Tên dự án đang mở, hoặc nil khi chưa mở dự án nào.
+    ///
+    /// Nói "Chưa mở dự án" chứ không để trống: một nút trống trên thanh là một nút người dùng
+    /// không biết để làm gì, còn câu ấy vừa nói tình trạng vừa mời bấm vào.
+    public func datDuAn(_ ten: String?) {
+        nutDuAn.title = (ten.map { "Dự án: \($0)" } ?? "Chưa mở dự án") + " ▾"
+    }
+
+    /// Nhãn đang hiện trên nút dự án — để test.
+    public var nhanDuAn: String { nutDuAn.title }
+
+    /// Bấm nút dự án bằng mã — dùng cho test và cho phím tắt về sau.
+    public func bamDuAnDeTest() { bamDuAn() }
+
+    @objc private func doiMuc() {
+        guard let ma = chonMuc.selectedItem?.representedObject as? String else { return }
+        // Không tự đổi nhãn ở đây. Mức có hiệu lực do daemon quyết — POL-17 tính nó từ dự án,
+        // board và loại hành động — nên panel phải hỏi lại và hiện thứ daemon TRẢ VỀ. Đổi nhãn
+        // ngay là hứa một điều chưa chắc xảy ra: A4 chọn trên một board chưa đánh dấu lab vẫn
+        // bị hạ xuống, và người dùng thì đang nhìn chữ "A4".
+        onDoiMuc?(ma)
+    }
+
     public func capNhat(muc: String?, dungKhan: Bool, soCho: Int, soHoanTac: Int) {
         // U10: "không dựa vào màu đơn lẻ (kèm nhãn/biểu tượng)" — trạng thái dừng được nói
         // bằng CHỮ, màu chỉ là lớp thứ hai. Người mù màu vẫn phải đọc được.
         let m = dungKhan ? "■ ĐÃ DỪNG (A0)" : (muc ?? "—")
         nhan.stringValue = "\(m)  ·  \(soCho) chờ anh  ·  \(soHoanTac) hoàn tác được"
         layer?.backgroundColor = (dungKhan ? EideToken.Mau.primary : EideToken.Mau.secondary).cgColor
+
+        // Đồng bộ ô chọn với mức THẬT. Mức daemon trả về có thể khác mức người vừa chọn (xem
+        // `doiMuc`), và để ô chọn đứng ở lựa chọn cũ là để nó nói dối.
+        let ma = dungKhan ? "A0" : (muc ?? "")
+        if let i = Self.MUC.firstIndex(where: { ma.hasPrefix($0.ma) }) {
+            chonMuc.selectItem(at: i)
+        }
+        chonMuc.isEnabled = !dungKhan
     }
+
+    /// Hiện băng tin "tác tử đang chờ người", hoặc ẩn nó đi.
+    ///
+    /// APD-08 §5 kể năm lý do leo thang: cổng trả ASK, một hành động hỏng 2 lần, ngân sách còn
+    /// dưới 20%, board lệch hộ chiếu, mẫu bất thường. Cả năm đều có nghĩa "công việc dừng ở
+    /// đây cho tới khi anh trả lời", và chỗ đúng để nói điều đó là thanh LUÔN HIỆN.
+    public func leoThang(_ vi: String?) {
+        guard let vi, !vi.isEmpty else {
+            bangTin.isHidden = true
+            return
+        }
+        bangTin.stringValue = "⚠︎ ĐANG CHỜ ANH: \(vi)"
+        bangTin.isHidden = false
+    }
+
+    /// Mức đang hiện trên ô chọn — để test và để panel đối chiếu.
+    public var mucDangChon: String? {
+        chonMuc.selectedItem?.representedObject as? String
+    }
+
+    public var dangBaoLeoThang: Bool { !bangTin.isHidden }
 }
 
 /// Vùng hội thoại — UXD-13 U1 (ChatPanel là màn hình mặc định), U8, U9.

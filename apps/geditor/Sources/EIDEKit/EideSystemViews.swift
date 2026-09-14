@@ -306,12 +306,77 @@ public final class ModelsView: ManHinhCoSo {
                  mau: EideToken.Mau.info)
         if !tuChu.isEmpty { themDong("mức tự chủ", tuChu) }
 
-        // Nói ra phần thiếu, kèm đường đi thật để xem nó.
-        noiRong("Bảng vai trò → mô hình và chi tiết từng lượt gọi KHÔNG có ở đây: API-15 chưa "
-              + "có phương thức nào trả chúng, và `model.call` không nằm trong 16 sự kiện "
-              + "`event.*`. Chúng vẫn được ghi đầy đủ vào sổ cái (role, model_id, tokens_in/out, "
-              + "cost_usd, latency_ms) — xem bằng `eide ledger --kind model.call`. "
-              + "Khoảng trống này ghi ở DEVIATIONS DEV-093.")
+        _hienTuSoCai(ketQua)
+    }
+
+    /// Gom `model.call` từ SỔ CÁI theo vai trò — UC-F7, đóng [DEV-093].
+    ///
+    /// ## Vì sao đổi nguồn
+    ///
+    /// Bản cũ đọc `models.yaml` và `project.status`, tức đọc **cấu hình**: nó nói tác tử ĐƯỢC
+    /// PHÉP dùng mô hình nào, không nói nó ĐÃ dùng gì. Hai câu ấy khác nhau ở đúng chỗ người
+    /// trả tiền quan tâm.
+    ///
+    /// Nay đọc `view.timeline` (VIEW-12, `ref: memory.ledger`) và lọc `model.call`. Mỗi bản ghi
+    /// có `role`, `model`, `tokens_in/out`, `cost_usd`, `ms` — đủ để gom theo vai trò mà không
+    /// cần thêm một phương thức RPC nào.
+    ///
+    /// **Không hiện nội dung prompt.** Sổ cái đã che khoá API (`che_bi_mat`), nhưng che khoá
+    /// khác với không đưa mã nguồn người dùng ra một cửa sổ có thể đang chia sẻ màn hình —
+    /// `TRUONG_KHONG_DAY` của daemon lược chúng từ trước, và màn này cũng không đi tìm.
+    private func _hienTuSoCai(_ ketQua: [String: Any]) {
+        let ds = ((ketQua["events"] as? [Any]) ?? [])
+            .compactMap { $0 as? [String: Any] }
+            .filter { ($0["kind"] as? String) == "model.call" }
+        guard !ds.isEmpty else {
+            // Ba trạng thái rỗng khác nhau — xem `NhatKyView`. Ở đây chỉ có hai, và cả hai đều
+            // phải nói ra: chưa gọi mô hình lần nào, hay chưa đọc được sổ cái.
+            noiRong(ketQua["events"] == nil
+                    ? "Chưa đọc được sổ cái — mở một dự án rồi thử lại."
+                    : "Chưa có lượt gọi mô hình nào trong sổ cái của dự án này.")
+            return
+        }
+
+        struct Gom { var luot = 0; var vao = 0; var ra = 0; var usd = 0.0; var ms = 0 }
+        var theoVaiTro: [String: Gom] = [:]
+        var tongUsd = 0.0, tongVao = 0, tongRa = 0
+        for e in ds {
+            let d = (e["data"] as? [String: Any]) ?? e
+            let vai = (d["role"] as? String) ?? (d["model"] as? String) ?? "(không rõ vai trò)"
+            var g = theoVaiTro[vai] ?? Gom()
+            g.luot += 1
+            g.vao += EideSo.nguyen(d["tokens_in"]) ?? 0
+            g.ra += EideSo.nguyen(d["tokens_out"]) ?? 0
+            g.usd += EideSo.thuc(d["cost_usd"]) ?? 0
+            g.ms += EideSo.nguyen(d["ms"]) ?? EideSo.nguyen(d["latency_ms"]) ?? 0
+            theoVaiTro[vai] = g
+            tongUsd += EideSo.thuc(d["cost_usd"]) ?? 0
+            tongVao += EideSo.nguyen(d["tokens_in"]) ?? 0
+            tongRa += EideSo.nguyen(d["tokens_out"]) ?? 0
+        }
+        soLuotGoi = ds.count
+        chiPhiHomNay = tongUsd
+        tomTat.stringValue = "\(ds.count) lượt gọi · \(tongVao) token vào · \(tongRa) ra"
+            + (tongUsd > 0 ? String(format: " · %.4f USD", tongUsd) : " · chưa có giá")
+        tomTat.textColor = EideToken.Mau.muted
+
+        // Sắp theo CHI PHÍ giảm dần, không theo bảng chữ cái: người mở màn này muốn biết tiền
+        // đi đâu, và vai trò tốn nhất phải nằm dòng đầu.
+        for (vai, g) in theoVaiTro.sorted(by: { $0.value.usd != $1.value.usd
+                                                ? $0.value.usd > $1.value.usd
+                                                : $0.key < $1.key }) {
+            var ct = "\(g.luot) lượt · \(g.vao) vào · \(g.ra) ra"
+            if g.usd > 0 { ct += String(format: " · %.4f USD", g.usd) }
+            if g.ms > 0 { ct += " · \(g.ms / max(1, g.luot)) ms/lượt" }
+            themDong(vai, ct, mau: EideToken.Mau.info)
+        }
+
+        if tongUsd == 0 {
+            // Không phải lượt gọi nào cũng biết giá (mô hình chạy cục bộ, gateway không trả).
+            // Hiện "0,0000 USD" là khẳng định nó miễn phí.
+            noiRong("Không lượt gọi nào mang giá — có thể mô hình chạy cục bộ, hoặc gateway "
+                    + "không trả `cost_usd`. Số token vẫn đúng.")
+        }
     }
 }
 

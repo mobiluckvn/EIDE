@@ -25,7 +25,20 @@ public final class EidePanel: NSView {
     private let client: EideClient
     private let thanhTuChu = AutonomyBar()
     private let hoiThoai = ChatView()
-    private let hangDoi = ReviewQueueView()
+    /// Vùng phải — giám sát và tham gia, LUÔN hiện (THIET-KE-UI sheet 1).
+    ///
+    /// Gom nhật ký + hàng đợi + hoàn tác vào một cột bên phải thay vì rải chúng thành một mục
+    /// sidebar và một dải đáy. Người trông một tác tử tự chạy cần thấy nó TRONG LÚC làm việc
+    /// khác; bản cũ bắt họ rời màn đang xem để biết tác tử đang làm gì.
+    /// Ô nhập của màn đang mở — sinh từ `input_schema` của năng lực chính (THIET-KE-UI sheet 3).
+    private let oNhap = EideONhap(frame: .zero)
+    /// UC-B2/B3 — tác tử nói lại cách hiểu và hỏi gộp. Màn riêng, không phải thẻ trôi trong chat.
+    private let lamRo = LamRoView()
+    /// UC-C9 — hai fact mâu thuẫn đặt cạnh nhau; T3, người quyết.
+    private let xungDot = XungDotView()
+    private let vungPhai = EideVungPhai(frame: .zero)
+    private var hangDoi: ReviewQueueView { vungPhai.hangDoi }
+    private var nhatKy: NhatKyView { vungPhai.nhatKy }
 
     // Các màn chuyên đề của UXD-13 §2. Chúng chiếm chỗ hội thoại chứ không đè lên thanh tự chủ
     // hay hàng đợi: U2 nói hai thứ ấy LUÔN hiện, kể cả khi người đang đọc một màn khác — nhất
@@ -83,6 +96,9 @@ public final class EidePanel: NSView {
         ("Models", moHinh),
         ("Env", moiTruong),
         ("FlowMap", hanhTrinh),
+        ("NhatKy", nhatKy),
+        ("LamRo", lamRo),
+        ("XungDot", xungDot),
     ]
 
     /// Màn 7 có HAI khung nhìn, và năng lực người gõ quyết định mở cái nào.
@@ -128,6 +144,25 @@ public final class EidePanel: NSView {
         noiManChuyenDe()
         hoiThoai.onGui = { [weak self] text in self?.gui(text) }
         thanhTuChu.onDungKhan = { [weak self] in self?.dungKhan() }
+        thanhTuChu.onDoiMuc = { [weak self] muc in self?.doiMucTuChu(muc) }
+        thanhTuChu.onChonDuAn = { [weak self] in self?.onChonDuAn?() }
+        oNhap.onChay = { [weak self] cap, ts in self?.chayTuONhap(cap, ts) }
+        // UC-C9: người chọn một bên của xung đột. `kg.resolve_conflict` là T2 nên nó vào hàng
+        // đợi trước khi chạy — đúng thiết kế: đây là quyết định về TRI THỨC, và hợp đồng đòi
+        // `actor` để sổ cái ghi được ai đã chọn.
+        xungDot.onChon = { [weak self] id, ben, dk in
+            var ts: [String: Any] = ["conflict_id": id, "choice": ben, "actor": "human"]
+            if let dk { ts["condition"] = dk }
+            self?.chayTuONhap("kg.resolve_conflict", ts)
+        }
+        // UC-B2: "Đúng — làm đi" chạy chuỗi tác tử vừa mô tả; "Sửa ý hiểu" nạp câu vào ô lệnh
+        // mà KHÔNG gửi, để người sửa một chữ thay vì gõ lại từ đầu.
+        lamRo.onDongY = { [weak self] in self?.chayTuONhap("chat.orchestrate", [:]) }
+        lamRo.onSuaYHieu = { [weak self] cau in self?.hoiThoai.oLenh.dienSan(cau) }
+        lamRo.onTraLoi = { [weak self] dap in
+            self?.chayTuONhap("chat.clarify", ["gaps": dap.map { ["key": $0.key, "answer": $0.value] }])
+        }
+        oNhap.onChonTep = { [weak self] nhan in self?.chonTep(nhan) }
         Task {
             await client.theoDoi { [weak self] ten, p in
                 Task { @MainActor in self?.nhanSuKien(ten, p) }
@@ -484,6 +519,21 @@ public final class EidePanel: NSView {
     /// Đóng màn chuyên đề, quay về hội thoại.
     public func dongManChuyenDe() { dongMan() }
 
+    /// Đóng panel và **tiến trình daemon của nó**.
+    ///
+    /// Mỗi panel giữ một `eide daemon` chạy nền qua stdio. Bỏ panel đi mà không đóng daemon thì
+    /// tiến trình ấy sống tới khi ứng dụng thoát — và nó vẫn đang theo dõi sổ cái, vẫn đang
+    /// phát sự kiện vào một ống không ai đọc. Đổi dự án vài lần là vài daemon mồ côi.
+    ///
+    /// Không `await`: người gọi là AppKit ở luồng chính, và một cửa sổ treo trong lúc chờ tiến
+    /// trình con chết là thứ người dùng thấy ngay. `Task` tách ra, `terminate()` bên trong
+    /// không cần ai đợi.
+    @MainActor
+    public func dong() {
+        let c = client
+        Task.detached { await c.dong() }
+    }
+
     private func _moTheoTenMan(_ ten: String, thamSo: String) -> Bool {
         let t = ten.lowercased()
         guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
@@ -492,8 +542,109 @@ public final class EidePanel: NSView {
         thanhMan.isHidden = false
         tenMan.stringValue = k.tien
         k.v.chuaNap("Đang đọc trạng thái…")
+        _dungONhap(choMan: k.tien, khungNhin: k.v)
+        // Năng lực tự nạp TRƯỚC, rồi mới tới hai màn nạp bằng phương thức daemon.
+        //
+        // Thiếu nhánh này thì **mở màn nào từ sidebar cũng ra "chưa có nguồn dữ liệu"** trừ
+        // `FlowMap` và `Models` — kể cả Tổng quan, Hộ chiếu, Môi trường, Nhật ký, những màn đã
+        // có sẵn năng lực trong `napMacDinh`. Đo 14/09/2026 bằng cách bấm mục 22 trên sidebar
+        // của bản dựng thật: màn mở ra, tiêu đề đúng, thân trống và một câu nói sai lý do.
+        //
+        // `napMacDinh` đã có từ 13/09 (lỗi im lặng số 21) nhưng chỉ chạy ở đường `_napLaiManDangMo`
+        // — tức chỉ khi một sự kiện `knowledge.changed` tới. Mở màn bằng tay thì không ai gọi
+        // nó. Hai đường vào cùng một màn, chỉ một đường nạp dữ liệu.
+        if let cap = Self.napMacDinh(choMan: k.tien) {
+            let v = k.v
+            chay(cap, [:], khiLoi: { [weak v] in v?.chuaNap($0) }) { [weak v] r in
+                v?.capNhat(ketQua: r)
+            }
+            return true
+        }
         _napManKhongNangLuc(k.tien, k.v)
         return true
+    }
+
+    /// Người bấm vào nút dự án trên thanh trên — cửa sổ mở menu chọn/tạo dự án.
+    ///
+    /// Panel không tự mở menu: danh sách dự án gần đây và việc khởi động lại daemon thuộc về
+    /// tầng cửa sổ (một panel không tự thay được daemon của chính nó).
+    public var onChonDuAn: (() -> Void)?
+
+    /// Tạo dự án mới từ một câu tiếng Việt — `project.create` (PROJECT-01).
+    ///
+    /// Đây là đường vào đầu tiên của sản phẩm, và nó phải là MỘT CÂU chứ không phải một biểu
+    /// mẫu: hợp đồng PROJECT-01 nhận `{text}` và tự suy ra tên, thư mục, chip nếu câu có nhắc.
+    /// Bắt người dùng điền "tên dự án / đường dẫn / chip" là bắt họ quyết ba thứ trước khi biết
+    /// mình muốn gì.
+    public func taoDuAn(_ cau: String, _ xong: @escaping (String?, String?) -> Void) {
+        chay("project.create", ["text": cau], khiLoi: { loi in xong(nil, loi) }) { r in
+            xong(r["path"] as? String, nil)
+        }
+    }
+
+    /// Cập nhật tên dự án trên thanh trên.
+    @MainActor
+    public func datTenDuAn(_ ten: String?) { thanhTuChu.datDuAn(ten) }
+
+    /// Người bấm "Chạy" trên ô nhập.
+    ///
+    /// Kết quả đổ về ĐÚNG màn đang mở, và lỗi hiện ngay cạnh nút chứ không trôi vào hội thoại —
+    /// người vừa điền một form thì câu trả lời phải ở chỗ họ đang nhìn.
+    private func chayTuONhap(_ cap: String, _ ts: [String: Any]) {
+        guard let k = bangMan.first(where: { !$0.v.isHidden }) else { return }
+        let v = k.v
+        oNhap.baoLoi("")
+        v.chuaNap("Đang chạy `\(cap)`…")
+        chay(cap, ts, khiLoi: { [weak self, weak v] loi in
+            // Lỗi vào CẢ hai chỗ: cạnh nút để người đang điền form thấy ngay, và trong màn để
+            // nó thôi hiện "Đang chạy…" mãi mãi.
+            self?.oNhap.baoLoi(loi)
+            v?.chuaNap(loi)
+        }) { [weak v] r in
+            v?.capNhat(ketQua: r)
+        }
+    }
+
+    /// Nút "Chọn tệp…" của ô nhập. Panel mở hộp thoại chứ không phải view — để `EideONhap` test
+    /// được mà không bật một hộp thoại hệ thống giữa lượt chạy test.
+    private func chonTep(_ nhan: @escaping (String) -> Void) {
+        let o = NSOpenPanel()
+        o.canChooseFiles = true
+        o.canChooseDirectories = false
+        o.allowsMultipleSelection = false
+        if o.runModal() == .OK, let u = o.url { nhan(u.path) }
+    }
+
+    /// Dựng ô nhập cho màn đang mở — THIET-KE-UI sheet 3.
+    ///
+    /// Hỏi `caps.describe` rồi để `EideONhap` sinh form từ `input_schema`. Không viết tay form
+    /// cho 21 màn: 37 tham số là 37 chỗ có thể sai, và một form viết tay sẽ trôi khỏi hợp đồng
+    /// ngay lần đầu ai đó đổi tên tham số trong `cds.json`.
+    ///
+    /// Màn cần board thì nói rõ cần cắm gì thay vì dựng một form không chạy được — chủ sản phẩm
+    /// chốt 14/09: *"vẫn hiện, nói rõ cần gì"*.
+    private func _dungONhap(choMan tien: String, khungNhin v: KhungNhinEide) {
+        guard let cap = Self.nangLucChinh[tien] else {
+            oNhap.isHidden = true
+            return
+        }
+        let canBoard = EideDieuHuong.NHOM.first { $0.ten == "PHẦN CỨNG" }?
+            .man.contains { $0.tien == tien } ?? false
+        Task {
+            let mo = try? await client.goi(.capsDescribe, ["id": cap])
+            await MainActor.run {
+                guard let mo, !mo.isEmpty else {
+                    self.oNhap.isHidden = true
+                    v.chuaNap("Không đọc được hợp đồng của `\(cap)` — daemon còn chạy không?")
+                    return
+                }
+                self.oNhap.dungTu(capId: cap, moTa: mo)
+                self.oNhap.isHidden = false
+                if canBoard {
+                    v.chuaNap(EideDieuHuong.loiCanBoard(tien))
+                }
+            }
+        }
     }
 
     /// Ba màn ấy nạp bằng PHƯƠNG THỨC RPC, không bằng `caps.invoke`.
@@ -614,11 +765,69 @@ public final class EidePanel: NSView {
     /// `Graph` không có mặc định: `RagAskView` chỉ hiểu `{answer, citations}`, và không năng
     /// lực chỉ-đọc nào trả hình dạng ấy — hỏi đáp thì phải có câu hỏi trước. Để trống là câu
     /// trả lời đúng, tự nạp một thứ màn không đọc được mới là sai.
+    /// Năng lực CHÍNH của mỗi màn — cái mà ô nhập dựng form theo.
+    ///
+    /// Khác `napMacDinh`: `napMacDinh` là năng lực chạy được NGAY khi mở màn (không tham số,
+    /// R0, không ghi gì). Bảng này là năng lực người dùng thật sự muốn chạy ở màn ấy, và phần
+    /// lớn chúng CẦN tham số — đó chính là lý do 18/22 màn từng mở ra trống.
+    ///
+    /// Nguồn: THIET-KE-UI sheet 2 cột "Năng lực chính", chủ sản phẩm duyệt 14/09/2026.
+    public static let nangLucChinh: [String: String] = [
+        "Ingest": "ingest.classify",
+        "Passport": "passport.query",
+        "Board": "board.check_pins",
+        "Graph": "view.rag_ask",
+        "LamRo": "chat.parse_intent",
+        "XungDot": "kg.conflicts",
+        "ReqArch": "req.elicit",
+        "DiagramView": "diagram.block",
+        "PlanDiff": "plan.create",
+        "Doc": "doc.generate",
+        "Code": "code.build",
+        "Sim": "sim.run",
+        "Env": "env.check",
+        "Discovery": "discover.ports",
+        "Debug": "target.flash",
+        "LogAssist": "debug.log_stats",
+        "Bench": "bench.badge",
+        "Main": "project.status",
+        "NhatKy": "view.timeline",
+        // `model.route` KHÔNG tồn tại — không có nhóm `model.*` trong 238 năng lực. Chi phí và
+        // hồ sơ mô hình nằm ở `policy.budget`… cũng không có. Thứ gần nhất và CÓ THẬT là
+        // `policy.learn_thresholds` (POLICY-06), vốn đọc `decision_log` để đề xuất ngưỡng —
+        // đúng dữ liệu màn này cần. Bắt được bằng test E2E duyệt cả bảng; trước đó màn "Mô hình
+        // & chi phí" mở ra sẽ báo lỗi mãi mãi vì hỏi hợp đồng của một năng lực không có.
+        // UC-F7: chi phí đọc từ SỔ CÁI (`model.call`), không từ `models.yaml`.
+        // `models.yaml` nói tác tử ĐƯỢC PHÉP dùng gì; sổ cái nói nó ĐÃ dùng gì.
+        "Models": "view.timeline",
+        "Registry": "registry.search",
+        "ToolForge": "tool.need",
+        "FlowMap": "policy.decide",
+    ]
+
+    /// Màn này có khung nhìn không? Điều hướng hỏi trước khi hiện một mục.
+    ///
+    /// Một mục điều hướng không có khung nhìn là một mục bấm vào thì không có gì hiện ra — và
+    /// đó là cách DEV-094 xảy ra: hai màn nằm trong danh sách mà không ai mở tới được.
+    @MainActor
+    public func coManDeTest(_ tien: String) -> Bool {
+        bangMan.contains { $0.tien == tien }
+    }
+
     public static func napMacDinh(choMan tien: String) -> String? {
         switch tien {
         case "Main": return "project.status"
         case "Passport": return "passport.query"
         case "Env": return "env.detect"
+        // Nhật ký nạp LỊCH SỬ bằng một lời gọi, không chờ kênh đẩy. Kênh đẩy chỉ mang sự kiện
+        // thời gian thực; một khối 200 bản ghi đẩy qua stdio làm đầy ống và treo daemon — đo
+        // được 14/09/2026 trên dự án ESP32-C3 (82 KB > 64 KB đệm ống).
+        case "NhatKy": return "view.timeline"
+        // `kg.conflicts` R0, không tham số bắt buộc, không ghi gì — mở màn ra là thấy ngay có
+        // xung đột nào đang chờ mình. Đây là màn mà "mở ra đã có dữ liệu" quan trọng nhất:
+        // một xung đột không ai biết là một xung đột không ai giải.
+        case "XungDot": return "kg.conflicts"
+        case "Models": return "view.timeline"
         default: return nil
         }
     }
@@ -727,7 +936,17 @@ public final class EidePanel: NSView {
         for k in bangMan { k.v.isHidden = true }
         banDo.isHidden = true
 
-        for v in [thanhTuChu, hoiThoai, hangDoi, thanhMan] as [NSView]
+        // BỐ CỤC BA VÙNG (THIET-KE-UI sheet 1, chủ sản phẩm duyệt 14/09/2026).
+        //
+        //   [ thanh tự chủ — suốt chiều ngang                                ]
+        //   [ giữa: màn đang chọn + ô nhập          | phải: giám sát 300 px  ]
+        //   [ giữa: ô lệnh (hội thoại)              |                        ]
+        //
+        // Vùng phải LUÔN hiện. Bản cũ đặt hàng đợi ở đáy cột giữa với chiều cao cố định 120 px,
+        // và mở một màn chuyên đề là đẩy nó khuất — tức đúng lúc tác tử làm việc thì chỗ nó hỏi
+        // người lại biến mất.
+        oNhap.isHidden = true
+        for v in [thanhTuChu, hoiThoai, vungPhai, thanhMan, oNhap] as [NSView]
                  + bangMan.map(\.v) + [banDo] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
@@ -739,30 +958,44 @@ public final class EidePanel: NSView {
             thanhTuChu.trailingAnchor.constraint(equalTo: trailingAnchor),
             thanhTuChu.heightAnchor.constraint(equalToConstant: EideToken.statusbarHeight + 8),
 
-            hoiThoai.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
-            hoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
-            hoiThoai.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -g),
+            vungPhai.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor),
+            vungPhai.trailingAnchor.constraint(equalTo: trailingAnchor),
+            vungPhai.bottomAnchor.constraint(equalTo: bottomAnchor),
+            vungPhai.widthAnchor.constraint(equalToConstant: EideVungPhai.RONG),
 
-            hangDoi.topAnchor.constraint(equalTo: hoiThoai.bottomAnchor, constant: g),
-            hangDoi.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
-            hangDoi.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -g),
-            hangDoi.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
-            hangDoi.heightAnchor.constraint(equalToConstant: 120),
+            // Ô lệnh nằm DƯỚI cùng của cột giữa và cao cố định: nó phải gõ được mọi lúc, kể cả
+            // khi một màn chuyên đề đang mở. Bản cũ để hội thoại chiếm cả cột rồi ẩn nó đi khi
+            // mở màn — người dùng muốn gõ một câu phải đóng màn đang xem.
+            hoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+            hoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
+            hoiThoai.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
+            hoiThoai.heightAnchor.constraint(greaterThanOrEqualToConstant: 150),
 
             thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+
+            oNhap.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: g),
+            oNhap.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+            oNhap.trailingAnchor.constraint(lessThanOrEqualTo: vungPhai.leadingAnchor,
+                                            constant: -g),
         ])
 
-        // Mọi màn chuyên đề dùng ĐÚNG khung của hội thoại, chỉ lùi xuống dưới thanh tiêu đề
-        // màn. Cùng khung thì không màn nào âm thầm rộng hơn màn khác rồi che mất hàng đợi.
+        // Mọi màn chuyên đề dùng ĐÚNG một khung: cột giữa, từ dưới thanh tiêu đề màn xuống tới
+        // trên ô lệnh. Cùng khung thì không màn nào âm thầm rộng hơn màn khác.
         for k in bangMan.map(\.v) + [banDo] {
             NSLayoutConstraint.activate([
-                k.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: g),
+                k.topAnchor.constraint(equalTo: oNhap.bottomAnchor, constant: g),
                 k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
-                k.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -g),
-                k.bottomAnchor.constraint(equalTo: hangDoi.topAnchor, constant: -g),
+                k.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
+                k.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -g),
             ])
         }
+        // Hội thoại bắt đầu ngay dưới thanh tự chủ khi KHÔNG có màn nào mở; khi có màn thì
+        // ràng buộc trên của màn đẩy nó xuống. Ưu tiên thấp để nó nhường chỗ cho màn.
+        let hoiThoaiTren = hoiThoai.topAnchor.constraint(
+            equalTo: thanhTuChu.bottomAnchor, constant: g)
+        hoiThoaiTren.priority = .defaultLow
+        hoiThoaiTren.isActive = true
     }
 
     // MARK: - hành động
@@ -1008,6 +1241,13 @@ public final class EidePanel: NSView {
     ///   xong mà vẫn hiện số fact cũ là một màn nói sai.
     @MainActor
     func nhanSuKien(_ ten: String, _ p: [String: Any]) {
+        // MỌI sự kiện vào nhật ký TRƯỚC, kể cả loại `switch` dưới không xử lý.
+        //
+        // Thứ tự này là bất biến của cả tính năng giám sát: nếu nhật ký nằm trong một `case` thì
+        // mỗi sự kiện thêm về sau là một chỗ có thể quên, và màn "tác tử vừa làm gì" sẽ im lặng
+        // bỏ sót đúng việc vừa thêm. `NhatKyView.dich` tự bỏ thứ nó không hiểu, nên đưa thừa
+        // vào đây rẻ hơn nhiều so với đưa thiếu.
+        nhatKy.them(ten, p)
         switch ten {
         case "event.chat.question":
             hienCauHoi(p)
@@ -1019,6 +1259,13 @@ public final class EidePanel: NSView {
             let muc = (p["level"] as? String) ?? "info"
             let tin = (p["message"] as? String) ?? (p["text"] as? String) ?? ""
             hoiThoai.themLuot(by: muc == "error" ? .loi : .heThong, text: tin)
+            // Leo thang KHÔNG phải một dòng thông báo. APD-08 §5: nó nghĩa là công việc đã dừng
+            // lại chờ người — năm lý do (cổng ASK, hỏng 2 lần, ngân sách < 20%, board lệch hộ
+            // chiếu, mẫu bất thường) đều dẫn tới cùng một tình trạng. Một dòng lẫn trong hội
+            // thoại thì người giám sát lướt qua, và tác tử đứng im chờ mãi.
+            if (p["kind"] as? String) == "policy.escalate" {
+                thanhTuChu.leoThang(tin.isEmpty ? "tác tử đang chờ anh trả lời" : tin)
+            }
         case "event.chat.report":
             hoiThoai.themLuot(by: .tacTu, text: (p["text"] as? String) ?? "(báo cáo)")
         case "event.queue.changed", "event.gate.opened", "event.undo.registered",
@@ -1026,6 +1273,13 @@ public final class EidePanel: NSView {
             Task { await lamMoi() }
         case "event.knowledge.changed", "event.doc.stale", "event.diagram.stale":
             _napLaiManDangMo()
+        case "event.gate.decided", "event.model.call", "event.tool.report",
+             "event.project.changed", "event.chat.intent":
+            // Năm sự kiện GIÁM SÁT: tác tử vừa tự làm xong một việc. Không có gì phải bấm, và
+            // cũng không có màn nào phải nạp lại — chỗ của chúng là dòng thời gian, nơi
+            // `nhatKy.them` ở đầu hàm đã đưa chúng vào. Liệt kê ra đây thay vì để rơi xuống
+            // `default` là để người đọc mã thấy chúng KHÔNG bị bỏ quên.
+            break
         default:
             break   // discover.changed, serial.line — cần board
         }
@@ -1192,6 +1446,29 @@ public final class EidePanel: NSView {
     }
 
     /// Đọc lại trạng thái từ daemon. Panel không giữ bản sao nào (GPI-23 §1).
+    /// Người đổi mức tự chủ — API-15 §2 `autonomy.set`, APD-08 §2.
+    ///
+    /// Gọi rồi **đọc lại** bằng `lamMoi()`, không tự đặt nhãn: mức CÓ HIỆU LỰC do daemon tính
+    /// (dự án → board → loại hành động, POL-17 §5), nên thứ người chọn và thứ thật sự có hiệu
+    /// lực có thể khác nhau. Đặt nhãn theo lựa chọn là hứa một điều chưa chắc xảy ra.
+    ///
+    /// Lỗi thì NÓI RA. Một lệnh đổi chính sách mà thất bại trong im lặng là trường hợp xấu nhất
+    /// của cả nhóm này: người dùng tin rằng họ vừa siết hoặc vừa nới quyền của tác tử, và không
+    /// điều nào trong hai điều ấy xảy ra.
+    private func doiMucTuChu(_ muc: String) {
+        Task {
+            do {
+                _ = try await client.goi(.autonomySet, ["level": muc])
+            } catch {
+                await MainActor.run {
+                    hoiThoai.themLuot(by: .loi,
+                                      text: "Không đổi được mức tự chủ sang \(muc): \(error)")
+                }
+            }
+            await lamMoi()
+        }
+    }
+
     private func lamMoi() async {
         await napGoiY()
         let tuChu = try? await client.goi(.autonomyGet, [:])
@@ -1204,6 +1481,12 @@ public final class EidePanel: NSView {
                                     soHoanTac: (undo?["items"] as? [[String: Any]])?.count ?? 0)
             self.hangDoi.capNhat(cho: doi?["items"] as? [[String: Any]] ?? [],
                                  hoanTac: undo?["items"] as? [[String: Any]] ?? [])
+            // Hàng đợi rỗng thì tắt băng leo thang. Người vừa duyệt xong mục cuối mà băng
+            // "ĐANG CHỜ ANH" vẫn đỏ trên đầu màn hình là một cảnh báo không tắt — và một cảnh
+            // báo không tắt thì lần sau người ta không đọc nữa.
+            if (doi?["items"] as? [[String: Any]])?.isEmpty ?? true {
+                self.thanhTuChu.leoThang(nil)
+            }
         }
     }
 }

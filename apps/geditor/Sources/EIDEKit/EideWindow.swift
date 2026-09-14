@@ -25,10 +25,14 @@ import AppKit
 /// dùng được cho ai muốn EIDE cạnh mã nguồn; hai lối vào, một thân.
 public final class EideWindowController: NSWindowController {
 
-    private let panel: EidePanel
+    private var panel: EidePanel
     private let sidebar = NSTableView()
     private let cuonSidebar = NSScrollView()
     private var dangChon = 0
+    private var boc = NSView()
+
+    /// Dự án đang mở, hoặc nil nếu daemon chạy không thuộc dự án nào.
+    public private(set) var duAn: String?
 
     /// Màn hiện trên sidebar — đọc từ `screens.json` qua panel, không gõ tay.
     ///
@@ -57,6 +61,7 @@ public final class EideWindowController: NSWindowController {
         ("Models", "Mô hình & chi phí"),
         ("Env", "Môi trường"),
         ("FlowMap", "Hành trình & cổng"),
+        ("NhatKy", "Nhật ký hoạt động"),
     ]
 
     public init(client: EideClient) {
@@ -113,10 +118,14 @@ public final class EideWindowController: NSWindowController {
         vach.boxType = .separator
         vach.translatesAutoresizingMaskIntoConstraints = false
 
-        panel.translatesAutoresizingMaskIntoConstraints = false
+        // Panel nằm trong một BỌC thay vì gắn thẳng vào gốc: đổi dự án nghĩa là dựng lại cả
+        // panel (xem `moDuAn`), và thay một view con của bọc rẻ hơn — cùng ràng buộc bố cục,
+        // không phải tính lại gì.
+        boc.translatesAutoresizingMaskIntoConstraints = false
         goc.addSubview(cuonSidebar)
         goc.addSubview(vach)
-        goc.addSubview(panel)
+        goc.addSubview(boc)
+        gan(panel: panel)
 
         NSLayoutConstraint.activate([
             cuonSidebar.topAnchor.constraint(equalTo: goc.topAnchor),
@@ -129,12 +138,62 @@ public final class EideWindowController: NSWindowController {
             vach.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
             vach.widthAnchor.constraint(equalToConstant: 1),
 
-            panel.leadingAnchor.constraint(equalTo: vach.trailingAnchor),
-            panel.topAnchor.constraint(equalTo: goc.topAnchor),
-            panel.trailingAnchor.constraint(equalTo: goc.trailingAnchor),
-            panel.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
+            boc.leadingAnchor.constraint(equalTo: vach.trailingAnchor),
+            boc.topAnchor.constraint(equalTo: goc.topAnchor),
+            boc.trailingAnchor.constraint(equalTo: goc.trailingAnchor),
+            boc.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
         ])
         w.contentView = goc
+    }
+
+    private func gan(panel p: EidePanel) {
+        p.translatesAutoresizingMaskIntoConstraints = false
+        boc.addSubview(p)
+        NSLayoutConstraint.activate([
+            p.leadingAnchor.constraint(equalTo: boc.leadingAnchor),
+            p.topAnchor.constraint(equalTo: boc.topAnchor),
+            p.trailingAnchor.constraint(equalTo: boc.trailingAnchor),
+            p.bottomAnchor.constraint(equalTo: boc.bottomAnchor),
+        ])
+    }
+
+    /// Mở một dự án khác — GIAM-SAT-UI §0.2.
+    ///
+    /// **Dựng lại daemon và panel, không "nạp lại dữ liệu".** `ctx.project_dir` của daemon
+    /// quyết lúc nó khởi động, và sổ cái mở theo đó; không có đường nào bảo một daemon đang
+    /// chạy trỏ sang dự án khác. Panel cũng dựng lại vì trạng thái nó giữ — màn đang mở, hàng
+    /// đợi, dòng nhật ký — đều thuộc về dự án cũ, và giữ lại một phần là trộn hai dự án trên
+    /// cùng một màn hình.
+    ///
+    /// Trả về lý do nếu không mở được. Người gọi hiện lý do ấy; nuốt nó đi thì người dùng bấm
+    /// "Mở dự án" và không có gì xảy ra.
+    @MainActor
+    @discardableResult
+    public func moDuAn(_ duong: String) -> String? {
+        switch EideDuAn.kiem(duong) {
+        case .duoc:
+            break
+        case let kq:
+            return kq.loi
+        }
+        guard let c = EideDaemonLauncher.moClient(duAn: duong) else {
+            return "Không chạy được `eide daemon` cho dự án này. Kiểm `make setup` trong kho "
+                 + "EIDE, hoặc đặt EIDE_PYTHON."
+        }
+        // Đóng panel CŨ trước khi dựng cái mới: mỗi panel giữ một tiến trình `eide daemon`, và
+        // hai daemon cùng theo dõi một sổ cái là hai nguồn sự kiện trùng nhau — chưa kể một
+        // tiến trình không ai đóng.
+        panel.dong()
+        panel.removeFromSuperview()
+
+        let moi = EidePanel(client: c)
+        panel = moi
+        gan(panel: moi)
+        duAn = duong
+        EideDuAn.nhoDaMo(duong)
+        window?.title = "EIDE — " + (duong as NSString).lastPathComponent
+        sidebar.selectRowIndexes([0], byExtendingSelection: false)
+        return nil
     }
 
     /// Mở cửa sổ và đưa nó lên trước.

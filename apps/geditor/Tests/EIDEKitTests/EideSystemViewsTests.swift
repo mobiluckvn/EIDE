@@ -95,16 +95,22 @@ final class EideSystemViewsTests: XCTestCase {
 
     // MARK: - Màn 20: Models — màn nói ra chính khoảng trống của nó
 
-    func testMANmoHINHnoiRAphanKHONGcoTRONGapi15() {
-        // Vẽ ra một bảng mô hình đẹp đẽ từ dữ liệu không có là cách tệ nhất để lấp một khoảng
-        // trống giữa hai tài liệu.
+    func testMANmoHINHnayDOCtuSOcaiCHUkhongTUcauHINH() {
+        // [DEV-093] ĐÓNG 15/09/2026. Bản cũ đọc `project.status` + `models.yaml`, tức đọc CẤU
+        // HÌNH: nó nói tác tử ĐƯỢC PHÉP dùng mô hình nào, không nói nó ĐÃ dùng gì. Hai câu ấy
+        // khác nhau ở đúng chỗ người trả tiền quan tâm.
+        //
+        // Nay đọc `view.timeline` và lọc `model.call` — mỗi bản ghi có role, tokens, cost_usd.
         let v = ModelsView()
-        v.capNhat(ketQua: ["report": ["cost_today": 0.42], "autonomy": "A3"])
+        v.capNhat(ketQua: ["events": [
+            ["kind": "model.call", "data": ["role": "librarian", "tokens_in": 1200,
+                                            "tokens_out": 340, "cost_usd": 0.42]],
+        ]])
         XCTAssertEqual(v.chiPhiHomNay, 0.42, accuracy: 0.001)
         let chu = chuTrongThan(v)
-        XCTAssertTrue(chu.contains("API-15 chưa"), chu)
-        XCTAssertTrue(chu.contains("model.call"), chu)
-        XCTAssertTrue(chu.contains("DEV-093"), "phải trỏ tới mục DEVIATIONS: \(chu)")
+        XCTAssertTrue(chu.contains("librarian"), chu)
+        XCTAssertTrue(chu.contains("1200"), chu)
+        XCTAssertFalse(chu.contains("DEV-093"), "khoảng trống đã đóng, đừng còn trỏ tới nó: \(chu)")
     }
 
     func testDUNGkhanHIENoMANmoHinh() {

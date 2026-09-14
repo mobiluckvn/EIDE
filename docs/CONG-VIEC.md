@@ -475,3 +475,10 @@ chuỗi chuẩn nào còn chờ mô phỏng nữa — ba chuỗi dở dang đề
   subject sẽ thành `conflict` giả. Mỗi thực thể một subject riêng.
 - Ba cổng chặn trong `tests/test_specs_consistency.py` vẫn nguyên: docstring nêu ĐÚNG mã hợp
   đồng; không đọc tham số ngoài `input_schema`; không định nghĩa trùng tên hàm ở mức cao nhất.
+
+## Bug đang mở — ghi 14/09/2026, chờ thiết kế lại usecase
+
+| # | Bug | Đo được | Vì sao hoãn |
+|---|---|---|---|
+| B1 | `AutonomyBar` mất phím tắt ⌘⇧. của nút Dừng khẩn | `EideUITests.testNutDungKhanCoPhimTat` đỏ sau khi thêm nút chọn dự án vào thanh | Thanh trên sắp được thiết kế lại theo usecase — sửa bây giờ có thể sửa vào chỗ sắp bỏ |
+| B2 | Màn Hộ chiếu từng hiện "không cần tham số" trên bản dựng thật | Ảnh chụp 14/09; E2E với daemon thật thì ra đủ 6 ô | Chưa dựng lại được sau khi sửa `nangLucChinh`; kiểm lại sau khi có thiết kế màn |

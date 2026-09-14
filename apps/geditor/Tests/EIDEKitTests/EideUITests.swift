@@ -63,7 +63,12 @@ final class EideUITests: XCTestCase {
     func testNutDungKhanCoPhimTat() {
         // U6: "nút ■ Dừng khẩn ở sidebar và phím tắt ⌘⇧." — với tới được mà không cần chuột.
         let bar = AutonomyBar()
-        let nut = bar.subviews.compactMap { $0 as? NSButton }.first
+        // Tìm theo TIÊU ĐỀ, không theo vị trí trong `subviews`. Bản cũ lấy nút đầu tiên và đỏ
+        // ngay khi thanh có thêm nút chọn dự án (15/09) — một test đỏ vì lý do không liên quan
+        // gì tới điều nó canh, và mất một lượt truy ngược để biết đó không phải lỗi thật.
+        let nut = bar.subviews.compactMap { $0 as? NSButton }
+            .first { $0.title.contains("Dừng khẩn") }
+        XCTAssertNotNil(nut, "không tìm thấy nút Dừng khẩn trên thanh tự chủ")
         XCTAssertEqual(nut?.keyEquivalent, ".")
         XCTAssertEqual(nut?.keyEquivalentModifierMask, [.command, .shift])
         XCTAssertNotNil(nut?.accessibilityLabel())

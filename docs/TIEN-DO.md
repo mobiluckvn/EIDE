@@ -296,7 +296,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Hai mươi chín lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Ba mươi ba lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -524,11 +524,57 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     theo semver" trong khi thứ được so không phải semver của công cụ. Cũng đáng ghi: mã thoát
     **không dùng làm tín hiệu được**, lọc theo nó thì nhận chuỗi rác và bỏ chuỗi thật.
 
+30. **Phát lại sổ cái làm TREO chính daemon** (14/09). Tính năng giám sát bản đầu cho daemon
+    tự phát 200 bản ghi cuối ngay trong `__init__`. stdio là một ống có đệm hữu hạn — 64 KB
+    trên macOS — còn client chỉ đọc khi đang chờ câu trả lời của một lời gọi. Phát một khối lớn
+    trước khi client gửi gì là ghi vào một ống không ai đọc, và `write` chặn vĩnh viễn ở đó.
+
+    Đo: dự án AVR 108 sự kiện ≈ 55,7 KB (sát ngưỡng); ESP32-C3 ≈ 82 KB — **vượt**. Triệu chứng
+    nhìn từ ngoài là một cửa sổ mở lên rồi đứng im: không lỗi, không thông báo, và nhãn tự chủ
+    đứng ở giá trị khởi tạo `…`. Tôi mất một lúc đi tìm trong phía Swift trước khi nghĩ tới ống.
+
+    Bài học không phải "đừng đẩy nhiều": kênh đẩy và kênh hỏi-đáp có **ràng buộc khác nhau**, và
+    một khối lớn phải đi bằng đường hỏi-đáp. Lịch sử nay đi qua `view.timeline` — năng lực vốn
+    đã có sẵn cho đúng việc ấy (VIEW-12, `ref: memory.ledger`).
+
+31. **Giao diện chạy một chính sách KHÁC CLI trên cùng một dự án**
+    ([DEV-108](DEVIATIONS.md), 14/09). `Daemon` dựng `PolicyGate()` trần: không đọc
+    `.eide/autonomy.yaml`, không đọc niêm `.eide/policy.sig`. `cli._router` đọc cả hai từ đầu.
+    Đo trên dự án AVR: tệp ghi `autonomy: A2`, CLI áp A2, cửa sổ EIDE hiện "—" và quyết định
+    theo mặc định toàn cục.
+
+    Hai nguồn sự thật cho cùng một câu hỏi, và cái người dùng **nhìn thấy** là cái sai. Nặng
+    hơn ở phần niêm: `eide policy sign -p <dự án>` ghi ra `.eide/policy.sig`, mà daemon đọc
+    `defaults.sig` — nên chữ ký của chủ sản phẩm trên dự án ấy chưa bao giờ có hiệu lực trong
+    giao diện.
+
+32. **Mở màn từ sidebar thì màn nào cũng rỗng** ([DEV-108](DEVIATIONS.md), 14/09).
+    `_moTheoTenMan` không hỏi `napMacDinh`; nó chỉ xử lý `FlowMap` và `Models`, còn 20 màn kia
+    nhận câu "Màn X chưa có nguồn dữ liệu" — một câu vừa sai vừa nghe như lỗi của người dùng.
+
+    `napMacDinh` thêm ngày 13/09 để sửa lỗi im lặng số 21, và nó ĐÚNG — chỉ là nó chạy ở đường
+    `_napLaiManDangMo`, tức chỉ khi một sự kiện `knowledge.changed` tới. Hai đường vào cùng một
+    màn, một đường nạp dữ liệu, một đường không; và đường người dùng thật sự đi là đường thứ
+    hai. Cùng họ với 22–25: **một bên khai, bên kia không đọc** — lần này hai bên đều là mã của
+    chính tôi, cách nhau một ngày.
+
+33. **Dòng "xong" trên nhật ký không nói xong CÁI GÌ** (14/09). `cap.run.start` mang `cap`,
+    `cap.run.finish` thì không — nên dòng thời gian hiện "kg.conflicts bắt đầu" rồi "? xong".
+    Ghép theo `run_id` ở phía giao diện cũng không cứu được, vì lịch sử chỉ nạp 200 bản ghi
+    cuối và dòng `start` tương ứng có thể đã bị cắt. Sửa ở nguồn: cả bốn nhánh kết thúc —
+    done, failed, pending, rejected — nay đều mang tên năng lực, và có test quét mã để không
+    nhánh nào bị bỏ sót lần sau.
+
 **Số 18–21 có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được test kỹ**.
 Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi sống trong
 khoảng giữa chúng, nơi không bài test đơn vị nào đi qua. Đó là lý do bộ E2E (`EideE2ETests`) ra
 đời ngày 13/09: nó gọi daemon thật, chạy năng lực thật, rồi đưa kết quả thật vào khung nhìn
 thật — và nó bắt được cả bốn trong một buổi.
+
+**Số 30–33 đến từ việc BẬT GIAO DIỆN LÊN và bấm thử.** Cả bốn đều nằm ngoài tầm của mọi bộ
+test đang có — không phải vì test yếu, mà vì chúng sống ở những chỗ chỉ tồn tại khi sản phẩm
+chạy thật: một ống stdio có đệm hữu hạn, một tiến trình con đọc cấu hình của dự án, một cú bấm
+chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên tiếp ngay trước đó.
 
 **Số 22–25 nói thêm một điều nữa, và nó khó chịu hơn:** bốn cái này đều nằm ở chỗ **một bên
 khai, bên kia không đọc**. Registry giữ `dac_trung` mà Router không gọi; manifest ISA khai

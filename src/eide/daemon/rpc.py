@@ -14,6 +14,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, TextIO
 
+import yaml
+
 from eide import __version__
 from eide_core.errors import EideError, error_table
 from eide_core.ledger import Ledger, TheoDoiTep
@@ -61,13 +63,21 @@ SU_KIEN: dict[str, str] = {
     "error": "event.notice",
 }
 
-# Số bản ghi sổ cái phát lại ngay khi giao diện mở.
+# Daemon KHÔNG tự phát lại lịch sử khi mở. Giao diện HỎI, bằng `view.timeline`.
 #
-# Mở EIDE lên sau khi tác tử đã chạy mà thấy màn hình trắng thì "giám sát" chỉ đúng với ai ngồi
-# canh từ đầu. 200 là một phiên làm việc: phiên AVR ngày 14/09 có 105 sự kiện, phiên ESP32-C3
-# khoảng gấp đôi. Toàn bộ sổ cái thì với một dự án đã trích 8.169 fact là hàng nghìn dòng và
-# vài giây dựng màn — đắt cho một thứ không ai đọc hết.
-PHAT_LAI_KHI_MO = 200
+# Bản đầu (14/09/2026) phát lại 200 bản ghi ngay trong `__init__`, và nó **treo daemon**: stdio
+# là một ống có đệm hữu hạn — 64 KB trên macOS — còn client chỉ đọc khi đang chờ câu trả lời của
+# một lời gọi. Phát một lúc 200 sự kiện trước khi client gửi gì là ghi vào một ống không ai đọc,
+# và `write` chặn vĩnh viễn ở đúng chỗ ấy.
+#
+# Đo được: dự án AVR 108 sự kiện ≈ 55,7 KB (sát ngưỡng); dự án ESP32-C3 ≈ 82 KB — **vượt, treo
+# ngay khi mở giao diện**. Triệu chứng nhìn từ ngoài là một cửa sổ mở lên rồi đứng im, không
+# lỗi, không thông báo.
+#
+# Kênh đẩy vì thế chỉ dùng cho sự kiện THỜI GIAN THỰC: ít, rải rác, và luôn có một lời gọi đang
+# chờ nên client đang đọc. Lịch sử là một khối lớn, và khối lớn phải đi bằng đường hỏi-đáp —
+# `view.timeline` (VIEW-12, `ref: memory.ledger`) vốn đã sinh ra để làm đúng việc ấy.
+PHAT_LAI_KHI_MO = 0
 
 # Ba kiểu sổ cái KHÔNG lên giao diện, và không phải vì quên.
 #
@@ -121,10 +131,45 @@ ALIAS: dict[str, str] = {
 }
 
 
+def _autonomy_du_an(project: Path | None) -> dict[str, Any] | None:
+    """`.eide/autonomy.yaml` của dự án, hoặc None.
+
+    Cùng phép đọc với `cli._autonomy_cua_du_an`. Hai bản sao là hai chỗ sẽ trôi, nhưng gộp
+    chúng đòi lõi biết về bố cục thư mục dự án — mà `.eide/` là quy ước của `eide`, không phải
+    của `eide_core`. Có test đối chiếu hai bên.
+
+    Tệp hỏng thì trả None chứ không nổ: một `autonomy.yaml` sai cú pháp làm daemon chết lúc
+    khởi động nghĩa là người dùng mất cả giao diện vì một dòng YAML — và họ không có cách nào
+    biết vì sao, vì daemon chết trước khi kịp nói gì.
+    """
+    if project is None:
+        return None
+    f = project / ".eide" / "autonomy.yaml"
+    if not f.exists():
+        return None
+    try:
+        d = yaml.safe_load(f.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        return None
+    return d if isinstance(d, dict) else None
+
+
 class Daemon:
     def __init__(self, project: Path | None = None,
                  phat: Callable[[str, dict[str, Any]], None] | None = None) -> None:
-        self.gate = PolicyGate()
+        # Chính sách CỦA DỰ ÁN, không phải chính sách mặc định.
+        #
+        # `PolicyGate()` trần đọc `docs/spec/policy/defaults.yaml` và niêm `defaults.sig` toàn
+        # cục. Trong một dự án thì cả hai đều sai: mức tự chủ nằm ở `.eide/autonomy.yaml`, và
+        # niêm có hiệu lực là `.eide/policy.sig` — `eide policy sign -p <dự án>` ghi ra đúng tệp
+        # ấy. CLI đã làm thế từ đầu (`cli._router`); daemon thì không, nên **giao diện chạy với
+        # một chính sách khác CLI trên cùng một dự án**.
+        #
+        # Đo được 14/09/2026: dự án AVR đặt `autonomy: A2`, `eide caps invoke` áp A2, còn cửa sổ
+        # EIDE hiện mức "—" và quyết định theo mặc định. Hai nguồn sự thật cho cùng một câu hỏi,
+        # và cái người dùng NHÌN THẤY là cái sai.
+        self.gate = PolicyGate(config=_autonomy_du_an(project),
+                               sig_path=(project / ".eide" / "policy.sig") if project else None)
         self.ledger = Ledger((project / ".eide" / "store" / "ledger.jsonl") if project else user_log() / "ledger.jsonl")
         self.router = Router(gate=self.gate, ledger=self.ledger)
         self.ctx = Context(project_dir=project, extra={"gate": self.gate})
@@ -143,16 +188,10 @@ class Daemon:
         # còn người theo dõi tệp chậm nhất một chu kỳ. Việc của chính daemon vì thế hiện tức
         # thì; việc của tiến trình khác hiện sau ~0,4 s. `TheoDoiTep` lọc trùng theo `seq` nên
         # không có bản ghi nào lên giao diện hai lần.
-        # Phát lại lịch sử CHỈ khi có dự án. Không có dự án thì sổ cái là `~/.eide/ledger.jsonl`
-        # dùng chung cho mọi lời gọi ngoài dự án của mọi dự án — phát lại 200 dòng của nó là đổ
-        # lịch sử dự án KHÁC vào cửa sổ đang mở, và đổ trước cả phản hồi RPC đầu tiên. Đo được
-        # ngay khi thêm tính năng này: `serve_stdio` trả về ba dòng `event.*` của phiên trước rồi
-        # mới tới câu trả lời cho lời gọi hiện tại.
         self._tail: TheoDoiTep | None = None
         if phat is not None:
             self.ledger.theo_doi(self._tu_so_cai)
-            self._tail = self.ledger.theo_doi_tep(
-                self._tu_so_cai, phat_lai=PHAT_LAI_KHI_MO if project else 0)
+            self._tail = self.ledger.theo_doi_tep(self._tu_so_cai, phat_lai=PHAT_LAI_KHI_MO)
         # Việc chạy nền. Khóa vì `job.status` đọc từ luồng RPC còn luồng việc thì ghi.
         self._jobs: dict[str, dict[str, Any]] = {}
         self._khoa = threading.Lock()

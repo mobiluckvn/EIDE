@@ -27,12 +27,18 @@ final class EideE2ETests: XCTestCase {
 
     // MARK: - Dựng một dự án thật trong thư mục tạm
 
-    private static var gocKho: URL {
+    /// Gốc kho EIDE. `internal` chứ không `private`: vài bộ test khác cũng cần đọc
+    /// `docs/spec/` và `src/` để đối chiếu — chép lại phép dò này lần thứ hai là tạo
+    /// một bản sao sẽ trôi.
+    static var gocKho: URL {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent()
             .deletingLastPathComponent().deletingLastPathComponent()
             .deletingLastPathComponent()
     }
+
+    /// Python của venv — vài bộ test khác cũng cần.
+    static var pythonDeTest: String? { python }
 
     private static var python: String? {
         let fm = FileManager.default
@@ -215,20 +221,20 @@ final class EideE2ETests: XCTestCase {
 
     // MARK: - Màn 20: Mô hình & chi phí
 
-    func testMAN20_moHinhLAYchiPHItuProjectStatus() async throws {
+    func testMAN20_moHinhDOCtuSOcaiTHAT() async throws {
+        // [DEV-093] đóng 15/09: chi phí đọc từ `view.timeline` (sổ cái), không từ
+        // `project.status` (cấu hình). Dự án E2E mới tinh chưa gọi mô hình lần nào — và màn
+        // phải NÓI RA điều đó thay vì hiện 0,00 USD như thể đã đo.
         let c = try moClient()
-        let kq = try await chay(c, "project.status")
-        let r = try XCTUnwrap(kq)
-        let tc = try await c.goi(.autonomyGet, [:])
-
-        var g: [String: Any] = (r["report"] as? [String: Any]) ?? [:]
-        g["autonomy"] = tc["autonomy"]
+        let kq = try await chay(c, "view.timeline")
+        let r = try XCTUnwrap(kq, "view.timeline không chạy được")
+        XCTAssertNotNil(r["events"], "hợp đồng VIEW-12 đổi: không còn `events`")
 
         let v = ModelsView()
-        v.capNhat(ketQua: g)
-        XCTAssertTrue(v.tomTat.stringValue.contains("USD"), v.tomTat.stringValue)
-        // Và vẫn nói ra phần API-15 chưa cấp — nói thật không phụ thuộc dữ liệu.
-        XCTAssertTrue(chu(v).contains("DEV-093"), chu(v))
+        v.capNhat(ketQua: r)
+        let t = chu(v)
+        XCTAssertTrue(t.contains("Chưa có lượt gọi") || t.contains("lượt gọi"), t)
+        XCTAssertFalse(t.contains("DEV-093"), "khoảng trống đã đóng: \(t)")
     }
 
     // MARK: - Hàng đợi và mức tự chủ — hai thứ U2 đòi LUÔN hiện
@@ -435,33 +441,55 @@ final class EideKenhSuKienTests: XCTestCase {
     }
 
     func testMOIsuKIENapi15DEUcoNHANHxuLYhoacCOchuY() throws {
-        // Mười sáu phương thức `event.*` của API-15 §1. Bài test đọc thẳng openrpc.json: nếu
-        // một sự kiện mới được thêm mà panel không biết, con số lệch và test đỏ — thay vì sự
-        // kiện ấy rơi vào `default` mãi mãi.
+        // Hai mươi mốt phương thức `event.*` của API-15 §1 (16 gốc + 5 giám sát thêm 14/09,
+        // DEV-107). Bài test đọc thẳng openrpc.json: nếu một sự kiện mới được thêm mà panel
+        // không biết, con số lệch và test đỏ — thay vì sự kiện ấy rơi vào `default` mãi mãi.
         let f = Self.gocKho.appendingPathComponent("docs/spec/api/openrpc.json")
         let d = try JSONSerialization.jsonObject(with: try Data(contentsOf: f))
             as? [String: Any] ?? [:]
         let ten = ((d["methods"] as? [[String: Any]]) ?? [])
             .compactMap { $0["name"] as? String }.filter { $0.hasPrefix("event.") }
-        XCTAssertEqual(ten.count, 16, "số sự kiện API-15 đổi: \(ten)")
+        XCTAssertEqual(ten.count, 21, "số sự kiện API-15 đổi: \(ten)")
 
-        // Bốn nhóm panel xử lý + phần còn lại cố ý bỏ qua (chưa có chỗ hiện tử tế).
+        // Panel xử lý + phần còn lại cố ý bỏ qua (chưa có chỗ hiện tử tế).
         let daXuLy: Set<String> = [
             "event.chat.question", "event.notice", "event.chat.report",
             "event.queue.changed", "event.gate.opened", "event.undo.registered",
             "event.undo.expired", "event.autonomy.changed",
             "event.knowledge.changed", "event.doc.stale", "event.diagram.stale",
+            "event.chat.restated", "event.run.progress", "event.job.progress",
+            // Năm sự kiện GIÁM SÁT: chỗ của chúng là dòng thời gian của `NhatKyView`, và
+            // `nhanSuKien` đưa MỌI sự kiện vào đó trước khi `switch`. Xử lý theo nghĩa "có chỗ
+            // hiện cho người dùng", không theo nghĩa "có một `case` riêng".
+            "event.gate.decided", "event.model.call", "event.tool.report",
+            "event.project.changed", "event.chat.intent",
         ]
         let boQua: Set<String> = [
-            "event.chat.restated",      // thẻ ý hiểu — chưa dựng
-            "event.run.progress",       // tiến độ chuỗi — chưa có chỗ hiện
-            "event.job.progress",       // việc nặng chạy nền
             "event.discover.changed",   // cần board
             "event.serial.line",        // cần board
         ]
         let la = Set(ten).subtracting(daXuLy).subtracting(boQua)
         XCTAssertTrue(la.isEmpty, "sự kiện chưa ai quyết định làm gì: \(la.sorted())")
-        XCTAssertEqual(daXuLy.count + boQua.count, 16)
+        XCTAssertEqual(daXuLy.count + boQua.count, 21)
+    }
+
+    @MainActor
+    func testMOIsuKIENdeuVAOnhatKYkeCAloaiPANELkhongXUly() {
+        // Bất biến của cả tính năng giám sát: `nhanSuKien` đưa MỌI sự kiện vào `NhatKyView`
+        // TRƯỚC `switch`. Nếu nhật ký nằm trong một `case` thì mỗi sự kiện thêm về sau là một
+        // chỗ có thể quên, và màn "tác tử vừa làm gì" sẽ im lặng bỏ sót đúng việc vừa thêm.
+        //
+        // Kiểm bằng cách đọc MÃ NGUỒN chứ không bằng cách gọi: thứ cần giữ là VỊ TRÍ của lời
+        // gọi, và không có cách nào quan sát vị trí ấy từ bên ngoài.
+        let f = Self.gocKho.appendingPathComponent("apps/geditor/Sources/EIDEKit/EidePanel.swift")
+        let src = (try? String(contentsOf: f, encoding: .utf8)) ?? ""
+        guard let ham = src.range(of: "func nhanSuKien("),
+              let sw = src.range(of: "switch ten {", range: ham.upperBound..<src.endIndex),
+              let goi = src.range(of: "nhatKy.them(", range: ham.upperBound..<src.endIndex) else {
+            return XCTFail("không tìm thấy `nhanSuKien` hoặc lời gọi `nhatKy.them`")
+        }
+        XCTAssertTrue(goi.lowerBound < sw.lowerBound,
+                      "`nhatKy.them` phải chạy TRƯỚC `switch`, không nằm trong một `case`")
     }
 }
 
@@ -983,5 +1011,51 @@ final class EideDoPhuUITests: XCTestCase {
         XCTAssertGreaterThanOrEqual(hien, 199,
                                     "độ phủ UI tụt so với mức đã đo; còn câm: \(cam.sorted())")
         XCTAssertGreaterThan(coMan, 190)
+    }
+}
+
+/// Ô nhập dựng từ daemon THẬT — tầng duy nhất bắt được lỗi "form rỗng trên bản dựng thật".
+///
+/// `EideBoCucMoiTests` dựng form từ payload tôi gõ tay và xanh; bản dựng thật thì màn Hộ chiếu
+/// báo "Năng lực này không cần tham số" cho một năng lực có năm tham số. Chỗ hở nằm giữa hai
+/// thứ ấy: **thứ `EideClient.goi` thật sự trả về**.
+final class EideONhapE2ETests: XCTestCase {
+
+    @MainActor
+    func testFORMdungTUcapsDescribeTHAT() async throws {
+        guard let py = EideE2ETests.pythonDeTest else { throw XCTSkip("chưa có venv") }
+        FileManager.default.changeCurrentDirectoryPath(EideE2ETests.gocKho.path)
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"]))
+        defer { Task { await c.dong() } }
+
+        let mo = try await c.goi(.capsDescribe, ["id": "passport.query"])
+        XCTAssertFalse(mo.isEmpty, "caps.describe trả rỗng")
+        XCTAssertNotNil(mo["input_schema"], "thiếu input_schema — khoá trả về: \(mo.keys.sorted())")
+
+        let o = EideONhap(frame: .zero)
+        o.dungTu(capId: "passport.query", moTa: mo)
+        XCTAssertEqual(o.soO, 6,
+                       "form dựng từ daemon thật ra \(o.soO) ô; input_schema = "
+                       + "\(mo["input_schema"] ?? "nil")")
+    }
+
+    @MainActor
+    func testFORMcuaMOImanCHINHdeuDUNGduoc() async throws {
+        // Duyệt mọi năng lực chính trong bảng: mỗi cái phải đọc được hợp đồng và dựng được form.
+        // Một màn có năng lực không tồn tại là một màn mở ra sẽ báo lỗi mãi mãi.
+        guard let py = EideE2ETests.pythonDeTest else { throw XCTSkip("chưa có venv") }
+        FileManager.default.changeCurrentDirectoryPath(EideE2ETests.gocKho.path)
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"]))
+        defer { Task { await c.dong() } }
+
+        var hong: [String] = []
+        for (man, cap) in EidePanel.nangLucChinh.sorted(by: { $0.key < $1.key }) {
+            guard let mo = try? await c.goi(.capsDescribe, ["id": cap]), !mo.isEmpty else {
+                hong.append("\(man) → \(cap): caps.describe rỗng")
+                continue
+            }
+            if mo["input_schema"] == nil { hong.append("\(man) → \(cap): thiếu input_schema") }
+        }
+        XCTAssertTrue(hong.isEmpty, hong.joined(separator: "\n"))
     }
 }
