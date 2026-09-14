@@ -491,7 +491,7 @@ def header_c(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     sid = _bao_dam_source(root, p, "header", "gold")
     chung = {"source_id": sid, "method": "parser", "tier": "gold", "confidence": 1.0}
 
-    facts: list[dict[str, Any]] = []
+    facts: list[dict[str, Any]] = _vung_nho_header(t, iri_goc, chung)
     pos: dict[str, int] = {}
     for mau, loai in MAU_HEADER:
         for m in mau.finditer(t):
@@ -513,6 +513,73 @@ def header_c(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                             "header": {"name": part, "source": p.name}},
                   "actor": ctx.actor}, ctx)
     return {"batch_id": kq["batch_id"], "n_facts": len(facts), "conflicts": kq["conflicts"]}
+
+
+# Vùng nhớ trong header hãng: một cặp `<TÊN>_LOW` / `<TÊN>_HIGH`. Quy ước này là của ESP-IDF
+# (`soc/soc.h`) nhưng không riêng Espressif — Nordic, NXP cũng khai biên vùng theo cặp low/high.
+#
+# `SOC_` là tiền tố của Espressif; bỏ nó để tên vùng trong hộ chiếu là `IRAM` chứ không phải
+# `SOC_IRAM` — tên vùng đi vào bản đồ bộ nhớ và vào `.repl`, nơi người đọc mong thấy tên vùng
+# chứ không thấy tên thư viện.
+MAU_BIEN_VUNG = re.compile(
+    r"^\s*#\s*define\s+((?:SOC_)?[A-Z][A-Z0-9_]*?)_(LOW|HIGH)\s+\(?\s*([A-Za-z0-9_]+)",
+    re.M)
+
+# Tên vùng phải NÓI nó là bộ nhớ. Không có ràng buộc này thì mọi `#define X_LOW/X_HIGH` trong
+# header — ngưỡng so sánh, mức logic chân, dải tần — đều thành một vùng nhớ ma trong hộ chiếu.
+# Cùng từ khoá mà `_bo_nho_svd` dùng, vì cùng một câu hỏi.
+TU_BO_NHO = ("RAM", "ROM", "FLASH")
+
+
+def _vung_nho_header(t: str, iri_goc: str, chung: dict[str, Any]) -> list[dict[str, Any]]:
+    """`SOC_IRAM_LOW`/`SOC_IRAM_HIGH` → fact `base_address` + `memory_size` (byte).
+
+    **Vì sao đường này tồn tại.** `memory_size` là fact mà `sim.build_platform`,
+    `arch.memory_budget` và `diagram.memory_map` đều đọc, và cho tới nay chỉ `extract.svd` và
+    `extract.atdf` sinh được nó. SVD của Espressif — khác ST — **không khai vùng nhớ nào**:
+    không có `<peripheral>` giả tên FLASH/RAM, không `addressBlock` nào phủ SRAM. Nên một dự án
+    ESP32 đi hết luồng tri thức (8.169 fact, 15.834 nút) mà vẫn không mô phỏng được, vì thiếu
+    đúng một con số. Header chính hãng có con số ấy, ở dạng máy đọc được, không cần mô hình.
+
+    **Vì sao trừ chứ không tin một `_SIZE` có sẵn.** Header hay có cả
+    `SOC_MAX_CONTIGUOUS_RAM_SIZE (SOC_IRAM_HIGH - SOC_IRAM_LOW)` — cùng một phép trừ, viết sẵn.
+    Đọc biểu thức ấy đòi phải hiểu cú pháp C; đọc hai biên rồi tự trừ thì không, và ra cùng số.
+
+    **Vùng chồng nhau không bị gộp.** ESP32-C3 nhìn cùng 400 KB SRAM qua hai cửa sổ (`IRAM`
+    0x4037C000, `DRAM` 0x3FC80000). Cả hai vào hộ chiếu như hai vùng: chúng có địa chỉ khác
+    nhau thật, và firmware nạp sai cửa sổ thì treo. Gộp chúng lại thành "400 KB RAM" là bỏ đi
+    đúng thông tin phân biệt được hai lỗi ấy.
+    """
+    bien: dict[str, dict[str, int]] = {}
+    tro: dict[tuple[str, str], str] = {}
+    so_theo_ten: dict[str, int] = {}
+    for m in MAU_BIEN_VUNG.finditer(t):
+        ten, canh, gt = m.group(1), m.group(2).lower(), m.group(3)
+        if (v := _so(gt.rstrip("UuLl"))) is None:
+            # Giá trị là tên một `#define` khác (`SOC_DROM_LOW  SOC_IROM_LOW` — có thật trong
+            # soc.h). Ghi lại để giải ở lượt hai; bỏ ngay thì mất hẳn một vùng.
+            tro[(ten, canh)] = gt
+            continue
+        bien.setdefault(ten, {})[canh] = v
+        so_theo_ten[f"{ten}_{canh.upper()}"] = v
+
+    for (ten, canh), ref in tro.items():
+        if (v := so_theo_ten.get(ref)) is not None:
+            bien.setdefault(ten, {}).setdefault(canh, v)
+
+    ra: list[dict[str, Any]] = []
+    for ten, c in bien.items():
+        lo, hi = c.get("low"), c.get("high")
+        if lo is None or hi is None or hi <= lo:
+            continue
+        goi = re.sub(r"^SOC_", "", ten)
+        if not any(k in goi for k in TU_BO_NHO):
+            continue
+        iri = f"{iri_goc}/mem:{goi}"
+        ra.append({"subject": iri, "predicate": "base_address", "value": lo, **chung})
+        ra.append({"subject": iri, "predicate": "memory_size", "value": hi - lo,
+                   "unit": "byte", **chung})
+    return ra
 
 
 def _part_tu_header(t: str) -> str | None:

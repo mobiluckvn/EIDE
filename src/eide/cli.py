@@ -23,6 +23,14 @@ COMMON_TOOLS = tools.COMMON_TOOLS   # nguồn duy nhất ở eide_core.tools
 
 
 def _router(project: Path | None = None) -> tuple[Router, Context]:
+    # Tuyệt đối hoá NGAY tại lối vào. `eide caps invoke -p . …` là cách gõ tự nhiên nhất từ
+    # trong thư mục dự án, và nó cho `project_dir = Path(".")`; mọi đường dẫn năng lực dựng từ
+    # đó cũng tương đối theo. Phần lớn năng lực không sao vì chúng chạy trong tiến trình này —
+    # nhưng thứ nào giao việc ra NGOÀI thì hỏng: sandbox của SEC-25 §2 đổi thư mục làm việc,
+    # nên `qemu … -kernel ./build/fw.elf` báo "No such file or directory" cho một tệp có thật.
+    # Đo 14/09/2026 bằng `sim.run`. Xem DEV-102.
+    if project is not None:
+        project = project.expanduser().resolve()
     ledger = Ledger((project / ".eide" / "store" / "ledger.jsonl") if project else user_log() / "ledger.jsonl")
     # Trong một dự án thì chính sách CỦA DỰ ÁN mới là chính sách có hiệu lực, và niêm phải là
     # niêm của dự án ấy. Dùng `defaults.sig` ở đây thì `eide policy sign -p <dự án>` ghi ra một

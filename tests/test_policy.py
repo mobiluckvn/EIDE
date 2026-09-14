@@ -48,6 +48,51 @@ def test_hash_mismatch_rejects():
     assert d.decision == REJECT and d.rule_id == "G-SRC-03"
 
 
+_NGUON_LA = {"source": {"domain": "raw.githubusercontent.com", "kind": "header",
+                        "size_mb": 0.01, "license": "Apache-2.0", "hash_match": True}}
+
+
+def test_nguoi_duyet_thi_quy_tac_cong_khong_hoi_lai():
+    """Người bấm "duyệt" xong thì lời gọi phải CHẠY, không quay lại chính câu hỏi vừa trả lời.
+
+    `Router.quyet_dinh()` duyệt xong chạy lại với `actor="human"`, và nhánh nhường của tầng 5
+    nói đó là APPROVE — nhưng tầng 5 chỉ tới khi KHÔNG quy tắc nào khớp, còn mọi mục vào hàng
+    đợi thì vào vì một quy tắc ASK vừa khớp ở tầng 3/4. Đo được bằng `search.fetch` +
+    `G-SRC-99`: duyệt, bị hỏi lại, duyệt nữa, bị hỏi lại — hàng đợi U2 không đóng được mục nào.
+
+    Test cũ (`test_hang_doi.test_duyet_thi_chay_tiep_khong_hoi_lai`) xanh suốt vì nó dùng
+    `kg.resolve_conflict`, một T2 gắn cổng `*` — đúng ca duy nhất rơi xuống tầng 5.
+    """
+    g = PolicyGate()
+    assert g.decide("G-SRC", _NGUON_LA, risk="R1").decision == ASK, "tiền đề: máy thì bị hỏi"
+    d = g.decide("G-SRC", _NGUON_LA, risk="R1", actor="human")
+    assert d.decision == APPROVE
+    assert d.rule_id == "G-SRC-99", "phải mượn id quy tắc, để còn truy được người trả lời câu nào"
+
+
+def test_nguoi_khong_lat_duoc_mot_lenh_tu_choi():
+    """Duyệt là trả lời một câu HỎI. Một quy tắc REJECT không hỏi gì cả — nó nói hành động này
+    không được phép, và biến nó thành hỏi-rồi-đồng-ý là bỏ mất ranh giới cứng của POL-17 §1."""
+    d = PolicyGate().decide(
+        "G-SRC", {"source": {"domain": "st.com", "kind": "svd", "size_mb": 1, "license": "MIT",
+                             "hash_match": False, "expected_hash": "abc"}},
+        risk="R1", actor="human")
+    assert d.decision == REJECT and d.rule_id == "G-SRC-03"
+
+
+def test_cong_tu_khai_dieu_kien_cho_nguoi_thi_nhanh_chung_khong_chong_len():
+    """S48 của POL-17 §8: "người ký nhưng băm không khớp niêm" → vẫn ASK.
+
+    G-WL-01 nói người ký được duyệt *khi niêm khớp*; tức cổng ấy đã khai rằng sự có mặt của
+    người là chưa đủ. Nhường chung ở tầng 3/4 mà không đọc điều ấy sẽ mở đường cho một chữ ký
+    không còn bảo chứng cho nội dung hiện tại — đúng thứ niêm sinh ra để chặn.
+    """
+    g = PolicyGate()
+    d = g.decide("G-WL", {"actor": "human", "wl": {"verified": False}},
+                 risk="R2", autonomy="A3", actor="human")
+    assert (d.decision, d.rule_id) == (ASK, "G-WL-99")
+
+
 def test_r4_always_asks_even_at_A4():
     d = PolicyGate().decide("G-OPS", {}, risk="R4", autonomy="A4")
     assert d.decision == ASK and d.rule_id == "HARD-R4"

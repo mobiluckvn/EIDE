@@ -509,6 +509,102 @@ def test_iri_header_khop_iri_svd(du_an, tmp_path):
     assert _iri_field("chip:st.x", "I2C_CR1") == "chip:st.x/periph:I2C/reg:CR1"
 
 
+# ---- vùng nhớ từ header (DEV-099)
+
+SOC_H = """
+/* trích nguyên văn esp-idf/components/soc/esp32c3/include/soc/soc.h */
+#define SOC_DROM_LOW    0x3C000000
+#define SOC_DROM_HIGH   0x3C800000
+#define SOC_IRAM_LOW    0x4037C000
+#define SOC_IRAM_HIGH   0x403E0000
+#define SOC_DRAM_LOW    0x3FC80000
+#define SOC_DRAM_HIGH   0x3FCE0000
+#define SOC_RTC_IRAM_LOW  0x50000000
+#define SOC_RTC_IRAM_HIGH 0x50002000
+#define SOC_MAX_CONTIGUOUS_RAM_SIZE (SOC_IRAM_HIGH - SOC_IRAM_LOW)
+#define RTC_CNTL_DIG_DBIAS_LOW  0
+#define APB_CLK_FREQ_HIGH  80000000
+"""
+
+
+def _mem(t: str) -> dict[str, dict[str, int]]:
+    from eide.caps.extract import _vung_nho_header
+
+    ra: dict[str, dict[str, int]] = {}
+    for f in _vung_nho_header(t, "chip:espressif.esp32c3", {}):
+        ra.setdefault(f["subject"].rsplit(":", 1)[-1], {})[f["predicate"]] = f["value"]
+    return ra
+
+
+def test_vung_nho_tu_bien_low_high():
+    """400 KB SRAM của ESP32-C3 — con số mà `sim.build_platform` chặn vì thiếu.
+
+    Kiểm bằng số nguyên byte chứ không bằng "400 KB": đơn vị là chỗ sai một nghìn lần mà con số
+    vẫn trông hợp lý, và `arch.memory_budget` cộng byte chứ không cộng chữ.
+    """
+    m = _mem(SOC_H)
+    assert m["IRAM"]["memory_size"] == 400 * 1024
+    assert m["IRAM"]["base_address"] == 0x4037C000
+    assert m["RTC_IRAM"]["memory_size"] == 8 * 1024
+    assert m["DROM"]["memory_size"] == 8 * 1024 * 1024
+
+
+def test_khong_bien_dinh_nghia_nao_ket_thuc_LOW_thanh_vung_nho():
+    """`RTC_CNTL_DIG_DBIAS_LOW` là một mức điện áp, `APB_CLK_FREQ_HIGH` là một tần số.
+
+    Không có ràng buộc tên-phải-nói-nó-là-bộ-nhớ thì cả hai thành vùng nhớ ma trong hộ chiếu —
+    và một vùng nhớ ma không báo lỗi ở đâu cả, nó chỉ làm bản đồ bộ nhớ sai lặng lẽ.
+    """
+    m = _mem(SOC_H)
+    assert not any("DBIAS" in k or "CLK" in k for k in m), m
+
+
+def test_vung_chong_nhau_khong_bi_gop():
+    """IRAM và DRAM của ESP32-C3 là hai cửa sổ nhìn vào cùng một khối SRAM vật lý.
+
+    Gộp chúng thành một vùng "400 KB RAM" bỏ đi đúng thứ phân biệt được hai lỗi khác nhau:
+    firmware nạp đúng dung lượng nhưng sai cửa sổ thì treo, và triệu chứng trông y hệt lỗi mã.
+    """
+    m = _mem(SOC_H)
+    assert m["IRAM"]["base_address"] != m["DRAM"]["base_address"]
+    assert m["DRAM"]["memory_size"] == 384 * 1024
+
+
+def test_bien_tro_toi_dinh_nghia_khac_van_giai_duoc():
+    """`SOC_DROM_LOW  SOC_IROM_LOW` — có thật trong soc.h của vài chip Espressif.
+
+    Bỏ qua dạng này thì mất hẳn một vùng, và mất im lặng: không lỗi, chỉ thiếu.
+    """
+    m = _mem("#define SOC_IROM_LOW 0x42000000\n"
+             "#define SOC_DROM_LOW SOC_IROM_LOW\n"
+             "#define SOC_DROM_HIGH 0x42800000\n")
+    assert m["DROM"]["base_address"] == 0x42000000
+
+
+def test_bien_thieu_mot_canh_thi_khong_doan():
+    """Một biên không đủ dựng một vùng. Đoán cạnh còn lại (bằng 64 KB, bằng vùng kế) là bịa ra
+    một dung lượng mà không nguồn nào nói."""
+    assert _mem("#define SOC_IRAM_LOW 0x40000000\n") == {}
+
+
+def test_header_c_ghi_vung_nho_vao_ho_chieu(du_an, tmp_path):
+    """Qua cả đường thật: parser → `passport.import` → store, tier vàng.
+
+    Tầng quan trọng vì `sim.build_platform` lọc `tier='gold' OR status IN (...)`: một fact bạc
+    chưa duyệt không dựng nổi nền tảng mà firmware sẽ chạy thật trên đó.
+    """
+    r, ctx, root = du_an
+    p = tmp_path / "soc.h"
+    p.write_text(SOC_H, encoding="utf-8")
+    r.invoke("extract.header_c", {"file": str(p), "part": "espressif.esp32c3"}, ctx)
+    with store.open_store(store.store_path(root)) as c:
+        row = c.execute(
+            "SELECT value, unit, tier FROM fact WHERE predicate='memory_size'"
+            " AND subject='chip:espressif.esp32c3/mem:IRAM'").fetchone()
+    assert row is not None, "fact memory_size phải đi qua cổng ghi duy nhất vào store"
+    assert json.loads(row[0]) == 409600 and row[1] == "byte" and row[2] == "gold"
+
+
 # ---------------------------------------------------------------- EXTRACT-09 code_constants
 
 

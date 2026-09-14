@@ -220,17 +220,39 @@ tối thiểu**, vì EIDE không sinh scaffold — `code.build` dựng theo `CMa
 
 | Chỉ số | Giá trị |
 |---|---|
-| Test Python | **1503** xanh, arm64 + x86_64 (`make check-py`) |
-| Test Swift | **2699** xanh (`make check-swift`, nay nằm trong `make check` — WI-260). Trong đó **29** là EIDEKit, phần thuộc EIDE; còn lại là GEditor, ứng dụng chủ |
-| Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **1 engine mô phỏng** (`qemu-system-avr`) · **2 chuỗi công cụ ARM** (`arm-none-eabi-gcc` + `cmake`/`ninja`). Ba nhóm sau nằm trong `make check` và tự bỏ qua nếu máy không có công cụ |
+| Test Python | **1555** xanh, arm64 + x86_64 (`make check-py`) |
+| Test Swift | **2863** xanh (`make check-swift`, nay nằm trong `make check` — WI-260). Trong đó **193** là EIDEKit, phần thuộc EIDE; còn lại là GEditor, nay là màn "Mã nguồn" của EIDE ([DEV-098](DEVIATIONS.md)) |
+| Test GỌI THẬT | 10 mạng (`make check-net`) · 7 mô hình (`make check-llm`) · **2 engine mô phỏng** (`qemu-system-avr`, `qemu-system-riscv32`) · **2 chuỗi công cụ ARM** (`arm-none-eabi-gcc` + `cmake`/`ninja`). Ba nhóm sau nằm trong `make check` và tự bỏ qua nếu máy không có công cụ |
 | Nghiệm thu Sprint 1 / 2 / 3 | 17/17 · 18/18 · **13/13** |
-| Mục DEVIATIONS | 89 tổng, **9 Mở** — 7 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-076] và [DEV-079] chờ D3 vision, [DEV-082]…[DEV-085] chờ kênh quan sát); **2 chờ chủ sản phẩm**: [DEV-088] (SEC-25 §2/§3) và [DEV-089] (ký lại `trusted_packages`) |
+| Mục DEVIATIONS | 102 tổng, **17 Mở** — 5 là nợ hiện thực chờ mốc/khối sau ([DEV-074] M5, [DEV-082]…[DEV-085] chờ kênh quan sát); còn lại chờ chủ sản phẩm, mới nhất là [DEV-099] (vùng nhớ từ header hãng), [DEV-100] (vòng lặp duyệt ở ngưỡng cứng R4), [DEV-101], [DEV-102] |
 | Tài liệu | 35 tệp, khớp nguồn sinh từng khối (`make check`). Phiên này: **TGT-19 v1.2**, **SIM-20 v1.1** |
 
 **Kiểm đột biến** dùng cho mọi nhóm năng lực: cố ý phá từng khẳng định rồi xác nhận test đỏ.
 Nó đã bắt được nhiều test "xanh vì lý do khác với lý do nó được viết ra" — trong đó có test
 SAFETY của `req.*`, ngưỡng 85% Flash của `arch.*`, hai lớp chặn DoS của `archive.unpack`, và
 ngưỡng 0,35 của `view.rag_ask`.
+
+**Một luồng thật, từ đầu đến cuối** (14/09/2026 — board ESP32-C3, không phần cứng). Đây là lần
+đầu một dự án đi trọn từ câu hỏi của người tới firmware chạy trong mô phỏng, và mỗi con số dưới
+đây là một lần gọi năng lực thật, không phải fixture:
+
+| Bước | Năng lực | Đo được |
+|---|---|---|
+| Tạo dự án, tìm tài liệu | `project.create` → `search.vendor` → `search.fetch` | SVD Espressif (gold, 1,0) |
+| Trích tri thức | `extract.svd` → `kg.build` | **8.169 fact** → **15.834 nút / 37.938 cạnh** |
+| Tra hộ chiếu | `passport.query` | I2C0 base `0x60013000`, có trích dẫn |
+| Ghim đích, kiểm môi trường | `project.set_target` → `env.check` | `isa: rv32imac`, **5/5** công cụ |
+| Dịch | `code.build` | `passed: true`, exit 0, `build/fw.elf` |
+| Duyệt fact | `kg.review_facts` | **8.125** tự duyệt · **44** hỏi người · 0 từ chối |
+| Vùng nhớ | `extract.header_c` ([DEV-099](DEVIATIONS.md)) | **10 vùng, 20 fact vàng** — SRAM 400 KB, ROM 384 KB, RTC 8 KB, khớp datasheet tr.34 từng con số |
+| Dựng nền tảng | `sim.build_platform` | qemu-system-riscv32, 10 vùng, 37 ngoại vi chưa mô hình |
+| Chạy mô phỏng | `sim.run` | **5/5 expect đạt**, UART thật, 0 `unverified` |
+
+Bốn lỗi im lặng (22–25) lộ ra trong chính buổi này, và không cái nào lộ được bằng một lời gọi
+đơn lẻ. Hai chỗ luồng còn dựa vào tay người vì môi trường thiếu khoá mô hình, và phải nói ra:
+`sim.scenario` (vai trò `planner`) không chạy được nên kịch bản `sim/bme280-khoi-dong.yaml` là
+viết tay theo đúng `_SCHEMA_KICH_BAN`; mọi `extract.pdf_*` cũng đứng vì cùng lý do, nên vùng
+nhớ đi đường header thay vì đường datasheet.
 
 **Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1346 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
@@ -251,7 +273,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Hai mươi mốt lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Hai mươi lăm lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -404,11 +426,55 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     khoá nó dùng, rồi giao với `output_schema` do daemon phát ra. Một danh sách gõ tay sẽ lệch
     đi ngay lần đầu ai đó thêm một trường — và lệch theo hướng làm test xanh.
 
-**Bốn cái cuối cùng có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được
-test kỹ**. Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi
-sống trong khoảng giữa chúng, nơi không bài test đơn vị nào đi qua. Đó là lý do bộ E2E
-(`EideE2ETests`) ra đời ngày 13/09: nó gọi daemon thật, chạy năng lực thật, rồi đưa kết quả
-thật vào khung nhìn thật — và nó bắt được cả bốn trong một buổi.
+22. **Hàm dựng đặc trưng chưa bao giờ được gọi** (13/09). `@capability(..., dac_trung=fn)` cho
+    một năng lực tự tính đặc trưng cổng từ tham số lời gọi — `search.fetch` khai nó để nói với
+    G-SRC nguồn này là gì, `env.install` khai nó để nói với G-OPS gói nào sắp cài. Registry giữ
+    hàm ấy tử tế trong `Registered.dac_trung`, và **Router không gọi**. Cổng vì thế luôn nhìn
+    một `features` rỗng và luôn rơi xuống quy tắc bắt hết. Không test nào thấy vì mỗi bên đều
+    được test riêng: registry có test giữ được hàm, PolicyGate có test quyết định đúng với
+    đặc trưng cho sẵn — và không ai kiểm rằng đặc trưng đi được từ bên này sang bên kia.
+
+23. **Duyệt xong bị hỏi lại chính câu vừa trả lời** ([DEV-100](DEVIATIONS.md), 14/09). Nhánh
+    nhường cho `actor == "human"` nằm ở tầng 5 của `PolicyGate.decide`, mà tầng 5 chỉ tới khi
+    KHÔNG quy tắc nào khớp — trong khi một mục vào hàng đợi thì gần như luôn vì một quy tắc ASK
+    ở tầng 3/4 vừa khớp. `eide queue approve` vì thế chạy lại lời gọi, gặp lại đúng quy tắc ấy,
+    và trả về "CHỜ NGƯỜI" với một run_id mới. **Hàng đợi U2 không đóng được mục nào.**
+
+    Docstring của `Router.quyet_dinh` mô tả đúng hành vi mong muốn — "lời gọi không quay lại
+    hàng đợi một lần nữa" — nên đọc mã thì thấy yên tâm. Và test giữ điều ấy (`test_hang_doi::
+    test_duyet_thi_chay_tiep_khong_hoi_lai`) xanh suốt vì nó dùng `kg.resolve_conflict`, một T2
+    gắn cổng `*`: **đúng ca duy nhất rơi xuống tầng 5**. Cùng khuôn với lỗi số 5 — fixture chọn
+    trúng trường hợp ngoại lệ, rồi chứng minh cho một tình huống không xảy ra trong đời thật.
+
+24. **`sim.cmd` của manifest ISA chưa bao giờ tới engine** ([DEV-101](DEVIATIONS.md), 14/09).
+    `_argv` dựng dòng lệnh qemu bằng tay; `docs/spec/isa/rv32imac.yaml` khai
+    `qemu-system-riscv32 -M virt -nographic -bios none -kernel {artifact}` và không ai đọc.
+    Thiếu `-bios none`, máy `virt` nạp OpenSBI ở 0x80000000 — đúng chỗ linker script đặt
+    firmware — nên lượt chạy chết bằng *"Some ROM regions are overlapping"*, một thông báo trỏ
+    thẳng vào người viết firmware. Nằm im vì armv7e-m và avr8 **không khai `sim.cmd`**: với
+    chúng hai đường trùng nhau, và manifest thứ ba là lần đầu tiên chúng tách ra.
+
+25. **`-p .` làm sandbox không thấy tệp có thật** ([DEV-102](DEVIATIONS.md), 14/09). CLI không
+    tuyệt đối hoá `--project`, nên `project_dir = Path(".")` và mọi đường dẫn dựng từ đó cũng
+    tương đối. Trong tiến trình thì không sao — thư mục hiện hành đúng là dự án. Nhưng sandbox
+    của SEC-25 §2 đổi thư mục làm việc, nên `qemu … -kernel ./build/fw.elf` báo *"No such file
+    or directory"* cho một tệp có thật, và câu ấy đổ lỗi cho tệp chứ không cho đường dẫn. Đi
+    đúng ví dụ đường dẫn mà hợp đồng SIM-05 viết, và đúng cách gõ tự nhiên nhất từ trong dự án.
+
+**Số 18–21 có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được test kỹ**.
+Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi sống trong
+khoảng giữa chúng, nơi không bài test đơn vị nào đi qua. Đó là lý do bộ E2E (`EideE2ETests`) ra
+đời ngày 13/09: nó gọi daemon thật, chạy năng lực thật, rồi đưa kết quả thật vào khung nhìn
+thật — và nó bắt được cả bốn trong một buổi.
+
+**Số 22–25 nói thêm một điều nữa, và nó khó chịu hơn:** bốn cái này đều nằm ở chỗ **một bên
+khai, bên kia không đọc**. Registry giữ `dac_trung` mà Router không gọi; manifest ISA khai
+`sim.cmd` mà `_argv` không đọc; APD-08 khai người duyệt được ưu tiên mà `decide` xét nó quá
+muộn; hợp đồng SIM-05 viết đường dẫn tương đối mà CLI không chuẩn hoá gốc. Không cái nào lộ ra
+bằng một lời gọi đơn lẻ — cả bốn chỉ lộ khi **chạy hết một luồng thật từ đầu đến cuối**, và cả
+bốn lộ trong cùng một buổi làm luồng ESP32-C3 (§6). Test đơn vị và test E2E trong-tiến-trình
+đều không bắt được, vì cả hai vẫn hỏi "phần này có làm đúng việc của nó không" chứ không hỏi
+"thứ phần này khai ra có tới được nơi cần dùng không".
 
 ---
 

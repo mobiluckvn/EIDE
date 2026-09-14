@@ -226,6 +226,22 @@ class PolicyGate:
         # Tầng 3 + 4 — quy tắc theo cổng rồi quy tắc chung
         khop = self._match(gate, env)
         if khop:
+            # Người gọi trực tiếp trả lời được một câu HỎI, nhưng không lật một lệnh TỪ CHỐI.
+            #
+            # `Router.quyet_dinh()` duyệt xong thì chạy lại với `actor="human"`, và tầng 5 dưới
+            # kia nói đó là APPROVE. Nhưng tầng 5 chỉ tới khi KHÔNG quy tắc nào khớp — mà một
+            # mục vào hàng đợi thì gần như luôn vì một quy tắc ASK ở tầng 3/4 vừa khớp. Nên
+            # trước 14/09/2026 người bấm "duyệt" xong thấy chính câu hỏi ấy quay lại, bấm nữa
+            # lại quay lại: hàng đợi U2 không bao giờ đóng được một mục nào. Đo bằng
+            # `search.fetch` + G-SRC-99. Xem DEV-100.
+            #
+            # REJECT thì KHÔNG nhường. Người duyệt đang trả lời "có, làm đi" cho một câu hỏi;
+            # một quy tắc REJECT không hỏi gì cả — nó nói hành động này không được phép, và
+            # biến nó thành hỏi-rồi-đồng-ý là bỏ mất ranh giới cứng (POL-17 §1).
+            if khop["decision"] == ASK and actor == "human" and not self._cong_tu_xu_nguoi(gate):
+                return Decision(APPROVE, khop["id"],
+                                f"Người duyệt mục chờ của {khop['id']} — {self._ly_do(khop)} "
+                                "(APD-08 §1: duyệt là quyết định của người)", gate, features)
             return Decision(khop["decision"], khop["id"], self._ly_do(khop), gate, features)
         # Tầng 5 — mức năng lực (APD-08 §4.1, Danh mục cột "Mức"): T1/T1* tự làm (T1* làm rồi báo cáo) trong
         # phạm vi lớp rủi ro đã qua tầng 2; T2 cần người duyệt; T3 người làm.
@@ -251,6 +267,22 @@ class PolicyGate:
             raise EideError("E3000", d.reason, rule=d.rule_id, gate=d.gate)
 
     # ---- nội bộ
+    def _cong_tu_xu_nguoi(self, gate: str) -> bool:
+        """Cổng này đã tự viết điều kiện cho `actor == "human"` chưa?
+
+        G-WL có `G-WL-01`: "người ký danh sách trắng, **niêm khớp**" → APPROVE. Nói cách khác
+        POL-17 đã khai ở cổng ấy rằng sự có mặt của người là CHƯA ĐỦ — còn phải có niêm khớp.
+        Nhường chung ở tầng 3/4 sẽ chồng lên đúng điều ấy: S48 ("người ký nhưng băm không khớp
+        niêm") đang phải ASK sẽ thành APPROVE, và một chữ ký không còn bảo chứng cho nội dung
+        hiện tại lại mở được đường.
+
+        Đọc điều kiện từ `when` thay vì liệt kê tay tên cổng: một cổng mới viết quy tắc về
+        `actor` trong POL-17 sẽ tự động được tôn trọng, còn danh sách gõ tay thì đứng yên trong
+        khi đặc tả đi tiếp.
+        """
+        return any(x.get("gate") == gate and x.get("decision") == APPROVE
+                   and "actor" in str(x.get("when", "")) for x in self.rules)
+
     def _ly_do(self, rule: dict[str, Any]) -> str:
         """Nói ra khi cổng đang chạy THIẾU danh sách trắng — POL-17 §3.
 

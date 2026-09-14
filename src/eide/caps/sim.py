@@ -21,6 +21,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import shlex
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -920,9 +921,20 @@ def _may_qemu(chip: str) -> dict[str, str] | None:
 
 def _argv(mo_ta: dict[str, Any], exe: str, artifact: Path, kb: dict[str, Any],
           root: Path) -> list[str]:
-    """Dòng lệnh của engine. Danh sách chuỗi, không phải chuỗi shell (PLATFORM.md quy tắc 3)."""
+    """Dòng lệnh của engine. Danh sách chuỗi, không phải chuỗi shell (PLATFORM.md quy tắc 3).
+
+    **Manifest ISA nói trước.** `docs/spec/isa/<isa>.yaml` có trường `sim.cmd`, và khi nó có mặt
+    thì nó LÀ dòng lệnh — không phải một gợi ý mà mã dựng lại theo trí nhớ. Trước 14/09/2026 mã
+    này dựng tay mọi lệnh qemu và không đọc `sim.cmd` bao giờ, nên `-bios none` của rv32imac
+    không tới được qemu: máy `virt` nạp OpenSBI mặc định ở 0x80000000, đúng chỗ linker script
+    đặt firmware, và lượt chạy chết bằng "Some ROM regions are overlapping" — một lỗi trông như
+    lỗi của người viết firmware. Không ai thấy sớm hơn vì armv7e-m và avr8 không khai `cmd`, nên
+    với chúng hai đường trùng nhau. Xem DEV-101.
+    """
     engine = mo_ta["engine"]
     thoi_luong = float(kb.get("duration_s") or 5)
+    if (tay := _argv_manifest(mo_ta, exe, artifact, thoi_luong)) is not None:
+        return tay
     if engine == "renode":
         resc = root / SIM_DIR / "run.resc"
         mau = resc.read_text(encoding="utf-8") if resc.exists() else _resc({"modeled": []})
@@ -942,6 +954,27 @@ def _argv(mo_ta: dict[str, Any], exe: str, artifact: Path, kb: dict[str, Any],
         return [exe, "-m", str(mo_ta.get("mcu") or mo_ta["chip"].rsplit(".", 1)[-1]),
                 str(artifact)]
     return [str(artifact)]
+
+
+def _argv_manifest(mo_ta: dict[str, Any], exe: str, artifact: Path,
+                   thoi_luong: float) -> list[str] | None:
+    """`sim.cmd` của manifest ISA → argv, hoặc None nếu manifest không khai.
+
+    Thay chương trình đầu dòng bằng `exe` đã dò được: manifest viết `qemu-system-riscv32` trần,
+    còn `_tim_exe` mới biết nó nằm ở đâu trên máy này (`/opt/homebrew/bin` hay `/usr/bin`) — và
+    PLATFORM.md không cho hard-code đường dẫn. Nhưng THAM SỐ thì lấy nguyên của manifest: đó là
+    chỗ đặc tả nói firmware nạp kiểu gì, và mã đoán lại là cách hai bên lệch nhau.
+    """
+    man = manifest_isa(mo_ta.get("isa") or "") or {}
+    cmd = ((man.get("sim") or {}).get("cmd") or "").strip()
+    if not cmd:
+        return None
+    phan = shlex.split(cmd)
+    ra = [exe]
+    for x in phan[1:]:
+        ra.append(x.replace("{artifact}", str(artifact))
+                   .replace("{duration}", str(thoi_luong)))
+    return ra
 
 
 def _cham_expect(kb: dict[str, Any], uart: list[str], engine: str) -> list[dict[str, Any]]:
@@ -1065,7 +1098,10 @@ def run(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     bang = _cham_expect(kb, kq["uart"], mo_ta["engine"])
     dat = bool(bang) and all(d["status"] == "passed" for d in bang)
     rep = {
-        "tool": "sim.run", "passed": dat, "log_ref": kq["log_ref"],
+        # Nhật ký cũng theo quy ước đường dẫn của `_tuong_doi`: sandbox trả đường tuyệt đối của
+        # máy này, và dán nguyên nó vào báo cáo thì báo cáo mang theo cây thư mục của người chạy.
+        "tool": "sim.run", "passed": dat,
+        "log_ref": _tuong_doi(root, Path(kq["log_ref"])) if kq.get("log_ref") else None,
         "metrics": {"engine": mo_ta["engine"], "scenario": _tuong_doi(root, kb_path),
                     "feature": kb.get("feature"), "duration_s": kb.get("duration_s"),
                     "terminated_by": "timeout" if kq["het_gio"] else "exit",

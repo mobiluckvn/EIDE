@@ -1022,3 +1022,32 @@ def test_qemu_co_may_ao_cho_risc_v_va_noi_ro_gioi_han():
     khop = [v for k, v in QEMU_MACHINE.items() if re.search(k, "ESP32-C3", re.I)]
     assert khop and khop[0]["machine"] == "virt"
     assert khop[0]["nap"] == "-kernel", "virt nạp bằng -kernel, không phải -bios"
+
+
+def test_lenh_qemu_lay_tu_manifest_chu_khong_dung_lai_bang_tay(tmp_path):
+    """`sim.cmd` của manifest LÀ dòng lệnh, không phải một gợi ý mã dựng lại theo trí nhớ.
+
+    Với rv32imac, chỗ khác nhau giữa hai đường là `-bios none`. Thiếu nó, máy `virt` nạp OpenSBI
+    mặc định ở 0x80000000 — đúng địa chỉ linker script đặt firmware — và qemu chết với "Some ROM
+    regions are overlapping". Đo được 14/09/2026 trên dự án ESP32-C3 thật: nền tảng dựng xong,
+    firmware dịch xong, lượt chạy vẫn chết bằng một lỗi trông như lỗi của người viết firmware.
+
+    Không ai thấy sớm hơn vì armv7e-m và avr8 không khai `sim.cmd`, nên với chúng đường dựng tay
+    và đường manifest trùng nhau.
+    """
+    from eide.caps.sim import _argv
+
+    argv = _argv({"engine": "qemu", "isa": "rv32imac", "chip": "chip:espressif.esp32c3"},
+                 "/opt/homebrew/bin/qemu-system-riscv32", tmp_path / "fw.elf", {}, tmp_path)
+    assert argv[0] == "/opt/homebrew/bin/qemu-system-riscv32", "argv[0] là exe đã dò được"
+    assert "-bios" in argv and argv[argv.index("-bios") + 1] == "none"
+    assert argv[-2:] == ["-kernel", str(tmp_path / "fw.elf")]
+
+
+def test_isa_khong_khai_cmd_thi_van_dung_duong_cu(tmp_path):
+    """armv7e-m/avr8 không khai `sim.cmd`; bỏ nhánh dựng tay là làm hỏng hai ISA đang chạy được."""
+    from eide.caps.sim import _argv
+
+    argv = _argv({"engine": "simavr", "isa": "avr8", "chip": "chip:atmel.atmega328p",
+                  "mcu": "atmega328p"}, "/usr/bin/simavr", tmp_path / "fw.elf", {}, tmp_path)
+    assert argv == ["/usr/bin/simavr", "-m", "atmega328p", str(tmp_path / "fw.elf")]
