@@ -423,6 +423,43 @@ def phan_loai_loi(log: str) -> dict[str, Any]:
     return {"kind": "unknown", "lines": [d for d in log.splitlines() if d.strip()][:SO_DONG_LOI]}
 
 
+def _giai_placeholder(cmd: str, root: Path, isa: str) -> str:
+    """`make -C . MCU={mcu} F_CPU={f_cpu}` → giá trị thật của dự án này.
+
+    TGT-19 dùng placeholder xuyên suốt — `flash.cmd` có `{programmer} {part} {port} {hex}`,
+    `id_read.cmd` có `{port}`, `sim.cmd` có `{artifact}` — và mỗi chỗ dùng chúng đều tự giải.
+    `build.cmd` là chỗ DUY NHẤT không giải: nó chạy chuỗi nguyên văn, nên `avr8` truyền cho
+    `make` một biến `MCU` mang đúng bảy ký tự `{mcu}`. Lỗi nằm im vì manifest `armv7e-m` và
+    `rv32imac` viết lệnh cmake không placeholder — và vì chưa ai dựng AVR bao giờ. Xem DEV-104.
+
+    **Không giải được thì DỪNG, không đoán.** Arduino Uno chạy 16 MHz và tôi biết điều đó,
+    nhưng không fact nào trong dự án này nói thế — `f_cpu` phải đến từ `constraints.yaml` hay
+    hộ chiếu board. Điền theo trí nhớ là gieo một hằng số không nguồn vào tận dòng lệnh dựng,
+    nơi không cổng nào của EIDE còn nhìn thấy nó; và sai `F_CPU` thì UART ra ký tự rác trong
+    khi mọi thứ khác trông vẫn đúng.
+    """
+    dich = _muc_tieu(root)
+    gia_tri: dict[str, Any] = {
+        "isa": isa,
+        # `microchip.atmega328p` → `atmega328p`: `make` và `avr-gcc -mmcu=` cần tên trần.
+        "mcu": str(dich.get("mcu") or dich.get("chip") or "").split("@")[0].rsplit(".", 1)[-1],
+        "chip": str(dich.get("chip") or "").split("@")[0],
+        "board": str(dich.get("board") or "").split("@")[0],
+        "f_cpu": dich.get("f_cpu"),
+    }
+    thieu = sorted({t for t in re.findall(r"\{([a-z_]+)\}", cmd) if not gia_tri.get(t)})
+    if thieu:
+        raise EideError(
+            "E2000",
+            f"`toolchain.build.cmd` của `{isa}` cần {', '.join('{' + t + '}' for t in thieu)} "
+            "mà dự án chưa khai — đặt trong `.eide/constraints.yaml` mục `target` "
+            "(ví dụ `f_cpu: 16000000`) hoặc nạp hộ chiếu board có thông số ấy.",
+            exists=sorted(k for k, v in gia_tri.items() if v),
+            candidates=["project.set_target", "board.import"],
+            missing=[f"target.{t}" for t in thieu])
+    return re.sub(r"\{([a-z_]+)\}", lambda m: str(gia_tri.get(m.group(1), m.group(0))), cmd)
+
+
 @capability("code.build")
 def build(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: CODE-05 — CDS-12.1; TGT-19 `toolchain.build`; SEC-25 §2. tc: TC-31; lỗi E4000, E4001.
@@ -459,7 +496,7 @@ def build(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     t0 = time.perf_counter()
     ma, log_ref, err_ref = 0, None, None
-    for lenh in tach_lenh(str(tc["cmd"])):
+    for lenh in tach_lenh(_giai_placeholder(str(tc["cmd"]), root, isa)):
         # ĐƯỜNG DẪN TUYỆT ĐỐI, không tên trần. Sandbox dựng lại `PATH` thành
         # `/usr/bin:/bin:/usr/sbin:/sbin` (SEC-25 §3), mà `cmake`/`ninja`/`make` do người dùng
         # cài thì nằm ở `/opt/homebrew/bin` (macOS), `/usr/local/bin`, hay `~/.cargo/bin`. Truyền

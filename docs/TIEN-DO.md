@@ -254,6 +254,29 @@ Bốn lỗi im lặng (22–25) lộ ra trong chính buổi này, và không cá
 viết tay theo đúng `_SCHEMA_KICH_BAN`; mọi `extract.pdf_*` cũng đứng vì cùng lý do, nên vùng
 nhớ đi đường header thay vì đường datasheet.
 
+**Luồng thứ hai, họ chip thứ hai** (14/09/2026 — Arduino Uno / ATmega328P, vẫn không phần cứng).
+Chạy lại đúng trình tự ấy trên một kiến trúc 8 bit để xem điều gì chỉ đúng với một nền tảng:
+
+| Bước | Năng lực | Đo được |
+|---|---|---|
+| Tìm nguồn hãng | `search.vendor` → `search.fetch` | gói DFP Microchip 35,4 MB, Apache-2.0 — qua cổng sau khi **người duyệt** ([DEV-103](DEVIATIONS.md)) |
+| Mở gói | `archive.query` → `archive.extract_one` | `atdf/ATmega328P.atdf` trong một kho 35 MB, không giải nén toàn bộ |
+| Trích tri thức | `extract.atdf` → `kg.build` | **287 fact** → **587 nút / 1.340 cạnh** |
+| Tra hộ chiếu | `passport.query` | `UBRR0` = 0xC4, `UCSR0A` = 0xC0, `UDRE0` bit 5 — khớp datasheet |
+| Ghim đích, kiểm môi trường | `project.set_target` → `env.check` | `isa: avr8`, **3/3** công cụ (avr-gcc 7.3.0, avrdude 8.0) |
+| Dịch | `code.build` | `passed: true`, `build/fw.elf` |
+| Ngân sách bộ nhớ | `code.size` | 650 B / 32.768 (**1,98 %** flash) · 108 B / 2.304 (**4,69 %** RAM) — **giới hạn lấy thẳng từ fact ATDF** |
+| Dựng nền tảng | `sim.build_platform` | `simavr` không có → **fallback qemu** ([DEV-086](DEVIATIONS.md)), 3 vùng nhớ |
+| Chạy mô phỏng | `sim.run` | **6/6 expect đạt** trên `qemu-system-avr -M arduino-uno`, 0 `unverified` |
+
+Khác biệt đáng kể nhất giữa hai luồng nằm ở **nguồn của `memory_size`**: ATDF của Microchip khai
+sẵn ba vùng (FLASH 32 KB, RAM 2.304 B, EEPROM 1 KB), nên `code.size` và `sim.build_platform`
+chạy được ngay — trong khi SVD của Espressif không khai vùng nào và phải đi đường header
+([DEV-099](DEVIATIONS.md)). Cùng một hợp đồng, hai hãng, hai mức đầy đủ.
+
+Bốn lỗi im lặng nữa (26–29) lộ ra ở buổi này. Và một chỗ dựa tay người y như lần trước:
+`sim.scenario` vẫn cần khoá mô hình, nên `sim/blink-uart.yaml` là viết tay.
+
 **Ba lớp test, ba loại câu hỏi khác nhau.** `make check` (1346 test, giả lập) hỏi *"mã có đúng
 với giả định của tôi không"*. `make check-net` (10 test, không tốn tiền) và `make check-llm`
 (6 test, tốn token) hỏi *"giả định của tôi có đúng với đời thật không"* — và câu hỏi thứ hai
@@ -273,7 +296,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Hai mươi lăm lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Hai mươi chín lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -461,6 +484,46 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     or directory"* cho một tệp có thật, và câu ấy đổ lỗi cho tệp chứ không cho đường dẫn. Đi
     đúng ví dụ đường dẫn mà hợp đồng SIM-05 viết, và đúng cách gõ tự nhiên nhất từ trong dự án.
 
+26. **Danh sách trắng nguồn cho phép đúng bốn thứ, và không thứ nào là trang hãng**
+    ([DEV-103](DEVIATIONS.md), 14/09). `trusted_sources` khớp CHÍNH XÁC chuỗi tên miền và chứa
+    tên miền trần (`st.com`, `microchip.com`); bảng nguồn hãng TGT-19 §8 thì dùng subdomain
+    thật (`www.st.com`, `packs.download.microchip.com`). Đối chiếu hai tệp: **4/12 mẫu URL tải
+    tự động được, cả bốn đều là `raw.githubusercontent.com`**. `microchip.com` và
+    `nordicsemi.com` là mục CHẾT — không mẫu nào dùng tên miền trần ấy, nên chữ ký của chủ sản
+    phẩm trên hai dòng đó chưa bao giờ cho phép tải được gì.
+
+    Sống được qua **ba lần ký danh sách** vì hai luồng đã chạy trước đó (STM32, ESP32-C3) đều
+    đi qua `raw.githubusercontent.com` — đúng bốn mục xanh. Luồng AVR là luồng đầu tiên cần một
+    trang hãng thật, và nó dừng ngay ở nguồn đầu tiên.
+
+27. **`build.cmd` của manifest chạy nguyên văn, placeholder thành chữ** ([DEV-104](DEVIATIONS.md),
+    14/09). `avr8` khai `make -C . MCU={mcu} F_CPU={f_cpu}`, và `code.build` truyền cho `make`
+    một biến `MCU` mang đúng năm ký tự `{mcu}`. TGT-19 dùng placeholder ở khắp nơi — `flash.cmd`,
+    `id_read.cmd`, `sim.cmd` — và mọi chỗ dùng đều tự giải; `build.cmd` là chỗ duy nhất không.
+    Cùng bẫy đã gặp 13/09 với `{march}` của rv32imac, lần ấy chữa bằng cách bỏ placeholder khỏi
+    manifest — tức chữa triệu chứng, nên bẫy còn nguyên cho manifest tiếp theo.
+
+28. **Ngưỡng phiên bản loại đúng chuỗi công cụ mà người dùng thật sự có**
+    ([DEV-105](DEVIATIONS.md), 14/09). `avr-gcc.min = 12.0` trên macOS chỉ đạt được qua tap
+    `osx-cross/avr`, mà Homebrew mới đòi `brew trust` — một quyết định bảo mật về máy người
+    dùng. Chuỗi công cụ chính thức của Arduino (avr-gcc 7.3.0, avrdude 8.0, không cần trust)
+    dựng ATmega328P hoàn toàn tốt: 650 B flash, 6/6 dòng expect đạt trong qemu. Ngưỡng ấy đổi
+    một tính chất không dùng tới lấy việc loại cả nền tảng. Gốc rễ: TGT-19 §2 ghi MỘT ngưỡng
+    cho cả ISA, mà avr8 gồm cả ATtiny1616 (AVRxt/UPDI, cần ≥8) lẫn ATmega328P (7.3 là đủ) —
+    một ngưỡng chung buộc phải lấy con số của chip khó nhất.
+
+29. **`env.check` đọc phiên bản từ TÊN THƯ MỤC CÀI ĐẶT** ([DEV-106](DEVIATIONS.md), 14/09).
+    `avrdude --version` trả mã thoát **0** nhưng in `"…/avrdude/8.0.0-arduino1/bin/avrdude:
+    illegal option -- -"`; `avrdude -v` trả mã **1** nhưng in đúng dòng phiên bản. `version_of`
+    lấy dòng đầu bất kể lệnh có chạy được không, rồi `_ver_ok` tìm `(\d+)\.(\d+)` trên cả chuỗi
+    và thấy `8.0.0` — **trong đường dẫn nằm trong chính thông báo lỗi**. Kết luận: `ok: true`,
+    `version` là một câu báo lỗi.
+
+    Lần này con số tình cờ đúng vì Arduino đặt tên thư mục theo phiên bản. Lần sau ai cài một
+    avrdude 6.3 vào thư mục tên `8.0.0` thì EIDE vẫn khẳng định đạt — và ENV-02 nói nó "so `min`
+    theo semver" trong khi thứ được so không phải semver của công cụ. Cũng đáng ghi: mã thoát
+    **không dùng làm tín hiệu được**, lọc theo nó thì nhận chuỗi rác và bỏ chuỗi thật.
+
 **Số 18–21 có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được test kỹ**.
 Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi sống trong
 khoảng giữa chúng, nơi không bài test đơn vị nào đi qua. Đó là lý do bộ E2E (`EideE2ETests`) ra
@@ -475,6 +538,15 @@ bằng một lời gọi đơn lẻ — cả bốn chỉ lộ khi **chạy hết
 bốn lộ trong cùng một buổi làm luồng ESP32-C3 (§6). Test đơn vị và test E2E trong-tiến-trình
 đều không bắt được, vì cả hai vẫn hỏi "phần này có làm đúng việc của nó không" chứ không hỏi
 "thứ phần này khai ra có tới được nơi cần dùng không".
+
+**Số 26–29 đến từ luồng AVR ngày hôm sau, và chúng nói một điều khác nữa:** bốn cái này chỉ lộ
+khi đi một luồng **trên nền tảng thứ hai**. Ba cái đầu (26, 27, 28) là những chỗ mà toàn bộ
+công việc trước đó đi vòng qua mà không biết: hai luồng đã chạy đều tải nguồn từ
+`raw.githubusercontent.com`, đều dùng manifest không placeholder, đều dùng chuỗi công cụ ARM.
+Không phải chúng khó tìm — chúng nằm ngay trên đường, chỉ là chưa ai đi con đường ấy. Điều đáng
+rút ra không phải "cần thêm test" mà **"cần thêm một luồng thật, trên một họ chip khác"**: mỗi
+luồng mới đi qua một tập nhánh mà không luồng nào trước đó chạm tới, và nó tìm ra lỗi với tốc
+độ mà không bộ test đơn vị nào sánh được — bốn cái trong một buổi, lần thứ hai liên tiếp.
 
 ---
 

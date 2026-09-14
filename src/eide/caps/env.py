@@ -42,11 +42,19 @@ def detect(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
 
 def _ver_ok(found: str | None, minimum: str | None) -> bool:
+    """`"avr-gcc (GCC) 7.3.0"` ≥ `"7.3"`?
+
+    Bỏ mọi từ trông như ĐƯỜNG DẪN trước khi tìm số. Chuỗi phiên bản thật không chứa đường dẫn,
+    còn thông báo lỗi thì có — và đường dẫn cài đặt hay mang số phiên bản trong tên thư mục
+    (`…/avrdude/8.0.0-arduino1/bin/avrdude`), nên tìm số trên cả chuỗi là đọc phiên bản từ
+    CHỖ CÀI thay vì từ công cụ. Lớp phòng vệ thứ hai sau `tools.version_of`; xem DEV-106.
+    """
     if not minimum:
         return found is not None
     if not found:
         return False
-    m = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", found)
+    sach = " ".join(w for w in found.split() if "/" not in w and "\\" not in w)
+    m = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", sach)
     if not m:
         return False
     got = tuple(int(x or 0) for x in m.groups())

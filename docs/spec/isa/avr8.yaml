@@ -3,7 +3,7 @@ family_patterns: ["^ATmega", "^ATtiny", "^AVR(64|128)"]
 abi: {endian: little, word: 8, fpu: none, align: 1}
 interrupts: {model: vector_table, priority_bits: 0}
 toolchain:
-  compiler: {name: avr-gcc, min: "12.0", check: "avr-gcc --version"}
+  compiler: {name: avr-gcc, min: "7.3", check: "avr-gcc --version"}
   tools: [{name: avrdude, min: "7.0"}, {name: avr-size, package: {macos: avr-gcc, linux: binutils-avr}}]
   install: {macos: ["brew tap osx-cross/avr && brew install avr-gcc avrdude"], linux: ["apt install gcc-avr avr-libc avrdude"], windows: ["winget install AVRDudes.AVRDUDE"]}
   build: {cmd: "make -C . MCU={mcu} F_CPU={f_cpu}", artifact: "build/*.elf"}

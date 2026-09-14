@@ -1606,3 +1606,68 @@ def test_annotate_KHONG_sua_tep(du_an):
     f = _viet(root, "e.c", goc := "#define I2C1_BASE 0x40005400\n")
     annotate({"file": f}, ctx)
     assert (root / f).read_text(encoding="utf-8") == goc
+
+
+# ---- placeholder trong build.cmd (DEV-104, 14/09/2026)
+
+
+def test_build_cmd_giai_placeholder_cua_manifest(tmp_path):
+    """`make -C . MCU={mcu} F_CPU={f_cpu}` phải thành giá trị thật của dự án.
+
+    TGT-19 dùng placeholder xuyên suốt — `flash.cmd`, `id_read.cmd`, `sim.cmd` đều có, và mỗi
+    chỗ dùng đều tự giải. `build.cmd` là chỗ duy nhất chạy chuỗi NGUYÊN VĂN, nên `avr8` truyền
+    cho `make` một biến `MCU` mang đúng bảy ký tự `{mcu}`. Không ai thấy vì `armv7e-m` và
+    `rv32imac` viết lệnh cmake không placeholder, và chưa ai dựng AVR bao giờ.
+    """
+    import yaml
+
+    from eide.caps.code import _giai_placeholder
+    from eide.caps.project import EIDE_DIR
+
+    (tmp_path / EIDE_DIR).mkdir(parents=True)
+    (tmp_path / EIDE_DIR / "constraints.yaml").write_text(yaml.safe_dump(
+        {"target": {"chip": "microchip.atmega328p@1.0.0", "board": "arduino-uno",
+                    "isa": "avr8", "f_cpu": 16000000}}), encoding="utf-8")
+
+    ra = _giai_placeholder("make -C . MCU={mcu} F_CPU={f_cpu}", tmp_path, "avr8")
+    assert ra == "make -C . MCU=atmega328p F_CPU=16000000"
+
+
+def test_thieu_gia_tri_thi_dung_chu_khong_doan(tmp_path):
+    """Arduino Uno chạy 16 MHz và ai cũng biết — nhưng không fact nào trong dự án nói thế.
+
+    Điền theo trí nhớ là gieo một hằng số không nguồn vào tận dòng lệnh dựng, nơi không cổng nào
+    của EIDE còn nhìn thấy nó. Và sai `F_CPU` thì UART ra ký tự rác trong khi mọi thứ khác trông
+    vẫn đúng — đúng lớp lỗi mà cả tầng tri thức sinh ra để chặn.
+    """
+    import yaml
+
+    from eide.caps.code import _giai_placeholder
+    from eide.caps.project import EIDE_DIR
+
+    (tmp_path / EIDE_DIR).mkdir(parents=True)
+    (tmp_path / EIDE_DIR / "constraints.yaml").write_text(yaml.safe_dump(
+        {"target": {"chip": "microchip.atmega328p", "isa": "avr8"}}), encoding="utf-8")
+
+    from eide_core.errors import EideError
+
+    with pytest.raises(EideError) as e:
+        _giai_placeholder("make MCU={mcu} F_CPU={f_cpu}", tmp_path, "avr8")
+    assert e.value.code == "E2000"
+    assert e.value.data["missing"] == ["target.f_cpu"], "phải nói THIẾU CÁI GÌ"
+    assert "mcu" in e.value.data["exists"], "và nói cái gì đã có, để người biết còn thiếu mỗi một"
+
+
+def test_lenh_khong_placeholder_di_qua_nguyen_ven(tmp_path):
+    """`armv7e-m` và `rv32imac` viết lệnh cmake không placeholder — không được đụng vào chúng."""
+    import yaml
+
+    from eide.caps.code import _giai_placeholder
+    from eide.caps.project import EIDE_DIR
+
+    (tmp_path / EIDE_DIR).mkdir(parents=True)
+    (tmp_path / EIDE_DIR / "constraints.yaml").write_text(yaml.safe_dump(
+        {"target": {"chip": "espressif.esp32c3", "isa": "rv32imac"}}), encoding="utf-8")
+
+    cmd = "cmake -S . -B build && cmake --build build"
+    assert _giai_placeholder(cmd, tmp_path, "rv32imac") == cmd
