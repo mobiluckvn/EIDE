@@ -217,15 +217,30 @@ public final class ReviewQueueView: NSView {
         let hang = NSStackView(views: [cot1, cot2])
         hang.orientation = .horizontal
         hang.distribution = .fillEqually
+        hang.alignment = .top
         hang.spacing = EideToken.space[3]
         hang.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(hang)
+
+        // CUỘN, không phải `bottomAnchor <= bottomAnchor`.
+        //
+        // Ràng buộc "nhỏ hơn hoặc bằng" cho phép stack tràn ra ngoài khung khi danh sách dài,
+        // và AppKit vẽ đè chứ không cắt: đo trên một store thật có 56 mục chờ thì 56 cặp nút
+        // "Duyệt"/"Từ chối" chồng lên nhau thành một khối đặc, không đọc được và không bấm
+        // đúng được. Hàng đợi là chỗ người duyệt việc cho tác tử — một danh sách không đọc
+        // được ở đây nghĩa là người bấm bừa hoặc bỏ qua.
+        let cuonHang = NSScrollView()
+        cuonHang.documentView = hang
+        cuonHang.hasVerticalScroller = true
+        cuonHang.drawsBackground = false
+        cuonHang.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(cuonHang)
         let s = EideToken.space[2]
         NSLayoutConstraint.activate([
-            hang.topAnchor.constraint(equalTo: topAnchor, constant: s),
-            hang.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
-            hang.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -s),
-            hang.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -s),
+            cuonHang.topAnchor.constraint(equalTo: topAnchor, constant: s),
+            cuonHang.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
+            cuonHang.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -s),
+            cuonHang.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -s),
+            hang.widthAnchor.constraint(equalTo: cuonHang.widthAnchor),
         ])
         capNhat(cho: [], hoanTac: [])
     }

@@ -26,6 +26,13 @@ final class MainWindowController: NSWindowController {
     /// Khung chứa toàn bộ nội dung cửa sổ.
     private let container = NSView()
 
+    // Khung EIDE (DEV-098) — sidebar trái và vùng nội dung đổi giữa trình soạn thảo với màn.
+    var sidebarEide: NSTableView?
+    private var nguonSidebar: NguonSidebarEide?
+    private var khungEideGoc: NSView?
+    private var vungSoanThao: NSView?
+    private var vachEide: NSBox?
+
     /// Hàng giữa: cây thư mục (nếu đã mở) bên trái, vùng soạn thảo bên phải.
     private let middleRow = NSView()
 
@@ -764,7 +771,126 @@ final class MainWindowController: NSWindowController {
             splitViewTrailing,
         ])
 
-        window.contentView = container
+        // KHUNG EIDE bọc ngoài trình soạn thảo — quyết định của chủ sản phẩm 14/09/2026:
+        // GEditor và EIDE là MỘT sản phẩm, tên EIDE, và trình soạn thảo là màn "Mã nguồn".
+        // Xem DEV-098.
+        window.contentView = dungKhungEide(quanh: container)
+        window.title = "EIDE"
+    }
+
+    // MARK: - Khung EIDE (DEV-098)
+
+    /// Sidebar 21 màn của UXD-13 §2, với trình soạn thảo làm màn "Mã nguồn".
+    ///
+    /// ## Vì sao bọc thay vì dựng cửa sổ thứ hai
+    ///
+    /// Bản trước có hai cửa sổ: một của trình soạn thảo, một của EIDE. Người mở sản phẩm lên
+    /// thấy trình soạn thảo, và EIDE là thứ phải đi tìm trong menu. Chủ sản phẩm chốt ngày
+    /// 14/09: **một giao diện, tên EIDE**, và mockup UXD-13 §2 vốn đã vẽ đúng thế — "Mã nguồn"
+    /// là màn số 11 trong sidebar, không phải chủ nhà.
+    ///
+    /// Bọc `container` thay vì bóc view soạn thảo ra: mọi ràng buộc, mọi panel, mọi đường
+    /// `attach` của trình soạn thảo giữ nguyên chỗ đứng. Thứ duy nhất đổi là có một cột 220 px
+    /// bên trái, và vùng còn lại đổi giữa *trình soạn thảo* với *màn EIDE đang chọn*.
+    private func dungKhungEide(quanh soanThao: NSView) -> NSView {
+        let goc = NSView()
+        let bang = NSTableView()
+        bang.headerView = nil
+        bang.rowHeight = 26
+        // Nguồn dữ liệu tách thành một đối tượng riêng: `MainWindowController` đã là delegate
+        // của hàng chục thứ khác, và nhét thêm hai protocol bảng vào đó làm mọi lời gọi
+        // `tableView(_:viewFor:)` của các bảng KHÁC trong cửa sổ phải tự phân biệt bằng `===`.
+        nguonSidebar = NguonSidebarEide { [weak self] h in self?.chonManEide(h) }
+        bang.dataSource = nguonSidebar
+        bang.delegate = nguonSidebar
+        bang.selectionHighlightStyle = .regular
+        bang.setAccessibilityLabel("Màn hình EIDE")
+        bang.addTableColumn(NSTableColumn(identifier: .init("man")))
+        sidebarEide = bang
+
+        let cuon = NSScrollView()
+        cuon.documentView = bang
+        cuon.hasVerticalScroller = true
+        cuon.translatesAutoresizingMaskIntoConstraints = false
+
+        let vach = NSBox()
+        vach.boxType = .separator
+        vach.translatesAutoresizingMaskIntoConstraints = false
+
+        soanThao.translatesAutoresizingMaskIntoConstraints = false
+        goc.addSubview(cuon)
+        goc.addSubview(vach)
+        goc.addSubview(soanThao)
+
+        NSLayoutConstraint.activate([
+            cuon.topAnchor.constraint(equalTo: goc.topAnchor),
+            cuon.leadingAnchor.constraint(equalTo: goc.leadingAnchor),
+            cuon.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
+            cuon.widthAnchor.constraint(equalToConstant: 220),
+
+            vach.leadingAnchor.constraint(equalTo: cuon.trailingAnchor),
+            vach.topAnchor.constraint(equalTo: goc.topAnchor),
+            vach.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
+            vach.widthAnchor.constraint(equalToConstant: 1),
+
+            soanThao.leadingAnchor.constraint(equalTo: vach.trailingAnchor),
+            soanThao.topAnchor.constraint(equalTo: goc.topAnchor),
+            soanThao.trailingAnchor.constraint(equalTo: goc.trailingAnchor),
+            soanThao.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
+        ])
+        khungEideGoc = goc
+        vungSoanThao = soanThao
+        vachEide = vach
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let b = self.sidebarEide else { return }
+            b.reloadData()
+            // Mở ra ở màn "Mã nguồn": người dùng vừa mở một tệp, và đưa họ tới một màn khác
+            // là làm mất chính thứ họ vừa bấm vào.
+            b.selectRowIndexes([Self.chiSoManMaNguon], byExtendingSelection: false)
+        }
+        return goc
+    }
+
+    /// Chỉ số màn "Mã nguồn" trong sidebar — `EideWindowController.manTrenSidebar` là nguồn.
+    static let chiSoManMaNguon = 10
+
+    /// Chọn một màn: `Mã nguồn` hiện trình soạn thảo, các màn khác hiện panel EIDE.
+    func chonManEide(_ hang: Int) {
+        let ds = EideWindowController.manTrenSidebar
+        guard hang >= 0, hang < ds.count, let goc = khungEideGoc,
+              let soanThao = vungSoanThao, let vach = vachEide else { return }
+
+        if hang == Self.chiSoManMaNguon {
+            eidePanel?.removeFromSuperview()
+            soanThao.isHidden = false
+            return
+        }
+        guard let p = eidePanel else {
+            // Không tìm thấy `eide` — nói ra ngay tại chỗ người vừa bấm, và quay về màn Mã
+            // nguồn để cửa sổ không đứng trắng.
+            sidebarEide?.selectRowIndexes([Self.chiSoManMaNguon], byExtendingSelection: false)
+            let a = NSAlert()
+            a.messageText = "Chưa chạy được EIDE"
+            a.informativeText = "Không tìm thấy `eide`. Chạy `make setup` trong kho, hoặc đặt "
+                + "EIDE_PYTHON trỏ tới python của venv."
+            a.runModal()
+            return
+        }
+        soanThao.isHidden = true
+        if p.superview !== goc {
+            p.translatesAutoresizingMaskIntoConstraints = false
+            goc.addSubview(p)
+            NSLayoutConstraint.activate([
+                p.leadingAnchor.constraint(equalTo: vach.trailingAnchor),
+                p.topAnchor.constraint(equalTo: goc.topAnchor),
+                p.trailingAnchor.constraint(equalTo: goc.trailingAnchor),
+                p.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
+            ])
+        }
+        p.isHidden = false
+        let m = ds[hang]
+        if m.tien == "Chat" { p.dongManChuyenDe() } else { p.moMan(m.tien) }
     }
 
     // MARK: - Gắn từng panel khi người dùng mở nó lần đầu
@@ -14373,5 +14499,46 @@ extension MainWindowController: HelpWelcomeSettings {
         // theme hay phím tắt, nên dựng lại toàn bộ chrome chỉ để ghi một dấu tích là một nháy
         // hình không ai xin.
         saveSettings()
+    }
+}
+
+
+/// Nguồn dữ liệu cho sidebar EIDE — 21 màn của UXD-13 §2.
+///
+/// Tách khỏi `MainWindowController` vì lớp ấy đã là delegate của hàng chục thứ; thêm hai
+/// protocol bảng vào đó buộc mọi bảng khác trong cửa sổ phải tự phân biệt bằng `===`, và cái
+/// quên phân biệt là cái hiện nhầm nội dung.
+final class NguonSidebarEide: NSObject, NSTableViewDataSource, NSTableViewDelegate {
+
+    private let khiChon: (Int) -> Void
+
+    init(khiChon: @escaping (Int) -> Void) {
+        self.khiChon = khiChon
+        super.init()
+    }
+
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        EideWindowController.manTrenSidebar.count
+    }
+
+    func tableView(_ tv: NSTableView, viewFor col: NSTableColumn?, row: Int) -> NSView? {
+        let m = EideWindowController.manTrenSidebar[row]
+        let l = NSTextField(labelWithString: "\(row + 1). \(m.nhan)")
+        l.font = NSFont.systemFont(ofSize: 12)
+        l.setAccessibilityLabel("Màn \(m.nhan)")
+        let hop = NSTableCellView()
+        hop.addSubview(l)
+        l.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            l.leadingAnchor.constraint(equalTo: hop.leadingAnchor, constant: 10),
+            l.centerYAnchor.constraint(equalTo: hop.centerYAnchor),
+            l.trailingAnchor.constraint(lessThanOrEqualTo: hop.trailingAnchor, constant: -4),
+        ])
+        return hop
+    }
+
+    func tableViewSelectionDidChange(_ n: Notification) {
+        guard let tv = n.object as? NSTableView else { return }
+        khiChon(tv.selectedRow)
     }
 }

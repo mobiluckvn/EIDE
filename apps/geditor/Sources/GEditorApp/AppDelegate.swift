@@ -1,4 +1,5 @@
 import AppKit
+import EIDEKit
 import GEditorCore
 
 /// NFR-USE-01: menu bar đầy đủ theo HIG — App/File/Edit/View/Search/Format/Window/Help.
@@ -8,6 +9,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var mainWindowController: MainWindowController?
     private var cliBridge: CLIBridgeServer?
     private var servicesProvider: ServicesProvider?
+
+    /// Cửa sổ EIDE, giữ lại để nó không bị thu hồi ngay sau khi mở.
+    var eideWindow: EideWindowController?
+
+    /// Mở cửa sổ EIDE — UXD-13 §1/§2 (sidebar 23 màn, 1440×900).
+    ///
+    /// Khác `MainWindowController.showEidePanel` ở CHỖ ĐỨNG chứ không ở nội dung: cùng một
+    /// `EidePanel`, nhưng một bên là dải 420 px dưới đáy trình soạn thảo, một bên là cửa sổ
+    /// riêng của sản phẩm. Mockup §2 mô tả cái thứ hai.
+    @objc func moCuaSoEide() {
+        if let w = eideWindow { return w.hien() }
+        guard let c = EideDaemonLauncher.moClient() else {
+            let a = NSAlert()
+            a.messageText = "Chưa chạy được EIDE"
+            a.informativeText = "Không tìm thấy `eide`. Chạy `make setup` trong kho EIDE, "
+                + "hoặc đặt EIDE_PYTHON trỏ tới python của venv."
+            a.runModal()
+            return
+        }
+        let w = EideWindowController(client: c)
+        eideWindow = w
+        w.hien()
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSLog("[GEditor] %@", GEditorCore.diagnosticSummary)
@@ -74,6 +98,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         StartupProbe.mark("showWindow")
         controller.window?.makeKeyAndOrderFront(nil)
         mainWindowController = controller
+
+        // Cửa sổ EIDE — giao diện của sản phẩm, mở bằng `--eide` hoặc `EIDE_UI=1`.
+        //
+        // Đây là lối vào KHÔNG đi qua menu, và điều đó có lý do đo được: menu của một app chạy
+        // không có bundle (`.build/debug/GEditorApp` trần) bị AppKit vô hiệu hoá toàn bộ — mọi
+        // mục trong menu Format đều `enabled: false`, kể cả mục mở panel EIDE. Trong lúc phát
+        // triển thì đó là cách duy nhất chạy nhanh, nên phải có một đường không phụ thuộc menu.
 
         // FR-AUTO-606: đăng ký nhận văn bản/file từ ứng dụng khác qua menu Services.
         //
@@ -403,7 +434,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // --- App ---
         let appMenuItem = NSMenuItem()
         let appMenu = NSMenu()
-        let veItem = appMenu.addItem(withTitle: L("Về GEditor"), action: #selector(showAbout),
+        let veItem = appMenu.addItem(withTitle: L("Về EIDE"), action: #selector(showAbout),
                                      keyEquivalent: "")
         veItem.target = self
         veItem.image = MenuIcons.image(for: "Về GEditor")
@@ -616,7 +647,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             ("JSON: truy vấn JSONPath…", #selector(MainWindowController.showJSONPathPanel(_:)), "~J"),
             // FR-KNW-901 · FR-KNW-902 — chế độ JSONL và Chunk Inspector.
             ("JSONL: kiểm và soi chunk…", #selector(MainWindowController.showJSONLPanel(_:)), ""),
-            ("EIDE: trợ lý nhúng…", #selector(MainWindowController.showEidePanel(_:)), ""),
+            // Hai lối vào EIDE, và chúng khác nhau về CHỖ ĐỨNG, không về nội dung:
+            // panel nằm cạnh mã nguồn (tiện khi đang sửa code), cửa sổ là giao diện của sản
+            // phẩm (UXD-13 §2: sidebar 23 màn, 1440×900). Cùng một `EidePanel` bên trong.
+            // Panel cạnh mã vẫn giữ cho ai muốn EIDE nằm dưới trình soạn thảo cùng lúc;
+            // sidebar của cửa sổ chính là lối đi thường ngày (DEV-098).
+            ("EIDE: panel cạnh mã…", #selector(MainWindowController.showEidePanel(_:)), ""),
             // FR-KNW-918 · FR-KNW-919 — truy hồi BM25 và đánh giá golden set.
             ("JSONL: phòng thí nghiệm truy hồi…",
              #selector(MainWindowController.showRetrievalPanel(_:)), ""),
@@ -918,7 +954,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAbout() {
         NSApp.orderFrontStandardAboutPanel(options: [
-            .applicationName: "GEditor",
+            .applicationName: "EIDE",
             .applicationVersion: GEditorCore.version,
             .init(rawValue: "Copyright"): "CÔNG TY TNHH MOBILUCK · code247.ai",
             .credits: NSAttributedString(

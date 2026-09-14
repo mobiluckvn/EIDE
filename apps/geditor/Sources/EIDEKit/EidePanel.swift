@@ -475,6 +475,15 @@ public final class EidePanel: NSView {
     /// U1 nói "mọi màn hình khác mở được từ lệnh" — không nói phải qua một năng lực. Không có
     /// lối này thì `ModelsView` và `FlowMapView` là mã chết: dựng xong, có test, và không cách
     /// nào mở ra.
+    /// Mở một màn theo TÊN — lối vào cho sidebar của cửa sổ EIDE.
+    @discardableResult
+    public func moMan(_ tien: String, thamSo: String = "") -> Bool {
+        _moTheoTenMan(tien, thamSo: thamSo)
+    }
+
+    /// Đóng màn chuyên đề, quay về hội thoại.
+    public func dongManChuyenDe() { dongMan() }
+
     private func _moTheoTenMan(_ ten: String, thamSo: String) -> Bool {
         let t = ten.lowercased()
         guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
