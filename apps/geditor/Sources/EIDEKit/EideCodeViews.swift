@@ -183,6 +183,7 @@ public final class PlanDiffView: ManHinhCoSo {
     public override func capNhat(ketQua: [String: Any]) {
         xoaThan()
         soBuoc = 0; soThieu = 0; duTriThuc = nil; trongNganSach = true; soChuTrinh = 0
+        soTep = 0; soTepThayCaTep = 0
 
         if ketQua.isEmpty {
             tomTat.stringValue = ""
@@ -273,7 +274,106 @@ public final class PlanDiffView: ManHinhCoSo {
 
         if let f = ketQua["feature"] as? [String: Any] { _hienTinhNang(f) }
 
-        if soDong == 0 { noiRong("Kế hoạch rỗng — không có bước nào.") }
+        // BẢN VÁ — nửa sau của màn, và tới 15/09/2026 nó hoàn toàn vắng mặt.
+        if let vá = ketQua["patch"] as? [String: Any] { _hienBanVa(vá) }
+
+        if soDong == 0 && soTep == 0 { noiRong("Kế hoạch rỗng — không có bước nào.") }
+    }
+
+    /// Số tệp trong bản vá đang hiện — cho test và để `capNhat` biết màn có rỗng thật không.
+    public private(set) var soTep = 0
+    /// Số tệp bị thay TOÀN BỘ (mode `create`/`replace`) thay vì vá từng dòng.
+    public private(set) var soTepThayCaTep = 0
+
+    /// `CodePatch` (PRS-16 §4): `{files[{path, content, mode}], cites[], rationale, tests[],
+    /// missing_facts[]}`.
+    ///
+    /// ## Vì sao bản vá phải hiện RA MÃ, không phải hiện số tệp
+    ///
+    /// Màn này là cổng **G3** — chỗ người duyệt mã do mô hình sinh ra. Bản cũ hiện kế hoạch rất
+    /// kỹ rồi dừng: không một dòng mã nào lên màn, dù `code.*` trả `patch` và mockup
+    /// `docs/ui/PlanDiff.dc.html` vẽ hẳn một khối diff làm trung tâm. Người dùng được mời duyệt
+    /// một thứ họ không nhìn thấy — và "duyệt mà không nhìn" đúng là thói quen mà cả cơ chế cổng
+    /// dựng lên để chặn.
+    ///
+    /// ## `mode` quyết định cách hiện, và phải NÓI RA
+    ///
+    /// Hợp đồng cho ba `mode`: `diff` là vá từng dòng, `create`/`replace` là **cả tệp**. Hiện
+    /// một `replace` như thể nó là diff là nói dối về phạm vi thay đổi: người đọc thấy vài dòng
+    /// xanh và tưởng chỉ thêm bấy nhiêu, trong khi cả tệp cũ vừa bị bỏ đi. Nên `replace` hiện
+    /// bằng khối mã kèm một câu nói rõ đây là toàn bộ nội dung mới.
+    /// Câu nói khi bản vá dài hơn trần hiển thị.
+    ///
+    /// Khác hẳn câu mặc định. Ở một bảng fact, "cắt bớt cho khỏi treo" là đủ. Ở đây người dùng
+    /// đang đứng trước nút Duyệt, và phần bị cắt là mã họ sắp chấp nhận **mà không nhìn thấy** —
+    /// nên câu phải nói về việc duyệt, và phải chỉ đường tới chỗ đọc được cả bản vá.
+    static let CAT_O_CONG_DUYET =
+        "phần còn lại KHÔNG hiện ở đây. Đừng duyệt phần anh chưa đọc: mở tệp trong màn Mã nguồn "
+        + "để xem cả bản vá trước khi bấm Duyệt."
+
+    private func _hienBanVa(_ va: [String: Any]) {
+        let tep = (va["files"] as? [[String: Any]]) ?? []
+        soTep = tep.count
+
+        // `rationale` là bắt buộc trong schema và nó là thứ đáng đọc TRƯỚC mã: nó nói vì sao,
+        // còn mã chỉ nói cái gì.
+        if let li = va["rationale"] as? String, !li.isEmpty {
+            themDong("vì sao (coder)", "", mau: EideToken.Mau.info)
+            noiRong(li)
+        }
+
+        // `missing_facts` lên trước mã: mã trích dẫn một fact KHÔNG CÓ là mã dựa trên phỏng
+        // đoán, và đó là điều cần biết trước khi đọc một dòng nào của nó.
+        let thieuFact = (va["missing_facts"] as? [String]) ?? []
+        if !thieuFact.isEmpty {
+            themDong("mã cần fact CHƯA CÓ (\(thieuFact.count))",
+                     thieuFact.prefix(8).joined(separator: ", "), mau: EideToken.Mau.bad)
+        }
+        let trich = (va["cites"] as? [String]) ?? []
+        themDong("trích dẫn", trich.isEmpty
+                 ? "KHÔNG trích dẫn fact nào — constant-guard sẽ chặn ở G-FACT"
+                 : "\(trich.count) fact: " + trich.prefix(6).joined(separator: ", "),
+                 mau: trich.isEmpty ? EideToken.Mau.warn : EideToken.Mau.muted)
+        if let kt = va["tests"] as? [String], !kt.isEmpty {
+            themDong("test kèm theo", kt.joined(separator: ", "))
+        }
+
+        soTepThayCaTep = 0
+        for f in tep {
+            let duong = (f["path"] as? String) ?? "(không rõ tệp)"
+            let noi = (f["content"] as? String) ?? ""
+            let cheDo = (f["mode"] as? String) ?? "diff"
+            if cheDo == "diff" {
+                themDong(duong, _tomTatDiff(noi), mau: EideToken.Mau.info)
+                themDiff(noi, viSaoCat: Self.CAT_O_CONG_DUYET)
+            } else {
+                soTepThayCaTep += 1
+                let soDongMoi = noi.isEmpty ? 0 : noi.components(separatedBy: .newlines).count
+                themDong(duong,
+                         cheDo == "create"
+                            ? "TỆP MỚI · \(soDongMoi) dòng"
+                            : "THAY CẢ TỆP · \(soDongMoi) dòng — đây không phải vá từng dòng, "
+                              + "toàn bộ nội dung cũ bị bỏ đi",
+                         mau: cheDo == "create" ? EideToken.Mau.ok : EideToken.Mau.warn)
+                themMa(dong: noi.components(separatedBy: .newlines).enumerated().map {
+                    EideDongMa(so: $0.offset + 1, chu: $0.element)
+                }, viSaoCat: Self.CAT_O_CONG_DUYET)
+            }
+        }
+    }
+
+    /// `+12 −3` — đếm dòng thêm/bớt của một unified diff.
+    ///
+    /// Bỏ qua `+++`/`---` của phần đầu: chúng bắt đầu bằng `+`/`-` nhưng là tên tệp, và đếm
+    /// chúng làm mọi bản vá một-tệp đều dư ra đúng một dòng thêm và một dòng bớt.
+    private func _tomTatDiff(_ d: String) -> String {
+        var them = 0, bot = 0
+        for dòng in d.components(separatedBy: .newlines) {
+            if dòng.hasPrefix("+++") || dòng.hasPrefix("---") { continue }
+            if dòng.hasPrefix("+") { them += 1 }
+            else if dòng.hasPrefix("-") { bot += 1 }
+        }
+        return "+\(them) −\(bot)"
     }
 
     /// `plan.define_feature` `{feature{id, title, expectation, constraints[], touches[]}}`.

@@ -354,3 +354,168 @@ final class EideBangBoCucTests: XCTestCase {
         XCTAssertFalse(b.coBoCuonDeTest)
     }
 }
+
+/// Màn "Kế hoạch & mã" — nửa MÃ, vốn hoàn toàn vắng mặt tới 15/09/2026.
+///
+/// Màn này là cổng G3: chỗ người duyệt mã do mô hình sinh ra. Bản cũ hiện kế hoạch rất kỹ rồi
+/// dừng — không một dòng mã nào lên màn, dù `code.*` trả `patch`. Người dùng được mời duyệt một
+/// thứ họ không nhìn thấy.
+final class EidePlanDiffBanVaTests: XCTestCase {
+
+    private func manVoi(_ va: [String: Any]) -> PlanDiffView {
+        let v = PlanDiffView()
+        v.capNhat(ketQua: ["patch": va])
+        return v
+    }
+
+    private func khoiMa(_ v: NSView) -> [EideMaView] {
+        var ra: [EideMaView] = []
+        if let m = v as? EideMaView { ra.append(m) }
+        for c in v.subviews { ra += khoiMa(c) }
+        return ra
+    }
+
+    private let diffMau = """
+        --- a/src/bme280.c
+        +++ b/src/bme280.c
+        @@ -38,6 +38,9 @@
+         uint8_t id = i2c_read8(BME280_ADDR, 0xD0);
+        +if (id != 0x60) return -ENODEV;
+        +uint8_t ctrl = (1u << 5) | 0x3u;
+        -i2c_write8(BME280_ADDR, 0xF4, 0x27);
+        """
+
+    func testDIFFdungRAmotKHOIma() {
+        let v = manVoi(["files": [["path": "src/bme280.c", "content": diffMau, "mode": "diff"]],
+                        "cites": ["f_b1"], "rationale": "kiểm id trước khi cấu hình"])
+        XCTAssertEqual(v.soTep, 1)
+        XCTAssertEqual(khoiMa(v).count, 1, "bản vá một tệp phải ra đúng một khối mã")
+    }
+
+    /// Tóm tắt `+n −m` không được đếm hai dòng đầu của diff.
+    ///
+    /// `+++`/`---` bắt đầu bằng `+`/`-` nhưng là TÊN TỆP. Đếm chúng làm mọi bản vá một-tệp đều
+    /// dư ra đúng một dòng thêm và một dòng bớt — một sai số nhỏ, đều, và không ai kiểm.
+    func testTOMtatDIFFkhongDEMhaiDONGdauTEP() throws {
+        let v = manVoi(["files": [["path": "a.c", "content": diffMau, "mode": "diff"]]])
+        let nhan = v.cot.arrangedSubviews.compactMap { hang -> String? in
+            guard let s = hang as? NSStackView, s.arrangedSubviews.count == 2,
+                  let trai = s.arrangedSubviews[0] as? NSTextField,
+                  let phai = s.arrangedSubviews[1] as? NSTextField,
+                  trai.stringValue == "a.c" else { return nil }
+            return phai.stringValue
+        }
+        XCTAssertEqual(nhan.first, "+2 −1")
+    }
+
+    /// `replace` phải NÓI RA là thay cả tệp.
+    ///
+    /// Hiện nó như diff là nói dối về phạm vi: người đọc thấy vài dòng và tưởng chỉ đổi bấy
+    /// nhiêu, trong khi toàn bộ tệp cũ vừa bị bỏ đi.
+    func testREPLACEnoiROlaTHAYcaTEP() {
+        let v = manVoi(["files": [["path": "x.c", "content": "a\nb\nc", "mode": "replace"]]])
+        XCTAssertEqual(v.soTepThayCaTep, 1)
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("THAY CẢ TỆP"), "nhận: \(chu)")
+    }
+
+    func testCREATEhienLAtepMOIchuKHONGphaiCANHbao() {
+        let v = manVoi(["files": [["path": "moi.c", "content": "int main(void){}", "mode": "create"]]])
+        XCTAssertEqual(v.soTepThayCaTep, 1)
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("TỆP MỚI"))
+        XCTAssertFalse(chu.contains("THAY CẢ TỆP"))
+    }
+
+    /// Mã không trích dẫn fact nào phải nói ra — constant-guard sẽ chặn nó ở G-FACT, và biết
+    /// trước khi đọc mã thì đỡ hơn biết sau khi duyệt.
+    func testKHONGtrichDANthiNOIra() {
+        let v = manVoi(["files": [["path": "a.c", "content": diffMau, "mode": "diff"]], "cites": []])
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("KHÔNG trích dẫn fact nào"), "nhận: \(chu)")
+    }
+
+    /// `missing_facts` phải lên TRƯỚC mã: mã trích một fact không có là mã dựa trên phỏng đoán.
+    func testMISSINGfactsHIENraVAdungTRUOCkhoiMA() {
+        let v = manVoi(["files": [["path": "a.c", "content": diffMau, "mode": "diff"]],
+                        "missing_facts": ["f_khong_co", "f_cung_khong"]])
+        let nhan = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .compactMap { ($0.first as? NSTextField)?.stringValue }
+        let iThieu = try? XCTUnwrap(nhan.firstIndex { $0.contains("fact CHƯA CÓ") })
+        let iTep = nhan.firstIndex { $0 == "a.c" }
+        XCTAssertNotNil(iThieu)
+        if let a = iThieu, let b = iTep { XCTAssertLessThan(a, b) }
+    }
+
+    /// Bản vá RỖNG không được đọc như "kế hoạch rỗng".
+    func testBANvaKHONGcoTEPthiVANnoiDUOCla_khongCOgi() {
+        let v = manVoi(["files": [], "rationale": "không cần sửa gì"])
+        XCTAssertEqual(v.soTep, 0)
+        XCTAssertEqual(khoiMa(v).count, 0)
+    }
+}
+
+/// Hình học của khối mã trong màn "Kế hoạch & mã".
+///
+/// Màn này không chụp ảnh được bằng dữ liệu thật: `plan.create` và `code.*` đều cần khoá mô
+/// hình, và bản vá chỉ tồn tại sau khi một mô hình sinh ra nó. Nên lớp lỗi mà ảnh chụp thường
+/// bắt — khối bị cắt, khối cao 0, khối tràn khỏi khung — phải đo bằng hình học ở đây.
+final class EidePlanDiffHinhHocTests: XCTestCase {
+
+    private func dungMan(_ soDong: Int) -> PlanDiffView {
+        let diff = (0..<soDong).map { "+dòng thêm số \($0)" }.joined(separator: "\n")
+        let v = PlanDiffView()
+        v.frame = NSRect(x: 0, y: 0, width: 900, height: 700)
+        v.capNhat(ketQua: ["patch": ["files": [["path": "a.c", "content": diff, "mode": "diff"]]]])
+        v.layoutSubtreeIfNeeded()
+        return v
+    }
+
+    private func khoiMa(_ v: NSView) -> EideMaView? {
+        if let m = v as? EideMaView { return m }
+        for c in v.subviews { if let m = khoiMa(c) { return m } }
+        return nil
+    }
+
+    func testKHOImaCOchieuCAOthatCHUkhongPHAIso0() throws {
+        let m = try XCTUnwrap(khoiMa(dungMan(6)))
+        XCTAssertGreaterThan(m.frame.height, 40, "khối mã cao \(m.frame.height) pt — gần như không thấy")
+    }
+
+    /// Diff DÀI phải dừng ở trần, không kéo màn dài vô tận.
+    ///
+    /// Một bản vá 3.000 dòng mà khối mã cao 3.000 hàng thì mọi thứ dưới nó — nút Duyệt, khối
+    /// rà soát — bị đẩy ra ngoài tầm với.
+    func testDIFFdaiDUNGoTRANkhongKEOmanDAIvoTAN() throws {
+        let m = try XCTUnwrap(khoiMa(dungMan(3000)))
+        XCTAssertLessThanOrEqual(m.frame.height, EideTuVung.caoToiDa + 1)
+    }
+
+    /// Diff dài BỊ CẮT, và màn phải nói ra bằng câu của cổng G3.
+    ///
+    /// Trần 2.000 dòng là có thật và cần thiết (dựng 3.000 hàng view làm treo cửa sổ). Nhưng ở
+    /// màn này, "cắt bớt cho gọn" có một nghĩa khác hẳn so với ở một bảng fact: người dùng đang
+    /// đứng trước nút Duyệt, và phần bị cắt là **mã họ sắp chấp nhận mà không nhìn thấy**. Nên
+    /// câu cảnh báo phải nói đúng điều đó, không nói "để cửa sổ không treo".
+    func testDIFFdaiBIcatVAnoiRAbangCAUcuaCONGduyet() throws {
+        let v = dungMan(3000)
+        let m = try XCTUnwrap(khoiMa(v))
+        XCTAssertEqual(m.soDongMa, EideTuVung.hangToiDa)
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSTextField)?.stringValue }
+            .joined(separator: " ")
+        XCTAssertTrue(chu.contains("\(EideTuVung.hangToiDa)/3000"), "phải nói rõ cắt bao nhiêu")
+        XCTAssertTrue(chu.lowercased().contains("duyệt"),
+                      "cảnh báo ở màn duyệt mã phải nói về việc DUYỆT, nhận: \(chu)")
+    }
+
+    /// Khối mã không được rộng hơn màn chứa nó.
+    func testKHOImaKHONGtranRAngoaiMAN() throws {
+        let v = dungMan(6)
+        let m = try XCTUnwrap(khoiMa(v))
+        XCTAssertLessThanOrEqual(m.frame.width, v.frame.width + 1,
+                                 "khối mã rộng \(m.frame.width) trong màn rộng \(v.frame.width)")
+    }
+}

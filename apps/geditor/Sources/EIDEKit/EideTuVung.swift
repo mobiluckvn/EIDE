@@ -636,8 +636,13 @@ extension ManHinhCoSo {
     }
 
     /// Thêm một khối mã.
+    ///
+    /// `viSaoCat` đổi CÂU nói khi nội dung bị cắt. Mặc định là câu chung ("để cửa sổ không
+    /// treo"); màn duyệt mã truyền câu của nó vào, vì ở đó phần bị cắt không phải "phần còn
+    /// lại của một danh sách" mà là **mã người dùng sắp duyệt mà không nhìn thấy**.
     @discardableResult
     public func themMa(dong ds: [EideDongMa], cao: CGFloat = EideTuVung.caoToiDa,
+                       viSaoCat: String? = nil,
                        chonDong: ((Int) -> Void)? = nil) -> EideMaView {
         let v = EideMaView(dong: ds, cao: cao)
         v.onChonDong = chonDong
@@ -645,7 +650,7 @@ extension ManHinhCoSo {
         cot.addArrangedSubview(v)
         v.widthAnchor.constraint(equalTo: cot.widthAnchor).isActive = true
         if ds.count > EideTuVung.hangToiDa {
-            _noiBiCat(hien: EideTuVung.hangToiDa, tong: ds.count, thu: "dòng")
+            _noiBiCat(hien: EideTuVung.hangToiDa, tong: ds.count, thu: "dòng", viSao: viSaoCat)
         }
         return v
     }
@@ -656,7 +661,8 @@ extension ManHinhCoSo {
     /// bản văn là việc của bên sinh ra chúng: hai thuật toán diff khác nhau cho hai kết quả khác
     /// nhau, và màn hình phải hiện ĐÚNG cái đã được duyệt, không phải cái nó tự tính lại.
     @discardableResult
-    public func themDiff(_ diff: String, cao: CGFloat = EideTuVung.caoToiDa) -> EideMaView {
+    public func themDiff(_ diff: String, cao: CGFloat = EideTuVung.caoToiDa,
+                         viSaoCat: String? = nil) -> EideMaView {
         let ds = diff.components(separatedBy: .newlines).enumerated().map { i, d -> EideDongMa in
             let mau: NSColor?
             if d.hasPrefix("+++") || d.hasPrefix("---") { mau = EideToken.Mau.muted }
@@ -666,7 +672,7 @@ extension ManHinhCoSo {
             else { mau = nil }
             return EideDongMa(so: i + 1, chu: d, mau: mau)
         }
-        return themMa(dong: ds, cao: cao)
+        return themMa(dong: ds, cao: cao, viSaoCat: viSaoCat)
     }
 
     /// Thêm một dải trạng thái ngang.
@@ -679,9 +685,10 @@ extension ManHinhCoSo {
     }
 
     /// Nói ra phần bị cắt. Im lặng cắt là cách chắc chắn nhất để một bảng thiếu bị đọc như đủ.
-    private func _noiBiCat(hien: Int, tong: Int, thu: String) {
-        let v = noiRong("Hiện \(hien)/\(tong) \(thu) — cắt bớt để cửa sổ không treo. "
-                        + "Lọc bớt rồi chạy lại để thấy phần còn lại.")
-        v.textColor = EideToken.Mau.warn
+    private func _noiBiCat(hien: Int, tong: Int, thu: String, viSao: String? = nil) {
+        let v = noiRong("Hiện \(hien)/\(tong) \(thu) — "
+                        + (viSao ?? "cắt bớt để cửa sổ không treo. "
+                                  + "Lọc bớt rồi chạy lại để thấy phần còn lại."))
+        v.textColor = viSao == nil ? EideToken.Mau.warn : EideToken.Mau.bad
     }
 }
