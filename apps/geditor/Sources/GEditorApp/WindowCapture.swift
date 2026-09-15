@@ -84,6 +84,7 @@ enum WindowCapture {
         case eideLamRo = "eide-lam-ro"       // màn làm rõ yêu cầu
         case eideModels = "eide-models"      // mô hình & chi phí
         case eideMaNguon = "eide-ma-nguon"   // cây dự án + trình soạn thảo
+        case eideHoChieu = "eide-ho-chieu"   // bảng fact có tầng, nguồn, độ tin
     }
 
     // ĐỌC ẢNH `eide-*` THẾ NÀO
@@ -122,7 +123,7 @@ enum WindowCapture {
         // lực), rồi mới gọi được năng lực của màn. Đo 15/09: khoảng 2,5 s tới lúc daemon trả
         // lời lần đầu. Chụp sớm hơn ra một màn "đang nạp…" — và một ảnh như thế thì không sai,
         // chỉ là không nói được gì.
-        case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon: return 8
+        case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon, .eideHoChieu: return 8
         default: return 0.4
         }
     }
@@ -242,6 +243,8 @@ enum WindowCapture {
             _ = chuanBiEide("Models", on: controller)
         case .eideMaNguon:
             _ = chuanBiEide("Code", on: controller)
+        case .eideHoChieu:
+            _ = chuanBiEide("Passport", on: controller)
         case .trong:
             controller.prepareSelfTestDocument("""
                 Xin chào. Đây là GEditor.

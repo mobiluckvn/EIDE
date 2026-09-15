@@ -45,6 +45,9 @@ open class ManHinhCoSo: NSView, KhungNhinEide {
 
     public init(ten: String) {
         super.init(frame: .zero)
+        // Ghim bảng màu sáng — cùng lý do như `EidePanel` (xem ghi chú ở đó, DEV-114). Đặt ở cả
+        // hai chỗ vì một màn dùng ngoài panel (test, cửa sổ phụ về sau) vẫn phải đọc được.
+        appearance = NSAppearance(named: .aqua)
         wantsLayer = true
         layer?.backgroundColor = EideToken.Mau.surface.cgColor
         layer?.borderColor = EideToken.Mau.border.cgColor

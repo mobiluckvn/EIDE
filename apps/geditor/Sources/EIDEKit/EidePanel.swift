@@ -138,8 +138,21 @@ public final class EidePanel: NSView {
     private var theTienDo: [String: RunProgressCard] = [:]
 
     public init(client: EideClient) {
+        // GHIM BẢNG MÀU SÁNG cho cả panel.
+        //
+        // `EideToken` là bảng màu PTIT của UXD-13 U7: các hằng số `#f4f6f9`, `#1c2530`… cố định,
+        // không đổi theo chế độ sáng/tối. Còn các control của AppKit — ô nhập, nút, hàng xen kẽ
+        // của bảng — thì ĐỔI theo giao diện hệ thống. Trên một máy đang để chế độ tối, hai thứ
+        // ấy chồng lên nhau: nền panel sáng theo token, ô nhập và hàng xen kẽ đen theo hệ thống,
+        // và chữ xám trên nền đen gần như không đọc được. Đo 15/09/2026 trên màn Hộ chiếu: sáu
+        // ô nhập của biểu mẫu và bốn hàng xen kẽ của bảng fact đều là những khối đen đặc.
+        //
+        // Ghim `.aqua` là cách ĐÚNG với tài liệu đang có: UXD-13 khai đúng MỘT bảng màu, nên
+        // "chế độ tối" của EIDE là một thứ chưa tồn tại — và bịa ra một bảng màu tối ở tầng mã
+        // là quyết định thương hiệu, không phải quyết định kỹ thuật. Xem DEV-114.
         self.client = client
         super.init(frame: .zero)
+        appearance = NSAppearance(named: .aqua)
         dungGiaoDien()
         noiHangDoi()
         noiManChuyenDe()

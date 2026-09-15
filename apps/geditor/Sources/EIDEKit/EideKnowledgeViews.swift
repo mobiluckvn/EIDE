@@ -120,10 +120,12 @@ public final class PassportView: NSView, KhungNhinEide {
             + " · \(cit.count) nguồn · \(ms) ms"
         tomTat.textColor = ms > 200 ? EideToken.Mau.warn : EideToken.Mau.muted
 
-        for f in facts {
-            bang.addArrangedSubview(_dongFact(f))
-            soDong += 1
-        }
+        let b = _bangFact(facts, cit: cit)
+        bang.addArrangedSubview(b)
+        // Ràng buộc bề rộng đặt SAU khi đã thêm vào cây: `widthAnchor` của hai khung nhìn chưa
+        // có tổ tiên chung thì AppKit từ chối kích hoạt, và nó từ chối bằng một ngoại lệ.
+        b.widthAnchor.constraint(equalTo: bang.widthAnchor).isActive = true
+        soDong = facts.count
         _hienThemCuaHoChieu(ketQua)
     }
 
@@ -183,6 +185,63 @@ public final class PassportView: NSView, KhungNhinEide {
             bang.addArrangedSubview(_nhanMo("  • \(nguon)\(noi)\(cach)"))
             soDong += 1
         }
+    }
+
+    /// Bảng fact — mockup `docs/ui/Passport.dc.html` vẽ một BẢNG có cột, không phải danh sách.
+    ///
+    /// ## Vì sao bảng, không phải mỗi fact một dòng chữ
+    ///
+    /// Bản cũ dựng mỗi fact thành một câu: `SRAM · memory_size = 401408 byte [XUNG ĐỘT] (nguồn)`.
+    /// Đọc được một fact, nhưng màn này tồn tại để đọc HÀNG NGHÌN: `passport.query` trên
+    /// STM32F411 trả 13.439 fact. Ba thứ mất khi xếp thành câu, và cả ba đều là thứ người ta mở
+    /// màn này ra để làm:
+    ///
+    /// 1. **So theo cột.** Bốn fact cùng `predicate` khác giá trị chỉ lộ ra khi giá trị xếp
+    ///    thẳng hàng. Trong câu thì chúng nằm ở bốn vị trí khác nhau tuỳ độ dài tên chủ thể.
+    /// 2. **Sắp xếp.** "Fact nào độ tin thấp nhất", "nguồn nào đóng góp nhiều nhất" — một cú
+    ///    bấm tiêu đề cột. Với danh sách thì phải đọc hết, và không ai đọc hết.
+    /// 3. **Tầng và trạng thái thành cột riêng**, nên quét dọc thấy ngay cụm XUNG ĐỘT.
+    private func _bangFact(_ facts: [[String: Any]], cit: [[String: Any]]) -> NSView {
+        // `source_id` là mã băm (`src_ee2e3dd3…`) và nó không nói gì với ai. `citations` của
+        // PASSPORT-02 mang sẵn `uri` cho từng nguồn — nối ở đây để cột Nguồn hiện TÊN TỆP.
+        var uri: [String: String] = [:]
+        for c in cit {
+            if let id = c["source_id"] as? String { uri[id] = (c["uri"] as? String) ?? id }
+        }
+
+        let hang = facts.map { f -> [String] in
+            let sid = (f["source_id"] as? String) ?? ""
+            let ten = uri[sid].map { ($0 as NSString).lastPathComponent } ?? sid
+            return [
+                EideKnowledgeFormat.tenNgan((f["subject"] as? String) ?? ""),
+                (f["predicate"] as? String) ?? "",
+                EideKnowledgeFormat.giaTriTheoViTu(f["value"], (f["predicate"] as? String) ?? ""),
+                (f["unit"] as? String) ?? "",
+                EideKnowledgeFormat.nhanTang((f["tier"] as? String) ?? "bronze",
+                                             (f["status"] as? String) ?? ""),
+                EideSo.thuc(f["confidence"]).map { String(format: "%.2f", $0) } ?? "",
+                (f["method"] as? String) ?? "",
+                ten,
+            ]
+        }
+        let b = EideBangView(
+            cot: ["chủ thể", "vị từ", "giá trị", "đơn vị", "tầng · trạng thái", "độ tin",
+                  "cách trích", "nguồn"],
+            hang: hang,
+            canPhai: [2, 5],
+            mauO: { i, cot in
+                guard cot == 4, i < facts.count else { return nil }
+                return EideKnowledgeFormat.mauTang((facts[i]["tier"] as? String) ?? "bronze",
+                                                   (facts[i]["status"] as? String) ?? "")
+            })
+        // Bấm một hàng mở chuỗi truy nguồn. Bản cũ có một nút "nguồn" riêng trên mỗi dòng; với
+        // một bảng thì cả hàng là vùng bấm, và người dùng không phải nhắm vào một chữ 30 px.
+        b.onChon = { [weak self] i in
+            guard i < facts.count, let id = facts[i]["id"] as? String, !id.isEmpty else { return }
+            self?.onXemNguon?(id)
+        }
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
     }
 
     private func _dongFact(_ f: [String: Any]) -> NSView {
@@ -607,6 +666,31 @@ public enum EideKnowledgeFormat {
         case .none: return "—"
         default: return String(describing: v ?? "—")
         }
+    }
+
+    /// Giá trị theo VỊ TỪ — địa chỉ ra hệ 16, kích thước bộ nhớ ra KiB kèm số byte.
+    ///
+    /// `passport.query` trả `base_address: 1070055424`. Con số ấy đúng và vô dụng: không kỹ sư
+    /// nhúng nào đọc địa chỉ thanh ghi ở hệ 10, và không ai đối chiếu được nó với `0x3FC7C000`
+    /// in trong datasheet mà không lấy máy tính ra. Cả màn này tồn tại để người dùng ĐỐI CHIẾU
+    /// điều EIDE biết với điều tài liệu hãng nói — hiện sai hệ đếm là phá đúng việc ấy.
+    ///
+    /// `memory_size: 401408` cũng vậy: "392 KiB" là con số người ta so với ngân sách RAM, còn
+    /// 401408 là con số người ta phải chia cho 1024 trong đầu. Giữ CẢ HAI, vì số byte chính xác
+    /// là thứ đi vào script linker.
+    public static func giaTriTheoViTu(_ v: Any?, _ viTu: String) -> String {
+        let hex: Set<String> = ["base_address", "address", "offset", "reset_value"]
+        if hex.contains(viTu), let n = EideSo.nguyen(v) {
+            // `%08X` cho địa chỉ 32 bit; offset nhỏ thì không đệm tới 8 chữ số vì `0x00000004`
+            // đọc chậm hơn `0x04` mà không thêm thông tin gì.
+            return n > 0xFFFF ? String(format: "0x%08X", n) : String(format: "0x%02X", n)
+        }
+        if viTu == "memory_size", let n = EideSo.nguyen(v), n >= 1024 {
+            let kib = Double(n) / 1024
+            let s = kib == kib.rounded() ? String(Int(kib)) : String(format: "%.1f", kib)
+            return "\(s) KiB (\(n))"
+        }
+        return giaTri(v)
     }
 
     /// Nhãn ngắn cho (tầng, trạng thái). **Trạng thái thắng tầng khi nó cảnh báo.**

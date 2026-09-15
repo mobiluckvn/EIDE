@@ -221,3 +221,136 @@ final class EideTuVungTests: XCTestCase {
         XCTAssertTrue(b.coBoCuonDeTest, "bảng 80 hàng vượt trần chiều cao thì phải cuộn được")
     }
 }
+
+/// Màn Hộ chiếu chip dựng trên bộ từ vựng — bảng fact thay cho danh sách câu.
+final class EidePassportBangTests: XCTestCase {
+
+    private func manVoi(_ facts: [[String: Any]],
+                        cit: [[String: Any]] = []) -> PassportView {
+        let v = PassportView()
+        v.capNhat(ketQua: ["facts": facts, "citations": cit,
+                           "tiers": ["gold": facts.count], "latency_ms": 12])
+        return v
+    }
+
+    private func bang(_ v: NSView) -> EideBangView? {
+        if let b = v as? EideBangView { return b }
+        for c in v.subviews { if let b = bang(c) { return b } }
+        return nil
+    }
+
+    private let factMau: [[String: Any]] = [
+        ["id": "f_1", "subject": "chip:esp.esp32c3/mem:SRAM", "predicate": "base_address",
+         "value": 1070055424, "tier": "gold", "status": "conflict", "method": "parser",
+         "confidence": 1.0, "source_id": "src_a"],
+        ["id": "f_2", "subject": "chip:esp.esp32c3/mem:SRAM", "predicate": "memory_size",
+         "value": 401408, "unit": "byte", "tier": "gold", "status": "normalized",
+         "method": "parser", "confidence": 0.71, "source_id": "src_b"],
+    ]
+
+    func testFACTdungRAmotBANGchuKHONGphaiDANHsachCAU() throws {
+        let v = manVoi(factMau)
+        let b = try XCTUnwrap(bang(v), "màn Hộ chiếu phải dựng ra một bảng")
+        XCTAssertEqual(b.soHang, 2)
+        XCTAssertEqual(v.soDong, 2)
+    }
+
+    /// Địa chỉ phải ra hệ 16.
+    ///
+    /// `1070055424` đúng và vô dụng: không ai đối chiếu được nó với `0x3FC7C000` in trong
+    /// datasheet mà không lấy máy tính ra — và đối chiếu chính là việc màn này sinh ra để làm.
+    func testDIAchiHIENheXAdecIMAL() throws {
+        let b = try XCTUnwrap(bang(manVoi(factMau)))
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 2), "0x3FC7C000")
+    }
+
+    /// Kích thước bộ nhớ hiện CẢ KiB lẫn số byte: KiB để so với ngân sách RAM, byte để đi vào
+    /// script linker.
+    func testKICHthuocBOnhoHIENkibVAbyte() throws {
+        let b = try XCTUnwrap(bang(manVoi(factMau)))
+        XCTAssertEqual(b.oDeTest(hang: 1, cot: 2), "392 KiB (401408)")
+    }
+
+    /// Trạng thái thắng tầng: một fact `gold` đang `conflict` phải hiện XUNG ĐỘT.
+    func testFACTvangDANGxungDOThienLAxungDOT() throws {
+        let b = try XCTUnwrap(bang(manVoi(factMau)))
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 4), "XUNG ĐỘT")
+    }
+
+    /// Cột Nguồn hiện TÊN TỆP, không hiện mã băm.
+    func testCOTnguonHIENtenTEPchuKHONGphaiMAbam() throws {
+        let b = try XCTUnwrap(bang(manVoi(
+            factMau,
+            cit: [["source_id": "src_a", "uri": "/tmp/tai-lieu/esp32c3-trm-v1.1.pdf"],
+                  ["source_id": "src_b", "uri": "/tmp/tai-lieu/ds-rev0.4.pdf"]])))
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 7), "esp32c3-trm-v1.1.pdf")
+    }
+
+    /// Không có `citations` thì rơi về `source_id` chứ không để trống: một ô trống nói rằng fact
+    /// này không có nguồn, mà đó là điều nghiêm trọng hơn hẳn "chưa biết tên tệp".
+    func testTHIEUcitationsTHIroiVEsourceID() throws {
+        let b = try XCTUnwrap(bang(manVoi(factMau)))
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 7), "src_a")
+    }
+
+    /// Bấm một hàng mở chuỗi truy nguồn của ĐÚNG fact ấy, kể cả sau khi sắp xếp lại.
+    func testBAMhangSAUkhiSAPvanMOdungFACT() throws {
+        let v = manVoi(factMau)
+        var mo: String?
+        v.onXemNguon = { mo = $0 }
+        let b = try XCTUnwrap(bang(v))
+        b.sapDeTest(cot: 5)                       // sắp theo độ tin: 0.71 lên đầu
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 5), "0.71")
+        b.onChon?(1)                              // chỉ số GỐC của fact 0.71 là 1
+        XCTAssertEqual(mo, "f_2")
+    }
+
+    func testKHONGcoFACTthiKHONGdungBANGrong() {
+        let v = manVoi([])
+        XCTAssertNil(bang(v), "không fact nào thì đừng dựng một bảng có tiêu đề cột và rỗng ruột")
+    }
+}
+
+/// Bố cục bảng — chiều cao và cuộn ngang.
+///
+/// Hai lỗi đo được trên ảnh chụp 15/09/2026, và cả hai đều KHÔNG lộ ra trong một bài kiểm hỏi
+/// "bảng có đúng số hàng không": hàng cuối bị cắt ngang, và ba cột cuối nằm ngoài mép không có
+/// cách nào tới.
+final class EideBangBoCucTests: XCTestCase {
+
+    private final class ManThu: ManHinhCoSo {
+        init() { super.init(ten: "thử") }
+    }
+
+    /// Khung bảng phải cao đủ cho MỌI hàng, không cắt hàng cuối.
+    ///
+    /// Một hàng bị cắt nửa dưới trông y như một hàng bình thường nếu không nhìn kỹ — và ở bảng
+    /// fact thì hàng cuối có thể là hàng XUNG ĐỘT.
+    func testKHUNGcaoDUchoMOIhangKHONGcatHANGcuoi() {
+        let m = ManThu()
+        let n = 8
+        let b = m.themBang(cot: ["a", "b"], hang: (0..<n).map { ["\($0)", "x"] })
+        b.layoutSubtreeIfNeeded()
+        let canToiThieu = b.caoDauDeTest + CGFloat(n) * b.caoHangDeTest
+        XCTAssertGreaterThanOrEqual(b.frame.height, canToiThieu,
+                                    "khung cao \(b.frame.height) nhưng cần ít nhất \(canToiThieu)")
+    }
+
+    /// Bảng nhiều cột phải cuộn NGANG được.
+    ///
+    /// Không có nó thì cột nằm ngoài mép bằng cột không tồn tại — chỉ tệ hơn ở chỗ người dùng
+    /// biết nó có ở đó.
+    func testBANGnhieuCOTcuonNGANGduoc() {
+        let m = ManThu()
+        let b = m.themBang(cot: (0..<10).map { "cột dài số \($0)" },
+                           hang: [(0..<10).map { "giá trị \($0)" }])
+        XCTAssertTrue(b.coCuonNgangDeTest)
+    }
+
+    /// Bảng nhỏ vẫn KHÔNG được có bộ cuộn dọc — quy tắc "không lồng vùng cuộn" giữ nguyên.
+    func testTHEMcuonNGANGkhongLAMbangNHOcoCUONdoc() {
+        let m = ManThu()
+        let b = m.themBang(cot: ["x"], hang: [["1"], ["2"]])
+        XCTAssertFalse(b.coBoCuonDeTest)
+    }
+}

@@ -113,12 +113,25 @@ public final class EideBangView: NSView {
         cuon.drawsBackground = false
         cuon.borderType = .lineBorder
         cuon.translatesAutoresizingMaskIntoConstraints = false
+        // Cuộn NGANG khi tổng bề rộng cột vượt khung. Bảng fact có tám cột và khung giữa của
+        // panel rộng khoảng 1.000 pt — đo 15/09: ba cột cuối (`độ tin`, `cách trích`, `nguồn`)
+        // nằm ngoài mép và không có cách nào tới được chúng. Một cột không tới được thì bằng
+        // một cột không tồn tại, chỉ tệ hơn ở chỗ người dùng biết nó có ở đó.
+        cuon.hasHorizontalScroller = true
+        cuon.autohidesScrollers = true
         addSubview(cuon)
 
-        let caoND = CGFloat(hang.count) * bang.rowHeight + 24
+        // Chiều cao nội dung = các hàng + ĐẦU BẢNG THẬT + viền.
+        //
+        // Hằng số 24 trước đây là ước lượng cho đầu bảng, và nó thiếu vài điểm: hàng cuối bị cắt
+        // ngang trên ảnh chụp 15/09. Một hàng bị cắt nửa dưới trông y như một hàng bình thường
+        // nếu người ta không nhìn kỹ — và ở một bảng fact thì hàng cuối có thể là hàng XUNG ĐỘT.
+        let caoDau = Self.caoDauBang(bang)
+        let caoND = CGFloat(hang.count) * (bang.rowHeight + bang.intercellSpacing.height)
+            + caoDau + 4
         let cao = min(caoND, EideTuVung.caoToiDa)
-        // Bộ cuộn riêng CHỈ khi nội dung thật sự bị cắt — xem ghi chú "không lồng vùng cuộn" ở
-        // đầu tệp.
+        // Bộ cuộn dọc riêng CHỈ khi nội dung thật sự bị cắt — xem ghi chú "không lồng vùng cuộn"
+        // ở đầu tệp.
         cuon.hasVerticalScroller = caoND > EideTuVung.caoToiDa
         NSLayoutConstraint.activate([
             cuon.topAnchor.constraint(equalTo: topAnchor),
@@ -154,6 +167,30 @@ public final class EideBangView: NSView {
 
     /// Có bộ cuộn riêng không — cho test canh quy tắc "không lồng vùng cuộn".
     public var coBoCuonDeTest: Bool { cuon.hasVerticalScroller }
+
+    /// Cuộn ngang được không — cho test canh "cột nằm ngoài mép vẫn tới được".
+    public var coCuonNgangDeTest: Bool { cuon.hasHorizontalScroller }
+
+    /// Chiều cao một hàng kể cả khe giữa hàng — cho test tính chiều cao cần thiết.
+    public var caoHangDeTest: CGFloat { bang.rowHeight + bang.intercellSpacing.height }
+
+    /// Chiều cao đầu bảng — cho test.
+    public var caoDauDeTest: CGFloat { Self.caoDauBang(bang) }
+
+    /// Chiều cao đầu bảng, đo được cả TRƯỚC khi bố cục chạy.
+    ///
+    /// `headerView?.fittingSize.height` trả **0** khi khung nhìn chưa vào cây và chưa bố cục —
+    /// đúng lúc ta cần nó, vì chiều cao khung được đặt ngay trong `init`. Dùng thẳng con số ấy
+    /// thì khung thiếu đúng một đầu bảng, và hàng CUỐI bị cắt ngang: thấy rõ trên ảnh chụp
+    /// 15/09/2026, và một hàng cắt nửa dưới trông y như hàng bình thường nếu không nhìn kỹ.
+    ///
+    /// Nên: lấy số đo thật khi có, rơi về 25 pt (chiều cao `NSTableHeaderView` chuẩn của aqua)
+    /// khi nó chưa nói được gì.
+    static func caoDauBang(_ b: NSTableView) -> CGFloat {
+        guard b.headerView != nil else { return 0 }
+        let d = b.headerView?.fittingSize.height ?? 0
+        return d >= 20 ? d : 25
+    }
 }
 
 extension EideBangView: NSTableViewDataSource, NSTableViewDelegate {

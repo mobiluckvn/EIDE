@@ -32,6 +32,9 @@ final class MainWindowController: NSWindowController {
     private var khungEideGoc: NSView?
     /// Dự án mà cây tệp đang trỏ tới — để không trỏ lại workspace ở mỗi lần mở màn Mã nguồn.
     private var cayDangTro: String?
+
+    /// Đã có ai chọn một màn EIDE chưa. Chặn lệnh chọn mặc định hoãn lại đè lên lựa chọn thật.
+    private var daChonMan = false
     private var vungSoanThao: NSView?
     private var vachEide: NSBox?
 
@@ -839,7 +842,14 @@ final class MainWindowController: NSWindowController {
         DispatchQueue.main.async { [weak self] in
             // Mở ra ở màn "Mã nguồn": người dùng vừa mở một tệp, và đưa họ tới một màn khác là
             // làm mất chính thứ họ vừa bấm vào.
-            self?.dieuHuongEide?.chon("Code")
+            //
+            // Nhưng chỉ khi CHƯA AI chọn màn nào. Lệnh này hoãn tới vòng run loop sau, nên nếu
+            // giữa lúc ấy có một lời gọi `chonManEide` — từ dòng lệnh, từ bộ chụp ảnh, từ một
+            // phím tắt người dùng bấm sớm — thì nó sẽ ĐÈ LÊN lựa chọn ấy và kéo người ta về Mã
+            // nguồn. Đo 15/09/2026: bộ chụp ảnh gọi `chonManEide("Passport")` rồi chụp ra màn Mã
+            // nguồn, và không có gì trong log nói vì sao.
+            guard let self, !self.daChonMan else { return }
+            self.dieuHuongEide?.chon("Code")
         }
         return goc
     }
@@ -931,6 +941,7 @@ final class MainWindowController: NSWindowController {
         guard let goc = khungEideGoc, let soanThao = vungSoanThao, let vach = vachEide else {
             return
         }
+        daChonMan = true
         // "Mã nguồn" là MỘT MÀN của EIDE (DEV-098) và nội dung của nó là **cây dự án + trình
         // soạn thảo** — mockup `Code.dc.html`, không phải một bộ đệm trống.
         if tien == "Code" {
