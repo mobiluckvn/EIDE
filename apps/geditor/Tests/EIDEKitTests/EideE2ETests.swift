@@ -51,7 +51,8 @@ final class EideE2ETests: XCTestCase {
 
     /// Dự án dùng chung cho cả lớp: tạo MỘT lần, vì `project.create` mất vài trăm ms và mọi
     /// bài test ở đây chỉ ĐỌC nó.
-    private static var duAn: URL?
+    /// Dự án E2E — `internal` để bộ test khác dùng lại thay vì dựng bản thứ hai.
+    static var duAn: URL?
     private static var loiDung: String?
 
     override class func setUp() {
@@ -85,6 +86,27 @@ final class EideE2ETests: XCTestCase {
                 return
             }
             duAn = URL(fileURLWithPath: duong)
+
+            // `project.create` KHÔNG chạy migration, nên store chưa có bảng nào — và nhóm
+            // `kg.*` cần store. Dự án tạo từ giao diện đã migrate (xem `moDuAnEide(diTru:)`);
+            // dự án tạo bằng CLI thì chưa, nên bộ test phải làm nốt bước ấy.
+            let mg = Process()
+            mg.executableURL = URL(fileURLWithPath: py)
+            mg.arguments = ["-m", "eide.cli", "migrate", "-p", duong]
+            mg.currentDirectoryURL = gocKho
+            let raMg = Pipe()
+            mg.standardOutput = raMg
+            mg.standardError = raMg
+            try mg.run()
+            // ĐỌC ống trước khi đợi: `migrate` in một dòng mỗi migration, và một ống không ai
+            // đọc đầy ở 64 KB rồi tiến trình con chặn ở `write` — `waitUntilExit` khi ấy đợi
+            // mãi. Cùng lớp lỗi với phát lại sổ cái qua stdio (PHAT_LAI_KHI_MO).
+            let dMg = raMg.fileHandleForReading.readDataToEndOfFile()
+            mg.waitUntilExit()
+            if mg.terminationStatus != 0 {
+                loiDung = "migrate hỏng: " + (String(data: dMg, encoding: .utf8) ?? "")
+                return
+            }
         } catch {
             loiDung = "\(error)"
         }
@@ -1060,5 +1082,112 @@ final class EideONhapE2ETests: XCTestCase {
             if mo["input_schema"] == nil { hong.append("\(man) → \(cap): thiếu input_schema") }
         }
         XCTAssertTrue(hong.isEmpty, hong.joined(separator: "\n"))
+    }
+}
+
+/// Mở màn từ sidebar, trên daemon THẬT — tầng bắt được "màn kẹt ở Đang đọc trạng thái…".
+///
+/// Đo 15/09 trên bản dựng release: bấm "Xung đột tri thức" thì tiêu đề đúng, ô nhập không hiện,
+/// và thân màn rỗng — trong khi `caps.invoke kg.conflicts` qua daemon trả về trong 0,4 giây.
+/// Chỗ hở nằm giữa hai thứ ấy: chuỗi lời gọi mà panel thật sự phát ra khi mở một màn.
+final class EideMoManE2ETests: XCTestCase {
+
+    /// Dựng một dự án tạm ĐÃ MIGRATE cho một bài test.
+    ///
+    /// `project.create` không chạy migration, và nhóm `kg.*` cần store — nên hai bước, không
+    /// một. Giao diện làm đúng thế khi tạo dự án (`moDuAnEide(diTru:)`).
+    static func duAnRieng(py: String) throws -> URL {
+        let tam = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("eide-moman-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: tam, withIntermediateDirectories: true)
+
+        func chay(_ arg: [String]) throws -> (Int32, String) {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: py)
+            p.arguments = ["-m", "eide.cli"] + arg
+            p.currentDirectoryURL = EideE2ETests.gocKho
+            let ra = Pipe()
+            p.standardOutput = ra
+            p.standardError = ra
+            try p.run()
+            let d = ra.fileHandleForReading.readDataToEndOfFile()
+            p.waitUntilExit()
+            return (p.terminationStatus, String(data: d, encoding: .utf8) ?? "")
+        }
+
+        let (_, out) = try chay(["caps", "invoke", "project.create",
+                                 #"{"text":"dự án mở màn","chip":"st.stm32f411"}"#,
+                                 "-p", tam.path])
+        guard let i = out.firstIndex(of: "{"),
+              let j = try JSONSerialization.jsonObject(with: Data(out[i...].utf8))
+                as? [String: Any],
+              let duong = j["path"] as? String else {
+            throw XCTSkip("không tạo được dự án: \(out.prefix(200))")
+        }
+        let (ma, outMg) = try chay(["migrate", "-p", duong])
+        guard ma == 0 else { throw XCTSkip("migrate hỏng: \(outMg.prefix(200))") }
+        return URL(fileURLWithPath: duong)
+    }
+
+
+    @MainActor
+    func testMOmanXUNGdotNHANduocDUlieu() async throws {
+        guard let py = EideE2ETests.pythonDeTest else { throw XCTSkip("chưa có venv") }
+        // Dự án RIÊNG của lớp này. `EideE2ETests.duAn` không dùng được: `tearDown` của lớp ấy
+        // xoá cả thư mục tạm khi lớp ấy chạy xong, và XCTest chạy các lớp theo bảng chữ cái —
+        // nên tới lượt lớp này thì `duAn` trỏ vào một thư mục đã biến mất. Lỗi hiện ra là
+        // "Không thấy store", một câu đúng về triệu chứng và sai về nguyên nhân.
+        let da = try Self.duAnRieng(py: py)
+        defer { try? FileManager.default.removeItem(at: da.deletingLastPathComponent()) }
+        FileManager.default.changeCurrentDirectoryPath(EideE2ETests.gocKho.path)
+        // CÓ dự án: `kg.*` cần một dự án đang mở, và một daemon không dự án trả E2000 — đúng
+        // thiết kế, nhưng không phải thứ bài test này muốn đo.
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"],
+                                                             duAn: da.path))
+        defer { Task { await c.dong() } }
+
+        // Đúng thứ tự panel làm khi mở một màn: hỏi hợp đồng cho ô nhập, rồi chạy năng lực nạp.
+        let cap = EidePanel.nangLucChinh["XungDot"]!
+        let mo = try await c.goi(.capsDescribe, ["id": cap])
+        XCTAssertFalse(mo.isEmpty, "caps.describe rỗng")
+
+        let md = EidePanel.napMacDinh(choMan: "XungDot")!
+        let r = try await c.goi(.capsInvoke, ["id": md, "params": [:]])
+        // In LỖI chứ không in cả bản ghi: `\(r)` cắt ngang ở 200 ký tự và phần bị cắt luôn là
+        // phần nói vì sao — mất một lượt chạy lại chỉ để đọc được thông báo.
+        let loi = ((r["error"] as? [String: Any])?["message"] as? String) ?? "\(r)"
+        XCTAssertEqual(r["status"] as? String, "done", "\(md): \(loi)")
+
+        let v = XungDotView()
+        v.capNhat(ketQua: (r["result"] as? [String: Any]) ?? [:])
+        func quet(_ x: NSView) -> [String] {
+            var ra: [String] = []
+            if let t = x as? NSTextField { ra.append(t.stringValue) }
+            for k in x.subviews { ra += quet(k) }
+            return ra
+        }
+        let chu = quet(v.cot).joined(separator: "\n")
+        XCTAssertFalse(chu.isEmpty, "màn nhận dữ liệu thật mà thân vẫn RỖNG")
+        XCTAssertTrue(chu.contains("xung đột"), chu)
+    }
+
+    @MainActor
+    func testBAlOIgoiSONGsongKHONGlamTREOnhau() async throws {
+        // Mở một màn phát ra BA lời gọi gần như cùng lúc: `caps.describe` (ô nhập),
+        // `caps.invoke` (nạp màn), và `caps.invoke passport.list` (gợi ý). `EideClient` là actor
+        // nên chúng tuần tự hoá — nhưng nếu một cái không bao giờ về thì hai cái kia treo theo,
+        // và màn đứng ở "Đang đọc trạng thái…" vĩnh viễn.
+        guard let py = EideE2ETests.pythonDeTest else { throw XCTSkip("chưa có venv") }
+        FileManager.default.changeCurrentDirectoryPath(EideE2ETests.gocKho.path)
+        let c = EideClient(transport: try EideStdioTransport(eide: [py, "-m", "eide.cli"]))
+        defer { Task { await c.dong() } }
+
+        async let a = try? c.goi(.capsDescribe, ["id": "kg.conflicts"])
+        async let b = try? c.goi(.capsInvoke, ["id": "kg.conflicts", "params": [:]])
+        async let d = try? c.goi(.capsInvoke, ["id": "passport.list", "params": [:]])
+        let ds = await [a, b, d]
+        for (i, x) in ds.enumerated() {
+            XCTAssertNotNil(x, "lời gọi thứ \(i + 1) không trả về")
+        }
     }
 }

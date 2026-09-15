@@ -92,6 +92,13 @@ class UndoService:
             if het:
                 self.ledger.append("undo.expire", {"undo_ref": ref})
             else:
-                con_lai.append({k: m[k] for k in ("undo_ref", "kind", "cap", "window", "at", "deadline")})
-        con_lai.sort(key=lambda x: x["at"])
+                # `.get`, KHÔNG `m[k]`: sổ cái là chỉ-thêm, nên bản ghi do một phiên bản CŨ
+                # hơn ghi sẽ nằm đó mãi mãi. `cap` thêm vào `undo.register` sau ngày đầu, và
+                # một bản ghi thiếu nó làm `list()` ném KeyError — tức **cả danh sách hoàn tác
+                # chết vì một dòng cũ**. Đo 15/09/2026 trên dự án AVR: `undo.list` trả E1000
+                # "Tham số sai: 'cap'", và vùng "Hoàn tác được" của giao diện rỗng vĩnh viễn
+                # trong khi sáu việc vẫn đang trong hạn. Xem lỗi im lặng số 34.
+                con_lai.append({k: m.get(k) for k in
+                                ("undo_ref", "kind", "cap", "window", "at", "deadline")})
+        con_lai.sort(key=lambda x: x["at"] or "")
         return con_lai

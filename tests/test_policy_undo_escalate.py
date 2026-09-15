@@ -400,3 +400,45 @@ def test_qua_cua_so_hoan_tac_thi_E7000_chu_khong_phai_E2000(tmp_path, workspace)
     with pytest.raises(EideError) as e2:
         r.hoan_tac("r_chua_tung_co", by="human", ctx=Context(project_dir=workspace))
     assert e2.value.code == "E2000"
+
+
+def test_ban_ghi_undo_CU_khong_lam_chet_ca_danh_sach(tmp_path):
+    """Sổ cái là chỉ-thêm: bản ghi do một phiên bản CŨ hơn ghi sẽ nằm đó mãi mãi.
+
+    `cap` được thêm vào `undo.register` sau ngày đầu. Một bản ghi thiếu nó làm `list()` ném
+    `KeyError`, và **cả danh sách hoàn tác chết vì một dòng cũ** — đo 15/09/2026 trên dự án
+    AVR: `undo.list` trả E1000 "Tham số sai: 'cap'", vùng "Hoàn tác được" của giao diện rỗng
+    vĩnh viễn trong khi sáu việc vẫn đang trong hạn.
+
+    Đây là lớp lỗi mà mọi hàm đọc sổ cái đều phải chịu được: dữ liệu cũ không sửa được.
+    """
+    from datetime import UTC, datetime, timedelta
+
+    from eide_core.ledger import Ledger
+    from eide_core.undo import UndoService
+
+    led = Ledger(tmp_path / "l.jsonl")
+    han = (datetime.now(UTC) + timedelta(hours=20)).isoformat()
+    # Bản ghi CŨ — không có `cap`, đúng hình dạng trước khi trường ấy ra đời.
+    led.append("undo.register", {"undo_ref": "r_cu", "kind": "supersede_facts", "window": "facts",
+                                 "at": datetime.now(UTC).isoformat(), "deadline": han})
+    # Bản ghi MỚI — đủ trường.
+    UndoService(led, None).register("r_moi", "supersede_facts", cap="extract.svd")
+
+    ds = UndoService(led, None).list()
+    assert len(ds) == 2, f"một bản ghi cũ làm mất cả danh sách: {ds}"
+    assert {d["undo_ref"] for d in ds} == {"r_cu", "r_moi"}
+    assert next(d for d in ds if d["undo_ref"] == "r_cu")["cap"] is None
+    assert next(d for d in ds if d["undo_ref"] == "r_moi")["cap"] == "extract.svd"
+
+
+def test_ban_ghi_thieu_ca_at_van_sap_xep_duoc(tmp_path):
+    """`at` cũng có thể vắng ở bản ghi cũ, và `sort` theo None thì ném TypeError."""
+    from eide_core.ledger import Ledger
+    from eide_core.undo import UndoService
+
+    led = Ledger(tmp_path / "l.jsonl")
+    led.append("undo.register", {"undo_ref": "r1", "kind": "supersede_facts",
+                                 "deadline": None})
+    UndoService(led, None).register("r2", "supersede_facts", cap="x")
+    assert len(UndoService(led, None).list()) >= 1

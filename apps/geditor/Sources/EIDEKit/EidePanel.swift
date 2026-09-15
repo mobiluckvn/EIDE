@@ -542,7 +542,11 @@ public final class EidePanel: NSView {
         for v in bangMan { v.v.isHidden = (v.v !== k.v) }
         hoiThoai.isHidden = true
         thanhMan.isHidden = false
-        tenMan.stringValue = k.tien
+        // Nhãn người đọc được, không phải tiền tố kỹ thuật: người bấm "Dò board" mà thấy
+        // tiêu đề "Discovery" phải tự dịch trong đầu, và hai chữ ấy không phải lúc nào cũng
+        // giống nhau ("LamRo" → "Làm rõ yêu cầu").
+        tenMan.stringValue = EideDieuHuong.NHOM
+            .flatMap(\.man).first { $0.tien == k.tien }?.nhan ?? k.tien
         k.v.chuaNap("Đang đọc trạng thái…")
         _dungONhap(choMan: k.tien, khungNhin: k.v)
         // Năng lực tự nạp TRƯỚC, rồi mới tới hai màn nạp bằng phương thức daemon.
@@ -699,9 +703,18 @@ public final class EidePanel: NSView {
         }
         let canBoard = EideDieuHuong.NHOM.first { $0.ten == "PHẦN CỨNG" }?
             .man.contains { $0.tien == tien } ?? false
+        // Ghi nhận màn đang mở TRƯỚC khi hỏi, và bỏ kết quả nếu người đã sang màn khác.
+        //
+        // `caps.describe` là một vòng gọi daemon, và người dùng bấm sidebar nhanh hơn thế. Không
+        // có chốt này thì form nào VỀ SAU thắng, không phải màn nào ĐANG MỞ — đo 15/09 trên bản
+        // dựng thật: màn "Dò board" hiện nút "Chạy bench.badge", tức form của một màn khác hẳn.
+        // Người dùng bấm nút ấy là chạy một năng lực họ không chọn.
+        oNhap.isHidden = true
+        _manDangHoi = tien
         Task {
             let mo = try? await client.goi(.capsDescribe, ["id": cap])
             await MainActor.run {
+                guard self._manDangHoi == tien else { return }
                 guard let mo, !mo.isEmpty else {
                     self.oNhap.isHidden = true
                     v.chuaNap("Không đọc được hợp đồng của `\(cap)` — daemon còn chạy không?")
@@ -715,6 +728,9 @@ public final class EidePanel: NSView {
             }
         }
     }
+
+    /// Màn đang chờ hợp đồng — chốt chống đua cho `_dungONhap`.
+    private var _manDangHoi = ""
 
     /// Ba màn ấy nạp bằng PHƯƠNG THỨC RPC, không bằng `caps.invoke`.
     ///
@@ -1567,8 +1583,24 @@ public final class EidePanel: NSView {
         await napGoiY()
         let tuChu = try? await client.goi(.autonomyGet, [:])
         let doi = try? await client.goi(.queueList, [:])
-        let undo = try? await client.goi(.undoList, [:])
+        // `undo.list` từng ném E1000 vì một bản ghi sổ cái CŨ thiếu trường `cap` — và `try?`
+        // biến lỗi ấy thành một danh sách rỗng, nên vùng "Hoàn tác được" trống mà không ai
+        // biết vì sao. Bắt riêng để NÓI RA. Xem lỗi im lặng số 34.
+        var undo: [String: Any]?
+        var loiUndo: String?
+        do { undo = try await client.goi(.undoList, [:]) }
+        catch { loiUndo = "\(error)" }
         await MainActor.run {
+            if let loiUndo {
+                self.hoiThoai.themLuot(by: .loi,
+                                       text: "Không đọc được danh sách hoàn tác: \(loiUndo)")
+            }
+            // `autonomy.get` thất bại KHÁC với mức tự chủ chưa đặt. Nhãn "—" cho cả hai là để
+            // người dùng nhìn một dấu gạch mà không biết tác tử đang được phép làm gì.
+            if tuChu == nil {
+                self.hoiThoai.themLuot(by: .loi,
+                                       text: "Không đọc được mức tự chủ — daemon còn chạy không?")
+            }
             self.thanhTuChu.capNhat(muc: tuChu?["autonomy"] as? String,
                                     dungKhan: tuChu?["stopped"] as? Bool ?? false,
                                     soCho: (doi?["items"] as? [[String: Any]])?.count ?? 0,

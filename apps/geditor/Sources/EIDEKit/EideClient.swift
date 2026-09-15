@@ -66,9 +66,56 @@ public actor EideClient {
     /// giành mất nó cũng nhìn thấy được.
     public func theoDoi(_ f: @escaping (String, [String: Any]) -> Void) { onSuKien = f }
 
+    /// Chốt tuần tự hoá — xem `goi`. Một mutex bất đồng bộ, không phải `Task` nối đuôi:
+    /// một `Task` chỉ bao phần CHỜ, nó hoàn thành ngay khi lời gọi trước bắt đầu đọc ống chứ
+    /// không đợi đọc xong — nên hai lời gọi vẫn vào ống cùng lúc. (Tôi đã viết nhầm đúng như
+    /// thế một lần, và test E2E vẫn treo y nguyên.)
+    private var dangBan = false
+    private var hangCho: [CheckedContinuation<Void, Never>] = []
+
+    private func vaoHang() async {
+        if !dangBan {
+            dangBan = true
+            return
+        }
+        await withCheckedContinuation { c in hangCho.append(c) }
+    }
+
+    private func roiHang() {
+        if hangCho.isEmpty {
+            dangBan = false
+        } else {
+            hangCho.removeFirst().resume()
+        }
+    }
+
     /// Gọi một phương thức. `method` là kiểu sinh từ openrpc.json, nên không gõ nhầm được tên.
+    ///
+    /// ## Vì sao phải xếp hàng, dù đây đã là một actor
+    ///
+    /// Actor tuần tự hoá từng ĐOẠN mã giữa hai điểm treo, không tuần tự hoá cả một hàm `async`.
+    /// `goi` có `await transport.receiveLine()` bên trong vòng đọc, và ở đúng chỗ ấy actor
+    /// **nhả quyền** cho lời gọi khác vào. Hai lời gọi đồng thời vì thế tranh nhau đọc một ống:
+    /// lời gọi B đọc được câu trả lời của A, thấy `id` khác, `continue` — và A không bao giờ
+    /// thấy câu trả lời của mình nữa. **Cả hai treo vĩnh viễn.**
+    ///
+    /// Đo 15/09/2026: mở một màn phát ra ba lời gọi gần như cùng lúc — `caps.describe` cho ô
+    /// nhập, `caps.invoke` để nạp màn, `caps.invoke passport.list` cho gợi ý — và màn "Xung đột
+    /// tri thức" đứng ở "Đang đọc trạng thái…" mãi mãi, trong khi daemon trả lời trong 0,4 giây.
+    /// Một test E2E gọi ba lượt bằng `async let` treo đủ 10 phút.
+    ///
+    /// Chốt này xếp chúng nối đuôi: mỗi lời gọi chờ lời gọi trước đọc xong response của nó rồi
+    /// mới bắt đầu. Xem lỗi im lặng số 35.
     @discardableResult
     public func goi(_ method: EideMethod, _ params: [String: Any] = [:]) async throws -> [String: Any] {
+        await vaoHang()
+        defer { roiHang() }
+        return try await _goiMotMinh(method, params)
+    }
+
+    /// Thân thật của `goi`, chạy khi đã chắc chắn không ai khác đang đọc ống.
+    private func _goiMotMinh(_ method: EideMethod,
+                             _ params: [String: Any]) async throws -> [String: Any] {
         soThuTu += 1
         let yeu_cau: [String: Any] = ["jsonrpc": "2.0", "id": soThuTu,
                                       "method": method.rawValue, "params": params]

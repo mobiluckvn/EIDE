@@ -296,7 +296,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Ba mươi ba lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Ba mươi lăm lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -564,6 +564,23 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
     cuối và dòng `start` tương ứng có thể đã bị cắt. Sửa ở nguồn: cả bốn nhánh kết thúc —
     done, failed, pending, rejected — nay đều mang tên năng lực, và có test quét mã để không
     nhánh nào bị bỏ sót lần sau.
+34. **`undo.list` chết vì một bản ghi do CHÍNH nó ghi ra tháng trước** (15/09). Sổ cái là
+    append-only, nên nó chứa bản ghi của mọi phiên bản mã từng chạy — kể cả các bản ghi ra
+    trước khi trường `cap` được thêm vào. `undo.list` đọc `m["cap"]`, gặp một bản ghi cũ thì
+    nổ `KeyError` và người dùng nhận E1000 "lỗi nội bộ". Không test nào thấy vì test nào cũng
+    chạy trên một sổ cái vừa tạo — tức một sổ cái chỉ có bản ghi của phiên bản mã hiện tại.
+    **Sổ cái càng sống lâu càng dễ hỏng, và test thì luôn trẻ.** Sửa bằng `.get()` cho mọi
+    trường thêm sau, và khoá sắp xếp `x["at"] or ""` để một bản ghi thiếu mốc thời gian không
+    kéo cả lời gọi xuống theo.
+35. **Hai lời gọi song song làm TREO client, vĩnh viễn** (15/09). `EideClient` là `actor`, và
+    tôi đã tin rằng actor tuần tự hoá cả hàm. Nó không: actor tuần tự hoá phần mã **giữa các
+    điểm treo** — tới `await` là nó nhả quyền cho lời gọi khác vào. Nên hai lời gọi cùng lúc
+    đều ghi vào stdin rồi cùng đọc stdout, mỗi bên nhận câu trả lời của bên kia; cả hai chờ
+    một phản hồi không bao giờ tới. Trong giao diện thì đây là một màn đứng im mãi mãi, không
+    lỗi, không xoay. Bản sửa ĐẦU của tôi cũng sai — nối các lời gọi bằng `Task`, trong khi
+    `Task` hoàn tất khi thân nó **chờ xong**, không phải khi việc xong. Bản đúng là một mutex
+    bất đồng bộ dựng bằng `CheckedContinuation`. Test bắt được: 0,314 giây thay cho 10 phút
+    treo.
 
 **Số 18–21 có chung một đặc điểm:** chúng đều nằm ở **chỗ nối giữa hai phần đã được test kỹ**.
 Khung nhìn có test, client có test, daemon có test, hợp đồng có test — và cả bốn lỗi sống trong
@@ -575,6 +592,12 @@ thật — và nó bắt được cả bốn trong một buổi.
 test đang có — không phải vì test yếu, mà vì chúng sống ở những chỗ chỉ tồn tại khi sản phẩm
 chạy thật: một ống stdio có đệm hữu hạn, một tiến trình con đọc cấu hình của dự án, một cú bấm
 chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên tiếp ngay trước đó.
+
+**Số 34 và 35 nói hai điều về TUỔI và về ĐỒNG THỜI.** Cả hai đều bất khả thi với một bài test
+đơn luồng trên dữ liệu mới: 34 cần một sổ cái già hơn mã đang chạy, 35 cần hai lời gọi chồng
+lên nhau. Cả hai nay đều có test — một test ghi thẳng bản ghi kiểu cũ vào sổ, một test bắn hai
+lời gọi song song và đặt hạn giờ. Điểm chung với 30–33: không cái nào lộ ra nếu chỉ chạy
+`make check`.
 
 **Số 22–25 nói thêm một điều nữa, và nó khó chịu hơn:** bốn cái này đều nằm ở chỗ **một bên
 khai, bên kia không đọc**. Registry giữ `dac_trung` mà Router không gọi; manifest ISA khai
