@@ -86,6 +86,26 @@
    }
   },
   {
+   "name": "budget.state",
+   "summary": "Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5",
+   "params": [
+    {
+     "name": "params",
+     "schema": {
+      "type": "object",
+      "description": "{}"
+     }
+    }
+   ],
+   "result": {
+    "name": "result",
+    "schema": {
+     "type": "object",
+     "description": "{daily_budget_usd, spent_usd, remaining_usd, calls_today, warn_pct, sap_het}"
+    }
+   }
+  },
+  {
    "name": "session.state",
    "summary": "Đọc M2 của phiên đang mở (MEM-11 §2). `permits`/`board` rỗng cho tới khi SessionMemory lưu chúng — DEV-110",
    "params": [

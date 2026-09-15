@@ -1002,7 +1002,73 @@ final class MainWindowController: NSWindowController {
         let tao = m.addItem(withTitle: "Tạo dự án mới…", action: #selector(taoDuAnMoi),
                             keyEquivalent: "")
         tao.target = self
+
+        // UC-A6/A7 — ba việc vòng đời dự án. Đặt sau một vạch ngăn và chỉ bật khi CÓ dự án
+        // đang mở: "nhân bản" khi chưa mở dự án nào là một mục bấm vào rồi mới biết không làm
+        // gì được.
+        if eidePanel != nil, AppDelegate.duAnMoSan() != nil {
+            m.addItem(.separator())
+            for (nhan, sel) in [("Nhân bản dự án…", #selector(nhanBanDuAn)),
+                                ("Lưu trữ dự án…", #selector(luuTruDuAn)),
+                                ("Quay lại mốc…", #selector(quayLaiMoc))] {
+                let it = m.addItem(withTitle: nhan, action: sel, keyEquivalent: "")
+                it.target = self
+            }
+        }
         m.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+    }
+
+    /// UC-A6 — nhân bản dự án. `project.clone` cần `src` + `new_name`, R2 → qua cổng.
+    @MainActor
+    @objc private func nhanBanDuAn() {
+        guard let p = eidePanel, let goc = AppDelegate.duAnMoSan() else { return }
+        guard let ten = hoiMotDong(
+            tieu: "Nhân bản dự án",
+            mo: "Bản sao giữ nguyên tri thức, hộ chiếu và lịch sử. Đặt tên cho bản mới:",
+            goiY: (goc as NSString).lastPathComponent + "-ban-sao") else { return }
+        p.chayVaBao("project.clone", ["src": goc, "new_name": ten])
+    }
+
+    /// UC-A6 — lưu trữ. Không hỏi gì thêm: `project` là dự án đang mở.
+    @MainActor
+    @objc private func luuTruDuAn() {
+        guard let p = eidePanel, let goc = AppDelegate.duAnMoSan() else { return }
+        let a = NSAlert()
+        a.messageText = "Lưu trữ dự án?"
+        a.informativeText = "Dự án được đóng gói lại. Tri thức và lịch sử giữ nguyên trong gói; "
+            + "thư mục làm việc thì thôi được cập nhật."
+        a.addButton(withTitle: "Lưu trữ")
+        a.addButton(withTitle: "Huỷ")
+        guard a.runModal() == .alertFirstButtonReturn else { return }
+        p.chayVaBao("project.archive", ["project": goc])
+    }
+
+    /// UC-A7 — quay lại mốc. `tag` để trống nghĩa là mốc gần nhất (hợp đồng cho phép).
+    @MainActor
+    @objc private func quayLaiMoc() {
+        guard let p = eidePanel else { return }
+        let ten = hoiMotDong(
+            tieu: "Quay lại một mốc",
+            mo: "Store và mã quay về mốc ấy. Để trống = mốc gần nhất.",
+            goiY: "") ?? ""
+        p.chayVaBao("project.rollback", ten.isEmpty ? [:] : ["tag": ten])
+    }
+
+    /// Hộp thoại một dòng. Trả nil khi người huỷ, và trả nil cả khi họ để TRỐNG một ô bắt buộc
+    /// — người gọi quyết ô nào bắt buộc bằng cách truyền `goiY` rỗng hay không.
+    @MainActor
+    private func hoiMotDong(tieu: String, mo: String, goiY: String) -> String? {
+        let a = NSAlert()
+        a.messageText = tieu
+        a.informativeText = mo
+        let o = NSTextField(frame: NSRect(x: 0, y: 0, width: 380, height: 24))
+        o.stringValue = goiY
+        a.accessoryView = o
+        a.addButton(withTitle: "Tiếp")
+        a.addButton(withTitle: "Huỷ")
+        a.window.initialFirstResponder = o
+        guard a.runModal() == .alertFirstButtonReturn else { return nil }
+        return o.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     @MainActor

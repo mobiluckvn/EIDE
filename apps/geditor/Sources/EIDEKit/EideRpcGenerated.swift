@@ -14,6 +14,8 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case autonomyGet = "autonomy.get"
     /// set là R4 khi nới lỏng → gate
     case autonomySet = "autonomy.set"
+    /// Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5
+    case budgetState = "budget.state"
     case capsDescribe = "caps.describe"
     /// Đường gọi duy nhất; tool nặng trả job_id trong result
     case capsInvoke = "caps.invoke"
@@ -228,5 +230,5 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
 }
 
 /// Số phương thức và mã lỗi lúc sinh — test hợp đồng đối chiếu với spec (API-15 §8).
-public let eideSoPhuongThuc = 63
+public let eideSoPhuongThuc = 64
 public let eideSoMaLoi = 29

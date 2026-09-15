@@ -40,6 +40,7 @@ c.push(P('Socket: `~/.eide/run/eided.sock` (macOS/Linux), named pipe trên Windo
 const RPC = [
  ['plane.hello', '{plugin_version, client}', '{api_version, daemon_version, project?, capabilities_hash}', 'Handshake; từ chối khi major khác'],
  ['project.list / project.open / project.close', '{} / {path|id} / {}', '{projects[]} / {project, state_summary} / {}', 'Mở dự án = M2 SessionMemory mới'],
+ ['budget.state', '{}', '{daily_budget_usd, spent_usd, remaining_usd, calls_today, warn_pct, sap_het}', 'Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5'],
  ['session.state', '{}', '{session_id, opened_at, autonomy_effective, stopped, turns, undo_items, permits[], board?}', 'Đọc M2 của phiên đang mở (MEM-11 §2). `permits`/`board` rỗng cho tới khi SessionMemory lưu chúng — DEV-110'],
  ['chat.send', '{text, attachments?[]}', '{intent_id, run_id?}', 'Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện'],
  ['chat.answer', '{question_id, option?, text?}', '{}', 'Trả lời câu hỏi gộp'],

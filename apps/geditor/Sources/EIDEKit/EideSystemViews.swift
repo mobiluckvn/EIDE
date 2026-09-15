@@ -306,7 +306,39 @@ public final class ModelsView: ManHinhCoSo {
                  mau: EideToken.Mau.info)
         if !tuChu.isEmpty { themDong("mức tự chủ", tuChu) }
 
+        _hienNganSach(ketQua)
         _hienTuSoCai(ketQua)
+    }
+
+    /// Ngân sách ngày — USECASE §4 mục 8, APD-08 §5.
+    ///
+    /// Đặt TRƯỚC danh sách lượt gọi vì nó trả lời câu hỏi người hỏi trước khi chạy một việc
+    /// nặng: *tôi còn bao nhiêu*. Danh sách lượt gọi trả lời câu hỏi sau đó: *đã tiêu vào đâu*.
+    ///
+    /// Không có hạn mức thì NÓI RA, không hiện "còn 100%": `daily_budget_usd` vắng nghĩa là
+    /// chưa ai đặt trần, và một thanh đầy màu xanh ở đó là lời trấn an không có căn cứ.
+    private func _hienNganSach(_ ketQua: [String: Any]) {
+        guard let b = ketQua["budget"] as? [String: Any] else { return }
+        let daTieu = EideSo.thuc(b["spent_usd"]) ?? 0
+        guard let han = EideSo.thuc(b["daily_budget_usd"]), han > 0 else {
+            themDong("ngân sách ngày", String(format: "chưa đặt trần — đã tiêu %.4f USD", daTieu),
+                     mau: EideToken.Mau.muted)
+            return
+        }
+        let conLai = EideSo.thuc(b["remaining_usd"]) ?? max(0, han - daTieu)
+        let pct = han > 0 ? conLai / han * 100 : 0
+        let sapHet = (b["sap_het"] as? Bool) ?? false
+        themDong("ngân sách ngày",
+                 String(format: "còn %.4f / %.2f USD (%.0f%%)", conLai, han, pct),
+                 mau: sapHet ? EideToken.Mau.bad : EideToken.Mau.ok)
+        if sapHet {
+            // APD-08 §5 kể "ngân sách token/ngày còn < 20%" là MỘT TRONG NĂM lý do leo thang.
+            // Nói ra hệ quả, không chỉ nói con số: người đọc cần biết việc gì sắp không chạy.
+            let nguong = EideSo.thuc(b["warn_pct"]) ?? 20
+            noiRong(String(format: "Còn dưới %.0f%% ngân sách ngày — tác tử sẽ LEO THANG lên anh "
+                           + "thay vì tự gọi mô hình (APD-08 §5). Việc nặng nên hoãn tới mai, "
+                           + "hoặc nâng `daily_budget_usd` trong `.eide/models.yaml`.", nguong))
+        }
     }
 
     /// Gom `model.call` từ SỔ CÁI theo vai trò — UC-F7, đóng [DEV-093].

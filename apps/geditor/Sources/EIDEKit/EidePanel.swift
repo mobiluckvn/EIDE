@@ -584,6 +584,25 @@ public final class EidePanel: NSView {
         }
     }
 
+    /// Chạy một năng lực và báo kết quả vào hội thoại — cho việc gọi từ MENU.
+    ///
+    /// Khác `chayTuONhap`: ở đây không có màn nào đang mở để đổ kết quả vào, và người dùng vừa
+    /// bấm một mục menu nên họ đang nhìn cả cửa sổ. Hội thoại là chỗ duy nhất chắc chắn thấy.
+    ///
+    /// Việc R2 vào hàng đợi thì KHÔNG báo "xong": `chay` trả về qua `khiLoi` với câu của cổng,
+    /// và nói "đã nhân bản" cho một việc đang chờ duyệt là nói dối về trạng thái dự án.
+    @MainActor
+    public func chayVaBao(_ cap: String, _ ts: [String: Any]) {
+        hoiThoai.themLuot(by: .heThong, text: "Đang chạy `\(cap)`…")
+        chay(cap, ts, khiLoi: { [weak self] loi in
+            self?.hoiThoai.themLuot(by: .loi, text: loi)
+        }) { [weak self] r in
+            let tom = r.isEmpty ? "xong" : r.map { "\($0.key): \($0.value)" }
+                .sorted().joined(separator: " · ")
+            self?.hoiThoai.themLuot(by: .tacTu, text: "`\(cap)` \(tom)")
+        }
+    }
+
     /// Cập nhật tên dự án trên thanh trên.
     @MainActor
     public func datTenDuAn(_ ten: String?) { thanhTuChu.datDuAn(ten) }
@@ -725,6 +744,16 @@ public final class EidePanel: NSView {
                 if let ph { g["session"] = ph }
                 await MainActor.run { v.capNhat(ketQua: g) }
             case "Models":
+                // Màn chi phí gom HAI nguồn: sổ cái (`view.timeline` → `model.call`) và ngân
+                // sách (`budget.state`). Một mình danh sách lượt gọi nói "đã tiêu vào đâu";
+                // người sắp chạy một việc nặng hỏi câu khác — "tôi còn bao nhiêu".
+                let ns = try? await client.goi(.budgetState, [:])
+                let tl = try? await client.goi(.capsInvoke,
+                                               ["id": "view.timeline", "params": [:]])
+                var gm: [String: Any] = (tl?["result"] as? [String: Any]) ?? [:]
+                if let ns { gm["budget"] = ns }
+                await MainActor.run { v.capNhat(ketQua: gm) }
+            case "__models_cu__":
                 // Chi phí nằm trong `project.status`; mức tự chủ trong `autonomy.get`.
                 let tc = try? await client.goi(.autonomyGet, [:])
                 let r = try? await client.goi(.capsInvoke,
@@ -893,7 +922,6 @@ public final class EidePanel: NSView {
         case "XungDot": return "kg.conflicts"
         // Màn "Làm rõ yêu cầu" KHÔNG tự nạp: `chat.parse_intent` cần `text`, và đoán một câu
         // để tự chạy là bịa ra yêu cầu của người dùng. Màn mở ra nói câu mời gõ ở ô lệnh.
-        case "Models": return "view.timeline"
         default: return nil
         }
     }

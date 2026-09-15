@@ -612,3 +612,94 @@ def test_daemon_dung_NIEM_cua_du_an(workspace):
     from eide.daemon.rpc import Daemon as _D
     src = inspect.getsource(_D.__init__)
     assert "policy.sig" in src, "daemon phải trỏ vào niêm của dự án"
+
+
+# ---------- budget.state (USECASE §4 mục 8)
+
+
+def test_ngan_sach_cong_tu_SO_CAI_chu_khong_tu_bo_dem(workspace):
+    """Một dự án có thể có nhiều tiến trình cùng tiêu tiền — giao diện, CLI, tác tử nền.
+
+    Bộ đếm sống trong tiến trình thì mỗi tiến trình đếm phần của mình, và không ai biết tổng.
+    Sổ cái là chỗ duy nhất cả ba cùng ghi.
+    """
+    import yaml as _yaml
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "models.yaml").write_text(
+        _yaml.safe_dump({"policy": {"daily_budget_usd": 5}}), encoding="utf-8")
+
+    d = Daemon(project=workspace)
+    d.ledger.append("model.call", {"role": "librarian", "cost_usd": 1.25})
+    d.ledger.append("model.call", {"role": "coder", "cost_usd": 0.75})
+
+    b = d.budget_state({})
+    assert b["daily_budget_usd"] == 5
+    assert abs(b["spent_usd"] - 2.0) < 1e-6
+    assert abs(b["remaining_usd"] - 3.0) < 1e-6
+    assert b["calls_today"] == 2
+    assert b["sap_het"] is False
+
+
+def test_sap_het_theo_nguong_budget_warn_pct(workspace):
+    """APD-08 §5: ngân sách ngày còn dưới 20% là một trong năm lý do LEO THANG."""
+    import yaml as _yaml
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "models.yaml").write_text(
+        _yaml.safe_dump({"policy": {"daily_budget_usd": 10}}), encoding="utf-8")
+    d = Daemon(project=workspace)
+    d.ledger.append("model.call", {"cost_usd": 8.5})
+    assert d.budget_state({})["sap_het"] is True
+
+
+def test_khong_co_tran_thi_sap_het_la_CHUA_BIET_khong_phai_con_nhieu(workspace):
+    """`daily_budget_usd` vắng nghĩa là chưa ai đặt trần.
+
+    Trả `sap_het: False` ở đó là khẳng định "còn nhiều" cho một hạn mức không tồn tại — và một
+    cảnh báo ngân sách sai hướng thì hoặc làm người ta hoảng, hoặc dạy người ta bỏ qua nó.
+    """
+    d = Daemon(project=workspace)
+    b = d.budget_state({})
+    assert b["daily_budget_usd"] is None
+    assert b["remaining_usd"] is None
+    assert b["sap_het"] is None
+
+
+def test_models_yaml_hong_thi_khong_no(workspace):
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "models.yaml").write_text("{ không: phải: yaml", encoding="utf-8")
+    assert Daemon(project=workspace).budget_state({})["daily_budget_usd"] is None
+
+
+def test_cost_usd_sai_kieu_bi_bo_qua_chu_khong_lam_hong_ca_phep_cong(workspace):
+    """Một bản ghi hỏng không được làm mất tổng của những bản ghi lành."""
+    import yaml as _yaml
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "models.yaml").write_text(
+        _yaml.safe_dump({"policy": {"daily_budget_usd": 5}}), encoding="utf-8")
+    d = Daemon(project=workspace)
+    d.ledger.append("model.call", {"cost_usd": "rẻ"})
+    d.ledger.append("model.call", {"cost_usd": 1.5})
+    assert abs(d.budget_state({})["spent_usd"] - 1.5) < 1e-6
+
+
+def test_chi_cong_LUOT_GOI_cua_NGAY_HOM_NAY(workspace, monkeypatch):
+    """Hạn mức là hạn mức NGÀY. Cộng cả bản ghi hôm qua thì trần cạn từ sáng."""
+    import yaml as _yaml
+
+    (workspace / ".eide").mkdir(parents=True, exist_ok=True)
+    (workspace / ".eide" / "models.yaml").write_text(
+        _yaml.safe_dump({"policy": {"daily_budget_usd": 5}}), encoding="utf-8")
+    d = Daemon(project=workspace)
+    d.ledger.append("model.call", {"cost_usd": 2.0})
+
+    # Ghi tay một bản ghi mang ngày cũ — `append` luôn đóng dấu hôm nay, nên phải chèn thẳng.
+    import json as _json
+    with d.ledger.path.open("a", encoding="utf-8") as f:
+        f.write(_json.dumps({"seq": 999, "ts": "2020-01-01T00:00:00+00:00",
+                             "kind": "model.call", "actor": "agent",
+                             "data": {"cost_usd": 99.0}, "prev_hash": "0" * 64,
+                             "hash": "a" * 64}, ensure_ascii=False) + "\n")
+    assert abs(d.budget_state({})["spent_usd"] - 2.0) < 1e-6, "cộng cả bản ghi hôm qua"

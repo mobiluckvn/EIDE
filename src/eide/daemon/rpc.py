@@ -205,7 +205,7 @@ class Daemon:
             # `Router.invoke` như mọi lời gọi khác, nên cùng cổng chính sách, cùng nhật ký, cùng
             # hoàn tác. Một đường tắt gọi thẳng handler sẽ nhanh hơn và sẽ bỏ qua cả ba thứ ấy.
             **{ten: self._alias(cap) for ten, cap in ALIAS.items()},
-            "project.close": self.project_close, "session.state": self.session_state,
+            "project.close": self.project_close, "session.state": self.session_state, "budget.state": self.budget_state,
             "diagram.open": self.diagram_open, "diagram.save": self.diagram_save,
             "doc.open": self.doc_open, "hex.resolve": self.hex_resolve,
             "chat.send": self.chat_send, "chat.answer": self.chat_answer,
@@ -639,6 +639,60 @@ class Daemon:
         mục vẫn nằm nguyên trong store — đúng thứ DEV-049 vừa sửa ở tầng dưới.
         """
         return {"items": self.router.cho_con_lai(self.ctx)}
+
+    def budget_state(self, p: dict[str, Any]) -> dict[str, Any]:
+        """Ngân sách token/chi phí — USECASE §4 mục 8, APD-08 §5 (leo thang khi còn < 20%).
+
+        Ba con số, ba nguồn khác nhau, và nói rõ nguồn nào ra nguồn nào:
+
+        - `daily_budget_usd` — hạn mức NGÀY, từ `models.yaml` `policy.daily_budget_usd`.
+        - `spent_usd` — đã tiêu, cộng từ SỔ CÁI (`model.call.cost_usd`) trong ngày hôm nay.
+        - `warn_pct` — ngưỡng cảnh báo, từ `defaults.yaml` `thresholds.budget_warn_pct` (20).
+
+        Cộng từ sổ cái chứ không giữ một bộ đếm: bộ đếm sống trong tiến trình, mà một dự án có
+        thể có nhiều tiến trình (giao diện, CLI, tác tử nền) cùng tiêu tiền. Sổ cái là chỗ duy
+        nhất cả ba cùng ghi.
+        """
+        from datetime import date
+
+        import yaml as _yaml
+
+        han = 0.0
+        if self.ctx.project_dir:
+            f = Path(self.ctx.project_dir) / ".eide" / "models.yaml"
+            if f.exists():
+                try:
+                    d = _yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+                    han = float(((d.get("policy") or {}).get("daily_budget_usd")) or 0)
+                except (OSError, _yaml.YAMLError, TypeError, ValueError):
+                    han = 0.0
+
+        hom_nay = date.today().isoformat()
+        da_tieu, so_luot = 0.0, 0
+        for r in self.ledger.records():
+            if r.get("kind") != "model.call":
+                continue
+            if not str(r.get("ts", "")).startswith(hom_nay):
+                continue
+            so_luot += 1
+            try:
+                da_tieu += float((r.get("data") or {}).get("cost_usd") or 0)
+            except (TypeError, ValueError):
+                continue
+
+        canh_bao = float(self.gate.config.get("thresholds", {}).get("budget_warn_pct") or 20)
+        con_lai = max(0.0, han - da_tieu) if han > 0 else None
+        return {
+            "daily_budget_usd": han or None,
+            "spent_usd": round(da_tieu, 6),
+            "remaining_usd": None if con_lai is None else round(con_lai, 6),
+            "calls_today": so_luot,
+            "warn_pct": canh_bao,
+            # `sap_het` chỉ có nghĩa khi CÓ hạn mức. None nghĩa là chưa biết, không phải "còn
+            # nhiều" — và một cảnh báo ngân sách sai hướng thì hoặc làm người ta hoảng, hoặc
+            # dạy người ta bỏ qua nó.
+            "sap_het": None if han <= 0 else (con_lai or 0) < han * canh_bao / 100,
+        }
 
     def autonomy_get(self, p: dict[str, Any]) -> dict[str, Any]:
         return {"autonomy": self.ctx.autonomy or self.gate.config.get("autonomy"), "stopped": self.gate.stopped}

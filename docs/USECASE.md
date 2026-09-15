@@ -300,7 +300,25 @@ nếu thành công thường. **Thất bại được nhớ kỹ hơn thành cô
 | ~~2~~ | ~~**UC-C9** xung đột tri thức chưa có màn~~ — **XONG 15/09**: màn "Xung đột tri thức", hai cột song song ([DEV-109]) | C9 | ~~1~~ |
 | ~~3~~ | ~~**UC-F7** chi phí đọc cấu hình thay vì sổ cái~~ — **XONG 15/09**: `ModelsView` gom `model.call` từ `view.timeline`; [DEV-093] đóng | F7 | ~~1~~ |
 | ~~4~~ | ~~Ô nhập chưa có gợi ý~~ — **XONG 15/09**: `passport.list`/`project.status` nạp gợi ý; một giá trị duy nhất thì điền sẵn, nhiều thì gợi ý chứ không chọn hộ | C10, E4 | ~~2~~ |
-| 5 | **UC-A6/A7** nhân bản, lưu trữ, rollback chưa có đường vào UI | A6, A7 | 3 |
+| ~~5~~ | ~~**UC-A6/A7** chưa có đường vào UI~~ — **XONG 15/09**: ba mục trong menu dự án, chỉ bật khi có dự án đang mở | A6, A7 | ~~3~~ |
 | ~~6~~ | ~~**UC-B10** chưa có bảng đánh đổi~~ — **XONG 15/09**: ma trận + điểm + đánh dấu khuyến nghị, nói rõ người quyết (T1*) | B10 | ~~2~~ |
 | ~~7~~ | ~~Chưa hiện **M2 phiên**~~ — **XONG 15/09**: `session.state` + màn Tổng quan; hai trường lõi chưa lưu được NÓI RA ([DEV-110]) | F1 | ~~2~~ |
-| 8 | Chưa có chỗ xem **ngân sách token còn lại** trước khi chạy việc nặng | F7 | 3 |
+| ~~8~~ | ~~Chưa xem được **ngân sách còn lại**~~ — **XONG 15/09**: `budget.state` cộng từ SỔ CÁI; dưới 20% thì nói rõ tác tử sẽ leo thang (APD-08 §5) | F7 | ~~3~~ |
+
+
+---
+
+## Phần 5 — Trạng thái sau đợt 15/09/2026
+
+**Cả 8 mục của §4 đã đóng.** Số đo sau đợt: 26 màn trong bảng UXD-13 §2 · 23 màn chuyên đề trên
+điều hướng (5 nhóm) · 64 phương thức JSON-RPC · độ phủ UI **201/201** · 1.595 test Python và
+2.996 test Swift.
+
+Ba việc còn nợ, đều là nợ HIỆN THỰC LÕI chứ không phải nợ giao diện — giao diện đã đọc sẵn
+chúng và không phải đổi một dòng nào khi chúng có dữ liệu:
+
+| Nợ | Ai trả | Ghi ở |
+|---|---|---|
+| `SessionMemory` chưa lưu `permits[]` (quyền R4 theo phiên) | `Router.quyet_dinh` khi quyết định là cấp quyền | [DEV-110] |
+| `SessionMemory` chưa lưu `board` (target gắn vào phiên) | cùng lúc với `discover.chip_id` — cần phần cứng | [DEV-110] |
+| `cost_usd` trong sổ cái luôn 0 khi gateway không trả giá | bảng `pricing` của `models.yaml` đã có; cần Gateway nhân token × giá | — |

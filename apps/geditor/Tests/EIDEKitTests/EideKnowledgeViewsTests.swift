@@ -306,7 +306,10 @@ final class EideNapLanDauTests: XCTestCase {
         // nguồn — `project.status` (năng lực) và `session.state` (phương thức daemon, M2). Hai
         // thứ ấy trả lời cùng một câu hỏi "dự án này đang ở đâu", và bắt người dùng mở hai màn
         // để ghép lại là bắt họ làm việc của giao diện.
-        for m in ["Passport", "Env", "NhatKy", "XungDot", "Models"] {
+        // "Models" ra khỏi danh sách 15/09 cùng lý do với "Main": nó nạp bằng nhánh riêng gom
+        // HAI nguồn — sổ cái (`view.timeline` → `model.call`, "đã tiêu vào đâu") và
+        // `budget.state` ("còn bao nhiêu"). Người sắp chạy một việc nặng hỏi câu thứ hai.
+        for m in ["Passport", "Env", "NhatKy", "XungDot"] {
             let md = EidePanel.napMacDinh(choMan: m)
             XCTAssertNotNil(md, "\(m) mất năng lực nạp mặc định")
             XCTAssertTrue(EidePanel.napAnToan.contains(md!),
@@ -327,6 +330,9 @@ final class EideNapLanDauTests: XCTestCase {
         XCTAssertTrue(src.contains("case \"Main\":"),
                       "Main không có `napMacDinh` và cũng không có nhánh nạp riêng")
         XCTAssertTrue(src.contains(".sessionState"), "nhánh Main phải gọi `session.state`")
+
+        XCTAssertNil(EidePanel.napMacDinh(choMan: "Models"))
+        XCTAssertTrue(src.contains(".budgetState"), "nhánh Models phải gọi `budget.state`")
     }
 
     func testMANgraphCOYkhongCOnapMACdinh() {
