@@ -83,7 +83,19 @@ enum WindowCapture {
         case eideXungDot = "eide-xung-dot"   // hai bên xung đột, mỗi bên kèm nguồn và tầng
         case eideLamRo = "eide-lam-ro"       // màn làm rõ yêu cầu
         case eideModels = "eide-models"      // mô hình & chi phí
+        case eideMaNguon = "eide-ma-nguon"   // cây dự án + trình soạn thảo
     }
+
+    // ĐỌC ẢNH `eide-*` THẾ NÀO
+    //
+    // `cacheDisplay` KHÔNG vẽ cột điều hướng EIDE ra — trên ảnh nó là một vùng TRONG SUỐT bên
+    // trái, và tỉ lệ "không vẽ được" in ra sau mỗi cảnh phần lớn là nó. Đừng đọc vùng ấy như
+    // "cột điều hướng biến mất": ba bài `--self-test EIDE` đo trực tiếp trên cửa sổ thật và
+    // khẳng định cột có mặt, rộng 220 pt, mở được cả 23 màn (đo 15/09/2026, 3/3 đạt).
+    //
+    // Cây tệp (`NSOutlineView` của `WorkspaceView`) thì VẼ ĐƯỢC. Nên ảnh `eide-ma-nguon` dùng
+    // được để soi đúng thứ nó sinh ra để soi: cây có trỏ vào dự án không, `.eide/` có hiện không,
+    // và có bao nhiêu cây trên màn hình — bản đầu có HAI, và chỉ ảnh chụp cho thấy điều đó.
 
     /// Thư mục dữ liệu cho tám cảnh `dt-*`. `nil` thì bỏ qua chúng.
     private static var dataDirectory: String? {
@@ -110,7 +122,7 @@ enum WindowCapture {
         // lực), rồi mới gọi được năng lực của màn. Đo 15/09: khoảng 2,5 s tới lúc daemon trả
         // lời lần đầu. Chụp sớm hơn ra một màn "đang nạp…" — và một ảnh như thế thì không sai,
         // chỉ là không nói được gì.
-        case .eideXungDot, .eideLamRo, .eideModels: return 8
+        case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon: return 8
         default: return 0.4
         }
     }
@@ -228,6 +240,8 @@ enum WindowCapture {
             _ = chuanBiEide("LamRo", on: controller)
         case .eideModels:
             _ = chuanBiEide("Models", on: controller)
+        case .eideMaNguon:
+            _ = chuanBiEide("Code", on: controller)
         case .trong:
             controller.prepareSelfTestDocument("""
                 Xin chào. Đây là GEditor.

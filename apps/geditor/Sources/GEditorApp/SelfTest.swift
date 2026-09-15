@@ -1,4 +1,5 @@
 import AppKit
+import EIDEKit
 import GEditorCore
 
 /// Tự kiểm những đường mà phím giả lập không chạm tới được (`GEditorApp --self-test`).
@@ -324,6 +325,63 @@ enum SelfTest {
     // MARK: - Các bài
 
     static let cases: [Case] = [
+
+        // ---------------------------------------------------------------- Khung EIDE
+        //
+        // Ba bài dưới đây kiểm CỬA SỔ THẬT, và chúng ở đây vì không bộ test nào khác kiểm được:
+        // `MainWindowController` nằm trong target thực thi `GEditorApp`, mà một target thực thi
+        // thì không import được từ bộ test. Hệ quả đo được là cả một lớp lỗi từng sống rất lâu —
+        // "bấm vào sidebar thì màn nào cũng rỗng" (lỗi im lặng 32) chỉ lộ ra khi có người bật
+        // giao diện lên và bấm thử.
+        //
+        // Ảnh chụp cũng không thay được: `cacheDisplay` KHÔNG vẽ cột điều hướng ra, nên trên ảnh
+        // nó là một vùng trong suốt — không phân biệt được "không vẽ được" với "không có".
+
+        Case(name: "EIDE: cột điều hướng có mặt trong cửa sổ, rộng 220") { controller in
+            guard let goc = controller.window?.contentView else { return "cửa sổ chưa có contentView" }
+            func tim(_ v: NSView) -> NSView? {
+                if v.accessibilityLabel() == "Điều hướng màn hình EIDE" { return v }
+                for c in v.subviews { if let r = tim(c) { return r } }
+                return nil
+            }
+            guard let dh = tim(goc) else {
+                return "không tìm thấy cột điều hướng EIDE trong cây khung nhìn — "
+                     + "cửa sổ đang là trình soạn thảo trần, không phải EIDE (DEV-098)"
+            }
+            // Bề rộng đọc từ ràng buộc chứ không từ `frame`: `frame` chỉ đúng sau một lượt bố
+            // cục, và bài này chạy ngay sau khi cửa sổ hiện ra.
+            controller.window?.layoutIfNeeded()
+            let rong = dh.enclosingScrollView?.frame.width ?? dh.frame.width
+            guard rong >= 200 else { return "cột điều hướng rộng \(rong) pt — gần như không thấy" }
+            return nil
+        },
+
+        Case(name: "EIDE: mở màn Mã nguồn thì cây tệp hiện ra") { controller in
+            controller.chonManEide(tien: "Code")
+            controller.window?.layoutIfNeeded()
+            guard controller.isSidebarVisible else {
+                return "vào màn Mã nguồn mà cây tệp vẫn ẩn — người dùng thấy một bộ đệm trống "
+                     + "và không có đường nào tới tệp của dự án"
+            }
+            return nil
+        },
+
+        Case(name: "EIDE: mọi màn sidebar mở được, không màn nào làm rơi cửa sổ") { controller in
+            // Đi qua HẾT các màn. Bài này bắt đúng dạng lỗi im lặng 32: một màn mở ra rỗng, hoặc
+            // một tiền tố trong bảng điều hướng không khớp tiền tố nào trong panel.
+            for nhom in EideDieuHuong.NHOM {
+                for m in nhom.man {
+                    controller.chonManEide(tien: m.tien)
+                    controller.window?.layoutIfNeeded()
+                    guard controller.window?.contentView != nil else {
+                        return "mở màn \(m.nhan) (\(m.tien)) xong thì cửa sổ mất contentView"
+                    }
+                }
+            }
+            controller.chonManEide(tien: "Code")
+            return nil
+        },
+
         Case(name: "gõ một ký tự trên ba vùng chọn") { controller in
             controller.prepareSelfTestDocument("ERROR một\nOK hai\nERROR ba\n")
             controller.selectAllOccurrencesForSelfTest("ERROR")

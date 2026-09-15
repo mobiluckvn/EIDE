@@ -19,6 +19,15 @@ final class WorkspaceView: NSView {
     private let outline = NSOutlineView()
 
     private var root: String?
+
+    /// Tên LUÔN hiện trong cây dù bắt đầu bằng dấu chấm.
+    ///
+    /// EIDE đặt `[".eide"]` khi workspace là một dự án EIDE: trong đó là store, sổ cái, chính
+    /// sách và hộ chiếu — thứ người ta mở ra để soi, không phải để sửa, nhưng giấu đi thì bằng
+    /// chứng của cả luận điểm đề án biến mất khỏi tầm mắt. Đổi giá trị này thì phải nạp lại cây.
+    var luonHien: Set<String> = [] {
+        didSet { if luonHien != oldValue { childrenCache.removeAll(); refreshKeepingState() } }
+    }
     /// Con của từng thư mục, đọc tới đâu nhớ tới đó.
     private var childrenCache: [String: [WorkspaceEntry]] = [:]
     /// Kết quả lọc; `nil` = đang hiện cây.
@@ -154,7 +163,7 @@ final class WorkspaceView: NSView {
 
     private func children(of path: String) -> [WorkspaceEntry] {
         if let cached = childrenCache[path] { return cached }
-        let entries = Workspace.children(of: path)
+        let entries = Workspace.children(of: path, alwaysShow: luonHien)
         childrenCache[path] = entries
         return entries
     }
@@ -180,8 +189,11 @@ final class WorkspaceView: NSView {
 
         let token = CancelToken()
         findToken = token
+        // Đọc `luonHien` TRƯỚC khi rời luồng chính: nó là trạng thái của khung nhìn, và đọc nó
+        // từ luồng nền là đúng loại chuyện chạy đúng chín trăm lần rồi sai một lần.
+        let luon = luonHien
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let found = Workspace.find(needle, under: root, cancelToken: token)
+            let found = Workspace.find(needle, under: root, alwaysShow: luon, cancelToken: token)
             DispatchQueue.main.async {
                 guard let self, !token.isCancelled else { return }
                 self.matches = found

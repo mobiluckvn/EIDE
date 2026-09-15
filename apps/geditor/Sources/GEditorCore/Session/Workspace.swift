@@ -36,17 +36,23 @@ public enum Workspace {
     ///
     /// Thư mục lên trước, rồi tới file; trong mỗi nhóm sắp theo tên không phân biệt hoa
     /// thường — đúng thứ tự Finder hiện, để mắt người dùng không phải học lại một trật tự mới.
+    /// - Parameter alwaysShow: tên LUÔN hiện, kể cả khi bắt đầu bằng dấu chấm.
+    ///
+    ///   Có mặt vì `showHidden` là một công tắc quá to cho việc cần làm: EIDE cần thấy `.eide/`
+    ///   — nơi chứa store, sổ cái, chính sách — nhưng bật `showHidden` thì kéo theo `.DS_Store`,
+    ///   `.gitignore`, `.vscode` và mọi thứ khác, tức đổi một thư mục thiếu lấy một cây đầy rác.
     public static func children(
         of directory: String,
         showHidden: Bool = false,
-        ignored: Set<String> = defaultIgnored
+        ignored: Set<String> = defaultIgnored,
+        alwaysShow: Set<String> = []
     ) -> [WorkspaceEntry] {
         let manager = FileManager.default
         guard let names = try? manager.contentsOfDirectory(atPath: directory) else { return [] }
 
         var entries: [WorkspaceEntry] = []
         for name in names {
-            if !showHidden, name.hasPrefix(".") { continue }
+            if !showHidden, name.hasPrefix("."), !alwaysShow.contains(name) { continue }
             if ignored.contains(name) { continue }
             let path = (directory as NSString).appendingPathComponent(name)
             var isDirectory: ObjCBool = false
@@ -69,6 +75,7 @@ public enum Workspace {
         under root: String,
         showHidden: Bool = false,
         ignored: Set<String> = defaultIgnored,
+        alwaysShow: Set<String> = [],
         limit: Int = 200,
         cancelToken: CancelToken = CancelToken()
     ) -> [WorkspaceEntry] {
@@ -82,7 +89,11 @@ public enum Workspace {
         while !queue.isEmpty, out.count < limit {
             guard (try? cancelToken.check()) != nil else { break }
             let directory = queue.removeFirst()
-            for entry in children(of: directory, showHidden: showHidden, ignored: ignored) {
+            // `alwaysShow` phải đi vào ĐÂY nữa, không chỉ vào `children`. Ô lọc mà không tìm
+            // được `ledger.jsonl` trong khi cây hiện nó ra là một mâu thuẫn người dùng gặp ngay
+            // lần gõ đầu tiên — và họ sẽ kết luận ô lọc hỏng, không phải nó bị cấu hình khác.
+            for entry in children(of: directory, showHidden: showHidden, ignored: ignored,
+                                  alwaysShow: alwaysShow) {
                 if fold(entry.name).contains(folded) {
                     out.append(entry)
                     if out.count >= limit { break }

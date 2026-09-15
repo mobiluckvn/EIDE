@@ -31,6 +31,8 @@ final class MainWindowController: NSWindowController {
     private var nguonSidebar: NguonSidebarEide?
     private var dieuHuongEide: EideDieuHuong?
     private var khungEideGoc: NSView?
+    /// Dự án mà cây tệp đang trỏ tới — để không trỏ lại workspace ở mỗi lần mở màn Mã nguồn.
+    private var cayDangTro: String?
     private var vungSoanThao: NSView?
     private var vachEide: NSBox?
 
@@ -810,6 +812,7 @@ final class MainWindowController: NSWindowController {
         vach.translatesAutoresizingMaskIntoConstraints = false
 
         soanThao.translatesAutoresizingMaskIntoConstraints = false
+
         goc.addSubview(cuon)
         goc.addSubview(vach)
         goc.addSubview(soanThao)
@@ -842,6 +845,70 @@ final class MainWindowController: NSWindowController {
         return goc
     }
 
+    /// Bề rộng cột cây. 240 pt vừa đủ cho `drivers/uart_stm32.c` ở tầng thứ hai không bị cắt —
+    /// tên tệp bị cắt trong một cây là thứ buộc người dùng phải bấm vào mới biết mình bấm gì.
+    /// Chuẩn bị màn "Mã nguồn": trỏ cây tệp vào dự án và hiện nó ra.
+    ///
+    /// ## Vì sao KHÔNG dựng một cây thứ hai
+    ///
+    /// Bản đầu của tôi thêm hẳn một cột `EideCayView` cạnh trình soạn thảo, đúng như mockup
+    /// `Code.dc.html` vẽ. Ảnh chụp cho thấy ngay vấn đề: **hai cây cạnh nhau**, cùng nói về một
+    /// thư mục — cây EIDE mới và cây tệp vốn có của trình soạn thảo. Đó đúng là "hai câu trả lời
+    /// cho cùng một câu hỏi" mà chính ghi chú của tôi vừa cảnh báo.
+    ///
+    /// Cây vốn có lại tốt hơn cây tôi viết ở mọi mặt đo được: nạp TỪNG CẤP (một `node_modules`
+    /// hai trăm nghìn tệp không làm treo), có ô lọc tìm tệp trong cả cây, có menu chuột phải
+    /// (tạo, đổi tên, bỏ vào Thùng rác, hiện trong Finder), bấm đúp mở tệp. Thứ nó thiếu là
+    /// `.eide/` — một thư mục ẩn nên bị luật "bỏ tên bắt đầu bằng dấu chấm" giấu đi.
+    ///
+    /// Nên: giữ một cây, dạy nó hiện `.eide/`. Ít mã hơn, và người dùng có một chỗ để nhìn.
+    @MainActor
+    func hienCayDuAn(_ hien: Bool) {
+        guard hien, let duAn = AppDelegate.duAnMoSan() else { return }
+
+        // Trỏ workspace vào thư mục dự án.
+        //
+        // Trước 15/09/2026 KHÔNG chỗ nào làm việc này: `openWorkspace(_:)` có sẵn và không một
+        // lời gọi nào trong `AppDelegate` hay `EIDEKit` chạm tới nó. Hệ quả là mở dự án bằng bất
+        // kỳ đường nào thì cây tệp vẫn nói "Chưa mở thư mục nào", tìm-trong-thư-mục không có gì
+        // để tìm, và màn Mã nguồn chỉ có thể là một bộ đệm trống tên "Chưa đặt tên".
+        if cayDangTro != duAn || workspaceRoot != duAn {
+            // `.eide/` hiện RIÊNG trong cây — chủ sản phẩm chốt 15/09. Nó không phải mã nguồn,
+            // nhưng giấu nó đi thì store, sổ cái và chính sách — bằng chứng của cả luận điểm đề
+            // án — biến mất khỏi tầm mắt người dùng.
+            workspaceView.luonHien = EideDuAn.kiem(duAn).loi == nil ? [".eide"] : []
+            openWorkspace(duAn)
+            cayDangTro = duAn
+        }
+        // Hiện cây ra. Vào màn Mã nguồn mà phải tự bấm ⌘0 mới thấy tệp thì màn ấy vẫn là một bộ
+        // đệm trống với đa số người dùng — họ không biết có phím tắt.
+        if !isSidebarVisible { toggleSidebar(nil) }
+    }
+
+    /// Mở một tệp từ cây vào trình soạn thảo.
+    ///
+    /// Tệp NHỊ PHÂN (store.sqlite, .elf, .hex) không mở ra như văn bản: một cửa sổ đầy ký tự rác
+    /// không nói gì, và với `store.sqlite` thì nó còn mời người dùng sửa tay đúng cái tệp mà cả
+    /// cơ chế niêm của POL-17 §3 dựng lên để phát hiện sửa tay.
+    @MainActor
+    func moTepTuCay(_ duong: String) {
+        let duoi = (duong as NSString).pathExtension.lowercased()
+        let nhiPhan: Set<String> = ["sqlite", "db", "elf", "hex", "bin", "o", "a", "so",
+                                    "dylib", "png", "jpg", "pdf", "zip", "sig"]
+        guard !nhiPhan.contains(duoi) else {
+            let a = NSAlert()
+            a.messageText = "Không mở được dưới dạng văn bản"
+            a.informativeText = "`\((duong as NSString).lastPathComponent)` là tệp nhị phân. "
+                + (duoi == "sqlite"
+                   ? "Store đọc qua các màn Hộ chiếu, Bản đồ tri thức và Nhật ký — sửa tay vào "
+                     + "đây sẽ làm lệch niêm store (POL-17 §3)."
+                   : "Dùng màn chuyên đề tương ứng để xem nội dung.")
+            a.runModal()
+            return
+        }
+        openInNewTab(path: duong)
+    }
+
     /// Có dựng được panel EIDE không — tức có chạy được `eide daemon` không.
     ///
     /// Đọc thuộc tính này DỰNG panel (nó `lazy`), nên đừng gọi ở đường khởi động. Nó có mặt để
@@ -859,12 +926,17 @@ final class MainWindowController: NSWindowController {
         guard let goc = khungEideGoc, let soanThao = vungSoanThao, let vach = vachEide else {
             return
         }
-        // "Mã nguồn" là MỘT MÀN của EIDE (DEV-098) và nội dung của nó là trình soạn thảo.
+        // "Mã nguồn" là MỘT MÀN của EIDE (DEV-098) và nội dung của nó là **cây dự án + trình
+        // soạn thảo** — mockup `Code.dc.html`, không phải một bộ đệm trống.
         if tien == "Code" {
             eidePanel?.isHidden = true
             soanThao.isHidden = false
+            hienCayDuAn(true)
             return
         }
+        // Màn chuyên đề: panel che cả vùng soạn thảo (kể cả cây tệp nằm trong đó), nên không
+        // phải ẩn gì thêm. Gọi `hienCayDuAn(false)` ở đây từng có mặt và nó không làm gì —
+        // một lời gọi không làm gì là một lời gọi người đọc sau phải tự chứng minh là vô hại.
         guard let p = eidePanel else {
             // Không tìm thấy `eide` — nói ra ngay tại chỗ người vừa bấm, và quay về Mã nguồn để
             // cửa sổ không đứng trắng.
@@ -1309,7 +1381,10 @@ final class MainWindowController: NSWindowController {
         sidebar.isVertical = false
         sidebar.dividerStyle = .thin
         sidebar.delegate = self
-        workspaceView.onOpenFile = { [weak self] path in self?.openInNewTab(path: path) }
+        // Qua `moTepTuCay` chứ không thẳng `openInNewTab`: cây nay hiện cả `.eide/`, và trong
+        // đó có `store.sqlite` — mở một tệp SQLite ra khung soạn thảo là vài nghìn dòng ký tự
+        // rác cộng một lời mời sửa tay đúng cái tệp mà niêm store dựng lên để phát hiện sửa tay.
+        workspaceView.onOpenFile = { [weak self] path in self?.moTepTuCay(path) }
         workspaceView.onCommand = { [weak self] command in self?.runWorkspaceCommand(command) }
         functionList.onSelect = { [weak self] symbol in self?.revealSymbol(symbol) }
         sidebar.addArrangedSubview(workspaceView)

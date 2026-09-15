@@ -246,7 +246,14 @@ public final class EideCayView: NSView {
     private let cuon = NSScrollView()
     private let goc: [EideNutCay]
 
-    public init(goc: [EideNutCay], cao: CGFloat = EideTuVung.caoToiDa) {
+    /// `cao: nil` nghĩa là **giãn theo khung chứa** — dùng khi cây là một CỘT của cửa sổ chứ
+    /// không phải một khối nhúng trong thân màn.
+    ///
+    /// Bản đầu không có lựa chọn này và tôi truyền `cao: 4000` cho cột cây dự án để nó "đủ cao".
+    /// Ràng buộc chiều cao là ràng buộc CỨNG, nên Auto Layout kéo cả cửa sổ lên 4000 pt: ảnh
+    /// chụp ra 2200×8000, và trên máy thật thì thanh trạng thái bị đẩy xuống dưới đáy màn hình.
+    /// Một con số "đủ lớn" trong một ràng buộc cứng luôn là một lỗi bố cục đang chờ ngày lộ.
+    public init(goc: [EideNutCay], cao: CGFloat? = EideTuVung.caoToiDa) {
         self.goc = goc
         super.init(frame: .zero)
         dung(cao: cao)
@@ -255,7 +262,7 @@ public final class EideCayView: NSView {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
-    private func dung(cao: CGFloat) {
+    private func dung(cao: CGFloat?) {
         cay.headerView = nil
         cay.rowHeight = 20
         cay.backgroundColor = EideToken.Mau.surface
@@ -281,8 +288,8 @@ public final class EideCayView: NSView {
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
             cuon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            cuon.heightAnchor.constraint(equalToConstant: cao),
         ])
+        if let cao { cuon.heightAnchor.constraint(equalToConstant: cao).isActive = true }
         cay.reloadData()
         _moSan(goc)
     }
@@ -581,7 +588,7 @@ extension ManHinhCoSo {
 
     /// Thêm một cây.
     @discardableResult
-    public func themCay(goc: [EideNutCay], cao: CGFloat = EideTuVung.caoToiDa,
+    public func themCay(goc: [EideNutCay], cao: CGFloat? = EideTuVung.caoToiDa,
                         chon: ((EideNutCay) -> Void)? = nil) -> EideCayView {
         let v = EideCayView(goc: goc, cao: cao)
         v.onChon = chon
