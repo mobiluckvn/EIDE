@@ -85,6 +85,7 @@ enum WindowCapture {
         case eideModels = "eide-models"      // mô hình & chi phí
         case eideMaNguon = "eide-ma-nguon"   // cây dự án + trình soạn thảo
         case eideHoChieu = "eide-ho-chieu"   // bảng fact có tầng, nguồn, độ tin
+        case eideBanDo = "eide-ban-do"       // đồ thị tri thức dựng thành cây
     }
 
     // ĐỌC ẢNH `eide-*` THẾ NÀO
@@ -97,6 +98,12 @@ enum WindowCapture {
     // Cây tệp (`NSOutlineView` của `WorkspaceView`) thì VẼ ĐƯỢC. Nên ảnh `eide-ma-nguon` dùng
     // được để soi đúng thứ nó sinh ra để soi: cây có trỏ vào dự án không, `.eide/` có hiện không,
     // và có bao nhiêu cây trên màn hình — bản đầu có HAI, và chỉ ảnh chụp cho thấy điều đó.
+    //
+    // ĐỪNG ĐO KÍCH THƯỚC TRÊN ẢNH. `cacheDisplay` vẽ phần có nội dung của một `NSScrollView` và
+    // bỏ phần trống dưới nó, nên một khung cao 420 pt chứa 5 hàng hiện ra như một khung 100 pt.
+    // Tôi đã đọc ảnh màn Bản đồ 15/09/2026 đúng kiểu ấy và kết luận cây bị co lại; đo trên cửa
+    // sổ thật (`--self-test "cây trên màn"`) thì nó cao đúng 420. Ảnh nói về NỘI DUNG; hình học
+    // thì hỏi bài tự kiểm.
 
     /// Thư mục dữ liệu cho tám cảnh `dt-*`. `nil` thì bỏ qua chúng.
     private static var dataDirectory: String? {
@@ -123,7 +130,8 @@ enum WindowCapture {
         // lực), rồi mới gọi được năng lực của màn. Đo 15/09: khoảng 2,5 s tới lúc daemon trả
         // lời lần đầu. Chụp sớm hơn ra một màn "đang nạp…" — và một ảnh như thế thì không sai,
         // chỉ là không nói được gì.
-        case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon, .eideHoChieu: return 8
+        case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon, .eideHoChieu, .eideBanDo:
+            return 8
         default: return 0.4
         }
     }
@@ -245,6 +253,8 @@ enum WindowCapture {
             _ = chuanBiEide("Code", on: controller)
         case .eideHoChieu:
             _ = chuanBiEide("Passport", on: controller)
+        case .eideBanDo:
+            _ = chuanBiEide("Graph", on: controller)
         case .trong:
             controller.prepareSelfTestDocument("""
                 Xin chào. Đây là GEditor.

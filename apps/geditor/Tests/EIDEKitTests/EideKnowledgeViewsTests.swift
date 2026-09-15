@@ -335,12 +335,23 @@ final class EideNapLanDauTests: XCTestCase {
         XCTAssertTrue(src.contains(".budgetState"), "nhánh Models phải gọi `budget.state`")
     }
 
-    func testMANgraphCOYkhongCOnapMACdinh() {
-        // `RagAskView` chỉ hiểu `{answer, citations}`, và không năng lực chỉ-đọc nào trả hình
-        // dạng ấy — hỏi đáp thì phải có câu hỏi trước. Để trống là câu trả lời đúng; bản đầu
-        // nạp `view.kg_map` (trả `{graph}`) và màn hiện "Không tìm thấy gì trong tri thức của
-        // dự án" — một khẳng định SAI sau khi vừa nhận cả đồ thị tri thức.
-        XCTAssertNil(EidePanel.napMacDinh(choMan: "Graph"))
+    /// Màn 7 nạp BẢN ĐỒ, không nạp hỏi đáp.
+    ///
+    /// Quyết định này đảo lại ngày 15/09/2026, và lý do cũ vẫn đúng ở phần nó nói: `RagAskView`
+    /// chỉ hiểu `{answer, citations}`, nên đổ `{graph}` vào nó cho ra câu *"Không tìm thấy gì
+    /// trong tri thức của dự án"* — một khẳng định SAI ngay sau khi hệ thống trả về cả đồ thị.
+    /// Cái sai của kết luận cũ là chỗ khác: nó cho rằng vì màn hỏi đáp không đọc được bản đồ thì
+    /// màn 7 không được có mặc định. Nhưng màn 7 có HAI khung nhìn, và `nangLucBanDo` đã định
+    /// tuyến `view.kg_map` sang `KgMapView` từ trước. Thứ còn thiếu là đường nạp mặc định cũng
+    /// phải đi qua phép định tuyến ấy — nay nó đi.
+    ///
+    /// Vế mặc định phải là vế CHẠY ĐƯỢC: `view.rag_ask` cần một mô hình (E5000 khi chưa có
+    /// khoá) và một câu hỏi; `view.kg_map` là R0, không tham số, đọc thẳng store.
+    func testMANgraphNAPbanDOchuKHONGphaiHOIdap() {
+        XCTAssertEqual(EidePanel.napMacDinh(choMan: "Graph"), "view.kg_map")
+        XCTAssertTrue(EidePanel.nangLucBanDoDeTest.contains("view.kg_map"),
+                      "năng lực mặc định của màn 7 phải được định tuyến sang KgMapView, "
+                      + "nếu không thì bản đồ lại rơi vào màn hỏi đáp")
     }
 
     func testDANHsachNOuiKHONGrongVAkhongTRUNGnapAnToan() {

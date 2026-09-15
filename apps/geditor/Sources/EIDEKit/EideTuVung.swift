@@ -329,6 +329,10 @@ public final class EideCayView: NSView {
         if let cao { cuon.heightAnchor.constraint(equalToConstant: cao).isActive = true }
         cay.reloadData()
         _moSan(goc)
+        // Về ĐẦU cây sau khi mở sẵn các nhánh. `expandItem` đẩy vị trí cuộn theo hàng vừa mở,
+        // nên một cây mở sẵn hai tầng sẽ hiện ra ở giữa danh sách — người đọc thấy một nút con
+        // ở dòng đầu và không biết nó là con của ai.
+        if cay.numberOfRows > 0 { cay.scrollRowToVisible(0) }
     }
 
     private func _moSan(_ ds: [EideNutCay]) {
@@ -365,6 +369,12 @@ public final class EideCayView: NSView {
 
     /// Số hàng đang hiện (đã tính nút đang gấp) — cho test.
     public var soHangHien: Int { cay.numberOfRows }
+
+    /// Hàng đầu tiên đang nhìn thấy — cho test canh "cây mở ra ở đầu, không ở giữa".
+    public var hangDauDeTest: Int {
+        let r = cay.rows(in: cuon.contentView.bounds)
+        return r.length > 0 ? r.location : 0
+    }
 }
 
 extension EideCayView: NSOutlineViewDataSource, NSOutlineViewDelegate {

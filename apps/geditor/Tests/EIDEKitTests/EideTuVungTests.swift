@@ -519,3 +519,200 @@ final class EidePlanDiffHinhHocTests: XCTestCase {
                                  "khối mã rộng \(m.frame.width) trong màn rộng \(v.frame.width)")
     }
 }
+
+/// Màn "Bản đồ tri thức" — đồ thị dựng thành cây theo CẠNH.
+///
+/// Bản cũ nhóm nút theo tầng rồi liệt kê phẳng và không hiện một cạnh nào, dù dòng tóm tắt ngay
+/// trên đó đếm chúng. Với dữ liệu thật của dự án demo: 17 nút, 26 cạnh, và cả 26 cạnh biến mất.
+final class EideKgCayTests: XCTestCase {
+
+    private func man(_ nodes: [[String: Any]], _ edges: [[String: Any]]) -> KgMapView {
+        let v = KgMapView()
+        v.capNhat(ketQua: ["graph": ["nodes": nodes, "edges": edges]])
+        return v
+    }
+
+    private func cay(_ v: NSView) -> EideCayView? {
+        if let c = v as? EideCayView { return c }
+        for s in v.subviews { if let c = cay(s) { return c } }
+        return nil
+    }
+
+    private let nodes: [[String: Any]] = [
+        ["id": "chip:x", "kind": "chip", "label": "chip:x"],
+        ["id": "chip:x/mem:SRAM", "kind": "chip", "label": "mem:SRAM", "tier": "gold"],
+        ["id": "f_1", "kind": "fact", "label": "f_1", "tier": "gold", "status": "conflict"],
+        ["id": "src_a", "kind": "source", "label": "src_a"],
+    ]
+    private let edges: [[String: Any]] = [
+        ["from": "chip:x", "type": "HAS", "to": "chip:x/mem:SRAM"],
+        ["from": "f_1", "type": "ABOUT", "to": "chip:x/mem:SRAM"],
+        ["from": "f_1", "type": "CITES", "to": "src_a"],
+    ]
+
+    func testDOthiDUNGrAmotCAYchuKHONGphaiDANHsachPHANG() throws {
+        let v = man(nodes, edges)
+        XCTAssertNotNil(cay(v), "đồ thị phải dựng ra một cây")
+        XCTAssertEqual(v.soNut, 4)
+        XCTAssertEqual(v.soCanh, 3)
+    }
+
+    /// Gốc là nút KHÔNG AI TRỎ TỚI — đúng hình dạng mockup vẽ (`chip:` trên cùng).
+    func testGOClaNUTkhongAItroTOI() throws {
+        let c = try XCTUnwrap(cay(man(nodes, edges)))
+        // chip:x và f_1 là gốc; mem:SRAM và src_a là con → 4 hàng khi mở hết.
+        XCTAssertTrue(c.chon(duong: "chip:x"))
+        XCTAssertTrue(c.chon(duong: "chip:x/mem:SRAM"), "con của chip phải nằm trong cây")
+        XCTAssertTrue(c.chon(duong: "src_a"))
+    }
+
+    /// Cạnh TRÙNG không được làm cây hiện cùng một con hai lần.
+    ///
+    /// `view.kg_map` trả `chip → HAS → mem:SRAM` hai lần trên dữ liệu thật (một lần cho mỗi fact
+    /// về cùng chủ thể). Không bỏ trùng thì người đọc tưởng có hai vùng nhớ tên SRAM.
+    func testCANHtrungKHONGlamCONxuatHIENhaiLAN() {
+        let khong = man(nodes, edges).soNutTrenCay
+        let co = man(nodes, edges
+                     + [["from": "chip:x", "type": "HAS", "to": "chip:x/mem:SRAM"]]).soNutTrenCay
+        XCTAssertEqual(co, khong, "thêm một cạnh TRÙNG không được làm cây dài thêm")
+    }
+
+    /// Một nút dùng chung xuất hiện dưới MỌI cha — và đó là chủ ý.
+    ///
+    /// `mem:SRAM` vừa là con `HAS` của chip vừa là đích `ABOUT` của fact. Gộp lại thành một hàng
+    /// sẽ giấu mất một trong hai quan hệ, mà quan hệ mới là thứ màn này hiện ra để nói.
+    func testNUTdungCHUNGxuatHIENduoiMOIcha() {
+        // 4 nút, nhưng 5 hàng: mem:SRAM nằm dưới cả chip:x lẫn f_1.
+        XCTAssertEqual(man(nodes, edges).soNutTrenCay, 5)
+    }
+
+    /// Chu trình không được làm cây dựng tới hết bộ nhớ.
+    ///
+    /// `SUPERSEDES` nối fact cũ với fact mới và có thể vòng lại.
+    func testCHUtrinhKHONGlamCAYdungVOtan() {
+        let n: [[String: Any]] = [["id": "a", "label": "a"], ["id": "b", "label": "b"]]
+        let e: [[String: Any]] = [["from": "a", "type": "SUPERSEDES", "to": "b"],
+                                  ["from": "b", "type": "SUPERSEDES", "to": "a"]]
+        let v = man(n, e)
+        XCTAssertNotNil(cay(v), "đồ thị toàn chu trình vẫn phải ra cây, không ra màn trống")
+        XCTAssertLessThan(v.soNutTrenCay, 20, "chu trình phải bị chặn, nhận \(v.soNutTrenCay)")
+    }
+
+    /// Nút CÔ LẬP phải hiện ra — như một gốc của chính nó.
+    ///
+    /// Một fact không ABOUT chủ thể nào, không CITES nguồn nào là fact đáng ngờ nhất trong
+    /// store. Bậc vào của nó là 0 nên nó thành gốc và nằm trong cây; giấu nó vì nó không hợp
+    /// hình dạng cây là đúng kiểu im lặng màn này phải chống.
+    func testNUTcoLAPvanHIENra() throws {
+        let v = man(nodes + [["id": "f_co_lap", "label": "f_co_lap", "kind": "fact"]], edges)
+        let c = try XCTUnwrap(cay(v))
+        XCTAssertTrue(c.chon(duong: "f_co_lap"), "nút cô lập phải nằm trong cây")
+    }
+
+    /// Một cụm TOÀN chu trình không tới được từ gốc nào — phải nói ra, không nuốt.
+    func testCUMtoanCHUtrinhKHONGtoiduocTHIphaiNOIra() {
+        let n: [[String: Any]] = [["id": "goc", "label": "goc"],
+                                  ["id": "x", "label": "x"], ["id": "y", "label": "y"]]
+        let e: [[String: Any]] = [["from": "x", "type": "SUPERSEDES", "to": "y"],
+                                  ["from": "y", "type": "SUPERSEDES", "to": "x"]]
+        let v = man(n, e)
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("KHÔNG nối vào đâu"), "nhận: \(chu)")
+    }
+
+    /// Bấm một nút trên cây mở đúng nút ấy.
+    func testBAMnutTRENcayMOdungNUT() throws {
+        let v = man(nodes, edges)
+        var mo: String?
+        v.onMoNut = { mo = $0 }
+        let c = try XCTUnwrap(cay(v))
+        XCTAssertTrue(c.chon(duong: "src_a"))
+        c.onChon?(EideNutCay(ten: "src_a", duong: "src_a", laThuMuc: false))
+        XCTAssertEqual(mo, "src_a")
+    }
+}
+
+/// Thân màn và cây phải bắt đầu từ ĐẦU, không từ giữa.
+final class EideCuonTuDauTests: XCTestCase {
+
+    private final class ManThu: ManHinhCoSo {
+        init() { super.init(ten: "thử") }
+    }
+
+    /// Nội dung dài hơn khung phải hiện phần ĐẦU.
+    ///
+    /// Hệ toạ độ mặc định của AppKit có gốc ở góc dưới-trái, nên một `NSStackView` dài hơn khung
+    /// neo từ dưới lên: mở màn ra là thấy phần cuối. Một màn mở ra ở cuối danh sách trông y như
+    /// một màn thiếu phần đầu — mà dòng đầu thường là dòng quan trọng nhất.
+    func testTHANmanBATdauTUdongDAU() {
+        let m = ManThu()
+        m.frame = NSRect(x: 0, y: 0, width: 600, height: 200)
+        for i in 0..<60 { m.themDong("dòng \(i)", "x") }
+        m.layoutSubtreeIfNeeded()
+        let cuon = m.subviews.compactMap { $0 as? NSScrollView }.first
+        XCTAssertNotNil(cuon)
+        XCTAssertTrue(cuon?.contentView is KhungLat,
+                      "khung cuộn của thân màn phải LẬT thì nội dung mới bắt đầu từ trên")
+    }
+
+    /// Cây mở sẵn nhiều tầng vẫn phải hiện từ hàng 0.
+    ///
+    /// `expandItem` đẩy vị trí cuộn theo hàng vừa mở — người đọc thấy một nút con ở dòng đầu và
+    /// không biết nó là con của ai.
+    func testCAYmoSANvanHIENtuHANGdau() {
+        let m = ManThu()
+        m.frame = NSRect(x: 0, y: 0, width: 600, height: 300)
+        let goc = (0..<20).map { i in
+            EideNutCay(ten: "g\(i)", duong: "g\(i)", laThuMuc: true, con: [
+                EideNutCay(ten: "c\(i)", duong: "c\(i)", laThuMuc: false),
+            ], moSan: true)
+        }
+        let c = m.themCay(goc: goc)
+        m.layoutSubtreeIfNeeded()
+        XCTAssertEqual(c.hangDauDeTest, 0, "cây phải hiện từ hàng 0, nhận \(c.hangDauDeTest)")
+    }
+
+    /// Cây dài phải cao bằng trần, không co lại thành vài dòng.
+    func testCAYdaiCAObangTRAN() {
+        let m = ManThu()
+        m.frame = NSRect(x: 0, y: 0, width: 600, height: 900)
+        let goc = (0..<60).map { EideNutCay(ten: "g\($0)", duong: "g\($0)", laThuMuc: false) }
+        let c = m.themCay(goc: goc)
+        m.layoutSubtreeIfNeeded()
+        XCTAssertEqual(c.frame.height, EideTuVung.caoToiDa, accuracy: 1,
+                       "cây dài phải cao \(EideTuVung.caoToiDa) pt, nhận \(c.frame.height)")
+    }
+}
+
+/// Khung nhìn nhúng phải giữ chiều cao của nó kể cả khi MÀN nhỏ hơn.
+///
+/// Đây là tình huống thật: panel EIDE cao khoảng 700 pt, và một màn có biểu mẫu ở trên cộng một
+/// cây 420 pt thì tổng đã vượt. Nếu cây co lại theo khung chứa thì nó còn vài dòng — đúng thứ
+/// thấy trên ảnh chụp màn Bản đồ 15/09/2026.
+final class EideKhungNhoTests: XCTestCase {
+
+    private final class ManThu: ManHinhCoSo {
+        init() { super.init(ten: "thử") }
+    }
+
+    func testCAYgiuCHIEUcaoKHImanNHOhon() {
+        let m = ManThu()
+        m.frame = NSRect(x: 0, y: 0, width: 600, height: 200)
+        let goc = (0..<60).map { EideNutCay(ten: "g\($0)", duong: "g\($0)", laThuMuc: false) }
+        let c = m.themCay(goc: goc)
+        m.layoutSubtreeIfNeeded()
+        XCTAssertEqual(c.frame.height, EideTuVung.caoToiDa, accuracy: 1,
+                       "màn cao 200 nhưng cây vẫn phải cao \(EideTuVung.caoToiDa) và để thân "
+                       + "màn cuộn; nhận \(c.frame.height)")
+    }
+
+    func testBANGgiuCHIEUcaoKHImanNHOhon() {
+        let m = ManThu()
+        m.frame = NSRect(x: 0, y: 0, width: 600, height: 200)
+        let b = m.themBang(cot: ["x"], hang: (0..<80).map { ["\($0)"] })
+        m.layoutSubtreeIfNeeded()
+        XCTAssertEqual(b.frame.height, EideTuVung.caoToiDa, accuracy: 1,
+                       "nhận \(b.frame.height)")
+    }
+}

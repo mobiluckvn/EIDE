@@ -347,7 +347,12 @@ final class EideMoManTuSidebarTests: XCTestCase {
         guard let ham = src.range(of: "private func _moTheoTenMan(") else {
             return XCTFail("không tìm thấy `_moTheoTenMan`")
         }
-        let than = src[ham.lowerBound...].prefix(2000)
+        // Cắt tới HÀM KẾ TIẾP, không cắt theo một số ký tự cố định. Bản cũ lấy 2.000 ký tự
+        // đầu và bài test đỏ ngày 15/09 chỉ vì hàm dài thêm một đoạn ghi chú — một bài kiểm đỏ
+        // vì lý do không liên quan tới thứ nó kiểm là một bài kiểm dạy người ta bỏ qua nó.
+        let sau = src[ham.upperBound...]
+        let het = sau.range(of: "\n    private func ") ?? sau.range(of: "\n    public func ")
+        let than = het.map { String(sau[..<$0.lowerBound]) } ?? String(sau.prefix(4000))
         XCTAssertTrue(than.contains("napMacDinh"),
                       "mở màn từ sidebar không hỏi `napMacDinh` — 20 màn sẽ rỗng")
         guard let goiNap = than.range(of: "napMacDinh"),

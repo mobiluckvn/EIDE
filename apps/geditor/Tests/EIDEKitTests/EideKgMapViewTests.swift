@@ -80,14 +80,24 @@ final class EideKgMapViewTests: XCTestCase {
         XCTAssertEqual(nhan.first, "vàng")
     }
 
-    func testBAMnutMObanDOlanCAN() {
+    /// Bấm một nút trên CÂY mở lân cận của nó.
+    ///
+    /// Từ 15/09/2026 đồ thị dựng thành cây (`themCay`), không còn là danh sách nút mỗi nút một
+    /// `NSButton`. Vùng bấm nay là cả hàng — người dùng không phải nhắm vào một chữ 30 px.
+    func testBAMnutMObanDOlanCAN() throws {
         let v = KgMapView()
         var nhan: String?
         v.onMoNut = { nhan = $0 }
         v.capNhat(ketQua: ["graph": ["nodes": [["id": "chip:st/periph:I2C1", "tier": "gold"]]]])
-        let nut = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews.first }
-            .compactMap { $0 as? NSButton }.first
-        nut?.performClick(nil)
+
+        func timCay(_ x: NSView) -> EideCayView? {
+            if let c = x as? EideCayView { return c }
+            for s in x.subviews { if let c = timCay(s) { return c } }
+            return nil
+        }
+        let cay = try XCTUnwrap(timCay(v), "đồ thị phải dựng ra một cây")
+        XCTAssertTrue(cay.chon(duong: "chip:st/periph:I2C1"))
+        cay.onChon?(EideNutCay(ten: "I2C1", duong: "chip:st/periph:I2C1", laThuMuc: false))
         XCTAssertEqual(nhan, "chip:st/periph:I2C1")
     }
 

@@ -114,6 +114,13 @@ public final class EidePanel: NSView {
         "view.doc_side_by_side", "view.rag_trace",
     ]
 
+    /// Phơi ra cho test: năng lực nào được định tuyến sang `KgMapView`.
+    ///
+    /// Cần thiết vì đây là chỗ hai quyết định phải khớp nhau — năng lực mặc định của màn 7 và
+    /// bảng định tuyến. Lệch nhau thì bản đồ rơi vào màn hỏi đáp và màn ấy kết luận "không tìm
+    /// thấy gì trong tri thức của dự án" ngay sau khi vừa nhận cả đồ thị.
+    public static var nangLucBanDoDeTest: Set<String> { nangLucBanDo }
+
     /// Tiền tố tên của mọi màn panel dựng được, phơi ra để test đối chiếu thẳng với
     /// `docs/spec/ui/screens.json`.
     ///
@@ -580,7 +587,16 @@ public final class EidePanel: NSView {
         // — tức chỉ khi một sự kiện `knowledge.changed` tới. Mở màn bằng tay thì không ai gọi
         // nó. Hai đường vào cùng một màn, chỉ một đường nạp dữ liệu.
         if let cap = Self.napMacDinh(choMan: k.tien) {
-            let v = k.v
+            // Kết quả đi tới khung nhìn mà NĂNG LỰC trỏ về, không phải khung nhìn của tiền tố.
+            //
+            // Hai thứ ấy khác nhau ở đúng màn 7: tiền tố `Graph` trỏ về `RagAskView`, còn
+            // `view.kg_map` thuộc `nangLucBanDo` nên phải vào `KgMapView`. Đổ nhầm chỗ thì màn
+            // hỏi đáp nhận một bản đồ nó không đọc được và kết luận *"Không tìm thấy gì trong
+            // tri thức của dự án"* — một câu SAI, phát ra ngay sau khi hệ thống vừa trả về 17
+            // nút và 26 cạnh. Đo 15/09/2026, và nó đúng cùng hình dạng với lỗi im lặng 17 mà
+            // ghi chú của `nangLucBanDo` đã mô tả cho đường gõ tay.
+            let v = khungCua(k.tien, id: cap) ?? k.v
+            if v !== k.v { hienKhung(v, ten: tenMan.stringValue, id: cap, thamSo: "") }
             chay(cap, [:], khiLoi: { [weak v] in v?.chuaNap($0) }) { [weak v] r in
                 v?.capNhat(ketQua: r)
             }
@@ -892,9 +908,10 @@ public final class EidePanel: NSView {
     /// chỉ không hiểu câu trả lời. `EideNapMacDinhTests` giữ điều này bằng cách đọc chính mã
     /// nguồn khung nhìn, không bằng một danh sách gõ tay.
     ///
-    /// `Graph` không có mặc định: `RagAskView` chỉ hiểu `{answer, citations}`, và không năng
-    /// lực chỉ-đọc nào trả hình dạng ấy — hỏi đáp thì phải có câu hỏi trước. Để trống là câu
-    /// trả lời đúng, tự nạp một thứ màn không đọc được mới là sai.
+    /// `Graph` nạp `view.kg_map` (từ 15/09/2026). Màn 7 có hai vế và vế mặc định phải là vế
+    /// chạy được mà không cần gì: `view.rag_ask` đòi một mô hình lẫn một câu hỏi, còn bản đồ
+    /// đọc thẳng store. Trước đó màn mở ra là một ô nhập rỗng, trong khi dự án có sẵn 17 nút và
+    /// 26 cạnh không ai thấy.
     /// Năng lực CHÍNH của mỗi màn — cái mà ô nhập dựng form theo.
     ///
     /// Khác `napMacDinh`: `napMacDinh` là năng lực chạy được NGAY khi mở màn (không tham số,
@@ -956,6 +973,14 @@ public final class EidePanel: NSView {
         // xung đột nào đang chờ mình. Đây là màn mà "mở ra đã có dữ liệu" quan trọng nhất:
         // một xung đột không ai biết là một xung đột không ai giải.
         case "XungDot": return "kg.conflicts"
+        // Màn 7 có hai vế, và vế mở ra mặc định phải là vế CHẠY ĐƯỢC. `view.rag_ask` cần một
+        // mô hình (E5000 khi chưa có khoá) và cần một câu hỏi; `view.kg_map` là R0, không tham
+        // số, đọc thẳng từ store. Đo 15/09/2026: mở "Bản đồ & hỏi đáp" từ sidebar ra một ô nhập
+        // rỗng và dòng "Gõ câu hỏi rồi Enter", trong khi dự án có sẵn 17 nút và 26 cạnh không
+        // ai thấy. Ghi chú cũ nói "Graph không có mặc định vì RagAskView chỉ hiểu
+        // {answer, citations}" — đúng vào lúc viết, và hết đúng từ khi `nangLucBanDo` định
+        // tuyến `view.kg_map` sang `KgMapView`.
+        case "Graph": return "view.kg_map"
         // Màn "Làm rõ yêu cầu" KHÔNG tự nạp: `chat.parse_intent` cần `text`, và đoán một câu
         // để tự chạy là bịa ra yêu cầu của người dùng. Màn mở ra nói câu mời gõ ở ô lệnh.
         default: return nil

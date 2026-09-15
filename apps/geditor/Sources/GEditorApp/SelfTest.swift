@@ -455,6 +455,30 @@ enum SelfTest {
             return nil
         },
 
+        Case(name: "EIDE: cây trên màn Bản đồ cao đúng trần, không co thành vài dòng") { c in
+            guard c.coPanelEide else { return "không chạy được `eide daemon`" }
+            c.chonManEide(tien: "Graph")
+            // Panel gọi daemon rồi mới dựng cây — chờ vòng run loop cho lời gọi ấy về.
+            RunLoop.current.run(until: Date().addingTimeInterval(6))
+            c.window?.layoutIfNeeded()
+
+            func tim(_ v: NSView) -> NSView? {
+                if v is EideCayView { return v }
+                for s in v.subviews { if let r = tim(s) { return r } }
+                return nil
+            }
+            guard let goc = c.window?.contentView, let cay = tim(goc) else {
+                return "không thấy cây nào trên màn Bản đồ — `view.kg_map` chưa về, hoặc kết quả "
+                     + "lại bị đổ sang khung nhìn khác"
+            }
+            // Ảnh chụp 15/09/2026 cho thấy khung cây chỉ khoảng 100 pt, trong khi trần là 420 và
+            // test đơn vị đo được 420. Bài này nói chắc bên nào đúng trên cửa sổ THẬT.
+            guard cay.frame.height >= EideTuVung.caoToiDa - 1 else {
+                return "cây cao \(Int(cay.frame.height)) pt, trần là \(Int(EideTuVung.caoToiDa))"
+            }
+            return nil
+        },
+
         Case(name: "gõ một ký tự trên ba vùng chọn") { controller in
             controller.prepareSelfTestDocument("ERROR một\nOK hai\nERROR ba\n")
             controller.selectAllOccurrencesForSelfTest("ERROR")

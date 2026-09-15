@@ -26,6 +26,14 @@ public protocol KhungNhinEide: NSView {
     func chuaNap(_ viSao: String)
 }
 
+/// `NSClipView` lật — để nội dung bắt đầu từ TRÊN.
+///
+/// Không phải chuyện thẩm mỹ: một màn mở ra ở cuối danh sách trông y như một màn thiếu phần đầu,
+/// và dòng đầu thường là dòng quan trọng nhất (tóm tắt, cảnh báo, "còn thiếu 3 thứ").
+public final class KhungLat: NSClipView {
+    public override var isFlipped: Bool { true }
+}
+
 open class ManHinhCoSo: NSView, KhungNhinEide {
 
     /// Tên màn, hiện ở đầu. Lớp con đặt trong `init`.
@@ -67,6 +75,12 @@ open class ManHinhCoSo: NSView, KhungNhinEide {
 
         // Cuộn được, vì `board.check_pins` trên một board thật trả về hàng chục dòng và một
         // danh sách bị cắt cụt ở đáy khung là một danh sách người đọc tưởng đã hết.
+        //
+        // `contentView` LẬT. Hệ toạ độ mặc định của AppKit có gốc ở góc DƯỚI-trái, nên một
+        // `NSStackView` dài hơn khung sẽ neo từ dưới lên: mở màn ra là thấy phần CUỐI nội dung,
+        // và người dùng phải cuộn ngược lên mới gặp dòng đầu. Đo 15/09/2026 trên màn Bản đồ tri
+        // thức — hai dòng đếm theo tầng nằm ngoài tầm nhìn, và cây bắt đầu giữa chừng.
+        cuon.contentView = KhungLat()
         cuon.documentView = cot
         cuon.hasVerticalScroller = true
         cuon.drawsBackground = false

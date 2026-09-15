@@ -48,7 +48,7 @@ public final class KgMapView: ManHinhCoSo {
     public override func capNhat(ketQua: [String: Any]) {
         xoaThan()
         soNut = 0; soCanh = 0; soXungDot = 0; soSuKien = 0
-        tiLePhu = nil; soNgoaiViTrong = 0
+        tiLePhu = nil; soNgoaiViTrong = 0; soNutTrenCay = 0
 
         if ketQua.isEmpty {
             tomTat.stringValue = ""
@@ -109,7 +109,9 @@ public final class KgMapView: ManHinhCoSo {
         }
 
         if let h = nhiet { _hienDoPhu(h) }
-        if do_ != nil { _hienDoThi(nodes) }
+        if let g = do_ {
+            _hienDoThi(nodes, canh: (g["edges"] as? [[String: Any]]) ?? [])
+        }
 
         for p in duong.prefix(10) {
             // VIEW-02 trả ĐƯỜNG ĐI tới nguồn — đó là câu trả lời cho "vì sao tin fact này",
@@ -157,23 +159,116 @@ public final class KgMapView: ManHinhCoSo {
     ///
     /// Một danh sách 500 nút phẳng thì không ai đọc. Nhóm theo `tier` là cách nhóm duy nhất
     /// trả lời được câu người dùng thật sự hỏi: *bao nhiêu phần tri thức này đáng tin?*
-    private func _hienDoThi(_ nodes: [[String: Any]]) {
-        let theoTang = Dictionary(grouping: nodes, by: { ($0["tier"] as? String) ?? "—" })
-        for (tang, ds) in theoTang.sorted(by: { _thuTuTang($0.key) < _thuTuTang($1.key) }) {
-            let xau = ds.filter { (($0["status"] as? String) ?? "") == "conflict" }.count
-            themDong(EideKnowledgeFormat.nhanTang(tang, ""),
-                     "\(ds.count) nút" + (xau > 0 ? " · \(xau) đang mâu thuẫn" : ""),
-                     mau: xau > 0 ? EideToken.Mau.bad : EideKnowledgeFormat.mauTang(tang, ""))
-            for n in ds.prefix(12) {
-                let id = (n["id"] as? String) ?? ""
-                let nhan = (n["label"] as? String) ?? EideKnowledgeFormat.tenNgan(id)
-                let loai = (n["kind"] as? String) ?? ""
-                themDong("  \(nhan)", loai, nut: !id.isEmpty, ma: id,
-                         bam: #selector(moNut(_:)))
+    /// Đồ thị dựng thành CÂY theo cạnh, kèm một dòng đếm theo tầng.
+    ///
+    /// ## Vì sao bản cũ sai
+    ///
+    /// Nó nhóm nút theo tầng rồi liệt kê phẳng — và **không hiện một cạnh nào**, dù `soCanh` đếm
+    /// chúng ngay dòng trên. Với dữ liệu thật của dự án demo: 17 nút, 26 cạnh, và cả 26 cạnh
+    /// biến mất. Nhưng cạnh CHÍNH LÀ tri thức ở màn này: `chip → HAS → mem:SRAM`,
+    /// `f_10ef… → CITES → src_ee2e…`. Một danh sách nút không cạnh trả lời được câu "có bao
+    /// nhiêu" và không trả lời được câu duy nhất người ta mở màn này để hỏi — *cái này nối với
+    /// cái gì, và vì sao ta tin nó*.
+    ///
+    /// ## Gốc là nút KHÔNG AI TRỎ TỚI
+    ///
+    /// Đúng hình dạng mockup `docs/ui/Graph.dc.html` vẽ: `chip:st.stm32f411` trên cùng, rồi
+    /// `periph:I2C1`, `reg:CR1`, `field:ACK`. Quan hệ (`HAS`, `CITES`, `ABOUT`, `SUPERSEDES`)
+    /// hiện làm dấu bên phải tên con, vì trong một cây thì cạnh không vẽ được thành mũi tên.
+    private func _hienDoThi(_ nodes: [[String: Any]], canh: [[String: Any]]) {
+        let theoId = Dictionary(nodes.map { (($0["id"] as? String) ?? "", $0) },
+                                uniquingKeysWith: { a, _ in a })
+
+        // Cạnh TRÙNG phải bỏ: `view.kg_map` trả `chip → HAS → mem:SRAM` hai lần trên dữ liệu
+        // thật (một lần cho mỗi fact về cùng chủ thể), và không bỏ thì cây hiện cùng một con hai
+        // lần — người đọc sẽ tưởng có hai vùng nhớ tên SRAM.
+        var daCo = Set<String>()
+        var con: [String: [(id: String, quanHe: String)]] = [:]
+        var coCha = Set<String>()
+        for e in canh {
+            let tu = (e["from"] as? String) ?? (e["source"] as? String) ?? ""
+            let toi = (e["to"] as? String) ?? (e["target"] as? String) ?? ""
+            let qh = (e["type"] as? String) ?? (e["kind"] as? String) ?? ""
+            guard !tu.isEmpty, !toi.isEmpty, daCo.insert("\(tu)|\(qh)|\(toi)").inserted else {
+                continue
             }
-            if ds.count > 12 { noiRong("  … và \(ds.count - 12) nút \(tang) nữa.") }
+            con[tu, default: []].append((toi, qh))
+            coCha.insert(toi)
+        }
+
+        let tang = Dictionary(grouping: nodes, by: { ($0["tier"] as? String) ?? "—" })
+        for (t, ds) in tang.sorted(by: { _thuTuTang($0.key) < _thuTuTang($1.key) }) {
+            let xau = ds.filter { (($0["status"] as? String) ?? "") == "conflict" }.count
+            themDong(EideKnowledgeFormat.nhanTang(t, ""),
+                     "\(ds.count) nút" + (xau > 0 ? " · \(xau) đang mâu thuẫn" : ""),
+                     mau: xau > 0 ? EideToken.Mau.bad : EideKnowledgeFormat.mauTang(t, ""))
+        }
+
+        var goc = nodes.compactMap { $0["id"] as? String }.filter { !coCha.contains($0) }
+        // Đồ thị toàn chu trình thì KHÔNG nút nào có bậc vào 0, và cây sẽ rỗng. Lấy nút đầu làm
+        // gốc chứ không im lặng trả về một màn trống — một màn trống ở đây đọc như "dự án chưa
+        // có tri thức", câu sai nguy hiểm nhất màn này nói được.
+        if goc.isEmpty, let dau = nodes.first?["id"] as? String { goc = [dau] }
+
+        var daVe = Set<String>()
+        var dung = 0
+        func nut(_ id: String, quanHe: String, duongDi: Set<String>) -> EideNutCay {
+            let n = theoId[id]
+            let nhan = (n?["label"] as? String) ?? EideKnowledgeFormat.tenNgan(id)
+            let xungDot = ((n?["status"] as? String) ?? "") == "conflict"
+            daVe.insert(id)
+            dung += 1
+
+            var cc: [EideNutCay] = []
+            // `duongDi` chặn chu trình: `SUPERSEDES` nối fact cũ với fact mới và có thể vòng
+            // lại. Không chặn thì cây dựng tới hết bộ nhớ.
+            if !duongDi.contains(id), dung < EideTuVung.hangToiDa {
+                let tiep = duongDi.union([id])
+                for c in (con[id] ?? []).sorted(by: { $0.quanHe < $1.quanHe }) {
+                    cc.append(nut(c.id, quanHe: c.quanHe, duongDi: tiep))
+                }
+            } else if duongDi.contains(id) {
+                cc = [EideNutCay(ten: "↻ đã xuất hiện ở trên", duong: "", laThuMuc: false,
+                                 dau: "chu trình", mauDau: EideToken.Mau.warn)]
+            }
+            return EideNutCay(
+                ten: nhan, duong: id, laThuMuc: !cc.isEmpty, con: cc,
+                dau: [quanHe, (n?["kind"] as? String) ?? ""].filter { !$0.isEmpty }
+                    .joined(separator: " · "),
+                mauDau: xungDot ? EideToken.Mau.bad
+                                : EideKnowledgeFormat.mauTang((n?["tier"] as? String) ?? "", ""),
+                moSan: true)
+        }
+
+        let cay = goc.sorted().map { nut($0, quanHe: "", duongDi: []) }
+        soNutTrenCay = dung
+        guard !cay.isEmpty else { return }
+        themCay(goc: cay) { [weak self] n in
+            guard !n.duong.isEmpty else { return }
+            self?.onMoNut?(n.duong)
+        }
+
+        // Nút không tới được từ gốc nào vẫn phải hiện ra.
+        //
+        // Nút CÔ LẬP hoàn toàn (không cạnh nào) thì không rơi vào đây: bậc vào của nó là 0 nên
+        // nó thành một GỐC và đã nằm trong cây — đúng như phải thế, vì một fact không ABOUT chủ
+        // thể nào và không CITES nguồn nào là fact đáng ngờ nhất trong store. Nhánh này bắt
+        // trường hợp còn lại: một cụm toàn chu trình, không nút nào bậc vào 0, nên phép duyệt từ
+        // các gốc không bao giờ chạm tới.
+        let moCoi = nodes.compactMap { $0["id"] as? String }.filter { !daVe.contains($0) }
+        if !moCoi.isEmpty {
+            themDong("\(moCoi.count) nút KHÔNG nối vào đâu",
+                     moCoi.prefix(6).joined(separator: ", "), mau: EideToken.Mau.warn)
         }
     }
+
+    /// Số HÀNG trên cây — cho test.
+    ///
+    /// Khác số nút, và khác một cách có chủ ý: đồ thị tri thức là một DAG, nên một nút dùng
+    /// chung (`mem:SRAM` vừa là con `HAS` của chip vừa là đích `ABOUT` của mỗi fact) xuất hiện
+    /// dưới MỌI cha của nó. Gộp nó lại thành một hàng sẽ giấu mất một trong hai quan hệ — mà
+    /// quan hệ mới là thứ màn này hiện ra để nói.
+    public private(set) var soNutTrenCay = 0
 
     private func _thuTuTang(_ t: String) -> Int {
         switch t {
