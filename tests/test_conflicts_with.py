@@ -150,7 +150,13 @@ def test_kg_conflicts_liet_ke_ca_cap_khai(du_an):
     _fact(root, "f_er", f"chip:{PART}/errata:2.4.1", "other", '{"kind":"errata"}',
           conflicts=["f_ds"])
     ds = r.invoke("kg.conflicts", {}, ctx).result["conflicts"]
-    assert any(set(x["nodes"]) == {"f_er", "f_ds"} for x in ds)
+    # `nodes` mang object đầy đủ từ 15/09/2026 (xem `kg._hai_ben`): màn "Xung đột tri thức" dựng
+    # hai cột cạnh nhau và cần giá trị, nguồn, tầng — với id trần thì cả hai cột chỉ hiện một mã
+    # băm. `id` vẫn nằm trong mỗi node nên phép kiểm này vẫn hỏi đúng câu nó vốn hỏi.
+    assert any({n["id"] for n in x["nodes"]} == {"f_er", "f_ds"} for x in ds)
+    # Và `conflict_id` phải có mặt: `kg.resolve_conflict` đòi nó, còn `kg.conflicts` trước đây
+    # không phát ra — nút "Chọn A" trên giao diện vì thế luôn gửi một id rỗng.
+    assert all(x["id"].count(":") == 1 and all(x["id"].split(":")) for x in ds)
 
 
 # ================================================================ passport.import ghi trường

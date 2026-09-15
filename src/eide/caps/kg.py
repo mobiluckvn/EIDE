@@ -80,12 +80,47 @@ def conflicts(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     nguyên" thành "đã kiểm và sạch".
     """
     g, _ = _do_thi(ctx)
-    ra = [{"type": "fact", "nodes": [a, b], "detail": _chi_tiet_mau_thuan(ctx, a, b)}
+    ra = [{"type": "fact", "id": f"{a}:{b}", "nodes": _hai_ben(ctx, a, b),
+           "detail": _chi_tiet_mau_thuan(ctx, a, b)}
           for a, k, b in g.canh if k == "CONFLICTS_WITH"]
     with store.open_store(_store(ctx)) as c:
         co_hw_map = bool(c.execute(
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='hw_map'").fetchone())
     return {"conflicts": ra, "resource_ready": co_hw_map}
+
+
+def _hai_ben(ctx: Context, a: str, b: str) -> list[dict[str, Any]]:
+    """Hai fact mâu thuẫn, mỗi cái đủ trường để NGƯỜI chọn được giữa chúng.
+
+    Trước 15/09/2026 `nodes` là hai id trần (`["f_2f00…", "f_ca7a…"]`) và mọi thứ đáng đọc bị
+    nén vào chuỗi `detail`. Hai hệ quả đo được trên bản dựng thật.
+
+    (a) Màn "Xung đột tri thức" dựng hai cột cạnh nhau, mỗi cột định hiện giá trị, nguồn, tầng,
+    độ tin — nó đọc `nodes[i]["value"]` và nhận `nil`, nên cả hai cột chỉ hiện đúng một dòng
+    `id: f_2f00…`. Người dùng nhìn hai mã băm và được hỏi chọn cái nào.
+
+    (b) `detail` là một CÂU, và câu thì không chia cột được, không tô màu theo tầng được, không
+    sắp xếp được. Nó tốt cho nhật ký và vô dụng cho một màn quyết định.
+
+    Trả về object không phá hợp đồng: CDS-12.2 KG-02 chỉ ghi `conflicts[]` là `object` với mô tả
+    "type fact|resource, nodes[], detail" — kiểu phần tử của `nodes` để ngỏ. `id` giữ nguyên
+    trong mỗi node nên bên nào đang đọc id trần vẫn lấy được.
+    """
+    # LEFT JOIN, không JOIN: một fact trỏ tới nguồn đã bị xoá vẫn phải hiện ra được. Nó là fact
+    # đáng ngờ nhất trong cả store, và JOIN thường sẽ làm nó biến mất khỏi đúng màn dùng để soi.
+    with store.open_store(_store(ctx)) as c:
+        rows = c.execute(
+            "SELECT f.id, f.subject, f.predicate, f.value, f.unit, f.tier, f.confidence,"
+            " f.source_id, f.locator, f.method, f.status, s.uri, s.kind"
+            " FROM fact f LEFT JOIN source s ON s.id = f.source_id"
+            " WHERE f.id IN (?, ?)", (a, b)).fetchall()
+    cot = ("id", "subject", "predicate", "value", "unit", "tier", "confidence", "source_id",
+           "locator", "method", "status", "source_uri", "source_kind")
+    d = {r[0]: dict(zip(cot, r, strict=True)) for r in rows}
+    # Giữ THỨ TỰ (a, b) của cạnh, không theo thứ tự SQLite trả hàng: `choice: "a"` của KG-06
+    # nghĩa là "fact đứng trước trong conflict_id", nên nếu hai cột đảo chỗ thì người bấm "Chọn
+    # A" giữ lại đúng cái họ vừa loại.
+    return [d[x] for x in (a, b) if x in d]
 
 
 def _chi_tiet_mau_thuan(ctx: Context, a: str, b: str) -> str:

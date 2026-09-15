@@ -85,6 +85,7 @@ def import_(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     ghi = gop = xung_dot = 0
 
     with store.open_store(db) as c:
+        _kiem_nguon(c, facts)
         if pid:
             _bao_dam_passport(c, pid, batch)
         for f in facts:
@@ -129,6 +130,35 @@ def _kiem_schema(facts: list[dict[str, Any]]) -> None:
     if loi:
         raise EideError("E6001", f"FactBatch không hợp lệ ({len(loi)} lỗi): "
                         + "; ".join(loi[:5]) + ("…" if len(loi) > 5 else ""), issues=loi)
+
+
+def _kiem_nguon(c: Any, facts: list[dict[str, Any]]) -> None:
+    """Mọi `source_id` phải đã có trong bảng `source` — kiểm ở đây, không để SQLite kiểm.
+
+    `fact.source_id` có `REFERENCES source(id)`, nên nạp một lô trỏ tới nguồn chưa đăng ký sẽ
+    ném `sqlite3.IntegrityError: FOREIGN KEY constraint failed` — một traceback Python trần,
+    không mã lỗi, không nói nguồn nào thiếu. Đo 15/09/2026: gõ `passport.import` với
+    `source_id: "trm_v1.1"` trên một store mới, người dùng nhận 20 dòng stack trace kết thúc
+    bằng tên một cột SQL. Câu ấy không nói được điều DUY NHẤT họ cần biết — rằng nguồn phải
+    đăng ký trước bằng `search.fetch`/`archive.*`.
+
+    Hai điều quan trọng hơn thẩm mỹ. (a) API-15 §4 nói mọi lỗi mang mã E1000–E8002; một
+    `IntegrityError` lọt ra ngoài là một lỗi KHÔNG phân loại được, nên bên gọi (daemon, giao
+    diện) không có cách nào xử lý khác nhau. (b) Kiểm TRƯỚC khi ghi, đúng như `_kiem_schema` đã
+    làm và vì đúng lý do ấy: FK nổ ở fact thứ 300 thì 299 fact đầu đã nằm trong giao dịch.
+    """
+    thieu = sorted({f["source_id"] for f in facts
+                    if not c.execute("SELECT 1 FROM source WHERE id=?",
+                                     (f["source_id"],)).fetchone()})
+    if thieu:
+        raise EideError(
+            "E6001",
+            f"FactBatch trỏ tới {len(thieu)} nguồn chưa đăng ký: {', '.join(thieu[:5])}"
+            + ("…" if len(thieu) > 5 else "")
+            + ". Nguồn phải vào store trước (search.fetch, archive.import) — fact không có "
+              "nguồn thì không truy được về đâu.",
+            issues=[f"source_id không có trong bảng source: {s}" for s in thieu],
+            missing_sources=thieu)
 
 
 def _gop_mot(c: Any, f: dict[str, Any], actor: str) -> tuple[str, str]:

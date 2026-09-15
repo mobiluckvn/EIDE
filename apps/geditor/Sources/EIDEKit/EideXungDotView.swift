@@ -108,15 +108,26 @@ public final class XungDotView: ManHinhCoSo {
         t.textColor = EideToken.Mau.text
         c.addArrangedSubview(t)
 
-        for (nhan, khoa) in [("giá trị", "value"), ("chủ thể", "subject"),
-                             ("vị từ", "predicate"), ("nguồn", "source_id"),
+        // Thứ tự là thứ tự NGƯỜI ĐỌC cần, không phải thứ tự cột SQL: giá trị trước (thứ đang
+        // cãi nhau), rồi nguồn (thứ quyết định tin bên nào), rồi phần còn lại. `source_uri` đặt
+        // TRÊN `source_id` vì `src_ee2e3dd3…` không nói gì với ai, còn tên tệp thì nói hết.
+        for (nhan, khoa) in [("giá trị", "value"), ("đơn vị", "unit"),
+                             ("chủ thể", "subject"), ("vị từ", "predicate"),
+                             ("nguồn", "source_uri"), ("loại nguồn", "source_kind"),
+                             ("mã nguồn", "source_id"),
                              ("tầng", "tier"), ("độ tin", "confidence"),
+                             ("cách trích", "method"), ("trạng thái", "status"),
                              ("trang", "locator")] {
             guard let v = n[khoa], !"\(v)".isEmpty, "\(v)" != "<null>" else { continue }
-            let l = NSTextField(labelWithString: "\(nhan): \(v)")
+            // Nguồn là một đường dẫn dài, và phần đáng đọc nằm ở CUỐI. Cắt đuôi theo lệ thường
+            // sẽ giấu đúng tên tệp — thứ duy nhất phân biệt "TRM v1.1" với "datasheet rev 0.4".
+            // Hiện tên tệp, giữ cả đường dẫn trong tooltip.
+            let hien = khoa == "source_uri" ? ("\(v)" as NSString).lastPathComponent : "\(v)"
+            let l = NSTextField(labelWithString: "\(nhan): \(hien)")
             l.font = khoa == "value" ? EideToken.fontMono : EideToken.fontUI
             l.textColor = khoa == "tier" ? EideMuc.mau("\(v)") : EideToken.Mau.muted
-            l.lineBreakMode = .byTruncatingTail
+            l.lineBreakMode = .byTruncatingMiddle
+            if khoa == "source_uri" { l.toolTip = "\(v)" }
             c.addArrangedSubview(l)
         }
         return c

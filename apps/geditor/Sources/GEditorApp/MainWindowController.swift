@@ -842,6 +842,14 @@ final class MainWindowController: NSWindowController {
         return goc
     }
 
+    /// Có dựng được panel EIDE không — tức có chạy được `eide daemon` không.
+    ///
+    /// Đọc thuộc tính này DỰNG panel (nó `lazy`), nên đừng gọi ở đường khởi động. Nó có mặt để
+    /// bên gọi hỏi được câu "mở màn EIDE bây giờ có ra gì không" mà KHÔNG phải chịu hộp thoại
+    /// `runModal` của `chonManEide` — hộp thoại ấy đúng cho người đang ngồi trước máy và là một
+    /// cú treo vĩnh viễn cho mọi tiến trình không có ai bấm.
+    var coPanelEide: Bool { eidePanel != nil }
+
     /// Chọn một màn theo TIỀN TỐ, không theo chỉ số hàng.
     ///
     /// Bản cũ nhận `hang: Int` và tra `EideWindowController.manTrenSidebar[hang]`. Chỉ số hàng

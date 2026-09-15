@@ -156,10 +156,19 @@ def test_hai_fact_khac_gia_tri_la_mau_thuan(du_an):
         _fact(c, I2C1, "pin_function", "PB8/PB9", source="src_b", fid="f_pin2")
         c.commit()
     out = r.invoke("kg.conflicts", {}, ctx).result
-    cap = [set(x["nodes"]) for x in out["conflicts"] if x["type"] == "fact"]
+    # `nodes` mang object đầy đủ từ 15/09/2026 — xem `kg._hai_ben`.
+    def ids(x):
+        return {n["id"] for n in x["nodes"]}
+
+    cap = [ids(x) for x in out["conflicts"] if x["type"] == "fact"]
     assert {"f_pin", "f_pin2"} in cap
-    d = next(x["detail"] for x in out["conflicts"] if set(x["nodes"]) == {"f_pin", "f_pin2"})
+    d = next(x["detail"] for x in out["conflicts"] if ids(x) == {"f_pin", "f_pin2"})
     assert "PB6/PB7" in d and "PB8/PB9" in d, "chi tiết phải nêu HAI giá trị để người quyết được"
+    # Hai cột của màn xung đột đọc thẳng từ `nodes`, nên mỗi bên phải tự nói được giá trị và
+    # nguồn của nó mà không phải bổ chuỗi `detail` ra.
+    mot = next(x for x in out["conflicts"] if ids(x) == {"f_pin", "f_pin2"})
+    assert {n["value"] for n in mot["nodes"]} == {'"PB6/PB7"', '"PB8/PB9"'}
+    assert all(n.get("source_id") for n in mot["nodes"])
 
 
 def test_cung_gia_tri_khac_thu_tu_khoa_khong_phai_mau_thuan(du_an):

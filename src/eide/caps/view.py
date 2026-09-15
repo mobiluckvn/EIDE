@@ -288,29 +288,37 @@ def conflict_board(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """
     from eide.caps.kg import conflicts
     ds = conflicts({}, ctx)["conflicts"]
-    db = _db(ctx)
     rows = []
-    with store.open_store(db) as c:
-        for i, x in enumerate(ds, 1):
-            a, b = (x.get("nodes") or [None, None])[:2]
-            ra = c.execute(
-                "SELECT f.id, f.subject, f.predicate, f.value, f.tier, f.status, s.uri"
-                "  FROM fact f LEFT JOIN source s ON s.id = f.source_id"
-                f" WHERE f.id IN ({','.join('?' * len([y for y in (a, b) if y]))})",  # noqa: S608
-                [y for y in (a, b) if y]).fetchall()
-            if len(ra) < 2:
-                continue
-            rows.append({
-                "conflict_id": f"c_{i:03d}", "subject": ra[0][1], "predicate": ra[0][2],
-                "a": {"fact_id": ra[0][0], "value": json.loads(ra[0][3]), "tier": ra[0][4],
-                      "status": ra[0][5], "source": ra[0][6]},
-                "b": {"fact_id": ra[1][0], "value": json.loads(ra[1][3]), "tier": ra[1][4],
-                      "status": ra[1][5], "source": ra[1][6]},
-                "tiers": [ra[0][4], ra[1][4]],
-                "sources": [ra[0][6], ra[1][6]],
-                "detail": x.get("detail"),
-                "actions": ["kg.review_facts", "kg.supersede", "view.provenance"],
-            })
+    for x in ds:
+        hai = (x.get("nodes") or [])[:2]
+        if len(hai) < 2:
+            continue
+        ra, rb = hai
+
+        def _gt(n: dict[str, Any]) -> Any:
+            try:
+                return json.loads(n.get("value") or "null")
+            except (TypeError, ValueError):
+                # Giá trị không phải JSON hợp lệ thì trả NGUYÊN chuỗi. Bỏ cả hàng đi sẽ giấu mất
+                # đúng cái fact hỏng nhất trong store khỏi đúng cái bảng dùng để soi nó.
+                return n.get("value")
+
+        def _ve(n: dict[str, Any]) -> dict[str, Any]:
+            return {"fact_id": n.get("id"), "value": _gt(n), "tier": n.get("tier"),
+                    "status": n.get("status"), "source": n.get("source_uri")}
+
+        rows.append({
+            # `conflict_id` là id THẬT — dạng `<fact_a>:<fact_b>` mà `kg.resolve_conflict` nhận.
+            # Bản cũ tự đánh số `c_001`, và con số ấy không truyền vào đâu được: bảng bày ra ba
+            # hành động cho mỗi hàng trong khi khoá để gọi chúng thì bảng tự bịa ra.
+            "conflict_id": x.get("id"), "subject": ra.get("subject"),
+            "predicate": ra.get("predicate"),
+            "a": _ve(ra), "b": _ve(rb),
+            "tiers": [ra.get("tier"), rb.get("tier")],
+            "sources": [ra.get("source_uri"), rb.get("source_uri")],
+            "detail": x.get("detail"),
+            "actions": ["kg.review_facts", "kg.supersede", "view.provenance"],
+        })
     return {"rows": rows}
 
 

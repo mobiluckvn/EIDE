@@ -69,6 +69,20 @@ enum WindowCapture {
         case cayJSON = "cay-json"         // chế độ View của JSON: cây khoá–giá trị
         case troGiup = "tro-giup"         // một trang dày: bảng + khối mã + hộp cảnh báo
         case chao = "chao"                // trang chào lúc khởi động, có chân trang ô tích
+
+        // --- Màn EIDE ---------------------------------------------------------------------
+        //
+        // Ba cảnh này chụp PANEL EIDE, tức cửa sổ đang nói chuyện với một `eide daemon` thật
+        // trên một dự án thật. Chúng cần `EIDE_PROJECT` trỏ tới một thư mục có `.eide/` đã di
+        // trú; không có thì cảnh tự bỏ qua và nói ra.
+        //
+        // Vì sao phải chụp chứ không tin bộ test: ba màn này đều đã có test đơn vị lẫn E2E, và
+        // cả hai loại đều XANH trong lúc màn "Xung đột tri thức" hiện hai cột chỉ chứa một mã
+        // băm (15/09/2026). Test hỏi "có đúng số dòng không"; chỉ con mắt hỏi được "hai dòng ấy
+        // có nói gì cho người đọc không".
+        case eideXungDot = "eide-xung-dot"   // hai bên xung đột, mỗi bên kèm nguồn và tầng
+        case eideLamRo = "eide-lam-ro"       // màn làm rõ yêu cầu
+        case eideModels = "eide-models"      // mô hình & chi phí
     }
 
     /// Thư mục dữ liệu cho tám cảnh `dt-*`. `nil` thì bỏ qua chúng.
@@ -92,6 +106,11 @@ enum WindowCapture {
         // luồng nền. Chụp ở 0,4 s ra một khung trắng.
         case .mediaAnh, .mediaPDF, .mediaNen, .mediaExcel, .mediaWord: return 2.5
         case .trangWord, .trangSlide: return 2.5
+        // Panel EIDE khởi động một tiến trình `eide daemon` (Python + nạp registry 238 năng
+        // lực), rồi mới gọi được năng lực của màn. Đo 15/09: khoảng 2,5 s tới lúc daemon trả
+        // lời lần đầu. Chụp sớm hơn ra một màn "đang nạp…" — và một ảnh như thế thì không sai,
+        // chỉ là không nói được gì.
+        case .eideXungDot, .eideLamRo, .eideModels: return 8
         default: return 0.4
         }
     }
@@ -169,8 +188,46 @@ enum WindowCapture {
         exit(0)
     }
 
+    /// Mở một màn EIDE trên dự án `EIDE_PROJECT`.
+    ///
+    /// Trả `false` (và nói lý do) khi chưa đặt biến môi trường: một ảnh chụp panel EIDE không có
+    /// dự án chỉ là một khung xám, và đưa nó vào thư mục ảnh cùng tên với cảnh thật là cách chắc
+    /// chắn nhất để về sau có người đọc nó như bằng chứng về một lỗi không tồn tại.
+    private static func chuanBiEide(_ tien: String, on controller: MainWindowController) -> Bool {
+        guard let d = ProcessInfo.processInfo.environment["EIDE_PROJECT"], !d.isEmpty else {
+            print("⏭  bỏ qua cảnh eide-*: chưa đặt EIDE_PROJECT")
+            return false
+        }
+        var laThuMuc: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: d, isDirectory: &laThuMuc),
+              laThuMuc.boolValue,
+              FileManager.default.fileExists(atPath: (d as NSString)
+                  .appendingPathComponent(".eide")) else {
+            print("⏭  bỏ qua cảnh eide-*: \(d) không phải dự án EIDE (thiếu .eide/)")
+            return false
+        }
+        // KHÔNG gọi `toggleSidebar` ở đây: đó là sidebar TỆP của trình soạn thảo. Cột điều hướng
+        // EIDE luôn có mặt trong `contentView` (DEV-098) và không bật/tắt được.
+        //
+        // Kiểm `eidePanel` TRƯỚC khi mở màn. `chonManEide` gặp panel nil sẽ dựng `NSAlert` và gọi
+        // `runModal()` — trong một tiến trình chụp ảnh không người ngồi trước máy thì đó là treo
+        // vĩnh viễn, và cách nó hỏng là không có gì xảy ra cả.
+        guard controller.coPanelEide else {
+            print("⏭  bỏ qua cảnh eide-*: không chạy được `eide daemon` (đặt EIDE_PYTHON?)")
+            return false
+        }
+        controller.chonManEide(tien: tien)
+        return true
+    }
+
     private static func prepare(_ scene: Scene, on controller: MainWindowController) {
         switch scene {
+        case .eideXungDot:
+            _ = chuanBiEide("XungDot", on: controller)
+        case .eideLamRo:
+            _ = chuanBiEide("LamRo", on: controller)
+        case .eideModels:
+            _ = chuanBiEide("Models", on: controller)
         case .trong:
             controller.prepareSelfTestDocument("""
                 Xin chào. Đây là GEditor.
