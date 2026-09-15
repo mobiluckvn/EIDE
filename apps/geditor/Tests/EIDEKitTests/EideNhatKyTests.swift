@@ -368,7 +368,11 @@ final class EideMoManTuSidebarTests: XCTestCase {
         let batBangPhuongThuc: Set<String> = ["FlowMap", "Models"]
 
         var thieu: [String] = []
-        for m in EideWindowController.manTrenSidebar where m.tien != "Chat" {
+        // Duyệt `EideDieuHuong.NHOM` — bảng màn DUY NHẤT từ 15/09/2026. Trước đó bài này đọc
+        // `EideWindowController.manTrenSidebar`, một bản sao thứ ba của cùng danh sách: thêm một
+        // màn vào điều hướng mà quên bản sao ấy thì bài này vẫn xanh trong khi màn mới không
+        // được kiểm gì.
+        for m in EideDieuHuong.NHOM.flatMap(\.man) where m.tien != "Chat" {
             if EidePanel.napMacDinh(choMan: m.tien) != nil { continue }
             if batBangPhuongThuc.contains(m.tien) { continue }
             // Màn còn lại phải ít nhất được nhắc tới trong mã với một câu giải thích — dấu hiệu

@@ -111,6 +111,40 @@ enum SelfTest {
     /// `fileExists` vẫn trả `true` cho tệp ngoài vùng chứa — chỉ lệnh đọc mới bị chặn. Bản đầu
     /// của ba bài Office hỏi `fileExists`, đi tiếp, rồi chép hụt trong im lặng vì `try?`, và
     /// bài kiểm báo "không nhận ra bảng tính" — một câu đổ lỗi cho sản phẩm.
+    /// Dựng một dự án EIDE thứ hai trong thư mục tạm, hoặc nil nếu không dựng được.
+    ///
+    /// Hai bước chứ không một: `project.create` KHÔNG chạy migration, và một dự án chưa di trú
+    /// thì `EideDuAn.kiem` từ chối — nên bỏ bước `migrate` sẽ làm bài kiểm trượt vì một lý do
+    /// không liên quan gì tới thứ nó định kiểm.
+    static func duAnThuHai() -> String? {
+        guard let py = ProcessInfo.processInfo.environment["EIDE_PYTHON"] else { return nil }
+        let tam = NSTemporaryDirectory() + "eide-doi-du-an-" + UUID().uuidString
+
+        func chay(_ arg: [String]) -> (Int32, String) {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: py)
+            p.arguments = ["-m", "eide.cli"] + arg
+            let ra = Pipe()
+            p.standardOutput = ra
+            p.standardError = ra
+            guard (try? p.run()) != nil else { return (-1, "") }
+            // Đọc HẾT ống trước `waitUntilExit`: ống có đệm hữu hạn, và một tiến trình con in
+            // nhiều hơn đệm sẽ đứng chờ ai đó đọc trong lúc ta đứng chờ nó chết.
+            let d = ra.fileHandleForReading.readDataToEndOfFile()
+            p.waitUntilExit()
+            return (p.terminationStatus, String(data: d, encoding: .utf8) ?? "")
+        }
+
+        try? FileManager.default.createDirectory(atPath: tam, withIntermediateDirectories: true)
+        let (_, out) = chay(["caps", "invoke", "project.create",
+                             #"{"text":"dự án thử đổi","chip":"st.stm32f411"}"#, "-p", tam])
+        guard let i = out.firstIndex(of: "{"),
+              let j = try? JSONSerialization.jsonObject(with: Data(out[i...].utf8)),
+              let duong = (j as? [String: Any])?["path"] as? String else { return nil }
+        guard chay(["migrate", "-p", duong]).0 == 0 else { return nil }
+        return duong
+    }
+
     static func fixtureUnreadable(_ relative: String) -> String? {
         let path = repoFile(relative)
         guard let handle = FileHandle(forReadingAtPath: path) else {
@@ -379,6 +413,45 @@ enum SelfTest {
                 }
             }
             controller.chonManEide(tien: "Code")
+            return nil
+        },
+
+        Case(name: "EIDE: đổi dự án ở NGAY trong cửa sổ này, không mở cửa sổ thứ hai") { c in
+            guard let cu = c.duAnDangMo else { return "chưa mở dự án nào — không đổi được" }
+            guard let moi = duAnThuHai() else {
+                return "không dựng được dự án thứ hai để thử (cần EIDE_PYTHON)"
+            }
+            defer { try? FileManager.default.removeItem(atPath: moi) }
+
+            // Đếm cửa sổ TRƯỚC. Lỗi cần bắt không phải "đổi không được" mà là "đổi được, kèm một
+            // cửa sổ thứ hai" — và cái thứ hai thì không ai nhìn thấy trong một bài kiểm chỉ hỏi
+            // dự án hiện tại là gì.
+            let truoc = NSApp.windows.count
+            c.chonManEide(tien: "Passport")
+            if let loi = c.doiDuAnEide(moi) { return "đổi dự án hỏng: \(loi)" }
+
+            guard c.duAnDangMo == moi else {
+                return "đổi xong mà `duAnDangMo` vẫn là \(c.duAnDangMo ?? "nil")"
+            }
+            guard NSApp.windows.count == truoc else {
+                return "đổi dự án làm số cửa sổ đi từ \(truoc) lên \(NSApp.windows.count) — "
+                     + "đây đúng là cửa sổ thứ hai mà DEV-098 bỏ đi"
+            }
+            // Màn đang xem phải GIỮ NGUYÊN: người đổi dự án lúc đang xem hộ chiếu muốn xem hộ
+            // chiếu của dự án mới.
+            guard c.eidePanel?.tenManDangMo == "Passport" else {
+                return "đổi dự án xong bị ném khỏi màn đang xem, sang "
+                     + "\(c.eidePanel?.tenManDangMo ?? "hội thoại")"
+            }
+            // Cây tệp phải theo sang dự án mới, không ở lại thư mục cũ.
+            c.chonManEide(tien: "Code")
+            c.window?.layoutIfNeeded()
+            guard c.workspaceRootForSelfTest == moi else {
+                return "cây tệp còn trỏ \(c.workspaceRootForSelfTest ?? "nil"), trong khi panel "
+                     + "đã nói về \(moi)"
+            }
+
+            _ = c.doiDuAnEide(cu)      // trả lại dự án ban đầu cho các bài sau
             return nil
         },
 

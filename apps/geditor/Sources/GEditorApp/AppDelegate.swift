@@ -10,9 +10,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var cliBridge: CLIBridgeServer?
     private var servicesProvider: ServicesProvider?
 
-    /// Cửa sổ EIDE, giữ lại để nó không bị thu hồi ngay sau khi mở.
-    var eideWindow: EideWindowController?
-
     /// Mở cửa sổ EIDE — UXD-13 §1/§2 (sidebar 23 màn, 1440×900).
     ///
     /// Khác `MainWindowController.showEidePanel` ở CHỖ ĐỨNG chứ không ở nội dung: cùng một
@@ -20,23 +17,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// riêng của sản phẩm. Mockup §2 mô tả cái thứ hai.
     @MainActor
     @objc func moCuaSoEide() {
-        if let w = eideWindow { return w.hien() }
-        // Mở kèm dự án ngay từ đầu, không mở rỗng rồi mới nạp: daemon quyết `ctx.project_dir`
-        // lúc khởi động, nên mở rỗng trước nghĩa là dựng một daemon để vứt đi ngay sau đó.
-        if let d = Self.duAnMoSan() {
-            return moDuAnEide(duong: d)
-        }
-        guard let c = EideDaemonLauncher.moClient() else {
-            let a = NSAlert()
-            a.messageText = "Chưa chạy được EIDE"
-            a.informativeText = "Không tìm thấy `eide`. Chạy `make setup` trong kho EIDE, "
-                + "hoặc đặt EIDE_PYTHON trỏ tới python của venv."
-            a.runModal()
-            return
-        }
-        let w = EideWindowController(client: c)
-        eideWindow = w
-        w.hien()
+        // KHÔNG mở cửa sổ mới: cửa sổ chính ĐÃ LÀ EIDE từ DEV-098 (sidebar 23 màn bên trái,
+        // trình soạn thảo là màn "Mã nguồn"). Mục menu này nay chỉ đưa nó lên trước và mở màn
+        // Tổng quan — giữ lại vì nó là lối vào không đi qua menu Format, vốn bị AppKit vô hiệu
+        // hoá toàn bộ khi chạy binary trần lúc phát triển.
+        guard let cua = mainWindowController else { return }
+        cua.showWindow(nil)
+        cua.window?.makeKeyAndOrderFront(nil)
+        cua.chonManEide(tien: "Main")
     }
 
     /// Dự án EIDE mở sẵn lúc khởi động, hoặc nil.
@@ -97,25 +85,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             a.runModal()
             return
         }
-        if eideWindow == nil {
-            guard let c = EideDaemonLauncher.moClient(duAn: duong) else {
-                bao(khongChayDuoc: ())
-                return
-            }
-            let w = EideWindowController(client: c)
-            eideWindow = w
-            EideDuAn.nhoDaMo(duong)
-            w.hien()
+        // Đổi dự án NGAY TRONG cửa sổ đang mở.
+        //
+        // Trước 15/09/2026, nhánh này dựng một `EideWindowController` — cửa sổ EIDE thời trước
+        // DEV-098. Chọn một dự án từ menu trên thanh trên vì thế mở ra một cửa sổ THỨ HAI mang
+        // dự án mới, trong khi cửa sổ người dùng đang nhìn giữ nguyên dự án cũ: hai bản sao của
+        // cùng một sản phẩm, hai tiến trình daemon, hai dòng sự kiện, và không có gì trên màn
+        // hình nói cho ai biết cái nào đang nói về cái gì. DEV-098 chốt "một giao diện tên
+        // EIDE" — nhánh ấy là mảnh sót lại của trạng thái trước nó.
+        guard let cua = mainWindowController else {
+            bao(khongChayDuoc: ())
             return
         }
-        if let loi = eideWindow?.moDuAn(duong) {
+        if let loi = cua.doiDuAnEide(duong) {
             let a = NSAlert()
             a.messageText = "Không mở được dự án"
             a.informativeText = loi
             a.runModal()
             return
         }
-        eideWindow?.hien()
+        cua.showWindow(nil)
+        cua.window?.makeKeyAndOrderFront(nil)
     }
 
     /// Chạy `eide migrate -p <dự án>` cho một dự án vừa tạo.

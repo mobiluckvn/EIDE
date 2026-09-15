@@ -521,6 +521,13 @@ public final class EidePanel: NSView {
     /// Đóng màn chuyên đề, quay về hội thoại.
     public func dongManChuyenDe() { dongMan() }
 
+    /// Tiền tố của màn đang mở, hoặc nil khi đang ở hội thoại.
+    ///
+    /// Dùng khi ĐỔI DỰ ÁN: panel cũ bị bỏ đi và panel mới phải mở lại đúng màn người đang xem.
+    /// Người đổi dự án lúc đang xem "Hộ chiếu chip" muốn xem hộ chiếu của dự án mới, không muốn
+    /// bị ném về Tổng quan rồi phải tự tìm đường quay lại.
+    public var tenManDangMo: String? { _manDangHoi.isEmpty ? nil : _manDangHoi }
+
     /// Đóng panel và **tiến trình daemon của nó**.
     ///
     /// Mỗi panel giữ một `eide daemon` chạy nền qua stdio. Bỏ panel đi mà không đóng daemon thì

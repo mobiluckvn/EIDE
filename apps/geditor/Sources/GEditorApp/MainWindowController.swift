@@ -28,7 +28,6 @@ final class MainWindowController: NSWindowController {
 
     // Khung EIDE (DEV-098) — sidebar trái và vùng nội dung đổi giữa trình soạn thảo với màn.
     var sidebarEide: NSTableView?
-    private var nguonSidebar: NguonSidebarEide?
     private var dieuHuongEide: EideDieuHuong?
     private var khungEideGoc: NSView?
     /// Dự án mà cây tệp đang trỏ tới — để không trỏ lại workspace ở mỗi lần mở màn Mã nguồn.
@@ -864,7 +863,13 @@ final class MainWindowController: NSWindowController {
     /// Nên: giữ một cây, dạy nó hiện `.eide/`. Ít mã hơn, và người dùng có một chỗ để nhìn.
     @MainActor
     func hienCayDuAn(_ hien: Bool) {
-        guard hien, let duAn = AppDelegate.duAnMoSan() else { return }
+        // `duAnDangMo` TRƯỚC, `duAnMoSan()` chỉ để dự phòng khi panel chưa dựng.
+        //
+        // Gọi thẳng `duAnMoSan()` là một cái bẫy đã sập một lần: hàm ấy ưu tiên biến môi trường
+        // `EIDE_PROJECT`, nên sau khi người dùng đổi dự án giữa phiên, cây tệp vẫn trỏ dự án cũ
+        // trong khi panel đã nói về dự án mới — hai nửa cửa sổ nói về hai thư mục khác nhau.
+        // Bài `--self-test` "đổi dự án ở ngay trong cửa sổ này" bắt được đúng chuyện đó.
+        guard hien, let duAn = duAnDangMo ?? AppDelegate.duAnMoSan() else { return }
 
         // Trỏ workspace vào thư mục dự án.
         //
@@ -1047,13 +1052,72 @@ final class MainWindowController: NSWindowController {
         // không dự án sẽ hiện màn trống cho tới khi ai đó dựng lại nó — và trước 14/09/2026 thì
         // không có đường nào dựng lại (GIAM-SAT-UI §0.2).
         let duAn = AppDelegate.duAnMoSan()
+        guard let p = self.dungPanel(duAn: duAn) else { return nil }
+        return p
+    }()
+
+    /// Dự án cửa sổ này đang mở. `nil` khi chưa dựng được panel.
+    ///
+    /// Đọc từ ĐÂY chứ không gọi lại `AppDelegate.duAnMoSan()`: hàm ấy ưu tiên biến môi trường
+    /// `EIDE_PROJECT`, nên sau khi người dùng đổi dự án trong phiên, nó vẫn trả về dự án cũ và
+    /// cây tệp sẽ trỏ một nơi còn panel nói về nơi khác.
+    private(set) var duAnDangMo: String?
+
+    /// Dựng một `EidePanel` mới cho `duAn`, nối sẵn dây.
+    ///
+    /// Một chỗ dựng duy nhất, vì có HAI đường tới đây — mở cửa sổ lần đầu và đổi dự án giữa
+    /// phiên — và hai đường dựng panel theo hai cách là cách chắc chắn để một trong hai quên nối
+    /// `onChonDuAn`, rồi nút tên dự án trên thanh trên bấm không ra gì.
+    @MainActor
+    private func dungPanel(duAn: String?) -> EidePanel? {
         guard let c = EideDaemonLauncher.moClient(duAn: duAn) else { return nil }
         if let duAn { EideDuAn.nhoDaMo(duAn) }
         let p = EidePanel(client: c)
         p.datTenDuAn(duAn.map { ($0 as NSString).lastPathComponent })
         p.onChonDuAn = { [weak self] in self?.moMenuDuAn() }
+        duAnDangMo = duAn
         return p
-    }()
+    }
+
+    /// Đổi dự án NGAY TRONG cửa sổ này. Trả câu lỗi, hoặc nil khi xong.
+    ///
+    /// ## Vì sao không mở cửa sổ thứ hai
+    ///
+    /// Trước 15/09/2026, chọn một dự án từ menu trên thanh trên gọi `AppDelegate.moDuAnEide`,
+    /// và hàm ấy dựng một `EideWindowController` — cửa sổ EIDE thời trước DEV-098. Kết quả: một
+    /// cửa sổ THỨ HAI hiện ra với dự án mới, còn cửa sổ đang nhìn giữ nguyên dự án cũ. Hai bản
+    /// sao của cùng một sản phẩm, hai daemon, hai dòng sự kiện — và người dùng không có cách nào
+    /// biết cái nào đang nói về cái gì.
+    ///
+    /// Đóng panel CŨ trước khi dựng cái mới là bắt buộc: mỗi panel giữ một tiến trình
+    /// `eide daemon`, và hai daemon cùng theo dõi một sổ cái là hai nguồn sự kiện trùng nhau,
+    /// chưa kể một tiến trình không ai đóng.
+    @discardableResult
+    func doiDuAnEide(_ duong: String) -> String? {
+        if let loi = EideDuAn.kiem(duong).loi { return loi }
+        if duAnDangMo == duong, eidePanel != nil { return nil }
+
+        let manCu = eidePanel?.tenManDangMo
+        eidePanel?.dong()
+        eidePanel?.removeFromSuperview()
+        eidePanel = nil
+
+        guard let p = dungPanel(duAn: duong) else {
+            return "Không chạy được `eide daemon` cho dự án này. Kiểm `make setup` trong kho "
+                 + "EIDE, hoặc đặt EIDE_PYTHON."
+        }
+        eidePanel = p
+        window?.title = "EIDE — " + (duong as NSString).lastPathComponent
+
+        // Buộc trỏ lại workspace: `cayDangTro` còn giữ dự án cũ, và không xoá nó thì cây tệp ở
+        // lại thư mục cũ trong khi panel đã nói về thư mục mới.
+        cayDangTro = nil
+        // Giữ NGUYÊN màn đang mở. Người đổi dự án lúc đang xem "Hộ chiếu chip" muốn xem hộ chiếu
+        // của dự án mới, không muốn bị ném về Tổng quan.
+        chonManEide(tien: manCu ?? "Main")
+        dieuHuongEide?.chon(manCu ?? "Main")
+        return nil
+    }
 
     /// Menu dự án — bấm vào tên dự án trên thanh trên.
     ///
@@ -14734,46 +14798,5 @@ extension MainWindowController: HelpWelcomeSettings {
         // theme hay phím tắt, nên dựng lại toàn bộ chrome chỉ để ghi một dấu tích là một nháy
         // hình không ai xin.
         saveSettings()
-    }
-}
-
-
-/// Nguồn dữ liệu cho sidebar EIDE — 21 màn của UXD-13 §2.
-///
-/// Tách khỏi `MainWindowController` vì lớp ấy đã là delegate của hàng chục thứ; thêm hai
-/// protocol bảng vào đó buộc mọi bảng khác trong cửa sổ phải tự phân biệt bằng `===`, và cái
-/// quên phân biệt là cái hiện nhầm nội dung.
-final class NguonSidebarEide: NSObject, NSTableViewDataSource, NSTableViewDelegate {
-
-    private let khiChon: (Int) -> Void
-
-    init(khiChon: @escaping (Int) -> Void) {
-        self.khiChon = khiChon
-        super.init()
-    }
-
-    func numberOfRows(in tableView: NSTableView) -> Int {
-        EideWindowController.manTrenSidebar.count
-    }
-
-    func tableView(_ tv: NSTableView, viewFor col: NSTableColumn?, row: Int) -> NSView? {
-        let m = EideWindowController.manTrenSidebar[row]
-        let l = NSTextField(labelWithString: "\(row + 1). \(m.nhan)")
-        l.font = NSFont.systemFont(ofSize: 12)
-        l.setAccessibilityLabel("Màn \(m.nhan)")
-        let hop = NSTableCellView()
-        hop.addSubview(l)
-        l.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            l.leadingAnchor.constraint(equalTo: hop.leadingAnchor, constant: 10),
-            l.centerYAnchor.constraint(equalTo: hop.centerYAnchor),
-            l.trailingAnchor.constraint(lessThanOrEqualTo: hop.trailingAnchor, constant: -4),
-        ])
-        return hop
-    }
-
-    func tableViewSelectionDidChange(_ n: Notification) {
-        guard let tv = n.object as? NSTableView else { return }
-        khiChon(tv.selectedRow)
     }
 }
