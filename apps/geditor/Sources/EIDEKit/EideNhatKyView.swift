@@ -352,6 +352,9 @@ public final class NhatKyView: NSView, KhungNhinEide {
     @MainActor
     public var soDongDeTest: Int { tatCa.count }
 
+    /// Số dòng dữ liệu đang hiện, theo `KhungNhinEide` — với nhật ký là số MỐC đã nhận.
+    public var soDong: Int { tatCa.count }
+
     /// Chọn nhóm lọc theo TÊN. Dùng cho test và cho lệnh `/nhật ký <nhóm>` về sau.
     @MainActor
     public func chonNhomDeTest(_ ten: String) {

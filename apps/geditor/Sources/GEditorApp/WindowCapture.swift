@@ -667,6 +667,15 @@ enum WindowCapture {
     /// In ra cạnh mỗi dòng ✅ — xem `write` để biết vì sao con số này quan trọng hơn vẻ ngoài.
     private(set) static var lastEmptyPercent: Int?
 
+    /// Chụp cửa sổ ra PNG — phơi ra cho `VongGiaoDien` dùng lại.
+    ///
+    /// Một phép chụp, một chỗ sửa. Hai chỗ chụp ảnh nghĩa là hai cách xử lý vùng trong suốt, và
+    /// vùng trong suốt là thứ đã một lần làm người đọc ảnh kết luận sai về một lỗi không có.
+    @discardableResult
+    static func chup(_ controller: NSWindowController, ra url: URL) -> Bool {
+        write(controller: controller, to: url)
+    }
+
     private static func write(controller: NSWindowController, to url: URL) -> Bool {
         guard let view = controller.window?.contentView, view.bounds.width > 0 else { return false }
         guard let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return false }

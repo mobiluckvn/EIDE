@@ -149,7 +149,15 @@ const TOKENS = {
     ok: '#0b6b52', okBg: '#dff5ee',
     warn: '#7a5200', warnBg: '#fff0cc',
     bad: '#7a0c0c', badBg: '#fde3e1',
-    info: '#BC2626', infoBg: '#e6effa',
+    // `info` là XANH LAM, không phải đỏ.
+    //
+    // Cặp `info`/`infoBg` vốn khai `#B8121F` trên `#e6effa`: chữ ĐỎ trên nền XANH. Nền đã nói
+    // đúng ý định thiết kế ("thông tin" là xanh), chỉ chữ đi lạc sang màu thương hiệu. Hệ quả
+    // đo được 16/09/2026 trong một vòng chạy qua giao diện: dòng "chi phí hôm nay 0.0000 USD"
+    // hiện màu ĐỎ — người dùng đọc một con số hoàn toàn bình thường như một cảnh báo. Và `info`
+    // đỏ chỉ khác `bad #7a0c0c` 1,83 lần tương phản, tức hai trạng thái ngược nhau gần như cùng
+    // một màu.
+    info: '#1e40af', infoBg: '#e6effa',
     bg: '#f4f6f9', surface: '#ffffff', border: '#e1e6ee',
     text: '#1b2430', muted: '#5b6b7f',
   },
@@ -170,7 +178,7 @@ c.push(...CODE([
   'color.brandGold    #B89C0E  · color.brandGoldLight #EFF003  (vàng ngọn đuốc trong logo)',
   'color.accent       #F2B705  (vàng sao — việc cần người, cảnh báo nhẹ)',
   'color.secondary    #373D4E  (xám xanh — lấy từ dòng chữ thứ hai của logo, tương phản 10,0)',
-  'color.ok #0b6b52/#dff5ee · color.warn #7a5200/#fff0cc · color.bad #7a0c0c/#fde3e1 · color.info #BC2626/#e6effa',
+  'color.ok #0b6b52/#dff5ee · color.warn #7a5200/#fff0cc · color.bad #7a0c0c/#fde3e1 · color.info #1e40af/#e6effa (xanh lam — KHÔNG dùng đỏ thương hiệu cho thông tin)',
   'color.bg #f4f6f9 · color.surface #fff · color.border #e1e6ee · color.text #1b2430 · color.muted #5b6b7f',
   'font.ui  IBM Plex Sans 13px/1.45 (macOS fallback -apple-system) · font.mono IBM Plex Mono 12px',
   'space 4/8/12/16/24 · radius 6/8/10 · shadow.window 0 20px 60px rgba(184,18,31,.14)',

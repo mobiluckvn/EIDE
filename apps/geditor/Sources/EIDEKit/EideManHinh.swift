@@ -21,6 +21,13 @@ import AppKit
 /// không kế thừa nó. Một giao thức chung cho phép panel đối xử với cả 20 màn như nhau mà không
 /// phải ép kiểu từng cái — và ép kiểu từng cái là chỗ, hôm thêm màn thứ 21, có người quên.
 public protocol KhungNhinEide: NSView {
+    /// Số dòng dữ liệu đang hiện.
+    ///
+    /// Nằm trong giao thức chứ không chỉ ở `ManHinhCoSo`, vì ba màn tri thức viết trước lớp cơ sở
+    /// và không kế thừa nó — bên gọi hỏi bằng cách ép kiểu sẽ nhận `nil` cho đúng ba màn ấy, và
+    /// một bảng kiểm kê ghi "0 dòng" cho màn đang hiện 290 fact là một bảng nói dối.
+    var soDong: Int { get }
+
     func capNhat(ketQua: [String: Any])
     /// Chưa hỏi daemon lần nào — khác hẳn "đã hỏi và không có gì".
     func chuaNap(_ viSao: String)

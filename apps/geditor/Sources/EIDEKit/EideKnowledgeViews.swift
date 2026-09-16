@@ -305,6 +305,12 @@ public final class RagAskView: NSView, KhungNhinEide {
     private let cotTrich = NSStackView()
     private let nutVet = NSButton()
 
+    /// Số dòng dữ liệu đang hiện, theo `KhungNhinEide`.
+    ///
+    /// Với màn hỏi đáp thì "dòng" LÀ trích dẫn: một câu trả lời không trích dẫn gì không phải một
+    /// dòng dữ liệu, nó là một lời khẳng định trần — và `daChanVoTrichDan` tồn tại đúng vì thế.
+    public var soDong: Int { soTrichDan }
+
     public private(set) var soTrichDan = 0
     /// Có đang từ chối hiện câu trả lời vì thiếu trích dẫn không — cho test đọc.
     public private(set) var daChanVoTrichDan = false
@@ -458,6 +464,9 @@ public final class DocView: NSView, KhungNhinEide {
     private let cot = NSStackView()
 
     /// Số dòng đang hiện (lỗi văn phong + mục lỗi thời).
+    /// Số dòng dữ liệu đang hiện, theo `KhungNhinEide` — với màn Tài liệu là số MỤC.
+    public var soDong: Int { soMuc }
+
     public private(set) var soMuc = 0
     /// Số mục `doc.sync` báo lỗi thời.
     public private(set) var soMucLoiThoi = 0

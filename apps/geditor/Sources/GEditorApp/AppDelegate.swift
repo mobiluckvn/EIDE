@@ -213,6 +213,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Đặt TRƯỚC `buildMenuBar` vì menu dựng một lần và giữ nguyên chữ của lần dựng ấy.
         if CommandLine.arguments.contains("--self-test")
             || CommandLine.arguments.contains("--capture")
+            || CommandLine.arguments.contains("--vong-giao-dien")
             || CommandLine.arguments.contains("--office-e2e") {
             L10n.lock(to: .vi)
         }
@@ -270,6 +271,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // `--capture <thư-mục>`: chụp ảnh cửa sổ ở vài trạng thái rồi thoát (xem `WindowCapture`).
         if CommandLine.arguments.contains("--capture") {
             WindowCapture.run(controller: controller, arguments: CommandLine.arguments)
+        }
+
+        // `--vong-giao-dien <thư-mục>`: đi một vòng làm việc THẬT qua giao diện, ghi nhật ký và
+        // ảnh từng bước rồi thoát. Xem `VongGiaoDien`.
+        if CommandLine.arguments.contains("--vong-giao-dien") {
+            VongGiaoDien.run(controller: controller, arguments: CommandLine.arguments)
         }
 
         // `--doc-sweep <thư-mục>`: mở MỌI tệp trong thư mục rồi báo cáo (xem `DocumentSweep`).

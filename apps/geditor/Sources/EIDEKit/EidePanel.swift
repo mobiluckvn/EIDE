@@ -114,6 +114,14 @@ public final class EidePanel: NSView {
         "view.doc_side_by_side", "view.rag_trace",
     ]
 
+    /// Màn có HAI khung nhìn, nên phải chọn khung theo NĂNG LỰC chứ không theo tiền tố màn.
+    ///
+    /// Đúng một màn: màn 7 "Bản đồ & hỏi đáp" (`RagAskView` trả lời câu hỏi, `KgMapView` vẽ tri
+    /// thức). Mọi màn khác có một khung nhìn, và `napMacDinh` của chúng được chọn cho đúng khung
+    /// ấy — áp phép định tuyến lên chúng chỉ tạo ra chỗ để một năng lực dùng chung (như
+    /// `view.timeline`) kéo màn sang khung của màn khác.
+    public static let MAN_HAI_KHUNG: Set<String> = ["Graph"]
+
     /// Phơi ra cho test: năng lực nào được định tuyến sang `KgMapView`.
     ///
     /// Cần thiết vì đây là chỗ hai quyết định phải khớp nhau — năng lực mặc định của màn 7 và
@@ -652,7 +660,10 @@ public final class EidePanel: NSView {
         let khoi = [bang > 0 ? "\(bang) bảng" : "", cay > 0 ? "\(cay) cây" : "",
                     ma > 0 ? "\(ma) khối mã" : "", dai > 0 ? "\(dai) dải" : ""]
             .filter { !$0.isEmpty }.joined(separator: " · ")
-        return ((v as? ManHinhCoSo)?.soDong ?? 0, khoi, chu > 0)
+        // `soDong` hỏi qua GIAO THỨC, không ép kiểu về `ManHinhCoSo`: ba màn tri thức
+        // (`PassportView`, `RagAskView`, `DocView`) viết trước lớp cơ sở nên không kế thừa nó, và
+        // ép kiểu trả `nil` → bảng kiểm kê ghi "0 dòng" cho màn Hộ chiếu đang hiện 290 fact.
+        return (v.soDong, khoi, chu > 0)
     }
 
     /// Tiền tố của màn đang mở, hoặc nil khi đang ở hội thoại.
@@ -681,6 +692,11 @@ public final class EidePanel: NSView {
         let t = ten.lowercased()
         guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
         for v in bangMan { v.v.isHidden = (v.v !== k.v) }
+        // ẨN CẢ BẢN ĐỒ. `banDo` không nằm trong `bangMan` (nó là khung thứ hai của màn 7), nên
+        // vòng lặp trên bỏ sót nó — và một khi bản đồ hiện ra, nó ĐÈ LÊN mọi màn mở sau đó.
+        // Đo 16/09/2026: sau khi xem Nhật ký, cả màn "Mô hình & chi phí" lẫn "Hành trình & cổng"
+        // đều hiện thân của bản đồ dưới tiêu đề của chính chúng.
+        banDo.isHidden = true
         hoiThoai.isHidden = true
         anHoiThoai.isActive = true
         thanhMan.isHidden = false
@@ -710,7 +726,17 @@ public final class EidePanel: NSView {
             // tri thức của dự án"* — một câu SAI, phát ra ngay sau khi hệ thống vừa trả về 17
             // nút và 26 cạnh. Đo 15/09/2026, và nó đúng cùng hình dạng với lỗi im lặng 17 mà
             // ghi chú của `nangLucBanDo` đã mô tả cho đường gõ tay.
-            let v = khungCua(k.tien, id: cap) ?? k.v
+            // Định tuyến theo NĂNG LỰC chỉ áp cho màn có HAI khung nhìn.
+            //
+            // Bản 15/09 áp cho mọi màn, và nó sai ở đúng chỗ khó thấy: `napMacDinh("NhatKy")` là
+            // `view.timeline`, mà `view.timeline` nằm trong `nangLucBanDo` — nên màn Nhật ký bị
+            // thay bằng Bản đồ tri thức. Tiêu đề vẫn ghi "Nhật ký đầy đủ", thân thì hiện "Bản đồ
+            // tri thức". Đo 16/09/2026 bằng một vòng chạy qua giao diện.
+            //
+            // Lý lẽ: `napMacDinh` được CHỌN THEO MÀN, nên theo xây dựng nó đã khớp khung nhìn của
+            // màn ấy. Ngoại lệ duy nhất là màn 7, nơi có hai khung nhìn và tôi cố ý chọn năng lực
+            // của khung bản đồ. Ghi ngoại lệ ấy thành dữ liệu, không thành một câu `if` ẩn.
+            let v = Self.MAN_HAI_KHUNG.contains(k.tien) ? (khungCua(k.tien, id: cap) ?? k.v) : k.v
             if v !== k.v { hienKhung(v, ten: tenMan.stringValue, id: cap, thamSo: "") }
             chay(cap, [:], khiLoi: { [weak v] in v?.chuaNap($0) }) { [weak v] r in
                 v?.capNhat(ketQua: r)

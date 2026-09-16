@@ -25,7 +25,7 @@ public enum EideToken {
         public static let warnBg = NSColor(hex: "#fff0cc")
         public static let bad = NSColor(hex: "#7a0c0c")
         public static let badBg = NSColor(hex: "#fde3e1")
-        public static let info = NSColor(hex: "#BC2626")
+        public static let info = NSColor(hex: "#1e40af")
         public static let infoBg = NSColor(hex: "#e6effa")
         public static let bg = NSColor(hex: "#f4f6f9")
         public static let surface = NSColor(hex: "#ffffff")

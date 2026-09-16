@@ -1256,3 +1256,54 @@ final class EideLogoTests: XCTestCase {
         return (max(x, y) + 0.05) / (min(x, y) + 0.05)
     }
 }
+
+/// Ngữ nghĩa bảng màu trạng thái — `ok`/`warn`/`bad`/`info` phải PHÂN BIỆT được.
+final class EideMauTrangThaiTests: XCTestCase {
+
+    /// `info` không được là một sắc ĐỎ.
+    ///
+    /// Cặp `info`/`infoBg` vốn khai chữ đỏ trên nền xanh: nền nói đúng ý định thiết kế, chữ đi
+    /// lạc sang màu thương hiệu. Đo được trong vòng chạy qua giao diện 16/09/2026 — dòng "chi phí
+    /// hôm nay 0.0000 USD" hiện màu đỏ, và người dùng đọc một con số bình thường như cảnh báo.
+    func testINFOkhongPHAImotSACdo() throws {
+        let c = try XCTUnwrap(EideToken.Mau.info.usingColorSpace(.sRGB))
+        XCTAssertLessThan(c.redComponent, max(c.greenComponent, c.blueComponent),
+                          "`info` đang là một sắc đỏ — nó sẽ đọc như `bad`")
+    }
+
+    /// `info` và `bad` phải khác nhau về SẮC, không phải về độ sáng.
+    ///
+    /// Bản đầu của bài này đo tỉ số tương phản giữa hai màu và đòi ≥ 2,5 — đo sai thứ. Tương
+    /// phản đo ĐỘ SÁNG, mà cả bảng trạng thái đều là màu tối để đọc được trên nền trắng: `ok`
+    /// với `bad` chỉ 1,72, `warn` với `bad` 1,61. Thứ phân biệt bốn trạng thái là SẮC, và cách
+    /// đo đúng là hỏi kênh màu nào trội.
+    func testINFOvaBADkhacSAC() throws {
+        let i = try XCTUnwrap(EideToken.Mau.info.usingColorSpace(.sRGB))
+        let b = try XCTUnwrap(EideToken.Mau.bad.usingColorSpace(.sRGB))
+        XCTAssertGreaterThan(i.blueComponent, i.redComponent, "`info` phải nghiêng về lam")
+        XCTAssertGreaterThan(b.redComponent, b.blueComponent, "`bad` phải nghiêng về đỏ")
+    }
+
+    /// Chữ trạng thái phải đọc được trên CHÍNH nền của nó.
+    func testCHUtrangTHAIdocDUOCtrenNENcuaNO() {
+        for (ten, chu, nen) in [("ok", EideToken.Mau.ok, EideToken.Mau.okBg),
+                                ("warn", EideToken.Mau.warn, EideToken.Mau.warnBg),
+                                ("bad", EideToken.Mau.bad, EideToken.Mau.badBg),
+                                ("info", EideToken.Mau.info, EideToken.Mau.infoBg)] {
+            XCTAssertGreaterThanOrEqual(_tp(chu, nen), 4.5, "\(ten) không đạt AA trên nền của nó")
+        }
+    }
+
+    private func _tp(_ a: NSColor, _ b: NSColor) -> CGFloat {
+        func L(_ c: NSColor) -> CGFloat {
+            guard let s = c.usingColorSpace(.sRGB) else { return 0 }
+            func k(_ v: CGFloat) -> CGFloat {
+                v <= 0.03928 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4)
+            }
+            return 0.2126 * k(s.redComponent) + 0.7152 * k(s.greenComponent)
+                 + 0.0722 * k(s.blueComponent)
+        }
+        let (x, y) = (L(a), L(b))
+        return (max(x, y) + 0.05) / (min(x, y) + 0.05)
+    }
+}
