@@ -905,7 +905,57 @@ final class MainWindowController: NSWindowController {
     /// Tệp NHỊ PHÂN (store.sqlite, .elf, .hex) không mở ra như văn bản: một cửa sổ đầy ký tự rác
     /// không nói gì, và với `store.sqlite` thì nó còn mời người dùng sửa tay đúng cái tệp mà cả
     /// cơ chế niêm của POL-17 §3 dựng lên để phát hiện sửa tay.
-    @MainActor
+    /// Chấm chú thích fact lên lề của tệp đang mở, và hỏi constant-guard.
+    ///
+    /// ## Vì sao TỰ CHẠY, không chờ người bấm
+    ///
+    /// Mục tiêu sản phẩm là tự động hoá tối đa: người mở một tệp mã trong EIDE luôn muốn biết
+    /// dòng nào dựa trên tri thức đã duyệt và dòng nào là hằng số trần. Bắt họ nhớ gõ
+    /// `/code.constant_guard` nghĩa là chín trong mười lần họ không gõ, và cổng G-FACT chỉ lên
+    /// tiếng lúc merge — muộn hơn hẳn chỗ rẻ nhất để sửa.
+    ///
+    /// Hai nguồn, hai tốc độ, và đó là chủ ý:
+    ///
+    /// - **Chú thích fact** đọc thẳng từ văn bản, không qua daemon. Nó chỉ là tìm chuỗi
+    ///   `eide:fact`, nên nó hiện NGAY khi tệp mở — không có một nhịp trống nào để người dùng
+    ///   kịp kết luận "tệp này chẳng có fact nào".
+    /// - **Vi phạm** phải hỏi `code.constant_guard`: quyết định một hằng số có trỏ fact hợp lệ
+    ///   hay không cần store, và store thì chỉ daemon có.
+    func chamTriThucLenTep(_ duong: String) {
+        let v = editorView
+        // Bước 1 — NGAY: chú thích fact từ chính văn bản.
+        var dau: [Int: WindowedTextView.DauEide] = [:]
+        let dong = v.noiDungDeChamDeTest.components(separatedBy: .newlines)
+        for (i, d) in dong.enumerated() {
+            if let f = CodeView.factTrongDong(d) { dau[i] = .coFact(f.mo) }
+        }
+        v.dauEide = dau
+
+        // Bước 2 — hỏi daemon. Panel có thể chưa dựng (chưa chạy được `eide`): khi ấy lề vẫn có
+        // chú thích fact, chỉ thiếu phần vi phạm. Thiếu một nửa vẫn hơn trống hẳn.
+        guard let panel = eidePanel, !dong.isEmpty else { return }
+        let noi = dong.joined(separator: "\n")
+        let tuongDoi = duAnDangMo.map { goc -> String in
+            duong.hasPrefix(goc) ? String(duong.dropFirst(goc.count).drop { $0 == "/" }) : duong
+        } ?? duong
+        panel.chamViPham(tep: tuongDoi, noiDung: noi) { [weak self] dongViPham, chan in
+            guard let self else { return }
+            let v = self.editorView
+            var m = v.dauEide
+            for (so, ly) in dongViPham { m[so - 1] = .viPham(ly) }
+            v.dauEide = m
+            self.baoCongCuTrenThanh(soViPham: dongViPham.count, chan: chan)
+        }
+    }
+
+    /// Nói kết quả cổng công cụ ở thanh trạng thái — một dòng, không cướp chỗ của mã.
+    func baoCongCuTrenThanh(soViPham: Int, chan: Bool) {
+        let t = soViPham == 0
+            ? "constant-guard: sạch"
+            : "constant-guard: \(soViPham) dòng vi phạm" + (chan ? " — CHẶN merge (G-FACT)" : "")
+        showBannerPublic(t, actionTitle: nil, action: nil)
+    }
+
     func moTepTuCay(_ duong: String) {
         let duoi = (duong as NSString).pathExtension.lowercased()
         let nhiPhan: Set<String> = ["sqlite", "db", "elf", "hex", "bin", "o", "a", "so",
@@ -922,6 +972,9 @@ final class MainWindowController: NSWindowController {
             return
         }
         openInNewTab(path: duong)
+        // Chấm tri thức lên lề NGAY sau khi mở. Hoãn một nhịp run loop vì `openInNewTab` dựng
+        // khung nhìn ở nhịp sau; hỏi văn bản ngay bây giờ sẽ nhận một bộ đệm rỗng.
+        DispatchQueue.main.async { [weak self] in self?.chamTriThucLenTep(duong) }
     }
 
     /// Có dựng được panel EIDE không — tức có chạy được `eide daemon` không.

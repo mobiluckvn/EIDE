@@ -911,6 +911,36 @@ public final class EidePanel: NSView {
         didSet { maNguon.duAnHienTai = duAnGoc }
     }
 
+    /// Hỏi `code.constant_guard` cho một tệp, trả về `(dòng → lý do, có CHẶN không)`.
+    ///
+    /// Dành cho trình soạn thảo: nó cần đúng hai thứ — dòng nào vi phạm, và cổng có chặn không —
+    /// chứ không cần cả khung nhìn `CodeView`. Gọi thẳng `chay` nên KHÔNG đụng tới màn đang mở:
+    /// người dùng có thể đang xem Hộ chiếu trong lúc mở một tệp mã ở tab khác.
+    ///
+    /// Bản vá dựng ở đây mang `mode: "replace"` với chính nội dung đang soạn thảo — tức guard
+    /// chấm thứ người dùng ĐANG viết, kể cả khi chưa lưu. Đó là điểm của việc chấm sớm.
+    public func chamViPham(tep: String, noiDung: String,
+                           xong: @escaping ([Int: String], Bool) -> Void) {
+        let va: [String: Any] = ["files": [["path": tep, "content": noiDung, "mode": "replace"]],
+                                 "cites": [], "rationale": "chấm tri thức khi mở tệp"]
+        chay("code.constant_guard", ["patch": va], khiLoi: { _ in
+            // Lỗi thì KHÔNG gọi `xong`: gọi với danh sách rỗng sẽ xoá dấu vi phạm đang hiện và
+            // nói "sạch" trong khi thật ra ta không biết gì.
+        }) { r in
+            let vp = (r["violations"] as? [[String: Any]]) ?? []
+            var theoDong: [Int: String] = [:]
+            for v in vp {
+                guard let d = EideSo.nguyen(v["line"]) else { continue }
+                let ly = (v["reason"] as? String) ?? ""
+                let hs = (v["literal"] as? String) ?? EideKnowledgeFormat.giaTri(v["literal"])
+                // Nhiều hằng số trên một dòng: nối lý do thay vì để cái sau đè cái trước.
+                let moi = [hs, ly].filter { !$0.isEmpty }.joined(separator: " — ")
+                theoDong[d] = theoDong[d].map { "\($0) · \(moi)" } ?? moi
+            }
+            xong(theoDong, (r["verdict"] as? String) == "block")
+        }
+    }
+
     /// Nói cho màn Mã nguồn biết tệp nào đang xem, rồi chạy một năng lực `code.*` trên nó.
     ///
     /// Gộp hai việc vì để rời thì có hai thứ tự đúng và một thứ tự sai — chạy trước rồi mới đặt

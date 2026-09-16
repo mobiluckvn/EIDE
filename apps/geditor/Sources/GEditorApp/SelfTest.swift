@@ -515,6 +515,41 @@ enum SelfTest {
             return nil
         },
 
+        Case(name: "EIDE: mở tệp mã thì LỀ có dấu fact và dấu vi phạm") { c in
+            guard let goc = ProcessInfo.processInfo.environment["EIDE_PROJECT"] else {
+                return "chưa đặt EIDE_PROJECT"
+            }
+            let nguon = (goc as NSString).appendingPathComponent("src")
+            guard let ten = (try? FileManager.default.contentsOfDirectory(atPath: nguon))?
+                .filter({ $0.hasSuffix(".c") }).sorted().first else {
+                return "dự án chưa có src/*.c"
+            }
+            let tep = (nguon as NSString).appendingPathComponent(ten)
+            guard let noi = try? String(contentsOfFile: tep, encoding: .utf8),
+                  noi.contains("eide:fact") else {
+                return "tệp \(ten) không có chú thích `eide:fact` để kiểm"
+            }
+
+            c.chonManEide(tien: "Code")
+            c.moTepTuCay(tep)
+            // Chú thích fact chấm NGAY (đọc từ văn bản); vi phạm phải chờ daemon.
+            RunLoop.current.run(until: Date().addingTimeInterval(6))
+
+            let dau = c.editorView.dauEideDeTest()
+            let coFact = dau.values.filter { if case .coFact = $0 { return true }; return false }
+            let viPham = dau.values.filter { if case .viPham = $0 { return true }; return false }
+            guard !coFact.isEmpty else {
+                return "mở \(ten) mà lề KHÔNG có dấu fact nào, trong khi tệp có `eide:fact`"
+            }
+            print("   \(ten): \(coFact.count) dòng có fact · \(viPham.count) dòng vi phạm")
+            // Không khẳng định SỐ vi phạm: nó tuỳ store của dự án. Khẳng định rằng đường đi
+            // tới daemon có chạy — tệp mẫu có hằng số trần thì phải ra ít nhất một vi phạm.
+            guard !viPham.isEmpty else {
+                return "không có dấu vi phạm nào — `code.constant_guard` chưa về tới lề"
+            }
+            return nil
+        },
+
         Case(name: "gõ một ký tự trên ba vùng chọn") { controller in
             controller.prepareSelfTestDocument("ERROR một\nOK hai\nERROR ba\n")
             controller.selectAllOccurrencesForSelfTest("ERROR")

@@ -1,4 +1,5 @@
 import AppKit
+import EIDEKit
 import GEditorCore
 
 /// Khung soạn thảo chạy trên CỬA SỔ nội dung — hiện thực quyết định ADR-01.
@@ -192,6 +193,35 @@ final class WindowedTextView: NSView {
     }
 
     /// Chín tập đánh dấu dòng (FR-SRCH-107). Nền dòng vẽ ở lớp phủ, DƯỚI chữ.
+    /// Dấu EIDE ở LỀ TRÁI — chú thích fact và vi phạm constant-guard.
+    ///
+    /// ## Vì sao không mượn `lineMarks`
+    ///
+    /// `lineMarks` là tính năng đánh dấu dòng CỦA NGƯỜI DÙNG: họ tự đặt, tự xoá, và có lệnh
+    /// "xoá mọi dòng đã đánh dấu". Ghi dấu fact vào đó thì EIDE đè lên việc của họ, và một lệnh
+    /// xoá dấu sẽ xoá luôn chú thích tri thức. Hai thứ khác chủ, hai kho riêng.
+    ///
+    /// ## Vì sao một vạch ở lề chứ không tô cả dòng
+    ///
+    /// Tô nền cả dòng là thứ `lineMarks` làm, và nó đúng cho "những dòng tôi đang quan tâm".
+    /// Với chú thích tri thức thì nền màu trên mọi dòng có fact sẽ biến một tệp được trích dẫn
+    /// tốt thành một tệp trông như đầy lỗi — ngược hẳn điều ta muốn nói. Một vạch 4 pt ở mép
+    /// trái đủ để mắt quét dọc và không chạm vào chữ.
+    enum DauEide: Equatable {
+        /// Dòng mang `/* eide:fact f_… */` — có tri thức đứng sau.
+        case coFact(String)
+        /// Hằng số phần cứng KHÔNG trỏ fact nào; constant-guard chặn.
+        case viPham(String)
+    }
+
+    /// Dòng (đếm từ 0) → dấu. Đặt lại cả bản đồ, không sửa từng phần.
+    var dauEide: [Int: DauEide] = [:] {
+        didSet {
+            guard dauEide != oldValue else { return }
+            overlay.needsDisplay = true
+        }
+    }
+
     var lineMarks = LineMarkBook() {
         didSet {
             guard lineMarks != oldValue else { return }
@@ -395,6 +425,7 @@ final class WindowedTextView: NSView {
         // mất chính chữ đang được chọn — thấy ngay trên ảnh chụp. Nền do canvas vẽ.
         overlay.rectForOffset = { [weak self] offset in self?.rect(forDocumentOffset: offset) }
         overlay.markedBands = { [weak self] rect in self?.markedLineBands(in: rect) ?? [] }
+        overlay.daiEide = { [weak self] rect in self?._daiEide(in: rect) ?? [] }
         overlay.foldMarkers = { [weak self] in self?.foldMarkerOffsets ?? [] }
         canvas.addSubview(overlay)
         textView.drawsBackground = false
@@ -798,6 +829,55 @@ final class WindowedTextView: NSView {
     ///
     /// Chỉ duyệt các đoạn CHẠM vùng cần vẽ, nên chi phí theo màn hình chứ không theo tài liệu:
     /// đánh dấu một triệu dòng vẫn chỉ vẽ vài chục dải.
+    /// Dải lề cho dấu EIDE — cùng phép duyệt đoạn bố cục với `markedLineBands`.
+    ///
+    /// Phải hỏi TextKit chứ không nhân số dòng với chiều cao dòng, vì đúng lý do đã ghi ở
+    /// `markedLineBands`: ngắt dòng mềm làm một dòng tài liệu chiếm nhiều hàng, và vạch lệch một
+    /// hàng là vạch chỉ vào dòng khác. Ở đây hậu quả nhẹ hơn mất dữ liệu nhưng nặng về nghĩa:
+    /// một vạch "có fact" chỉ nhầm sang dòng bên cạnh là một lời khẳng định sai về tri thức.
+    private func _daiEide(in rect: NSRect) -> [(rect: NSRect, viPham: Bool)] {
+        guard !dauEide.isEmpty,
+              let manager = textView.textLayoutManager,
+              let content = manager.textContentManager
+        else { return [] }
+
+        let inset = textView.textContainerInset
+        let top = Swift.max(0, rect.minY - inset.height)
+        let from = manager.textLayoutFragment(for: CGPoint(x: 0, y: top))?.rangeInElement.location
+
+        var ra: [(rect: NSRect, viPham: Bool)] = []
+        manager.enumerateTextLayoutFragments(
+            from: from ?? content.documentRange.location, options: [.ensuresLayout]
+        ) { fragment in
+            let frame = fragment.layoutFragmentFrame
+            guard frame.minY + inset.height <= rect.maxY else { return false }
+            let utf16 = content.offset(
+                from: content.documentRange.location, to: fragment.rangeInElement.location)
+            let line = buffer.lineNumber(atOffset: documentOffset(forUTF16: utf16))
+            if let d = dauEide[line] {
+                let vp: Bool
+                if case .viPham = d { vp = true } else { vp = false }
+                ra.append((NSRect(x: 0, y: frame.minY + inset.height,
+                                  width: Self.RONG_VACH_EIDE, height: frame.height), vp))
+            }
+            return true
+        }
+        return ra
+    }
+
+    /// Bề rộng vạch lề EIDE. 4 pt: thấy được khi quét dọc, không ăn vào chỗ của chữ.
+    static let RONG_VACH_EIDE: CGFloat = 4
+
+    /// Toàn văn tài liệu — để chấm chú thích fact lên lề.
+    ///
+    /// Đọc từ `buffer` chứ không từ `textView.string`: `textView` chỉ giữ CỬA SỔ đang hiện
+    /// (xem `TextWindowing`), nên chấm theo nó sẽ bỏ sót mọi dòng ngoài màn hình — và tệp dài
+    /// thì phần ngoài màn hình là gần hết tệp.
+    var noiDungDeChamDeTest: String { buffer.text }
+
+    /// Dấu EIDE đang hiện, theo dòng — cho test.
+    func dauEideDeTest() -> [Int: DauEide] { dauEide }
+
     private func markedLineBands(in rect: NSRect) -> [(rect: NSRect, color: Int)] {
         guard !lineMarks.isEmpty,
               let manager = textView.textLayoutManager,
@@ -2108,6 +2188,8 @@ final class MultiCaretOverlay: NSView {
     var markedBands: ((NSRect) -> [(rect: NSRect, color: Int)])?
     /// Offset cuối những dòng đang gấp — chỗ đặt phù hiệu `⋯`.
     var foldMarkers: (() -> [Int])?
+    /// Vạch lề EIDE: dòng có chú thích fact, và dòng vi phạm constant-guard.
+    var daiEide: ((NSRect) -> [(rect: NSRect, viPham: Bool)])?
 
     override var isFlipped: Bool { true }
     override func hitTest(_ point: NSPoint) -> NSView? { nil }   // chuột vẫn đi thẳng xuống text view
@@ -2119,6 +2201,21 @@ final class MultiCaretOverlay: NSView {
             let palette = Tokens.Color.markColors
             palette[Swift.min(Swift.max(band.color, 0), palette.count - 1)].setFill()
             band.rect.fill()
+        }
+
+        // Vạch lề EIDE vẽ SAU nền dòng đánh dấu và TRƯỚC vùng chọn: nó là chú thích của hệ
+        // thống, nên nó không được che dấu người dùng tự đặt, và cũng không được bị vùng chọn
+        // xoá đi — vạch ở mép trái, vùng chọn bắt đầu sau đó.
+        for d in daiEide?(dirtyRect) ?? [] {
+            // ĐỎ = vi phạm, XANH LỤC = có fact.
+            //
+            // Bản đầu dùng `action` cho "có fact", và `action` là một màu cam-đỏ của bảng PTIT:
+            // trên ảnh chụp 16/09, bốn dòng 4–7 (fact · vi phạm · fact · vi phạm xen kẽ) hiện
+            // ra thành MỘT vệt liền, không phân biệt được hai nghĩa ngược nhau. Xanh lục
+            // `EideToken.Mau.ok` là màu EIDE vẫn dùng cho "đã duyệt, dùng được" ở mọi màn khác,
+            // nên nó nói đúng điều cần nói và không dạy thêm một nghĩa mới.
+            (d.viPham ? Tokens.Color.error : EideToken.Mau.ok).setFill()
+            d.rect.fill()
         }
 
         // Phù hiệu `⋯` cuối dòng đã gấp.

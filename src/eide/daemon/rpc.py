@@ -19,7 +19,7 @@ import yaml
 from eide import __version__
 from eide_core.errors import EideError, error_table
 from eide_core.ledger import Ledger, TheoDoiTep
-from eide_core.paths import user_log
+from eide_core.paths import nap_env, user_log
 from eide_core.policy import PolicyGate
 from eide_core.registry import get_registry
 from eide_core.router import Context, Router
@@ -774,6 +774,12 @@ def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:
     trước câu trả lời của chính lời gọi ấy. Đúng như thế: panel thấy `event.run.progress` rồi
     mới thấy kết quả, và đó là thứ tự người dùng cần.
     """
+    # Daemon là tiến trình CON của giao diện, và nó không thừa kế shell của người dùng — nên
+    # nếu `.env` không được nạp ở đây thì mọi năng lực cần mô hình đều trả E5000 khi chạy từ
+    # cửa sổ EIDE, trong khi cùng lời gọi ấy qua CLI thì chạy được. Hai hành vi khác nhau cho
+    # cùng một lệnh là thứ người dùng không bao giờ truy ra được.
+    nap_env()
+
     def phat(ten: str, p: dict[str, Any]) -> None:
         out.write(json.dumps({"jsonrpc": "2.0", "method": ten, "params": p},
                              ensure_ascii=False) + "\n")

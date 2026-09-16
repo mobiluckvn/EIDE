@@ -616,7 +616,7 @@ public final class CodeView: ManHinhCoSo {
     /// Nhận cả `hkw:fact` — mockup UXD-13 viết bằng tiền tố cũ của dự án, và mã sinh ra trước
     /// khi đổi tên vẫn nằm trong các dự án đang có. Bỏ qua tiền tố cũ nghĩa là chú thích biến
     /// mất khỏi lề đúng ở những tệp lâu đời nhất.
-    static func factTrongDong(_ d: String) -> (id: String, mo: String)? {
+    public static func factTrongDong(_ d: String) -> (id: String, mo: String)? {
         for khoa in ["eide:fact", "hkw:fact"] {
             guard let r = d.range(of: khoa) else { continue }
             let sau = d[r.upperBound...].drop { $0 == " " || $0 == ":" }

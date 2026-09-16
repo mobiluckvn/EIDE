@@ -14,7 +14,7 @@ from eide import __version__
 from eide_core import store, tools, whitelist
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
-from eide_core.paths import project_dir_default, spec_dir, user_log
+from eide_core.paths import nap_env, project_dir_default, spec_dir, user_log
 from eide_core.policy import PolicyGate
 from eide_core.registry import get_registry
 from eide_core.router import Context, Router
@@ -358,6 +358,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Nạp `.env` ở GỐC KHO trước khi làm gì — xem `paths.nap_env`.
+    #
+    # Đặt ở đây chứ không trong `Gateway`: nhiều thứ ngoài Gateway cũng đọc biến môi trường
+    # (`EIDE_AUTONOMY`, `EIDE_MODEL_*`, `EIDE_SPEC_DIR`), và nạp muộn nghĩa là những thứ chạy
+    # sớm hơn đọc phải giá trị cũ. Một lối vào, một chỗ nạp.
+    nap_env()
     a = build_parser().parse_args(argv)
     try:
         return a.fn(a)

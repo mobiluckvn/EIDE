@@ -133,8 +133,10 @@ enum WindowCapture {
         // lực), rồi mới gọi được năng lực của màn. Đo 15/09: khoảng 2,5 s tới lúc daemon trả
         // lời lần đầu. Chụp sớm hơn ra một màn "đang nạp…" — và một ảnh như thế thì không sai,
         // chỉ là không nói được gì.
-        case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon, .eideHoChieu, .eideBanDo:
+        case .eideXungDot, .eideLamRo, .eideModels, .eideHoChieu, .eideBanDo:
             return 8
+        // Màn Mã nguồn còn chờ `code.constant_guard` về tới lề.
+        case .eideMaNguon: return 12
         // Mô phỏng chạy `qemu-system-avr` THẬT. Đo 15/09: 25 giây ở dòng lệnh, nhưng qua daemon
         // còn thêm 2 giây chờ màn mở, nhịp hỏi `job.status` giãn dần, và một lượt khởi động
         // qemu nữa — chụp ở 45 giây ra đúng dòng "Đang chạy `sim.run`…".
@@ -259,7 +261,16 @@ enum WindowCapture {
         case .eideModels:
             _ = chuanBiEide("Models", on: controller)
         case .eideMaNguon:
-            _ = chuanBiEide("Code", on: controller)
+            guard chuanBiEide("Code", on: controller) else { break }
+            // Mở một tệp mã thật để thấy CẢ cây dự án lẫn dấu tri thức ở lề — đó là hình dạng
+            // màn Mã nguồn sau khi gộp (DEV-117), và một ảnh chụp bộ đệm trống không nói được
+            // gì về nó.
+            let d = ProcessInfo.processInfo.environment["EIDE_PROJECT"] ?? ""
+            let src = (d as NSString).appendingPathComponent("src")
+            if let c = (try? FileManager.default.contentsOfDirectory(atPath: src))?
+                .filter({ $0.hasSuffix(".c") }).sorted().first {
+                controller.moTepTuCay((src as NSString).appendingPathComponent(c))
+            }
         case .eideHoChieu:
             _ = chuanBiEide("Passport", on: controller)
         case .eideBanDo:

@@ -12,8 +12,8 @@
 
 ## 1. Một dòng
 
-**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1599 test
-Python + 3092 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Thêm 6 bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 6/6, trong đó một bài KIỂM KÊ cả 23 màn.**
+**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1602 test
+Python + 3092 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Thêm 7 bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7, trong đó một bài KIỂM KÊ cả 23 màn.**
 
 **Từ 15/09, phần việc không nằm ở năng lực nữa mà ở GIAO DIỆN.** Con số năng lực không đổi
 trong hai ngày này — 216/238 hôm 14/09 và 216/238 hôm nay — trong khi sáu màn được dựng lại
@@ -179,6 +179,9 @@ trạng thái), thay cho ba thứ cũ là một đoạn văn, một dòng `nhãn
 | Mã nguồn | `main.c` 16 dòng · 2 dòng có fact (`•`) · 4 dòng vi phạm (`!`), cổng G-FACT chặn |
 | Kế hoạch & mã | bản vá hiện thành diff/khối mã kèm `rationale` và `missing_facts` |
 | Cây dự án | workspace trỏ đúng thư mục dự án, `.eide/` hiện thành nhóm riêng cuối cây |
+| Mã nguồn (gộp) | mở `main.c`: cây + trình soạn thảo + vạch lề XANH LỤC ở 2 dòng có fact, ĐỎ ở 4 dòng vi phạm — tự chạy khi mở tệp |
+| Môi trường | bảng cổng serial có cột "truy cập"; `driver_ok: false` ra ô đỏ |
+| Nhật ký | 311 mốc thành bảng sắp xếp được, cột `ai` tô màu việc tác tử tự làm |
 
 Ba việc nền đi kèm, mỗi việc đều là thứ không màn nào tự làm được: bỏ cửa sổ EIDE cũ (chọn dự
 án từng mở ra một cửa sổ THỨ HAI với dự án khác), theo dõi việc nặng qua `job.status` thay vì
@@ -721,6 +724,12 @@ luồng mới đi qua một tập nhánh mà không luồng nào trước đó c
 ---
 
 ## 7. Việc chờ chủ sản phẩm
+
+**Chủ sản phẩm xác nhận toàn bộ ngày 16/09/2026.** Ba mươi mốt mục DEVIATIONS chuyển từ `Mở`
+sang `Đã duyệt`; hai quyết định thiết kế đã chốt (DEV-114 giữ bảng màu sáng; DEV-117 GỘP chú
+thích fact vào trình soạn thảo — đã hiện thực cùng ngày). Board chưa lắp, nên 22 năng lực và
+bốn màn phần cứng vẫn chờ. Bảng dưới là phần CÒN LẠI sau lần duyệt ấy.
+
 
 | Việc | Vì sao cần người |
 |---|---|
