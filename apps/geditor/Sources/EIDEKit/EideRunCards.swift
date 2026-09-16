@@ -132,6 +132,11 @@ public final class RunProgressCard: NSView {
     /// Gọi MỘT LẦN khi thẻ vừa chuyển sang xong — panel dùng để gỡ thẻ đi.
     public var onXong: (() -> Void)?
     private var daBaoXong = false
+    /// Tên năng lực đã thấy trong các sự kiện của lượt chạy này, theo thứ tự.
+    private var _tenDaThay: [String] = []
+
+    /// Dải chip từng nút. Ẩn khi chưa có nút nào — xem `capNhat`.
+    private let _cuonChip = NSScrollView()
     /// Phần trăm gần nhất, `nil` nếu daemon chưa gửi.
     public private(set) var phanTram: Int?
 
@@ -159,7 +164,7 @@ public final class RunProgressCard: NSView {
         nutHuy.target = self
         nutHuy.action = #selector(huy)
 
-        let cuon = NSScrollView()
+        let cuon = _cuonChip
         cuon.documentView = hang
         cuon.hasHorizontalScroller = true
         cuon.drawsBackground = false
@@ -236,7 +241,16 @@ public final class RunProgressCard: NSView {
         // một việc vừa chạy. Người dùng không tra được mã ấy ở đâu, và mười lăm thẻ như thế xếp
         // chồng thì không thẻ nào nói được việc gì vừa xảy ra. Tên năng lực thì họ đọc được
         // ngay, và `caps.describe` tra được. Đo 16/09/2026 trong vòng chạy qua giao diện.
-        let ten = trangThai.compactMap { $0.cap.isEmpty ? nil : $0.cap }
+        // Nhớ tên năng lực NGAY từ sự kiện đầu tiên. `trangThai` chỉ có mục khi sự kiện mang
+        // `node_id`, mà sự kiện mở màn của một lượt chạy đơn thì không — nên thẻ hiện "Đang chạy
+        // 038c110c8b65…" suốt cả lượt. Đo 16/09/2026: ba thẻ cùng lúc, cả ba là mã băm.
+        if !cap.isEmpty, !_tenDaThay.contains(cap) { _tenDaThay.append(cap) }
+        // Dải chip cao 28 pt cố định, kể cả khi RỖNG. Một chuỗi nhiều nút thì dải ấy đáng giá;
+        // một lượt chạy đơn không có nút nào, và ba thẻ như thế ăn 270 pt của vùng trao đổi —
+        // đủ để đẩy lượt đối thoại mới nhất ra ngoài tầm nhìn. Trong NSStackView, `isHidden`
+        // THU HỒI chỗ (khác với ràng buộc thường), nên chỉ cần bật cờ.
+        _cuonChip.isHidden = trangThai.isEmpty
+        let ten = _tenDaThay
         let nhanChinh = ten.isEmpty ? runId
             : (ten.count == 1 ? ten[0] : "\(ten[0]) +\(ten.count - 1)")
         tomTat.stringValue = d.isEmpty ? "Đang chạy \(nhanChinh)…"

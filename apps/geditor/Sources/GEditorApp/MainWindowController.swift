@@ -854,6 +854,26 @@ final class MainWindowController: NSWindowController {
         return goc
     }
 
+    /// Gắn panel vào khung EIDE (một lần), và GIAO trình soạn thảo cho nó giữ.
+    ///
+    /// Trình soạn thảo thành một màn bên trong panel: cùng vùng, cùng ràng buộc với 22 màn kia.
+    /// Nhờ thế hội thoại và cột giám sát nằm ngoài vùng ấy và không bao giờ bị thay chỗ.
+    private func _gnPanel(_ p: EidePanel, vao goc: NSView, sau vach: NSView) {
+        guard p.superview !== goc else { return }
+        p.translatesAutoresizingMaskIntoConstraints = false
+        goc.addSubview(p)
+        NSLayoutConstraint.activate([
+            p.leadingAnchor.constraint(equalTo: vach.trailingAnchor),
+            p.topAnchor.constraint(equalTo: goc.topAnchor),
+            p.trailingAnchor.constraint(equalTo: goc.trailingAnchor),
+            p.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
+        ])
+        if let st = vungSoanThao {
+            st.removeFromSuperview()
+            p.datManNgoai(st)
+        }
+    }
+
     /// Bề rộng cột cây. 240 pt vừa đủ cho `drivers/uart_stm32.c` ở tầng thứ hai không bị cắt —
     /// tên tệp bị cắt trong một cây là thứ buộc người dùng phải bấm vào mới biết mình bấm gì.
     /// Chuẩn bị màn "Mã nguồn": trỏ cây tệp vào dự án và hiện nó ra.
@@ -995,11 +1015,19 @@ final class MainWindowController: NSWindowController {
             return
         }
         daChonMan = true
-        // "Mã nguồn" là MỘT MÀN của EIDE (DEV-098) và nội dung của nó là **cây dự án + trình
-        // soạn thảo** — mockup `Code.dc.html`, không phải một bộ đệm trống.
+        // "Mã nguồn" là MỘT MÀN của EIDE (DEV-098), và từ 16/09/2026 nó là một màn NẰM TRONG
+        // panel — không còn là thứ thay thế panel.
+        //
+        // Chủ sản phẩm: *"khu vực tương tác người và agent phải đảm bảo LUÔN hiển thị"*. Bản
+        // trước đổi chỗ giữa hai thứ: panel (có hội thoại và cột giám sát) và trình soạn thảo.
+        // Mở màn Mã nguồn nghĩa là ẩn panel — mất cả chỗ trao đổi lẫn chỗ giám sát, đúng lúc
+        // tác tử đang sửa mã và người cần nhìn nhất.
         if tien == "Code" {
-            eidePanel?.isHidden = true
+            guard let p = eidePanel else { return }
+            _gnPanel(p, vao: goc, sau: vach)
+            p.isHidden = false
             soanThao.isHidden = false
+            p.hienManNgoai()
             hienCayDuAn(true)
             return
         }
@@ -1018,19 +1046,9 @@ final class MainWindowController: NSWindowController {
             a.runModal()
             return
         }
-        soanThao.isHidden = true
-        if p.superview !== goc {
-            p.translatesAutoresizingMaskIntoConstraints = false
-            goc.addSubview(p)
-            NSLayoutConstraint.activate([
-                p.leadingAnchor.constraint(equalTo: vach.trailingAnchor),
-                p.topAnchor.constraint(equalTo: goc.topAnchor),
-                p.trailingAnchor.constraint(equalTo: goc.trailingAnchor),
-                p.bottomAnchor.constraint(equalTo: goc.bottomAnchor),
-            ])
-        }
+        _gnPanel(p, vao: goc, sau: vach)
         p.isHidden = false
-        p.moMan(tien)
+        _ = p.moMan(tien)
     }
 
     // MARK: - Gắn từng panel khi người dùng mở nó lần đầu

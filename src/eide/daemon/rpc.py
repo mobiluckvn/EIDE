@@ -283,7 +283,13 @@ class Daemon:
             return
         with self._khoa:
             j = dict(self._jobs.get(jid) or {})
+        # `cap` đi cùng MỌI thông điệp tiến độ, không chỉ lúc `cap_run` trả về. Thiếu nó thì giao
+        # diện không có tên để gọi việc nền: thẻ tiến độ hiện "Đang chạy job_038c110c8b65…", và
+        # màn chuyên biệt không tự mở được vì bên nhận không biết việc thuộc nhóm năng lực nào —
+        # tức là đúng những việc CHẠY LÂU (build, sim, flash) lại là những việc người dùng không
+        # được dẫn tới màn của chúng. Đo 16/09/2026 qua giao diện: ba thẻ cùng lúc, cả ba vô danh.
         self.phat("event.job.progress", {"job_id": jid, "pct": j.get("progress", 0),
+                                         "cap": j.get("cap") or "",
                                          "log_tail": j.get("log_tail") or [],
                                          "state": j.get("state")})
 

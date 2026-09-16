@@ -615,6 +615,7 @@ public final class EidePanel: NSView {
     private func hienKhung(_ v: KhungNhinEide, ten: String, id: String, thamSo: String) {
         for k in bangMan { k.v.isHidden = (k.v !== v) }
         banDo.isHidden = (banDo !== v)
+        manNgoai?.isHidden = true
         // Ô LỆNH Ở LẠI. Hội thoại vào chế độ gọn (giấu bản ghi, giữ thẻ và ô gõ) thay vì ẩn
         // hẳn — xem `ChatView.gon`. Ẩn hẳn nghĩa là muốn nói một câu thì phải bỏ màn đang xem.
         hoiThoai.isHidden = false
@@ -714,6 +715,7 @@ public final class EidePanel: NSView {
         let t = ten.lowercased()
         guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
         for v in bangMan { v.v.isHidden = (v.v !== k.v) }
+        manNgoai?.isHidden = true
         hoiThoai.isHidden = false
         hoiThoai.gon = false
         // ẨN CẢ BẢN ĐỒ. `banDo` không nằm trong `bangMan` (nó là khung thứ hai của màn 7), nên
@@ -1028,6 +1030,20 @@ public final class EidePanel: NSView {
         return c
     }()
 
+    /// TRẦN chiều cao hội thoại — bắt buộc.
+    ///
+    /// Sàn giữ cho vùng trao đổi không biến mất; trần giữ cho nó không nuốt vùng làm việc. Thiếu
+    /// trần thì hội thoại cao theo nội dung: đo 16/09/2026 với ba thẻ đang chạy cộng một thông
+    /// báo lỗi dài, hội thoại chiếm gần nửa cửa sổ và trình soạn thảo còn một dải BỐN DÒNG.
+    ///
+    /// Bắt buộc, khác sàn: một vùng trao đổi cao quá vẫn đọc được (nó cuộn), còn một vùng làm
+    /// việc bị bóp còn bốn dòng thì không làm việc được.
+    private lazy var _tranHoiThoai =
+        hoiThoai.heightAnchor.constraint(lessThanOrEqualToConstant: Self.TRAN_HOI_THOAI)
+
+    /// Chiều cao tối đa của vùng trao đổi. 320 pt ≈ năm lượt đối thoại cộng ô gõ.
+    public static let TRAN_HOI_THOAI: CGFloat = 320
+
     /// Ba màn ấy nạp bằng PHƯƠNG THỨC RPC, không bằng `caps.invoke`.
     ///
     /// `queue.list` và `autonomy.get` là phương thức của daemon chứ không phải năng lực trong
@@ -1321,6 +1337,7 @@ public final class EidePanel: NSView {
     @objc private func dongMan() {
         for k in bangMan { k.v.isHidden = true }
         banDo.isHidden = true
+        manNgoai?.isHidden = true
         thanhMan.isHidden = true
         // ẨN CẢ BIỂU MẪU của màn vừa đóng.
         //
@@ -1399,7 +1416,7 @@ public final class EidePanel: NSView {
             hoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
             hoiThoai.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
             // (bắt buộc, = 0) phải thắng được nó.
-            _sanHoiThoai,
+            _sanHoiThoai, _tranHoiThoai,
 
             thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
@@ -1413,12 +1430,7 @@ public final class EidePanel: NSView {
         // Mọi màn chuyên đề dùng ĐÚNG một khung: cột giữa, từ dưới thanh tiêu đề màn xuống tới
         // trên ô lệnh. Cùng khung thì không màn nào âm thầm rộng hơn màn khác.
         for k in bangMan.map(\.v) + [banDo] {
-            NSLayoutConstraint.activate([
-                k.topAnchor.constraint(equalTo: oNhap.bottomAnchor, constant: g),
-                k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
-                k.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
-                k.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -g),
-            ])
+            NSLayoutConstraint.activate(_rangBuocVungMan(k))
         }
         // Hội thoại bắt đầu ngay dưới thanh tự chủ khi KHÔNG có màn nào mở; khi có màn thì
         // ràng buộc trên của màn đẩy nó xuống. Ưu tiên thấp để nó nhường chỗ cho màn.
@@ -1520,7 +1532,18 @@ public final class EidePanel: NSView {
     private func _theoTacTu(_ cap: String) {
         if let luc = _nguoiTuChonLuc,
            Date().timeIntervalSince(luc) < Self.GIU_MAN_NGUOI_CHON { return }
-        guard let man = manHinhCua[cap], let v = khungCua(man, id: cap) else { return }
+        guard let man = manHinhCua[cap] else { return }
+        // Màn "Mã nguồn" là trình soạn thảo (một màn NGOÀI), không có khung nhìn trong `bangMan`
+        // — nên nó phải đi đường riêng. Đây đúng là ví dụ chủ sản phẩm đưa: *"agent đang viết
+        // code hoặc sửa code thì sẽ mở phần giao diện code"*.
+        if man.hasPrefix("Code"), manNgoai != nil {
+            if manNgoai?.isHidden == false { return }
+            hienManNgoai()
+            onTacTuMoMan?("Code")
+            hoiThoai.themLuot(by: .heThong, text: "→ mở màn Mã nguồn (tác tử đang chạy `\(cap)`)")
+            return
+        }
+        guard let v = khungCua(man, id: cap) else { return }
         // Đã đúng màn rồi thì thôi — mở lại sẽ xoá thân màn và nạp lại, tức nhấp nháy dưới tay
         // người đang đọc.
         if !v.isHidden { return }
@@ -1541,6 +1564,55 @@ public final class EidePanel: NSView {
 
     /// Đánh dấu người vừa TỰ chọn một màn — gọi từ đường sidebar và đường gõ `/ns.name`.
     public func nguoiVuaChonMan() { _nguoiTuChonLuc = Date() }
+
+    /// Ràng buộc của VÙNG MÀN: cột giữa, từ dưới ô nhập xuống trên hội thoại.
+    ///
+    /// Một bộ ràng buộc duy nhất cho cả 23 màn chuyên đề LẪN trình soạn thảo — nên không màn nào
+    /// âm thầm rộng hơn màn khác, và trình soạn thảo không thể lấn vào chỗ của hội thoại.
+    private func _rangBuocVungMan(_ k: NSView) -> [NSLayoutConstraint] {
+        let g = EideToken.space[2]
+        return [
+            k.topAnchor.constraint(equalTo: oNhap.bottomAnchor, constant: g),
+            k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+            k.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
+            k.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -g),
+        ]
+    }
+
+    /// Khung nhìn NGOÀI đặt vào vùng màn — trình soạn thảo của cửa sổ.
+    ///
+    /// ## Vì sao trình soạn thảo phải nằm TRONG panel
+    ///
+    /// Chủ sản phẩm 16/09/2026: *"khu vực tương tác người và agent sẽ vẫn phải đảm bảo luôn hiển
+    /// thị"*. Trước thay đổi này, cửa sổ đổi CHỖ giữa hai thứ: panel (có hội thoại và cột giám
+    /// sát) và trình soạn thảo. Mở màn Mã nguồn nghĩa là ẩn panel — tức mất CẢ chỗ trao đổi lẫn
+    /// chỗ giám sát, đúng lúc tác tử đang sửa mã và người cần nhìn nhất.
+    ///
+    /// Nay trình soạn thảo là MỘT MÀN như 22 màn kia: nó nằm trong vùng màn của panel, dùng đúng
+    /// bộ ràng buộc ấy, và hội thoại cùng cột giám sát không bao giờ rời màn hình.
+    private weak var manNgoai: NSView?
+
+    /// Cửa sổ giao trình soạn thảo cho panel giữ. Gọi MỘT LẦN lúc dựng.
+    public func datManNgoai(_ v: NSView) {
+        manNgoai = v
+        v.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(v)
+        NSLayoutConstraint.activate(_rangBuocVungMan(v))
+        v.isHidden = true
+    }
+
+    /// Hiện trình soạn thảo trong vùng màn, ẩn mọi màn chuyên đề.
+    public func hienManNgoai() {
+        for k in bangMan { k.v.isHidden = true }
+        banDo.isHidden = true
+        manNgoai?.isHidden = false
+        oNhap.isHidden = true
+        thanhMan.isHidden = false
+        tenMan.stringValue = "Mã nguồn"
+        hoiThoai.isHidden = false
+        hoiThoai.gon = false
+        _manDangHoi = "Code"
+    }
 
     /// Tác tử vừa MỞ một màn: `(tiền tố màn)`. Cửa sổ nối vào để chuyển cả điều hướng.
     ///
@@ -1937,6 +2009,13 @@ public final class EidePanel: NSView {
         }
         theTienDo[id] = the
         hoiThoai.themThe(the)
+        // ĐƯA thông điệp tạo ra thẻ VÀO thẻ. `init` chỉ gọi `capNhat([:])`, nên trước đây thông
+        // điệp ĐẦU TIÊN — thông điệp duy nhất mang `cap`, và đôi khi là thông điệp duy nhất của
+        // cả lượt chạy — bị vứt. Hệ quả đo 16/09/2026 qua giao diện: năm thẻ cùng lúc, cả năm ghi
+        // "Đang chạy 7d173eec3fc0…" và KHÔNG thẻ nào biến mất, vì trạng thái `done`/`failed` nằm
+        // trong chính thông điệp đã bị bỏ. Một lượt chạy xong mà giao diện vẫn nói đang chạy là
+        // lời nói sai về việc máy vừa làm — đúng thứ màn giám sát tồn tại để không xảy ra.
+        the.capNhat(p)
     }
 
     /// Hiện một thẻ câu hỏi gộp — UXD-13 U3, từ sự kiện `event.chat.question`.

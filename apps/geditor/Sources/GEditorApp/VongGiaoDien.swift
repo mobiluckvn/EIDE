@@ -284,6 +284,38 @@ enum VongGiaoDien {
                 : "HỎNG: tác tử chạy `passport.query` mà màn vẫn là `\(sau)`"
         },
 
+        Buoc(ten: "BA ĐIỀU KIỆN: tác tử sửa mã → mở màn mã, mà hội thoại VẪN hiện") { c in
+            guard let p = c.eidePanel, let goc = c.duAnDangMo else {
+                return "HỎNG: chưa mở dự án"
+            }
+            c.chonManEide(tien: "Env")
+            cho(2)
+            cho(EidePanel.GIU_MAN_NGUOI_CHON + 1)
+
+            let src = (goc as NSString).appendingPathComponent("src")
+            guard let ten = (try? FileManager.default.contentsOfDirectory(atPath: src))?
+                .filter({ $0.hasSuffix(".c") }).sorted().first,
+                let noi = try? String(contentsOfFile:
+                    (src as NSString).appendingPathComponent(ten), encoding: .utf8) else {
+                return "HỎNG: dự án không có src/*.c"
+            }
+            // Tác tử "sửa mã": chạy một năng lực `code.*` — đúng ví dụ chủ sản phẩm đưa.
+            p.chayNhuNguoiDung("code.constant_guard",
+                               ["patch": ["files": [["path": "src/" + ten, "content": noi,
+                                                     "mode": "replace"]],
+                                          "cites": [], "rationale": "vòng chạy"]])
+            cho(12)
+
+            let man = p.tenManDangMo ?? "(hội thoại)"
+            let hoiThoaiHien = p.oLenhGoDuocDeTest
+            var loi: [String] = []
+            if man != "Code" { loi.append("tác tử chạy `code.*` mà màn là `\(man)`") }
+            if !hoiThoaiHien { loi.append("HỘI THOẠI BIẾN MẤT — vi phạm điều kiện bất biến") }
+            return loi.isEmpty
+                ? "mở màn `\(man)` · hội thoại vẫn hiện"
+                : "HỎNG: " + loi.joined(separator: " · ")
+        },
+
         Buoc(ten: "Nhật ký — mọi việc vừa làm có vào sổ cái không") { c in
             c.chonManEide(tien: "NhatKy")
             cho(5)
