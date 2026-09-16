@@ -451,6 +451,7 @@ public final class CodeView: ManHinhCoSo {
     public override func capNhat(ketQua: [String: Any]) {
         xoaThan()
         soViPham = 0; biChan = false; dungDuoc = nil
+        soTepMa = 0; soDongCoFact = 0; _phanQuyetCuoi = nil
 
         if ketQua.isEmpty {
             tomTat.stringValue = ""
@@ -466,6 +467,7 @@ public final class CodeView: ManHinhCoSo {
 
         biChan = phanQuyet == "block"
         soViPham = vp.count
+        _phanQuyetCuoi = phanQuyet.isEmpty ? nil : (biChan, soViPham)
 
         var d: [String] = []
         if !phanQuyet.isEmpty {
@@ -506,8 +508,135 @@ public final class CodeView: ManHinhCoSo {
         }
 
         _hienDeXuatVaTest(ketQua)
+        // MÃ CÓ CHÚ THÍCH FACT — bốn vùng cuối của mockup `Code.dc.html`.
+        _hienMaCoFact(ketQua, viPham: vp)
 
-        if soDong == 0 { noiRong("Không có vi phạm, không có báo cáo công cụ nào để hiện.") }
+        if soDong == 0 && soTepMa == 0 {
+            noiRong("Không có vi phạm, không có báo cáo công cụ nào để hiện.")
+        }
+    }
+
+    /// Số tệp đang hiện mã — cho test và cho `capNhat` biết màn có rỗng thật không.
+    public private(set) var soTepMa = 0
+    /// Số dòng mang chú thích fact trong tệp đang hiện.
+    public private(set) var soDongCoFact = 0
+
+    /// Người bấm một dòng mang fact: `(fact_id)` — panel mở `passport.query`.
+    public var onXemFact: ((String) -> Void)?
+
+    /// Mã nguồn kèm chú thích fact ở lề, thanh đầu tệp, và dải cổng công cụ.
+    ///
+    /// ## Vì sao chú thích fact phải nằm Ở LỀ, không nằm trong một danh sách bên dưới
+    ///
+    /// Luận điểm của cả đề án là **mọi hằng số phần cứng trong mã truy được về một fact đã
+    /// duyệt**. Một danh sách "tệp này trích 7 fact" đặt dưới khối mã chứng minh được con số ấy
+    /// và không chứng minh được điều quan trọng hơn: *dòng NÀY dựa trên fact NÀO*. Người đọc mã
+    /// nhìn `#define BME280_ADDR 0x76u` và câu hỏi của họ là "0x76 ở đâu ra" — câu trả lời phải
+    /// nằm ngay cạnh con số, không nằm cách đó ba mươi dòng.
+    ///
+    /// Đọc tệp TỪ ĐĨA chứ không chờ một năng lực trả nội dung: `code.constant_guard` trả
+    /// `{file, line, literal, reason}` — nó nói dòng nào sai mà không nói dòng ấy viết gì. Panel
+    /// chạy trên cùng máy với dự án, nên đọc thẳng là đường ngắn nhất và không thêm một năng lực
+    /// nào chỉ để làm việc mà hệ tệp đã làm.
+    private func _hienMaCoFact(_ ketQua: [String: Any], viPham: [[String: Any]]) {
+        soTepMa = 0
+        soDongCoFact = 0
+
+        // Tệp nào: `path` nếu có, nếu không thì tệp của vi phạm ĐẦU TIÊN — đó là tệp người dùng
+        // đang cần nhìn.
+        let duong = (ketQua["path"] as? String) ?? (ketQua["file"] as? String)
+            ?? (viPham.first?["file"] as? String) ?? tepDangXem ?? ""
+        guard !duong.isEmpty else { return }
+        let day = _duongDayDu(duong, ketQua: ketQua)
+        guard let noi = try? String(contentsOfFile: day, encoding: .utf8) else {
+            themDong(EideKnowledgeFormat.tenNgan(duong),
+                     "không đọc được tệp để hiện mã — kiểm đường dẫn", mau: EideToken.Mau.warn)
+            return
+        }
+
+        let dongVP = Set(viPham.filter {
+            ((($0["file"] as? String) ?? "") as NSString).lastPathComponent
+                == (duong as NSString).lastPathComponent
+        }.compactMap { EideSo.nguyen($0["line"]) })
+
+        let dong = noi.components(separatedBy: .newlines)
+        var factTheoDong: [Int: String] = [:]
+        for (i, d) in dong.enumerated() {
+            if let f = Self.factTrongDong(d) {
+                factTheoDong[i + 1] = f.mo
+                soDongCoFact += 1
+            }
+        }
+
+        // THANH ĐẦU TỆP — mockup vẽ `driver_bme280.c · armv7e-m · 118 dòng · constant-guard:
+        // 1 vi phạm`. Kiến trúc lấy từ kết quả khi có; KHÔNG đoán từ đuôi tệp.
+        var dau: [String] = ["\(dong.count) dòng"]
+        if let a = (ketQua["arch"] as? String) ?? (ketQua["isa"] as? String) { dau.append(a) }
+        dau.append("\(soDongCoFact) dòng có fact")
+        // Đếm DÒNG, và nói rõ là dòng.
+        //
+        // Một dòng có thể chứa nhiều hằng số vi phạm: `i2c_write8(ADDR, 0xF5u, 0x27u, …)` là hai
+        // vi phạm trên một dòng. Viết "4 vi phạm" trong khi danh sách ngay trên có 5 dòng là một
+        // mâu thuẫn người đọc thấy ngay, và nó làm họ nghi ngờ cả hai con số. Lề đánh dấu theo
+        // DÒNG, nên thanh đầu tệp cũng phải nói theo dòng.
+        dau.append(dongVP.isEmpty ? "constant-guard: sạch"
+                                  : "constant-guard: \(dongVP.count) dòng vi phạm")
+        themDong((duong as NSString).lastPathComponent, dau.joined(separator: " · "),
+                 mau: dongVP.isEmpty ? EideToken.Mau.info : EideToken.Mau.bad)
+
+        themMa(dong: dong.enumerated().map { i, d in
+            EideDongMa(so: i + 1, chu: d, fact: factTheoDong[i + 1], viPham: dongVP.contains(i + 1))
+        }, chonDong: { [weak self] so in
+            guard let f = Self.factTrongDong(dong.indices.contains(so - 1) ? dong[so - 1] : "")
+            else { return }
+            self?.onXemFact?(f.id)
+        })
+        soTepMa = 1
+    }
+
+    /// Đường dẫn đầy đủ của tệp: `code.*` trả đường TƯƠNG ĐỐI so với gốc dự án.
+    private func _duongDayDu(_ duong: String, ketQua: [String: Any]) -> String {
+        if duong.hasPrefix("/") { return duong }
+        let goc = (ketQua["project_dir"] as? String) ?? duAnHienTai ?? ""
+        return goc.isEmpty ? duong : (goc as NSString).appendingPathComponent(duong)
+    }
+
+    /// Thư mục dự án — panel đặt vào để màn dựng được đường dẫn đầy đủ.
+    public var duAnHienTai: String?
+
+    /// Tệp người dùng đang xem — bên gọi đặt vào TRƯỚC khi chạy một năng lực `code.*`.
+    ///
+    /// Cần thiết vì kết quả không phải lúc nào cũng nói tệp nào: `code.constant_guard` trả
+    /// `{verdict, violations}`, và khi mã SẠCH thì `violations` rỗng — tức đúng lúc mọi thứ tốt
+    /// thì màn lại không biết hiện tệp nào. Người gọi thì luôn biết: họ vừa chọn tệp ấy.
+    public var tepDangXem: String?
+
+    /// Chú thích fact trong một dòng mã: `/* eide:fact f_b1c2 BME280 addr 0x76 */`.
+    ///
+    /// Nhận cả `hkw:fact` — mockup UXD-13 viết bằng tiền tố cũ của dự án, và mã sinh ra trước
+    /// khi đổi tên vẫn nằm trong các dự án đang có. Bỏ qua tiền tố cũ nghĩa là chú thích biến
+    /// mất khỏi lề đúng ở những tệp lâu đời nhất.
+    static func factTrongDong(_ d: String) -> (id: String, mo: String)? {
+        for khoa in ["eide:fact", "hkw:fact"] {
+            guard let r = d.range(of: khoa) else { continue }
+            let sau = d[r.upperBound...].drop { $0 == " " || $0 == ":" }
+            let id = String(sau.prefix { !$0.isWhitespace })
+            // Id phải TRÔNG NHƯ một id. `/* eide:fact */` không có id, và phép lấy "từ kế tiếp"
+            // ngây thơ trả về `*/` — một fact tên `*/` sẽ đi thẳng vào `passport.query` khi
+            // người dùng bấm vào dòng ấy. Chú thích viết dở là chuyện thường; biến nó thành một
+            // lời gọi vô nghĩa thì không.
+            guard !id.isEmpty, let dau = id.first,
+                  dau.isLetter || dau == "_",
+                  id.allSatisfy({ $0.isLetter || $0.isNumber || "_-.:".contains($0) })
+            else { continue }
+            var mo = String(sau.dropFirst(id.count))
+            for cat in ["*/", "*)", "-->"] {
+                if let c = mo.range(of: cat) { mo = String(mo[..<c.lowerBound]) }
+            }
+            mo = mo.trimmingCharacters(in: .whitespaces)
+            return (id, mo.isEmpty ? id : "\(id) — \(mo)")
+        }
+        return nil
     }
 
     /// `code.annotate` `{suggestions[]}`, `code.generate_tests` `{tests[]}`,
@@ -543,6 +672,13 @@ public final class CodeView: ManHinhCoSo {
     }
 
     private func _hienBaoCao(_ r: [String: Any]) {
+        // DẢI CỔNG CÔNG CỤ — mockup `Code.dc.html` đặt `build 3,1 s · size Flash 38% · static 0
+        // vi phạm · host-test 12/12 · constant-guard 1 vi phạm` thành MỘT dòng đáy.
+        //
+        // Ngang chứ không dọc là chủ ý: năm con số ấy là thứ người ta LIẾC chứ không đọc, và xếp
+        // dọc thì chúng chiếm năm dòng của vùng đọc mã. Bản cũ dựng mỗi số một dòng `nhãn: giá
+        // trị`, nên một lượt dựng đầy đủ đẩy khối mã xuống dưới màn hình.
+        _hienDaiCong(r)
         if let log = r["log_ref"] as? String, !log.isEmpty {
             themDong("log", log, mau: EideToken.Mau.info)
         }
@@ -564,6 +700,38 @@ public final class CodeView: ManHinhCoSo {
             }
         }
     }
+
+    /// Dải ngang: tên công cụ, đạt/không, thời gian, và các phần trăm bộ nhớ.
+    private func _hienDaiCong(_ r: [String: Any]) {
+        var o: [EideDaiTrangThai.O] = []
+        let cong = (r["tool"] as? String) ?? "công cụ"
+        if let dat = r["passed"] as? Bool {
+            o.append(.init(cong, dat ? "đạt" : "KHÔNG ĐẠT",
+                           mau: dat ? EideToken.Mau.ok : EideToken.Mau.bad))
+        }
+        if let ms = EideSo.nguyen(r["duration_ms"]) {
+            o.append(.init("thời gian", String(format: "%.1f s", Double(ms) / 1000)))
+        }
+        let m = (r["metrics"] as? [String: Any]) ?? [:]
+        for k in ["flash_pct", "ram_pct"] {
+            guard let so = EideSo.thuc(m[k]) else { continue }
+            let ti = so > 1 ? so / 100 : so
+            o.append(.init(k == "flash_pct" ? "Flash" : "RAM",
+                           String(format: "%.0f%%", ti * 100),
+                           mau: ti >= Self.nguongChatBoNho ? EideToken.Mau.warn : nil))
+        }
+        // `constant-guard` vào dải CẢ KHI đạt: cổng im lặng lúc đạt là cổng người ta quên mất là
+        // có, và quên rồi thì một lần `block` trông như một lỗi lạ chứ không như một cổng.
+        if let pq = _phanQuyetCuoi {
+            o.append(.init("constant-guard", pq.chan ? "\(pq.so) vi phạm — CHẶN" : "sạch",
+                           mau: pq.chan ? EideToken.Mau.bad : EideToken.Mau.ok))
+        }
+        guard !o.isEmpty else { return }
+        themDaiTrangThai(o)
+    }
+
+    /// Phán quyết constant-guard của lượt cập nhật hiện tại — để dải cổng nói về nó.
+    private var _phanQuyetCuoi: (chan: Bool, so: Int)?
 
     @objc private func moViPham(_ s: NSButton) {
         let p = (s.identifier?.rawValue ?? "").split(separator: "#", maxSplits: 1).map(String.init)

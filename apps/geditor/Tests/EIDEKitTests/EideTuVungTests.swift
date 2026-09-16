@@ -874,3 +874,135 @@ final class EideSimTenKyVongTests: XCTestCase {
         XCTAssertFalse(nhan.contains("?"))
     }
 }
+
+/// Màn Mã nguồn — mã có chú thích fact ở lề, thanh đầu tệp, dải cổng công cụ.
+///
+/// Luận điểm của cả đề án là mọi hằng số phần cứng trong mã truy được về một fact đã duyệt. Một
+/// danh sách "tệp này trích 7 fact" chứng minh được con số ấy và KHÔNG chứng minh được điều quan
+/// trọng hơn: dòng NÀY dựa trên fact NÀO.
+final class EideCodeFactTests: XCTestCase {
+
+    private var tep: URL!
+
+    override func setUpWithError() throws {
+        tep = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("bme280-\(UUID().uuidString).c")
+        try """
+            #include "bme280.h"
+            /* eide:fact f_b1c2 BME280 addr 0x76 (SDO→GND) */
+            #define BME280_ADDR 0x76u
+            int init(void) {
+                i2c_write8(BME280_ADDR, 0xF5u, 0x27u);
+                return 0;
+            }
+            """.write(to: tep, atomically: true, encoding: .utf8)
+    }
+
+    override func tearDownWithError() throws { try? FileManager.default.removeItem(at: tep) }
+
+    private func khoiMa(_ v: NSView) -> EideMaView? {
+        if let m = v as? EideMaView { return m }
+        for c in v.subviews { if let m = khoiMa(c) { return m } }
+        return nil
+    }
+
+    private func man(viPham: [[String: Any]] = []) -> CodeView {
+        let v = CodeView()
+        v.capNhat(ketQua: ["path": tep.path, "verdict": viPham.isEmpty ? "pass" : "block",
+                           "violations": viPham])
+        return v
+    }
+
+    func testHIENmaCUAtepVAdemDONGcoFACT() throws {
+        let v = man()
+        let m = try XCTUnwrap(khoiMa(v), "màn Mã nguồn phải dựng một khối mã")
+        XCTAssertEqual(m.soDongMa, 7)
+        XCTAssertEqual(v.soDongCoFact, 1)
+    }
+
+    func testDONGviPHAMduocDANHdauTRENkhoiMA() throws {
+        let m = try XCTUnwrap(khoiMa(man(viPham: [
+            ["file": tep.lastPathComponent, "line": 5, "literal": "0x27",
+             "reason": "không có fact"],
+        ])))
+        XCTAssertEqual(m.soViPham, 1)
+    }
+
+    /// Vi phạm của TỆP KHÁC không được đánh dấu lên tệp đang mở.
+    func testVIphamTEPkhacKHONGdanhDAUnhamLENtepNAY() throws {
+        let m = try XCTUnwrap(khoiMa(man(viPham: [
+            ["file": "khac.c", "line": 5, "literal": "0x27"],
+        ])))
+        XCTAssertEqual(m.soViPham, 0)
+    }
+
+    func testTHANHdauTEPnoiSOdongVAphanQUYET() {
+        let chu = man().cot.arrangedSubviews
+            .compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("7 dòng"), chu)
+        XCTAssertTrue(chu.contains("1 dòng có fact"), chu)
+        XCTAssertTrue(chu.contains("constant-guard: sạch"), chu)
+    }
+
+    /// Nhiều hằng số vi phạm trên MỘT dòng vẫn là một dòng.
+    ///
+    /// `i2c_write8(ADDR, 0xF5u, 0x27u, …)` cho hai vi phạm cùng dòng. Thanh đầu tệp đếm theo
+    /// DÒNG vì lề cũng đánh dấu theo dòng; nói "4 vi phạm" cạnh một danh sách 5 dòng là mâu
+    /// thuẫn người đọc thấy ngay, và nó làm họ nghi ngờ cả hai con số.
+    func testNHIEUviPHAMcungDONGdemLAmotDONG() throws {
+        let v = man(viPham: [
+            ["file": tep.lastPathComponent, "line": 5, "literal": "0xF5u"],
+            ["file": tep.lastPathComponent, "line": 5, "literal": "0x27u"],
+        ])
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("1 dòng vi phạm"), chu)
+        XCTAssertEqual(v.soViPham, 2, "vẫn đếm đủ HAI hằng số ở dòng tóm tắt")
+        XCTAssertEqual(try XCTUnwrap(khoiMa(v)).soViPham, 1, "lề đánh dấu một dòng")
+    }
+
+    func testTEPkhongDOCduocTHIkhongNOnhungPHAInoiRA() {
+        let v = CodeView()
+        v.capNhat(ketQua: ["path": "/khong/co/tep.c", "verdict": "pass", "violations": []])
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("không đọc được tệp"), chu)
+        XCTAssertEqual(v.soTepMa, 0)
+    }
+
+    // MARK: - Đọc chú thích fact
+
+    func testDOCduocCHUthichFACTdangEIDE() throws {
+        let f = try XCTUnwrap(CodeView.factTrongDong(
+            "/* eide:fact f_b1c2 BME280 addr 0x76 */"))
+        XCTAssertEqual(f.id, "f_b1c2")
+        XCTAssertEqual(f.mo, "f_b1c2 — BME280 addr 0x76")
+    }
+
+    /// Tiền tố CŨ `hkw:fact` vẫn phải đọc được.
+    ///
+    /// Mockup UXD-13 viết bằng tiền tố cũ, và mã sinh ra trước khi đổi tên vẫn nằm trong các dự
+    /// án đang có — bỏ qua nó nghĩa là chú thích biến mất khỏi lề đúng ở những tệp lâu đời nhất.
+    func testDOCduocCAtienTOcuHKW() throws {
+        let f = try XCTUnwrap(CodeView.factTrongDong("// hkw:fact f_old ghi chú cũ"))
+        XCTAssertEqual(f.id, "f_old")
+    }
+
+    func testDONGkhongCOfactTRAnil() {
+        XCTAssertNil(CodeView.factTrongDong("#define X 1"))
+        XCTAssertNil(CodeView.factTrongDong("/* eide:fact */"), "không có id thì không phải fact")
+    }
+
+    /// Bấm một dòng mang fact mở hộ chiếu của ĐÚNG fact ấy.
+    func testBAMdongCOfactMOdungFACT() throws {
+        let v = man()
+        var mo: String?
+        v.onXemFact = { mo = $0 }
+        let m = try XCTUnwrap(khoiMa(v))
+        m.onChonDong?(2)
+        XCTAssertEqual(mo, "f_b1c2")
+        m.onChonDong?(1)
+        XCTAssertEqual(mo, "f_b1c2", "dòng không có fact thì KHÔNG đổi gì")
+    }
+}

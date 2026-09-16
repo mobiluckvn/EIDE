@@ -328,6 +328,15 @@ public final class EidePanel: NSView {
                 text: "\(tep):\(dong) — hằng số không trỏ fact nào. `/code.annotate` để tìm fact "
                     + "khớp, hoặc `/kg.request` nếu tri thức chưa có.")
         }
+        // Bấm một dòng mã mang chú thích fact → mở HỘ CHIẾU của chính fact ấy.
+        //
+        // Đây là nửa còn lại của luận điểm "mọi hằng số truy được về một fact": lề nói dòng này
+        // dựa trên `f_b1c2`, và cú bấm phải dẫn tới chỗ nói `f_b1c2` là gì, từ nguồn nào, tầng
+        // mấy. Không có đường ấy thì chú thích ở lề chỉ là một mã băm.
+        maNguon.onXemFact = { [weak self] fid in
+            self?.chayNhuNguoiDung("view.provenance", ["fact_id": fid])
+        }
+
 
         // KHÔNG gọi `board.mark_lab` từ đây. BOARD-05 đòi `no_actuator`, `current_limited` và
         // `by` — hai lời cam kết về phần cứng cộng tên người cam kết, để rồi ghi vào
@@ -865,6 +874,25 @@ public final class EidePanel: NSView {
 
     /// Màn đang chờ hợp đồng — chốt chống đua cho `_dungONhap`.
     private var _manDangHoi = ""
+
+    /// Thư mục gốc của dự án daemon đang mở.
+    ///
+    /// Panel không tự biết: nó chỉ cầm một `client` đã trỏ sẵn vào dự án, và `datTenDuAn` chỉ
+    /// nhận TÊN để hiện lên thanh trên. Cửa sổ đặt giá trị này vào vì `code.*` trả đường dẫn
+    /// TƯƠNG ĐỐI so với gốc dự án, và màn Mã nguồn cần đường đầy đủ để đọc tệp lên mà chú thích.
+    public var duAnGoc: String? {
+        didSet { maNguon.duAnHienTai = duAnGoc }
+    }
+
+    /// Nói cho màn Mã nguồn biết tệp nào đang xem, rồi chạy một năng lực `code.*` trên nó.
+    ///
+    /// Gộp hai việc vì để rời thì có hai thứ tự đúng và một thứ tự sai — chạy trước rồi mới đặt
+    /// tệp thì lượt cập nhật đầu tiên không có tệp nào để hiện.
+    @discardableResult
+    public func xemTepMa(_ duong: String, chay cap: String, _ ts: [String: Any]) -> Bool {
+        maNguon.tepDangXem = duong
+        return chayNhuNguoiDung(cap, ts)
+    }
 
     /// Ép chiều cao hội thoại về 0 khi một màn chuyên đề đang mở.
     ///

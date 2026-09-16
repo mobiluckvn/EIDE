@@ -87,6 +87,7 @@ enum WindowCapture {
         case eideHoChieu = "eide-ho-chieu"   // bảng fact có tầng, nguồn, độ tin
         case eideBanDo = "eide-ban-do"       // đồ thị tri thức dựng thành cây
         case eideMoPhong = "eide-mo-phong"   // kỳ vọng, log UART, bảng quét
+        case eideMaFact = "eide-ma-fact"     // mã có chú thích fact ở lề
     }
 
     // ĐỌC ẢNH `eide-*` THẾ NÀO
@@ -137,6 +138,7 @@ enum WindowCapture {
         // còn thêm 2 giây chờ màn mở, nhịp hỏi `job.status` giãn dần, và một lượt khởi động
         // qemu nữa — chụp ở 45 giây ra đúng dòng "Đang chạy `sim.run`…".
         case .eideMoPhong: return 120
+        case .eideMaFact: return 12
         default: return 0.4
         }
     }
@@ -260,6 +262,35 @@ enum WindowCapture {
             _ = chuanBiEide("Passport", on: controller)
         case .eideBanDo:
             _ = chuanBiEide("Graph", on: controller)
+        case .eideMaFact:
+            // KHÔNG mở "Code" ở tầng cửa sổ: trong cửa sổ gộp, màn "Mã nguồn" là TRÌNH SOẠN
+            // THẢO (DEV-098), và mở nó ẩn cả panel đi. Khung nhìn có chú thích fact là `CodeView`
+            // của panel, mở bằng một năng lực `code.*`. Nên: mở một màn panel bất kỳ để panel
+            // hiện ra, rồi hỏi panel mở đúng khung nhìn ấy.
+            guard chuanBiEide("Main", on: controller) else { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(1.5))
+            _ = controller.eidePanel?.moMan("Code")
+            // Màn Mã nguồn trong cửa sổ gộp là trình soạn thảo; khung nhìn CÓ CHÚ THÍCH FACT là
+            // `CodeView`, mở ra bằng một năng lực `code.*`. `code.constant_guard` là cái chạy
+            // được mà không cần khoá mô hình.
+            RunLoop.current.run(until: Date().addingTimeInterval(2))
+            let goc = ProcessInfo.processInfo.environment["EIDE_PROJECT"] ?? ""
+            let nguon = (goc as NSString).appendingPathComponent("src")
+            let c = (try? FileManager.default.contentsOfDirectory(atPath: nguon))?
+                .filter { $0.hasSuffix(".c") }.sorted().first
+            guard let c else {
+                print("⏭  bỏ qua eide-ma-fact: dự án chưa có src/*.c")
+                break
+            }
+            let duongC = (nguon as NSString).appendingPathComponent(c)
+            // `code.constant_guard` nhận một CodePatch, không nhận danh sách tệp — nó chấm nội
+            // dung sắp ghi, không chấm nội dung đã ghi. Dựng patch từ chính tệp trên đĩa.
+            guard let noiDung = try? String(contentsOfFile: duongC, encoding: .utf8) else { break }
+            controller.eidePanel?.xemTepMa(
+                duongC, chay: "code.constant_guard",
+                ["patch": ["files": [["path": "src/" + c, "content": noiDung, "mode": "replace"]],
+                           "cites": [], "rationale": "chụp ảnh màn Mã nguồn"]])
+
         case .eideMoPhong:
             guard chuanBiEide("Sim", on: controller) else { break }
             // Màn Mô phỏng chỉ có gì để hiện SAU khi chạy, và `sim.run` cần firmware lẫn kịch

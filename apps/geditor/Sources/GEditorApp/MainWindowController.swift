@@ -1085,6 +1085,7 @@ final class MainWindowController: NSWindowController {
         if let duAn { EideDuAn.nhoDaMo(duAn) }
         let p = EidePanel(client: c)
         p.datTenDuAn(duAn.map { ($0 as NSString).lastPathComponent })
+        p.duAnGoc = duAn
         p.onChonDuAn = { [weak self] in self?.moMenuDuAn() }
         duAnDangMo = duAn
         return p
