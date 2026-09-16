@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 13/09/2026 (lần 23). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 16/09/2026 (lần 24). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,8 +12,14 @@
 
 ## 1. Một dòng
 
-**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1539 test
-Python + 2863 test Swift xanh (trong đó 20 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23/23 màn hình, 199/199 năng lực hiện được kết quả, 10/10 phím tắt, 14/16 sự kiện.**
+**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1599 test
+Python + 3079 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Thêm 5 bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 5/5.**
+
+**Từ 15/09, phần việc không nằm ở năng lực nữa mà ở GIAO DIỆN.** Con số năng lực không đổi
+trong hai ngày này — 216/238 hôm 14/09 và 216/238 hôm nay — trong khi sáu màn được dựng lại
+và mười một lỗi lộ ra. Đó không phải nghịch lý: một năng lực "xong" nghĩa là nó trả đúng dữ
+liệu, còn một màn "xong" nghĩa là người dùng ĐỌC được dữ liệu ấy, và hai điều đó cách nhau
+đúng bằng khoảng cách mà bộ test không đi qua.
 
 **Từ 14/09, MỌI thứ còn thiếu quy về một nguyên nhân: chưa có bo mạch.** Rà lại 29 năng lực
 chưa hiện thực thì **bảy cái không chặn bởi gì cả** — chúng chỉ HỎI máy tính xem đang thấy gì,
@@ -161,6 +167,27 @@ eide project new "đo nhiệt độ bằng STM32F411 và BME280"
 Ngoài ra: **MCP server** (dùng được từ Claude Code/Cursor), **plugin GEditor** (Swift, panel
 ba vùng), **JSON-RPC daemon**, **CLI** đầy đủ.
 
+**Và từ 15–16/09, GIAO DIỆN chạy được thật — có ảnh chụp trên dữ liệu thật.** Sáu màn dựng lại
+trên một bộ từ vựng hiển thị chung (`EideTuVung`: bảng sắp xếp được, cây, khối mã, diff, dải
+trạng thái), thay cho ba thứ cũ là một đoạn văn, một dòng `nhãn: giá trị`, và một lời xin lỗi:
+
+| Màn | Đo được trên bản dựng release |
+|---|---|
+| Hộ chiếu chip | 8 fact thành bảng sắp xếp được; địa chỉ ra `0x3FC7C000` chứ không `1070055424`; `392 KiB (401408)`; hai fact XUNG ĐỘT tô đỏ |
+| Bản đồ tri thức | 17 nút · 26 cạnh thành cây gốc `chip:*`, quan hệ `HAS`/`CITES`/`ABOUT` hiện ở lề phải |
+| Mô phỏng | `qemu-system-avr` chạy 25 giây qua daemon, 6/6 kỳ vọng có TÊN, log UART 8 dòng hiện đủ |
+| Mã nguồn | `main.c` 16 dòng · 2 dòng có fact (`•`) · 4 dòng vi phạm (`!`), cổng G-FACT chặn |
+| Kế hoạch & mã | bản vá hiện thành diff/khối mã kèm `rationale` và `missing_facts` |
+| Cây dự án | workspace trỏ đúng thư mục dự án, `.eide/` hiện thành nhóm riêng cuối cây |
+
+Ba việc nền đi kèm, mỗi việc đều là thứ không màn nào tự làm được: bỏ cửa sổ EIDE cũ (chọn dự
+án từng mở ra một cửa sổ THỨ HAI với dự án khác), theo dõi việc nặng qua `job.status` thay vì
+gọi `running` là lỗi, và ghim bảng màu sáng cho cả bề mặt EIDE (token PTIT cố định gặp control
+AppKit theo chế độ hệ thống = ô nhập đen sì trên máy để chế độ tối).
+
+Năm bài `--self-test EIDE` đo trên CỬA SỔ THẬT, vì `MainWindowController` nằm trong target thực
+thi nên không bộ test nào import được — và đó đúng là lý do cả lớp lỗi cửa sổ sống lâu tới vậy.
+
 **Và từ 11/09 đợt 2, một lượt mô phỏng THẬT** — `qemu-system-avr -M arduino-uno` (= ATmega328P)
 chạy một ELF AVR qua chính `sim.run`, qua chính sandbox SEC-25, trả `captured.uart == ["E"]`.
 ELF ấy dựng bằng tay trong test, 98 byte, năm lệnh mã máy (TXEN0 → UCSR0B, `'E'` → UDR0,
@@ -296,7 +323,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Ba mươi lăm lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Bốn mươi bốn lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -593,6 +620,56 @@ test đang có — không phải vì test yếu, mà vì chúng sống ở nhữ
 chạy thật: một ống stdio có đệm hữu hạn, một tiến trình con đọc cấu hình của dự án, một cú bấm
 chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên tiếp ngay trước đó.
 
+36. **`kg.conflicts` không phát ra khoá mà `kg.resolve_conflict` bắt buộc phải có** (15/09).
+    KG-06 nhận `conflict_id` dạng `<fact_a>:<fact_b>`, và docstring của nó còn ghi "cặp mà
+    `kg.conflicts` trả về" — trong khi `kg.conflicts` không trả. Nút "Chọn A" trên giao diện gửi
+    `"?"` và luôn hỏng; `view.conflict_board` thì tự đánh số `c_001`, một khoá không truyền vào
+    đâu được. **Mỗi bên có test riêng và cả hai cùng xanh** — không bài nào hỏi câu "hai cái này
+    có khớp nhau không". [DEV-112](DEVIATIONS.md).
+37. **Tiến trình con trong sandbox ĂN MẤT ống JSON-RPC của daemon** (16/09). `subprocess.Popen`
+    chuyển hướng stdout và stderr vào tệp nhưng KHÔNG chuyển hướng stdin, nên
+    `qemu-system-avr` — vốn đọc stdin như console nối tiếp — thừa kế stdin của daemon, tức chính
+    ống lệnh từ giao diện. Triệu chứng: `sim.run` qua daemon không bao giờ xong, trong khi cùng
+    lời gọi ấy qua CLI mất 25 giây. Đây còn là một lỗ SEC-25: stdin thừa kế là một kênh vào
+    KHÔNG khai báo, và bất kỳ công cụ nào đọc stdin đều rút được lưu lượng RPC của tiến trình
+    cha. [DEV-116](DEVIATIONS.md).
+38. **Ngân sách ngày không tính bảy tiếng đầu mỗi ngày** (16/09). Sổ cái đóng dấu `ts` bằng UTC;
+    `budget_state` so với `date.today()` — giờ ĐỊA PHƯƠNG. Ở +07, mọi `model.call` từ nửa đêm
+    tới 7 giờ sáng rơi vào ngày UTC hôm trước và **không được cộng vào chi tiêu hôm nay**. Không
+    phải chuyện hiển thị: APD-08 §5 leo thang khi còn dưới 20% ngân sách, nên bộ đếm đọc 0 suốt
+    bảy tiếng là bộ đếm không bao giờ chạm ngưỡng trong bảy tiếng ấy. Tìm ra vì buổi làm việc
+    này kéo qua nửa đêm và bốn bài test đỏ lúc 06:55.
+39. **Hội thoại BỊ ẨN vẫn giữ nguyên chiều cao** (16/09). `isHidden = true` không lấy lại chỗ
+    trong Auto Layout, mà mép dưới của MỌI màn chuyên đề buộc vào mép trên hội thoại — nên mỗi
+    màn mất phần dưới đúng bằng chiều cao hội thoại, trong khi nửa dưới cửa sổ trống trơn. Thấy
+    ra ở màn Mô phỏng (khối log bị cắt ngang dòng đầu) nhưng nó đúng với cả 23 màn.
+40. **Kết quả việc nặng bị bọc hai lớp** (16/09). `job.status` trả `result` là CẢ CapabilityRun
+    (`asdict(run)`), client bọc thêm một lớp nữa, nên màn nhận `{status, result}` thay cho
+    `{report}` và kết luận *"Mô phỏng không trả về kỳ vọng nào để hiện"* — sau một lượt chạy
+    qemu 25 giây ĐẠT 6/6. Hợp đồng API-15 không nói `job.status.result` là phong bì hay thân,
+    nên mỗi bên gọi tự đoán một kiểu.
+41. **Đường nạp mặc định đổ kết quả vào khung nhìn SAI** (15/09). Nó chọn khung nhìn theo TIỀN
+    TỐ MÀN, trong khi màn 7 có hai khung nhìn và phép định tuyến theo NĂNG LỰC mới là cái đúng.
+    Hệ quả: `view.kg_map` rơi vào `RagAskView`, và màn hỏi đáp kết luận *"Không tìm thấy gì
+    trong tri thức của dự án"* ngay sau khi hệ thống trả về 17 nút và 26 cạnh.
+42. **Lệnh chọn màn mặc định hoãn lại ĐÈ LÊN lựa chọn thật** (15/09). `dungKhungEide` xếp một
+    `DispatchQueue.main.async { chon("Code") }`; mọi lời gọi `chonManEide` đặt trước vòng run
+    loop kế tiếp đều bị nó ghi đè. Bộ chụp ảnh gọi `chonManEide("Passport")` rồi chụp ra màn Mã
+    nguồn, và không có gì trong log nói vì sao.
+43. **`chayTuONhap` bỏ qua trong im lặng khi chưa có màn nào mở** (16/09). Đúng cho một ô nhập
+    (ô nhập chỉ tồn tại khi có màn), sai cho một lời gọi bằng mã: lời gọi rơi vào hư không và
+    ảnh chụp ra một màn trống. Nay `chayNhuNguoiDung` trả `false` để bên gọi biết.
+44. **`/* eide:fact */` thành một fact tên `*/`** (16/09). Phép lấy "từ kế tiếp" ngây thơ trong
+    trình đọc chú thích không kiểm dạng id, nên một chú thích viết dở sinh ra một id rác — và cú
+    bấm vào dòng ấy gửi nó thẳng vào `passport.query`. Chú thích viết dở là chuyện thường; biến
+    nó thành một lời gọi vô nghĩa thì không.
+
+**Số 36–44 đều đến từ MỘT việc: dựng lại sáu màn hình trên dữ liệu thật rồi NHÌN.** Không cái
+nào lộ ra trong `make check`, và bốn cái (37, 39, 41, 44) sống ở chỗ hai phần đều đúng theo test
+của riêng chúng. Đáng chú ý là ba cái nặng nhất — 37, 38, 39 — không phải lỗi giao diện: một
+lỗ sandbox, một lỗi múi giờ trong bộ đếm ngân sách, và một hiểu sai về Auto Layout. Chúng lộ ra
+ở giao diện vì giao diện là chỗ duy nhất chạy cả hệ thống cùng lúc.
+
 **Số 34 và 35 nói hai điều về TUỔI và về ĐỒNG THỜI.** Cả hai đều bất khả thi với một bài test
 đơn luồng trên dữ liệu mới: 34 cần một sổ cái già hơn mã đang chạy, 35 cần hai lời gọi chồng
 lên nhau. Cả hai nay đều có test — một test ghi thẳng bản ghi kiểu cũ vào sổ, một test bắn hai
@@ -627,6 +704,9 @@ luồng mới đi qua một tập nhánh mà không luồng nào trước đó c
 | **[DEV-089]** ký lại `trusted_packages` | Danh sách ghi `gcc-arm-none-eabi` — tên gói **apt**. Homebrew và `armv7e-m.yaml` đều dùng `arm-none-eabi-gcc`, nên `env.install` cho trình dịch ARM rơi vào **ASK**, còn mục đang có thì APPROVE một gói không tồn tại trên máy nào. Đúng hình dạng WI-257, ở nhóm gói. Nằm trong niêm nên phải `eide policy sign` lại |
 | **[DEV-088]** SEC-25 §2/§3 | Lõi sandbox nay nhận `cwd` và `them_path` — hai thứ SEC-25 không khai. Không có chúng thì `code.build` **không thể thành công trên bất kỳ máy nào**. Đề xuất §3 ghi rõ `PATH` gồm cả thư mục chuỗi công cụ đã khai trong manifest ISA |
 | **WI-258** | Xác nhận đỏ PTIT chính thức (đang dùng `#B8121F` theo UXD-13 §7) |
+| **[DEV-114]** bảng màu TỐI | EIDE ghim `.aqua` từ 15/09 vì token PTIT là hằng số sáng cố định còn control AppKit đổi theo hệ thống — trên máy để chế độ tối thì ô nhập và hàng xen kẽ là những khối đen đặc. Ghim là cách đúng với tài liệu ĐANG CÓ (UXD-13 khai đúng một bảng màu), nhưng "EIDE không có chế độ tối" là một quyết định thương hiệu, không phải quyết định kỹ thuật |
+| **[DEV-117]** hai bề mặt cùng tên "Mã nguồn" | Trong cửa sổ gộp, mục sidebar "Mã nguồn" là TRÌNH SOẠN THẢO (DEV-098), còn khung nhìn có chú thích fact ở lề chỉ tới được bằng cách gõ một năng lực `code.*`. Cần chốt một trong hai: gộp chú thích fact vào chính trình soạn thảo (đúng mockup, nhưng đụng vào lõi soạn thảo), hay tách tên hai màn |
+| **[DEV-112]…[DEV-117]** sáu mục giao diện | Sinh ra từ đợt dựng lại 15–16/09. Không mục nào chặn việc đang chạy; chúng chờ duyệt để đồng bộ UXD-13, API-15 và SEC-25 §2 với thứ mã đang làm |
 | ~~**[DEV-086]**~~ | ~~thêm `fallback: qemu` cho `avr8.yaml`~~ — **anh duyệt 11/09, đã xong.** TGT-19 lên v1.2, SIM-20 lên v1.1, và nhóm `sim.*` có lượt chạy engine thật đầu tiên (§5) |
 
 ---

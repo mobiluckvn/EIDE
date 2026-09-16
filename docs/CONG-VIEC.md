@@ -480,5 +480,12 @@ chuỗi chuẩn nào còn chờ mô phỏng nữa — ba chuỗi dở dang đề
 
 | # | Bug | Đo được | Vì sao hoãn |
 |---|---|---|---|
-| B1 | `AutonomyBar` mất phím tắt ⌘⇧. của nút Dừng khẩn | `EideUITests.testNutDungKhanCoPhimTat` đỏ sau khi thêm nút chọn dự án vào thanh | Thanh trên sắp được thiết kế lại theo usecase — sửa bây giờ có thể sửa vào chỗ sắp bỏ |
-| B2 | Màn Hộ chiếu từng hiện "không cần tham số" trên bản dựng thật | Ảnh chụp 14/09; E2E với daemon thật thì ra đủ 6 ô | Chưa dựng lại được sau khi sửa `nangLucChinh`; kiểm lại sau khi có thiết kế màn |
+| ~~B1~~ | ~~`AutonomyBar` mất phím tắt ⌘⇧. của nút Dừng khẩn~~ | — | **Xong 15/09.** Test xanh trở lại |
+| ~~B2~~ | ~~Màn Hộ chiếu từng hiện "không cần tham số"~~ | Ảnh chụp 15/09 và 16/09 trên bản dựng release: màn ra đủ biểu mẫu 6 ô rồi tới bảng 8 fact | **Xong 15/09**, do bản sửa đua `_manDangHoi`. Đã KIỂM BẰNG MẮT, không chỉ bằng test — đó là điều còn thiếu hôm 14/09 |
+
+Cả hai đóng trong đợt dựng lại giao diện 15–16/09. Đợt ấy mở ra chín lỗi im lặng mới (số 36–44
+trong [`TIEN-DO.md`](TIEN-DO.md) §6) và sáu mục sai khác [DEV-112]…[DEV-117] đang chờ chủ sản
+phẩm. Ba lỗi nặng nhất trong chín cái **không phải lỗi giao diện**: một lỗ sandbox (tiến trình
+con thừa kế stdin của daemon, tức ống JSON-RPC), một lỗi múi giờ trong bộ đếm ngân sách (bảy
+tiếng đầu mỗi ngày không được tính), và một hiểu sai về Auto Layout (khung nhìn ẩn vẫn giữ chỗ).
+Chúng lộ ra ở giao diện vì giao diện là chỗ duy nhất chạy cả hệ thống cùng lúc.
