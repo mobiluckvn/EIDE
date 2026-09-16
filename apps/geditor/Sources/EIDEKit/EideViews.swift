@@ -28,6 +28,17 @@ public final class AutonomyBar: NSView {
     /// chủ, vì đó là hai thứ trả lời câu "tôi đang ở đâu và tác tử được phép làm gì".
     public var onChonDuAn: (() -> Void)?
 
+    /// Biểu tượng PTIT. 28 pt: cao hơn thì nó át tên dự án, thấp hơn thì ngọn đuốc trong
+    /// logo nhoè thành một chấm.
+    static let CAO_LOGO: CGFloat = 28
+
+    /// Đệm quanh logo trong ô nền sáng. 4 pt — bộ nhận diện nào cũng đòi một vùng trống quanh
+    /// logo, và một logo dán sát mép ô trông như bị cắt.
+    static let DEM_LOGO: CGFloat = 4
+
+    private let logo = NSImageView()
+    /// Nền sáng đặt dưới logo — xem ghi chú ở chỗ dựng.
+    private let neLogo = NSView()
     private let nutDuAn = NSButton()
     private let nhan = NSTextField(labelWithString: "…")
     private let nutDung = NSButton()
@@ -53,6 +64,22 @@ public final class AutonomyBar: NSView {
 
         nhan.font = EideToken.fontUI
         nhan.textColor = .white
+        logo.image = EideLogo.bieuTuong()
+        logo.imageScaling = .scaleProportionallyUpOrDown
+        logo.setAccessibilityLabel("Học viện Công nghệ Bưu chính Viễn thông")
+        logo.toolTip = "EIDE — Đề án tốt nghiệp Thạc sĩ, Học viện Công nghệ Bưu chính Viễn thông"
+
+        // NỀN SÁNG dưới logo. Không phải trang trí.
+        //
+        // Thanh trên là `secondary #373D4E`, và đỏ PTIT `#DE221A` trên nền ấy đo được **1,99** —
+        // logo chìm hẳn vào thanh, thấy rõ trên ảnh chụp 16/09/2026. Hai cách chữa, và cách còn
+        // lại tệ hơn: TÔ LẠI logo thành trắng thì mất đỏ PTIT lẫn vàng ngọn đuốc, tức sửa bộ
+        // nhận diện của trường để hợp với nền của mình. Đặt nó lên một ô sáng thì logo giữ
+        // nguyên màu thật và vẫn đọc được — đúng cách các bộ nhận diện quy định cho nền tối.
+        neLogo.wantsLayer = true
+        neLogo.layer?.backgroundColor = EideToken.Mau.surface.cgColor
+        neLogo.layer?.cornerRadius = EideToken.radius[0]
+
         nutDuAn.title = "Chưa mở dự án ▾"
         nutDuAn.bezelStyle = .rounded
         nutDuAn.font = EideToken.fontUI
@@ -87,13 +114,30 @@ public final class AutonomyBar: NSView {
         bangTin.isHidden = true
         bangTin.setAccessibilityLabel("Tác tử đang chờ người")
 
-        for v in [nutDuAn, nhan, nutDung, chonMuc, bangTin] as [NSView] {
+        for v in [neLogo, nutDuAn, nhan, nutDung, chonMuc, bangTin] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        neLogo.addSubview(logo)
         let s = EideToken.space[2]
         NSLayoutConstraint.activate([
-            nutDuAn.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
+            // BIỂU TƯỢNG PTIT ở mép trái thanh trên — chỗ duy nhất luôn hiện trên mọi màn.
+            //
+            // Chỉ phần HÌNH, không kèm chữ: wordmark 347×40 ép vào một thanh cao 52 pt sẽ hoặc
+            // bé tới mức không đọc được, hoặc ăn hết chỗ của tên dự án. Chữ "PTIT" đã nằm trong
+            // hộp thoại Giới thiệu, nơi có chỗ để đọc nó.
+            neLogo.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
+            neLogo.centerYAnchor.constraint(equalTo: centerYAnchor),
+            neLogo.widthAnchor.constraint(equalToConstant: Self.CAO_LOGO + 2 * Self.DEM_LOGO),
+            neLogo.heightAnchor.constraint(equalToConstant: Self.CAO_LOGO + 2 * Self.DEM_LOGO),
+
+            logo.centerXAnchor.constraint(equalTo: neLogo.centerXAnchor),
+            logo.centerYAnchor.constraint(equalTo: neLogo.centerYAnchor),
+            logo.widthAnchor.constraint(equalToConstant: Self.CAO_LOGO),
+            logo.heightAnchor.constraint(equalToConstant: Self.CAO_LOGO),
+
+            nutDuAn.leadingAnchor.constraint(equalTo: neLogo.trailingAnchor, constant: s),
             nutDuAn.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             nhan.leadingAnchor.constraint(equalTo: nutDuAn.trailingAnchor, constant: s),

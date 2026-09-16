@@ -1183,3 +1183,76 @@ final class EideDichTests: XCTestCase {
         XCTAssertEqual(dong(v).first, "x")
     }
 }
+
+/// Nhận diện PTIT — màu lấy từ logo chính thức, và logo đọc được lúc chạy.
+final class EideLogoTests: XCTestCase {
+
+    /// Đỏ dùng cho CHỮ phải đạt AA trên nền sáng của sản phẩm.
+    ///
+    /// Đỏ biểu tượng `#DE221A` đo được 4,46 — dưới ngưỡng 4,5 mà `tokens.json` tự khai. Bộ nhận
+    /// diện đã tự giải quyết: dòng chữ trong logo dùng `#BC2626`, đỏ đậm hơn, đo được 5,63. Sản
+    /// phẩm theo đúng phân vai ấy.
+    func testDOchuDATtuongPHANaaTRENnenSANG() {
+        XCTAssertGreaterThanOrEqual(_tuongPhan(EideToken.Mau.primary, EideToken.Mau.bg), 4.5)
+        XCTAssertGreaterThanOrEqual(_tuongPhan(EideToken.Mau.primary, EideToken.Mau.surface), 4.5)
+    }
+
+    /// Và đỏ BIỂU TƯỢNG thì KHÔNG đạt — ghi lại để không ai lỡ tay dùng nó cho chữ.
+    ///
+    /// Bài test này đỏ nếu có người đổi `brand` thành một màu đạt AA: khi ấy hãy xoá nó và gộp
+    /// hai token, đừng nới lỏng nó.
+    func testDObieuTUONGkhongDATaaCHOchu_nenCHIdungChoMANGlon() {
+        let r = _tuongPhan(EideToken.Mau.brand, EideToken.Mau.bg)
+        XCTAssertLessThan(r, 4.5, "nếu `brand` nay đạt AA thì gộp nó với `primary`, đừng giữ hai")
+        XCTAssertGreaterThanOrEqual(r, 3.0, "vẫn phải đạt AA cho chữ LỚN và cho mảng màu")
+    }
+
+    /// Màu phải KHỚP tệp nhận diện chính thức, không phải một giá trị gõ tay gần đúng.
+    func testMAUkhopTEPnhanDIENchinhTHUC() throws {
+        // Lùi từ tệp test tới GỐC KHO bằng cách tìm `CLAUDE.md`, không đếm số bậc: đếm bậc
+        // thì đổi chỗ tệp test một lần là bài kiểm đỏ vì một lý do không liên quan.
+        var goc = URL(fileURLWithPath: #filePath)
+        while goc.pathComponents.count > 1,
+              !FileManager.default.fileExists(
+                  atPath: goc.appendingPathComponent("CLAUDE.md").path) {
+            goc = goc.deletingLastPathComponent()
+        }
+        let svg = try String(contentsOf: goc.appendingPathComponent("docs/logo-ptit-1.svg"),
+                             encoding: .utf8)
+        for (ten, hex) in [("brand", "#DE221A"), ("primary", "#BC2626"),
+                           ("secondary", "#373D4E"), ("brandGold", "#B89C0E")] {
+            XCTAssertTrue(svg.contains(hex), "\(ten) = \(hex) không có trong logo chính thức")
+        }
+    }
+
+    func testDOCduocBIEUtuongVAwordmark() {
+        XCTAssertNotNil(EideLogo.bieuTuong(), "thiếu ptit-mark.svg trong tài nguyên EIDEKit")
+        XCTAssertNotNil(EideLogo.wordmark(), "thiếu ptit-logo.svg trong tài nguyên EIDEKit")
+    }
+
+    /// Biểu tượng phải VUÔNG — nó đi vào icon ứng dụng và vào một ô 28×28 trên thanh trên.
+    func testBIEUtuongVUONG() throws {
+        let a = try XCTUnwrap(EideLogo.bieuTuong())
+        XCTAssertEqual(a.size.width, a.size.height, accuracy: 0.5,
+                       "biểu tượng \(a.size) không vuông — icon sẽ méo")
+    }
+
+    /// Wordmark giữ đúng tỉ lệ 347×40 của bản gốc.
+    func testWORDMARKgiuTIle() throws {
+        let a = try XCTUnwrap(EideLogo.wordmark())
+        XCTAssertEqual(a.size.width / a.size.height, EideLogo.TI_LE_WORDMARK, accuracy: 0.05)
+    }
+
+    private func _tuongPhan(_ a: NSColor, _ b: NSColor) -> CGFloat {
+        func L(_ c: NSColor) -> CGFloat {
+            guard let s = c.usingColorSpace(.sRGB) else { return 0 }
+            func k(_ v: CGFloat) -> CGFloat {
+                v <= 0.03928 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4)
+            }
+            return 0.2126 * k(s.redComponent) + 0.7152 * k(s.greenComponent)
+                 + 0.0722 * k(s.blueComponent)
+        }
+        let (x, y) = (L(a), L(b))
+        return (max(x, y) + 0.05) / (min(x, y) + 0.05)
+    }
+}

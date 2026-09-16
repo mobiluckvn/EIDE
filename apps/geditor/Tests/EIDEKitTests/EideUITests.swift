@@ -15,9 +15,15 @@ final class EideUITests: XCTestCase {
     func testMauLayTuTokenChuKhongVietTay() {
         // UXD-13 §7. Nếu ai đổi tokens.json mà quên sinh lại Swift thì `make check-gen` đỏ;
         // test này chốt thêm giá trị để một lần sinh sai không lọt qua im lặng.
-        XCTAssertEqual(EideToken.Mau.primary.hexString, "#B8121F")   // đỏ PTIT
+        //
+        // Cập nhật 16/09/2026 (WI-258 xong): ba màu nay lấy từ tệp nhận diện chính thức
+        // `docs/logo-ptit-1.svg` thay vì ước lượng. `primary` là đỏ mà logo dùng cho CHỮ
+        // (`#BC2626`, tương phản 5,63) chứ không phải đỏ biểu tượng (`#DE221A`, 4,46 — dưới
+        // ngưỡng AA mà chính `tokens.json` khai). Xem `EideLogoTests`.
+        XCTAssertEqual(EideToken.Mau.primary.hexString, "#BC2626")   // đỏ PTIT — cho chữ
+        XCTAssertEqual(EideToken.Mau.brand.hexString, "#DE221A")     // đỏ biểu tượng — mảng lớn
         XCTAssertEqual(EideToken.Mau.accent.hexString, "#F2B705")    // vàng — việc cần người
-        XCTAssertEqual(EideToken.Mau.secondary.hexString, "#2F4858") // xám xanh — tác tử
+        XCTAssertEqual(EideToken.Mau.secondary.hexString, "#373D4E") // xám xanh — tác tử
     }
 
     // MARK: - U10: tương phản WCAG 2.2 AA

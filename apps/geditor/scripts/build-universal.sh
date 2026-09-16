@@ -139,6 +139,20 @@ fi
 
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
+# Icon ứng dụng — biểu tượng PTIT chính thức.
+#
+# `Info.plist` khai `CFBundleIconFile = AppIcon` từ đầu, nhưng tệp `AppIcon.icns` thì KHÔNG có
+# trong kho cho tới 16/09/2026: bản dựng chạy với icon trắng mặc định của macOS, và không gì
+# báo — `CFBundleIconFile` trỏ vào một tệp không tồn tại là chuyện Finder im lặng bỏ qua.
+#
+# Dựng lại icon: `python3 scripts/sinh_icon_ptit.py` (tách biểu tượng khỏi wordmark, chừa lề,
+# rsvg-convert + iconutil). Nguồn là `docs/logo-ptit-1.svg`.
+if [ -f Resources/AppIcon.icns ]; then
+    cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+else
+    echo "⚠ thiếu Resources/AppIcon.icns — bản dựng sẽ mang icon trắng mặc định"
+fi
+
 # NFR-SEC-01 — KHÔNG ĐƯỢC KÝ một bản mang khoá cập nhật giữ chỗ.
 #
 # Bản chưa ký thì cho qua: người ta dựng nó hàng chục lần một ngày để thử. Bản ĐÃ KÝ thì khác —

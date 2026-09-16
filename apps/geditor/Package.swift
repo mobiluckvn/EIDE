@@ -199,7 +199,11 @@ let package = Package(
         ),
 
         // Lớp 1 — Lõi xử lý văn bản, độc lập UI, test được không cần app (NFR-MNT-01).
-        .target(name: "EIDEKit"),
+        .target(
+            name: "EIDEKit",
+            // Nhận diện PTIT đi kèm thư viện, không nhúng vào mã: một nguồn SVG cho mọi cỡ
+            // (28 pt thanh trên · 64 pt hộp Giới thiệu · 1024 px icon). Xem `EideLogo`.
+            resources: [.copy("Resources")]),
         .testTarget(name: "EIDEKitTests", dependencies: ["EIDEKit"]),
 
         .target(

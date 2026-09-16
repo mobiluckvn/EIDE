@@ -13,16 +13,19 @@ import AppKit
 public enum EideToken {
 
     public enum Mau {
-        public static let primary = NSColor(hex: "#B8121F")
+        public static let primary = NSColor(hex: "#BC2626")
+        public static let brand = NSColor(hex: "#DE221A")
+        public static let brandGold = NSColor(hex: "#B89C0E")
+        public static let brandGoldLight = NSColor(hex: "#EFF003")
         public static let accent = NSColor(hex: "#F2B705")
-        public static let secondary = NSColor(hex: "#2F4858")
+        public static let secondary = NSColor(hex: "#373D4E")
         public static let ok = NSColor(hex: "#0b6b52")
         public static let okBg = NSColor(hex: "#dff5ee")
         public static let warn = NSColor(hex: "#7a5200")
         public static let warnBg = NSColor(hex: "#fff0cc")
         public static let bad = NSColor(hex: "#7a0c0c")
         public static let badBg = NSColor(hex: "#fde3e1")
-        public static let info = NSColor(hex: "#B8121F")
+        public static let info = NSColor(hex: "#BC2626")
         public static let infoBg = NSColor(hex: "#e6effa")
         public static let bg = NSColor(hex: "#f4f6f9")
         public static let surface = NSColor(hex: "#ffffff")

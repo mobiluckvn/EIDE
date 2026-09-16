@@ -1098,14 +1098,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func showAbout() {
-        NSApp.orderFrontStandardAboutPanel(options: [
+        // Ảnh trong hộp Giới thiệu là WORDMARK đầy đủ (hình + chữ), không phải biểu tượng.
+        //
+        // Đây là chỗ DUY NHẤT trong sản phẩm có đủ chỗ ngang cho tỉ lệ 347×40, và là chỗ câu
+        // "Học viện Công nghệ Bưu chính Viễn thông" cần đọc được — thanh trên chỉ đủ cho hình.
+        var tuy: [NSApplication.AboutPanelOptionKey: Any] = [
             .applicationName: "EIDE",
             .applicationVersion: GEditorCore.version,
             .init(rawValue: "Copyright"): "CÔNG TY TNHH MOBILUCK · code247.ai",
             .credits: NSAttributedString(
-                string: Self.aboutCredits,
+                string: "Đề án tốt nghiệp Thạc sĩ Kỹ thuật Điện tử — Học viện Công nghệ Bưu "
+                    + "chính Viễn thông (PTIT)\nHọc viên Vũ Trí Công · GVHD TS. Nguyễn Trung "
+                    + "Hiếu\n\n" + Self.aboutCredits,
                 attributes: [.font: Tokens.Font.caption]
             ),
-        ])
+        ]
+        // Thiếu ảnh thì BỎ khoá, không đặt `nil`: `orderFrontStandardAboutPanel` nhận một khoá
+        // mang nil và vẽ ra một ô trống thay cho icon ứng dụng — tệ hơn là không đặt gì.
+        if let logo = EideLogo.wordmark() { tuy[.applicationIcon] = logo }
+        NSApp.orderFrontStandardAboutPanel(options: tuy)
     }
 }

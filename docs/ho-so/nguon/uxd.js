@@ -122,17 +122,34 @@ c.push(H1('7. Token thiết kế'));
 // (Swift/AppKit), và tài liệu này. Trước đây chúng chỉ nằm trong văn xuôi §7, nên ba chỗ ấy
 // đều chép tay — đúng bài học DEV-018. Nay sinh ra `ui/tokens.json`. Xem DEVIATIONS DEV-025.
 //
-// `primary` là đỏ PTIT. UXD-13 ghi "gần đúng, xác nhận với bộ nhận diện chính thức" — WI-258
-// là việc xác nhận ấy; tới khi có xác nhận thì đây là mã dùng chính thức trong sản phẩm.
+// WI-258 ĐÃ XONG (16/09/2026): chủ sản phẩm đưa tệp nhận diện chính thức
+// `docs/logo-ptit-1.svg`, và bảng màu dưới đây nay LẤY TỪ chính tệp ấy thay vì ước lượng.
+//
+// Năm màu trong logo: `#DE221A` (đỏ biểu tượng, 10 path), `#B89C0E` và `#EFF003` (vàng ngọn
+// đuốc), `#BC2626` (đỏ dòng chữ thứ nhất), `#373D4E` (xám xanh dòng chữ thứ hai).
+//
+// ## Vì sao `primary` KHÔNG phải `#DE221A`
+//
+// Đo tương phản trên nền `bg #f4f6f9`: `#DE221A` được **4,46** — dưới ngưỡng AA 4,5 mà chính
+// `contrastMin` dưới đây khai, và có một bài test đo nó. Chênh 0,04 là chênh vô nghĩa với mắt
+// và rất có nghĩa với người đọc màn hình ở độ sáng thấp.
+//
+// May là bộ nhận diện đã tự giải quyết chuyện này: dòng chữ trong logo KHÔNG dùng `#DE221A` mà
+// dùng `#BC2626` — đỏ đậm hơn, đo được **5,63**. Tức PTIT đã chọn sẵn một đỏ cho chữ và một đỏ
+// cho hình. Sản phẩm theo đúng phân vai ấy: `primary` (chữ, viền, hành động) lấy đỏ chữ;
+// `brand` (nền lớn, biểu tượng, ảnh nhận diện) lấy đỏ hình.
 const TOKENS = {
   color: {
-    primary: '#B8121F',      // đỏ PTIT — điều hướng, hành động chính
+    primary: '#BC2626',      // đỏ PTIT dùng cho CHỮ — lấy từ logo chính thức, tương phản 5,63
+    brand: '#DE221A',        // đỏ biểu tượng — CHỈ cho mảng lớn và logo (4,46 < AA cho chữ)
+    brandGold: '#B89C0E',    // vàng ngọn đuốc trong logo
+    brandGoldLight: '#EFF003', // vàng sáng ở tâm ngọn đuốc
     accent: '#F2B705',       // vàng sao — việc cần người, cảnh báo nhẹ
-    secondary: '#2F4858',    // xám xanh — hành động phụ, tác tử
+    secondary: '#373D4E',    // xám xanh — lấy từ dòng chữ thứ hai của logo, tương phản 10,0
     ok: '#0b6b52', okBg: '#dff5ee',
     warn: '#7a5200', warnBg: '#fff0cc',
     bad: '#7a0c0c', badBg: '#fde3e1',
-    info: '#B8121F', infoBg: '#e6effa',
+    info: '#BC2626', infoBg: '#e6effa',
     bg: '#f4f6f9', surface: '#ffffff', border: '#e1e6ee',
     text: '#1b2430', muted: '#5b6b7f',
   },
@@ -148,10 +165,12 @@ const TOKENS = {
 if (!fs.existsSync('ui')) fs.mkdirSync('ui');
 fs.writeFileSync('ui/tokens.json', JSON.stringify(TOKENS, null, 2) + '\n');
 c.push(...CODE([
-  'color.primary      #B8121F  (đỏ PTIT — điều hướng, hành động chính; gần đúng, xác nhận với bộ nhận diện chính thức)',
+  'color.primary      #BC2626  (đỏ PTIT cho CHỮ — lấy từ logo chính thức, tương phản 5,63 trên nền bg)',
+  'color.brand        #DE221A  (đỏ biểu tượng — chỉ dùng cho mảng lớn và logo; 4,46 nên KHÔNG dùng cho chữ)',
+  'color.brandGold    #B89C0E  · color.brandGoldLight #EFF003  (vàng ngọn đuốc trong logo)',
   'color.accent       #F2B705  (vàng sao — việc cần người, cảnh báo nhẹ)',
-  'color.secondary    #2F4858  (xám xanh — hành động phụ, tác tử)',
-  'color.ok #0b6b52/#dff5ee · color.warn #7a5200/#fff0cc · color.bad #7a0c0c/#fde3e1 · color.info #B8121F/#e6effa',
+  'color.secondary    #373D4E  (xám xanh — lấy từ dòng chữ thứ hai của logo, tương phản 10,0)',
+  'color.ok #0b6b52/#dff5ee · color.warn #7a5200/#fff0cc · color.bad #7a0c0c/#fde3e1 · color.info #BC2626/#e6effa',
   'color.bg #f4f6f9 · color.surface #fff · color.border #e1e6ee · color.text #1b2430 · color.muted #5b6b7f',
   'font.ui  IBM Plex Sans 13px/1.45 (macOS fallback -apple-system) · font.mono IBM Plex Mono 12px',
   'space 4/8/12/16/24 · radius 6/8/10 · shadow.window 0 20px 60px rgba(184,18,31,.14)',
