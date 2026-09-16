@@ -439,7 +439,7 @@ public final class EnvView: ManHinhCoSo {
     /// trong mã thay đổi để giải thích điều đó.
     public override func capNhat(ketQua: [String: Any]) {
         xoaThan()
-        soThieu = 0; soTroi = 0
+        soThieu = 0; soCong = 0; soProbe = 0; soTroi = 0
 
         if ketQua.isEmpty {
             tomTat.stringValue = ""
@@ -477,6 +477,13 @@ public final class EnvView: ManHinhCoSo {
             themDong(ten, "khóa \(cu) · máy đang có \(moi) — firmware dựng ra sẽ khác",
                      mau: EideToken.Mau.bad)
         }
+
+        // CỔNG và PROBE của máy — `env.detect` trả chúng và màn này chưa bao giờ hiện.
+        //
+        // Đây đúng là chỗ người dùng vào để hỏi *"máy có thấy board của tôi không"*. Câu trả lời
+        // nằm sẵn trong `env.ports`/`env.probes`, và trước 16/09/2026 màn chỉ rút ra đúng hai
+        // chữ `Darwin arm64` từ payload ấy rồi bỏ phần còn lại. Đo bằng bài kiểm kê 23 màn.
+        _hienCongVaProbe(mt)
 
         for t in bang.sorted(by: { (($0["ok"] as? Bool) ?? true) == false
                                  && (($1["ok"] as? Bool) ?? true) }) {
@@ -516,6 +523,54 @@ public final class EnvView: ManHinhCoSo {
             themDong("probe", p.isEmpty ? "không thấy probe nào" : "\(p.count) probe",
                      mau: p.isEmpty ? EideToken.Mau.muted : nil)
         }
+    }
+
+    /// Số cổng serial và số probe máy đang thấy — cho test.
+    public private(set) var soCong = 0
+    public private(set) var soProbe = 0
+
+    /// Bảng cổng serial và bảng probe.
+    ///
+    /// `driver_ok: false` là thứ đáng nhìn nhất trong bảng cổng: cổng CÓ mặt nhưng hệ điều hành
+    /// chưa cho truy cập (thiếu driver, thiếu quyền). Người dùng ở tình huống ấy nhìn thấy tên
+    /// cổng trong Finder và không hiểu vì sao EIDE nói không nạp được — nên nó phải hiện thành
+    /// một ô đỏ có chữ, không phải một cờ ẩn trong JSON.
+    private func _hienCongVaProbe(_ mt: [String: Any]?) {
+        guard let mt else { return }
+        let cong = (mt["ports"] as? [[String: Any]]) ?? []
+        let probe = (mt["probes"] as? [[String: Any]]) ?? []
+        soCong = cong.count
+        soProbe = probe.count
+
+        if cong.isEmpty {
+            themDong("cổng serial", "máy không thấy cổng nào — cắm board qua USB rồi chạy lại",
+                     mau: EideToken.Mau.muted)
+        } else {
+            themDong("cổng serial", "\(cong.count)", mau: EideToken.Mau.info)
+            themBang(cot: ["thiết bị", "loại", "VID:PID", "sản phẩm", "truy cập"],
+                     hang: cong.map { c in
+                         let vid = (c["vid"] as? String) ?? ""
+                         let pid = (c["pid"] as? String) ?? ""
+                         return [(c["dev"] as? String) ?? "?",
+                                 (c["kind"] as? String) ?? "",
+                                 vid.isEmpty && pid.isEmpty ? "" : "\(vid):\(pid)",
+                                 (c["product"] as? String) ?? "",
+                                 ((c["driver_ok"] as? Bool) ?? true) ? "được"
+                                                                     : "KHÔNG — thiếu quyền/driver"]
+                     },
+                     mauO: { i, cot in
+                         guard cot == 4, i < cong.count,
+                               ((cong[i]["driver_ok"] as? Bool) ?? true) == false else { return nil }
+                         return EideToken.Mau.bad
+                     })
+        }
+
+        guard !probe.isEmpty else { return }
+        themDong("probe", "\(probe.count)", mau: EideToken.Mau.info)
+        themBang(cot: ["probe", "serial", "loại"],
+                 hang: probe.map { [($0["name"] as? String) ?? ($0["kind"] as? String) ?? "?",
+                                    ($0["serial"] as? String) ?? "",
+                                    ($0["kind"] as? String) ?? ""] })
     }
 
     @objc private func cai(_ s: NSButton) {

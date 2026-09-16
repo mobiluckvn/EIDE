@@ -13,7 +13,7 @@
 ## 1. Một dòng
 
 **216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1599 test
-Python + 3079 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Thêm 5 bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 5/5.**
+Python + 3092 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Thêm 6 bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 6/6, trong đó một bài KIỂM KÊ cả 23 màn.**
 
 **Từ 15/09, phần việc không nằm ở năng lực nữa mà ở GIAO DIỆN.** Con số năng lực không đổi
 trong hai ngày này — 216/238 hôm 14/09 và 216/238 hôm nay — trong khi sáu màn được dựng lại
@@ -323,7 +323,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Bốn mươi bốn lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Bốn mươi tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -663,6 +663,30 @@ chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên ti
     trình đọc chú thích không kiểm dạng id, nên một chú thích viết dở sinh ra một id rác — và cú
     bấm vào dòng ấy gửi nó thẳng vào `passport.query`. Chú thích viết dở là chuyện thường; biến
     nó thành một lời gọi vô nghĩa thì không.
+
+45. **Màn Tổng quan đọc `features` và `gates_open` sai hình dạng** (16/09). `project.status`
+    trả `features: {total, passing, failing}` (đếm sẵn) và `gates_open: 0` (một số); màn đọc cả
+    hai như MẢNG, nhận `nil`, gán 0. Hợp đồng PROJECT-04 để `report` là object tự do với một
+    dòng mô tả liệt kê tên trường — không nói trường nào là mảng — nên **không bên nào sai**;
+    chúng chỉ không khớp nhau, và màn là bên thua. Cùng khuôn với 36.
+46. **`env.detect` trả cổng serial và probe, màn Môi trường chưa bao giờ hiện chúng** (16/09).
+    Màn rút đúng hai chữ `Darwin arm64` từ payload rồi bỏ phần còn lại — trong khi đó đúng là
+    chỗ người dùng vào để hỏi *"máy có thấy board của tôi không"*. Riêng `driver_ok: false`
+    (cổng CÓ mặt nhưng hệ điều hành chưa cho truy cập) là thứ đắt nhất bị giấu: người dùng nhìn
+    thấy tên cổng trong Finder và không hiểu vì sao EIDE nói không nạp được.
+47. **Nhật ký cắt còn 40 mốc trong 311** (16/09). Và phần bị cắt là phần CŨ — tức phần chứa lý
+    do một thứ hôm nay đang sai. Cùng lúc ấy cột `by` (`human` hay `agent`) không hiện, trong
+    khi *"cái này do tôi hay do nó làm"* là câu hỏi trung tâm của một công cụ tác tử.
+48. **`Đích ?` trên một dự án đã ghim chip** (16/09). `project.status` gọi trường ấy là `chip`,
+    `target.detect` gọi là `chip_id`/`id`; màn hỏi hai cái sau rồi rơi về `"?"`. Con chip mà mọi
+    thứ khác trong dự án dựa vào hiện ra thành một dấu hỏi.
+
+**Số 45–48 tìm ra bằng MỘT bài kiểm kê, không phải bằng mắt.** `--self-test EIDE` mở cả 23 màn
+trên một dự án thật, đếm số dòng và số khối của từng màn, rồi in ra một bảng. Bốn màn có dữ liệu
+mà vẫn hiện ít hoặc hiện sai lộ ra ngay trên bảng ấy. Bài kiểm kê chỉ khẳng định MỘT điều —
+không màn nào được vừa rỗng vừa im — còn lại nó để người đọc bảng tự thấy. Đó là cách rẻ nhất
+tìm ra chuyện "màn có dữ liệu nhưng hiện sai": một khẳng định cứng cho từng màn sẽ phải viết 23
+lần và sai 23 kiểu.
 
 **Số 36–44 đều đến từ MỘT việc: dựng lại sáu màn hình trên dữ liệu thật rồi NHÌN.** Không cái
 nào lộ ra trong `make check`, và bốn cái (37, 39, 41, 44) sống ở chỗ hai phần đều đúng theo test

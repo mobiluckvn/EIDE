@@ -1006,3 +1006,180 @@ final class EideCodeFactTests: XCTestCase {
         XCTAssertEqual(mo, "f_b1c2", "dòng không có fact thì KHÔNG đổi gì")
     }
 }
+
+/// Ba màn hệ thống — dựng lại trên bộ từ vựng sau bài kiểm kê 23 màn (16/09/2026).
+final class EideManHeThongTests: XCTestCase {
+
+    private func bang(_ v: NSView) -> [EideBangView] {
+        var ra: [EideBangView] = []
+        if let b = v as? EideBangView { ra.append(b) }
+        for c in v.subviews { ra += bang(c) }
+        return ra
+    }
+
+    // MARK: - Tổng quan dự án
+
+    /// `project.status` trả `features` là OBJECT đếm sẵn và `gates_open` là SỐ.
+    ///
+    /// Màn đọc cả hai như MẢNG, nhận nil, gán 0 — nên Tổng quan hiện đúng một dòng trên một dự
+    /// án có 8 fact, 4 mục hoàn tác và một chip đã ghim. Hợp đồng PROJECT-04 để `report` là
+    /// object tự do nên không bên nào sai; chúng chỉ không khớp nhau, và màn là bên thua.
+    func testTONGquanDOCduocFEATURESdangDEMsan() {
+        let v = ProjectStatusView()
+        v.capNhat(ketQua: ["report": [
+            "features": ["total": 6, "passing": 4, "failing": 2],
+            "gates_open": 3, "undo_items": [], "cost_today": 0, "autonomy": "A2",
+        ]])
+        XCTAssertEqual(v.soTinhNang, 6)
+        XCTAssertEqual(v.soFailing, 2)
+        XCTAssertEqual(v.soCongMo, 3)
+    }
+
+    /// Dạng MẢNG cũ vẫn đọc được — `target.detect` và bản ghi cũ dùng nó.
+    func testTONGquanVANdocDUOCdangMANGcu() {
+        let v = ProjectStatusView()
+        v.capNhat(ketQua: ["report": [
+            "features": [["id": "F-01", "status": "passing"], ["id": "F-02", "status": "failing"]],
+            "gates_open": [["gate": "G1"]], "undo_items": [],
+        ]])
+        XCTAssertEqual(v.soTinhNang, 2)
+        XCTAssertEqual(v.soFailing, 1)
+        XCTAssertEqual(v.soCongMo, 1)
+    }
+
+    /// `failing` thiếu thì suy từ `total - passing`, không mặc định 0.
+    func testSUYfailingKHIhopDONGchiTRAtotalVApassing() {
+        let v = ProjectStatusView()
+        v.capNhat(ketQua: ["report": ["features": ["total": 5, "passing": 3], "gates_open": 0]])
+        XCTAssertEqual(v.soFailing, 2)
+    }
+
+    // MARK: - Môi trường
+
+    /// `env.detect` trả `ports`/`probes` và màn chưa bao giờ hiện chúng.
+    ///
+    /// Đây đúng là chỗ người dùng vào để hỏi "máy có thấy board của tôi không".
+    func testMOItruongHIENbangCONGserial() throws {
+        let v = EnvView()
+        v.capNhat(ketQua: ["env": [
+            "os": "Darwin", "arch": "arm64",
+            "ports": [["dev": "/dev/cu.usbmodem1103", "kind": "serial", "vid": "2341",
+                       "pid": "0043", "product": "Arduino Uno", "driver_ok": true],
+                      ["dev": "/dev/cu.SLAB_USBtoUART", "kind": "serial", "driver_ok": false]],
+            "probes": [],
+        ]])
+        XCTAssertEqual(v.soCong, 2)
+        let b = try XCTUnwrap(bang(v).first, "cổng serial phải ra một bảng")
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 0), "/dev/cu.usbmodem1103")
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 2), "2341:0043")
+    }
+
+    /// `driver_ok: false` phải thành chữ ĐỎ có nghĩa, không phải một cờ ẩn trong JSON.
+    ///
+    /// Người dùng ở tình huống ấy nhìn thấy tên cổng trong Finder và không hiểu vì sao EIDE nói
+    /// không nạp được.
+    func testCONGkhongTRUYcapDUOCtoDOvaNOIro() throws {
+        let v = EnvView()
+        v.capNhat(ketQua: ["env": ["ports": [["dev": "/dev/x", "driver_ok": false]]]])
+        let b = try XCTUnwrap(bang(v).first)
+        XCTAssertTrue((b.oDeTest(hang: 0, cot: 4) ?? "").hasPrefix("KHÔNG"))
+        XCTAssertEqual(b.mauODeTest(hang: 0, cot: 4), EideToken.Mau.bad)
+    }
+
+    func testKHONGcoCONGthiNOIcachLAMchuKHONGdungBANGrong() {
+        let v = EnvView()
+        v.capNhat(ketQua: ["env": ["os": "Darwin", "ports": [], "probes": []]])
+        XCTAssertEqual(v.soCong, 0)
+        XCTAssertTrue(bang(v).isEmpty, "không cổng nào thì đừng dựng một bảng rỗng ruột")
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("cắm board qua USB"), chu)
+    }
+
+    // MARK: - Nhật ký
+
+    func testNHATkyDUNGrAbangVAgiuDUmoc() throws {
+        let sk = (0..<311).map { i -> [String: Any] in
+            ["at": "2026-09-15T04:55:\(String(format: "%02d", i % 60))+00:00",
+             "kind": "cap.run.start", "by": i % 3 == 0 ? "human" : "agent",
+             "data": ["cap": "passport.import"]]
+        }
+        let v = KgMapView()
+        v.capNhat(ketQua: ["events": sk])
+        let b = try XCTUnwrap(bang(v).first, "dòng thời gian phải ra một bảng")
+        XCTAssertEqual(b.soHang, 311, "bản cũ cắt còn 40 — phần bị cắt là phần CŨ, tức phần chứa "
+                       + "lý do một thứ hôm nay đang sai")
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 0), "04:55:00")
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 3), "passport.import")
+    }
+
+    /// Việc do TÁC TỬ tự làm tô khác việc do người làm.
+    func testCOTaiToKHACgiuaAGENTvaHUMAN() throws {
+        let v = KgMapView()
+        v.capNhat(ketQua: ["events": [["at": "x", "kind": "k", "by": "agent"],
+                                      ["at": "x", "kind": "k", "by": "human"]]])
+        let b = try XCTUnwrap(bang(v).first)
+        XCTAssertEqual(b.mauODeTest(hang: 0, cot: 2), EideToken.Mau.warn)
+        XCTAssertEqual(b.mauODeTest(hang: 1, cot: 2), EideToken.Mau.muted)
+    }
+
+    /// Mốc thời gian lạ thì giữ NGUYÊN — cắt bừa sẽ giấu mất dấu hiệu nó hỏng.
+    func testMOCthoiGIANlaGIUnguyen() {
+        XCTAssertEqual(KgMapView.gioNgan("2026-09-15T04:55:11.482439+00:00"), "04:55:11")
+        XCTAssertEqual(KgMapView.gioNgan("hôm qua"), "hôm qua")
+        XCTAssertEqual(KgMapView.gioNgan("2026-09-15Txx"), "2026-09-15Txx")
+    }
+
+    /// `cap.run.*` là loại sự kiện đông nhất, và `cap` là thứ duy nhất đáng đọc trong `data`.
+    func testMOtaMOCuuTIENcapVAquyetDINH() {
+        XCTAssertEqual(KgMapView.moTaMoc(["data": ["cap": "kg.build",
+                                                   "decision": ["decision": "APPROVE"]]]),
+                       "kg.build · APPROVE")
+        XCTAssertEqual(KgMapView.moTaMoc(["data": ["args_hash": "abc", "n": 3]]), "n=3",
+                       "băm không phải thứ người đọc")
+    }
+}
+
+/// Dòng "Đích" của màn Tổng quan — hai hợp đồng, hai tên trường.
+final class EideDichTests: XCTestCase {
+
+    private func dong(_ v: ProjectStatusView) -> [String] {
+        v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .compactMap { h -> String? in
+                guard let a = h.first as? NSTextField, a.stringValue == "Đích",
+                      let b = h.last as? NSTextField else { return nil }
+                return b.stringValue
+            }
+    }
+
+    /// `project.status` gọi trường ấy là `chip`; `target.detect` gọi là `chip_id`/`id`.
+    ///
+    /// Bản cũ hỏi hai cái sau rồi rơi về `"?"`, nên Tổng quan hiện `Đích  ?` trên một dự án đã
+    /// ghim `esp.esp32c3` — đúng con chip mà mọi thứ khác trong dự án dựa vào.
+    func testDOCduocTENtruongCUAprojectSTATUS() {
+        let v = ProjectStatusView()
+        v.capNhat(ketQua: ["report": ["target": ["chip": "esp.esp32c3", "board": NSNull()],
+                                      "features": ["total": 0], "gates_open": 0]])
+        XCTAssertEqual(dong(v).first, "esp.esp32c3 · chưa gắn board")
+    }
+
+    func testVANdocDUOCtenTRUONGcuaTARGETdetect() {
+        let v = ProjectStatusView()
+        v.capNhat(ketQua: ["report": ["target": ["chip_id": "st.stm32f411", "port": "/dev/cu.x",
+                                                 "lab": true],
+                                      "features": ["total": 0], "gates_open": 0]])
+        XCTAssertEqual(dong(v).first, "st.stm32f411 · /dev/cu.x · LAB (tự nạp được)")
+    }
+
+    /// `board` CÓ mặt và rỗng thì nói ra; `board` KHÔNG có mặt thì im.
+    ///
+    /// Hai chuyện khác nhau: hợp đồng trả `board: null` nghĩa là "đã hỏi, chưa gắn"; hợp đồng
+    /// không có khoá `board` nghĩa là nó không nói gì về board — và bịa thêm một câu ở trường
+    /// hợp sau là khẳng định thay cho một hợp đồng im lặng.
+    func testKHONGcoKHOAboardTHIkhongNOIgiVEboard() {
+        let v = ProjectStatusView()
+        v.capNhat(ketQua: ["report": ["target": ["chip": "x"], "features": ["total": 0],
+                                      "gates_open": 0]])
+        XCTAssertEqual(dong(v).first, "x")
+    }
+}

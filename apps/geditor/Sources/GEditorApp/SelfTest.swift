@@ -479,6 +479,42 @@ enum SelfTest {
             return nil
         },
 
+        Case(name: "EIDE: kiểm kê 23 màn — màn nào mở ra RỖNG") { c in
+            guard c.coPanelEide, let panel = c.eidePanel else {
+                return "không chạy được `eide daemon`"
+            }
+            // Đi qua HẾT các màn trên điều hướng, mở từng cái bằng đúng đường người dùng đi, chờ
+            // daemon trả lời, rồi ĐẾM xem thân màn có gì.
+            //
+            // Bài này không khẳng định màn nào phải có bao nhiêu dòng — nó in ra một bảng kiểm
+            // kê. Khẳng định duy nhất: KHÔNG màn nào được vừa rỗng vừa im. Một màn rỗng mà nói
+            // ra lý do ("cần board", "chưa có tài liệu") là một màn trung thực; một màn rỗng
+            // không nói gì là lỗi im lặng số 21, 32 và 41 quay lại.
+            var rong: [String] = []
+            var bang: [(String, Int, String)] = []
+            for nhom in EideDieuHuong.NHOM {
+                for m in nhom.man where m.tien != "Code" {
+                    c.chonManEide(tien: m.tien)
+                    _ = panel.moMan(m.tien)
+                    RunLoop.current.run(until: Date().addingTimeInterval(1.2))
+                    c.window?.layoutIfNeeded()
+                    let d = panel.kiemKeManDangMo()
+                    bang.append((m.nhan, d.soDong, d.khoi))
+                    if d.soDong == 0 && d.khoi.isEmpty && !d.coChu { rong.append(m.nhan) }
+                }
+            }
+            print("   ┌─ kiểm kê màn ──────────────────────────────────────────")
+            for (ten, so, khoi) in bang {
+                print(String(format: "   │ %-22@ %3d dòng  %@",
+                             ten as NSString, so, khoi as NSString))
+            }
+            print("   └────────────────────────────────────────────────────────")
+            guard rong.isEmpty else {
+                return "màn mở ra RỖNG và không nói lý do: \(rong.joined(separator: ", "))"
+            }
+            return nil
+        },
+
         Case(name: "gõ một ký tự trên ba vùng chọn") { controller in
             controller.prepareSelfTestDocument("ERROR một\nOK hai\nERROR ba\n")
             controller.selectAllOccurrencesForSelfTest("ERROR")

@@ -66,9 +66,25 @@ public final class ProjectStatusView: ManHinhCoSo {
         let tuChu = (bc["autonomy"] as? String) ?? ""
         let dich = bc["target"]
 
-        soTinhNang = tinhNang.count
-        soFailing = tinhNang.filter { ((($0["status"] as? String) ?? "")) != "passing" }.count
-        soCongMo = cong.count
+        // `features` và `gates_open` tới ở HAI hình dạng, và màn phải đọc được cả hai.
+        //
+        // Hợp đồng PROJECT-04 để `report` là `object` tự do với một dòng mô tả liệt kê tên
+        // trường — không nói trường nào là mảng, trường nào là số. Hiện thực trả `features:
+        // {total, passing, failing, first_failing}` và `gates_open: 0` (đếm sẵn); màn thì đọc cả
+        // hai như MẢNG, nên nó nhận `nil`, gán 0, và Tổng quan hiện đúng MỘT dòng trên một dự án
+        // có 8 fact, 4 mục hoàn tác và một chip đã ghim. Đo 16/09/2026 bằng bài kiểm kê 23 màn.
+        //
+        // Đọc dạng đếm sẵn TRƯỚC: nó là thứ hiện thực thật sự trả về. Dạng mảng giữ lại vì
+        // `target.detect` và các bản ghi cũ dùng nó.
+        if let dem = bc["features"] as? [String: Any] {
+            soTinhNang = EideSo.nguyen(dem["total"]) ?? 0
+            soFailing = EideSo.nguyen(dem["failing"])
+                ?? max(0, soTinhNang - (EideSo.nguyen(dem["passing"]) ?? soTinhNang))
+        } else {
+            soTinhNang = tinhNang.count
+            soFailing = tinhNang.filter { ((($0["status"] as? String) ?? "")) != "passing" }.count
+        }
+        soCongMo = EideSo.nguyen(bc["gates_open"]) ?? cong.count
 
         var d: [String] = []
         if soTinhNang > 0 {
@@ -121,13 +137,27 @@ public final class ProjectStatusView: ManHinhCoSo {
     private func _moTaDich(_ v: Any?) -> String? {
         if let s = v as? String, !s.isEmpty { return s }
         guard let t = v as? [String: Any] else { return nil }
-        let chip = (t["chip_id"] as? String) ?? (t["id"] as? String) ?? "?"
+        // `chip` là tên `project.status` dùng; `chip_id`/`id` là tên `target.detect` dùng. Bản cũ
+        // hỏi hai cái sau rồi rơi về `"?"`, nên màn Tổng quan hiện `Đích  ?` trên một dự án đã
+        // ghim `esp.esp32c3` — đúng con chip mà mọi thứ khác trong dự án dựa vào. Đo 16/09/2026.
+        let chip = (t["chip"] as? String) ?? (t["chip_id"] as? String) ?? (t["id"] as? String)
+            ?? "?"
         let cong = (t["port"] as? String).map { " · \($0)" } ?? ""
         let probe = (t["probe"] as? String).map { " · \($0)" } ?? ""
         // `lab` không phải nhãn trang trí: board đánh dấu lab mới được tự nạp (BOARD-05),
         // nên nó là một quyền, và một quyền thì phải nhìn thấy được.
         let lab = ((t["lab"] as? Bool) ?? false) ? " · LAB (tự nạp được)" : ""
-        return chip + cong + probe + lab
+        // `board: null` nói một điều THẬT và quan trọng: chip đã ghim, board thì chưa. Im lặng ở
+        // đây để người dùng tự đoán xem `nạp firmware` sẽ đi đâu.
+        let board: String
+        if let b = t["board"] as? String, !b.isEmpty {
+            board = " · board \(b)"
+        } else if t.keys.contains("board") {
+            board = " · chưa gắn board"
+        } else {
+            board = ""
+        }
+        return chip + board + cong + probe + lab
     }
 
     @objc private func moTinhNang(_ s: NSButton) {

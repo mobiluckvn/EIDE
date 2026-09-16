@@ -628,6 +628,33 @@ public final class EidePanel: NSView {
     /// Đóng màn chuyên đề, quay về hội thoại.
     public func dongManChuyenDe() { dongMan() }
 
+    /// Kiểm kê thân màn đang mở: bao nhiêu dòng, những khối gì, có chữ nào không.
+    ///
+    /// Có mặt cho bài tự kiểm "màn nào mở ra RỖNG". Không bộ test nào khác trả lời được câu ấy:
+    /// nó cần một daemon thật trên một dự án thật, và nó cần đi qua đúng đường người dùng đi.
+    public func kiemKeManDangMo() -> (soDong: Int, khoi: String, coChu: Bool) {
+        guard let v = (bangMan.map(\.v) + [banDo]).first(where: { !$0.isHidden }) else {
+            return (0, "", false)
+        }
+        var bang = 0, cay = 0, ma = 0, dai = 0, chu = 0
+        func quet(_ x: NSView) {
+            switch x {
+            case is EideBangView: bang += 1
+            case is EideCayView: cay += 1
+            case is EideMaView: ma += 1
+            case is EideDaiTrangThai: dai += 1
+            case let l as NSTextField where !l.stringValue.isEmpty: chu += 1
+            default: break
+            }
+            for c in x.subviews { quet(c) }
+        }
+        quet(v)
+        let khoi = [bang > 0 ? "\(bang) bảng" : "", cay > 0 ? "\(cay) cây" : "",
+                    ma > 0 ? "\(ma) khối mã" : "", dai > 0 ? "\(dai) dải" : ""]
+            .filter { !$0.isEmpty }.joined(separator: " · ")
+        return ((v as? ManHinhCoSo)?.soDong ?? 0, khoi, chu > 0)
+    }
+
     /// Tiền tố của màn đang mở, hoặc nil khi đang ở hội thoại.
     ///
     /// Dùng khi ĐỔI DỰ ÁN: panel cũ bị bỏ đi và panel mới phải mở lại đúng màn người đang xem.
@@ -1106,6 +1133,12 @@ public final class EidePanel: NSView {
     public static func napMacDinh(choMan tien: String) -> String? {
         switch tien {
         case "Passport": return "passport.query"
+        // `Main` CỐ Ý không có ở đây. Nó nạp bằng nhánh riêng trong `_napManKhongNangLuc`, và
+        // nhánh ấy gom HAI nguồn (`project.status` + `session.state`). Thêm `Main` vào bảng này
+        // thì `napMacDinh` chạy trước và trả về, nên nhánh kia không bao giờ tới — màn mất nửa
+        // dữ liệu mà vẫn trông như đang hoạt động. Tôi đã thêm nó ngày 16/09/2026 và
+        // `testMANmainNAPbangNHANHrieng` bắt được ngay; bài test ấy có mặt đúng để chặn việc
+        // này.
         case "Env": return "env.detect"
         // Nhật ký nạp LỊCH SỬ bằng một lời gọi, không chờ kênh đẩy. Kênh đẩy chỉ mang sự kiện
         // thời gian thực; một khối 200 bản ghi đẩy qua stdio làm đầy ống và treo daemon — đo

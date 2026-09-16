@@ -136,13 +136,7 @@ public final class KgMapView: ManHinhCoSo {
 
         if let t = trai, let ph = phai { _hienCanhNhau(t, ph) }
 
-        for e in sk.prefix(40) {
-            let loai = (e["kind"] as? String) ?? (e["type"] as? String) ?? "?"
-            let luc = (e["at"] as? String) ?? ""
-            let mo = (e["detail"] as? String) ?? (e["subject"] as? String) ?? ""
-            themDong(luc.isEmpty ? loai : "\(luc) · \(loai)", mo)
-        }
-        if sk.count > 40 { noiRong("… và \(sk.count - 40) mốc nữa.") }
+        if !sk.isEmpty { _hienDongThoiGian(sk) }
 
         if let s = trangThai {
             for (k, v) in s.sorted(by: { $0.key < $1.key }) {
@@ -175,6 +169,62 @@ public final class KgMapView: ManHinhCoSo {
     /// Đúng hình dạng mockup `docs/ui/Graph.dc.html` vẽ: `chip:st.stm32f411` trên cùng, rồi
     /// `periph:I2C1`, `reg:CR1`, `field:ACK`. Quan hệ (`HAS`, `CITES`, `ABOUT`, `SUPERSEDES`)
     /// hiện làm dấu bên phải tên con, vì trong một cây thì cạnh không vẽ được thành mũi tên.
+    /// `view.timeline` `{events[]}` — dòng thời gian thành BẢNG.
+    ///
+    /// Bản cũ dựng 40 mốc đầu thành 40 dòng nhãn rồi ghi "… và 271 mốc nữa". Ba thứ mất:
+    ///
+    /// 1. **Sắp xếp.** "Chuyện gì xảy ra gần nhất", "ai làm nhiều nhất", "loại sự kiện nào
+    ///    nhiều" — một cú bấm tiêu đề cột. Với 311 mốc thì không ai đọc hết để tự thấy.
+    /// 2. **Cột `ai`.** Sổ cái ghi `by: human | agent` cho MỌI bản ghi, và câu hỏi trung tâm của
+    ///    một công cụ tác tử là *cái này do tôi hay do nó làm*. Bản cũ không hiện cột ấy.
+    /// 3. **271 mốc bị cắt** — và phần bị cắt là phần CŨ, tức phần chứa lý do một thứ hôm nay
+    ///    đang sai. Trần 2.000 hàng của `themBang` rộng hơn hẳn 40.
+    private func _hienDongThoiGian(_ sk: [[String: Any]]) {
+        themDong("dòng thời gian", "\(sk.count) mốc", mau: EideToken.Mau.info)
+        themBang(cot: ["lúc", "loại", "ai", "chi tiết"],
+                 hang: sk.map { e in
+                     [Self.gioNgan((e["at"] as? String) ?? ""),
+                      (e["kind"] as? String) ?? (e["type"] as? String) ?? "?",
+                      (e["by"] as? String) ?? (e["actor"] as? String) ?? "",
+                      Self.moTaMoc(e)]
+                 },
+                 mauO: { i, cot in
+                     guard cot == 2, i < sk.count else { return nil }
+                     // Việc do TÁC TỬ tự làm tô khác việc do người làm. Đây là cột người ta quét
+                     // dọc để tìm "nó đã tự làm gì" — màu làm việc ấy nhanh hơn đọc.
+                     return ((sk[i]["by"] as? String) ?? "") == "agent"
+                         ? EideToken.Mau.warn : EideToken.Mau.muted
+                 })
+    }
+
+    /// `2026-09-15T04:55:11.482439+00:00` → `04:55:11`.
+    ///
+    /// Ngày đầy đủ chiếm một phần ba bề rộng bảng để nói một điều gần như luôn giống nhau trên
+    /// mọi hàng. Chuỗi không đọc được thì trả NGUYÊN — cắt bừa một chuỗi lạ sẽ giấu mất chính
+    /// dấu hiệu rằng mốc thời gian ấy hỏng.
+    static func gioNgan(_ s: String) -> String {
+        guard let t = s.firstIndex(of: "T") else { return s }
+        let sau = s[s.index(after: t)...]
+        let gio = sau.prefix(8)
+        return gio.count == 8 && gio.filter({ $0 == ":" }).count == 2 ? String(gio) : s
+    }
+
+    /// Một câu ngắn cho `data` của mốc — mỗi loại sự kiện có trường đáng đọc riêng.
+    static func moTaMoc(_ e: [String: Any]) -> String {
+        if let t = (e["detail"] as? String) ?? (e["subject"] as? String) { return t }
+        guard let d = e["data"] as? [String: Any], !d.isEmpty else { return "" }
+        // `cap` trước tiên: với `cap.run.*` — loại sự kiện đông nhất — nó là thứ duy nhất đáng
+        // đọc, và nó là thứ từng THIẾU (lỗi im lặng số 33).
+        if let c = d["cap"] as? String {
+            let them = (d["decision"] as? [String: Any])?["decision"] as? String
+            return them.map { "\(c) · \($0)" } ?? c
+        }
+        let bo: Set<String> = ["args_hash", "prev_hash", "hash"]
+        return d.filter { !bo.contains($0.key) }
+            .map { "\($0.key)=\(EideKnowledgeFormat.giaTri($0.value))" }
+            .sorted().prefix(3).joined(separator: " · ")
+    }
+
     private func _hienDoThi(_ nodes: [[String: Any]], canh: [[String: Any]]) {
         let theoId = Dictionary(nodes.map { (($0["id"] as? String) ?? "", $0) },
                                 uniquingKeysWith: { a, _ in a })

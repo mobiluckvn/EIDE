@@ -88,6 +88,7 @@ enum WindowCapture {
         case eideBanDo = "eide-ban-do"       // đồ thị tri thức dựng thành cây
         case eideMoPhong = "eide-mo-phong"   // kỳ vọng, log UART, bảng quét
         case eideMaFact = "eide-ma-fact"     // mã có chú thích fact ở lề
+        case eideTongQuan = "eide-tong-quan" // tổng quan dự án
     }
 
     // ĐỌC ẢNH `eide-*` THẾ NÀO
@@ -139,6 +140,7 @@ enum WindowCapture {
         // qemu nữa — chụp ở 45 giây ra đúng dòng "Đang chạy `sim.run`…".
         case .eideMoPhong: return 120
         case .eideMaFact: return 12
+        case .eideTongQuan: return 10
         default: return 0.4
         }
     }
@@ -262,6 +264,12 @@ enum WindowCapture {
             _ = chuanBiEide("Passport", on: controller)
         case .eideBanDo:
             _ = chuanBiEide("Graph", on: controller)
+        case .eideTongQuan:
+            _ = chuanBiEide("Main", on: controller)
+
+        case .eideTongQuan:
+            _ = chuanBiEide("Main", on: controller)
+
         case .eideMaFact:
             // KHÔNG mở "Code" ở tầng cửa sổ: trong cửa sổ gộp, màn "Mã nguồn" là TRÌNH SOẠN
             // THẢO (DEV-098), và mở nó ẩn cả panel đi. Khung nhìn có chú thích fact là `CodeView`
