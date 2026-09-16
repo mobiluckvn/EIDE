@@ -100,8 +100,18 @@ public final class EideONhap: NSView {
             nhanLoi.leadingAnchor.constraint(equalTo: nutChay.trailingAnchor,
                                              constant: EideToken.space[1]),
             nhanLoi.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            bottomAnchor.constraint(equalTo: nutChay.bottomAnchor),
+            _dayXuong(bottomAnchor.constraint(equalTo: nutChay.bottomAnchor)),
         ])
+        // Biểu mẫu NÉN ĐƯỢC. Ràng buộc đáy ở ưu tiên cao thay vì bắt buộc: một biểu mẫu sáu ô
+        // đòi 203 pt, và khi cộng với thân màn thì tổng vượt chiều cao cửa sổ — AppKit phóng
+        // cửa sổ to ra để thoả, rồi không co lại. Đo 16/09/2026 trong vòng chạy qua giao diện.
+        setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+    }
+
+    /// Hạ một ràng buộc xuống ưu tiên CAO (999 → 750) để nó nhường khi hết chỗ.
+    private func _dayXuong(_ c: NSLayoutConstraint) -> NSLayoutConstraint {
+        c.priority = .defaultHigh
+        return c
     }
 
     @available(*, unavailable)

@@ -128,6 +128,10 @@ public final class RunProgressCard: NSView {
 
     public private(set) var soNut = 0
     public private(set) var daXong = false
+
+    /// Gọi MỘT LẦN khi thẻ vừa chuyển sang xong — panel dùng để gỡ thẻ đi.
+    public var onXong: (() -> Void)?
+    private var daBaoXong = false
     /// Phần trăm gần nhất, `nil` nếu daemon chưa gửi.
     public private(set) var phanTram: Int?
 
@@ -215,6 +219,10 @@ public final class RunProgressCard: NSView {
             ["done", "failed", "cancelled"].contains($0.state)
         }
         nutHuy.isHidden = daXong
+        if daXong && !daBaoXong {
+            daBaoXong = true
+            onXong?()
+        }
 
         var d: [String] = []
         let xong = trangThai.filter { $0.state == "done" }.count
@@ -222,8 +230,17 @@ public final class RunProgressCard: NSView {
         if let pc = phanTram { d.append("\(pc)%") }
         if daXong { d.append("xong") }
         if let l = duoi.last, !l.isEmpty { d.append(l) }
-        tomTat.stringValue = d.isEmpty ? "Đang chạy \(runId)…"
-                                       : "\(runId) · " + d.joined(separator: " · ")
+        // TÊN NĂNG LỰC lên trước, mã lượt chạy chỉ là đuôi.
+        //
+        // Thẻ vốn ghi `12b8c3f535b8 · 1/1 bước · xong` — một mã băm mười hai ký tự làm nhãn cho
+        // một việc vừa chạy. Người dùng không tra được mã ấy ở đâu, và mười lăm thẻ như thế xếp
+        // chồng thì không thẻ nào nói được việc gì vừa xảy ra. Tên năng lực thì họ đọc được
+        // ngay, và `caps.describe` tra được. Đo 16/09/2026 trong vòng chạy qua giao diện.
+        let ten = trangThai.compactMap { $0.cap.isEmpty ? nil : $0.cap }
+        let nhanChinh = ten.isEmpty ? runId
+            : (ten.count == 1 ? ten[0] : "\(ten[0]) +\(ten.count - 1)")
+        tomTat.stringValue = d.isEmpty ? "Đang chạy \(nhanChinh)…"
+                                       : "\(nhanChinh) · " + d.joined(separator: " · ")
         tomTat.textColor = daXong ? EideToken.Mau.muted : EideToken.Mau.info
 
         for v in hang.arrangedSubviews { hang.removeArrangedSubview(v); v.removeFromSuperview() }

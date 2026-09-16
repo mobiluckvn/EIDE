@@ -64,13 +64,29 @@ public final class PassportView: NSView, KhungNhinEide {
         coc.alignment = .leading
         coc.spacing = EideToken.space[1]
         coc.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(coc)
+
+        // CUỘN, không đẩy.
+        //
+        // `PassportView` viết trước `ManHinhCoSo` nên nó không có vùng cuộn: nội dung dài đẩy
+        // thẳng vào chiều cao khung nhìn, khung nhìn đẩy vào panel, panel phóng CỬA SỔ. Đo
+        // 16/09/2026: mở màn này với 290 fact thì `PassportView` đòi 500 pt và cửa sổ đi từ
+        // 720 lên 836 — rồi ở lại đó. `ManHinhCoSo` không dính vì nó cuộn từ đầu.
+        let cuon = NSScrollView()
+        // `contentView` TRƯỚC `documentView`. Đổi khung nội dung SAU khi gán document view sẽ gỡ
+        // document view ra khỏi cây, và ràng buộc bề rộng kèm theo nổ ngay: "no common ancestor".
+        cuon.contentView = KhungLat()
+        cuon.documentView = coc
+        cuon.hasVerticalScroller = true
+        cuon.drawsBackground = false
+        cuon.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(cuon)
         let s = EideToken.space[2]
         NSLayoutConstraint.activate([
-            coc.topAnchor.constraint(equalTo: topAnchor, constant: s),
-            coc.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
-            coc.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -s),
-            coc.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -s),
+            cuon.topAnchor.constraint(equalTo: topAnchor, constant: s),
+            cuon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: s),
+            cuon.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -s),
+            cuon.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -s),
+            coc.widthAnchor.constraint(equalTo: cuon.widthAnchor),
             o.widthAnchor.constraint(equalTo: coc.widthAnchor),
         ])
         capNhat(ketQua: [:])

@@ -243,6 +243,9 @@ public final class ChatView: NSView {
     /// ô lệnh: một thẻ đang đợi trả lời phải ở ngay trên chỗ người đang gõ, không trôi lên trên
     /// theo dòng chảy hội thoại rồi khuất khỏi màn hình đúng lúc đồng hồ đang đếm.
     private let cocThe = NSStackView()
+    private let cuonThe = NSScrollView()
+    /// Ép bản ghi hội thoại về 0 khi ở chế độ gọn.
+    private lazy var caoCuon = cuon.heightAnchor.constraint(equalToConstant: 0)
 
     public init() {
         super.init(frame: .zero)
@@ -261,19 +264,37 @@ public final class ChatView: NSView {
         cocThe.spacing = EideToken.space[1]
         cocThe.setAccessibilityLabel("Thẻ đang chờ")
 
-        for v in [cuon, cocThe, oLenh] {
+        // THẺ NẰM TRONG VÙNG CUỘN RIÊNG.
+        //
+        // Trước 16/09/2026 `cocThe` là một stack trần giữa bản ghi hội thoại và ô lệnh: mỗi thẻ
+        // cộng THẲNG chiều cao vào hội thoại, hội thoại cộng vào panel, panel cộng vào cửa sổ.
+        // Đo trong vòng chạy qua giao diện: mười lăm thẻ đẩy cửa sổ từ 720 pt lên 1100 pt, và
+        // cửa sổ KHÔNG BAO GIỜ co lại — trên máy 13 inch thì nửa dưới nằm ngoài màn hình.
+        //
+        // Trần 240 pt ở ưu tiên CAO, không bắt buộc: có chỗ thì thẻ hiện đủ, hết chỗ thì cuộn.
+        cuonThe.documentView = cocThe
+        cuonThe.hasVerticalScroller = true
+        cuonThe.drawsBackground = false
+        for v in [cuon, cuonThe, oLenh] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
+        cocThe.translatesAutoresizingMaskIntoConstraints = false
         let s = EideToken.space[1]
+        let tranThe = cuonThe.heightAnchor.constraint(lessThanOrEqualToConstant: 240)
+        tranThe.priority = .required
+        let caoThe = cuonThe.heightAnchor.constraint(equalTo: cocThe.heightAnchor)
+        caoThe.priority = .defaultHigh
         NSLayoutConstraint.activate([
             cuon.topAnchor.constraint(equalTo: topAnchor),
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
-            cocThe.topAnchor.constraint(equalTo: cuon.bottomAnchor, constant: s),
-            cocThe.leadingAnchor.constraint(equalTo: leadingAnchor),
-            cocThe.trailingAnchor.constraint(equalTo: trailingAnchor),
-            oLenh.topAnchor.constraint(equalTo: cocThe.bottomAnchor, constant: s),
+            cuonThe.topAnchor.constraint(equalTo: cuon.bottomAnchor, constant: s),
+            cuonThe.leadingAnchor.constraint(equalTo: leadingAnchor),
+            cuonThe.trailingAnchor.constraint(equalTo: trailingAnchor),
+            cocThe.widthAnchor.constraint(equalTo: cuonThe.widthAnchor),
+            tranThe, caoThe,
+            oLenh.topAnchor.constraint(equalTo: cuonThe.bottomAnchor, constant: s),
             oLenh.leadingAnchor.constraint(equalTo: leadingAnchor),
             oLenh.trailingAnchor.constraint(equalTo: trailingAnchor),
             oLenh.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -284,10 +305,17 @@ public final class ChatView: NSView {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
+    /// Gỡ một thẻ khỏi hội thoại.
+    public func goThe(_ the: NSView) {
+        cocThe.removeArrangedSubview(the)
+        the.removeFromSuperview()
+    }
+
     /// Thêm một thẻ tương tác; thẻ tự gỡ mình khi trả lời xong.
     public func themThe(_ the: NSView) {
         cocThe.addArrangedSubview(the)
         the.widthAnchor.constraint(equalTo: cocThe.widthAnchor).isActive = true
+        cuonThe.documentView?.layoutSubtreeIfNeeded()
         if let q = the as? QuestionCard {
             let truoc = q.onTraLoi
             q.onTraLoi = { [weak self, weak q] v, hetGio in
@@ -303,7 +331,42 @@ public final class ChatView: NSView {
         }
     }
 
+    /// Chế độ GỌN: giấu bản ghi hội thoại, giữ thẻ và ô lệnh.
+    ///
+    /// ## Vì sao cần
+    ///
+    /// USECASE UC-B1 nói thẳng: *"một ô lệnh luôn gõ được, không phải một màn"*. Nhưng tới
+    /// 16/09/2026, mở bất kỳ màn nào trong 23 màn thì cả hội thoại bị ẩn — người đang xem Hộ
+    /// chiếu mà muốn ra lệnh phải bấm "← Hội thoại", tức BỎ màn đang xem để nói một câu, rồi mở
+    /// lại. Với một sản phẩm mà đường vào chính là gõ tiếng Việt, đó là rào ngay giữa lối đi.
+    ///
+    /// Chế độ gọn giữ đúng hai thứ người dùng cần trong lúc xem một màn: chỗ GÕ, và chỗ thẻ
+    /// hiện ra khi tác tử hỏi lại. Bản ghi hội thoại thì nhường chỗ cho màn — nó vẫn còn nguyên,
+    /// bấm "← Hội thoại" là thấy.
+    public var gon = false {
+        didSet {
+            guard gon != oldValue else { return }
+            cuon.isHidden = gon
+            caoCuon.isActive = gon
+        }
+    }
+
+    /// Ô gõ có hiện không — kể cả khi bản ghi hội thoại đang thu gọn.
+    public var oLenhHienDeTest: Bool { !oLenh.isHidden }
+
     public var soThe: Int { cocThe.arrangedSubviews.count }
+
+    /// Số LƯỢT đã hiện trong hội thoại — đếm dòng có nhãn `Ai:`.
+    ///
+    /// Hội thoại là một `NSTextView` nối chuỗi, không phải danh sách khung nhìn, nên đếm phải
+    /// đọc văn bản. Dùng cho vòng chạy qua giao diện: câu hỏi "gõ xong tác tử có trả lời không"
+    /// chỉ trả lời được bằng cách đếm lượt.
+    public var soLuotDeTest: Int {
+        (van.string as NSString).components(separatedBy: "\n")
+            .filter { d in ["Anh: ", "EIDE: ", "Chờ anh: ", "Lỗi: ", "·: "]
+                .contains { d.hasPrefix($0) } }
+            .count
+    }
 
     public func themLuot(by ai: Ai, text: String) {
         let (nhan, mau): (String, NSColor) = {

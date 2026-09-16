@@ -1140,6 +1140,12 @@ final class MainWindowController: NSWindowController {
         p.datTenDuAn(duAn.map { ($0 as NSString).lastPathComponent })
         p.duAnGoc = duAn
         p.onChonDuAn = { [weak self] in self?.moMenuDuAn() }
+        // Tác tử mở màn nào thì SIDEBAR sáng ở đúng mục ấy. Nội dung một đằng và điều hướng một
+        // nẻo là cách chắc chắn để người dùng mất dấu mình đang ở đâu.
+        p.onTacTuMoMan = { [weak self] tien in
+            self?.dieuHuongEide?.chon(tien)
+            self?.hienCayDuAn(tien == "Code")
+        }
         duAnDangMo = duAn
         return p
     }

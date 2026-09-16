@@ -62,6 +62,16 @@ enum VongGiaoDien {
             ghi("")
             ghi("- \(hong ? "❌" : "✅") \(kq)")
             ghi("- \(ms) ms")
+            // Chiều cao cửa sổ và chiều cao Auto Layout ĐÒI. Hai số này lệch nhau nghĩa là có
+            // ràng buộc nào đó đang kéo cửa sổ to ra — và một cửa sổ cao hơn màn hình là lỗi
+            // người dùng gặp trước mọi lỗi khác.
+            if let w = controller.window, let v = w.contentView {
+                let doi = v.fittingSize.height
+                ghi(String(format: "- cửa sổ %.0f pt · Auto Layout đòi %.0f pt%@",
+                           w.frame.height, doi,
+                           doi > w.frame.height + 1 ? "  ⚠ ĐANG KÉO CỬA SỔ TO RA" : ""))
+                if doi > w.frame.height - 1 { ghi("- " + _aiDoi(v)) }
+            }
             let anh = chupBuoc(controller, n + 1, b.ten)
             if let anh { ghi("- ảnh: `\(anh)`") }
             ghi("")
@@ -77,6 +87,40 @@ enum VongGiaoDien {
                                                                encoding: .utf8)
         print("\n✅ \(dat)/\(cacBuoc.count) bước · nhật ký: \(f.path)")
         exit(dat == cacBuoc.count ? 0 : 1)
+    }
+
+    /// Ba khung nhìn đòi chiều cao nhiều nhất — để biết ai kéo cửa sổ to ra.
+    ///
+    /// Duyệt cây và so `fittingSize.height` của từng nút với chiều cao nó ĐANG có. Nút nào đòi
+    /// nhiều hơn phần được cấp là nút đang đẩy; in ba nút đầu là đủ để đi thẳng tới chỗ sửa,
+    /// thay cho ba lượt đoán như tôi vừa làm.
+    private static func _aiDoi(_ goc: NSView) -> String {
+        var ds: [(String, CGFloat, CGFloat)] = []
+        func di(_ v: NSView, _ sau: Int) {
+            guard sau < 6 else { return }
+            let doi = v.fittingSize.height
+            if doi > 1 { ds.append((String(describing: type(of: v)), doi, v.frame.height)) }
+            for c in v.subviews { di(c, sau + 1) }
+        }
+        di(goc, 0)
+        let top = ds.sorted { $0.1 > $1.1 }.prefix(3)
+            .map { String(format: "%@ đòi %.0f (đang có %.0f)", $0.0, $0.1, $0.2) }
+
+        // Và các CON TRỰC TIẾP của panel: chuỗi ràng buộc dọc cộng dồn ở đây, nên đây là chỗ
+        // đọc ra ai đang đẩy — không phải ở nút sâu nhất có `fittingSize` lớn.
+        func timPanel(_ v: NSView) -> NSView? {
+            if String(describing: type(of: v)) == "EidePanel" { return v }
+            for c in v.subviews { if let r = timPanel(c) { return r } }
+            return nil
+        }
+        var con = ""
+        if let pn = timPanel(goc) {
+            con = "\n- con của panel: " + pn.subviews.map {
+                String(format: "%@ %.0f/%.0f%@", String(describing: type(of: $0)),
+                       $0.fittingSize.height, $0.frame.height, $0.isHidden ? " (ẩn)" : "")
+            }.joined(separator: " · ")
+        }
+        return "đòi nhiều nhất: " + top.joined(separator: " · ") + con
     }
 
     private static func ghi(_ s: String) {
@@ -200,6 +244,44 @@ enum VongGiaoDien {
                                                .appendingPathComponent(kb)])
             cho(90)
             return kiemKe(c)
+        },
+
+        Buoc(ten: "Ô LỆNH gõ được NGAY TRÊN một màn chuyên đề") { c in
+            guard let p = c.eidePanel else { return "HỎNG: chưa có panel" }
+            // KHÔNG đóng màn. USECASE UC-B1: "một ô lệnh luôn gõ được, không phải một màn" —
+            // nên bài này mở màn Hộ chiếu rồi gõ NGAY TẠI ĐÓ.
+            c.chonManEide(tien: "Passport")
+            cho(3)
+            guard p.oLenhGoDuocDeTest else {
+                return "HỎNG: mở một màn thì ô lệnh biến mất — muốn nói một câu phải bỏ màn"
+            }
+            p.goNhuNguoiDung("cho tôi biết chip này có bao nhiêu RAM")
+            cho(40)
+            let l1 = p.soLuotHoiThoaiDeTest
+            guard l1 >= 2 else { return "HỎNG: gõ trên màn chuyên đề mà không ai trả lời" }
+            p.dongManChuyenDe()
+            cho(1)
+            p.goNhuNguoiDung("đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART mỗi giây")
+            cho(45)
+            let luot = p.soLuotHoiThoaiDeTest
+            return luot >= 3 ? "gõ được CẢ trên màn chuyên đề lẫn ở hội thoại · \(luot) lượt"
+                             : "HỎNG: gõ xong không thấy tác tử trả lời (\(luot) lượt)"
+        },
+
+        Buoc(ten: "Tác tử tự MỞ và FOCUS đúng màn của việc nó đang làm") { c in
+            guard let p = c.eidePanel else { return "HỎNG: chưa có panel" }
+            // Đứng ở một màn KHÔNG liên quan, rồi bảo tác tử chạy một năng lực của màn khác.
+            c.chonManEide(tien: "Env")
+            cho(3)
+            let truoc = p.tenManDangMo ?? "(hội thoại)"
+            // Chờ qua thời gian giữ màn của người dùng — nếu không, tác tử cố ý KHÔNG cướp màn.
+            cho(EidePanel.GIU_MAN_NGUOI_CHON + 1)
+            p.chayNhuNguoiDung("passport.query", ["part": "atmega328p"])
+            cho(12)
+            let sau = p.tenManDangMo ?? "(hội thoại)"
+            return sau == "Passport"
+                ? "đang ở `\(truoc)` → tác tử chạy `passport.query` → tự mở `\(sau)`"
+                : "HỎNG: tác tử chạy `passport.query` mà màn vẫn là `\(sau)`"
         },
 
         Buoc(ten: "Nhật ký — mọi việc vừa làm có vào sổ cái không") { c in

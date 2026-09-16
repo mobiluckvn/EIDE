@@ -33,6 +33,25 @@ import AppKit
 /// ngưỡng `caoToiDa`. Quá ngưỡng thì nó bật bộ cuộn riêng, VÀ nói ra là đang cắt bao nhiêu (xem
 /// `_noiBiCat`). Một bảng 8.000 fact dựng hết 8.000 hàng view sẽ làm treo cửa sổ, nên ngưỡng là
 /// bắt buộc; điều không bắt buộc — và là điều quan trọng — là nói cho người dùng biết.
+/// Ràng buộc chiều cao MONG MUỐN, không bắt buộc.
+///
+/// ## Vì sao không dùng ràng buộc bắt buộc
+///
+/// Một `heightAnchor == 420` bắt buộc nằm trong một cửa sổ chỉ cao 700 pt thì Auto Layout không
+/// có cách nào khác ngoài **làm cửa sổ to ra**. Đo 16/09/2026 trong vòng chạy qua giao diện: cửa
+/// sổ đi từ 1440 px lên 1672 rồi 2548 khi mở lần lượt màn Hộ chiếu (bảng 290 fact) và hội thoại
+/// — người dùng cuộn mãi không tới ô lệnh, và trên máy màn hình 13 inch thì nửa cửa sổ nằm ngoài
+/// màn hình.
+///
+/// Ưu tiên `.defaultHigh` nói đúng ý định: *cho tôi 420 pt nếu có chỗ*. Hết chỗ thì khối co lại
+/// và cuộn bên trong — đúng thứ nó vốn làm khi nội dung dài hơn 420.
+@discardableResult
+func _caoMongMuon(_ v: NSView, _ cao: CGFloat) -> NSLayoutConstraint {
+    let c = v.heightAnchor.constraint(equalToConstant: cao)
+    c.priority = .defaultHigh
+    return c
+}
+
 public enum EideTuVung {
 
     /// Chiều cao tối đa của một khung nhìn nhúng, tính bằng điểm.
@@ -138,7 +157,7 @@ public final class EideBangView: NSView {
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
             cuon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            cuon.heightAnchor.constraint(equalToConstant: cao),
+            _caoMongMuon(cuon, cao),
         ])
     }
 
@@ -329,7 +348,7 @@ public final class EideCayView: NSView {
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
             cuon.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-        if let cao { cuon.heightAnchor.constraint(equalToConstant: cao).isActive = true }
+        if let cao { _caoMongMuon(cuon, cao).isActive = true }
         cay.reloadData()
         _moSan(goc)
         // Về ĐẦU cây sau khi mở sẵn các nhánh. `expandItem` đẩy vị trí cuộn theo hàng vừa mở,
@@ -498,7 +517,7 @@ public final class EideMaView: NSView {
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
             cuon.bottomAnchor.constraint(equalTo: bottomAnchor),
-            cuon.heightAnchor.constraint(equalToConstant: cao),
+            _caoMongMuon(cuon, cao),
         ])
     }
 

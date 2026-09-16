@@ -149,6 +149,12 @@ public final class EidePanel: NSView {
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
     private var manHinhCua: [String: String] = [:]
 
+    /// Giữ thẻ đã xong trên màn bấy nhiêu giây trước khi gỡ.
+    ///
+    /// 4 giây: đủ để người đang nhìn thấy nó chuyển sang "xong", ngắn hơn hẳn thời gian họ đọc
+    /// xong một dòng kết quả ở Nhật ký.
+    static let TRE_GO_THE: TimeInterval = 4
+
     /// `run_id`/`job_id` → thẻ tiến độ đang hiện. Xem `hienTienDo`.
     private var theTienDo: [String: RunProgressCard] = [:]
 
@@ -168,6 +174,18 @@ public final class EidePanel: NSView {
         self.client = client
         super.init(frame: .zero)
         appearance = NSAppearance(named: .aqua)
+        // PANEL KHÔNG ĐƯỢC ĐẨY CỬA SỔ TO RA.
+        //
+        // Đo 16/09/2026 bằng vòng chạy qua giao diện: cửa sổ đi 720 → 836 → 1009 pt khi mở lần
+        // lượt màn Hộ chiếu và hội thoại, và **không bao giờ co lại** — AppKit phóng cửa sổ để
+        // thoả ràng buộc bắt buộc, rồi để nguyên. Trên máy 13 inch thì nửa dưới nằm ngoài màn
+        // hình, và ô lệnh — thứ dùng nhiều nhất — nằm ở nửa ấy.
+        //
+        // Hạ sức kháng nén theo chiều dọc xuống thấp nói đúng điều cần: *panel co lại được*. Nội
+        // dung bên trong đã có vùng cuộn riêng (bản ghi hội thoại, thẻ, hàng đợi, thân màn), nên
+        // co lại nghĩa là cuộn, không phải mất chữ.
+        setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        setContentHuggingPriority(.defaultLow, for: .vertical)
         dungGiaoDien()
         noiHangDoi()
         noiManChuyenDe()
@@ -597,8 +615,10 @@ public final class EidePanel: NSView {
     private func hienKhung(_ v: KhungNhinEide, ten: String, id: String, thamSo: String) {
         for k in bangMan { k.v.isHidden = (k.v !== v) }
         banDo.isHidden = (banDo !== v)
-        hoiThoai.isHidden = true
-        anHoiThoai.isActive = true
+        // Ô LỆNH Ở LẠI. Hội thoại vào chế độ gọn (giấu bản ghi, giữ thẻ và ô gõ) thay vì ẩn
+        // hẳn — xem `ChatView.gon`. Ẩn hẳn nghĩa là muốn nói một câu thì phải bỏ màn đang xem.
+        hoiThoai.isHidden = false
+        hoiThoai.gon = false
         thanhMan.isHidden = false
         tenMan.stringValue = ten
         if !thamSo.isEmpty {
@@ -630,7 +650,9 @@ public final class EidePanel: NSView {
     /// Mở một màn theo TÊN — lối vào cho sidebar của cửa sổ EIDE.
     @discardableResult
     public func moMan(_ tien: String, thamSo: String = "") -> Bool {
-        _moTheoTenMan(tien, thamSo: thamSo)
+        // Người tự chọn: giữ màn này, đừng để tác tử kéo đi ngay — xem `_theoTacTu`.
+        nguoiVuaChonMan()
+        return _moTheoTenMan(tien, thamSo: thamSo)
     }
 
     /// Đóng màn chuyên đề, quay về hội thoại.
@@ -692,13 +714,13 @@ public final class EidePanel: NSView {
         let t = ten.lowercased()
         guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
         for v in bangMan { v.v.isHidden = (v.v !== k.v) }
+        hoiThoai.isHidden = false
+        hoiThoai.gon = false
         // ẨN CẢ BẢN ĐỒ. `banDo` không nằm trong `bangMan` (nó là khung thứ hai của màn 7), nên
         // vòng lặp trên bỏ sót nó — và một khi bản đồ hiện ra, nó ĐÈ LÊN mọi màn mở sau đó.
         // Đo 16/09/2026: sau khi xem Nhật ký, cả màn "Mô hình & chi phí" lẫn "Hành trình & cổng"
         // đều hiện thân của bản đồ dưới tiêu đề của chính chúng.
         banDo.isHidden = true
-        hoiThoai.isHidden = true
-        anHoiThoai.isActive = true
         thanhMan.isHidden = false
         // Nhãn người đọc được, không phải tiền tố kỹ thuật: người bấm "Dò board" mà thấy
         // tiêu đề "Discovery" phải tự dịch trong đầu, và hai chữ ấy không phải lúc nào cũng
@@ -984,11 +1006,24 @@ public final class EidePanel: NSView {
     /// mọi màn chuyên đề buộc vào mép trên hội thoại, phần ấy bị lấy thẳng từ màn. Đo 16/09/2026
     /// trên màn Mô phỏng: khung mã chứa log UART bị cắt ngang ngay dòng đầu, trong khi nửa dưới
     /// cửa sổ trống trơn.
-    private lazy var anHoiThoai = hoiThoai.heightAnchor.constraint(equalToConstant: 0)
 
-    /// Sàn chiều cao hội thoại — ưu tiên CAO chứ không bắt buộc, để `anHoiThoai` thắng được.
+    /// Chiều cao tối thiểu của vùng trao đổi người–máy.
+    public static let CAO_HOI_THOAI: CGFloat = 220
+
+    /// Sàn chiều cao hội thoại — **bất biến**, không bao giờ về 0.
+    ///
+    /// Chủ sản phẩm chốt 16/09/2026: *"giao diện để người và máy cùng trao đổi là phải có và bất
+    /// biến"*. Màn chuyên đề là thứ ĐẾN RỒI ĐI — tác tử làm tới phần nào thì màn ấy hiện ra —
+    /// còn chỗ hai bên nói chuyện thì luôn ở đó.
+    ///
+    /// Bản trước ép hội thoại về 0 khi mở một màn, và đó là quyết định sai đã đi qua hai lần
+    /// sửa: lần đầu giấu hẳn hội thoại, lần sau thu gọn còn ô gõ. Cả hai đều lấy chỗ của cuộc
+    /// trao đổi để cho màn — trong khi màn đã có vùng cuộn riêng và không cần chỗ ấy.
+    ///
+    /// Ưu tiên CAO chứ không bắt buộc: trên cửa sổ rất thấp thì sàn này nhường, thay vì phóng
+    /// cửa sổ to ra — lỗi đã đo được trong vòng chạy cùng ngày.
     private lazy var _sanHoiThoai: NSLayoutConstraint = {
-        let c = hoiThoai.heightAnchor.constraint(greaterThanOrEqualToConstant: 150)
+        let c = hoiThoai.heightAnchor.constraint(greaterThanOrEqualToConstant: Self.CAO_HOI_THOAI)
         c.priority = .defaultHigh
         return c
     }()
@@ -1287,8 +1322,15 @@ public final class EidePanel: NSView {
         for k in bangMan { k.v.isHidden = true }
         banDo.isHidden = true
         thanhMan.isHidden = true
+        // ẨN CẢ BIỂU MẪU của màn vừa đóng.
+        //
+        // `oNhap` dựng form theo `nangLucChinh` của màn đang mở, và `dongMan` không chạm tới nó —
+        // nên bấm "← Hội thoại" từ màn Mô phỏng để lại hai ô `artifact`/`scenario` và nút
+        // "Chạy sim.run" lơ lửng trên đầu hội thoại. Người dùng bấm nút ấy trong lúc đang trò
+        // chuyện và không hiểu vì sao có nó. Đo 16/09/2026 trong vòng chạy qua giao diện.
+        oNhap.isHidden = true
         hoiThoai.isHidden = false
-        anHoiThoai.isActive = false
+        hoiThoai.gon = false
     }
 
     /// Kết quả `chat.send`: `{intent_id, run_id?}`. Trọn đường DPS-09 đã chạy, không phải mỗi
@@ -1356,7 +1398,6 @@ public final class EidePanel: NSView {
             hoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             hoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
             hoiThoai.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
-            // Sàn 150 pt ở ƯU TIÊN CAO, không bắt buộc: khi một màn chuyên đề mở ra, `anHoiThoai`
             // (bắt buộc, = 0) phải thắng được nó.
             _sanHoiThoai,
 
@@ -1403,6 +1444,19 @@ public final class EidePanel: NSView {
     ///
     /// Panel vẫn là client thuần (GPI-23 §1): nó không hiểu lệnh, chỉ chuyển đúng thứ người đã
     /// chọn từ một danh sách do daemon cấp.
+    /// Gõ một câu vào ô lệnh y như người dùng — cho vòng chạy qua giao diện.
+    ///
+    /// Đi qua ĐÚNG `gui(_:)`, tức qua cả `duongVao` (câu bắt đầu bằng `/` mở màn, còn lại đi
+    /// `chat.send`). Gọi thẳng `chat.send` sẽ bỏ qua nhánh phân đường — mà nhánh ấy chính là thứ
+    /// quyết định "gõ một câu tiếng Việt thì có việc gì xảy ra không".
+    public func goNhuNguoiDung(_ text: String) { gui(text) }
+
+    /// Số lượt trong ô hội thoại — cho vòng chạy đo "gõ xong tác tử có trả lời không".
+    public var soLuotHoiThoaiDeTest: Int { hoiThoai.soLuotDeTest }
+
+    /// Ô lệnh có gõ được ngay bây giờ không — hiện ra và không bị che.
+    public var oLenhGoDuocDeTest: Bool { !hoiThoai.isHidden && hoiThoai.oLenhHienDeTest }
+
     private func gui(_ text: String) {
         hoiThoai.themLuot(by: .nguoi, text: text)
         switch Self.duongVao(text) {
@@ -1455,7 +1509,49 @@ public final class EidePanel: NSView {
     /// chuỗi sau id nên vào trường nào là đúng kiểu tự nghĩ ra hành vi. Màn hình có ô nhập của
     /// nó — `PassportView` có ô "Mã linh kiện", `RagAskView` có ô câu hỏi — nên tham số đi vào
     /// ô ấy và người bấm Enter là người quyết định chạy.
+    /// Giữ màn người vừa tự chọn bấy nhiêu giây trước khi lại đi theo tác tử.
+    ///
+    /// 20 giây: đủ để đọc xong một bảng, ngắn hơn hẳn một lượt chạy có mô hình.
+    public static let GIU_MAN_NGUOI_CHON: TimeInterval = 20
+
+    private var _nguoiTuChonLuc: Date?
+
+    /// Mở màn phụ trách năng lực `cap`, trừ khi người dùng vừa tự chọn một màn khác.
+    private func _theoTacTu(_ cap: String) {
+        if let luc = _nguoiTuChonLuc,
+           Date().timeIntervalSince(luc) < Self.GIU_MAN_NGUOI_CHON { return }
+        guard let man = manHinhCua[cap], let v = khungCua(man, id: cap) else { return }
+        // Đã đúng màn rồi thì thôi — mở lại sẽ xoá thân màn và nạp lại, tức nhấp nháy dưới tay
+        // người đang đọc.
+        if !v.isHidden { return }
+        hienKhung(v, ten: man, id: cap, thamSo: "")
+        // FOCUS: chuyển cả mục đang sáng trên sidebar, không chỉ đổi nội dung.
+        if let k = bangMan.first(where: { $0.v === v })?.tien ?? (v === banDo ? "Graph" : nil) {
+            onTacTuMoMan?(k)
+        }
+        hoiThoai.themLuot(by: .heThong, text: "→ mở màn \(man) (tác tử đang chạy `\(cap)`)")
+        // Nạp dữ liệu mặc định của màn nếu có: tác tử vừa chạy `cap`, và màn mở ra rỗng thì
+        // người dùng thấy đúng cái tên màn và không thấy việc.
+        if let mac = Self.napMacDinh(choMan: man), mac != cap {
+            chay(mac, [:], khiLoi: { [weak v] in v?.chuaNap($0) }) { [weak v] r in
+                v?.capNhat(ketQua: r)
+            }
+        }
+    }
+
+    /// Đánh dấu người vừa TỰ chọn một màn — gọi từ đường sidebar và đường gõ `/ns.name`.
+    public func nguoiVuaChonMan() { _nguoiTuChonLuc = Date() }
+
+    /// Tác tử vừa MỞ một màn: `(tiền tố màn)`. Cửa sổ nối vào để chuyển cả điều hướng.
+    ///
+    /// Panel không tự làm được việc này: sidebar thuộc về cửa sổ (DEV-098), và panel chỉ biết
+    /// khung nhìn của mình. Không có đường này thì màn đổi mà **mục đang sáng trên sidebar vẫn ở
+    /// chỗ cũ** — người dùng nhìn thấy nội dung một đằng, điều hướng một nẻo, và không biết mình
+    /// đang ở đâu. Chủ sản phẩm 16/09/2026: *"tự mở và focus vào phần đó"*.
+    public var onTacTuMoMan: ((String) -> Void)?
+
     private func moManHinh(id: String, thamSo: String) {
+        nguoiVuaChonMan()
         // Thử TÊN MÀN trước khi báo không có: ba màn trong bảng UXD-13 §2 không có năng lực
         // nào trỏ tới chúng, nên không lệnh `/ns.name` nào mở được — xem `_moTheoTenMan`.
         if manHinhCua[id] == nil, _moTheoTenMan(id, thamSo: thamSo) { return }
@@ -1643,6 +1739,22 @@ public final class EidePanel: NSView {
         case "event.chat.restated":
             hienYHieu(p)
         case "event.run.progress", "event.job.progress":
+            // TÁC TỬ LÀM TỚI ĐÂU, MÀN ẤY MỞ RA VÀ ĐƯỢC FOCUS.
+            //
+            // Chủ sản phẩm chốt 16/09/2026: *"các giao diện chuyên biệt theo từng tác vụ khi
+            // Agent thay đổi đến phần đó thì nó sẽ được show đến"*. Trước đó người dùng phải tự
+            // đoán tác tử đang làm gì rồi tự bấm đúng màn — tức phải thuộc bảng 238 năng lực
+            // thuộc màn nào.
+            //
+            // KHÔNG cướp màn khi người dùng vừa tự chọn một màn khác: `_nguoiTuChon` đánh dấu
+            // lựa chọn của người và giữ nó trong `GIU_MAN_NGUOI_CHON` giây. Một giao diện tự đổi
+            // màn ngay dưới tay người đang đọc là giao diện không dùng được.
+            //
+            // Nối vào `event.run.progress` chứ không một sự kiện riêng: daemon ánh xạ CẢ
+            // `cap.run.start` lẫn `cap.run.finish` về tên ấy (`SU_KIEN` trong rpc.py). Tôi đã
+            // viết `case "event.cap.run.start"` một lần và nó không bao giờ chạy — tên sự kiện
+            // của sổ cái khác tên sự kiện của API-15, và chỗ ánh xạ nằm ở phía daemon.
+            if let cap = p["cap"] as? String { _theoTacTu(cap) }
             hienTienDo(p)
         case "event.notice":
             let muc = (p["level"] as? String) ?? "info"
@@ -1808,6 +1920,20 @@ public final class EidePanel: NSView {
         }
         the.onXemNut = { [weak self] cap in
             self?.chay2(.capsDescribe, ["id": cap])
+        }
+        // GỠ thẻ khi việc xong. Không gỡ thì mỗi lượt chạy để lại một thẻ vĩnh viễn: đo
+        // 16/09/2026 trong một vòng qua giao diện, mười lăm thẻ đã xong xếp chồng và kéo CỬA SỔ
+        // cao 4048 px — người dùng cuộn mãi không tới ô lệnh.
+        //
+        // Chờ `TRE_GO_THE` giây rồi mới gỡ: biến mất ngay lúc xong thì người đang nhìn không kịp
+        // thấy nó xong. Và không mất gì — việc đã xong nằm trong Nhật ký và trong cột "hoàn tác
+        // được" bên phải; thẻ tiến độ chỉ nói về thứ ĐANG chạy.
+        the.onXong = { [weak self, weak the] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + Self.TRE_GO_THE) {
+                guard let the else { return }
+                self?.theTienDo.removeValue(forKey: id)
+                self?.hoiThoai.goThe(the)
+            }
         }
         theTienDo[id] = the
         hoiThoai.themThe(the)
