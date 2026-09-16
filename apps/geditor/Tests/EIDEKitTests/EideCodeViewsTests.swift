@@ -219,13 +219,28 @@ final class EideCodeViewsTests: XCTestCase {
         XCTAssertTrue(v.tomTat.stringValue.contains("DỪNG VÌ HẾT GIỜ"), v.tomTat.stringValue)
     }
 
-    func testQUETthamSOhienHANGtotNHAT() {
+    /// Quét tham số ra một BẢNG, và hàng tốt nhất được TÔ trong bảng ấy.
+    ///
+    /// Đổi từ 16/09/2026. Bản cũ dựng mỗi hàng thành một câu `quét kp=1 · overshoot=12` rồi thêm
+    /// một dòng "tốt nhất" riêng — bài test cũ đếm đúng ba dòng ấy. Quét tham số là việc SO SÁNH
+    /// các hàng để tìm cấu hình tốt nhất; xếp thành câu thì cùng một tham số nằm ở vị trí khác
+    /// nhau trên mỗi dòng và mắt không quét dọc được. Tách "tốt nhất" ra một dòng riêng còn buộc
+    /// người đọc tự tìm lại nó trong danh sách để xem nó hơn ở chỗ nào — mà đó chính là câu hỏi.
+    func testQUETthamSOhienHANGtotNHAT() throws {
         let v = SimView()
         v.capNhat(ketQua: [
             "table": [["kp": 1.0, "overshoot": 12.0], ["kp": 2.0, "overshoot": 4.0]],
             "best": ["kp": 2.0, "overshoot": 4.0],
         ])
-        XCTAssertEqual(v.soDong, 3)   // 2 hàng + 1 dòng "tốt nhất"
+        func tim(_ x: NSView) -> EideBangView? {
+            if let b = x as? EideBangView { return b }
+            for s in x.subviews { if let b = tim(s) { return b } }
+            return nil
+        }
+        let b = try XCTUnwrap(tim(v), "quét tham số phải ra một bảng")
+        XCTAssertEqual(b.soHang, 2)
+        XCTAssertEqual(b.mauODeTest(hang: 1, cot: 0), EideToken.Mau.ok, "hàng tốt nhất phải tô")
+        XCTAssertNil(b.mauODeTest(hang: 0, cot: 0))
     }
 
     // MARK: - Chung

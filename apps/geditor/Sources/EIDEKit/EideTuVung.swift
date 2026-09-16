@@ -162,6 +162,9 @@ public final class EideBangView: NSView {
         return c < g.count ? g[c] : ""
     }
 
+    /// Màu của một ô theo chỉ số GỐC — cho test canh phép tô hàng.
+    public func mauODeTest(hang h: Int, cot c: Int) -> NSColor? { mauO?(h, c) }
+
     /// Bấm tiêu đề cột bằng mã — cho test.
     public func sapDeTest(cot c: Int) { tableView(bang, didClick: bang.tableColumns[c]) }
 

@@ -180,6 +180,16 @@ public final class EideStdioTransport: EideClient.Transport, @unchecked Sendable
     ///   - eide: đường dẫn tới `python -m eide.cli` hoặc tới `eide` đã cài.
     ///   - duAn: thư mục dự án (`-p`), nếu có.
     public init(eide: [String], duAn: String? = nil) throws {
+        // Tắt SIGPIPE cho cả tiến trình, MỘT LẦN.
+        //
+        // Mặc định của Unix là giết tiến trình khi nó ghi vào một ống không còn ai đọc. Với một
+        // công cụ dòng lệnh thì đó là hành vi đúng; với một ứng dụng có cửa sổ thì nó nghĩa là:
+        // daemon chết → EIDE biến mất khỏi màn hình, không hộp thoại, không log, không cơ hội
+        // lưu gì. `SIG_IGN` biến nó thành `EPIPE` trên lời gọi `write`, và `guiDongBo` dịch
+        // `EPIPE` thành một câu người đọc được.
+        //
+        // `dispatch_once` không cần: đặt lại cùng một giá trị nhiều lần là vô hại.
+        signal(SIGPIPE, SIG_IGN)
         var arg = Array(eide.dropFirst()) + ["daemon"]
         if let duAn { arg += ["-p", duAn] }
         process.executableURL = URL(fileURLWithPath: eide[0])
@@ -190,7 +200,7 @@ public final class EideStdioTransport: EideClient.Transport, @unchecked Sendable
         try process.run()
     }
 
-    public func send(_ line: Data) async throws { guiDongBo(line) }
+    public func send(_ line: Data) async throws { try guiDongBo(line) }
 
     /// Đọc tới hết một dòng. JSON-RPC qua stdio dùng một thông điệp một dòng (API-15 §2), nên
     /// biên thông điệp là `\n` — và vì thế phải ĐỆM: một lần `read` có thể trả về nửa dòng,
@@ -200,9 +210,22 @@ public final class EideStdioTransport: EideClient.Transport, @unchecked Sendable
     // Phần đụng khoá nằm trong hàm ĐỒNG BỘ, không phải trong `async`: Swift 6 coi việc giữ
     // `NSLock` bắc qua một điểm `await` là lỗi, vì tác vụ có thể đổi luồng giữa lock và
     // unlock. Ở đây không có `await` nào bên trong, nên khoá không bao giờ bắc qua điểm treo.
-    private func guiDongBo(_ line: Data) {
+    private func guiDongBo(_ line: Data) throws {
         khoa.lock(); defer { khoa.unlock() }
-        vao.fileHandleForWriting.write(line + Data("\n".utf8))
+        // `write(contentsOf:)` NÉM lỗi; `write(_:)` thì không — nó bắn `SIGPIPE`, và tín hiệu ấy
+        // mặc định GIẾT cả tiến trình. Cùng với `SIG_IGN` đặt ở `EideStdioTransport.init`, một
+        // daemon đã chết nay thành một câu lỗi thay vì một cửa sổ biến mất.
+        //
+        // Đo 16/09/2026: chạy `sim.run` (qemu-system-avr) qua daemon, daemon dừng giữa chừng, và
+        // cả EIDE tắt ngay lập tức — mã thoát 141, không hộp thoại, không dòng log, không gì
+        // trên màn hình. Người dùng chỉ thấy ứng dụng biến mất giữa lúc đang chạy mô phỏng.
+        do {
+            try vao.fileHandleForWriting.write(contentsOf: line + Data("\n".utf8))
+        } catch {
+            throw EideClient.Failure.khongKetNoi(
+                "daemon đã dừng — không gửi được lệnh nữa (\(error.localizedDescription)). "
+                + "Mở lại dự án để khởi động daemon mới.")
+        }
     }
 
     private func docDongBo() throws -> Data {

@@ -113,7 +113,20 @@ class Sandbox:
         vi_pham: list[str] = []
         t0 = time.perf_counter()
         with f_out.open("wb") as fo, f_err.open("wb") as fe:
+            # `stdin=DEVNULL` — KHÔNG để tiến trình con thừa kế stdin của tiến trình cha.
+            #
+            # Đo 16/09/2026: `sim.run` chạy qua `eide daemon` không bao giờ xong, trong khi cùng
+            # lời gọi ấy qua CLI mất 25 giây. Lý do là `qemu-system-avr` đọc stdin (nó coi đó là
+            # console nối tiếp), và stdin của daemon chính là **ống JSON-RPC** từ giao diện. Nên
+            # qemu ăn mất các lệnh người dùng gửi: `job.status` không tới nơi, màn hình đứng ở
+            # "Đang chạy…" mãi mãi, rồi daemon gặp rác trên ống và thoát — kéo theo SIGPIPE giết
+            # cả cửa sổ EIDE.
+            #
+            # Không chỉ là chuyện của qemu. SEC-25 §2 nói sandbox phải cắt mọi kênh không khai
+            # báo, và stdin thừa kế là một kênh vào KHÔNG khai báo: bất kỳ công cụ nào đọc stdin
+            # đều rút được dữ liệu của tiến trình cha — ở đây là toàn bộ lưu lượng RPC.
             p = subprocess.Popen(lenh, cwd=lam_viec, stdout=fo, stderr=fe,  # noqa: S603 — cmd dạng danh sách
+                                 stdin=subprocess.DEVNULL,
                                  env=_moi_truong(them_path), preexec_fn=_dat_gioi_han(gh))
             canh = _CanhRSS(p.pid, gh["rss_mb"])
             canh.start()

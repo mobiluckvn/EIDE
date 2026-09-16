@@ -451,7 +451,16 @@ public final class EidePanel: NSView {
                       _ xong: @escaping ([String: Any]) -> Void) {
         Task {
             do {
-                let r = try await client.goi(.capsInvoke, ["id": id, "params": params])
+                var r = try await client.goi(.capsInvoke, ["id": id, "params": params])
+                // VIỆC NẶNG trả `job_id` và `status: running` NGAY — API-15 §2. Trước
+                // 15/09/2026 mọi trạng thái khác `done` đều rơi vào nhánh lỗi, nên chạy
+                // `sim.run` cho ra câu *"chưa chạy được (trạng thái running)"*: một câu SAI,
+                // phát ra đúng lúc việc đang chạy. Người dùng đọc nó rồi bấm lại, và lần bấm
+                // thứ hai khởi động một `qemu` thứ hai.
+                if (r["status"] as? String) == "running",
+                   let jid = (r["job_id"] as? String) ?? ((r["result"] as? [String: Any])?["job_id"] as? String) {
+                    r = await self.theoDoiViec(jid, id: id)
+                }
                 await MainActor.run {
                     if (r["status"] as? String) == "done" {
                         xong((r["result"] as? [String: Any]) ?? [:])
@@ -470,6 +479,57 @@ public final class EidePanel: NSView {
         }
     }
 
+    /// Hỏi `job.status` tới khi việc nặng xong, rồi trả về một kết quả dạng CapabilityRun.
+    ///
+    /// ## Vì sao hỏi vòng chứ không chờ sự kiện
+    ///
+    /// `event.job.progress` có trong API-15 và panel đã hiện thẻ tiến độ từ nó. Nhưng sự kiện
+    /// chỉ nói *đang tới đâu*; thứ màn cần là **kết quả**, và kết quả nằm trong `job.status`.
+    /// Chờ một sự kiện "xong" rồi mới hỏi thì thêm một chỗ có thể lỡ: sự kiện phát trong lúc ta
+    /// chưa kịp đăng ký là một màn chờ mãi mãi.
+    ///
+    /// Nhịp hỏi giãn dần: 0,3 s cho vài lượt đầu (việc nhẹ xong ngay thì không phải chờ nguyên
+    /// một giây), rồi giãn tới 2 s. Đo 15/09: `sim.run` trên `qemu-system-avr` mất 25 giây, nên
+    /// hỏi 0,3 s suốt 25 giây là 83 lượt gọi không cần thiết trên một ống stdio tuần tự.
+    ///
+    /// Trần `TRAN_CHO` có mặt vì một việc treo là chuyện có thật (một `qemu` không thoát), và
+    /// một màn quay mãi không nói gì tệ hơn một màn nói "quá lâu, đây là cách xem tiếp".
+    private func theoDoiViec(_ jid: String, id: String) async -> [String: Any] {
+        let batDau = Date()
+        var nhip: UInt64 = 300_000_000
+        while Date().timeIntervalSince(batDau) < Self.TRAN_CHO {
+            try? await Task.sleep(nanoseconds: nhip)
+            nhip = min(nhip + 200_000_000, 2_000_000_000)
+            guard let j = try? await client.goi(.jobStatus, ["job_id": jid]) else { continue }
+            switch (j["state"] as? String) ?? "" {
+            case "done":
+                // `job.status` trả `result` là CẢ CapabilityRun (`asdict(run)` phía daemon), tức
+                // một phong bì `{status, result, error, …}` — không phải phần thân. Bọc thêm một
+                // lớp nữa ở đây thì màn nhận `{status, result}` thay cho `{report: …}` và kết
+                // luận *"Mô phỏng không trả về kỳ vọng nào để hiện"* sau một lượt chạy 25 giây
+                // ĐẠT 6/6. Trả thẳng phong bì: nó đã đúng hình dạng mà `chay` chờ.
+                if let bi = j["result"] as? [String: Any], bi["status"] != nil { return bi }
+                return ["status": "done", "result": j["result"] ?? [:]]
+            case "failed":
+                return ["status": "failed",
+                        "error": (j["result"] as? [String: Any])?["error"]
+                            ?? ["message": "việc `\(id)` hỏng: "
+                                + (((j["log_tail"] as? [Any])?.last).map { "\($0)" } ?? "không rõ")]]
+            case "cancelled":
+                return ["status": "cancelled"]
+            default:
+                continue
+            }
+        }
+        return ["status": "running", "job_id": jid]
+    }
+
+    /// Chờ một việc nặng nhiều nhất bấy nhiêu giây trước khi thôi hỏi.
+    ///
+    /// 10 phút: `code.build` một dự án lớn và `sim.run` một kịch bản dài đều nằm dưới mốc ấy, và
+    /// quá nó thì gần như chắc chắn là treo chứ không phải chậm.
+    public static let TRAN_CHO: TimeInterval = 600
+
     /// Lỗi của một CapabilityRun thành một câu người đọc được.
     ///
     /// E2000 (`GROUNDING_FAILED`) chiếm phần lớn lỗi mà một màn vừa mở gặp phải: năng lực cần
@@ -477,7 +537,24 @@ public final class EidePanel: NSView {
     /// công việc. Hiện nó dưới dạng lỗi đỏ là dạy người dùng rằng phần mềm này hay lỗi.
     static func docLoi(_ r: [String: Any]) -> String {
         guard let e = r["error"] as? [String: Any] else {
-            return "chưa chạy được (trạng thái \((r["status"] as? String) ?? "?"))."
+            // Mỗi trạng thái nói một việc KHÁC NHAU cho người dùng, nên đừng gộp chúng vào một
+            // câu "chưa chạy được" — câu ấy đúng với `rejected` và sai với ba cái còn lại.
+            switch (r["status"] as? String) ?? "?" {
+            case "pending":
+                return "Đang chờ anh duyệt ở hàng đợi bên phải — năng lực này cần người đồng ý "
+                     + "trước khi chạy."
+            case "running":
+                return "Vẫn đang chạy sau \(Int(TRAN_CHO)) giây. Việc chạy tiếp ở nền; xem tiến "
+                     + "độ ở thẻ bên phải, hoặc bấm Huỷ ở đó."
+            case "cancelled":
+                return "Đã huỷ theo yêu cầu. Kết quả bị bỏ — hợp đồng job.cancel nói rõ việc vẫn "
+                     + "chạy hết nhưng kết quả không dùng."
+            case "rejected":
+                return "Chính sách TỪ CHỐI năng lực này. Xem màn Hành trình & cổng để biết quy "
+                     + "tắc nào chặn."
+            case let s:
+                return "chưa chạy được (trạng thái \(s))."
+            }
         }
         let ma = (e["eide_code"] as? String) ?? ""
         let tin = (e["message"] as? String) ?? ""
@@ -504,6 +581,7 @@ public final class EidePanel: NSView {
         for k in bangMan { k.v.isHidden = (k.v !== v) }
         banDo.isHidden = (banDo !== v)
         hoiThoai.isHidden = true
+        anHoiThoai.isActive = true
         thanhMan.isHidden = false
         tenMan.stringValue = ten
         if !thamSo.isEmpty {
@@ -568,6 +646,7 @@ public final class EidePanel: NSView {
         guard let k = bangMan.first(where: { $0.tien.lowercased() == t }) else { return false }
         for v in bangMan { v.v.isHidden = (v.v !== k.v) }
         hoiThoai.isHidden = true
+        anHoiThoai.isActive = true
         thanhMan.isHidden = false
         // Nhãn người đọc được, không phải tiền tố kỹ thuật: người bấm "Dò board" mà thấy
         // tiêu đề "Discovery" phải tự dịch trong đầu, và hai chữ ấy không phải lúc nào cũng
@@ -651,6 +730,25 @@ public final class EidePanel: NSView {
     ///
     /// Kết quả đổ về ĐÚNG màn đang mở, và lỗi hiện ngay cạnh nút chứ không trôi vào hội thoại —
     /// người vừa điền một form thì câu trả lời phải ở chỗ họ đang nhìn.
+    /// Chạy một năng lực và đổ kết quả vào MÀN ĐANG MỞ — như thể người dùng vừa điền form và
+    /// bấm nút.
+    ///
+    /// Phơi ra cho bộ chụp ảnh: vài màn (Mô phỏng, Benchmark) chỉ có gì để hiện sau khi chạy một
+    /// năng lực CÓ THAM SỐ, và không có đường này thì ảnh của chúng mãi là ảnh một biểu mẫu
+    /// rỗng — tức là ảnh không nói được gì về thứ ta vừa sửa.
+    /// Trả `false` khi CHƯA có màn chuyên đề nào mở — bên gọi cần biết, không nên đoán.
+    ///
+    /// `chayTuONhap` bỏ qua trong im lặng khi không tìm thấy màn đang hiện, và điều đó đúng cho
+    /// một ô nhập (ô nhập chỉ tồn tại khi có màn). Với một lời gọi bằng mã thì im lặng là bẫy:
+    /// bộ chụp ảnh gọi hàm này ngay sau khi mở màn, màn chưa kịp hiện, lời gọi rơi vào hư
+    /// không — và ảnh ra một màn trống mà không có gì trong log nói vì sao. Đo 15/09/2026.
+    @discardableResult
+    public func chayNhuNguoiDung(_ cap: String, _ ts: [String: Any]) -> Bool {
+        guard bangMan.contains(where: { !$0.v.isHidden }) else { return false }
+        chayTuONhap(cap, ts)
+        return true
+    }
+
     private func chayTuONhap(_ cap: String, _ ts: [String: Any]) {
         guard let k = bangMan.first(where: { !$0.v.isHidden }) else { return }
         let v = k.v
@@ -767,6 +865,22 @@ public final class EidePanel: NSView {
 
     /// Màn đang chờ hợp đồng — chốt chống đua cho `_dungONhap`.
     private var _manDangHoi = ""
+
+    /// Ép chiều cao hội thoại về 0 khi một màn chuyên đề đang mở.
+    ///
+    /// `isHidden = true` KHÔNG lấy lại chỗ: một khung nhìn ẩn vẫn tham gia Auto Layout đầy đủ.
+    /// Nên hội thoại ẩn vẫn giữ sàn 150 pt CỘNG chiều cao nội dung của nó, và vì mép dưới của
+    /// mọi màn chuyên đề buộc vào mép trên hội thoại, phần ấy bị lấy thẳng từ màn. Đo 16/09/2026
+    /// trên màn Mô phỏng: khung mã chứa log UART bị cắt ngang ngay dòng đầu, trong khi nửa dưới
+    /// cửa sổ trống trơn.
+    private lazy var anHoiThoai = hoiThoai.heightAnchor.constraint(equalToConstant: 0)
+
+    /// Sàn chiều cao hội thoại — ưu tiên CAO chứ không bắt buộc, để `anHoiThoai` thắng được.
+    private lazy var _sanHoiThoai: NSLayoutConstraint = {
+        let c = hoiThoai.heightAnchor.constraint(greaterThanOrEqualToConstant: 150)
+        c.priority = .defaultHigh
+        return c
+    }()
 
     /// Ba màn ấy nạp bằng PHƯƠNG THỨC RPC, không bằng `caps.invoke`.
     ///
@@ -1057,6 +1171,7 @@ public final class EidePanel: NSView {
         banDo.isHidden = true
         thanhMan.isHidden = true
         hoiThoai.isHidden = false
+        anHoiThoai.isActive = false
     }
 
     /// Kết quả `chat.send`: `{intent_id, run_id?}`. Trọn đường DPS-09 đã chạy, không phải mỗi
@@ -1124,7 +1239,9 @@ public final class EidePanel: NSView {
             hoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             hoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
             hoiThoai.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
-            hoiThoai.heightAnchor.constraint(greaterThanOrEqualToConstant: 150),
+            // Sàn 150 pt ở ƯU TIÊN CAO, không bắt buộc: khi một màn chuyên đề mở ra, `anHoiThoai`
+            // (bắt buộc, = 0) phải thắng được nó.
+            _sanHoiThoai,
 
             thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),

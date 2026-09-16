@@ -716,3 +716,161 @@ final class EideKhungNhoTests: XCTestCase {
                        "nhận \(b.frame.height)")
     }
 }
+
+/// Màn "Mô phỏng" — ba khối vốn dùng sai kiểu hiển thị.
+final class EideSimBangTests: XCTestCase {
+
+    private func bang(_ v: NSView) -> [EideBangView] {
+        var ra: [EideBangView] = []
+        if let b = v as? EideBangView { ra.append(b) }
+        for c in v.subviews { ra += bang(c) }
+        return ra
+    }
+
+    private func khoiMa(_ v: NSView) -> [EideMaView] {
+        var ra: [EideMaView] = []
+        if let m = v as? EideMaView { ra.append(m) }
+        for c in v.subviews { ra += khoiMa(c) }
+        return ra
+    }
+
+    // MARK: - Quét tham số
+
+    private let quet: [[String: Any]] = [
+        ["kp": 1.0, "ki": 0.1, "settle_s": 3.4],
+        ["kp": 2.0, "ki": 0.1, "settle_s": 2.6],
+        ["kp": 3.0, "ki": 0.2, "settle_s": 4.1],
+    ]
+
+    func testQUETthamSOdungRAmotBANG() throws {
+        let v = SimView()
+        v.capNhat(ketQua: ["table": quet, "best": quet[1]])
+        let b = try XCTUnwrap(bang(v).first, "quét tham số phải ra một bảng")
+        XCTAssertEqual(b.soHang, 3)
+        // Cột sắp theo BẢNG CHỮ CÁI: ki, kp, settle_s. `[String: Any]` không giữ thứ tự khoá,
+        // nên thứ tự chèn không phải một lựa chọn có thật — sắp theo tên là thứ tự DUY NHẤT
+        // dựng lại được như nhau ở mọi lần chạy.
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 0), "0.1")
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 1), "1")
+        XCTAssertEqual(b.oDeTest(hang: 1, cot: 2), "2.6")
+    }
+
+    /// Cột là HỢP các khoá của mọi hàng.
+    ///
+    /// Lấy khoá của hàng đầu thì một tham số chỉ xuất hiện từ hàng thứ hai trở đi sẽ biến mất
+    /// khỏi bảng mà không ai biết — và đó có thể là tham số làm nên khác biệt.
+    func testCOTlaHOPkhoaCUAmoiHANG() throws {
+        let v = SimView()
+        v.capNhat(ketQua: ["table": [["a": 1], ["a": 2, "b": 9]], "best": [:]])
+        let b = try XCTUnwrap(bang(v).first)
+        XCTAssertEqual(b.oDeTest(hang: 1, cot: 1), "9")
+        // Ô thiếu giá trị hiện `—`, không hiện rỗng: một ô rỗng lẫn với "giá trị là chuỗi rỗng",
+        // còn `—` nói thẳng rằng hàng này không có tham số ấy.
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 1), "—", "hàng thiếu khoá vẫn giữ cột")
+    }
+
+    /// Hàng tốt nhất được TÔ trong bảng, không tách ra một dòng riêng.
+    ///
+    /// Tách ra thì người đọc phải tự tìm nó trong bảng để xem nó hơn các hàng khác ở chỗ nào —
+    /// mà đó chính là câu hỏi họ mở bảng ra để hỏi.
+    func testHANGtotNHATduocTOtrongBANG() throws {
+        let v = SimView()
+        v.capNhat(ketQua: ["table": quet, "best": quet[1]])
+        let b = try XCTUnwrap(bang(v).first)
+        XCTAssertEqual(b.mauODeTest(hang: 1, cot: 0), EideToken.Mau.ok)
+        XCTAssertNil(b.mauODeTest(hang: 0, cot: 0))
+    }
+
+    // MARK: - So sánh SIL ↔ HIL
+
+    func testSOsanhHILdungRAbangBAcot() throws {
+        let v = SimView()
+        v.capNhat(ketQua: ["diff": ["settle_s": ["sil": 2.6, "hil": 3.1, "verdict": "đạt"],
+                                    "latency_ms": ["sil": 4.9, "hil": 5.3, "verdict": "vượt 0,3"]],
+                           "proposals": ["cập nhật mô hình ma sát K7 → K5"]])
+        let b = try XCTUnwrap(bang(v).first)
+        XCTAssertEqual(b.soHang, 2)
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 0), "latency_ms")
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 3), "vượt 0,3")
+    }
+
+    /// `diff` hình dạng lạ vẫn phải hiện — hợp đồng để nó là `object` tự do.
+    ///
+    /// Một chỉ số lệch bị nuốt vì hình dạng không khớp là đúng thứ tệ nhất: lệch SIL↔HIL là tin
+    /// quan trọng nhất màn này mang.
+    func testDIFFhinhDANGlaVANhienRA() throws {
+        let v = SimView()
+        v.capNhat(ketQua: ["diff": ["gi_do": "khác 12%"], "proposals": []])
+        let b = try XCTUnwrap(bang(v).first)
+        XCTAssertEqual(b.oDeTest(hang: 0, cot: 3), "khác 12%")
+    }
+
+    /// Đề xuất sửa mô hình phải nói rõ là CHỜ DUYỆT.
+    func testDExuatNOIroLAchoDUYET() {
+        let v = SimView()
+        v.capNhat(ketQua: ["diff": ["x": ["sil": 1, "hil": 2]],
+                           "proposals": ["đổi K7 thành K5"]])
+        let chu = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .flatMap { $0 }.compactMap { ($0 as? NSTextField)?.stringValue }.joined(separator: " ")
+        XCTAssertTrue(chu.contains("chờ duyệt"), "nhận: \(chu)")
+    }
+
+    // MARK: - Log UART
+
+    /// Log hiện ĐỦ, không cắt còn 5 dòng đầu.
+    ///
+    /// 5 dòng đầu của một log firmware là phần khởi động — đúng phần KHÔNG bao giờ chứa lý do
+    /// hỏng. Thứ người ta đọc log để tìm nằm ở cuối, hoặc ở dòng ngay trước khi nó im.
+    func testLOGuartHIENdUkhongCATconNAMdong() throws {
+        let v = SimView()
+        let dong = (0..<40).map { "00:00:0\($0 % 10).000 [INFO] dòng \($0)" }
+        v.capNhat(ketQua: ["report": ["passed": true, "captured": ["uart": dong]]])
+        let m = try XCTUnwrap(khoiMa(v).first, "log UART phải ra một khối mã")
+        XCTAssertEqual(m.soDongMa, 40)
+    }
+}
+
+/// Tên của một dòng `expect` — hình dạng THẬT của engine, không phải hình dạng ta mong.
+final class EideSimTenKyVongTests: XCTestCase {
+
+    /// Hình dạng thật của qemu: `{kind, pattern, within_s, status, matched}`.
+    ///
+    /// Bản cũ hỏi `expect`/`name` rồi rơi về `"?"`, nên màn hiện sáu dòng `?  đạt` — người dùng
+    /// biết có sáu kỳ vọng và không biết kỳ vọng nào.
+    func testDUNGtenTUkindVApattern() {
+        let e: [String: Any] = ["kind": "uart", "pattern": "EIDE: atmega328p arduino-uno",
+                                "within_s": 5, "status": "passed"]
+        XCTAssertEqual(SimView.tenKyVong(e), "uart \"EIDE: atmega328p arduino-uno\"")
+    }
+
+    func testUUtienKHOAexpectKHIco() {
+        XCTAssertEqual(SimView.tenKyVong(["expect": "settle < 3s", "kind": "sim"]), "settle < 3s")
+    }
+
+    /// Khoá lạ vẫn phải hiện nguyên — một dòng khó đọc hơn hẳn một dòng không nói gì, và nó chỉ
+    /// ra đúng khoá mà hàm còn thiếu.
+    func testKHOAlaHIENnguyenCHUkhongRAdauHOI() {
+        let t = SimView.tenKyVong(["gpio_toggles": 12, "status": "passed", "matched": "x"])
+        XCTAssertEqual(t, "gpio_toggles=12")
+        XCTAssertFalse(t.contains("?"))
+    }
+
+    func testKHONGcoGIthiNOIroLAkhongTEN() {
+        XCTAssertEqual(SimView.tenKyVong(["status": "passed"]), "(kỳ vọng không tên)")
+    }
+
+    /// Màn dựng đúng tên cho cả sáu dòng của luồng AVR thật.
+    func testSAUdongAVRdeuCOten() {
+        let ky: [[String: Any]] = (0..<6).map {
+            ["kind": "uart", "pattern": "dòng \($0)", "status": "passed"]
+        }
+        let v = SimView()
+        v.capNhat(ketQua: ["report": ["passed": true,
+                                      "metrics": ["expect": ky, "n_passed": 6,
+                                                  "n_unverified": 0, "engine": "qemu"]]])
+        let nhan = v.cot.arrangedSubviews.compactMap { ($0 as? NSStackView)?.arrangedSubviews }
+            .compactMap { ($0.first as? NSTextField)?.stringValue }
+        XCTAssertEqual(nhan.filter { $0.hasPrefix("uart ") }.count, 6)
+        XCTAssertFalse(nhan.contains("?"))
+    }
+}

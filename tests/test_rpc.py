@@ -703,3 +703,56 @@ def test_chi_cong_LUOT_GOI_cua_NGAY_HOM_NAY(workspace, monkeypatch):
                              "data": {"cost_usd": 99.0}, "prev_hash": "0" * 64,
                              "hash": "a" * 64}, ensure_ascii=False) + "\n")
     assert abs(d.budget_state({})["spent_usd"] - 2.0) < 1e-6, "cộng cả bản ghi hôm qua"
+
+
+def test_ngan_sach_tinh_theo_NGAY_DIA_PHUONG_khong_theo_utc(workspace):
+    """Sổ cái đóng dấu UTC; "hạn mức NGÀY" thì người dùng hiểu theo múi giờ của họ.
+
+    So một chuỗi UTC với `date.today()` địa phương nghĩa là ở +07, mọi chi phí từ nửa đêm tới
+    7 giờ sáng không được tính. Đo 16/09/2026 lúc 06:55 giờ Việt Nam: một lượt `model.call`
+    2 USD vừa ghi xong, `budget_state` trả `spent_usd = 0`. Và APD-08 §5 leo thang khi còn dưới
+    20% ngân sách — một bộ đếm đọc 0 suốt bảy tiếng đầu ngày không bao giờ chạm ngưỡng.
+    """
+    import json as _json
+    from datetime import UTC, datetime, timedelta
+
+    d = Daemon(project=workspace)
+    # Một mốc THUỘC ngày địa phương hôm nay nhưng rơi vào ngày UTC HÔM QUA — tức khoảng nửa đêm
+    # tới sáng ở mọi múi giờ dương. Dựng bằng cách lùi giờ từ đầu ngày địa phương.
+    dau_ngay = datetime.now().astimezone().replace(hour=0, minute=30, second=0, microsecond=0)
+    utc = dau_ngay.astimezone(UTC)
+    with d.ledger.path.open("a", encoding="utf-8") as f:
+        f.write(_json.dumps({"seq": 998, "ts": utc.isoformat(), "kind": "model.call",
+                             "actor": "agent", "data": {"cost_usd": 3.0},
+                             "prev_hash": "0" * 64, "hash": "b" * 64},
+                            ensure_ascii=False) + "\n")
+    kq = d.budget_state({})
+    assert abs(kq["spent_usd"] - 3.0) < 1e-6, (
+        f"chi phí lúc {dau_ngay:%H:%M} giờ địa phương phải tính vào hôm nay, nhận {kq}")
+    assert kq["calls_today"] == 1
+
+    # Và một mốc của ngày địa phương HÔM QUA thì không được tính.
+    hom_qua = (dau_ngay - timedelta(days=1)).astimezone(UTC)
+    with d.ledger.path.open("a", encoding="utf-8") as f:
+        f.write(_json.dumps({"seq": 997, "ts": hom_qua.isoformat(), "kind": "model.call",
+                             "actor": "agent", "data": {"cost_usd": 50.0},
+                             "prev_hash": "0" * 64, "hash": "c" * 64},
+                            ensure_ascii=False) + "\n")
+    assert abs(d.budget_state({})["spent_usd"] - 3.0) < 1e-6, "cộng cả bản ghi hôm qua"
+
+
+def test_ts_hong_khong_tinh_vao_ngay_nao(workspace):
+    """Mốc thời gian đọc không được thì bỏ qua, KHÔNG mặc định là hôm nay.
+
+    Mặc định vào hôm nay sẽ khiến một bản ghi hỏng đội ngân sách lên và chặn việc của người
+    dùng — một lỗi dữ liệu biến thành một lệnh cấm.
+    """
+    import json as _json
+
+    d = Daemon(project=workspace)
+    with d.ledger.path.open("a", encoding="utf-8") as f:
+        f.write(_json.dumps({"seq": 996, "ts": "không-phải-thời-gian", "kind": "model.call",
+                             "actor": "agent", "data": {"cost_usd": 77.0},
+                             "prev_hash": "0" * 64, "hash": "d" * 64},
+                            ensure_ascii=False) + "\n")
+    assert d.budget_state({})["spent_usd"] == 0.0

@@ -86,6 +86,7 @@ enum WindowCapture {
         case eideMaNguon = "eide-ma-nguon"   // cây dự án + trình soạn thảo
         case eideHoChieu = "eide-ho-chieu"   // bảng fact có tầng, nguồn, độ tin
         case eideBanDo = "eide-ban-do"       // đồ thị tri thức dựng thành cây
+        case eideMoPhong = "eide-mo-phong"   // kỳ vọng, log UART, bảng quét
     }
 
     // ĐỌC ẢNH `eide-*` THẾ NÀO
@@ -132,6 +133,10 @@ enum WindowCapture {
         // chỉ là không nói được gì.
         case .eideXungDot, .eideLamRo, .eideModels, .eideMaNguon, .eideHoChieu, .eideBanDo:
             return 8
+        // Mô phỏng chạy `qemu-system-avr` THẬT. Đo 15/09: 25 giây ở dòng lệnh, nhưng qua daemon
+        // còn thêm 2 giây chờ màn mở, nhịp hỏi `job.status` giãn dần, và một lượt khởi động
+        // qemu nữa — chụp ở 45 giây ra đúng dòng "Đang chạy `sim.run`…".
+        case .eideMoPhong: return 120
         default: return 0.4
         }
     }
@@ -255,6 +260,29 @@ enum WindowCapture {
             _ = chuanBiEide("Passport", on: controller)
         case .eideBanDo:
             _ = chuanBiEide("Graph", on: controller)
+        case .eideMoPhong:
+            guard chuanBiEide("Sim", on: controller) else { break }
+            // Màn Mô phỏng chỉ có gì để hiện SAU khi chạy, và `sim.run` cần firmware lẫn kịch
+            // bản. Lấy chúng từ chính dự án: `build/fw.elf` và tệp `.yaml` đầu tiên trong `sim/`
+            // — gắn cứng tên tệp thì cảnh chỉ chụp được trên máy của một người.
+            let d = ProcessInfo.processInfo.environment["EIDE_PROJECT"] ?? ""
+            let elf = (d as NSString).appendingPathComponent("build/fw.elf")
+            let thuMucSim = (d as NSString).appendingPathComponent("sim")
+            let kb = (try? FileManager.default.contentsOfDirectory(atPath: thuMucSim))?
+                .filter { $0.hasSuffix(".yaml") }.sorted().first
+            guard FileManager.default.fileExists(atPath: elf), let kb else {
+                print("⏭  bỏ qua eide-mo-phong: dự án chưa có build/fw.elf hoặc sim/*.yaml")
+                break
+            }
+            // Cho run loop chạy để màn KỊP MỞ trước khi gọi. `chonManEide` dựng màn qua vài
+            // nhịp hoãn lại; gọi ngay thì `chayNhuNguoiDung` không tìm thấy màn nào đang hiện.
+            RunLoop.current.run(until: Date().addingTimeInterval(2))
+            let chay = controller.eidePanel?.chayNhuNguoiDung(
+                "sim.run", ["artifact": elf,
+                            "scenario": (thuMucSim as NSString).appendingPathComponent(kb)])
+            if chay != true {
+                print("⏭  eide-mo-phong: chưa mở được màn Mô phỏng nên không chạy sim.run")
+            }
         case .trong:
             controller.prepareSelfTestDocument("""
                 Xin chào. Đây là GEditor.

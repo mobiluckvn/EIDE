@@ -658,27 +658,25 @@ public final class SimView: ManHinhCoSo {
             }
 
             for e in ky {
-                let ten = (e["expect"] as? String) ?? (e["name"] as? String) ?? "?"
                 let tt = (e["status"] as? String) ?? "?"
                 let ly = (e["reason"] as? String) ?? ""
                 let mau: NSColor = tt == "passed" ? EideToken.Mau.ok
                     : (tt == "unverified" ? EideToken.Mau.warn : EideToken.Mau.bad)
-                themDong(ten, "\(_tenTrangThai(tt))\(ly.isEmpty ? "" : " — \(ly)")", mau: mau)
+                themDong(Self.tenKyVong(e),
+                         "\(_tenTrangThai(tt))\(ly.isEmpty ? "" : " — \(ly)")", mau: mau)
             }
 
             _hienBatDuoc(r)
         }
 
-        for r in bang.prefix(30) {
-            let ten = r.keys.sorted().map { "\($0)=\(EideKnowledgeFormat.giaTri(r[$0]))" }
-            themDong("quét", ten.joined(separator: " · "))
-        }
-        if bang.count > 30 { noiRong("… và \(bang.count - 30) hàng nữa.") }
+        if !bang.isEmpty { _hienBangQuet(bang, totNhat: totNhat) }
 
-        if let b = totNhat {
+        if let b = totNhat, bang.isEmpty {
             let mo = b.keys.sorted().map { "\($0)=\(EideKnowledgeFormat.giaTri(b[$0]))" }
             themDong("tốt nhất", mo.joined(separator: " · "), mau: EideToken.Mau.ok)
         }
+
+        if let sosanh = ketQua["diff"] as? [String: Any] { _hienSoSanhHil(sosanh, ketQua) }
 
         _hienNenTang(ketQua)
 
@@ -721,12 +719,89 @@ public final class SimView: ManHinhCoSo {
         }
     }
 
+    /// `sim.sweep` `{table[], best}` — một BẢNG, và bản cũ dựng nó thành câu.
+    ///
+    /// Mỗi hàng ra một dòng `quét a=1 · b=2 · c=3`. Quét tham số là việc SO SÁNH các hàng với
+    /// nhau để tìm cấu hình tốt nhất; xếp thành câu thì cùng một tham số nằm ở vị trí khác nhau
+    /// trên mỗi dòng tuỳ độ dài giá trị trước nó, và mắt không quét dọc được. Đúng lý do vì sao
+    /// màn Hộ chiếu cũng phải bỏ cách dựng ấy.
+    ///
+    /// Hàng `best` được tô, không tách ra một dòng riêng: tách ra thì người đọc phải tự tìm nó
+    /// trong bảng để xem nó hơn các hàng khác ở chỗ nào — mà đó chính là câu hỏi.
+    private func _hienBangQuet(_ bang: [[String: Any]], totNhat: [String: Any]?) {
+        // Cột = HỢP các khoá của mọi hàng. Lấy khoá của hàng đầu thì một tham số chỉ xuất hiện
+        // từ hàng thứ hai trở đi sẽ biến mất khỏi bảng mà không ai biết.
+        var cot: [String] = []
+        for h in bang {
+            for k in h.keys.sorted() where !cot.contains(k) { cot.append(k) }
+        }
+        guard !cot.isEmpty else { return }
+
+        func la(_ h: [String: Any]) -> Bool {
+            guard let b = totNhat, !b.isEmpty else { return false }
+            return b.allSatisfy { k, v in
+                EideKnowledgeFormat.giaTri(h[k]) == EideKnowledgeFormat.giaTri(v)
+            }
+        }
+        let iTot = bang.firstIndex(where: la)
+        themDong("quét tham số", "\(bang.count) cấu hình"
+                 + (iTot != nil ? " · hàng tô xanh là tốt nhất" : ""),
+                 mau: EideToken.Mau.info)
+        themBang(cot: cot,
+                 hang: bang.map { h in cot.map { EideKnowledgeFormat.giaTri(h[$0]) } },
+                 canPhai: Set(cot.indices.filter { i in
+                     bang.allSatisfy { Double(EideKnowledgeFormat.giaTri($0[cot[i]])) != nil }
+                 }),
+                 mauO: { h, _ in h == iTot ? EideToken.Mau.ok : nil })
+    }
+
+    /// `sim.compare_hil` `{diff, proposals}` — bảng SIL ↔ HIL của mockup `Sim.dc.html`.
+    ///
+    /// **Lệch giữa SIL và HIL là tin quan trọng nhất màn này mang.** Nó nói mô hình mô phỏng sai
+    /// ở đâu so với board thật, và mọi kết luận rút từ SIL về sau đều đứng trên chỗ lệch ấy.
+    /// Hợp đồng để `diff` là `object` tự do, nên đọc cả hai hình dạng hay gặp: `{chỉ số: {sil,
+    /// hil, verdict}}` và `{chỉ số: [sil, hil]}`.
+    private func _hienSoSanhHil(_ diff: [String: Any], _ ketQua: [String: Any]) {
+        var hang: [[String]] = []
+        for (ten, v) in diff.sorted(by: { $0.key < $1.key }) {
+            if let m = v as? [String: Any] {
+                hang.append([ten,
+                             EideKnowledgeFormat.giaTri(m["sil"] ?? m["SIL"]),
+                             EideKnowledgeFormat.giaTri(m["hil"] ?? m["HIL"]),
+                             (m["verdict"] as? String) ?? (m["status"] as? String) ?? ""])
+            } else if let a = v as? [Any], a.count >= 2 {
+                hang.append([ten, EideKnowledgeFormat.giaTri(a[0]),
+                             EideKnowledgeFormat.giaTri(a[1]), ""])
+            } else {
+                // Hình dạng lạ: hiện NGUYÊN giá trị vào cột chênh lệch thay vì bỏ hàng đi. Một
+                // chỉ số lệch bị nuốt vì hợp đồng không nói rõ hình dạng là đúng thứ tệ nhất.
+                hang.append([ten, "", "", EideKnowledgeFormat.giaTri(v)])
+            }
+        }
+        guard !hang.isEmpty else { return }
+        themDong("so sánh SIL ↔ HIL", "\(hang.count) chỉ số", mau: EideToken.Mau.warn)
+        themBang(cot: ["chỉ số", "SIL", "HIL", "kết luận"], hang: hang, canPhai: [1, 2])
+
+        // `proposals` là đề xuất SỬA MÔ HÌNH, và nó chờ người duyệt — nói rõ điều đó, vì một đề
+        // xuất trông như một kết luận sẽ được đọc như việc đã rồi.
+        let de = (ketQua["proposals"] as? [String]) ?? []
+        for d in de {
+            themDong("đề xuất (chờ duyệt)", d, mau: EideToken.Mau.warn)
+        }
+    }
+
     private func _hienBatDuoc(_ r: [String: Any]) {
         guard let b = (r["captured"] as? [String: Any])
             ?? ((r["metrics"] as? [String: Any])?["captured"] as? [String: Any]) else { return }
         if let uart = b["uart"] as? [Any], !uart.isEmpty {
+            // LOG ĐẦY ĐỦ, phông đơn cách, có số dòng — mockup `Sim.dc.html` vẽ hẳn một khung
+            // console cho nó. Bản cũ hiện 5 dòng đầu rồi thôi, và 5 dòng đầu của một log
+            // firmware là phần khởi động: đúng phần KHÔNG bao giờ chứa lý do hỏng. Thứ người ta
+            // đọc log để tìm nằm ở cuối, hoặc ở giữa, hoặc ở dòng ngay trước khi nó im.
             themDong("UART bắt được", "\(uart.count) dòng", mau: EideToken.Mau.info)
-            for d in uart.prefix(5) { themDong(" · ", EideKnowledgeFormat.giaTri(d)) }
+            themMa(dong: uart.enumerated().map {
+                EideDongMa(so: $0.offset + 1, chu: EideKnowledgeFormat.giaTri($0.element))
+            })
         }
         if let gpio = b["gpio"] as? [Any], !gpio.isEmpty {
             themDong("GPIO", "\(gpio.count) lần đổi mức", mau: EideToken.Mau.info)
@@ -736,6 +811,31 @@ public final class SimView: ManHinhCoSo {
                 themDong("biến \(k)", EideKnowledgeFormat.giaTri(v))
             }
         }
+    }
+
+    /// Tên người đọc được của một dòng `expect`.
+    ///
+    /// Hợp đồng SIM-05 để `expect[]` là mảng object tự do, và hình dạng THẬT của engine qemu là
+    /// `{kind, pattern, within_s, status, matched}` — không có `expect` lẫn `name`. Bản cũ hỏi
+    /// đúng hai khoá ấy rồi rơi về `"?"`, nên màn hiện sáu dòng `?  đạt`: người dùng biết có sáu
+    /// kỳ vọng và không biết kỳ vọng nào. Đo 16/09/2026 trên luồng AVR.
+    ///
+    /// Dựng tên từ thứ CÓ: `uart "EIDE: atmega328p"` nói đủ cả loại kênh lẫn điều đang chờ.
+    static func tenKyVong(_ e: [String: Any]) -> String {
+        if let t = (e["expect"] as? String) ?? (e["name"] as? String), !t.isEmpty { return t }
+        let loai = (e["kind"] as? String) ?? ""
+        let mau = (e["pattern"] as? String) ?? (e["value"] as? String) ?? ""
+        if !loai.isEmpty || !mau.isEmpty {
+            return [loai, mau.isEmpty ? "" : "\"\(mau)\""]
+                .filter { !$0.isEmpty }.joined(separator: " ")
+        }
+        // Không khoá nào quen: hiện NGUYÊN các trường còn lại thay vì "?". Một dòng khó đọc vẫn
+        // hơn một dòng không nói gì — và nó chỉ ra đúng khoá mà hàm này còn thiếu.
+        let bo: Set<String> = ["status", "reason", "matched"]
+        let con = e.filter { !bo.contains($0.key) }
+        return con.isEmpty ? "(kỳ vọng không tên)"
+            : con.map { "\($0.key)=\(EideKnowledgeFormat.giaTri($0.value))" }
+                .sorted().joined(separator: " · ")
     }
 
     private func _tenTrangThai(_ t: String) -> String {

@@ -10,7 +10,7 @@ import secrets
 import threading
 from collections.abc import Callable
 from dataclasses import asdict
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, TextIO
 
@@ -152,6 +152,32 @@ def _autonomy_du_an(project: Path | None) -> dict[str, Any] | None:
     except (OSError, yaml.YAMLError):
         return None
     return d if isinstance(d, dict) else None
+
+
+
+def _ngay_dia_phuong(ts: Any) -> date | None:
+    """Ngày ĐỊA PHƯƠNG của một mốc thời gian trong sổ cái.
+
+    Sổ cái đóng dấu `ts` bằng UTC (`Ledger.append`), còn "hạn mức NGÀY" thì người dùng hiểu theo
+    múi giờ của họ. So hai thứ ấy bằng `ts.startswith(date.today())` là so một chuỗi UTC với một
+    ngày địa phương — và ở Việt Nam (+07) điều đó nghĩa là **mọi chi phí từ nửa đêm tới 7 giờ
+    sáng không được tính vào ngân sách hôm nay**. Đo 16/09/2026 lúc 06:55 giờ địa phương: một
+    lượt `model.call` 2 USD vừa ghi xong, `budget_state` trả `spent_usd = 0`.
+
+    Hệ quả không phải chuyện hiển thị: APD-08 §5 leo thang khi còn dưới 20% ngân sách, và một
+    bộ đếm đọc 0 suốt bảy tiếng đầu ngày là bộ đếm không bao giờ chạm ngưỡng trong bảy tiếng ấy.
+
+    Trả `None` khi mốc thời gian đọc không được — bản ghi ấy không tính vào ngày nào cả, thay vì
+    tính nhầm vào hôm nay.
+    """
+    try:
+        d = datetime.fromisoformat(str(ts))
+    except (TypeError, ValueError):
+        return None
+    # Mốc không mang múi giờ thì coi là UTC — đó là thứ `Ledger.append` ghi ra.
+    if d.tzinfo is None:
+        d = d.replace(tzinfo=UTC)
+    return d.astimezone().date()
 
 
 class Daemon:
@@ -653,8 +679,6 @@ class Daemon:
         thể có nhiều tiến trình (giao diện, CLI, tác tử nền) cùng tiêu tiền. Sổ cái là chỗ duy
         nhất cả ba cùng ghi.
         """
-        from datetime import date
-
         import yaml as _yaml
 
         han = 0.0
@@ -667,12 +691,12 @@ class Daemon:
                 except (OSError, _yaml.YAMLError, TypeError, ValueError):
                     han = 0.0
 
-        hom_nay = date.today().isoformat()
+        hom_nay = date.today()
         da_tieu, so_luot = 0.0, 0
         for r in self.ledger.records():
             if r.get("kind") != "model.call":
                 continue
-            if not str(r.get("ts", "")).startswith(hom_nay):
+            if _ngay_dia_phuong(r.get("ts")) != hom_nay:
                 continue
             so_luot += 1
             try:
