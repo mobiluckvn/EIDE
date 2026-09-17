@@ -98,9 +98,12 @@ final class EideUITests: XCTestCase {
         q.capNhat(cho: [["cap": "target.flash"]],
                   hoanTac: [["cap": "project.create", "deadline": "2026-09-07T03:10:00+00:00"]])
         let chu = q.moiChu()
-        XCTAssertTrue(chu.contains("Chờ anh (1)"))
+        // Nhãn đổi theo bản demo UX v2.0 (§2F.1): "CHỜ TÔI" / "HOÀN TÁC ĐƯỢC", chữ hoa như hai
+        // tiêu đề khối còn lại của cột phải. Bất biến vẫn là bất biến cũ: HAI danh sách tách
+        // nhau, mỗi danh sách một câu hỏi.
+        XCTAssertTrue(chu.contains("CHỜ TÔI (1)"))
         XCTAssertTrue(chu.contains("target.flash"))
-        XCTAssertTrue(chu.contains("Đã làm — hoàn tác được (1)"))
+        XCTAssertTrue(chu.contains("HOÀN TÁC ĐƯỢC (1)"))
         XCTAssertTrue(chu.contains("project.create"))
     }
 

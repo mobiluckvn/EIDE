@@ -183,6 +183,8 @@ public final class EidePanel: NSView {
     private let hanhTrinh = FlowMapView()
     private let chinhSach = ChinhSachView()
     private let thanhMan = NSStackView()
+    /// Năng lực đứng sau màn đang mở — hiện cạnh tên màn (UXC-31 §2C.4).
+    private let nangLucMan = NSTextField(labelWithString: "")
     private let tenMan = NSTextField(labelWithString: "")
 
     /// Tiền tố tên màn trong `screens.json` → khung nhìn.
@@ -746,6 +748,7 @@ public final class EidePanel: NSView {
         hoiThoai.gon = false
         thanhMan.isHidden = false
         tenMan.stringValue = ten
+        nangLucMan.stringValue = _nangLucCuaMan(ten)
         if !thamSo.isEmpty {
             // Điền sẵn ô nhập của màn, KHÔNG tự bấm Enter: người gõ "/passport.query stm32"
             // có thể muốn sửa lại trước khi tra, và một màn tự chạy ngay lúc mở là một màn
@@ -854,6 +857,10 @@ public final class EidePanel: NSView {
         // giống nhau ("LamRo" → "Làm rõ yêu cầu").
         tenMan.stringValue = EideDieuHuong.NHOM
             .flatMap(\.man).first { $0.tien == k.tien }?.nhan ?? k.tien
+        // Đường vào từ CỘT ĐIỀU HƯỚNG — đường người dùng đi nhiều nhất. Bản đầu chỉ đặt dòng
+        // phụ ở `hienKhung` (đường gõ `/ns.name`), nên dòng phụ tồn tại, có mã, và không bao
+        // giờ hiện ra cho người bấm chuột.
+        nangLucMan.stringValue = _nangLucCuaMan(k.tien)
         k.v.chuaNap("Đang đọc trạng thái…")
         _dungONhap(choMan: k.tien, khungNhin: k.v)
         // Năng lực tự nạp TRƯỚC, rồi mới tới hai màn nạp bằng phương thức daemon.
@@ -1561,6 +1568,15 @@ public final class EidePanel: NSView {
         thanhMan.spacing = EideToken.space[1]
         thanhMan.addArrangedSubview(nutDong)
         thanhMan.addArrangedSubview(tenMan)
+        // Dòng NĂNG LỰC đứng cạnh tên màn — UXC-31 §2C.4.
+        //
+        // Đặt ở THANH MÀN chứ không trong khung nhìn: tiêu đề người dùng THẬT SỰ nhìn thấy là
+        // tiêu đề ở đây, còn `ManHinhCoSo.tieuDe` bị thanh này che. Đặt nhầm chỗ thì dòng phụ
+        // tồn tại trong cây khung nhìn, có test, và không ai nhìn thấy — đúng hình dạng lỗi im
+        // lặng 61 (dải chip cao 0) chỉ khác chỗ.
+        nangLucMan.font = EideToken.fontMono
+        nangLucMan.textColor = EideToken.Mau.faint
+        thanhMan.addArrangedSubview(nangLucMan)
         thanhMan.isHidden = true
         for k in bangMan { k.v.isHidden = true }
         banDo.isHidden = true
@@ -1581,6 +1597,11 @@ public final class EidePanel: NSView {
             addSubview(v)
         }
         let g = EideToken.contentGap
+        vungPhai.dangChay.onChon = { [weak self] ma in
+            guard let self else { return }
+            self.nguoiVuaChonMan()
+            _ = self._moTheoTenMan("NhatKy", thamSo: ma)
+        }
         daiCu.onTaiLai = { [weak self] in
             guard let self else { return }
             self.lucCuoiNghe = Date()
@@ -1624,18 +1645,6 @@ public final class EidePanel: NSView {
         for k in bangMan.map(\.v) + [banDo] {
             NSLayoutConstraint.activate(_rangBuocVungMan(k))
         }
-        daiCu.onTaiLai = { [weak self] in
-            guard let self else { return }
-            self.lucCuoiNghe = Date()
-            self.capNhatDaiCu()
-            Task { await self.lamMoi() }
-        }
-        addSubview(daiCu)
-        NSLayoutConstraint.activate([
-            daiCu.topAnchor.constraint(equalTo: oNhap.bottomAnchor, constant: 0),
-            daiCu.leadingAnchor.constraint(equalTo: leadingAnchor),
-            daiCu.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor),
-        ])
         batNhipTim()
 
         // Hội thoại bắt đầu ngay dưới thanh tự chủ khi KHÔNG có màn nào mở; khi có màn thì
@@ -1987,6 +1996,70 @@ public final class EidePanel: NSView {
         await MainActor.run {
             self.manHinhCua = bang
             self.hoiThoai.oLenh.napNangLuc(ds + themMan)
+            self._dienNangLucPhu()
+        }
+    }
+
+    /// Năng lực đứng sau một màn, đảo từ bảng `cap → màn` daemon gửi.
+    ///
+    /// Cắt còn ba tên: màn Nhập tài liệu đứng sau hơn hai mươi năng lực, và một dòng phụ dài
+    /// hơn tên màn thì không còn là dòng phụ.
+    @MainActor
+    private func _nangLucCuaMan(_ ten: String) -> String {
+        // Tra bằng CẢ HAI chiều: `ten` có thể là tiền tố (`Passport`) khi mở bằng `/` hoặc là
+        // NHÃN tiếng Việt (`Hộ chiếu chip`) khi bấm trên cột điều hướng. `_tienCuaMan` chỉ xử lý
+        // chiều thứ nhất — nó so `ten.hasPrefix(tiền tố)`, mà "Hộ chiếu chip" không bắt đầu bằng
+        // "Passport", nên nó trả về chính cái nhãn và phép lọc dưới đây khớp 0 năng lực. Dòng
+        // phụ vì thế rỗng ở đúng đường vào mà người dùng đi nhiều nhất.
+        let tien = _tienCuaMan(ten)
+        var ds = manHinhCua.filter {
+            $0.value.hasPrefix(tien) || $0.value.contains("(\(ten))")
+        }.keys.sorted()
+        guard !ds.isEmpty else { return "" }
+        // NĂNG LỰC MẶC ĐỊNH lên đầu, phần còn lại theo bảng chữ cái.
+        //
+        // Sắp thuần chữ cái cho ra "passport.diff · passport.export · passport.import" cho màn
+        // Hộ chiếu chip — ba năng lực ít liên quan nhất tới thứ màn đang hiện, chỉ vì chữ `d`
+        // đứng trước chữ `q`. Thứ người đọc cần là năng lực màn THẬT SỰ chạy khi mở ra.
+        if let md = Self.napMacDinh(choMan: tien), let i = ds.firstIndex(of: md) {
+            ds.remove(at: i)
+            ds.insert(md, at: 0)
+        }
+        let hien = ds.count > 3 ? Array(ds.prefix(3)) + ["+\(ds.count - 3)"] : ds
+        return hien.joined(separator: " · ")
+    }
+
+    /// Chiếu các thẻ Run đang chạy xuống khối ĐANG CHẠY ở cột phải — UXC-31 §2F.1.
+    ///
+    /// Gọi ở đúng hai chỗ thẻ Run đổi tập hợp: lúc thêm và lúc gỡ. KHÔNG gọi ở mỗi lần cập nhật
+    /// tiến độ — bản chiếu một dòng không đổi khi một bước xong, và vẽ lại cột phải mỗi sự kiện
+    /// là vẽ lại vài chục lần một giây trong lúc một chuỗi chạy.
+    @MainActor
+    private func _chieuDangChay() {
+        let ds = theTienDo
+            .filter { !$0.value.daXong || $0.value.choNguoi }
+            .map { (ma: $0.key, dong: $0.value.tomTat_choTest) }
+            .sorted { $0.dong < $1.dong }
+        vungPhai.dangChay.datDs(ds)
+    }
+
+    /// Điền dòng phụ "năng lực đứng sau" cho từng màn — UXC-31 §2C.4.
+    ///
+    /// ĐẢO bảng `cap → màn` mà daemon vừa gửi, thay vì giữ một bảng `màn → cap` viết tay. Bảng
+    /// viết tay là bản sao thứ hai của `screens.json`, và mọi bản sao thứ hai trong kho này đều
+    /// đã lệch ít nhất một lần (xem DEV-128 lỗi 70). Đảo bảng thì không có gì để lệch.
+    @MainActor
+    private func _dienNangLucPhu() {
+        var theoMan: [String: [String]] = [:]
+        for (cap, man) in manHinhCua {
+            theoMan[man, default: []].append(cap)
+        }
+        for (tien, v) in bangMan {
+            guard let m = v as? ManHinhCoSo else { continue }
+            let ds = theoMan.first { $0.key.hasPrefix(tien) }?.value.sorted() ?? []
+            // Cắt còn ba tên: một màn như Nhập tài liệu đứng sau hơn hai mươi năng lực, và một
+            // dòng phụ dài hai dòng thì không còn là dòng phụ.
+            m.datNangLuc(ds.count > 3 ? Array(ds.prefix(3)) + ["+\(ds.count - 3)"] : ds)
         }
     }
 
@@ -2249,10 +2322,12 @@ public final class EidePanel: NSView {
                 if the.choNguoi { return }
                 self?.theTienDo.removeValue(forKey: id)
                 self?.hoiThoai.goThe(the)
+                self?._chieuDangChay()
             }
         }
         theTienDo[id] = the
         hoiThoai.themThe(the)
+        _chieuDangChay()
         // ĐƯA thông điệp tạo ra thẻ VÀO thẻ. `init` chỉ gọi `capNhat([:])`, nên trước đây thông
         // điệp ĐẦU TIÊN — thông điệp duy nhất mang `cap`, và đôi khi là thông điệp duy nhất của
         // cả lượt chạy — bị vứt. Hệ quả đo 16/09/2026 qua giao diện: năm thẻ cùng lúc, cả năm ghi

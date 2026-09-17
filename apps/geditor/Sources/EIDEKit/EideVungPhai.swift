@@ -20,6 +20,15 @@ import AppKit
 /// đẩy khuất ngay khi một màn chuyên đề mở ra.
 public final class EideVungPhai: NSView {
 
+    /// Khung nhìn Nhật ký — **màn S2**, không phải một khối của cột này.
+    ///
+    /// Giữ ở đây vì panel lấy nó qua `vungPhai.nhatKy` từ lâu, nhưng nó KHÔNG được thêm vào cột
+    /// phải nữa. Lý do là một lỗi im lặng sống từ ngày màn Nhật ký ra đời: cùng một thể hiện
+    /// `NSView` vừa được cột phải `addSubview`, vừa được panel `addSubview` để làm màn S2 — mà
+    /// một view chỉ có MỘT cha, nên lần thêm thứ hai âm thầm kéo nó khỏi cột phải. Kết quả:
+    /// tiêu đề "ĐANG LÀM" đứng trên một khoảng trống suốt cả phiên, và ràng buộc `cao ≥ 200`
+    /// của nó thành một ràng buộc mồ côi. Mọi ảnh chụp từ 15/09 đều cho thấy khoảng trống ấy —
+    /// tôi đọc qua chúng nhiều lần mà không hỏi vì sao chỗ đó rỗng.
     public let nhatKy = NhatKyView(frame: .zero)
     public let hangDoi = ReviewQueueView()
 
@@ -28,7 +37,10 @@ public final class EideVungPhai: NSView {
     /// người ta đọc một danh sách đang chạy.
     public static let RONG: CGFloat = 300
 
-    private let tieuDe1 = NSTextField(labelWithString: "ĐANG LÀM")
+    /// Khối ĐANG CHẠY — bản chiếu một dòng của thẻ Run (UXC-31 §2F.1).
+    public let dangChay = EideDangChay()
+
+    private let tieuDe1 = NSTextField(labelWithString: "ĐANG CHẠY")
     private let vach = NSBox()
 
     public override init(frame: NSRect) {
@@ -47,7 +59,7 @@ public final class EideVungPhai: NSView {
         tieuDe1.textColor = EideToken.Mau.muted
         vach.boxType = .separator
 
-        for v in [tieuDe1, nhatKy, vach, hangDoi] as [NSView] {
+        for v in [tieuDe1, dangChay, vach, hangDoi] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -56,11 +68,11 @@ public final class EideVungPhai: NSView {
             tieuDe1.topAnchor.constraint(equalTo: topAnchor, constant: g),
             tieuDe1.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
 
-            nhatKy.topAnchor.constraint(equalTo: tieuDe1.bottomAnchor, constant: 2),
-            nhatKy.leadingAnchor.constraint(equalTo: leadingAnchor),
-            nhatKy.trailingAnchor.constraint(equalTo: trailingAnchor),
+            dangChay.topAnchor.constraint(equalTo: tieuDe1.bottomAnchor, constant: 2),
+            dangChay.leadingAnchor.constraint(equalTo: leadingAnchor),
+            dangChay.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            vach.topAnchor.constraint(equalTo: nhatKy.bottomAnchor, constant: g),
+            vach.topAnchor.constraint(equalTo: dangChay.bottomAnchor, constant: g),
             vach.leadingAnchor.constraint(equalTo: leadingAnchor),
             vach.trailingAnchor.constraint(equalTo: trailingAnchor),
 
@@ -73,10 +85,7 @@ public final class EideVungPhai: NSView {
             // việc chờ: một mục ASK bị cắt mất nút Duyệt là một mục người dùng không trả lời
             // được, và tác tử đứng chờ vì một lỗi bố cục.
             hangDoi.heightAnchor.constraint(greaterThanOrEqualToConstant: 150),
-            nhatKy.heightAnchor.constraint(greaterThanOrEqualToConstant: 200),
         ])
-        // Nhật ký nhường chỗ trước khi hàng đợi phải nhường.
-        nhatKy.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         hangDoi.setContentCompressionResistancePriority(.required, for: .vertical)
     }
 

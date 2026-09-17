@@ -43,6 +43,19 @@ public final class KhungLat: NSClipView {
 
 open class ManHinhCoSo: NSView, KhungNhinEide {
 
+    /// Dòng phụ ghi NĂNG LỰC đứng sau màn — UXC-31 §2C.4.
+    ///
+    /// Mỗi màn phải nói nó chạy trên cái gì. Hai lý do, và lý do thứ hai mới là lý do chính.
+    ///
+    /// Thứ nhất: người dùng gõ được `/passport.query` để chạy lại đúng thứ màn vừa hiện, nên
+    /// tên năng lực là một lối tắt đọc được ngay trên màn.
+    ///
+    /// Thứ hai, và quan trọng hơn: một màn KHÔNG ghi được năng lực nào là một màn mồ côi — nó
+    /// hiện một thứ gì đó mà không ai truy được thứ ấy từ đâu ra. Phát hiện R6 của bản rà soát
+    /// bắt đúng một màn như thế (`FlowMap` khai `—`), và dòng phụ này biến "màn mồ côi" từ một
+    /// thứ phải đi dò trong spec thành một thứ NHÌN LÀ THẤY.
+    public let nangLucPhu = NSTextField(labelWithString: "")
+
     /// Tên màn, hiện ở đầu. Lớp con đặt trong `init`.
     public let tieuDe = NSTextField(labelWithString: "")
     /// Dòng tóm tắt dưới tiêu đề — chỗ của những con số đáng nhìn trước.
@@ -57,6 +70,13 @@ open class ManHinhCoSo: NSView, KhungNhinEide {
 
     public override func accessibilityRole() -> NSAccessibility.Role? { .group }
     public override func accessibilityLabel() -> String? { tieuDe.stringValue }
+
+    /// Đặt dòng phụ. Rỗng thì ẩn hẳn — một dòng trống vẫn ăn chỗ, và một màn có khoảng trống
+    /// không giải thích được trông như một màn hỏng.
+    public func datNangLuc(_ ds: [String]) {
+        nangLucPhu.stringValue = ds.joined(separator: " · ")
+        nangLucPhu.isHidden = ds.isEmpty
+    }
 
     public init(ten: String) {
         super.init(frame: .zero)
@@ -74,6 +94,8 @@ open class ManHinhCoSo: NSView, KhungNhinEide {
         tieuDe.textColor = EideToken.Mau.text
         tomTat.font = EideToken.fontUI
         tomTat.textColor = EideToken.Mau.muted
+        nangLucPhu.font = EideToken.fontMono
+        nangLucPhu.textColor = EideToken.Mau.faint
 
         cot.orientation = .vertical
         cot.alignment = .leading
@@ -93,7 +115,7 @@ open class ManHinhCoSo: NSView, KhungNhinEide {
         cuon.drawsBackground = false
         cuon.translatesAutoresizingMaskIntoConstraints = false
 
-        let dau = NSStackView(views: [tieuDe, tomTat])
+        let dau = NSStackView(views: [tieuDe, nangLucPhu, tomTat])
         dau.orientation = .vertical
         dau.alignment = .leading
         dau.spacing = 2

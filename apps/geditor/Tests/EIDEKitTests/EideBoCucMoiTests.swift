@@ -295,19 +295,36 @@ final class EideBoCucMoiTests: XCTestCase {
     }
 
     @MainActor
-    func testVUNGPHAIkhongBIhangDOIdayNHATkyRAngoai() {
-        // Hai khối chia nhau một cột: khi hàng đợi dài, nhật ký nhường chỗ — nhưng không được
-        // biến mất, vì người vẫn cần thấy tác tử đang làm gì trong lúc duyệt.
+    func testVUNGPHAIkhongBIhangDOIdayKHOIdangCHAYRAngoai() {
+        // Bất biến giữ nguyên, người mang nó đổi. Bài này vốn canh khối NHẬT KÝ ở cột phải: khi
+        // hàng đợi dài, nhật ký nhường chỗ nhưng không được biến mất, "vì người vẫn cần thấy tác
+        // tử đang làm gì trong lúc duyệt".
+        //
+        // Từ 17/09/2026 dòng thời gian là MÀN S2, không phải một khối của cột phải (bản demo UX
+        // v2.0 xếp cột phải thành đúng ba khối). Câu "đang làm gì" nay do khối ĐANG CHẠY trả
+        // lời, nên bài canh đúng nó.
         let vp = EideVungPhai(frame: .init(x: 0, y: 0, width: EideVungPhai.RONG, height: 800))
-        vp.nhatKy.datCoDuAn(true)
-        for i in 0..<50 { vp.nhatKy.them("event.run.progress", ["cap": "kg.build", "status": "done", "at": "2026-09-14T07:0\(i % 10):00+00:00"]) }
+        vp.dangChay.datDs((0..<3).map { (ma: "r\($0)", dong: "Run #\($0) · 2/8 bước") })
         vp.hangDoi.capNhat(cho: (0..<30).map {
             ["run_id": "r\($0)", "cap": "search.fetch",
              "decision": ["gate": "G-SRC", "rule": "G-SRC-99", "reason": "ngoài danh sách"]]
         }, hoanTac: [])
         vp.layoutSubtreeIfNeeded()
-        XCTAssertGreaterThan(vp.nhatKy.frame.height, 0, "nhật ký bị ép về 0 — không còn giám sát được")
+        XCTAssertGreaterThan(vp.dangChay.frame.height, 0,
+                             "khối ĐANG CHẠY bị ép về 0 — không còn giám sát được")
         XCTAssertGreaterThan(vp.hangDoi.frame.height, 0)
+    }
+
+    @MainActor
+    func testKHOIdangCHAYrongVANnoiLYdo() {
+        // B5 của UXC-31: khối rỗng vẫn hiện tiêu đề và một dòng lý do. Một khối biến mất khiến
+        // người dùng tưởng mình nhớ nhầm chỗ, rồi đi tìm ở màn khác.
+        let k = EideDangChay()
+        k.datDs([])
+        XCTAssertEqual(k.soDong, 0)
+        let chu = k.subviews.flatMap { $0.subviews }.compactMap { ($0 as? NSTextField)?.stringValue }
+        XCTAssertTrue(chu.contains { $0.contains("Không có lượt chạy") }, "\(chu)")
+        XCTAssertNotNil(k.accessibilityLabel())
     }
 
     @MainActor

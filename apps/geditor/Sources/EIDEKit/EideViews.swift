@@ -412,8 +412,8 @@ public final class ReviewQueueView: NSView {
     /// (undo_ref)
     public var onHoanTac: ((String) -> Void)?
 
-    private let choNhan = NSTextField(labelWithString: "Chờ anh")
-    private let hoanTacNhan = NSTextField(labelWithString: "Đã làm — hoàn tác được")
+    private let choNhan = NSTextField(labelWithString: "CHỜ TÔI")
+    private let hoanTacNhan = NSTextField(labelWithString: "HOÀN TÁC ĐƯỢC")
     private let choCot = NSStackView()
     private let hoanTacCot = NSStackView()
 
@@ -441,10 +441,18 @@ public final class ReviewQueueView: NSView {
             c.alignment = .leading
             c.spacing = EideToken.space[0]
         }
+        // DỌC, không phải ngang.
+        //
+        // Hai khối xếp cạnh nhau trong một cột rộng 300 pt thì mỗi khối còn ~150 pt, và tiêu đề
+        // "Đã làm — hoàn tác được" bị ép mất chữ. Đo 17/09/2026 trên cửa sổ thật: cột phải hiện
+        // một danh sách mục hoàn tác KHÔNG có tiêu đề nào phía trên — người dùng nhìn thấy một
+        // đống thẻ và không biết chúng là việc chờ mình hay việc đã xong.
+        //
+        // Bản demo UX v2.0 xếp cột phải thành ba khối CHỒNG DỌC, mỗi khối một tiêu đề. Đó cũng
+        // là cách duy nhất giữ được §2F.2: khối rỗng vẫn hiện tiêu đề và một dòng lý do.
         let hang = NSStackView(views: [cot1, cot2])
-        hang.orientation = .horizontal
-        hang.distribution = .fillEqually
-        hang.alignment = .top
+        hang.orientation = .vertical
+        hang.alignment = .leading
         hang.spacing = EideToken.space[3]
         hang.translatesAutoresizingMaskIntoConstraints = false
 
@@ -456,6 +464,17 @@ public final class ReviewQueueView: NSView {
         // đúng được. Hàng đợi là chỗ người duyệt việc cho tác tử — một danh sách không đọc
         // được ở đây nghĩa là người bấm bừa hoặc bỏ qua.
         let cuonHang = NSScrollView()
+        // `contentView` LẬT, và đặt TRƯỚC `documentView`.
+        //
+        // Hệ toạ độ mặc định của AppKit có gốc ở góc DƯỚI-trái, nên một stack dài hơn khung neo
+        // từ dưới lên: mở cột phải ra là thấy phần CUỐI danh sách, và hai tiêu đề "CHỜ TÔI" /
+        // "HOÀN TÁC ĐƯỢC" nằm ngoài tầm nhìn. Đo 17/09/2026 trên cửa sổ thật với 35 mục hoàn
+        // tác: cột phải hiện một đống thẻ không có tiêu đề nào phía trên — cùng lỗi DEV-115(d)
+        // ở một khung nhìn khác.
+        //
+        // Thứ tự quan trọng: đặt `contentView` SAU `documentView` thì AppKit ném "no common
+        // ancestor" (DEV-116).
+        cuonHang.contentView = KhungLat()
         cuonHang.documentView = hang
         cuonHang.hasVerticalScroller = true
         cuonHang.drawsBackground = false
@@ -516,8 +535,8 @@ public final class ReviewQueueView: NSView {
         _urefGanNhat = hoanTac.first.flatMap {
             ($0["undo_ref"] as? String) ?? ($0["id"] as? String)
         }
-        choNhan.stringValue = "Chờ anh (\(cho.count))"
-        hoanTacNhan.stringValue = "Đã làm — hoàn tác được (\(hoanTac.count))"
+        choNhan.stringValue = cho.isEmpty ? "CHỜ TÔI" : "CHỜ TÔI (\(cho.count))"
+        hoanTacNhan.stringValue = hoanTac.isEmpty ? "HOÀN TÁC ĐƯỢC" : "HOÀN TÁC ĐƯỢC (\(hoanTac.count))"
         for c in [choCot, hoanTacCot] {
             for v in c.arrangedSubviews { c.removeArrangedSubview(v); v.removeFromSuperview() }
         }
