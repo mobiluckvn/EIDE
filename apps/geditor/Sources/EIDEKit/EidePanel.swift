@@ -183,6 +183,8 @@ public final class EidePanel: NSView {
     private let hanhTrinh = FlowMapView()
     private let chinhSach = ChinhSachView()
     private let thanhMan = NSStackView()
+    /// Thanh tab của vùng làm việc — UXC-31 §2C.1.
+    public let thanhTab = EideThanhTab()
     /// Thanh nhỏ trên vùng trao đổi: nhãn + ba nút đổi chiều cao (UXC-31 §2D.3).
     private let thanhHoiThoai = NSStackView()
     /// Năng lực đứng sau màn đang mở — hiện cạnh tên màn (UXC-31 §2C.4).
@@ -751,6 +753,7 @@ public final class EidePanel: NSView {
         thanhMan.isHidden = false
         tenMan.stringValue = ten
         nangLucMan.stringValue = _nangLucCuaMan(ten)
+        thanhTab.mo(tien: _tienCuaMan(ten), nhan: Self.nhanMan(_tienCuaMan(ten)))
         if !thamSo.isEmpty {
             // Điền sẵn ô nhập của màn, KHÔNG tự bấm Enter: người gõ "/passport.query stm32"
             // có thể muốn sửa lại trước khi tra, và một màn tự chạy ngay lúc mở là một màn
@@ -863,6 +866,7 @@ public final class EidePanel: NSView {
         // phụ ở `hienKhung` (đường gõ `/ns.name`), nên dòng phụ tồn tại, có mã, và không bao
         // giờ hiện ra cho người bấm chuột.
         nangLucMan.stringValue = _nangLucCuaMan(k.tien)
+        thanhTab.mo(tien: k.tien, nhan: Self.nhanMan(k.tien))
         k.v.chuaNap("Đang đọc trạng thái…")
         _dungONhap(choMan: k.tien, khungNhin: k.v)
         // Năng lực tự nạp TRƯỚC, rồi mới tới hai màn nạp bằng phương thức daemon.
@@ -1511,6 +1515,17 @@ public final class EidePanel: NSView {
         bangMan.first { ten.hasPrefix($0.tien) }?.tien ?? ten
     }
 
+    /// Nhãn tiếng Việt của một màn, tra từ bảng điều hướng.
+    ///
+    /// MỘT nguồn cho tên tab. Hai đường mở màn truyền hai loại tên — đường gõ `/ns.name` truyền
+    /// tên đầy đủ trong `screens.json` ("Passport (Hộ chiếu chip)"), đường bấm cột điều hướng
+    /// truyền nhãn ("Môi trường") — nên thanh tab hiện ba kiểu chữ cạnh nhau, đo được 18/09/2026.
+    /// Tab là chỗ người dùng quét mắt để tìm lại màn vừa đọc; ba kiểu đặt tên trong một hàng làm
+    /// việc quét ấy chậm đi mà không mang thêm thông tin nào.
+    public static func nhanMan(_ tien: String) -> String {
+        EideDieuHuong.NHOM.flatMap(\.man).first { $0.tien == tien }?.nhan ?? tien
+    }
+
     @objc private func _bamCaoHoiThoai(_ n: NSButton) {
         guard let v = n.identifier?.rawValue, let px = Double(v),
               let tt = CaoHoiThoai(rawValue: CGFloat(px)) else { return }
@@ -1519,6 +1534,7 @@ public final class EidePanel: NSView {
     }
 
     @objc private func dongMan() {
+        thanhTab.dongHet()
         for k in bangMan { k.v.isHidden = true }
         banDo.isHidden = true
         manNgoai?.isHidden = true
@@ -1665,6 +1681,24 @@ public final class EidePanel: NSView {
         thanhHoiThoai.translatesAutoresizingMaskIntoConstraints = false
         addSubview(thanhHoiThoai)
 
+        thanhTab.onChon = { [weak self] tien in
+            guard let self else { return }
+            self.nguoiVuaChonMan()
+            _ = self._moTheoTenMan(tien, thamSo: "")
+        }
+        thanhTab.onDong = { [weak self] tien in
+            guard let self else { return }
+            // Đóng tab đang xem thì mở tab kế; hết tab thì về hội thoại. KHÔNG để vùng làm việc
+            // trống mà thanh tab vẫn còn — người dùng sẽ bấm vào một tab không mở gì.
+            if let ke = self.thanhTab.dong(tien: tien) {
+                _ = self._moTheoTenMan(ke, thamSo: "")
+            } else {
+                self.dongMan()
+            }
+        }
+        thanhTab.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(thanhTab)
+
         vungPhai.dangChay.onChon = { [weak self] ma in
             guard let self else { return }
             self.nguoiVuaChonMan()
@@ -1706,7 +1740,11 @@ public final class EidePanel: NSView {
             thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
 
-            oNhap.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: g),
+            thanhTab.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: 2),
+            thanhTab.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+            thanhTab.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
+
+            oNhap.topAnchor.constraint(equalTo: thanhTab.bottomAnchor, constant: g),
             oNhap.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             oNhap.trailingAnchor.constraint(lessThanOrEqualTo: vungPhai.leadingAnchor,
                                             constant: -g),

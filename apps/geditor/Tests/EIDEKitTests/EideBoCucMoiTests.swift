@@ -416,3 +416,47 @@ final class EideCaoHoiThoaiTests: XCTestCase {
         }
     }
 }
+
+// MARK: - Thanh tab vùng làm việc (UXC-31 §2C.1–2C.2)
+
+final class EideThanhTabTests: XCTestCase {
+
+    @MainActor
+    func testMO_LAI_mot_man_KHONG_tao_tab_thu_hai() {
+        // Tác tử tự mở màn theo việc nó làm (NT2), nên trong một chuỗi tám bước cùng một màn có
+        // thể được mở ba bốn lần. Mỗi lần một tab thì thanh tab thành một danh sách trùng lặp,
+        // và nó thôi là bộ nhớ ngắn hạn của phiên làm việc.
+        let tb = EideThanhTab()
+        tb.mo(tien: "Passport", nhan: "Hộ chiếu chip")
+        tb.mo(tien: "Env", nhan: "Môi trường")
+        tb.mo(tien: "Passport", nhan: "Hộ chiếu chip")
+        XCTAssertEqual(tb.tab.map(\.tien), ["Passport", "Env"])
+        XCTAssertEqual(tb.dangMo, "Passport", "mở lại phải CHUYỂN tiêu điểm, không thêm tab")
+    }
+
+    @MainActor
+    func testDONG_tab_dang_xem_thi_MO_tab_ke_chu_khong_de_trong() {
+        // Vùng làm việc trống mà thanh tab vẫn còn là trạng thái người dùng bấm vào một tab và
+        // không thấy gì mở ra.
+        let tb = EideThanhTab()
+        tb.mo(tien: "Main", nhan: "Tổng quan")
+        tb.mo(tien: "Env", nhan: "Môi trường")
+        let ke = tb.dong(tien: "Env")
+        XCTAssertEqual(ke, "Main")
+        XCTAssertEqual(tb.dangMo, "Main")
+
+        XCTAssertNil(tb.dong(tien: "Main"), "đóng tab cuối thì không còn tab nào để mở")
+        XCTAssertTrue(tb.tab.isEmpty)
+        XCTAssertTrue(tb.isHidden, "không tab nào thì thanh tab phải biến mất, không để một dải trống")
+    }
+
+    @MainActor
+    func testNHAN_TAB_lay_tu_MOT_nguon_duy_nhat() {
+        // Hai đường mở màn từng truyền hai loại tên — tên đầy đủ trong screens.json và nhãn
+        // tiếng Việt — nên thanh tab hiện ba kiểu chữ cạnh nhau (đo 18/09/2026).
+        for m in EideDieuHuong.NHOM.flatMap(\.man) {
+            XCTAssertEqual(EidePanel.nhanMan(m.tien), m.nhan, "nhãn tab của \(m.tien) lệch bảng")
+        }
+        XCTAssertEqual(EidePanel.nhanMan("KhongCoMan"), "KhongCoMan", "màn lạ thì trả chính tiền tố")
+    }
+}
