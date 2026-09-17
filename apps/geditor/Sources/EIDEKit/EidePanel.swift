@@ -181,6 +181,7 @@ public final class EidePanel: NSView {
     private let moHinh = ModelsView()
     private let moiTruong = EnvView()
     private let hanhTrinh = FlowMapView()
+    private let chinhSach = ChinhSachView()
     private let thanhMan = NSStackView()
     private let tenMan = NSTextField(labelWithString: "")
 
@@ -213,6 +214,12 @@ public final class EidePanel: NSView {
         ("Models", moHinh),
         ("Env", moiTruong),
         ("FlowMap", hanhTrinh),
+        // `DiffMerge` dùng CHUNG khung nhìn với `PlanDiff`: UXD-13 v2.0 §4 tách đôi màn theo
+        // hai CÂU HỎI khác nhau của người dùng (kế hoạch thuộc Thiết kế, diff và cổng thuộc Mã
+        // nguồn), nhưng dữ liệu là một. Hai khung nhìn riêng sẽ là hai bản sao của cùng một
+        // trạng thái, và chúng sẽ lệch nhau.
+        ("DiffMerge", keHoach),
+        ("ChinhSach", chinhSach),
         ("NhatKy", nhatKy),
         ("LamRo", lamRo),
         ("XungDot", xungDot),
@@ -260,7 +267,7 @@ public final class EidePanel: NSView {
         "Chat", "Main", "ReviewQueue", "Ingest", "Passport", "Board", "Graph", "ReqArch",
         "DiagramView", "Doc", "PlanDiff", "Code", "Sim", "Discovery", "LogAssist", "Debug",
         "ToolForge", "Bench", "Registry", "Models", "Env", "FlowMap", "Trạng thái/khung",
-        "XungDot", "LamRo", "NhatKy",
+        "XungDot", "LamRo", "NhatKy", "DiffMerge", "ChinhSach",
     ]
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
@@ -1269,6 +1276,10 @@ public final class EidePanel: NSView {
         // Thêm 15/09 cùng hai màn mới. Cả hai đã đối chiếu `output_schema` với khoá mà khung
         // nhìn thật sự đọc — đúng phép đo đã rút `napAnToan` từ 11 mục xuống 4 hồi 13/09:
         "kg.conflicts",         // Xung đột → `conflicts`, `resource_ready` — XungDotView
+        // Thêm 17/09 cùng màn Chính sách tự chủ (S25). Đối chiếu như phép đo 13/09: hợp đồng
+        // trả `{rules[], signed, reason}` và `ChinhSachView.capNhat` đọc đúng ba khoá ấy.
+        // R0/T1, không tham số, `undo: none` — đúng hồ sơ mà danh sách này tồn tại để kể.
+        "policy.rules",         // màn 27 → `rules`, `signed` — ChinhSachView
     ]
 
     /// Năng lực chỉ-đọc nhưng **chưa có khung nhìn nào đọc được đầu ra của chúng**.
@@ -1323,6 +1334,8 @@ public final class EidePanel: NSView {
         "ReqArch": "req.elicit",
         "DiagramView": "diagram.block",
         "PlanDiff": "plan.create",
+        "DiffMerge": "code.review",
+        "ChinhSach": "policy.rules",
         "Doc": "doc.generate",
         "Code": "code.build",
         "Sim": "sim.run",

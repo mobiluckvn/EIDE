@@ -249,8 +249,9 @@ final class EideManDayDuTests: XCTestCase {
 
     func testMOImanTRONGscreensJsonDEUcoKhungNhin() throws {
         let man = try tenMan()
-        XCTAssertEqual(man.count, 26, "bảng UXD-13 §2 đổi số màn — 23 gốc + NhatKy (DEV-107), "
-                       + "XungDot và LamRo (DEV-109)")
+        XCTAssertEqual(man.count, 28, "bảng UXD-13 §2 đổi số màn — 25 màn trên điều hướng "
+                       + "(v2.0 thêm DiffMerge và ChinhSach) + ba màn KHÔNG nằm trên điều hướng "
+                       + "(Chat, ReviewQueue, Trạng thái/khung) vì chúng luôn hiện")
 
         let thieu = man.filter { ten in
             !EidePanel.tienManDaDung.contains { ten.hasPrefix($0) }

@@ -308,3 +308,35 @@ def _de_xuat(gate: str, ten: str, hien: Any, huong: str, k: int, n: int) -> dict
             "ly_do": (f"người APPROVE {k}/{n} lần máy hỏi" if huong == "noi"
                       else f"người hoàn tác {k}/{n} lần máy tự làm"),
             "ap_dung": False}
+
+
+@capability("policy.rules")
+def rules(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: POLICY-08 — CDS-12.5; POL-17 §1–2; UXC-31 §8 S25.
+
+    Trả bảng quy tắc mà PolicyGate ĐANG NẠP, không phải nội dung tệp `rules.yaml`.
+
+    Hai thứ ấy khác nhau ở đúng lúc quan trọng nhất: khi niêm danh sách trắng không khớp,
+    `whitelist.kiem` bỏ `trusted_sources`/`trusted_packages`/`allowed_licenses` khỏi biểu thức,
+    nên các quy tắc dựa vào chúng không khớp nữa và lời gọi rơi xuống quy tắc bắt hết. Một màn
+    đọc thẳng tệp sẽ hiện một chính sách không ai đang chạy — và người dùng ngồi đối chiếu với
+    hành vi thật rồi kết luận hệ thống hỏng, trong khi thứ hỏng là chữ ký.
+    """
+    gate = ctx.extra.get("gate") or PolicyGate()
+    # BỎ mọi khoá riêng tư (`_code`: biểu thức `when` đã biên dịch).
+    #
+    # Một đối tượng code không tuần tự hoá được sang JSON, và daemon phát hiện điều đó ở tầng
+    # ghi ống — tức là SAU khi đã trả lời xong: ống vỡ, và MỌI lời gọi sau đó hỏng theo. Đo
+    # 17/09/2026 bằng bài quét toàn bộ năng lực: `policy.rules` chết, rồi chín năng lực tiếp
+    # theo cùng chết với thông điệp "daemon đóng ống" — một lỗi ở một năng lực đọc thuần tuý
+    # kéo sập cả phiên làm việc.
+    #
+    # `output_schema` KHÔNG bắt được: nó khai `arr<obj>` và một dict có `_code` vẫn là một dict.
+    # Khớp schema không có nghĩa là gửi được.
+    sach = [{k: v for k, v in r.items() if not k.startswith("_")}
+            for r in getattr(gate, "rules", [])]
+    return {
+        "rules": sach,
+        "signed": bool(getattr(gate, "danh_sach_da_ky", False)),
+        "reason": str(getattr(gate, "ly_do_chua_ky", "") or ""),
+    }

@@ -2295,6 +2295,21 @@
   "m0": "chưa"
  },
  {
+  "code": "POLICY-08",
+  "ns": "policy",
+  "name": "policy.rules",
+  "desc": "Bảng quy tắc ĐANG CÓ HIỆU LỰC + trạng thái niêm danh sách trắng",
+  "inp": "—",
+  "out": "rules[], signed",
+  "risk": "R0",
+  "tier": "T1",
+  "ground": "—",
+  "ask": "—",
+  "ref": "UC-K02",
+  "ms": "M1",
+  "m0": "chưa"
+ },
+ {
   "code": "CHAT-01",
   "ns": "chat",
   "name": "chat.parse_intent",

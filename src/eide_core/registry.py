@@ -86,20 +86,35 @@ def _ui_tu_spec() -> dict[str, str]:
     nói năng lực nào thuộc màn hình nào là bảng §2, dạng `chat.*` (cả nhóm) hoặc `project.status`
     (một năng lực). Xem DEVIATIONS DEV-046.
 
-    Một năng lực xuất hiện ở nhiều màn hình thì lấy màn hình ĐẦU TIÊN: bảng §2 xếp theo thứ tự
-    màn hình, và màn hình số nhỏ là màn hình chính của năng lực ấy (Chat là số 1).
+    **Khớp CỤ THỂ thắng khớp MẪU; cùng độ cụ thể thì màn số nhỏ thắng.**
+
+    Luật cũ chỉ có vế sau ("lấy màn ĐẦU TIÊN"), và nó làm mọi khai báo về sau thành vô nghĩa:
+    màn 1 khai `policy.*`, nên cả bảy năng lực `policy.*` trỏ về Chat — kể cả `policy.decide`
+    khai riêng cho màn Hành trình và `policy.set_autonomy` khai cho màn khung. Hệ quả đo được
+    17/09/2026: màn Chính sách tự chủ vừa thêm khai `policy.rules` cho chính nó, nạp mặc định
+    đúng năng lực ấy, và hiện **0 dòng** — kết quả bị đẩy sang màn Chat. Cùng lúc, quy tắc
+    "tác tử chạm tới đâu, màn ấy tự mở" (UXD-13 v2.0 NT2) mở SAI ĐỊA CHỈ cho những năng lực ấy.
+
+    Một cái tên đầy đủ là một lời khai CHÍNH XÁC về màn nào sở hữu năng lực nào; một mẫu `ns.*`
+    là lời khai "phần còn lại của nhóm này thuộc về tôi". Để mẫu thắng tên là để câu nói chung
+    đè lên câu nói riêng. Xem DEV-122.
     """
     f = spec_dir() / "ui" / "screens.json"
     if not f.exists():
         return {}
     ra: dict[str, str] = {}
     caps = [c["id"] for c in json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))]
-    for man in json.loads(f.read_text(encoding="utf-8")):
-        for mau in man["nang_luc"]:
-            khop = ([c for c in caps if c.startswith(mau[:-1])] if mau.endswith("*")
-                    else [c for c in caps if c == mau])
-            for c in khop:
-                ra.setdefault(c, man["man_hinh"])
+    bang = json.loads(f.read_text(encoding="utf-8"))
+    # HAI LƯỢT: tên đầy đủ trước, mẫu sau. Trong mỗi lượt, màn số nhỏ vẫn thắng.
+    for cu_the in (True, False):
+        for man in bang:
+            for mau in man["nang_luc"]:
+                if mau.endswith("*") == cu_the:
+                    continue
+                khop = ([c for c in caps if c.startswith(mau[:-1])] if mau.endswith("*")
+                        else [c for c in caps if c == mau])
+                for c in khop:
+                    ra.setdefault(c, man["man_hinh"])
     return ra
 
 

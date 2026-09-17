@@ -35,42 +35,56 @@ public final class EideDieuHuong: NSView {
     private let bang = NSTableView()
     private let cuon = NSScrollView()
     private var muc: [Muc] = []
-
-    /// Năm nhóm, theo giai đoạn công việc. Nguồn duy nhất — `EideWindowController` đọc từ đây
-    /// thay vì giữ một bản sao thứ hai.
+    /// **Sáu nhóm, hai mươi lăm màn** — đúng bản demo UX v2.0 và UXC-31 §8.
+    ///
+    /// Nhóm theo CÂU HỎI người dùng tự hỏi trong vòng đời công việc, không theo namespace năng
+    /// lực. Bản trước nhóm theo giai đoạn kỹ thuật (TRI THỨC / THIẾT KẾ / MÃ & CHẠY / PHẦN CỨNG
+    /// / HỆ THỐNG) — đúng với cách người viết mã nghĩ, và lệch với cách người DÙNG nghĩ: họ tìm
+    /// "dự án tôi thế nào" chứ không tìm "tầng tri thức".
+    ///
+    /// Hai chỗ đổi vai đáng ghi. `PlanDiff` TÁCH ĐÔI: kế hoạch thuộc câu hỏi "làm cái gì" (nhóm
+    /// Thiết kế), còn diff và bốn cổng thuộc câu hỏi "merge được chưa" (nhóm Mã nguồn) — hai lối
+    /// vào, MỘT nguồn dữ liệu. Và `Env` rời nhóm chạy thử sang nhóm Hệ thống: công cụ trên máy
+    /// là chuyện hạ tầng, không phải chuyện của một lượt chạy thử.
+    ///
+    /// Nguồn duy nhất — mọi nơi khác đọc từ đây thay vì giữ một bản sao thứ hai.
     public static let NHOM: [(ten: String, man: [(tien: String, nhan: String, board: Bool)])] = [
+        ("DỰ ÁN", [
+            ("Main", "Tổng quan", false),
+            ("NhatKy", "Nhật ký", false),
+            ("FlowMap", "Bản đồ luồng", false),
+        ]),
         ("TRI THỨC", [
             ("Ingest", "Nhập tài liệu", false),
-            ("XungDot", "Xung đột tri thức", false),
             ("Passport", "Hộ chiếu chip", false),
             ("Board", "Hộ chiếu mạch", false),
-            ("Graph", "Bản đồ & hỏi đáp", false),
+            ("Graph", "Bản đồ tri thức & hỏi đáp", false),
+            ("XungDot", "Xung đột tri thức", false),
         ]),
         ("THIẾT KẾ", [
             ("LamRo", "Làm rõ yêu cầu", false),
             ("ReqArch", "Yêu cầu & kiến trúc", false),
             ("DiagramView", "Lược đồ", false),
-            ("PlanDiff", "Kế hoạch & mã", false),
+            ("PlanDiff", "Kế hoạch", false),
             ("Doc", "Tài liệu", false),
         ]),
-        ("MÃ & CHẠY", [
-            ("Code", "Mã nguồn", false),
-            ("Sim", "Mô phỏng", false),
-            ("Env", "Môi trường", false),
+        ("MÃ NGUỒN", [
+            ("Code", "Trình soạn thảo", false),
+            ("DiffMerge", "Diff & cổng merge", false),
         ]),
-        ("PHẦN CỨNG", [
+        ("CHẠY THỬ", [
+            ("Sim", "Mô phỏng", false),
             ("Discovery", "Dò board", true),
-            ("Debug", "Nạp & gỡ lỗi", true),
             ("LogAssist", "Log & serial", true),
-            ("Bench", "Benchmark", true),
+            ("Debug", "Gỡ lỗi probe", true),
+            ("Bench", "Bench", true),
         ]),
         ("HỆ THỐNG", [
-            ("Main", "Tổng quan dự án", false),
-            ("NhatKy", "Nhật ký đầy đủ", false),
+            ("Env", "Môi trường", false),
             ("Models", "Mô hình & chi phí", false),
-            ("Registry", "Registry", false),
             ("ToolForge", "Công cụ tự tạo", false),
-            ("FlowMap", "Hành trình & cổng", false),
+            ("Registry", "Registry", false),
+            ("ChinhSach", "Chính sách tự chủ", false),
         ]),
     ]
 

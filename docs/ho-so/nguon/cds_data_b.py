@@ -120,6 +120,14 @@ d("policy.undo_window", {}, {"items": "arr<obj>!"}, ["UndoService.list; hết h�
 d("policy.escalate", {"reason": "str!", "ref": "str!", "level": "enum:queue|chat|notify"}, {"notified": "arr<str>!"}, ["POL-17 §6 kênh theo mức; ghi ledger"], [], "none", '{"reason":"fail_retries","ref":"cr_9"}', "TC-54")
 d("policy.emergency_stop", {}, {"stopped": "bool!", "cancelled": "arr<str>!"}, ["session.stopped=true; A0; hủy EXECUTING risk ≥ R3; < 1 s"], [], "none", '{}', "TC-53")
 d("policy.learn_thresholds", {"days": "int"}, {"proposals": "arr<obj>!"}, ["POL-17 §7 thống kê → đề xuất; không áp dụng"], [], "none", '{"days":30}', "TC-55")
+# v2.0 — màn Chính sách tự chủ (S25) phải đọc được chính sách ĐANG CÓ HIỆU LỰC.
+#
+# Không để giao diện tự đọc `rules.yaml`: khi niêm không khớp, `whitelist.kiem` BỎ ba danh sách
+# khỏi biểu thức, nên thứ đang thi hành khác thứ ghi trong tệp. Một màn đọc tệp sẽ hiện một
+# chính sách không ai đang chạy — và người dùng đối chiếu nhầm cả buổi.
+d("policy.rules", {}, {"rules": "arr<obj>!", "signed": "bool!", "reason": "str # vì sao chưa niêm"},
+  ["Trả bảng quy tắc PolicyGate đang nạp, kèm trạng thái niêm danh sách trắng"],
+  [], "none", '{}', "S25")
 d("policy.set_autonomy", {"level": "enum:A0|A1|A2|A3|A4!", "board": "str", "by": "str!"}, {"effective": "str!"}, ["Nới lỏng (tăng mức) là R4 → ASK trừ by=human; siết → tức thì; ghi autonomy.yaml + ký; event.autonomy.changed"], ["E3000"], "restore_config", '{"level":"A2","board":"robot-ctrl","by":"cong"}', "TC-56")
 
 # ---------- chat (DPS-09) ----------

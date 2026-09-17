@@ -223,6 +223,21 @@ final class EideE2ETests: XCTestCase {
 
     // MARK: - Màn 22: FlowMap — nạp bằng PHƯƠNG THỨC, không phải năng lực
 
+    func testMAN27_chinhSachDOCduocBANGquyTacTHAT() async throws {
+        // S25 của UXC-31. Màn này trả lời câu đầu tiên người dùng hỏi khi giao việc cho tác tử:
+        // "nó được phép làm tới đâu?" — và trả lời bằng "mở tệp rules.yaml" là không trả lời.
+        let c = try moClient()
+        let r = try await c.goi(.capsInvoke, ["id": "policy.rules", "params": [:]])
+        let kq = (r["result"] as? [String: Any]) ?? [:]
+
+        let v = ChinhSachView()
+        v.capNhat(ketQua: kq)
+        XCTAssertGreaterThanOrEqual(v.soQuyTac, 50,
+                                    "POL-17 v2.0 có 54 quy tắc; màn đọc được \(v.soQuyTac)")
+        XCTAssertEqual(v.soQuyTac, (kq["rules"] as? [Any])?.count ?? -1,
+                       "màn phải hiện ĐỦ số quy tắc daemon trả về, không cắt bớt")
+    }
+
     func testMAN22_flowMapDOCduocHANGdoiTHAT() async throws {
         let c = try moClient()
         let doi = try await c.goi(.queueList, [:])
@@ -861,6 +876,10 @@ final class EideNapMacDinhTests: XCTestCase {
         "FlowMap": ["EideSystemViews"],
         "NhatKy": ["EideNhatKyView"],
         "XungDot": ["EideXungDotView"],
+        // v2.0 — hai màn thêm 17/09. `DiffMerge` dùng CHUNG khung nhìn với `PlanDiff` (hai lối
+        // vào, một nguồn dữ liệu), nên nó trỏ về đúng tệp ấy.
+        "DiffMerge": ["EideCodeViews"],
+        "ChinhSach": ["EideChinhSachView"],
         "LamRo": ["EideLamRoView"],
     ]
 

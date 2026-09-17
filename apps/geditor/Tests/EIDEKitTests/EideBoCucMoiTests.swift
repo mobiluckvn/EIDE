@@ -18,17 +18,17 @@ final class EideBoCucMoiTests: XCTestCase {
     // MARK: - Điều hướng: người dùng tìm thấy màn mình cần
 
     @MainActor
-    func testDIEUHUONGgom5NHOMdungThuTUcongViec() {
+    func testDIEUHUONGgom6NHOMdungThuTUcauHOI() {
         // Thứ tự nhóm LÀ thứ tự một dự án đi qua. Người mới mở sản phẩm đọc từ trên xuống là
         // biết bắt đầu từ đâu — điều mà một danh sách 22 mục phẳng không nói được.
         let ten = EideDieuHuong.NHOM.map(\.ten)
-        XCTAssertEqual(ten, ["TRI THỨC", "THIẾT KẾ", "MÃ & CHẠY", "PHẦN CỨNG", "HỆ THỐNG"])
+        XCTAssertEqual(ten, ["DỰ ÁN", "TRI THỨC", "THIẾT KẾ", "MÃ NGUỒN", "CHẠY THỬ", "HỆ THỐNG"])
     }
 
     @MainActor
-    func testDU21manKHONGthieuKHONGthua() {
+    func testDU25manKHONGthieuKHONGthua() {
         let dh = EideDieuHuong(frame: .zero)
-        XCTAssertEqual(dh.soMan, 23, "23 màn chuyên đề (thêm Làm rõ yêu cầu, Xung đột tri thức "
+        XCTAssertEqual(dh.soMan, 25, "25 màn chuyên đề (thêm Làm rõ yêu cầu, Xung đột tri thức "
                        + "ngày 15/09); Chat là ô lệnh thường trực, không phải màn")
     }
 
@@ -59,7 +59,10 @@ final class EideBoCucMoiTests: XCTestCase {
     func testMANcanBOARDnoiVIECcanLAMchuKHONGnoiTINHtrang() {
         // "Chưa có board" là điều người dùng đã biết. "Cắm board qua USB rồi bấm Dò lại" là
         // điều họ cần. Mỗi màn phần cứng phải nói việc, không nói tình trạng.
-        for m in EideDieuHuong.NHOM.first(where: { $0.ten == "PHẦN CỨNG" })!.man {
+        // Duyệt theo CỜ `board`, không theo tên nhóm: UXD-13 v2.0 sắp lại điều hướng theo câu
+        // hỏi người dùng nên nhóm "PHẦN CỨNG" tan vào "CHẠY THỬ" — mà bốn màn cần board thì
+        // không đổi. Bám tên nhóm là bám một thứ được phép đổi.
+        for m in EideDieuHuong.NHOM.flatMap(\.man) where m.board {
             let c = EideDieuHuong.loiCanBoard(m.tien)
             XCTAssertFalse(c.isEmpty, m.tien)
             XCTAssertTrue(c.contains("Cắm") || c.contains("cắm") || c.contains("chọn"),
@@ -69,14 +72,25 @@ final class EideBoCucMoiTests: XCTestCase {
     }
 
     @MainActor
-    func testBONmanPHANCUNGdeuDANHdauCANboard() {
-        let pc = EideDieuHuong.NHOM.first { $0.ten == "PHẦN CỨNG" }!
-        XCTAssertEqual(pc.man.count, 4)
-        XCTAssertTrue(pc.man.allSatisfy(\.board))
-        // Và không nhóm nào khác đánh dấu nhầm.
-        for n in EideDieuHuong.NHOM where n.ten != "PHẦN CỨNG" {
-            XCTAssertTrue(n.man.allSatisfy { !$0.board }, "nhóm \(n.ten) có màn đánh dấu cần board")
+    func testDUNGBONmanDANHdauCANboard_khongThuaKhongThieu() {
+        // Bốn màn cần một vật ngoài máy tính, và CHỈ bốn màn ấy. Đánh dấu thừa thì một màn chạy
+        // được lại hiện "chưa có board"; đánh dấu thiếu thì một màn rỗng không nói vì sao rỗng —
+        // vi phạm B5 của UXC-31.
+        let canBoard = Set(EideDieuHuong.NHOM.flatMap(\.man).filter(\.board).map(\.tien))
+        XCTAssertEqual(canBoard, ["Discovery", "LogAssist", "Debug", "Bench"],
+                       "tập màn cần board đổi rồi: \(canBoard.sorted())")
+    }
+
+    @MainActor
+    func testDIEUHUONG_SAUnhom_moiNhom_2den5_muc() {
+        // Tiêu chí N8 của UXC-31, và giới hạn quét 7±2 của con người: đúng sáu nhóm cấp một,
+        // mỗi nhóm 2–5 mục. Bản trước có năm nhóm và một nhóm sáu mục.
+        XCTAssertEqual(EideDieuHuong.NHOM.count, 6)
+        for n in EideDieuHuong.NHOM {
+            XCTAssertTrue((2...5).contains(n.man.count),
+                          "nhóm \(n.ten) có \(n.man.count) mục — ngoài khoảng 2–5")
         }
+        XCTAssertEqual(EideDieuHuong.NHOM.flatMap(\.man).count, 25, "đúng 25 màn trên điều hướng")
     }
 
     // MARK: - Ô nhập: người dùng biết phải điền gì
@@ -300,7 +314,8 @@ final class EideBoCucMoiTests: XCTestCase {
     func testTENmanDAIkhongLAMvoDIEUhuong() {
         let dh = EideDieuHuong(frame: .init(x: 0, y: 0, width: 220, height: 700))
         dh.layoutSubtreeIfNeeded()
-        XCTAssertEqual(dh.soMan, 23)
+        // Đếm theo bảng, không viết cứng — xem ghi chú ở `testDU25manKHONGthieuKHONGthua`.
+        XCTAssertEqual(dh.soMan, EideDieuHuong.NHOM.flatMap(\.man).count)
     }
 }
 

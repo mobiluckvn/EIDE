@@ -121,11 +121,9 @@
  {
   "so": "14",
   "man_hinh": "PlanDiff (Kế hoạch & mã)",
-  "noi_dung": "Kế hoạch có trích dẫn; diff; 4 cổng; review; auto-merge",
+  "noi_dung": "Kế hoạch có trích dẫn fact; missing[] hiện thành khối \"còn thiếu\"",
   "nang_luc": [
-   "plan.*",
-   "code.review",
-   "code.merge"
+   "plan.*"
   ]
  },
  {
@@ -222,6 +220,24 @@
  },
  {
   "so": "26",
+  "man_hinh": "DiffMerge (Diff & cổng merge)",
+  "noi_dung": "Diff hai cột; bốn cổng G1/G3/G4/G5 kèm lý do chặn; commit + tác giả máy-đọc-được + hạn hoàn tác",
+  "nang_luc": [
+   "code.review",
+   "code.merge"
+  ]
+ },
+ {
+  "so": "27",
+  "man_hinh": "ChinhSach (Chính sách tự chủ)",
+  "noi_dung": "Bảng quy tắc ĐANG CÓ HIỆU LỰC (chỉ đọc) + mức tự chủ + trạng thái niêm danh sách trắng",
+  "nang_luc": [
+   "policy.rules",
+   "policy.set_autonomy"
+  ]
+ },
+ {
+  "so": "28",
   "man_hinh": "Trạng thái/khung (Main shell)",
   "noi_dung": "Điều hướng theo nhóm (26 màn); thanh trạng thái tự chủ; dừng khẩn; tab tệp",
   "nang_luc": [
