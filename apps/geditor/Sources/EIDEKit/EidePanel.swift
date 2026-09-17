@@ -1359,6 +1359,15 @@ public final class EidePanel: NSView {
         let y = (r["intent_id"] as? String) ?? "?"
         if let rid = r["run_id"] as? String {
             hoiThoai.themLuot(by: .tacTu, text: "Đang chạy: \(y) (run \(rid)).")
+            // Chuỗi dừng chờ người thì nói ra NÓ CHỜ GÌ. Một chuỗi mười sáu bước dừng ở bước bốn
+            // mà giao diện chỉ ghi "đang chạy" là giao diện đang nói sai: nó không chạy, nó chờ
+            // — và người duy nhất gỡ được thế chờ ấy thì không biết mình đang được chờ.
+            for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) {
+                let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
+                let cap = (n["cap"] as? String) ?? "?"
+                hoiThoai.themLuot(by: .cho,
+                                  text: "Dừng ở `\(cap)` — cần anh cho biết: \(thieu).")
+            }
         } else {
             hoiThoai.themLuot(by: .cho, text: "Đã hiểu \(y), chưa dựng được chuỗi việc.")
         }

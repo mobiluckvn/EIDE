@@ -427,15 +427,17 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     # Bước 1 — mẫu trước, planner sau.
     mau = chain_mod.chon_mau(ten_y_dinh)
-    chuoi, nguon = _dung_chuoi(mau, intent, grounded, ctx)
+    chuoi, nguon = _dung_chuoi(mau, intent, grounded, ctx, run_id)
 
     # Bước 2 — kiểm deterministic. Ném E5002 (cấu trúc) hoặc E3003 (ngân sách).
     gate = ctx.extra.get("gate")
     nguong = ((getattr(gate, "config", None) or {}).get("thresholds") or {})
-    chain_mod.kiem(chuoi, get_registry(),
-                   tran_nut=int(nguong.get("plan_max_steps") or chain_mod.TRAN_NUT),
-                   chi_phi_uoc=_uoc_chi_phi(chuoi),
-                   ngan_sach=float(nguong.get("plan_max_cost_usd") or 0) or None)
+    thieu_du_kien = chain_mod.kiem(
+        chuoi, get_registry(),
+        tran_nut=int(nguong.get("plan_max_steps") or chain_mod.TRAN_NUT),
+        chi_phi_uoc=_uoc_chi_phi(chuoi),
+        ngan_sach=float(nguong.get("plan_max_cost_usd") or 0) or None)
+    can_nguoi = {x["id"]: x["thieu"] for x in thieu_du_kien}
 
     # Bước 3 — ghi kế hoạch xuống store TRƯỚC khi chạy: một chuỗi đang chạy dở mà máy tắt thì
     # phần đã làm vẫn phải đọc lại được, và `run.graph` là chỗ duy nhất giữ được điều đó.
@@ -443,6 +445,10 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     # Bước 4–5 — chạy từng nút.
     ket_qua, cho, bo_qua, hong = [], [], [], []
+    # Đầu ra từng nút, để nút sau đọc bằng `${nX.field}`. Giữ trong bộ nhớ của lượt chạy này:
+    # `run.graph` dưới store giữ KẾ HOẠCH, không giữ kết quả, và một kết quả có thể là cả một
+    # CodePatch — thứ không nên đi vòng qua đĩa giữa hai nút liền nhau.
+    dau_ra: dict[str, Any] = {}
     router = ctx.extra.get("router")
     xong: set[str] = set()
     for nut in chain_mod.thu_tu_chay(chuoi):
@@ -455,9 +461,26 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         if router is None:
             cho.append({"id": nut.id, "cap": nut.cap, "vi": "không có router trong ngữ cảnh"})
             continue
-        run = router.invoke(nut.cap, dict(nut.args), ctx)
+        # Nút thiếu dữ kiện thì CHỜ NGƯỜI, không làm hỏng chuỗi. `scenario` của `sim.run` và
+        # `target` của `target.flash` không nút nào sinh ra được — chúng đến từ người dùng. Trước
+        # 17/09/2026 chúng nằm chung rổ với lỗi cấu trúc, nên một câu hỏi đáng lẽ hỏi người lại
+        # giết cả chuỗi NGAY LÚC LẬP, kể cả phần đầu đã đủ dữ kiện để chạy.
+        if nut.id in can_nguoi:
+            cho.append({"id": nut.id, "cap": nut.cap, "on_ask": nut.on_ask,
+                        "thieu": can_nguoi[nut.id],
+                        "vi": "cần anh cho biết: " + ", ".join(can_nguoi[nut.id])})
+            if nut.on_ask == "wait":
+                break
+            continue
+        try:
+            tham_so = chain_mod.giai_tham_chieu(dict(nut.args), dau_ra)
+        except EideError as e:
+            hong.append({"id": nut.id, "cap": nut.cap, "error": {"eide_code": e.code, "message": str(e)}})
+            continue
+        run = router.invoke(nut.cap, tham_so, ctx)
         if run.status == "done":
             xong.add(nut.id)
+            dau_ra[nut.id] = run.result or {}
             ket_qua.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id})
         elif run.status == "pending":
             cho.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id, "on_ask": nut.on_ask})
@@ -485,7 +508,8 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
 
 def _dung_chuoi(mau: dict[str, Any] | None, intent: dict[str, Any],
-                grounded: dict[str, Any], ctx: Context) -> tuple[Any, str]:
+                grounded: dict[str, Any], ctx: Context,
+                run_id: str = "") -> tuple[Any, str]:
     """Chuỗi từ mẫu, hoặc từ mô hình lập kế hoạch nếu không mẫu nào khớp.
 
     Mẫu của §4.4 là chuỗi RÚT GỌN viết cho người đọc ("project.create → search.reference_projects
@@ -503,18 +527,47 @@ def _dung_chuoi(mau: dict[str, Any] | None, intent: dict[str, Any],
             ten = b.split("(")[0].strip()
             if ten in reg and reg.get(ten).implemented:
                 nut.append(chain_mod.Nut(id=f"n{i + 1}", cap=ten,
-                                         args=_args_cho(ten, intent, grounded),
+                                         args=_args_cho(ten, intent, grounded, run_id),
                                          when=f"n{i}" if nut else None, on_ask="wait"))
         if nut:
             # Nối `when` theo đúng thứ tự các nút GIỮ LẠI, không theo chỉ số gốc: bỏ bước 3 mà
             # vẫn để bước 4 phụ thuộc "n3" thì cả chuỗi treo ở một nút không tồn tại.
             for k, n in enumerate(nut):
                 n.when = nut[k - 1].id if k else None
+            _noi_dau_ra(nut, reg)
             return chain_mod.Chain(nut), f"mẫu: {mau['ten']}"
     if (mot := _chuoi_toi_thieu(intent, grounded, reg)):
         return chain_mod.Chain(mot), "ý định là năng lực"
     tu_planner = _chuoi_tu_planner(intent, grounded, ctx)
     return chain_mod.Chain(tu_planner), "planner" if tu_planner else "không dựng được chuỗi"
+
+
+def _noi_dau_ra(nut: list[Any], reg: Any) -> None:
+    """Nối tham số bắt buộc còn trống của một nút vào ĐẦU RA của nút chạy trước gần nhất.
+
+    Mẫu của §4.4 chỉ liệt kê các BƯỚC; nó không nói bước nào lấy dữ liệu của bước nào. Chỗ duy
+    nhất nói được điều ấy mà không phải phỏng đoán là `output_schema`: nếu một nút trước khai ra
+    đúng cái tên mà nút này đòi, thì đó là cùng một thứ — trong một bộ đặc tả, một cái tên là
+    một khái niệm.
+
+    **Chỉ nối khi tên TRÙNG**, và cố ý dừng ở đó. Bảng ánh xạ kiểu `req.classify.reqset` →
+    `req.ground_hw.reqset_ids` thì đúng với mắt người đọc, nhưng nó là tri thức KHÔNG có trong
+    bất kỳ tài liệu nào của kho — viết nó vào mã là tự nghĩ ra hành vi. Những chỗ ấy để lại
+    trống, và nút thiếu dữ kiện sẽ CHỜ NGƯỜI với câu hỏi nói rõ thiếu gì. Xem DEV-121: đề nghị
+    mẫu chuỗi trong `dps.js` tự mang phần nối, vì chỉ mẫu mới có quyền nói điều đó.
+    """
+    khai: dict[str, list[str]] = {}
+    for n in nut:
+        if n.cap not in reg:
+            continue
+        spec = reg.get(n.cap).spec
+        for k in ((spec.input_schema or {}).get("required") or []):
+            if k in n.args:
+                continue
+            nguon = [nid for nid, ten in khai.items() if k in ten]
+            if nguon:
+                n.args[k] = "${" + f"{nguon[-1]}.{k}" + "}"
+        khai[n.id] = list(((spec.output_schema or {}).get("properties") or {}).keys())
 
 
 def _chuoi_toi_thieu(intent: dict[str, Any], grounded: dict[str, Any], reg: Any) -> list[Any]:
@@ -562,17 +615,28 @@ def _chuoi_tu_planner(intent: dict[str, Any], grounded: dict[str, Any],
     return nut
 
 
-def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any]) -> dict[str, Any]:
+def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any],
+              run_id: str = "") -> dict[str, Any]:
     """Ghép tham số cho một nút từ slots của ý định và kết quả grounding.
 
     Chỉ lấy khóa CÓ TRONG input_schema của năng lực: thừa một khóa là E1000 ở Router, và phép
     kiểm deterministic ở bước 2 sẽ bắt nó — nhưng bắt ở đây thì thông điệp nói được vì sao.
+
+    Hai thứ KHÔNG nằm trong slots mà chuỗi vẫn biết chắc, và bỏ sót chúng thì chuỗi dừng ngay ở
+    nút đầu để hỏi một câu đã có sẵn câu trả lời:
+
+    * `intent` — chính ý định đang xử lý. `chat_send` gọi thẳng `chat.ground` với `{"intent":
+      intent}` (rpc.py), nên đây là cùng một phép nối, chỉ là chuỗi mẫu chưa được hưởng.
+    * `run_id` — mã lượt chạy của chính chuỗi này, thứ `chat.report_back` cần để tổng kết.
     """
     reg = get_registry()
     if cap not in reg:
         return {}
     cho_phep = set(reg.get(cap).spec.input_schema.get("properties") or {})
-    nguon = {**(grounded or {}), **((intent or {}).get("slots") or {})}
+    nguon: dict[str, Any] = {"intent": intent}
+    if run_id:
+        nguon["run_id"] = run_id
+    nguon.update({**(grounded or {}), **((intent or {}).get("slots") or {})})
     return {k: v for k, v in nguon.items() if k in cho_phep and v is not None}
 
 

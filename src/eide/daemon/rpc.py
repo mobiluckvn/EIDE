@@ -567,9 +567,28 @@ class Daemon:
                                    {"intent": intent, "grounded": grounded}, self.ctx)
         if chuoi.status == "done" and chuoi.result:
             ra["run_id"] = chuoi.result.get("run_id")
+            # Chuỗi dừng để chờ người thì NÓI RA nó chờ gì, ngay trong câu trả lời.
+            #
+            # Hợp đồng ghi `{intent_id, run_id?}` và "kết quả đến qua sự kiện" — đúng cho KẾT QUẢ.
+            # Nhưng "tôi đang chờ anh cho biết `scenario`" không phải kết quả, nó là một câu hỏi,
+            # và một câu hỏi nằm trong báo cáo dưới store là một câu hỏi không ai nghe thấy: giao
+            # diện hiện "Đang chạy: code.feature" rồi đứng yên vĩnh viễn. Xem DEV-121.
+            ra["cho_nguoi"] = self._cho_gi(self.ctx, chuoi.result.get("run_id") or "")
         else:
             ra["run"] = asdict(chuoi)
         return ra
+
+    def _cho_gi(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
+        """Các nút đang chờ người, đọc từ báo cáo `run.graph` của chính lượt chạy vừa lập."""
+        from eide.caps.chat import doc_bao_cao
+        if not run_id or not ctx.project_dir:
+            return []
+        try:
+            bc = doc_bao_cao(Path(ctx.project_dir), run_id) or {}
+        except Exception:  # noqa: BLE001 — không đọc được báo cáo thì im, đừng làm hỏng câu trả lời
+            return []
+        return [{"cap": n.get("cap", ""), "thieu": n.get("thieu") or [], "vi": n.get("vi", "")}
+                for n in (bc.get("waiting") or []) if n.get("thieu")]
 
     def chat_answer(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{question_id, option?, text?}` — thẻ câu hỏi gộp của UXD-13 U1.

@@ -11,9 +11,19 @@ import json
 
 import pytest
 
-from eide.caps.chat import doc_bao_cao
+from eide.caps.chat import _noi_dau_ra, doc_bao_cao
 from eide_core import store
-from eide_core.chain import Chain, Nut, chon_mau, kiem, mau, thu_tu_chay, tim_chu_trinh
+from eide_core.chain import (
+    Chain,
+    Nut,
+    chon_mau,
+    doc_duong,
+    giai_tham_chieu,
+    kiem,
+    mau,
+    thu_tu_chay,
+    tim_chu_trinh,
+)
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.policy import PolicyGate
@@ -236,3 +246,113 @@ def test_khong_dung_duoc_chuoi_thi_NOI_RA(du_an):
     r, ctx, _ = du_an
     run = r.invoke("chat.orchestrate", {"intent": {"intent": "unknown"}, "grounded": {}}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+# ---------- nối dữ liệu giữa các nút: `${nX.field}` (DEV-121)
+
+
+def test_tham_chieu_doc_dung_gia_tri_long_nhau():
+    """Đường đọc phải đi được vào trong: một `patch` hay một `plan` là object nhiều tầng, và
+    tham số nút sau thường là MỘT TRƯỜNG của nó chứ không phải cả cục."""
+    goc = {"plan": {"steps": [{"id": "s1", "cap": "code.generate_module"},
+                              {"id": "s2", "cap": "code.review"}]}}
+    assert doc_duong(goc, "plan.steps[0].id") == "s1"
+    assert doc_duong(goc, "plan.steps[*].id") == ["s1", "s2"]
+    assert doc_duong(goc, "plan.steps[*].cap") == ["code.generate_module", "code.review"]
+
+
+def test_duong_doc_hong_NOI_RO_chang_nao_chu_khong_tra_None():
+    """`None` đi tiếp xuống năng lực rồi hỏng ở đó — cách chỗ sai vài nút, dưới một thông báo nói
+    về chuyện khác. Đây là đúng hình dạng của một lỗi im lặng."""
+    with pytest.raises(KeyError, match="khong_co"):
+        doc_duong({"plan": {}}, "plan.khong_co.id")
+    with pytest.raises(KeyError, match=r"\[3\]"):
+        doc_duong({"a": [1, 2]}, "a[3]")
+
+
+def test_tham_chieu_duoc_giai_bang_ket_qua_nut_truoc():
+    args = {"patch": "${n7.patch}", "ghi_chu": "giữ nguyên",
+            "gom": ["${n7.cites}", "hằng"]}
+    ra = giai_tham_chieu(args, {"n7": {"patch": {"diff": "..."}, "cites": ["f_1"]}})
+    assert ra == {"patch": {"diff": "..."}, "ghi_chu": "giữ nguyên",
+                  "gom": [["f_1"], "hằng"]}
+
+
+def test_tham_chieu_toi_nut_CHAY_SAU_bi_bat_luc_LAP_KE_HOACH():
+    """Ba phép kiểm tham chiếu đều làm được lúc lập, nên phải làm lúc lập: hỏng ở phút thứ ba của
+    một lượt chạy đã ghi vào store và đã tiêu tiền gọi mô hình là quá muộn."""
+    c = _c({"id": "n1", "cap": "kg.build", "args": {}},
+           {"id": "n2", "cap": "kg.neighborhood", "args": {"node": "${n3.x}"}, "when": "n1"},
+           {"id": "n3", "cap": "kg.conflicts", "args": {}, "when": "n2"})
+    with pytest.raises(EideError) as e:
+        kiem(c, get_registry())
+    assert e.value.code == "E5002" and "chạy SAU" in str(e.value)
+
+
+def test_tham_chieu_toi_DAU_RA_KHONG_KHAI_bi_bat():
+    """`output_schema` là chỗ duy nhất nói được một năng lực sinh ra cái gì. Trỏ vào một tên nó
+    không khai là một lỗi đánh máy sẽ hỏng lúc chạy — bắt được từ lúc lập thì bắt."""
+    c = _c({"id": "n1", "cap": "kg.conflicts", "args": {}},
+           {"id": "n2", "cap": "kg.neighborhood",
+            "args": {"node": "${n1.khong_he_co}"}, "when": "n1"})
+    with pytest.raises(EideError) as e:
+        kiem(c, get_registry())
+    assert e.value.code == "E5002" and "không khai đầu ra" in str(e.value)
+
+
+def test_tham_chieu_vao_CHINH_NO_bi_bat():
+    c = _c({"id": "n1", "cap": "kg.neighborhood", "args": {"node": "${n1.x}"}})
+    with pytest.raises(EideError) as e:
+        kiem(c, get_registry())
+    assert e.value.code == "E5002" and "trỏ vào chính nó" in str(e.value)
+
+
+def test_THIEU_tham_so_KHONG_phai_loi_chuoi_ma_la_cau_hoi_cho_nguoi():
+    """Ranh giới của DEV-121, và là lý do nó tồn tại.
+
+    Một tham số SAI KIỂU là chuỗi hỏng — mô hình lập kế hoạch viết sai. Một tham số THIẾU là
+    chuỗi chưa đủ dữ kiện: `sim.run` cần `scenario`, `target.flash` cần `target`, và không nút
+    nào sinh ra chúng vì chúng đến từ NGƯỜI. Trước 17/09/2026 cả hai cùng là E5002, nên một câu
+    hỏi đáng lẽ hỏi người lại giết cả chuỗi ngay lúc lập — kể cả phần đầu đã đủ dữ kiện để chạy.
+    """
+    c = _c({"id": "n1", "cap": "kg.neighborhood", "args": {}})
+    thieu = kiem(c, get_registry())          # KHÔNG ném
+    assert thieu == [{"id": "n1", "cap": "kg.neighborhood", "thieu": ["node"]}]
+
+
+def test_SAI_KIEU_van_la_E5002_chu_khong_thanh_cau_hoi():
+    """Ranh giới phải cắt đúng chỗ: nới lỏng phép kiểm thiếu tham số mà nới cả sai kiểu thì
+    DPS-09 §4.4 mất phép kiểm quan trọng nhất của nó."""
+    with pytest.raises(EideError) as e:
+        kiem(_c({"id": "n1", "cap": "kg.neighborhood", "args": {"node": 123}}), get_registry())
+    assert e.value.code == "E5002" and "input_schema" in str(e.value)
+
+
+def test_noi_dau_ra_CHI_noi_khi_spec_KHAI_dung_ten_ay():
+    """Chỉ nối khi `output_schema` của một nút trước khai đúng cái tên nút này đòi.
+
+    Bảng ánh xạ kiểu `req.classify.reqset` → `req.ground_hw.reqset_ids` đúng với mắt người đọc,
+    nhưng nó là tri thức KHÔNG có trong tài liệu nào của kho — viết vào mã là tự nghĩ ra hành vi.
+    Chỗ ấy để trống và thành câu hỏi cho người.
+    """
+    reg = get_registry()
+    nut = [Nut(id="n1", cap="req.elicit"),
+           Nut(id="n2", cap="req.classify", when="n1"),
+           Nut(id="n3", cap="req.ground_hw", when="n2")]
+    _noi_dau_ra(nut, reg)
+    assert nut[1].args["raw"] == "${n1.raw}", "req.elicit KHAI `raw`, req.classify ĐÒI `raw`"
+    assert "reqset_ids" not in nut[2].args, "không nút nào khai `reqset_ids` — không được đoán"
+
+
+def test_chuoi_CHAY_PHAN_LAM_DUOC_roi_moi_dung_hoi(du_an):
+    """Đo trên đường đi chính của sản phẩm. Trước DEV-121 chuỗi `code.feature` trả về một bức
+    tường E5002 và KHÔNG một nút nào chạy; nay phần đủ dữ kiện chạy, rồi dừng đúng chỗ thiếu."""
+    from eide.caps.chat import _args_cho
+    reg = get_registry()
+    nut = [Nut(id=f"n{i + 1}", cap=c, when=f"n{i}" if i else None,
+               args=_args_cho(c, {"intent": "code.feature"}, {}, "r_abc"))
+           for i, c in enumerate(["chat.ground", "req.elicit", "req.classify", "req.ground_hw"])]
+    _noi_dau_ra(nut, reg)
+    thieu = kiem(Chain(nut), reg)
+    assert [x["id"] for x in thieu] == ["n4"], "ba nút đầu đủ dữ kiện"
+    assert set(thieu[0]["thieu"]) == {"reqset_ids", "passport"}
