@@ -479,7 +479,7 @@ enum SelfTest {
             return nil
         },
 
-        Case(name: "EIDE: kiểm kê 23 màn — màn nào mở ra RỖNG") { c in
+        Case(name: "EIDE: kiểm kê MỌI màn — màn nào mở ra RỖNG") { c in
             guard c.coPanelEide, let panel = c.eidePanel else {
                 return "không chạy được `eide daemon`"
             }

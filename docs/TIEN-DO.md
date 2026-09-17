@@ -13,7 +13,7 @@
 ## 1. Một dòng
 
 **216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1612 test
-Python + 3101 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7, trong đó một bài KIỂM KÊ cả 23 màn. Một `--vong-giao-dien` đi 15 bước của một vòng làm việc thật QUA GIAO DIỆN: 15/15, ghi nhật ký và một ảnh mỗi bước.**
+Python + 3101 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: **26** màn hình trên điều hướng (đếm từ `docs/spec/ui/screens.json`; con số "23" ghi ở đây tới 16/09 đã cũ — ba màn NhatKy/XungDot/LamRo thêm sau mà dòng tóm tắt không được đo lại), 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7, trong đó một bài KIỂM KÊ cả 23 màn. Một `--vong-giao-dien` đi 15 bước của một vòng làm việc thật QUA GIAO DIỆN: 15/15, ghi nhật ký và một ảnh mỗi bước.**
 
 **Ngày 17/09 đóng ba việc mà hai ngày trước còn là "giao diện hiện sai": vùng trao đổi người ↔
 tác tử thành BẤT BIẾN (DEV-120), chuỗi năng lực nối được dữ liệu cho nhau (DEV-121), và bộ tự

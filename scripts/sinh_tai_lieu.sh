@@ -56,6 +56,13 @@ ln -s "$NGUON/node_modules" "$SAN/node_modules"
 # kịch bản ấy ở đây thay vì chép bản cũ trong `docs/spec`: nếu chỉ chép thì sửa `cds_data_a.py`
 # xong docx vẫn dựng từ bản cũ, và người sửa tưởng mình vừa đổi tài liệu. Cùng khuôn mẫu DEV-018.
 cp "$SPEC/caps.json" "$SAN/"
+# FTR-30 mô tả cả 26 màn hình và nhúng ảnh CHỤP TỪ CỬA SỔ THẬT, nên nó cần hai thứ không nằm
+# trong `nguon/`: bảng màn (`docs/spec/ui/screens.json`) và thư mục ảnh của vòng chạy qua giao
+# diện. Cùng lý do với `cds.json` ở trên — đo lại lúc sinh, không chép một bản cũ.
+cp "$SPEC/ui/screens.json" "$SAN/" 2>/dev/null || true
+if [ "$TEN" = "ftr" ]; then
+    EIDE_GOC="$GOC" "$PY" "$NGUON/gen_ftr_data.py" "$SAN"
+fi
 (cd "$SAN" && "$PY" gen_cds.py >/dev/null && "$PY" gen_ddd.py >/dev/null)
 # Bốn tệp Excel của bộ hồ sơ có bộ sinh riêng ở `nguon/excel/`. Chỉ chạy khi được gọi đích danh
 # (`sinh_tai_lieu.sh excel`) vì chúng cần openpyxl và không phải bộ sinh docx nào cũng liên quan.

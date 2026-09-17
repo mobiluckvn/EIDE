@@ -6,15 +6,20 @@ const {
 } = require('docx');
 
 const FONT = 'Times New Roman', SZ = 26, LINE = 360, NAVY = '1F3864', ALT = 'F2F6FB';
-const run = (t, o = {}) => new TextRun({ text: t, font: FONT, size: o.size || SZ, bold: o.bold, italics: o.italics, color: o.color });
+const run = (t, o = {}) => new TextRun({ text: t, font: o.mono ? 'Consolas' : FONT, size: o.size || (o.mono ? (SZ - 4) : SZ), bold: o.bold, italics: o.italics, color: o.color });
 
-// Inline markup: **bold**, *italic*
+// Inline markup: **bold**, *italic*, `mã`
+//
+// Dấu ngược cho ĐỊNH DANH — tên năng lực, tên tệp, khoá JSON. Thiếu nó thì hoặc phải bỏ dấu
+// (và `code.merge` trông giống một câu tiếng Anh giữa dòng tiếng Việt), hoặc để nguyên dấu
+// ngược trong bản in — thứ lộ ra ngay rằng tài liệu được viết bằng Markdown rồi đổ vào docx.
 function inline(text, o = {}) {
-  const out = []; const re = /(\*\*(?=\S)[^*]+?(?<=\S)\*\*|\*(?=[^\s*,])[^*]+?(?<=\S)\*)/g; let last = 0, m;
+  const out = []; const re = /(\*\*(?=\S)[^*]+?(?<=\S)\*\*|\*(?=[^\s*,])[^*]+?(?<=\S)\*|`[^`]+`)/g; let last = 0, m;
   while ((m = re.exec(text))) {
     if (m.index > last) out.push(run(text.slice(last, m.index), o));
     const s = m[0];
-    if (s.startsWith('**')) out.push(run(s.slice(2, -2), { ...o, bold: true }));
+    if (s.startsWith('`')) out.push(run(s.slice(1, -1), { ...o, mono: true }));
+    else if (s.startsWith('**')) out.push(run(s.slice(2, -2), { ...o, bold: true }));
     else out.push(run(s.slice(1, -1), { ...o, italics: true }));
     last = m.index + s.length;
   }

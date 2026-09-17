@@ -2,6 +2,8 @@
 
 Bộ hồ sơ v1.2 (05/09/2026). Tài liệu docx nằm trong `ho-so/`; đặc tả máy đọc được trong `spec/` (đây là bản chuẩn để test đối chiếu; docx là bản giải thích).
 
+**Một tài liệu khác kiểu cả ba thứ trên**: [`EIDE-FTR-30`](ho-so/EIDE-FTR-30_Mo_ta_tinh_nang_san_pham.docx) mô tả sản phẩm ĐANG CHẠY được gì, không phải sản phẩm sẽ được xây thế nào. Mọi con số trong đó đo lại lúc sinh (`scripts/sinh_tai_lieu.sh ftr` đọc thẳng registry) và mọi ảnh chụp từ cửa sổ thật trong một vòng `--vong-giao-dien`. Dùng khi cần đưa sản phẩm cho người ngoài nhóm phát triển đọc.
+
 **Làm gì tiếp?** → [`CONG-VIEC.md`](CONG-VIEC.md) — danh sách công việc theo thứ tự nên làm, đo từ registry. Khối cần phần cứng để cuối cùng (quyết định 08/09).
 
 **Đang ở đâu?** → [`TIEN-DO.md`](TIEN-DO.md) — tiến độ đo từ mã (năng lực theo mốc, chỗ đứt của năm chuỗi chuẩn, việc chờ chủ sản phẩm). Số liệu trong đó sinh lại bằng `eide spec`, `scripts/kiem_chuoi_chuan.py` và `pytest`, không gõ tay.
@@ -11,6 +13,7 @@ Bộ hồ sơ v1.2 (05/09/2026). Tài liệu docx nằm trong `ho-so/`; đặc t
 | Việc | Đọc trước | Đặc tả máy đọc được |
 |---|---|---|
 | Hiểu sản phẩm, nguyên tắc P1–P9, lộ trình | EIDE-PDA-00 | — |
+| **Sản phẩm ĐANG CHẠY được gì** (tính năng, 26 màn hình kèm ảnh thật, phần chưa làm) | EIDE-FTR-30 | sinh từ registry + `spec/ui/screens.json` |
 | Yêu cầu người dùng / chức năng | EIDE-URD-01, EIDE-SRS-02 (§3B: một FR cho mỗi năng lực) | `spec/caps.json` |
 | Kiến trúc tổng thể, ADR | EIDE-SAD-03 | — |
 | Thiết kế chi tiết mô-đun, cấu hình `.eide/*.yaml` | EIDE-SDD-04 | `spec/data/` |
