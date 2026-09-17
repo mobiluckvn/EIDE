@@ -69,7 +69,7 @@ c.push(SP());
 c.push(H2('2.1. Sự kiện (daemon → plugin)'));
 const EV = [
  ['event.chat.restated', '{intent_id, text}', 'Thẻ "tôi hiểu là…"'], ['event.chat.question', '{question_id, text, options[], default, timeout_s, remember_as?}', 'Thẻ câu hỏi gộp'],
- ['event.chat.report', '{run_id, done[], waiting[], undo_until?, cost_usd}', 'Thẻ báo cáo cuối'], ['event.run.progress', '{run_id, node_id, cap, state, pct?}', 'Dòng tiến độ chuỗi'],
+ ['event.chat.report', '{run_id, done[], waiting[], undo_until?, cost_usd}', 'Thẻ báo cáo cuối'], ['event.run.progress', '{run_id, n?, node_id?, cap, state, i?, of?, steps[]?, pct?, reason?}', 'Dòng tiến độ chuỗi. `run_id` là mã LƯỢT CHẠY: một lời gọi năng lực lẻ mang mã của chính nó, còn một nút trong chuỗi mang mã của CHUỖI — nên mọi bước của một Run gộp về một thẻ. Sửa v2.0: trước đó mọi nút mang mã riêng và sinh một thẻ mỗi nút'],
  ['event.queue.changed', '{kind, added[], removed[]}', ''], ['event.gate.opened', '{gate_id, gate, cap, summary, risk, evidence[]}', 'Mục ASK mới'],
  ['event.undo.registered', '{undo_ref, deadline}', ''], ['event.undo.expired', '{undo_ref}', ''], ['event.autonomy.changed', '{effective, reason}', 'Kể cả STOP'],
  ['event.discover.changed', 'Discovery', 'Cắm/rút board'], ['event.serial.line', '{port, ts, line}', ''],
@@ -184,6 +184,14 @@ const LED = [
  ['tool.report', 'ToolReport', 'TargetService'],
  ['discover.result', 'Discovery', ''],
  ['intent / question / answer / report', 'Intent / Question / {question_id, answer, by: human|timeout} / Report', 'Orchestrator'],
+ // v2.0 — vòng đời của MỘT LƯỢT CHẠY (Run), khác với `cap.run.*` vốn nói về một LỜI GỌI năng
+ // lực. Trước 17/09/2026 không kiểu nào ghi được "chuỗi này bắt đầu / xong / bị chặn", nên
+ // giao diện phải suy tiến độ chuỗi từ các sự kiện rời của từng nút — và hiện nó ở bốn chỗ
+ // khác nhau mà không chỗ nào là nguồn chính (UXD-13 v2.0 §1.1 R3).
+ ['run.started', '{run_id, n, text, steps[]: {id, cap}}', 'Orchestrator'],
+ ['run.step_started / run.step_done', '{run_id, node_id, cap, i, of} / {…, status, error?}', 'Orchestrator'],
+ ['run.blocked', '{run_id, node_id, cap, reason, missing[]?, rule?}', 'Orchestrator'],
+ ['run.done / run.cancelled', '{run_id, state, done, waiting, failed} / {run_id, by}', 'Orchestrator'],
  ['error', 'ErrorLedgerEntry', 'Mọi thành phần'],
  ['session.open / session.summary', '{session_id, project} / {session_id, summary}', ''],
  ['store.migrate', '{from_version, to_version}', ''],

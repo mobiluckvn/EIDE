@@ -89,8 +89,16 @@ class Router:
                              risk=reg.spec.risk_class, autonomy=ctx.autonomy, board=ctx.board,
                              tier=reg.spec.tier_hieu_luc, actor=ctx.actor)
         dec = {"decision": d.decision, "rule": d.rule_id, "reason": d.reason, "gate": d.gate}
+        # `chain`: nút này thuộc lượt chạy nào của Orchestrator. Có thì bản ghi mang theo, để
+        # giao diện gộp MỌI bước của một chuỗi về MỘT thẻ thay vì một thẻ mỗi nút.
+        #
+        # Đặt ở Router chứ không ở Orchestrator vì đây là chỗ DUY NHẤT mọi lời gọi đi qua: một
+        # nút gọi năng lực nào cũng ghi `cap.run.*` ở đây, nên nối quan hệ "nút này thuộc chuỗi
+        # kia" ở đây là nối một lần cho mọi năng lực hiện có lẫn mọi năng lực thêm sau.
+        chuoi = ctx.extra.get("chain") or {}
         self._log("cap.run.start", {"run_id": run_id, "cap": cap_id, "actor": ctx.actor,
-                                    "args_hash": _h(params), "decision": dec})
+                                    "args_hash": _h(params), "decision": dec,
+                                    **({"chain": dict(chuoi)} if chuoi else {})})
         self._ghi_decision_log(run_id, cap_id, reg, d, ctx, features)
         if d.decision == ASK:
             run = CapabilityRun(run_id, cap_id, "pending", None, dec, 0, undo=reg.spec.undo)
@@ -101,10 +109,12 @@ class Router:
             # hai trường `pending_question`/`asked_at` cho chính tình huống này. Xem DEV-049.
             self._cho[run_id] = (cap_id, params, ctx, features)
             self._luu_cho(run_id, cap_id, params, ctx, features, dec)
-            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id, "status": "pending", "error": "E3000"})
+            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
+                                     **({"chain": dict(chuoi)} if chuoi else {}), "status": "pending", "error": "E3000"})
             return run
         if d.decision != "APPROVE":
-            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id, "status": "rejected", "error": "E3001"})
+            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
+                                     "status": "rejected", "error": "E3001"})
             return CapabilityRun(run_id, cap_id, "rejected", None, dec, 0, {"code": "E3001", "message": d.reason})
         # Nhiều năng lực phải tự ghi sự kiện nghiệp vụ của mình vào ledger (API-15 §5:
         # session.open, store.write, acq.state, tool.report…). Router là điểm gọi duy nhất và
@@ -127,10 +137,12 @@ class Router:
             self.registry.validate_output(cap_id, result)
         except EideError as e:
             ms = int((time.perf_counter() - t0) * 1000)
-            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id, "status": "failed", "error": e.code, "duration_ms": ms})
+            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
+                                     **({"chain": dict(chuoi)} if chuoi else {}), "status": "failed", "error": e.code, "duration_ms": ms})
             return CapabilityRun(run_id, cap_id, "failed", None, dec, ms, e.to_rpc()["data"] | {"message": str(e)})
         ms = int((time.perf_counter() - t0) * 1000)
-        self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id, "status": "done", "result_hash": _h(result),
+        self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
+                                     **({"chain": dict(chuoi)} if chuoi else {}), "status": "done", "result_hash": _h(result),
                                      "duration_ms": ms, "undo_ref": run_id if reg.spec.undo in KIND_WINDOW else None})
         # Việc tác tử vừa TỰ làm phải vào cửa sổ hoàn tác ngay tại đây, không để năng lực tự nhớ.
         # UXD-13 U2 hứa "mỗi việc tự làm có lý do và nút hoàn tác"; nếu việc đăng ký nằm trong
@@ -218,7 +230,8 @@ class Router:
             self.queue.remove(cho)
         self._xoa_cho(ctx, run_id, quyet)
         if quyet == "reject":
-            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id, "status": "rejected", "error": "E3001"})
+            self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
+                                     "status": "rejected", "error": "E3001"})
             return CapabilityRun(run_id, cap_id, "rejected", None,
                                  cho.decision if cho is not None else {"decision": "ASK"}, 0,
                                  {"code": "E3001", "message": f"người từ chối: {note}" if note

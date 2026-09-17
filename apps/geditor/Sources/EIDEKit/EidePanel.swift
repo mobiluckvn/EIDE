@@ -2003,6 +2003,13 @@ public final class EidePanel: NSView {
         the.onXemNut = { [weak self] cap in
             self?.chay2(.capsDescribe, ["id": cap])
         }
+        // "Mở chi tiết" → màn Nhật ký, lọc sẵn theo mã lượt chạy. Thẻ Run trả lời câu "đến bước
+        // mấy"; câu "bước ấy đã làm gì" thuộc về sổ cái, và dẫn người sang đúng chỗ ấy rẻ hơn
+        // nhiều so với nhồi thêm chi tiết vào một thẻ nằm trong dòng hội thoại.
+        the.onXemChiTiet = { [weak self] rid in
+            self?.nguoiVuaChonMan()
+            _ = self?._moTheoTenMan("NhatKy", thamSo: rid)
+        }
         // GỠ thẻ khi việc xong. Không gỡ thì mỗi lượt chạy để lại một thẻ vĩnh viễn: đo
         // 16/09/2026 trong một vòng qua giao diện, mười lăm thẻ đã xong xếp chồng và kéo CỬA SỔ
         // cao 4048 px — người dùng cuộn mãi không tới ô lệnh.
@@ -2013,6 +2020,10 @@ public final class EidePanel: NSView {
         the.onXong = { [weak self, weak the] in
             DispatchQueue.main.asyncAfter(deadline: .now() + Self.TRE_GO_THE) {
                 guard let the else { return }
+                // Thẻ ĐANG CHỜ NGƯỜI thì KHÔNG gỡ. "Xong" ở đây nghĩa là mọi nút đã chạy đều
+                // kết thúc — nhưng một chuỗi dừng ở bước 3 để hỏi cũng thoả điều kiện ấy, và gỡ
+                // nó đi là xoá đúng câu hỏi đang đợi người trả lời.
+                if the.choNguoi { return }
                 self?.theTienDo.removeValue(forKey: id)
                 self?.hoiThoai.goThe(the)
             }

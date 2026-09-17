@@ -924,13 +924,13 @@
   },
   {
    "name": "event.run.progress",
-   "summary": "Dòng tiến độ chuỗi",
+   "summary": "Dòng tiến độ chuỗi. `run_id` là mã LƯỢT CHẠY: một lời gọi năng lực lẻ mang mã của chính nó, còn một nút trong chuỗi mang mã của CHUỖI — nên mọi bước của một Run gộp về một thẻ. Sửa v2.0: trước đó mọi nút mang mã riêng và sinh một thẻ mỗi nút",
    "params": [
     {
      "name": "params",
      "schema": {
       "type": "object",
-      "description": "{run_id, node_id, cap, state, pct?}"
+      "description": "{run_id, n?, node_id?, cap, state, i?, of?, steps[]?, pct?, reason?}"
      }
     }
    ],

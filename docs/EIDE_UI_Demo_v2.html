@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EIDE — Demo giao diện v2.0 (UXD-13)</title>
+<style>
+  :root{
+    --red:#BC2626; --red2:#DE221A; --red-bg:#FBECEC;
+    --ink:#1b1b1b; --mut:#6b6b6b; --faint:#9a9a9a;
+    --bg:#f5f4f2; --panel:#ffffff; --line:#e2e0dc; --line2:#cfcdc8;
+    --ok:#1d7a4f; --ok-bg:#e7f4ec; --warn:#8a5a00; --warn-bg:#fdf3dd;
+    --blue:#1b5fa5; --blue-bg:#e9f1fa;
+  }
+  *{box-sizing:border-box; margin:0}
+  html,body{height:100%}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif; font-size:13px; color:var(--ink); background:var(--bg)}
+  button{font:inherit; cursor:pointer; border:1px solid var(--line2); background:#fff; border-radius:6px; padding:4px 10px}
+  button:hover{background:#f2f1ee}
+  button.pri{background:var(--red); border-color:var(--red); color:#fff}
+  button.pri:hover{background:#a31f1f}
+  button.ghost{border:none; background:transparent; color:var(--mut)}
+  .badge{display:inline-block; min-width:16px; text-align:center; background:var(--warn-bg); color:var(--warn); border-radius:9px; padding:0 5px; font-size:11px; font-weight:600}
+  .pill{display:inline-block; border-radius:10px; padding:1px 9px; font-size:11px; font-weight:600}
+  .pill.a2{background:var(--blue-bg); color:var(--blue)}
+  .pill.a0{background:var(--red-bg); color:var(--red)}
+  .tag{font-size:11px; color:var(--mut)}
+  code,.mono{font-family:"SF Mono",Consolas,Menlo,monospace; font-size:12px}
+
+  #app{display:flex; flex-direction:column; height:100vh}
+  /* ============ thanh trên ============ */
+  #topbar{display:flex; align-items:center; gap:12px; height:46px; padding:0 12px; background:#fff; border-bottom:2px solid var(--red2); flex-shrink:0}
+  #ptit{font-weight:700; color:var(--red); letter-spacing:.5px}
+  #projBtn{font-weight:600; display:flex; align-items:center; gap:6px}
+  #topbar .cnt{color:var(--mut); font-size:12px; cursor:pointer}
+  #topbar .cnt b{color:var(--ink)}
+  #stopBtn{background:var(--red-bg); border-color:var(--red); color:var(--red); font-weight:600}
+  #kbtn{color:var(--faint); font-size:12px; border:1px dashed var(--line2); border-radius:6px; padding:3px 8px; cursor:pointer}
+  /* ============ bố cục chính ============ */
+  #main{display:flex; flex:1; min-height:0}
+  /* cột trái */
+  #nav{width:198px; background:#fff; border-right:1px solid var(--line); overflow-y:auto; flex-shrink:0; padding:6px 0}
+  .g-h{display:flex; align-items:center; gap:6px; padding:7px 12px 4px; font-size:10.5px; font-weight:700; color:var(--faint); letter-spacing:.6px; cursor:pointer; user-select:none}
+  .g-h .badge{margin-left:auto}
+  .s-it{display:flex; align-items:center; gap:6px; padding:5px 12px 5px 20px; color:#333; cursor:pointer; border-left:3px solid transparent}
+  .s-it:hover{background:#f6f5f2}
+  .s-it.act{background:#f1efe9; border-left-color:var(--red); font-weight:600}
+  .s-it .badge{margin-left:auto}
+  .g-body.closed{display:none}
+  @keyframes flash{0%,100%{background:transparent}50%{background:var(--warn-bg)}}
+  .s-it.flash{animation:flash .3s 2}
+  /* trung tâm */
+  #center{flex:1; display:flex; flex-direction:column; min-width:0}
+  #tabs{display:flex; gap:2px; padding:6px 10px 0; border-bottom:1px solid var(--line); background:#faf9f7; flex-shrink:0; overflow-x:auto}
+  .tab{border:1px solid var(--line); border-bottom:none; border-radius:7px 7px 0 0; padding:4px 10px; background:#efedea; color:var(--mut); cursor:pointer; white-space:nowrap; font-size:12px}
+  .tab.act{background:#fff; color:var(--ink); font-weight:600}
+  .tab .x{margin-left:6px; color:var(--faint)}
+  #screen{flex:1; overflow-y:auto; background:#fff; padding:16px 20px}
+  #screen h2{font-size:16px; margin-bottom:2px}
+  #screen .sub{color:var(--mut); margin-bottom:14px; font-size:12px}
+  .card{border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin-bottom:12px; background:#fff}
+  .kpis{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+  .kpi{background:#f6f5f2; border-radius:8px; padding:8px 14px; min-width:120px}
+  .kpi .v{font-size:19px; font-weight:600}
+  .kpi .l{font-size:11px; color:var(--mut)}
+  table.t{border-collapse:collapse; width:100%; margin:8px 0}
+  table.t th,table.t td{border:1px solid var(--line); padding:5px 8px; text-align:left; font-size:12px}
+  table.t th{background:#f6f5f2}
+  .empty{border:1px dashed var(--line2); border-radius:8px; padding:22px; text-align:center; color:var(--mut); background:#fbfaf8}
+  .empty b{color:var(--ink)}
+  .banner{background:var(--blue-bg); color:var(--blue); border-radius:7px; padding:7px 11px; margin-bottom:10px; font-size:12px}
+  .banner.warn{background:var(--warn-bg); color:var(--warn)}
+  .banner.ok{background:var(--ok-bg); color:var(--ok)}
+  /* editor */
+  .ed{border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .ed-h{display:flex; gap:10px; align-items:center; padding:6px 10px; background:#f6f5f2; border-bottom:1px solid var(--line); font-size:12px}
+  .ed-b{font-family:"SF Mono",Consolas,Menlo,monospace; font-size:12.5px; line-height:2; padding:10px 0}
+  .ln{display:flex; gap:10px; padding:0 12px}
+  .ln .gut{width:12px; text-align:center; flex-shrink:0}
+  .ln.viol{background:#fdf0ef}
+  .dot-ok{color:var(--ok)} .dot-bad{color:var(--red); font-weight:700}
+  .cmt{color:#8a8a8a}
+  .human-edit{background:#fffbe8}
+  /* conflict */
+  .conf{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .conf .side{border:1px solid var(--line); border-radius:8px; padding:10px 12px}
+  .conf .side h4{margin-bottom:6px; font-size:13px}
+  .conf .side .v{font-size:18px; font-weight:700; font-family:Consolas,Menlo,monospace}
+  /* ============ vùng trao đổi ============ */
+  #dock{border-top:1px solid var(--line2); background:#faf9f7; display:flex; flex-direction:column; flex-shrink:0; transition:height .15s; height:220px}
+  #dock.min{height:48px} #dock.max{height:320px}
+  #dock-h{display:flex; align-items:center; gap:8px; padding:4px 12px; font-size:11px; color:var(--faint); flex-shrink:0}
+  #chatlog{flex:1; overflow-y:auto; padding:2px 12px}
+  #dock.min #chatlog,#dock.min #dock-h .ttl{display:none}
+  .msg{max-width:78%; border-radius:9px; padding:6px 11px; margin:5px 0; line-height:1.5}
+  .msg.u{background:var(--red-bg); margin-left:auto}
+  .msg.a{background:#fff; border:1px solid var(--line)}
+  .runcard{border:1px solid var(--line2); border-radius:9px; background:#fff; padding:8px 11px; margin:6px 0}
+  .runcard .rh{display:flex; gap:10px; align-items:center; font-size:12px}
+  .runcard .rh b{font-size:12.5px}
+  .runcard .bar{display:flex; gap:3px; margin-top:7px}
+  .seg{flex:1; height:5px; border-radius:3px; background:var(--line2)}
+  .seg.done{background:var(--ok)} .seg.cur{background:var(--blue)} .seg.blk{background:var(--warn)}
+  .rstep{font-size:11.5px; color:var(--mut); margin-top:5px}
+  #inrow{display:flex; gap:8px; padding:7px 12px; flex-shrink:0}
+  #cmd{flex:1; border:1px solid var(--line2); border-radius:7px; padding:7px 10px; font:inherit}
+  /* cột phải */
+  #rail{width:236px; background:#fff; border-left:1px solid var(--line); overflow-y:auto; flex-shrink:0; padding:10px 12px}
+  #rail h5{font-size:10.5px; color:var(--faint); letter-spacing:.6px; margin:10px 0 5px}
+  .r-it{border:1px solid var(--line); border-radius:7px; padding:6px 9px; margin-bottom:6px; font-size:12px; cursor:pointer}
+  .r-it:hover{border-color:var(--line2)}
+  .r-it .tag{display:block; margin-top:2px}
+  .r-it.ask{border-color:#e8c87a; background:var(--warn-bg)}
+  /* welcome / overlay */
+  .ov{position:fixed; inset:0; background:rgba(30,28,25,.45); display:flex; align-items:center; justify-content:center; z-index:50}
+  .box{background:#fff; border-radius:12px; padding:26px 30px; width:520px; max-width:92vw; box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  .box h1{font-size:19px; margin-bottom:8px}
+  .box p{color:var(--mut); margin-bottom:12px; line-height:1.55}
+  /* palette */
+  #pal .box{padding:14px}
+  #palIn{width:100%; border:1px solid var(--line2); border-radius:7px; padding:8px 11px; font:inherit; margin-bottom:8px}
+  #palList{max-height:300px; overflow-y:auto}
+  .pal-it{display:flex; gap:10px; padding:6px 9px; border-radius:6px; cursor:pointer}
+  .pal-it:hover{background:#f4f2ee}
+  .pal-it code{color:var(--red)}
+  .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:#2b2a28; color:#fff; padding:8px 16px; border-radius:8px; font-size:12.5px; z-index:99; opacity:0; transition:opacity .2s}
+  .toast.show{opacity:1}
+  .hint{background:var(--warn-bg); border-radius:8px; padding:8px 12px; margin-bottom:12px; font-size:12px; color:var(--warn)}
+</style>
+</head>
+<body>
+
+<div id="app" style="display:none">
+  <!-- THANH TRÊN -->
+  <div id="topbar">
+    <span id="ptit">EIDE</span>
+    <button id="projBtn" onclick="toast('Bộ chuyển dự án: danh sách project.list + nút Dự án mới')">Robot-CanBang <span style="color:var(--faint)">▾</span></button>
+    <span class="pill a2" id="autoPill">Tự chủ A2</span>
+    <span class="cnt" onclick="openScreen('S2')">Chờ tôi <b id="cAsk">0</b></span>
+    <span class="cnt" onclick="openScreen('S2')">Hoàn tác <b id="cUndo">0</b></span>
+    <span style="flex:1"></span>
+    <span id="kbtn" onclick="openPal()">⌘K · bảng lệnh</span>
+    <button class="pri" id="demoBtn" onclick="playDemo()">▶ Chạy kịch bản demo</button>
+    <button id="stopBtn" onclick="emergencyStop()">■ Dừng khẩn</button>
+  </div>
+
+  <div id="main">
+    <!-- CỘT TRÁI: 6 NHÓM -->
+    <nav id="nav"></nav>
+
+    <!-- TRUNG TÂM -->
+    <div id="center">
+      <div id="tabs"></div>
+      <div id="screen"></div>
+      <!-- VÙNG TRAO ĐỔI -->
+      <div id="dock">
+        <div id="dock-h">
+          <span class="ttl">VÙNG TRAO ĐỔI — bất biến, 3 trạng thái</span>
+          <span style="flex:1"></span>
+          <button class="ghost" title="Thu gọn (48pt)" onclick="setDock('min')">▁</button>
+          <button class="ghost" title="Chuẩn (220pt)" onclick="setDock('std')">▂</button>
+          <button class="ghost" title="Mở rộng (320pt)" onclick="setDock('max')">▃</button>
+        </div>
+        <div id="chatlog"></div>
+        <div id="inrow">
+          <input id="cmd" placeholder='Ra lệnh cho tác tử… (thử gõ: sinh driver I2C cho MPU6050)' onkeydown="if(event.key==='Enter')sendCmd()">
+          <button class="pri" onclick="sendCmd()">Gửi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CỘT PHẢI -->
+    <aside id="rail">
+      <h5>ĐANG CHẠY</h5><div id="rRun"><div class="tag">Không có Run nào.</div></div>
+      <h5>CHỜ TÔI <span class="badge" id="rAskN" style="display:none">0</span></h5><div id="rAsk"><div class="tag">Trống — không việc nào chờ anh.</div></div>
+      <h5>HOÀN TÁC ĐƯỢC</h5><div id="rUndo"><div class="tag">Chưa có mục nào trong cửa sổ hoàn tác.</div></div>
+    </aside>
+  </div>
+</div>
+
+<!-- MÀN HÌNH CHÀO (phát hiện R2) -->
+<div class="ov" id="welcome">
+  <div class="box">
+    <h1>Chào mừng đến EIDE</h1>
+    <p>Chưa có dự án nào trong workspace. Đây là <b>trạng thái rỗng có lý do và bước kế tiếp</b> — quy tắc mọi màn của EIDE.</p>
+    <p class="tag">Gợi ý: mô tả dự án bằng một câu, ví dụ "robot hai bánh tự cân bằng trên ATmega328P".</p>
+    <button class="pri" onclick="createProject()" style="padding:8px 18px">Tạo dự án đầu tiên (project.create)</button>
+  </div>
+</div>
+
+<!-- BẢNG LỆNH -->
+<div class="ov" id="pal" style="display:none" onclick="if(event.target===this)closePal()">
+  <div class="box" style="align-self:flex-start; margin-top:70px">
+    <input id="palIn" placeholder="Gõ tên năng lực hoặc màn… (238 năng lực trong registry)" oninput="renderPal()">
+    <div id="palList"></div>
+  </div>
+</div>
+
+<!-- HỘP THOẠI ASK -->
+<div class="ov" id="modal" style="display:none">
+  <div class="box" id="modalBox"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2600);}
+function now(){return new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+
+/* ================= TRẠNG THÁI ================= */
+const S={auto:'A2', run:null, timers:[], pending:[], undo:[], ledger:[], dirty:false, resolvedConflict:false, humanSaved:false, generated:false, guarded:false, merged:false};
+
+/* ================= ĐIỀU HƯỚNG: 6 NHÓM / 23 MÀN ================= */
+const NAV=[
+ {name:'DỰ ÁN — "dự án tôi thế nào?"', sc:[['S1','Tổng quan'],['S2','Nhật ký'],['S3','Bản đồ luồng']]},
+ {name:'TRI THỨC — "máy biết gì, tin được không?"', sc:[['S4','Nhập tài liệu'],['S5','Hộ chiếu chip'],['S6','Hộ chiếu mạch'],['S7','Bản đồ tri thức & hỏi đáp'],['S8','Xung đột tri thức']]},
+ {name:'THIẾT KẾ — "làm cái gì, làm thế nào?"', sc:[['S9','Làm rõ yêu cầu'],['S10','Yêu cầu & kiến trúc'],['S11','Lược đồ'],['S12','Kế hoạch'],['S13','Tài liệu']]},
+ {name:'MÃ NGUỒN — "mã đâu, merge được chưa?"', sc:[['S14','Trình soạn thảo'],['S15','Diff & cổng merge']]},
+ {name:'CHẠY THỬ — "chạy có đúng không?"', sc:[['S16','Mô phỏng'],['S17','Dò board'],['S18','Log & serial'],['S19','Gỡ lỗi probe'],['S20','Bench']]},
+ {name:'HỆ THỐNG — "công cụ, tiền, quyền"', sc:[['S21','Môi trường'],['S22','Mô hình & chi phí'],['S23','Công cụ tự tạo'],['S24','Registry'],['S25','Chính sách tự chủ']]},
+];
+const SNAME={}; NAV.forEach(g=>g.sc.forEach(([i,n])=>SNAME[i]=n));
+const GROUP_OF={}; NAV.forEach((g,gi)=>g.sc.forEach(([i])=>GROUP_OF[i]=gi));
+
+function renderNav(){
+  const askByGroup={}; S.pending.forEach(p=>{const g=GROUP_OF[p.screen]; askByGroup[g]=(askByGroup[g]||0)+1;});
+  $('nav').innerHTML=NAV.map((g,gi)=>`
+    <div class="g-h" onclick="tgGroup(${gi})">${g.name.split(' — ')[0]}
+      ${askByGroup[gi]?`<span class="badge">${askByGroup[gi]}</span>`:''}
+    </div>
+    <div class="g-body" id="gb${gi}">
+      ${g.sc.map(([id,n])=>`<div class="s-it ${cur===id?'act':''}" id="nav-${id}" onclick="openScreen('${id}')">${n}
+        ${S.pending.some(p=>p.screen===id)?`<span class="badge">${S.pending.filter(p=>p.screen===id).length}</span>`:''}</div>`).join('')}
+    </div>`).join('');
+}
+function tgGroup(gi){$('gb'+gi).classList.toggle('closed');}
+
+/* ================= TAB + MÀN ================= */
+let tabs=[], cur=null;
+function openScreen(id, flash){
+  if(!tabs.includes(id)) tabs.push(id);
+  cur=id; renderTabs(); renderScreen(); renderNav();
+  if(flash){const g=GROUP_OF[id]; $('gb'+g).classList.remove('closed');
+    const el=$('nav-'+id); if(el){el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),700);}}
+}
+function closeTab(id,ev){ev.stopPropagation(); tabs=tabs.filter(t=>t!==id); if(cur===id)cur=tabs[tabs.length-1]||null; renderTabs(); renderScreen(); renderNav();}
+function renderTabs(){$('tabs').innerHTML=tabs.map(t=>`<div class="tab ${t===cur?'act':''}" onclick="openScreen('${t}')">${SNAME[t]}<span class="x" onclick="closeTab('${t}',event)">✕</span></div>`).join('')||'<div class="tag" style="padding:5px">Chưa mở màn nào — chọn ở cột trái, hoặc để tác tử tự mở.</div>';}
+
+/* ---- nội dung từng màn ---- */
+function emptyBox(reason,next){return `<div class="empty"><b>Màn này đang rỗng — vì:</b> ${reason}<br><span class="tag">Bước kế tiếp: ${next}</span></div>`;}
+const SCR={
+ S1:()=>`<h2>Tổng quan dự án</h2><div class="sub">project.status · target.detect</div>
+   <div class="kpis"><div class="kpi"><div class="v">128</div><div class="l">fact trong store</div></div>
+   <div class="kpi"><div class="v">${S.pending.length}</div><div class="l">việc chờ người</div></div>
+   <div class="kpi"><div class="v">${S.undo.length}</div><div class="l">hoàn tác được</div></div>
+   <div class="kpi"><div class="v">ATmega328P</div><div class="l">chip đã ghim · hộ chiếu v1.3</div></div></div>
+   <div class="card"><b>Feature đang theo dõi</b><table class="t"><tr><th>Feature</th><th>Trạng thái</th><th>Cổng mở</th></tr>
+   <tr><td>drv_i2c — driver TWI cho MPU6050</td><td>${S.merged?'✅ đã merge (M-77)':'đang làm'}</td><td>${S.merged?'—':'G3'}</td></tr>
+   <tr><td>logic_pid — vòng PID cân bằng</td><td>chờ kế hoạch</td><td>G1</td></tr></table></div>
+   <div class="hint">Demo: bấm <b>▶ Chạy kịch bản demo</b> trên thanh trên để xem tác tử làm việc, hoặc gõ lệnh vào vùng trao đổi bên dưới.</div>`,
+ S2:()=>`<h2>Nhật ký hoạt động</h2><div class="sub">view.timeline — MỌI sự kiện phái sinh từ sổ cái chỉ-ghi-thêm (chuỗi băm ✔ liền mạch). Gồm cả sự kiện của NGƯỜI (human.*) — bổ sung v2.0.</div>
+   ${S.ledger.length?S.ledger.slice().reverse().map(e=>`<div class="card" style="margin-bottom:6px;padding:6px 12px"><span class="tag">${e.t}</span> · <code>${e.type}</code> — ${e.text}</div>`).join(''):emptyBox('sổ cái chưa có sự kiện nào cho dự án này','tạo dự án hoặc ra một lệnh cho tác tử')}`,
+ S3:()=>`<h2>Bản đồ luồng P0–P7</h2><div class="sub">Năng lực đứng sau: view.timeline (lọc theo pha) — đã bổ sung, hết "màn mồ côi" (phát hiện R6)</div>
+   <div class="card mono">P0 Nhập tri thức → P1 Hộ chiếu → P2 Yêu cầu → P3 Kiến trúc → P4 Kế hoạch → P5 Sinh mã ⇄ Cổng → P6 Mô phỏng/Board → P7 Phát hành</div>
+   <div class="banner">Vòng demo hiện tại đi qua: P1 → P4 → P5 → P6 → cổng G3.</div>`,
+ S4:()=>`<h2>Nhập tài liệu</h2><div class="sub">archive.* · ingest.* · extract.* · search.fetch</div>
+   <div class="card">Kéo thả tệp vào đây (PDF, SVD/ATDF, BOM, ảnh schematic, zip lồng ≤5 cấp)…</div>
+   <table class="t"><tr><th>Nguồn</th><th>Loại</th><th>Fact trích</th><th>Trạng thái</th></tr>
+   <tr><td>ATmega328P-datasheet.pdf</td><td>PDF bảng thanh ghi</td><td>96</td><td>✅ đã duyệt theo chính sách</td></tr>
+   <tr><td>iom328p.h (header hãng)</td><td>Header C</td><td>32</td><td>✅</td></tr></table>`,
+ S5:()=>`<h2>Hộ chiếu chip — ATmega328P</h2><div class="sub">passport.query · view.provenance — địa chỉ hệ 16 để đối chiếu thẳng datasheet</div>
+   <table class="t"><tr><th>Thanh ghi</th><th>Địa chỉ</th><th>Tầng</th><th>Nguồn (bấm mở đúng trang)</th></tr>
+   <tr><td>TWBR</td><td class="mono">0xB8</td><td>Vàng</td><td>datasheet tr.180, bbox ✔</td></tr>
+   <tr><td>TWCR</td><td class="mono">0xBC</td><td>Vàng</td><td>datasheet tr.182 ✔</td></tr>
+   <tr><td>UBRR0</td><td class="mono">${S.resolvedConflict?'0xC4 <span class="tag">(vế A — anh đã chọn '+ (S.confT||'') +')</span>':'⚠ 2 nguồn mâu thuẫn'}</td><td>Vàng</td><td>${S.resolvedConflict?'datasheet tr.200 ✔':'xem màn Xung đột'}</td></tr></table>`,
+ S6:()=>`<h2>Hộ chiếu mạch</h2><div class="sub">board.* · diagram.pinmap</div>
+   <table class="t"><tr><th>Net</th><th>Chân</th><th>Chức năng</th><th>Kiểm</th></tr>
+   <tr><td>SDA</td><td>PC4</td><td>TWI data · pull-up 4.7k</td><td>✅ không xung đột</td></tr>
+   <tr><td>SCL</td><td>PC5</td><td>TWI clock</td><td>✅</td></tr></table>
+   <div class="banner ok">board.mark_lab: mạch đã được NGƯỜI khai là mạch lab (không cơ cấu chấp hành) — tên người khai: CongVT.</div>`,
+ S7:()=>`<h2>Bản đồ tri thức & hỏi đáp</h2><div class="sub">view.kg_map · view.rag_ask — trả lời có trích dẫn nhấp mở nguồn</div>
+   <div class="card mono" style="line-height:1.9">[ATmega328P]──HAS──▶(TWBR 0xB8)──CITES──▶[datasheet tr.180]<br>[drv_i2c.c]──USES──▶(TWBR 0xB8)&nbsp;&nbsp;&nbsp;(UBRR0)◀──CONFLICT──▶[iom328p.h]</div>
+   <div class="card"><b>Hỏi:</b> "tần số TWI tối đa ở 16 MHz?" → <b>Đáp:</b> 400 kHz fast-mode <span class="tag">[datasheet tr.178 §21.2 — bấm mở]</span></div>`,
+ S8:()=>{
+   if(S.resolvedConflict) return `<h2>Xung đột tri thức</h2><div class="sub">kg.conflicts · kg.resolve_conflict</div><div class="banner ok">Không còn xung đột mở. Quyết định gần nhất: UBRR0 — chọn ${S.confT} — người quyết: CongVT (đã ghi sổ cái).</div>`;
+   const open=S.pending.some(p=>p.kind==='conflict');
+   if(!open) return `<h2>Xung đột tri thức</h2><div class="sub">kg.conflicts · kg.resolve_conflict</div>`+emptyBox('chưa phát hiện cặp fact nào mâu thuẫn','chạy kịch bản demo — bước kg.conflicts sẽ dựng một xung đột thật');
+   return `<h2>Xung đột tri thức — UBRR0</h2><div class="sub">Hai nguồn nói khác nhau về cùng một thanh ghi. Hệ thống KHÔNG tự chọn — anh chọn, sổ cái ghi tên người quyết. (Mẫu màn này tái dùng cho xung đột MÃ khi người và tác tử sửa cùng vùng — §7.3 UXD-13 v2.0)</div>
+   <div class="conf">
+     <div class="side"><h4>Vế A — Datasheet</h4><div class="v">0xC4</div><div class="tag">Tầng vàng · tr.200 bảng 24-1 · trích bbox ✔</div><br><button class="pri" onclick="resolveConflict('A')">Chọn vế A</button></div>
+     <div class="side"><h4>Vế B — Header iom328p.h</h4><div class="v">0xC0</div><div class="tag">Tầng vàng · dòng 412 · trích ✔ (nghi lệch phiên bản)</div><br><button onclick="resolveConflict('B')">Chọn vế B</button></div>
+   </div>`;},
+ S9:()=>`<h2>Làm rõ yêu cầu</h2><div class="sub">chat.restate · chat.clarify — tác tử nói lại ý hiểu KÈM chuỗi bước, câu hỏi gộp có mặc định</div>
+   <div class="card"><b>Ý hiểu:</b> "Sinh driver TWI (I2C) cho MPU6050 trên ATmega328P, tốc độ 400 kHz, có kiểm hằng số."<br>
+   <b>Chuỗi sẽ chạy:</b> <code>passport.query → plan.create → code.generate_module → code.constant_guard → sim.run → code.merge</code><br><span class="tag">Nút "Đúng — làm đi" / "Sửa ý hiểu" hiện trong thẻ Run ở vùng trao đổi.</span></div>`,
+ S10:()=>`<h2>Yêu cầu & kiến trúc</h2><div class="sub">req.* · arch.*</div>
+   <table class="t"><tr><th>Mã</th><th>Yêu cầu</th><th>Khả thi (req.ground_hw)</th></tr>
+   <tr><td>FR-12</td><td>Đọc MPU6050 qua TWI 400 kHz</td><td>✅ chip có TWI, chân PC4/PC5 rảnh</td></tr>
+   <tr><td>NFR-3</td><td>Chu kỳ điều khiển ≤ 5 ms</td><td>✅ theo arch.timing_budget</td></tr></table>
+   <div class="card"><b>ADR-07:</b> chọn kiến trúc super-loop + ISR — lý do và fact trích dẫn kèm theo.</div>`,
+ S11:()=>`<h2>Lược đồ</h2><div class="sub">diagram.* — 6 ngôn ngữ, đồng bộ hai chiều mã ↔ hình</div>
+   <div class="card mono">sequence: app → drv_i2c: read(0x68) ; drv_i2c → TWI: START|SLA+R ; TWI → MPU6050 …</div>
+   <div class="banner">diagram.sync: lược đồ khớp mã (không lệch).</div>`,
+ S12:()=>`<h2>Kế hoạch</h2><div class="sub">plan.create — từng bước có trích dẫn fact; missing[] nói rõ còn thiếu gì</div>
+   <table class="t"><tr><th>#</th><th>Bước</th><th>Fact trích dẫn</th></tr>
+   <tr><td>1</td><td>Cấu hình TWBR/TWSR cho 400 kHz</td><td class="mono">F-1042 (TWBR 0xB8)</td></tr>
+   <tr><td>2</td><td>Máy trạng thái START/SLA/DATA</td><td class="mono">F-1044…F-1049</td></tr>
+   <tr><td>3</td><td>Đọc 14 byte MPU6050, kiểm WHO_AM_I</td><td class="mono">F-2001</td></tr>
+   <tr><td>4</td><td>Test host + mô phỏng UART log</td><td>—</td></tr></table>`,
+ S13:()=>`<h2>Tài liệu</h2><div class="sub">doc.* — sinh theo chuẩn bộ EAA/EIDE, doc.style_check: tiếng Việt ưu tiên, mọi khẳng định có nguồn</div>
+   <table class="t"><tr><th>Tài liệu</th><th>Trạng thái</th></tr><tr><td>README drv_i2c</td><td>${S.merged?'✅ mới sinh sau merge':'⏳ chờ merge'}</td></tr><tr><td>Bring-up guide</td><td>mục stale: 0</td></tr></table>`,
+ S14:()=>{
+   const gen=S.generated;
+   return `<h2>Trình soạn thảo — drv_i2c.c</h2><div class="sub">Lề trái: chấm xanh = hằng số có fact · vạch đỏ = hằng số không nguồn (G-FACT sẽ CHẶN merge)</div>
+   ${S.runActiveOnFile?`<div class="banner">🤖 Tác tử đang sửa tệp này (Run #218) — anh vẫn gõ được; hai chuỗi sửa sẽ merge 3 bên.</div>`:''}
+   ${S.dirty?`<div class="banner warn">Bộ đệm có sửa CHƯA LƯU của anh — tác tử muốn ghi tệp này sẽ bị chính sách hỏi (P-EDIT-01).</div>`:''}
+   <div class="ed"><div class="ed-h"><b>drv_i2c.c</b><span class="tag">${gen?'11 dòng có fact · '+(S.guarded&&!S.resolvedConflict?'1 vi phạm':'0 vi phạm'):'tệp trống'}</span>
+     <span style="flex:1"></span>
+     <button onclick="humanType()">✎ Sửa tay</button>
+     <button class="pri" onclick="humanSave()">Lưu (code.human_save)</button></div>
+   <div class="ed-b">${gen?edLines():'<div class="ln"><span class="gut"></span><span class="cmt">// tác tử chưa sinh mã — chạy kịch bản demo, hoặc gõ lệnh</span></div>'}</div></div>
+   <p class="tag" style="margin-top:8px">Lưu của người = một commit <code>human:congvt</code> + sự kiện <code>human.file_save</code> + một mục Hoàn tác — luôn APPROVE ở mọi mức tự chủ (P-EDIT-02).</p>`;},
+ S15:()=>`<h2>Diff & cổng merge</h2><div class="sub">code.review · code.merge — 4 cổng G1/G3/G4/G5</div>
+   ${S.merged?`<div class="banner ok">Merge M-77 vào nhánh auto/ — commit <span class="mono">agent:run-218/step-7</span>, trailer Eide-Ledger-Seq ✔. Cửa sổ hoàn tác: 60 phút.</div>`:
+   S.resolvedConflict?`<div class="banner">Chờ cổng G3 — G-FACT: 0 vi phạm sau khi anh quyết xung đột. Sẵn sàng merge.</div>`:
+   `<div class="banner warn">G-FACT đang CHẶN: còn hằng số không trỏ fact (UCSR0A 0xC0). Giải quyết ở màn Xung đột tri thức.</div>`}
+   <table class="t"><tr><th>Cổng</th><th>Nghĩa</th><th>Trạng thái</th></tr>
+   <tr><td>G-FACT</td><td>mọi hằng số phần cứng trỏ fact</td><td>${S.resolvedConflict?'✅':'⛔ chặn'}</td></tr>
+   <tr><td>G3</td><td>review + test host</td><td>${S.merged?'✅':'⏳'}</td></tr></table>`,
+ S16:()=>S.simDone?`<h2>Mô phỏng</h2><div class="sub">sim.run trên simavr — firmware thật, UART log thật</div>
+   <div class="card mono">[UART] MPU6050 WHO_AM_I=0x68 ✔<br>[UART] accel=(12,-3,16384) gyro=(1,0,-2)<br>[EXPECT] who_am_i==0x68 → ĐẠT · [EXPECT] rate 400kHz ±2% → ĐẠT</div>
+   <div class="banner ok">2/2 kỳ vọng đạt.</div>`:
+   `<h2>Mô phỏng</h2><div class="sub">sim.*</div>`+emptyBox('chưa có lượt mô phỏng nào cho feature này','tác tử sẽ chạy sim.run ở bước 6 của kịch bản'),
+ S17:()=>`<h2>Dò board</h2><div class="sub">discover.*</div>`+emptyBox('chưa có bo mạch cắm vào máy — 8/12 năng lực nhóm này chờ đúng một vật ngoài máy tính (FTR-30 §9)','cắm board + mạch nạp; discover.ports đã thấy 0 cổng'),
+ S18:()=>`<h2>Log & serial</h2><div class="sub">debug.log_stats · debug.ask_at · target.serial</div>
+   <div class="card mono">log mô phỏng 12 480 dòng · mẫu lặp: 3 · hỏi-tại-dòng sẵn sàng</div>`+ (S.simDone?'':emptyBox('phần serial chờ board thật','phần log dùng được ngay với log mô phỏng')),
+ S19:()=>`<h2>Gỡ lỗi probe</h2><div class="sub">debug.* · target.probe_*</div>`+emptyBox('chưa có debug probe — khung EvidencePack/giả thuyết/thí nghiệm đã dựng đủ theo hợp đồng','cắm ST-Link / AVRISP; không hiện dữ liệu giả'),
+ S20:()=>`<h2>Bench</h2><div class="sub">bench.*</div>`+emptyBox('bench.run cần cả mô phỏng lẫn board thật để SO hai vế','2/3 năng lực nhóm đã chạy (badge, suggest_skill_fix)'),
+ S21:()=>`<h2>Môi trường</h2><div class="sub">env.doctor · tools.lock — không sudo trong mọi đường cài</div>
+   <table class="t"><tr><th>Công cụ</th><th>Phiên bản</th><th>Hash khớp lock</th></tr>
+   <tr><td>avr-gcc</td><td>14.1</td><td>✅</td></tr><tr><td>simavr</td><td>1.7</td><td>✅</td></tr><tr><td>avrdude</td><td>8.0</td><td>✅</td></tr></table>`,
+ S22:()=>`<h2>Mô hình & chi phí</h2><div class="sub">Vai trò → mô hình · ngân sách ngày · khoá API không rời tiến trình cha</div>
+   <div class="kpis"><div class="kpi"><div class="v">0,41 $</div><div class="l">vòng hiện tại</div></div><div class="kpi"><div class="v">62 %</div><div class="l">hạn mức ngày còn lại</div></div></div>
+   <table class="t"><tr><th>Vai</th><th>Mô hình</th></tr><tr><td>Planner/Coder</td><td>mô hình chính (đám mây)</td></tr><tr><td>Reviewer</td><td>mô hình khác hãng</td></tr></table>`,
+ S23:()=>`<h2>Công cụ tự tạo</h2><div class="sub">tool.* — công cụ mới phải qua sandbox + bài kiểm (G-TOOL) mới thành năng lực user.*</div>
+   <table class="t"><tr><th>Công cụ</th><th>Trạng thái</th><th>Đã dùng</th></tr><tr><td>user.parse_mpu_selftest</td><td>tạm — chờ thăng cấp</td><td>3 lần ✅</td></tr></table>`,
+ S24:()=>`<h2>Registry</h2><div class="sub">registry.* — gói .hkp có chữ ký, license</div>
+   <table class="t"><tr><th>Gói</th><th>Huy hiệu</th></tr><tr><td>passport-atmega328p v1.3</td><td>verified</td></tr><tr><td>skillpack-avr-twi v0.9</td><td>bench</td></tr></table>`,
+ S25:()=>`<h2>Chính sách tự chủ</h2><div class="sub">policy.* — 49 quy tắc + 4 quy tắc mới v2.0; ký lại chính sách là LỆNH DÒNG LỆNH, không phải năng lực</div>
+   <table class="t"><tr><th>Mã</th><th>Quy tắc mới (v2.0)</th></tr>
+   <tr><td>P-EDIT-01</td><td>tác tử ghi tệp đang có sửa chưa lưu của người → ASK</td></tr>
+   <tr><td>P-EDIT-02</td><td>code.human_save → APPROVE mọi mức, kể cả A0</td></tr>
+   <tr><td>P-EDIT-03</td><td>vùng sửa giao nhau → bắt buộc dựng xung đột, không tự chọn vế</td></tr>
+   <tr><td>P-RUN-01</td><td>run.started phải phát trước hành động đầu tiên của chuỗi</td></tr></table>
+   <div class="card">Mức hiện tại: <b id="polAuto">${S.auto}</b> — đổi bằng policy.set_autonomy (đi qua cổng như mọi lời gọi).</div>`,
+};
+function edLines(){
+  const conflictFixed=S.resolvedConflict;
+  return `
+  <div class="ln"><span class="gut dot-ok">●</span><span>#define TWBR_VAL 0x0C <span class="cmt">// eide:fact F-1042 · 400kHz@16MHz</span></span></div>
+  <div class="ln"><span class="gut dot-ok">●</span><span>#define TWI_BASE 0xB8 <span class="cmt">// eide:fact F-1043</span></span></div>
+  <div class="ln ${conflictFixed?'':'viol'}"><span class="gut ${conflictFixed?'dot-ok':'dot-bad'}">${conflictFixed?'●':'▎'}</span><span>#define UBRR0_ADDR ${conflictFixed?'0xC4':'0xC0'} <span class="cmt">${conflictFixed?'// eide:fact F-1077 (vế A — người quyết)':'// ← hằng số KHÔNG trỏ fact — G-FACT chặn merge'}</span></span></div>
+  <div class="ln"><span class="gut"></span><span>void i2c_init(void){ TWBR = TWBR_VAL; TWSR = 0; }</span></div>
+  <div class="ln ${S.humanSaved?'human-edit':''}"><span class="gut ${S.humanSaved?'dot-ok':''}">${S.humanSaved?'●':''}</span><span>${S.humanSaved?'uint8_t i2c_retry = 3; <span class="cmt">// ← dòng NGƯỜI thêm — commit human:congvt</span>':'<span class="cmt">// …</span>'}</span></div>`;
+}
+function renderScreen(){$('screen').innerHTML=cur?SCR[cur]():`<div class="empty" style="margin-top:30px"><b>Vùng làm việc trống.</b><br><span class="tag">Chọn màn ở cột trái — hoặc ra lệnh, tác tử sẽ tự mở đúng màn (NT2).</span></div>`;}
+
+/* ================= SỔ CÁI + CỘT PHẢI ================= */
+function addLedger(type,text){S.ledger.push({t:now(),type,text}); if(cur==='S2')renderScreen(); }
+function addUndo(label){S.undo.push({label,left:60}); renderRail();}
+function renderRail(){
+  $('cAsk').textContent=S.pending.length; $('cUndo').textContent=S.undo.length;
+  $('rAskN').style.display=S.pending.length?'':'none'; $('rAskN').textContent=S.pending.length;
+  $('rRun').innerHTML=S.run&&S.run.status!=='done'&&S.run.status!=='cancelled'
+    ?`<div class="r-it" onclick="openScreen('S2')"><b>Run #${S.run.id}</b> · bước ${S.run.i+1}/${S.run.steps.length}<span class="tag">${S.run.status==='blocked'?'⏸ chờ anh quyết':'▶ '+S.run.steps[S.run.i][1]}</span></div>`
+    :'<div class="tag">Không có Run nào.</div>';
+  $('rAsk').innerHTML=S.pending.length?S.pending.map((p,i)=>`<div class="r-it ask" onclick="openScreen('${p.screen}')"><b>${p.title}</b><span class="tag">${p.why} — bấm để mở</span></div>`).join(''):'<div class="tag">Trống — không việc nào chờ anh.</div>';
+  $('rUndo').innerHTML=S.undo.length?S.undo.map((u,i)=>`<div class="r-it"><b>${u.label}</b><span class="tag">còn ${u.left} phút · <a href="#" onclick="doUndo(${i});return false" style="color:var(--red)">hoàn tác</a></span></div>`).join(''):'<div class="tag">Chưa có mục nào trong cửa sổ hoàn tác.</div>';
+  renderNav();
+}
+function doUndo(i){const u=S.undo[i]; S.undo.splice(i,1); addLedger('code.revert',`Hoàn tác "${u.label}" — git revert, người: CongVT`); if(u.label.startsWith('Merge'))S.merged=false; toast('Đã hoàn tác: '+u.label); renderRail(); renderScreen();}
+
+/* ================= VÙNG TRAO ĐỔI ================= */
+function setDock(m){$('dock').className=m==='min'?'min':m==='max'?'max':'';}
+function chatU(t){$('chatlog').insertAdjacentHTML('beforeend',`<div class="msg u">${t}</div>`);scrollChat();}
+function chatA(h){$('chatlog').insertAdjacentHTML('beforeend',`<div class="msg a">${h}</div>`);scrollChat();}
+function scrollChat(){const c=$('chatlog');c.scrollTop=c.scrollHeight;}
+function sendCmd(){const v=$('cmd').value.trim(); if(!v)return; $('cmd').value=''; chatU(v);
+  if(S.run&&S.run.status==='running'){chatA('Run #218 đang chạy — lệnh mới sẽ xếp hàng sau khi Run kết thúc (chat.orchestrate).');return;}
+  playDemo(v);}
+
+/* ================= THẺ RUN + KỊCH BẢN ================= */
+const STEPS=[
+ ['passport.query','Tra fact TWI/UART của ATmega328P','S5',1300],
+ ['plan.create','Lập kế hoạch 4 bước có trích dẫn fact','S12',1500],
+ ['code.generate_module','Sinh drv_i2c.c — chú thích eide:fact cạnh mỗi hằng số','S14',1800],
+ ['code.constant_guard','Quét hằng số: 1 vi phạm (UBRR0_ADDR không nguồn)','S14',1500],
+ ['kg.conflicts','Dựng xung đột UBRR0: datasheet ≠ header — HỎI NGƯỜI','S8',1200],
+ ['sim.run','Chạy firmware trên simavr — kiểm kỳ vọng UART','S16',1700],
+ ['code.merge','Qua G-FACT + G3 → merge M-77 (hoàn tác 60 phút)','S15',1500],
+];
+function runCardHTML(){
+  const r=S.run;
+  const segs=r.steps.map((s,i)=>`<div class="seg ${i<r.i?'done':i===r.i?(r.status==='blocked'?'blk':'cur'):''}"></div>`).join('');
+  const st=r.status==='blocked'?'⏸ Chờ anh quyết xung đột — mở ở cột phải hoặc màn Xung đột':r.status==='done'?'✅ Hoàn thành — báo cáo bên dưới':r.status==='cancelled'?'✖ Đã huỷ (Dừng khẩn)':'▶ '+r.steps[r.i][1]+' <code>'+r.steps[r.i][0]+'</code>';
+  return `<div class="rh"><b>Run #${r.id} · Sinh driver I2C cho MPU6050</b><span class="tag">bước ${Math.min(r.i+1,r.steps.length)}/${r.steps.length}</span>
+    <span style="flex:1"></span><a href="#" onclick="openScreen('S2');return false">Mở chi tiết</a>&nbsp;<a href="#" style="color:var(--red)" onclick="emergencyStop();return false">Dừng</a></div>
+    <div class="bar">${segs}</div><div class="rstep">${st}</div>`;
+}
+function updateRunCard(){if($('runcard'))$('runcard').innerHTML=runCardHTML(); renderRail();}
+function playDemo(cmdText){
+  if(S.run&&(S.run.status==='running'||S.run.status==='blocked')){toast('Run #218 đang chạy.');return;}
+  resetDemoState();
+  setDock('std');
+  if(!cmdText){chatU('Sinh driver I2C cho MPU6050, tốc độ 400 kHz, có kiểm hằng số.');}
+  chatA('<b>Ý hiểu (chat.restate):</b> sinh driver TWI cho MPU6050 trên ATmega328P @400 kHz, kiểm hằng số, mô phỏng rồi merge.<br><span class="tag">Chuỗi: passport.query → plan → generate → constant_guard → (xung đột?) → sim → merge. Mức tự chủ A2: tự làm, hỏi khi chạm nhánh chính hoặc khi tri thức mâu thuẫn.</span>');
+  S.run={id:218,steps:STEPS,i:0,status:'running'};
+  addLedger('run.started','Run #218 — "sinh driver I2C cho MPU6050" · 7 bước dự kiến (P-RUN-01: phát trước hành động đầu tiên)');
+  chatA('<div class="runcard" id="runcard"></div>');
+  updateRunCard();
+  stepRun();
+}
+function resetDemoState(){S.timers.forEach(clearTimeout);S.timers=[];S.generated=false;S.guarded=false;S.simDone=false;S.merged=false;S.resolvedConflict=false;S.humanSaved=false;S.dirty=false;S.runActiveOnFile=false;S.pending=S.pending.filter(p=>p.kind!=='conflict');}
+function stepRun(){
+  const r=S.run; if(!r||r.status!=='running')return;
+  if(r.i>=r.steps.length){finishRun();return;}
+  const [cap,label,screen,ms]=r.steps[r.i];
+  /* P-EDIT-01: tệp dirty của người */
+  if(cap.startsWith('code.')&&S.dirty){askDirty(cap);return;}
+  addLedger('run.step_started',`Bước ${r.i+1}: ${cap} — ${label}`);
+  S.runActiveOnFile=(screen==='S14');
+  openScreen(screen,true);
+  updateRunCard();
+  S.timers.push(setTimeout(()=>{
+    if(cap==='code.generate_module'){S.generated=true;}
+    if(cap==='code.constant_guard'){S.guarded=true;}
+    addLedger('run.step_done',`Bước ${r.i+1} xong: ${cap}`);
+    if(cap==='kg.conflicts'){blockOnConflict();return;}
+    if(cap==='sim.run'){S.simDone=true;}
+    if(cap==='code.merge'){S.merged=true;addUndo('Merge M-77 (agent:run-218)');}
+    S.runActiveOnFile=false;
+    r.i++; updateRunCard(); renderScreen(); stepRun();
+  },ms));
+}
+function blockOnConflict(){
+  S.run.status='blocked';
+  S.pending.push({kind:'conflict',title:'Xung đột UBRR0',why:'2 nguồn mâu thuẫn — hệ thống không tự chọn',screen:'S8'});
+  addLedger('run.blocked','Run #218 dừng ở cổng ASK — quy tắc: tri thức mâu thuẫn phải có tên người quyết');
+  updateRunCard(); openScreen('S8',true); renderScreen();
+  chatA('⏸ <b>Chuỗi dừng để hỏi:</b> UBRR0 có hai giá trị (datasheet 0xC4 · header 0xC0). Mời anh quyết ở màn <a href="#" onclick="openScreen(\'S8\');return false">Xung đột tri thức</a> — mục cũng đang nằm ở khối "Chờ tôi".');
+}
+function resolveConflict(side){
+  S.resolvedConflict=true; S.confT=side==='A'?'vế A (datasheet 0xC4)':'vế B (header 0xC0)';
+  S.pending=S.pending.filter(p=>p.kind!=='conflict');
+  addLedger('human.decision',`kg.resolve_conflict: UBRR0 → ${S.confT} — người quyết: CongVT`);
+  addLedger('code.annotate','Cập nhật eide:fact F-1077 vào drv_i2c.c — dấu lề đổi màu ngay dưới mắt người (đồng bộ tầng 4)');
+  toast('Đã ghi quyết định vào sổ cái — Run #218 tiếp tục');
+  chatA('✔ Anh đã chọn '+S.confT+'. G-FACT hết vi phạm. Tiếp tục chuỗi…');
+  S.run.status='running'; S.run.i++; updateRunCard(); renderScreen(); stepRun();
+}
+function finishRun(){
+  S.run.status='done'; updateRunCard();
+  addLedger('run.done','Run #218 hoàn thành — 7/7 bước · chi phí 0,41 $');
+  chatA('<b>Báo cáo (chat.report_back):</b> drv_i2c.c sinh xong, 11 hằng số đều trỏ fact, mô phỏng 2/2 kỳ vọng đạt, đã merge M-77 vào nhánh auto/.<br><span class="tag">Hoàn tác được đến 60 phút — xem cột phải. Thử tiếp: bấm "✎ Sửa tay" trong Trình soạn thảo rồi Lưu, để xem luồng người–tác tử cùng sửa.</span>');
+  renderScreen();
+}
+/* dirty-file ASK (P-EDIT-01) */
+function askDirty(cap){
+  S.run.status='blocked'; updateRunCard();
+  $('modal').style.display='flex';
+  $('modalBox').innerHTML=`<h1 style="font-size:16px">Chính sách hỏi (P-EDIT-01)</h1>
+   <p>Tác tử sắp chạy <code>${cap}</code> trên <b>drv_i2c.c</b>, nhưng anh đang có sửa <b>chưa lưu</b> ở tệp này. Không có đường ghi đè im lặng.</p>
+   <div style="display:flex;gap:8px"><button class="pri" onclick="dirtyChoice(1)">Lưu bản của tôi rồi tác tử tiếp tục</button>
+   <button onclick="dirtyChoice(0)">Tác tử chờ — tôi sửa tiếp</button></div>`;
+}
+function dirtyChoice(saveFirst){
+  $('modal').style.display='none';
+  if(saveFirst){humanSave(true); chatA('✔ Đã lưu bản của anh (commit human:congvt). Tác tử sẽ merge 3 bên nếu chạm cùng vùng.'); S.run.status='running'; stepRun();}
+  else{chatA('⏸ Tác tử chờ. Lưu xong anh bấm lại ▶ để chuỗi tiếp tục.'); }
+  updateRunCard();
+}
+/* ================= NGƯỜI SỬA TỆP ================= */
+function humanType(){if(!S.generated){toast('Tệp còn trống — chạy kịch bản để tác tử sinh mã trước.');return;}
+  S.dirty=true; renderScreen(); toast('Bộ đệm đánh dấu CHƯA LƯU — tác tử ghi tệp này sẽ bị hỏi (P-EDIT-01)');}
+function humanSave(silent){
+  if(!S.generated){toast('Chưa có gì để lưu.');return;}
+  S.dirty=false; S.humanSaved=true;
+  addLedger('human.file_save','code.human_save: drv_i2c.c — commit human:congvt (+1 dòng i2c_retry) · APPROVE mọi mức (P-EDIT-02)');
+  addUndo('Lưu drv_i2c.c (human:congvt)');
+  if(!silent){toast('Đã lưu — sự kiện human.file_save vào sổ cái ≤ 1 giây (tiêu chí N3)'); renderScreen();}
+}
+/* ================= DỪNG KHẨN ================= */
+function emergencyStop(){
+  S.timers.forEach(clearTimeout);S.timers=[];
+  S.auto='A0'; $('autoPill').textContent='Tự chủ A0 — DỪNG'; $('autoPill').className='pill a0';
+  if(S.run&&S.run.status!=='done'){S.run.status='cancelled'; addLedger('run.cancelled','Run #218 bị huỷ — policy.emergency_stop hạ về A0 dưới 1 giây');}
+  updateRunCard(); toast('Dừng khẩn: hạ về A0, huỷ thao tác đang chờ. (Đặt lại A2 trong màn Chính sách tự chủ)');
+  S.timers.push(setTimeout(()=>{S.auto='A2';$('autoPill').textContent='Tự chủ A2';$('autoPill').className='pill a2';toast('Demo: đã đặt lại A2 (policy.set_autonomy)');},4000));
+}
+/* ================= BẢNG LỆNH ================= */
+const CAPS=[['project.create','Tạo dự án từ câu lệnh','S1'],['project.rollback','Về known-good gần nhất','S1'],['passport.query','Tra fact theo thanh ghi/địa chỉ','S5'],['kg.conflicts','Tìm fact mâu thuẫn','S8'],['plan.create','Kế hoạch có trích dẫn fact','S12'],['code.generate_module','Sinh module theo STEP+fact','S14'],['code.constant_guard','Quét hằng số không nguồn','S14'],['code.human_save','Lưu tệp của người (mới v2.0)','S14'],['code.merge_conflict_resolve','Người quyết vùng xung đột mã (mới v2.0)','S14'],['project.watch','Theo dõi tệp đổi ngoài EIDE (mới v2.0)','S2'],['sim.run','Chạy firmware trên mô phỏng','S16'],['debug.ask_at','Hỏi tại dòng log','S18'],['tool.write','Tác tử tự viết công cụ (G-TOOL)','S23'],['policy.set_autonomy','Đặt mức tự chủ','S25'],['report.progress','Báo cáo tiến độ/ngày','S1'],['doc.generate','Sinh tài liệu chuẩn EAA/EIDE','S13'],['view.rag_ask','Hỏi đáp có trích dẫn','S7'],['env.check','Kiểm công cụ theo manifest','S21']];
+function openPal(){$('pal').style.display='flex';$('palIn').value='';renderPal();setTimeout(()=>$('palIn').focus(),50);}
+function closePal(){$('pal').style.display='none';}
+function renderPal(){const q=$('palIn').value.toLowerCase();
+  $('palList').innerHTML=CAPS.filter(c=>c[0].includes(q)||c[1].toLowerCase().includes(q)).map(c=>`<div class="pal-it" onclick="pickCap('${c[0]}','${c[2]}')"><code>${c[0]}</code><span class="tag">${c[1]}</span></div>`).join('')||'<div class="tag" style="padding:8px">Không khớp — demo chỉ nạp 18/238 năng lực.</div>';}
+function pickCap(cap,sc){closePal();openScreen(sc,true);toast('policy.decide('+cap+') → APPROVE — mọi lời gọi từ bảng lệnh đi cùng một đường chính sách');}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openPal();} if(e.key==='Escape')closePal();});
+
+/* ================= KHỞI ĐỘNG ================= */
+function createProject(){
+  $('welcome').style.display='none'; $('app').style.display='flex';
+  addLedger('project.create','Tạo dự án "Robot-CanBang" — chip ATmega328P suy từ câu mô tả · mặc định A2');
+  openScreen('S1');
+  chatA('Xin chào! Dự án <b>Robot-CanBang</b> đã tạo (≤ 3 thao tác — tiêu chí N1). Thanh trên luôn hiện: dự án, mức tự chủ, Chờ tôi, Hoàn tác, Dừng khẩn.<br><span class="tag">Bấm ▶ Chạy kịch bản demo, hoặc gõ lệnh ngay dưới đây. ⌘K mở bảng lệnh.</span>');
+  renderRail();
+}
+renderTabs();
+</script>
+</body>
+</html>

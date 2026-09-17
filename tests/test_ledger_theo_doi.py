@@ -361,3 +361,42 @@ def test_UTF8_nhieu_byte_khong_bi_cat_giua_ky_tu(tmp_path, thu):
         assert thu.nhan[0]["data"]["name"] == ten
     finally:
         td.dung()
+
+
+def test_MOT_nguoi_nhan_dang_ky_CA_HAI_duong_chi_nhan_MOT_lan(tmp_path, thu):
+    """Đây là hình dạng daemon dùng thật, và nó phát ĐÔI suốt từ 14/09 tới 17/09/2026.
+
+    Daemon đăng ký cùng một hàm nhận cho cả hai đường: `theo_doi()` để thấy việc của chính nó
+    ngay lập tức, `theo_doi_tep()` để thấy việc của tiến trình khác sau ~0,4 s. `TheoDoiTep` có
+    lọc trùng theo `seq`, nhưng nó chỉ biết một `seq` sau khi TỰ đọc dòng ấy — tức sau khi đã
+    phát lần hai. Đo được: 29 thông báo lên giao diện cho 15 bản ghi.
+
+    Không bài kiểm nào bắt được vì mỗi đường có bài riêng và cả hai đều đúng phần của mình.
+    """
+    duong = tmp_path / "ledger.jsonl"
+    so = Ledger(duong)
+    so.theo_doi(thu)
+    td = so.theo_doi_tep(thu, chu_ky=0.02)
+    try:
+        so.append("cap.run.start", {"run_id": "mot"})
+        so.append("cap.run.finish", {"run_id": "mot", "cap": "kg.build"})
+        time.sleep(0.15)          # đủ một chu kỳ theo dõi tệp
+        seq = [r["seq"] for r in thu.nhan]
+        assert seq == sorted(set(seq)), f"có bản ghi lên hai lần: {seq}"
+        assert len(thu.nhan) == 2, f"mong 2 bản ghi, nhận {len(thu.nhan)}"
+    finally:
+        td.dung()
+
+
+def test_CHI_theo_doi_tep_thi_VAN_nhan_du(tmp_path, thu):
+    """Mặt kia của phép khử trùng: ai chỉ đăng ký `theo_doi_tep()` thì bộ theo dõi tệp là đường
+    DUY NHẤT tới họ. Bản vá đầu của DEV-123 đánh dấu `seq` cho MỌI bộ theo dõi và nuốt mất bản
+    ghi của chính những người ấy — ba bài trong tệp này đỏ ngay."""
+    duong = tmp_path / "ledger.jsonl"
+    so = Ledger(duong)
+    td = so.theo_doi_tep(thu, chu_ky=0.02)
+    try:
+        so.append("cap.run.start", {"run_id": "x"})
+        assert _cho(lambda: len(thu.nhan) == 1), "bản ghi không tới nơi"
+    finally:
+        td.dung()

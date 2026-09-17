@@ -40,6 +40,15 @@ API_VERSION = "1.2"
 SU_KIEN: dict[str, str] = {
     "cap.run.start": "event.run.progress",
     "cap.run.finish": "event.run.progress",
+    # Vòng đời của MỘT LƯỢT CHẠY (API-15 §7, thêm v2.0). Cùng đi về `event.run.progress` chứ
+    # không thêm bốn tên sự kiện: bên nhận gom chúng theo `run_id` vào đúng một thẻ, và một
+    # tên sự kiện cho một khái niệm là thứ giữ cho bảng 21 sự kiện không phình thành 27.
+    "run.started": "event.run.progress",
+    "run.step_started": "event.run.progress",
+    "run.step_done": "event.run.progress",
+    "run.blocked": "event.run.progress",
+    "run.done": "event.run.progress",
+    "run.cancelled": "event.run.progress",
     "gate.decision": "event.gate.opened",
     "gate.human": "event.queue.changed",
     "undo.register": "event.undo.registered",
@@ -403,6 +412,16 @@ class Daemon:
         # dòng thời gian thay vì vào hàng đợi. Trước 14/09/2026 chúng bị bỏ hẳn.
         if kind == "gate.decision" and d.get("decision") != "ASK":
             ten = "event.gate.decided"
+        # Một nút của chuỗi mang mã của CHÍNH NÓ trong `run_id` (Router cấp), và mã của CHUỖI
+        # trong `chain`. Giao diện gom thẻ theo `run_id`, nên nếu không đổi thì một chuỗi 16
+        # bước sinh 16 thẻ rời — đúng thứ UXD-13 v2.0 §1.1 R3 gọi là "tiến độ rải bốn chỗ,
+        # không chỗ nào là nguồn chính". Đổi ở ĐÂY, một chỗ, thay vì bắt mỗi bên nhận tự gom.
+        if isinstance(d.get("chain"), dict):
+            ch = d.pop("chain")
+            d["cr_run_id"] = d.get("run_id")
+            d["run_id"] = ch.get("run_id")
+            d["node_id"] = ch.get("node_id")
+            d["i"], d["of"] = ch.get("i"), ch.get("of")
         self.phat(ten, {**d, "kind": kind, "at": rec.get("ts"), "seq": rec.get("seq"),
                         "actor": rec.get("actor")})
 
@@ -564,7 +583,8 @@ class Daemon:
         grounded = (neo.result or {}).get("grounded", {}) if neo.status == "done" else {}
         ra: dict[str, Any] = {"intent_id": (y.result or {}).get("intent_id") or intent.get("intent")}
         chuoi = self.router.invoke("chat.orchestrate",
-                                   {"intent": intent, "grounded": grounded}, self.ctx)
+                                   {"intent": intent, "grounded": grounded,
+                                    "text": p["text"]}, self.ctx)
         if chuoi.status == "done" and chuoi.result:
             ra["run_id"] = chuoi.result.get("run_id")
             # Chuỗi dừng để chờ người thì NÓI RA nó chờ gì, ngay trong câu trả lời.

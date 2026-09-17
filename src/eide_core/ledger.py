@@ -60,6 +60,9 @@ class Ledger:
         # "phát sự kiện" vào từng năng lực — thì mỗi năng lực mới là một chỗ có thể quên, và
         # panel sẽ im lặng bỏ sót đúng việc vừa thêm.
         self._quan_sat: list[Callable[[dict[str, Any]], None]] = []
+        # Các bộ theo dõi TỆP do chính sổ cái này tạo ra. Giữ tham chiếu để `append()` đánh dấu
+        # `seq` đã phát — xem giải thích ở `append()`.
+        self._tep: list[TheoDoiTep] = []
         if self.path.exists():
             for line in self.path.read_text(encoding="utf-8").splitlines():
                 if line.strip():
@@ -76,6 +79,30 @@ class Ledger:
         with self.path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
         self._last_hash = rec["hash"]
+        # ĐÁNH DẤU `seq` cho mọi bộ theo dõi tệp TRƯỚC khi phát in-process.
+        #
+        # Hai đường cùng dẫn tới một người nhận: `_quan_sat` chạy ngay, bộ theo dõi tệp đọc lại
+        # chính dòng vừa ghi sau ~0,4 s. `TheoDoiTep._goi` có lọc theo `seq`, nhưng nó chỉ biết
+        # một `seq` SAU KHI tự đọc dòng ấy — tức là sau khi đã phát lần hai. Nên phép lọc chưa
+        # bao giờ chặn được đường này, dù docstring của `TheoDoiTep` khẳng định nó chặn.
+        #
+        # Đo 17/09/2026 trên một lượt `chat.send`: 29 thông báo `event.run.progress` lên giao
+        # diện cho 15 bản ghi sổ cái — MỌI việc của chính daemon đi lên hai lần. Không ai thấy
+        # vì các thẻ khoá theo `run_id` và mọi phép cập nhật đều luỹ đẳng; nó chỉ lộ ra khi thẻ
+        # Run bắt đầu ĐẾM bước.
+        #
+        # Chỉ đánh dấu cho bộ theo dõi nào có CÙNG hàm nhận với một người quan sát in-process.
+        # Khử trùng cho tất cả là sai: ai chỉ đăng ký `theo_doi_tep()` thì bộ theo dõi tệp là
+        # đường DUY NHẤT tới họ, và đánh dấu ở đây sẽ nuốt mất bản ghi thay vì khử một bản sao.
+        #
+        # `==` chứ KHÔNG `is`. Người gọi thường truyền cùng một phương thức ràng buộc cho cả hai
+        # đường (`self.ledger.theo_doi(self._f)` rồi `self.ledger.theo_doi_tep(self._f)`), mà
+        # mỗi lần truy cập một phương thức ràng buộc lại sinh một ĐỐI TƯỢNG MỚI — nên `is` luôn
+        # sai và phép khử trùng im lặng không chạy. Bản vá đầu của chính mục này dùng `is`, và
+        # nó qua được toàn bộ 1 612 bài kiểm trong khi trên daemon thật vẫn phát đôi.
+        for td in self._tep:
+            if any(q == td.f for q in self._quan_sat):
+                td.danh_dau(rec["seq"])
         # Người quan sát KHÔNG được làm hỏng việc ghi sổ. Một panel đã đóng ống dẫn, một
         # `BrokenPipeError` từ stdout — không lý do nào trong số đó đáng để mất một dòng sổ cái.
         # Sổ cái là bằng chứng; thông báo cho giao diện thì không.
@@ -108,6 +135,7 @@ class Ledger:
         """
         td = TheoDoiTep(self.path, f, phat_lai=phat_lai, chu_ky=chu_ky)
         td.bat_dau()
+        self._tep.append(td)
         return td
 
     def verify(self) -> tuple[bool, int]:
@@ -251,6 +279,11 @@ class TheoDoiTep:
         for dong in xong.splitlines():
             if (r := _doc_dong(dong)) is not None:
                 self._goi(r)
+
+    def danh_dau(self, seq: int) -> None:
+        """Ghi nhận một `seq` đã được phát bằng đường khác — xem `Ledger.append`."""
+        if isinstance(seq, int):
+            self._da_thay.add(seq)
 
     def _goi(self, r: dict[str, Any]) -> None:
         """Phát một bản ghi MỚI — lọc trùng theo `seq` trước."""

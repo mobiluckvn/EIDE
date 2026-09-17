@@ -70,6 +70,26 @@
   "source": "Orchestrator"
  },
  {
+  "kind": "run.started",
+  "fields": "{run_id, n, text, steps[]: {id, cap}}",
+  "source": "Orchestrator"
+ },
+ {
+  "kind": "run.step_started / run.step_done",
+  "fields": "{run_id, node_id, cap, i, of} / {…, status, error?}",
+  "source": "Orchestrator"
+ },
+ {
+  "kind": "run.blocked",
+  "fields": "{run_id, node_id, cap, reason, missing[]?, rule?}",
+  "source": "Orchestrator"
+ },
+ {
+  "kind": "run.done / run.cancelled",
+  "fields": "{run_id, state, done, waiting, failed} / {run_id, by}",
+  "source": "Orchestrator"
+ },
+ {
   "kind": "error",
   "fields": "ErrorLedgerEntry",
   "source": "Mọi thành phần"

@@ -441,7 +441,20 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     # Bước 3 — ghi kế hoạch xuống store TRƯỚC khi chạy: một chuỗi đang chạy dở mà máy tắt thì
     # phần đã làm vẫn phải đọc lại được, và `run.graph` là chỗ duy nhất giữ được điều đó.
+    so_run = _so_run(root)
     _ghi_run(root, run_id, chuoi, "running", intent)
+    buoc_ds = [{"id": n.id, "cap": n.cap} for n in chain_mod.thu_tu_chay(chuoi)]
+    led = ctx.extra.get("ledger")
+    # `run.started` TRƯỚC hành động đầu tiên — quy tắc P-RUN-01 của UXD-13 v2.0. Thẻ Run phải
+    # tồn tại trước khi có việc để hiển thị; ngược lại thì bước đầu chạy xong rồi giao diện mới
+    # biết có một lượt chạy, và người dùng thấy tiến độ bắt đầu từ giữa chừng.
+    if led is not None:
+        # Câu NGƯỜI GÕ, không phải tên ý định. "Run #17 · code.feature" đúng nhưng vô nghĩa
+        # với người vừa gõ "đọc cảm biến BME280 qua I2C" — họ nhận ra việc của mình bằng chính
+        # câu mình viết. Lùi về tên ý định khi không có câu gốc (chuỗi do planner dựng).
+        van = str(params.get("text") or "").strip() or str(ten_y_dinh)
+        led.append("run.started", {"run_id": run_id, "n": so_run,
+                                   "text": van[:120], "steps": buoc_ds})
 
     # Bước 4–5 — chạy từng nút.
     ket_qua, cho, bo_qua, hong = [], [], [], []
@@ -469,6 +482,9 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             cho.append({"id": nut.id, "cap": nut.cap, "on_ask": nut.on_ask,
                         "thieu": can_nguoi[nut.id],
                         "vi": "cần anh cho biết: " + ", ".join(can_nguoi[nut.id])})
+            if led is not None:
+                led.append("run.blocked", {"run_id": run_id, "node_id": nut.id, "cap": nut.cap,
+                                           "reason": "thiếu tham số", "missing": can_nguoi[nut.id]})
             if nut.on_ask == "wait":
                 break
             continue
@@ -477,7 +493,21 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         except EideError as e:
             hong.append({"id": nut.id, "cap": nut.cap, "error": {"eide_code": e.code, "message": str(e)}})
             continue
-        run = router.invoke(nut.cap, tham_so, ctx)
+        i_buoc = next((k for k, b in enumerate(buoc_ds, 1) if b["id"] == nut.id), 0)
+        # Ngữ cảnh chuỗi đi CÙNG lời gọi: Router ghi nó vào `cap.run.*`, nên mọi bước của một
+        # Run gộp về một thẻ ở giao diện mà không cần bên nhận tự đoán.
+        ctx.extra["chain"] = {"run_id": run_id, "node_id": nut.id, "i": i_buoc, "of": len(buoc_ds)}
+        if led is not None:
+            led.append("run.step_started", {"run_id": run_id, "node_id": nut.id, "cap": nut.cap,
+                                            "i": i_buoc, "of": len(buoc_ds)})
+        try:
+            run = router.invoke(nut.cap, tham_so, ctx)
+        finally:
+            ctx.extra.pop("chain", None)
+        if led is not None:
+            led.append("run.step_done", {"run_id": run_id, "node_id": nut.id, "cap": nut.cap,
+                                         "i": i_buoc, "of": len(buoc_ds), "status": run.status,
+                                         **({"error": run.error} if run.error else {})})
         if run.status == "done":
             xong.add(nut.id)
             dau_ra[nut.id] = run.result or {}
@@ -495,7 +525,13 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                                   {"reason": "fail_retries", "ref": run_id}, ctx)
                 break
 
-    trang_thai = "done" if not cho and not hong else ("asked" if cho else "failed")
+    # `cancelled` đứng TRƯỚC mọi trạng thái khác: một chuỗi bị người dừng giữa chừng cũng có
+    # nút chờ và nút hỏng, nên nếu xét theo thứ tự cũ thì nó bị gọi là "asked" — tức giao diện
+    # nói tác tử đang đợi người, trong khi chính người vừa bảo nó dừng.
+    bi_huy = any((x.get("error") or {}).get("eide_code") == "E3002" for x in hong) or any(
+        x.get("status") == "cancelled" for x in ket_qua)
+    trang_thai = ("cancelled" if bi_huy
+                  else "done" if not cho and not hong else ("asked" if cho else "failed"))
     # Hợp đồng trả ĐÚNG `{run_id}` — CHAT-06 là bất đồng bộ theo thiết kế: tiến độ đi qua sự kiện
     # `cap.run.start`/`cap.run.finish` của từng nút (đã có sẵn vì mỗi nút đi qua Router), còn
     # báo cáo cuối nằm ở `run.report` (DDD-14 §2 Run, cột "JSON Report"). Trả cả báo cáo ra
@@ -504,6 +540,12 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     _ghi_run(root, run_id, chuoi, trang_thai, intent,
              report={"nguon_chuoi": nguon, "state": trang_thai, "done": ket_qua,
                      "waiting": cho, "skipped": bo_qua, "failed": hong})
+    if led is not None:
+        if trang_thai == "cancelled":
+            led.append("run.cancelled", {"run_id": run_id, "by": "human"})
+        else:
+            led.append("run.done", {"run_id": run_id, "state": trang_thai, "done": len(ket_qua),
+                                    "waiting": len(cho), "failed": len(hong)})
     return {"run_id": run_id}
 
 
@@ -647,6 +689,26 @@ def _uoc_chi_phi(chuoi: Any) -> float:
     đơn. Con số chính xác chỉ có sau khi chạy, và `model.call.cost_usd` mới là nơi ghi nó.
     """
     return len(chuoi.nodes) * 0.01
+
+
+def _so_run(root: Path | None) -> int:
+    """Số thứ tự của lượt chạy sắp bắt đầu, trong phạm vi một dự án — "Run #7".
+
+    Người dùng cần một cái tên NGẮN để gọi một lượt chạy khi nói chuyện với nhau và với tác tử.
+    `r_9f3c1a2b4e5d` thì đúng nhưng không ai đọc to lên được, và hai mã băm cạnh nhau trông
+    giống hệt nhau. Đếm từ bảng `run` của chính dự án chứ không giữ một bộ đếm riêng: thêm một
+    chỗ giữ trạng thái là thêm một chỗ lệch, và bảng ấy vốn đã là nơi mọi lượt chạy được ghi.
+    """
+    if root is None:
+        return 1
+    db = store.store_path(root)
+    if not db.exists():
+        return 1
+    try:
+        with store.open_store(db) as c:
+            return int(c.execute("SELECT COUNT(*) FROM run").fetchone()[0]) + 1
+    except sqlite3.Error:
+        return 1
 
 
 def _ghi_run(root: Path | None, run_id: str, chuoi: Any, state: str,

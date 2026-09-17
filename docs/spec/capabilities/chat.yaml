@@ -197,6 +197,9 @@
         type: object
       grounded:
         type: object
+      text:
+        type: string
+        description: câu lệnh gốc của người, để thẻ Run gọi tên việc bằng chính câu ấy
     required:
     - intent
     - grounded

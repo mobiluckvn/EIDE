@@ -137,6 +137,20 @@ public final class RunProgressCard: NSView {
 
     /// Dải chip từng nút. Ẩn khi chưa có nút nào — xem `capNhat`.
     private let _cuonChip = NSScrollView()
+
+    /// Số thứ tự lượt chạy trong dự án — "Run #7". 0 nghĩa là chưa nhận `run.started`.
+    public private(set) var soRun = 0
+    /// Câu lệnh gốc, để thẻ nói VIỆC GÌ chứ không chỉ nói mã.
+    private var cauLenh = ""
+    /// Kế hoạch từ `run.started`: các bước dự kiến, theo thứ tự chạy.
+    private var keHoach: [(id: String, cap: String)] = []
+    /// Lượt chạy đang chờ người: `run.blocked` tới mà chưa có `run.done`.
+    public private(set) var choNguoi = false
+    private let thanh = NSProgressIndicator()
+    private let nutChiTiet = NSButton()
+
+    /// (run_id) — người bấm "Mở chi tiết".
+    public var onXemChiTiet: ((String) -> Void)?
     /// Phần trăm gần nhất, `nil` nếu daemon chưa gửi.
     public private(set) var phanTram: Int?
 
@@ -166,16 +180,39 @@ public final class RunProgressCard: NSView {
 
         let cuon = _cuonChip
         cuon.documentView = hang
+        // `hang` là documentView, và một documentView KHÔNG có ràng buộc thì đứng ở kích thước
+        // 0 — các chip vẫn được dựng, vẫn nằm trong cây khung nhìn, và không một cái nào hiện
+        // ra. Đo 17/09/2026: thẻ "Run #17 · 2/8 bước" có đủ 8 chip mà dải chip trống trơn.
+        // Neo dọc vào clip view, để chiều ngang tự do theo nội dung thì mới cuộn ngang được.
+        hang.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hang.leadingAnchor.constraint(equalTo: cuon.contentView.leadingAnchor),
+            hang.topAnchor.constraint(equalTo: cuon.contentView.topAnchor),
+            hang.bottomAnchor.constraint(equalTo: cuon.contentView.bottomAnchor),
+        ])
         cuon.hasHorizontalScroller = true
         cuon.drawsBackground = false
         cuon.translatesAutoresizingMaskIntoConstraints = false
 
-        let dau = NSStackView(views: [tomTat, nutHuy])
+        thanh.isIndeterminate = false
+        thanh.minValue = 0
+        thanh.controlSize = .small
+        thanh.isHidden = true
+        thanh.translatesAutoresizingMaskIntoConstraints = false
+
+        nutChiTiet.title = "Mở chi tiết"
+        nutChiTiet.bezelStyle = .inline
+        nutChiTiet.font = EideToken.fontUI
+        nutChiTiet.target = self
+        nutChiTiet.action = #selector(xemChiTiet)
+        nutChiTiet.isHidden = true
+
+        let dau = NSStackView(views: [tomTat, nutHuy, nutChiTiet])
         dau.orientation = .horizontal
         dau.alignment = .centerY
         dau.spacing = EideToken.space[1]
 
-        let coc = NSStackView(views: [dau, cuon])
+        let coc = NSStackView(views: [dau, thanh, cuon])
         coc.orientation = .vertical
         coc.alignment = .leading
         coc.spacing = EideToken.space[1]
@@ -189,12 +226,46 @@ public final class RunProgressCard: NSView {
             coc.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -s),
             cuon.widthAnchor.constraint(equalTo: coc.widthAnchor),
             cuon.heightAnchor.constraint(equalToConstant: 28),
+            thanh.widthAnchor.constraint(equalTo: coc.widthAnchor),
         ])
         capNhat([:])
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
+
+    @objc private func xemChiTiet() { onXemChiTiet?(runId) }
+
+    /// Đọc phần VÒNG ĐỜI của một lượt chạy — `run.started` / `run.blocked` / `run.done`.
+    ///
+    /// Tách khỏi `capNhat` vì đây là thứ duy nhất nói được PHẠM VI của việc: `run.started` mang
+    /// cả kế hoạch, nên thẻ biết "8 bước" ngay từ giây đầu thay vì đếm dần theo số nút đã chạy
+    /// qua. Trước v2.0 thẻ chỉ thấy từng nút rời và không bao giờ trả lời được câu "còn bao lâu".
+    private func _vongDoi(_ p: [String: Any]) {
+        switch (p["kind"] as? String) ?? "" {
+        case "run.started":
+            soRun = EideSo.nguyen(p["n"]) ?? soRun
+            cauLenh = (p["text"] as? String) ?? cauLenh
+            keHoach = (p["steps"] as? [[String: Any]] ?? []).map {
+                (id: ($0["id"] as? String) ?? "", cap: ($0["cap"] as? String) ?? "")
+            }
+            // Dựng sẵn chip cho MỌI bước, trạng thái "chờ". Người nhìn thấy cả con đường phía
+            // trước chứ không chỉ chỗ đang đứng — đó là khác biệt giữa một thanh tiến độ và một
+            // dòng "đang chạy…".
+            for b in keHoach where !trangThai.contains(where: { $0.khoa == b.id }) {
+                trangThai.append((b.id, b.cap, "cho"))
+            }
+            thanh.maxValue = Double(max(keHoach.count, 1))
+            thanh.isHidden = keHoach.isEmpty
+        case "run.blocked":
+            choNguoi = true
+        case "run.done", "run.cancelled":
+            choNguoi = false
+        default:
+            break
+        }
+        if let i = EideSo.nguyen(p["i"]) { thanh.doubleValue = Double(i) }
+    }
 
     /// Nhận một `event.run.progress` hoặc `event.job.progress`.
     ///
@@ -205,6 +276,7 @@ public final class RunProgressCard: NSView {
         let khoa = (p["node_id"] as? String) ?? cap
         let tt = (p["state"] as? String) ?? (p["status"] as? String) ?? ""
         if let pc = EideSo.nguyen(p["pct"]) { phanTram = pc }
+        _vongDoi(p)
 
         if !khoa.isEmpty || !tt.isEmpty {
             if let i = trangThai.firstIndex(where: { $0.khoa == khoa && !khoa.isEmpty }) {
@@ -231,7 +303,13 @@ public final class RunProgressCard: NSView {
 
         var d: [String] = []
         let xong = trangThai.filter { $0.state == "done" }.count
-        if soNut > 0 { d.append("\(xong)/\(soNut) bước") }
+        // Khi có kế hoạch từ `run.started`, đếm theo TỔNG SỐ BƯỚC DỰ KIẾN chứ không theo số nút
+        // đã thấy: một chuỗi 8 bước dừng ở bước 3 mà ghi "2/2 bước" thì nói dối về phạm vi việc.
+        if !keHoach.isEmpty {
+            d.append("\(xong)/\(keHoach.count) bước")
+        } else if soNut > 0 {
+            d.append("\(xong)/\(soNut) bước")
+        }
         if let pc = phanTram { d.append("\(pc)%") }
         if daXong { d.append("xong") }
         if let l = duoi.last, !l.isEmpty { d.append(l) }
@@ -253,9 +331,20 @@ public final class RunProgressCard: NSView {
         let ten = _tenDaThay
         let nhanChinh = ten.isEmpty ? runId
             : (ten.count == 1 ? ten[0] : "\(ten[0]) +\(ten.count - 1)")
-        tomTat.stringValue = d.isEmpty ? "Đang chạy \(nhanChinh)…"
-                                       : "\(nhanChinh) · " + d.joined(separator: " · ")
-        tomTat.textColor = daXong ? EideToken.Mau.muted : EideToken.Mau.info
+        if soRun > 0 {
+            // Thẻ của một LƯỢT CHẠY: nói số Run, việc gì, và đang ở bước mấy trên mấy.
+            var v = ["Run #\(soRun)"]
+            if !cauLenh.isEmpty { v.append(cauLenh) }
+            if choNguoi { v.append("chờ anh") } else if daXong { v.append("xong") }
+            if !d.isEmpty { v.append(d.joined(separator: " · ")) }
+            tomTat.stringValue = v.joined(separator: " · ")
+        } else {
+            tomTat.stringValue = d.isEmpty ? "Đang chạy \(nhanChinh)…"
+                                           : "\(nhanChinh) · " + d.joined(separator: " · ")
+        }
+        tomTat.textColor = choNguoi ? EideToken.Mau.warn
+            : (daXong ? EideToken.Mau.muted : EideToken.Mau.info)
+        nutChiTiet.isHidden = soRun == 0
 
         for v in hang.arrangedSubviews { hang.removeArrangedSubview(v); v.removeFromSuperview() }
         for t in trangThai {

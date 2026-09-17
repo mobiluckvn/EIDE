@@ -58,6 +58,8 @@ public final class NhatKyView: NSView, KhungNhinEide {
     static let NHOM: [(ten: String, kinds: Set<String>)] = [
         ("Tất cả", []),
         ("Năng lực", ["cap.run.start", "cap.run.finish"]),
+        ("Lượt chạy", ["run.started", "run.step_started", "run.step_done",
+                       "run.blocked", "run.done", "run.cancelled"]),
         ("Cổng", ["gate.decision", "gate.human", "policy.escalate", "policy.sign",
                   "autonomy.change", "stop"]),
         ("Tri thức", ["store.write", "store.migrate", "acq.state"]),
@@ -408,6 +410,10 @@ public final class NhatKyView: NSView, KhungNhinEide {
     static func tenSuKien(_ kind: String) -> String {
         switch kind {
         case "cap.run.start", "cap.run.finish": return "event.run.progress"
+        // Vòng đời một LƯỢT CHẠY (API-15 §7, v2.0). Cùng về `event.run.progress` với sự
+        // kiện của từng nút: bên nhận gom theo `run_id` vào đúng một thẻ Run.
+        case "run.started", "run.step_started", "run.step_done",
+             "run.blocked", "run.done", "run.cancelled": return "event.run.progress"
         case "gate.decision": return "event.gate.decided"
         case "gate.human": return "event.queue.changed"
         case "undo.register", "undo.apply": return "event.undo.registered"
