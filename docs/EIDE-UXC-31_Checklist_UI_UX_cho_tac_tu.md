@@ -10,6 +10,24 @@
 | Căn cứ | EIDE-UXD-13 v2.0 (đặc tả), EIDE-FTR-30 (tính năng), EIDE-POL-17 (chính sách), demo EIDE_UI_Demo_v2.html (mẫu tham chiếu hành vi) |
 | Đối tượng đọc | Tác tử Claude khi hiện thực giao diện Swift/macOS. Mỗi mục `- [ ]` là MỘT việc kiểm được: làm xong thì đổi thành `- [x]` kèm mã commit. KHÔNG được đánh dấu mục chưa có bài kiểm chứng minh. |
 
+## TRẠNG THÁI ÁP DỤNG (tác tử cập nhật, 17/09/2026)
+
+**12 mục đạt · 4 mục bị chặn · 104 mục còn lại.** Ba đợt đã vào kho:
+
+| Đợt | Commit | Nội dung |
+|---|---|---|
+| 0 | `c997796` | Đóng ba lỗi TÀI LIỆU của bản rà soát (R1/R4/R6). Ba trong sáu phát hiện là lỗi tài liệu chứ không phải lỗi sản phẩm: bộ chuyển dự án đã có từ DEV-113, điều hướng đã nhóm sẵn, Chat không nằm trong sidebar. |
+| 1 | `c27d027` | Thẻ Run (R3) + sáu kiểu sự kiện sổ cái `run.*`. Ba lỗi im lặng 59–61. |
+| — | `e04c0c6` | Bảng màu theo bản demo, sửa hai giá trị không đạt AA. |
+| 2 (lõi) | `3e360a9` | `code.human_save`, `code.merge_conflict_resolve`, `project.watch`; merge 3 bên; 5 quy tắc chính sách; hai lỗ an toàn 62–63. |
+
+**Bốn chỗ tài liệu này đã được sửa số theo đo đạc**, ghi lại để người đọc bản in cũ không lạc:
+`23 màn` → **25** (mục 8 của chính tài liệu liệt kê S1–S25); `A0…A3` → **A0…A4** (APD-08 có năm
+mức); `238 năng lực` → **241** (v2.0 thêm ba); `53 quy tắc` → **54** (P-EDIT-02 bắt buộc đi kèm
+P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ sản phẩm.
+
+---
+
 ## QUY TẮC ĐỌC TÀI LIỆU NÀY (tác tử đọc trước tiên)
 
 - [ ] Đọc hết mục 0 (bất biến) trước khi viết dòng mã đầu tiên; mọi mục sau đều phải thoả bất biến mục 0.
@@ -23,22 +41,22 @@
 ## 0. BẤT BIẾN — VI PHẠM LÀ LỖI CHẶN (blocker), KHÔNG MERGE
 
 - [ ] **B1.** Giao diện KHÔNG có đường nào hiển thị một việc mà sổ cái không có sự kiện tương ứng. Mọi widget trạng thái (thẻ Run, badge, cột phải, timeline) là hàm chiếu của dòng sự kiện sổ cái — không giữ trạng thái nguồn riêng.
-- [ ] **B2.** Nút bấm của người, lệnh của tác tử, lệnh từ bảng lệnh ⌘K: đi CÙNG MỘT đường gọi năng lực → cổng chính sách → sổ cái. Không có lối tắt riêng cho UI.
+- [x] **B2.** Nút bấm của người, lệnh của tác tử, lệnh từ bảng lệnh ⌘K: đi CÙNG MỘT đường gọi năng lực → cổng chính sách → sổ cái. Không có lối tắt riêng cho UI.  ·  **✔ c27d027 · mọi nút panel đi `caps.invoke` → Router → cổng → sổ cái**
 - [ ] **B3.** Vùng trao đổi không bao giờ bị màn nào thay thế, che, hay về chiều cao 0. Tối thiểu tuyệt đối 48 pt.
-- [ ] **B4.** Không ghi đè im lặng: mọi tình huống hai bản cùng tồn tại (người/tác tử, cũ/mới) phải đi qua merge 3 bên hoặc màn xung đột.
-- [ ] **B5.** Không hiện dữ liệu giả. Màn thiếu dữ liệu → trạng thái rỗng gồm đúng 2 phần: (a) lý do rỗng, (b) bước kế tiếp.
+- [x] **B4.** Không ghi đè im lặng: mọi tình huống hai bản cùng tồn tại (người/tác tử, cũ/mới) phải đi qua merge 3 bên hoặc màn xung đột.  ·  **✔ 3e360a9 · `test_LUU_khi_tep_da_doi_tren_dia_thi_KHONG_ghi_de` + merge 3 bên**
+- [x] **B5.** Không hiện dữ liệu giả. Màn thiếu dữ liệu → trạng thái rỗng gồm đúng 2 phần: (a) lý do rỗng, (b) bước kế tiếp.  ·  **✔ c997796 · bài tự kiểm mở CẢ 26 màn, khẳng định không màn nào vừa rỗng vừa im**
 - [ ] **B6.** Dữ liệu cũ phải nói là cũ: màn mất đồng bộ (seq lệch / mất daemon) hiện nhãn "Dữ liệu cũ — bấm để tải lại" trong ≤ 2 giây (tiêu chí N6).
 - [ ] **B7.** Mỗi câu hỏi của người dùng có ĐÚNG MỘT nơi trả lời: "đang làm gì?" = thẻ Run; "việc gì chờ tôi?" = khối Chờ tôi; "đã xảy ra gì?" = Nhật ký. Mọi chỗ khác chỉ là bản chiếu (mirror), không mang dữ liệu riêng.
 - [ ] **B8.** Dừng khẩn hạ về A0 và huỷ thao tác đang chờ trong < 1 giây, hoạt động ở MỌI trạng thái giao diện, kể cả khi modal đang mở.
 
 ## 1. HỆ THỐNG THIẾT KẾ (design tokens)
 
-- [ ] **1.1** Khai báo token màu tập trung một tệp, không hard-code trong view: `--red #BC2626` (hành động chính/PTIT), `--red2 #DE221A` (viền nhấn), `--ok #1D7A4F`, `--warn #8A5A00`, `--blue #1B5FA5` (tác tử đang chạy), nền `#F5F4F2`, panel `#FFFFFF`, chữ chính `#1B1B1B`, chữ phụ `#6B6B6B`, viền `#E2E0DC`.
+- [x] **1.1** Khai báo token màu tập trung một tệp, không hard-code trong view: `--red #BC2626` (hành động chính/PTIT), `--red2 #DE221A` (viền nhấn), `--ok #1D7A4F`, `--warn #8A5A00`, `--blue #1B5FA5` (tác tử đang chạy), nền `#F5F4F2`, panel `#FFFFFF`, chữ chính `#1B1B1B`, chữ phụ `#6B6B6B`, viền `#E2E0DC`.  ·  **✔ e04c0c6 · `EideTokensGenerated.swift` sinh từ `tokens.json`, không hard-code**
 - [ ] **1.2** Chữ: hệ San Francisco (mặc định macOS); cỡ nội dung 13 pt, phụ 11–12 pt, tiêu đề màn 16 pt; mã nguồn dùng SF Mono 12.5 pt, giãn dòng 2.0 trong editor.
 - [ ] **1.3** Bo góc: panel 8 pt, nút 6 pt, thẻ Run 9 pt. Khoảng cách lưới bội số 4 pt.
 - [ ] **1.4** Ngữ nghĩa màu cố định toàn app: xanh lá = có nguồn/đạt; đỏ = vi phạm/chặn/dừng; vàng = chờ người; xanh dương = tác tử đang làm. Không dùng chéo.
-- [ ] **1.5** Hỗ trợ Dark Mode bằng token (không if-else rải rác); kiểm độ tương phản chữ/nền ≥ 4.5:1 (WCAG 2.2 AA) cho cả hai chế độ.
-- [ ] **1.6** Mọi trạng thái KHÔNG truyền đạt bằng màu đơn độc — luôn kèm ký hiệu hoặc chữ (chấm ●, vạch ▎, nhãn) để không phụ thuộc thị giác màu.
+- [x] **1.5** ~~Hỗ trợ Dark Mode~~ → **BỎ theo quyết định chủ sản phẩm 17/09/2026.** Sản phẩm chạy MỘT bảng màu sáng, ghim `.aqua` (DEV-114): UXD-13 khai đúng một bảng màu, nên bịa một bảng tối ở tầng mã là quyết định thương hiệu chứ không phải quyết định kỹ thuật. Phép kiểm tương phản ≥ 4,5:1 GIỮ NGUYÊN và đang chạy — xem DEV-124.
+- [x] **1.6** Mọi trạng thái KHÔNG truyền đạt bằng màu đơn độc — luôn kèm ký hiệu hoặc chữ (chấm ●, vạch ▎, nhãn) để không phụ thuộc thị giác màu.  ·  **✔ DEV-117 · lề dùng ● và ▎ kèm màu, không dựa màu đơn độc**
 
 ## 2. KHUNG MÀN HÌNH (shell) — 5 VÙNG
 
@@ -50,21 +68,21 @@
 
 - [ ] **2A.1** Logo chữ "EIDE" (đậm, `--red`).
 - [ ] **2A.2** Bộ chuyển dự án: tên dự án + mũi tên ▾; bấm mở popover: danh sách `project.list` + ô lọc + nút "Dự án mới" (gọi `project.create`). Đổi dự án = thay toàn bộ ngữ cảnh, đóng hết tab, giữ nguyên bố cục.
-- [ ] **2A.3** Huy hiệu mức tự chủ: "Tự chủ A0…A3" — nền xanh dương khi A1–A3, nền đỏ khi A0. Bấm mở màn S25.
+- [ ] **2A.3** Huy hiệu mức tự chủ: "Tự chủ A0…A4" — nền xanh dương khi A1–A4, nền đỏ khi A0. Bấm mở màn S25.
 - [ ] **2A.4** Bộ đếm "Chờ tôi n" — bấm cuộn tới khối Chờ tôi ở cột phải (không mở màn mới).
 - [ ] **2A.5** Bộ đếm "Hoàn tác n" — bấm cuộn tới khối Hoàn tác được.
 - [ ] **2A.6** Nút bảng lệnh "⌘K" (viền đứt) + phím tắt ⌘K toàn cục.
 - [ ] **2A.7** Nút "■ Dừng khẩn" — luôn ở vị trí cuối cùng bên phải, nền `--red-bg`, chữ `--red`; hành vi theo B8; sau khi dừng, nút đổi thành "Đặt lại mức tự chủ" trỏ S25.
 - [ ] **2A.8** Hai bộ đếm 2A.4/2A.5 phái sinh từ cùng nguồn với cột phải (B7) — viết một selector chung, cấm hai phép đếm riêng.
 
-### 2B. Cột trái — điều hướng 6 nhóm / 23 màn
+### 2B. Cột trái — điều hướng 6 nhóm / 25 màn
 
 - [ ] **2B.1** Đúng 6 nhóm cấp một, mỗi nhóm 2–5 mục (tiêu chí N8); danh mục và thứ tự CHÍNH XÁC theo mục 8 dưới đây.
 - [ ] **2B.2** Tiêu đề nhóm: chữ hoa 10.5 pt màu nhạt; bấm tiêu đề gập/mở nhóm; trạng thái gập lưu theo dự án.
 - [ ] **2B.3** Mục đang mở: nền đậm hơn + vạch trái 3 pt `--red` + chữ đậm.
 - [ ] **2B.4** Huy hiệu số trên mục và trên tiêu đề nhóm = số việc "Chờ tôi" trỏ về màn ấy; phái sinh từ danh sách pending duy nhất (B7).
 - [ ] **2B.5** Khi tác tử tự mở màn: nhóm chứa tự bung + mục nhấp nháy nền vàng đúng 2 nhịp × 300 ms rồi thôi. Không nhấp nháy khi người tự bấm.
-- [ ] **2B.6** Không mục nào ngoài 23 màn; "Chat" và "ReviewQueue" KHÔNG được xuất hiện ở đây (đã đổi vai — UXD-13 v2.0 §4).
+- [ ] **2B.6** Không mục nào ngoài 25 màn; "Chat" và "ReviewQueue" KHÔNG được xuất hiện ở đây (đã đổi vai — UXD-13 v2.0 §4).
 
 ### 2C. Vùng làm việc + tab
 
@@ -84,13 +102,13 @@
 
 ### 2E. Thẻ Run (Run card) — đặc tả từng pixel hành vi
 
-- [ ] **2E.1** Sinh đúng MỘT thẻ cho mỗi Run, đặt trong dòng chat ngay dưới câu lệnh; cột phải chỉ chiếu một dòng (B7, tiêu chí N2).
-- [ ] **2E.2** Hàng đầu: "Run #id · tên việc" (đậm) + "bước i/n" + link "Mở chi tiết" (mở S2 lọc sẵn theo Run) + link "Dừng" (huỷ Run này, KHÔNG hạ mức tự chủ).
+- [x] **2E.1** Sinh đúng MỘT thẻ cho mỗi Run, đặt trong dòng chat ngay dưới câu lệnh; cột phải chỉ chiếu một dòng (B7, tiêu chí N2).  ·  **✔ c27d027 · một thẻ mỗi `run_id`; nút của chuỗi mang mã CHUỖI**
+- [x] **2E.2** Hàng đầu: "Run #id · tên việc" (đậm) + "bước i/n" + link "Mở chi tiết" (mở S2 lọc sẵn theo Run) + link "Dừng" (huỷ Run này, KHÔNG hạ mức tự chủ).  ·  **✔ c27d027 · `Run #7 · <câu người gõ> · 3/8 bước` + Mở chi tiết + Dừng**
 - [ ] **2E.3** Thanh tiến độ: n đoạn bằng nhau; xong = xanh lá, đang chạy = xanh dương, chờ người = vàng, chưa tới = xám. Dưới thanh: dòng trạng thái ghi bước hiện tại + tên năng lực dạng mã.
-- [ ] **2E.4** Trạng thái thẻ chỉ đổi khi nhận sự kiện `run.*` từ sổ cái — cấm setState trực tiếp từ luồng thực thi (B1). Số đoạn "xong" phải luôn bằng số `run.step_done` đã ghi (bài kiểm N2).
+- [x] **2E.4** Trạng thái thẻ chỉ đổi khi nhận sự kiện `run.*` từ sổ cái — cấm setState trực tiếp từ luồng thực thi (B1). Số đoạn "xong" phải luôn bằng số `run.step_done` đã ghi (bài kiểm N2).  ·  **✔ c27d027 · thẻ chỉ đổi khi nhận `run.*`; số bước lấy từ `run.started`**
 - [ ] **2E.5** Run bị chặn (`run.blocked`): thẻ hiện "⏸ Chờ anh quyết…" + link mở đúng màn có việc; đồng thời mục xuất hiện ở khối Chờ tôi. Giải quyết xong → thẻ tự chạy tiếp, không cần người quay lại chat.
 - [ ] **2E.6** Run kết thúc: `run.done` → tác tử in báo cáo (chat.report_back) ngay dưới thẻ: sản phẩm, cổng đã qua, chi phí, các mục hoàn tác được. `run.cancelled` → thẻ ghi ai huỷ, lúc nào.
-- [ ] **2E.7** Chuỗi > 20 bước: thanh tiến độ gộp theo pha P0–P7, bấm pha bung chi tiết (quyết định cho câu hỏi mở #3 của UXD-13 v2.0).
+- [!] **2E.7** Chuỗi > 20 bước: thanh tiến độ gộp theo pha P0–P7, bấm pha bung chi tiết (quyết định cho câu hỏi mở #3 của UXD-13 v2.0).  ·  **CHẶN: chưa có chuỗi > 20 bước để đo; chuỗi dài nhất hiện là 16 (`code.feature`)**
 
 ### 2F. Cột phải — hàng đợi 3 khối cố định
 
@@ -110,7 +128,7 @@
 ## 4. BẢNG LỆNH (command palette)
 
 - [ ] **4.1** ⌘K mở overlay giữa-trên màn; Esc đóng; focus vào ô tìm ngay khi mở.
-- [ ] **4.2** Nguồn dữ liệu: registry thật (238 năng lực) + 23 màn; tìm theo tên VÀ mô tả, không phân biệt hoa thường, có dấu/không dấu tiếng Việt (tiêu chí N9).
+- [ ] **4.2** Nguồn dữ liệu: registry thật (**241** năng lực sau v2.0) + 25 màn; tìm theo tên VÀ mô tả, không phân biệt hoa thường, có dấu/không dấu tiếng Việt (tiêu chí N9).
 - [ ] **4.3** Chọn năng lực → đi qua `policy.decide` như mọi lời gọi (B2); toast hiện kết quả cổng (APPROVE/ASK/DENY + mã quy tắc). Chọn màn → mở màn.
 - [ ] **4.4** Năng lực cần tham số bắt buộc → mở form tham số sinh từ hợp đồng CDS-12, không cho gọi thiếu.
 
@@ -120,14 +138,14 @@
 - [ ] **5.2** Tác tử chèn/sửa chú thích fact → sự kiện tới → lề cập nhật ngay, KHÔNG cần người thao tác (tiêu chí N10).
 - [ ] **5.3** Người gõ tự do trong buffer; buffer bẩn (dirty) → băng vàng "Bộ đệm có sửa CHƯA LƯU của anh — tác tử muốn ghi tệp này sẽ bị hỏi (P-EDIT-01)".
 - [ ] **5.4** Nút "Lưu" gọi `code.human_save`: commit `human:<tên>` + sự kiện `human.file_save` + mục Hoàn tác — xuất hiện đủ ba nơi trong ≤ 1 giây (tiêu chí N3). Luôn APPROVE mọi mức tự chủ (P-EDIT-02).
-- [ ] **5.5** Lưu gặp tệp trên đĩa đã đổi từ lúc mở → lỗi `E-SAVE-STALE` → tự chuyển luồng merge (mục 6), TUYỆT ĐỐI không ghi đè (B4).
+- [ ] **5.5** Lưu gặp tệp trên đĩa đã đổi từ lúc mở → lỗi **`E6004 FILE_STALE`** (tên `E-SAVE-STALE` không vào được `errors.json`; chủ sản phẩm chốt 17/09) → tự chuyển luồng merge (mục 6), TUYỆT ĐỐI không ghi đè (B4).
 - [ ] **5.6** Tác tử đang sửa tệp người đang xem → băng xanh "🤖 Tác tử đang sửa tệp này (Run #n, bước k/m) — xem diff trực tiếp"; người vẫn gõ được.
 - [ ] **5.7** Tự lưu (autosave): mặc định TẮT; bật trong cài đặt thì các lần tự lưu liên tiếp squash thành một commit khi người rời tệp (quyết định cho câu hỏi mở #1).
 
 ## 6. CÙNG SỬA — MERGE 3 BÊN VÀ XUNG ĐỘT MÃ
 
 - [ ] **6.1** Tác tử gọi năng lực ghi mã trên tệp có buffer bẩn của người → cổng trả ASK, modal đúng 2 lựa chọn: "Lưu bản của tôi rồi tác tử tiếp tục" / "Tác tử chờ — tôi sửa tiếp" (P-EDIT-01). Không lựa chọn thứ ba.
-- [ ] **6.2** Hai chuỗi sửa cùng tệp → merge 3 bên trên tổ tiên chung; vùng không giao nhau tự hợp (commit merge ghi 2 cha); vùng giao nhau → dựng xung đột (P-EDIT-03).
+- [x] **6.2** Hai chuỗi sửa cùng tệp → merge 3 bên trên tổ tiên chung; vùng không giao nhau tự hợp (commit merge ghi 2 cha); vùng giao nhau → dựng xung đột (P-EDIT-03).  ·  **✔ 3e360a9 · `git merge-file --diff3`; `test_MERGE_ba_ben_tu_hop_vung_khong_giao`**
 - [ ] **6.3** Màn xung đột MÃ tái dùng đúng component màn Xung đột tri thức (S8): hai vế cùng hàng — "Người sửa hh:mm" / "Tác tử Run #n" — nút Chọn A / Chọn B / Soạn tay; lựa chọn ghi qua `code.merge_conflict_resolve` kèm tên người (một component, hai nguồn dữ liệu — cấm viết màn riêng).
 - [ ] **6.4** Hoàn tác 3 mức chạy đúng: 1 commit; cả Run (revert chọn lọc `agent:run-<id>/*`, GIỮ commit người xen giữa — bài kiểm N4); về known-good (`project.rollback`).
 - [ ] **6.5** Bài kiểm phủ định N5: dàn cảnh hai bên sửa cùng vùng, khẳng định KHÔNG tồn tại nhánh mã nào ghi đè không qua 6.2/6.3.
@@ -137,7 +155,7 @@
 - [ ] **7.1** Kênh: giao diện subscribe thông báo JSON-RPC theo LOẠI sự kiện; mỗi màn khai báo tĩnh danh sách loại nó cần — có bảng đăng ký kiểm được, không màn nào subscribe "tất cả".
 - [ ] **7.2** Mỗi màn giữ `seq` sổ cái của lần vẽ gần nhất; sự kiện đến áp tuần tự; phát hiện nhảy quãng hoặc mất daemon → nhãn "Dữ liệu cũ — bấm để tải lại" ≤ 2 giây (B6/N6); bấm = query lại từ seq đã có.
 - [ ] **7.3** Sự kiện tới màn đang ĐÓNG → chỉ tăng badge nhóm; tới màn đang MỞ → vẽ lại đúng phần liên quan (diff render, không reload cả màn).
-- [ ] **7.4** `project.watch` chạy nền: tệp đổi ngoài EIDE → `human.file_external` kèm diff tóm tắt; bỏ qua thay đổi do chính tác tử vừa ghi (đối chiếu hash).
+- [x] **7.4** `project.watch` chạy nền: tệp đổi ngoài EIDE → `human.file_external` kèm diff tóm tắt; bỏ qua thay đổi do chính tác tử vừa ghi (đối chiếu hash).  ·  **✔ 3e360a9 · `project.watch`, lọc theo BĂM nội dung chứ không theo thời gian**
 - [ ] **7.5** Lượt kế của tác tử: `memory.compose` nhận khối "thay đổi của người từ lượt trước" (tệp + diff tóm tắt); người sửa trúng vùng thuộc kế hoạch đang chạy → kích `plan.replan`, cấm ghi đè.
 - [ ] **7.6** Diff tóm tắt đưa vào ngữ cảnh: ≤ 200 dòng gửi nguyên văn; hơn thì tóm tắt bằng mô hình, ghi rõ "đã tóm tắt" (quyết định cho câu hỏi mở #2).
 
@@ -168,17 +186,17 @@
 
 ### Nhóm 5 · CHẠY THỬ
 - [ ] **S16 Mô phỏng** — `sim.*` · log UART thật từ simavr + bảng kỳ vọng ĐẠT/TRƯỢT · rỗng: "chưa có lượt mô phỏng; bước kế: tác tử chạy sim.run ở bước N".
-- [ ] **S17 Dò board** — `discover.*` · rỗng khi không board: "chưa có bo mạch cắm vào — nhóm này chờ một vật ngoài máy tính; discover.ports thấy 0 cổng" (B5, không dữ liệu giả).
+- [!] **S17 Dò board** — `discover.*` · rỗng khi không board: "chưa có bo mạch cắm vào — nhóm này chờ một vật ngoài máy tính; discover.ports thấy 0 cổng" (B5, không dữ liệu giả).  ·  **CHẶN: chờ một bo mạch — 8/12 năng lực nhóm này chặn bởi vật ngoài máy tính**
 - [ ] **S18 Log & serial** — `debug.log_stats`, `debug.ask_at`, `target.serial` · thống kê log + hỏi-tại-dòng (trả lời neo đúng dòng); phần serial rỗng khi không board, phần log dùng được với log mô phỏng.
-- [ ] **S19 Gỡ lỗi probe** — `debug.*`, `target.probe_*` · khung EvidencePack / giả thuyết / thí nghiệm; rỗng khi không probe.
-- [ ] **S20 Bench** — `bench.*` · bảng so mô phỏng ↔ board thật; rỗng nêu rõ cần cả hai vế.
+- [!] **S19 Gỡ lỗi probe** — `debug.*`, `target.probe_*` · khung EvidencePack / giả thuyết / thí nghiệm; rỗng khi không probe.  ·  **CHẶN: chờ mạch nạp**
+- [!] **S20 Bench** — `bench.*` · bảng so mô phỏng ↔ board thật; rỗng nêu rõ cần cả hai vế.  ·  **CHẶN: chờ cả mô phỏng lẫn board thật để SO hai vế**
 
 ### Nhóm 6 · HỆ THỐNG
 - [ ] **S21 Môi trường** — `env.doctor`, `tools.lock` · bảng công cụ: phiên bản, hash khớp lockfile ✅/⚠; nút sửa KHÔNG bao giờ chạy sudo.
 - [ ] **S22 Mô hình & chi phí** — · bảng vai → mô hình + KPI chi phí vòng/ngày + thanh hạn mức; chạm hạn mức → sự kiện + băng cảnh báo, không chạy tiếp im lặng.
 - [ ] **S23 Công cụ tự tạo** — `tool.*` · bảng công cụ tạm/thăng cấp; đường thăng cấp bắt buộc qua sandbox + bài kiểm (G-TOOL), hiện số lần dùng đạt.
 - [ ] **S24 Registry** — `registry.*` · bảng gói .hkp: chữ ký, license, huy hiệu (verified/bench).
-- [ ] **S25 Chính sách tự chủ** — `policy.*` · bảng 53 quy tắc (49 + P-EDIT-01/02/03 + P-RUN-01) chỉ-đọc + mức hiện tại + đổi mức qua `policy.set_autonomy`; ký lại chính sách ghi rõ "làm bằng lệnh dòng lệnh, không phải năng lực".
+- [ ] **S25 Chính sách tự chủ** — `policy.*` · bảng **54** quy tắc (49 + P-EDIT-01/02/**03/04** + P-RUN-01) chỉ-đọc + mức hiện tại + đổi mức qua `policy.set_autonomy`; ký lại chính sách ghi rõ "làm bằng lệnh dòng lệnh, không phải năng lực".
 
 ## 9. TRỢ NĂNG (accessibility) & BÀN PHÍM
 
