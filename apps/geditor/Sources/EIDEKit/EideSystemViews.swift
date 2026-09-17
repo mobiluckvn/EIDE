@@ -612,6 +612,16 @@ public final class FlowMapView: ManHinhCoSo {
         ("G5", "công bố ra ngoài"),
         ("G-OPS", "thao tác vận hành"),
         ("G-WL", "thêm vào danh sách trắng"),
+        // `*` là cổng CHUNG của POL-17: `GEN-01…03` và bốn quy tắc `P-EDIT-*` của v2.0 đều
+        // treo ở đây, và Router dùng nó cho mọi năng lực không khai cổng riêng — tức PHẦN LỚN
+        // lời gọi đi qua đúng cổng này.
+        //
+        // Bỏ sót nó là lỗi giống hệt lỗi mà chú thích trên vừa kể, chỉ sâu hơn một tầng: bản
+        // trước thiếu `G-TOOL`/`G-WL` và được sửa, nhưng `*` vẫn nằm ngoài vì nó "trông không
+        // giống tên cổng". Đo 17/09/2026 trên dự án thật: sáu mục chờ hiện dưới nhãn "? — KHÔNG
+        // có trong POL-17" — màn hình buộc tội tài liệu thiếu một cổng mà tài liệu có đủ, và
+        // người đọc sẽ đi tìm một lỗi không tồn tại.
+        ("*", "chung — áp cho mọi năng lực"),
     ]
 
     public init() { super.init(ten: "Hành trình & cổng người") }

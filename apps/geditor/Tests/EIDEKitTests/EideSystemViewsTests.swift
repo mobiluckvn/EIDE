@@ -154,19 +154,33 @@ final class EideSystemViewsTests: XCTestCase {
 
     // MARK: - Màn 22: FlowMap
 
-    func testCHINcongCUAPOL17hienDU_khongChiCaiDangTAC() {
+    func testMOIcongCUAPOL17hienDU_khongChiCaiDangTAC() throws {
         // Chỉ hiện cổng đang tắc thì người dùng thấy danh sách ngắn và không biết nó ngắn vì
         // mọi thứ trôi chảy hay vì màn hình chỉ biết bấy nhiêu.
-        XCTAssertEqual(FlowMapView.congTheoThuTu.count, 9)
-        let ma = Set(FlowMapView.congTheoThuTu.map(\.ma))
-        for g in ["G-SRC", "G-FACT", "G1", "G-TOOL", "G3", "G4", "G5", "G-OPS", "G-WL"] {
-            XCTAssertTrue(ma.contains(g), "thiếu cổng \(g) của POL-17")
+        //
+        // Danh sách cổng ĐỌC TỪ `rules.yaml`, không chép tay. Bản trước của bài này liệt kê
+        // chín tên ngay trong mã test — tức mắc đúng lỗi mà chú thích của `congTheoThuTu` cảnh
+        // báo, chỉ ở phía kiểm: cả hai bên cùng chép từ một trí nhớ, nên cả hai cùng thiếu `*`
+        // và bài kiểm vẫn xanh trong khi màn hình báo động giả.
+        let f = EideE2ETests.gocKho.appendingPathComponent("docs/spec/policy/rules.yaml")
+        let yaml = try String(contentsOf: f, encoding: .utf8)
+        var congSpec = Set<String>()
+        for dong in yaml.split(separator: "\n") where dong.contains("gate:") {
+            let phan = dong.split(separator: ":", maxSplits: 1)
+            guard phan.count == 2 else { continue }
+            congSpec.insert(phan[1].trimmingCharacters(in: CharacterSet(charactersIn: " \"'")))
         }
+        XCTAssertFalse(congSpec.isEmpty, "không đọc được cổng nào từ rules.yaml")
+
+        let ma = Set(FlowMapView.congTheoThuTu.map(\.ma))
+        XCTAssertEqual(ma, congSpec,
+                       "màn Hành trình lệch với POL-17 — thiếu: \(congSpec.subtracting(ma)), "
+                       + "thừa: \(ma.subtracting(congSpec))")
 
         let v = FlowMapView()
         v.capNhat(ketQua: ["items": [], "autonomy": "A3"])
         XCTAssertEqual(v.soDangCho, 0)
-        XCTAssertEqual(v.soDong, 9, "chín cổng phải hiện đủ kể cả khi rỗng")
+        XCTAssertEqual(v.soDong, ma.count, "mọi cổng phải hiện đủ kể cả khi rỗng")
     }
 
     func testMUCchoNAMduoiDUNGcongCUAno() {
@@ -176,7 +190,9 @@ final class EideSystemViewsTests: XCTestCase {
             ["gate": "G-FACT", "gate_id": "g_13", "reason": "3 fact bạc"],
         ], "autonomy": "A2"])
         XCTAssertEqual(v.soDangCho, 2)
-        XCTAssertEqual(v.soDong, 11)   // 9 cổng + 2 mục
+        // Đếm theo bảng cổng chứ không viết cứng: thêm một cổng vào POL-17 là việc hợp lệ, và
+        // một con số cứng ở đây biến việc ấy thành một bài test đỏ ở chỗ không liên quan.
+        XCTAssertEqual(v.soDong, FlowMapView.congTheoThuTu.count + 2)
         XCTAssertTrue(v.tomTat.stringValue.contains("2 mục chờ anh"), v.tomTat.stringValue)
     }
 

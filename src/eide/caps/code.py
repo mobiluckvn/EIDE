@@ -9,6 +9,7 @@ không ai truy được nguồn.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -2299,8 +2300,23 @@ def human_save(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # `git checkout` hay một trình sinh mã có thể ghi lại đúng nội dung cũ và đổi thời gian, và
     # một hệ tệp có độ phân giải thời gian 1 giây thì hai lần ghi liền nhau không phân biệt được.
     if (goc := params.get("base_content")) is not None and cu != str(goc):
+        # DỰNG LUÔN xung đột ở đây, đừng chỉ báo lỗi.
+        #
+        # Đây là chỗ DUY NHẤT biết đủ ba vế: tổ tiên chung (bản người dùng thấy lúc mở), bản của
+        # người (đang gửi tới), và bản trên đĩa. Bắt giao diện tự dựng lại là bắt nó đọc tệp lần
+        # nữa — mà giữa hai lần đọc tệp có thể đổi tiếp, và lúc ấy hai bên hợp nhất hai thứ khác
+        # nhau. Lỗi mang theo `conflict_id` để màn xung đột mở thẳng vào đúng cái vừa sinh.
+        hop, so_vung = hop_nhat_ba_ben(str(goc), noi_dung, cu)
+        vung = tach_vung(hop)
+        cid = "cf_" + hashlib.sha256(f"{dich}{len(hop)}".encode()).hexdigest()[:10]
+        _XUNG_DOT_MA[cid] = {"path": str(dich.relative_to(root.resolve())), "vung": vung}
+        # Gửi kèm CẢ nội dung hai vế, không chỉ số lượng vùng: giao diện dựng hai cột từ đúng
+        # dữ liệu này. Bắt nó hỏi lại một vòng nữa là mở ra khả năng tệp đổi tiếp giữa hai lần
+        # hỏi — và lúc ấy màn xung đột hiện một thứ, lõi hợp nhất một thứ khác.
         raise EideError("E6004", f"`{dich.name}` đã đổi trên đĩa từ lúc anh mở — cần hợp nhất, "
-                        "không ghi đè", path=str(dich), tom_tat=_tom_tat_diff(str(goc), cu))
+                        "không ghi đè", path=str(dich), conflict_id=cid, regions=so_vung,
+                        vung=[v for v in vung if v["kind"] == "giao"],
+                        tom_tat=_tom_tat_diff(str(goc), cu))
 
     git.dam_bao_kho(root)
     dich.parent.mkdir(parents=True, exist_ok=True)
@@ -2432,6 +2448,7 @@ def merge_conflict_resolve(params: dict[str, Any], ctx: Context) -> dict[str, An
                         regions=con_thieu)
 
     dich = _trong_du_an(root, xd["path"])
+    git.dam_bao_kho(root)
     dich.write_text("\n".join(ra) + "\n", encoding="utf-8")
     rel = str(dich.relative_to(root.resolve()))
     ai = f"human:{params.get('by') or os.environ.get('USER') or 'nguoi-dung'}"

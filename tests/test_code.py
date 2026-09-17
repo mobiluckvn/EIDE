@@ -1763,3 +1763,64 @@ def test_MERGE_ba_ben_tu_hop_vung_khong_giao_va_GIU_vung_giao(tmp_path, workspac
     giao = [v for v in vung if v["kind"] == "giao"]
     assert len(giao) == 1 and giao[0]["a"] == "NGUOI" and giao[0]["b"] == "TACTU"
     assert "ZZZ" in hop, "sửa độc lập của tác tử phải được hợp TỰ ĐỘNG"
+
+
+def test_TEP_DA_DOI_thi_dung_luon_mot_XUNG_DOT_co_hai_ve(tmp_path, workspace):
+    """E6004 phải mang theo `conflict_id`, không chỉ báo "hỏng rồi".
+
+    Đây là chỗ DUY NHẤT biết đủ ba vế: bản người dùng thấy lúc mở, bản họ đang gửi tới, và bản
+    trên đĩa. Bắt giao diện tự dựng lại là bắt nó đọc tệp lần nữa — mà giữa hai lần đọc tệp có
+    thể đổi tiếp, và lúc ấy hai bên hợp nhất hai thứ khác nhau.
+    """
+    from dataclasses import replace
+
+    from eide.caps.code import _XUNG_DOT_MA
+    r, ctx, root = _du_an_git(tmp_path, workspace)
+    (root / "src").mkdir(exist_ok=True)
+    tep = root / "src" / "d.c"
+    tep.write_text("a\nb\nc\n", encoding="utf-8")
+    tep.write_text("a\nTAC_TU\nc\n", encoding="utf-8")      # ai đó ghi trong lúc người soạn
+
+    run = r.invoke("code.human_save",
+                   {"path": "src/d.c", "content": "a\nNGUOI\nc\n", "base_content": "a\nb\nc\n"},
+                   replace(ctx, actor="human"))
+    assert run.status == "failed" and run.error["eide_code"] == "E6004"
+    cid = run.error.get("conflict_id") or run.error.get("payload", {}).get("conflict_id")
+    assert cid, f"E6004 phải mang conflict_id: {run.error}"
+    assert cid in _XUNG_DOT_MA, "xung đột phải được dựng sẵn ở phía lõi"
+
+    giao = [v for v in _XUNG_DOT_MA[cid]["vung"] if v["kind"] == "giao"]
+    assert len(giao) == 1 and giao[0]["a"] == "NGUOI" and giao[0]["b"] == "TAC_TU"
+
+    # Người quyết vế của mình → commit merge, tệp mang đúng bản đã chọn.
+    run2 = r.invoke("code.merge_conflict_resolve",
+                    {"conflict_id": cid, "choices": [{"region": 1, "side": "A"}]},
+                    replace(ctx, actor="human"))
+    assert run2.status == "done", run2.error
+    assert tep.read_text() == "a\nNGUOI\nc\n"
+    assert cid not in _XUNG_DOT_MA, "xung đột đã giải phải rời danh sách đang mở"
+
+
+def test_CHUA_quyet_du_vung_thi_KHONG_ghi_gi_ca(tmp_path, workspace):
+    """P-EDIT-03: không có đường "lấy hết bên A". Thiếu một vùng là thiếu một quyết định."""
+    from dataclasses import replace
+
+    r, ctx, root = _du_an_git(tmp_path, workspace)
+    (root / "src").mkdir(exist_ok=True)
+    tep = root / "src" / "e.c"
+    tep.write_text("a\nb\nc\nd\n", encoding="utf-8")
+    tep.write_text("a\nX\nc\nY\n", encoding="utf-8")
+    hong = r.invoke("code.human_save",
+                    {"path": "src/e.c", "content": "a\nP\nc\nQ\n",
+                     "base_content": "a\nb\nc\nd\n"},
+                    replace(ctx, actor="human"))
+    # Lấy mã từ CHÍNH LỖI, không `next(iter(_XUNG_DOT_MA))`: bảng xung đột là trạng thái mức
+    # mô-đun dùng chung giữa các bài, nên lấy "cái đầu tiên" là lấy phải cái bài khác để lại.
+    # Bản đầu của bài này đỏ khi chạy cả nhóm và xanh khi chạy một mình — đúng thứ khó chịu nhất.
+    cid = hong.error["conflict_id"]
+    truoc = tep.read_text()
+    run = r.invoke("code.merge_conflict_resolve",
+                   {"conflict_id": cid, "choices": [{"region": 1, "side": "A"}]},
+                   replace(ctx, actor="human"))
+    assert run.status == "failed" and run.error["eide_code"] == "E1000"
+    assert tep.read_text() == truoc, "thiếu một vùng thì KHÔNG được ghi gì"

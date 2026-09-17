@@ -2239,8 +2239,15 @@ def test_since_ngay_cung_chay(kho):
 
 def test_chua_phai_kho_git_thi_NOI_RO(du_an):
     """Một changelog rỗng và một dự án chưa có kho git đọc phải khác nhau. Trả chuỗi rỗng là để
-    người dùng đi tìm xem mình gõ sai chỗ nào."""
-    r, ctx, _ = du_an
+    người dùng đi tìm xem mình gõ sai chỗ nào.
+
+    Từ 17/09/2026 `project.create` tự `git init` (DEV-125: tầng phiên bản tệp đứng trên git), nên
+    trạng thái "chưa phải kho git" phải dựng TAY. Nó vẫn có thật — một thư mục dự án chép từ máy
+    khác, một bản giải nén — và đó vẫn là lúc câu trả lời phải nói ra thay vì trả rỗng.
+    """
+    import shutil
+    r, ctx, root = du_an
+    shutil.rmtree(root / ".git", ignore_errors=True)
     md = r.invoke("doc.changelog", {"range": "since 2000-01-01"}, ctx).result["markdown"]
     assert "chưa phải một kho git" in md
 

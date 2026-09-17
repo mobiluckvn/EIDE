@@ -31,6 +31,107 @@ public final class EidePanel: NSView {
     /// Nằm trên cùng vùng làm việc, ẩn khi mọi thứ bình thường.
     private let daiCu = EideDaiCu()
 
+    /// Mở màn hợp nhất cho một tệp bị xung đột — UXC-31 §6.3.
+    ///
+    /// Dùng LẠI `XungDotView` chứ không dựng một màn riêng: hai loại xung đột là cùng một câu
+    /// hỏi ("chọn vế nào, ai chịu trách nhiệm"), và một màn thứ hai trông gần giống sẽ dạy người
+    /// dùng rằng hai thứ ấy khác nhau — rồi họ phải học lại thao tác ở nơi thứ hai.
+    public func moHopNhatTep(duong: String, cuaToi: String) {
+        nguoiVuaChonMan()
+        _ = _moTheoTenMan("XungDot", thamSo: "")
+        guard let v = khungCua("XungDot", id: "kg.conflicts") as? XungDotView else { return }
+        let ten = (duong as NSString).lastPathComponent
+        v.onChon = { [weak self] cid, ben, _ in
+            guard let self else { return }
+            let vung = Int(cid.split(separator: "#").last.map(String.init) ?? "1") ?? 1
+            let ma = String(cid.split(separator: "#").first.map(String.init) ?? cid)
+            self.chay("code.merge_conflict_resolve",
+                      ["conflict_id": ma,
+                       "choices": [["region": vung, "side": ben.uppercased()]]],
+                      khiLoi: { loi in
+                          self.hoiThoai.themLuot(by: .cho, text: "chưa hợp nhất được: \(loi)")
+                      }) { _ in
+                self.hoiThoai.themLuot(by: .heThong, text: "đã hợp nhất `\(ten)` theo lựa chọn của anh")
+                Task { await self.lamMoi() }
+            }
+        }
+        v.capNhat(ketQua: ["conflicts": _vungXungDot(duong: duong, cuaToi: cuaToi)])
+    }
+
+    /// Dựng dữ liệu hai vế cho màn xung đột từ tệp trên đĩa và bản của người.
+    ///
+    /// Hỏi daemon thay vì tự hợp nhất trong giao diện: phép hợp nhất ba bên đã chạy ở phía lõi
+    /// lúc `code.human_save` báo E6004, và làm lại nó ở đây nghĩa là hai bên có thể ra hai kết
+    /// quả khác nhau cho cùng một tệp — đúng thứ một màn xung đột KHÔNG được phép làm.
+    private func _vungXungDot(duong: String, cuaToi: String) -> [[String: Any]] {
+        guard let d = _xungDotCuoi, d.duong == duong else { return [] }
+        return d.vung.enumerated().compactMap { i, v -> [String: Any]? in
+            guard (v["kind"] as? String) == "giao" else { return nil }
+            let so = (v["region"] as? Int) ?? (i + 1)
+            return [
+                "id": "\(d.ma)#\(so)", "type": "code",
+                "detail": "\((duong as NSString).lastPathComponent) — vùng \(so)",
+                "nodes": [
+                    ["id": "anh sửa", "value": v["a"] ?? "", "tier": "người",
+                     "source": "bộ đệm trình soạn thảo"],
+                    ["id": "bản trên đĩa", "value": v["b"] ?? "", "tier": "tác tử / ngoài EIDE",
+                     "source": duong],
+                ],
+            ]
+        }
+    }
+
+    /// Xung đột mã gần nhất daemon báo về — điền từ lỗi E6004 của `code.human_save`.
+    private var _xungDotCuoi: (ma: String, duong: String, vung: [[String: Any]])?
+
+    /// Ghi nhận xung đột vừa sinh, để `moHopNhatTep` dựng được hai vế.
+    public func nhanXungDotMa(ma: String, duong: String, vung: [[String: Any]]) {
+        _xungDotCuoi = (ma, duong, vung)
+    }
+
+    /// Người bấm Lưu trong trình soạn thảo → `code.human_save` (UXD-13 v2.0 §7.1, UXC-31 §5.4).
+    ///
+    /// `xong(nil, nil)` = lưu được; `xong(mã lỗi, thông điệp)` = không. Gọi lại trên luồng chính.
+    ///
+    /// Đây là chỗ nguyên tắc "một đường" của FTR-30 §5.3 được giữ cho hành vi THƯỜNG XUYÊN NHẤT
+    /// của sản phẩm: một lần gõ ⌘S nay để lại một commit có tác giả máy-đọc-được, một dòng sổ
+    /// cái, và một mục hoàn tác — y như mọi việc tác tử làm.
+    public func luuNhuNguoi(duong: String, noiDung: String, goc: String?,
+                            xong: @escaping (String?, String?) -> Void) {
+        var ts: [String: Any] = ["path": duong, "content": noiDung]
+        if let goc { ts["base_content"] = goc }
+        Task {
+            do {
+                let r = try await client.goi(.capsInvoke,
+                                             ["id": "code.human_save", "params": ts])
+                let tt = (r["status"] as? String) ?? ""
+                let loi = r["error"] as? [String: Any]
+                await MainActor.run {
+                    if tt == "done" {
+                        self.hoiThoai.themLuot(
+                            by: .heThong,
+                            text: "đã lưu `\((duong as NSString).lastPathComponent)` — "
+                                + "commit \(((r["result"] as? [String: Any])?["commit"] as? String ?? "").prefix(8))")
+                        Task { await self.lamMoi() }
+                        xong(nil, nil)
+                    } else {
+                        // E6004 mang theo cả hai vế — giữ lại để `moHopNhatTep` dựng màn mà
+                        // không phải hỏi daemon lần nữa.
+                        if let ma = loi?["conflict_id"] as? String {
+                            self.nhanXungDotMa(
+                                ma: ma, duong: duong,
+                                vung: (loi?["vung"] as? [[String: Any]]) ?? [])
+                        }
+                        xong((loi?["eide_code"] as? String) ?? "E?",
+                             (loi?["message"] as? String) ?? "không lưu được")
+                    }
+                }
+            } catch {
+                await MainActor.run { xong("E?", "\(error)") }
+            }
+        }
+    }
+
     /// Giết daemon để đo phép phát hiện mất kết nối — chỉ dùng trong bài kiểm.
     public func gietDaemonDeTest() { Task { await client.gietDeTest() } }
 

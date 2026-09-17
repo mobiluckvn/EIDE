@@ -235,8 +235,9 @@ final class EideE2ETests: XCTestCase {
         let v = FlowMapView()
         v.capNhat(ketQua: g)
 
-        // Chín cổng luôn hiện đủ, kể cả khi hàng đợi rỗng.
-        XCTAssertEqual(v.soDong, 9 + v.soDangCho)
+        // MỌI cổng luôn hiện đủ, kể cả khi hàng đợi rỗng. Đếm theo bảng, không viết cứng:
+        // POL-17 v2.0 thêm cổng chung `*` và một con số 9 ở đây đỏ ở chỗ không liên quan.
+        XCTAssertEqual(v.soDong, FlowMapView.congTheoThuTu.count + v.soDangCho)
         XCTAssertEqual(v.soDangCho, (doi["items"] as? [[String: Any]])?.count ?? 0)
         XCTAssertFalse(v.mucTuChu.isEmpty, "autonomy.get không trả mức tự chủ")
     }

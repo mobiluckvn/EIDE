@@ -138,6 +138,12 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     (eide / "FEATURES.json").write_text(json.dumps({"features": []}, ensure_ascii=False, indent=2), encoding="utf-8")
     (eide / "PROGRESS.md").write_text(f"# {name}\n\n- {time.strftime('%Y-%m-%d %H:%M')} — tạo dự án từ lệnh: \"{params['text']}\"\n", encoding="utf-8")
     (eide / ".gitignore").write_text("store/\nsession/\nindex/\n", encoding="utf-8")
+    # KHỞI TẠO kho git ngay lúc tạo dự án — tiền đề của cả tầng phiên bản tệp (UXD-13 v2.0 §6.2,
+    # quyết định Q1). Trước 17/09/2026 dự án chỉ có một `.gitignore` mà không có `.git`, nên
+    # `code.revert` ném E7001 ("chưa phải kho git") và hoàn tác ba mức không có gì để đứng lên.
+    # Một dự án không có lịch sử là một dự án mà "hoàn tác được trong 24 giờ" là lời hứa suông.
+    from eide_core import git as _git
+    _git.dam_bao_kho(root)
     nxt = []
     if params.get("chip"):
         nxt.append("project.set_target")

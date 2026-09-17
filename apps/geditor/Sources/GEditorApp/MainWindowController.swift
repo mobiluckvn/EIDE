@@ -2585,7 +2585,12 @@ final class MainWindowController: NSWindowController {
         if let kind = editorDocument.mediaKind {
             return saveOfficeDocument(kind: kind)
         }
-        guard editorDocument.path != nil else { return saveDocumentAs(sender) }
+        guard let duong = editorDocument.path else { return saveDocumentAs(sender) }
+        // Tệp THUỘC DỰ ÁN đang mở đi qua `code.human_save`, không ghi thẳng đĩa (UXD-13 v2.0
+        // §7.1). Tệp ngoài dự án — một ghi chú trên Desktop, một tệp cấu hình của máy — vẫn ghi
+        // như trình soạn thảo bình thường: sổ cái là sổ của MỘT dự án, và ghi vào nó những thứ
+        // không thuộc dự án ấy vừa sai chỗ vừa lộ đường dẫn riêng của người dùng.
+        if luuQuaEide(duong) { return }
         performSave { try self.editorDocument.save(allowLossy: $0) }
     }
 
@@ -2937,6 +2942,59 @@ final class MainWindowController: NSWindowController {
     /// Lõi TỪ CHỐI lưu mất dữ liệu trừ khi được truyền `allowLossy: true`, nên chỗ duy nhất
     /// quyết định là ở đây — và nó phải là một câu hỏi hiện ra trước mắt người dùng, kèm số
     /// ký tự sẽ mất (FR-ENC-203).
+    /// Nội dung tệp lúc MỞ hoặc lúc lưu lần cuối — vế "bản chung" của phép kiểm tệp cũ.
+    ///
+    /// Giữ ở đây chứ không hỏi đĩa lúc lưu: hỏi đĩa thì luôn khớp, vì thứ ta muốn so là bản
+    /// người dùng NHÌN THẤY khi bắt đầu gõ, không phải bản đang nằm trên đĩa lúc này.
+    private var noiDungLucMo: [String: String] = [:]
+
+    /// Ghi nhớ nội dung một tệp vừa mở — gọi từ đường mở tệp của EIDE.
+    func ghiNhoNoiDungGoc(_ duong: String) {
+        noiDungLucMo[duong] = (try? String(contentsOfFile: duong, encoding: .utf8)) ?? ""
+    }
+
+    /// Lưu qua EIDE nếu tệp thuộc dự án đang mở. Trả `true` khi đã nhận việc.
+    ///
+    /// Bất đồng bộ nhưng trả `true` ngay: `saveDocument` là một `@objc` đồng bộ của AppKit và
+    /// không chờ được. Tài liệu chỉ được đánh dấu ĐÃ LƯU sau khi năng lực báo xong — nên nếu
+    /// cổng chặn hay tệp đã đổi, dấu "chưa lưu" vẫn còn nguyên và người không bị nói dối rằng
+    /// bản sửa của mình đã an toàn.
+    private func luuQuaEide(_ duong: String) -> Bool {
+        guard let p = eidePanel, let duAn = duAnDangMo else { return false }
+        let goc = URL(fileURLWithPath: duAn).standardizedFileURL.path
+        let tep = URL(fileURLWithPath: duong).standardizedFileURL.path
+        guard tep.hasPrefix(goc + "/") else { return false }
+
+        let noi = editorDocument.buffer.text
+        p.luuNhuNguoi(duong: tep, noiDung: noi, goc: noiDungLucMo[tep]) { [weak self] ma, thong in
+            guard let self else { return }
+            if ma == nil {
+                self.noiDungLucMo[tep] = noi
+                self.editorDocument.danhDauDaLuu()
+                self.refreshChrome()
+                return
+            }
+            if ma == "E6004" { return self.hienXungDotTep(tep, cuaToi: noi, thong: thong) }
+            let a = NSAlert()
+            a.messageText = "Không lưu được \((tep as NSString).lastPathComponent)"
+            a.informativeText = "\(ma ?? "") — \(thong ?? "")"
+            a.runModal()
+        }
+        return true
+    }
+
+    /// Tệp đã đổi trên đĩa từ lúc mở — KHÔNG ghi đè, mở đường hợp nhất (UXC-31 B4, 5.5).
+    private func hienXungDotTep(_ duong: String, cuaToi: String, thong: String?) {
+        let a = NSAlert()
+        a.messageText = "\((duong as NSString).lastPathComponent) đã đổi từ lúc anh mở"
+        a.informativeText = (thong ?? "")
+            + "\n\nKhông có đường ghi đè: bản của anh và bản trên đĩa phải được hợp nhất."
+        a.addButton(withTitle: "Xem hợp nhất")
+        a.addButton(withTitle: "Để sau")
+        guard Unattended.ask(a) == .alertFirstButtonReturn else { return }
+        eidePanel?.moHopNhatTep(duong: duong, cuaToi: cuaToi)
+    }
+
     private func performSave(_ save: (Bool) throws -> Document.SaveResult) {
         applyTrimOnSaveIfEnabled()
         do {

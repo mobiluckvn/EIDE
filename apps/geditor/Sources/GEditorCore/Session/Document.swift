@@ -386,6 +386,21 @@ public final class Document {
         buffer.undoDepth != savedUndoDepth || buffer.historyBranch != savedHistoryBranch
     }
 
+    /// Đánh dấu tài liệu ĐÃ LƯU mà không tự ghi — khi một thành phần KHÁC đã ghi tệp.
+    ///
+    /// Trong EIDE, nút Lưu của một tệp thuộc dự án đi qua năng lực `code.human_save` chứ không
+    /// ghi thẳng đĩa (UXD-13 v2.0 §7.1): năng lực ấy phải là NGƯỜI GHI DUY NHẤT thì phép kiểm
+    /// "tệp đã đổi từ lúc mở" mới có nghĩa — nếu trình soạn thảo ghi trước rồi mới gọi năng lực
+    /// thì nội dung trên đĩa đã là nội dung mới, và không xung đột nào còn phát hiện được.
+    ///
+    /// Nên sau khi năng lực ghi xong, tài liệu cần biết mình không còn "sửa dở" nữa. Không có
+    /// hàm này thì dấu chấm "chưa lưu" ở tiêu đề cửa sổ nằm lại vĩnh viễn, và ⌘S lần sau lại
+    /// gửi đúng nội dung ấy đi lần nữa.
+    public func danhDauDaLuu() {
+        savedUndoDepth = buffer.undoDepth
+        savedHistoryBranch = buffer.historyBranch
+    }
+
     /// Kiểu EOL chiếm đa số; `nil` khi tài liệu chưa có dòng nào kết thúc.
     public var eol: EOL? { eolReport.dominant }
 

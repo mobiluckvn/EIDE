@@ -70,7 +70,13 @@ public final class XungDotView: ManHinhCoSo {
         let loai = (c["type"] as? String) ?? "fact"
         dangCho.append(id)
 
-        themDong(loai == "resource" ? "xung đột TÀI NGUYÊN" : "xung đột FACT",
+        // Ba loại xung đột, MỘT màn. §6.3 của UXC-31 nói thẳng lý do: người dùng học một lần,
+        // dùng hai nơi — xung đột tri thức (hai nguồn nói khác nhau về một thanh ghi) và xung
+        // đột mã (người và tác tử sửa cùng một vùng dòng) là cùng một câu hỏi "chọn vế nào, và
+        // ai chịu trách nhiệm cho lựa chọn ấy".
+        let nhan = ["resource": "xung đột TÀI NGUYÊN", "code": "xung đột MÃ"][loai]
+            ?? "xung đột FACT"
+        themDong(nhan,
                  (c["detail"] as? String) ?? (c["subject"] as? String) ?? id,
                  mau: EideToken.Mau.bad)
 
