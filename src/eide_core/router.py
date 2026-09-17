@@ -468,5 +468,31 @@ class Router:
             self.ledger.append(kind, data)
 
 
+def _dich_tep(params: dict[str, Any], ctx: Context) -> dict[str, str]:
+    """`{"target": <đường dẫn>}` nếu lời gọi nhắm vào MỘT TỆP TRONG DỰ ÁN, ngược lại rỗng.
+
+    `args_hash` cố ý không mang tham số lên giao diện, và đó là đúng — nhưng có một tham số mà
+    giao diện BẮT BUỘC phải biết: tệp nào đang bị ghi. Không có nó thì băng "tác tử đang sửa tệp
+    này" không hiện được, và người đang gõ trong trình soạn thảo không biết có tay thứ hai chạm
+    vào đúng tệp mình mở (UXC-31 §5.6).
+
+    Tính CHUNG cho mọi năng lực chứ không theo một danh sách `code.*`: danh sách thì lệch khi
+    thêm năng lực, còn quy ước tên tham số (`file`/`path`) thì cả 241 hợp đồng dùng chung.
+
+    Chỉ trả đường dẫn nằm TRONG dự án. Một năng lực đọc `/etc/hosts` hay một tệp trong thư mục
+    nhà của người dùng thì đường dẫn ấy KHÔNG vào sổ cái — sổ cái là bằng chứng công khai của
+    một dự án, không phải nhật ký hệ tệp của máy.
+    """
+    d = params.get("file") or params.get("path")
+    if not isinstance(d, str) or not d or not ctx.project_dir:
+        return {}
+    try:
+        goc = Path(ctx.project_dir).expanduser().resolve()
+        tep = (goc / d).resolve() if not Path(d).is_absolute() else Path(d).expanduser().resolve()
+    except (OSError, ValueError):
+        return {}
+    return {"target": str(tep)} if goc == tep or goc in tep.parents else {}
+
+
 def _h(obj: Any) -> str:
     return hashlib.sha256(json.dumps(obj, ensure_ascii=False, sort_keys=True, default=str).encode()).hexdigest()[:16]

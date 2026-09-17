@@ -1166,6 +1166,9 @@ final class MainWindowController: NSWindowController {
         p.onChonDuAn = { [weak self] in self?.moMenuDuAn() }
         // Tác tử mở màn nào thì SIDEBAR sáng ở đúng mục ấy. Nội dung một đằng và điều hướng một
         // nẻo là cách chắc chắn để người dùng mất dấu mình đang ở đâu.
+        p.onTacTuSuaTep = { [weak self] duong, buoc in
+            self?.eideTacTuSua(duong: duong, buoc: buoc)
+        }
         p.onTacTuMoMan = { [weak self] tien in
             self?.dieuHuongEide?.chon(tien)
             self?.hienCayDuAn(tien == "Code")
@@ -1898,9 +1901,60 @@ final class MainWindowController: NSWindowController {
         mirrorEdit(from: editorView, in: editorDocument)
     }
 
+    /// Tệp mà tác tử đang sửa ngay lúc này — `(đường dẫn, mô tả bước)`. Xoá khi lượt chạy xong.
+    private var tacTuDangSua: (duong: String, buoc: String)?
+
+    /// Hai băng của trình soạn thảo khi tệp thuộc dự án EIDE — UXC-31 §5.3 và §5.6.
+    ///
+    /// Thứ tự ưu tiên có chủ ý: băng "tác tử đang sửa" thắng băng "bộ đệm chưa lưu". Khi cả hai
+    /// cùng đúng thì thứ người cần biết TRƯỚC là có một tay thứ hai đang chạm vào tệp — dấu
+    /// "chưa lưu" họ đã tự biết vì chính họ vừa gõ.
+    /// Băng đang hiện có phải của EIDE không.
+    ///
+    /// Thanh băng là tài nguyên DÙNG CHUNG: `constant-guard` báo "11 dòng vi phạm — CHẶN merge",
+    /// bộ khôi phục phiên báo có bản nháp, chuyển đổi bảng mã báo mất ký tự. Gọi `hideBanner()`
+    /// vô điều kiện ở đây là xoá băng của người khác — và đó đúng là thứ đã xảy ra: ảnh chụp
+    /// bước 12 ngày 17/09/2026 cho thấy dải vàng constant-guard biến mất ngay sau khi tôi thêm
+    /// hai băng này. Chỉ ẩn băng do CHÍNH mình dựng.
+    private var bangCuaEide = false
+
+    private func capNhatBangEide() {
+        guard let duong = editorDocument.path, duAnDangMo != nil else { return }
+        if let t = tacTuDangSua, t.duong == duong {
+            bangCuaEide = true
+            return showBanner("Tác tử đang sửa tệp này — \(t.buoc). Anh vẫn gõ được; hai bản sẽ "
+                              + "được hợp nhất, không bản nào bị ghi đè.",
+                              actionTitle: nil, action: nil)
+        }
+        if editorDocument.isModified && luuQuaEideDuoc(duong) {
+            bangCuaEide = true
+            return showBanner("Bộ đệm có sửa CHƯA LƯU của anh — tác tử muốn ghi tệp này sẽ bị "
+                              + "chính sách hỏi trước (P-EDIT-01).",
+                              actionTitle: "Lưu ngay", action: #selector(saveDocument(_:)))
+        }
+        if bangCuaEide {
+            bangCuaEide = false
+            hideBanner()
+        }
+    }
+
+    /// Tệp này có đi qua đường lưu của EIDE không — dùng chung điều kiện với `luuQuaEide`.
+    private func luuQuaEideDuoc(_ duong: String) -> Bool {
+        guard let duAn = duAnDangMo else { return false }
+        let goc = URL(fileURLWithPath: duAn).standardizedFileURL.path
+        return URL(fileURLWithPath: duong).standardizedFileURL.path.hasPrefix(goc + "/")
+    }
+
+    /// Panel báo tác tử bắt đầu / thôi sửa một tệp.
+    func eideTacTuSua(duong: String?, buoc: String) {
+        tacTuDangSua = duong.map { ($0, buoc) }
+        capNhatBangEide()
+    }
+
     private func refreshChrome() {
         // Giữ bất biến "pane hiện đúng tài liệu của nó" ở ĐÂY, vì gần như mọi lệnh đều đi qua
         // `refreshChrome()`. Xem `syncPanesToTheirTabs`.
+        capNhatBangEide()
         syncPanesToTheirTabs()
 
         var state = statusBar.state

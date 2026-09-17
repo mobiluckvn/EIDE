@@ -1817,6 +1817,9 @@ public final class EidePanel: NSView {
     /// đang ở đâu. Chủ sản phẩm 16/09/2026: *"tự mở và focus vào phần đó"*.
     public var onTacTuMoMan: ((String) -> Void)?
 
+    /// Tác tử bắt đầu/thôi ghi một tệp — `(đường dẫn hoặc nil, mô tả bước)`. UXC-31 §5.6.
+    public var onTacTuSuaTep: ((String?, String) -> Void)?
+
     private func moManHinh(id: String, thamSo: String) {
         nguoiVuaChonMan()
         // Thử TÊN MÀN trước khi báo không có: ba màn trong bảng UXD-13 §2 không có năng lực
@@ -2022,6 +2025,7 @@ public final class EidePanel: NSView {
             // viết `case "event.cap.run.start"` một lần và nó không bao giờ chạy — tên sự kiện
             // của sổ cái khác tên sự kiện của API-15, và chỗ ánh xạ nằm ở phía daemon.
             if let cap = p["cap"] as? String { _theoTacTu(cap) }
+            _bamTepTacTuSua(p)
             hienTienDo(p)
         case "event.notice":
             let muc = (p["level"] as? String) ?? "info"
@@ -2159,6 +2163,27 @@ public final class EidePanel: NSView {
                               intentId: (p["intent_id"] as? String) ?? "")
         the.onSua = { [weak self] t in self?.hoiThoai.oLenh.dienSan(t) }
         hoiThoai.themThe(the)
+    }
+
+    /// Theo dõi tệp tác tử đang ghi, để cửa sổ dựng băng §5.6.
+    ///
+    /// Bật ở `cap.run.start`, tắt ở `cap.run.finish` — cặp ấy luôn đủ đôi vì Router ghi cả hai
+    /// quanh MỌI lời gọi, kể cả lời gọi hỏng. Bám vào `run.step_*` thì hụt: một năng lực gọi lẻ
+    /// (người bấm nút trên màn) không nằm trong chuỗi nào và không có bước nào.
+    private func _bamTepTacTuSua(_ p: [String: Any]) {
+        guard let kind = p["kind"] as? String else { return }
+        if kind == "cap.run.start", let t = p["target"] as? String {
+            let cap = (p["cap"] as? String) ?? "một năng lực"
+            let buoc: String
+            if let i = EideSo.nguyen(p["i"]), let n = EideSo.nguyen(p["of"]) {
+                buoc = "`\(cap)` (bước \(i)/\(n))"
+            } else {
+                buoc = "`\(cap)`"
+            }
+            onTacTuSuaTep?(t, buoc)
+        } else if kind == "cap.run.finish" {
+            onTacTuSuaTep?(nil, "")
+        }
     }
 
     /// Thẻ tiến độ chuỗi — UXD-13 §4 RunProgress.
