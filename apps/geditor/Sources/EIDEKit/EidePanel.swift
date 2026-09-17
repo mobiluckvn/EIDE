@@ -183,6 +183,8 @@ public final class EidePanel: NSView {
     private let hanhTrinh = FlowMapView()
     private let chinhSach = ChinhSachView()
     private let thanhMan = NSStackView()
+    /// Thanh nhỏ trên vùng trao đổi: nhãn + ba nút đổi chiều cao (UXC-31 §2D.3).
+    private let thanhHoiThoai = NSStackView()
     /// Năng lực đứng sau màn đang mở — hiện cạnh tên màn (UXC-31 §2C.4).
     private let nangLucMan = NSTextField(labelWithString: "")
     private let tenMan = NSTextField(labelWithString: "")
@@ -1176,6 +1178,43 @@ public final class EidePanel: NSView {
     /// Chiều cao tối đa của vùng trao đổi. 320 pt ≈ năm lượt đối thoại cộng ô gõ.
     public static let TRAN_HOI_THOAI: CGFloat = 320
 
+    /// Ba trạng thái chiều cao của vùng trao đổi — UXC-31 §2D.1.
+    ///
+    /// Sàn–trần (220…320, cao theo nội dung) giữ được hai bất biến quan trọng và thiếu đúng một
+    /// thứ: người dùng KHÔNG đổi được nó. Trên màn 13 inch, soạn mã với 220 pt cố định dưới đáy
+    /// là chật; mà bỏ sàn đi thì vùng trao đổi biến mất — thứ chủ sản phẩm cấm từ 16/09.
+    ///
+    /// Ba trạng thái thay một kích thước bằng một HÀNH VI: người kéo xuống khi cần chỗ soạn mã,
+    /// kéo lên khi đang đọc một chuỗi dài, và hệ thống tự về mức chuẩn khi một Run bắt đầu — vì
+    /// đúng lúc ấy có thứ mới để đọc. Không trạng thái nào bằng 0: `thuGon` vẫn để lại ô gõ.
+    public enum CaoHoiThoai: CGFloat, CaseIterable {
+        case thuGon = 48
+        case chuan = 220
+        case moRong = 320
+    }
+
+    /// Trạng thái hiện tại — cho bài kiểm đọc.
+    public private(set) var caoHoiThoai: CaoHoiThoai = .chuan
+
+    private lazy var _caoHoiThoai: NSLayoutConstraint =
+        hoiThoai.heightAnchor.constraint(equalToConstant: CaoHoiThoai.chuan.rawValue)
+
+    /// Đổi trạng thái vùng trao đổi.
+    ///
+    /// KHÔNG đổi khi con trỏ đang ở ô lệnh (§2D.2c): một ô nhập tụt xuống dưới tay người đang gõ
+    /// là cách chắc chắn nhất để họ gõ nhầm chỗ và mất câu vừa viết.
+    @MainActor
+    public func datCaoHoiThoai(_ c: CaoHoiThoai, buoc: Bool = false) {
+        if !buoc && _dangGoTrongONhap { return }
+        caoHoiThoai = c
+        NSAnimationContext.runAnimationGroup { ctx in
+            ctx.duration = 0.15          // §2D.3: ≤ 150 ms
+            ctx.allowsImplicitAnimation = true
+            _caoHoiThoai.animator().constant = c.rawValue
+            self.layoutSubtreeIfNeeded()
+        }
+    }
+
     /// Ba màn ấy nạp bằng PHƯƠNG THỨC RPC, không bằng `caps.invoke`.
     ///
     /// `queue.list` và `autonomy.get` là phương thức của daemon chứ không phải năng lực trong
@@ -1472,6 +1511,13 @@ public final class EidePanel: NSView {
         bangMan.first { ten.hasPrefix($0.tien) }?.tien ?? ten
     }
 
+    @objc private func _bamCaoHoiThoai(_ n: NSButton) {
+        guard let v = n.identifier?.rawValue, let px = Double(v),
+              let tt = CaoHoiThoai(rawValue: CGFloat(px)) else { return }
+        // `buoc: true` — người BẤM là người quyết; phép hoãn "đang gõ" chỉ áp cho phép tự đổi.
+        datCaoHoiThoai(tt, buoc: true)
+    }
+
     @objc private func dongMan() {
         for k in bangMan { k.v.isHidden = true }
         banDo.isHidden = true
@@ -1597,6 +1643,28 @@ public final class EidePanel: NSView {
             addSubview(v)
         }
         let g = EideToken.contentGap
+        // Thanh vùng trao đổi: nhãn bên trái, ba nút đổi chiều cao bên phải.
+        let nhanHT = NSTextField(labelWithString: "VÙNG TRAO ĐỔI")
+        nhanHT.font = NSFont.boldSystemFont(ofSize: 10)
+        nhanHT.textColor = EideToken.Mau.faint
+        thanhHoiThoai.orientation = .horizontal
+        thanhHoiThoai.alignment = .centerY
+        thanhHoiThoai.spacing = 2
+        thanhHoiThoai.addArrangedSubview(nhanHT)
+        let dem = NSView()
+        dem.setContentHuggingPriority(.init(1), for: .horizontal)
+        thanhHoiThoai.addArrangedSubview(dem)
+        for (nhan, tt) in [("▁", CaoHoiThoai.thuGon), ("▂", .chuan), ("▃", .moRong)] {
+            let b = NSButton(title: nhan, target: self, action: #selector(_bamCaoHoiThoai(_:)))
+            b.bezelStyle = .inline
+            b.font = EideToken.fontUI
+            b.toolTip = "Chiều cao vùng trao đổi: \(Int(tt.rawValue)) pt"
+            b.identifier = NSUserInterfaceItemIdentifier("\(Int(tt.rawValue))")
+            thanhHoiThoai.addArrangedSubview(b)
+        }
+        thanhHoiThoai.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(thanhHoiThoai)
+
         vungPhai.dangChay.onChon = { [weak self] ma in
             guard let self else { return }
             self.nguoiVuaChonMan()
@@ -1625,11 +1693,15 @@ public final class EidePanel: NSView {
             // Ô lệnh nằm DƯỚI cùng của cột giữa và cao cố định: nó phải gõ được mọi lúc, kể cả
             // khi một màn chuyên đề đang mở. Bản cũ để hội thoại chiếm cả cột rồi ẩn nó đi khi
             // mở màn — người dùng muốn gõ một câu phải đóng màn đang xem.
+            thanhHoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+            thanhHoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
+            thanhHoiThoai.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -2),
+
             hoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             hoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
             hoiThoai.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -g),
             // (bắt buộc, = 0) phải thắng được nó.
-            _sanHoiThoai, _tranHoiThoai,
+            _caoHoiThoai,
 
             thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
@@ -1792,7 +1864,7 @@ public final class EidePanel: NSView {
             k.topAnchor.constraint(equalTo: daiCu.bottomAnchor, constant: g),
             k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             k.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
-            k.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -g),
+            k.bottomAnchor.constraint(equalTo: thanhHoiThoai.topAnchor, constant: -g),
         ]
     }
 
@@ -2328,6 +2400,9 @@ public final class EidePanel: NSView {
         theTienDo[id] = the
         hoiThoai.themThe(the)
         _chieuDangChay()
+        // §2D.2a: một Run bắt đầu thì vùng trao đổi về mức chuẩn — đúng lúc ấy có thứ mới để
+        // đọc, và một thẻ Run nằm trong một vùng cao 48 pt là một thẻ không ai thấy.
+        if caoHoiThoai == .thuGon { datCaoHoiThoai(.chuan) }
         // ĐƯA thông điệp tạo ra thẻ VÀO thẻ. `init` chỉ gọi `capNhat([:])`, nên trước đây thông
         // điệp ĐẦU TIÊN — thông điệp duy nhất mang `cap`, và đôi khi là thông điệp duy nhất của
         // cả lượt chạy — bị vứt. Hệ quả đo 16/09/2026 qua giao diện: năm thẻ cùng lúc, cả năm ghi

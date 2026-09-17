@@ -6,7 +6,7 @@ Dự án: /Users/congvt/eide/doc-cam-bien-dht22-va-nhap-nhay-led-tren-arduino
 ## 1. Mở dự án — cửa sổ dựng xong, cột điều hướng có mặt
 
 - ✅ dự án `doc-cam-bien-dht22-va-nhap-nhay-led-tren-arduino` · panel sẵn sàng
-- 3001 ms
+- 3000 ms
 - cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-01.png`
 
@@ -27,7 +27,7 @@ Dự án: /Users/congvt/eide/doc-cam-bien-dht22-va-nhap-nhay-led-tren-arduino
 ## 4. Nhập tài liệu — trích fact từ một header C
 
 - ✅ 1 dòng
-- 7005 ms
+- 7003 ms
 - cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-04.png`
 
@@ -41,7 +41,7 @@ Dự án: /Users/congvt/eide/doc-cam-bien-dht22-va-nhap-nhay-led-tren-arduino
 ## 6. Bản đồ tri thức — đồ thị dựng từ store
 
 - ✅ 2 dòng · 1 cây
-- 5001 ms
+- 5002 ms
 - cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-06.png`
 
@@ -55,7 +55,7 @@ Dự án: /Users/congvt/eide/doc-cam-bien-dht22-va-nhap-nhay-led-tren-arduino
 ## 8. Mã nguồn — mở một tệp, xem dấu tri thức ở lề
 
 - ✅ main.c · 0 dòng có fact · 11 dòng vi phạm constant-guard
-- 8019 ms
+- 8020 ms
 - cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-08.png`
 
@@ -68,51 +68,51 @@ Dự án: /Users/congvt/eide/doc-cam-bien-dht22-va-nhap-nhay-led-tren-arduino
 
 ## 10. Ô LỆNH gõ được NGAY TRÊN một màn chuyên đề
 
-- ✅ gõ được CẢ trên màn chuyên đề lẫn ở hội thoại · 9 lượt
-- 89006 ms
-- cửa sổ 720 pt · Auto Layout đòi 320 pt
+- ✅ gõ được CẢ trên màn chuyên đề lẫn ở hội thoại · 8 lượt
+- 89007 ms
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-10.png`
 
 ## 11. Tác tử tự MỞ và FOCUS đúng màn của việc nó đang làm
 
 - ✅ đang ở `Env` → tác tử chạy `passport.query` → tự mở `Passport`
-- 36007 ms
-- cửa sổ 720 pt · Auto Layout đòi 320 pt
+- 36006 ms
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-11.png`
 
 ## 12. BA ĐIỀU KIỆN: tác tử sửa mã → mở màn mã, mà hội thoại VẪN hiện
 
 - ✅ mở màn `Code` · hội thoại vẫn hiện
 - 35005 ms
-- cửa sổ 720 pt · Auto Layout đòi 320 pt
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-12.png`
 
 ## 13. Nhật ký — mọi việc vừa làm có vào sổ cái không
 
-- ✅ 1519 dòng
+- ✅ 1518 dòng
 - 5001 ms
-- cửa sổ 720 pt · Auto Layout đòi 320 pt
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-13.png`
 
 ## 14. Mô hình & chi phí — tiêu bao nhiêu trong vòng này
 
 - ✅ 5 dòng
 - 4001 ms
-- cửa sổ 720 pt · Auto Layout đòi 354 pt
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-14.png`
 
 ## 15. Hành trình & cổng — chính sách đã quyết những gì
 
 - ✅ 11 dòng
-- 4002 ms
-- cửa sổ 720 pt · Auto Layout đòi 320 pt
+- 4001 ms
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-15.png`
 
 ## 16. MẤT DAEMON: màn hình có NÓI RA rằng dữ liệu đã cũ không
 
 - ✅ ✅ daemon chết → dải "Dữ liệu cũ" hiện ra
 - 5001 ms
-- cửa sổ 720 pt · Auto Layout đòi 320 pt
+- cửa sổ 720 pt · Auto Layout đòi 286 pt
 - ảnh: `buoc-16.png`
 
 ---

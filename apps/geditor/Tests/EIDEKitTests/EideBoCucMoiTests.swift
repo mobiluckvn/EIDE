@@ -392,3 +392,27 @@ final class EideDaiCuTests: XCTestCase {
                           "nhịp tim phải dày hơn hạn, nếu không thì hạn không bao giờ đo được")
     }
 }
+
+// MARK: - Vùng trao đổi ba trạng thái (UXC-31 §2D)
+
+final class EideCaoHoiThoaiTests: XCTestCase {
+
+    func testBA_trang_thai_dung_so_cua_dac_ta() {
+        // §2D.1 viết bằng số: 48 / 220 / 320. Ghim vào bài kiểm chứ không để chúng trôi trong
+        // mã — một hằng số đổi thầm vẫn chạy đúng và vẫn phá tiêu chí nghiệm thu N7.
+        XCTAssertEqual(EidePanel.CaoHoiThoai.thuGon.rawValue, 48)
+        XCTAssertEqual(EidePanel.CaoHoiThoai.chuan.rawValue, 220)
+        XCTAssertEqual(EidePanel.CaoHoiThoai.moRong.rawValue, 320)
+        XCTAssertEqual(EidePanel.CaoHoiThoai.moRong.rawValue, EidePanel.TRAN_HOI_THOAI)
+        XCTAssertEqual(EidePanel.CaoHoiThoai.chuan.rawValue, EidePanel.CAO_HOI_THOAI)
+    }
+
+    func testKHONG_trang_thai_nao_bang_khong() {
+        // B3 của UXC-31: vùng trao đổi không bao giờ về 0, tối thiểu tuyệt đối 48 pt. Đây là
+        // bất biến chủ sản phẩm chốt 16/09 — "giao diện để người và máy cùng trao đổi là phải
+        // có và BẤT BIẾN" — nên nó phải có một bài kiểm không cho ai hạ xuống thấp hơn.
+        for t in EidePanel.CaoHoiThoai.allCases {
+            XCTAssertGreaterThanOrEqual(t.rawValue, 48, "\(t) thấp hơn sàn tuyệt đối")
+        }
+    }
+}
