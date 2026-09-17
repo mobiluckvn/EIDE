@@ -26,6 +26,14 @@ LEVELS = ["A0", "A1", "A2", "A3", "A4"]
 # R4 (không hoàn tác được: xóa flash, fuse, cơ cấu chấp hành, phát hành công khai) luôn ASK ở mọi mức.
 MAX_AUTO_RISK = {"A0": -1, "A1": 1, "A2": 2, "A3": 3, "A4": 3}
 
+#: Năng lực thuộc BỀ MẶT NGƯỜI — chỉ người gọi được, qua ống RPC của giao diện.
+#:
+#: Đây là danh sách đóng, viết ở mã chứ không suy từ tham số: `Router` tra `cap_id` trong tập
+#: này rồi mới đặt đặc trưng `cap.is_human_surface`, nên không lời gọi nào tự khai mình là bề
+#: mặt người. Cặp quy tắc `P-EDIT-02`/`P-EDIT-04` của POL-17 v2.0 đứng trên đúng đặc trưng ấy:
+#: người gọi → APPROVE, tác tử gọi → REJECT.
+NANG_LUC_BE_MAT_NGUOI = frozenset({"code.human_save", "code.merge_conflict_resolve"})
+
 # Dải "chặn" của rules.yaml: các quy tắc priority <= 5 nói vì sao chính hành động này nguy hiểm
 # (hash lệch, không hoàn tác, hằng số không nguồn, dự án nhạy cảm). Quy tắc ưu tiên lớn hơn là
 # lời khuyên chung. Ngưỡng cứng chỉ mượn lý do từ dải này — xem `decide` tầng 2, DEVIATIONS DEV-012.
@@ -152,7 +160,7 @@ class PolicyGate:
         #
         # Quy tắc cổng chỉ được phép SIẾT ở đây, không được nới: một quy tắc APPROVE gặp ngưỡng
         # cứng vẫn ra ASK. REJECT thì mạnh hơn ASK nên được giữ nguyên.
-        env = self._env(features, level, board)
+        env = self._env(features, level, board, actor)
         r = int(risk[1]) if len(risk) > 1 and risk[1].isdigit() else 1
         khop = self._match(gate, env)
 
@@ -181,11 +189,26 @@ class PolicyGate:
                 and _dua_tren_danh_sach(khop):
             r = 2
 
+        # BỀ MẶT NGƯỜI được miễn ngưỡng cứng — miễn RẤT HẸP, và chỉ ở tầng này.
+        #
+        # UXD-13 v2.0 Q2 đòi `code.human_save` APPROVE ở mọi mức tự chủ, kể cả A0, với lý do
+        # "cổng kiểm máy, không kiểm người". Nhưng ngưỡng cứng tầng 2 chặn TRƯỚC khi tới quy
+        # tắc, nên viết P-EDIT-02 thôi thì người bấm Lưu ở A0 vẫn nhận `ASK HARD-A0` — đo được
+        # 17/09/2026 ở tình huống S50.
+        #
+        # Miễn ở tầng 2 chứ KHÔNG ở tầng 1: `A0` là một MỨC người đặt ("tác tử đừng tự làm gì"),
+        # còn `stopped` là DỪNG KHẨN đang có hiệu lực. Người sửa tệp của mình khi tác tử đang bị
+        # giữ ở A0 là việc bình thường; còn giữa một lệnh dừng khẩn thì mọi thứ dừng, kể cả việc
+        # này — người bấm dừng rồi bấm tiếp tục là một thao tác, còn một ngoại lệ ở tầng 1 là
+        # một lỗ vĩnh viễn trong thứ duy nhất chặn được mọi thứ.
+        be_mat_nguoi = actor == "human" and bool((features.get("cap") or {}).get("is_human_surface"))
         cung = None
         if r >= 4:
             cung = ("HARD-R4", "Hành động lớp R4 không hoàn tác được — luôn hỏi người")
         elif r > MAX_AUTO_RISK[level] and r > 0:
             cung = (f"HARD-{level}", f"Lớp {risk} vượt mức tự chủ {level}")
+        if be_mat_nguoi and cung and cung[0] != "HARD-R4":
+            cung = None
         if cung:
             # Chỉ mượn lý do của quy tắc NÓI VỀ CHÍNH HÀNH ĐỘNG NÀY. Quy tắc trong dải chặn
             # (priority <= PRI_CHAN) mô tả vì sao hành động này nguy hiểm — "Không hoàn tác",
@@ -315,7 +338,8 @@ class PolicyGate:
             raise EideError("E1000", f"Mức tự chủ không hợp lệ: {level}")
         return level
 
-    def _env(self, features: dict[str, Any], level: str, board: str | None) -> dict[str, Any]:
+    def _env(self, features: dict[str, Any], level: str, board: str | None,
+             actor: str = "agent") -> dict[str, Any]:
         cfg = self.config
         # `boards` là một trong bốn khóa `whitelist.KHOA_NIEM`, và nó là khóa quyết định G-OPS:
         # `boards.<id>.lab` bật thẳng `G-OPS-01` (APPROVE tự nạp). Niêm vỡ mà vẫn nạp nó thì sửa
@@ -347,4 +371,15 @@ class PolicyGate:
             if k == "board":
                 continue
             env[k] = _Ns(v) if isinstance(v, dict) else v
+        # `actor` ghi SAU CÙNG: giá trị Router truyền xuống là nguồn có thẩm quyền, đặc trưng thì
+        # không. Trước 17/09/2026 biến `actor` trong biểu thức quy tắc CHỈ tồn tại nếu ai đó nhét
+        # nó vào `features` — mà `features` một phần suy từ THAM SỐ của lời gọi. Nghĩa là mọi quy
+        # tắc viết `actor == "human"` (G-WL-01, và cả cặp P-EDIT-02/04 thêm ở v2.0) đứng trên một
+        # giá trị bên gọi đặt được, thay vì trên sự thật "ai đang gọi".
+        #
+        # Và khi KHÔNG ai nhét: `_Env.__missing__` trả `_Ns({})`, nên `actor == "human"` là False
+        # còn `actor != "human"` là True — G-WL-01 không bao giờ khớp, G-WL-02 khớp cho tất cả.
+        # Cổng danh sách trắng vì thế từ chối cả NGƯỜI, và không bài kiểm nào thấy vì mọi tình
+        # huống trong `situations.py` đều tự nhét `actor` vào đặc trưng.
+        env["actor"] = actor
         return env

@@ -150,6 +150,12 @@ const ERR = [
  ['E6001', 'SCHEMA_VIOLATION', 'Ghi sai JSON Schema (DDD-14)', ''],
  ['E6002', 'CONFLICT', 'Fact mâu thuẫn cần người', ''],
  ['E6003', 'MIGRATION_REQUIRED', 'user_version cũ', 'eide migrate'],
+ // v2.0 — hai lỗi của luồng NGƯỜI lưu tệp (UXD-13 v2.0 §7.1). Cùng họ E6xxx vì đây là toàn vẹn
+ // dữ liệu: bản trên đĩa và bản trong bộ đệm đã rẽ nhánh. Tài liệu v2.0 và checklist UXC-31 đặt
+ // tên `E-SAVE-STALE`/`E-SAVE-RO`; tên phi số không vào được `errors.json` (lớp lỗi từ chối mọi
+ // mã ngoài bảng) nên lấy số trong dải, chủ sản phẩm chốt 17/09/2026.
+ ['E6004', 'FILE_STALE', 'Tệp đã đổi trên đĩa từ lúc mở — phải merge, KHÔNG ghi đè', 'Chuyển luồng merge 3 bên'],
+ ['E6005', 'FILE_READONLY', 'Tệp chỉ đọc hoặc không ghi được', 'Nói rõ đường dẫn; không thử lại im lặng'],
  ['E7000', 'UNDO_EXPIRED', 'Quá cửa sổ hoàn tác', ''],
  ['E7001', 'UNDO_FAILED', 'Hoàn tác không thành (revert xung đột…)', 'Leo thang'],
  ['E8000', 'SANDBOX_VIOLATION', 'Extractor/công cụ vượt giới hạn', 'SEC-25'],
@@ -192,6 +198,12 @@ const LED = [
  ['run.step_started / run.step_done', '{run_id, node_id, cap, i, of} / {…, status, error?}', 'Orchestrator'],
  ['run.blocked', '{run_id, node_id, cap, reason, missing[]?, rule?}', 'Orchestrator'],
  ['run.done / run.cancelled', '{run_id, state, done, waiting, failed} / {run_id, by}', 'Orchestrator'],
+ // v2.0 — hành vi của NGƯỜI trên tệp. Nửa còn thiếu của chữ "đồng bộ": tới v1.x sổ cái chỉ ghi
+ // việc của máy, nên người sửa mã là một khoảng trống mà tác tử không nhìn thấy, và lượt sau
+ // nó sinh mã trên bản cũ. `human.decision` mà UXD-13 v2.0 §6.1 nhắc tới chính là `gate.human`
+ // đã có từ v1.0 — cùng một thứ, hai tên; bảng này giữ tên cũ.
+ ['human.file_save', '{path, commit, diff_summary, by}', 'code.human_save'],
+ ['human.file_external', '{path, diff_summary, source}', 'project.watch'],
  ['error', 'ErrorLedgerEntry', 'Mọi thành phần'],
  ['session.open / session.summary', '{session_id, project} / {session_id, summary}', ''],
  ['store.migrate', '{from_version, to_version}', ''],

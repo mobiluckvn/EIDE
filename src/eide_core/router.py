@@ -20,7 +20,7 @@ from eide_core import store
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger, che_bi_mat
 from eide_core.memory import WorkingMemory
-from eide_core.policy import ASK, PolicyGate
+from eide_core.policy import ASK, NANG_LUC_BE_MAT_NGUOI, PolicyGate
 from eide_core.registry import Registry, get_registry
 from eide_core.undo import KIND_WINDOW, UndoService
 
@@ -85,7 +85,19 @@ class Router:
                 pass
         run_id = uuid.uuid4().hex[:12]
         t0 = time.perf_counter()
-        d = self.gate.decide(reg.spec.gate, {"cap": {"id": cap_id, "risk": reg.spec.risk_class}, **features},
+        # Khối `cap` ghi SAU `**features`, không phải trước.
+        #
+        # Thứ tự cũ (`{"cap": {...}, **features}`) để đặc trưng suy từ THAM SỐ ghi đè được khối
+        # quyền lực nhất của biểu thức chính sách: một `features["cap"]` — dù đến từ
+        # `reg.dac_trung(params)` hay từ bên gọi — thay được cả `id` lẫn `risk` mà cổng dùng để
+        # quyết. Chưa ai khai thác, nhưng `cap.is_human_surface` thêm ở v2.0 biến chỗ này thành
+        # đường tự phong "tôi là người". Nguồn của khối `cap` là REGISTRY, nên nó phải thắng.
+        d = self.gate.decide(reg.spec.gate,
+                             {**features,
+                              "cap": {"id": cap_id, "risk": reg.spec.risk_class,
+                                      "is_human_surface": cap_id in NANG_LUC_BE_MAT_NGUOI,
+                                      **{k: v for k, v in (features.get("cap") or {}).items()
+                                         if k not in ("id", "risk", "is_human_surface")}}},
                              risk=reg.spec.risk_class, autonomy=ctx.autonomy, board=ctx.board,
                              tier=reg.spec.tier_hieu_luc, actor=ctx.actor)
         dec = {"decision": d.decision, "rule": d.rule_id, "reason": d.reason, "gate": d.gate}

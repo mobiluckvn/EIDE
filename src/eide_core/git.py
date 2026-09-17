@@ -26,7 +26,12 @@ from eide_core.errors import EideError
 # được, và cả hai đều rất dễ viết ra trong lúc sửa một lỗi khác.
 LENH_CHO_PHEP = frozenset({"init", "add", "commit", "checkout", "switch", "branch", "tag",
                            "revert", "rev-parse", "status", "log", "config", "diff",
-                           "show", "symbolic-ref", "ls-files"})
+                           "show", "symbolic-ref", "ls-files",
+                           # v2.0 — merge 3 bên khi người và tác tử cùng sửa một tệp.
+                           # `merge-file` hợp nhất Ở MỨC DÒNG và tự đánh dấu vùng giao nhau;
+                           # tự viết phép hợp nhất là tự viết lại một thuật toán đã đúng ba
+                           # mươi năm, và sai ở đó thì sai im lặng vào mã nguồn của người dùng.
+                           "merge-base", "merge-file"})
 
 
 def co_git() -> Path | None:
@@ -89,16 +94,40 @@ def co_thay_doi(root: Path) -> bool:
     return bool(chay(root, "status", "--porcelain").stdout.strip())
 
 
-def commit(root: Path, thong_diep: str, duong_dan: list[str]) -> str:
+def tac_gia(ai: str) -> str:
+    """Tác giả MÁY ĐỌC ĐƯỢC cho một commit — UXD-13 v2.0 §6.2 (quyết định Q1).
+
+    `human:congvt` hay `agent:run-r_9f3c/step-3` một mình KHÔNG phải tác giả git hợp lệ: git đòi
+    dạng `Tên <thư@điện.tử>`, và truyền chuỗi trần vào `--author` làm cả lệnh commit hỏng. Nên
+    tên máy-đọc-được đi vào phần TÊN, còn phần thư điện tử là một địa chỉ cục bộ không gửi được.
+
+    Vì sao cần: hoàn tác cả một Run là `git revert` chọn lọc mọi commit của `agent:run-<id>/*`
+    trong khi GIỮ commit của người xen giữa (tiêu chí N4). Phép chọn lọc ấy phải đọc được từ
+    chính lịch sử, không từ một bảng bên cạnh — bảng bên cạnh thì lệch, còn lịch sử thì không.
+    """
+    return f"{ai} <{ai.replace('/', '-')}@eide.local>"
+
+
+def commit(root: Path, thong_diep: str, duong_dan: list[str], *,
+           ai: str | None = None, seq: int | None = None) -> str:
     """Thêm ĐÚNG các tệp được nêu rồi commit; trả SHA đầy đủ.
 
     `git add <đường dẫn>` chứ không `git add -A`: một patch chỉ được đưa vào commit đúng những
     tệp nó khai. Thêm tất cả thì mọi thứ người dùng đang sửa dở trong cây làm việc cũng bị cuốn
     vào một commit mang trailer "do tác tử tạo" — và trailer ấy sẽ nói dối.
+
+    `ai` là tác giả máy-đọc-được (`human:<tên>` / `agent:run-<id>/step-<n>`); `seq` là số thứ tự
+    sự kiện sổ cái tương ứng, đi vào trailer `Eide-Ledger-Seq`. Hai thứ ấy nối lịch sử git với
+    sổ cái theo cả hai chiều: từ một commit tra ra việc đã ghi, và ngược lại.
     """
     for d in duong_dan:
         chay(root, "add", "--", d)
-    chay(root, "commit", "-q", "-m", thong_diep, "--", *duong_dan)
+    if seq is not None:
+        thong_diep = f"{thong_diep}\n\nEide-Ledger-Seq: {seq}"
+    lenh = ["commit", "-q", "-m", thong_diep]
+    if ai:
+        lenh += [f"--author={tac_gia(ai)}"]
+    chay(root, *lenh, "--", *duong_dan)
     return chay(root, "rev-parse", "HEAD").stdout.strip()
 
 

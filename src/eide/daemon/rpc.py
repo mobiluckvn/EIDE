@@ -9,7 +9,7 @@ import json
 import secrets
 import threading
 from collections.abc import Callable
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, TextIO
@@ -20,7 +20,7 @@ from eide import __version__
 from eide_core.errors import EideError, error_table
 from eide_core.ledger import Ledger, TheoDoiTep
 from eide_core.paths import nap_env, user_log
-from eide_core.policy import PolicyGate
+from eide_core.policy import NANG_LUC_BE_MAT_NGUOI, PolicyGate
 from eide_core.registry import get_registry
 from eide_core.router import Context, Router
 from eide_core.undo import UndoService
@@ -684,8 +684,25 @@ class Daemon:
         """
         if p["id"] in CAP_NANG and self.phat is not None:
             return self._chay_nen(p["id"], p.get("params", {}))
-        run = self.router.invoke(p["id"], p.get("params", {}), self.ctx, p.get("features"))
+        run = self.router.invoke(p["id"], p.get("params", {}), self._ctx_cho(p["id"]),
+                                 p.get("features"))
         return asdict(run)
+
+    def _ctx_cho(self, cap_id: str) -> Context:
+        """Ngữ cảnh cho một lời gọi — chỉ khác `self.ctx` ở `actor`, và chỉ cho hai năng lực.
+
+        Ranh giới người ↔ máy ở đây là ranh giới CẤU TRÚC, không phải một cờ ai cũng đặt được:
+        tác tử chạy `Router.invoke` TRONG tiến trình (Orchestrator gọi thẳng), còn panel nói
+        chuyện QUA ỐNG RPC và mọi lời gọi của nó đi vào đúng hàm này. Nên "đến từ ống RPC" đọc
+        được là "người bấm".
+
+        Đánh dấu HẸP — chỉ `NANG_LUC_BE_MAT_NGUOI` — chứ không đánh dấu mọi lời gọi RPC, vì tầng
+        5 của PolicyGate trả APPROVE cho `actor == "human"` với BẤT KỲ năng lực nào. Đặt rộng
+        thì mỗi nút bấm trên giao diện tự duyệt chính nó, và cả 241 năng lực mất cổng cùng lúc.
+        """
+        if cap_id in NANG_LUC_BE_MAT_NGUOI:
+            return replace(self.ctx, actor="human")
+        return self.ctx
 
     def gate_decide(self, p: dict[str, Any]) -> dict[str, Any]:
         """API-15 §2 `{gate_id, decision: approve|reject, note?}` — UXD-13 U2 nút duyệt/từ chối."""

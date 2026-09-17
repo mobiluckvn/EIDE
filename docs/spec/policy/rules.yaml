@@ -323,6 +323,41 @@ rules:
     reason: "Mặc định: thay đổi danh sách trắng cần người xác nhận"
     priority: 99
     features: []
+  - id: P-EDIT-01
+    gate: "*"
+    when: "action.target_dirty_by_human"
+    decision: ASK
+    reason: "Tệp đích đang có sửa chưa lưu của người — hỏi trước khi ghi"
+    priority: 2
+    features: ["target_dirty_by_human"]
+  - id: P-EDIT-02
+    gate: "*"
+    when: "cap.is_human_surface and actor == \"human\""
+    decision: APPROVE
+    reason: "Người tự lưu tệp của mình — cổng kiểm máy, không kiểm người"
+    priority: 1
+    features: ["is_human_surface","actor"]
+  - id: P-EDIT-04
+    gate: "*"
+    when: "cap.is_human_surface and actor != \"human\""
+    decision: REJECT
+    reason: "Chỉ người mới gọi được năng lực bề mặt người; tác tử phải đi đường code.* thường"
+    priority: 1
+    features: ["is_human_surface","actor"]
+  - id: P-EDIT-03
+    gate: "*"
+    when: "action.merge_regions_overlap"
+    decision: ASK
+    reason: "Hai bên sửa vùng giao nhau — bắt buộc dựng xung đột, không tự chọn vế"
+    priority: 2
+    features: ["merge_regions_overlap"]
+  - id: P-RUN-01
+    gate: "*"
+    when: "action.chain_started_without_event"
+    decision: REJECT
+    reason: "Chuỗi phải phát run.started trước hành động đầu tiên"
+    priority: 1
+    features: ["chain_started_without_event"]
   - id: GEN-01
     gate: "*"
     when: "cap.ask_when_matched"

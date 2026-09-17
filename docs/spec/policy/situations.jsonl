@@ -46,3 +46,8 @@
 {"id":"S46","gate":"G-WL","situation":"Người chạy `eide policy sign`; niêm khớp cấu hình sau hợp nhất","expected":"APPROVE G-WL-01"}
 {"id":"S47","gate":"G-WL","situation":"Tác tử tự gọi để thêm một tên miền vào trusted_sources","expected":"REJECT G-WL-02"}
 {"id":"S48","gate":"G-WL","situation":"Người ký nhưng băm không khớp niêm (danh sách đã đổi sau khi ký)","expected":"ASK G-WL-99"}
+{"id":"S49","gate":"*","situation":"Tác tử chạy `code.modify` trên tệp người đang có bộ đệm chưa lưu","expected":"ASK P-EDIT-01"}
+{"id":"S50","gate":"*","situation":"Người bấm Lưu trong trình soạn thảo ở mức A0 — `code.human_save`, actor=human","expected":"APPROVE P-EDIT-02"}
+{"id":"S51","gate":"*","situation":"Tác tử tự gọi `code.human_save` để ghi một tệp bất kỳ","expected":"REJECT P-EDIT-04"}
+{"id":"S52","gate":"*","situation":"Merge 3 bên: người và tác tử sửa CÙNG vùng dòng của một tệp","expected":"ASK P-EDIT-03"}
+{"id":"S53","gate":"*","situation":"Chuỗi chạy nút đầu tiên mà chưa phát `run.started`","expected":"REJECT P-RUN-01"}

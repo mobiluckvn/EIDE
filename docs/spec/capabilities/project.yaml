@@ -393,3 +393,38 @@
     value: stlink
     scope: user
     learned_from: UC-A03
+- code: PROJECT-10
+  id: project.watch
+  name: Theo dõi tệp đổi NGOÀI EIDE; phát human.file_external kèm diff tóm tắt
+  desc: Theo dõi tệp đổi NGOÀI EIDE; phát human.file_external kèm diff tóm tắt
+  input:
+    type: object
+    properties:
+      enable:
+        type: boolean
+        description: bật/tắt; thiếu = bật
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      watching:
+        type: boolean
+      path:
+        type: string
+    required:
+    - watching
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.project:watch
+  errors:
+  - E2000
+  example:
+    enable: true

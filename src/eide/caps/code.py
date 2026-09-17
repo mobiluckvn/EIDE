@@ -10,6 +10,7 @@ không ai truy được nguồn.
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from datetime import UTC, datetime
@@ -2232,3 +2233,214 @@ def _tep_trong_pham_vi(root: Path, pham_vi: list[str]) -> list[Path]:
         elif p.is_file():
             ra.append(p)
     return ra
+
+
+# ==================== v2.0 — người và tác tử cùng sửa tệp ====================
+
+
+def _trong_du_an(root: Path, duong: str) -> Path:
+    """Đường dẫn tuyệt đối, và phải NẰM TRONG dự án.
+
+    Kiểm bằng `resolve()` rồi so tiền tố: `../../../etc/passwd` hay một liên kết mềm trỏ ra
+    ngoài đều thành đường dẫn thật trước khi so, nên không lọt. Một năng lực ghi tệp mà không
+    chặn ở đây là một năng lực ghi được mọi chỗ trên máy.
+    """
+    p = (root / duong).expanduser().resolve() if not Path(duong).is_absolute() \
+        else Path(duong).expanduser().resolve()
+    goc = root.resolve()
+    if goc != p and goc not in p.parents:
+        raise EideError("E2000", f"`{duong}` nằm ngoài thư mục dự án", missing=["path"])
+    return p
+
+
+def _tom_tat_diff(cu: str, moi: str) -> str:
+    """Một dòng: +thêm/−bớt. Đưa vào sổ cái và vào ngữ cảnh lượt sau của tác tử.
+
+    KHÔNG ghi nội dung dòng vào sổ cái: sổ cái là bằng chứng công khai của dự án, còn nội dung
+    tệp có thể mang khoá, đường dẫn riêng, hay dữ liệu khách hàng. Số dòng đủ để tác tử biết
+    "người vừa sửa chỗ này, đọc lại trước khi sinh mã".
+    """
+    a, b = cu.splitlines(), moi.splitlines()
+    import difflib
+    them = bot = 0
+    for d in difflib.ndiff(a, b):
+        if d.startswith("+ "):
+            them += 1
+        elif d.startswith("- "):
+            bot += 1
+    return f"+{them}/−{bot} dòng"
+
+
+@capability("code.human_save")
+def human_save(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-17 — CDS-12.1; UXD-13 v2.0 §7.1 và Q2; POL-17 P-EDIT-02/04. Lỗi E6004, E6005.
+
+    Nút Lưu của trình soạn thảo đi qua ĐÂY chứ không ghi thẳng đĩa, và đó là toàn bộ lý do năng
+    lực này tồn tại. Trước v2.0, người gõ mã là hành vi thường xuyên nhất trong sản phẩm mà sổ
+    cái không thấy: không lời gọi năng lực, không mục hoàn tác, không mô hình xung đột với tác
+    tử — nên tác tử có thể ghi đè bản sửa của người trong im lặng, và nguyên tắc "giao diện chỉ
+    hiện việc sổ cái có" thủng đúng ở chỗ đông người qua lại nhất (UXD-13 v2.0 §1.1 R5).
+
+    **Tác tử KHÔNG gọi được năng lực này** — `P-EDIT-04` trả REJECT khi `actor != "human"`. Nếu
+    gọi được thì nó là một đường ghi tệp không qua G-FACT, G-OPS hay bất cứ cổng nào; xem ghi
+    chú ở `NANG_LUC_BE_MAT_NGUOI`.
+    """
+    from eide_core import git
+
+    root = _du_an(ctx, params)
+    dich = _trong_du_an(root, str(params["path"]))
+    noi_dung = str(params["content"])
+
+    if dich.exists() and not os.access(dich, os.W_OK):
+        raise EideError("E6005", f"`{dich.name}` chỉ đọc — không ghi được", path=str(dich))
+
+    cu = dich.read_text(encoding="utf-8", errors="replace") if dich.exists() else ""
+    # Tệp đã đổi từ lúc người mở? So bằng NỘI DUNG đã biết, không bằng thời gian sửa tệp: một
+    # `git checkout` hay một trình sinh mã có thể ghi lại đúng nội dung cũ và đổi thời gian, và
+    # một hệ tệp có độ phân giải thời gian 1 giây thì hai lần ghi liền nhau không phân biệt được.
+    if (goc := params.get("base_content")) is not None and cu != str(goc):
+        raise EideError("E6004", f"`{dich.name}` đã đổi trên đĩa từ lúc anh mở — cần hợp nhất, "
+                        "không ghi đè", path=str(dich), tom_tat=_tom_tat_diff(str(goc), cu))
+
+    git.dam_bao_kho(root)
+    dich.parent.mkdir(parents=True, exist_ok=True)
+    dich.write_text(noi_dung, encoding="utf-8")
+
+    rel = str(dich.relative_to(root.resolve()))
+    ai = f"human:{params.get('by') or os.environ.get('USER') or 'nguoi-dung'}"
+    tom_tat = _tom_tat_diff(cu, noi_dung)
+    led = ctx.extra.get("ledger")
+    sha = git.commit(root, git.thong_diep("chore", rel, f"người sửa {rel} ({tom_tat})", {}),
+                     [rel], ai=ai, seq=(getattr(led, "_seq", 0) + 1) if led is not None else None)
+    seq = 0
+    if led is not None:
+        rec = led.append("human.file_save",
+                         {"path": rel, "commit": sha, "diff_summary": tom_tat, "by": ai},
+                         actor="human")
+        seq = int(rec.get("seq") or 0)
+    return {"commit": sha, "seq": seq, "path": rel}
+
+
+#: Xung đột mã đang mở, theo `conflict_id`. Sống trong tiến trình daemon: một xung đột chưa
+#: quyết mà máy tắt thì hai bản vẫn còn nguyên trong git, nên dựng lại được — khác với việc
+#: giữ nó dưới store rồi phải đồng bộ hai nguồn.
+_XUNG_DOT_MA: dict[str, dict[str, Any]] = {}
+
+#: Dấu vùng giao nhau mà `git merge-file` chèn vào. Đọc lại đúng ba dấu này để tách vùng.
+_DAU_A, _DAU_GIUA, _DAU_B = "<<<<<<<", "=======", ">>>>>>>"
+
+
+def hop_nhat_ba_ben(to_tien: str, ben_a: str, ben_b: str) -> tuple[str, int]:
+    """Hợp nhất ba bên, trả (nội dung, số vùng giao nhau) — UXD-13 v2.0 §7.3, P-EDIT-03.
+
+    Dùng `git merge-file` chứ không tự viết: phép hợp nhất ba bên ở mức dòng là thuật toán đã
+    đúng ba mươi năm, và một bản tự viết sai thì sai IM LẶNG vào mã nguồn của người dùng — đúng
+    thứ `B4` của checklist cấm.
+    """
+    import tempfile
+
+    from eide_core import git
+    with tempfile.TemporaryDirectory() as tm:
+        d = Path(tm)
+        (d / "a").write_text(ben_a, encoding="utf-8")
+        (d / "o").write_text(to_tien, encoding="utf-8")
+        (d / "b").write_text(ben_b, encoding="utf-8")
+        # `-p` in ra stdout thay vì sửa tệp; mã thoát = số vùng giao nhau (âm = lỗi thật).
+        kq = git.chay(d, "merge-file", "-p", "--diff3",
+                      "-L", "anh sửa", "-L", "bản chung", "-L", "tác tử sửa",
+                      "a", "o", "b", kiem=False)
+        if kq.returncode < 0:
+            raise EideError("E7001", "git merge-file không chạy được")
+        return kq.stdout, max(0, kq.returncode)
+
+
+def tach_vung(hop: str) -> list[dict[str, Any]]:
+    """Tách bản đã hợp nhất thành các vùng: chung hoặc GIAO NHAU (có hai vế).
+
+    Trả về danh sách vùng theo thứ tự, mỗi vùng giao nhau mang cả hai vế nguyên văn — màn xung
+    đột dựng hai cột từ đúng dữ liệu này, không đoán lại từ diff.
+    """
+    vung: list[dict[str, Any]] = []
+    chung: list[str] = []
+    a: list[str] | None = None
+    b: list[str] | None = None
+    ben = 0
+    for dong in hop.splitlines():
+        if dong.startswith(_DAU_A):
+            if chung:
+                vung.append({"kind": "chung", "text": "\n".join(chung)})
+                chung = []
+            a, b, ben = [], [], 1
+        elif dong.startswith("|||||||") and a is not None:
+            ben = 3                      # phần tổ tiên của `--diff3` — bỏ, không hiện cho người
+        elif dong.startswith(_DAU_GIUA) and a is not None:
+            ben = 2
+        elif dong.startswith(_DAU_B) and a is not None:
+            vung.append({"kind": "giao", "a": "\n".join(a or []), "b": "\n".join(b or []),
+                         "region": len([v for v in vung if v["kind"] == "giao"]) + 1})
+            a = b = None
+            ben = 0
+        elif ben == 1 and a is not None:
+            a.append(dong)
+        elif ben == 2 and b is not None:
+            b.append(dong)
+        elif ben == 0:
+            chung.append(dong)
+    if chung:
+        vung.append({"kind": "chung", "text": "\n".join(chung)})
+    return vung
+
+
+@capability("code.merge_conflict_resolve")
+def merge_conflict_resolve(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: CODE-18 — CDS-12.1; UXD-13 v2.0 §7.3; POL-17 P-EDIT-03. Lỗi E1000, E2000, E7001.
+
+    Người quyết TỪNG VÙNG giao nhau. Không có đường "chọn hết bên A" tự động, và đó là điều
+    P-EDIT-03 nói: vùng không giao nhau thì hợp tự động, vùng giao nhau thì bắt buộc có người.
+    Một nút "lấy bản của tôi" cho cả tệp là ghi đè có tên gọi khác.
+    """
+    from eide_core import git
+
+    root = _du_an(ctx, params)
+    cid = str(params["conflict_id"])
+    xd = _XUNG_DOT_MA.get(cid)
+    if xd is None:
+        raise EideError("E2000", f"Không có xung đột mã `{cid}` đang mở", missing=["conflict_id"])
+
+    chon = {int(c["region"]): c for c in (params.get("choices") or []) if "region" in c}
+    ra: list[str] = []
+    con_thieu: list[int] = []
+    for v in xd["vung"]:
+        if v["kind"] == "chung":
+            ra.append(v["text"])
+            continue
+        c = chon.get(v["region"])
+        if c is None:
+            con_thieu.append(v["region"])
+            continue
+        ben = str(c.get("side") or "")
+        if ben == "A":
+            ra.append(v["a"])
+        elif ben == "B":
+            ra.append(v["b"])
+        elif ben == "manual":
+            ra.append(str(c.get("text") or ""))
+        else:
+            raise EideError("E1000", f"vùng {v['region']}: `side` phải là A, B hoặc manual")
+    if con_thieu:
+        raise EideError("E1000", f"còn {len(con_thieu)} vùng chưa quyết: {con_thieu}",
+                        regions=con_thieu)
+
+    dich = _trong_du_an(root, xd["path"])
+    dich.write_text("\n".join(ra) + "\n", encoding="utf-8")
+    rel = str(dich.relative_to(root.resolve()))
+    ai = f"human:{params.get('by') or os.environ.get('USER') or 'nguoi-dung'}"
+    led = ctx.extra.get("ledger")
+    sha = git.commit(root, git.thong_diep("fix", rel, f"người quyết {len(chon)} vùng xung đột", {}),
+                     [rel], ai=ai, seq=(getattr(led, "_seq", 0) + 1) if led is not None else None)
+    if led is not None:
+        led.append("gate.human", {"gate_id": cid, "decision": "resolved", "by": ai,
+                                  "note": f"{len(chon)} vùng xung đột mã trong {rel}"},
+                   actor="human")
+    _XUNG_DOT_MA.pop(cid, None)
+    return {"commit": sha, "resolved": len(chon)}

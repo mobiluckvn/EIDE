@@ -90,6 +90,16 @@
   "source": "Orchestrator"
  },
  {
+  "kind": "human.file_save",
+  "fields": "{path, commit, diff_summary, by}",
+  "source": "code.human_save"
+ },
+ {
+  "kind": "human.file_external",
+  "fields": "{path, diff_summary, source}",
+  "source": "project.watch"
+ },
+ {
   "kind": "error",
   "fields": "ErrorLedgerEntry",
   "source": "Mọi thành phần"

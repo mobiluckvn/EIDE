@@ -609,3 +609,102 @@
   example:
     scope:
     - src/drivers/
+- code: CODE-17
+  id: code.human_save
+  name: 'Người lưu tệp trong trình soạn thảo: commit human:<tên> + sự kiện + mục hoàn tác'
+  desc: 'Người lưu tệp trong trình soạn thảo: commit human:<tên> + sự kiện + mục hoàn tác'
+  input:
+    type: object
+    properties:
+      path:
+        type: string
+      content:
+        type: string
+      base_content:
+        type: string
+        description: nội dung tệp lúc người MỞ; thiếu thì bỏ qua phép kiểm tệp cũ
+      by:
+        type: string
+        description: tên người, mặc định lấy từ môi trường
+    required:
+    - path
+    - content
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      commit:
+        type: string
+      seq:
+        type: integer
+      path:
+        type: string
+    required:
+    - commit
+    - seq
+    - path
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Tệp trong thư mục dự án; kho git đã khởi tạo
+  ask_when: []
+  undo:
+    kind: git_revert
+  milestone: M2
+  impl: eide.code:human_save
+  errors:
+  - E6004
+  - E6005
+  - E3001
+  example:
+    path: src/drv_i2c.c
+    content: '...'
+    base_content: '...'
+- code: CODE-18
+  id: code.merge_conflict_resolve
+  name: Người quyết từng vùng xung đột mã; commit merge ghi hai cha
+  desc: Người quyết từng vùng xung đột mã; commit merge ghi hai cha
+  input:
+    type: object
+    properties:
+      conflict_id:
+        type: string
+      choices:
+        type: array
+        items:
+          type: object
+        description: 'mỗi vùng: {region, side: A|B|manual, text?}'
+    required:
+    - conflict_id
+    - choices
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      commit:
+        type: string
+      resolved:
+        type: integer
+    required:
+    - commit
+    - resolved
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Có xung đột mã đang mở
+  ask_when: []
+  undo:
+    kind: git_revert
+  milestone: M2
+  impl: eide.code:merge_conflict_resolve
+  errors:
+  - E1000
+  - E2000
+  - E7001
+  example:
+    conflict_id: cf_1
+    choices:
+    - region: 1
+      side: A

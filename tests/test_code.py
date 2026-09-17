@@ -1671,3 +1671,95 @@ def test_lenh_khong_placeholder_di_qua_nguyen_ven(tmp_path):
 
     cmd = "cmake -S . -B build && cmake --build build"
     assert _giai_placeholder(cmd, tmp_path, "rv32imac") == cmd
+
+
+# ==================== v2.0 — người và tác tử cùng sửa tệp ====================
+
+
+def _du_an_git(tmp_path, workspace):
+    """Một dự án thật có store và kho git — nền của mọi bài dưới đây."""
+    from eide_core.ledger import Ledger
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+    res = r.invoke("project.create", {"text": "dự án cùng sửa"}, Context(project_dir=workspace)).result
+    root = workspace / res["project_id"]
+    store.migrate(store.store_path(root), ledger=r.ledger)
+    ctx = Context(project_dir=root, extra={"gate": PolicyGate(), "ledger": r.ledger,
+                                           "router": r})
+    return r, ctx, root
+
+
+def test_NGUOI_luu_duoc_o_muc_A0_con_TAC_TU_thi_KHONG(tmp_path, workspace):
+    """Ranh giới an toàn của cả nhóm quy tắc v2.0, đo trên Router thật.
+
+    `code.human_save` luôn APPROVE cho NGƯỜI kể cả ở A0 (P-EDIT-02 + miễn ngưỡng cứng tầng 2) —
+    cổng tồn tại để kiểm máy, không kiểm người. Nhưng tác tử gọi được mọi năng lực, nên nếu
+    thiếu vế REJECT thì đây là một đường ghi tệp KHÔNG qua G-FACT, G-OPS hay bất cứ cổng nào.
+    Hai vế phải được kiểm CÙNG NHAU; kiểm riêng vế đầu là kiểm đúng nửa nguy hiểm.
+    """
+    from dataclasses import replace
+    r, ctx, root = _du_an_git(tmp_path, workspace)
+    (root / "src").mkdir(exist_ok=True)
+    tham_so = {"path": "src/a.c", "content": "int main(void){return 0;}\n"}
+
+    nguoi = replace(ctx, actor="human", autonomy="A0")
+    run = r.invoke("code.human_save", tham_so, nguoi)
+    assert run.status == "done", run.error
+    assert run.result["commit"], "người lưu ở A0 phải ghi được"
+
+    tac_tu = replace(ctx, actor="agent", autonomy="A3")
+    run2 = r.invoke("code.human_save", {**tham_so, "content": "TAC TU GHI\n"}, tac_tu)
+    assert run2.status == "rejected", f"tác tử KHÔNG được gọi code.human_save: {run2}"
+    assert (root / "src" / "a.c").read_text().startswith("int main"), "tệp bị tác tử ghi đè"
+
+
+def test_LUU_khi_tep_da_doi_tren_dia_thi_KHONG_ghi_de(tmp_path, workspace):
+    """B4 của checklist: không có đường ghi đè im lặng. Tệp đổi từ lúc mở → E6004, KHÔNG ghi."""
+    from dataclasses import replace
+    r, ctx, root = _du_an_git(tmp_path, workspace)
+    (root / "src").mkdir(exist_ok=True)
+    tep = root / "src" / "b.c"
+    tep.write_text("ban goc\n", encoding="utf-8")
+    nguoi = replace(ctx, actor="human")
+    # Ai đó ghi tệp trong lúc người đang soạn
+    tep.write_text("ai do vua ghi\n", encoding="utf-8")
+    run = r.invoke("code.human_save",
+                   {"path": "src/b.c", "content": "ban cua toi\n", "base_content": "ban goc\n"},
+                   nguoi)
+    assert run.status == "failed" and run.error["eide_code"] == "E6004", run
+    assert tep.read_text() == "ai do vua ghi\n", "KHÔNG được ghi đè khi tệp đã đổi"
+
+
+def test_LUU_ghi_su_kien_va_commit_mang_TAC_GIA_may_doc_duoc(tmp_path, workspace):
+    """N3 + §6.2: một lần lưu để lại ba dấu — commit có tác giả máy-đọc-được, sự kiện sổ cái,
+    và mục hoàn tác. Thiếu một trong ba thì "người sửa mã" lại là việc sổ cái không thấy."""
+    from dataclasses import replace
+
+    from eide_core import git
+    r, ctx, root = _du_an_git(tmp_path, workspace)
+    (root / "src").mkdir(exist_ok=True)
+    run = r.invoke("code.human_save",
+                   {"path": "src/c.c", "content": "x\n", "by": "congvt"},
+                   replace(ctx, actor="human"))
+    assert run.status == "done", run.error
+    tac_gia = git.chay(root, "log", "-1", "--format=%an").stdout.strip()
+    assert tac_gia == "human:congvt", f"tác giả commit: {tac_gia!r}"
+    kinds = [json.loads(x)["kind"] for x in (tmp_path / "l.jsonl").read_text().splitlines()]
+    assert "human.file_save" in kinds, kinds[-6:]
+
+
+def test_MERGE_ba_ben_tu_hop_vung_khong_giao_va_GIU_vung_giao(tmp_path, workspace):
+    """P-EDIT-03: vùng không giao nhau hợp tự động, vùng giao nhau BẮT BUỘC có người.
+
+    Bài này là lý do dùng `git merge-file` thay vì tự viết: nó phải phân biệt được "hai bên sửa
+    hai chỗ khác nhau" (hợp được) với "hai bên sửa cùng chỗ" (phải hỏi) — và phân biệt sai theo
+    hướng dễ dãi thì mất một bản sửa mà không ai biết.
+    """
+    from eide.caps.code import hop_nhat_ba_ben, tach_vung
+    hop, n = hop_nhat_ba_ben("a\nb\nc\nd\n", "a\nNGUOI\nc\nd\n", "a\nTACTU\nc\nZZZ\n")
+    assert n == 1, f"mong ĐÚNG một vùng giao nhau, nhận {n}"
+    vung = tach_vung(hop)
+    giao = [v for v in vung if v["kind"] == "giao"]
+    assert len(giao) == 1 and giao[0]["a"] == "NGUOI" and giao[0]["b"] == "TACTU"
+    assert "ZZZ" in hop, "sửa độc lập của tác tử phải được hợp TỰ ĐỘNG"

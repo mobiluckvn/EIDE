@@ -1,9 +1,11 @@
 """Namespace project.* — CDS-12.3 (tập Hiện thực), DDD-14 project/feature, UC-A01."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sqlite3
+import threading
 import time
 import unicodedata
 from datetime import UTC, datetime
@@ -877,3 +879,91 @@ def _roles_mac_dinh() -> str:
                       else None,
         }
     return yaml.safe_dump({"roles": ra}, allow_unicode=True, sort_keys=False)
+
+
+# ==================== v2.0 — theo dõi tệp đổi NGOÀI EIDE ====================
+
+#: Bộ theo dõi đang chạy, theo thư mục dự án. Tiến trình daemon sống lâu hơn một lời gọi, nên
+#: trạng thái này phải nằm ngoài hàm; khoá là đường dẫn đã `resolve()` để hai cách viết cùng
+#: một thư mục không tạo hai bộ theo dõi.
+_DANG_THEO: dict[str, Any] = {}
+
+
+@capability("project.watch")
+def watch(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: PROJECT-10 — CDS-12.3; UXD-13 v2.0 §6.1 và §7.4. Lỗi E2000.
+
+    Nửa còn thiếu của chữ "đồng bộ". Sổ cái thấy mọi việc EIDE làm, nhưng một tệp đổi vì người
+    dùng gõ trong Vim, vì `git checkout`, hay vì một trình sinh mã khác thì nó không thấy gì —
+    và lượt sau tác tử sinh mã trên bản cũ, ghi đè bản mới trong im lặng.
+
+    **Bỏ qua thay đổi do chính EIDE vừa ghi**, đối chiếu bằng BĂM NỘI DUNG chứ không bằng thời
+    gian: `code.merge` ghi xong thì thời gian sửa tệp đổi, và một bộ lọc theo thời gian sẽ báo
+    "người vừa sửa tệp" ngay sau mỗi lần tác tử làm việc — tức là nói dối đúng vào thứ năng lực
+    này sinh ra để nói thật.
+    """
+    # Chỉ đọc `ctx.project_dir`: `project` KHÔNG có trong input_schema, nên Router chặn nó
+    # bằng E1000 trước khi tới đây — đọc một khoá như thế là viết mã cho một đường không
+    # bao giờ đi tới, và người đọc sau tưởng năng lực nhận được tham số ấy.
+    root = Path(ctx.project_dir or "").expanduser()
+    if not root.name or not (root / EIDE_DIR).is_dir():
+        raise EideError("E2000", "`project.watch` cần một dự án đang mở", missing=["project"])
+    khoa = str(root.resolve())
+    bat = bool(params.get("enable", True))
+
+    cu = _DANG_THEO.pop(khoa, None)
+    if cu is not None:
+        cu["dung"] = True
+    if not bat:
+        return {"watching": False, "path": khoa}
+
+    trang_thai: dict[str, Any] = {"dung": False, "bam": _bam_cay(root)}
+    _DANG_THEO[khoa] = trang_thai
+    led = ctx.extra.get("ledger")
+
+    def vong() -> None:
+        import time as _t
+        while not trang_thai["dung"]:
+            _t.sleep(CHU_KY_THEO_DOI)
+            if trang_thai["dung"]:
+                return
+            try:
+                moi = _bam_cay(root)
+            except OSError:
+                continue
+            for duong, bam in moi.items():
+                if trang_thai["bam"].get(duong) != bam and led is not None:
+                    led.append("human.file_external",
+                               {"path": duong, "diff_summary": "nội dung đổi",
+                                "source": "watcher"}, actor="human")
+            trang_thai["bam"] = moi
+
+    th = threading.Thread(target=vong, name=f"eide-watch-{root.name}", daemon=True)
+    th.start()
+    trang_thai["luong"] = th
+    return {"watching": True, "path": khoa}
+
+
+#: Chu kỳ quét, giây. Đủ nhanh để tác tử không kịp sinh mã trên bản cũ trong một lượt, đủ chậm
+#: để không hâm nóng đĩa của một dự án vài nghìn tệp.
+CHU_KY_THEO_DOI = 1.5
+
+#: Thư mục KHÔNG theo dõi. `.eide/` là nơi chính EIDE ghi sổ cái và store — theo dõi nó thì mỗi
+#: sự kiện sinh ra một sự kiện nữa, và vòng lặp ấy không có đáy.
+BO_QUA_THEO_DOI = {EIDE_DIR, ".git", "build", "node_modules", ".venv", "__pycache__"}
+
+
+def _bam_cay(root: Path) -> dict[str, str]:
+    """Đường dẫn tương đối → băm nội dung, cho mọi tệp văn bản trong dự án."""
+    ra: dict[str, str] = {}
+    for p in root.rglob("*"):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(root)
+        if set(rel.parts) & BO_QUA_THEO_DOI:
+            continue
+        try:
+            ra[str(rel)] = hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+        except OSError:
+            continue
+    return ra

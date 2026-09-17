@@ -34,6 +34,29 @@ d("code.generate_tests", {"feature": "str!"}, {"tests": "arr<obj>! # path, conte
 d("code.self_repair", {"report_id": "str!", "patch": "obj!", "round": "int!"}, {"patch": "obj!", "give_up": "bool!"}, ["round ≤ 3: coder với C6 = lỗi đã lọc; sau mỗi vòng chạy lại cổng thất bại; > 3 → give_up + error_ledger + leo thang"], ["E5003"], "delete_created_files", '{"report_id":"tr_1","patch":{},"round":1}', "Lỗi cú pháp sửa trong 1 vòng; lỗi thiết kế → give_up ở vòng 3")
 d("code.review", {"patch": "obj!"}, {"review": "obj! # Review"}, ["Router chọn reviewer khác hãng coder; memory.compose(reviewer); Review với findings tệp:dòng; ghi ledger vendors"], ["E5002"], "none", '{"patch":{}}', "TC-24, TC-30")
 d("code.merge", {"patch": "obj!", "feature": "str!", "reports": "arr<str>!", "review_id": "str!"}, {"commit": "str!", "branch": "str!", "undo_until": "str"}, ["Đặc trưng: tools_passed, constant_guard_violations, verdict/max_severity, in_scope, size_growth_pct, touches_isr_linker, vendors → policy.decide(G3)", "APPROVE: ghi tệp, commit vào auto/<feature> với trailer Eide-* (CON-28); tag; cập nhật code_unit CITES/USES; undo git_revert 24 h; ASK → gate"], ["E3000", "E3001", "E7001"], "git_revert", '{"patch":{},"feature":"F-04","reports":["tr_1","tr_2","tr_3","tr_4"],"review_id":"rv_1"}', "S23…S28; TC-52")
+# ==== v2.0 — người và tác tử cùng sửa tệp (UXD-13 v2.0 §7–§8) ====
+#
+# `code.human_save` là NĂNG LỰC, không phải một đường ghi riêng của giao diện, vì nguyên tắc
+# "một đường" của FTR-30 §5.3: mọi việc phải qua Router để có cổng, sổ cái và hoàn tác. Nhưng
+# nó là năng lực DUY NHẤT mà tác tử bị cấm gọi — xem cặp P-EDIT-02/04 trong POL-17.
+d("code.human_save", {"path": "str!", "content": "str!", "base_content": "str # nội dung tệp lúc người MỞ; thiếu thì bỏ qua phép kiểm tệp cũ", "by": "str # tên người, mặc định lấy từ môi trường"},
+  {"commit": "str!", "seq": "int!", "path": "str!"},
+  ["Kiểm tệp trên đĩa có khác `base_content` → E6004 và KHÔNG ghi (chuyển luồng merge 3 bên). So NỘI DUNG chứ không so thời gian sửa: một `git checkout` ghi lại đúng nội dung cũ vẫn đổi thời gian, và hệ tệp phân giải 1 giây thì hai lần ghi liền nhau không phân biệt được",
+   "Ghi tệp; `git commit` tác giả `human:<tên>` kèm trailer `Eide-Ledger-Seq`",
+   "Ledger `human.file_save` {path, commit, diff_summary, by}; đăng ký hoàn tác một-commit"],
+  ["E6004", "E6005", "E3001"], "git_revert",
+  '{"path":"src/drv_i2c.c","content":"...","base_content":"..."}', "N3; N5")
+d("code.merge_conflict_resolve", {"conflict_id": "str!", "choices": "arr<obj>! # mỗi vùng: {region, side: A|B|manual, text?}"},
+  {"commit": "str!", "resolved": "int!"},
+  ["Dựng bản hợp nhất từ lựa chọn từng vùng; vùng nào chưa chọn → E1000",
+   "Commit merge ghi HAI cha; ledger `gate.human` kèm tên người quyết"],
+  ["E1000", "E2000", "E7001"], "git_revert",
+  '{"conflict_id":"cf_1","choices":[{"region":1,"side":"A"}]}', "N5")
+d("project.watch", {"enable": "bool # bật/tắt; thiếu = bật"},
+  {"watching": "bool!", "path": "str!"},
+  ["Theo dõi thư mục dự án; tệp đổi ngoài EIDE → ledger `human.file_external` kèm diff tóm tắt",
+   "Bỏ qua thay đổi do chính tác tử vừa ghi — đối chiếu hash nội dung, không đối chiếu thời gian"],
+  ["E2000"], "none", '{"enable":true}', "7.4")
 d("code.revert", {"commit": "str!", "reason": "str!"}, {"revert_commit": "str!"}, ["git revert; build kiểm; FEATURES cập nhật; ledger"], ["E7001"], "none", '{"commit":"abc123","reason":"undo"}', "Build đạt sau revert")
 d("code.annotate", {"file": "str!"}, {"suggestions": "arr<obj>! # line, literal, fact_id, confidence"}, ["Khớp literal với fact (giá trị + ngữ cảnh tên); đề xuất chú thích; người/coder áp dụng qua code.modify"], [], "none", '{"file":"src/hal/i2c.c"}', "0x40005400 → f_1a2b")
 d("code.docs", {"module": "str!"}, {"path": "str!"}, ["writer: README module có API, fact trích dẫn; doc.style_check"], ["E5002"], "delete_created_files", '{"module":"mod_bme280"}', "style_check 0 lỗi")

@@ -137,7 +137,11 @@ def test_nang_luc_tra_dung_nhu_goi_truc_tiep(tmp_path):
             continue
         run = r.invoke("policy.decide", {
             "action": {"cap": "search.fetch", "gate": gate, "risk": kw["risk"], "features": features},
-            "ctx": {"autonomy": kw.get("autonomy"), "tier": kw.get("tier", "T2")},
+            # `actor` phải đi cùng, không chỉ `autonomy`/`tier`. Hai đường chỉ so được với nhau
+            # khi nhận CÙNG đầu vào; bỏ `actor` thì đường Router luôn chạy như tác tử, và bài
+            # này im lặng không kiểm được bất kỳ quy tắc nào nói về người (G-WL-01, P-EDIT-02).
+            "ctx": {"autonomy": kw.get("autonomy"), "tier": kw.get("tier", "T2"),
+                    "actor": kw.get("actor", "agent")},
         }, Context())
         assert run.status == "done", (sid, run)
         d = run.result["decision"]

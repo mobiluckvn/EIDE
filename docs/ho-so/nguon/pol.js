@@ -131,6 +131,24 @@ const RULES = [
  ['G-WL-01', 'G-WL', 'actor == "human" and wl.verified', 'APPROVE', 'Người ký danh sách trắng, niêm khớp', 5, 'actor, verified'],
  ['G-WL-02', 'G-WL', 'actor != "human"', 'REJECT', 'Chỉ người mới được đổi danh sách trắng (R4)', 1, 'actor'],
  ['G-WL-99', 'G-WL', 'True', 'ASK', 'Mặc định: thay đổi danh sách trắng cần người xác nhận', 99, ''],
+ // ==== v2.0 — người và tác tử cùng sửa tệp (UXD-13 v2.0 §7, §9.2) ====
+ //
+ // P-EDIT-02 phải đi KÈM P-EDIT-04, và đây là chỗ dễ hỏng nhất của cả nhóm.
+ //
+ // Tài liệu v2.0 viết quy tắc là "`code.human_save` luôn APPROVE ở mọi mức tự chủ, kể cả A0",
+ // với lý do "cổng kiểm máy, không kiểm người". Lý do ấy chỉ đúng nếu hệ thống PHÂN BIỆT được
+ // máy với người — mà tác tử gọi được mọi năng lực. Viết mỗi vế APPROVE thì tác tử gọi
+ // `code.human_save` là ghi được bất kỳ tệp nào, không qua G-FACT, không qua G-OPS: một đường
+ // vòng quanh toàn bộ hệ thống cổng, đúng hình dạng lỗ mà `G-WL-02` dựng lên để chặn.
+ //
+ // Nên cặp này viết theo đúng khuôn G-WL: APPROVE khi `actor == "human"`, REJECT khi không.
+ // Daemon chỉ đặt `actor="human"` cho hai năng lực bề mặt người và chỉ khi lời gọi đến qua ống
+ // RPC của panel; tác tử chạy trong tiến trình nên luôn là `agent`.
+ ['P-EDIT-01', '*', 'action.target_dirty_by_human', 'ASK', 'Tệp đích đang có sửa chưa lưu của người — hỏi trước khi ghi', 2, 'target_dirty_by_human'],
+ ['P-EDIT-02', '*', 'cap.is_human_surface and actor == "human"', 'APPROVE', 'Người tự lưu tệp của mình — cổng kiểm máy, không kiểm người', 1, 'is_human_surface, actor'],
+ ['P-EDIT-04', '*', 'cap.is_human_surface and actor != "human"', 'REJECT', 'Chỉ người mới gọi được năng lực bề mặt người; tác tử phải đi đường code.* thường', 1, 'is_human_surface, actor'],
+ ['P-EDIT-03', '*', 'action.merge_regions_overlap', 'ASK', 'Hai bên sửa vùng giao nhau — bắt buộc dựng xung đột, không tự chọn vế', 2, 'merge_regions_overlap'],
+ ['P-RUN-01', '*', 'action.chain_started_without_event', 'REJECT', 'Chuỗi phải phát run.started trước hành động đầu tiên', 1, 'chain_started_without_event'],
  ['GEN-01', '*', 'cap.ask_when_matched', 'ASK', 'Điều kiện "Hỏi kỹ sư khi" của năng lực khớp', 30, 'ask_when_matched'],
  ['GEN-02', '*', 'action.fail_count >= thresholds.fail_retries', 'ASK', 'Thất bại lặp → leo thang', 3, 'fail_count'],
  ['GEN-03', '*', 'action.is_delete_project or action.is_overwrite_project', 'ASK', 'Xóa/ghi đè dự án (R4)', 1, 'is_delete_project, is_overwrite_project'],
@@ -262,6 +280,14 @@ const SIT = [
  ['S46', 'G-WL', 'Người chạy `eide policy sign`; niêm khớp cấu hình sau hợp nhất', 'APPROVE G-WL-01'],
  ['S47', 'G-WL', 'Tác tử tự gọi để thêm một tên miền vào trusted_sources', 'REJECT G-WL-02'],
  ['S48', 'G-WL', 'Người ký nhưng băm không khớp niêm (danh sách đã đổi sau khi ký)', 'ASK G-WL-99'],
+ // v2.0 — người và tác tử cùng sửa tệp. S50 và S51 là một CẶP, và cặp ấy chính là ranh giới:
+ // cùng một năng lực, khác người gọi, khác hẳn quyết định. Bỏ S51 thì `code.human_save` thành
+ // một đường vòng quanh mọi cổng cho bất kỳ ai gọi được Router.
+ ['S49', '*', 'Tác tử chạy `code.modify` trên tệp người đang có bộ đệm chưa lưu', 'ASK P-EDIT-01'],
+ ['S50', '*', 'Người bấm Lưu trong trình soạn thảo ở mức A0 — `code.human_save`, actor=human', 'APPROVE P-EDIT-02'],
+ ['S51', '*', 'Tác tử tự gọi `code.human_save` để ghi một tệp bất kỳ', 'REJECT P-EDIT-04'],
+ ['S52', '*', 'Merge 3 bên: người và tác tử sửa CÙNG vùng dòng của một tệp', 'ASK P-EDIT-03'],
+ ['S53', '*', 'Chuỗi chạy nút đầu tiên mà chưa phát `run.started`', 'REJECT P-RUN-01'],
 ];
 c.push(T([700, 900, 5000, 2700], ['#', 'Cổng', 'Tình huống (mức; đặc trưng)', 'Kỳ vọng (quyết định, quy tắc)'], SIT, { size: 19 }));
 fs.writeFileSync('policy/situations.jsonl', SIT.map(s => JSON.stringify({ id: s[0], gate: s[1], situation: s[2], expected: s[3] })).join('\n') + '\n');

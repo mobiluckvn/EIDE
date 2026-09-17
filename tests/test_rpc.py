@@ -7,7 +7,7 @@ from eide.daemon.rpc import Daemon, serve_stdio
 def test_hello_and_caps_list():
     d = Daemon()
     r = d.handle({"jsonrpc": "2.0", "id": 1, "method": "plane.hello", "params": {"api_version": "1.2"}})
-    assert r["result"]["caps"] == 238
+    assert r["result"]["caps"] == SO_NANG_LUC
     r = d.handle({"jsonrpc": "2.0", "id": 2, "method": "caps.list", "params": {"ns": "tool"}})
     assert len(r["result"]["caps"]) == 10
 
@@ -30,6 +30,15 @@ def test_stdio_roundtrip():
 import pytest  # noqa: E402
 
 from eide_core import store  # noqa: E402
+from eide_core.paths import spec_dir  # noqa: E402
+
+#: Số năng lực trong đặc tả — ĐỌC từ `cds.json`, không gõ tay.
+#:
+#: Con số này đổi mỗi lần bộ hồ sơ thêm năng lực (238 → 241 ở v2.0), và viết cứng
+#: nó biến mỗi lần mở rộng đặc tả thành một bài test đỏ ở chỗ không liên quan —
+#: cái giá là người ta sửa số cho qua mà không đọc xem năng lực mới có đúng không.
+
+SO_NANG_LUC = len(json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8")))
 
 
 @pytest.fixture

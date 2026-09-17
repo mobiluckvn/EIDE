@@ -240,4 +240,25 @@ SITUATIONS: dict[str, tuple[str, dict, dict]] = {
 
     "S48": ("G-WL", {"actor": "human", "wl": {"verified": False}},
             {"risk": "R2", "autonomy": "A3", "actor": "human"}),
+
+    # P-EDIT / P-RUN — người và tác tử cùng sửa tệp (POL-17 v2.0, cổng `*`).
+    #
+    # S50 và S51 là MỘT CẶP và phải đọc cùng nhau: cùng năng lực `code.human_save`, khác đúng
+    # một thứ — ai gọi — và ra hai quyết định ngược nhau. Đây là ranh giới an toàn của cả nhóm
+    # quy tắc v2.0; nếu một ngày S51 chuyển từ REJECT sang bất cứ gì khác thì tác tử có một
+    # đường ghi tệp không qua cổng nào.
+    "S49": ("*", {"action": {"target_dirty_by_human": True}},
+            {"risk": "R1", "autonomy": "A2"}),
+
+    "S50": ("*", {"cap": {"is_human_surface": True}, "actor": "human"},
+            {"risk": "R1", "autonomy": "A0", "actor": "human"}),
+
+    "S51": ("*", {"cap": {"is_human_surface": True}, "actor": "agent"},
+            {"risk": "R1", "autonomy": "A2"}),
+
+    "S52": ("*", {"action": {"merge_regions_overlap": True}},
+            {"risk": "R1", "autonomy": "A2"}),
+
+    "S53": ("*", {"action": {"chain_started_without_event": True}},
+            {"risk": "R1", "autonomy": "A2"}),
 }

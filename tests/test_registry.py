@@ -1,13 +1,24 @@
 """Registry ≡ docs/spec (SDD-04 §4; CDS-12)."""
+import json
+
 import pytest
 
 from eide_core.errors import EideError
+from eide_core.paths import spec_dir
 from eide_core.registry import get_registry
+
+#: Số năng lực trong đặc tả — ĐỌC từ `cds.json`, không gõ tay.
+#:
+#: Con số này đổi mỗi lần bộ hồ sơ thêm năng lực (238 → 241 ở v2.0), và viết cứng
+#: nó biến mỗi lần mở rộng đặc tả thành một bài test đỏ ở chỗ không liên quan —
+#: cái giá là người ta sửa số cho qua mà không đọc xem năng lực mới có đúng không.
+
+SO_NANG_LUC = len(json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8")))
 
 
 def test_loads_all_capabilities_from_spec():
     reg = get_registry()
-    assert len(reg.list()) == 238
+    assert len(reg.list()) == SO_NANG_LUC
     assert len(reg.namespaces()) == 27
     assert "tool.write" in reg and "project.create" in reg
 

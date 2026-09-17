@@ -111,7 +111,7 @@ def test_json_hong_tra_32700_va_van_chay_tiep():
 # ---------- chính sách vẫn ở giữa
 
 
-def test_caps_list_thay_ca_238_nang_luc(tmp_path, workspace):
+def test_caps_list_thay_CA_registry(tmp_path, workspace):
     """Chỉ 7 tool được phơi, nhưng `caps_list` vẫn thấy toàn bộ registry — đó là điều làm cho
     trần 20 không phải một giới hạn về NĂNG LỰC, chỉ là giới hạn về số lối vào trực tiếp."""
     ra = _phien([{"jsonrpc": "2.0", "id": 1, "method": "tools/call",
@@ -120,7 +120,13 @@ def test_caps_list_thay_ca_238_nang_luc(tmp_path, workspace):
     assert {c["id"] for c in caps} >= {"kg.build", "kg.conflicts"}
     tat_ca = _kq(_phien([{"jsonrpc": "2.0", "id": 1, "method": "tools/call",
                           "params": {"name": "caps_list", "arguments": {}}}])[0])["caps"]
-    assert len(tat_ca) == 238
+    # Đo từ `cds.json`, không gõ số: bộ hồ sơ thêm năng lực là việc thường xuyên
+    # (238 → 241 ở v2.0), và một con số viết cứng biến việc ấy thành một bài test
+    # đỏ ở chỗ không liên quan gì tới MCP.
+    import json as _json
+
+    from eide_core.paths import spec_dir as _sd
+    assert len(tat_ca) == len(_json.loads((_sd() / "cds.json").read_text(encoding="utf-8")))
 
 
 def test_ASK_tra_pending_chu_khong_phai_loi(tmp_path, workspace):

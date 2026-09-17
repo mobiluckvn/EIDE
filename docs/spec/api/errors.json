@@ -144,6 +144,18 @@
   "handling": "eide migrate"
  },
  {
+  "code": "E6004",
+  "name": "FILE_STALE",
+  "meaning": "Tệp đã đổi trên đĩa từ lúc mở — phải merge, KHÔNG ghi đè",
+  "handling": "Chuyển luồng merge 3 bên"
+ },
+ {
+  "code": "E6005",
+  "name": "FILE_READONLY",
+  "meaning": "Tệp chỉ đọc hoặc không ghi được",
+  "handling": "Nói rõ đường dẫn; không thử lại im lặng"
+ },
+ {
   "code": "E7000",
   "name": "UNDO_EXPIRED",
   "meaning": "Quá cửa sổ hoàn tác",
