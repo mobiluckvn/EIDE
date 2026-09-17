@@ -278,11 +278,16 @@ final class EideMoManTests: XCTestCase {
                          ($0["nang_luc"] as? [String]) ?? []) }
     }
 
-    func testBAmanKHONGcoNangLUCnaoTROtoi() throws {
-        // Ghi lại đúng con số đã đo. Nếu bảng UXD-13 được sửa để cả ba màn có năng lực, test
-        // này đỏ — và đó là tin tốt: lúc ấy lối mở theo tên màn thành dư thừa, xem lại DEV-094.
+    func testKHONGmanNAOkhaiNangLucRONG() throws {
+        // Bài này TỪNG khẳng định `["FlowMap"]` — màn duy nhất khai `nang_luc: []` — và ghi rằng
+        // sửa được thì là tin tốt. Sửa ngày 17/09/2026: bảng §2 nay khai `policy.decide` cho
+        // FlowMap, đúng thứ panel vẫn nạp mặc định cho màn ấy.
+        //
+        // Nhưng KHÔNG vì thế mà lối mở theo TÊN màn thành dư thừa, và đó là chỗ bài cũ đoán sai:
+        // `_man_hinh()` lấy màn ĐẦU TIÊN khớp, mà màn 1 đã nhận cả `policy.*`. Nên `policy.decide`
+        // vẫn trỏ về Chat, và `/FlowMap` vẫn là đường duy nhất mở màn ấy. Xem DEV-122.
         let trong = try bangMan().filter { $0.caps.isEmpty }.map(\.ten)
-        XCTAssertEqual(trong, ["FlowMap"], "màn khai nang_luc rỗng đổi rồi: \(trong)")
+        XCTAssertEqual(trong, [], "màn khai nang_luc rỗng: \(trong)")
     }
 
     func testMOImanTRONGbangMOduocBANGtenCUAno() {

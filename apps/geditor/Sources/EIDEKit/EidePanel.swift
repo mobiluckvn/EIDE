@@ -638,8 +638,9 @@ public final class EidePanel: NSView {
     /// Ba màn trong bảng UXD-13 §2 không có năng lực nào trỏ tới, nên `/ns.name` không với tới
     /// được (đo 13/09, xem DEV-094):
     ///
-    /// - **FlowMap** khai `nang_luc: []` — cố ý, nó hiện trạng thái của chính dòng công việc
-    ///   chứ không hiện kết quả của một năng lực nào.
+    /// - **FlowMap** khai `policy.decide` (sửa 17/09/2026 — trước đó khai `[]`, trong khi
+    ///   `napMacDinh` vẫn nạp đúng năng lực ấy: bảng và mã nói ngược nhau). Vẫn không với tới
+    ///   được bằng `/ns.name` vì màn 1 đã nhận cả `policy.*` và bảng lấy màn ĐẦU TIÊN.
     /// - **Models** khai `policy` và `gateway` — hai chuỗi không khớp quy ước nào của bảng
     ///   (`ns.*` hoặc `ns.name` đầy đủ), nên khớp được 0 năng lực.
     /// - **Trạng thái/khung** khai `policy.set_autonomy`, nhưng năng lực ấy đã bị màn 1 nhận

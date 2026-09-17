@@ -1,7 +1,7 @@
 - code: CODE-01
   id: code.generate_module
-  name: Sinh một module theo STEP + skill + fact; hkw:fact cho hằng số
-  desc: Sinh một module theo STEP + skill + fact; hkw:fact cho hằng số
+  name: Sinh một module theo STEP + skill + fact; eide:fact cho hằng số
+  desc: Sinh một module theo STEP + skill + fact; eide:fact cho hằng số
   input:
     type: object
     properties:
@@ -506,8 +506,8 @@
     reason: undo
 - code: CODE-14
   id: code.annotate
-  name: Gợi ý/chèn hkw:fact cho mã người viết
-  desc: Gợi ý/chèn hkw:fact cho mã người viết
+  name: Gợi ý/chèn eide:fact cho mã người viết
+  desc: Gợi ý/chèn eide:fact cho mã người viết
   input:
     type: object
     properties:
