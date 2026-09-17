@@ -333,5 +333,21 @@ enum VongGiaoDien {
             cho(4)
             return kiemKe(c)
         },
+
+        // ĐẶT CUỐI vì nó phá hỏng daemon: mọi bước sau đây sẽ không có gì để nói.
+        //
+        // Bài kiểm B6/N6 của UXC-31, và là bài kiểm PHỦ ĐỊNH duy nhất của vòng này: nó khẳng
+        // định giao diện KHÔNG im lặng khi mất nguồn dữ liệu. Trước 17/09/2026 kênh sự kiện chỉ
+        // được bơm trong lúc có một lời gọi đang chạy, nên khi người ngồi yên thì cửa sổ điếc
+        // hoàn toàn — và điếc mà không biết mình điếc là hình dạng gốc của mọi lỗi im lặng.
+        Buoc(ten: "MẤT DAEMON: màn hình có NÓI RA rằng dữ liệu đã cũ không") { c in
+            guard c.coPanelEide else { return "HỎNG: không có panel để đo" }
+            if c.eideDangBaoDuLieuCu { return "HỎNG: đang báo dữ liệu cũ TRƯỚC khi giết daemon" }
+            c.eideGietDaemonDeTest()
+            cho(5)          // hạn N6 là 2 s; chờ rộng hơn để không phụ thuộc nhịp máy
+            return c.eideDangBaoDuLieuCu
+                ? "✅ daemon chết → dải \"Dữ liệu cũ\" hiện ra"
+                : "HỎNG: daemon chết mà màn hình vẫn hiện dữ liệu cũ như thật"
+        },
     ]
 }

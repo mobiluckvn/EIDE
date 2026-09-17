@@ -24,6 +24,9 @@ public actor EideClient {
     public protocol Transport: Sendable {
         func send(_ line: Data) async throws
         func receiveLine() async throws -> Data
+        /// Giết đầu kia ĐỘT NGỘT — chỉ để đo phép phát hiện mất kết nối (UXC-31 B6).
+        /// Mặc định không làm gì: một transport trong bộ nhớ không có ai để giết.
+        func gietDeTest()
         func close() async
     }
 
@@ -65,6 +68,9 @@ public actor EideClient {
     /// và đó là điều tốt: kênh sự kiện chỉ có MỘT người nghe, đặt qua một hàm thì chỗ nào
     /// giành mất nó cũng nhìn thấy được.
     public func theoDoi(_ f: @escaping (String, [String: Any]) -> Void) { onSuKien = f }
+
+    /// Giết daemon đột ngột — chỉ dùng trong bài kiểm B6/N6. Xem `Transport.gietDeTest`.
+    public func gietDeTest() { transport.gietDeTest() }
 
     /// Chốt tuần tự hoá — xem `goi`. Một mutex bất đồng bộ, không phải `Task` nối đuôi:
     /// một `Task` chỉ bao phần CHỜ, nó hoàn thành ngay khi lời gọi trước bắt đầu đọc ống chứ
@@ -168,6 +174,10 @@ public actor EideClient {
 }
 
 /// Đường truyền qua tiến trình con `eide daemon` (stdio).
+public extension EideClient.Transport {
+    func gietDeTest() {}
+}
+
 public final class EideStdioTransport: EideClient.Transport, @unchecked Sendable {
 
     private let process = Process()
@@ -244,6 +254,16 @@ public final class EideStdioTransport: EideClient.Transport, @unchecked Sendable
             }
             khoa.lock(); dem.append(phan); khoa.unlock()
         }
+    }
+
+    /// Giết tiến trình daemon KHÔNG đóng ống êm — chỉ dùng để đo phép phát hiện mất kết nối.
+    ///
+    /// `close()` đóng ống rồi mới `terminate()`, tức là một lần chia tay có thông báo. Bài kiểm
+    /// B6 cần đúng thứ ngược lại: daemon biến mất ĐỘT NGỘT, như khi nó bị OOM hay bị người dùng
+    /// tắt từ Activity Monitor — vì đó mới là lúc giao diện có nguy cơ hiện dữ liệu cũ mà không
+    /// biết mình đang hiện dữ liệu cũ.
+    public func gietDeTest() {
+        process.terminate()
     }
 
     public func close() async {

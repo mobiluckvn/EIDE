@@ -313,3 +313,50 @@ final class TransportGia: EideClient.Transport, @unchecked Sendable {
     }
     func close() async {}
 }
+
+// MARK: - Dải "Dữ liệu cũ" (UXC-31 B6, tiêu chí N6)
+
+final class EideDaiCuTests: XCTestCase {
+
+    func testBINH_THUONG_thi_dai_KHONG_an_cho_nao() {
+        // Dải neo bằng ràng buộc THƯỜNG, không nằm trong một `NSStackView`. Ở đó `isHidden`
+        // không thu hồi chỗ — một dải ẩn vẫn ăn 28 pt của vùng làm việc suốt cả phiên, và đó
+        // đúng là hình dạng lỗi 52 (hội thoại không trần) chỉ nhỏ hơn.
+        let d = EideDaiCu()
+        d.datCu(false, tre: 0)
+        XCTAssertFalse(d.dangCu)
+        XCTAssertTrue(d.isHidden)
+        let cao = d.constraints.first { $0.firstAttribute == .height }
+        XCTAssertEqual(cao?.constant, 0, "dải bình thường phải cao 0, không chỉ ẩn")
+    }
+
+    func testCU_thi_NOI_RA_bao_lau_va_co_duong_tai_lai() {
+        // "Dữ liệu cũ" một mình chưa đủ: người cần biết CŨ BAO LÂU để quyết có tin màn hình
+        // đang nhìn hay không, và cần một đường ra khỏi trạng thái ấy ngay tại chỗ.
+        let d = EideDaiCu()
+        var daBam = false
+        d.onTaiLai = { daBam = true }
+        d.datCu(true, tre: 7)
+
+        XCTAssertTrue(d.dangCu)
+        XCTAssertFalse(d.isHidden)
+        XCTAssertEqual(d.constraints.first { $0.firstAttribute == .height }?.constant, 28)
+        let chu = d.subviews.flatMap { $0.subviews }.compactMap { ($0 as? NSTextField)?.stringValue }
+        XCTAssertTrue(chu.contains { $0.contains("Dữ liệu cũ") && $0.contains("7") },
+                      "dải phải nói rõ cũ bao lâu: \(chu)")
+        XCTAssertNotNil(d.accessibilityLabel(), "VoiceOver phải đọc được trạng thái này")
+
+        let nut = d.subviews.flatMap { $0.subviews }.compactMap { $0 as? NSButton }.first
+        XCTAssertNotNil(nut)
+        nut?.performClick(nil)
+        XCTAssertTrue(daBam, "nút Tải lại phải gọi được")
+    }
+
+    func testHAN_DU_LIEU_CU_khong_qua_2_giay() {
+        // N6 viết bằng số: "≤ 2 giây". Ghim con số vào bài kiểm chứ không để nó trôi trong mã —
+        // một hằng số nới ra 10 giây vẫn chạy đúng và vẫn phá tiêu chí nghiệm thu.
+        XCTAssertLessThanOrEqual(EidePanel.HAN_DU_LIEU_CU, 2.0)
+        XCTAssertLessThan(EidePanel.NHIP_TIM, EidePanel.HAN_DU_LIEU_CU,
+                          "nhịp tim phải dày hơn hạn, nếu không thì hạn không bao giờ đo được")
+    }
+}

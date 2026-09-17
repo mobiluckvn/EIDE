@@ -1010,6 +1010,12 @@ final class MainWindowController: NSWindowController {
     /// Bản cũ nhận `hang: Int` và tra `EideWindowController.manTrenSidebar[hang]`. Chỉ số hàng
     /// là thứ đổi mỗi lần thêm một màn hoặc một tiêu đề nhóm — và khi nó đổi, cú bấm vào "Mô
     /// phỏng" mở ra "Dò board" mà không ai báo gì. Tên màn thì không đổi.
+    /// Panel có đang báo "Dữ liệu cũ" không — bài kiểm B6/N6 đọc qua đây.
+    var eideDangBaoDuLieuCu: Bool { eidePanel?.dangBaoDuLieuCu ?? false }
+
+    /// Giết tiến trình daemon để đo phép phát hiện mất kết nối. CHỈ dùng trong bài kiểm.
+    func eideGietDaemonDeTest() { eidePanel?.gietDaemonDeTest() }
+
     func chonManEide(tien: String) {
         guard let goc = khungEideGoc, let soanThao = vungSoanThao, let vach = vachEide else {
             return

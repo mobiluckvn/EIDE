@@ -25,6 +25,22 @@ public final class EidePanel: NSView {
     private let client: EideClient
     private let thanhTuChu = AutonomyBar()
     private let hoiThoai = ChatView()
+
+    /// Dải "Dữ liệu cũ" — B6 của UXC-31 và tiêu chí N6.
+    ///
+    /// Nằm trên cùng vùng làm việc, ẩn khi mọi thứ bình thường.
+    private let daiCu = EideDaiCu()
+
+    /// Giết daemon để đo phép phát hiện mất kết nối — chỉ dùng trong bài kiểm.
+    public func gietDaemonDeTest() { Task { await client.gietDeTest() } }
+
+    /// Dải "Dữ liệu cũ" có đang hiện không — cho bài kiểm trên cửa sổ THẬT đọc.
+    public var dangBaoDuLieuCu: Bool { daiCu.dangCu }
+
+    /// Nhịp tim tới daemon. Xem `batNhipTim()` về lý do nó tồn tại.
+    private var nhipTim: Timer?
+    /// Lần cuối daemon trả lời. Dùng để quyết định khi nào dữ liệu thành "cũ".
+    private var lucCuoiNghe = Date()
     /// Vùng phải — giám sát và tham gia, LUÔN hiện (THIET-KE-UI sheet 1).
     ///
     /// Gom nhật ký + hàng đợi + hoàn tác vào một cột bên phải thay vì rải chúng thành một mục
@@ -1374,6 +1390,49 @@ public final class EidePanel: NSView {
         }
     }
 
+    /// Khoảng nhịp tim, giây.
+    public static let NHIP_TIM: TimeInterval = 1.0
+    /// Quá bấy nhiêu giây không nghe được daemon thì dữ liệu trên màn là CŨ (N6 đòi ≤ 2 s).
+    public static let HAN_DU_LIEU_CU: TimeInterval = 2.0
+
+    /// Đập một nhịp mỗi giây, và đó là thứ làm cho kênh sự kiện có thật.
+    ///
+    /// API-15 cho `event.*` đi CHUNG ống với câu trả lời, và `EideClient` đọc ống ấy chỉ trong
+    /// lúc một lời gọi đang chạy — một quyết định đúng (hai bên cùng đọc một ống là cách mất
+    /// thông điệp, xem ghi chú ở `goi`), nhưng nó có một hệ quả không ai viết ra: **khi người
+    /// dùng ngồi yên, giao diện điếc hoàn toàn.** Tác tử chạy qua CLI ở tiến trình khác, sổ cái
+    /// đầy sự kiện, bộ theo dõi tệp của daemon phát đủ — và cửa sổ đứng im cho tới khi người
+    /// bấm một cái gì đó. Cả cơ chế giám sát dựng ở DEV-102 dừng lại đúng ở tầng vận chuyển.
+    ///
+    /// Một nhịp tim rẻ hơn nhiều so với viết lại tầng vận chuyển thành hai luồng đọc–ghi: mỗi
+    /// giây một `plane.hello`, và mọi thông báo đang xếp trong ống được bơm ra trong chính lời
+    /// gọi ấy. Nó còn cho luôn phép phát hiện mất daemon — thứ B6 cần — mà không thêm cơ chế.
+    ///
+    /// Trong lúc một lời gọi dài đang chạy (mô phỏng 25 giây) thì nhịp tim xếp hàng sau nó,
+    /// nhưng đúng lúc ấy ống ĐANG được đọc nên sự kiện vẫn tới ngay. Hai cơ chế bù nhau kín.
+    private func batNhipTim() {
+        nhipTim?.invalidate()
+        nhipTim = Timer.scheduledTimer(withTimeInterval: Self.NHIP_TIM, repeats: true) {
+            [weak self] _ in
+            guard let self else { return }
+            Task { [weak self] in
+                guard let self else { return }
+                let song = (try? await self.client.goi(.planeHello, [:])) != nil
+                await MainActor.run {
+                    if song { self.lucCuoiNghe = Date() }
+                    self.capNhatDaiCu()
+                }
+            }
+        }
+    }
+
+    /// Hiện/ẩn dải "Dữ liệu cũ" theo lần cuối nghe được daemon.
+    @MainActor
+    private func capNhatDaiCu() {
+        let tre = Date().timeIntervalSince(lucCuoiNghe)
+        daiCu.datCu(tre > Self.HAN_DU_LIEU_CU, tre: tre)
+    }
+
     private func dungGiaoDien() {
         wantsLayer = true
         layer?.backgroundColor = EideToken.Mau.bg.cgColor
@@ -1408,6 +1467,15 @@ public final class EidePanel: NSView {
             addSubview(v)
         }
         let g = EideToken.contentGap
+        daiCu.onTaiLai = { [weak self] in
+            guard let self else { return }
+            self.lucCuoiNghe = Date()
+            self.capNhatDaiCu()
+            Task { await self.lamMoi() }
+        }
+        addSubview(daiCu)
+        batNhipTim()
+
         NSLayoutConstraint.activate([
             thanhTuChu.topAnchor.constraint(equalTo: topAnchor),
             thanhTuChu.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -1442,6 +1510,20 @@ public final class EidePanel: NSView {
         for k in bangMan.map(\.v) + [banDo] {
             NSLayoutConstraint.activate(_rangBuocVungMan(k))
         }
+        daiCu.onTaiLai = { [weak self] in
+            guard let self else { return }
+            self.lucCuoiNghe = Date()
+            self.capNhatDaiCu()
+            Task { await self.lamMoi() }
+        }
+        addSubview(daiCu)
+        NSLayoutConstraint.activate([
+            daiCu.topAnchor.constraint(equalTo: oNhap.bottomAnchor, constant: 0),
+            daiCu.leadingAnchor.constraint(equalTo: leadingAnchor),
+            daiCu.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor),
+        ])
+        batNhipTim()
+
         // Hội thoại bắt đầu ngay dưới thanh tự chủ khi KHÔNG có màn nào mở; khi có màn thì
         // ràng buộc trên của màn đẩy nó xuống. Ưu tiên thấp để nó nhường chỗ cho màn.
         let hoiThoaiTren = hoiThoai.topAnchor.constraint(
@@ -1582,7 +1664,9 @@ public final class EidePanel: NSView {
     private func _rangBuocVungMan(_ k: NSView) -> [NSLayoutConstraint] {
         let g = EideToken.space[2]
         return [
-            k.topAnchor.constraint(equalTo: oNhap.bottomAnchor, constant: g),
+            // Neo dưới DẢI CŨ, không dưới ô nhập: dải cao 0 khi bình thường nên không đổi gì,
+            // còn khi nó hiện thì mọi màn tụt xuống thay vì bị nó đè lên.
+            k.topAnchor.constraint(equalTo: daiCu.bottomAnchor, constant: g),
             k.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             k.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
             k.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -g),
