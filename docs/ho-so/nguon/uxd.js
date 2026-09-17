@@ -146,9 +146,17 @@ const TOKENS = {
     brandGoldLight: '#EFF003', // vàng sáng ở tâm ngọn đuốc
     accent: '#F2B705',       // vàng sao — việc cần người, cảnh báo nhẹ
     secondary: '#373D4E',    // xám xanh — lấy từ dòng chữ thứ hai của logo, tương phản 10,0
-    ok: '#0b6b52', okBg: '#dff5ee',
-    warn: '#7a5200', warnBg: '#fff0cc',
-    bad: '#7a0c0c', badBg: '#fde3e1',
+    // Bốn màu TRẠNG THÁI lấy từ bản demo UX v2.0 (chủ sản phẩm chốt 17/09/2026). Đo được điều
+    // đáng giá nhất: bốn màu gần BẰNG NHAU về độ sáng (tỉ số 1,03–1,22 giữa từng cặp), tức
+    // chúng phân biệt bằng SẮC chứ không bằng sáng-tối — đúng nguyên tắc DEV-119 rút ra sau khi
+    // `info` đỏ bị đọc nhầm thành cảnh báo. Mỗi màu đo trên nền `bg` mới đều ≥ 4,5.
+    ok: '#1d7a4f', okBg: '#e7f4ec',
+    warn: '#8a5a00', warnBg: '#fdf3dd',
+    // `bad` KHÔNG lấy thẳng `--red` của demo. Demo dùng một đỏ cho cả thương hiệu lẫn lỗi, nên
+    // một nút hành động chính và một dòng lỗi trông y hệt nhau — cùng hình dạng lỗi mà DEV-119
+    // vừa sửa, chỉ soi gương. Lấy `#A31F1F` (chính là `button.pri:hover` của demo): vẫn trong
+    // họ đỏ của bản thiết kế, đo 6,89 trên nền, và khác `primary` 1,24 lần — đủ để mắt tách.
+    bad: '#A31F1F', badBg: '#FBECEC',
     // `info` là XANH LAM, không phải đỏ.
     //
     // Cặp `info`/`infoBg` vốn khai `#B8121F` trên `#e6effa`: chữ ĐỎ trên nền XANH. Nền đã nói
@@ -157,9 +165,18 @@ const TOKENS = {
     // hiện màu ĐỎ — người dùng đọc một con số hoàn toàn bình thường như một cảnh báo. Và `info`
     // đỏ chỉ khác `bad #7a0c0c` 1,83 lần tương phản, tức hai trạng thái ngược nhau gần như cùng
     // một màu.
-    info: '#1e40af', infoBg: '#e6effa',
-    bg: '#f4f6f9', surface: '#ffffff', border: '#e1e6ee',
-    text: '#1b2430', muted: '#5b6b7f',
+    info: '#1b5fa5', infoBg: '#e9f1fa',
+    bg: '#f5f4f2', surface: '#ffffff', border: '#e2e0dc',
+    // `border2` — đường kẻ đậm hơn cho mép vùng (mép trên vùng trao đổi, viền thẻ Run). Bản
+    // demo phân hai mức đường kẻ; một mức duy nhất làm mọi mép trông ngang nhau và người không
+    // đọc được đâu là ranh giới giữa hai VÙNG, đâu là ranh giới giữa hai hàng.
+    border2: '#cfcdc8',
+    text: '#1b1b1b', muted: '#6b6b6b',
+    // `faint` — nhãn nhóm ở cột trái, gợi ý mờ. Demo dùng `#9a9a9a`, đo được **2,56** trên nền
+    // của chính nó: TRƯỢT ngưỡng 4,5 mà `contrastMin` ngay dưới đây khai, và nhãn nhóm là chữ
+    // 10,5 px in đậm nên không được hưởng ngoại lệ "chữ lớn". Lấy `#707070` — xám nhạt nhất vẫn
+    // đạt AA (4,51). Đây là chỗ DUY NHẤT bảng màu demo bị sửa số.
+    faint: '#707070',
   },
   font: { ui: 'IBM Plex Sans', uiSize: 13, uiLine: 1.45, mono: 'IBM Plex Mono', monoSize: 12 },
   space: [4, 8, 12, 16, 24],
