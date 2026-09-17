@@ -1,6 +1,6 @@
 # Tiến độ sản phẩm EIDE
 
-*Cập nhật 16/09/2026 (lần 24). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
+*Cập nhật 17/09/2026 (lần 25). Số liệu **đo từ mã**, không gõ tay: `eide spec`,
 `scripts/kiem_chuoi_chuan.py`, `pytest`. Tài liệu này sinh lại bằng cách chạy lại chúng —
 đừng sửa số ở đây mà không chạy lại, vì con số gõ tay sẽ đúng đúng một ngày.*
 
@@ -12,8 +12,17 @@
 
 ## 1. Một dòng
 
-**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1602 test
-Python + 3092 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Thêm 7 bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7, trong đó một bài KIỂM KÊ cả 23 màn.**
+**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1612 test
+Python + 3101 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: 23 màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7, trong đó một bài KIỂM KÊ cả 23 màn. Một `--vong-giao-dien` đi 15 bước của một vòng làm việc thật QUA GIAO DIỆN: 15/15, ghi nhật ký và một ảnh mỗi bước.**
+
+**Ngày 17/09 đóng ba việc mà hai ngày trước còn là "giao diện hiện sai": vùng trao đổi người ↔
+tác tử thành BẤT BIẾN (DEV-120), chuỗi năng lực nối được dữ liệu cho nhau (DEV-121), và bộ tự
+kiểm thôi phụ thuộc vào dự án nào đang mở.** Việc thứ hai là việc nặng nhất và không bắt đầu từ
+giao diện: khi ô trò chuyện thôi bị che, thứ nó nói ra là *đường đi chính của sản phẩm đang
+hỏng* — gõ một câu tiếng Việt cho tác tử trả về một bức tường E5002 và KHÔNG một nút nào chạy.
+Nguyên nhân nằm sâu trong lõi: `Nut.args` chỉ nhận giá trị nguyên, nên **mọi chuỗi dài hơn một
+bước đều trượt phép kiểm của chính nó** — bốn trong năm chuỗi mẫu của DPS-09 §4.4 chưa bao giờ
+chạy được, và cả hai phía đều có test riêng và cùng xanh.
 
 **Từ 15/09, phần việc không nằm ở năng lực nữa mà ở GIAO DIỆN.** Con số năng lực không đổi
 trong hai ngày này — 216/238 hôm 14/09 và 216/238 hôm nay — trong khi sáu màn được dựng lại
@@ -326,7 +335,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Bốn mươi tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Năm mươi tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -683,6 +692,53 @@ chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên ti
 48. **`Đích ?` trên một dự án đã ghim chip** (16/09). `project.status` gọi trường ấy là `chip`,
     `target.detect` gọi là `chip_id`/`id`; màn hỏi hai cái sau rồi rơi về `"?"`. Con chip mà mọi
     thứ khác trong dự án dựa vào hiện ra thành một dấu hỏi.
+
+49. **Màn Nhật ký bị thay bằng Bản đồ tri thức** (16/09). Tiêu đề đúng, thân sai — do chính
+    bản sửa hôm trước: `napMacDinh("NhatKy")` là `view.timeline`, mà năng lực ấy nằm trong nhóm
+    bản đồ, nên phép định tuyến theo năng lực kéo màn sang khung khác. Mỗi phần có test riêng và
+    cùng xanh.
+50. **Bản đồ tri thức ĐÈ LÊN mọi màn mở sau nó** (16/09). `_moTheoTenMan` duyệt bảng 23 màn để
+    ẩn, mà `banDo` là khung nhìn duy nhất NGOÀI bảng ấy — nên mọi vòng lặp "cho mọi màn" đều bỏ
+    sót nó. Chỉ lộ ra khi đi qua nhiều màn liên tiếp, và không bài test nào làm thế.
+51. **Token `info` là màu ĐỎ** (16/09). Dòng "chi phí hôm nay 0,0000 USD" đọc như một cảnh báo.
+    Cặp `info`/`infoBg` khai chữ đỏ trên nền XANH — nền đã nói đúng ý định thiết kế, chỉ chữ đi
+    lạc sang màu thương hiệu.
+52. **Vùng trao đổi không có TRẦN nên nuốt vùng làm việc** (17/09). Nó cao theo nội dung: với
+    năm thẻ đang chạy cộng một thông báo lỗi dài, hội thoại chiếm gần nửa cửa sổ và trình soạn
+    thảo còn một dải BỐN DÒNG — cây dự án bị bóp tới mức chỉ còn hai ô tìm kiếm.
+53. **Mọi việc nền đều VÔ DANH** (17/09). `_bao_job` biết `cap` của việc nhưng không phát nó,
+    nên thẻ tiến độ ghi `Đang chạy job_038c110c8b65…` và màn chuyên biệt không tự mở được — tức
+    là đúng những việc CHẠY LÂU (build, sim, flash) lại là những việc người dùng không được dẫn
+    tới màn của chúng.
+54. **Thẻ tiến độ vứt thông điệp đã tạo ra nó** (17/09). `init` chỉ gọi `capNhat([:])`, nên một
+    lượt chạy mà panel chỉ nhận đúng một thông điệp để lại một thẻ VĨNH VIỄN ghi "đang chạy"
+    mang mã băm — trạng thái `done`/`failed` nằm trong chính thông điệp bị bỏ. Đo được năm thẻ
+    như thế cùng lúc. Một lượt chạy đã xong mà giao diện nói đang chạy là lời nói sai về việc máy
+    vừa làm, đúng thứ màn giám sát tồn tại để không xảy ra.
+55. **Thẻ giữ dải chip cao 28 pt kể cả khi không có nút nào** (17/09). Ba thẻ rỗng ăn 270 pt của
+    vùng trao đổi.
+56. **Chuỗi năng lực không nối được dữ liệu giữa các nút** (17/09). `code.merge` cần `patch` mà
+    `code.integrate` mới sinh ra; `sim.run` cần `artifact` của bước dựng. Chúng chưa tồn tại lúc
+    lập, nhưng §4.4 kiểm CẢ chuỗi ngay lúc lập và `Nut.args` không có chỗ viết "lấy từ nút n7".
+    Hệ quả: mọi chuỗi dài hơn một bước đều trượt phép kiểm của chính nó. Lỗi im lặng LỚN NHẤT
+    tìm được từ đầu đề án tính theo phạm vi — nó chặn đúng luận điểm trung tâm, và nó sống được
+    lâu vì `chain.py` và `chat.py` đều có test riêng và đều xanh.
+57. **Hai tham số ĐÃ BIẾT lúc lập mà không được đưa vào** (17/09). `chat.ground` đòi `intent`,
+    `chat.report_back` đòi `run_id`; `_args_cho` chỉ đọc `slots` nên chuỗi dừng ngay ở nút ĐẦU
+    để hỏi một câu đã có sẵn câu trả lời.
+58. **Một bài tự kiểm báo ĐỎ về sản phẩm khi sản phẩm chưa hề được gọi tới** (17/09). Bài "lề có
+    dấu fact" lấy tệp `src/*.c` đầu tiên của dự án đang mở và đòi nó mang `eide:fact`; firmware
+    demo chú thích fact bằng văn xuôi nên bài trượt. Đổi sang "bỏ qua" thì tệ hơn: KHÔNG dự án
+    nào trên máy có `eide:fact`, nên bài chuyển thành LUÔN bỏ qua — một phép kiểm lặng lẽ thôi
+    kiểm, đúng thứ ghi chú của chính bộ tự kiểm cảnh báo. Nay bài TỰ MANG mẫu và tự xoá sau khi
+    đo, nên nó luôn chạy và luôn kiểm đúng thứ nó nói.
+
+**Số 49–58 đến từ hai việc: một VÒNG ĐI QUA GIAO DIỆN, và việc bỏ trần cho ô trò chuyện.** Vòng
+đi (`--vong-giao-dien`) không khẳng định gì — nó đi 15 bước của một ngày làm việc thật rồi ghi
+lại — và đó là lý do nó thấy được thứ 3 101 bài test Swift không thấy: các lỗi này sống ở chỗ
+NỐI giữa các màn, giữa giao diện và lõi, hoặc chỉ hiện ra sau khi đi qua nhiều màn liên tiếp.
+Còn số 56 thì đáng ghi riêng: nó không phải lỗi giao diện chút nào, nhưng nó chỉ lộ ra khi ô
+trò chuyện thôi bị che — **một lỗi lõi mà cách duy nhất nhìn thấy là sửa một lỗi bố cục**.
 
 **Số 45–48 tìm ra bằng MỘT bài kiểm kê, không phải bằng mắt.** `--self-test EIDE` mở cả 23 màn
 trên một dự án thật, đếm số dòng và số khối của từng màn, rồi in ra một bảng. Bốn màn có dữ liệu

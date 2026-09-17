@@ -515,20 +515,38 @@ enum SelfTest {
             return nil
         },
 
+        // Bài này TỰ MANG MẪU thay vì mượn mã của dự án đang mở.
+        //
+        // Bản đầu lấy tệp `src/*.c` đầu tiên và đòi nó có `eide:fact`. Đo 17/09/2026: firmware
+        // AVR của dự án demo chú thích fact bằng VĂN XUÔI (`fact f_d077…` trong khối bình luận,
+        // không theo quy ước PRS-16 §3), nên bài báo ❌ ĐỎ nói sản phẩm hỏng trong khi sản phẩm
+        // chưa hề được gọi tới. Đổi sang `skipWhen` thì tệ hơn nữa: không dự án nào trên máy này
+        // có `eide:fact`, nên bài chuyển thành LUÔN BỎ QUA — một phép kiểm lặng lẽ thôi kiểm,
+        // đúng thứ ghi chú của `skipReason` ngay trên kia cảnh báo.
+        //
+        // Tự mang mẫu thì bài luôn chạy và luôn kiểm đúng thứ nó nói: lề có chấm cho dòng mang
+        // `eide:fact`, và có vạch đỏ cho hằng số phần cứng không trỏ fact nào. Mẫu bị XOÁ sau
+        // khi đo — nó nằm trong dự án của người dùng, không phải của bộ tự kiểm.
         Case(name: "EIDE: mở tệp mã thì LỀ có dấu fact và dấu vi phạm") { c in
             guard let goc = ProcessInfo.processInfo.environment["EIDE_PROJECT"] else {
                 return "chưa đặt EIDE_PROJECT"
             }
             let nguon = (goc as NSString).appendingPathComponent("src")
-            guard let ten = (try? FileManager.default.contentsOfDirectory(atPath: nguon))?
-                .filter({ $0.hasSuffix(".c") }).sorted().first else {
-                return "dự án chưa có src/*.c"
-            }
+            let ten = "_tu_kiem_eide.c"
             let tep = (nguon as NSString).appendingPathComponent(ten)
-            guard let noi = try? String(contentsOfFile: tep, encoding: .utf8),
-                  noi.contains("eide:fact") else {
-                return "tệp \(ten) không có chú thích `eide:fact` để kiểm"
+            let mau = """
+            /* Mẫu của bộ tự kiểm EIDE — xoá ngay sau khi đo. */
+            #include <stdint.h>
+            #define REG8(a) (*(volatile uint8_t *)(a))
+
+            #define UCSR0A REG8(0xC0u)   /* eide:fact f_d077d0d174fcfee7 */
+            #define UCSR0B REG8(0xC1u)   /* eide:fact f_1c16a148f5e667af */
+            #define KHONG_CO_FACT REG8(0x76u)
+            """
+            guard (try? mau.write(toFile: tep, atomically: true, encoding: .utf8)) != nil else {
+                return "không ghi được mẫu vào \(nguon) — dự án chỉ đọc?"
             }
+            defer { try? FileManager.default.removeItem(atPath: tep) }
 
             c.chonManEide(tien: "Code")
             c.moTepTuCay(tep)

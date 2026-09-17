@@ -1,8 +1,18 @@
 # Danh sách công việc EIDE
 
-*Đo 13/09/2026 (lần 19) từ registry — không gõ tay. Còn **29/238** năng lực, và **cả 29 đều
-cần một bo mạch**. Xem [`TIEN-DO.md`](TIEN-DO.md) cho bức tranh trạng thái; tệp này trả lời
-**làm gì tiếp**.*
+*Đo 17/09/2026 (lần 20) từ registry — không gõ tay. Còn **22/238** năng lực, và **cả 22 đều
+cần một bo mạch, một công cụ ngoài, hay một thiết bị đo**. Xem [`TIEN-DO.md`](TIEN-DO.md) cho
+bức tranh trạng thái; tệp này trả lời **làm gì tiếp**.*
+
+> **17/09: việc của phần mềm nay nằm ở CHỖ NỐI, không ở năng lực.** Hai hạng mục vừa đóng đều
+> không phải một năng lực mới: vùng trao đổi người ↔ tác tử thành bất biến ([DEV-120]), và nút
+> của chuỗi nối được dữ liệu cho nhau ([DEV-121]). Cái thứ hai mở lại đường đi trung tâm của sản
+> phẩm — trước nó, bốn trong năm chuỗi mẫu của DPS-09 §4.4 không bao giờ chạy được.
+>
+> **Một mục MỞ đang chờ anh**: [DEV-121] đề nghị mẫu chuỗi trong `dps.js` tự mang phần nối
+> (`args` với tham chiếu `${nX.field}`). Hiện phép tự nối chỉ dựa vào trùng tên và giải được 3
+> trong 20 chỗ; 17 chỗ còn lại đúng với mắt người đọc nhưng không tài liệu nào của kho nói thế,
+> nên tôi để trống thay vì tự nghĩ ra. Đây là việc của tài liệu, không phải của mã.
 
 > **13/09: danh sách này chỉ còn MỘT hạng mục.** Ngày 12/09 nó còn bốn nhóm chờ bốn thứ khác
 > nhau. Nay registry đã dựng cục bộ ([DEV-091]) và đường ảnh đã mở, nên **29 năng lực còn lại
