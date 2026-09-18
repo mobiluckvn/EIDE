@@ -77,17 +77,27 @@ public final class EideThanhTren: NSView {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
+    /// Hai giá trị cho bài đo đọc — KHÔNG phải trạng thái thứ hai: chúng đọc thẳng từ chính
+    /// khung nhìn người dùng đang nhìn. Một bài kiểm đọc bản sao thì nó kiểm bản sao.
+    public var tenDuAn: String { ten.title }
+    public var mucHienTai: String { muc.stringValue }
+
     public func datDuAn(_ s: String?) {
         ten.title = (s.map { ($0 as NSString).lastPathComponent } ?? "— chưa mở dự án —") + " ▾"
     }
 
-    public func datMuc(_ m: String) {
-        muc.stringValue = " Tự chủ \(m) "
+    /// `dung` = cờ dừng khẩn CÒN CÀI, đọc từ `autonomy.get`.
+    ///
+    /// Mức tự chủ và cờ dừng là HAI thứ khác nhau: dừng khẩn cắt mọi việc mà không hạ mức, nên
+    /// một dự án đang đứng im hoàn toàn vẫn báo "A2". Hiện mỗi mức là nói dối bằng cách nói thật
+    /// một nửa — người đọc "A2" rồi ngồi đợi tác tử làm việc mà nó sẽ không bao giờ làm.
+    public func datMuc(_ m: String, dung: Bool = false) {
+        muc.stringValue = dung ? " ĐÃ DỪNG KHẨN · \(m) " : " Tự chủ \(m) "
         // A0 = nền ĐỎ. Mức "tác tử không tự làm gì" phải khác hẳn mọi mức khác về màu, vì nó là
         // trạng thái người vừa bấm Dừng khẩn hoặc vừa siết quyền — và cả hai đều cần thấy ngay.
-        let a0 = m == "A0"
-        muc.textColor = a0 ? EideToken.Mau.primary : EideToken.Mau.info
-        muc.layer?.backgroundColor = (a0 ? EideToken.Mau.badBg : EideToken.Mau.infoBg).cgColor
+        let do_ = dung || m == "A0"
+        muc.textColor = do_ ? EideToken.Mau.primary : EideToken.Mau.info
+        muc.layer?.backgroundColor = (do_ ? EideToken.Mau.badBg : EideToken.Mau.infoBg).cgColor
     }
 
     public func datDem(cho: Int, hoanTac: Int) {

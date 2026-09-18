@@ -46,13 +46,70 @@ public actor EideDaemon {
     private var dem = Data()
     private var onSuKien: (@Sendable (String, [String: Any]) -> Void)?
 
-    /// Bật một daemon cho một dự án. `python` là trình thông dịch có gói `eide`.
-    public init(duAn: String, python: String) throws {
+    /// Tìm cách chạy `eide daemon`.
+    ///
+    /// Ba đường, theo thứ tự chắc chắn giảm dần. Nói ra cả ba vì "không chạy được daemon" là lỗi
+    /// người dùng gặp trước mọi lỗi khác, và một thông điệp không nói đã thử gì thì không giúp
+    /// được ai.
+    public static func timLenh() -> [String]? {
+        let mt = ProcessInfo.processInfo.environment
+        // 1. Người chạy chỉ định thẳng trình thông dịch của venv.
+        if let py = mt["EIDE_PYTHON"], FileManager.default.isExecutableFile(atPath: py) {
+            return [py, "-m", "eide.cli"]
+        }
+        // 2. Lệnh `eide` trong PATH.
+        for d in (mt["PATH"] ?? "").split(separator: ":") {
+            let p = String(d) + "/eide"
+            if FileManager.default.isExecutableFile(atPath: p) { return [p] }
+        }
+        // 3. venv của kho, cho lượt chạy từ thư mục mã.
+        for p in ["\(mt["HOME"] ?? "")/Documents/EIDE/.venv-arm/bin/eide",
+                  "\(FileManager.default.currentDirectoryPath)/.venv-arm/bin/eide"] {
+            if FileManager.default.isExecutableFile(atPath: p) { return [p] }
+        }
+        return nil
+    }
+
+    /// Chạy `eide` MỘT lần rồi lấy JSON trên stdout.
+    ///
+    /// Tạo dự án là con gà và quả trứng: `EideDaemon(duAn:)` cần sẵn một thư mục dự án, còn
+    /// `project.create` chính là thứ tạo ra thư mục ấy. Nên lượt gọi đầu tiên đi qua CLI một
+    /// lượt, không qua daemon.
+    ///
+    /// stderr KHÔNG bị bỏ: dòng `-- run … · <quyết định> theo <luật>` nằm ở đó, và khi
+    /// `project.create` bị chính sách chặn thì đó là chỗ DUY NHẤT nói vì sao.
+    public static func motLan(_ thamSo: [String]) throws -> (ma: Int32, json: [String: Any]?, van: String, loi: String) {
+        guard let lenh = timLenh() else { throw Loi.khongChay("không tìm thấy `eide` (thử $EIDE_PYTHON, $PATH, .venv-arm)") }
+        let tt = Process()
+        tt.executableURL = URL(fileURLWithPath: lenh[0])
+        tt.arguments = Array(lenh.dropFirst()) + thamSo
+        let oRa = Pipe(), oLoi = Pipe()
+        tt.standardOutput = oRa
+        tt.standardError = oLoi
+        tt.standardInput = FileHandle.nullDevice
+        try tt.run()
+        // Đọc HẾT hai ống trước khi chờ: ống 64 KB đầy thì tiến trình con treo, và `waitUntilExit`
+        // treo theo — một bế tắc không có thông điệp nào cả.
+        let dRa = oRa.fileHandleForReading.readDataToEndOfFile()
+        let dLoi = oLoi.fileHandleForReading.readDataToEndOfFile()
+        tt.waitUntilExit()
+        let van = String(data: dRa, encoding: .utf8) ?? ""
+        let loi = String(data: dLoi, encoding: .utf8) ?? ""
+        let js = (try? JSONSerialization.jsonObject(with: dRa)) as? [String: Any]
+        return (tt.terminationStatus, js, van, loi)
+    }
+
+    /// Bật một daemon cho một dự án.
+    public init(duAn: String) throws {
         // Bài học 3 — bỏ qua SIGPIPE MỘT LẦN cho cả tiến trình.
         signal(SIGPIPE, SIG_IGN)
 
-        tienTrinh.executableURL = URL(fileURLWithPath: python)
-        tienTrinh.arguments = ["-m", "eide.cli", "daemon", "--project", duAn]
+        guard let lenh = Self.timLenh() else {
+            throw Loi.khongChay("không tìm thấy `eide`. Đã thử: biến môi trường EIDE_PYTHON, "
+                                + "lệnh `eide` trong PATH, và .venv-arm của kho.")
+        }
+        tienTrinh.executableURL = URL(fileURLWithPath: lenh[0])
+        tienTrinh.arguments = Array(lenh.dropFirst()) + ["daemon", "-p", duAn]
         tienTrinh.standardInput = vao
         tienTrinh.standardOutput = ra
         tienTrinh.standardError = FileHandle.nullDevice

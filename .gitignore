@@ -7,6 +7,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 build/
+# SwiftPM dựng vào `.build/`, và mẫu `build/` KHÔNG khớp nó — dấu chấm đầu là một ký tự thật.
+# Lọt vào kho ngày 18/09: 2588 tệp nhị phân, mỗi lần `swift build` lại hiện ra trong `git status`
+# và che mất những tệp mã thật sự đổi.
+.build/
 dist/
 *.egg-info/
 .DS_Store

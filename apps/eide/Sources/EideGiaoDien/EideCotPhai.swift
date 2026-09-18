@@ -20,6 +20,11 @@ public final class EideCotPhai: NSView {
     private let nhanCho = NSTextField(labelWithString: "CHỜ TÔI")
     private let nhanHoanTac = NSTextField(labelWithString: "HOÀN TÁC ĐƯỢC")
 
+    /// Số thẻ tối đa mỗi khối. Cột rộng 236 pt: 55 thẻ hoàn tác biến nó thành một cuộn dài vô
+    /// nghĩa, và thứ người cần — mục MỚI NHẤT — nằm ngay đầu. Phần bị cắt KHÔNG im lặng: một
+    /// dòng cuối khối nói còn bao nhiêu và xem ở đâu.
+    public static let TOI_DA = 8
+
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         wantsLayer = true
@@ -89,6 +94,7 @@ public final class EideCotPhai: NSView {
         _do(cocCho, rong: "Trống — không việc nào chờ anh.", ds.map { m in
             let t = NSTextField(labelWithString: m.tieuDe)
             t.font = NSFont.boldSystemFont(ofSize: 12)
+            _catDuoi(t)
             let l = NSTextField(wrappingLabelWithString: m.ly)
             l.font = EideToken.fontUI
             l.textColor = EideToken.Mau.muted
@@ -119,19 +125,37 @@ public final class EideCotPhai: NSView {
         _do(cocHoanTac, rong: "Chưa có mục nào trong cửa sổ hoàn tác.", ds.map { m in
             let t = NSTextField(labelWithString: m.nhan)
             t.font = NSFont.boldSystemFont(ofSize: 12)
+            _catDuoi(t)
             let h = NSTextField(labelWithString: m.han)
             h.font = EideToken.fontUI
             h.textColor = EideToken.Mau.muted
+            _catDuoi(h)
             let b = NSButton(title: "Hoàn tác", target: self, action: #selector(_hoanTac(_:)))
             b.bezelStyle = .inline
             b.font = EideToken.fontUI
+            // Đỏ như bản demo: hoàn tác là việc ĐẢO một thứ đã xảy ra. Màu xám mặc định của
+            // `.inline` trông y hệt nút đang bị vô hiệu hoá — người không bấm thứ trông như chết.
+            b.contentTintColor = EideToken.Mau.bad
             b.identifier = NSUserInterfaceItemIdentifier(m.ma)
             let o = NSStackView(views: [t, h, b])
             o.orientation = .vertical
             o.alignment = .leading
             o.spacing = 2
+            o.edgeInsets = NSEdgeInsets(top: 6, left: 9, bottom: 6, right: 9)
+            o.wantsLayer = true
+            o.layer?.backgroundColor = EideToken.Mau.bg.cgColor
+            o.layer?.cornerRadius = 7
             return o
         })
+    }
+
+    /// Nhãn một dòng trong cột hẹp: cắt đuôi, và KHÔNG được phép đòi thêm bề ngang. `cap` như
+    /// `code.merge_conflict_resolve` dài hơn cả cột — mặc định AppKit sẽ giãn thẻ ra cho vừa.
+    private func _catDuoi(_ n: NSTextField) {
+        n.lineBreakMode = .byTruncatingTail
+        n.cell?.truncatesLastVisibleLine = true
+        n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        n.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
 
     private func _do(_ coc: NSStackView, rong: String, _ ds: [NSView]) {
@@ -143,7 +167,20 @@ public final class EideCotPhai: NSView {
             coc.addArrangedSubview(n)
             return
         }
-        for v in ds { coc.addArrangedSubview(v) }
+        for v in ds.prefix(Self.TOI_DA) {
+            coc.addArrangedSubview(v)
+            // Ghim bề rộng thẻ vào cột. Thiếu dòng này, NSStackView để thẻ rộng theo nhãn dài
+            // nhất rồi ĐẨY phần thừa ra ngoài vùng cắt — chữ mất mà không có cảnh báo nào.
+            v.widthAnchor.constraint(equalTo: coc.widthAnchor).isActive = true
+        }
+        if ds.count > Self.TOI_DA {
+            let n = NSTextField(wrappingLabelWithString:
+                "… và \(ds.count - Self.TOI_DA) mục nữa — xem màn Nhật ký.")
+            n.font = EideToken.fontUI
+            n.textColor = EideToken.Mau.faint
+            coc.addArrangedSubview(n)
+            n.widthAnchor.constraint(equalTo: coc.widthAnchor).isActive = true
+        }
     }
 
     @objc private func _chonRun(_ n: NSButton) { n.identifier.map { onChonRun?($0.rawValue) } }

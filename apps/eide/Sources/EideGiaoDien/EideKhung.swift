@@ -42,6 +42,13 @@ public final class EideKhung: NSView {
 
     private let vienDo = NSView()
     private let vachDock = NSBox()
+    /// Dải "Dữ liệu cũ" — B6/N6. Cao 0 khi bình thường, 28 khi mất daemon.
+    private let daiCu = NSView()
+    private let nhanCu = NSTextField(labelWithString: "")
+    private lazy var caoDaiCu = daiCu.heightAnchor.constraint(equalToConstant: 0)
+
+    /// Màn hình chào — chiếm TOÀN cửa sổ khi chưa có dự án (§3.1).
+    public let manChao = EideManChao()
 
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -62,8 +69,16 @@ public final class EideKhung: NSView {
         vienDo.layer?.backgroundColor = EideToken.Mau.brand.cgColor
         vachDock.boxType = .separator
 
-        for v in [thanhTren, vienDo, cotTrai, thanhTab, vungLamViec,
-                  vachDock, dock, cotPhai] as [NSView] {
+        daiCu.wantsLayer = true
+        daiCu.layer?.backgroundColor = EideToken.Mau.warnBg.cgColor
+        nhanCu.font = EideToken.fontUI
+        nhanCu.textColor = EideToken.Mau.warn
+        nhanCu.translatesAutoresizingMaskIntoConstraints = false
+        daiCu.addSubview(nhanCu)
+        daiCu.isHidden = true
+
+        for v in [thanhTren, vienDo, cotTrai, thanhTab, daiCu, vungLamViec,
+                  vachDock, dock, cotPhai, manChao] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -96,8 +111,22 @@ public final class EideKhung: NSView {
             thanhTab.leadingAnchor.constraint(equalTo: cotTrai.trailingAnchor),
             thanhTab.trailingAnchor.constraint(equalTo: cotPhai.leadingAnchor),
 
+            // ── dải "Dữ liệu cũ": giữa thanh tab và vùng làm việc, cao 0 khi bình thường
+            daiCu.topAnchor.constraint(equalTo: thanhTab.bottomAnchor),
+            daiCu.leadingAnchor.constraint(equalTo: cotTrai.trailingAnchor),
+            daiCu.trailingAnchor.constraint(equalTo: cotPhai.leadingAnchor),
+            caoDaiCu,
+            nhanCu.leadingAnchor.constraint(equalTo: daiCu.leadingAnchor, constant: 12),
+            nhanCu.centerYAnchor.constraint(equalTo: daiCu.centerYAnchor),
+
+            // ── màn hình chào: TOÀN cửa sổ, nổi trên mọi vùng
+            manChao.topAnchor.constraint(equalTo: topAnchor),
+            manChao.leadingAnchor.constraint(equalTo: leadingAnchor),
+            manChao.trailingAnchor.constraint(equalTo: trailingAnchor),
+            manChao.bottomAnchor.constraint(equalTo: bottomAnchor),
+
             // ── cột giữa, hàng 2: VÙNG LÀM VIỆC — vùng giãn
-            vungLamViec.topAnchor.constraint(equalTo: thanhTab.bottomAnchor),
+            vungLamViec.topAnchor.constraint(equalTo: daiCu.bottomAnchor),
             vungLamViec.leadingAnchor.constraint(equalTo: cotTrai.trailingAnchor),
             vungLamViec.trailingAnchor.constraint(equalTo: cotPhai.leadingAnchor),
             vungLamViec.bottomAnchor.constraint(equalTo: vachDock.topAnchor),
@@ -115,4 +144,23 @@ public final class EideKhung: NSView {
             dock.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
+
+    /// Bật/tắt dải "Dữ liệu cũ" — B6. Nói rõ CŨ BAO LÂU: người cần con số ấy để quyết có tin
+    /// những gì màn hình đang hiện hay không.
+    public func datDuLieuCu(_ cu: Bool, tre: TimeInterval) {
+        daiCu.isHidden = !cu
+        caoDaiCu.constant = cu ? 28 : 0
+        nhanCu.stringValue = cu
+            ? "Dữ liệu cũ — không nghe được daemon \(Int(tre)) giây qua."
+            : ""
+    }
+
+    /// Chữ đang hiện trong dải "Dữ liệu cũ" — cho bài kiểm đọc.
+    public var chuDaiCu: String { daiCu.isHidden ? "" : nhanCu.stringValue }
+
+    /// Ẩn màn hình chào khi đã có dự án. Bốn vùng kia lộ ra nguyên vẹn phía dưới.
+    public func anManChao() { manChao.isHidden = true }
+
+    /// Đang ở trạng thái chưa có dự án hay không — cho bài kiểm đọc.
+    public var dangChao: Bool { !manChao.isHidden }
 }
