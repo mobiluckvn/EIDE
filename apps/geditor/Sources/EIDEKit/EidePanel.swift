@@ -187,6 +187,10 @@ public final class EidePanel: NSView {
     public let thanhTab = EideThanhTab()
     /// Bảng lệnh ⌘K — UXC-31 §4.
     public let bangLenh = EideBangLenh()
+    /// Nền TRẮNG của vùng làm việc — `#screen` của bản demo.
+    private let nenLamViec = NSView()
+    /// Vạch ngang tách vùng làm việc khỏi vùng trao đổi — `border-top` của `#dock`.
+    private let vachDock = NSBox()
     /// Thanh nhỏ trên vùng trao đổi: nhãn + ba nút đổi chiều cao (UXC-31 §2D.3).
     private let thanhHoiThoai = NSStackView()
     /// Năng lực đứng sau màn đang mở — hiện cạnh tên màn (UXC-31 §2C.4).
@@ -1698,6 +1702,23 @@ public final class EidePanel: NSView {
         thanhHoiThoai.translatesAutoresizingMaskIntoConstraints = false
         addSubview(thanhHoiThoai)
 
+        // RANH GIỚI BA VÙNG, vẽ ra chứ không để người tự đoán (bản demo UX v2.0: `#screen` nền
+        // trắng, `#dock` nền xám có viền trên).
+        //
+        // Trước đây cả cột giữa cùng một màu, nên vùng làm việc và vùng trao đổi dính vào nhau
+        // thành một dải; người dùng phải suy ra ranh giới từ nội dung. Hai khung nhìn nền dưới
+        // đây không nhận chuột, không tham gia bố cục của ai — chúng chỉ nói ra chỗ một vùng
+        // kết thúc và vùng kia bắt đầu.
+        nenLamViec.wantsLayer = true
+        nenLamViec.layer?.backgroundColor = EideToken.Mau.surface.cgColor
+        nenLamViec.layer?.cornerRadius = EideToken.radius[0]
+        nenLamViec.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(nenLamViec, positioned: .below, relativeTo: nil)
+
+        vachDock.boxType = .separator
+        vachDock.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(vachDock)
+
         thanhTab.onChon = { [weak self] tien in
             guard let self else { return }
             self.nguoiVuaChonMan()
@@ -1762,6 +1783,16 @@ public final class EidePanel: NSView {
             thanhHoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             thanhHoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),
             thanhHoiThoai.bottomAnchor.constraint(equalTo: hoiThoai.topAnchor, constant: -2),
+
+            vachDock.leadingAnchor.constraint(equalTo: leadingAnchor),
+            vachDock.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor),
+            vachDock.bottomAnchor.constraint(equalTo: thanhHoiThoai.topAnchor, constant: -4),
+            vachDock.heightAnchor.constraint(equalToConstant: 1),
+
+            nenLamViec.topAnchor.constraint(equalTo: daiCu.bottomAnchor, constant: 4),
+            nenLamViec.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
+            nenLamViec.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -4),
+            nenLamViec.bottomAnchor.constraint(equalTo: vachDock.topAnchor, constant: -4),
 
             hoiThoai.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
             hoiThoai.trailingAnchor.constraint(equalTo: vungPhai.leadingAnchor, constant: -g),

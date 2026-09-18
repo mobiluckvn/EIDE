@@ -236,7 +236,14 @@ public final class ChatView: NSView {
     public var onGui: ((String) -> Void)?
 
     private let cuon = NSScrollView()
-    private let van = NSTextView()
+    /// Cột bong bóng — mỗi lượt một khung nhìn, thay cho khối văn bản nối chuỗi cũ.
+    ///
+    /// Đổi 18/09/2026 theo bản demo UX v2.0. Khối văn bản đọc được, nhưng nó bắt người phải LÀM
+    /// VIỆC để biết ai đang nói: đọc tiền tố ở đầu dòng, rồi dò xem câu kết thúc ở đâu khi nó
+    /// dài ba dòng. Bong bóng trả lời câu ấy bằng VỊ TRÍ và MÀU, trước khi đọc chữ đầu tiên.
+    private let cocLuot = NSStackView()
+    /// Các lượt đã hiện — giữ để `soLuotDeTest` đếm mà không phải phân tích chuỗi.
+    private var luot: [EideBongBong] = []
     /// Ô lệnh có gợi ý "/" (U1). Công khai để panel nạp danh sách năng lực vào.
     public let oLenh = CommandBox()
     /// Chỗ đặt thẻ tương tác (câu hỏi gộp U3, báo cáo, tiến độ). Nằm GIỮA bản ghi hội thoại và
@@ -249,13 +256,23 @@ public final class ChatView: NSView {
 
     public init() {
         super.init(frame: .zero)
-        van.isEditable = false
-        van.drawsBackground = true
-        van.backgroundColor = EideToken.Mau.surface
-        van.textContainerInset = NSSize(width: EideToken.space[2], height: EideToken.space[1])
-        cuon.documentView = van
+        cocLuot.orientation = .vertical
+        cocLuot.alignment = .leading
+        cocLuot.spacing = 5
+        cocLuot.edgeInsets = NSEdgeInsets(top: 2, left: 0, bottom: 2, right: 0)
+        cocLuot.translatesAutoresizingMaskIntoConstraints = false
+        // `contentView` LẬT và đặt TRƯỚC `documentView` — lượt mới ở DƯỚI, và mở ra phải thấy
+        // phần đầu chứ không phải phần cuối (DEV-115(d), DEV-116).
+        cuon.contentView = KhungLat()
+        cuon.documentView = cocLuot
         cuon.hasVerticalScroller = true
-        cuon.borderType = .lineBorder
+        cuon.drawsBackground = false
+        cuon.borderType = .noBorder
+        NSLayoutConstraint.activate([
+            cocLuot.leadingAnchor.constraint(equalTo: cuon.contentView.leadingAnchor),
+            cocLuot.trailingAnchor.constraint(equalTo: cuon.contentView.trailingAnchor),
+            cocLuot.topAnchor.constraint(equalTo: cuon.contentView.topAnchor),
+        ])
 
         oLenh.onGui = { [weak self] t in self?.onGui?(t) }
 
@@ -289,6 +306,14 @@ public final class ChatView: NSView {
             cuon.topAnchor.constraint(equalTo: topAnchor),
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
+            // SÀN cho vùng bản ghi.
+            //
+            // Trước 18/09 chiều cao vùng này đến từ kích thước nội tại của `NSTextView`. Bong
+            // bóng nằm trong một `NSScrollView`, mà scroll view KHÔNG có kích thước nội tại —
+            // nên vùng bản ghi co về 0 và toàn bộ hội thoại biến mất, chỉ còn thẻ và ô gõ. Đo
+            // được ngay trên ảnh bước 11: dưới nhãn "VÙNG TRAO ĐỔI" là thẻ Run, không một lượt
+            // nào. Một vùng trao đổi không hiện lượt trao đổi nào thì không còn là vùng trao đổi.
+            cuon.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
             cuonThe.topAnchor.constraint(equalTo: cuon.bottomAnchor, constant: s),
             cuonThe.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuonThe.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -361,31 +386,42 @@ public final class ChatView: NSView {
     /// Hội thoại là một `NSTextView` nối chuỗi, không phải danh sách khung nhìn, nên đếm phải
     /// đọc văn bản. Dùng cho vòng chạy qua giao diện: câu hỏi "gõ xong tác tử có trả lời không"
     /// chỉ trả lời được bằng cách đếm lượt.
-    public var soLuotDeTest: Int {
-        (van.string as NSString).components(separatedBy: "\n")
-            .filter { d in ["Anh: ", "EIDE: ", "Chờ anh: ", "Lỗi: ", "·: "]
-                .contains { d.hasPrefix($0) } }
-            .count
-    }
+    public var soLuotDeTest: Int { luot.count }
+
+    /// Toàn bộ chữ trong hội thoại — cho bài kiểm tìm một câu đã nói.
+    public var chuDeTest: String { luot.map { "\($0.ai.nhan): \($0.van)" }.joined(separator: "\n") }
 
     public func themLuot(by ai: Ai, text: String) {
-        let (nhan, mau): (String, NSColor) = {
+        let b = EideBongBong(ai: {
             switch ai {
-            case .nguoi:   return ("Anh", EideToken.Mau.text)
-            case .tacTu:   return ("EIDE", EideToken.Mau.secondary)
-            case .cho:     return ("Chờ anh", EideToken.Mau.warn)      // U2: việc cần người
-            case .loi:     return ("Lỗi", EideToken.Mau.bad)
-            case .heThong: return ("·", EideToken.Mau.muted)
+            case .nguoi: return .nguoi
+            case .tacTu: return .tacTu
+            case .cho: return .cho
+            case .loi: return .loi
+            case .heThong: return .heThong
             }
-        }()
-        let d = NSMutableAttributedString(
-            string: "\(nhan): ",
-            attributes: [.font: NSFont.boldSystemFont(ofSize: 13), .foregroundColor: mau])
-        d.append(NSAttributedString(
-            string: text + "\n",
-            attributes: [.font: EideToken.fontUI, .foregroundColor: EideToken.Mau.text]))
-        van.textStorage?.append(d)
-        van.scrollToEndOfDocument(nil)
+        }(), van: text)
+        luot.append(b)
+
+        // Bong bóng rộng TỐI ĐA 78%, và neo trái hay phải tuỳ người nói. Một hàng bọc ngoài lo
+        // việc ấy: stack dọc căn `.leading` cho mọi con, nên tự nó không đẩy được bong bóng của
+        // người sang phải.
+        let hang = NSStackView(views: ai == .nguoi ? [NSView(), b] : [b, NSView()])
+        hang.orientation = .horizontal
+        hang.spacing = 0
+        hang.translatesAutoresizingMaskIntoConstraints = false
+        cocLuot.addArrangedSubview(hang)
+        NSLayoutConstraint.activate([
+            hang.widthAnchor.constraint(equalTo: cocLuot.widthAnchor),
+            b.widthAnchor.constraint(lessThanOrEqualTo: cocLuot.widthAnchor, multiplier: 0.78),
+        ])
+        // Cuộn xuống lượt mới nhất — thứ người vừa gõ phải nhìn thấy ngay.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.cuon.contentView.scroll(to: NSPoint(
+                x: 0, y: max(0, self.cocLuot.frame.height - self.cuon.contentSize.height)))
+            self.cuon.reflectScrolledClipView(self.cuon.contentView)
+        }
     }
 }
 
