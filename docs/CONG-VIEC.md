@@ -248,7 +248,58 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 13/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+## Điểm dừng phiên 18/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+
+*Cây làm việc SẠCH, 4 commit trong ngày. **1628 test Python · 3116 Swift gói cũ · 29 Swift gói
+mới** đều xanh. `check-spec`: 242 năng lực. `apps/eide --tu-kiem`: **22/22** trên một dự án tạm
+rồi tự xoá.*
+
+### Đang làm gì: viết lại giao diện trong `apps/eide/`
+
+Chủ sản phẩm quyết ngày 18/09 ([DEV-131](DEVIATIONS.md)): giao diện dựng lại từ đầu trong một
+gói Swift RIÊNG, chỉ tham khảo mã cũ. `apps/geditor` giữ nguyên làm bản chạy được cho tới khi
+gói mới phủ đủ 25 màn. Hai bộ sinh (token màu, hợp đồng JSON-RPC) nay ghi cho CẢ HAI gói.
+
+**Đã xong trong gói mới:** khung năm vùng (ràng buộc tường minh, không stack lồng nhau) · màn
+chào §3.1 · `EidePhien` nối daemon (lớp DUY NHẤT hai bên biết nhau) · nhịp tim + dải "Dữ liệu
+cũ" · cột phải ba khối bấm được · thẻ Run có thanh tiến độ chia đoạn · bảng lệnh ⌘K qua thanh
+menu thật · **3/25 màn** đọc dữ liệu thật (S1 Tổng quan, S2 Nhật ký, S25 Chính sách).
+
+**Làm tiếp — theo mục 8 của UXC-31, thứ tự đề xuất:**
+
+1. **Nhóm TRI THỨC** (S5 Hộ chiếu chip, S8 Xung đột tri thức, S4 Nhập tài liệu, S7 Bản đồ tri
+   thức). Ưu tiên vì đây là chỗ luận điểm trung tâm của đề án hiện ra: mọi hằng số phần cứng
+   truy về một fact đã duyệt. `passport.query`/`passport.browse`, `kg.conflicts`, `view.kg_map`
+   đều đã có alias JSON-RPC sẵn.
+2. **S14 Trình soạn thảo** — nặng nhất và chưa bắt đầu: cần `code.human_save`, hai băng cảnh báo
+   (§5.3, §5.6), và ⌘S đi qua Router. Gói cũ đã làm, đọc `apps/geditor/Sources/EIDEKit/EideCodeViews.swift` trước khi viết.
+3. **S12 Kế hoạch / S15 Diff & cổng merge** — cần thẻ diff và cổng G-FACT.
+4. Ô lệnh gửi `chat.send` THẬT (hôm nay chỉ gửi chuỗi và hiện `run_id`; chưa nối `chat.answer`
+   cho câu hỏi gộp).
+
+**Ba thứ CHƯA nối trong gói mới, đừng tưởng là xong:** `chat.answer` (trả lời câu hỏi gộp) ·
+phím tắt ngoài ⌘K/⌘⇧. · bộ chuyển dự án ở thanh trên (nút có, menu chưa có).
+
+**Cách đo, chạy trước khi tin bất cứ điều gì:**
+
+```bash
+cd apps/eide && swift test                 # 29 bài bố cục + logic
+.build/debug/EideApp --tu-kiem             # 22 phép đo trên CỬA SỔ THẬT, dự án tạm
+.build/debug/EideApp --chup /tmp/anh       # 7 ảnh: màn chào, khung, 3 màn, thẻ Run, bảng lệnh
+```
+
+`--tu-kiem` in cả CỠ CỬA SỔ và thời gian mở từng màn. Hai con số ấy bắt được lớp lỗi mà không
+phép kiểm nội dung nào thấy — xem lỗi im lặng 83, 84, 89 trong [TIEN-DO.md](TIEN-DO.md) §6.
+
+### Hai mục chờ chủ sản phẩm
+
+- **[DEV-131]** — ghi nhận `apps/eide/` là bề mặt giao diện đích trong UXD-13/UXC-31.
+- **[DEV-132]** — `view.timeline` nhận thêm `limit`/`total`; `range.days` nay chạy thật (nó nằm
+  trong ví dụ của chính hợp đồng mà chưa bao giờ có mã đọc tới).
+
+---
+
+## Điểm dừng phiên 13/09/2026 (lịch sử)
 
 *Cây làm việc SẠCH. `make check`: **1503 test Python + 2699 test Swift** xanh. DEVIATIONS **9
 Mở** — 7 nợ hiện thực, **2 chờ chủ sản phẩm** ([DEV-088] SEC-25 §2/§3, [DEV-089] trường
