@@ -13,7 +13,7 @@
 ## 1. Một dòng
 
 **220/242 năng lực (91%). M0 22/22; M1 75/76; M2 92/102; M3 22/29; M4 8/9; M5 1/4. 1628 test
-Python + 3116 test Swift ở gói cũ và 24 ở gói giao diện mới, đều xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel cũ: **26** màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt. Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7. Một `--vong-giao-dien` đi 17 bước của một vòng làm việc thật QUA GIAO DIỆN: 17/17, ghi nhật ký và một ảnh mỗi bước. Gói giao diện MỚI (`apps/eide/`) nay nối daemon thật và có ba màn đọc dữ liệu thật: `--tu-kiem` 20/20.**
+Python + 3116 test Swift ở gói cũ và 29 ở gói giao diện mới, đều xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel cũ: **26** màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt. Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7. Một `--vong-giao-dien` đi 17 bước của một vòng làm việc thật QUA GIAO DIỆN: 17/17, ghi nhật ký và một ảnh mỗi bước. Gói giao diện MỚI (`apps/eide/`) nay nối daemon thật và có ba màn đọc dữ liệu thật: `--tu-kiem` 22/22.**
 
 **Ngày 18/09: giao diện được VIẾT LẠI trong một kho mã riêng (`apps/eide/`), và chỗ nối nó với
 lõi mở ra ba mươi hai lỗi im lặng (59–90).** Quyết định đập đi làm lại là của chủ sản phẩm sau

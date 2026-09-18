@@ -25,6 +25,7 @@ final class UngDung: NSObject, NSApplicationDelegate {
         cuaSo.center()
 
         phien = EidePhien(khung: khung)
+        _dungMenu()
 
         // `--chup <thư-mục>`: dựng cửa sổ, chụp, thoát. Để so ảnh với bản demo mà không cần
         // người ngồi trước máy.
@@ -87,6 +88,11 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     try? await Task.sleep(nanoseconds: 500_000_000)
                     self.khung.layoutSubtreeIfNeeded()
                     self._chup(thuMuc.appendingPathComponent("the-run.png"))
+
+                    self.khung.bangLenh.mo()
+                    _ = self.khung.bangLenh.locDeTest("ho chieu")
+                    self.khung.layoutSubtreeIfNeeded()
+                    self._chup(thuMuc.appendingPathComponent("bang-lenh.png"))
                     exit(0)
                 }
             }
@@ -192,6 +198,14 @@ final class UngDung: NSObject, NSApplicationDelegate {
         do_("12. lời gọi năng lực ĐƠN LẺ không sinh thẻ Run",
             !_chuTrong(khung.dock).contains("đang lập kế hoạch"))
 
+        khung.bangLenh.mo()
+        let kq = khung.bangLenh.locDeTest("ho chieu")
+        do_("13. bảng lệnh nạp cả màn lẫn năng lực từ registry",
+            khung.bangLenh.soMuc > 200, "(\(khung.bangLenh.soMuc) mục)")
+        do_("14. gõ KHÔNG DẤU vẫn ra màn Hộ chiếu chip",
+            kq.contains { $0.ma == "Passport" }, "(\(kq.count) kết quả)")
+        khung.bangLenh.dong()
+
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()
         do_("9. dải Dữ liệu cũ nói rõ trễ bao lâu", khung.chuDaiCu.contains("9 giây"),
@@ -204,6 +218,38 @@ final class UngDung: NSObject, NSApplicationDelegate {
 
     /// In cỡ cửa sổ sau mỗi bước. Cửa sổ phình ra là lỗi ÂM THẦM: ảnh vẫn đẹp, mọi vùng vẫn
     /// đúng tỉ lệ, chỉ là người dùng thấy một cửa sổ tự lớn lên và không co lại.
+    /// Menu thật, không phải bộ bắt phím.
+    ///
+    /// `NSEvent.addLocalMonitorForEvents` cũng bắt được ⌘K và ngắn hơn ba lần, nhưng phím tắt ấy
+    /// sẽ KHÔNG xuất hiện ở đâu cả: thanh menu là chỗ duy nhất trên macOS mà người dùng tra được
+    /// một ứng dụng có những lệnh gì. Thanh trên đã quảng cáo "⌘K · bảng lệnh"; quảng cáo một
+    /// phím tắt rồi giấu nó khỏi menu là nửa vời.
+    private func _dungMenu() {
+        let goc = NSMenu()
+
+        let ungDung = NSMenuItem()
+        ungDung.submenu = NSMenu(title: "EIDE")
+        ungDung.submenu?.addItem(withTitle: "Thoát EIDE", action: #selector(NSApplication.terminate(_:)),
+                                 keyEquivalent: "q")
+        goc.addItem(ungDung)
+
+        let lenh = NSMenuItem()
+        lenh.submenu = NSMenu(title: "Lệnh")
+        let k = NSMenuItem(title: "Bảng lệnh…", action: #selector(_moBangLenh), keyEquivalent: "k")
+        k.target = self
+        lenh.submenu?.addItem(k)
+        let dung = NSMenuItem(title: "Dừng khẩn", action: #selector(_dungKhan), keyEquivalent: ".")
+        dung.keyEquivalentModifierMask = [.command, .shift]
+        dung.target = self
+        lenh.submenu?.addItem(dung)
+        goc.addItem(lenh)
+
+        NSApp.mainMenu = goc
+    }
+
+    @objc private func _moBangLenh() { khung.bangLenh.mo() }
+    @objc private func _dungKhan() { Task { await phien.dungKhan() } }
+
     private func _co(_ nhan: String) {
         print(String(format: "  [cỡ] %-16@ %.0f × %.0f", nhan as NSString,
                      khung.frame.width, khung.frame.height))

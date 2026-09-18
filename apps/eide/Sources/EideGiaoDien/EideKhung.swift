@@ -50,6 +50,9 @@ public final class EideKhung: NSView {
     /// Màn hình chào — chiếm TOÀN cửa sổ khi chưa có dự án (§3.1).
     public let manChao = EideManChao()
 
+    /// Bảng lệnh ⌘K — lớp phủ, đứng TRÊN cả màn chào.
+    public let bangLenh = EideBangLenh()
+
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         dung()
@@ -78,7 +81,7 @@ public final class EideKhung: NSView {
         daiCu.isHidden = true
 
         for v in [thanhTren, vienDo, cotTrai, thanhTab, daiCu, vungLamViec,
-                  vachDock, dock, cotPhai, manChao] as [NSView] {
+                  vachDock, dock, cotPhai, manChao, bangLenh] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -124,6 +127,12 @@ public final class EideKhung: NSView {
             manChao.leadingAnchor.constraint(equalTo: leadingAnchor),
             manChao.trailingAnchor.constraint(equalTo: trailingAnchor),
             manChao.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // ── bảng lệnh: phủ TOÀN cửa sổ, thêm sau cùng nên nằm trên
+            bangLenh.topAnchor.constraint(equalTo: topAnchor),
+            bangLenh.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bangLenh.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bangLenh.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             // ── cột giữa, hàng 2: VÙNG LÀM VIỆC — vùng giãn
             vungLamViec.topAnchor.constraint(equalTo: daiCu.bottomAnchor),

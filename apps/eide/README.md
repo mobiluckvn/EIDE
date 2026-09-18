@@ -148,3 +148,24 @@ ghi "Dừng" sẽ đọc như "dừng việc này thôi".
    `--tu-kiem` nay đo bề rộng cửa sổ như một phép kiểm riêng.
 2. **Mỗi lời gọi năng lực đơn lẻ sinh một thẻ Run.** `event.run.progress` gánh hai khái niệm —
    vòng đời của một CHUỖI và của một LỜI GỌI. Cả `plane.hello` của nhịp tim cũng có thẻ riêng.
+
+## Bảng lệnh ⌘K — `EideBangLenh` (18/09)
+
+Lớp phủ 560×320 giữa-trên màn, đúng bản demo. Ba điều UXC-31 §4 đòi, và cả ba là lý do nó không
+phải một menu gợi ý trong ô lệnh:
+
+1. Tìm theo **mô tả**, không chỉ theo tên — người nhớ "cái tra thanh ghi", không nhớ
+   `passport.query`.
+2. Tìm được cả **màn**, không chỉ năng lực — nửa số thứ người ta muốn mở là một màn hình.
+3. **Bỏ dấu**: "ho chieu" ra "Hộ chiếu chip". Riêng `đ` phải thay tay — nó là một chữ cái riêng
+   trong bảng chữ cái, không phải `d` có dấu, nên `folding` không đụng tới nó.
+
+Đo trên cửa sổ thật: 245 mục nạp từ registry, gõ "ho chieu" ra 18 kết quả, màn lên trước.
+
+Phím tắt đi qua **thanh menu thật**, không qua bộ bắt sự kiện: thanh menu là chỗ duy nhất trên
+macOS mà người dùng tra được một ứng dụng có những lệnh gì, và thanh trên đã quảng cáo
+"⌘K · bảng lệnh" từ đầu.
+
+Gọi một năng lực từ bảng lệnh **không đoán tham số**. Năng lực cần tham số thì lời gọi dừng ở
+cổng hoặc trả E1000, và câu trả lời ấy được nói nguyên văn ra vùng trao đổi — tự điền một giá
+trị "hợp lý" cho một năng lực có thể ghi tệp hoặc nạp firmware là cách nhanh nhất để mất lòng tin.

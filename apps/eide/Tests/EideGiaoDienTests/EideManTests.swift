@@ -151,3 +151,61 @@ final class EideTheRunTests: XCTestCase {
         return ra
     }
 }
+
+/// Bảng lệnh ⌘K — ba điều UXC-31 §4 đòi, mỗi điều một phép đo.
+@MainActor
+final class EideBangLenhTests: XCTestCase {
+
+    private func _bang() -> EideBangLenh {
+        let b = EideBangLenh(frame: NSRect(x: 0, y: 0, width: 1456, height: 838))
+        b.datNguon(nangLuc: [
+            ("passport.query", "Tra thanh ghi/bit từ hộ chiếu chip"),
+            ("sim.run", "Chạy firmware trên bộ mô phỏng"),
+            ("code.build", "Dựng firmware"),
+        ])
+        return b
+    }
+
+    /// Gõ KHÔNG DẤU vẫn ra. Bắt gõ đủ dấu trong một ô tìm-nhanh là biến phím tắt thành một bài
+    /// kiểm tra chính tả.
+    func testTimKhongDau() {
+        let ds = _bang().locDeTest("ho chieu")
+        XCTAssertTrue(ds.contains { $0.ma == "Passport" }, "không tìm ra màn Hộ chiếu chip")
+        XCTAssertTrue(ds.contains { $0.ma == "passport.query" }, "không tìm ra qua MÔ TẢ")
+    }
+
+    /// `đ` không rụng dấu qua `folding` — nó là một chữ cái riêng, không phải `d` có dấu.
+    func testChuDCoGachKhongLotLuoi() {
+        XCTAssertEqual(EideBangLenh.bo("Đồng bộ"), "dong bo")
+        XCTAssertEqual(EideBangLenh.bo("Hộ chiếu"), "ho chieu")
+    }
+
+    /// Tìm được MÀN, không chỉ năng lực — nửa số thứ người ta muốn mở là một màn hình.
+    func testManLenTruocKhiDiemBangNhau() {
+        let ds = _bang().locDeTest("mo phong")
+        XCTAssertEqual(ds.first?.ma, "Sim")
+        XCTAssertTrue(ds.first?.laMan == true)
+    }
+
+    /// Ô trống thì hiện 25 màn, không hiện 242 năng lực: mở bảng lệnh mà chưa gõ gì là đang tìm
+    /// một NƠI để đến.
+    func testORongThiHienMan() {
+        let ds = _bang().locDeTest("")
+        XCTAssertEqual(ds.count, EideManHinhDS.tatCa.count)
+        XCTAssertTrue(ds.allSatisfy(\.laMan))
+    }
+
+    func testKhongKhopThiNoiCachTimKhac() {
+        let b = _bang()
+        b.locDeTest("xyzzy-khong-co-that")
+        let van = _chuTrong(b)
+        XCTAssertTrue(van.contains("Không có mục nào khớp"), van)
+        XCTAssertTrue(van.contains("mô tả"), van)
+    }
+
+    private func _chuTrong(_ v: NSView) -> String {
+        var ra = (v as? NSTextField)?.stringValue ?? ""
+        for c in v.subviews { ra += "\n" + _chuTrong(c) }
+        return ra
+    }
+}

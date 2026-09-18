@@ -159,6 +159,7 @@ public final class EidePhien {
             manCua[id] = c["ui"] as? String ?? ""
             motaCua[id] = c["desc"] as? String ?? ""
         }
+        khung.bangLenh.datNguon(nangLuc: motaCua.keys.sorted().map { ($0, motaCua[$0] ?? "") })
     }
 
     /// Năng lực đứng sau một màn — đảo bảng `cap → màn`, không giữ bảng thứ hai.
@@ -185,6 +186,11 @@ public final class EidePhien {
         }
         khung.dock.onGui = { [weak self] van in
             Task { await self?._gui(van) }
+        }
+        khung.thanhTren.onBangLenh = { [weak self] in self?.khung.bangLenh.mo() }
+        khung.bangLenh.onChonMan = { [weak self] tien in self?.moMan(tien, boiTacTu: false) }
+        khung.bangLenh.onChonNangLuc = { [weak self] id in
+            Task { await self?.goiNangLuc(id) }
         }
         khung.thanhTren.onDungKhan = { [weak self] in
             Task { await self?._dungKhan() }
@@ -364,6 +370,34 @@ public final class EidePhien {
         if the.trangThai == .chan || the.trangThai == .xong || the.trangThai == .huy {
             Task { await _lamMoi() }
         }
+    }
+
+    /// Gọi một năng lực từ bảng lệnh.
+    ///
+    /// KHÔNG đoán tham số. Năng lực nào cần tham số thì lời gọi dừng ở cổng hoặc trả E1000, và
+    /// câu trả lời ấy được nói nguyên văn ra vùng trao đổi — tự điền một giá trị "hợp lý" cho
+    /// một năng lực có thể ghi tệp hoặc nạp firmware là cách nhanh nhất để mất lòng tin.
+    public func goiNangLuc(_ id: String) async {
+        guard let d = daemon else {
+            return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
+        }
+        khung.dock.themLuot(.nguoi, "/\(id)")
+        do {
+            let r = try EideKetQua.boc(
+                try await d.goi("caps.invoke", ["id": id, "params": [:]]), id)
+            let khoa = r.keys.sorted().prefix(4).joined(separator: ", ")
+            khung.dock.themLuot(.tacTu, "`\(id)` xong"
+                                + (khoa.isEmpty ? "." : " — trả về: \(khoa)."))
+            if let man = manCua[id],
+               let tien = EideManHinhDS.tatCa.first(where: { man.hasPrefix($0.tien) })?.tien {
+                moMan(tien, boiTacTu: true)
+            }
+        } catch let e as EideKetQua.Loi {
+            khung.dock.themLuot(.cho, "\(e)")
+        } catch {
+            khung.dock.themLuot(.loi, "\(error)")
+        }
+        await _lamMoi()
     }
 
     private func _dungKhan() async {
