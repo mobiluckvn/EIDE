@@ -1010,6 +1010,17 @@ final class MainWindowController: NSWindowController {
     /// Bản cũ nhận `hang: Int` và tra `EideWindowController.manTrenSidebar[hang]`. Chỉ số hàng
     /// là thứ đổi mỗi lần thêm một màn hoặc một tiêu đề nhóm — và khi nó đổi, cú bấm vào "Mô
     /// phỏng" mở ra "Dò board" mà không ai báo gì. Tên màn thì không đổi.
+    /// Mở bảng lệnh — bài kiểm N9 gọi qua đây.
+    func eideMoBangLenh() -> (tong: Int, khongDau: Int) {
+        guard let p = eidePanel else { return (0, 0) }
+        p.moBangLenh()
+        let tong = p.bangLenh.soHien
+        p.bangLenh.locDeTest("ho chieu")
+        let n = p.bangLenh.soHien
+        p.bangLenh.dongLai()
+        return (tong, n)
+    }
+
     /// Panel có đang báo "Dữ liệu cũ" không — bài kiểm B6/N6 đọc qua đây.
     var eideDangBaoDuLieuCu: Bool { eidePanel?.dangBaoDuLieuCu ?? false }
 

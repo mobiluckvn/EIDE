@@ -185,6 +185,8 @@ public final class EidePanel: NSView {
     private let thanhMan = NSStackView()
     /// Thanh tab của vùng làm việc — UXC-31 §2C.1.
     public let thanhTab = EideThanhTab()
+    /// Bảng lệnh ⌘K — UXC-31 §4.
+    public let bangLenh = EideBangLenh()
     /// Thanh nhỏ trên vùng trao đổi: nhãn + ba nút đổi chiều cao (UXC-31 §2D.3).
     private let thanhHoiThoai = NSStackView()
     /// Năng lực đứng sau màn đang mở — hiện cạnh tên màn (UXC-31 §2C.4).
@@ -278,6 +280,8 @@ public final class EidePanel: NSView {
 
     /// id năng lực → tên màn hình, lấy từ `caps.list` (daemon suy từ bảng UXD-13 §2).
     private var manHinhCua: [String: String] = [:]
+    /// id năng lực → mô tả, cho bảng lệnh tìm theo mô tả (UXC-31 §4.2).
+    private var motaNangLuc: [String: String] = [:]
 
     /// Giữ thẻ đã xong trên màn bấy nhiêu giây trước khi gỡ.
     ///
@@ -1515,6 +1519,19 @@ public final class EidePanel: NSView {
         bangMan.first { ten.hasPrefix($0.tien) }?.tien ?? ten
     }
 
+    /// Mở bảng lệnh và nạp nguồn: MỌI năng lực trong registry + MỌI màn (§4.2).
+    @MainActor
+    public func moBangLenh() {
+        var ds: [EideBangLenh.Muc] = manHinhCua.keys.sorted().map {
+            .init(id: $0, mota: motaNangLuc[$0] ?? "", laMan: false)
+        }
+        ds += EideDieuHuong.NHOM.flatMap(\.man).map {
+            .init(id: $0.tien, mota: "màn hình — \($0.nhan)", laMan: true)
+        }
+        bangLenh.nap(ds)
+        bangLenh.moRa()
+    }
+
     /// Nhãn tiếng Việt của một màn, tra từ bảng điều hướng.
     ///
     /// MỘT nguồn cho tên tab. Hai đường mở màn truyền hai loại tên — đường gõ `/ns.name` truyền
@@ -1699,6 +1716,21 @@ public final class EidePanel: NSView {
         thanhTab.translatesAutoresizingMaskIntoConstraints = false
         addSubview(thanhTab)
 
+        bangLenh.isHidden = true
+        bangLenh.translatesAutoresizingMaskIntoConstraints = false
+        bangLenh.onChon = { [weak self] id, laMan in
+            guard let self else { return }
+            self.nguoiVuaChonMan()
+            if laMan {
+                _ = self._moTheoTenMan(id, thamSo: "")
+            } else {
+                // Năng lực đi qua ĐÚNG đường mọi lời gọi khác đi (B2): không lối tắt cho bảng
+                // lệnh. Dùng lại `chayNhuNguoiDung` để cả phần hiện kết quả cũng giống hệt.
+                _ = self.chayNhuNguoiDung(id, [:])
+            }
+        }
+        addSubview(bangLenh)
+
         vungPhai.dangChay.onChon = { [weak self] ma in
             guard let self else { return }
             self.nguoiVuaChonMan()
@@ -1739,6 +1771,12 @@ public final class EidePanel: NSView {
 
             thanhMan.topAnchor.constraint(equalTo: thanhTuChu.bottomAnchor, constant: g),
             thanhMan.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
+
+            // Bảng lệnh: lớp phủ GIỮA-TRÊN màn (§4.1), rộng 560 pt như bản demo.
+            bangLenh.topAnchor.constraint(equalTo: topAnchor, constant: 70),
+            bangLenh.centerXAnchor.constraint(equalTo: centerXAnchor),
+            bangLenh.widthAnchor.constraint(equalToConstant: 560),
+            bangLenh.heightAnchor.constraint(equalToConstant: 320),
 
             thanhTab.topAnchor.constraint(equalTo: thanhMan.bottomAnchor, constant: 2),
             thanhTab.leadingAnchor.constraint(equalTo: leadingAnchor, constant: g),
@@ -2103,8 +2141,13 @@ public final class EidePanel: NSView {
                                       mota: "màn hình (không phải năng lực)",
                                       manHinh: $0) }
 
+        // Giữ lại MÔ TẢ, không chỉ tên. §4.2 đòi bảng lệnh tìm theo cả mô tả: người dùng nhớ
+        // "cái tra thanh ghi" chứ không nhớ `passport.query`, và một ô tìm chỉ khớp tên là một
+        // ô tìm chỉ dùng được cho người đã thuộc bảng 242 năng lực.
+        let mota = Dictionary(ds.map { ($0.id, $0.mota) }, uniquingKeysWith: { a, _ in a })
         await MainActor.run {
             self.manHinhCua = bang
+            self.motaNangLuc = mota
             self.hoiThoai.oLenh.napNangLuc(ds + themMan)
             self._dienNangLucPhu()
         }
@@ -2288,9 +2331,7 @@ public final class EidePanel: NSView {
             hoiThoai.oLenh.vaoO()
             return true
         case (true, false, "k"):
-            // "Bảng lệnh: tìm năng lực/màn hình" — chính là menu "/" của ô lệnh, nên ⌘K điền
-            // sẵn dấu gạch chéo thay vì dựng một bảng thứ hai làm cùng một việc.
-            hoiThoai.oLenh.dienSan("/")
+            moBangLenh()
             return true
         case (true, true, "q"), (true, true, "Q"):
             dongMan()

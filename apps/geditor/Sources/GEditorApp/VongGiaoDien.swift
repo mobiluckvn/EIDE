@@ -334,6 +334,16 @@ enum VongGiaoDien {
             return kiemKe(c)
         },
 
+        Buoc(ten: "BẢNG LỆNH ⌘K: tìm được năng lực bằng chữ KHÔNG DẤU") { c in
+            let (tong, n) = c.eideMoBangLenh()
+            guard tong > 200 else {
+                return "HỎNG: bảng lệnh chỉ thấy \(tong) mục — phải thấy cả registry lẫn màn"
+            }
+            return n > 0
+                ? "✅ \(tong) mục · gõ \"ho chieu\" (không dấu) ra \(n) kết quả"
+                : "HỎNG: gõ không dấu không ra kết quả nào"
+        },
+
         // ĐẶT CUỐI vì nó phá hỏng daemon: mọi bước sau đây sẽ không có gì để nói.
         //
         // Bài kiểm B6/N6 của UXC-31, và là bài kiểm PHỦ ĐỊNH duy nhất của vòng này: nó khẳng

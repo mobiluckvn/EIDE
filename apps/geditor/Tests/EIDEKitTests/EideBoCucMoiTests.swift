@@ -460,3 +460,55 @@ final class EideThanhTabTests: XCTestCase {
         XCTAssertEqual(EidePanel.nhanMan("KhongCoMan"), "KhongCoMan", "màn lạ thì trả chính tiền tố")
     }
 }
+
+// MARK: - Bảng lệnh ⌘K (UXC-31 §4)
+
+final class EideBangLenhTests: XCTestCase {
+
+    private func mau() -> EideBangLenh {
+        let b = EideBangLenh()
+        b.nap([
+            .init(id: "passport.query", mota: "Tra fact theo tên thanh ghi hoặc địa chỉ", laMan: false),
+            .init(id: "sim.run", mota: "Chạy firmware trên mô phỏng", laMan: false),
+            .init(id: "Passport", mota: "màn hình — Hộ chiếu chip", laMan: true),
+        ])
+        return b
+    }
+
+    @MainActor
+    func testTIM_theo_MO_TA_chu_khong_chi_theo_TEN() {
+        // §4.2. Người dùng nhớ "cái tra thanh ghi", không nhớ `passport.query`. Một ô tìm chỉ
+        // khớp tên là ô tìm chỉ dùng được cho người đã thuộc bảng 242 năng lực — tức là không
+        // dùng được cho ai cả.
+        let b = mau()
+        XCTAssertEqual(b.soHien, 3)
+        b.locDeTest("thanh ghi")
+        XCTAssertEqual(b.soHien, 1, "tìm theo mô tả không ra kết quả nào")
+    }
+
+    @MainActor
+    func testTIM_KHONG_DAU() {
+        // Người Việt gõ nhanh thường bỏ dấu. Bắt gõ đủ dấu trong một ô tìm-nhanh là biến phím
+        // tắt thành một bài kiểm tra chính tả.
+        let b = mau()
+        b.locDeTest("ho chieu")
+        XCTAssertEqual(b.soHien, 1, "\"ho chieu\" phải ra \"Hộ chiếu chip\"")
+        b.locDeTest("mo phong")
+        XCTAssertEqual(b.soHien, 1, "\"mo phong\" phải ra \"mô phỏng\"")
+    }
+
+    @MainActor
+    func testKHONG_KHOP_thi_NOI_cach_tim_khac() {
+        // B5: trạng thái rỗng gồm lý do và bước kế tiếp. "Không có kết quả" một mình để người
+        // dùng đứng im, không biết nên gõ khác đi thế nào.
+        let b = mau()
+        b.locDeTest("zzzz-khong-co-gi")
+        XCTAssertEqual(b.soHien, 0)
+        XCTAssertTrue(b.demDeTest.contains("thử một từ trong mô tả"), b.demDeTest)
+    }
+
+    func testKHONG_DAU_giu_nguyen_chu_khong_dau() {
+        XCTAssertEqual(EideBangLenh.khongDau("Hộ chiếu CHIP"), "ho chieu chip")
+        XCTAssertEqual(EideBangLenh.khongDau("passport.query"), "passport.query")
+    }
+}
