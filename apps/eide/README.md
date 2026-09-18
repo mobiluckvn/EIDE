@@ -128,3 +128,23 @@ thái rỗng hai phần (lý do + bước kế tiếp), và bóc vỏ `Capabilit
 
 Và một phép đo mới: `--tu-kiem` nay tính cả THỜI GIAN mở mỗi màn, không chỉ nội dung. Một màn
 trắng hơn hai giây là một màn người dùng cho là hỏng, mà không phép kiểm nội dung nào bắt được.
+
+## Thẻ Run — `EideTheRun` (18/09)
+
+MỘT thẻ cho MỘT lượt chạy, dù lượt ấy mười sáu bước: tiêu đề là CÂU NGƯỜI GÕ, thanh tiến độ chia
+đoạn (xanh lá = xong, xanh dương = đang chạy, vàng = đang chờ người), dòng trạng thái, và hai
+nút "Mở chi tiết" / "Dừng khẩn". Thẻ không hỏi lõi — nó nhận `event.run.progress` và tự cập nhật.
+
+Nút ghi **"Dừng khẩn"** chứ không phải "Dừng", vì không có đường huỷ RIÊNG một lượt chạy: một
+chuỗi chuyển sang `cancelled` khi các bước của nó nhận E3002, tức khi cả phiên bị dừng. Một nút
+ghi "Dừng" sẽ đọc như "dừng việc này thôi".
+
+### Hai lỗi im lặng nữa
+
+1. **Một nhãn đòi bề rộng làm phình CẢ CỬA SỔ.** NSWindow coi ràng buộc bắt buộc trong
+   `contentView` là ràng buộc của chính cửa sổ. Dòng phụ của màn Trình soạn thảo nối 16 tên năng
+   lực thành một dòng ~2 000 pt; ngay khi tác tử tự mở màn ấy, cửa sổ nhảy 1456 → 2482 pt và
+   không co lại. **Đây là cơ chế đã làm cửa sổ bản cũ nhích 720 → 818 pt** suốt nhiều ngày.
+   `--tu-kiem` nay đo bề rộng cửa sổ như một phép kiểm riêng.
+2. **Mỗi lời gọi năng lực đơn lẻ sinh một thẻ Run.** `event.run.progress` gánh hai khái niệm —
+   vòng đời của một CHUỖI và của một LỜI GỌI. Cả `plane.hello` của nhịp tim cũng có thẻ riêng.

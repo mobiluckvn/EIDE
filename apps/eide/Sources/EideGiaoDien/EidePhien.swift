@@ -20,6 +20,10 @@ public final class EidePhien {
     private var manCua: [String: String] = [:]
     private var motaCua: [String: String] = [:]
 
+    /// Thẻ Run đang hiện, theo mã lượt chạy. Giữ ở ĐÂY chứ không trong dock: dock là nơi HIỆN
+    /// bong bóng, còn "sự kiện này thuộc lượt chạy nào" là việc của lớp nối.
+    private var theRun: [String: EideTheRun] = [:]
+
     /// Lần cuối nghe được daemon — nền của dải "Dữ liệu cũ" (B6).
     private var lucCuoiNghe = Date()
     private var nhipTim: Timer?
@@ -271,9 +275,19 @@ public final class EidePhien {
         await _lamMoi()
     }
 
+    /// Đường vào cho bài đo — gọi ĐÚNG hàm mà kênh sự kiện thật gọi.
+    ///
+    /// Không có đường nào để một bài kiểm tự sinh ra một lượt chạy thật: `chat.send` đi qua mô
+    /// hình, tức qua mạng và qua tiền. Nên bài đo bơm đúng những bản ghi mà `chat.py` ghi ra, và
+    /// mọi thứ sau điểm bơm — gom theo `run_id`, dựng thẻ, đổi chiều cao dock, làm mới cột phải
+    /// — vẫn là mã thật.
+    public func napSuKien(_ ten: String, _ p: [String: Any]) { _suKien(ten, p) }
+
     private func _suKien(_ ten: String, _ p: [String: Any]) {
         lucCuoiNghe = Date()
-        guard ten == "event.run.progress", let cap = p["cap"] as? String else { return }
+        guard ten == "event.run.progress" else { return }
+        _theoRun(p)
+        guard let cap = p["cap"] as? String else { return }
         // NT2 — tác tử chạm tới đâu, màn ấy tự mở và ĐƯỢC FOCUS.
         guard let man = manCua[cap], !man.isEmpty else { return }
         let tien = EideManHinhDS.tatCa.first { man.hasPrefix($0.tien) }?.tien
@@ -315,6 +329,42 @@ public final class EidePhien {
 
     /// Dừng khẩn. Công khai vì bài tự kiểm phải bấm được đúng cái nút người bấm.
     public func dungKhan() async { await _dungKhan() }
+
+    /// Gom mọi sự kiện của MỘT lượt chạy về MỘT thẻ.
+    ///
+    /// Thẻ dựng LƯỜI: mở ứng dụng giữa một lượt chạy đang dở thì sự kiện đầu tiên nghe được là
+    /// `run.step_started`, không phải `run.started`. Chờ đúng `run.started` mới dựng thẻ nghĩa
+    /// là lượt chạy ấy không bao giờ hiện ra.
+    private func _theoRun(_ p: [String: Any]) {
+        guard let ma = p["run_id"] as? String else { return }
+        // CHỈ lượt chạy nhiều bước. `event.run.progress` gánh hai khái niệm: vòng đời của một
+        // CHUỖI (`run.*`) và vòng đời của MỘT lời gọi năng lực (`cap.run.*`). Không lọc thì mỗi
+        // lời gọi đơn lẻ — kể cả `plane.hello` của nhịp tim — sinh một thẻ Run riêng, và vùng
+        // trao đổi đầy những thẻ một đoạn không tiêu đề. Đo 18/09 bằng ảnh chụp: một dải xanh
+        // chạy hết chiều ngang nằm trên thẻ thật, không chữ nào, không ai đoán được nó là gì.
+        //
+        // Một lời gọi THUỘC một chuỗi thì vẫn nhận: daemon đã đổi `run_id` của nó sang mã chuỗi
+        // và gắn `node_id`, nên nó là một bước chứ không phải một lượt chạy riêng.
+        let loai = (p["kind"] as? String) ?? ""
+        guard loai.hasPrefix("run.") || p["node_id"] != nil else { return }
+        let the: EideTheRun
+        if let co = theRun[ma] {
+            the = co
+        } else {
+            the = EideTheRun(ma: ma, van: (p["text"] as? String) ?? "Lượt chạy \(ma.prefix(8))")
+            the.onChiTiet = { [weak self] _ in self?.moMan("NhatKy", boiTacTu: false) }
+            the.onDung = { [weak self] in Task { await self?.dungKhan() } }
+            theRun[ma] = the
+            khung.dock.themThe(the)
+            // Run mới bắt đầu → dock về mức chuẩn (§2D): đúng lúc ấy có thứ mới để đọc, và một
+            // thẻ Run nằm trong vùng cao 48 pt là thẻ không ai thấy.
+            khung.dock.datCao(.chuan)
+        }
+        the.nhan(p)
+        if the.trangThai == .chan || the.trangThai == .xong || the.trangThai == .huy {
+            Task { await _lamMoi() }
+        }
+    }
 
     private func _dungKhan() async {
         guard let d = daemon else { return }

@@ -61,6 +61,32 @@ final class UngDung: NSObject, NSApplicationDelegate {
                         self.khung.layoutSubtreeIfNeeded()
                         self._chup(thuMuc.appendingPathComponent("man-\(tien).png"))
                     }
+                    // Thẻ Run trên cửa sổ thật. Bơm đúng những bản ghi `chat.py` ghi ra —
+                    // `chat.send` đi qua mô hình, tức qua mạng và qua tiền, nên nó không nằm
+                    // trong một đường chụp ảnh.
+                    self.phien.napSuKien("event.run.progress", [
+                        "kind": "run.started", "run_id": "demo", "n": 7,
+                        "text": "đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART",
+                        "steps": [["id": "n1", "cap": "passport.query"],
+                                  ["id": "n2", "cap": "extract.header_c"],
+                                  ["id": "n3", "cap": "code.write"],
+                                  ["id": "n4", "cap": "code.build"],
+                                  ["id": "n5", "cap": "sim.run"],
+                                  ["id": "n6", "cap": "code.merge"]]])
+                    self.khung.layoutSubtreeIfNeeded(); self._co("sau run.started")
+                    for i in 1...3 {
+                        self.phien.napSuKien("event.run.progress",
+                            ["kind": "run.step_done", "run_id": "demo", "cap": "b\(i)",
+                             "i": i, "of": 6, "status": "done"])
+                    }
+                    self.khung.layoutSubtreeIfNeeded(); self._co("sau 3 step_done")
+                    self.phien.napSuKien("event.run.progress",
+                        ["kind": "run.step_started", "run_id": "demo",
+                         "cap": "code.build", "i": 4, "of": 6])
+                    self.khung.layoutSubtreeIfNeeded(); self._co("sau step_started")
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    self.khung.layoutSubtreeIfNeeded()
+                    self._chup(thuMuc.appendingPathComponent("the-run.png"))
                     exit(0)
                 }
             }
@@ -144,6 +170,28 @@ final class UngDung: NSObject, NSApplicationDelegate {
             sauDung.contains("dừng khẩn") || sauDung.contains("cổng chính sách"),
             "(\(sauDung.split(separator: "\n").filter { $0.contains("vì:") }.joined()))")
 
+        // Thẻ Run, rồi phép đo quan trọng nhất của cả bài: CỬA SỔ KHÔNG ĐƯỢC PHÌNH.
+        // NSWindow coi ràng buộc bắt buộc trong `contentView` là ràng buộc của chính cửa sổ, nên
+        // một nhãn đòi bề rộng ở bất kỳ đâu trong cây khung nhìn đều đẩy cửa sổ rộng ra và nó
+        // không co lại. Cửa sổ bản cũ nhích 720 → 818 pt suốt nhiều ngày vì đúng cơ chế này.
+        phien.napSuKien("event.run.progress", [
+            "kind": "run.started", "run_id": "kiem", "text": String(repeating: "câu lệnh dài ", count: 12),
+            "steps": [["cap": "code.write"], ["cap": "code.build"], ["cap": "sim.run"]]])
+        phien.napSuKien("event.run.progress",
+                        ["kind": "run.step_started", "run_id": "kiem", "cap": "code.build",
+                         "i": 2, "of": 3])
+        khung.layoutSubtreeIfNeeded()
+        do_("10. thẻ Run hiện ra trong vùng trao đổi",
+            _chuTrong(khung.dock).contains("bước 2/3"))
+        do_("11. cửa sổ KHÔNG phình ra vì nội dung", khung.frame.width == 1456,
+            String(format: "(%.0f pt)", khung.frame.width))
+
+        phien.napSuKien("event.run.progress",
+                        ["kind": "cap.run.start", "run_id": "le", "cap": "plane.hello"])
+        khung.layoutSubtreeIfNeeded()
+        do_("12. lời gọi năng lực ĐƠN LẺ không sinh thẻ Run",
+            !_chuTrong(khung.dock).contains("đang lập kế hoạch"))
+
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()
         do_("9. dải Dữ liệu cũ nói rõ trễ bao lâu", khung.chuDaiCu.contains("9 giây"),
@@ -154,7 +202,15 @@ final class UngDung: NSObject, NSApplicationDelegate {
         exit(hong == 0 ? 0 : 1)
     }
 
+    /// In cỡ cửa sổ sau mỗi bước. Cửa sổ phình ra là lỗi ÂM THẦM: ảnh vẫn đẹp, mọi vùng vẫn
+    /// đúng tỉ lệ, chỉ là người dùng thấy một cửa sổ tự lớn lên và không co lại.
+    private func _co(_ nhan: String) {
+        print(String(format: "  [cỡ] %-16@ %.0f × %.0f", nhan as NSString,
+                     khung.frame.width, khung.frame.height))
+    }
+
     private func _chup(_ url: URL) {
+        _co((url.lastPathComponent as NSString).deletingPathExtension)
         guard let v = cuaSo.contentView,
               let rep = v.bitmapImageRepForCachingDisplay(in: v.bounds) else { return }
         v.cacheDisplay(in: v.bounds, to: rep)

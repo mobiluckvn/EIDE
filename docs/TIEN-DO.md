@@ -13,10 +13,10 @@
 ## 1. Một dòng
 
 **220/242 năng lực (91%). M0 22/22; M1 75/76; M2 92/102; M3 22/29; M4 8/9; M5 1/4. 1628 test
-Python + 3116 test Swift ở gói cũ và 20 ở gói giao diện mới, đều xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel cũ: **26** màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt. Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7. Một `--vong-giao-dien` đi 17 bước của một vòng làm việc thật QUA GIAO DIỆN: 17/17, ghi nhật ký và một ảnh mỗi bước. Gói giao diện MỚI (`apps/eide/`) nay nối daemon thật và có ba màn đọc dữ liệu thật: `--tu-kiem` 17/17.**
+Python + 3116 test Swift ở gói cũ và 24 ở gói giao diện mới, đều xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel cũ: **26** màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt. Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7. Một `--vong-giao-dien` đi 17 bước của một vòng làm việc thật QUA GIAO DIỆN: 17/17, ghi nhật ký và một ảnh mỗi bước. Gói giao diện MỚI (`apps/eide/`) nay nối daemon thật và có ba màn đọc dữ liệu thật: `--tu-kiem` 20/20.**
 
 **Ngày 18/09: giao diện được VIẾT LẠI trong một kho mã riêng (`apps/eide/`), và chỗ nối nó với
-lõi mở ra ba mươi lỗi im lặng (59–88).** Quyết định đập đi làm lại là của chủ sản phẩm sau
+lõi mở ra ba mươi hai lỗi im lặng (59–90).** Quyết định đập đi làm lại là của chủ sản phẩm sau
 khi bản demo UX v2.0 cho thấy bố cục cũ không phân vùng rõ. Một lần viết lại tại chỗ đã THẤT
 BẠI trước đó — cửa sổ tụt từ 720 pt xuống 70 pt vì một định nghĩa chiều cao vòng tròn — nên bản
 mới dựng bằng ràng buộc tường minh, mỗi bước chụp một ảnh, và mang sang đúng ba thứ: token màu
@@ -349,7 +349,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Tám mươi tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Chín mươi lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -854,7 +854,19 @@ chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên ti
     không khớp `.build/` — dấu chấm đầu là một ký tự thật. Mỗi lần `swift build` lại hiện ra
     trong `git status` và che mất những tệp mã thật sự đổi.
 
-**Số 80–88 đến từ việc dựng BA MÀN ĐẦU TIÊN trên dữ liệu thật** (18/09). Bảy trong chín cái chỉ
+89. **Một nhãn đòi bề rộng làm PHÌNH CẢ CỬA SỔ** (18/09). NSWindow coi ràng buộc bắt buộc
+    trong `contentView` là ràng buộc của chính cửa sổ. Màn Trình soạn thảo có 16 năng lực đứng
+    sau; dòng phụ nối chúng bằng " · " thành một dòng ~2 000 pt, và ngay khi tác tử TỰ mở màn ấy
+    (NT2) cửa sổ nhảy 1456 → 2482 pt rồi không co lại. Ảnh chụp vẫn đẹp, mọi vùng vẫn đúng tỉ
+    lệ — chỉ là cửa sổ tự lớn lên. **Đây chính là cơ chế đã làm cửa sổ bản cũ nhích 720 → 818 pt
+    suốt nhiều ngày** mà không ai truy ra nguyên nhân: một lỗi đã đo được từ lâu, nay có tên.
+90. **Mỗi lời gọi năng lực đơn lẻ sinh MỘT thẻ Run** (18/09). `event.run.progress` gánh hai khái
+    niệm: vòng đời của một CHUỖI (`run.*`) và vòng đời của một LỜI GỌI (`cap.run.*`). Không lọc
+    thì cả `plane.hello` của nhịp tim cũng có thẻ riêng — vùng trao đổi đầy những dải xanh chạy
+    hết chiều ngang, không tiêu đề, không ai đoán được chúng là gì.
+
+
+**Số 80–90 đến từ việc dựng BA MÀN ĐẦU TIÊN và THẺ RUN trên dữ liệu thật** (18/09). Chín trong mười một cái chỉ
 lộ ra khi một màn thật đọc lõi thật: bốn cái là chỗ NỐI (80, 81, 82, 84), hai cái là bố cục
 (85, 86), và một cái là phép kiểm tự khẳng định về thứ không tồn tại (87). Cách tìm ra chúng
 cũng đáng ghi: `--tu-kiem` nay đo cả THỜI GIAN mở mỗi màn chứ không chỉ nội dung — số 83 và 84

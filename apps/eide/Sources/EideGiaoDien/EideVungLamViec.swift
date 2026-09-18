@@ -26,6 +26,16 @@ public final class EideVungLamViec: NSView {
         tieuDe.textColor = EideToken.Mau.text
         nangLuc.font = EideToken.fontMono
         nangLuc.textColor = EideToken.Mau.muted
+        // Dòng phụ KHÔNG được đòi bề rộng. Màn Trình soạn thảo có 16 năng lực đứng sau; nối
+        // chúng bằng " · " ra một dòng dài ~2 000 pt, và NSWindow coi ràng buộc bắt buộc trong
+        // `contentView` là ràng buộc của CHÍNH CỬA SỔ — cửa sổ nhảy từ 1456 lên 2482 pt ngay khi
+        // tác tử tự mở màn ấy, rồi KHÔNG co lại. Đây đúng là cơ chế đã làm cửa sổ bản cũ nhích
+        // dần 720 → 818 pt suốt nhiều ngày mà không ai truy ra nguyên nhân.
+        nangLuc.lineBreakMode = .byTruncatingTail
+        nangLuc.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        for n in [tieuDe, khiTrong] {
+            n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        }
         khiTrong.font = EideToken.fontUI
         khiTrong.textColor = EideToken.Mau.muted
 
@@ -73,7 +83,13 @@ public final class EideVungLamViec: NSView {
         dangMo = tien
         tieuDe.stringValue = EideManHinhDS.nhan(tien)
         tieuDe.isHidden = false
-        nangLuc.stringValue = nangLucDs.isEmpty ? "—" : nangLucDs.joined(separator: " · ")
+        // Ba cái đầu, rồi đếm phần còn lại. Mười sáu tên năng lực nối bằng " · " là một dòng
+        // không ai đọc; ba cái đầu cộng "+13 nữa" trả lời đúng câu hỏi người đặt ra ở đây —
+        // *màn này lấy dữ liệu từ đâu* — và danh sách đủ nằm trong tooltip.
+        nangLuc.stringValue = nangLucDs.isEmpty ? "—"
+            : nangLucDs.prefix(3).joined(separator: " · ")
+              + (nangLucDs.count > 3 ? " · +\(nangLucDs.count - 3) nữa" : "")
+        nangLuc.toolTip = nangLucDs.isEmpty ? nil : nangLucDs.joined(separator: "\n")
         nangLuc.isHidden = false
         khiTrong.isHidden = true
         xoaThan()

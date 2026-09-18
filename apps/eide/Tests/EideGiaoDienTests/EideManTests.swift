@@ -85,3 +85,69 @@ final class EideManTests: XCTestCase {
         }
     }
 }
+
+/// Thẻ Run — máy trạng thái nhận sự kiện. Payload chép đúng từ `src/eide/caps/chat.py`.
+@MainActor
+final class EideTheRunTests: XCTestCase {
+
+    private func _the() -> EideTheRun { EideTheRun(ma: "r1", van: "đọc BME280 qua I2C") }
+
+    func testMotLuotChayTronVenDiHetBonTrangThai() {
+        let t = _the()
+        XCTAssertEqual(t.trangThai, .chay)
+        t.nhan(["kind": "run.started", "run_id": "r1", "n": 7, "text": "đọc BME280 qua I2C",
+                "steps": [["id": "n1", "cap": "passport.query"], ["id": "n2", "cap": "code.write"],
+                          ["id": "n3", "cap": "sim.run"]]])
+        XCTAssertEqual(t.tong, 3)
+        XCTAssertEqual(t.buoc, 0)
+
+        t.nhan(["kind": "run.step_started", "run_id": "r1", "cap": "passport.query", "i": 1, "of": 3])
+        XCTAssertEqual(t.buoc, 0, "bước 1 ĐANG chạy nghĩa là 0 bước đã xong")
+        t.nhan(["kind": "run.step_done", "run_id": "r1", "cap": "passport.query",
+                "i": 1, "of": 3, "status": "done"])
+        XCTAssertEqual(t.buoc, 1)
+
+        t.nhan(["kind": "run.done", "run_id": "r1", "state": "done", "done": 3])
+        XCTAssertEqual(t.trangThai, .xong)
+        XCTAssertEqual(t.buoc, 3)
+    }
+
+    /// Sự kiện tới KHÔNG theo thứ tự thì thẻ không được lùi: ống sự kiện dùng chung với câu trả
+    /// lời, và một bước có thể tới sau bước kế nó.
+    func testSuKienDenMuonKhongDayTienDoLUI() {
+        let t = _the()
+        t.nhan(["kind": "run.step_done", "run_id": "r1", "cap": "b", "i": 5, "of": 8, "status": "done"])
+        XCTAssertEqual(t.buoc, 5)
+        t.nhan(["kind": "run.step_done", "run_id": "r1", "cap": "a", "i": 2, "of": 8, "status": "done"])
+        XCTAssertEqual(t.buoc, 5, "một sự kiện cũ đã kéo tiến độ lùi")
+    }
+
+    /// Bị chặn thì thẻ phải nói CHẶN VÌ GÌ — một thẻ đứng im ở "đang chạy" là lời nói sai.
+    func testBiChanThiNoiRaThieuGi() {
+        let t = _the()
+        t.nhan(["kind": "run.started", "run_id": "r1", "steps": [["cap": "sim.run"]]])
+        t.nhan(["kind": "run.blocked", "run_id": "r1", "cap": "sim.run",
+                "reason": "thiếu tham số", "missing": ["scenario"]])
+        XCTAssertEqual(t.trangThai, .chan)
+        XCTAssertTrue(_chu(t).contains("scenario"), _chu(t))
+    }
+
+    /// Mở ứng dụng giữa một lượt chạy đang dở: sự kiện đầu tiên nghe được KHÔNG phải
+    /// `run.started`. Thẻ vẫn phải dựng.
+    func testDungTheLUOIKhiNgheGiuaChung() {
+        let k = EideKhung(frame: NSRect(x: 0, y: 0, width: 1456, height: 838))
+        let ph = EidePhien(khung: k)
+        let truoc = k.dock.soLuot
+        ph.napSuKien("event.run.progress",
+                     ["kind": "run.step_started", "run_id": "r9", "cap": "code.write", "i": 3, "of": 8])
+        XCTAssertEqual(k.dock.soLuot, truoc + 1)
+        XCTAssertTrue(_chu(k.dock).contains("bước 3/8"), _chu(k.dock))
+    }
+
+    private func _chu(_ v: NSView) -> String {
+        var ra = (v as? NSTextField)?.stringValue ?? ""
+        if let b = v as? NSButton { ra += " " + b.title }
+        for c in v.subviews { ra += "\n" + _chu(c) }
+        return ra
+    }
+}
