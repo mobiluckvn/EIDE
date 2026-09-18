@@ -1,0 +1,68 @@
+{
+  "": {
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/primary.swiftdeps"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideBongBong.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideBongBong.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideBongBong.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideBongBong~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideBongBong.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideBongBong.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideCotPhai.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideCotPhai.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideCotPhai.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideCotPhai~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideCotPhai.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideCotPhai.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDieuHuong.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDieuHuong.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDieuHuong.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDieuHuong~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDieuHuong.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDieuHuong.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDock.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDock.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDock.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDock~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDock.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideDock.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideKhung.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideKhung.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideKhung.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideKhung~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideKhung.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideKhung.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideManHinhDS.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideManHinhDS.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideManHinhDS.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideManHinhDS~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideManHinhDS.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideManHinhDS.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTab.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTab.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTab.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTab~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTab.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTab.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTren.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTren.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTren.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTren~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTren.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideThanhTren.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideVungLamViec.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideVungLamViec.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideVungLamViec.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideVungLamViec~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideVungLamViec.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EideGiaoDien.build/EideVungLamViec.dia"
+  }
+}

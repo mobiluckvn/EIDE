@@ -1,0 +1,1183 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.xctest/Contents/MacOS/EIDEPackageTests",
+      "packagePath" : "/Users/congvt/Documents/EIDE/apps/eide",
+      "productName" : "EIDEPackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.EIDEPackageTests-arm64-apple-macosx-release.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/sources",
+      "importPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDienTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "EIDEPackageTests",
+      "moduleOutputPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EIDEPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-whole-module-optimization",
+        "-num-threads",
+        "12",
+        "-serialize-diagnostics",
+        "-O",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/include/EIDEPackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "eide"
+      ],
+      "outputFileMapPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EIDEPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build",
+      "wholeModuleOptimization" : true
+    },
+    "C.EideApp-arm64-apple-macosx-release.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/sources",
+      "importPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideApp/main.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDien.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "EideApp",
+      "moduleOutputPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideApp.swiftmodule",
+      "objects" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/main.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-whole-module-optimization",
+        "-num-threads",
+        "12",
+        "-serialize-diagnostics",
+        "-O",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "EideApp_main",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "eide"
+      ],
+      "outputFileMapPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/main.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideApp.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideApp/main.swift"
+      ],
+      "tempsPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build",
+      "wholeModuleOptimization" : true
+    },
+    "C.EideGiaoDien-arm64-apple-macosx-release.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/sources",
+      "importPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideBongBong.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideCotPhai.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDieuHuong.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDock.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideKhung.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideManHinhDS.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTab.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTren.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideVungLamViec.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideLoi.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "EideGiaoDien",
+      "moduleOutputPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDien.swiftmodule",
+      "objects" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideBongBong.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideCotPhai.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDieuHuong.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDock.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideKhung.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideManHinhDS.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTab.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTren.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideVungLamViec.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-whole-module-optimization",
+        "-num-threads",
+        "12",
+        "-serialize-diagnostics",
+        "-O",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/include/EideGiaoDien-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "eide"
+      ],
+      "outputFileMapPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideBongBong.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideCotPhai.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDieuHuong.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDock.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideKhung.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideManHinhDS.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTab.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTren.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideVungLamViec.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDien.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideBongBong.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideCotPhai.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDieuHuong.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDock.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideKhung.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideManHinhDS.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTab.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTren.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideVungLamViec.swift"
+      ],
+      "tempsPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build",
+      "wholeModuleOptimization" : true
+    },
+    "C.EideGiaoDienTests-arm64-apple-macosx-release.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/sources",
+      "importPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Tests/EideGiaoDienTests/EideKhungTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDien.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "EideGiaoDienTests",
+      "moduleOutputPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDienTests.swiftmodule",
+      "objects" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/EideKhungTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-whole-module-optimization",
+        "-num-threads",
+        "12",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/index/store",
+        "-O",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "eide"
+      ],
+      "outputFileMapPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/EideKhungTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideGiaoDienTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/Tests/EideGiaoDienTests/EideKhungTests.swift"
+      ],
+      "tempsPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build",
+      "wholeModuleOptimization" : true
+    },
+    "C.EideLoi-arm64-apple-macosx-release.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/sources",
+      "importPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideDaemon.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideRpcGenerated.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideTokensGenerated.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "EideLoi",
+      "moduleOutputPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideLoi.swiftmodule",
+      "objects" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.swift.o",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-whole-module-optimization",
+        "-num-threads",
+        "12",
+        "-serialize-diagnostics",
+        "-O",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/include/EideLoi-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "eide"
+      ],
+      "outputFileMapPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules/EideLoi.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideDaemon.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideRpcGenerated.swift",
+        "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideTokensGenerated.swift"
+      ],
+      "tempsPath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build",
+      "wholeModuleOptimization" : true
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "EIDEPackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "EIDEPackageTests",
+      "-package-name",
+      "eide",
+      "-c",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-whole-module-optimization",
+      "-num-threads",
+      "12",
+      "-serialize-diagnostics",
+      "-O",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/include/EIDEPackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "eide",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "EideApp" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "EideApp",
+      "-package-name",
+      "eide",
+      "-c",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideApp/main.swift",
+      "-I",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-whole-module-optimization",
+      "-num-threads",
+      "12",
+      "-serialize-diagnostics",
+      "-O",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "EideApp_main",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "eide",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "EideGiaoDien" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "EideGiaoDien",
+      "-package-name",
+      "eide",
+      "-c",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideBongBong.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideCotPhai.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDieuHuong.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDock.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideKhung.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideManHinhDS.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTab.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTren.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideVungLamViec.swift",
+      "-I",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-whole-module-optimization",
+      "-num-threads",
+      "12",
+      "-serialize-diagnostics",
+      "-O",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/include/EideGiaoDien-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "eide",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "EideGiaoDienTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "EideGiaoDienTests",
+      "-package-name",
+      "eide",
+      "-c",
+      "/Users/congvt/Documents/EIDE/apps/eide/Tests/EideGiaoDienTests/EideKhungTests.swift",
+      "-I",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-whole-module-optimization",
+      "-num-threads",
+      "12",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/index/store",
+      "-O",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "eide",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "EideLoi" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "EideLoi",
+      "-package-name",
+      "eide",
+      "-c",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideDaemon.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideRpcGenerated.swift",
+      "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideTokensGenerated.swift",
+      "-I",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-whole-module-optimization",
+      "-num-threads",
+      "12",
+      "-serialize-diagnostics",
+      "-O",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/include/EideLoi-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "eide",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "EIDEPackageTests" : [
+      "EideGiaoDienTests",
+      "EideGiaoDien",
+      "EideLoi"
+    ],
+    "EideApp" : [
+      "EideGiaoDien",
+      "EideLoi"
+    ],
+    "EideGiaoDien" : [
+      "EideLoi"
+    ],
+    "EideGiaoDienTests" : [
+      "EideGiaoDien",
+      "EideLoi"
+    ],
+    "EideLoi" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/sources"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideBongBong.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideCotPhai.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDieuHuong.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDock.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideKhung.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideManHinhDS.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTab.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTren.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideVungLamViec.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/EideKhungTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EIDEPackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideApp/main.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/sources"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.build/main.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideBongBong.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideCotPhai.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDieuHuong.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideDock.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideKhung.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideManHinhDS.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTab.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideThanhTren.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/EideVungLamViec.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideApp.product/Objects.LinkFileList"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideBongBong.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideCotPhai.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDieuHuong.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideDock.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideKhung.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideManHinhDS.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTab.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideThanhTren.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideGiaoDien/EideVungLamViec.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDien.build/sources"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Tests/EideGiaoDienTests/EideKhungTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideGiaoDienTests.build/sources"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideDaemon.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideRpcGenerated.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideTokensGenerated.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/sources"
+    },
+    "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

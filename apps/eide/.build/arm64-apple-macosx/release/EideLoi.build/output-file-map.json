@@ -1,0 +1,25 @@
+{
+  "": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideLoi.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideLoi.o",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/primary.swiftdeps"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideDaemon.swift": {
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideDaemon.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideRpcGenerated.swift": {
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideRpcGenerated.dia"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/Sources/EideLoi/EideTokensGenerated.swift": {
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/release/EideLoi.build/EideTokensGenerated.dia"
+  }
+}

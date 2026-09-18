@@ -20,7 +20,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TOKENS = ROOT / "docs" / "spec" / "ui" / "tokens.json"
-DICH = ROOT / "apps" / "geditor" / "Sources" / "EIDEKit" / "EideTokensGenerated.swift"
+# Hai đích: gói cũ (`EIDEKit`) và gói mới (`apps/eide`). Sinh cho cả hai chứ không chép tay
+# từ bên này sang bên kia — một bảng màu chép tay là một bảng màu sẽ lệch, và lệch bảng màu
+# thì hai bản của cùng sản phẩm trông như hai sản phẩm.
+DICH_DS = [
+    ROOT / "apps" / "geditor" / "Sources" / "EIDEKit" / "EideTokensGenerated.swift",
+    ROOT / "apps" / "eide" / "Sources" / "EideLoi" / "EideTokensGenerated.swift",
+]
 
 
 def main() -> int:
@@ -99,6 +105,13 @@ def main() -> int:
     ]
     noi_dung = "\n".join(d)
 
+    ra = 0
+    for DICH in DICH_DS:
+        ra |= _ghi(DICH, noi_dung, mau)
+    return ra
+
+
+def _ghi(DICH, noi_dung, mau):
     cu = DICH.read_text(encoding="utf-8") if DICH.exists() else None
     if "--kiem" in sys.argv:
         if cu != noi_dung:

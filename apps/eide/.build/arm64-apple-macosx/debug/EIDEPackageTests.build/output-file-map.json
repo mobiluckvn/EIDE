@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.build/primary.swiftdeps"
+  },
+  "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.derived/runner.swift": {
+    "dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.build/runner.d",
+    "object": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/congvt/Documents/EIDE/apps/eide/.build/arm64-apple-macosx/debug/EIDEPackageTests.build/runner.dia"
+  }
+}

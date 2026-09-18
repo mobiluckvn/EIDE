@@ -22,7 +22,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OPENRPC = ROOT / "docs" / "spec" / "api" / "openrpc.json"
 ERRORS = ROOT / "docs" / "spec" / "api" / "errors.json"
-DICH = ROOT / "apps" / "geditor" / "Sources" / "EIDEKit" / "EideRpcGenerated.swift"
+# Hai đích — xem ghi chú cùng loại ở `gen_ui_swift.py`.
+DICH_DS = [
+    ROOT / "apps" / "geditor" / "Sources" / "EIDEKit" / "EideRpcGenerated.swift",
+    ROOT / "apps" / "eide" / "Sources" / "EideLoi" / "EideRpcGenerated.swift",
+]
 
 
 def ten_swift(rpc: str) -> str:
@@ -89,18 +93,25 @@ def main() -> int:
     ]
     noi_dung = "\n".join(d)
 
+    ra = 0
+    for DICH in DICH_DS:
+        ra |= _ghi(DICH, noi_dung, len(methods), len(loi))
+    return ra
+
+
+def _ghi(DICH, noi_dung, so_pt, so_loi):
     cu = DICH.read_text(encoding="utf-8") if DICH.exists() else None
     if "--kiem" in sys.argv:
         if cu != noi_dung:
             print(f"✗ {DICH.relative_to(ROOT)} lệch openrpc.json — chạy scripts/gen_rpc_swift.py")
             return 1
         print(f"✓ EideRpcGenerated.swift khớp openrpc.json "
-              f"({len(methods)} phương thức, {len(loi)} mã lỗi)")
+              f"({so_pt} phương thức, {so_loi} mã lỗi)")
         return 0
     DICH.parent.mkdir(parents=True, exist_ok=True)
     DICH.write_text(noi_dung, encoding="utf-8")
     print(f"{'=' if cu == noi_dung else 'đã ghi'} {DICH.relative_to(ROOT)} "
-          f"({len(methods)} phương thức, {len(loi)} mã lỗi)")
+          f"({so_pt} phương thức, {so_loi} mã lỗi)")
     return 0
 
 
