@@ -44,6 +44,23 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     try? await Task.sleep(nanoseconds: 1_200_000_000)
                     self.khung.layoutSubtreeIfNeeded()
                     self._chup(thuMuc.appendingPathComponent("khung.png"))
+                    // Rồi một màn CÓ DỮ LIỆU: ảnh của khung rỗng không nói được gì về cách một
+                    // bảng thật nằm trong đó.
+                    for tien in ["Main", "ChinhSach", "NhatKy"] {
+                        let t0 = ProcessInfo.processInfo.systemUptime
+                        self.phien.moMan(tien, boiTacTu: false)
+                        try? await Task.sleep(nanoseconds: 300_000_000)
+                        while self._chuTrong(self.khung.vungLamViec).contains("Đang đọc…"),
+                              ProcessInfo.processInfo.systemUptime - t0 < 10 {
+                            try? await Task.sleep(nanoseconds: 100_000_000)
+                        }
+                        let m = self.khung.vungLamViec.manDangMo
+                        print(String(format: "  %@ hiện xong sau %.2f s (lõi %.0f ms, vẽ %.0f ms)",
+                                     tien, ProcessInfo.processInfo.systemUptime - t0,
+                                     m?.msGoi ?? 0, (m?.msTong ?? 0) - (m?.msGoi ?? 0)))
+                        self.khung.layoutSubtreeIfNeeded()
+                        self._chup(thuMuc.appendingPathComponent("man-\(tien).png"))
+                    }
                     exit(0)
                 }
             }
@@ -63,6 +80,12 @@ final class UngDung: NSObject, NSApplicationDelegate {
         Task { await phien.khoiDong() }
     }
 
+    private func _chuTrong(_ v: NSView) -> String {
+        var ra = (v as? NSTextField)?.stringValue ?? ""
+        for c in v.subviews { ra += "\n" + _chuTrong(c) }
+        return ra
+    }
+
     private func _tuKiem() async {
         var dat = 0, hong = 0
         func do_(_ ten: String, _ dung: Bool, _ them: String = "") {
@@ -79,10 +102,31 @@ final class UngDung: NSObject, NSApplicationDelegate {
             "(\(khung.thanhTren.tenDuAn))")
         do_("4. registry nạp được ≥ 200 năng lực", phien.soNangLuc >= 200, "(\(phien.soNangLuc))")
 
-        phien.moMan("S3", boiTacTu: false)
-        do_("5. mở màn thì tab mở theo", khung.thanhTab.tab.contains("S3"))
-        do_("6. vùng làm việc đổi sang màn ấy", khung.vungLamViec.dangMo == "S3",
+        phien.moMan("FlowMap", boiTacTu: false)
+        do_("5. mở màn thì tab mở theo", khung.thanhTab.tab.contains("FlowMap"))
+        do_("6. vùng làm việc đổi sang màn ấy", khung.vungLamViec.dangMo == "FlowMap",
             "(\(khung.vungLamViec.dangMo ?? "nil"))")
+        phien.moMan("S3", boiTacTu: false)
+        do_("6b. tiền tố lạ KHÔNG mở được màn nào", khung.vungLamViec.dangMo == "FlowMap")
+
+        for tien in EidePhien.MAN.keys.sorted() {
+            // Đo THỜI GIAN mở màn, không chỉ nội dung. Bản đầu của bảng dựng 480 khung nhìn cho
+            // 120 hàng và mất hơn một giây — một màn trắng hơn một giây là một màn người dùng
+            // cho là hỏng, mà không phép kiểm nội dung nào bắt được.
+            let t0 = ProcessInfo.processInfo.systemUptime
+            phien.moMan(tien, boiTacTu: false)
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            while _chuTrong(khung.vungLamViec).contains("Đang đọc…"),
+                  ProcessInfo.processInfo.systemUptime - t0 < 8 {
+                try? await Task.sleep(nanoseconds: 100_000_000)
+            }
+            let giay = ProcessInfo.processInfo.systemUptime - t0
+            do_("6d. màn \(tien) hiện xong dưới 2 giây", giay < 2.0, String(format: "(%.2f s)", giay))
+            let van = _chuTrong(khung.vungLamViec)
+            do_("6c. màn \(tien) nạp được dữ liệu thật",
+                !van.contains("Màn này đang rỗng") && !van.contains("Đang đọc…"),
+                "(\(van.split(separator: "\n").filter { $0.contains("rỗng") || $0.contains("vì:") }.joined(separator: " | ")))")
+        }
 
         await phien._lamMoi()
         let mucTruoc = khung.thanhTren.mucHienTai
@@ -92,6 +136,13 @@ final class UngDung: NSObject, NSApplicationDelegate {
         await phien._lamMoi()
         do_("8. dừng khẩn hiện ra ở thanh trên, không núp sau mức tự chủ",
             khung.thanhTren.mucHienTai.contains("DỪNG"), "(\(khung.thanhTren.mucHienTai))")
+
+        phien.moMan("ChinhSach", boiTacTu: false)
+        try? await Task.sleep(nanoseconds: 900_000_000)
+        let sauDung = _chuTrong(khung.vungLamViec)
+        do_("8b. sau dừng khẩn, màn nói bị CHẶN chứ không nói \"không có dữ liệu\"",
+            sauDung.contains("dừng khẩn") || sauDung.contains("cổng chính sách"),
+            "(\(sauDung.split(separator: "\n").filter { $0.contains("vì:") }.joined()))")
 
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()

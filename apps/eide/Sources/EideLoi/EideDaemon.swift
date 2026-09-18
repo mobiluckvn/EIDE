@@ -23,6 +23,52 @@ import Foundation
 /// 4. **Kênh sự kiện chỉ được BƠM khi có lời gọi.** Vì ống chỉ được đọc trong `goi`, một giao
 ///    diện ngồi yên là một giao diện điếc — tác tử chạy ở tiến trình khác, sổ cái đầy sự kiện,
 ///    màn hình đứng im. Bên dùng phải tự giữ một nhịp; xem `nhipTim`.
+/// Bóc vỏ `CapabilityRun` khỏi câu trả lời của daemon.
+///
+/// `caps.invoke` và mọi alias trả về NGUYÊN bản ghi lượt chạy khi lượt ấy không xong — bị cổng
+/// giữ, bị từ chối, hoặc hỏng — và trả thẳng kết quả khi xong. Bên gọi nào tự đọc `r["result"]`
+/// sẽ thấy `nil` cho cả ba trường hợp đầu và kết luận "không có dữ liệu".
+///
+/// Đặt ở đây, trong `EideLoi`, vì đã có HAI bên gọi mắc đúng lỗi ấy: màn Chính sách báo "không
+/// nạp được quy tắc nào" sau khi người bấm Dừng khẩn, và phiên làm việc báo "đã mở dự án" cho
+/// một `project.open` vừa trả về E2000.
+public enum EideKetQua {
+
+    public enum Loi: Error, CustomStringConvertible {
+        case chan(cap: String, quyet: String, luat: String, ly: String)
+        case hong(cap: String, ma: String, van: String)
+
+        /// Mã lỗi EIDE, nếu có — bên gọi cần nó để gợi ý ĐÚNG cách sửa.
+        public var maEide: String? {
+            if case .hong(_, let ma, _) = self, !ma.isEmpty { return ma }
+            return nil
+        }
+
+        public var description: String {
+            switch self {
+            case .chan(let c, let q, let l, let ly):
+                return "cổng chính sách trả \(q) cho `\(c)` theo luật \(l) — \(ly)"
+            case .hong(let c, let ma, let van):
+                return "`\(c)` không chạy được: \(van)\(ma.isEmpty ? "" : " (\(ma))")"
+            }
+        }
+    }
+
+    public static func boc(_ r: [String: Any], _ ten: String) throws -> [String: Any] {
+        guard let tt = r["status"] as? String else { return r }   // không phải một lượt chạy
+        if tt == "done" { return (r["result"] as? [String: Any]) ?? [:] }
+        let cap = (r["cap"] as? String) ?? ten
+        if let e = r["error"] as? [String: Any] {
+            throw Loi.hong(cap: cap, ma: (e["eide_code"] as? String) ?? "",
+                           van: (e["message"] as? String) ?? tt)
+        }
+        let qd = (r["decision"] as? [String: Any]) ?? [:]
+        throw Loi.chan(cap: cap, quyet: (qd["decision"] as? String) ?? tt.uppercased(),
+                       luat: (qd["rule"] as? String) ?? "?",
+                       ly: (qd["reason"] as? String) ?? "không nêu lý do")
+    }
+}
+
 public actor EideDaemon {
 
     public enum Loi: Error, CustomStringConvertible {
@@ -78,7 +124,16 @@ public actor EideDaemon {
     ///
     /// stderr KHÔNG bị bỏ: dòng `-- run … · <quyết định> theo <luật>` nằm ở đó, và khi
     /// `project.create` bị chính sách chặn thì đó là chỗ DUY NHẤT nói vì sao.
-    public static func motLan(_ thamSo: [String]) throws -> (ma: Int32, json: [String: Any]?, van: String, loi: String) {
+    ///
+    /// **`async` và chạy ngoài luồng chính.** Bản đầu là hàm đồng bộ gọi thẳng từ `@MainActor`:
+    /// cửa sổ đứng hình suốt thời gian `eide` khởi động (~1 s cho `project list`, lâu hơn cho
+    /// `project new`) — đúng lúc người vừa bấm nút, tức đúng lúc họ cần biết máy có nhận không.
+    /// Không sập, không log, chỉ một cửa sổ chết trong một giây rồi sống lại.
+    public static func motLan(_ thamSo: [String]) async throws -> (ma: Int32, json: [String: Any]?, van: String, loi: String) {
+        try await Task.detached(priority: .userInitiated) { try _motLanDongBo(thamSo) }.value
+    }
+
+    private static func _motLanDongBo(_ thamSo: [String]) throws -> (ma: Int32, json: [String: Any]?, van: String, loi: String) {
         guard let lenh = timLenh() else { throw Loi.khongChay("không tìm thấy `eide` (thử $EIDE_PYTHON, $PATH, .venv-arm)") }
         let tt = Process()
         tt.executableURL = URL(fileURLWithPath: lenh[0])

@@ -55,6 +55,12 @@ public final class EideVungLamViec: NSView {
             coc.leadingAnchor.constraint(equalTo: cuon.contentView.leadingAnchor),
             coc.trailingAnchor.constraint(equalTo: cuon.contentView.trailingAnchor),
             coc.topAnchor.constraint(equalTo: cuon.contentView.topAnchor),
+            // Bề rộng của `than` phải đến TỪ NGOÀI. Stack dọc căn `.leading` không kéo giãn khung
+            // nhìn con, nên nếu màn bên trong lại lấy bề rộng theo `than` thì hai bên định nghĩa
+            // lẫn nhau — một vòng tròn hợp lệ với Auto Layout, và nó giải ra giá trị NHỎ NHẤT.
+            // Đo 18/09: bảng bốn cột co về ~190 pt, chữ tràn ra ngoài nền hàng, mọi cột sau cột
+            // thứ hai rơi xuống dòng kế. Đủ chữ nên nó đọc như một kiểu trình bày xấu.
+            than.widthAnchor.constraint(equalTo: coc.widthAnchor, constant: -40),
         ])
         dongMan()
     }
@@ -106,4 +112,18 @@ public final class EideVungLamViec: NSView {
 
     /// Số khung nhìn trong thân — cho bài kiểm đọc.
     public var soThan: Int { than.arrangedSubviews.count }
+
+    /// Đặt màn thật vào thân. Một màn mỗi lúc; màn cũ bị gỡ hẳn khỏi cây khung nhìn.
+    ///
+    /// Giữ lại thể hiện cũ để "quay về tab trước" khỏi phải nạp lại là một tối ưu đắt giá: một
+    /// NSView chỉ có MỘT cha, và một danh sách màn sống ngầm là cách bản cũ để một khung nhìn
+    /// đăng ký hai chỗ rồi biến mất ở chỗ thứ nhất (lỗi im lặng 71).
+    /// Màn đang nằm trong thân, nếu nó là một màn thật — cho bài đo đọc.
+    public var manDangMo: EideManCoSo? { than.arrangedSubviews.compactMap { $0 as? EideManCoSo }.first }
+
+    public func datMan(_ v: NSView) {
+        xoaThan()
+        themThan(v)
+        v.widthAnchor.constraint(equalTo: than.widthAnchor).isActive = true
+    }
 }

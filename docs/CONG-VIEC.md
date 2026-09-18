@@ -210,7 +210,7 @@ Quyết định của chủ sản phẩm 08/09: board thật test sau cùng.
 
 | # | Việc | Ghi chú |
 |---|---|---|
-| I1 | **WI-253** — sinh test hợp đồng tự động cho 238 năng lực | `validate_specs.py` đã có; cần sinh test từ `input_schema`/`errors`. Bắt được lỗi E1000/E1004 mà không phải viết tay từng cái |
+| I1 | **WI-253** — sinh test hợp đồng tự động cho 242 năng lực | `validate_specs.py` đã có; cần sinh test từ `input_schema`/`errors`. Bắt được lỗi E1000/E1004 mà không phải viết tay từng cái |
 | I2 | Mở rộng `make check-net` cho `mmdc`/`plantuml`/`d2`/`7z` | Hiện chỉ Graphviz chạy thật; bốn bộ dựng còn lại vẫn chưa nhánh nào được thi hành (đo 11/09: cả bốn đều **chưa cài**). **Thử lại sau khi sửa sandbox 08/09** — chúng ghi tệp ra, mà đúng chỗ ấy trước đây bị chặn. Cùng hình dạng với [DEV-086], nay đã có tiền lệ gỡ được |
 | ~~I7~~ | ~~**Chuỗi công cụ ARM — dựng thật một lần**~~ | **Xong 11/09 đợt 3.** `arm-none-eabi-gcc` 16.2.0 cài bằng **công thức** (không phải cask — cask là `.pkg` cần mật khẩu admin). `code.build` nay dựng ra firmware `armv7e-m` thật và `code.size` đọc số thật từ `arm-none-eabi-size`. Phải sửa **ba tầng** trong lõi mới chạy được — xem [DEV-088](DEVIATIONS.md) |
 | I3 | Thêm test `llm` cho `plan.*`, `tool.write`, `extract.pdf_register_map` | Ba nhóm sinh còn lại chưa có test gọi thật |

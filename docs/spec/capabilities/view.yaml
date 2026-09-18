@@ -419,9 +419,13 @@
     properties:
       range:
         type: object
+        description: from|to ISO, hoặc days:int
       filter:
         type: object
         description: by policy|human, kinds
+      limit:
+        type: integer
+        description: số sự kiện MỚI NHẤT trả về
     required: []
     additionalProperties: false
   output:
@@ -431,8 +435,12 @@
         type: array
         items:
           type: object
+      total:
+        type: integer
+        description: tổng trước khi cắt
     required:
     - events
+    - total
     additionalProperties: false
   risk: R0
   tier: T1
@@ -446,6 +454,7 @@
   example:
     range:
       days: 7
+    limit: 120
 - code: VIEW-13
   id: view.export_map
   name: Xuất bản đồ tri thức ra DOT/GraphML/SVG/PNG hoặc mã Mermaid để chèn tài liệu

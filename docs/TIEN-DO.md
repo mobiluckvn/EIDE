@@ -12,8 +12,22 @@
 
 ## 1. Một dòng
 
-**216/238 năng lực (91%). M0 22/22; M1 74/75; M2 89/99; M3 22/29; M4 8/9; M5 1/4. 1612 test
-Python + 3101 test Swift xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel: **26** màn hình trên điều hướng (đếm từ `docs/spec/ui/screens.json`; con số "23" ghi ở đây tới 16/09 đã cũ — ba màn NhatKy/XungDot/LamRo thêm sau mà dòng tóm tắt không được đo lại), 201/201 năng lực hiện được kết quả, 10/10 phím tắt, 23 kiểu sự kiện sổ cái đẩy lên UI (API-15 khai 21 `event.*`). Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7, trong đó một bài KIỂM KÊ cả 23 màn. Một `--vong-giao-dien` đi 15 bước của một vòng làm việc thật QUA GIAO DIỆN: 15/15, ghi nhật ký và một ảnh mỗi bước.**
+**220/242 năng lực (91%). M0 22/22; M1 75/76; M2 92/102; M3 22/29; M4 8/9; M5 1/4. 1628 test
+Python + 3116 test Swift ở gói cũ và 20 ở gói giao diện mới, đều xanh (trong đó 27 test ĐẦU-CUỐI gọi daemon thật). Nghiệm thu Sprint 2: 18/18; Sprint 3: 13/13. Panel cũ: **26** màn hình trên điều hướng, 201/201 năng lực hiện được kết quả, 10/10 phím tắt. Bảy bài `--self-test EIDE` đo trên CỬA SỔ THẬT: 7/7. Một `--vong-giao-dien` đi 17 bước của một vòng làm việc thật QUA GIAO DIỆN: 17/17, ghi nhật ký và một ảnh mỗi bước. Gói giao diện MỚI (`apps/eide/`) nay nối daemon thật và có ba màn đọc dữ liệu thật: `--tu-kiem` 17/17.**
+
+**Ngày 18/09: giao diện được VIẾT LẠI trong một kho mã riêng (`apps/eide/`), và chỗ nối nó với
+lõi mở ra ba mươi lỗi im lặng (59–88).** Quyết định đập đi làm lại là của chủ sản phẩm sau
+khi bản demo UX v2.0 cho thấy bố cục cũ không phân vùng rõ. Một lần viết lại tại chỗ đã THẤT
+BẠI trước đó — cửa sổ tụt từ 720 pt xuống 70 pt vì một định nghĩa chiều cao vòng tròn — nên bản
+mới dựng bằng ràng buộc tường minh, mỗi bước chụp một ảnh, và mang sang đúng ba thứ: token màu
+(sinh lại từ spec), client JSON-RPC (viết lại, kèm bốn bài học đã trả giá), và danh mục màn
+(một nguồn thay cho ba bản sao đã lệch nhau).
+
+Điều đáng ghi của hai mươi mốt lỗi ấy: **năm cái nặng nhất không phải lỗi giao diện.** Sự kiện
+sổ cái phát đôi suốt bốn ngày (59, 60); cổng danh sách trắng từ chối NGƯỜI và chấp nhận mọi tác
+tử (62); `project.create` không `git init` nên cả tầng hoàn tác ba mức không có gì đứng lên
+(66); một năng lực ĐỌC THUẦN TUÝ giết cả daemon vì trả về đối tượng code đã biên dịch (69).
+Chúng lộ ra ở giao diện vì giao diện là chỗ duy nhất chạy cả hệ thống cùng lúc.
 
 **Ngày 17/09 đóng ba việc mà hai ngày trước còn là "giao diện hiện sai": vùng trao đổi người ↔
 tác tử thành BẤT BIẾN (DEV-120), chuỗi năng lực nối được dữ liệu cho nhau (DEV-121), và bộ tự
@@ -107,10 +121,10 @@ chân**: nạp board, đo, gỡ lỗi trên phần cứng.
 | Mốc | Xong | Ý nghĩa |
 |---|---|---|
 | **M0** | **22/22 · 100%** | Nền: dự án, store, chính sách, thu nhận tri thức |
-| **M1** | **74/75 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
-| M2 | 83/99 · 84% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
-| M3 | **21/29 · 72%** | Mô phỏng và gỡ lỗi — `sim.*`, `debug.*`, đường ảnh đều xong |
-| M4 | 2/9 | Registry chia sẻ, benchmark |
+| **M1** | **75/76 · 99%** | Tác tử hiểu lệnh, tra cứu, lập kế hoạch, viết tài liệu |
+| M2 | 92/102 · 90% | Sinh mã, board, mô phỏng nền, tài liệu đầy đủ |
+| M3 | **22/29 · 76%** | Mô phỏng và gỡ lỗi — `sim.*`, `debug.*`, đường ảnh đều xong |
+| M4 | 8/9 | Registry chia sẻ, benchmark |
 | M5 | 1/4 | ISA mở rộng — `extract.image_scope` xong; ba manifest ISA còn lại xem [DEV-055](DEVIATIONS.md) |
 
 **M1 còn đúng 1 năng lực**: `passport.verify_on_board` (R3) — **cần board thật**, không mô
@@ -335,7 +349,7 @@ với giả định của tôi không"*. `make check-net` (10 test, không tốn
   không có trích dẫn. Một câu trung thực "không có dữ liệu" thì không thể có trích dẫn, và bắt
   nó phải có là **dạy mô hình bịa cho đủ**.
 
-**Năm mươi tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
+**Tám mươi tám lỗi im lặng, mỗi cái tìm ra bằng một cách khác nhau:**
 
 1. **Niêm store lệch sau mỗi phiên bình thường** — `req.*`/`arch.*`/`extract.*` ghi vào bảng
    có niêm mà không niêm lại. Cảnh báo "store bị sửa ngoài EIDE" luôn đỏ, và cảnh báo luôn đỏ
@@ -733,6 +747,130 @@ chuột vào hàng thứ 22 của sidebar. Ba lượt `make check` xanh liên ti
     kiểm, đúng thứ ghi chú của chính bộ tự kiểm cảnh báo. Nay bài TỰ MANG mẫu và tự xoá sau khi
     đo, nên nó luôn chạy và luôn kiểm đúng thứ nó nói.
 
+59. **MỌI sự kiện lên giao diện HAI LẦN từ 14/09** (18/09). Daemon đăng ký cùng một hàm nhận
+    cho cả hai đường phát; phép lọc theo `seq` của bộ theo dõi tệp chỉ biết một `seq` SAU KHI tự
+    đọc dòng ấy — tức sau khi đã phát lần hai. Đo được 29 thông báo cho 15 bản ghi. Bốn ngày
+    liền mỗi thẻ tiến độ nhận đôi mọi bước, và không ai thấy vì hai bản giống hệt nhau.
+60. **Bản vá đầu của 59 dùng `is` để so hàm nhận** (18/09). Mỗi lần truy cập một phương thức
+    ràng buộc trong Python sinh một đối tượng MỚI, nên phép so luôn sai; bản vá qua sạch 1 612
+    bài kiểm trong khi daemon thật vẫn phát đôi. Một bản sửa xanh mà không sửa gì là thứ khó
+    thấy hơn cả lỗi gốc.
+61. **Dải chip của thẻ Run không hiện gì** (18/09). `hang` là documentView không có ràng buộc
+    nên đứng ở kích thước 0 — tám chip dựng đủ, không cái nào thấy được. Cùng họ bẫy với
+    contentView/documentView của DEV-116.
+62. **Cổng danh sách trắng từ chối NGƯỜI, và chấp nhận mọi tác tử** (18/09). `actor` trong biểu
+    thức quy tắc đọc từ ĐẶC TRƯNG — thứ suy được từ tham số — chứ không từ giá trị Router truyền
+    xuống. Khi không ai nhét `actor` vào đặc trưng thì `actor == "human"` luôn False và
+    `actor != "human"` luôn True: G-WL-01 CHƯA BAO GIỜ khớp được, G-WL-02 khớp cho tất cả. Không
+    bài kiểm nào thấy vì mọi tình huống trong `situations.py` đều tự nhét `actor` vào đặc trưng.
+    Lỗ AN TOÀN, không phải lỗi hiển thị.
+63. **Đặc trưng ghi đè được khối `cap` của cổng** (18/09). `{"cap": {...}, **features}` — một
+    tham số tên `cap` thay được cả `id` lẫn `risk` mà PolicyGate dùng để quyết. Nay khối `cap`
+    ghi SAU CÙNG, lấy từ registry.
+64. **Kênh sự kiện CHỈ được bơm khi có một lời gọi đang chạy** (18/09). `EideClient.goi` là chỗ
+    duy nhất đọc ống, mà mọi `lamMoi()` đều do người bấm. Người dùng ngồi yên thì cửa sổ điếc
+    hoàn toàn: tác tử chạy qua CLI ở tiến trình khác, sổ cái đầy sự kiện, bộ theo dõi tệp phát
+    đủ, và màn hình đứng im. Cả cơ chế giám sát dừng lại đúng ở tầng vận chuyển. Không bài kiểm
+    nào thấy vì mọi bài đều CHỦ ĐỘNG gọi.
+65. **Màn neo vào một dải chưa vào cây khung nhìn** (18/09). NSException "no common ancestor",
+    ứng dụng sập ngay lúc mở — lỗi ồn ào duy nhất trong cả danh sách này, ghi lại vì nó cùng họ
+    bẫy với 61.
+66. **`project.create` viết `.gitignore` nhưng KHÔNG `git init`** (18/09). Nên `code.revert` ném
+    E7001 trên MỌI dự án đã tạo, và cả tầng hoàn tác ba mức không có gì để đứng lên — "hoàn tác
+    được trong 24 giờ" là lời hứa suông. Mục hoàn tác vẫn hiện ra, vẫn bấm được, và chỉ hỏng lúc
+    người cần nó nhất.
+67. **Một tên cổng có thật bị bảng gọi là "KHÔNG có trong POL-17"** (18/09). Cổng của sáu mục
+    chờ là `*`; bảng cổng của màn Hành trình chép tay chín tên và `*` lọt vì "trông không giống
+    tên cổng". Chú thích ngay trên bảng ấy cảnh báo đúng lỗi này sau lần thiếu G-TOOL/G-WL. Nay
+    bài kiểm ĐỌC `rules.yaml`.
+68. **Một bản vá xoá mất dải cảnh báo của người khác** (18/09). Thanh băng là tài nguyên DÙNG
+    CHUNG (constant-guard, khôi phục phiên, cảnh báo bảng mã), và `capNhatBangEide()` gọi
+    `hideBanner()` vô điều kiện đã xoá dải vàng "constant-guard: 11 dòng vi phạm — CHẶN merge".
+    Ảnh chụp bắt được bằng điểm ảnh: (246,234,218) → (254,252,250) → (246,234,212).
+69. **Một năng lực ĐỌC THUẦN TUÝ giết cả daemon** (18/09). `policy.rules` trả các quy tắc kèm
+    biểu thức `when` đã biên dịch; một đối tượng code không tuần tự hoá được, ống vỡ ở tầng ghi
+    — tức SAU khi đã trả lời — nên mọi lời gọi sau đó cũng chết. `output_schema` khai `arr<obj>`
+    và một dict có `_code` vẫn là dict: **khớp schema ≠ gửi được**.
+70. **Bài kiểm giữ bản chép tay thứ hai của danh sách màn** (18/09). Thêm màn mà quên nó thì một
+    bài báo "màn không có khung nhìn" trong khi bài đầu-cuối dựng được đúng màn ấy.
+71. **Cùng một thể hiện `NhatKyView` đăng ký HAI chỗ** (18/09) — khối cột phải và màn S2. Một
+    NSView chỉ có một cha, nên lần `addSubview` thứ hai âm thầm kéo nó đi: tiêu đề "ĐANG LÀM"
+    đứng trên khoảng trống suốt từ ngày màn Nhật ký ra đời. Mọi ảnh chụp từ 15/09 đều cho thấy;
+    tôi đọc qua nhiều lần mà không hỏi vì sao chỗ đó rỗng.
+72. **Hai khối hàng đợi xếp NGANG trong cột rộng 300 pt** (18/09) → tiêu đề bị ép mất chữ.
+73. **Hàng đợi neo từ dưới lên** (18/09): với 35 mục hoàn tác thì cả hai tiêu đề nằm ngoài tầm
+    nhìn. Cùng lỗi DEV-115(d) ở một khung nhìn khác.
+74. **Dòng phụ năng lực đặt ở chỗ bị che** (18/09, do tôi vừa gây ra). Nó tồn tại, có mã, và
+    không ai thấy; phép tra lại so nhãn tiếng Việt với tiền tố kỹ thuật nên khớp 0 năng lực.
+75. **`ISO8601DateFormatter` từ chối dấu thập phân của giây** (18/09). `datetime.isoformat()`
+    bên Python ghi `…:45.123456+00:00`; bộ phân tích mặc định trả `nil`, nên MỌI mục hoàn tác có
+    hạn thật hiện "hạn không rõ" ở cột phải. Một dòng chữ vô hại trông y hệt dữ liệu thiếu,
+    trong khi thứ thiếu là một cờ `.withFractionalSeconds`.
+76. **Mục hoàn tác thiếu `cap` hiện thành "?"** (18/09). Trường ấy chỉ thêm vào `undo.register`
+    từ giữa chặng nên bản ghi cũ không có; `kind` thì luôn có. Không ai bấm hoàn tác một việc
+    tên "?" — tức mục càng cũ càng không dùng được, đúng chiều ngược với ý nghĩa của nó.
+77. **Thẻ ở cột phải tràn ra ngoài vùng cắt** (18/09). `NSStackView` để thẻ rộng theo nhãn dài
+    nhất rồi đẩy phần thừa ra ngoài — `code.merge_conflict_resolve` dài hơn cột 236 pt, và cái
+    mất đi là chữ chứ không phải một cảnh báo.
+78. **Cờ dừng khẩn núp sau mức tự chủ** (18/09). `autonomy.get` trả cả `autonomy` lẫn `stopped`,
+    mà thanh trên chỉ đọc cái đầu: một dự án bị chặn sạch vẫn báo "Tự chủ A2". Người đọc rồi
+    ngồi đợi tác tử làm việc mà nó sẽ không bao giờ làm.
+79. **Hàng hoàn tác xếp cũ-trước** (18/09). Sổ cái trả theo thứ tự ghi; cột chỉ hiện 8 thẻ, nên
+    thứ người vừa làm — thứ gần như luôn là thứ họ muốn đảo — nằm ngoài tầm nhìn.
+
+80. **Ba kết cục khác nhau hiện thành MỘT câu** (18/09). `caps.invoke` và mọi alias trả nguyên
+    bản ghi lượt chạy khi lượt ấy bị cổng giữ, bị từ chối, hoặc hỏng; bên gọi đọc `r["result"]`
+    thấy `nil` cho cả ba và kết luận "không có dữ liệu". Sau khi bấm Dừng khẩn, màn Chính sách
+    báo *"PolicyGate không nạp được quy tắc nào"* — vừa sai vừa đáng sợ, trong khi sự thật là
+    lời gọi vừa bị chính cái nút ấy chặn.
+81. **`project.open` chưa bao giờ được gọi** (18/09). Bật daemon với `-p <dự án>` mới là nói cho
+    nó biết thư mục nào; năm bước của PROJECT-02 thì không chạy. Mất cả ba: phiên làm việc không
+    mở (màn Tổng quan hiện "chưa mở phiên nào" trên một dự án đang mở ngay trước mắt), niêm
+    store không được kiểm (E6000 đi thẳng vào phiên), `user_version` không được so (E6003 hỏng
+    dần ở từng lời gọi thay vì dừng ngay với một câu "chạy `eide migrate`").
+82. **Và khi được gọi thì nó trả E2000 trong im lặng** (18/09). `project.open` nhận TÊN dự án và
+    tra trong `ctx.project_dir` — vốn CHÍNH LÀ dự án ấy khi daemon chạy với `-p`. Lỗi nằm TRONG
+    kết quả chứ không phải một lỗi JSON-RPC, nên bên gọi vẫn báo "đã mở" (cùng gốc với số 80).
+83. **Nhãn "Đang đọc…" bị xoá trước cả `await` đầu tiên** (18/09). Nó được thêm rồi gỡ trong
+    cùng một lượt chạy, nên chưa bao giờ hiện lên một điểm ảnh. Màn Nhật ký trên sổ cái lớn đứng
+    TRẮNG TRƠN hơn hai giây.
+84. **Đọc 9 128 sự kiện để vẽ 120 dòng** (18/09). Đo trên cửa sổ thật: 2 651 ms chờ lõi so với
+    40 ms vẽ. Sửa ở HỢP ĐỒNG ([DEV-132](DEVIATIONS.md): `limit` + `total`), không cắt ở giao
+    diện — cắt ở giao diện thì mỗi bên gọi cắt một kiểu và ai cũng đã trả giá cho toàn bộ dữ
+    liệu rồi. Kèm theo lộ ra `range.days`: nó nằm trong VÍ DỤ của chính hợp đồng mà chưa bao giờ
+    có mã đọc tới, nên lời gọi mẫu trả về toàn bộ sổ cái.
+85. **Bề rộng thân màn định nghĩa VÒNG TRÒN** (18/09). Stack dọc căn `.leading` không kéo giãn
+    khung nhìn con, còn màn bên trong lấy bề rộng theo thân. Auto Layout chấp nhận và giải ra
+    giá trị NHỎ NHẤT: bảng bốn cột co còn ~190 pt, chữ tràn ra ngoài nền hàng, mọi cột sau cột
+    thứ hai rơi xuống dòng kế. Đủ chữ nên nó đọc như một kiểu trình bày xấu, không như một lỗi.
+86. **Từ điển lồng in bằng mô tả của Objective-C** (18/09). Nội suy `"\(giá trị)"` cho một
+    `[String: Any]` lồng xuống dòng và escape tiếng Việt: dòng lý do đọc là
+    `"L\U1edbp R0 ch\U1ec9 \U0111\U1ecdc"`. Chữ vẫn đủ, chỉ là không ai đọc được.
+87. **Một bài tự kiểm khẳng định về một màn không tồn tại** (18/09). `moMan("S3")` chạy trót
+    lọt — cột trái không chọn gì, tab mang nhãn "S3", vùng làm việc ghi nhận một màn không có
+    trong danh mục — và bài kiểm khẳng định cả ba thứ ấy vẫn ĐẠT. Mã màn (`S1`…`S25`) và tiền tố
+    kỹ thuật (`Main`, `NhatKy`…) là hai không gian tên khác nhau, và không chỗ nào kiểm.
+88. **`apps/eide/.build/` (2 588 tệp) lọt vào kho** (18/09). Mẫu `build/` trong `.gitignore`
+    không khớp `.build/` — dấu chấm đầu là một ký tự thật. Mỗi lần `swift build` lại hiện ra
+    trong `git status` và che mất những tệp mã thật sự đổi.
+
+**Số 80–88 đến từ việc dựng BA MÀN ĐẦU TIÊN trên dữ liệu thật** (18/09). Bảy trong chín cái chỉ
+lộ ra khi một màn thật đọc lõi thật: bốn cái là chỗ NỐI (80, 81, 82, 84), hai cái là bố cục
+(85, 86), và một cái là phép kiểm tự khẳng định về thứ không tồn tại (87). Cách tìm ra chúng
+cũng đáng ghi: `--tu-kiem` nay đo cả THỜI GIAN mở mỗi màn chứ không chỉ nội dung — số 83 và 84
+không có phép kiểm nội dung nào bắt được, vì nội dung cuối cùng vẫn đúng.
+
+**Số 75–79 đến từ việc NỐI daemon vào khung giao diện viết lại** (`apps/eide/`, 18/09). Cả năm
+đều ở chỗ nối giữa hai bên đã có test riêng và đều xanh: lõi trả đúng dữ liệu, khung nhìn dựng
+đúng khung nhìn, và thứ sai nằm ở cách đọc dữ liệu ấy. Tìm ra bằng `--tu-kiem` (9 phép đo trên
+một dự án tạm) cộng với đọc ảnh chụp — không cái nào làm đỏ 13 bài kiểm bố cục.
+
+**Số 59–74 đến từ đợt áp UXD-13 v2.0 và UXC-31** (17–18/09). Điều đáng ghi: **năm cái nặng nhất
+không phải lỗi giao diện** — 59/60 (sự kiện phát đôi), 62/63 (hai lỗ ở cổng chính sách), 66
+(`git init` thiếu nên cả tầng hoàn tác rỗng ruột), 69 (một năng lực đọc giết daemon). Chúng lộ
+ra ở giao diện vì giao diện là chỗ duy nhất chạy cả hệ thống cùng lúc, và vì áp một bản rà soát
+buộc phải đi qua từng đường thật thay vì từng hàm.
+
 **Số 49–58 đến từ hai việc: một VÒNG ĐI QUA GIAO DIỆN, và việc bỏ trần cho ô trò chuyện.** Vòng
 đi (`--vong-giao-dien`) không khẳng định gì — nó đi 15 bước của một ngày làm việc thật rồi ghi
 lại — và đó là lý do nó thấy được thứ 3 101 bài test Swift không thấy: các lỗi này sống ở chỗ
@@ -789,7 +927,7 @@ bốn màn phần cứng vẫn chờ. Bảng dưới là phần CÒN LẠI sau l
 
 | Việc | Vì sao cần người |
 |---|---|
-| **WI-257** — chạy `eide policy sign` | **Dữ liệu đã sửa, chỉ còn chữ ký.** `defaults.yaml` nay có `raw.githubusercontent.com`; mã, test và [DEV-087](DEVIATIONS.md) đã xong. Nhưng `eide policy sign` **cố ý là LỆNH chứ không phải năng lực** — trong 238 năng lực không có `policy.sign`, vì năng lực thì Router gọi được, tức tác tử gọi được, tức tác tử tự cấp quyền cho chính nó. Tình huống S47 nói thẳng: *"tác tử tự thêm một tên miền vào `trusted_sources`" → REJECT G-WL-02*. Chưa ký thì PolicyGate **bỏ hẳn ba danh sách** và mọi thứ rơi về ASK — đo được: 19 test đỏ, tất cả cùng một nguyên nhân. Đã kiểm trên bản sao đã ký (`EIDE_SPEC_DIR`, không đụng niêm thật): **1352 xanh**. Lệnh: `.venv-arm/bin/python -m eide.cli policy sign --by "Vũ Trí Công"` |
+| **WI-257** — chạy `eide policy sign` | **Dữ liệu đã sửa, chỉ còn chữ ký.** `defaults.yaml` nay có `raw.githubusercontent.com`; mã, test và [DEV-087](DEVIATIONS.md) đã xong. Nhưng `eide policy sign` **cố ý là LỆNH chứ không phải năng lực** — trong 242 năng lực không có `policy.sign`, vì năng lực thì Router gọi được, tức tác tử gọi được, tức tác tử tự cấp quyền cho chính nó. Tình huống S47 nói thẳng: *"tác tử tự thêm một tên miền vào `trusted_sources`" → REJECT G-WL-02*. Chưa ký thì PolicyGate **bỏ hẳn ba danh sách** và mọi thứ rơi về ASK — đo được: 19 test đỏ, tất cả cùng một nguyên nhân. Đã kiểm trên bản sao đã ký (`EIDE_SPEC_DIR`, không đụng niêm thật): **1352 xanh**. Lệnh: `.venv-arm/bin/python -m eide.cli policy sign --by "Vũ Trí Công"` |
 | **[DEV-089]** ký lại `trusted_packages` | Danh sách ghi `gcc-arm-none-eabi` — tên gói **apt**. Homebrew và `armv7e-m.yaml` đều dùng `arm-none-eabi-gcc`, nên `env.install` cho trình dịch ARM rơi vào **ASK**, còn mục đang có thì APPROVE một gói không tồn tại trên máy nào. Đúng hình dạng WI-257, ở nhóm gói. Nằm trong niêm nên phải `eide policy sign` lại |
 | **[DEV-088]** SEC-25 §2/§3 | Lõi sandbox nay nhận `cwd` và `them_path` — hai thứ SEC-25 không khai. Không có chúng thì `code.build` **không thể thành công trên bất kỳ máy nào**. Đề xuất §3 ghi rõ `PATH` gồm cả thư mục chuỗi công cụ đã khai trong manifest ISA |
 | ~~**WI-258**~~ | ~~Xác nhận đỏ PTIT chính thức~~ — **xong 16/09**: chủ sản phẩm đưa `docs/logo-ptit-1.svg`, bảng màu nay lấy từ chính tệp ấy. `primary` `#BC2626` (đỏ CHỮ của logo, tương phản 5,63), `brand` `#DE221A` (đỏ hình, 4,46 — chỉ cho mảng lớn), `secondary` `#373D4E`. Biểu tượng vào icon ứng dụng, thanh trên và hộp Giới thiệu. [DEV-118](DEVIATIONS.md) |

@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import secrets
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -956,6 +957,13 @@ def timeline(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     Bộ lọc `by: policy|human` trả lời câu hỏi thật đầu tiên khi một thứ trong dự án khác với trí
     nhớ của người dùng: *việc gì đã tự chạy, việc gì tôi đã duyệt*.
+
+    `range.days` và `limit` — xem [DEV-132](../../docs/DEVIATIONS.md). `days` VỐN CÓ trong ví dụ
+    của hợp đồng (`{"range":{"days":7}}`) mà chưa bao giờ được hiện thực: lời gọi theo đúng ví
+    dụ của chính tài liệu trả về TOÀN BỘ sổ cái và không ai biết bộ lọc không chạy. `limit` là
+    phần thêm: màn Nhật ký hiện 120 dòng, và đọc 9 128 sự kiện để vẽ 120 dòng tốn 2,6 giây trên
+    máy đo — gần hết thời gian ấy nằm ở chỗ chuyển 3 MB JSON qua ống, không ở chỗ truy vấn.
+    `total` đi kèm để bên gọi nói được "hiện 120 trong 9 128" thay vì im lặng cắt bớt.
     """
     loc = params.get("filter") or {}
     khoang = params.get("range") or {}
@@ -984,11 +992,28 @@ def timeline(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
 
     ds = [e for e in ds if _qua_loc_thoi_gian(e, khoang) and _qua_loc_su_kien(e, loc)]
     ds.sort(key=lambda e: (e["at"], e["source"], e["id"]))
-    return {"events": ds}
+    tong = len(ds)
+    # Cắt từ ĐUÔI: danh sách sắp tăng dần, còn thứ người mở màn Nhật ký muốn là phần mới nhất.
+    if (n := params.get("limit")) is not None:
+        if not isinstance(n, int) or n <= 0:
+            raise EideError("E1000", "limit phải là số nguyên dương")
+        ds = ds[-n:]
+    return {"events": ds, "total": tong}
 
 
 def _qua_loc_thoi_gian(e: dict[str, Any], khoang: dict[str, Any]) -> bool:
+    """`from`/`to` là mốc ISO; `days` là quãng tính ngược từ BÂY GIỜ.
+
+    `days` nằm trong ví dụ của hợp đồng từ đầu và chưa bao giờ chạy: lời gọi mẫu
+    `{"range":{"days":7}}` trả về toàn bộ sổ cái, và một bộ lọc không lọc gì thì không ai thấy
+    — kết quả vẫn đúng kiểu, vẫn sắp đúng thứ tự, chỉ nhiều hơn thứ được hỏi.
+    """
     at = e.get("at") or ""
+    if (d := khoang.get("days")) is not None:
+        if not isinstance(d, int | float) or d <= 0:
+            raise EideError("E1000", "range.days phải là số dương")
+        if at < (datetime.now(UTC) - timedelta(days=float(d))).isoformat():
+            return False
     if (t := khoang.get("from")) and at < t:
         return False
     return not ((t := khoang.get("to")) and at > t)

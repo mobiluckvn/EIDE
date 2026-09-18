@@ -43,10 +43,7 @@ public final class EidePhien {
     /// `project.list` sắp theo `last_open` giảm dần, nên phần tử đầu là dự án người vừa làm.
     /// Đây là chọn HỘ người dùng, nên nó phải nói ra mình vừa chọn gì — dòng đầu trong dock.
     public func khoiDong() async {
-        khung.manChao.onTao = { [weak self] van in
-            Task { await self?.taoDuAn(van) }
-        }
-        let r = try? EideDaemon.motLan(["project", "list"])
+        let r = try? await EideDaemon.motLan(["project", "list"])
         guard let r, r.ma == 0, let ds = r.json?["projects"] as? [[String: Any]], !ds.isEmpty
         else {
             if let r, r.ma != 0 {
@@ -74,7 +71,7 @@ public final class EidePhien {
         khung.manChao.datTrangThai("Đang tạo dự án…", ban: true)
         var tham = ["project", "new", van]
         if let thuMuc { tham += ["--dir", thuMuc] }
-        guard let r = try? EideDaemon.motLan(tham) else {
+        guard let r = try? await EideDaemon.motLan(tham) else {
             return khung.manChao.datTrangThai("Không tìm thấy lệnh `eide` trên máy này.", ban: false)
         }
         guard r.ma == 0, let j = r.json, let duong = j["path"] as? String else {
@@ -107,12 +104,46 @@ public final class EidePhien {
                 Task { @MainActor in self?._suKien(ten, p) }
             }
             try await _napRegistry(d)
+            try await _moThat(d, duong)
             await _lamMoi()
             _batNhipTim()
-            khung.dock.themLuot(.tacTu, "Đã mở `\((duong as NSString).lastPathComponent)`. "
-                                + "Gõ một câu tiếng Việt để bắt đầu.")
         } catch {
             khung.dock.themLuot(.loi, "\(error)")
+        }
+    }
+
+    /// Gọi `project.open` THẬT, không chỉ bật daemon lên.
+    ///
+    /// Bật daemon với `-p <đường dẫn>` mới chỉ nói cho nó biết thư mục nào; năm bước của
+    /// PROJECT-02 chưa chạy. Bỏ qua chúng mất ba thứ, và cả ba đều im lặng:
+    ///
+    /// - **Phiên làm việc** không được mở, nên `session.state` trả rỗng và màn Tổng quan hiện
+    ///   "chưa mở phiên nào" trên một dự án đang mở ngay trước mắt.
+    /// - **Niêm store** không được kiểm, nên một store bị ghi ngoài cổng (E6000) đi thẳng vào
+    ///   phiên làm việc — đúng thứ phép kiểm ấy tồn tại để chặn.
+    /// - **`user_version`** không được so, nên một dự án của bản cũ (E6003) hỏng dần ở từng lời
+    ///   gọi thay vì dừng ngay với một câu "chạy `eide migrate`".
+    private func _moThat(_ d: EideDaemon, _ duong: String) async throws {
+        let ten = (duong as NSString).lastPathComponent
+        do {
+            // ĐƯỜNG DẪN ĐẦY ĐỦ, không phải tên. Daemon chạy với `-p <dự án>`, nên `ctx.project_dir`
+            // CHÍNH LÀ dự án; `project.open` lại tra tên trong thư mục ấy như một workspace và
+            // không thấy gì. Lời gọi trả E2000 mà bên gọi vẫn báo "đã mở" — vì `caps.invoke` trả
+            // lỗi TRONG kết quả, không phải bằng một lỗi JSON-RPC.
+            let r = try EideKetQua.boc(try await d.goi("project.open", ["project": duong]),
+                                       "project.open")
+            let f = (r["features"] as? [String: Any])
+            let n = (f?["total"] as? Int) ?? 0
+            let dau = (r["first_failing"] as? [String: Any])?["title"] as? String
+            khung.dock.themLuot(.tacTu, "Đã mở `\(ten)` — \(n) tính năng trong hồ sơ"
+                                + (dau.map { ", đang dở: \($0)" } ?? "")
+                                + ". Gõ một câu tiếng Việt để bắt đầu.")
+        } catch let e as EideKetQua.Loi {
+            // E6003/E6000 không phải lỗi để nuốt: chúng có CÁCH SỬA, và cách ấy phải hiện ra.
+            let cach = e.maEide == "E6003" ? " → chạy `eide migrate` trong thư mục dự án."
+                     : (e.maEide == "E6000"
+                        ? " → store bị ghi ngoài EIDE; dựng lại chỉ mục trước khi làm tiếp." : "")
+            khung.dock.themLuot(.loi, "Mở `\(ten)` không xong: \(e)\(cach)")
         }
     }
 
@@ -160,6 +191,11 @@ public final class EidePhien {
         khung.cotPhai.onHoanTac = { [weak self] ma in
             Task { await self?._hoanTac(ma) }
         }
+        // Nối ở ĐÂY chứ không trong `khoiDong()`: một nút chỉ sống khi một hàm khác được gọi
+        // là một nút chết trong mọi đường chạy quên gọi hàm ấy — và `--chup` là một đường như thế.
+        khung.manChao.onTao = { [weak self] van in
+            Task { await self?.taoDuAn(van) }
+        }
         khung.cotPhai.onChonRun = { [weak self] _ in
             self?.moMan("S2", boiTacTu: false)
         }
@@ -167,18 +203,50 @@ public final class EidePhien {
 
     /// Mở một màn. `boiTacTu` quyết định có nhấp nháy hay không (§2B.5).
     public func moMan(_ tien: String, boiTacTu: Bool) {
+        // Tiền tố lạ thì NÓI RA. Trước phép kiểm này, `moMan("S3")` chạy trót lọt: cột trái
+        // không chọn gì, tab mang nhãn "S3", vùng làm việc ghi nhận một màn không tồn tại — và
+        // một bài tự kiểm khẳng định cả ba thứ ấy vẫn ĐẠT.
+        guard EideManHinhDS.man(tien) != nil else {
+            khung.dock.themLuot(.loi, "Không có màn nào mang tiền tố `\(tien)` trong danh mục 25 màn.")
+            return
+        }
         khung.cotTrai.chon(tien, nhapNhay: boiTacTu)
         khung.thanhTab.mo(tien)
         khung.vungLamViec.moMan(tien, nangLucDs: _nangLucCua(tien))
+
+        if let tao = Self.MAN[tien] {
+            let man = tao()
+            khung.vungLamViec.datMan(man)
+            guard let d = daemon else {
+                return khung.vungLamViec.khiRong(
+                    vi: "chưa mở dự án nào nên không có daemon để hỏi",
+                    buocKe: "tạo hoặc mở một dự án")
+            }
+            Task { [weak self] in
+                await man.nap { ten, tham in
+                    _ = self   // giữ phiên sống đúng bằng thời gian màn còn nạp
+                    return try await d.goi(ten, tham)
+                }
+            }
+            return
+        }
         if let m = EideManHinhDS.man(tien), m.canBoard {
-            khung.vungLamViec.khiRong(
+            return khung.vungLamViec.khiRong(
                 vi: "chưa có bo mạch cắm vào máy",
                 buocKe: "cắm board và mạch nạp, rồi mở lại màn này")
-            return
         }
         khung.vungLamViec.khiRong(vi: "màn này chưa nối dữ liệu trong bản dựng hiện tại",
                                   buocKe: "đang làm — xem mục 8 của UXC-31")
     }
+
+    /// Bảng màn ĐÃ NỐI DỮ LIỆU. Khoá là tiền tố trong `EideManHinhDS`, và phép kiểm bố cục đối
+    /// chiếu từng khoá với danh mục — một khoá gõ sai ở đây là một màn không bao giờ mở được, và
+    /// nó trông y hệt một màn chưa làm.
+    public static let MAN: [String: () -> EideManCoSo] = [
+        EideManTongQuan.tien: { EideManTongQuan() },
+        EideManNhatKy.tien: { EideManNhatKy() },
+        EideManChinhSach.tien: { EideManChinhSach() },
+    ]
 
     // MARK: - lệnh và sự kiện
 
