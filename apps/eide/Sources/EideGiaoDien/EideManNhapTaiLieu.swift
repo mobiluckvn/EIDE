@@ -19,11 +19,15 @@ import EideLoi
 /// 3. extractor của từng tệp MỚI.
 /// 4. `ingest.index_text` cho README/md — chỉ tài liệu ngữ cảnh, không phải datasheet.
 ///
-/// ## Điều màn này KHÔNG có, và đã ghi ra
+/// ## Bảng nguồn
 ///
-/// UXC-31 đòi một **bảng nguồn thường trực** kèm trạng thái duyệt. Không năng lực nào trong 242
-/// cái đọc ra bảng `source` — xem [DEV-134]. Nên ở đây có hai bảng thật thà hơn: bảng của LƯỢT
-/// NHẬP vừa chạy, và LỊCH SỬ NHẬP dựng từ sổ cái. Không cái nào tự nhận là danh mục nguồn.
+/// `archive.sources` (ARCHIVE-08) — năng lực thêm ngày 20/09/2026 theo [DEV-134], vì tới lúc ấy
+/// **không năng lực nào trong 242 cái đọc ra bảng `source`**, và màn này phải bày hai bảng gần
+/// đúng (lượt nhập vừa chạy · lịch sử từ sổ cái) thay cho một bảng đúng.
+///
+/// `n_pending` tách khỏi `n_facts` vì hai con số trả lời hai câu khác nhau: nguồn này đóng góp
+/// bao nhiêu tri thức, và bao nhiêu trong đó còn CHƯA dùng được làm hằng số phần cứng. Gộp
+/// chúng thì một datasheet đã nhập trọn vẹn mà chưa ai duyệt trông y hệt một datasheet đã duyệt.
 public final class EideManNhapTaiLieu: EideManCoSo {
 
     public override class var tien: String { "Ingest" }
@@ -59,15 +63,35 @@ public final class EideManNhapTaiLieu: EideManCoSo {
         them(vungTha)
         them(cocTienDo)
 
-        let lan = await _lichSuNhap(goi)
-        guard !lan.isEmpty else {
+        let nguon = (try? await nangLuc(goi, "archive.sources"))
+            .flatMap { $0["sources"] as? [[String: Any]] } ?? []
+        guard !nguon.isEmpty else {
             // Đúng câu UXC-31 quy định cho trạng thái rỗng của S4 — và vùng thả vẫn nằm trên
             // nó, vì lời mời và lời giải thích là hai việc khác nhau.
             return rong(vi: "chưa nhập tài liệu nào vào dự án này",
                         buocKe: "kéo PDF/SVD/BOM vào vùng trên, hoặc chạy "
                               + "`eide ingest <tệp>` ở dòng lệnh")
         }
-        tieuDePhu("\(lan.count) LẦN NHẬP GẦN ĐÂY — theo sổ cái, không phải danh mục nguồn (DEV-134)")
+
+        let cho = nguon.reduce(0) { $0 + (EideManHoChieu.nguyen($1["n_pending"]) ?? 0) }
+        tieuDePhu("\(nguon.count) NGUỒN ĐÃ NHẬP"
+                  + (cho > 0 ? " — \(cho) fact chưa dùng được làm hằng số phần cứng" : ""))
+        bang(cot: [("NGUỒN", 250), ("LOẠI", 104), ("TẦNG", 74), ("FACT", 64), ("CHƯA DUYỆT", 96),
+                   ("NHẬP LÚC", 0)],
+             dong: nguon.map { s in
+                 [EideManHoChieu.tenTep((s["uri"] as? String) ?? "?"),
+                  (s["kind"] as? String) ?? "—",
+                  EideManHoChieu.nhanTang((s["tier"] as? String) ?? "", ""),
+                  "\(EideManHoChieu.nguyen(s["n_facts"]) ?? 0)",
+                  Self.oChuaDuyet(EideManHoChieu.nguyen(s["n_pending"]) ?? 0),
+                  // `added_at` đọc từ cột `fetched_at` của DDD-14 §2, và cột ấy RỖNG với tệp
+                  // người tự bỏ vào — chỉ `search.fetch` mới điền. Nói ra chứ không để ô trống.
+                  (s["added_at"] as? String).map(EideManNhatKy.gio) ?? "tệp tại chỗ"]
+             })
+
+        let lan = await _lichSuNhap(goi)
+        guard !lan.isEmpty else { return }
+        tieuDePhu("\(lan.count) LẦN NHẬP GẦN ĐÂY — theo sổ cái")
         // "FACT MỚI", không phải "FACT". `store.write` đếm số fact GHI RA; một lô mà mọi fact
         // đã có sẵn thì gộp hết và con số ấy bằng 0 — đúng, nhưng đọc "FACT 0" thành "lần nhập
         // này hỏng". Đo 20/09 trên hai lượt `passport.import` gộp: bảng nói 2 lần nhập · 0 fact.
@@ -170,6 +194,16 @@ public final class EideManNhapTaiLieu: EideManCoSo {
         } catch {
             return "không gọi được: \(error)"
         }
+    }
+
+    /// Ô "chưa duyệt" — **`0` phải là một chữ, không phải một số không.**
+    ///
+    /// Cột này nói "còn bao nhiêu fact của nguồn này chưa dùng được làm hằng số phần cứng"
+    /// (`code.constant_guard`, CODE-04 bước 1). Một cột toàn số mà thỉnh thoảng có `0` thì mắt
+    /// lướt qua; mà `0` ở đây lại là tin TỐT nhất trong cả bảng — nguồn ấy đã sẵn sàng cho tác
+    /// tử sinh mã. Viết nó ra thành chữ để nó thôi trông giống một ô trống.
+    public static func oChuaDuyet(_ n: Int) -> String {
+        n == 0 ? "— dùng được" : "\(n)"
     }
 
     /// Nhãn nhận dạng một lần nhập.

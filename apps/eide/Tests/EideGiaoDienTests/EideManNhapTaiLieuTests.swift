@@ -107,23 +107,43 @@ final class EideManNhapTaiLieuTests: XCTestCase {
         XCTAssertFalse(van.contains("0 fact"), "đọc thành trích được 0 fact — \(van)")
     }
 
-    /// Lịch sử dựng từ SỔ CÁI, và tiêu đề phải nói thẳng nó KHÔNG phải danh mục nguồn — đó là
-    /// nội dung của [DEV-134], và giấu nó đi là để người đọc tưởng mình đang xem cái không có.
-    func testLichSuNoiRoNoKhongPhaiDanhMucNguon() async {
+    /// **Bảng nguồn thật** — `archive.sources` (ARCHIVE-08), năng lực thêm theo [DEV-134].
+    ///
+    /// `n_pending` tách khỏi `n_facts`: gộp hai số thì một datasheet đã nhập trọn vẹn mà chưa
+    /// ai duyệt trông y hệt một datasheet đã duyệt xong.
+    func testBangNguonTachFACTvoiCHUADUYET() async {
         let m = EideManNhapTaiLieu()
-        await m.nap { ten, _ in
-            guard ten == "view.timeline" else { return ["status": "done", "result": [String: Any]()] }
-            return ["status": "done", "result": ["events": [
-                ["kind": "store.write", "at": "2026-09-20T09:12:00+00:00",
-                 "data": ["batch_id": "b1", "n_facts": 412, "n_conflicts": 1,
-                          "actor": "agent", "reason": "extract.svd"]],
-                ["kind": "cap.run.start", "at": "2026-09-20T09:11:00+00:00", "data": [:]],
-            ], "total": 2]]
-        }
+        await m.nap(Self.loiCoNguon())
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("không phải danh mục nguồn"), van)
-        XCTAssertTrue(van.contains("DEV-134"), van)
+        XCTAssertTrue(van.contains("2 NGUỒN ĐÃ NHẬP"), van)
+        XCTAssertTrue(van.contains("rm0383.pdf"), van)
         XCTAssertTrue(van.contains("412"), van)
+        XCTAssertTrue(van.contains("7 fact chưa dùng được"), "không tổng hợp phần chờ — \(van)")
+        XCTAssertTrue(van.contains("CHƯA DUYỆT"), van)
+    }
+
+    /// `0` ở cột CHƯA DUYỆT là tin TỐT nhất trong cả bảng — nguồn ấy đã sẵn sàng cho tác tử
+    /// sinh mã. Một cột toàn số thì mắt lướt qua đúng cái `0` ấy.
+    func testKhongConFactChoThiNoiRaBangCHU() {
+        XCTAssertEqual(EideManNhapTaiLieu.oChuaDuyet(0), "— dùng được")
+        XCTAssertEqual(EideManNhapTaiLieu.oChuaDuyet(7), "7")
+    }
+
+    /// `added_at` đọc từ cột `fetched_at` của DDD-14 §2, và cột ấy RỖNG với tệp người tự bỏ vào
+    /// — chỉ `search.fetch` mới điền. Ô trống ở đó đọc như dữ liệu bị mất.
+    func testNguonKhongCoMocThoiGianVanNoiRaViSao() async {
+        let m = EideManNhapTaiLieu()
+        await m.nap(Self.loiCoNguon())
+        XCTAssertTrue(Self.chu(m).contains("tệp tại chỗ"), Self.chu(m))
+    }
+
+    /// Lịch sử nhập vẫn dựng từ SỔ CÁI, và nằm DƯỚI bảng nguồn: nó trả lời một câu khác —
+    /// "lần nhập nào ghi được bao nhiêu", không phải "máy đã đọc những gì".
+    func testLichSuNhapVanCoDuoiBangNguon() async {
+        let m = EideManNhapTaiLieu()
+        await m.nap(Self.loiCoNguon())
+        let van = Self.chu(m)
+        XCTAssertTrue(van.contains("LẦN NHẬP GẦN ĐÂY"), van)
         XCTAssertTrue(van.contains("20/09 09:12"), van)
         XCTAssertTrue(van.contains("FACT MỚI"), "cột FACT trần đọc thành 'lần nhập hỏng' — \(van)")
     }
@@ -162,6 +182,30 @@ final class EideManNhapTaiLieuTests: XCTestCase {
     }
 
     // MARK: - phụ
+
+    /// Lõi giả có hai nguồn thật và một lần nhập trong sổ cái.
+    private static func loiCoNguon() -> EideGoi {
+        { ten, tham in
+            if ten == "view.timeline" {
+                return ["status": "done", "result": ["events": [
+                    ["kind": "store.write", "at": "2026-09-20T09:12:00+00:00",
+                     "data": ["batch_id": "b1", "n_facts": 412, "n_conflicts": 1,
+                              "actor": "agent", "reason": "extract.svd"]],
+                    ["kind": "cap.run.start", "at": "2026-09-20T09:11:00+00:00", "data": [:]],
+                ], "total": 2]]
+            }
+            guard (tham["id"] as? String) == "archive.sources" else {
+                return ["status": "done", "result": [String: Any]()]
+            }
+            return ["status": "done", "result": ["sources": [
+                ["source_id": "s_rm", "uri": "/kho/ds/rm0383.pdf", "kind": "datasheet",
+                 "tier": "gold", "added_at": NSNull(), "n_facts": 412, "n_pending": 7],
+                ["source_id": "s_er", "uri": "/kho/ds/errata.pdf", "kind": "errata",
+                 "tier": "silver", "added_at": "2026-09-19T10:00:00+00:00",
+                 "n_facts": 12, "n_pending": 0],
+            ]]]
+        }
+    }
 
     private static func cho() async {
         for _ in 0..<60 { await Task.yield() }
