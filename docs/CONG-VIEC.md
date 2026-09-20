@@ -248,7 +248,47 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ---
 
-## Điểm dừng phiên 18/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
+
+*Gói mới: **51 test Swift** xanh. `apps/eide --tu-kiem`: **24/24**. Màn đã nối dữ liệu:
+**4/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip** — mới).*
+
+### Đã làm: S5 Hộ chiếu chip — màn đầu của nhóm TRI THỨC
+
+`passport.query` (PASSPORT-02) + `view.provenance` (VIEW-03). Chip đọc từ mục tiêu đã ghim của
+dự án, nên trạng thái rỗng đúng câu UXC-31 §8 S5 quy định. Bảng có địa chỉ hệ 16, kích thước
+kèm KiB, tầng, và nguồn kèm `tr.<trang> [bbox]`. Kiểm bằng MẮT trên hộ chiếu ATmega328P thật
+(287 fact), không chỉ bằng test.
+
+**Năm lỗi im lặng mà màn này lôi ra — bốn cái KHÔNG phải của nó:**
+
+| # | Lỗi | Vì sao không test nào thấy |
+|---|---|---|
+| 1 | **NT2 đẩy một màn ra khỏi chính nó.** Mở S5 → S5 gọi `project.status` để biết chip đã ghim → NT2 thấy năng lực ấy thuộc màn Tổng quan → nhảy sang Tổng quan. Ảnh `man-Passport.png` ra một màn Tổng quan thân trống | Cả hai màn đều đúng ở mức đơn vị; chỗ hỏng nằm GIỮA chúng. `_theoRun` đã có đúng bộ lọc cần dùng từ 18/09, NT2 ngay trên nó thì chưa |
+| 2 | **`bit_range [0, 1]` hiện thành `[false, true]`.** `(0 as NSNumber) as? Bool` THÀNH CÔNG trên Darwin, nên một nhánh Bool đứng trước nhánh số nuốt mọi 0/1 | Giá trị vẫn là mảng hai phần tử, vẫn đúng kiểu. Chỉ là nó nói khác datasheet |
+| 3 | **Ô dài hơn cột đẩy cả đuôi hàng lệch một cột.** Điểm dừng tab là mốc tuyệt đối. Hàng `field:AIN0D` hiện "vàng · chưa duyệt" nằm dưới tiêu đề NGUỒN | Đọc như một fact có nguồn tên "vàng" — sai, mà trông như một lựa chọn trình bày xấu |
+| 4 | **Cột TẦNG mâu thuẫn với chính cổng hằng số.** 287 fact đều `gold`+`normalized`: tóm tắt nói "vàng 287", mọi hàng nói "chưa duyệt", còn `code.constant_guard` thì CHO cả 287 đi qua (vàng thì qua kể cả chưa duyệt) | Ba câu về cùng một thứ, không câu nào sai riêng lẻ. Nay ghép thành `vàng · chưa duyệt` |
+| 5 | **`--tu-kiem` 6c coi mọi màn rỗng là hỏng.** Một dự án vừa tạo KHÔNG có tri thức, nên S5 rỗng ở đó là ĐÚNG | Nó từng "ĐẠT" chỉ vì lỗi số 1 khiến phép đo đo nhầm màn khác. Nay 6c đòi rỗng ĐÚNG HAI PHẦN (B5) và IN RA lý do |
+
+**Một mục chờ chủ sản phẩm:** [DEV-133] — UXC-31 đòi *ô nguồn bấm được*; bảng của gói mới là
+MỘT `NSTextField` (có chủ ý, vì hai bản dựng-nhiều-khung-nhìn trước đều hỏng bố cục) nên chỗ
+bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
+
+**Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
+dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
+
+**Làm tiếp:** S8 Xung đột tri thức (component dùng chung với xung đột MÃ ở §6.3) → S4 Nhập tài
+liệu → S7 Bản đồ tri thức. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
+phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
+
+> **Bẫy đã biết:** `kg.conflicts`/`kg.resolve_conflict` **KHÔNG có alias JSON-RPC** (ghi chú
+> 18/09 nói có là nhầm) — S8 phải đi qua `caps.invoke`. Và `predicate` của fact là enum ĐÓNG 16
+> giá trị trong `docs/spec/data/json/fact.json`: fixture giao diện mang vị từ ngoài enum là
+> fixture không bao giờ gặp lại ngoài đời.
+
+---
+
+## Điểm dừng phiên 18/09/2026 (lịch sử)
 
 *Cây làm việc SẠCH, 4 commit trong ngày. **1628 test Python · 3116 Swift gói cũ · 29 Swift gói
 mới** đều xanh. `check-spec`: 242 năng lực. `apps/eide --tu-kiem`: **22/22** trên một dự án tạm
