@@ -45,6 +45,9 @@ public final class EideKhung: NSView {
     /// Dải "Dữ liệu cũ" — B6/N6. Cao 0 khi bình thường, 28 khi mất daemon.
     private let daiCu = NSView()
     private let nhanCu = NSTextField(labelWithString: "")
+    /// "bấm để tải lại" — §7.2. Một dải chỉ báo mà không bấm được thì người đọc xong không có
+    /// việc gì làm với nó ngoài việc lo.
+    public let nutTaiLai = NSButton(title: "Tải lại", target: nil, action: nil)
     private lazy var caoDaiCu = daiCu.heightAnchor.constraint(equalToConstant: 0)
 
     /// Màn hình chào — chiếm TOÀN cửa sổ khi chưa có dự án (§3.1).
@@ -78,6 +81,10 @@ public final class EideKhung: NSView {
         nhanCu.textColor = EideToken.Mau.warn
         nhanCu.translatesAutoresizingMaskIntoConstraints = false
         daiCu.addSubview(nhanCu)
+        nutTaiLai.bezelStyle = .inline
+        nutTaiLai.isHidden = true
+        nutTaiLai.translatesAutoresizingMaskIntoConstraints = false
+        daiCu.addSubview(nutTaiLai)
         daiCu.isHidden = true
 
         for v in [thanhTren, vienDo, cotTrai, thanhTab, daiCu, vungLamViec,
@@ -121,6 +128,8 @@ public final class EideKhung: NSView {
             caoDaiCu,
             nhanCu.leadingAnchor.constraint(equalTo: daiCu.leadingAnchor, constant: 12),
             nhanCu.centerYAnchor.constraint(equalTo: daiCu.centerYAnchor),
+            nutTaiLai.leadingAnchor.constraint(equalTo: nhanCu.trailingAnchor, constant: 10),
+            nutTaiLai.centerYAnchor.constraint(equalTo: daiCu.centerYAnchor),
 
             // ── màn hình chào: TOÀN cửa sổ, nổi trên mọi vùng
             manChao.topAnchor.constraint(equalTo: topAnchor),
@@ -159,9 +168,24 @@ public final class EideKhung: NSView {
     public func datDuLieuCu(_ cu: Bool, tre: TimeInterval) {
         daiCu.isHidden = !cu
         caoDaiCu.constant = cu ? 28 : 0
+        nutTaiLai.isHidden = !cu
         nhanCu.stringValue = cu
             ? "Dữ liệu cũ — không nghe được daemon \(Int(tre)) giây qua."
             : ""
+    }
+
+    /// Dải "Dữ liệu cũ" vì **NHẢY QUÃNG `seq`** — UXC-31 §7.2, khác hẳn mất daemon.
+    ///
+    /// Mất daemon là "không nghe thấy gì"; nhảy quãng là "nghe thấy, nhưng thiếu mất mấy bản
+    /// ghi ở giữa" — và cái thứ hai nguy hơn, vì màn hình vẫn đang cập nhật nên trông như đang
+    /// đúng. Hai câu phải khác nhau, nếu không thì người dùng học được đúng một phản xạ cho hai
+    /// tình huống cần hai phản xạ.
+    public func datNhayQuang(_ tu: Int, _ den: Int) {
+        daiCu.isHidden = false
+        caoDaiCu.constant = 28
+        nutTaiLai.isHidden = false
+        nhanCu.stringValue = "Dữ liệu cũ — thiếu \(den - tu - 1) bản ghi sổ cái "
+                           + "(seq \(tu + 1)…\(den - 1)). Màn đang hiện một trạng thái chưa đủ."
     }
 
     /// Chữ đang hiện trong dải "Dữ liệu cũ" — cho bài kiểm đọc.

@@ -22,6 +22,27 @@ open class EideManCoSo: NSView {
     /// Nạp dữ liệu. Lỗi ném ra từ đây được lớp cơ sở bắt và hiện thành trạng thái rỗng CÓ LÝ DO.
     open func napDuLieu(_ goi: @escaping EideGoi) async throws {}
 
+    /// **`seq` sổ cái tại lần vẽ gần nhất** — UXC-31 §7.2.
+    ///
+    /// Không dùng để phát hiện nhảy quãng: `seq` là số thứ tự TOÀN CỤC của sổ cái, còn mỗi màn
+    /// chỉ nghe vài loại sự kiện, nên một màn thấy `seq` 5 rồi 11 là chuyện bình thường. Phép
+    /// phát hiện nhảy quãng vì thế nằm ở `EidePhien`, nơi nghe đủ mọi loại.
+    ///
+    /// Con số này là MỐC NƯỚC: "màn đang hiện trạng thái tính tới seq bao nhiêu" — thứ mà
+    /// §7.2 gọi là "bấm = query lại **từ seq đã có**".
+    public internal(set) var seqCuoi = 0
+
+    /// Áp một sự kiện vào màn đang MỞ — UXC-31 §7.3 ("vẽ lại đúng phần liên quan").
+    ///
+    /// Trả `true` nghĩa là màn đã tự cập nhật phần liên quan tại chỗ. Trả `false` — mặc định —
+    /// nghĩa là màn chưa biết vẽ riêng phần ấy, và bên gọi sẽ nạp lại CHÍNH MÀN NÀY (không phải
+    /// cả cửa sổ).
+    ///
+    /// Mặc định là `false` chứ không phải "tự nạp lại": một lớp cơ sở tự ý nạp lại sẽ giấu mất
+    /// việc màn con chưa hiện thực diff render, và §7.3 tồn tại chính vì nạp lại cả màn là thứ
+    /// cần tránh. Để `false` thì đếm được còn bao nhiêu màn chưa làm phần ấy.
+    open func apDung(_ ten: String, _ p: [String: Any]) -> Bool { false }
+
     public let than = NSStackView()
 
     /// Thời gian lần nạp gần nhất, tách làm hai: chờ lõi, và vẽ. Tách vì hai con số ấy dẫn tới

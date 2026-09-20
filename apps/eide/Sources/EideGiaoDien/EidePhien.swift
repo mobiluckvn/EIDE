@@ -177,6 +177,10 @@ public final class EidePhien {
     // MARK: - nối các vùng
 
     private func _noiDay() {
+        // §7.2: "bấm = query lại TỪ seq đã có". Nạp lại màn đang mở và xoá dải.
+        khung.nutTaiLai.target = self
+        khung.nutTaiLai.action = #selector(_taiLai)
+
         khung.cotTrai.onChon = { [weak self] tien in
             self?.moMan(tien, boiTacTu: false)
         }
@@ -229,6 +233,10 @@ public final class EidePhien {
         }
         khung.cotTrai.chon(tien, nhapNhay: boiTacTu)
         khung.thanhTab.mo(tien)
+        // Người MỞ màn ra là đã xem — badge về 0 bất kể daemon còn sống hay không. Đặt sau
+        // `guard let d = daemon` (chỗ tự nhiên hơn) thì mất daemon xong badge đứng mãi, và một
+        // badge không bao giờ tắt là một badge người ta thôi nhìn.
+        daXem(tien)
         khung.vungLamViec.moMan(tien, nangLucDs: _nangLucCua(tien))
 
         if let tao = Self.MAN[tien] {
@@ -244,6 +252,8 @@ public final class EidePhien {
                     _ = self   // giữ phiên sống đúng bằng thời gian màn còn nạp
                     return try await d.goi(ten, tham)
                 }
+                // Mốc nước §7.2: màn này đang hiện trạng thái tính tới seq nào.
+                man.seqCuoi = self?.seqNghe ?? 0
             }
             return
         }
@@ -269,6 +279,140 @@ public final class EidePhien {
         EideManBanDoTriThuc.tien: { EideManBanDoTriThuc() },
         EideManHoChieuMach.tien: { EideManHoChieuMach() },
     ]
+
+
+    // MARK: - đồng bộ sự kiện (UXC-31 §7)
+
+    /// `seq` sổ cái nghe được gần nhất. 0 = chưa nghe gì.
+    private var seqNghe = 0
+
+    /// Màn ĐANG ĐÓNG có sự kiện chưa xem — §7.3 ("chỉ tăng badge nhóm").
+    private var moiTheoMan: [String: Int] = [:]
+
+    /// Mục CHỜ TÔI theo màn, phái sinh từ hàng đợi (B7). Badge = trường này cộng `moiTheoMan`.
+    private var choTheoMan: [String: Int] = [:]
+
+    /// **§7.2 — phát hiện nhảy quãng.**
+    ///
+    /// Phép này nằm ở đây chứ không ở từng màn, vì `seq` là số thứ tự TOÀN CỤC của sổ cái: một
+    /// màn chỉ nghe hai loại sự kiện sẽ thấy `seq` 5 rồi 11 và tưởng mình mất sáu bản ghi. Chỉ
+    /// lớp nghe ĐỦ MỌI LOẠI mới nói được "thiếu" hay "không thiếu".
+    ///
+    /// Nhảy quãng khác mất daemon, và khác ở chỗ nguy hơn: mất daemon là không nghe thấy gì,
+    /// còn nhảy quãng là màn hình VẪN đang cập nhật nên trông như đang đúng.
+    private func _theoSeq(_ p: [String: Any]) {
+        guard let seq = p["seq"] as? Int, seq > 0 else { return }
+        defer { seqNghe = max(seqNghe, seq) }
+        // Bản ghi ĐẦU TIÊN nghe được không nói lên điều gì: daemon có thể đã chạy từ trước.
+        guard seqNghe > 0, seq > seqNghe + 1 else { return }
+        khung.datNhayQuang(seqNghe, seq)
+    }
+
+
+    /// Sự kiện này có phải một THAY ĐỔI TRẠNG THÁI không — hay chỉ là tiếng vọng của một lời
+    /// gọi đọc?
+    ///
+    /// `event.run.progress` gánh hai khái niệm (xem `_theoRun`), và một trong hai là `cap.run.*`
+    /// của MỘT lời gọi đơn lẻ — bao gồm cả những lời gọi mà chính một màn vừa mở phát ra để tự
+    /// vẽ. Không lọc thì `_dinhTuyen` thấy màn đang mở "cần" sự kiện ấy, nạp lại nó, lần nạp
+    /// lại sinh ra sự kiện y hệt, và vòng lặp không có đáy.
+    ///
+    /// Đo 20/09: thêm §7 xong, `--tu-kiem` treo ở màn đầu tiên — cùng hình dạng với lỗi NT2 đã
+    /// sửa sáng cùng ngày, ở một chỗ khác. Nên phép phân biệt nay có MỘT tên và MỘT chỗ, và cả
+    /// hai bên gọi dùng chung nó.
+    static func laDoiTrangThai(_ ten: String, _ p: [String: Any]) -> Bool {
+        // Dấu hiệu "tiếng vọng": sự kiện nói về MỘT LỜI GỌI NĂNG LỰC (`cap`) mà không thuộc
+        // chuỗi nào (`node_id`) và không phải vòng đời chuỗi (`run.*`).
+        //
+        // Luật này rộng hơn `event.run.progress`, và phải thế: bản đầu chỉ lọc run.progress,
+        // còn `gate.decision` → `event.gate.decided` của CÙNG lời gọi đọc ấy vẫn lọt — nên màn
+        // Xung đột tri thức (khai nghe `gate.decided`) tự nạp lại chính mình, vô tận. Mỗi lời
+        // gọi năng lực sinh ra ba bản ghi sổ cái, nên bịt một đường còn hai.
+        guard p["cap"] != nil else { return true }
+        let loai = (p["kind"] as? String) ?? ""
+        return loai.hasPrefix("run.") || p["node_id"] != nil
+    }
+
+    /// **§7.1 + §7.3 — đưa sự kiện tới đúng màn.**
+    ///
+    /// Màn đang MỞ và có khai báo nghe loại này → hỏi nó tự vẽ lại phần liên quan; nó chưa biết
+    /// thì nạp lại CHÍNH màn ấy, không phải cả cửa sổ. Màn đang ĐÓNG → chỉ tăng badge.
+    private func _dinhTuyen(_ ten: String, _ p: [String: Any]) {
+        guard Self.laDoiTrangThai(ten, p) else { return }
+        let can = EideDangKySuKien.manCan(ten)
+        guard !can.isEmpty else { return }
+        let dangMo = khung.vungLamViec.dangMo
+        for tien in can where tien != dangMo {
+            moiTheoMan[tien, default: 0] += 1
+        }
+        _veBadge()
+        guard let dangMo, can.contains(dangMo), let man = khung.vungLamViec.manDangMo else { return }
+        if man.apDung(ten, p) { return }
+        _henNapLai(man, dangMo)
+    }
+
+
+    /// Màn đang chờ nạp lại — gộp nhiều sự kiện thành MỘT lần nạp.
+    private var choNapLai: Set<String> = []
+
+    /// Cửa sổ gộp. Đủ ngắn để người không kịp thấy độ trễ, đủ dài để một lượt chạy nhiều bước
+    /// không kéo theo một lần nạp cho mỗi bước.
+    public static let GOP_NAP: TimeInterval = 0.4
+
+    /// **Gộp lời gọi nạp lại** — hệ quả trực tiếp của §7.3 ("KHÔNG reload cả màn").
+    ///
+    /// Nạp lại NGAY ở mỗi sự kiện là thứ §7.3 cấm, và nó hỏng nhanh nhất ở đúng màn nghe nhiều
+    /// nhất: đo 20/09, màn Nhật ký — khai `TAT_CA` theo §8 S2 — mất **7,68 s** để hiện xong,
+    /// so với 0,35 s trước đó, vì mỗi sự kiện đẩy nó về lại trạng thái "Đang đọc…".
+    ///
+    /// Gộp không thay được diff render; nó là cách lùi TRUNG THỰC cho tới khi từng màn hiện
+    /// thực `apDung`. Khác biệt đáng giữ: một lần nạp cho một chùm sự kiện, thay vì một lần
+    /// nạp cho mỗi sự kiện.
+    private func _henNapLai(_ man: EideManCoSo, _ tien: String) {
+        guard let d = daemon, !choNapLai.contains(tien) else { return }
+        choNapLai.insert(tien)
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(Self.GOP_NAP * 1_000_000_000))
+            guard let self else { return }
+            choNapLai.remove(tien)
+            // Người có thể đã chuyển màn trong lúc chờ — nạp lại một màn không còn trên màn
+            // hình là tốn một lượt gọi lõi để không ai thấy.
+            guard khung.vungLamViec.dangMo == tien,
+                  let dang = khung.vungLamViec.manDangMo, dang === man else { return }
+            await man.nap { t, x in try await d.goi(t, x) }
+            man.seqCuoi = seqNghe
+        }
+    }
+
+    /// Badge = mục CHỜ TÔI cộng sự kiện CHƯA XEM của màn đang đóng.
+    ///
+    /// Hai nguồn, một con số, và đó là chủ ý: người nhìn cột trái hỏi "chỗ nào có việc cho tôi",
+    /// không hỏi "việc ấy thuộc loại nào". Tách làm hai dãy số sẽ bắt họ học một bảng chú giải.
+    private func _veBadge() {
+        var g = choTheoMan
+        for (tien, n) in moiTheoMan { g[tien, default: 0] += n }
+        khung.cotTrai.choTheoMan = g
+    }
+
+    /// Người mở một màn → phần "chưa xem" của nó về 0.
+    func daXem(_ tien: String) {
+        guard moiTheoMan[tien] != nil else { return }
+        moiTheoMan[tien] = nil
+        _veBadge()
+    }
+
+    /// Cho bài đo đọc số sự kiện chưa xem.
+    public func chuaXem(_ tien: String) -> Int { moiTheoMan[tien] ?? 0 }
+
+    /// `seq` nghe được gần nhất — cho bài đo.
+    public var seqDangNghe: Int { seqNghe }
+
+    /// Người bấm "Tải lại" trên dải Dữ liệu cũ — §7.2.
+    @objc func _taiLai() {
+        khung.datDuLieuCu(false, tre: 0)
+        guard let tien = khung.vungLamViec.dangMo else { return }
+        moMan(tien, boiTacTu: false)
+    }
 
     // MARK: - lệnh và sự kiện
 
@@ -303,6 +447,8 @@ public final class EidePhien {
 
     private func _suKien(_ ten: String, _ p: [String: Any]) {
         lucCuoiNghe = Date()
+        _theoSeq(p)
+        _dinhTuyen(ten, p)
         guard ten == "event.run.progress" else { return }
         _theoRun(p)
         guard let cap = p["cap"] as? String else { return }
@@ -319,8 +465,7 @@ public final class EidePhien {
         // Tổng quan. Ảnh `man-Passport.png` ra một màn Tổng quan với thân trống, và dòng
         // `hiện xong sau 0,55 s (lõi 0 ms, vẽ 0 ms)` đo nhầm một màn khác. Không test nào thấy:
         // cả hai màn đều đúng ở mức đơn vị, chỗ hỏng nằm giữa chúng.
-        let loai = (p["kind"] as? String) ?? ""
-        guard loai.hasPrefix("run.") || p["node_id"] != nil else { return }
+        guard Self.laDoiTrangThai(ten, p) else { return }
         guard let man = manCua[cap], !man.isEmpty else { return }
         let tien = EideManHinhDS.tatCa.first { man.hasPrefix($0.tien) }?.tien
         guard let tien, tien != khung.vungLamViec.dangMo else { return }
@@ -466,7 +611,8 @@ public final class EidePhien {
             else { continue }
             theoMan[tien, default: 0] += 1
         }
-        khung.cotTrai.choTheoMan = theoMan
+        choTheoMan = theoMan
+        _veBadge()
     }
 
     /// `datetime.isoformat()` của Python ghi cả phần thập phân của giây (`…:45.123456+00:00`),
