@@ -40,18 +40,33 @@ from eide_core.tools import which
 #
 # `kind` phải thuộc enum của DDD-14 §2 Source — không được đặt thêm tên mới ở đây, vì cột ấy có
 # ràng buộc và vì `search.*`/`extract.*` sau này lọc theo đúng enum ấy.
+# `extractor` là TÊN NĂNG LỰC GỌI ĐƯỢC, không phải một nhãn mô tả.
+#
+# Cả điểm của trường này là bên gọi dispatch được trên nó: phân loại xong thì biết ngay phải
+# chạy cái gì tiếp. Tới 20/09/2026 chưa bên gọi nào làm thế, và trong khoảng lặng ấy **7 trong
+# 16 dòng trỏ tới năng lực KHÔNG TỒN TẠI**: `extract.binding`, `extract.header`, `extract.image`,
+# `extract.kicad`, `extract.netlist`, `extract.csv`, `extract.html`. Chúng là tên RÚT GỌN của
+# `kind` chứ không phải tên năng lực, và chúng gồm những loại tệp thường gặp nhất — header C,
+# netlist KiCad, CSV. Màn Nhập tài liệu (S4) là bên gọi đầu tiên, nên nó là chỗ đầu tiên đạp
+# phải. `test_extractor_deu_la_nang_luc_co_that` giữ cho bảng này khỏi rữa lại.
+#
+# Hai dòng cố ý để `None`, và `None` ở đây là một câu trả lời chứ không phải một chỗ trống:
+# - `html`: không có năng lực nào đọc HTML thành fact.
+# - `image`: có ba ứng viên (`image_board`/`image_schematic`/`image_scope`) mà chữ ký tệp không
+#   phân biệt nổi, và cả ba đều chờ đường ảnh cho Gateway ([DEV-076], [DEV-079]). Đoán một
+#   trong ba là hứa một việc sản phẩm chưa làm được.
 BANG_KIND: dict[str, tuple[str, str | None]] = {
     "svd":      ("gold", "extract.svd"),
     "atdf":     ("gold", "extract.atdf"),
     "edc":      ("gold", "extract.edc"),
-    "binding":  ("gold", "extract.binding"),
-    "header":   ("gold", "extract.header"),
+    "binding":  ("gold", "extract.dt_binding"),
+    "header":   ("gold", "extract.header_c"),
     "pdf":      ("silver", "extract.pdf_layout"),
-    "image":    ("silver", "extract.image"),
-    "kicad":    ("silver", "extract.kicad"),
-    "netlist":  ("silver", "extract.netlist"),
-    "csv":      ("bronze", "extract.csv"),
-    "html":     ("bronze", "extract.html"),
+    "image":    ("silver", None),
+    "kicad":    ("silver", "extract.kicad_netlist"),
+    "netlist":  ("silver", "extract.kicad_netlist"),
+    "csv":      ("bronze", "extract.bom"),
+    "html":     ("bronze", None),
     "md":       ("bronze", None),
     "readme":   ("bronze", None),
     "archive":  ("bronze", "archive.list"),

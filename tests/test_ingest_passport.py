@@ -196,6 +196,53 @@ def test_tier_va_extractor_theo_bang_buoc_2(tmp_path, du_an):
     assert out["pdf"]["tier"] == "silver"
 
 
+def test_extractor_deu_la_nang_luc_co_that():
+    """`extractor` là TÊN NĂNG LỰC GỌI ĐƯỢC, không phải một nhãn mô tả.
+
+    Cả điểm của trường này (ARCHIVE-05, mô tả output: "file, kind, tier, extractor") là bên gọi
+    dispatch được trên nó. Tới 20/09/2026 chưa bên gọi nào làm thế, và trong khoảng lặng ấy
+    **7 trong 16 dòng của `BANG_KIND` trỏ tới năng lực không tồn tại**: `extract.binding`,
+    `extract.header`, `extract.image`, `extract.kicad`, `extract.netlist`, `extract.csv`,
+    `extract.html` — tên rút gọn của `kind` chứ không phải tên năng lực. Chúng gồm những loại
+    tệp thường gặp nhất: header C, netlist KiCad, CSV.
+
+    Không test nào thấy vì không test nào GỌI thứ mà bảng chỉ tới; các test cũ chỉ so chuỗi
+    `extract.svd` — đúng một trong chín dòng không hỏng.
+    """
+    from eide.caps.archive import BANG_KIND
+    from eide_core.registry import get_registry
+
+    reg = get_registry()
+    sai = {k: ex for k, (_, ex) in BANG_KIND.items() if ex and ex not in reg}
+    assert not sai, f"extractor không có trong registry: {sai}"
+
+
+def test_extractor_nhan_tep_qua_dung_ten_tham_so():
+    """Biết GỌI CÁI GÌ chưa đủ — còn phải biết truyền tệp vào ĐÂU.
+
+    Bên gọi tự nhiên gửi `{"file": <đường dẫn>}` cho mọi extractor, và đúng với 7/9. Hai cái
+    còn lại nhận tên khác, nên cùng một vòng dispatch sẽ trả E1000 cho đúng hai loại tệp:
+    `csv` (→ `extract.bom` nhận `sources`, một MẢNG) và `archive` (→ `archive.list` nhận
+    `path`). Bảng ngoại lệ nằm ở đây chứ không chỉ trong giao diện, vì nó là chuyện của hợp
+    đồng: thêm một extractor nhận tên khác mà không ai biết thì màn Nhập tài liệu lặng lẽ
+    không đọc được một loại tệp.
+    """
+    from eide.caps.archive import BANG_KIND
+    from eide_core.registry import get_registry
+
+    NGOAI_LE = {"archive.list": "path", "extract.bom": "sources"}
+    reg = get_registry()
+    sai = {}
+    for _kind, (_tier, ex) in BANG_KIND.items():
+        if not ex:
+            continue
+        req = (reg.get(ex).spec.input_schema or {}).get("required", [])
+        mong = [NGOAI_LE.get(ex, "file")]
+        if req != mong:
+            sai[ex] = (req, mong)
+    assert not sai, f"tham số bắt buộc khác kỳ vọng của bên gọi: {sai}"
+
+
 def test_docx_khong_bi_xep_nham_thanh_archive(tmp_path):
     """docx/xlsx cũng là zip. Không phân biệt thì một .docx bị đẩy sang `archive.list` và người
     dùng nhận về danh sách `word/document.xml` thay vì nội dung tài liệu."""
