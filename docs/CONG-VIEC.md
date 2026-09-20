@@ -250,9 +250,39 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **65 test Swift** xanh. `apps/eide --tu-kiem`: **26/26**. `make check` thoát 0. Màn đã
-nối dữ liệu: **5/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip**,
-**S8 Xung đột tri thức** — hai cái sau là mới).*
+*Gói mới: **74 test Swift** xanh. `apps/eide --tu-kiem`: **28/28**. `make check` thoát 0. Màn đã
+nối dữ liệu: **6/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip**,
+**S8 Xung đột tri thức**, **S4 Nhập tài liệu** — ba cái sau là mới).*
+
+### Đã làm (3): S4 Nhập tài liệu — và một lỗi lõi mà việc ĐỌC lôi ra trước khi viết mã
+
+Vùng kéo-thả + đường ống `ingest.classify` → `ingest.hash_dedupe` → extractor của từng tệp MỚI
+→ `ingest.index_text` cho README/md. Khử trùng chạy TRƯỚC khi trích, vì cả điểm của nó là tránh
+chạy lại một lượt trích đắt tiền. Đã kiểm đầu-cuối trên lõi thật: `.svd` → `extract.svd` → 2
+fact → `store.write`; `README.md` → không extractor → chỉ mục toàn văn.
+
+**Lỗi lõi tìm được TRƯỚC khi viết dòng giao diện đầu tiên.** `ingest.classify` sinh trường
+`extractor` để bên gọi dispatch — và **7 trong 16 dòng của `BANG_KIND` trỏ tới năng lực KHÔNG
+TỒN TẠI**: `extract.binding`, `extract.header`, `extract.image`, `extract.kicad`,
+`extract.netlist`, `extract.csv`, `extract.html`. Chúng là tên rút gọn của `kind` chứ không phải
+tên năng lực, và gồm những loại tệp thường gặp nhất: header C, netlist KiCad, CSV. Không test
+nào thấy vì **chưa bên gọi nào từng dispatch trên trường ấy** — S4 là bên gọi đầu tiên. Đã sửa,
+và `test_extractor_deu_la_nang_luc_co_that` giữ bảng khỏi rữa lại.
+
+Bẫy thứ hai cùng chỗ: biết gọi cái gì chưa đủ, còn phải biết truyền tệp vào ĐÂU. Bảy extractor
+nhận `file`, nhưng `archive.list` nhận `path` và `extract.bom` nhận `sources` (một MẢNG) — nên
+một vòng dispatch ngây thơ trả E1000 cho đúng hai loại tệp. `test_extractor_nhan_tep_qua_dung_
+ten_tham_so` đọc thẳng `input_schema` để phía Python đỏ trước khi giao diện kịp câm.
+
+**Hai lỗi hiển thị chỉ ảnh chụp bắt được:** `reason` của `store.write` là chuỗi RỖNG trong đường
+thường gặp nhất (`passport.import` không nhận `reason`), nên `?? "…"` không cứu được và cả cột
+trống trơn — nay nhận dạng bằng `batch_id`. Và cột `FACT` đổi thành **FACT MỚI**: `store.write`
+đếm fact GHI RA, nên một lô gộp hết cho số 0, đúng mà đọc thành "lần nhập này hỏng".
+
+**Một mục chờ chủ sản phẩm:** [DEV-134] — UXC-31 đòi *bảng nguồn thường trực kèm trạng thái
+duyệt*, nhưng **không năng lực nào trong 242 cái đọc ra bảng `source`**. S4 hiện hai bảng thật
+thà hơn (lượt nhập vừa chạy · lịch sử nhập từ sổ cái) và tiêu đề nói thẳng nó không phải danh
+mục nguồn. Đề xuất thêm `archive.sources` — S6 và S13 rồi cũng sẽ cần.
 
 ### Đã làm (2): S8 Xung đột tri thức — và thẻ dùng chung mà §6.3 bắt buộc
 
@@ -304,7 +334,7 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp:** S4 Nhập tài liệu → S7 Bản đồ tri thức → S6 Hộ chiếu mạch (đóng nhóm TRI THỨC).
+**Làm tiếp:** S7 Bản đồ tri thức → S6 Hộ chiếu mạch (đóng nhóm TRI THỨC).
 **Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
 5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
