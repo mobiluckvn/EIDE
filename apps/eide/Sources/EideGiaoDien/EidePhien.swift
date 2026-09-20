@@ -265,6 +265,7 @@ public final class EidePhien {
         EideManChinhSach.tien: { EideManChinhSach() },
         EideManHoChieu.tien: { EideManHoChieu() },
         EideManXungDot.tien: { EideManXungDot() },
+        EideManNhapTaiLieu.tien: { EideManNhapTaiLieu() },
     ]
 
     // MARK: - lệnh và sự kiện
