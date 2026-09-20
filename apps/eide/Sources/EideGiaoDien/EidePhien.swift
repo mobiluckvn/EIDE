@@ -278,6 +278,7 @@ public final class EidePhien {
         EideManNhapTaiLieu.tien: { EideManNhapTaiLieu() },
         EideManBanDoTriThuc.tien: { EideManBanDoTriThuc() },
         EideManHoChieuMach.tien: { EideManHoChieuMach() },
+        EideManLamRo.tien: { EideManLamRo() },
     ]
 
 

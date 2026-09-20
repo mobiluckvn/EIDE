@@ -49,6 +49,9 @@ public enum EideDangKySuKien {
         "Graph": ["event.knowledge.changed"],
         // S8 Xung đột tri thức — xung đột sinh ra lúc ghi store, và giải quyết qua cổng.
         "XungDot": ["event.knowledge.changed", "event.gate.opened", "event.gate.decided"],
+        // S9 Làm rõ yêu cầu — câu hỏi gộp là một mục ASK ở cổng, nên nó tới qua hàng đợi.
+        "LamRo": ["event.queue.changed", "event.gate.opened", "event.chat.question",
+                  "event.chat.restated"],
         // S25 Chính sách — mức tự chủ và niêm.
         "ChinhSach": ["event.autonomy.changed", "event.notice"],
     ]
