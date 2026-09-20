@@ -152,9 +152,9 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## 7. ĐỒNG BỘ SỰ KIỆN (nền của mọi thứ — làm TRƯỚC các màn)
 
-- [ ] **7.1** Kênh: giao diện subscribe thông báo JSON-RPC theo LOẠI sự kiện; mỗi màn khai báo tĩnh danh sách loại nó cần — có bảng đăng ký kiểm được, không màn nào subscribe "tất cả".
-- [ ] **7.2** Mỗi màn giữ `seq` sổ cái của lần vẽ gần nhất; sự kiện đến áp tuần tự; phát hiện nhảy quãng hoặc mất daemon → nhãn "Dữ liệu cũ — bấm để tải lại" ≤ 2 giây (B6/N6); bấm = query lại từ seq đã có.
-- [ ] **7.3** Sự kiện tới màn đang ĐÓNG → chỉ tăng badge nhóm; tới màn đang MỞ → vẽ lại đúng phần liên quan (diff render, không reload cả màn).
+- [x] **7.1** Kênh: giao diện subscribe thông báo JSON-RPC theo LOẠI sự kiện; mỗi màn khai báo tĩnh danh sách loại nó cần — có bảng đăng ký kiểm được, không màn nào subscribe "tất cả".  ·  **✔ 9fa1ffc · `EideDangKySuKien.BANG`; 22 loại lấy từ `EideMethod` (sinh từ openrpc.json), không chép tay. Nhật ký khai `TAT_CA` — hằng số CÓ TÊN, không phải `"*"` — vì §8 S2 đòi "nghe mọi loại"; có bài kiểm đòi ĐÚNG MỘT màn được dùng nó**
+- [x] **7.2** Mỗi màn giữ `seq` sổ cái của lần vẽ gần nhất; sự kiện đến áp tuần tự; phát hiện nhảy quãng hoặc mất daemon → nhãn "Dữ liệu cũ — bấm để tải lại" ≤ 2 giây (B6/N6); bấm = query lại từ seq đã có.  ·  **✔ 9fa1ffc · phát hiện nhảy quãng ở `EidePhien` chứ không ở từng màn (`seq` là số TOÀN CỤC); nhảy quãng có câu RIÊNG khác mất daemon; dải có nút Tải lại bấm được**
+- [~] **7.3** Sự kiện tới màn đang ĐÓNG → chỉ tăng badge nhóm; tới màn đang MỞ → vẽ lại đúng phần liên quan (diff render, không reload cả màn).  ·  **NỬA ĐẦU XONG 9fa1ffc** (badge cho màn đóng, cộng chung với mục CHỜ TÔI). **Nửa sau CHƯA**: cách lùi hiện tại là nạp lại CHÍNH màn ấy, gộp trong 0,4 s — nạp ngay ở mỗi sự kiện làm màn Nhật ký mất 7,68 s. Điểm mở rộng `EideManCoSo.apDung`; mặc định trả `false` để đếm được còn bao nhiêu màn chưa làm
 - [x] **7.4** `project.watch` chạy nền: tệp đổi ngoài EIDE → `human.file_external` kèm diff tóm tắt; bỏ qua thay đổi do chính tác tử vừa ghi (đối chiếu hash).  ·  **✔ 3e360a9 · `project.watch`, lọc theo BĂM nội dung chứ không theo thời gian**
 - [ ] **7.5** Lượt kế của tác tử: `memory.compose` nhận khối "thay đổi của người từ lượt trước" (tệp + diff tóm tắt); người sửa trúng vùng thuộc kế hoạch đang chạy → kích `plan.replan`, cấm ghi đè.
 - [ ] **7.6** Diff tóm tắt đưa vào ngữ cảnh: ≤ 200 dòng gửi nguyên văn; hơn thì tóm tắt bằng mô hình, ghi rõ "đã tóm tắt" (quyết định cho câu hỏi mở #2).

@@ -250,10 +250,34 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **106 test Swift** xanh. `apps/eide --tu-kiem`: **32/32**. `make check` thoát 0. Màn
+*Gói mới: **118 test Swift** xanh. `apps/eide --tu-kiem`: **32/32**. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (6): §7 Đồng bộ sự kiện — nền mà ta làm sau tám màn
+
+`EideDangKySuKien` (§7.1) · mốc `seq` + nhảy quãng + nút Tải lại (§7.2) · badge cho màn đóng
+(§7.3 nửa đầu). Checklist UXC-31 nay tick được 7.1 và 7.2; 7.3 đánh dấu **nửa**.
+
+**Bảng đăng ký là chỗ DUY NHẤT** trả lời "sự kiện này đi tới những màn nào" — nên nó là dữ
+liệu tĩnh chứ không phải mỗi màn tự gắn tay nghe. 22 tên sự kiện lấy từ `EideMethod` (sinh từ
+`openrpc.json`), không chép tay.
+
+*"Không màn nào subscribe tất cả"* (§7.1) kéo ngược với *"Nhật ký — nghe: mọi loại"* (§8 S2).
+Hoà bằng `TAT_CA` — một hằng số **có tên** thay vì chuỗi `"*"`: bảng vẫn đọc được, và một sự
+kiện mới vẫn phải được ai đó quyết cho chảy vào đâu. Có bài kiểm đòi đúng một màn được dùng nó.
+
+**Hai lỗi tôi tự tạo ra rồi tự bắt, cả hai đều là vòng lặp:**
+
+| # | Lỗi | Đo được |
+|---|---|---|
+| 1 | Màn nạp dữ liệu → sinh sự kiện → **tự nạp lại** → vô tận | `--tu-kiem` treo ở màn đầu. Cùng hình dạng lỗi NT2 sáng cùng ngày, ở chỗ khác — nên phép phân biệt "đổi trạng thái" / "tiếng vọng của lời gọi đọc" nay có MỘT tên và MỘT chỗ. Bản đầu chỉ lọc `run.progress`, còn `gate.decided` của cùng lời gọi vẫn lọt: mỗi lời gọi sinh ba bản ghi sổ cái |
+| 2 | Nạp lại NGAY ở mỗi sự kiện — đúng thứ §7.3 cấm | Màn Nhật ký (nghe mọi loại) mất **7,68 s** thay vì 0,35 s. Nay gộp trong cửa sổ 0,4 s |
+
+**Chưa làm:** §7.3 nửa sau — *diff render*. Cách lùi là nạp lại chính màn ấy qua điểm mở rộng
+`EideManCoSo.apDung`; mặc định trả `false` để **đếm được** còn bao nhiêu màn chưa làm, và có
+một bài kiểm giữ con số đó khỏi trôi trong im lặng.
 
 ### Đã làm (5): S6 Hộ chiếu mạch — đóng nhóm TRI THỨC
 
@@ -382,8 +406,8 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp: §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau khi đóng
-nhóm TRI THỨC, lúc còn 8 màn phải sửa thay vì 21. Sau đó nhóm THIẾT KẾ (S9–S13) và S14.
+**Làm tiếp:** nhóm THIẾT KẾ (S9 Làm rõ yêu cầu → S13 Tài liệu), rồi S14 Trình soạn thảo —
+nặng nhất, cả mục 5 của UXC-31. Xen vào: §7.3 nửa sau (diff render) cho từng màn khi chạm tới nó.
 **Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
 5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
