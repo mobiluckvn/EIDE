@@ -39,6 +39,12 @@ d("archive.query", {"path": "str!", "pattern": "str!", "mode": "enum:name|conten
 d("ingest.classify", {"files": "arr<str>!"}, {"classification": "arr<obj>! # file, kind, tier, extractor, confidence"}, ["Chữ ký nội dung (magic, XML root, từ khóa) trước phần mở rộng", "Bảng kind → tier/extractor (svd/atdf/edc/binding/header: gold; pdf hãng: silver; ảnh: silver-vision; readme/md: context)", "PDF: phân biệt datasheet/reference manual/errata/schematic-pdf theo tiêu đề trang 1"], [], "none", '{"files":["a.svd","ds.pdf","board.jpg"]}', "TC-01 ≥ 95% đúng trên bộ 10 tệp")
 d("ingest.hash_dedupe", {"files": "arr<str>!"}, {"new": "arr<str>!", "dup": "arr<obj>!"}, ["sha256 từng tệp; so với source.sha256"], [], "none", '{"files":["ds.pdf"]}', "Tệp đã có → dup kèm source_id")
 d("ingest.index_text", {"files": "arr<str>!"}, {"indexed": "int!"}, ["Chỉ tài liệu ngữ cảnh (README, ghi chú): chunk + FTS5 (view.rag_index gọi bên trong)"], [], "none", '{"files":["README.md"]}', "Truy vấn từ khóa tìm thấy")
+d("archive.sources", {"kind": "str # lọc theo loại nguồn (datasheet, svd, errata…)"},
+  {"sources": "arr<obj>! # source_id, uri, kind, tier, n_facts, n_pending, added_at"},
+  ["Đọc bảng `source` JOIN `fact` theo source_id; đếm fact mỗi nguồn và số fact CHƯA duyệt (status normalized|conflict)",
+   "Sắp theo added_at giảm dần; lọc theo kind nếu có",
+   "Không mở lại tệp nguồn: trả CON TRỎ (uri) như passport.export, vì bảng này nằm trong đường vẽ màn S4 và chạy mỗi lần mở màn"],
+  [], "none", '{}', "Nhập 2 tệp → 2 nguồn, n_facts khớp passport.query; kind lạ → rỗng")
 
 # ---------- search ----------
 d("search.registry", {"query": "str!", "kind": "enum:passport|skill|template|any"}, {"candidates": "arr<obj>! # id@ver, kind, badges, score"}, ["Tra index.json registry (cache 1 h) theo id/mpn/từ khóa; xếp theo badge + khớp"], ["E4004 registry không tới được → trả rỗng + cảnh báo"], "none", '{"query":"stm32f411","kind":"passport"}', "Seed 640 chip → tìm thấy")

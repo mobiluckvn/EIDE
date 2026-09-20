@@ -280,3 +280,36 @@
   example:
     files:
     - README.md
+- code: ARCHIVE-08
+  id: archive.sources
+  name: Liệt kê nguồn đã nhập kèm loại, tầng, số fact và trạng thái duyệt
+  desc: Liệt kê nguồn đã nhập kèm loại, tầng, số fact và trạng thái duyệt
+  input:
+    type: object
+    properties:
+      kind:
+        type: string
+        description: lọc theo loại nguồn (datasheet, svd, errata…)
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      sources:
+        type: array
+        items:
+          type: object
+        description: source_id, uri, kind, tier, n_facts, n_pending, added_at
+    required:
+    - sources
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.archive:sources
+  errors: []
+  example: {}

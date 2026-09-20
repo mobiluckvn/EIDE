@@ -375,6 +375,21 @@
   "m0": "chưa"
  },
  {
+  "code": "ARCHIVE-08",
+  "ns": "archive",
+  "name": "archive.sources",
+  "desc": "Liệt kê nguồn đã nhập kèm loại, tầng, số fact và trạng thái duyệt",
+  "inp": "kind?",
+  "out": "sources[]",
+  "risk": "R0",
+  "tier": "T1",
+  "ground": "—",
+  "ask": "—",
+  "ref": "UC-B01",
+  "ms": "M1",
+  "m0": "chưa"
+ },
+ {
   "code": "SEARCH-01",
   "ns": "search",
   "name": "search.registry",

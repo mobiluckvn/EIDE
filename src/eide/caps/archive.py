@@ -306,6 +306,63 @@ def index_text(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"indexed": idx.them(doan)}
 
 
+# ---------------------------------------------------------------- ARCHIVE-08 sources
+
+
+# Fact CHƯA dùng được — đúng tập mà `code.constant_guard` từ chối (CODE-04 bước 1: qua khi
+# `status` là reviewed/verified **hoặc** tầng gold). Đếm ở đây để màn Nhập tài liệu nói được
+# "nguồn này đã nhập xong nhưng chưa dùng được", thay vì chỉ nói nó có bao nhiêu fact.
+STATUS_CHO = ("normalized", "conflict")
+
+
+@capability("archive.sources")
+def sources(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: ARCHIVE-08 — CDS-12.2; DDD-14 §2 Source. tc: "Nhập 2 tệp → 2 nguồn, n_facts khớp
+    passport.query; kind lạ → rỗng".
+
+    ## Vì sao năng lực này tồn tại
+
+    Bảng `source` là thứ duy nhất trả lời *"máy đã đọc những gì"*, và tới 20/09/2026 **không
+    năng lực nào đọc ra nó** — xem [DEV-134]. `passport.query` trả `citations` nhưng chỉ trong
+    phạm vi một `part` và không đếm fact mỗi nguồn; sổ cái đếm được fact mỗi LẦN NHẬP, không
+    đếm được fact mỗi NGUỒN. Màn S4 vì thế phải bày hai bảng gần đúng thay cho một bảng đúng.
+
+    `n_pending` tách khỏi `n_facts` vì hai con số trả lời hai câu khác nhau: nguồn này đóng góp
+    bao nhiêu tri thức, và bao nhiêu trong đó còn chưa dùng được làm hằng số phần cứng. Gộp
+    chúng lại thì một datasheet đã nhập trọn vẹn mà chưa ai duyệt trông y hệt một datasheet đã
+    duyệt xong.
+
+    Không mở lại tệp nguồn: trả CON TRỎ (`uri`) như `passport.export`. Bảng này nằm trong đường
+    vẽ của màn S4 và chạy mỗi lần mở màn.
+    """
+    root = _root(ctx)
+    db = store.store_path(root)
+    if not db.exists():
+        # Dự án chưa có store là "chưa nhập gì", không phải một sự cố — cùng lý do với
+        # `passport.query` trên một dự án trống. Ném E2000 ở đây sẽ bắt màn S4 phải bắt lỗi để
+        # hiện một trạng thái rỗng hoàn toàn bình thường.
+        return {"sources": []}
+
+    dk, tham = ("WHERE s.kind = ?", [params["kind"]]) if params.get("kind") else ("", [])
+    with store.open_store(db) as c:
+        rows = c.execute(
+            "SELECT s.id, s.uri, s.kind, s.tier, s.fetched_at, s.license, s.size_bytes,"
+            "       COUNT(f.id),"
+            f"       SUM(CASE WHEN f.status IN ({','.join('?' * len(STATUS_CHO))})"
+            "                 AND f.tier != 'gold' THEN 1 ELSE 0 END)"
+            "  FROM source s LEFT JOIN fact f ON f.source_id = s.id"
+            f" {dk} GROUP BY s.id ORDER BY s.fetched_at DESC, s.id",  # noqa: S608
+            [*STATUS_CHO, *tham]).fetchall()
+
+    return {"sources": [
+        {"source_id": r[0], "uri": r[1], "kind": r[2], "tier": r[3],
+         # `added_at` đọc từ cột `fetched_at` của DDD-14 §2. Hai tên cho cùng một mốc, và mốc ấy
+         # RỖNG với tệp người tự bỏ vào — `fetched_at` chỉ có khi `search.fetch` tải về.
+         "added_at": r[4], "license": r[5], "size_bytes": r[6],
+         "n_facts": r[7], "n_pending": r[8] or 0}
+        for r in rows]}
+
+
 DAI_DOAN = 1200          # ký tự
 
 

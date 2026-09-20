@@ -243,6 +243,74 @@ def test_extractor_nhan_tep_qua_dung_ten_tham_so():
     assert not sai, f"tham số bắt buộc khác kỳ vọng của bên gọi: {sai}"
 
 
+# ---------- ARCHIVE-08 archive.sources ([DEV-134])
+
+
+def test_ARCHIVE08_liet_ke_nguon_va_dem_fact_moi_nguon(du_an):
+    """tc: "Nhập 2 tệp → 2 nguồn, n_facts khớp passport.query".
+
+    Bảng `source` là thứ duy nhất trả lời "máy đã đọc những gì", và trước [DEV-134] không năng
+    lực nào đọc ra nó — nên màn S4 phải bày hai bảng gần đúng thay cho một bảng đúng.
+    """
+    r, ctx, root = du_an
+    _nguon(root, sid="s_a", h="h_a")
+    _nguon(root, sid="s_b", h="h_b")
+    r.invoke("passport.import", {"batch": {"facts": [
+        _fact("chip:x/periph:I2C1", "base_address", 0x1000, sid="s_a"),
+        _fact("chip:x/periph:I2C1", "offset", 0x04, sid="s_a"),
+        _fact("chip:x", "package", "LQFP48", sid="s_b"),
+    ]}, "actor": "agent"}, ctx)
+
+    ds = r.invoke("archive.sources", {}, ctx).result["sources"]
+    theo = {x["source_id"]: x for x in ds}
+    assert set(theo) == {"s_a", "s_b"}
+    assert (theo["s_a"]["n_facts"], theo["s_b"]["n_facts"]) == (2, 1)
+    # Khớp `passport.query`: cùng một store thì hai đường đếm phải ra cùng một số.
+    q = r.invoke("passport.query", {"part": "x"}, ctx).result
+    assert sum(x["n_facts"] for x in ds) == len(q["facts"])
+    assert theo["s_a"]["uri"].endswith(".pdf")
+
+
+def test_ARCHIVE08_kind_la_thi_rong(du_an):
+    """tc nhánh: "kind lạ → rỗng"."""
+    r, ctx, root = du_an
+    _nguon(root)
+    assert r.invoke("archive.sources", {"kind": "khong-co-loai-nay"}, ctx).result["sources"] == []
+
+
+def test_ARCHIVE08_n_pending_tach_khoi_n_facts(du_an):
+    """Hai con số trả lời hai câu khác nhau: nguồn này đóng góp bao nhiêu tri thức, và bao nhiêu
+    trong đó CHƯA dùng được làm hằng số phần cứng.
+
+    `n_pending` đếm đúng tập mà `code.constant_guard` từ chối (CODE-04 bước 1: qua khi status là
+    reviewed/verified **hoặc** tầng gold). Gộp hai số thì một datasheet đã nhập trọn vẹn mà chưa
+    ai duyệt trông y hệt một datasheet đã duyệt xong.
+    """
+    r, ctx, root = du_an
+    _nguon(root, sid="s_c", h="h_c")
+    r.invoke("passport.import", {"batch": {"facts": [
+        _fact("chip:y", "package", "QFN32", sid="s_c", tier="silver"),   # bạc + normalized → chờ
+        _fact("chip:y", "offset", 0x08, sid="s_c", tier="gold"),          # vàng → qua guard
+    ]}, "actor": "agent"}, ctx)
+    x = r.invoke("archive.sources", {}, ctx).result["sources"][0]
+    assert x["n_facts"] == 2
+    assert x["n_pending"] == 1, "fact vàng chưa duyệt vẫn qua được cổng hằng số (TC-04)"
+
+
+def test_ARCHIVE08_store_chua_co_thi_rong_chu_khong_nem(tmp_path, workspace):
+    """Dự án chưa có store là "chưa nhập gì", không phải một sự cố.
+
+    Ném E2000 ở đây sẽ bắt màn S4 phải bắt lỗi để hiện một trạng thái rỗng hoàn toàn bình
+    thường — và một màn bắt lỗi để vẽ trạng thái thường gặp nhất là một màn sẽ nuốt lỗi thật.
+    """
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+    res = r.invoke("project.create", {"text": "dự án trống"}, Context(project_dir=workspace)).result
+    ctx = Context(project_dir=workspace / res["project_id"])
+    run = r.invoke("archive.sources", {}, ctx)
+    assert run.status == "done", run.error
+    assert run.result["sources"] == []
+
+
 def test_docx_khong_bi_xep_nham_thanh_archive(tmp_path):
     """docx/xlsx cũng là zip. Không phân biệt thì một .docx bị đẩy sang `archive.list` và người
     dùng nhận về danh sách `word/document.xml` thay vì nội dung tài liệu."""

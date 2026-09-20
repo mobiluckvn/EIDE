@@ -17,6 +17,7 @@ add("project", [
  ("project.rollback", "Về known-good gần nhất hoặc tag chỉ định", "tag?", "state", "R2", "T1", "Có tag", "—", "UC-D06", "M2", "chưa"),
  ("project.status", "Tổng hợp tiến độ, feature, gate mở, chi phí", "—", "report", "R0", "T1", "—", "—", "UC-A06", "M1", "một phần"),
  ("project.preferences", "Ghi/đọc tùy chọn đã học từ câu trả lời của kỹ sư", "key, value?", "prefs", "R1", "T1", "—", "—", "D8", "M1", "chưa"),
+ ("project.watch", "Theo dõi tệp đổi NGOÀI EIDE; phát human.file_external kèm diff tóm tắt", "enable?", "watching, path", "R0", "T1", "—", "—", "UC-A08", "M2", "chưa"),
 ])
 add("memory", [
  ("memory.compose", "Ghép ngữ cảnh 7 lớp K1–K7 theo vai trò và tác vụ; kiểm ngân sách token", "role, task", "context ≤ budget", "R0", "T1", "—", "—", "FR-AGT-02", "M1", "thiết kế"),
@@ -36,6 +37,7 @@ add("archive", [
  ("ingest.classify", "Phân loại tệp theo chữ ký nội dung → loại, tầng, extractor", "files[]", "classification", "R0", "T1", "—", "—", "UC-B01", "M0", "có"),
  ("ingest.hash_dedupe", "sha256, phát hiện trùng với Source đã có", "files[]", "new/dup", "R0", "T1", "—", "—", "UC-B01", "M0", "có"),
  ("ingest.index_text", "Lập chỉ mục văn bản (BM25) cho tài liệu ngữ cảnh không sinh fact", "files[]", "index", "R1", "T1", "—", "—", "UC-B01", "M1", "chưa"),
+ ("archive.sources", "Liệt kê nguồn đã nhập kèm loại, tầng, số fact và trạng thái duyệt", "kind?", "sources[]", "R0", "T1", "—", "—", "UC-B01", "M1", "chưa"),
 ])
 add("search", [
  ("search.registry", "Tìm gói/hộ chiếu/mẫu tham chiếu trong registry", "query", "candidates[]", "R0", "T1", "—", "—", "UC-B08", "M4", "chưa"),
@@ -118,7 +120,7 @@ add("plan", [
  ("plan.sufficiency", "Tự đánh giá đủ thông tin trước khi làm", "task", "missing[]", "R0", "T1", "—", "—", "UC-H02", "M1", "chưa"),
 ])
 add("code", [
- ("code.generate_module", "Sinh một module theo STEP + skill + fact; hkw:fact cho hằng số", "step", "CodePatch", "R2", "T1", "G1 approved", "—", "UC-D03", "M2", "chưa"),
+ ("code.generate_module", "Sinh một module theo STEP + skill + fact; eide:fact cho hằng số", "step", "CodePatch", "R2", "T1", "G1 approved", "—", "UC-D03", "M2", "chưa"),
  ("code.modify", "Sửa mã có sẵn theo yêu cầu/finding", "file, intent", "CodePatch", "R2", "T1", "—", "Chạm ISR/linker", "UC-D03", "M2", "chưa"),
  ("code.integrate", "Tích hợp module: wiring, init order, cấu hình build, kiểm tương thích giao diện", "modules[]", "CodePatch", "R2", "T1", "—", "Xung đột tài nguyên", "UC-D03", "M2", "chưa"),
  ("code.constant_guard", "Hook: mọi hằng số phần cứng phải trỏ fact reviewed/verified", "patch", "verdict", "R0", "T1", "—", "—", "UC-D03", "M1", "chưa"),
@@ -131,9 +133,11 @@ add("code", [
  ("code.review", "Reviewer khác hãng chấm checklist", "patch", "Review", "R0", "T1", "≥ 2 hãng", "—", "UC-D04", "M2", "chưa"),
  ("code.merge", "Merge vào auto/ với commit truy vết; cửa sổ hoàn tác", "patch", "commit", "R2", "T1*", "4 cổng + review", "Blocker; chạm ISR/linker; ngoài phạm vi", "UC-D04", "M2", "chưa"),
  ("code.revert", "Hoàn tác merge", "commit", "—", "R2", "T1", "—", "—", "UC-D04", "M2", "chưa"),
- ("code.annotate", "Gợi ý/chèn hkw:fact cho mã người viết", "file", "suggestions", "R2", "T1", "—", "—", "UC-D05", "M3", "chưa"),
+ ("code.annotate", "Gợi ý/chèn eide:fact cho mã người viết", "file", "suggestions", "R2", "T1", "—", "—", "UC-D05", "M3", "chưa"),
  ("code.docs", "Sinh tài liệu mã/README module có trích dẫn", "module", "docs", "R2", "T1", "—", "—", "UC-G04", "M3", "chưa"),
  ("code.refactor", "Tái cấu trúc theo quy ước repo, không đổi hành vi (kiểm bằng test)", "scope", "CodePatch", "R2", "T1", "—", "—", "UC-A05", "M3", "chưa"),
+ ("code.human_save", "Người lưu tệp trong trình soạn thảo: commit human:<tên> + sự kiện + mục hoàn tác", "path, content, base_seq?", "commit, seq", "R1", "T1", "Tệp trong thư mục dự án; kho git đã khởi tạo", "—", "UC-D06", "M2", "chưa"),
+ ("code.merge_conflict_resolve", "Người quyết từng vùng xung đột mã; commit merge ghi hai cha", "conflict_id, choices", "commit", "R1", "T1", "Có xung đột mã đang mở", "—", "UC-D06", "M2", "chưa"),
 ])
 add("sim", [
  ("sim.build_platform", "Sinh mô tả nền tảng (Renode .repl / simavr / tự xây) từ hộ chiếu", "chip, board", "sim/", "R1", "T1", "Hộ chiếu vàng", "Chip không có trong Renode", "UC-E01", "M3", "chưa"),
@@ -194,12 +198,13 @@ add("policy", [
  ("policy.emergency_stop", "Hạ về A0, hủy thao tác phần cứng đang chờ", "—", "—", "R0", "T3", "—", "—", "APD §5", "M1", "chưa"),
  ("policy.learn_thresholds", "Tổng hợp quyết định của người → đề xuất ngưỡng", "—", "proposal", "R0", "T2", "—", "Luôn", "APD §6", "M2", "chưa"),
  ("policy.set_autonomy", "Đặt mức tự chủ dự án/board", "level", "—", "R1", "T2", "—", "Nới lỏng", "APD §2", "M1", "chưa"),
+ ("policy.rules", "Bảng quy tắc ĐANG CÓ HIỆU LỰC + trạng thái niêm danh sách trắng", "—", "rules[], signed", "R0", "T1", "—", "—", "UC-K02", "M1", "chưa"),
 ])
 add("chat", [
  ("chat.parse_intent", "Câu lệnh → ý định + tham số (slot); nhận diện lệnh lớn", "text", "intent", "R0", "T1", "—", "—", "DPS-09", "M1", "chưa"),
  ("chat.ground", "Đối chiếu ý định với trạng thái (dự án/hộ chiếu/board tồn tại?)", "intent", "grounded", "R0", "T1", "—", "—", "D1", "M1", "chưa"),
  ("chat.fill_defaults", "Điền ô trống bằng mặc định có căn cứ; ghi ledger", "intent", "intent'", "R0", "T1", "—", "—", "D2", "M1", "chưa"),
- ("chat.clarify", "Một câu hỏi gộp có phương án và mặc định; timeout", "gaps", "answer|default", "R0", "T2", "—", "Khi không có mặc định", "D3", "M1", "chưa"),
+ ("chat.clarify", "Một câu hỏi gộp có phương án và mặc định; timeout", "gaps", "answer|default", "R0", "T1", "—", "Khi không có mặc định", "D3", "M1", "chưa"),
  ("chat.restate", "Nói lại ý hiểu 1–2 câu trước chuỗi dài", "plan", "text", "R0", "T1", "—", "—", "D6", "M1", "chưa"),
  ("chat.orchestrate", "Biến lệnh lớn thành chuỗi gọi năng lực có nhánh; chạy theo chính sách", "intent", "run", "R0", "T1", "—", "—", "UC-H01", "M2", "chưa"),
  ("chat.report_back", "Tóm tắt việc đã làm, đang chờ, hoàn tác được, chi phí", "run", "text", "R0", "T1", "—", "—", "APD §5", "M1", "chưa"),
