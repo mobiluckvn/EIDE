@@ -40,10 +40,7 @@ public final class EideManXungDot: EideManCoSo {
         // `view.conflict_board` gặp chuyện ấy trả E2000, và E2000 ở đây KHÔNG phải một sự cố:
         // nó là câu "dự án này chưa có tri thức nào". Để nguyên thì màn hiện "không đọc được:
         // … (E2000)" và đẩy người đi kiểm daemon — một việc không hỏng.
-        let bang: [String: Any]
-        do {
-            bang = try await nangLuc(goi, "view.conflict_board")
-        } catch let e as EideKetQua.Loi where e.maEide == "E2000" {
+        guard let bang = try await nangLucNeuCo(goi, "view.conflict_board") else {
             return rong(vi: "dự án này chưa có store tri thức — chưa thứ gì được nhập vào",
                         buocKe: "nhập datasheet/SVD ở màn Nhập tài liệu (S4); xung đột chỉ xuất "
                               + "hiện khi có từ hai nguồn nói về cùng một thứ")

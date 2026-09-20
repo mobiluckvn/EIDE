@@ -90,6 +90,28 @@ open class EideManCoSo: NSView {
         try await doc(goi, "caps.invoke", ["id": id, "params": tham])
     }
 
+    /// Như `nangLuc`, nhưng **"dự án chưa có store" trả `nil` chứ không ném.**
+    ///
+    /// `store.sqlite` chỉ ra đời khi có thứ đầu tiên cần ghi vào, nên mọi năng lực đọc tri thức
+    /// đều trả E2000 trên một dự án vừa tạo. Đó là câu *"chưa nhập gì"* — trạng thái thường gặp
+    /// nhất của màn đầu tiên người dùng mở — chứ không phải một sự cố.
+    ///
+    /// Để nguyên thì màn hiện "không đọc được: … (E2000)" và đẩy người đi kiểm daemon, một việc
+    /// không hỏng. Ba màn đã cần đúng phép này (S4, S7, S8) nên nó nằm ở đây chứ không chép lại
+    /// ở từng màn — và `--tu-kiem` 6c phân biệt được "rỗng vì thiếu dữ liệu" với "rỗng vì lỗi"
+    /// chính nhờ nó.
+    ///
+    /// Chỉ nuốt E2000, và chỉ để TRẢ VỀ `nil`: bên gọi vẫn phải tự nói ra trạng thái rỗng của
+    /// mình bằng câu của mình.
+    public func nangLucNeuCo(_ goi: @escaping EideGoi, _ id: String,
+                             _ tham: [String: Any] = [:]) async throws -> [String: Any]? {
+        do {
+            return try await nangLuc(goi, id, tham)
+        } catch let e as EideKetQua.Loi where e.maEide == "E2000" {
+            return nil
+        }
+    }
+
     // MARK: - khối dựng sẵn
 
     public func xoa() {

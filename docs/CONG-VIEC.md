@@ -250,9 +250,31 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **74 test Swift** xanh. `apps/eide --tu-kiem`: **28/28**. `make check` thoát 0. Màn đã
-nối dữ liệu: **6/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip**,
-**S8 Xung đột tri thức**, **S4 Nhập tài liệu** — ba cái sau là mới).*
+*Gói mới: **93 test Swift** xanh. `apps/eide --tu-kiem`: **30/30**. `make check` thoát 0. Màn
+đã nối dữ liệu: **7/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip**,
+**S8 Xung đột tri thức**, **S4 Nhập tài liệu**, **S7 Bản đồ tri thức** — bốn cái sau là mới).
+**Nhóm TRI THỨC còn đúng S6 Hộ chiếu mạch.** Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (4): S7 Bản đồ tri thức & hỏi đáp
+
+`view.kg_map` (VIEW-01) · `view.rag_ask` (VIEW-07) · `view.rag_trace` (VIEW-08).
+
+**Đồ thị bố cục theo CỘT, không lực đẩy.** Đồ thị tri thức của EIDE có hướng đọc tự nhiên —
+nguồn → fact → chủ thể → mã — và đó là hướng người ta lần một con số về tới trang datasheet đẻ
+ra nó. Bố cục lực đẩy đặt nút ở chỗ khác nhau sau mỗi lần mở: đẹp hơn, và không so được hai lần
+mở, không chụp ảnh đối chiếu được, không viết được phép kiểm. Bố cục cột thì **tất định** — có
+một bài kiểm đảo ngược thứ tự đầu vào và đòi ra đúng cùng một hình.
+
+**Ràng buộc nặng nhất của cả sản phẩm nằm ở màn này**, và màn giữ nó tới điểm ảnh cuối cùng:
+lõi trả câu trả lời mà `citations` rỗng thì màn **không hiện câu trả lời** — có bài kiểm cho
+đúng điều đó. `not_found` KHÔNG hiện như lỗi: nó là kết quả đúng, và là chỗ duy nhất trong sản
+phẩm mà trả về rỗng nghĩa là làm đúng việc.
+
+**Một lỗi lõi ảnh chụp bắt được:** sáu trong mười một nút hiện ra là **mã băm**
+(`f_0b8108e3143a10f9`). Id của fact không phải IRI, nên nhãn "đoạn cuối của IRI" trả nguyên mã
+băm — và cả màn ấy tồn tại để trả lời "máy biết những gì". Đã sửa `view._thuoc_tinh_nut` để nút
+fact mang nhãn `subject·predicate` (`periph:I2C1·base_address`); nút chủ thể giữ nguyên IRI, vì
+gán nhãn một fact cho chủ thể sẽ chọn tên theo thứ tự dòng SQL.
 
 ### Đã làm (3): S4 Nhập tài liệu — và một lỗi lõi mà việc ĐỌC lôi ra trước khi viết mã
 
@@ -334,7 +356,7 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp:** S7 Bản đồ tri thức → S6 Hộ chiếu mạch (đóng nhóm TRI THỨC).
+**Làm tiếp:** S6 Hộ chiếu mạch — đóng nhóm TRI THỨC.
 **Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
 5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
