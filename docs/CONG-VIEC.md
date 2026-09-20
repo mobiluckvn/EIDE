@@ -250,10 +250,37 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **51 test Swift** xanh. `apps/eide --tu-kiem`: **24/24**. Màn đã nối dữ liệu:
-**4/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip** — mới).*
+*Gói mới: **65 test Swift** xanh. `apps/eide --tu-kiem`: **26/26**. `make check` thoát 0. Màn đã
+nối dữ liệu: **5/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip**,
+**S8 Xung đột tri thức** — hai cái sau là mới).*
 
-### Đã làm: S5 Hộ chiếu chip — màn đầu của nhóm TRI THỨC
+### Đã làm (2): S8 Xung đột tri thức — và thẻ dùng chung mà §6.3 bắt buộc
+
+`view.conflict_board` (VIEW-04) cho hàng hai vế · `kg.conflicts` (KG-02) cho `resource_ready` ·
+`kg.resolve_conflict` (KG-06) cho hành động. Thẻ nằm trong `EideTheXungDot` và **không biết gì
+về fact** — nó nhận một nhãn, một giá trị, vài dòng phụ và một khoá — nên S15 dùng lại nguyên
+nó cho xung đột MÃ, đúng điều §6.3 cấm viết màn riêng. Có một bài kiểm dựng thẻ ấy bằng dữ liệu
+MÃ để ràng buộc này không mục đi trong im lặng.
+
+**Ba điều màn này phải nói mà dữ liệu không tự nói**, mỗi điều một bài kiểm: `resource_ready =
+false` KHÁC "sạch" (thiếu `hw_map` thì phần tài nguyên chưa hề được kiểm) · bấm nút **không** áp
+dụng ngay (KG-06 là T2, lời gọi dừng ở `pending` và rơi vào *Chờ tôi*) · rỗng phải kèm quyết
+định gần nhất, đọc từ **sổ cái** chứ không từ một bảng riêng.
+
+**Bốn thứ ảnh chụp và lõi thật bắt được mà test giả không bắt:**
+
+| # | Lỗi | Ghi chú |
+|---|---|---|
+| 1 | Câu `detail` của lõi in giá trị **hệ 10** và nguồn bằng **mã băm**, nằm ngay trên hai cột in đúng hai con số ấy ở hệ 16 kèm tên tệp | Chính docstring `kg._hai_ben` đã ghi `detail` là câu cho sổ cái, "vô dụng cho một màn quyết định". Đã bỏ khỏi thẻ |
+| 2 | Hai vế **bất đối xứng**: lõi chỉ đánh `status=conflict` cho fact ĐẾN SAU, fact đến trước giữ `normalized` — nên A hiện "vàng · chưa duyệt" còn B hiện "⚠ XUNG ĐỘT" | Đọc như chỉ một bên bị tranh chấp. Trong thẻ xung đột, cả hai nhãn ấy đúng mà không phân biệt → bỏ cả hai, giữ tầng |
+| 3 | Bản đầu viết cứng *"cổng G-FACT hỏi người"*. Lõi thật trả `rule: DEFAULT, gate: "*"` — quy tắc bắt hết theo mức tự chủ | Một câu nghe có thẩm quyền, khớp tài liệu, không khớp máy. Nay dựng từ chính `decision` |
+| 4 | `--tu-kiem` 6c chấm **ĐẠT** cho một màn rỗng vì **E2000** | Đúng chỗ yếu của bản nới lỏng 6c hôm nay: câu "không đọc được…" cũng có đủ hai phần. Nay 6c trượt khi lý do là lỗi; và S8 nhận ra E2000-thiếu-store là "chưa có tri thức", không phải sự cố |
+
+**Chưa làm trong S8:** UXC-31 đòi *"đã quyết → dòng lịch sử ghi tên người + thời điểm"* dưới mỗi
+xung đột đã giải. Hiện xung đột đã giải chỉ rời khỏi danh sách; lịch sử mới hiện ở trạng thái
+rỗng. Sổ cái đã có đủ dữ liệu (`gate.human` kèm `note`), nên đây là việc vẽ, không phải việc nối.
+
+### Đã làm (1): S5 Hộ chiếu chip — màn đầu của nhóm TRI THỨC
 
 `passport.query` (PASSPORT-02) + `view.provenance` (VIEW-03). Chip đọc từ mục tiêu đã ghim của
 dự án, nên trạng thái rỗng đúng câu UXC-31 §8 S5 quy định. Bảng có địa chỉ hệ 16, kích thước
@@ -277,8 +304,9 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp:** S8 Xung đột tri thức (component dùng chung với xung đột MÃ ở §6.3) → S4 Nhập tài
-liệu → S7 Bản đồ tri thức. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
+**Làm tiếp:** S4 Nhập tài liệu → S7 Bản đồ tri thức → S6 Hộ chiếu mạch (đóng nhóm TRI THỨC).
+**Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
+5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
 
 > **Bẫy đã biết:** `kg.conflicts`/`kg.resolve_conflict` **KHÔNG có alias JSON-RPC** (ghi chú
