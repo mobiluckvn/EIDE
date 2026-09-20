@@ -51,6 +51,21 @@ final class EideManTests: XCTestCase {
         XCTAssertEqual(m.than.arrangedSubviews.count, 1)
     }
 
+    /// Điểm dừng tab là mốc TUYỆT ĐỐI: một ô dài hơn cột đẩy ô kế sang mốc sau đó, và cả đuôi
+    /// hàng lệch một cột. Đo 20/09 trên màn Hộ chiếu chip — hàng ấy hiện "vàng · chưa duyệt"
+    /// nằm dưới tiêu đề NGUỒN, đọc như một fact có nguồn tên "vàng".
+    func testOQuaDaiBiCatChuKhongDayLechCotSau() {
+        let f = EideToken.fontMono
+        let dai = "periph:AC/reg:DIDR1/field:AIN0D/mot/duong/dan/rat/dai"
+        let cat = EideManCoSo.catVua(dai, rong: 120, font: f)
+        XCTAssertTrue(cat.hasSuffix("…"), cat)
+        XCTAssertLessThanOrEqual((cat as NSString).size(withAttributes: [.font: f]).width, 120)
+        // Cột CUỐI (`rong == 0`) không cắt: nó chạy hết bề ngang còn lại.
+        XCTAssertEqual(EideManCoSo.catVua(dai, rong: 0, font: f), dai)
+        // Vừa rồi thì giữ NGUYÊN — cắt một ô đã vừa là bỏ chữ đi không vì gì.
+        XCTAssertEqual(EideManCoSo.catVua("CR1", rong: 120, font: f), "CR1")
+    }
+
     func testGioDocDuocNgayVaGio() {
         XCTAssertEqual(EideManNhatKy.gio("2026-09-18T16:04:21.123456+00:00"), "18/09 16:04:21")
         XCTAssertEqual(EideManNhatKy.gio(nil), "—")

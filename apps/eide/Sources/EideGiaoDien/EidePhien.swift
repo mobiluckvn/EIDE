@@ -162,6 +162,13 @@ public final class EidePhien {
         khung.bangLenh.datNguon(nangLuc: motaCua.keys.sorted().map { ($0, motaCua[$0] ?? "") })
     }
 
+    /// Nạp thẳng bảng `năng lực → màn` mà không cần daemon.
+    ///
+    /// Chỉ để đo NT2: luật "tác tử chạm tới đâu, màn ấy mở" chỉ chạy khi bảng này có dữ liệu,
+    /// mà dữ liệu ấy đến từ `caps.list` — tức từ một daemon thật. Không có hàm này thì mọi bài
+    /// kiểm NT2 đều xanh vì luật không bao giờ được thi hành, chứ không phải vì nó đúng.
+    func datBanDoMan(_ m: [String: String]) { manCua = m }
+
     /// Năng lực đứng sau một màn — đảo bảng `cap → màn`, không giữ bảng thứ hai.
     private func _nangLucCua(_ tien: String) -> [String] {
         manCua.filter { $0.value.hasPrefix(tien) }.keys.sorted()
@@ -256,6 +263,7 @@ public final class EidePhien {
         EideManTongQuan.tien: { EideManTongQuan() },
         EideManNhatKy.tien: { EideManNhatKy() },
         EideManChinhSach.tien: { EideManChinhSach() },
+        EideManHoChieu.tien: { EideManHoChieu() },
     ]
 
     // MARK: - lệnh và sự kiện
@@ -294,7 +302,21 @@ public final class EidePhien {
         guard ten == "event.run.progress" else { return }
         _theoRun(p)
         guard let cap = p["cap"] as? String else { return }
-        // NT2 — tác tử chạm tới đâu, màn ấy tự mở và ĐƯỢC FOCUS.
+        // NT2 — **TÁC TỬ** chạm tới đâu, màn ấy tự mở và ĐƯỢC FOCUS.
+        //
+        // Cùng bộ lọc của `_theoRun` ngay dưới, và cùng một lý do: `event.run.progress` gánh
+        // hai khái niệm, và chỉ một trong hai là "tác tử đang làm việc". Cái còn lại —
+        // `cap.run.*` của một lời gọi đơn lẻ — bao gồm cả những lời gọi mà CHÍNH MỘT MÀN vừa
+        // mở phát ra để tự vẽ.
+        //
+        // Không lọc thì mở một màn đọc năng lực thuộc về màn khác sẽ bị chính mình đẩy đi.
+        // Đo 20/09 bằng ảnh chụp cửa sổ thật: bấm *Hộ chiếu chip* → màn ấy gọi `project.status`
+        // để biết chip đã ghim → NT2 thấy `project.status` thuộc màn *Tổng quan* → nhảy sang
+        // Tổng quan. Ảnh `man-Passport.png` ra một màn Tổng quan với thân trống, và dòng
+        // `hiện xong sau 0,55 s (lõi 0 ms, vẽ 0 ms)` đo nhầm một màn khác. Không test nào thấy:
+        // cả hai màn đều đúng ở mức đơn vị, chỗ hỏng nằm giữa chúng.
+        let loai = (p["kind"] as? String) ?? ""
+        guard loai.hasPrefix("run.") || p["node_id"] != nil else { return }
         guard let man = manCua[cap], !man.isEmpty else { return }
         let tien = EideManHinhDS.tatCa.first { man.hasPrefix($0.tien) }?.tien
         guard let tien, tien != khung.vungLamViec.dangMo else { return }

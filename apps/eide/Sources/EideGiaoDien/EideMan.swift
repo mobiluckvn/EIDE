@@ -135,6 +135,15 @@ open class EideManCoSo: NSView {
     /// Nay cả bảng là MỘT nhãn: điểm dừng tab lo cột, `headIndent` lo dòng gấp, và nền xen kẽ
     /// đi bằng thuộc tính `.backgroundColor` của từng đoạn. Không stack, không ràng buộc nào để
     /// phá, và số khung nhìn không phụ thuộc số hàng.
+    ///
+    /// **Chi phí nằm ở đâu, đo 20/09 trên bảng 287 hàng × 5 cột của màn Hộ chiếu chip:** dựng
+    /// chuỗi có thuộc tính — kể cả phép cắt ô — mất **6 ms**; dựng `NSTextField` từ chuỗi ấy
+    /// mất **~200 ms**. Nghĩa là thứ đắt là lượt dàn chữ của AppKit, và nó tăng theo BỀ RỘNG
+    /// dòng chứ không chỉ theo số hàng: nới hai cột của màn ấy (208→264 và 92→136 pt) đẩy thời
+    /// gian vẽ từ 33 ms lên 99 ms trước khi thêm bất cứ thứ gì khác.
+    ///
+    /// Ghi lại vì lần đầu tôi đoán sai chỗ: đã đi tối ưu phép cắt — nơi tốn 6 ms — trong khi
+    /// 97% thời gian nằm ở dòng kế bên.
     public func bang(cot: [(ten: String, rong: CGFloat)], dong: [[String]]) {
         var moc: CGFloat = 0
         var dung: [NSTextTab] = []
@@ -149,21 +158,38 @@ open class EideManCoSo: NSView {
         kieu.paragraphSpacing = 3
 
         let s = NSMutableAttributedString()
+        // Nhớ lại phép cắt theo (cột, chữ). Một bảng hộ chiếu 287 hàng có 4 cột mà giá trị lặp
+        // đi lặp lại — `vàng · chưa duyệt` 287 lần, `ATmega328P.atdf` 287 lần — nên không nhớ
+        // thì cùng một phép đo bề rộng chạy hàng trăm lượt.
+        var daCat: [String: String] = [:]
         func hang(_ o: [String], dam: Bool, nen: NSColor?) {
             for (i, van) in o.enumerated() {
+                let phong = dam ? NSFont.boldSystemFont(ofSize: 11)
+                                : (i == 0 ? EideToken.fontMono : EideToken.fontUI)
                 var thuoc: [NSAttributedString.Key: Any] = [
-                    .font: dam ? NSFont.boldSystemFont(ofSize: 11)
-                               : (i == 0 ? EideToken.fontMono : EideToken.fontUI),
+                    .font: phong,
                     .foregroundColor: dam ? EideToken.Mau.faint : EideToken.Mau.text,
                     .paragraphStyle: kieu,
                 ]
                 if let nen { thuoc[.backgroundColor] = nen }
                 // Tab trong dữ liệu sẽ ĐẨY LỆCH mọi cột sau nó — thay bằng dấu cách ngay ở đây,
                 // vì một ô lệch cột đọc như một ô của hàng khác.
+                //
+                // Một ô DÀI HƠN CỘT làm đúng như thế mà không cần tab nào: điểm dừng tab là
+                // mốc tuyệt đối, nên chữ tràn qua mốc sẽ đẩy ô kế sang mốc SAU đó, và cả phần
+                // đuôi của hàng lệch đi một cột. Đo 20/09 trên màn Hộ chiếu chip:
+                // `periph:AC/reg:DIDR1/field:AIN0D` dài hơn cột CHỦ THỂ, và hàng ấy hiện "vàng
+                // · chưa duyệt" nằm dưới tiêu đề NGUỒN — đọc như một fact có nguồn tên "vàng".
+                let tho = van.replacingOccurrences(of: "\t", with: " ")
+                let khoa = "\(i)\u{1}\(dam ? 1 : 0)\u{1}\(tho)"
+                let vua = daCat[khoa] ?? {
+                    let x = Self.catVua(tho, rong: i < cot.count - 1 ? cot[i].rong : 0,
+                                        font: phong)
+                    daCat[khoa] = x
+                    return x
+                }()
                 s.append(NSAttributedString(
-                    string: van.replacingOccurrences(of: "\t", with: " ")
-                          + (i < o.count - 1 ? "\t" : "\n"),
-                    attributes: thuoc))
+                    string: vua + (i < o.count - 1 ? "\t" : "\n"), attributes: thuoc))
             }
         }
         hang(cot.map(\.ten), dam: true, nen: nil)
@@ -175,5 +201,40 @@ open class EideManCoSo: NSView {
         n.lineBreakMode = .byWordWrapping
         n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         them(n)
+    }
+
+    /// Cắt một ô cho vừa cột, kèm `…`. `rong == 0` nghĩa là cột cuối — không cắt, vì nó chạy
+    /// hết bề ngang còn lại và có `headIndent` lo phần gấp dòng.
+    ///
+    /// Đo bằng chính phông sẽ vẽ ra, không đếm ký tự: cột CHỦ THỂ dùng phông mono còn các cột
+    /// sau dùng phông UI tỉ lệ, nên một ngưỡng tính theo số ký tự đúng ở cột này và sai ở cột kia.
+    /// Hai đường tắt trước khi đo, vì `size(withAttributes:)` dựng một lượt dàn chữ mỗi lần gọi
+    /// (~0,6 ms) và một bảng 287 hàng × 5 cột gọi nó hơn một nghìn lượt. Đo 20/09: phép cắt
+    /// ngây thơ đẩy thời gian VẼ màn Hộ chiếu chip từ 33 ms lên 223 ms.
+    ///
+    /// 1. **Phông đều ô** (cột đầu của mọi bảng ở đây): bề rộng ĐÚNG BẰNG `số ô × bước tiến`,
+    ///    không phải một ước lượng — nên cột đắt nhất thôi hẳn việc đo.
+    /// 2. **Phông tỉ lệ**: `bước tiến lớn nhất` cho một chặn trên. Qua được chặn ấy là chắc
+    ///    chắn vừa; chỉ phần còn lại mới phải đo, và đo bằng chia đôi chứ không bỏ từng ký tự.
+    public static func catVua(_ s: String, rong: CGFloat, font: NSFont) -> String {
+        guard rong > 0, !s.isEmpty else { return s }
+        let so = CGFloat(s.count)
+        let buoc = font.maximumAdvancement.width
+        if font.isFixedPitch {
+            guard so * buoc > rong else { return s }
+            let giu = max(0, Int(rong / buoc) - 1)
+            return giu == 0 ? "…" : String(s.prefix(giu)) + "…"
+        }
+        guard so * buoc > rong else { return s }
+
+        let thuoc: [NSAttributedString.Key: Any] = [.font: font]
+        func be(_ t: String) -> CGFloat { (t as NSString).size(withAttributes: thuoc).width }
+        guard be(s) > rong else { return s }
+        var thap = 0, cao = s.count
+        while thap < cao {
+            let giua = (thap + cao + 1) / 2
+            if be(String(s.prefix(giua)) + "…") <= rong { thap = giua } else { cao = giua - 1 }
+        }
+        return thap == 0 ? "…" : String(s.prefix(thap)) + "…"
     }
 }

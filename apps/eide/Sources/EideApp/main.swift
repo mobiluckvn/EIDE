@@ -47,7 +47,7 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     self._chup(thuMuc.appendingPathComponent("khung.png"))
                     // Rồi một màn CÓ DỮ LIỆU: ảnh của khung rỗng không nói được gì về cách một
                     // bảng thật nằm trong đó.
-                    for tien in ["Main", "ChinhSach", "NhatKy"] {
+                    for tien in ["Main", "ChinhSach", "NhatKy", "Passport"] {
                         let t0 = ProcessInfo.processInfo.systemUptime
                         self.phien.moMan(tien, boiTacTu: false)
                         try? await Task.sleep(nanoseconds: 300_000_000)
@@ -118,6 +118,10 @@ final class UngDung: NSObject, NSApplicationDelegate {
         return ra
     }
 
+    /// Màn PHẢI có dữ liệu ngay trên một dự án vừa tạo: phiên, sổ cái và bảng quy tắc đều ra
+    /// đời cùng dự án. Mọi màn khác đứng trên tri thức hoặc mã mà dự án mới chưa có.
+    static let CAN_DU_LIEU: Set<String> = ["Main", "NhatKy", "ChinhSach"]
+
     private func _tuKiem() async {
         var dat = 0, hong = 0
         func do_(_ ten: String, _ dung: Bool, _ them: String = "") {
@@ -155,9 +159,24 @@ final class UngDung: NSObject, NSApplicationDelegate {
             let giay = ProcessInfo.processInfo.systemUptime - t0
             do_("6d. màn \(tien) hiện xong dưới 2 giây", giay < 2.0, String(format: "(%.2f s)", giay))
             let van = _chuTrong(khung.vungLamViec)
-            do_("6c. màn \(tien) nạp được dữ liệu thật",
-                !van.contains("Màn này đang rỗng") && !van.contains("Đang đọc…"),
-                "(\(van.split(separator: "\n").filter { $0.contains("rỗng") || $0.contains("vì:") }.joined(separator: " | ")))")
+            let lyDo = van.split(separator: "\n")
+                .filter { $0.contains("rỗng") || $0.contains("Bước kế tiếp") }
+                .joined(separator: " | ")
+            // Một dự án vừa tạo KHÔNG có tri thức nào, nên màn Hộ chiếu chip đúng ra phải rỗng
+            // ở đây. Bắt nó có dữ liệu là bắt nó nói dối. Nhưng "rỗng" cũng không được là một
+            // lối thoát: phép kiểm đòi trạng thái rỗng ĐÚNG HAI PHẦN (B5) — vì gì, và bước kế
+            // tiếp là gì — nên một màn hỏng im lặng vẫn trượt.
+            //
+            // Ba màn trong `CAN_DU_LIEU` thì khác: phiên, sổ cái và bảng quy tắc có mặt từ lúc
+            // dự án ra đời, nên rỗng ở đó là hỏng thật.
+            if van.contains("Màn này đang rỗng"), !Self.CAN_DU_LIEU.contains(tien) {
+                do_("6c. màn \(tien) rỗng CÓ LÝ DO và có bước kế tiếp",
+                    van.contains("vì:") && van.contains("Bước kế tiếp"), "(\(lyDo))")
+                print("       └ \(lyDo)")
+            } else {
+                do_("6c. màn \(tien) nạp được dữ liệu thật",
+                    !van.contains("Màn này đang rỗng") && !van.contains("Đang đọc…"), "(\(lyDo))")
+            }
         }
 
         await phien._lamMoi()
