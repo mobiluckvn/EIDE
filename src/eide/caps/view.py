@@ -78,7 +78,8 @@ def kg_map(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         t = thuoc_tinh.get(nid, {})
         if not _qua_loc(kind, t, loc):
             continue
-        nut.append({"id": nid, "kind": kind, "label": _nhan(nid), "tier": t.get("tier"),
+        nut.append({"id": nid, "kind": kind, "label": t.get("nhan") or _nhan(nid),
+                    "tier": t.get("tier"),
                     "status": t.get("status"), "layer": t.get("layer"),
                     "color": MAU_STATUS.get(t.get("status") or "") or
                              MAU_TIER.get(t.get("tier") or "", "#5F6368")})
@@ -101,6 +102,20 @@ def _nhan(nid: str) -> str:
     return nid.rsplit("/", 1)[-1]
 
 
+def _nhan_fact(subject: str, predicate: str) -> str:
+    """Nhãn của một nút FACT — `I2C1·base_address`, không phải `f_0b8108e3143a10f9`.
+
+    Id của fact không phải IRI, nên `_nhan` trả về nguyên mã băm. Đo 20/09/2026 trên màn Bản đồ
+    tri thức (S7) với một store nhỏ: sáu trong mười một nút hiện ra là sáu chuỗi hex, và cả màn
+    ấy tồn tại để trả lời "máy biết những gì". Một nhãn không ai đọc được thì đồ thị chỉ còn là
+    hình trang trí — người xem đếm được số nút và không biết chúng nói gì.
+
+    `subject·predicate` là cặp định danh một fact theo DDD-14 §2 (`passport._gop_mot` gộp theo
+    đúng cặp ấy), nên nhãn này không chỉ đọc được mà còn đúng cấp.
+    """
+    return f"{_nhan(subject)}·{predicate}"
+
+
 def _qua_loc(kind: str, t: dict[str, Any], loc: dict[str, Any]) -> bool:
     for khoa, cot in (("tier", "tier"), ("status", "status"), ("layer", "layer")):
         if (ds := loc.get(khoa)) and t.get(cot) not in ds:
@@ -119,10 +134,13 @@ def _thuoc_tinh_nut(ctx: Context) -> dict[str, dict[str, Any]]:
         return {}
     ra: dict[str, dict[str, Any]] = {}
     with store.open_store(db) as c:
-        for fid, subj, tier, st, layer in c.execute(
-                "SELECT id, subject, tier, status, layer FROM fact"):
+        for fid, subj, pred, tier, st, layer in c.execute(
+                "SELECT id, subject, predicate, tier, status, layer FROM fact"):
             d = {"tier": tier, "status": st, "layer": layer}
-            ra[fid] = d
+            # `nhan` CHỈ gắn cho nút fact. Nút chủ thể đã có IRI đọc được rồi, và gán nhãn của
+            # một fact cho nó sẽ làm `periph:I2C1` hiện ra là `I2C1·base_address` — tên của một
+            # trong nhiều fact của nó, chọn theo thứ tự dòng.
+            ra[fid] = {**d, "nhan": _nhan_fact(subj, pred)}
             # Chủ thể lấy trạng thái NẶNG NHẤT trong các fact của nó: một IRI có một fact mâu
             # thuẫn thì nút ấy phải đỏ, dù chín fact còn lại bình thường. Lấy fact cuối cùng
             # đọc được sẽ cho màu phụ thuộc thứ tự dòng — tức ngẫu nhiên.

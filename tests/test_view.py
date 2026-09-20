@@ -74,6 +74,23 @@ def test_mau_theo_tier_va_status(du_an):
     assert theo["f_2"]["color"] == MAU_STATUS["conflict"], "status phải thắng tier"
 
 
+def test_nhan_nut_fact_doc_duoc_chu_khong_phai_ma_bam(du_an):
+    """Id của fact không phải IRI, nên nhãn "đoạn cuối của IRI" trả về nguyên mã băm.
+
+    Đo 20/09/2026 trên màn Bản đồ tri thức (S7) với một store nhỏ: sáu trong mười một nút hiện
+    ra là sáu chuỗi hex, và cả màn ấy tồn tại để trả lời "máy biết những gì". Một nhãn không ai
+    đọc được thì đồ thị chỉ còn là hình trang trí.
+
+    Nút CHỦ THỂ giữ nguyên nhãn IRI của nó: gán nhãn của một fact cho chủ thể sẽ làm
+    `periph:I2C1` hiện ra là tên của một trong nhiều fact của nó, chọn theo thứ tự dòng SQL.
+    """
+    r, ctx, root = du_an
+    nap(root, [("f_1", f"{CHIP}/periph:I2C1", "base_address", 0x40005400, "gold", "normalized")])
+    theo = {n["id"]: n for n in r.invoke("view.kg_map", {}, ctx).result["graph"]["nodes"]}
+    assert theo["f_1"]["label"] == "periph:I2C1·base_address"
+    assert theo[f"{CHIP}/periph:I2C1"]["label"] == "periph:I2C1"
+
+
 def test_mau_khong_phu_thuoc_thu_tu_dong(du_an):
     """Một IRI có MỘT fact mâu thuẫn thì nút ấy phải đỏ, dù chín fact còn lại bình thường.
 
