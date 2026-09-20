@@ -47,7 +47,7 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     self._chup(thuMuc.appendingPathComponent("khung.png"))
                     // Rồi một màn CÓ DỮ LIỆU: ảnh của khung rỗng không nói được gì về cách một
                     // bảng thật nằm trong đó.
-                    for tien in ["Main", "ChinhSach", "NhatKy", "Passport"] {
+                    for tien in ["Main", "ChinhSach", "NhatKy", "Passport", "XungDot"] {
                         let t0 = ProcessInfo.processInfo.systemUptime
                         self.phien.moMan(tien, boiTacTu: false)
                         try? await Task.sleep(nanoseconds: 300_000_000)
@@ -170,8 +170,14 @@ final class UngDung: NSObject, NSApplicationDelegate {
             // Ba màn trong `CAN_DU_LIEU` thì khác: phiên, sổ cái và bảng quy tắc có mặt từ lúc
             // dự án ra đời, nên rỗng ở đó là hỏng thật.
             if van.contains("Màn này đang rỗng"), !Self.CAN_DU_LIEU.contains(tien) {
+                // "Rỗng có lý do" KHÔNG được thành lối thoát cho một lỗi. Lớp cơ sở dựng câu
+                // "không đọc được: …" khi `napDuLieu` ném, và câu ấy cũng có đủ hai phần — nên
+                // chỉ đếm hai phần thì một màn hỏng đi qua được phép kiểm. Đo 20/09: màn Xung
+                // đột tri thức trên dự án tạm ĐẠT với lý do là một E2000.
+                let loi = van.contains("không đọc được")
                 do_("6c. màn \(tien) rỗng CÓ LÝ DO và có bước kế tiếp",
-                    van.contains("vì:") && van.contains("Bước kế tiếp"), "(\(lyDo))")
+                    !loi && van.contains("vì:") && van.contains("Bước kế tiếp"),
+                    loi ? "(rỗng vì LỖI, không vì thiếu dữ liệu)" : "(\(lyDo))")
                 print("       └ \(lyDo)")
             } else {
                 do_("6c. màn \(tien) nạp được dữ liệu thật",
