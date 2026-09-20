@@ -250,10 +250,36 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **93 test Swift** xanh. `apps/eide --tu-kiem`: **30/30**. `make check` thoát 0. Màn
-đã nối dữ liệu: **7/25** (S1 Tổng quan, S2 Nhật ký, S25 Chính sách, **S5 Hộ chiếu chip**,
-**S8 Xung đột tri thức**, **S4 Nhập tài liệu**, **S7 Bản đồ tri thức** — bốn cái sau là mới).
-**Nhóm TRI THỨC còn đúng S6 Hộ chiếu mạch.** Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+*Gói mới: **106 test Swift** xanh. `apps/eide --tu-kiem`: **32/32**. `make check` thoát 0. Màn
+đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
+chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
+với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (5): S6 Hộ chiếu mạch — đóng nhóm TRI THỨC
+
+`diagram.pinmap` · `board.check_pins` · `board.constraints` · `board.propose_fix` ·
+`board.mark_lab`. S5 nói *con chip* biết gì; S6 nói *tấm mạch trước mặt* nối những gì vào đâu —
+và mọi xung đột chân đều sinh ra ở chỗ hai nguồn ấy giao nhau.
+
+**Khai báo mạch lab là một lời khai về AN TOÀN**, nên màn không có nút "đánh dấu lab": nó có
+hai ô xác nhận và nút chỉ sống khi cả hai được tích. BOARD-05 trả E1000 khi thiếu một — một nút
+bấm được rồi mới báo lỗi là một nút dạy người dùng bỏ qua thông báo.
+
+**Ba lỗi chạy thật trên netlist bắt được:**
+
+| # | Lỗi | |
+|---|---|---|
+| 1 | Bảng chân rỗng **kết thúc cả màn** — mất luôn khối ràng buộc và khối khai báo lab | `diagram.pinmap` cần fact `pin_function` của hộ chiếu CHIP, trong khi `check_pins` và `constraints` chạy được trên chính netlist ấy. Đo thật: bảng 0 hàng, mà `check_pins` tìm ra một net I2C thiếu điện trở kéo lên |
+| 2 | `bus_limits · {1 khoá}` giấu mất câu `why` | Câu ấy — *"kéo lên 4700 Ω ≤ 4700 Ω — đủ nhanh cho Fast-mode 400 kHz"* — nói giới hạn đến TỪ ĐÂU, nên người đọc kiểm lại được thay vì phải tin. Nay trải phẳng tới lá |
+| 3 | Từ điển rỗng hiện `{0 khoá}` | Đếm thay vì nói. `voltage.rails` rỗng nay đọc là "chưa có" |
+
+Lỗi 2 còn lộ ra hai câu lõi **tự thú nhận nó chưa biết** (`current.why`, `voltage.why`) — trước
+đó bị giấu sau một con số.
+
+**Một mục chờ chủ sản phẩm:** [DEV-135] — UXC-31 đòi hiện *trạng thái khai báo mạch lab*, nhưng
+`board.mark_lab` ghi `boards.<id>` vào `autonomy.yaml` mà **không năng lực nào trong 243 cái đọc
+ra khóa ấy**. Cùng hình dạng [DEV-134]. Đề xuất mở rộng `policy.rules` trả thêm `boards` — nó
+vốn đã là "bảng quy tắc đang có hiệu lực + trạng thái niêm", không thêm năng lực mới.
 
 ### Đã làm (4): S7 Bản đồ tri thức & hỏi đáp
 
@@ -356,7 +382,8 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp:** S6 Hộ chiếu mạch — đóng nhóm TRI THỨC.
+**Làm tiếp: §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau khi đóng
+nhóm TRI THỨC, lúc còn 8 màn phải sửa thay vì 21. Sau đó nhóm THIẾT KẾ (S9–S13) và S14.
 **Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
 5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
