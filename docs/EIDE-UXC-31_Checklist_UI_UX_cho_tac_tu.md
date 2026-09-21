@@ -120,17 +120,17 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## 3. LUỒNG LÀM QUEN (onboarding) — trả lời phát hiện R2
 
-- [ ] **3.1** Workspace chưa có dự án → toàn màn là màn hình chào: 1 câu chào, 1 đoạn giải thích trạng thái rỗng, 1 ô gợi ý mô tả dự án một câu, ĐÚNG MỘT nút chính "Tạo dự án đầu tiên (project.create)". Không menu, không cột phải lúc này.
-- [ ] **3.2** Tạo dự án xong ≤ 3 thao tác từ lúc mở app (tiêu chí N1 — viết bài kiểm đếm click).
-- [ ] **3.3** Sau tạo: mở S1, tác tử chào trong vùng trao đổi + chỉ đúng 3 thứ: nút demo/lệnh mẫu, ⌘K, nút Dừng khẩn. Không tour dài.
-- [ ] **3.4** Ô lệnh 10 phút đầu: placeholder xoay vòng 3 lệnh mẫu thật chạy được với dự án vừa tạo.
+- [x] **3.1** Workspace chưa có dự án → toàn màn là màn hình chào: 1 câu chào, 1 đoạn giải thích trạng thái rỗng, 1 ô gợi ý mô tả dự án một câu, ĐÚNG MỘT nút chính "Tạo dự án đầu tiên (project.create)". Không menu, không cột phải lúc này.  ·  **✔ Đúng MỘT nút trong cả cây khung nhìn (bài kiểm đếm nút, không tin mắt); phủ toàn cửa sổ nên không cột phải lúc này; trạng thái rỗng hai phần của B5**
+- [x] **3.2** Tạo dự án xong ≤ 3 thao tác từ lúc mở app (tiêu chí N1 — viết bài kiểm đếm click).  ·  **✔ N1 đo bằng cách đi ĐÚNG đường người đi — điền ô rồi bấm nút tìm thấy trong cây khung nhìn, không gọi thẳng `taoDuAn`. **Hai** thao tác. Bỏ trống ô vẫn tạo được bằng câu gợi ý đang hiện**
+- [x] **3.3** Sau tạo: mở S1, tác tử chào trong vùng trao đổi + chỉ đúng 3 thứ: nút demo/lệnh mẫu, ⌘K, nút Dừng khẩn. Không tour dài.  ·  **✔ `lamQuen()` mở S1 TRƯỚC rồi chào — câu chào nói về thứ đang hiện trên màn hình. Đúng ba mục, và có bài kiểm khẳng định KHÔNG có mục thứ tư**
+- [x] **3.4** Ô lệnh 10 phút đầu: placeholder xoay vòng 3 lệnh mẫu thật chạy được với dự án vừa tạo.  ·  **✔ Ba lệnh mẫu của màn chào xoay mỗi 12 s trong 10 phút đầu, rồi TRẢ ô lại cho gợi ý theo pha của §2D.4. Hai luật cùng viết vào một ô nên phải nói rõ luật nào thắng lúc nào**
 
 ## 4. BẢNG LỆNH (command palette)
 
-- [ ] **4.1** ⌘K mở overlay giữa-trên màn; Esc đóng; focus vào ô tìm ngay khi mở.
-- [ ] **4.2** Nguồn dữ liệu: registry thật (**241** năng lực sau v2.0) + 25 màn; tìm theo tên VÀ mô tả, không phân biệt hoa thường, có dấu/không dấu tiếng Việt (tiêu chí N9).
-- [ ] **4.3** Chọn năng lực → đi qua `policy.decide` như mọi lời gọi (B2); toast hiện kết quả cổng (APPROVE/ASK/DENY + mã quy tắc). Chọn màn → mở màn.
-- [ ] **4.4** Năng lực cần tham số bắt buộc → mở form tham số sinh từ hợp đồng CDS-12, không cho gọi thiếu.
+- [x] **4.1** ⌘K mở overlay giữa-trên màn; Esc đóng; focus vào ô tìm ngay khi mở.  ·  **✔ `mo()` xoá ô tìm và đặt tiêu điểm vào đó; Esc đóng. Nhánh `cancelOperation` cũ chỉ chạy khi con trỏ CÒN trong ô tìm — bấm vào một kết quả rồi đổi ý thì Esc không làm gì; nay `EideBangLenh` override thẳng**
+- [x] **4.2** Nguồn dữ liệu: registry thật (**241** năng lực sau v2.0) + 25 màn; tìm theo tên VÀ mô tả, không phân biệt hoa thường, có dấu/không dấu tiếng Việt (tiêu chí N9).  ·  **✔ 25 màn + mọi năng lực đã hiện thực; tìm theo tên VÀ mô tả, không dấu, không phân biệt hoa thường. `--tu-kiem` 13/14 đo trên registry thật (244 năng lực, không phải 241)**
+- [x] **4.3** Chọn năng lực → đi qua `policy.decide` như mọi lời gọi (B2); toast hiện kết quả cổng (APPROVE/ASK/DENY + mã quy tắc). Chọn màn → mở màn.  ·  **✔ `EideToast` — quyết định · năng lực · cổng · mã quy tắc · lý do, thiếu trường thì NÓI thiếu. Đồng thời ghi một dòng vào vùng trao đổi, vì một thông báo chỉ sống 5 giây là thông báo không xem lại được. §4.3 viết "DENY" — một từ cổng KHÔNG BAO GIỜ phát ra, [DEV-143]**
+- [x] **4.4** Năng lực cần tham số bắt buộc → mở form tham số sinh từ hợp đồng CDS-12, không cho gọi thiếu.  ·  **✔ `EideFormThamSo` sinh từ `caps.describe`, không từ bảng chép tay. Nút Chạy chết tới khi đủ ô bắt buộc và nói rõ thiếu ô nào; trường `integer` gửi đi là SỐ; ô tuỳ chọn để trống thì không gửi**
 
 ## 5. TRÌNH SOẠN THẢO (S14) — nơi người và tác tử gặp nhau
 

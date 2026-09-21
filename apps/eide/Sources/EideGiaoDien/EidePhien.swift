@@ -27,6 +27,8 @@ public final class EidePhien {
     /// Lần cuối nghe được daemon — nền của dải "Dữ liệu cũ" (B6).
     private var lucCuoiNghe = Date()
     private var nhipTim: Timer?
+    /// Bộ xoay lệnh mẫu §3.4 — sống tối đa mười phút đầu.
+    private var xoayMau: Timer?
 
     /// Nhịp tim và hạn dữ liệu cũ. Nhịp phải DÀY hơn hạn, nếu không thì hạn không đo được.
     public static let NHIP_TIM: TimeInterval = 1.0
@@ -92,6 +94,41 @@ public final class EidePhien {
         khung.manChao.datTrangThai("", ban: false)
         khung.anManChao()
         await moDuAn(duong)
+        lamQuen()
+    }
+
+    /// **§3.3 — sau khi tạo dự án: mở S1, chào, chỉ ĐÚNG BA THỨ.**
+    ///
+    /// Ba, không bốn. §3.3 viết thẳng "không tour dài", và lý do nằm ở chỗ người vừa gõ xong một
+    /// câu mô tả dự án đang muốn xem chuyện gì xảy ra — không muốn đọc. Thứ tư trở đi là thứ họ
+    /// lướt qua, và lướt qua một danh sách bốn mục thì họ lướt qua cả ba mục đầu.
+    ///
+    /// Mở S1 trước khi chào: câu chào nói về những thứ đang hiện trên màn hình, nên màn hình
+    /// phải hiện rồi.
+    func lamQuen() {
+        moMan("Main", boiTacTu: false)
+        khung.dock.batDauLamQuen(dongHo())
+        khung.dock.themLuot(.tacTu, Self.CHAO_BA_THU)
+        _batXoayMau()
+    }
+
+    /// Đúng ba thứ, theo đúng thứ tự §3.3: lệnh mẫu, ⌘K, Dừng khẩn.
+    public static let CHAO_BA_THU =
+        "Dự án đã sẵn sàng. Ba thứ cần biết, hết:\n"
+        + "1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.\n"
+        + "2. ⌘K mở bảng lệnh — tìm 244 năng lực và 25 màn theo tên hoặc mô tả.\n"
+        + "3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào."
+
+    /// Bộ xoay lệnh mẫu của §3.4. Dừng hẳn khi hết mười phút — `xoayMau` trả `false`.
+    private func _batXoayMau() {
+        xoayMau?.invalidate()
+        xoayMau = Timer.scheduledTimer(withTimeInterval: EideDock.XOAY_MOI, repeats: true) {
+            [weak self] t in
+            Task { @MainActor in
+                guard let self else { return t.invalidate() }
+                if !self.khung.dock.xoayMau(self.dongHo()) { t.invalidate() }
+            }
+        }
     }
 
     // MARK: - mở dự án
@@ -202,6 +239,9 @@ public final class EidePhien {
         khung.bangLenh.onChonMan = { [weak self] tien in self?.moMan(tien, boiTacTu: false) }
         khung.bangLenh.onChonNangLuc = { [weak self] id in
             Task { await self?.goiNangLuc(id) }
+        }
+        khung.formThamSo.onChay = { [weak self] id, tham in
+            Task { await self?.goiNangLuc(id, tham) }
         }
         khung.thanhTren.onDungKhan = { [weak self] in
             Task { await self?._dungKhan() }
@@ -771,13 +811,36 @@ public final class EidePhien {
     /// câu trả lời ấy được nói nguyên văn ra vùng trao đổi — tự điền một giá trị "hợp lý" cho
     /// một năng lực có thể ghi tệp hoặc nạp firmware là cách nhanh nhất để mất lòng tin.
     public func goiNangLuc(_ id: String) async {
+        guard daemon != nil else {
+            return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
+        }
+        // §4.4 — cần tham số bắt buộc thì MỞ FORM, không gọi thiếu. Gọi thiếu trả E1000
+        // INPUT_SCHEMA: một mã lỗi đúng, mà đọc xong vẫn không biết phải điền gì.
+        if let mota = try? await daemon?.goi("caps.describe", ["id": id]),
+           !EideFormThamSo.batBuoc(mota).isEmpty {
+            khung.formThamSo.mo(id: id, mota: mota)
+            return
+        }
+        await goiNangLuc(id, [:])
+    }
+
+    /// Gọi một năng lực với tham số đã có. Đường chung của bảng lệnh và form §4.4.
+    public func goiNangLuc(_ id: String, _ tham: [String: Any]) async {
         guard let d = daemon else {
             return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
         }
-        khung.dock.themLuot(.nguoi, "/\(id)")
+        khung.dock.themLuot(.nguoi, tham.isEmpty ? "/\(id)"
+            : "/\(id) \(tham.keys.sorted().map { "\($0)=\(tham[$0]!)" }.joined(separator: " "))")
         do {
-            let r = try EideKetQua.boc(
-                try await d.goi("caps.invoke", ["id": id, "params": [:]]), id)
+            let tho = try await d.goi("caps.invoke", ["id": id, "params": tham])
+            // §4.3 — toast quyết định cổng, đọc TRƯỚC khi bóc kết quả. `EideKetQua.boc` ném khi
+            // lời gọi không `done`, và đúng những lần ấy mới là lúc người dùng cần biết cổng nào
+            // chặn: bóc trước thì quyết định rơi mất đúng ở nhánh nó có giá trị nhất.
+            if let dec = tho["decision"] as? [String: Any] {
+                khung.toast.hien(dec, cap: id)
+                khung.dock.themLuot(.heThong, EideToast.cau(dec, cap: id))
+            }
+            let r = try EideKetQua.boc(tho, id)
             let khoa = r.keys.sorted().prefix(4).joined(separator: ", ")
             khung.dock.themLuot(.tacTu, "`\(id)` xong"
                                 + (khoa.isEmpty ? "." : " — trả về: \(khoa)."))

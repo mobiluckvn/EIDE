@@ -131,6 +131,16 @@ public final class EideBangLenh: NSView {
          .lowercased()
     }
 
+    /// Chữ đang có trong ô tìm — cho bài đo đọc.
+    public var chuTim: String { o.stringValue }
+
+    /// Esc đóng — §4.1.
+    ///
+    /// Nhánh `cancelOperation` trong `control(_:textView:doCommandBy:)` chỉ chạy khi con trỏ CÒN
+    /// TRONG ô tìm. Người bấm vào một kết quả rồi đổi ý thì tiêu điểm đã rời ô, và lúc ấy Esc
+    /// không làm gì — một lớp phủ giữa màn hình không thoát được bằng phím quen nhất.
+    public override func cancelOperation(_ sender: Any?) { dong() }
+
     /// Đường vào cho bài đo — ĐẶT chữ vào ô tìm rồi lọc, đúng như người gõ.
     ///
     /// Chỉ gọi `_loc` mà không đặt `o.stringValue` thì ảnh chụp cho thấy một bảng đầy kết quả

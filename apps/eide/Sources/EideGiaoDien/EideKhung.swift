@@ -75,6 +75,13 @@ public final class EideKhung: NSView {
     /// Bảng lệnh ⌘K — lớp phủ, đứng TRÊN cả màn chào.
     public let bangLenh = EideBangLenh()
 
+    /// Form tham số §4.4 và toast kết quả cổng §4.3 — hai lớp phủ của bảng lệnh.
+    ///
+    /// Toast thêm SAU CÙNG nên nằm trên tất cả: nó là thứ báo một lệnh vừa bị cổng chặn, và một
+    /// thông báo bị chính lớp phủ vừa sinh ra nó che mất thì không ai đọc được.
+    public let formThamSo = EideFormThamSo()
+    public let toast = EideToast()
+
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         dung()
@@ -108,7 +115,7 @@ public final class EideKhung: NSView {
         cotPhai.onDoiHep = { [weak self] h in self?.nguoiDoiCotPhai(h) }
 
         for v in [thanhTren, vienDo, cotTrai, thanhTab, daiCu, vungLamViec,
-                  vachDock, dock, cotPhai, manChao, bangLenh] as [NSView] {
+                  vachDock, dock, cotPhai, manChao, bangLenh, formThamSo, toast] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -162,6 +169,18 @@ public final class EideKhung: NSView {
             bangLenh.leadingAnchor.constraint(equalTo: leadingAnchor),
             bangLenh.trailingAnchor.constraint(equalTo: trailingAnchor),
             bangLenh.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // ── form tham số: phủ toàn cửa sổ như bảng lệnh
+            formThamSo.topAnchor.constraint(equalTo: topAnchor),
+            formThamSo.leadingAnchor.constraint(equalTo: leadingAnchor),
+            formThamSo.trailingAnchor.constraint(equalTo: trailingAnchor),
+            formThamSo.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // ── toast: giữa-trên, ngay dưới thanh trên. KHÔNG phủ toàn cửa sổ, vì nó không
+            // chặn thao tác nào — người vẫn bấm được mọi thứ trong lúc nó hiện.
+            toast.topAnchor.constraint(equalTo: vienDo.bottomAnchor, constant: 12),
+            toast.centerXAnchor.constraint(equalTo: centerXAnchor),
+            toast.widthAnchor.constraint(lessThanOrEqualToConstant: 620),
 
             // ── cột giữa, hàng 2: VÙNG LÀM VIỆC — vùng giãn
             vungLamViec.topAnchor.constraint(equalTo: daiCu.bottomAnchor),

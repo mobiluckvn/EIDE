@@ -105,6 +105,23 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     _ = self.khung.bangLenh.locDeTest("ho chieu")
                     self.khung.layoutSubtreeIfNeeded()
                     self._chup(thuMuc.appendingPathComponent("bang-lenh.png"))
+                    self.khung.bangLenh.dong()
+
+                    // Form tham số §4.4 và toast §4.3 trên cửa sổ thật. Hai lớp phủ này là chỗ
+                    // duy nhất trong §4 mà một bài kiểm đọc chuỗi không thay được con mắt: nhãn
+                    // đúng không có nghĩa là hộp vừa, và một ô nhập tràn ra ngoài hộp thì người
+                    // dùng gõ vào một chỗ họ không thấy.
+                    await self.phien.goiNangLuc("kg.neighborhood")
+                    self.khung.layoutSubtreeIfNeeded()
+                    self._chup(thuMuc.appendingPathComponent("form-tham-so.png"))
+                    self.khung.formThamSo.dong()
+
+                    self.khung.toast.hien(
+                        ["decision": "REJECT", "gate": "G-FACT", "rule": "FACT-03",
+                         "reason": "hằng số 0x40000000 không trỏ về fact nào đã duyệt"],
+                        cap: "code.merge")
+                    self.khung.layoutSubtreeIfNeeded()
+                    self._chup(thuMuc.appendingPathComponent("toast-cong.png"))
                     exit(0)
                 }
             }
@@ -308,6 +325,31 @@ final class UngDung: NSObject, NSApplicationDelegate {
                 && phien.chonDuAn.loc("").count > 0,
             "(\(phien.chonDuAn.loc("").count) dự án đọc từ `project.list`)")
         phien.popChon.close()
+
+        // §4.4 — form tham số dựng từ hợp đồng THẬT trong registry, không từ một JSON bịa ra.
+        // `kg.neighborhood` là R0 và khai `node` bắt buộc. Chọn một năng lực CÓ THẬT tham số bắt
+        // buộc chứ không chọn theo trí nhớ: bản đầu dùng `passport.query`, mà hợp đồng của nó
+        // khai `required: []` — phép đo khi ấy xanh hay đỏ đều không nói gì về §4.4.
+        //
+        // Lời gọi KHÔNG chạy: `goiNangLuc` mở form rồi trả về, nên không năng lực nào được thi
+        // hành trong bài tự kiểm này.
+        await phien.goiNangLuc("kg.neighborhood")
+        let dangHoi = !khung.formThamSo.isHidden
+        let thieu = khung.formThamSo.conThieu().sorted()
+        do_("19. năng lực cần tham số thì MỞ FORM chứ không gọi thiếu (§4.4)",
+            dangHoi && !thieu.isEmpty, "(form mở: \(dangHoi), còn thiếu: \(thieu))")
+        khung.formThamSo.dong()
+
+        // §4.3 — toast quyết định cổng. `project.status` không tham số nên nó chạy thẳng, và
+        // quyết định của cổng phải hiện ra dù APPROVE.
+        await phien.goiNangLuc("project.status")
+        // Từ vựng THẬT của cổng là APPROVE / ASK / REJECT. UXC-31 §4.3 viết "DENY" — một từ
+        // `PolicyGate` không bao giờ phát ra. Xem [DEV-143].
+        do_("20. toast hiện quyết định cổng kèm mã quy tắc (§4.3)",
+            khung.toast.chu.contains("project.status")
+                && ["APPROVE", "ASK", "REJECT"].contains(where: khung.toast.chu.contains),
+            "(\(khung.toast.chu))")
+        khung.toast.an()
 
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()

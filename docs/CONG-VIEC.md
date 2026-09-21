@@ -250,11 +250,38 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **235 test Swift** xanh. `apps/eide --tu-kiem`: **65/65**. Checklist UXC-31:
-**83 xong · 30 chưa · 4 chặn** (đầu phiên 20/09: 11 xong). **Mục 2 đóng trọn**; §0 còn B1, §1 xong hết. `make check` thoát 0. Màn
+*Gói mới: **255 test Swift** xanh. `apps/eide --tu-kiem`: **67/67**. Checklist UXC-31:
+**91 xong · 22 chưa · 4 chặn** (đầu phiên 20/09: 11 xong). **Mục 1, 2, 3, 4 đóng trọn**; §0 còn B1. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (16): §3 Luồng làm quen và §4 Bảng lệnh — **cả hai đóng**
+
+Tám mục. Hai thứ dựng mới: `EideToast` (§4.3) và `EideFormThamSo` (§4.4 — sinh từ
+`caps.describe`, không từ bảng chép tay; 244 năng lực thì một bảng chép tay lệch ngay ở lần sửa
+hợp đồng đầu tiên, và lệch im lặng).
+
+**Ba lỗi thật, cả ba do bài kiểm ép ra — và một cái tôi vừa tự viết doc-comment cảnh báo:**
+
+1. **`NSPopUpButton` LÀ một `NSButton`.** Nhánh boolean đứng trước nên nuốt mọi ô enum:
+   `conThieu()` thấy chúng luôn có giá trị → nút Chạy sống ngay từ lúc mở form → tham số gửi đi
+   là `true`/`false` thay cho lựa chọn. Với `passport.query` thì `predicate: false`.
+2. **Popup bắt buộc tự chọn hộ người dùng.** Tôi bỏ mục rỗng cho ô bắt buộc với lý do "kiểu gì
+   cũng phải chọn" — đúng cái lỗi mà đoạn tài liệu ngay trên nó vừa cảnh báo: form gửi đi lựa
+   chọn ĐẦU TIÊN trong enum như thể người dùng đã chọn nó.
+3. **Esc chỉ đóng bảng lệnh khi con trỏ CÒN trong ô tìm.** Nhánh `cancelOperation` nằm trong
+   `control(_:textView:doCommandBy:)`; bấm vào một kết quả rồi đổi ý là Esc chết.
+
+**[DEV-143] — §4.3 dùng một từ cổng không bao giờ phát ra.** Tài liệu viết "APPROVE/ASK/**DENY**";
+`PolicyGate` phát `APPROVE`/`ASK`/**`REJECT`**. Phát hiện bằng chính phép đo viết theo tài liệu:
+nó HỎNG với chuỗi thật `REJECT · project.status · cổng * · STOP — Phiên đang dừng khẩn (E3002)`.
+Toast nay tô màu theo NGHĨA chứ không theo danh sách tên, nên một quyết định thứ tư sau này cũng
+không lọt qua thành màu trung tính.
+
+**Và một phép đo vô nghĩa tôi suýt để lại:** bài tự kiểm §4.4 ban đầu dùng `passport.query`, mà
+hợp đồng của nó khai `required: []` — xanh hay đỏ đều không nói gì về §4.4. Đổi sang
+`kg.neighborhood` (R0, `node` bắt buộc).
 
 ### Đã làm (15): §0 bất biến và §1 hệ thống thiết kế
 
@@ -532,7 +559,7 @@ dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ư
 
 **Làm tiếp — không cần phần cứng:**
 
-1. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm lần nào.
+1. **§5–§6, §9–§11** — phần còn lại của checklist, 22 mục (4 trong đó chặn vì board).
 2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
    dùng cách lùi (nạp lại, gộp 0,4 s).
 3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.

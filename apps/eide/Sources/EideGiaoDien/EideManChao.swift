@@ -107,6 +107,9 @@ public final class EideManChao: NSView {
         nhanTt.textColor = ban ? EideToken.Mau.muted : EideToken.Mau.bad
     }
 
+    /// Gõ câu mô tả — cho bài đo đi đúng đường người dùng đi.
+    public func datMoTaDeTest(_ van: String) { o.stringValue = van }
+
     @objc private func _tao() {
         guard !dangBan else { return }
         let v = o.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)

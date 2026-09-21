@@ -37,9 +37,55 @@ public final class EideDock: NSView {
         "P7": "Ví dụ: viết yêu cầu cho tính năng đo nhiệt độ rồi vẽ lược đồ khối",
     ]
 
+    /// **Mười phút đầu sau khi tạo dự án — §3.4.** `nil` = không còn trong giai đoạn ấy.
+    ///
+    /// Trong mười phút ấy placeholder xoay vòng ba lệnh mẫu của màn chào, và chúng THẮNG gợi ý
+    /// theo pha của §2D.4. Hai luật cùng viết vào một ô, nên phải chọn: người vừa tạo dự án chưa
+    /// có pha nào để nói về — dự án mới tinh luôn ở P0 — nên câu theo pha lúc ấy là câu đúng mà
+    /// vô dụng. Ba lệnh mẫu thì nói được "gõ một câu dài cỡ này, cụ thể cỡ này".
+    private var tuLuc: Date?
+    private var chiSoMau = 0
+    private var phaHienTai: String?
+
+    /// Mười phút, tính từ lúc tạo dự án.
+    public static let GIAI_DOAN_DAU: TimeInterval = 600
+    /// Bao lâu đổi một lệnh mẫu.
+    public static let XOAY_MOI: TimeInterval = 12
+
+    /// Bắt đầu giai đoạn làm quen. Gọi sau khi tạo dự án.
+    public func batDauLamQuen(_ luc: Date) {
+        tuLuc = luc
+        chiSoMau = 0
+        _veGoiY()
+    }
+
+    /// Xoay sang lệnh mẫu kế tiếp. Trả `false` khi đã hết mười phút — và khi ấy gợi ý theo pha
+    /// của §2D.4 nhận lại quyền.
+    @discardableResult
+    public func xoayMau(_ bayGio: Date) -> Bool {
+        guard let t = tuLuc else { return false }
+        guard bayGio.timeIntervalSince(t) < Self.GIAI_DOAN_DAU else {
+            tuLuc = nil
+            _veGoiY()
+            return false
+        }
+        chiSoMau = (chiSoMau + 1) % EideManChao.MAU.count
+        _veGoiY()
+        return true
+    }
+
     /// Đặt pha hiện tại của dự án. `nil` = chưa biết, và khi ấy quay về câu chung chứ không đoán.
     public func datPha(_ pha: String?) {
-        oGo.placeholderString = Self.GOI_Y[pha] ?? Self.GOI_Y[nil]!
+        phaHienTai = pha
+        _veGoiY()
+    }
+
+    private func _veGoiY() {
+        if tuLuc != nil {
+            oGo.placeholderString = "Thử: \(EideManChao.MAU[chiSoMau])"
+            return
+        }
+        oGo.placeholderString = Self.GOI_Y[phaHienTai] ?? Self.GOI_Y[nil]!
     }
 
     /// Placeholder đang hiện — cho bài đo đọc.
