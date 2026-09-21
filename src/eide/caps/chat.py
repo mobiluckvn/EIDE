@@ -593,24 +593,73 @@ def _dung_chuoi(mau: dict[str, Any] | None, intent: dict[str, Any],
     """
     reg = get_registry()
     if mau is not None:
-        nut = []
-        for i, b in enumerate(mau["buoc"]):
-            ten = b.split("(")[0].strip()
-            if ten in reg and reg.get(ten).implemented:
-                nut.append(chain_mod.Nut(id=f"n{i + 1}", cap=ten,
-                                         args=_args_cho(ten, intent, grounded, run_id),
-                                         when=f"n{i}" if nut else None, on_ask="wait"))
+        nut = _tu_nodes(mau, intent, grounded, ctx, run_id, reg) or \
+              _tu_buoc(mau, intent, grounded, run_id, reg)
         if nut:
-            # Nối `when` theo đúng thứ tự các nút GIỮ LẠI, không theo chỉ số gốc: bỏ bước 3 mà
-            # vẫn để bước 4 phụ thuộc "n3" thì cả chuỗi treo ở một nút không tồn tại.
-            for k, n in enumerate(nut):
-                n.when = nut[k - 1].id if k else None
             _noi_dau_ra(nut, reg)
             return chain_mod.Chain(nut), f"mẫu: {mau['ten']}"
     if (mot := _chuoi_toi_thieu(intent, grounded, reg)):
         return chain_mod.Chain(mot), "ý định là năng lực"
     tu_planner = _chuoi_tu_planner(intent, grounded, ctx)
     return chain_mod.Chain(tu_planner), "planner" if tu_planner else "không dựng được chuỗi"
+
+
+def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, Any],
+              ctx: Context, run_id: str, reg: Any) -> list[Any]:
+    """Dựng chuỗi từ trường `nodes` — dạng MÁY DÙNG ĐƯỢC của mẫu (DPS-09 §4.4 v1.3).
+
+    `nodes` có từ DEV-059 và mang `{id, cap, when, on_ask}`; v1.3 mang thêm `args` với tham
+    chiếu `${nX.field}` (DEV-121). Tới 21/09 mã vẫn dựng nút từ `buoc` — bản VĂN XUÔI — nên ba
+    thứ của `nodes` bị bỏ qua hết: `when` thật (chuỗi bị ép thành một dây thẳng), `on_ask`
+    (mọi nhánh điều kiện thành `wait`, tức một nút bỏ qua được lại chặn cả chuỗi), và `args`.
+    Phần nối vừa viết vào mẫu vì thế sẽ không bao giờ chạy.
+
+    Tham số của mẫu THẮNG `_args_cho`: mẫu nói "lấy từ nút n8", còn `_args_cho` chỉ biết đọc
+    slots của ý định. Một tham chiếu bị một giá trị suy từ slots đè lên là mất đúng phép nối.
+
+    Nút chưa hiện thực bị BỎ, và `when` nối lại theo các nút còn giữ — bỏ bước 3 mà vẫn để bước
+    4 phụ thuộc `n3` thì cả chuỗi treo ở một nút không tồn tại.
+    """
+    ds = mau.get("nodes") or []
+    if not ds:
+        return []
+    giu = [n for n in ds if (n.get("cap") in reg and reg.get(n["cap"]).implemented)]
+    if not giu:
+        return []
+    con = {n["id"] for n in giu}
+    ra = []
+    for n in giu:
+        args = dict(_args_cho(n["cap"], intent, grounded, run_id))
+        args.update(n.get("args") or {})
+        # Tham chiếu tới một nút ĐÃ BỊ BỎ là một tham chiếu không bao giờ giải được — và nó
+        # sẽ giết cả chuỗi ở phép kiểm deterministic. Bỏ nó đi, để nút rơi về "thiếu tham số"
+        # và hỏi người: một câu hỏi người trả lời được tốt hơn một chuỗi chết.
+        args = {k: v for k, v in args.items()
+                if not (isinstance(v, str)
+                        and (m := chain_mod.tach_tham_chieu(v)) and m[0] not in con)}
+        ra.append(chain_mod.Nut(id=n["id"], cap=n["cap"], args=args,
+                                when=n.get("when") if n.get("when") in con else None,
+                                on_ask=n.get("on_ask") or "wait"))
+    return ra
+
+
+def _tu_buoc(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, Any],
+             run_id: str, reg: Any) -> list[Any]:
+    """Đường LÙI: dựng từ bản văn xuôi khi mẫu chưa có `nodes`.
+
+    Giữ lại vì `chains.json` là bản sinh — một mẫu mới thêm vào `dps.js` mà quên `nodes` thì
+    vẫn chạy được, chỉ mất phần nối. Mất một tiện nghi khác hẳn mất cả chuỗi.
+    """
+    nut = []
+    for i, b in enumerate(mau.get("buoc") or []):
+        ten = b.split("(")[0].strip()
+        if ten in reg and reg.get(ten).implemented:
+            nut.append(chain_mod.Nut(id=f"n{i + 1}", cap=ten,
+                                     args=_args_cho(ten, intent, grounded, run_id),
+                                     when=None, on_ask="wait"))
+    for k, n in enumerate(nut):
+        n.when = nut[k - 1].id if k else None
+    return nut
 
 
 def _noi_dau_ra(nut: list[Any], reg: Any) -> None:

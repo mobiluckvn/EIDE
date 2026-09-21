@@ -141,7 +141,7 @@
         "name": "result",
         "schema": {
           "type": "object",
-          "description": "{intent_id, run_id?}"
+          "description": "{intent_id, run_id?, cho_nguoi[], restate?, steps[]} — v1.3: `cho_nguoi[]` là các nút đang chờ người (`{cap, thieu[], vi}`), vì \"kết quả đến qua sự kiện\" đúng cho KẾT QUẢ nhưng một câu hỏi nằm trong báo cáo dưới store là câu hỏi không ai nghe thấy — giao diện hiện \"đang chạy\" rồi đứng yên vĩnh viễn (DEV-121). `restate`/`steps[]` là thẻ Ý hiểu của UXC-31 §2D.6 (DEV-140)"
         }
       }
     },

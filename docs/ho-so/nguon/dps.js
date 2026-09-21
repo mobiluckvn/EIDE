@@ -187,14 +187,48 @@ const CHUOI_MAU = [
 //
 // `cap` dưới đây là id THẬT trong danh mục 238; `when` là id nút phải xong trước (DPS-09 §4.4
 // ChainNode); `on_ask` theo enum wait|parallel|skip.
+//
+// PHẦN TỬ THỨ 5 — `args`, thêm v1.3 (DEV-121). Đây là chỗ MẪU nói bước nào lấy dữ liệu của
+// bước nào, bằng tham chiếu `${nX.duong.doc}`. Máy giải tham chiếu đã có sẵn trong
+// `eide_core.chain` (`THAM_CHIEU`, `doc_duong`, `giai_tham_chieu`) từ 17/09, nhưng **không có
+// dữ liệu để giải**: mô hình `Nut` không có chỗ nào viết được "tham số này lấy từ nút n7".
+//
+// Hệ quả đo được 17/09 qua giao diện: gõ "đọc cảm biến BME280 qua I2C" trả về một bức tường
+// E5002 liệt kê bảy nút thiếu tham số bắt buộc, và KHÔNG một nút nào chạy — vì §4.4 kiểm CẢ
+// chuỗi ngay lúc lập, trong khi `code.merge` cần `patch` mà `code.integrate` mới sinh ra.
+//
+// **Chỉ điền chỗ SUY ĐƯỢC TỪ HỢP ĐỒNG.** Mỗi dòng dưới đây nối một `output_schema` với một
+// `input_schema` mà tên và kiểu khớp nhau; chỗ nào phải đoán thì để TRỐNG kèm ghi chú, vì
+// viết bừa vào đây là biến một phỏng đoán thành đặc tả. Năm chỗ còn trống và lý do:
+//
+//   - Z-05 `arch.map_hw.module_ids` — chuỗi Z-05 KHÔNG có nút `arch.decompose`, nên không nút
+//     nào trong chuỗi sinh ra `module_graph`. Đây là một lỗ của chính chuỗi mẫu, không phải
+//     của phép nối.
+//   - Z-05 `code.integrate.modules` — `arr<str>` id module; hai ứng viên (`arch.decompose` và
+//     các nút `code.generate_module` chạy nhiều lượt) và không hợp đồng nào nói cái nào.
+//   - Z-05 `code.merge.reports` / `review_id` — `reports` là `arr<str>`, không rõ trỏ tới
+//     `tool_report` hay `sim.run.report`; `review_id` cần trường `id` BÊN TRONG `code.review
+//     .review`, mà `output_schema` của nó khai `{"type":"object"}` trần.
+//   - Z-05 `sim.run.artifact` — chuỗi không có nút dựng firmware nào.
+//   - Z-05 `doc.section.target` — `target` là mục tài liệu cần viết, không phải đầu ra
+//     của nút nào; nó đến từ ý định hoặc từ người.
+//
+// Chặng SÂU của đường đọc (`plan.steps[0].id`) chỉ kiểm được lúc CHẠY: phần lớn
+// `output_schema` khai `{"type":"object"}` kèm một câu mô tả, nên khẳng định hơn thế lúc lập
+// là một lời chắc chắn dựa trên không gì cả.
 const CHUOI_NUT = {
   'Dự án mới từ ý tưởng (Z-01)': [
     ['n1', 'project.create'], ['n2', 'search.reference_projects', 'n1'],
     ['n3', 'registry.pull', 'n2', 'skip'], ['n4', 'req.elicit', 'n2'],
     ['n5', 'board.build_passport', 'n3', 'skip'], ['n6', 'env.check', 'n1'],
-    ['n7', 'sim.build_platform', 'n5', 'skip'], ['n8', 'req.classify', 'n4'],
-    ['n9', 'arch.style_select', 'n8'], ['n10', 'arch.decompose', 'n9'],
-    ['n11', 'arch.map_hw', 'n10'], ['n12', 'diagram.block', 'n10', 'parallel'],
+    ['n7', 'sim.build_platform', 'n5', 'skip'],
+    ['n8', 'req.classify', 'n4', 'wait', { raw: '${n4.raw}' }],
+    ['n9', 'arch.style_select', 'n8', 'wait', { reqset_ids: '${n8.reqset[*].id}' }],
+    ['n10', 'arch.decompose', 'n9', 'wait',
+      { reqset_ids: '${n8.reqset[*].id}', style: '${n9.decision.style}' }],
+    ['n11', 'arch.map_hw', 'n10', 'wait',
+      { module_ids: '${n10.module_graph.modules[*].id}' }],
+    ['n12', 'diagram.block', 'n10', 'parallel'],
     ['n13', 'plan.create', 'n11'], ['n14', 'chat.report_back', 'n13'],
   ],
   'Dự án mới từ zip (Z-07)': [
@@ -212,11 +246,16 @@ const CHUOI_NUT = {
     ['n23', 'chat.report_back', 'n21'],
   ],
   'Thêm tính năng (Z-05)': [
-    ['n1', 'chat.ground'], ['n2', 'req.elicit', 'n1'], ['n3', 'req.classify', 'n2'],
-    ['n4', 'req.ground_hw', 'n3'], ['n5', 'arch.map_hw', 'n4'],
-    ['n6', 'plan.create', 'n5'], ['n7', 'code.generate_module', 'n6', 'skip'],
-    ['n8', 'code.integrate', 'n7', 'skip'], ['n9', 'code.generate_tests', 'n7', 'skip'],
-    ['n10', 'code.review', 'n8', 'skip'], ['n11', 'code.merge', 'n10', 'skip'],
+    ['n1', 'chat.ground'], ['n2', 'req.elicit', 'n1'],
+    ['n3', 'req.classify', 'n2', 'wait', { raw: '${n2.raw}' }],
+    ['n4', 'req.ground_hw', 'n3', 'wait', { reqset_ids: '${n3.reqset[*].id}' }],
+    ['n5', 'arch.map_hw', 'n4'],        // module_ids: không nút nào sinh — xem ghi chú trên
+    ['n6', 'plan.create', 'n5'],
+    ['n7', 'code.generate_module', 'n6', 'skip', { step_ref: '${n6.plan.steps[0].id}' }],
+    ['n8', 'code.integrate', 'n7', 'skip'],   // modules: hai ứng viên, hợp đồng không phân xử
+    ['n9', 'code.generate_tests', 'n7', 'skip'],
+    ['n10', 'code.review', 'n8', 'skip', { patch: '${n8.patch}' }],
+    ['n11', 'code.merge', 'n10', 'skip', { patch: '${n8.patch}' }],
     ['n12', 'sim.run', 'n11', 'skip'], ['n13', 'target.flash', 'n12', 'skip'],
     ['n14', 'target.observe', 'n13', 'skip'], ['n15', 'doc.section', 'n11', 'skip'],
     ['n16', 'chat.report_back', 'n6'],
@@ -246,6 +285,10 @@ c.push(P('Cột "Chuỗi mẫu" ở trên viết cho người đọc. Dạng **m
   + '`scripts/kiem_chuoi_chuan.py` đối chiếu `nodes` với registry, nên một tên gõ sai bị bắt '
   + 'ngay thay vì im lặng biến mất khỏi khung mà `chat.orchestrate` dựng. Xem DEVIATIONS '
   + 'DEV-059.'));
+c.push(SP());
+// v1.3 — DEV-121 điểm (1). Gộp hai tình huống vào một mã là lý do một câu hỏi đáng lẽ hỏi
+// người lại giết cả chuỗi.
+c.push(P('**Chuỗi SAI khác chuỗi CHƯA ĐỦ DỮ KIỆN (v1.3).** Phép kiểm deterministic ở cuối §4.4 trả về HAI loại kết quả, và chúng dẫn tới hai việc khác hẳn nhau. **Chuỗi sai** — `cap` không có trong registry, có chu trình, vượt trần nút hoặc vượt ngân sách — là lỗi của kế hoạch: `E5002`, không chạy nút nào. **Chuỗi chưa đủ dữ kiện** — một nút thiếu tham số bắt buộc mà không nút trước nào sinh ra — KHÔNG phải lỗi: chuỗi chạy tới đó rồi dừng và hỏi người. Trả `E5002` cho cả hai là biến một câu hỏi trả lời được thành một bức tường lỗi, và đó đúng là thứ đo được ngày 17/09: một lệnh bình thường trả về bảy nút thiếu tham số và không nút nào chạy. Xem DEVIATIONS DEV-121.'));
 c.push(SP());
 c.push(H2('4.5. Ưu tiên nguồn khi suy luận (D5) và ghi nhớ (D8)'));
 c.push(P('Khi phải suy ra chip/board/linh kiện/tham số cho một ý tưởng, thứ tự là: điều người nói > dự án hiện có > mẫu tham chiếu trong registry (K5′) > web (chỉ ứng viên). Mọi suy luận được trình bày là **đề xuất có nguồn** ("BOM tham chiếu từ eide.ref.balancing-robot@1.2, đã kiểm định trên board") và mang nhãn tạm cho tới khi người xác nhận hoặc có fact thật (Z-09: tham số vật lý mặc định gắn nhãn "tham số tạm"). Mỗi câu trả lời của người cho một Question có `remember_as` được ghi vào preferences.yaml với phạm vi (người/dự án); lần sau Orchestrator áp dụng và chỉ nhắc "áp dụng như lần trước: dùng ST-Link". Người có thể nói "hỏi lại tôi mỗi lần" để xóa một tùy chọn.'));

@@ -110,7 +110,11 @@ const VIEC = [
                 chuoi: r[1],
                 buoc: r[1].split('\u2192').map(x => x.trim()).filter(Boolean),
                 nodes: (NUT[r[0]] || []).map(n => ({
+                    // `args` (phần tử thứ 5) — v1.3, DEV-121. Chỉ MẪU mới có quyền nói bước
+                    // nào lấy dữ liệu của bước nào; máy giải tham chiếu `${nX.field}` đã có
+                    // sẵn trong `eide_core.chain`, nhưng không có dữ liệu để giải.
                     id: n[0], cap: n[1], when: n[2] || null, on_ask: n[3] || 'wait',
+                    args: n[4] || {},
                 })),
                 trigger_intents: r[2] || [],
             })), null, 1) + '\n';
