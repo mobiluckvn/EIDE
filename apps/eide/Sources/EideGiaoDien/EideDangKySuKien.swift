@@ -60,6 +60,12 @@ public enum EideDangKySuKien {
         "PlanDiff": ["event.run.progress", "event.knowledge.changed"],
         // S13 Tài liệu — `event.doc.stale` là đúng tín hiệu "mục này đã cũ so với mã".
         "Doc": ["event.doc.stale", "event.run.progress"],
+        // S14 Trình soạn thảo — §5.2 (lề cập nhật khi tác tử chèn chú thích fact) và §5.6
+        // (băng xanh khi tác tử đang sửa tệp người đang xem).
+        "Code": ["event.run.progress", "event.knowledge.changed"],
+        // S15 Diff & cổng merge — xung đột mã tới qua hàng đợi, cổng qua `gate.*`.
+        "DiffMerge": ["event.queue.changed", "event.gate.opened", "event.gate.decided",
+                      "event.run.progress"],
         // S25 Chính sách — mức tự chủ và niêm.
         "ChinhSach": ["event.autonomy.changed", "event.notice"],
     ]

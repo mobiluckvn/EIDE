@@ -47,7 +47,7 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     self._chup(thuMuc.appendingPathComponent("khung.png"))
                     // Rồi một màn CÓ DỮ LIỆU: ảnh của khung rỗng không nói được gì về cách một
                     // bảng thật nằm trong đó.
-                    for tien in ["Main", "ChinhSach", "NhatKy", "Passport", "XungDot", "Ingest", "Graph", "Board", "LamRo", "ReqArch", "DiagramView", "PlanDiff", "Doc"] {
+                    for tien in ["Main", "ChinhSach", "NhatKy", "Passport", "XungDot", "Ingest", "Graph", "Board", "LamRo", "ReqArch", "DiagramView", "PlanDiff", "Doc", "Code", "DiffMerge"] {
                         let t0 = ProcessInfo.processInfo.systemUptime
                         self.phien.moMan(tien, boiTacTu: false)
                         try? await Task.sleep(nanoseconds: 300_000_000)

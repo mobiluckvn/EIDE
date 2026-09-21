@@ -283,6 +283,8 @@ public final class EidePhien {
         EideManLuocDo.tien: { EideManLuocDo() },
         EideManKeHoach.tien: { EideManKeHoach() },
         EideManTaiLieu.tien: { EideManTaiLieu() },
+        EideManSoanThao.tien: { EideManSoanThao() },
+        EideManDiffMerge.tien: { EideManDiffMerge() },
     ]
 
 

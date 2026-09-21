@@ -134,19 +134,19 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## 5. TRÌNH SOẠN THẢO (S14) — nơi người và tác tử gặp nhau
 
-- [ ] **5.1** Lề trái mỗi dòng có hằng số phần cứng: chấm xanh ● = có `eide:fact` (hover hiện fact + nút mở nguồn đúng trang PDF); vạch đỏ ▎ = không nguồn, dòng nền hồng nhạt + chú thích "← hằng số không trỏ fact — G-FACT chặn merge".
-- [ ] **5.2** Tác tử chèn/sửa chú thích fact → sự kiện tới → lề cập nhật ngay, KHÔNG cần người thao tác (tiêu chí N10).
-- [ ] **5.3** Người gõ tự do trong buffer; buffer bẩn (dirty) → băng vàng "Bộ đệm có sửa CHƯA LƯU của anh — tác tử muốn ghi tệp này sẽ bị hỏi (P-EDIT-01)".
-- [ ] **5.4** Nút "Lưu" gọi `code.human_save`: commit `human:<tên>` + sự kiện `human.file_save` + mục Hoàn tác — xuất hiện đủ ba nơi trong ≤ 1 giây (tiêu chí N3). Luôn APPROVE mọi mức tự chủ (P-EDIT-02).
-- [ ] **5.5** Lưu gặp tệp trên đĩa đã đổi từ lúc mở → lỗi **`E6004 FILE_STALE`** (tên `E-SAVE-STALE` không vào được `errors.json`; chủ sản phẩm chốt 17/09) → tự chuyển luồng merge (mục 6), TUYỆT ĐỐI không ghi đè (B4).
-- [ ] **5.6** Tác tử đang sửa tệp người đang xem → băng xanh "🤖 Tác tử đang sửa tệp này (Run #n, bước k/m) — xem diff trực tiếp"; người vẫn gõ được.
+- [x] **5.1** Lề trái mỗi dòng có hằng số phần cứng: chấm xanh ● = có `eide:fact` (hover hiện fact + nút mở nguồn đúng trang PDF); vạch đỏ ▎ = không nguồn, dòng nền hồng nhạt + chú thích "← hằng số không trỏ fact — G-FACT chặn merge".  ·  **✔ S14 · lề `NSRulerView`: ● xanh có `eide:fact`, ▎đỏ không nguồn. Hai dấu khác nhau cả HÌNH lẫn MÀU — bản in đen trắng và mắt mù màu vẫn phân biệt được**
+- [x] **5.2** Tác tử chèn/sửa chú thích fact → sự kiện tới → lề cập nhật ngay, KHÔNG cần người thao tác (tiêu chí N10).  ·  **✔ S14 · `apDung` của §7.3 — màn ĐẦU TIÊN hiện thực nó; lề dựng lại từ `code.constant_guard` khi sự kiện tới**
+- [x] **5.3** Người gõ tự do trong buffer; buffer bẩn (dirty) → băng vàng "Bộ đệm có sửa CHƯA LƯU của anh — tác tử muốn ghi tệp này sẽ bị hỏi (P-EDIT-01)".  ·  **✔ S14 · băng vàng nêu đúng P-EDIT-01; so NỘI DUNG chứ không đếm lần gõ, nên gõ rồi hoàn về như cũ là hết bẩn**
+- [x] **5.4** Nút "Lưu" gọi `code.human_save`: commit `human:<tên>` + sự kiện `human.file_save` + mục Hoàn tác — xuất hiện đủ ba nơi trong ≤ 1 giây (tiêu chí N3). Luôn APPROVE mọi mức tự chủ (P-EDIT-02).  ·  **✔ S14 · `code.human_save` kèm `by: human:<tên>`; commit + seq hiện ngay, mục hoàn tác vào cột phải**
+- [x] **5.5** Lưu gặp tệp trên đĩa đã đổi từ lúc mở → lỗi **`E6004 FILE_STALE`** (tên `E-SAVE-STALE` không vào được `errors.json`; chủ sản phẩm chốt 17/09) → tự chuyển luồng merge (mục 6), TUYỆT ĐỐI không ghi đè (B4).  ·  **✔ S14 · KHÔNG có nút ghi đè — một nút như thế biến merge ba bên thành tuỳ chọn. E6004 dẫn sang S15, bản của người nằm nguyên trong bộ đệm**
+- [x] **5.6** Tác tử đang sửa tệp người đang xem → băng xanh "🤖 Tác tử đang sửa tệp này (Run #n, bước k/m) — xem diff trực tiếp"; người vẫn gõ được.  ·  **✔ S14 · băng XANH, người vẫn gõ được; sự kiện của tệp KHÁC không làm phiền**
 - [ ] **5.7** Tự lưu (autosave): mặc định TẮT; bật trong cài đặt thì các lần tự lưu liên tiếp squash thành một commit khi người rời tệp (quyết định cho câu hỏi mở #1).
 
 ## 6. CÙNG SỬA — MERGE 3 BÊN VÀ XUNG ĐỘT MÃ
 
 - [ ] **6.1** Tác tử gọi năng lực ghi mã trên tệp có buffer bẩn của người → cổng trả ASK, modal đúng 2 lựa chọn: "Lưu bản của tôi rồi tác tử tiếp tục" / "Tác tử chờ — tôi sửa tiếp" (P-EDIT-01). Không lựa chọn thứ ba.
 - [x] **6.2** Hai chuỗi sửa cùng tệp → merge 3 bên trên tổ tiên chung; vùng không giao nhau tự hợp (commit merge ghi 2 cha); vùng giao nhau → dựng xung đột (P-EDIT-03).  ·  **✔ 3e360a9 · `git merge-file --diff3`; `test_MERGE_ba_ben_tu_hop_vung_khong_giao`**
-- [ ] **6.3** Màn xung đột MÃ tái dùng đúng component màn Xung đột tri thức (S8): hai vế cùng hàng — "Người sửa hh:mm" / "Tác tử Run #n" — nút Chọn A / Chọn B / Soạn tay; lựa chọn ghi qua `code.merge_conflict_resolve` kèm tên người (một component, hai nguồn dữ liệu — cấm viết màn riêng).
+- [x] **6.3** Màn xung đột MÃ tái dùng đúng component màn Xung đột tri thức (S8): hai vế cùng hàng — "Người sửa hh:mm" / "Tác tử Run #n" — nút Chọn A / Chọn B / Soạn tay; lựa chọn ghi qua `code.merge_conflict_resolve` kèm tên người (một component, hai nguồn dữ liệu — cấm viết màn riêng).  ·  **✔ S15 · dựng `EideTheXungDot` y như S8, có bài kiểm tìm đúng lớp ấy trong cây khung nhìn. Nút thứ ba là *Soạn tay*, và nó KHÔNG gọi năng lực — nó đưa người về S14**
 - [ ] **6.4** Hoàn tác 3 mức chạy đúng: 1 commit; cả Run (revert chọn lọc `agent:run-<id>/*`, GIỮ commit người xen giữa — bài kiểm N4); về known-good (`project.rollback`).
 - [ ] **6.5** Bài kiểm phủ định N5: dàn cảnh hai bên sửa cùng vùng, khẳng định KHÔNG tồn tại nhánh mã nào ghi đè không qua 6.2/6.3.
 
