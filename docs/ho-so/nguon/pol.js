@@ -206,7 +206,11 @@ c.push(SP());
 c.push(H1('5. Hoàn tác theo loại'));
 c.push(T([2000, 3300, 2200, 1800], ['Loại undo', 'Cách hoàn tác', 'Cửa sổ', 'Năng lực dùng'], [
   ['supersede_facts', 'Với mỗi fact tự duyệt: tạo fact mới supersedes với status = superseded, khôi phục fact trước (nếu có) thành hiện hành; ghi lý do "undo:<decision_id>"', 'facts (72h)', 'kg.review_facts, kg.supersede, search.fetch (fact sinh từ nguồn)'],
-  ['git_revert', 'git revert commit merge vào auto/ (giữ lịch sử); chạy lại build để xác nhận; FEATURES cập nhật', 'merge (24h)', 'code.merge, code.integrate'],
+  // v1.3 — thêm `code.human_save` vào cột năng lực (DEV-141). Lần NGƯỜI bấm Lưu cũng là
+  // một commit git, nên đảo nó là đảo một commit; trước v1.3 nó không đăng ký hoàn tác
+  // nào, và khối "Hoàn tác được" ở cột phải vì thế chỉ chứa việc của MÁY — đúng sự
+  // phân biệt mà UXC-31 §2F.5 cấm.
+  ['git_revert', 'git revert một commit (giữ lịch sử); với `code.merge` thì chạy lại build để xác nhận và cập nhật FEATURES. Lần lưu của NGƯỜI (`code.human_save`) dùng CÙNG loại này — cùng cơ chế, không phân biệt (UXC-31 §2F.5)', 'merge (24h)', 'code.merge, code.integrate, code.human_save'],
   ['reflash_known_good', 'Nạp lại artifact known-good gần nhất qua target.flash (được coi là R3 trên board lab, tự động)', 'flash (phiên)', 'target.flash, target.probe_write'],
   ['delete_created_files', 'Xóa tệp/thư mục do năng lực tạo (đường dẫn ghi trong CapabilityRun), không chạm tệp có sẵn', 'files (24h)', 'project.create, doc.generate, diagram.render, env.install_tool (gỡ gói)'],
   ['restore_config', 'Khôi phục tệp cấu hình từ bản sao trước (autonomy/target/constraints)', 'files (24h)', 'discover.auto_setup, policy.set_autonomy'],

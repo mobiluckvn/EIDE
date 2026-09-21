@@ -99,14 +99,46 @@ final class EideManHeThongTests: XCTestCase {
         XCTAssertTrue(van.contains("37"), van)
     }
 
-    /// Bảng VAI → MÔ HÌNH chưa dựng được ([DEV-136]) — màn phải nói thẳng thay vì bỏ trống.
-    func testNoiThangRangBangVaiMoHinhChuaCo() async {
+    /// **Bảng VAI → MÔ HÌNH dựng từ `budget.state.roles`** — v1.3, [DEV-136].
+    ///
+    /// Tới 21/09 màn phải nói thẳng rằng bảng này chưa dựng được: `models.yaml` khai bảy vai mà
+    /// không năng lực nào đọc ra. Nay `budget.state` trả `roles`.
+    func testBangVaiMoHinhDungTuBudgetState() async {
+        let m = EideManMoHinh()
+        await m.nap { _, _ in
+            ["status": "done", "result": [
+                "spent_usd": 0.0, "calls_today": 0,
+                "roles": ["intent": [
+                    "candidates": [["alias": "gemini-flash", "model": "gemini-3.8-flash"],
+                                   ["alias": "claude-haiku", "model": "claude-haiku-4-5"]],
+                    "temperature": 0.0, "output_schema": "Intent"]]]]
+        }
+        let van = Self.chu(m)
+        XCTAssertTrue(van.contains("VAI → MÔ HÌNH"), van)
+        XCTAssertTrue(van.contains("intent"), van)
+        // Hiện CẢ bí danh lẫn tên thật: `models.yaml` viết bí danh, còn thứ người dùng đối
+        // chiếu với hoá đơn là `model_id`.
+        XCTAssertTrue(van.contains("gemini-flash → gemini-3.8-flash"), van)
+        XCTAssertTrue(van.contains("Intent"), van)
+        XCTAssertTrue(van.contains("chưa đặt"), "hạn mức nil phải là 'chưa đặt' — \(van)")
+    }
+
+    /// `roles` rỗng vẫn phải NÓI RA, và nói rõ phần chi phí phía trên vẫn đúng — nó cộng từ
+    /// SỔ CÁI chứ không từ cấu hình, nên một `models.yaml` hỏng không làm sai con số tiền.
+    func testRolesRongThiNoiRaChuKhongBoTrong() async {
         let m = EideManMoHinh()
         await m.nap { _, _ in ["status": "done", "result": ["spent_usd": 0.0, "calls_today": 0]] }
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("VAI → MÔ HÌNH"), van)
-        XCTAssertTrue(van.contains("DEV-136"), van)
-        XCTAssertTrue(van.contains("chưa đặt"), "hạn mức nil phải là 'chưa đặt' — \(van)")
+        XCTAssertTrue(van.contains("VAI → MÔ HÌNH rỗng"), van)
+        XCTAssertTrue(van.contains("cộng từ SỔ CÁI"), van)
+    }
+
+    /// `nil` nhiệt độ = Gateway dùng mặc định nhà cung cấp. Hiện `0` cho một vai chưa đặt là
+    /// nói rằng nó chạy XÁC ĐỊNH — trong khi nó không.
+    func testNhietDoChuaDatKhongHienThanhKhong() {
+        XCTAssertEqual(EideManMoHinh.oNhiet(nil), "mặc định")
+        XCTAssertEqual(EideManMoHinh.oNhiet(0.0), "0.0")
+        XCTAssertEqual(EideManMoHinh.oNhiet(0.7), "0.7")
     }
 
     /// Thanh hạn mức chỉ vẽ khi CÓ hạn — vẽ một thanh không có mốc là vẽ một con số bịa.

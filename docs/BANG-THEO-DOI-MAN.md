@@ -13,7 +13,7 @@
 | S3 | Bản đồ luồng | nối | `EideManLuongVaMoPhong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
 | S4 | Nhập tài liệu | nối | `EideManNhapTaiLieu.swift` | `57c9ad0` | 2026-09-20 | Vũ Trí Công |
 | S5 | Hộ chiếu chip | nối | `EideManHoChieu.swift` | `482cd03` | 2026-09-20 | Vũ Trí Công |
-| S6 | Hộ chiếu mạch | nối | `EideManHoChieuMach.swift` | `5f8e2c5` | 2026-09-20 | Vũ Trí Công |
+| S6 | Hộ chiếu mạch | nối | `EideManHoChieuMach.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
 | S7 | Bản đồ tri thức & hỏi đáp | nối | `EideManBanDoTriThuc.swift` | `f88d7d9` | 2026-09-20 | Vũ Trí Công |
 | S8 | Xung đột tri thức | nối | `EideManXungDot.swift` | `f88d7d9` | 2026-09-20 | Vũ Trí Công |
 | S9 | Làm rõ yêu cầu | nối | `EideManLamRo.swift` | `1664389` | 2026-09-21 | Vũ Trí Công |
@@ -28,10 +28,10 @@
 | S18 | Log & serial | chặn | — | — | — | — |
 | S19 | Gỡ lỗi probe | chặn | — | — | — | — |
 | S20 | Bench | chặn | — | — | — | — |
-| S21 | Môi trường | nối | `EideManHeThong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
-| S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
-| S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
-| S24 | Registry | nối | `EideManHeThong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
+| S21 | Môi trường | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
+| S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
+| S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
+| S24 | Registry | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
 | S25 | Chính sách tự chủ | nối | `EideManDauTien.swift` | `4969443` | 2026-09-21 | Vũ Trí Công |
 
 **21 nối · 4 chặn (chờ bo mạch) · 0 chưa.**

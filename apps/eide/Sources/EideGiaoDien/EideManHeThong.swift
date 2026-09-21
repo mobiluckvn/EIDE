@@ -172,15 +172,49 @@ public final class EideManMoHinh: EideManCoSo {
                               nguong: Double(EideManHoChieu.nguyen(b["warn_pct"]) ?? 20)))
         }
 
-        // Bảng VAI → MÔ HÌNH chưa dựng được: không năng lực nào đọc `models.yaml`. Nói ra chứ
-        // không bỏ trống — xem [DEV-136].
-        let n = NSTextField(wrappingLabelWithString:
-            "Bảng VAI → MÔ HÌNH mà §8 S22 đòi chưa dựng được: `models.yaml` khai bảy vai và "
-            + "thứ tự mô hình cho mỗi vai, nhưng không năng lực nào trong 244 cái đọc ra nó — "
-            + "`budget.state` chỉ trả con số tiền. Xem [DEV-136].")
-        n.font = EideToken.fontUI
-        n.textColor = EideToken.Mau.muted
-        them(n)
+        // v1.3 — bảng VAI → MÔ HÌNH. `budget.state` nay trả `roles` ([DEV-136]); tới 21/09
+        // khối này phải nói thẳng rằng không năng lực nào đọc `models.yaml`.
+        let vai = (b["roles"] as? [String: Any]) ?? [:]
+        guard !vai.isEmpty else {
+            let n = NSTextField(wrappingLabelWithString:
+                "Bảng VAI → MÔ HÌNH rỗng — `models.yaml` chưa khai vai nào, hoặc daemon không "
+                + "đọc được tệp ấy. Hạn mức và chi phí phía trên vẫn đúng: chúng cộng từ SỔ "
+                + "CÁI, không từ cấu hình.")
+            n.font = EideToken.fontUI
+            n.textColor = EideToken.Mau.muted
+            them(n)
+            return
+        }
+        tieuDePhu("\(vai.count) VAI → MÔ HÌNH — thứ tự ứng viên là thứ tự Gateway THỬ, "
+                  + "không phải thứ tự ưu tiên viết tay")
+        bang(cot: [("VAI", 130), ("NHIỆT", 60), ("SCHEMA", 110), ("ỨNG VIÊN (theo thứ tự thử)", 0)],
+             dong: vai.keys.sorted().map { ten in
+                 let r = (vai[ten] as? [String: Any]) ?? [:]
+                 return [ten,
+                         Self.oNhiet(r["temperature"]),
+                         (r["output_schema"] as? String) ?? "—",
+                         Self.oUngVien(r["candidates"])]
+             })
+    }
+
+    /// `nil` = vai không đặt nhiệt độ, tức Gateway dùng mặc định của nhà cung cấp. Hiện `0`
+    /// cho một vai chưa đặt là nói rằng nó chạy XÁC ĐỊNH — trong khi nó không.
+    public static func oNhiet(_ x: Any?) -> String {
+        guard let n = EideManHoChieu.nguyen(x) ?? (x as? Double).map({ Int($0 * 100) })
+        else { return "mặc định" }
+        return (x as? Double).map { String(format: "%.1f", $0) } ?? "\(n)"
+    }
+
+    /// Ứng viên hiện CẢ bí danh lẫn model_id thật: `models.yaml` viết bí danh
+    /// (`gemini-flash`), còn thứ người dùng đối chiếu với hoá đơn là tên thật.
+    public static func oUngVien(_ x: Any?) -> String {
+        let ds = (x as? [[String: Any]]) ?? []
+        guard !ds.isEmpty else { return "— chưa khai ứng viên nào" }
+        return ds.map { c in
+            let bi = (c["alias"] as? String) ?? "?"
+            let that = (c["model"] as? String) ?? bi
+            return bi == that ? bi : "\(bi) → \(that)"
+        }.joined(separator: "  ·  ")
     }
 
     /// `nil` là "chưa đặt hạn mức", không phải 0 USD. Hai câu ấy trái ngược nhau.

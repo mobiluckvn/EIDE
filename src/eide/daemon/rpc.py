@@ -822,7 +822,41 @@ class Daemon:
             # nhiều" — và một cảnh báo ngân sách sai hướng thì hoặc làm người ta hoảng, hoặc
             # dạy người ta bỏ qua nó.
             "sap_het": None if han <= 0 else (con_lai or 0) < han * canh_bao / 100,
+            # v1.3 — bảng VAI → MÔ HÌNH (DEV-136). `models.yaml` khai bảy vai và thứ tự mô hình
+            # cho mỗi vai, và tới 21/09 KHÔNG đường nào đọc ra được: màn S22 có phần chi phí đầy
+            # đủ mà phải nói thẳng rằng bảng vai không có. Đặt ở đây chứ không thành một năng
+            # lực mới vì nó là CẤU HÌNH chứ không phải hiện vật trong store — cùng lý do đã chọn
+            # cho `policy.rules` + `boards` ở DEV-135.
+            "roles": self._vai_tro(),
         }
+
+    def _vai_tro(self) -> dict[str, Any]:
+        """Bảng vai → mô hình, đọc từ CÙNG `models.yaml` mà Gateway dùng để chọn.
+
+        Trả `candidates` đã giải bí danh khi giải được: `models.yaml` viết bí danh
+        (`gemini-flash`) còn thứ người dùng cần đối chiếu với hoá đơn là `model_id` thật. Giải
+        không được thì giữ nguyên bí danh — nói sai một tên mô hình còn tệ hơn nói một cái tên
+        người dùng phải tra thêm một bước.
+        """
+        from eide_core.gateway import Gateway
+        try:
+            gw = Gateway(ledger=self.ledger)
+            cfg = gw.config or {}
+        except Exception:  # noqa: BLE001 — thiếu models.yaml là trạng thái thật, không phải sự cố
+            return {}
+        bi_danh = cfg.get("aliases") or {}
+        ra: dict[str, Any] = {}
+        for vai, r in (cfg.get("roles") or {}).items():
+            if not isinstance(r, dict):
+                continue
+            ds = []
+            for b in (r.get("candidates") or []):
+                a = bi_danh.get(b) or {}
+                ds.append({"alias": b, "model": a.get("model") or b,
+                           "provider": a.get("provider")})
+            ra[str(vai)] = {"candidates": ds, "temperature": r.get("temperature"),
+                            "output_schema": r.get("output_schema")}
+        return ra
 
     def autonomy_get(self, p: dict[str, Any]) -> dict[str, Any]:
         return {"autonomy": self.ctx.autonomy or self.gate.config.get("autonomy"), "stopped": self.gate.stopped}

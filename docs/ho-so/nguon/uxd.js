@@ -65,6 +65,11 @@ c.push(P('v1.0–v1.2 chỉ có luật (2), nên một mẫu rộng ở màn s�
   + 'ấy tự mở") mở SAI ĐỊA CHỈ, và không ai thấy vì màn Chat vẫn mở ra bình thường. '
   + 'Xem DEVIATIONS DEV-122.'));
 c.push(P('Ảnh chụp và mã HTML của 23 màn hình nằm trong `EIDE-UI-v1.2/` (mở `eide-workbench-v12-gallery.html`); màn hình sinh từ `gen.py` nên mọi sửa đổi thiết kế làm ở mã và sinh lại.'));
+// v1.3 — DEV-131. Bề mặt hiện thực đổi, và tài liệu phải nói ra để người đọc không đi
+// sửa nhầm gói.
+c.push(SP());
+c.push(P('**Bề mặt hiện thực (v1.3).** Từ 18/09/2026 giao diện được viết lại trong gói Swift riêng `apps/eide/` theo bản demo `docs/EIDE_UI_Demo_v2.html`; `apps/geditor/Sources/EIDEKit` chuyển thành **bản duy trì** — vẫn chạy, không nhận tính năng mới. Lý do không sửa tiếp gói cũ: panel EIDE ở đó là một tab bên trong một trình soạn thảo, còn v2.0 đặt vùng trao đổi làm trung tâm và năm vùng cố định quanh nó — hai hình dạng khác nhau về gốc, không phải khác nhau về chi tiết.'));
+c.push(P('Ba thứ giữ NGUYÊN giữa hai gói, và chúng là lý do việc viết lại không phải viết lại từ đầu: token thiết kế (§7, sinh từ tệp này), hợp đồng JSON-RPC (API-15, sinh bằng `gen_rpc_swift.py`), và danh mục 25 màn ở §2. Gói mới chỉ dựng lại phần KHUNG NHÌN. Tiến độ từng màn theo dõi ở `docs/BANG-THEO-DOI-MAN.md` (bản sinh), tiêu chí hoàn thành ở EIDE-UXC-31 §11. Xem DEVIATIONS DEV-131.'));
 c.push(H1('3. Sơ đồ điều hướng'));
 c.push(...CODE([
   'Mở dự án ──► Chat (mặc định)',
