@@ -58,6 +58,20 @@ public final class EideDieuHuong: NSView {
         if nhapNhay { _nhapNhay(tien) }
     }
 
+    /// Nháy một mục mà **KHÔNG** chọn nó — §2C.3, khi tác tử mở tab ở nền.
+    ///
+    /// `chon(_:nhapNhay:)` không dùng được ở đây: nó đặt `dangMo`, và vệt sáng "đang mở" ở cột
+    /// trái khi đó trỏ vào một màn người dùng không nhìn thấy. Hai câu khác nhau — "anh đang ở
+    /// đây" và "có thứ mới ở đằng kia" — phải trông khác nhau.
+    public func nhayMuc(_ tien: String) {
+        if let n = EideManHinhDS.nhom.first(where: { $0.man.contains { $0.tien == tien } }),
+           nhomGap.contains(n.ten) {
+            nhomGap.remove(n.ten)
+            _ve()
+        }
+        _nhapNhay(tien)
+    }
+
     private func _ve() {
         for v in coc.arrangedSubviews { coc.removeArrangedSubview(v); v.removeFromSuperview() }
         for n in EideManHinhDS.nhom {

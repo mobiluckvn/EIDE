@@ -206,6 +206,12 @@ public final class EidePhien {
         khung.thanhTren.onDungKhan = { [weak self] in
             Task { await self?._dungKhan() }
         }
+        // §2A.3 huy hiệu → S25. §2A.4/2A.5 hai bộ đếm → CUỘN tới khối tương ứng ở cột phải, KHÔNG
+        // mở màn: cả hai khối đã nằm sẵn trên màn hình, và mở thêm một màn để xem thứ đang hiện
+        // là dạy người dùng đi vòng.
+        khung.thanhTren.onMuc = { [weak self] in self?.moMan("ChinhSach", boiTacTu: false) }
+        khung.thanhTren.onDemCho = { [weak self] in self?.khung.cotPhai.cuonToi(.cho) }
+        khung.thanhTren.onDemHoanTac = { [weak self] in self?.khung.cotPhai.cuonToi(.hoanTac) }
         khung.cotPhai.onDuyet = { [weak self] ma, thuan in
             Task { await self?._quyet(ma, thuan) }
         }
@@ -222,15 +228,43 @@ public final class EidePhien {
         }
     }
 
+    /// Khoảng "màn này là của tôi" sau một lần NGƯỜI tự chọn màn — §2C.3.
+    public static let GIU_MAN: TimeInterval = 20
+
+    /// Lần gần nhất người tự chọn một màn. `nil` = chưa lần nào, và khi ấy tác tử được mở thẳng:
+    /// không có việc nào của người đang bị cắt ngang.
+    private var lanNguoiChon: Date?
+
+    /// Đồng hồ — tiêm được, vì bài kiểm cho §2C.3 phải vượt qua mốc 20 giây mà không chờ 20 giây.
+    var dongHo: () -> Date = { Date() }
+
     /// Mở một màn. `boiTacTu` quyết định có nhấp nháy hay không (§2B.5).
-    public func moMan(_ tien: String, boiTacTu: Bool) {
+    ///
+    /// Trả về **có chiếm được vùng làm việc hay không**. Người gọi cần biết: câu báo ra vùng
+    /// trao đổi khác hẳn giữa "đã mở màn X" và "đã thêm tab X ở nền", và một câu nói sai chỗ
+    /// dạy người dùng nhìn nhầm chỗ.
+    @discardableResult
+    public func moMan(_ tien: String, boiTacTu: Bool) -> Bool {
         // Tiền tố lạ thì NÓI RA. Trước phép kiểm này, `moMan("S3")` chạy trót lọt: cột trái
         // không chọn gì, tab mang nhãn "S3", vùng làm việc ghi nhận một màn không tồn tại — và
         // một bài tự kiểm khẳng định cả ba thứ ấy vẫn ĐẠT.
         guard EideManHinhDS.man(tien) != nil else {
             khung.dock.themLuot(.loi, "Không có màn nào mang tiền tố `\(tien)` trong danh mục 25 màn.")
-            return
+            return false
         }
+        // §2C.3 — **không cướp màn.** Người vừa tự chọn một màn khác dưới 20 giây thì họ đang
+        // ĐỌC nó; kéo màn hình đi lúc ấy làm mất chỗ đang đọc và không có nút quay lại. Tab vẫn
+        // được thêm và cột trái vẫn nháy, nên việc của tác tử không bị giấu — chỉ không được
+        // đặt lên trước việc của người.
+        if boiTacTu, let t = lanNguoiChon, dongHo().timeIntervalSince(t) < Self.GIU_MAN,
+           tien != khung.vungLamViec.dangMo {
+            khung.thanhTab.moNen(tien)
+            khung.cotTrai.nhayMuc(tien)
+            moiTheoMan[tien, default: 0] += 1
+            _veBadge()
+            return false
+        }
+        if !boiTacTu { lanNguoiChon = dongHo() }
         khung.cotTrai.chon(tien, nhapNhay: boiTacTu)
         khung.thanhTab.mo(tien)
         // Người MỞ màn ra là đã xem — badge về 0 bất kể daemon còn sống hay không. Đặt sau
@@ -241,11 +275,13 @@ public final class EidePhien {
 
         if let tao = Self.MAN[tien] {
             let man = tao()
+            man.onNguoiGo = { [weak self] in self?.nguoiGo() }
             khung.vungLamViec.datMan(man)
             guard let d = daemon else {
-                return khung.vungLamViec.khiRong(
+                khung.vungLamViec.khiRong(
                     vi: "chưa mở dự án nào nên không có daemon để hỏi",
                     buocKe: "tạo hoặc mở một dự án")
+                return true
             }
             Task { [weak self] in
                 await man.nap { ten, tham in
@@ -255,15 +291,48 @@ public final class EidePhien {
                 // Mốc nước §7.2: màn này đang hiện trạng thái tính tới seq nào.
                 man.seqCuoi = self?.seqNghe ?? 0
             }
-            return
+            return true
         }
         if let m = EideManHinhDS.man(tien), m.canBoard {
-            return khung.vungLamViec.khiRong(
+            khung.vungLamViec.khiRong(
                 vi: "chưa có bo mạch cắm vào máy",
                 buocKe: "cắm board và mạch nạp, rồi mở lại màn này")
+            return true
         }
         khung.vungLamViec.khiRong(vi: "màn này chưa nối dữ liệu trong bản dựng hiện tại",
                                   buocKe: "đang làm — xem mục 8 của UXC-31")
+        return true
+    }
+
+    // MARK: - §2D.2(b) gõ liên tục thì thu gọn vùng trao đổi
+
+    /// Gõ liền mạch bao lâu thì thu gọn vùng trao đổi.
+    public static let GO_LIEN: TimeInterval = 5
+
+    /// Ngắt tay bao lâu thì coi như hết một mạch gõ. Con số này KHÔNG có trong UXC-31 — §2D.2(b)
+    /// chỉ nói "liên tục 5 giây", mà "liên tục" cần một định nghĩa để đo được. 1,5 s là quãng
+    /// nghỉ dài hơn mọi khoảng giữa hai phím của người gõ bình thường, kể cả lúc dừng nghĩ một
+    /// nhịp giữa câu.
+    public static let NGAT_GO: TimeInterval = 1.5
+
+    /// Phím đầu tiên của mạch gõ đang chạy, và phím gần nhất.
+    private var goTu: Date?
+    private var goCuoi: Date?
+
+    /// Người gõ một phím trong vùng soạn thảo của màn đang mở — §2D.2(b).
+    ///
+    /// Đo bằng MỐC THỜI GIAN chứ không bằng `Timer`: một bộ đếm giờ chạy nền phải bị huỷ đúng
+    /// chỗ khi màn đóng, khi tệp đổi, khi cửa sổ mất tiêu điểm — ba đường quên huỷ là ba lần
+    /// vùng trao đổi tự tụt xuống trong lúc người dùng đang đọc nó.
+    func nguoiGo() {
+        let gio = dongHo()
+        if let c = goCuoi, gio.timeIntervalSince(c) > Self.NGAT_GO { goTu = nil }
+        goCuoi = gio
+        let tu = goTu ?? gio
+        goTu = tu
+        guard gio.timeIntervalSince(tu) >= Self.GO_LIEN, khung.dock.cao != .thuGon else { return }
+        khung.dock.datCao(.thuGon)
+        goTu = nil   // đã thu gọn rồi thì thôi, đừng thu lại mỗi phím sau đó
     }
 
     /// Bảng màn ĐÃ NỐI DỮ LIỆU. Khoá là tiền tố trong `EideManHinhDS`, và phép kiểm bố cục đối
@@ -482,9 +551,13 @@ public final class EidePhien {
         guard let man = manCua[cap], !man.isEmpty else { return }
         let tien = EideManHinhDS.tatCa.first { man.hasPrefix($0.tien) }?.tien
         guard let tien, tien != khung.vungLamViec.dangMo else { return }
-        moMan(tien, boiTacTu: true)
-        khung.dock.themLuot(.heThong, "→ mở màn \(EideManHinhDS.nhan(tien)) "
-                            + "(tác tử đang chạy `\(cap)`)")
+        let nhan = EideManHinhDS.nhan(tien)
+        if moMan(tien, boiTacTu: true) {
+            khung.dock.themLuot(.heThong, "→ mở màn \(nhan) (tác tử đang chạy `\(cap)`)")
+        } else {
+            khung.dock.themLuot(.heThong, "→ \(nhan) mở ở NỀN — anh vừa tự chọn màn khác chưa quá "
+                + "\(Int(Self.GIU_MAN)) giây (§2C.3). Tab đã thêm, cột trái đang nháy.")
+        }
     }
 
     /// Người duyệt hoặc từ chối một mục chờ.

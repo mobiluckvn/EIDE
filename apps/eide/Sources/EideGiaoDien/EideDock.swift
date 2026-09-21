@@ -113,15 +113,35 @@ public final class EideDock: NSView {
     }
 
     /// Đổi chiều cao. `buoc` = người BẤM (bỏ qua phép hoãn "đang gõ").
+    ///
+    /// §2D.2(c): con trỏ đang ở ô lệnh thì KHÔNG đổi. Người đang gõ dở một câu mà khung tụt
+    /// xuống 48 pt sẽ mất chỗ nhìn giữa chừng, và lần sau họ gõ nhanh hơn để kịp — đúng thứ một
+    /// ô lệnh không nên dạy.
+    ///
+    /// §2D.3: 150 ms, **ease-out**. Mặc định của `NSAnimationContext` là ease-in-ease-out, tức
+    /// khởi động chậm; trên một quãng 150 ms nó đọc thành một khựng nhẹ rồi mới chạy.
     public func datCao(_ c: Cao, buoc: Bool = false) {
-        if !buoc, window?.firstResponder === oGo.currentEditor() { return }
+        // `let bien =` chứ không so thẳng: `window?.firstResponder === oGo.currentEditor()` cho
+        // ra `nil === nil` → TRUE khi ô lệnh CHƯA có con trỏ, tức luật §2D.2(c) chặn đúng những
+        // lần đổi chiều cao mà nó lẽ ra phải cho qua. Đúng trong ứng dụng thật (cửa sổ luôn có),
+        // sai ở mọi đường không có cửa sổ — và sai im lặng.
+        if !buoc, let bien = oGo.currentEditor(), window?.firstResponder === bien { return }
         cao = c
         NSAnimationContext.runAnimationGroup {
             $0.duration = 0.15
+            $0.timingFunction = CAMediaTimingFunction(name: .easeOut)
             $0.allowsImplicitAnimation = true
             rangCao.animator().constant = c.rawValue
             superview?.layoutSubtreeIfNeeded()
         }
+    }
+
+    /// Đưa con trỏ vào ô lệnh và cho biết có vào được không — cho bài tự kiểm trên cửa sổ thật.
+    /// Trả `false` khi chưa có cửa sổ, chứ không giả vờ là đã vào.
+    @discardableResult
+    public func doTroVaoOLenh() -> Bool {
+        guard let w = window, w.makeFirstResponder(oGo) else { return false }
+        return oGo.currentEditor() != nil
     }
 
     /// Thêm một lượt. Bong bóng neo trái hay phải tuỳ người nói — §2D.5.

@@ -250,11 +250,40 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **175 test Swift** xanh. `apps/eide --tu-kiem`: **58/58**. Checklist UXC-31:
-**62 xong · 51 chưa · 4 chặn** (đầu phiên: 11 xong). `make check` thoát 0. Màn
+*Gói mới: **192 test Swift** xanh. `apps/eide --tu-kiem`: **61/61**. Checklist UXC-31:
+**69 xong · 44 chưa · 4 chặn** (đầu phiên 20/09: 11 xong). `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (13): bảy chỗ bấm của §2 — và hai ghi chú hôm qua tôi viết sai
+
+2A.3 huy hiệu tự chủ → S25 · 2A.4/2A.5 hai bộ đếm → cuộn tới khối ở cột phải · 2C.1 kéo đổi thứ
+tự tab · 2C.3 "không cướp màn" · 2D.2 ba luật tự chuyển chiều cao · 2D.3 ease-out.
+
+**Luật đáng nhớ nhất là 2C.3.** Người vừa tự chọn một màn thì trong 20 giây họ đang ĐỌC nó; kéo
+màn hình đi lúc ấy làm mất chỗ đang đọc và không có nút quay lại. Nên `moMan` nay trả về *có
+chiếm được vùng làm việc hay không*, và vùng trao đổi nói hai câu khác nhau cho hai trường hợp.
+Tab vẫn được thêm, cột trái vẫn nháy, badge vẫn lên — giấu hẳn việc của tác tử còn tệ hơn cướp
+màn.
+
+**Hai ghi chú 20/09 của tôi sai theo chiều "chưa làm":** 2D.2(a) và (c) đã có trong mã từ trước,
+2D.3 cũng thế. Tôi đã ghi "chưa" cho cả ba. Cùng một lỗi đo với vụ `grep -c "doan"` hôm qua, và
+lần này nó suýt làm tôi viết lại thứ đã chạy.
+
+**Ba lỗi thật, cả ba do bài kiểm ép ra:**
+
+1. `window?.firstResponder === oGo.currentEditor()` cho `nil === nil` → **`true`**, nên luật
+   §2D.2(c) chặn đúng những lần đổi chiều cao lẽ ra phải cho qua. Đúng trong ứng dụng thật (cửa
+   sổ luôn có), sai ở mọi đường không có cửa sổ — và sai im lặng.
+2. Cột phải cuộn NGƯỢC: `NSStackView` không lật còn `EideKhungLat` thì có, nên lấy thẳng `minY`
+   đưa khối đầu tiên xuống đáy.
+3. Bài kiểm "gõ liên tục 5 giây" của chính tôi nhảy 5 giây trong một bước — mà đó chính là một
+   lần ngắt tay. Bài sai, không phải mã.
+
+Thêm hai phép đo vào `--tu-kiem` (nay **61/61**) cho đúng hai nhánh `swift test` không chạm tới:
+§2D.2(c) cần `firstResponder` thật, §2C.3 cần cả phiên. [DEV-138] ghi con số `NGAT_GO = 1,5` s —
+UXC-31 nói "liên tục" mà không định nghĩa, và không định nghĩa được thì không đo được.
 
 ### Đã làm (12): đối chiếu UXC-31 với mã — 11 → 62 mục xong
 
@@ -455,8 +484,9 @@ dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ư
 
 **Làm tiếp — không cần phần cứng:**
 
-1. **14 mục §2 còn lại**, nay đã ghi rõ từng cái thiếu gì. Nhóm rẻ nhất: 2A.3/2A.4/2A.5 (ba
-   chỗ bấm chưa nối) và 2C.1 (kéo đổi thứ tự tab).
+1. **7 mục §2 còn lại**: 2.2/2.3 (bài kiểm bố cục so ảnh với bản demo), 2A.2, 2D.4
+   (placeholder gợi ý theo pha), 2D.6 (thẻ "Ý hiểu" hai nút), 2E.6, 2F.5. Kèm một món nợ §9:
+   kéo tab hiện chỉ có đường CHUỘT, chưa có đường bàn phím.
 2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
    dùng cách lùi (nạp lại, gộp 0,4 s).
 3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.

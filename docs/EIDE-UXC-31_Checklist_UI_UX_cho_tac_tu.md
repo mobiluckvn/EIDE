@@ -68,9 +68,9 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 - [x] **2A.1** Logo chữ "EIDE" (đậm, `--red`).  ·  **✔ `EideThanhTren`**
 - [ ] **2A.2** Bộ chuyển dự án: tên dự án + mũi tên ▾; bấm mở popover: danh sách `project.list` + ô lọc + nút "Dự án mới" (gọi `project.create`). Đổi dự án = thay toàn bộ ngữ cảnh, đóng hết tab, giữ nguyên bố cục.  ·  ****CHƯA** — nút có, popover `project.list` chưa có (đã ghi trong điểm dừng phiên từ 18/09)**
-- [ ] **2A.3** Huy hiệu mức tự chủ: "Tự chủ A0…A4" — nền xanh dương khi A1–A4, nền đỏ khi A0. Bấm mở màn S25.  ·  ****CHƯA** — huy hiệu hiện đúng mức và đổi màu, nhưng bấm chưa mở S25**
-- [ ] **2A.4** Bộ đếm "Chờ tôi n" — bấm cuộn tới khối Chờ tôi ở cột phải (không mở màn mới).  ·  ****CHƯA** — bộ đếm hiện đúng số, bấm chưa cuộn tới khối Chờ tôi**
-- [ ] **2A.5** Bộ đếm "Hoàn tác n" — bấm cuộn tới khối Hoàn tác được.  ·  ****CHƯA** — như 2A.4**
+- [x] **2A.3** Huy hiệu mức tự chủ: "Tự chủ A0…A4" — nền xanh dương khi A1–A4, nền đỏ khi A0. Bấm mở màn S25.  ·  **✔ `EideThanhTren.muc` là NSButton → `onMuc` → `moMan("ChinhSach")`; nền pill giữ nguyên bằng `attributedTitle`**
+- [x] **2A.4** Bộ đếm "Chờ tôi n" — bấm cuộn tới khối Chờ tôi ở cột phải (không mở màn mới).  ·  **✔ `onDemCho` → `EideCotPhai.cuonToi(.cho)`; KHÔNG mở màn — có bài kiểm khoá điều đó**
+- [x] **2A.5** Bộ đếm "Hoàn tác n" — bấm cuộn tới khối Hoàn tác được.  ·  **✔ `onDemHoanTac` → `cuonToi(.hoanTac)`. Cột vừa màn hình thì cuộn là lệnh không-làm-gì, nên tiêu đề khối luôn NHÁY — nút phải trả lời cả khi không có gì để cuộn**
 - [x] **2A.6** Nút bảng lệnh "⌘K" (viền đứt) + phím tắt ⌘K toàn cục.  ·  **✔ nút ⌘K + phím tắt qua thanh menu thật**
 - [x] **2A.7** Nút "■ Dừng khẩn" — luôn ở vị trí cuối cùng bên phải, nền `--red-bg`, chữ `--red`; hành vi theo B8; sau khi dừng, nút đổi thành "Đặt lại mức tự chủ" trỏ S25.  ·  **✔ nút Dừng khẩn cuối bên phải; `--tu-kiem` mục 8 đo nó không núp sau mức tự chủ**
 - [x] **2A.8** Hai bộ đếm 2A.4/2A.5 phái sinh từ cùng nguồn với cột phải (B7) — viết một selector chung, cấm hai phép đếm riêng.  ·  **✔ `EidePhien.choTheoMan` là nguồn DUY NHẤT, `_veBadge()` chiếu ra cột trái — không có phép đếm thứ hai**
@@ -86,16 +86,16 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ### 2C. Vùng làm việc + tab
 
-- [ ] **2C.1** Tab như IDE: mở màn nào thêm tab đó (không trùng), đóng bằng ✕, kéo đổi thứ tự; tab đang mở nền trắng chữ đậm.  ·  ****MỘT NỬA** — mở/đóng tab xong, không trùng, tab đang mở nền trắng chữ đậm; **kéo đổi thứ tự CHƯA****
+- [x] **2C.1** Tab như IDE: mở màn nào thêm tab đó (không trùng), đóng bằng ✕, kéo đổi thứ tự; tab đang mở nền trắng chữ đậm.  ·  **✔ `EideNutTab` tự chạy vòng sự kiện chuột (NSButton nuốt chuột nên `mouseDragged` ở cha không bao giờ chạy); quá 6 pt là KÉO, trong ngưỡng vẫn là BẤM. Chưa có đường bàn phím — ghi ở §9**
 - [x] **2C.2** Không tab nào mở: hiện trạng thái rỗng "Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn."  ·  **✔ "Vùng làm việc trống" trong `EideVungLamViec`**
-- [ ] **2C.3** Quy tắc "không cướp màn": tác tử muốn mở màn trong khi người vừa TỰ chọn màn khác < 20 giây → tab mới mở ở nền (không chiếm focus) + nhấp nháy 2B.5; quá 20 giây → được chiếm focus.  ·  ****CHƯA** — chưa có quy tắc "không cướp màn" (người vừa tự chọn màn < 20 s thì tab của tác tử mở ở nền)**
+- [x] **2C.3** Quy tắc "không cướp màn": tác tử muốn mở màn trong khi người vừa TỰ chọn màn khác < 20 giây → tab mới mở ở nền (không chiếm focus) + nhấp nháy 2B.5; quá 20 giây → được chiếm focus.  ·  **✔ `EidePhien.GIU_MAN = 20`; `moMan` trả về CÓ CHIẾM ĐƯỢC hay không, vùng trao đổi nói hai câu khác nhau cho hai trường hợp. Mở ở nền vẫn tăng badge — tab nằm im không dấu hiệu thì còn tệ hơn cướp màn**
 - [x] **2C.4** Mỗi màn khai báo header chuẩn: tiêu đề (16 pt) + dòng phụ ghi tên năng lực đứng sau (12 pt, màu phụ). Không màn nào không ghi năng lực (chống "màn mồ côi" — phát hiện R6).  ·  **✔ `moMan(tien:nangLucDs:)` dựng header cho MỌI màn — không màn nào tự dựng lấy**
 
 ### 2D. Vùng trao đổi (chat dock) — 3 trạng thái
 
 - [x] **2D.1** Ba trạng thái chiều cao: thu gọn 48 pt (chỉ ô nhập) · chuẩn 220 pt · mở rộng tối đa 320 pt (kéo tay, nội dung vượt trần thì cuộn trong).  ·  **✔ `case thuGon = 48, chuan = 220, moRong = 320`**
-- [ ] **2D.2** Tự chuyển: (a) Run mới bắt đầu → về chuẩn; (b) người gõ trong editor liên tục 5 giây → thu gọn; (c) không bao giờ đổi trạng thái trong lúc con trỏ đang ở ô lệnh.  ·  ****CHƯA** — ba luật tự chuyển chiều cao chưa nối**
-- [ ] **2D.3** Hoạt ảnh chuyển ≤ 150 ms, ease-out; ba nút ▁▂▃ góc phải cho chuyển tay.  ·  ****CHƯA** — chưa có hoạt ảnh 150 ms và ba nút ▁▂▃**
+- [x] **2D.2** Tự chuyển: (a) Run mới bắt đầu → về chuẩn; (b) người gõ trong editor liên tục 5 giây → thu gọn; (c) không bao giờ đổi trạng thái trong lúc con trỏ đang ở ô lệnh.  ·  **✔ (a) đã có từ trước (`_theoRun` → `datCao(.chuan)`); (b) mới: `nguoiGo()` đo mốc thời gian, `GO_LIEN = 5` s, `NGAT_GO = 1,5` s [DEV-138]; (c) đã có từ trước — và nó sai im lặng: `nil === nil` → `true` khiến luật chặn cả những lần lẽ ra phải cho qua**
+- [x] **2D.3** Hoạt ảnh chuyển ≤ 150 ms, ease-out; ba nút ▁▂▃ góc phải cho chuyển tay.  ·  **✔ Cả hai ĐÃ CÓ từ trước — ghi chú 20/09 của tôi sai. Chỉ thiếu `timingFunction`: mặc định là ease-in-ease-out, trên quãng 150 ms đọc thành một khựng nhẹ. Nay `.easeOut`**
 - [ ] **2D.4** Ô lệnh: placeholder gợi ý một lệnh mẫu theo pha hiện tại của dự án; Enter gửi; đang có Run chạy thì lệnh mới được báo "xếp hàng sau Run hiện tại".  ·  ****MỘT NỬA** — Enter gửi; placeholder chưa gợi ý theo pha, và lệnh mới lúc đang chạy chưa xếp hàng có báo**
 - [x] **2D.5** Bong bóng: người nền `--red-bg` căn phải ≤ 78 % rộng; tác tử nền trắng viền, căn trái.  ·  **✔ `EideBongBong` — người nền đỏ nhạt căn phải, tác tử nền trắng viền căn trái**
 - [ ] **2D.6** Trước mọi chuỗi: tác tử in "Ý hiểu (chat.restate)" + danh sách bước dự kiến + hai nút "Đúng — làm đi" / "Sửa ý hiểu" (A1); mức A2–A3 tự chạy nhưng vẫn in ý hiểu.  ·  ****CHƯA** — thẻ "Ý hiểu" hai nút (Đúng — làm đi / Sửa ý hiểu) chưa có; S9 hiện ý hiểu ở dạng chỉ đọc**

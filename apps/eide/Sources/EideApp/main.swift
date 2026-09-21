@@ -231,6 +231,28 @@ final class UngDung: NSObject, NSApplicationDelegate {
             kq.contains { $0.ma == "Passport" }, "(\(kq.count) kết quả)")
         khung.bangLenh.dong()
 
+        // §2D.2(c) — chỉ đo được ở ĐÂY. Luật "không đổi chiều cao khi con trỏ ở ô lệnh" hỏi
+        // `window?.firstResponder`, mà `firstResponder` chỉ có nghĩa khi có một cửa sổ thật với
+        // một trường soạn thảo thật. Mọi bài `swift test` chạy ngoài cửa sổ đều bỏ lọt nhánh này
+        // — và nó đã từng sai im lặng theo chiều ngược lại (`nil === nil` → true).
+        khung.dock.datCao(.chuan, buoc: true)
+        let daVao = khung.dock.doTroVaoOLenh()
+        khung.dock.datCao(.thuGon)
+        do_("15. con trỏ đang ở ô lệnh thì chiều cao vùng trao đổi KHÔNG tự đổi (§2D.2c)",
+            daVao && khung.dock.cao == .chuan, "(con trỏ vào ô: \(daVao), cao: \(khung.dock.cao))")
+        khung.window?.makeFirstResponder(nil)
+        khung.dock.datCao(.thuGon)
+        do_("15b. rời ô lệnh thì luật tự chuyển chạy lại", khung.dock.cao == .thuGon)
+
+        // §2C.3 — tác tử không cướp màn người vừa tự chọn.
+        phien.moMan("Passport", boiTacTu: false)
+        let chiem = phien.moMan("NhatKy", boiTacTu: true)
+        do_("16. tác tử KHÔNG cướp màn người vừa tự chọn, nhưng vẫn thêm tab (§2C.3)",
+            !chiem && khung.vungLamViec.dangMo == "Passport"
+                   && khung.thanhTab.tab.contains("NhatKy"),
+            "(chiếm: \(chiem), đang mở: \(khung.vungLamViec.dangMo ?? "—"), "
+            + "tab: \(khung.thanhTab.tab.count))")
+
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()
         do_("9. dải Dữ liệu cũ nói rõ trễ bao lâu", khung.chuDaiCu.contains("9 giây"),

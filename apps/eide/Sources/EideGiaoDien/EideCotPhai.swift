@@ -17,8 +17,13 @@ public final class EideCotPhai: NSView {
     private let cocDangChay = NSStackView()
     private let cocCho = NSStackView()
     private let cocHoanTac = NSStackView()
+    private let nhanChay = NSTextField(labelWithString: "ĐANG CHẠY")
     private let nhanCho = NSTextField(labelWithString: "CHỜ TÔI")
     private let nhanHoanTac = NSTextField(labelWithString: "HOÀN TÁC ĐƯỢC")
+    private let cuon = NSScrollView()
+
+    /// Ba khối của cột — §2F.1. Dùng làm ĐÍCH cho hai bộ đếm ở thanh trên (§2A.4/2A.5).
+    public enum Khoi { case dangChay, cho, hoanTac }
 
     /// Số thẻ tối đa mỗi khối. Cột rộng 236 pt: 55 thẻ hoàn tác biến nó thành một cuộn dài vô
     /// nghĩa, và thứ người cần — mục MỚI NHẤT — nằm ngay đầu. Phần bị cắt KHÔNG im lặng: một
@@ -30,7 +35,6 @@ public final class EideCotPhai: NSView {
         wantsLayer = true
         layer?.backgroundColor = EideToken.Mau.surface.cgColor
 
-        let nhanChay = NSTextField(labelWithString: "ĐANG CHẠY")
         for n in [nhanChay, nhanCho, nhanHoanTac] {
             n.font = NSFont.boldSystemFont(ofSize: 10.5)
             n.textColor = EideToken.Mau.faint
@@ -52,7 +56,6 @@ public final class EideCotPhai: NSView {
         coc.edgeInsets = NSEdgeInsets(top: 10, left: 12, bottom: 10, right: 12)
         coc.translatesAutoresizingMaskIntoConstraints = false
 
-        let cuon = NSScrollView()
         cuon.contentView = EideKhungLat()
         cuon.documentView = coc
         cuon.hasVerticalScroller = true
@@ -147,6 +150,45 @@ public final class EideCotPhai: NSView {
             o.layer?.cornerRadius = 7
             return o
         })
+    }
+
+    /// Cuộn tới một khối — đích của hai bộ đếm ở thanh trên (§2A.4/2A.5).
+    ///
+    /// **Luôn nhấp nháy tiêu đề khối, kể cả khi không cuộn được.** Cửa sổ cao thì cả ba khối đã
+    /// nằm trong tầm nhìn, nên phép cuộn là một lệnh không-làm-gì; một nút bấm vào không thấy
+    /// chuyện gì xảy ra là nút người dùng kết luận đã hỏng. Nháy là câu trả lời "đây, chỗ này".
+    public func cuonToi(_ k: Khoi) {
+        let n: NSTextField = switch k {
+        case .dangChay: nhanChay
+        case .cho: nhanCho
+        case .hoanTac: nhanHoanTac
+        }
+        if let doc = cuon.documentView {
+            // Khoảng cách từ ĐỈNH tài liệu, tính cho cả hai chiều hệ toạ độ. `NSStackView` không
+            // lật, còn `EideKhungLat` thì có: lấy thẳng `minY` của nhãn sẽ cuộn tới khối NGƯỢC
+            // lại — đo được vì khối đầu tiên nhảy xuống đáy.
+            let o = doc.convert(n.bounds, from: n)
+            let y = (doc.isFlipped ? o.minY : doc.frame.height - o.maxY) - 10
+            let toiDa = max(0, doc.frame.height - cuon.contentSize.height)
+            cuon.contentView.scroll(to: NSPoint(x: 0, y: min(max(0, y), toiDa)))
+            cuon.reflectScrolledClipView(cuon.contentView)
+        }
+        _nhay(n)
+    }
+
+    /// Vị trí cuộn hiện tại — cho bài đo đọc.
+    public var viTriCuon: CGFloat { cuon.contentView.bounds.origin.y }
+
+    /// Nháy hai nhịp × 250 ms. Tôn trọng "Giảm chuyển động" như §2B.5.
+    private func _nhay(_ n: NSTextField) {
+        guard !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else { return }
+        n.wantsLayer = true
+        let a = CABasicAnimation(keyPath: "backgroundColor")
+        a.fromValue = EideToken.Mau.warnBg.cgColor
+        a.toValue = n.layer?.backgroundColor ?? NSColor.clear.cgColor
+        a.duration = 0.25
+        a.repeatCount = 2
+        n.layer?.add(a, forKey: "nhay")
     }
 
     /// Nhãn một dòng trong cột hẹp: cắt đuôi, và KHÔNG được phép đòi thêm bề ngang. `cap` như

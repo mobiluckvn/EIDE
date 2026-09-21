@@ -43,6 +43,12 @@ open class EideManCoSo: NSView {
     /// cần tránh. Để `false` thì đếm được còn bao nhiêu màn chưa làm phần ấy.
     open func apDung(_ ten: String, _ p: [String: Any]) -> Bool { false }
 
+    /// Người vừa gõ một phím vào một vùng soạn thảo của màn — §2D.2(b).
+    ///
+    /// Nằm ở lớp cơ sở chứ không riêng S14: "editor" theo nghĩa của §2D.2 là bất kỳ chỗ nào
+    /// người đang viết dài, và màn nào mọc thêm một vùng như thế sau này cũng cần cùng luật.
+    public var onNguoiGo: (() -> Void)?
+
     public let than = NSStackView()
 
     /// Thời gian lần nạp gần nhất, tách làm hai: chờ lõi, và vẽ. Tách vì hai con số ấy dẫn tới

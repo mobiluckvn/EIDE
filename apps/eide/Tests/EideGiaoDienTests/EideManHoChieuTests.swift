@@ -257,6 +257,11 @@ final class EideManHoChieuTests: XCTestCase {
     func testLoiGoiCuaCHINHManKhongTuDayManDi() {
         let k = EideKhung(frame: NSRect(x: 0, y: 0, width: 1456, height: 838))
         let ph = EidePhien(khung: k)
+        // Đồng hồ tiêm: bài này đo NT2 chứ không đo §2C.3, nên nó phải đứng NGOÀI cửa sổ giữ màn
+        // 20 giây. Không có dòng này, bài đỏ vì một luật khác đúng — và đó là một bài kiểm nói
+        // sai tên thứ nó vừa bắt được.
+        var gio = Date(timeIntervalSince1970: 1_000_000)
+        ph.dongHo = { gio }
         ph.datBanDoMan(["project.status": "Main", "passport.query": "Passport"])
         ph.moMan("Passport", boiTacTu: false)
         XCTAssertEqual(k.vungLamViec.dangMo, "Passport")
@@ -267,6 +272,7 @@ final class EideManHoChieuTests: XCTestCase {
                        "màn tự đẩy mình đi vì chính lời gọi nó phát ra để vẽ")
 
         // Còn một BƯỚC THẬT của tác tử thì vẫn kéo màn theo — NT2 phải giữ nguyên tác dụng.
+        gio += EidePhien.GIU_MAN + 5
         ph.napSuKien("event.run.progress",
                      ["kind": "run.step_started", "run_id": "r1", "cap": "project.status"])
         XCTAssertEqual(k.vungLamViec.dangMo, "Main")

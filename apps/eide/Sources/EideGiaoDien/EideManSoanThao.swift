@@ -240,6 +240,7 @@ public final class EideManSoanThao: EideManCoSo {
 
     /// §5.3 — buffer bẩn thì băng vàng, và câu ấy nói đúng điều sẽ xảy ra với tác tử.
     private func _goPhim() {
+        onNguoiGo?()
         guard ban else { return _xoaBang() }
         if cocBang.arrangedSubviews.contains(where: {
             (($0 as? NSTextField)?.stringValue ?? "").contains("CHƯA LƯU")
