@@ -28,10 +28,10 @@
 | S18 | Log & serial | chặn | — | — | — | — |
 | S19 | Gỡ lỗi probe | chặn | — | — | — | — |
 | S20 | Bench | chặn | — | — | — | — |
-| S21 | Môi trường | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
-| S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
-| S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
-| S24 | Registry | nối | `EideManHeThong.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
+| S21 | Môi trường | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
+| S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
+| S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
+| S24 | Registry | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S25 | Chính sách tự chủ | nối | `EideManDauTien.swift` | `4969443` | 2026-09-21 | Vũ Trí Công |
 
 **21 nối · 4 chặn (chờ bo mạch) · 0 chưa.**

@@ -192,6 +192,10 @@ final class EideManMaNguonTests: XCTestCase {
 
     static func chu(_ v: NSView) -> String {
         var ra = ""
+        // `NSTextView` — bảng có ô bấm được ([DEV-133]) dùng nó thay cho
+        // `NSTextField`. Thiếu nhánh này thì cả bảng VÔ HÌNH với bài kiểm,
+        // và bài kiểm đỏ vì phép ĐO mù chứ không vì màn hỏng.
+        if let t = v as? NSTextView { ra += t.string + " " }
         if let t = v as? NSTextField {
             ra += t.attributedStringValue.string.isEmpty ? t.stringValue
                                                          : t.attributedStringValue.string

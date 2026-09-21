@@ -100,6 +100,67 @@ final class EideManHoChieuTests: XCTestCase {
         XCTAssertNotNil(EideManHoChieu.duongTep(NSTemporaryDirectory()))
     }
 
+    // MARK: - §8 S5 ô NGUỒN bấm được ([DEV-133])
+
+    /// **Bảng có ô bấm được vẫn là MỘT khung nhìn.**
+    ///
+    /// Đây là điều kiện mà [DEV-133] đặt ra khi hoãn mục này: hai bản trước dựng một khung nhìn
+    /// mỗi ô, cả hai hỏng bố cục, và một bản làm màn Nhật ký mất hơn một giây để vẽ.
+    func testBangBamDuocVanLaMotKhungNhin() {
+        let m = EideManHoChieu()
+        var daBam: [EideManCoSo.BamO] = []
+        m.bang(cot: [("A", 100), ("B", 0)],
+               dong: [["a1", "b1"], ["a2", "b2"]],
+               bam: [EideManCoSo.BamO(1, 1): { daBam.append(EideManCoSo.BamO(1, 1)) }])
+        XCTAssertEqual(Self.demTextView(m), 1, "bảng dựng nhiều hơn một khung nhìn")
+        XCTAssertNotNil(m.bangBamDuoc)
+
+        m.bangBamDuoc?.bamDeTest(1, 1)
+        XCTAssertEqual(daBam, [EideManCoSo.BamO(1, 1)])
+    }
+
+    /// **Hệ chữ phải dựng tường minh.** `init(frame:textContainer: nil)` cho ra một
+    /// `NSTextView` không có `textStorage`, nên mọi lệnh đặt nội dung là lệnh KHÔNG LÀM GÌ —
+    /// bảng hiện rỗng trơn, không lỗi, không cảnh báo.
+    func testBangBamDuocThucSuMangNoiDung() {
+        let m = EideManHoChieu()
+        m.bang(cot: [("A", 100), ("B", 0)], dong: [["gia-tri-a", "gia-tri-b"]],
+               bam: [EideManCoSo.BamO(0, 1): {}])
+        XCTAssertTrue(Self.chu(m).contains("gia-tri-b"), "bảng rỗng: \(Self.chu(m))")
+    }
+
+    /// Ô KHÔNG có trong bản đồ thì không bấm được. Gắn link cả bảng thì mọi ô đổi màu và gạch
+    /// chân, và người dùng học rằng mọi thứ bấm được.
+    func testOKhongTrongBanDoThiKhongBamDuoc() {
+        let m = EideManHoChieu()
+        var dem = 0
+        m.bang(cot: [("A", 100), ("B", 0)], dong: [["a", "b"]],
+               bam: [EideManCoSo.BamO(0, 1): { dem += 1 }])
+        XCTAssertFalse(m.bangBamDuoc?.bamDeTest(0, 0) ?? true, "ô ngoài bản đồ vẫn chạy")
+        XCTAssertEqual(dem, 0)
+    }
+
+    /// Link LẠ không được mở trình duyệt — bảng này chỉ chứa dữ liệu của dự án.
+    func testLinkLaKhongDuocMo() {
+        XCTAssertNil(EideBangBamDuoc.doc(URL(string: "https://example.com")!))
+        XCTAssertNil(EideBangBamDuoc.doc("eide-o://khong-phai-so/1"))
+        XCTAssertEqual(EideBangBamDuoc.doc(URL(string: "eide-o://3/4")!),
+                       EideManCoSo.BamO(3, 4))
+    }
+
+    /// Bảng KHÔNG có ô bấm được vẫn dùng `NSTextField` — nhẹ hơn, và đó là đường mà 287 hàng
+    /// của hộ chiếu ATmega328P đi qua.
+    func testBangThuongVanDungNSTextField() {
+        let m = EideManHoChieu()
+        m.bang(cot: [("A", 0)], dong: [["x"]])
+        XCTAssertEqual(Self.demTextView(m), 0, "bảng thường cũng dựng NSTextView")
+        XCTAssertNil(m.bangBamDuoc)
+    }
+
+    private static func demTextView(_ v: NSView) -> Int {
+        (v is EideBangBamDuoc ? 1 : 0) + v.subviews.reduce(0) { $0 + demTextView($1) }
+    }
+
     // MARK: - màn chạy trên một lõi giả
 
     /// Chưa ghim chip → đúng câu mà UXC-31 §8 S5 quy định, và nó phải nêu CẢ HAI đường ra.
@@ -315,6 +376,10 @@ final class EideManHoChieuTests: XCTestCase {
     /// Mọi chữ hiện trên màn — kể cả chữ nằm trong chuỗi có thuộc tính của bảng.
     static func chu(_ v: NSView) -> String {
         var ra = ""
+        // `NSTextView` — bảng có ô bấm được ([DEV-133]) dùng nó thay cho
+        // `NSTextField`. Thiếu nhánh này thì cả bảng VÔ HÌNH với bài kiểm,
+        // và bài kiểm đỏ vì phép ĐO mù chứ không vì màn hỏng.
+        if let t = v as? NSTextView { ra += t.string + " " }
         if let t = v as? NSTextField {
             ra += t.attributedStringValue.string.isEmpty ? t.stringValue
                                                          : t.attributedStringValue.string

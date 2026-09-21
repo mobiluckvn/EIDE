@@ -93,6 +93,9 @@ public final class EideManHoChieu: EideManCoSo {
         // CHỦ THỂ rộng 264 pt vì `periph:AC/reg:DIDR1/field:AIN0D` — dạng dài nhất còn thường
         // gặp — vừa đúng trong đó. `bang()` vẫn cắt kèm `…` cho phần dài hơn, nhưng cắt là
         // đường lui; chỗ này chọn bề rộng để đường lui gần như không phải dùng tới.
+        // Cột NGUỒN (chỉ số 4) BẤM ĐƯỢC — UXC-31 §8 S5, [DEV-133]. Tới 21/09 chỗ bấm nằm ở
+        // một khối riêng dưới bảng: chọn fact trong popup rồi bấm *Xem nguồn*, tức một bước
+        // thừa cho đúng thao tác người dùng làm nhiều nhất trên màn này.
         bang(cot: [("CHỦ THỂ", 264), ("THUỘC TÍNH", 132), ("GIÁ TRỊ", 132), ("TẦNG", 136), ("NGUỒN", 0)],
              dong: hien.map { f in
                  let vt = (f["predicate"] as? String) ?? "?"
@@ -101,7 +104,11 @@ public final class EideManHoChieu: EideManCoSo {
                          Self.giaTriTheoViTu(f["value"], vt),
                          Self.nhanTang((f["tier"] as? String) ?? "", (f["status"] as? String) ?? ""),
                          Self.oNguon(f, uri: uri)]
-             })
+             },
+             bam: Dictionary(uniqueKeysWithValues: hien.enumerated().compactMap { i, f in
+                 guard let fid = f["id"] as? String else { return nil }
+                 return (BamO(i, 4), { [weak self] in self?.xemNguon(fid) })
+             }))
 
         _khoiNguon(Array(hien))
     }
@@ -222,8 +229,21 @@ public final class EideManHoChieu: EideManCoSo {
     }
 
     @objc private func _xemNguon() {
-        guard let goi = goiLoi, let nhan = chonFact.titleOfSelectedItem,
+        guard let nhan = chonFact.titleOfSelectedItem,
               let fid = factTheoNhan[nhan] else { return }
+        xemNguon(fid)
+    }
+
+    /// Hiện chuỗi nguồn của một fact. Dùng chung cho nút *Xem nguồn* và cho cú bấm thẳng vào ô
+    /// cột NGUỒN ([DEV-133]) — một đường, nên hai chỗ bấm không thể cho ra hai kết quả khác nhau.
+    ///
+    /// Bấm vào ô cũng ĐỒNG BỘ popup bên dưới: người dùng vừa chỉ vào một hàng, và để popup nằm
+    /// ở một fact khác là để hai phần của cùng màn nói về hai fact.
+    public func xemNguon(_ fid: String) {
+        guard let goi = goiLoi else { return }
+        if let nhan = factTheoNhan.first(where: { $0.value == fid })?.key {
+            chonFact.selectItem(withTitle: nhan)
+        }
         Task { [weak self] in
             guard let self else { return }
             _xoaCocNguon()

@@ -193,7 +193,25 @@ open class EideManCoSo: NSView {
     ///
     /// Ghi lại vì lần đầu tôi đoán sai chỗ: đã đi tối ưu phép cắt — nơi tốn 6 ms — trong khi
     /// 97% thời gian nằm ở dòng kế bên.
-    public func bang(cot: [(ten: String, rong: CGFloat)], dong: [[String]]) {
+    /// Ô bấm được của bảng: `(hàng, cột)` → việc phải làm. Rỗng = bảng thường.
+    ///
+    /// Đặt ở lớp cơ sở chứ không ở từng màn vì `bang()` là chỗ DUY NHẤT dựng bảng, và một màn
+    /// tự dựng bảng riêng để có ô bấm được sẽ mất phép cắt `catVua`, mất tab stop, mất cả phép
+    /// nhớ theo (cột, chữ) — ba thứ đã tốn hai lần đo để làm đúng.
+    public typealias OBam = [BamO: () -> Void]
+
+    /// Khoá của một ô. `struct` chứ không tuple: tuple không `Hashable` được.
+    public struct BamO: Hashable {
+        public let hang: Int
+        public let cot: Int
+        public init(_ hang: Int, _ cot: Int) {
+            self.hang = hang
+            self.cot = cot
+        }
+    }
+
+    public func bang(cot: [(ten: String, rong: CGFloat)], dong: [[String]],
+                     bam: OBam = [:]) {
         var moc: CGFloat = 0
         var dung: [NSTextTab] = []
         for c in cot.dropLast() {
@@ -237,20 +255,57 @@ open class EideManCoSo: NSView {
                     daCat[khoa] = x
                     return x
                 }()
+                // Ô bấm được → `.link` mang toạ độ. Chỉ gắn cho ô CÓ trong bản đồ: gắn cả
+                // bảng thì mọi ô đổi màu và gạch chân, và người dùng học rằng mọi thứ bấm được.
+                if hangHienTai >= 0, bam[BamO(hangHienTai, i)] != nil,
+                   let u = URL(string: "eide-o://\(hangHienTai)/\(i)") {
+                    thuoc[.link] = u
+                    thuoc[.foregroundColor] = EideToken.Mau.info
+                    thuoc[.underlineStyle] = NSUnderlineStyle.single.rawValue
+                }
                 s.append(NSAttributedString(
                     string: vua + (i < o.count - 1 ? "\t" : "\n"), attributes: thuoc))
             }
         }
+        hangHienTai = -1
         hang(cot.map(\.ten), dam: true, nen: nil)
         for (i, d) in dong.enumerated() {
+            hangHienTai = i
             hang(d, dam: false, nen: i % 2 == 1 ? EideToken.Mau.bg : nil)
         }
+        hangHienTai = -1
 
-        let n = NSTextField(labelWithAttributedString: s)
-        n.lineBreakMode = .byWordWrapping
-        n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        them(n)
+        // MỘT khung nhìn cho cả bảng, kể cả khi có ô bấm được.
+        //
+        // `NSTextView` chỉ dùng khi thật sự cần — nó nặng hơn `NSTextField` và bảng hộ chiếu
+        // 287 hàng là chỗ đã đo hai lần để xuống 33 ms. Dựng một khung nhìn MỖI Ô thì còn tệ
+        // hơn nữa: hai bản trước làm thế và cả hai hỏng bố cục, một bản còn làm màn Nhật ký
+        // mất hơn một giây để vẽ. Nên ô bấm được là một `.link` trong CÙNG chuỗi thuộc tính,
+        // và `NSTextView` chỉ là thứ duy nhất trong AppKit chuyển một `.link` thành cú bấm.
+        guard !bam.isEmpty else {
+            let n = NSTextField(labelWithAttributedString: s)
+            n.lineBreakMode = .byWordWrapping
+            n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            them(n)
+            return
+        }
+        oBam = bam
+        let tv = EideBangBamDuoc(chu: s)
+        tv.onBam = { [weak self] o in
+            guard let viec = self?.oBam[o] else { return false }
+            viec()
+            return true
+        }
+        them(tv)
+        bangBamDuoc = tv
     }
+
+    /// Hàng đang dựng — để `hang()` biết ô nào bấm được mà không phải truyền thêm tham số qua
+    /// một closure lồng nhau.
+    private var hangHienTai = -1
+    private var oBam: OBam = [:]
+    /// Bảng bấm được gần nhất — cho bài đo bấm vào đúng chỗ người bấm.
+    public private(set) var bangBamDuoc: EideBangBamDuoc?
 
     /// Cắt một ô cho vừa cột, kèm `…`. `rong == 0` nghĩa là cột cuối — không cắt, vì nó chạy
     /// hết bề ngang còn lại và có `headIndent` lo phần gấp dòng.
@@ -285,5 +340,108 @@ open class EideManCoSo: NSView {
             if be(String(s.prefix(giua)) + "…") <= rong { thap = giua } else { cao = giua - 1 }
         }
         return thap == 0 ? "…" : String(s.prefix(thap)) + "…"
+    }
+}
+
+/// **Bảng có ô bấm được** — UXC-31 §8 S5 (cột NGUỒN), [DEV-133].
+///
+/// Một `NSTextView` cho CẢ bảng, không phải một khung nhìn mỗi ô. Đó là cùng quyết định mà
+/// `EideManCoSo.bang` đã ghi: hai bản trước dựng một khung nhìn mỗi ô, cả hai hỏng bố cục, và
+/// một bản làm màn Nhật ký mất hơn một giây để vẽ. Ô bấm được ở đây là một thuộc tính `.link`
+/// trong cùng chuỗi — `NSTextView` chỉ là thứ duy nhất trong AppKit biến `.link` thành cú bấm.
+///
+/// **Không sửa được, nhưng chọn được.** Bảng là dữ liệu để đọc và để chép ra ngoài; khoá luôn
+/// phép chọn sẽ lấy mất một việc người dùng làm thường xuyên với một bảng fact — chép một địa
+/// chỉ thanh ghi sang chỗ khác.
+@MainActor
+public final class EideBangBamDuoc: NSTextView, NSTextViewDelegate {
+
+    /// Trả `true` nếu ô ấy THẬT SỰ có việc để làm.
+    ///
+    /// `-> Bool` chứ không `-> Void`: `textView(_:clickedOnLink:at:)` phải nói cho AppKit
+    /// biết cú bấm đã được xử lý hay chưa, và trả `true` cho một ô không có việc gì là nói
+    /// dối — AppKit khi ấy thôi tìm người xử lý khác, và một ô chưa nối im lặng trông y hệt
+    /// một ô đã nối.
+    public var onBam: ((EideManCoSo.BamO) -> Bool)?
+
+    /// **`init(frame:textContainer:)`, không phải `init(frame:)`.**
+    ///
+    /// `NSTextView` khai `init(frame:textContainer:)` là khởi tạo ĐÍNH DANH; gọi `super.init(
+    /// frame:)` từ lớp con thì AppKit vẫn định tuyến về cái kia, và nó chết ở runtime với
+    /// *"Use of unimplemented initializer"*. Biên dịch sạch, chết lúc dựng — tức chết ở đúng
+    /// màn đầu tiên người dùng mở, chứ không ở bàn của tôi.
+    public override init(frame frameRect: NSRect, textContainer: NSTextContainer?) {
+        super.init(frame: frameRect, textContainer: textContainer)
+    }
+
+    /// **Dựng hệ chữ TƯỜNG MINH.**
+    ///
+    /// `init(frame:textContainer: nil)` cho ra một `NSTextView` **không có** `textStorage`,
+    /// `layoutManager` hay `textContainer` — chỉ `init(frame:)` mới dựng cả bộ, mà lớp con
+    /// không gọi được nó (xem ghi chú ở khởi tạo đính danh). Hệ quả nếu để `nil`: mọi lệnh
+    /// `textStorage?.setAttributedString(...)` là một lệnh KHÔNG LÀM GÌ, và bảng hiện ra rỗng
+    /// trơn. Không lỗi, không cảnh báo — đo được vì bốn phép khẳng định về nội dung bảng cùng
+    /// đỏ trong khi mọi nhãn ngoài bảng vẫn xanh.
+    public convenience init(chu: NSAttributedString) {
+        let kho = NSTextStorage()
+        let dan = NSLayoutManager()
+        let khung = NSTextContainer(size: NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude))
+        kho.addLayoutManager(dan)
+        dan.addTextContainer(khung)
+        self.init(frame: .zero, textContainer: khung)
+        isEditable = false
+        isSelectable = true
+        drawsBackground = false
+        // Dàn chữ theo bề ngang thật của khung nhìn, không theo một bề ngang vô hạn: bảng dùng
+        // tab stop tuyệt đối, và một `textContainer` không theo khung sẽ để cột cuối chạy ra
+        // ngoài vùng cắt thay vì gấp dòng.
+        isHorizontallyResizable = false
+        textContainer?.widthTracksTextView = true
+        textContainer?.lineFragmentPadding = 0
+        textContainerInset = .zero
+        delegate = self
+        textStorage?.setAttributedString(chu)
+        // Màu link mặc định của AppKit là xanh hệ thống — ghi đè để bảng dùng đúng bảng màu
+        // sản phẩm, vì `--tu-kiem` so ảnh với bản demo.
+        linkTextAttributes = [.foregroundColor: EideToken.Mau.info,
+                              .underlineStyle: NSUnderlineStyle.single.rawValue,
+                              .cursor: NSCursor.pointingHand]
+    }
+
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) { fatalError() }
+
+    /// `NSTextView` không tự cao theo nội dung trong một `NSStackView` — phải tự khai.
+    public override var intrinsicContentSize: NSSize {
+        guard let lm = layoutManager, let tc = textContainer else { return super.intrinsicContentSize }
+        lm.ensureLayout(for: tc)
+        return NSSize(width: NSView.noIntrinsicMetric, height: lm.usedRect(for: tc).height)
+    }
+
+    public override func layout() {
+        super.layout()
+        invalidateIntrinsicContentSize()
+    }
+
+    public func textView(_ v: NSTextView, clickedOnLink link: Any,
+                         at charIndex: Int) -> Bool {
+        guard let o = Self.doc(link) else { return false }
+        return onBam?(o) ?? false
+    }
+
+    /// `eide-o://<hàng>/<cột>` → toạ độ ô. Trả `nil` cho mọi thứ khác — một link lạ trong bảng
+    /// KHÔNG được mở trình duyệt, vì bảng này chỉ chứa dữ liệu của dự án.
+    public static func doc(_ link: Any) -> EideManCoSo.BamO? {
+        let s = (link as? URL)?.absoluteString ?? (link as? String) ?? ""
+        guard s.hasPrefix("eide-o://") else { return nil }
+        let p = s.dropFirst("eide-o://".count).split(separator: "/")
+        guard p.count == 2, let h = Int(p[0]), let c = Int(p[1]) else { return nil }
+        return EideManCoSo.BamO(h, c)
+    }
+
+    /// Bấm vào một ô — cho bài đo đi đúng đường người dùng đi.
+    @discardableResult
+    public func bamDeTest(_ hang: Int, _ cot: Int) -> Bool {
+        textView(self, clickedOnLink: URL(string: "eide-o://\(hang)/\(cot)")!, at: 0)
     }
 }
