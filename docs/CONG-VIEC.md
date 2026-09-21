@@ -250,10 +250,28 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **150 test Swift** xanh. `apps/eide --tu-kiem`: **46/46**. `make check` thoát 0. Màn
+*Gói mới: **175 test Swift** xanh. `apps/eide --tu-kiem`: **58/58**. Checklist UXC-31:
+**62 xong · 51 chưa · 4 chặn** (đầu phiên: 11 xong). `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (12): đối chiếu UXC-31 với mã — 11 → 62 mục xong
+
+Checklist là §11 Definition of Done của giao diện và nó đã thôi đo được. Đây là đối chiếu VỚI
+MÃ: mỗi mục kiểm bằng một lần đọc mã hoặc một phép đo `--tu-kiem`; mục chưa làm ghi RÕ còn
+thiếu gì. §8 trước đó mới tick 6 màn trong khi 21 màn đã chạy — chính thứ trôi mà việc này sửa.
+
+**Hai lần suýt ghi sai, cả hai là bài học về cách đo:** `grep -c "doan"` trả 0 cho thanh tiến
+độ chia đoạn vì mã dùng `_mauDoan` (grep phân biệt hoa thường) — một phép đo sai hướng tệ hơn
+không đo, vì nó đẻ ra một dòng tài liệu sai. Và §2.1 lộ ra [DEV-137].
+
+*(Số trong commit `1151141` ghi "47 chưa" — đo lại là **51**. Tôi viết con số ấy trước khi
+chạy phép đếm.)*
+
+### Đã làm (11): nhóm HỆ THỐNG S21–S24
+
+### Đã làm (10): S3 Bản đồ luồng + S16 Mô phỏng — 21/25 màn
 
 ### Đã làm (9): S14 Trình soạn thảo + S15 Diff & cổng merge — nhóm MÃ NGUỒN đóng
 
@@ -435,9 +453,14 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp:** S3 Bản đồ luồng · S16 Mô phỏng · S21–S24 (nhóm HỆ THỐNG). Còn **10 màn**,
-trong đó 4 chờ board. Xen vào: §7.3 nửa sau (diff render) — S14 là màn đầu tiên hiện thực
-`apDung`, còn 14 màn dùng cách lùi.
+**Làm tiếp — không cần phần cứng:**
+
+1. **14 mục §2 còn lại**, nay đã ghi rõ từng cái thiếu gì. Nhóm rẻ nhất: 2A.3/2A.4/2A.5 (ba
+   chỗ bấm chưa nối) và 2C.1 (kéo đổi thứ tự tab).
+2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
+   dùng cách lùi (nạp lại, gộp 0,4 s).
+3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.
+4. **7 mục DEVIATIONS `Mở`**, trong đó [DEV-134]/[135]/[136] cùng một hình dạng.
 **Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
 5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.
