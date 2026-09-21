@@ -1,0 +1,13 @@
+# VÒNG CỘNG TÁC ĐẦY ĐỦ, làm hết trên giao diện, mỗi bước một ảnh:
+#   1. mở dự án
+#   2. mở tab Làm rõ yêu cầu — đọc câu hỏi tác tử đặt ra
+#   3. trả lời lần một
+#   4. sửa lại — trả lời lần hai
+#   5. bấm Hoàn tác → phải quay về câu TRẢ LỜI LẦN MỘT, không phải rỗng
+#   6. bấm Hoàn tác lần nữa → mới về rỗng, điểm ấy quay lại CHỜ ANH
+@mo ~/eide/demo-cnc/gateway-lan-sang-usb-cho-may-cnc-fangling-f2300b
+@man LamRo
+@tra-loi CL-53dc51e7ac | FAT32, ổ tối đa 32 GB
+@tra-loi CL-53dc51e7ac | Đo lại rồi: FAT16, ổ tối đa 2 GB
+@hoan-tac moi-nhat
+@hoan-tac moi-nhat

@@ -497,14 +497,46 @@ def test_nguoi_tra_loi_roi_HOAN_TAC_lui_dan_tung_ban(tmp_path, workspace):
                              (ma,)).fetchone()
 
     assert hien() == ("answered", "chính xác 12 MB")
+    # Router đăng ký mục hoàn tác bằng MÃ LƯỢT CHẠY, một mã cho mỗi lần gọi — nên mỗi lần trả
+    # lời có mã riêng mà không cần năng lực tự dựng thêm một mã song song. Đăng ký hai lần cho
+    # một việc làm cột phải hiện hai nút Hoàn tác, và nút trên cùng lại là nút bộ hoàn tác
+    # không đọc được (đo 22/09/2026 qua giao diện).
     refs = [m["undo_ref"] for m in UndoService(r.ledger).list()
-            if m["undo_ref"].startswith("clar:")]
-    assert len(refs) == 2, "mỗi lần trả lời phải có mã hoàn tác RIÊNG, không dùng chung một mã"
+            if m.get("cap") == "req.answer_clarification"]
+    assert len(refs) == 2, f"mỗi lần trả lời một mã hoàn tác, nhận: {refs}"
 
-    assert r.hoan_tac(refs[0], by="human", ctx=ctx)["applied"] is True
-    assert hien() == ("answered", "khoảng 8 MB"), "phải quay về bản TRƯỚC, không phải rỗng"
+    # Gỡ bản MỚI NHẤT trước (mã thứ hai) — đúng thứ tự người đi lui.
     assert r.hoan_tac(refs[1], by="human", ctx=ctx)["applied"] is True
+    assert hien() == ("answered", "khoảng 8 MB"), "phải quay về bản TRƯỚC, không phải rỗng"
+    assert r.hoan_tac(refs[0], by="human", ctx=ctx)["applied"] is True
     assert hien() == ("open", None)
+
+
+def test_hoan_tac_dung_BAN_ma_ma_tro_toi_khong_phai_ban_cuoi(tmp_path, workspace):
+    """Người trả lời hai điểm rồi rút lại câu THỨ NHẤT — câu thứ hai phải ở nguyên.
+
+    Đó là khác biệt giữa "hoàn tác theo từng lần thay đổi" và "hoàn tác lần cuối".
+    """
+    from eide.caps.req import ghi_clarification
+    from eide.undo_handlers import dang_ky
+    from eide_core.undo import UndoService
+    r, ctx, root, ma1 = _du_an_co_diem(tmp_path, workspace)
+    dang_ky(r, ctx)
+    ghi_clarification(root, [{"kind": "gap", "text": "xưởng có LAN có dây không?"}],
+                      cap="req.elicit")
+    with store.open_store(store.store_path(root)) as c:
+        ma2 = c.execute("SELECT id FROM clarification WHERE id!=?", (ma1,)).fetchone()[0]
+
+    r.invoke("req.answer_clarification", {"clar_id": ma1, "answer": "8 MB"}, ctx)
+    r.invoke("req.answer_clarification", {"clar_id": ma2, "answer": "có dây"}, ctx)
+    ref_dau = [m["undo_ref"] for m in UndoService(r.ledger).list()
+               if m.get("cap") == "req.answer_clarification"][0]
+    assert r.hoan_tac(ref_dau, by="human", ctx=ctx)["applied"] is True
+
+    with store.open_store(store.store_path(root)) as c:
+        d = dict(c.execute("SELECT id, answer FROM clarification").fetchall())
+    assert d[ma1] is None, "câu vừa rút phải trống"
+    assert d[ma2] == "có dây", "câu KIA phải ở nguyên"
 
 
 def test_tra_loi_KHONG_bi_cong_hoi_lai_nguoi(tmp_path, workspace):

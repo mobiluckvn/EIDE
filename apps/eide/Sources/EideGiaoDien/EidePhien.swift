@@ -400,6 +400,11 @@ public final class EidePhien {
         if let tao = Self.MAN[tien] {
             let man = tao()
             man.onNguoiGo = { [weak self] in self?.nguoiGo() }
+            // Màn Làm rõ yêu cầu là màn DUY NHẤT cho tới nay mà người GHI vào từ bên trong nó.
+            // Ghi xong thì thanh trên và cột phải phải đổi theo — chúng chiếu cùng một danh
+            // sách việc chờ, và để chúng lệch nhau là để hai con số về cùng một thứ nằm cạnh
+            // nhau mà khác nhau.
+            (man as? EideManLamRo)?.onDaTraLoi = { [weak self] in await self?._lamMoi() }
             khung.vungLamViec.datMan(man)
             guard let d = daemon else {
                 khung.vungLamViec.khiRong(
@@ -821,6 +826,20 @@ public final class EidePhien {
             khung.dock.themLuot(.loi, "Không hoàn tác được: \(error)")
         }
         await _lamMoi()
+        await veLaiManDangMo()
+    }
+
+    /// Vẽ lại màn đang mở từ store.
+    ///
+    /// `_lamMoi` chỉ dựng lại thanh trên và cột phải; vùng làm việc giữ nguyên thứ nó đọc lúc
+    /// mở. Với các màn chỉ-đọc điều đó vô hại, nhưng hoàn tác ĐỔI dữ liệu ngay dưới chân màn
+    /// đang mở. Đo 22/09/2026 qua ảnh chụp: bấm Hoàn tác một câu trả lời, vùng trao đổi báo
+    /// "Đã hoàn tác (restore_answer)", và bảng ở tab Làm rõ yêu cầu VẪN hiện câu trả lời vừa
+    /// bị gỡ — người dùng đọc hai điều trái ngược trên cùng một khung hình.
+    public func veLaiManDangMo() async {
+        guard let tien = khung.vungLamViec.dangMo, !tien.isEmpty,
+              Self.MAN[tien] != nil else { return }
+        _ = moMan(tien, boiTacTu: false)
     }
 
     /// Dừng khẩn. Công khai vì bài tự kiểm phải bấm được đúng cái nút người bấm.
@@ -1155,6 +1174,9 @@ public final class EidePhien {
     }
 
     /// Đọc lại trạng thái: mức tự chủ, hàng đợi, mục hoàn tác.
+    /// Nhãn tiếng người cho loại điểm cần làm rõ — cùng bảng với màn S9, một nguồn.
+    static func nhanLoaiLamRo(_ k: String) -> String { EideManLamRo.nhanLoai(k) }
+
     public func _lamMoi() async {
         guard let d = daemon else { return }
         if let tc = try? await d.goi("autonomy.get"), let m = tc["autonomy"] as? String {
@@ -1162,12 +1184,37 @@ public final class EidePhien {
         }
         let cho = (try? await d.goi("queue.list"))?["items"] as? [[String: Any]] ?? []
         let ht = (try? await d.goi("undo.list"))?["items"] as? [[String: Any]] ?? []
-        khung.thanhTren.datDem(cho: cho.count, hoanTac: ht.count)
-        khung.cotPhai.datCho(cho.map {
-            (ma: $0["run_id"] as? String ?? "?",
-             tieuDe: $0["cap"] as? String ?? "?",
-             ly: (($0["decision"] as? [String: Any])?["reason"] as? String) ?? "")
-        })
+        // ĐIỂM CẦN LÀM RÕ cũng là việc chờ người — [DEV-151].
+        //
+        // `queue.list` chỉ trả các mục bị CỔNG chặn. Nhưng một điểm cần làm rõ đang `open` cũng
+        // đúng là "việc chờ anh", và nó không đi qua cổng nào. Đo 22/09/2026 bằng ảnh chụp cửa
+        // sổ thật: tab Làm rõ yêu cầu hiện 5 dòng "CHỜ ANH" trong khi thanh trên ghi "Chờ tôi 0"
+        // và cột phải ghi "Trống — không việc nào chờ anh". Hai chỗ trên CÙNG một khung hình nói
+        // ngược nhau về cùng một việc, và người dùng không có cách nào biết chỗ nào đúng.
+        let goiLamRo = try? await d.goi("caps.invoke",
+                                        ["id": "view.artifacts",
+                                         "params": ["kind": "clarification", "limit": 200]])
+        let ketLamRo = goiLamRo?["result"] as? [String: Any]
+        let lamRo = (ketLamRo?["items"] as? [[String: Any]]) ?? []
+        let lamRoMo = lamRo.filter { (($0["status"] as? String) ?? "open") == "open" }
+        khung.thanhTren.datDem(cho: cho.count + lamRoMo.count, hoanTac: ht.count)
+        khung.cotPhai.onMoLamRo = { [weak self] in
+            _ = self?.moMan(EideManLamRo.tien, boiTacTu: false)
+        }
+        var mucCho: [EideCotPhai.MucCho] = cho.map { m in
+            let qd = (m["decision"] as? [String: Any]) ?? [:]
+            return EideCotPhai.MucCho(ma: (m["run_id"] as? String) ?? "?",
+                                      tieuDe: (m["cap"] as? String) ?? "?",
+                                      ly: (qd["reason"] as? String) ?? "")
+        }
+        mucCho += lamRoMo.map { m in
+            EideCotPhai.MucCho(ma: (m["id"] as? String) ?? "?",
+                               tieuDe: "Làm rõ yêu cầu — "
+                                   + Self.nhanLoaiLamRo((m["kind"] as? String) ?? ""),
+                               ly: (m["text"] as? String) ?? "",
+                               traLoiChu: true)
+        }
+        khung.cotPhai.datCho(mucCho)
         // Sổ cái trả theo thứ tự GHI (cũ trước). Cột phải chỉ hiện 8 thẻ, nên phải đảo: việc
         // người muốn hoàn tác gần như luôn là việc vừa xảy ra.
         khung.cotPhai.datHoanTac(ht.reversed().map {

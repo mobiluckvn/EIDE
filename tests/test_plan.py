@@ -367,6 +367,7 @@ def test_ten_tep_plan_bi_chan_do_dai_nhung_khong_dung_hang(tmp_path):
 def test_doc_plan_feature_van_doc_duoc_ke_hoach_ghi_truoc_ban_va(tmp_path):
     """Một dự án đang chạy dở không được mất lịch sử vì một lần nâng cấp."""
     import json as _json
+
     from eide.caps.plan import EIDE_DIR, THU_MUC_PLAN, doc_plan_feature
     thu = tmp_path / EIDE_DIR / THU_MUC_PLAN
     thu.mkdir(parents=True)

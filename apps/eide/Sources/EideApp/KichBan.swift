@@ -85,6 +85,35 @@ enum KichBan {
                 let d = NSString(string: String(lenh.dropFirst(4))).expandingTildeInPath
                 ghi("**Tôi (người dùng):** mở lại dự án — `\((d as NSString).lastPathComponent)`")
                 await ud.phien.moDuAn(d)
+            } else if lenh.hasPrefix("@tra-loi ") {
+                // GÕ VÀO Ô TRẢ LỜI của màn Làm rõ yêu cầu rồi bấm Lưu — `<mã> | <câu trả lời>`.
+                // Đi qua đúng nút người bấm, không gọi tắt xuống năng lực.
+                let phan = String(lenh.dropFirst(9)).components(separatedBy: "|")
+                let ma = phan.first?.trimmingCharacters(in: .whitespaces) ?? ""
+                let van = phan.dropFirst().joined(separator: "|")
+                    .trimmingCharacters(in: .whitespaces)
+                ghi("**Tôi (người dùng):** trả lời `\(ma)` → “\(van)”")
+                if let m = ud.khung.vungLamViec.manDangMo as? EideManLamRo {
+                    await m.traLoiDeTest(ma, van)
+                } else {
+                    ghi("(màn Làm rõ yêu cầu chưa mở — `@man LamRo` trước)")
+                }
+            } else if lenh.hasPrefix("@hoan-tac ") {
+                // BẤM nút Hoàn tác ở cột phải — `@hoan-tac <mã>`, hoặc `@hoan-tac moi-nhat`
+                // để lấy mục trên cùng (thứ người gần như luôn muốn gỡ).
+                let x = String(lenh.dropFirst(10)).trimmingCharacters(in: .whitespaces)
+                let ma = x == "moi-nhat" ? (ud.khung.cotPhai.maHoanTacDau ?? "") : x
+                ghi("**Tôi (người dùng):** bấm Hoàn tác cho `\(ma)`")
+                ud.khung.cotPhai.bamHoanTacDeTest(ma)
+                try? await Task.sleep(nanoseconds: 2_500_000_000)
+            } else if lenh.hasPrefix("@man ") {
+                // MỞ MỘT TAB, như người bấm vào cột trái. Không có chỉ thị này thì bộ lái chỉ
+                // chụp được màn đang mở sẵn, và mọi khẳng định về "tab X hiện gì" là suy đoán
+                // từ dữ liệu trong store chứ không phải từ màn hình.
+                let tien = String(lenh.dropFirst(5)).trimmingCharacters(in: .whitespaces)
+                ghi("**Tôi (người dùng):** bấm vào tab `\(tien)` ở cột trái")
+                _ = ud.phien.moMan(tien, boiTacTu: false)
+                try? await Task.sleep(nanoseconds: 2_500_000_000)
             } else {
                 ghi("**Tôi (người dùng):** \(lenh)")
                 // ĐÚNG đường người dùng đi: đặt chữ vào ô lệnh rồi bấm Gửi.

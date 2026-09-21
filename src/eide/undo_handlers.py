@@ -152,10 +152,6 @@ def _go_cau_tra_loi(ctx: Any, muc: dict[str, Any]) -> dict[str, Any]:
     đổi" thật sự đòi hỏi, và là lý do bảng lịch sử tồn tại.
     """
     from eide.caps.req import hoan_tac_cau_tra_loi
-    ref = str(muc.get("undo_ref") or "")
-    if not ref.startswith("clar:"):
-        raise EideError("E2000", f"Không đọc được `undo_ref` `{ref}` — cần `clar:<id>`",
-                        exists=[], candidates=["clar:"], missing=[ref])
-    # `clar:<id>#<số bản>` — phần sau `#` chỉ để mỗi lần trả lời có một mã hoàn tác riêng;
-    # việc gỡ luôn là gỡ bản MỚI NHẤT còn hiệu lực, nên lùi đúng thứ tự người đã đi.
-    return hoan_tac_cau_tra_loi(_du_an(ctx), ref[5:].split("#", 1)[0])
+    # `undo_ref` ở đây là MÃ LƯỢT CHẠY — Router đăng ký mọi mục hoàn tác bằng nó. Chấp nhận cả
+    # dạng `clar:<id>` cho các mục đăng ký tay hoặc từ bản cũ.
+    return hoan_tac_cau_tra_loi(_du_an(ctx), str(muc.get("undo_ref") or ""))

@@ -1,0 +1,12 @@
+-- 0009 — `clarification_answer.run_id`. [DEV-151]
+--
+-- Cột này đáng lẽ nằm trong 0008. Nó không, vì lúc viết 0008 tôi chưa biết Router đăng ký mục
+-- hoàn tác bằng MÃ LƯỢT CHẠY — và không có cột này thì bộ hoàn tác cầm một mã mà không biết nó
+-- trỏ vào dòng nào.
+--
+-- Vì sao không sửa thẳng 0008: **một migration đã áp là bất biến.** Sửa nó xong thì store nào
+-- đã ở v8 sẽ không bao giờ nhận được cột mới — `user_version` đã là 8, nên `migrate` coi như
+-- không còn gì để làm. Đo 22/09/2026: sửa 0008 tại chỗ làm daemon CHẾT giữa phiên ("mất kết
+-- nối: daemon đóng ống khi ghi") vì câu INSERT trỏ vào một cột không tồn tại, và giao diện chỉ
+-- hiện "Dữ liệu cũ — không nghe được daemon 6 giây qua".
+ALTER TABLE clarification_answer ADD COLUMN run_id TEXT;

@@ -673,8 +673,9 @@ def answer_clarification(params: dict[str, Any], ctx: Context) -> dict[str, Any]
                             exists=co, candidates=[], missing=[ma])
         so = int(c.execute("SELECT COUNT(*) FROM clarification_answer WHERE clar_id=?",
                            (ma,)).fetchone()[0]) + 1
-        c.execute("INSERT INTO clarification_answer (id, clar_id, answer, answered_by, at)"
-                  " VALUES (?,?,?,?,?)", (f"{ma}#{so}", ma, van, ai, now))
+        c.execute("INSERT INTO clarification_answer (id, clar_id, answer, answered_by, at,"
+                  " run_id) VALUES (?,?,?,?,?,?)",
+                  (f"{ma}#{so}", ma, van, ai, now, ctx.extra.get("cap_run_id")))
         c.execute("UPDATE clarification SET answer=?, answered_by=?, answered_at=?,"
                   " status='answered' WHERE id=?", (van, ai, now, ma))
         c.commit()
@@ -682,33 +683,44 @@ def answer_clarification(params: dict[str, Any], ctx: Context) -> dict[str, Any]
     if led is not None:
         led.append("human.file_save", {"clar_id": ma, "revision": so, "by": ai,
                                        "cap": "req.answer_clarification"})
-        # ĐĂNG KÝ mục hoàn tác — không có dòng này thì `restore_answer` có hiện thực mà nút
-        # Hoàn tác không có gì để bấm: cột phải đọc `UndoService.list()`, không đọc sổ cái.
-        from eide_core.undo import UndoService
-        UndoService(led, (getattr(ctx.extra.get("gate"), "config", None) or {})).register(
-            # Mã hoàn tác mang SỐ BẢN: Router đánh dấu một `undo_ref` là đã dùng sau khi hoàn
-            # tác, nên dùng chung một mã cho mọi lần trả lời thì chỉ lùi được ĐÚNG MỘT bước —
-            # trong khi cả bảng lịch sử này sinh ra để lùi được từng lần.
-            f"clar:{ma}#{so}", "restore_answer", cap="req.answer_clarification")
+        # KHÔNG tự đăng ký mục hoàn tác ở đây. Router đã đăng ký một mục với `undo_ref` là mã
+        # lượt chạy, cho MỌI năng lực khai một loại hoàn tác — thêm một mục nữa ở đây làm cột
+        # phải hiện HAI nút Hoàn tác cho cùng một việc, và mục trên cùng lại là mục Router
+        # đăng ký nên nút người bấm là nút bộ hoàn tác không đọc được.
+        #
+        # Đo 22/09/2026 qua giao diện: bấm Hoàn tác trả về "Không đọc được `undo_ref`
+        # `fdfafbb4e45f` — cần `clar:<id>`". Thay vì dựng một mã song song, `clarification_answer`
+        # nay ghi `run_id`, nên mã của Router trỏ thẳng vào ĐÚNG bản trả lời.
     return {"clar_id": ma, "status": "answered", "answer": van, "revision": so}
 
 
-def hoan_tac_cau_tra_loi(root: Path, clar_id: str) -> dict[str, Any]:
-    """Gỡ LẦN trả lời gần nhất, trả về bản trước đó — bộ hoàn tác `restore_answer`.
+def hoan_tac_cau_tra_loi(root: Path, khoa: str) -> dict[str, Any]:
+    """Gỡ MỘT bản trả lời, khôi phục bản trước đó — bộ hoàn tác `restore_answer`.
+
+    `khoa` là mã lượt chạy đã ghi bản ấy (Router đăng ký mục hoàn tác bằng `run_id`), hoặc mã
+    một điểm cần làm rõ — khi ấy gỡ bản mới nhất của điểm ấy.
+
+    Gỡ ĐÚNG BẢN mà mã trỏ tới chứ không phải "bản mới nhất": đó là khác biệt giữa "hoàn tác
+    theo từng lần thay đổi" và "hoàn tác lần cuối". Người trả lời ba điểm rồi muốn rút lại câu
+    thứ nhất thì hai câu kia phải ở nguyên.
 
     Đánh dấu `undone_at` chứ không xoá dòng: một lần hoàn tác cũng là một sự kiện, và xoá nó đi
-    thì lần sau không ai biết câu trả lời ấy từng tồn tại. Hoàn tác nhiều lần thì lùi dần từng
-    bước — đó là điều "rollback theo từng lần thay đổi" thật sự đòi hỏi.
+    thì lần sau không ai biết câu trả lời ấy từng tồn tại.
     """
     db = store.store_path(root)
     now = datetime.now(UTC).isoformat()
     with store.open_store(db) as c:
-        r = c.execute("SELECT id, answer FROM clarification_answer WHERE clar_id=?"
-                      " AND undone_at IS NULL ORDER BY at DESC, id DESC LIMIT 1",
-                      (clar_id,)).fetchone()
+        r = c.execute("SELECT id, answer, clar_id FROM clarification_answer WHERE run_id=?"
+                      " AND undone_at IS NULL LIMIT 1", (khoa,)).fetchone()
         if r is None:
-            raise EideError("E2000", f"`{clar_id}` chưa có câu trả lời nào để hoàn tác",
-                            exists=[], candidates=[], missing=[clar_id])
+            ma = khoa[5:] if khoa.startswith("clar:") else khoa
+            r = c.execute("SELECT id, answer, clar_id FROM clarification_answer WHERE clar_id=?"
+                          " AND undone_at IS NULL ORDER BY at DESC, id DESC LIMIT 1",
+                          (ma.split("#", 1)[0],)).fetchone()
+        if r is None:
+            raise EideError("E2000", f"`{khoa}` không trỏ tới bản trả lời nào còn hiệu lực",
+                            exists=[], candidates=[], missing=[khoa])
+        clar_id = r[2]
         c.execute("UPDATE clarification_answer SET undone_at=? WHERE id=?", (now, r[0]))
         truoc = c.execute("SELECT answer, answered_by FROM clarification_answer WHERE clar_id=?"
                           " AND undone_at IS NULL ORDER BY at DESC, id DESC LIMIT 1",

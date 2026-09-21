@@ -56,7 +56,7 @@ final class EideKhungNutTests: XCTestCase {
     func testCotPhaiCuonXuongKhiKhoiNamNgoaiTamNhin() {
         let c = EideCotPhai(frame: NSRect(x: 0, y: 0, width: 236, height: 180))
         c.datDangChay((1...6).map { (ma: "r\($0)", dong: "Lượt chạy \($0)") })
-        c.datCho((1...6).map { (ma: "g\($0)", tieuDe: "Mục \($0)", ly: "chờ duyệt") })
+        c.datCho((1...6).map { EideCotPhai.MucCho(ma: "g\($0)", tieuDe: "Mục \($0)", ly: "chờ duyệt") })
         c.datHoanTac((1...6).map { (ma: "u\($0)", nhan: "Ghi tệp \($0)", han: "còn 10 phút") })
         c.layoutSubtreeIfNeeded()
 
@@ -71,7 +71,7 @@ final class EideKhungNutTests: XCTestCase {
     /// người dùng kết luận nút hỏng. Nháy tiêu đề là câu trả lời "đây, chỗ này".
     func testCuonToiKhongNemDuLieuKhiCotVuaManHinh() {
         let c = EideCotPhai(frame: NSRect(x: 0, y: 0, width: 236, height: 900))
-        c.datCho([(ma: "g1", tieuDe: "Một mục", ly: "chờ duyệt")])
+        c.datCho([EideCotPhai.MucCho(ma: "g1", tieuDe: "Một mục", ly: "chờ duyệt")])
         c.layoutSubtreeIfNeeded()
         c.cuonToi(.cho)
         XCTAssertEqual(c.viTriCuon, 0, accuracy: 1, "cột vừa màn hình mà vẫn bị đẩy đi")

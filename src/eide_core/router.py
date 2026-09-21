@@ -143,6 +143,12 @@ class Router:
         # tự dựng một cái mới: một Router thứ hai sẽ có hàng đợi riêng và ledger riêng, và mục
         # chờ do chuỗi sinh ra sẽ không bao giờ xuất hiện trong hàng đợi người đang nhìn.
         ctx.extra.setdefault("router", self)
+        # Mã lượt chạy của CHÍNH lời gọi này. Router đăng ký mục hoàn tác bằng `run_id`, nên một
+        # năng lực muốn hoàn tác được ở mức chi tiết hơn "cả lời gọi" phải ghi lại mã ấy cùng
+        # dữ liệu nó vừa ghi — không có nó thì bộ hoàn tác cầm một mã mà không biết nó trỏ vào
+        # dòng nào. Đo 22/09/2026 trên bài CNC: bấm Hoàn tác cho một câu trả lời trả về
+        # "Không đọc được `undo_ref` `fdfafbb4e45f`".
+        ctx.extra["cap_run_id"] = run_id
         commit_truoc = store.so_commit()
         try:
             result = reg.handler(params, ctx)  # type: ignore[misc]
@@ -285,12 +291,24 @@ class Router:
                             exists=[m["undo_ref"] for m in con_han], candidates=[],
                             missing=[undo_ref])
         ham = self.undo_handlers.get(muc["kind"])
+        # NIÊM LẠI sau khi hoàn tác. `hoan_tac` gọi thẳng hàm xử lý chứ không qua `invoke`, nên
+        # `_niem_lai` — vốn đặt trong `invoke` đúng vì đó là chỗ duy nhất không quên được —
+        # không chạy cho đường này.
+        #
+        # Với ba loại cũ điều đó vô hại: chúng đều gọi lại một NĂNG LỰC (`code.revert`,
+        # `project.rollback`), nên lời gọi bên trong tự niêm. `restore_answer` ghi thẳng vào
+        # store, và nó là loại đầu tiên làm thế.
+        #
+        # Đo 22/09/2026 qua giao diện: hoàn tác một câu trả lời xong, lần mở dự án kế tiếp hỏng
+        # với E6000 "store bị ghi ngoài cổng" — tức phép kiểm toàn vẹn tố cáo chính EIDE.
+        commit_truoc_ht = store.so_commit()
         if ham is None:
             ket_qua = {"applied": False, "kind": muc["kind"],
                        "reason": f"chưa có hiện thực hoàn tác cho loại `{muc['kind']}` "
                                  f"(POL-17 §5 giao cho {muc.get('cap') or 'năng lực tương ứng'})"}
         else:
             ket_qua = {"applied": True, "kind": muc["kind"], **(ham(muc) or {})}
+        self._niem_lai(ctx or Context(), commit_truoc_ht)
         self._log("undo.apply", {"undo_ref": undo_ref, "by": by, "result": ket_qua})
         if ket_qua["applied"]:
             self._cap_nhat_decision_log(ctx or Context(), undo_ref,

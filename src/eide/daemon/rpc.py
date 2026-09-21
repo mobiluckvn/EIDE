@@ -1056,6 +1056,30 @@ class Daemon:
             # JSON-RPC trần. Client (EIDEKit) tra `eide_code` để hiện CÁCH XỬ LÝ mà tài liệu
             # khuyến nghị; thiếu nó thì phía giao diện chỉ có một con số âm để đưa cho người dùng.
             return _err(rid, -32602, f"Tham số sai: {e}", eide_code="E1000")
+        except Exception as e:  # noqa: BLE001
+            # MỘT LỜI GỌI HỎNG KHÔNG ĐƯỢC GIẾT CẢ DAEMON.
+            #
+            # Tới 22/09/2026 chỉ ba loại trên được bắt, nên bất kỳ ngoại lệ nào khác — một câu
+            # SQL trỏ vào cột không tồn tại, một tệp mất giữa chừng — làm vòng phục vụ thoát và
+            # daemon chết. Người dùng khi ấy mất TOÀN BỘ giao diện vì một lời gọi hỏng: màn hình
+            # chỉ hiện "Dữ liệu cũ — không nghe được daemon 6 giây qua", và không chỗ nào nói
+            # lời gọi nào đã làm nó chết.
+            #
+            # Đo được đúng như thế khi tôi sửa một migration đã áp: store thiếu một cột, câu
+            # INSERT nổ, và cả phiên làm việc đứt.
+            #
+            # Trả lỗi kèm LOẠI ngoại lệ, và in vết ra stderr: một `RuntimeError` trần trong câu
+            # trả lời thì người báo lỗi không có gì để gửi cho người sửa.
+            #
+            # KHÔNG gắn `eide_code`: bảng 30 mã của API-15 §3 không có mã nào cho "lỗi nội bộ
+            # không lường trước", và mượn một mã sẵn có (E8002 SENSITIVE_UPLOAD chẳng hạn) là
+            # nói dối phía giao diện về loại sự cố — nó tra bảng để hiện CÁCH XỬ LÝ, nên một mã
+            # sai chỉ người dùng đi làm một việc không liên quan. Đề nghị thêm mã ở [DEV-153].
+            import traceback
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.flush()
+            return _err(rid, -32603, f"Lỗi không lường trước trong `{msg.get('method')}`: "
+                        f"{type(e).__name__}: {e}")
 
 
 def _err(rid: Any, code: int, message: str, eide_code: str | None = None) -> dict[str, Any]:

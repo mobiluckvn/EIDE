@@ -1,0 +1,7 @@
+# Vòng CỘNG TÁC đầy đủ, làm hết trên giao diện:
+#   mở dự án → mở tab Làm rõ yêu cầu → đọc câu hỏi → gõ câu trả lời → bấm Lưu
+# Mã điểm lấy từ chính bảng trên màn hình ở bước trước.
+@mo ~/eide/demo-cnc/gateway-lan-sang-usb-cho-may-cnc-fangling-f2300b
+@man LamRo
+@tra-loi CL-3453415582 | File G-code lớn nhất khoảng 8 MB, chép xong trong 20 giây là chấp nhận được
+@tra-loi CL-b01eb5ab0e | Xưởng có mạng LAN có dây kéo tới tận tủ điện của máy CNC

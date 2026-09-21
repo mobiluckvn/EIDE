@@ -356,6 +356,7 @@ CREATE TABLE IF NOT EXISTS clarification_answer (
   answer      TEXT NOT NULL,
   answered_by TEXT NOT NULL,
   at          TEXT NOT NULL,
+  run_id      TEXT,
   undone_at   TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_clar_answer ON clarification_answer (clar_id, at);

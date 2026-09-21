@@ -80,6 +80,9 @@ public final class EideManLamRo: EideManCoSo {
         }
     }
 
+    /// Gọi sau khi người lưu một câu trả lời — để phiên làm mới thanh trên và cột phải.
+    public var onDaTraLoi: (() async -> Void)?
+
     /// Ô trả lời đang mở — `clar_id` của điểm người vừa bấm.
     private var dangTraLoi = ""
     private let oTraLoi = NSTextField()
@@ -127,6 +130,23 @@ public final class EideManLamRo: EideManCoSo {
         dangTraLoi = (n.selectedItem?.representedObject as? String) ?? ""
     }
 
+    /// Gõ câu trả lời rồi bấm Lưu — ĐÚNG đường người dùng đi.
+    ///
+    /// Công khai vì bài kiểm phải thao tác đúng cái nút người bấm, không gọi tắt xuống năng
+    /// lực. Cùng khuôn với `EideDock.guiDeTest`: một bài kiểm gọi thẳng `req.answer_clarification`
+    /// sẽ xanh kể cả khi nút Lưu không nối vào đâu cả.
+    public func traLoiDeTest(_ clarId: String, _ van: String) async {
+        dangTraLoi = clarId
+        oTraLoi.stringValue = van
+        _luuTraLoi()
+        // `_luuTraLoi` chạy trong một Task riêng; chờ nó xong rồi mới trả về, nếu không bài
+        // kiểm chụp ảnh trước khi bảng kịp vẽ lại.
+        for _ in 0..<60 where !oTraLoi.stringValue.isEmpty {
+            try? await Task.sleep(nanoseconds: 200_000_000)
+        }
+        try? await Task.sleep(nanoseconds: 600_000_000)
+    }
+
     @objc private func _luuTraLoi() {
         let van = oTraLoi.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !dangTraLoi.isEmpty, !van.isEmpty, let goi = goiLoi else { return }
@@ -141,6 +161,11 @@ public final class EideManLamRo: EideManCoSo {
             // một đằng còn store một nẻo.
             xoa()
             try? await napDuLieu(goi)
+            // LÀM MỚI cả thanh trên và cột phải. Trả lời xong là một việc rời khỏi danh sách
+            // chờ, nhưng badge "Chờ tôi" chỉ được tính trong `_lamMoi`. Đo 22/09/2026 bằng ảnh
+            // chụp: bảng ghi "3 chưa trả lời" còn thanh trên vẫn ghi "Chờ tôi 5" — hai con số
+            // về cùng một thứ, cạnh nhau, khác nhau.
+            await onDaTraLoi?()
         }
     }
 

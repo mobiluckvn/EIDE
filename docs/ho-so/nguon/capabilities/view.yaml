@@ -515,6 +515,7 @@
         - board
         - feature
         - tool
+        - clarification
       filter:
         type: object
         description: trường → giá trị, khớp bằng

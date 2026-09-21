@@ -27,10 +27,18 @@ def _luc(gio_truoc: float) -> str:
 # ---------- cửa sổ theo loại (POL-17 §5) ----------
 
 def test_moi_loai_undo_cua_hop_dong_deu_co_cua_so():
-    """POL-17 §5 liệt kê 5 loại hoàn tác; mỗi loại phải ánh xạ vào một cửa sổ của undo_window."""
+    """Mỗi loại hoàn tác phải ánh xạ vào một cửa sổ của `undo_window` — POL-17 §5.
+
+    Sáu loại từ v1.3: năm loại của §5 cộng `restore_answer` ([DEV-151]). Năm loại cũ hoàn tác
+    một tệp, một commit, hay cả dự án; không loại nào lùi được MỘT DÒNG trong store — mà câu
+    trả lời của người cho một điểm cần làm rõ đúng là một dòng như thế.
+
+    Bảng này viết lại NGUYÊN VĂN ở đây cố ý: thêm một loại vào `KIND_WINDOW` mà quên `pol.js`
+    thì tài liệu và mã nói hai thứ khác nhau, và test này là chỗ duy nhất bắt được.
+    """
     assert KIND_WINDOW == {"supersede_facts": "facts", "git_revert": "merge",
                            "reflash_known_good": "flash", "delete_created_files": "files",
-                           "restore_config": "files"}
+                           "restore_config": "files", "restore_answer": "files"}
 
 
 @pytest.mark.parametrize("chuoi,gio", [("72h", 72), ("24h", 24), ("30m", 0.5), ("7d", 168)])

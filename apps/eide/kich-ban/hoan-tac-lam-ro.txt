@@ -1,0 +1,7 @@
+# HOÀN TÁC TỪNG LẦN, làm trên giao diện.
+# Điểm CL-3453415582 đã có hai bản trả lời; bấm Hoàn tác phải lùi về bản TRƯỚC, không về rỗng.
+@mo ~/eide/demo-cnc/gateway-lan-sang-usb-cho-may-cnc-fangling-f2300b
+@man LamRo
+@tra-loi CL-3453415582 | Sửa lại: file lớn nhất 12 MB, chép trong 30 giây
+@hoan-tac moi-nhat
+@hoan-tac moi-nhat

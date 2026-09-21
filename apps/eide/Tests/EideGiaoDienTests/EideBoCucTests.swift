@@ -73,7 +73,7 @@ final class EideBoCucTests: XCTestCase {
     /// Ba con số vẫn đọc được ở dải hẹp — đó là toàn bộ lý do dải ấy tồn tại.
     func testDaiHepVanHienDuBaConSo() {
         let c = EideCotPhai(frame: NSRect(x: 0, y: 0, width: 44, height: 700))
-        c.datCho([(ma: "g1", tieuDe: "a", ly: "b"), (ma: "g2", tieuDe: "c", ly: "d")])
+        c.datCho([EideCotPhai.MucCho(ma: "g1", tieuDe: "a", ly: "b"), EideCotPhai.MucCho(ma: "g2", tieuDe: "c", ly: "d")])
         c.datHoanTac([(ma: "u1", nhan: "x", han: "y")])
         c.datHep(true)
         let van = Self.chu(c)

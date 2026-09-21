@@ -527,11 +527,11 @@ def test_req_analyze_co_chuoi_mau_va_chuoi_do_tu_nối_duoc_reqset_ids():
     ra phải sinh ra hai bước trước đó. [DEV-147]
     """
     import json as _json
+
     from eide_core.paths import spec_dir
     ds = _json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
     mau = [m for m in ds if "req.analyze" in (m.get("trigger_intents") or [])]
     assert mau, "req.analyze phải có chuỗi mẫu"
-    nut = {n["id"]: n for n in mau[0]["nodes"]}
     caps = [n["cap"] for n in mau[0]["nodes"]]
     assert caps[0] == "req.elicit" and "req.classify" in caps, caps
     # Mẫu phải TỰ MANG phần nối: `req.classify` trả `reqset` (mảng đối tượng) còn các nút sau

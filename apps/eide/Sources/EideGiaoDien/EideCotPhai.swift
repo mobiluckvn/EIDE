@@ -177,7 +177,25 @@ public final class EideCotPhai: NSView {
         })
     }
 
-    public func datCho(_ ds: [(ma: String, tieuDe: String, ly: String)]) {
+    /// Một mục chờ người. `traLoiChu` mặc định `false` — mục bị cổng chặn, gật hoặc lắc.
+    public struct MucCho {
+        public let ma: String, tieuDe: String, ly: String, traLoiChu: Bool
+        public init(ma: String, tieuDe: String, ly: String, traLoiChu: Bool = false) {
+            self.ma = ma; self.tieuDe = tieuDe; self.ly = ly; self.traLoiChu = traLoiChu
+        }
+    }
+
+    /// Người bấm "Trả lời ở tab Làm rõ yêu cầu" — mở màn S9. Đặt từ `EidePhien`.
+    public var onMoLamRo: (() -> Void)?
+
+    /// `traLoiChu = true` → mục này cần một CÂU TRẢ LỜI bằng chữ, không phải duyệt/từ chối.
+    ///
+    /// Hai loại việc chờ người trông giống nhau trong danh sách mà cần hai thao tác khác hẳn:
+    /// mục bị cổng chặn thì người gật hoặc lắc; một ĐIỂM CẦN LÀM RÕ thì người phải VIẾT ra câu
+    /// trả lời. Đo 22/09/2026 bằng ảnh chụp cửa sổ thật: cột phải hiện "Duyệt / Từ chối" cho
+    /// câu hỏi "Xưởng có mạng LAN có dây không?" — bấm Duyệt sẽ gọi `gate.decide` trên một
+    /// `run_id` không tồn tại, và dù có tồn tại thì "duyệt" cũng không trả lời được câu hỏi ấy.
+    public func datCho(_ ds: [MucCho]) {
         dem.cho = ds.count
         _veDai()
         nhanCho.stringValue = ds.isEmpty ? "CHỜ TÔI" : "CHỜ TÔI (\(ds.count))"
@@ -188,14 +206,24 @@ public final class EideCotPhai: NSView {
             let l = NSTextField(wrappingLabelWithString: m.ly)
             l.font = EideToken.fontUI
             l.textColor = EideToken.Mau.muted
-            let ok = NSButton(title: "Duyệt", target: self, action: #selector(_duyet(_:)))
-            let no = NSButton(title: "Từ chối", target: self, action: #selector(_tuChoi(_:)))
-            for b in [ok, no] {
+            var nutDs: [NSView] = []
+            if m.traLoiChu {
+                let b = NSButton(title: "Trả lời ở tab Làm rõ yêu cầu",
+                                 target: self, action: #selector(_moLamRo))
                 b.bezelStyle = .inline
                 b.font = EideToken.fontUI
-                b.identifier = NSUserInterfaceItemIdentifier(m.ma)
+                nutDs = [b]
+            } else {
+                let ok = NSButton(title: "Duyệt", target: self, action: #selector(_duyet(_:)))
+                let no = NSButton(title: "Từ chối", target: self, action: #selector(_tuChoi(_:)))
+                for b in [ok, no] {
+                    b.bezelStyle = .inline
+                    b.font = EideToken.fontUI
+                    b.identifier = NSUserInterfaceItemIdentifier(m.ma)
+                }
+                nutDs = [ok, no]
             }
-            let nut = NSStackView(views: [ok, no])
+            let nut = NSStackView(views: nutDs)
             nut.orientation = .horizontal
             nut.spacing = 6
             let o = NSStackView(views: [t, l, nut])
@@ -210,7 +238,11 @@ public final class EideCotPhai: NSView {
         })
     }
 
+    /// Mã của mục hoàn tác TRÊN CÙNG — thứ người gần như luôn muốn gỡ. Cho bài kiểm.
+    public private(set) var maHoanTacDau: String?
+
     public func datHoanTac(_ ds: [(ma: String, nhan: String, han: String)]) {
+        maHoanTacDau = ds.first?.ma
         dem.hoanTac = ds.count
         _veDai()
         nhanHoanTac.stringValue = ds.isEmpty ? "HOÀN TÁC ĐƯỢC" : "HOÀN TÁC ĐƯỢC (\(ds.count))"
@@ -315,6 +347,15 @@ public final class EideCotPhai: NSView {
     }
 
     @objc private func _chonRun(_ n: NSButton) { n.identifier.map { onChonRun?($0.rawValue) } }
+    /// Bấm nút "Hoàn tác" của một mục — ĐÚNG đường người bấm. Cho bài kiểm.
+    ///
+    /// Gọi thẳng `undo.apply` trong bài kiểm sẽ xanh kể cả khi nút không nối vào đâu — đúng
+    /// loại lỗi mà `_ = try await` ở `EidePhien._hoanTac` từng gây ra (báo "Đã hoàn tác" cho
+    /// một lần hoàn tác không xảy ra).
+    public func bamHoanTacDeTest(_ ma: String) { onHoanTac?(ma) }
+
+    @objc private func _moLamRo() { onMoLamRo?() }
+
     @objc private func _duyet(_ n: NSButton) { n.identifier.map { onDuyet?($0.rawValue, true) } }
     @objc private func _tuChoi(_ n: NSButton) { n.identifier.map { onDuyet?($0.rawValue, false) } }
     @objc private func _hoanTac(_ n: NSButton) { n.identifier.map { onHoanTac?($0.rawValue) } }

@@ -1,0 +1,5 @@
+# Chỉ MỞ dự án rồi bấm vào tab "Làm rõ yêu cầu" — không gõ gì cả.
+# Mục đích duy nhất: chụp lại ĐÚNG thứ trên màn hình, để không phải đoán.
+@mo ~/eide/demo-cnc/gateway-lan-sang-usb-cho-may-cnc-fangling-f2300b
+@man LamRo
+@man ReqArch

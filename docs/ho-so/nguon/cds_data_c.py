@@ -77,11 +77,12 @@ d("view.doc_side_by_side", {"ref": "str! # fact_id | code_unit_id"}, {"left": "o
 d("view.timeline", {"range": "obj # from|to ISO, hoặc days:int", "filter": "obj # by policy|human, kinds", "limit": "int # số sự kiện MỚI NHẤT trả về"}, {"events": "arr<obj>!", "total": "int! # tổng trước khi cắt"}, ["Từ ledger/decision_log/capability_run/store.write; sắp theo thời gian; lọc", "`limit` cắt từ ĐUÔI (mới nhất) và `total` luôn là số trước khi cắt — bên gọi phải biết mình đang xem một phần"], [], "none", '{"range":{"days":7},"limit":120}', "Sự kiện khớp ledger")
 d("view.export_map", {"view": "obj!", "format": "enum:dot|graphml|svg|png|mermaid!"}, {"file": "str!"}, ["Chuyển GraphView → định dạng; mermaid giới hạn 300 nút"], [], "delete_created_files", '{"view":{},"format":"mermaid"}', "Mermaid render được")
 d("view.artifacts",
-  {"kind": "enum:requirement|adr|plan|doc|diagram|module|board|feature|tool!", "filter": "obj # trường → giá trị, khớp bằng", "limit": "int"},
+  {"kind": "enum:requirement|adr|plan|doc|diagram|module|board|feature|tool|clarification!", "filter": "obj # trường → giá trị, khớp bằng", "limit": "int"},
   {"items": "arr<obj>! # id + các trường chính của loại ấy, kèm at nếu có", "total": "int! # số trước khi cắt", "kind": "str!"},
   ["Đọc THẲNG bảng tương ứng trong store; không gọi mô hình, không ghi gì",
    "Mỗi loại trả các trường chính của nó, KHÔNG trả cả hàng: một bảng có cột nội dung dài (doc.body, diagram.src) sẽ kéo vài MB qua ống RPC cho một danh sách",
    "Sắp mới nhất trước; `limit` cắt từ ĐẦU danh sách đã sắp, `total` luôn là số trước khi cắt",
+   "v1.3 — `kind: clarification` ([DEV-151]): các ĐIỂM CẦN LÀM RÕ mà `req.elicit` và `req.detect_conflict` tìm ra. Sắp theo `status` trước rồi thời gian — cái đang `open` phải nổi lên trên cái đã trả lời, vì tab S9 tồn tại để người thấy thứ CÒN PHẢI LÀM",
    "v1.3 — `kind: tool` (DEV-136): gộp `tool_report` theo `tool`, trả tên công cụ + số lượt ĐẠT/TỔNG + lần chạy gần nhất. `tool.search` (TOOL-02) KHÔNG dùng được cho việc này: nó là năng lực KHỚP chứ không phải LIỆT KÊ — gọi nó với một ToolSpec bịa ra để lấy danh sách là dùng sai hợp đồng, và điểm tương tự trả về sẽ vô nghĩa"],
   ["E1000 kind ngoài enum", "E2000 store chưa có"], "none",
   '{"kind":"adr"}',
