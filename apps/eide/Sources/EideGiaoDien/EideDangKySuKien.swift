@@ -52,6 +52,14 @@ public enum EideDangKySuKien {
         // S9 Làm rõ yêu cầu — câu hỏi gộp là một mục ASK ở cổng, nên nó tới qua hàng đợi.
         "LamRo": ["event.queue.changed", "event.gate.opened", "event.chat.question",
                   "event.chat.restated"],
+        // S10 Yêu cầu & kiến trúc — yêu cầu và ADR đều là hiện vật trong store.
+        "ReqArch": ["event.knowledge.changed", "event.run.progress"],
+        // S11 Lược đồ — "chỉ báo đồng bộ hai chiều mã ↔ hình": mã đổi thì hình thành cũ.
+        "DiagramView": ["event.diagram.stale", "event.run.progress"],
+        // S12 Kế hoạch — kế hoạch đổi theo lượt chạy của tác tử.
+        "PlanDiff": ["event.run.progress", "event.knowledge.changed"],
+        // S13 Tài liệu — `event.doc.stale` là đúng tín hiệu "mục này đã cũ so với mã".
+        "Doc": ["event.doc.stale", "event.run.progress"],
         // S25 Chính sách — mức tự chủ và niêm.
         "ChinhSach": ["event.autonomy.changed", "event.notice"],
     ]
