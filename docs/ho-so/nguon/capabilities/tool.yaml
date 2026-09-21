@@ -1,0 +1,432 @@
+- code: TOOL-01
+  id: tool.need
+  name: 'Nhận diện nhu cầu công cụ mới: khi chuỗi thiếu năng lực phù hợp hoặc năng lực hi'
+  desc: 'Nhận diện nhu cầu công cụ mới: khi chuỗi thiếu năng lực phù hợp hoặc năng lực hiện có không đủ, mô tả nhu cầu thành đặc tả công cụ (vào/ra/hiệu ứng)'
+  input:
+    type: object
+    properties:
+      gap:
+        type: string
+        description: mô tả việc không có năng lực phù hợp
+      context:
+        type: object
+        description: intent, chain node, dữ liệu vào/ra mong muốn
+    required:
+    - gap
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      spec:
+        type: object
+        description: ToolSpec {name, purpose, input_schema, output_schema, effects[], deps[], acceptance[]}
+      reuse:
+        type: array
+        items:
+          type: object
+        description: công cụ/năng lực gần khớp
+    required:
+    - spec
+    - reuse
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Không có năng lực nào khớp ≥ ngưỡng
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.tool:need
+  errors:
+  - E5002
+  example:
+    gap: chuyển tệp .hex Intel sang .bin và tính CRC32
+    context:
+      node: n7
+- code: TOOL-02
+  id: tool.search
+  name: 'Tìm công cụ đã có (do tác tử tự viết trước đó, trong dự án/người dùng/registry) '
+  desc: Tìm công cụ đã có (do tác tử tự viết trước đó, trong dự án/người dùng/registry) khớp đặc tả để tái dùng thay vì viết mới
+  input:
+    type: object
+    properties:
+      spec:
+        type: object
+      scope:
+        type: array
+        items:
+          type: string
+          enum:
+          - project
+          - user
+          - registry
+    required:
+    - spec
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      tools:
+        type: array
+        items:
+          type: object
+        description: tool_id, score, uses, last_ok
+    required:
+    - tools
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.tool:search
+  errors: []
+  example:
+    spec:
+      purpose: hex → bin + crc
+- code: TOOL-03
+  id: tool.write
+  name: 'Tự viết công cụ bằng Python theo ToolSpec: hàm thuần có chữ ký, docstring, kiểm '
+  desc: 'Tự viết công cụ bằng Python theo ToolSpec: hàm thuần có chữ ký, docstring, kiểm tham số, xử lý lỗi, không tác dụng phụ ngoài hiệu ứng khai báo; kèm test'
+  input:
+    type: object
+    properties:
+      spec:
+        type: object
+    required:
+    - spec
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      tool_id:
+        type: string
+      code_path:
+        type: string
+      test_path:
+        type: string
+      effects:
+        type: array
+        items:
+          type: string
+    required:
+    - tool_id
+    - code_path
+    - test_path
+    - effects
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding:
+  - ToolSpec đầy đủ
+  ask_when:
+  - Hiệu ứng khai báo gồm mạng/phần cứng/sudo
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.tool:write
+  errors:
+  - E5002
+  - E5003 (import cấm)
+  - E8000
+  example:
+    spec:
+      name: hex_to_bin_crc
+      effects:
+      - read_fs
+      - write_project
+- code: TOOL-04
+  id: tool.test
+  name: Chạy test của công cụ trong sandbox (không mạng, không phần cứng); kiểm hiệu ứng
+  desc: Chạy test của công cụ trong sandbox (không mạng, không phần cứng); kiểm hiệu ứng thực tế khớp khai báo (giám sát syscall/ghi tệp)
+  input:
+    type: object
+    properties:
+      tool_id:
+        type: string
+    required:
+    - tool_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: ToolReport
+      observed_effects:
+        type: array
+        items:
+          type: string
+      effects_ok:
+        type: boolean
+    required:
+    - report
+    - observed_effects
+    - effects_ok
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.tool:test
+  errors:
+  - E8000
+  - E4000
+  example:
+    tool_id: user.hex_to_bin_crc
+- code: TOOL-05
+  id: tool.run
+  name: Thực thi công cụ trong sandbox với giới hạn theo hiệu ứng khai báo; chính sách q
+  desc: Thực thi công cụ trong sandbox với giới hạn theo hiệu ứng khai báo; chính sách quyết định theo lớp rủi ro suy ra từ hiệu ứng (đọc R0, ghi dự án R2, mạng R1, phần cứng R3, hệ thống R4)
+  input:
+    type: object
+    properties:
+      tool_id:
+        type: string
+      args:
+        type: object
+      run_id:
+        type: string
+    required:
+    - tool_id
+    - args
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      result:
+        type: object
+      report:
+        type: object
+    required:
+    - result
+    - report
+    additionalProperties: false
+  risk: R2
+  tier: T1*
+  grounding:
+  - Đã test đạt
+  ask_when:
+  - Hiệu ứng ngoài khai báo; R3/R4
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.tool:run
+  errors:
+  - E3000
+  - E3001
+  - E8000
+  - E4000
+  - E5002
+  example:
+    tool_id: user.hex_to_bin_crc
+    args:
+      hex: build/fw.hex
+- code: TOOL-06
+  id: tool.register
+  name: 'Đăng ký công cụ thành năng lực tạm (namespace user.*) trong Capability Registry '
+  desc: Đăng ký công cụ thành năng lực tạm (namespace user.*) trong Capability Registry với hợp đồng 13 trường suy ra từ ToolSpec; gọi được từ chuỗi/UI/MCP như mọi năng lực
+  input:
+    type: object
+    properties:
+      tool_id:
+        type: string
+    required:
+    - tool_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      capability_code:
+        type: string
+        description: USER-nn
+      capability_id:
+        type: string
+        description: user.<name>
+    required:
+    - capability_code
+    - capability_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - test đạt
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M1
+  impl: eide.tool:register
+  errors:
+  - E1000 chưa test
+  example:
+    tool_id: user.hex_to_bin_crc
+- code: TOOL-07
+  id: tool.repair
+  name: Sửa công cụ khi thất bại (ToolReport/lỗi runtime) ≤ 3 vòng; ghi sổ lỗi
+  desc: Sửa công cụ khi thất bại (ToolReport/lỗi runtime) ≤ 3 vòng; ghi sổ lỗi
+  input:
+    type: object
+    properties:
+      tool_id:
+        type: string
+      report_id:
+        type: string
+      round:
+        type: integer
+    required:
+    - tool_id
+    - report_id
+    - round
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      code_path:
+        type: string
+      give_up:
+        type: boolean
+    required:
+    - code_path
+    - give_up
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.tool:repair
+  errors:
+  - E5003
+  example:
+    tool_id: user.hex_to_bin_crc
+    report_id: tr_7
+    round: 1
+- code: TOOL-08
+  id: tool.promote
+  name: Thăng công cụ tạm thành năng lực chính thức (namespace chuẩn) sau khi dùng ≥ n l
+  desc: Thăng công cụ tạm thành năng lực chính thức (namespace chuẩn) sau khi dùng ≥ n lần thành công và benchmark; đóng gói vào registry (K5 thủ tục); Pack owner duyệt
+  input:
+    type: object
+    properties:
+      tool_id:
+        type: string
+      target_ns:
+        type: string
+    required:
+    - tool_id
+    - target_ns
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      proposal:
+        type: object
+        description: PR/pack, bench
+    required:
+    - proposal
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding:
+  - Dùng ≥ 3 lần, 0 lỗi
+  ask_when:
+  - Luôn
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.tool:promote
+  errors:
+  - E3000
+  example:
+    tool_id: user.hex_to_bin_crc
+    target_ns: code
+- code: TOOL-09
+  id: tool.compose
+  name: Ghép nhiều công cụ/năng lực thành công cụ mới (pipeline) không cần viết mã; khai
+  desc: Ghép nhiều công cụ/năng lực thành công cụ mới (pipeline) không cần viết mã; khai báo hiệu ứng = hợp hiệu ứng thành phần
+  input:
+    type: object
+    properties:
+      tool_ids:
+        type: array
+        items:
+          type: string
+      wiring:
+        type: object
+        description: map output→input
+      name:
+        type: string
+    required:
+    - tool_ids
+    - wiring
+    - name
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      tool_id:
+        type: string
+    required:
+    - tool_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.tool:compose
+  errors:
+  - E1000 schema không khớp
+  example:
+    tool_ids:
+    - user.hex_to_bin_crc
+    - target.flash
+    wiring: {}
+    name: build_and_flash_bin
+- code: TOOL-10
+  id: tool.deprecate
+  name: Vô hiệu hóa công cụ lỗi/không dùng; giữ lịch sử; thay thế bằng năng lực chính th
+  desc: Vô hiệu hóa công cụ lỗi/không dùng; giữ lịch sử; thay thế bằng năng lực chính thức khi có
+  input:
+    type: object
+    properties:
+      tool_id:
+        type: string
+      reason:
+        type: string
+      replaced_by:
+        type: string
+    required:
+    - tool_id
+    - reason
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      ok:
+        type: boolean
+    required:
+    - ok
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.tool:deprecate
+  errors: []
+  example:
+    tool_id: user.old_tool
+    reason: thay bằng code.size

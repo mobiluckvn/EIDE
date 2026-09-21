@@ -1,0 +1,121 @@
+- code: BENCH-01
+  id: bench.run
+  name: Chạy bộ tác vụ CF/BF/BC theo mô hình/skill
+  desc: Chạy bộ tác vụ CF/BF/BC theo mô hình/skill
+  input:
+    type: object
+    properties:
+      isa:
+        type: string
+      models:
+        type: array
+        items:
+          type: string
+      level:
+        type: array
+        items:
+          type: integer
+      tasks:
+        type: array
+        items:
+          type: string
+    required:
+    - isa
+    - models
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: per task/model CF/BF/BC, tokens, rounds
+    required:
+    - report
+    additionalProperties: false
+  risk: R3
+  tier: T1
+  grounding:
+  - Board lab
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.bench:run
+  errors:
+  - E4002
+  example:
+    isa: armv7e-m
+    models:
+    - claude-sonnet
+    - gemini-pro
+- code: BENCH-02
+  id: bench.badge
+  name: Gắn huy hiệu verified/bench cho gói
+  desc: Gắn huy hiệu verified/bench cho gói
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+      result:
+        type: object
+    required:
+    - id
+    - result
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      badges:
+        type: array
+        items:
+          type: object
+    required:
+    - badges
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.bench:badge
+  errors: []
+  example:
+    id: skills/armv7e-m/i2c
+    result: {}
+- code: BENCH-03
+  id: bench.suggest_skill_fix
+  name: Từ ca lỗi đề xuất sửa skill (chờ Pack owner)
+  desc: Từ ca lỗi đề xuất sửa skill (chờ Pack owner)
+  input:
+    type: object
+    properties:
+      failures:
+        type: array
+        items:
+          type: object
+    required:
+    - failures
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      proposal:
+        type: object
+    required:
+    - proposal
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.bench:suggest_skill_fix
+  errors: []
+  example:
+    failures: []

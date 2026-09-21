@@ -265,47 +265,40 @@ public final class EideManCongCu: EideManCoSo {
     public static let NGUONG_THANG = 3
 
     public override func napDuLieu(_ goi: @escaping EideGoi) async throws {
-        guard let r = try? await doc(goi, "view.timeline", ["limit": 500]),
-              let ds = r["events"] as? [[String: Any]] else {
-            return rong(vi: "không đọc được sổ cái",
+        // v1.3 — đọc DANH MỤC qua `view.artifacts kind=tool` (VIEW-14), không dựng lại từ sổ
+        // cái. [DEV-136]
+        //
+        // Bản cũ lọc `tool.report` trong 500 bản ghi gần nhất của `view.timeline`, và nó sai
+        // theo hai chiều cùng lúc: một công cụ chạy nhiều từ lâu bị TRÔI ra khỏi cửa sổ 500 nên
+        // biến mất khỏi danh mục, còn một dự án chạy dày thì 500 bản ghi không đủ tới công cụ
+        // thứ hai. Phép gộp nay ở SQL, và `total` là SỐ CÔNG CỤ chứ không phải số lượt chạy.
+        guard let r = try await nangLucNeuCo(goi, "view.artifacts", ["kind": "tool"]),
+              let ds = r["items"] as? [[String: Any]] else {
+            return rong(vi: "không đọc được danh mục công cụ từ store",
                         buocKe: "kiểm daemon còn sống rồi mở lại màn")
         }
-        let luot = ds.filter { ($0["kind"] as? String) == "tool.report" }
-        guard !luot.isEmpty else {
+        // `sim.run` cũng ghi `tool.report` (xem `sim.py`), nên không lọc thì nó hiện ra ở đây
+        // như một công cụ tác tử tự viết. Năng lực DỰNG SẴN mang id có dấu chấm (`ns.name`);
+        // công cụ tự tạo mang tên trần do `tool.write` đặt.
+        let cc = ds.filter { !(($0["tool"] as? String) ?? "").contains(".") }
+        guard !cc.isEmpty else {
             return rong(vi: "chưa công cụ nào của tác tử được chạy trong dự án này",
                         buocKe: "khi một chuỗi thiếu năng lực phù hợp, `tool.need` → "
                               + "`tool.write` → `tool.test` tự viết một công cụ; lượt chạy của "
                               + "nó hiện ở đây")
         }
 
-        var dat: [String: Int] = [:]
-        var hong: [String: Int] = [:]
-        var lan: [String: String] = [:]
-        for e in luot {
-            let d = (e["data"] as? [String: Any]) ?? [:]
-            let t = (d["tool"] as? String) ?? "?"
-            // `sim.run` cũng ghi `tool.report` (xem `sim.py`), nên không lọc thì nó hiện ra ở
-            // đây như một công cụ tác tử tự viết. Năng lực DỰNG SẴN mang id có dấu chấm
-            // (`ns.name`); công cụ tự tạo mang tên trần do `tool.write` đặt.
-            if t.contains(".") { continue }
-            if (d["passed"] as? Bool) == true || EideManHoChieu.nguyen(d["passed"]) == 1 {
-                dat[t, default: 0] += 1
-            } else {
-                hong[t, default: 0] += 1
-            }
-            lan[t] = (e["at"] as? String) ?? lan[t]
-        }
-
-        tieuDePhu("\(dat.count + Set(hong.keys).subtracting(dat.keys).count) CÔNG CỤ TỰ TẠO "
-                  + "— theo sổ cái, không phải danh mục công cụ (DEV-136). "
-                  + "Thăng cấp cần: dùng ≥ \(Self.NGUONG_THANG) lần, 0 lỗi (TOOL-08)")
-        let ten = Set(dat.keys).union(hong.keys).sorted()
+        tieuDePhu("\(cc.count) CÔNG CỤ TỰ TẠO — gộp từ `tool_report` qua `view.artifacts` "
+                  + "(VIEW-14). Thăng cấp cần: dùng ≥ \(Self.NGUONG_THANG) lần, 0 lỗi (TOOL-08)")
         bang(cot: [("CÔNG CỤ", 190), ("ĐẠT", 68), ("HỎNG", 68), ("THĂNG CẤP", 170),
                    ("LẦN CHẠY CUỐI", 0)],
-             dong: ten.map { t in
-                 [t, "\(dat[t] ?? 0)", "\(hong[t] ?? 0)",
-                  Self.oThangCap(dat: dat[t] ?? 0, hong: hong[t] ?? 0),
-                  EideManNhatKy.gio(lan[t])]
+             dong: cc.map { x in
+                 let ten = (x["tool"] as? String) ?? "?"
+                 let dat = EideManHoChieu.nguyen(x["dat"]) ?? 0
+                 let tong = EideManHoChieu.nguyen(x["tong"]) ?? 0
+                 return [ten, "\(dat)", "\(tong - dat)",
+                         Self.oThangCap(dat: dat, hong: tong - dat),
+                         EideManNhatKy.gio(x["at"] as? String)]
              })
     }
 

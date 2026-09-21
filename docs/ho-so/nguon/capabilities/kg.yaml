@@ -1,0 +1,371 @@
+- code: KG-01
+  id: kg.build
+  name: Dựng/tải đồ thị từ store (cache có hash)
+  desc: Dựng/tải đồ thị từ store (cache có hash)
+  input:
+    type: object
+    properties:
+      part:
+        type: string
+      force:
+        type: boolean
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      nodes:
+        type: integer
+      edges:
+        type: integer
+      cached:
+        type: boolean
+    required:
+    - nodes
+    - edges
+    - cached
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.kg:build
+  errors: []
+  example: {}
+- code: KG-02
+  id: kg.conflicts
+  name: Fact mâu thuẫn + tài nguyên bị dùng bởi >1 module
+  desc: Fact mâu thuẫn + tài nguyên bị dùng bởi >1 module
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      conflicts:
+        type: array
+        items:
+          type: object
+        description: type fact|resource, nodes[], detail
+      resource_ready:
+        type: boolean
+        description: đã kiểm được xung đột TÀI NGUYÊN chưa (cần hw_map, mốc M2). false nghĩa là chưa kiểm, KHÁC với đã kiểm và sạch
+    required:
+    - conflicts
+    - resource_ready
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.kg:conflicts
+  errors: []
+  example: {}
+- code: KG-03
+  id: kg.impact
+  name: Fact đổi → CodeUnit stale, Feature cần tái kiểm
+  desc: Fact đổi → CodeUnit stale, Feature cần tái kiểm
+  input:
+    type: object
+    properties:
+      fact_id:
+        type: string
+    required:
+    - fact_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      stale_code_units:
+        type: array
+        items:
+          type: string
+      features:
+        type: array
+        items:
+          type: string
+      docs:
+        type: array
+        items:
+          type: string
+      diagrams:
+        type: array
+        items:
+          type: string
+    required:
+    - stale_code_units
+    - features
+    - docs
+    - diagrams
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.kg:impact
+  errors:
+  - E2000
+  example:
+    fact_id: f_1a2b
+- code: KG-04
+  id: kg.neighborhood
+  name: Lân cận ≤ 2 bước cho ngữ cảnh/hiển thị
+  desc: Lân cận ≤ 2 bước cho ngữ cảnh/hiển thị
+  input:
+    type: object
+    properties:
+      node:
+        type: string
+      depth:
+        type: integer
+    required:
+    - node
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      subgraph:
+        type: object
+    required:
+    - subgraph
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.kg:neighborhood
+  errors: []
+  example:
+    node: chip:st.stm32f411ce/periph:I2C1
+    depth: 2
+- code: KG-05
+  id: kg.review_facts
+  name: Duyệt fact theo nhóm (tự theo chính sách hoặc người)
+  desc: Duyệt fact theo nhóm (tự theo chính sách hoặc người)
+  input:
+    type: object
+    properties:
+      group:
+        type: string
+        description: batch_id|subject prefix|status
+      decision:
+        type: string
+        enum:
+        - accept
+        - reject
+        - policy
+      actor:
+        type: string
+    required:
+    - group
+    - actor
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      reviewed:
+        type: integer
+      asked:
+        type: integer
+      rejected:
+        type: integer
+        description: nhánh REJECT của G-FACT (ví dụ tầng đồng)
+    required:
+    - reviewed
+    - asked
+    - rejected
+    additionalProperties: false
+  risk: R1
+  tier: T1*
+  grounding: []
+  ask_when:
+  - confidence thấp; mâu thuẫn
+  undo:
+    kind: supersede_facts
+  milestone: M1
+  impl: eide.kg:review_facts
+  errors:
+  - E3000
+  example:
+    group: batch:b_12
+    decision: policy
+    actor: policy
+- code: KG-06
+  id: kg.resolve_conflict
+  name: Chọn fact hiện hành / cả hai theo điều kiện
+  desc: Chọn fact hiện hành / cả hai theo điều kiện
+  input:
+    type: object
+    properties:
+      conflict_id:
+        type: string
+      choice:
+        type: string
+        enum:
+        - a
+        - b
+        - both_conditional
+      condition:
+        type: string
+      actor:
+        type: string
+    required:
+    - conflict_id
+    - choice
+    - actor
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      current:
+        type: string
+    required:
+    - current
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: supersede_facts
+  milestone: M1
+  impl: eide.kg:resolve_conflict
+  errors:
+  - E3000 nếu actor=policy
+  example:
+    conflict_id: c_3
+    choice: a
+    actor: cong
+- code: KG-07
+  id: kg.supersede
+  name: Fact mới thay fact cũ có lý do
+  desc: Fact mới thay fact cũ có lý do
+  input:
+    type: object
+    properties:
+      old:
+        type: string
+      new:
+        type: object
+      reason:
+        type: string
+      actor:
+        type: string
+    required:
+    - old
+    - new
+    - reason
+    - actor
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      new_id:
+        type: string
+    required:
+    - new_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M0
+  impl: eide.kg:supersede
+  errors:
+  - E2000
+  example:
+    old: f_1a2b
+    new: {}
+    reason: SVD 1.2
+    actor: agent
+- code: KG-08
+  id: kg.request
+  name: Tạo yêu cầu nhận tri thức
+  desc: Tạo yêu cầu nhận tri thức
+  input:
+    type: object
+    properties:
+      need:
+        type: string
+      subject:
+        type: string
+      part:
+        type: string
+      peripheral:
+        type: string
+    required:
+    - need
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      request_id:
+        type: string
+    required:
+    - request_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.kg:request
+  errors: []
+  example:
+    need: timing I2C fast mode
+    subject: part:bosch.bme280
+- code: KG-09
+  id: kg.evidence
+  name: Bằng chứng gắn với feature/fact (log hash, số đo, badge)
+  desc: Bằng chứng gắn với feature/fact (log hash, số đo, badge)
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+        description: feature|fact
+    required:
+    - id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      evidence:
+        type: array
+        items:
+          type: object
+    required:
+    - evidence
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.kg:evidence
+  errors: []
+  example:
+    id: F-03

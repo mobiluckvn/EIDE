@@ -142,24 +142,29 @@ final class EideManHeThongTests: XCTestCase {
 
     /// Đếm theo lượt ĐẠT, không theo tổng lượt chạy: một công cụ chạy 10 lần hỏng 7 thì con số
     /// "10" nói sai hoàn toàn về nó.
+    ///
+    /// v1.3 — nguồn đổi từ `view.timeline` sang `view.artifacts kind=tool` ([DEV-136]). Bản cũ
+    /// lọc `tool.report` trong 500 bản ghi gần nhất, và nó sai theo HAI chiều: công cụ chạy
+    /// nhiều từ lâu trôi ra khỏi cửa sổ nên biến mất khỏi danh mục, còn dự án chạy dày thì 500
+    /// bản ghi không đủ tới công cụ thứ hai. Phép gộp nay ở SQL.
     func testDemTheoLuotDATkhongTheoTongLuotChay() async {
         let m = EideManCongCu()
-        await m.nap { ten, _ in
-            guard ten == "view.timeline" else { return ["status": "done", "result": [String: Any]()] }
-            return ["status": "done", "result": ["events": [
-                ["kind": "tool.report", "at": "2026-09-21T08:00:00+00:00",
-                 "data": ["tool": "crc16", "passed": true]],
-                ["kind": "tool.report", "at": "2026-09-21T08:01:00+00:00",
-                 "data": ["tool": "crc16", "passed": false]],
-                ["kind": "cap.run.start", "at": "2026-09-21T08:02:00+00:00", "data": [:]],
-            ]]]
+        await m.nap { ten, tham in
+            guard ten == "caps.invoke",
+                  (tham["id"] as? String) == "view.artifacts" else {
+                return ["status": "done", "result": [String: Any]()]
+            }
+            return ["status": "done", "result": ["items": [
+                ["tool": "crc16", "dat": 1, "tong": 2, "at": "2026-09-21T08:01:00+00:00"],
+                ["tool": "sim.run", "dat": 5, "tong": 5, "at": "2026-09-21T08:02:00+00:00"],
+            ], "total": 2, "kind": "tool"]]
         }
         let van = Self.chu(m)
         XCTAssertTrue(van.contains("crc16"), van)
         XCTAssertTrue(van.contains("1 lượt hỏng"), "báo đủ điều kiện dù có lượt hỏng — \(van)")
         XCTAssertTrue(van.contains("0 lỗi (TOOL-08)"), "câu trích luật mất khỏi tiêu đề — \(van)")
-        XCTAssertTrue(van.contains("không phải danh mục công cụ"),
-                      "không nói rõ đây là lịch sử chạy (DEV-136) — \(van)")
+        XCTAssertFalse(van.contains("sim.run"),
+                       "năng lực dựng sẵn lọt vào bảng công cụ TỰ TẠO — \(van)")
     }
 
     // MARK: - S24 Registry

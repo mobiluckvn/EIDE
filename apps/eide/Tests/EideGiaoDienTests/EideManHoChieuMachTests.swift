@@ -86,14 +86,46 @@ final class EideManHoChieuMachTests: XCTestCase {
         XCTAssertTrue(m.nutLabSongKhong)
     }
 
-    /// Trạng thái lab hiện tại CHƯA đọc lại được ([DEV-135]) — màn phải nói thẳng, vì một ô
-    /// "lab: chưa" trông y hệt một ô chưa đọc được.
-    func testNoiThangRangChuaDocLaiDuocTrangThaiLab() async {
+    /// **Ba trạng thái lab, không hai** — v1.3, [DEV-135].
+    ///
+    /// Tới 21/09 màn phải nói "CHƯA đọc lại được" vì không năng lực nào đọc ra `boards.<id>`.
+    /// Nay `policy.rules` trả `boards`, và `nil` vẫn là một câu trả lời riêng: board CHƯA được
+    /// khai, khác hẳn "khai là không".
+    func testBaTrangThaiLabKhongGopLamHai() {
+        let chua = EideManHoChieuMach.cauTrangThai(nil, board: "nucleo-f411")
+        XCTAssertTrue(chua.contains("CHƯA được khai"), chua)
+
+        let day = EideManHoChieuMach.cauTrangThai(
+            ["lab": true, "has_actuator": false, "reason": "bàn thí nghiệm"],
+            board: "nucleo-f411")
+        XCTAssertTrue(day.contains("mạch lab **có**"), day)
+        XCTAssertTrue(day.contains("chấp hành **không**"), day)
+        XCTAssertTrue(day.contains("bàn thí nghiệm"), day)
+
+        // Thiếu MỘT trường không được đoán thành `false`: BOARD-05 đòi cả hai lời khai vì
+        // "không có cơ cấu chấp hành nhưng chưa hạn dòng" vẫn cháy được.
+        let thieu = EideManHoChieuMach.cauTrangThai(["lab": true], board: "b1")
+        XCTAssertTrue(thieu.contains("chấp hành **CHƯA khai**"), thieu)
+    }
+
+    /// Màn đọc trạng thái ấy THẬT, không chỉ có hàm dựng câu.
+    func testManDocTrangThaiLabQuaPolicyRules() async {
         let m = EideManHoChieuMach()
-        await m.nap(Self.loiCoMach())
+        let nen = Self.loiCoMach()
+        await m.nap { ten, tham in
+            if ten == "policy.rules" || (tham["id"] as? String) == "policy.rules" {
+                return ["status": "done",
+                        // `uno-v3` — ĐÚNG board mà `loiCoMach()` ghim. Một khoá khác
+                        // sẽ cho `nil`, và bài kiểm khi ấy xanh vì nhánh "chưa khai" chứ không
+                        // vì màn đọc được gì.
+                        "result": ["boards": ["uno-v3": ["lab": true,
+                                                         "has_actuator": true]]]]
+            }
+            return try await nen(ten, tham)
+        }
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("CHƯA đọc lại được"), van)
-        XCTAssertTrue(van.contains("DEV-135"), van)
+        XCTAssertTrue(van.contains("Trạng thái hiện tại"), van)
+        XCTAssertFalse(van.contains("CHƯA đọc lại được"), van)
     }
 
     /// `touches_code` là thứ quyết định phương án rẻ hay đắt: đổi chân trên mạch là việc của mỏ

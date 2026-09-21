@@ -1,0 +1,230 @@
+- code: DEBUG-01
+  id: debug.log_stats
+  name: 'Thống kê log lớn (GEditor): mẫu lặp, khoảng thời gian, mức'
+  desc: 'Thống kê log lớn (GEditor): mẫu lặp, khoảng thời gian, mức'
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      range:
+        type: object
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      stats:
+        type: object
+        description: top_patterns[], time_span, gaps[], levels{}
+    required:
+    - stats
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.debug:log_stats
+  errors:
+  - E4004
+  example:
+    file: serial-2026-09-05.log
+- code: DEBUG-02
+  id: debug.ask_at
+  name: 'Hỏi tại dòng: ngữ cảnh = vùng log + stats + hộ chiếu + mã liên quan'
+  desc: 'Hỏi tại dòng: ngữ cảnh = vùng log + stats + hộ chiếu + mã liên quan'
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      range:
+        type: object
+      question:
+        type: string
+    required:
+    - file
+    - range
+    - question
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagnosis:
+        type: object
+      session_id:
+        type: string
+    required:
+    - diagnosis
+    - session_id
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.debug:ask_at
+  errors:
+  - E5002
+  example:
+    file: log
+    range:
+      start: 10000
+      end: 10200
+    question: vì sao treo?
+- code: DEBUG-03
+  id: debug.hypothesize
+  name: Giả thuyết xếp hạng + thí nghiệm phân biệt
+  desc: Giả thuyết xếp hạng + thí nghiệm phân biệt
+  input:
+    type: object
+    properties:
+      evidence_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - evidence_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagnosis:
+        type: object
+    required:
+    - diagnosis
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.debug:hypothesize
+  errors:
+  - E5002
+  example:
+    evidence_ids:
+    - ev_1
+- code: DEBUG-04
+  id: debug.experiment
+  name: Chạy thí nghiệm (probe/test firmware) theo chính sách
+  desc: Chạy thí nghiệm (probe/test firmware) theo chính sách
+  input:
+    type: object
+    properties:
+      experiment:
+        type: object
+        description: cap, args, expect
+      target:
+        type: string
+    required:
+    - experiment
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      evidence:
+        type: object
+    required:
+    - evidence
+    additionalProperties: false
+  risk: R3
+  tier: T1*
+  grounding:
+  - Board lab
+  ask_when:
+  - Không lab
+  undo:
+    kind: reflash_known_good
+  milestone: M3
+  impl: eide.debug:experiment
+  errors:
+  - E3000
+  - E4002
+  example:
+    experiment:
+      cap: target.probe_read
+      args:
+        op: read_registers
+    target: nucleo-f411
+- code: DEBUG-05
+  id: debug.save_session
+  name: Lưu DebugSession gắn fact/mã/log; ghi sổ lỗi
+  desc: Lưu DebugSession gắn fact/mã/log; ghi sổ lỗi
+  input:
+    type: object
+    properties:
+      diagnosis:
+        type: object
+      outcome:
+        type: string
+        enum:
+        - confirmed
+        - refuted
+        - open
+    required:
+    - diagnosis
+    - outcome
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      id:
+        type: string
+    required:
+    - id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.debug:save_session
+  errors: []
+  example:
+    diagnosis: {}
+    outcome: confirmed
+- code: DEBUG-06
+  id: debug.propose_fix
+  name: 'Đề xuất sửa: mã (→ STEP), ràng buộc (→ K6), phần cứng (→ người)'
+  desc: 'Đề xuất sửa: mã (→ STEP), ràng buộc (→ K6), phần cứng (→ người)'
+  input:
+    type: object
+    properties:
+      session_id:
+        type: string
+    required:
+    - session_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      proposal:
+        type: object
+        description: kind code|constraint|hardware, step_text, k6_change?
+    required:
+    - proposal
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Sửa phần cứng
+  undo:
+    kind: restore_config
+  milestone: M3
+  impl: eide.debug:propose_fix
+  errors: []
+  example:
+    session_id: ds_1

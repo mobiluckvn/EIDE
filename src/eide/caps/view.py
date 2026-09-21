@@ -1058,6 +1058,45 @@ def _qua_loc_su_kien(e: dict[str, Any], loc: dict[str, Any]) -> bool:
 # giữ nguyên mã Mermaid của một lược đồ, `doc_artifact.sections` giữ cả cây mục. Kéo chúng qua
 # ống RPC cho một DANH SÁCH là vài MB để vẽ mươi dòng — cùng lớp lỗi với `view.timeline` trước
 # khi có `limit` ([DEV-132]).
+def _hien_vat_tool(db: Path, params: dict[str, Any]) -> dict[str, Any]:
+    """`kind=tool` — DANH MỤC công cụ tác tử tự viết, gộp từ `tool_report` (DEV-136).
+
+    Khác tám loại kia ở chỗ không có bảng nào liệt kê công cụ: `tool_report` là LỊCH SỬ CHẠY,
+    một hàng cho mỗi lượt. Nên phải gộp theo `tool` — và phải gộp ở SQL chứ không ở Python, vì
+    một dự án chạy lâu có hàng nghìn lượt và kéo hết chúng qua ống RPC để đếm là đúng thứ mà
+    ghi chú "không trả cả hàng" của VIEW-14 cấm.
+
+    `tool.search` (TOOL-02) không thay được: nó là năng lực KHỚP chứ không phải LIỆT KÊ — gọi
+    nó với một `ToolSpec` bịa ra để lấy danh sách là dùng sai hợp đồng, và điểm tương tự trả về
+    sẽ vô nghĩa.
+
+    Trả `dat`/`tong` chứ không chỉ `passed` của lượt cuối: một công cụ đạt 9/10 và một công cụ
+    đạt 1/10 mà lượt cuối may mắn xanh là hai thứ rất khác nhau, và cột "ĐẠT" ở màn S23 tồn tại
+    để nói ra khác biệt ấy.
+    """
+    if not db.exists():
+        return {"items": [], "total": 0, "kind": "tool"}
+    loc = params.get("filter") or {}
+    for k in loc:
+        if k != "tool":
+            raise EideError("E1000", f"`filter.{k}` không lọc được cho `kind=tool`; chỉ có: tool")
+    dk, tham = ("", []) if "tool" not in loc else (" WHERE tool = ?", [loc["tool"]])
+    with store.open_store(db) as c:
+        if not c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+                         ("tool_report",)).fetchone():
+            return {"items": [], "total": 0, "kind": "tool"}
+        rows = c.execute(
+            "SELECT tool, SUM(passed), COUNT(*), MAX(at) FROM tool_report"  # noqa: S608
+            f"{dk} GROUP BY tool ORDER BY MAX(at) DESC, tool", tham).fetchall()
+    ds = [{"tool": t, "dat": int(d or 0), "tong": int(n or 0), "at": a} for t, d, n, a in rows]
+    tong = len(ds)
+    if (n := params.get("limit")) is not None:
+        if not isinstance(n, int) or n <= 0:
+            raise EideError("E1000", "limit phải là số nguyên dương")
+        ds = ds[:n]
+    return {"items": ds, "total": tong, "kind": "tool"}
+
+
 BANG_HIEN_VAT: dict[str, tuple[str, tuple[str, ...], str]] = {
     "requirement": ("requirement",
                     ("id", "kind", "text", "priority", "status", "feasibility", "updated_at"),
@@ -1075,6 +1114,10 @@ BANG_HIEN_VAT: dict[str, tuple[str, tuple[str, ...], str]] = {
              "updated_at"),
     "board": ("passport", ("id", "kind", "header", "badges", "pinned_by", "created_at"),
               "created_at"),
+    # `tool` KHÔNG phải một bảng liệt kê được như tám loại trên — xem `_hien_vat_tool`. Vẫn giữ
+    # một dòng ở đây để enum của hợp đồng và bảng này là MỘT nguồn: hai danh sách loại hiện vật
+    # là hai chỗ sẽ lệch, và có bài kiểm đối chiếu chúng.
+    "tool": ("tool_report", ("tool", "passed", "tong", "at"), "at"),
 }
 
 # Cột chứa JSON — bung ra để bên gọi khỏi phải tự giải mã hai lần.
@@ -1116,6 +1159,8 @@ def artifacts(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     bang, cot, sap = BANG_HIEN_VAT[loai]
 
     db = _db(ctx)
+    if loai == "tool":
+        return _hien_vat_tool(db, params)
     if not db.exists():
         # Dự án chưa có store là "chưa có hiện vật nào", không phải một sự cố — cùng lý do với
         # `archive.sources` (ARCHIVE-08): bắt bên gọi bắt lỗi để vẽ trạng thái rỗng thường gặp

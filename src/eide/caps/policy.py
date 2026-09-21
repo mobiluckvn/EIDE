@@ -339,4 +339,34 @@ def rules(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         "rules": sach,
         "signed": bool(getattr(gate, "danh_sach_da_ky", False)),
         "reason": str(getattr(gate, "ly_do_chua_ky", "") or ""),
+        # v1.3 — `boards` (DEV-135). Đọc từ CÙNG `gate.config` mà `G-OPS-01` dùng để quyết
+        # định, không mở lại `autonomy.yaml`: hai đường đọc là hai chỗ có thể lệch, và lệch ở
+        # đây nghĩa là màn S6 hiện một trạng thái lab khác trạng thái cổng đang thi hành.
+        "boards": _boards(gate),
     }
+
+
+def _boards(gate: Any) -> dict[str, Any]:
+    """`{<board_id>: {lab, has_actuator, reason}}` từ cấu hình đang có hiệu lực.
+
+    `board.mark_lab` ghi khoá này vào `autonomy.yaml`, và trước v1.3 **không năng lực nào trong
+    244 cái đọc ra được nó**: S6 có đường GHI đầy đủ (hai ô xác nhận → cổng → niêm ký lại) mà
+    không có đường ĐỌC, nên nó phải nói "trạng thái hiện tại chưa đọc lại được".
+
+    Chuẩn hoá về đúng ba trường, kể cả khi tệp ghi thiếu: một board khai `{lab: true}` mà thiếu
+    `has_actuator` không được hiện thành "không có cơ cấu chấp hành" — đó là hai câu khác nhau,
+    và câu thứ hai nới lỏng một cổng an toàn.
+    """
+    d = (getattr(gate, "config", None) or {}).get("boards") or {}
+    if not isinstance(d, dict):
+        return {}
+    ra: dict[str, Any] = {}
+    for ma, v in d.items():
+        if not isinstance(v, dict):
+            continue
+        ra[str(ma)] = {
+            "lab": v.get("lab"),
+            "has_actuator": v.get("has_actuator"),
+            "reason": str(v.get("reason") or ""),
+        }
+    return ra

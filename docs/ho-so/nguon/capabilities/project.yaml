@@ -1,0 +1,430 @@
+- code: PROJECT-01
+  id: project.create
+  name: Tạo dự án từ câu lệnh; suy ra tên/mô tả/đường dẫn/chip; áp mặc định
+  desc: Tạo dự án từ câu lệnh; suy ra tên/mô tả/đường dẫn/chip; áp mặc định
+  input:
+    type: object
+    properties:
+      text:
+        type: string
+        description: câu lệnh gốc
+      docs_path:
+        type: string
+      chip:
+        type: string
+      board:
+        type: string
+      autonomy:
+        type: string
+        enum:
+        - A0
+        - A1
+        - A2
+        - A3
+        - A4
+      name:
+        type: string
+      dir:
+        type: string
+    required:
+    - text
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      project_id:
+        type: string
+      path:
+        type: string
+      created:
+        type: boolean
+      existing:
+        type: array
+        items:
+          type: object
+        description: dự án trùng/gần giống nếu có
+      next:
+        type: array
+        items:
+          type: string
+        description: năng lực nên gọi tiếp
+    required:
+    - project_id
+    - path
+    - created
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding:
+  - Kiểm trùng tên/gần giống; mẫu tham chiếu
+  ask_when:
+  - Trùng tên đúng; ghi đè
+  undo:
+    kind: delete_created_files
+  milestone: M0
+  impl: eide.project:create
+  errors:
+  - E2001 ALREADY_EXISTS (trùng đúng tên)
+  - E1000 tên không hợp lệ
+  - E8000 thư mục ngoài workspace cho phép
+  example:
+    text: Tạo cho anh dự án robot hai bánh tự cân bằng
+    autonomy: A3
+- code: PROJECT-02
+  id: project.open
+  name: Mở dự án đã có; kiểm hash store; tái dựng đồ thị
+  desc: Mở dự án đã có; kiểm hash store; tái dựng đồ thị
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+        description: id hoặc đường dẫn
+    required:
+    - project
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      summary:
+        type: object
+        description: dự án, board, hộ chiếu, feature failing đầu, mục chờ, undo còn hạn
+      migrated:
+        type: boolean
+      stale_runs:
+        type: array
+        items:
+          type: string
+    required:
+    - summary
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Hash store hợp lệ
+  ask_when:
+  - Hash lệch (ghi ngoài cổng)
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.project:open
+  errors:
+  - E6003 MIGRATION_REQUIRED
+  - E6000 STORE_INTEGRITY
+  - E2000 không tìm thấy
+  example:
+    project: ~/eide/robot-2-banh
+- code: PROJECT-03
+  id: project.list
+  name: Liệt kê dự án trong workspace với ngày, board, tiến độ
+  desc: Liệt kê dự án trong workspace với ngày, board, tiến độ
+  input:
+    type: object
+    properties:
+      workspace:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      projects:
+        type: array
+        items:
+          type: object
+        description: id, path, created, last_open, board, passing/total, autonomy
+    required:
+    - projects
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.project:list
+  errors:
+  - E2000 workspace không tồn tại
+  example: {}
+- code: PROJECT-04
+  id: project.clone
+  name: Nhân bản dự án thành dự án mới (giữ tri thức, bỏ ledger)
+  desc: Nhân bản dự án thành dự án mới (giữ tri thức, bỏ ledger)
+  input:
+    type: object
+    properties:
+      src:
+        type: string
+      new_name:
+        type: string
+      keep:
+        type: array
+        items:
+          type: string
+          enum:
+          - knowledge
+          - code
+          - docs
+          - features
+        description: mặc định knowledge
+    required:
+    - src
+    - new_name
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      project_id:
+        type: string
+      path:
+        type: string
+    required:
+    - project_id
+    - path
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.project:clone
+  errors:
+  - E2001
+  - E2000 src không có
+  example:
+    src: robot-ctrl
+    new_name: robot-ctrl-v2
+    keep:
+    - knowledge
+    - code
+- code: PROJECT-05
+  id: project.archive
+  name: Lưu trữ/đóng dự án (không xóa)
+  desc: Lưu trữ/đóng dự án (không xóa)
+  input:
+    type: object
+    properties:
+      project:
+        type: string
+    required:
+    - project
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      archived_path:
+        type: string
+    required:
+    - archived_path
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding: []
+  ask_when:
+  - Xóa thật sự (R4)
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.project:archive
+  errors:
+  - E2000
+  example:
+    project: test-1
+- code: PROJECT-06
+  id: project.set_target
+  name: Đặt/suy ra ISA, chip, board; ghim phiên bản hộ chiếu
+  desc: Đặt/suy ra ISA, chip, board; ghim phiên bản hộ chiếu
+  input:
+    type: object
+    properties:
+      chip:
+        type: string
+      isa:
+        type: string
+      board:
+        type: string
+      pin_version:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      pins:
+        type: object
+        description: hộ chiếu đã ghim {chip@ver, board@ver, isa}
+      missing:
+        type: array
+        items:
+          type: string
+    required:
+    - pins
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding:
+  - Hộ chiếu có trong store/registry
+  ask_when:
+  - Tài liệu nêu >1 chip
+  undo:
+    kind: restore_config
+  milestone: M0
+  impl: eide.project:set_target
+  errors:
+  - E2000 chip không rõ và không tìm được
+  example:
+    chip: STM32F411CE
+- code: PROJECT-07
+  id: project.rollback
+  name: Về known-good gần nhất hoặc tag chỉ định
+  desc: Về known-good gần nhất hoặc tag chỉ định
+  input:
+    type: object
+    properties:
+      tag:
+        type: string
+        description: mặc định known-good gần nhất
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      state:
+        type: object
+        description: commit, features
+    required:
+    - state
+    additionalProperties: false
+  risk: R2
+  tier: T1
+  grounding:
+  - Có tag
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.project:rollback
+  errors:
+  - E7001 xung đột working tree
+  - E2000 không có tag
+  example: {}
+- code: PROJECT-08
+  id: project.status
+  name: Tổng hợp tiến độ, feature, gate mở, chi phí
+  desc: Tổng hợp tiến độ, feature, gate mở, chi phí
+  input:
+    type: object
+    properties: {}
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      report:
+        type: object
+        description: features, gates_open, undo_items, cost_today, autonomy, target
+    required:
+    - report
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.project:status
+  errors: []
+  example: {}
+- code: PROJECT-09
+  id: project.preferences
+  name: Ghi/đọc tùy chọn đã học từ câu trả lời của kỹ sư
+  desc: Ghi/đọc tùy chọn đã học từ câu trả lời của kỹ sư
+  input:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        description: giá trị JSON bất kỳ (số, chuỗi, mảng, đối tượng)
+      scope:
+        type: string
+        enum:
+        - user
+        - project
+      op:
+        type: string
+        enum:
+        - get
+        - set
+        - delete
+        - list
+      learned_from:
+        type: string
+        description: id decision/turn (D8)
+      ttl_days:
+        type: integer
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      prefs:
+        type: object
+    required:
+    - prefs
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M1
+  impl: eide.project:preferences
+  errors:
+  - E1000
+  example:
+    op: set
+    key: probe
+    value: stlink
+    scope: user
+    learned_from: UC-A03
+- code: PROJECT-10
+  id: project.watch
+  name: Theo dõi tệp đổi NGOÀI EIDE; phát human.file_external kèm diff tóm tắt
+  desc: Theo dõi tệp đổi NGOÀI EIDE; phát human.file_external kèm diff tóm tắt
+  input:
+    type: object
+    properties:
+      enable:
+        type: boolean
+        description: bật/tắt; thiếu = bật
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      watching:
+        type: boolean
+      path:
+        type: string
+    required:
+    - watching
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.project:watch
+  errors:
+  - E2000
+  example:
+    enable: true

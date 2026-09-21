@@ -1,0 +1,132 @@
+- code: MEASURE-01
+  id: measure.capture_signal
+  name: 'sigrok: bắt và decode I2C/SPI/UART'
+  desc: 'sigrok: bắt và decode I2C/SPI/UART'
+  input:
+    type: object
+    properties:
+      channels:
+        type: array
+        items:
+          type: string
+      duration_s:
+        type: number
+      decoder:
+        type: string
+        enum:
+        - i2c
+        - spi
+        - uart
+        - none
+    required:
+    - channels
+    - duration_s
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      dataset_id:
+        type: string
+      decoded:
+        type: array
+        items:
+          type: object
+    required:
+    - dataset_id
+    - decoded
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - LA nối
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M5
+  impl: eide.measure:capture_signal
+  errors:
+  - E4001
+  - E4002
+  example:
+    channels:
+    - D0
+    - D1
+    duration_s: 2
+    decoder: i2c
+- code: MEASURE-02
+  id: measure.power
+  name: 'INA2xx/PPK2: dòng/năng lượng theo mốc GPIO'
+  desc: 'INA2xx/PPK2: dòng/năng lượng theo mốc GPIO'
+  input:
+    type: object
+    properties:
+      duration_s:
+        type: number
+      markers:
+        type: array
+        items:
+          type: string
+    required:
+    - duration_s
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      dataset_id:
+        type: string
+      avg_ma:
+        type: number
+      energy_mj:
+        type: number
+    required:
+    - dataset_id
+    - avg_ma
+    - energy_mj
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M5
+  impl: eide.measure:power
+  errors:
+  - E4002
+  example:
+    duration_s: 10
+- code: MEASURE-03
+  id: measure.sync
+  name: Đồng bộ thời gian log ↔ waveform ↔ số đo
+  desc: Đồng bộ thời gian log ↔ waveform ↔ số đo
+  input:
+    type: object
+    properties:
+      sets:
+        type: array
+        items:
+          type: string
+    required:
+    - sets
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      aligned:
+        type: object
+    required:
+    - aligned
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M5
+  impl: eide.measure:sync
+  errors: []
+  example:
+    sets:
+    - ds_1
+    - log_1

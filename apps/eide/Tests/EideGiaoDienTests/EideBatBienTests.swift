@@ -230,6 +230,23 @@ final class EideBatBienTests: XCTestCase {
         XCTAssertFalse(EideToken.fontUI.fontName.isEmpty)
     }
 
+    /// **Ba con số bố cục đọc THẲNG từ token, không chép tay.** [DEV-137]
+    ///
+    /// Bài này không kiểm "46 có bằng 46 không" — nó kiểm rằng `EideKhung` và `EideToken` là
+    /// MỘT nguồn. Từ 18/09 tới 21/09 chúng là hai: mã dùng 46/198 (đúng), token nói 52/212, và
+    /// không test nào đỏ vì không ai đọc token. Một hằng chết không sai cho tới lúc có người
+    /// dùng nó.
+    func testBaConSoBoCucDocTuTokenChuKhongChepTay() {
+        XCTAssertEqual(EideKhung.CAO_THANH_TREN, EideToken.topbarHeight)
+        XCTAssertEqual(EideKhung.RONG_COT_TRAI, EideToken.sidebarWidth)
+        XCTAssertEqual(EideKhung.RONG_COT_PHAI, EideToken.railWidth)
+        // Và token phải khớp bản demo v2.0 — nếu `uxd.js` đổi sang một bộ số khác thì đây là
+        // chỗ nói ra, chứ không phải một màn hình lệch mà không ai đo.
+        XCTAssertEqual(EideToken.topbarHeight, 46)
+        XCTAssertEqual(EideToken.sidebarWidth, 198)
+        XCTAssertEqual(EideToken.railWidth, 236)
+    }
+
     /// §1.3 — bo góc và lưới 4 pt. Bộ bán kính của UXD-13 là `[6, 8, 10]`; §1.3 nói "thẻ Run
     /// 9 pt", một con số **không có trong bộ ấy**. Cùng lý do trên: token thắng. [DEV-142]
     func testBoGocVaLuoiLayTuToken() {

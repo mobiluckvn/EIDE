@@ -28,10 +28,17 @@ import EideLoi
 /// hơn, và nó nói ra hình dạng của chính nó.
 public final class EideKhung: NSView {
 
-    // Kích thước LẤY TỪ bản demo, không đặt lại. Bốn con số này là hợp đồng với bản thiết kế.
-    public static let CAO_THANH_TREN: CGFloat = 46
-    public static let RONG_COT_TRAI: CGFloat = 198
-    public static let RONG_COT_PHAI: CGFloat = 236
+    // Kích thước đọc THẲNG từ token sinh ra từ `uxd.js`, không chép tay.
+    //
+    // Từ 18/09 tới 21/09 đây là ba hằng riêng — và chúng ĐÚNG, trong khi token nói 52/212. Vì
+    // mã không đọc token, hai con số ấy là HẰNG CHẾT: không test nào đỏ, và người viết màn mới
+    // dùng `EideToken.topbarHeight` nhận một bố cục lệch 6 pt so với khung. [DEV-137]
+    //
+    // Nay một nguồn: sửa `uxd.js` → sinh lại → cả tài liệu lẫn mã cùng đổi, và `make check-gen`
+    // đỏ nếu ai đó sửa một bên.
+    public static let CAO_THANH_TREN: CGFloat = EideToken.topbarHeight
+    public static let RONG_COT_TRAI: CGFloat = EideToken.sidebarWidth
+    public static let RONG_COT_PHAI: CGFloat = EideToken.railWidth
 
     /// Cỡ cửa sổ tối thiểu — §2.2.
     public static let CO_TOI_THIEU = NSSize(width: 1100, height: 700)

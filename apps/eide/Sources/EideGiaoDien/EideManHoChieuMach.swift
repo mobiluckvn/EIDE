@@ -91,7 +91,12 @@ public final class EideManHoChieuMach: EideManCoSo {
         }
 
         await _khoiRangBuoc(goi)
-        them(_khoiLab())
+        // v1.3 — đọc trạng thái lab ĐANG CÓ HIỆU LỰC. `policy.rules.boards` (DEV-135)
+        // đọc từ CÙNG cấu hình `G-OPS-01` dùng để quyết định, nên ô này và cổng không
+        // thể nói hai chuyện khác nhau về một board.
+        let lab = ((try? await nangLuc(goi, "policy.rules"))?["boards"]
+                   as? [String: Any])?[board] as? [String: Any]
+        them(_khoiLab(lab))
         them(cocBao)
     }
 
@@ -247,18 +252,21 @@ public final class EideManHoChieuMach: EideManCoSo {
 
     /// Khối khai báo mạch lab.
     ///
-    /// **Không đọc lại được trạng thái hiện tại.** `board.mark_lab` ghi `boards.<id>.lab` vào
-    /// `autonomy.yaml`, nhưng không năng lực nào trong 243 cái đọc ra khóa ấy: `policy.rules`
-    /// trả `{rules, signed, reason}`, `project.status` trả `report.autonomy` là MỨC tự chủ chứ
-    /// không phải bảng board. Xem [DEV-135]. Màn nói thẳng điều đó thay vì hiện một trạng thái
-    /// nó không biết — một ô "lab: chưa" trông y hệt một ô chưa đọc được.
-    private func _khoiLab() -> NSView {
+    /// **Trạng thái hiện tại đọc từ `policy.rules.boards`** — v1.3, [DEV-135].
+    ///
+    /// Tới 21/09 khối này phải nói "chưa đọc lại được": `board.mark_lab` ghi `boards.<id>` vào
+    /// `autonomy.yaml` mà không năng lực nào trong 244 cái đọc ra khoá ấy. Màn nói thẳng điều
+    /// đó thay vì hiện một trạng thái nó không biết — một ô "lab: chưa" trông y hệt một ô chưa
+    /// đọc được.
+    ///
+    /// Nay `POLICY-08` trả thêm `boards`, đọc từ CÙNG cấu hình mà `G-OPS-01` dùng để quyết
+    /// định. `nil` vẫn là một câu trả lời: board này CHƯA được khai, khác hẳn "khai là không".
+    private func _khoiLab(_ lab: [String: Any]?) -> NSView {
         tieuDePhu("MẠCH LAB — mở cổng cho tác tử TỰ NẠP firmware")
         let giai = NSTextField(wrappingLabelWithString:
             "BOARD-05 đòi CẢ HAI lời khai, vì \"không có cơ cấu chấp hành nhưng chưa hạn dòng\" "
             + "vẫn cháy được. Lời khai ghi tên anh vào `autonomy.yaml` và ký lại niêm. "
-            + "Trạng thái hiện tại CHƯA đọc lại được — không năng lực nào đọc `boards.<id>` "
-            + "(DEV-135).")
+            + Self.cauTrangThai(lab, board: board))
         giai.font = EideToken.fontUI
         giai.textColor = EideToken.Mau.muted
         them(giai)
@@ -281,6 +289,30 @@ public final class EideManHoChieuMach: EideManCoSo {
 
     /// Nút chỉ sống khi CẢ HAI ô được tích — hợp đồng trả E1000 khi thiếu một, và một nút bấm
     /// được rồi mới báo lỗi là một nút dạy người dùng bỏ qua thông báo.
+    /// Câu trạng thái lab của một board. **Ba trạng thái, không hai.**
+    ///
+    /// `nil` = chưa khai bao giờ; khai rồi thì `lab` và `has_actuator` mỗi cái vẫn có thể thiếu
+    /// — và thiếu KHÔNG được đọc thành `false`. BOARD-05 đòi cả hai lời khai vì "không có cơ
+    /// cấu chấp hành nhưng chưa hạn dòng" vẫn cháy được; một trường thiếu bị đoán thành "an
+    /// toàn" là bỏ mất đúng nửa nguy hiểm của phép đòi ấy.
+    public static func cauTrangThai(_ lab: [String: Any]?, board: String) -> String {
+        guard let lab else {
+            return "Board `\(board)` CHƯA được khai là mạch lab — cổng `G-OPS-01` đang hỏi "
+                 + "người trước mỗi lần nạp."
+        }
+        func ba(_ k: String) -> String {
+            if let n = lab[k] as? NSNumber, CFGetTypeID(n) == CFBooleanGetTypeID() {
+                return n.boolValue ? "có" : "không"
+            }
+            if let b = lab[k] as? Bool { return b ? "có" : "không" }
+            return "CHƯA khai"
+        }
+        let vi = (lab["reason"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+        return "Trạng thái hiện tại của `\(board)`: mạch lab **\(ba("lab"))** · không cơ cấu "
+             + "chấp hành **\(ba("has_actuator"))**"
+             + (vi.map { " — \($0)" } ?? "") + "."
+    }
+
     @objc private func _doiTich() {
         nutLab.isEnabled = oKhongCoCoCau.state == .on && oHanDong.state == .on
     }

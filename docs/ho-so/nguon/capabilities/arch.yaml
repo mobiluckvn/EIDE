@@ -1,0 +1,440 @@
+- code: ARCH-01
+  id: arch.style_select
+  name: 'Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL) theo '
+  desc: Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL) theo yêu cầu và tài nguyên chip
+  input:
+    type: object
+    properties:
+      reqset_ids:
+        type: array
+        items:
+          type: string
+      passport:
+        type: string
+    required:
+    - reqset_ids
+    - passport
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      decision:
+        type: object
+        description: style, reasons[], facts[], alternatives[]
+    required:
+    - decision
+    additionalProperties: false
+  risk: R1
+  tier: T1*
+  grounding:
+  - Hộ chiếu + NFR
+  ask_when:
+  - Đổi kiểu kiến trúc dự án đã có
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.arch:style_select
+  errors:
+  - E3000
+  - E5002
+  example:
+    reqset_ids: []
+    passport: st.stm32f411ce@1.2
+- code: ARCH-02
+  id: arch.decompose
+  name: Phân rã hệ thống thành module/lớp/thành phần với trách nhiệm, giao diện, phụ thu
+  desc: Phân rã hệ thống thành module/lớp/thành phần với trách nhiệm, giao diện, phụ thuộc
+  input:
+    type: object
+    properties:
+      reqset_ids:
+        type: array
+        items:
+          type: string
+      style:
+        type: string
+    required:
+    - reqset_ids
+    - style
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      module_graph:
+        type: object
+        description: modules[], edges[]
+    required:
+    - module_graph
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.arch:decompose
+  errors:
+  - E5002
+  example:
+    reqset_ids: []
+    style: rtos
+- code: ARCH-03
+  id: arch.map_hw
+  name: Gán module ↔ ngoại vi/chân/ngắt/DMA/timer; kiểm xung đột tài nguyên
+  desc: Gán module ↔ ngoại vi/chân/ngắt/DMA/timer; kiểm xung đột tài nguyên
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+      passport:
+        type: string
+      board:
+        type: string
+    required:
+    - module_ids
+    - passport
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      hw_map:
+        type: array
+        items:
+          type: object
+      conflicts:
+        type: array
+        items:
+          type: object
+    required:
+    - hw_map
+    - conflicts
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Hộ chiếu
+  ask_when:
+  - Xung đột chân/timer không tự giải
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.arch:map_hw
+  errors:
+  - E3000
+  example:
+    module_ids:
+    - mod_imu
+    passport: st.stm32f411ce@1.2
+    board: robot-main
+- code: ARCH-04
+  id: arch.memory_budget
+  name: Ngân sách RAM/Flash/stack/heap theo module; cảnh báo vượt
+  desc: Ngân sách RAM/Flash/stack/heap theo module; cảnh báo vượt
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+      passport:
+        type: string
+    required:
+    - module_ids
+    - passport
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      budget:
+        type: object
+        description: per module ram/flash/stack, total, limits, ok
+    required:
+    - budget
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Vượt ngân sách
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.arch:memory_budget
+  errors: []
+  example:
+    module_ids: []
+    passport: st.stm32f411ce@1.2
+- code: ARCH-05
+  id: arch.timing_budget
+  name: 'Ngân sách thời gian thực: chu kỳ, WCET ước lượng, ưu tiên ngắt/task'
+  desc: 'Ngân sách thời gian thực: chu kỳ, WCET ước lượng, ưu tiên ngắt/task'
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - module_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      budget:
+        type: object
+        description: tasks[] {period, wcet_est, prio}, utilization, schedulable
+    required:
+    - budget
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Deadline không đạt
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.arch:timing_budget
+  errors: []
+  example:
+    module_ids:
+    - mod_pid
+    - mod_imu
+- code: ARCH-06
+  id: arch.interface_spec
+  name: Đặc tả API/giao thức giữa module (chữ ký, message, lỗi, trạng thái)
+  desc: Đặc tả API/giao thức giữa module (chữ ký, message, lỗi, trạng thái)
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - module_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      interfaces:
+        type: array
+        items:
+          type: object
+        description: module, functions[] {sig, errors[], timing}, messages[]
+    required:
+    - interfaces
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.arch:interface_spec
+  errors:
+  - E5002
+  example:
+    module_ids:
+    - mod_bme280
+- code: ARCH-07
+  id: arch.state_machine
+  name: Thiết kế máy trạng thái cho module/thiết bị; kiểm tính đầy đủ chuyển trạng thái
+  desc: Thiết kế máy trạng thái cho module/thiết bị; kiểm tính đầy đủ chuyển trạng thái
+  input:
+    type: object
+    properties:
+      module_id:
+        type: string
+    required:
+    - module_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      fsm:
+        type: object
+        description: states[], events[], transitions[], initial, invariants[]
+    required:
+    - fsm
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.arch:state_machine
+  errors:
+  - E5002
+  example:
+    module_id: mod_motor
+- code: ARCH-08
+  id: arch.adr
+  name: 'Ghi Architecture Decision Record: bối cảnh, phương án, quyết định, hệ quả, fact '
+  desc: 'Ghi Architecture Decision Record: bối cảnh, phương án, quyết định, hệ quả, fact trích dẫn'
+  input:
+    type: object
+    properties:
+      decision:
+        type: object
+        description: title, context, options[], choice, consequences
+    required:
+    - decision
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      adr_id:
+        type: string
+      path:
+        type: string
+    required:
+    - adr_id
+    - path
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.arch:adr
+  errors:
+  - E5002
+  example:
+    decision:
+      title: Dùng RTOS
+      options:
+      - name: super_loop
+      - name: rtos
+      choice: rtos
+- code: ARCH-09
+  id: arch.review
+  name: 'Rà kiến trúc theo checklist nhúng (coupling, ISR ngắn, lock, watchdog, bảo mật) '
+  desc: Rà kiến trúc theo checklist nhúng (coupling, ISR ngắn, lock, watchdog, bảo mật) → phát hiện
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - module_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      findings:
+        type: array
+        items:
+          type: object
+        description: severity, module, rule, message
+    required:
+    - findings
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.arch:review
+  errors: []
+  example:
+    module_ids: []
+- code: ARCH-10
+  id: arch.compare
+  name: So sánh 2–3 phương án kiến trúc theo tiêu chí có trọng số; đề xuất có lý do
+  desc: So sánh 2–3 phương án kiến trúc theo tiêu chí có trọng số; đề xuất có lý do
+  input:
+    type: object
+    properties:
+      options:
+        type: array
+        items:
+          type: object
+        description: '{name, module_graph|style}'
+      criteria:
+        type: array
+        items:
+          type: object
+        description: '{name, weight}'
+    required:
+    - options
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      comparison:
+        type: object
+        description: matrix, scores, recommendation
+    required:
+    - comparison
+    additionalProperties: false
+  risk: R0
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Chọn phương án cuối
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.arch:compare
+  errors:
+  - E3000
+  example:
+    options:
+    - name: A
+    - name: B
+- code: ARCH-11
+  id: arch.to_plan
+  name: Chuyển kiến trúc thành kế hoạch hiện thực theo mốc; nối plan.create
+  desc: Chuyển kiến trúc thành kế hoạch hiện thực theo mốc; nối plan.create
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+    required:
+    - module_ids
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      features:
+        type: array
+        items:
+          type: string
+      order:
+        type: array
+        items:
+          type: string
+    required:
+    - features
+    - order
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.arch:to_plan
+  errors: []
+  example:
+    module_ids: []

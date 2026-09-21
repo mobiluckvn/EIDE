@@ -1,0 +1,831 @@
+- code: EXTRACT-01
+  id: extract.svd
+  name: SVD → hộ chiếu chip (derivedFrom, dim, cluster, enum)
+  desc: SVD → hộ chiếu chip (derivedFrom, dim, cluster, enum)
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      include_descriptions:
+        type: boolean
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+      n_facts:
+        type: integer
+      part:
+        type: string
+    required:
+    - batch_id
+    - n_facts
+    - part
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M0
+  impl: eide.extract:svd
+  errors:
+  - E6001
+  example:
+    file: STM32F411.svd
+- code: EXTRACT-02
+  id: extract.atdf
+  name: ATDF (Microchip) → hộ chiếu
+  desc: ATDF (Microchip) → hộ chiếu
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+      n_facts:
+        type: integer
+    required:
+    - batch_id
+    - n_facts
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M0
+  impl: eide.extract:atdf
+  errors:
+  - E6001
+  example:
+    file: ATmega328P.atdf
+- code: EXTRACT-03
+  id: extract.edc
+  name: EDC/.PIC → hộ chiếu
+  desc: EDC/.PIC → hộ chiếu
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+      n_facts:
+        type: integer
+    required:
+    - batch_id
+    - n_facts
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M1
+  impl: eide.extract:edc
+  errors:
+  - E6001
+  example:
+    file: PIC16F18855.PIC
+- code: EXTRACT-04
+  id: extract.header_c
+  name: Header C chính hãng → địa chỉ/bit (đối chiếu SVD)
+  desc: Header C chính hãng → địa chỉ/bit (đối chiếu SVD)
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      part:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+      n_facts:
+        type: integer
+      conflicts:
+        type: integer
+    required:
+    - batch_id
+    - n_facts
+    - conflicts
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M1
+  impl: eide.extract:header_c
+  errors: []
+  example:
+    file: stm32f411xe.h
+- code: EXTRACT-05
+  id: extract.dt_binding
+  name: Devicetree binding YAML → thuộc tính bắt buộc
+  desc: Devicetree binding YAML → thuộc tính bắt buộc
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+    required:
+    - batch_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.extract:dt_binding
+  errors: []
+  example:
+    file: bosch,bme280.yaml
+- code: EXTRACT-06
+  id: extract.pdf_layout
+  name: 'Bố cục PDF: chương, bảng, hình, bbox (Docling/pdfplumber)'
+  desc: 'Bố cục PDF: chương, bảng, hình, bbox (Docling/pdfplumber)'
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      pages:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      blocks:
+        type: array
+        items:
+          type: object
+        description: page, bbox, type text|table|figure|heading, content
+      toc:
+        type: array
+        items:
+          type: object
+    required:
+    - blocks
+    - toc
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.extract:pdf_layout
+  errors:
+  - E4001 thiếu docling
+  - E4004
+  example:
+    file: bme280-ds.pdf
+- code: EXTRACT-07
+  id: extract.pdf_register_map
+  name: Bảng thanh ghi/bit-field từ PDF → fact có trang/bbox
+  desc: Bảng thanh ghi/bit-field từ PDF → fact có trang/bbox
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      blocks:
+        type: array
+        items:
+          type: object
+      part:
+        type: string
+    required:
+    - file
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+      n_facts:
+        type: integer
+      low_confidence:
+        type: integer
+    required:
+    - batch_id
+    - n_facts
+    - low_confidence
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - confidence < ngưỡng
+  undo:
+    kind: supersede_facts
+  milestone: M1
+  impl: eide.extract:pdf_register_map
+  errors:
+  - E5002
+  example:
+    file: bme280-ds.pdf
+    part: bosch.bme280
+- code: EXTRACT-08
+  id: extract.pdf_electrical
+  name: Thông số điện, timing, nhiệt → fact (tầng bạc, luôn cần duyệt)
+  desc: Thông số điện, timing, nhiệt → fact (tầng bạc, luôn cần duyệt)
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      part:
+        type: string
+    required:
+    - file
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+    required:
+    - batch_id
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn (an toàn)
+  undo:
+    kind: supersede_facts
+  milestone: M1
+  impl: eide.extract:pdf_electrical
+  errors:
+  - E5002
+  example:
+    file: a4988.pdf
+    part: allegro.a4988
+- code: EXTRACT-09
+  id: extract.pdf_pinout
+  name: Pinout/package từ bảng hoặc hình → pin function
+  desc: Pinout/package từ bảng hoặc hình → pin function
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      part:
+        type: string
+    required:
+    - file
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+    required:
+    - batch_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Từ hình
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.extract:pdf_pinout
+  errors: []
+  example:
+    file: stm32f411-ds.pdf
+    part: st.stm32f411ce
+- code: EXTRACT-10
+  id: extract.pdf_errata
+  name: Errata → overlay K2′ với điều kiện áp dụng
+  desc: Errata → overlay K2′ với điều kiện áp dụng
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      part:
+        type: string
+    required:
+    - file
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      batch_id:
+        type: string
+    required:
+    - batch_id
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.extract:pdf_errata
+  errors: []
+  example:
+    file: stm32f411-errata.pdf
+    part: st.stm32f411ce
+- code: EXTRACT-11
+  id: extract.pdf_formula
+  name: Công thức/thuật toán (ví dụ bù nhiệt BME280) → skill dự án có trích dẫn
+  desc: Công thức/thuật toán (ví dụ bù nhiệt BME280) → skill dự án có trích dẫn
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      section:
+        type: string
+      part:
+        type: string
+    required:
+    - file
+    - section
+    - part
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      skill_path:
+        type: string
+    required:
+    - skill_path
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.extract:pdf_formula
+  errors:
+  - E5002
+  example:
+    file: bme280-ds.pdf
+    section: 4.2.3
+    part: bosch.bme280
+- code: EXTRACT-12
+  id: extract.ocr
+  name: OCR PDF scan/ảnh chữ; giảm confidence 0,1
+  desc: OCR PDF scan/ảnh chữ; giảm confidence 0,1
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      lang:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      text_blocks:
+        type: array
+        items:
+          type: object
+    required:
+    - text_blocks
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.extract:ocr
+  errors:
+  - E4001
+  example:
+    file: scan.pdf
+- code: EXTRACT-13
+  id: extract.image_schematic
+  name: Ảnh schematic → net/linh kiện đề xuất (thị giác) kèm ảnh cắt
+  desc: Ảnh schematic → net/linh kiện đề xuất (thị giác) kèm ảnh cắt
+  input:
+    type: object
+    properties:
+      image:
+        type: string
+      part_hint:
+        type: string
+    required:
+    - image
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      proposal_id:
+        type: string
+      nets:
+        type: array
+        items:
+          type: object
+      unreadable:
+        type: array
+        items:
+          type: object
+    required:
+    - proposal_id
+    - nets
+    - unreadable
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding:
+  - Mô hình có thị giác
+  ask_when:
+  - Luôn (đề xuất)
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.extract:image_schematic
+  errors:
+  - E5002
+  example:
+    image: sch.jpg
+    part_hint: blackpill-f411
+- code: EXTRACT-14
+  id: extract.image_board
+  name: Ảnh board → nhãn chip/linh kiện, vị trí, cổng
+  desc: Ảnh board → nhãn chip/linh kiện, vị trí, cổng
+  input:
+    type: object
+    properties:
+      image:
+        type: string
+    required:
+    - image
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      parts:
+        type: array
+        items:
+          type: object
+        description: label, mpn_guess, bbox, ports[]
+    required:
+    - parts
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.extract:image_board
+  errors:
+  - E5002
+  example:
+    image: board.jpg
+- code: EXTRACT-15
+  id: extract.image_scope
+  name: Ảnh màn hình oscilloscope/LA → giá trị đo, kết luận sơ bộ
+  desc: Ảnh màn hình oscilloscope/LA → giá trị đo, kết luận sơ bộ
+  input:
+    type: object
+    properties:
+      image:
+        type: string
+      kind:
+        type: string
+        enum:
+        - oscilloscope
+        - logic
+        - multimeter
+    required:
+    - image
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      measurement:
+        type: object
+    required:
+    - measurement
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn
+  undo:
+    kind: none
+  milestone: M5
+  impl: eide.extract:image_scope
+  errors: []
+  example:
+    image: scope.png
+    kind: oscilloscope
+- code: EXTRACT-16
+  id: extract.kicad_netlist
+  name: kicad-cli → net/pin/part
+  desc: kicad-cli → net/pin/part
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+      name:
+        type: string
+        description: tên board; không nêu thì lấy tên tệp. Phải có để khớp với `name` của BOARD-01 — tên tệp netlist thường là tên bản vẽ, không phải tên board (DEV-066)
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      board_passport_id:
+        type: string
+      nets:
+        type: integer
+      parts:
+        type: integer
+    required:
+    - board_passport_id
+    - nets
+    - parts
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - kicad-cli
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.extract:kicad_netlist
+  errors:
+  - E4001 thiếu kicad-cli
+  example:
+    file: robot.kicad_sch
+- code: EXTRACT-17
+  id: extract.bom
+  name: Trích BOM từ schematic (KiCad/PDF/Excel/README) → bảng ref, MPN, giá trị, số lượ
+  desc: Trích BOM từ schematic (KiCad/PDF/Excel/README) → bảng ref, MPN, giá trị, số lượng
+  input:
+    type: object
+    properties:
+      sources:
+        type: array
+        items:
+          type: string
+      kind:
+        type: string
+        enum:
+        - schematic
+        - csv
+        - xlsx
+        - image
+        - readme
+    required:
+    - sources
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      bom:
+        type: array
+        items:
+          type: object
+        description: ref, mpn, value, qty, footprint, source_locator
+      unmatched:
+        type: array
+        items:
+          type: string
+    required:
+    - bom
+    - unmatched
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Mâu thuẫn giữa nguồn
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.extract:bom
+  errors:
+  - E5002
+  example:
+    sources:
+    - robot.kicad_sch
+    kind: schematic
+- code: EXTRACT-18
+  id: extract.bom_enrich
+  name: 'Với mỗi MPN trong BOM: tìm hộ chiếu/datasheet (search.*) và gắn'
+  desc: 'Với mỗi MPN trong BOM: tìm hộ chiếu/datasheet (search.*) và gắn'
+  input:
+    type: object
+    properties:
+      bom:
+        type: array
+        items:
+          type: object
+    required:
+    - bom
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      bom:
+        type: array
+        items:
+          type: object
+      requests:
+        type: array
+        items:
+          type: string
+    required:
+    - bom
+    - requests
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Nguồn ngoài tin cậy
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.extract:bom_enrich
+  errors: []
+  example:
+    bom:
+    - mpn: A4988
+- code: EXTRACT-19
+  id: extract.office
+  name: DOCX/XLSX/HTML/MD → văn bản, bảng có vị trí
+  desc: DOCX/XLSX/HTML/MD → văn bản, bảng có vị trí
+  input:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      blocks:
+        type: array
+        items:
+          type: object
+    required:
+    - blocks
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.extract:office
+  errors: []
+  example:
+    file: notes.docx
+- code: EXTRACT-20
+  id: extract.readme_goal
+  name: Suy ra mục tiêu dự án, danh sách tính năng từ README/ghi chú
+  desc: Suy ra mục tiêu dự án, danh sách tính năng từ README/ghi chú
+  input:
+    type: object
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      goal:
+        type: string
+      features:
+        type: array
+        items:
+          type: object
+        description: title, expectation, priority_guess
+      bom_hints:
+        type: array
+        items:
+          type: string
+    required:
+    - goal
+    - features
+    - bom_hints
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.extract:readme_goal
+  errors:
+  - E5002
+  example:
+    text: '# Balancing robot …'
+- code: EXTRACT-21
+  id: extract.code_constants
+  name: 'Quét mã sẵn có: hằng số địa chỉ/bit → ánh xạ fact; danh sách không nguồn'
+  desc: 'Quét mã sẵn có: hằng số địa chỉ/bit → ánh xạ fact; danh sách không nguồn'
+  input:
+    type: object
+    properties:
+      repo:
+        type: string
+      paths:
+        type: array
+        items:
+          type: string
+    required:
+    - repo
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      code_units:
+        type: integer
+      unsourced:
+        type: array
+        items:
+          type: object
+        description: file, line, literal
+    required:
+    - code_units
+    - unsourced
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.extract:code_constants
+  errors: []
+  example:
+    repo: .

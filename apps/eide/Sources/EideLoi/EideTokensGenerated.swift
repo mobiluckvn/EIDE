@@ -43,8 +43,9 @@ public enum EideToken {
 
     public static let space: [CGFloat] = [4, 8, 12, 16, 24]
     public static let radius: [CGFloat] = [6, 8, 10]
-    public static let sidebarWidth: CGFloat = 212
-    public static let topbarHeight: CGFloat = 52
+    public static let sidebarWidth: CGFloat = 198
+    public static let topbarHeight: CGFloat = 46
+    public static let railWidth: CGFloat = 236
     public static let statusbarHeight: CGFloat = 26
     public static let contentGap: CGFloat = 16
 

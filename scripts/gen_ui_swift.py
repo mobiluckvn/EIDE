@@ -63,6 +63,9 @@ def main() -> int:
         f'    public static let radius: [CGFloat] = {t["radius"]}',
         f'    public static let sidebarWidth: CGFloat = {t["layout"]["sidebar"]}',
         f'    public static let topbarHeight: CGFloat = {t["layout"]["topbar"]}',
+        # `rail` = cột phải. Thêm ở v1.3 (DEV-137): trước đó con số 236 chỉ sống trong mã Swift,
+        # nên token và mã nói hai chuyện về cùng một bố cục mà không ai thấy.
+        f'    public static let railWidth: CGFloat = {t["layout"]["rail"]}',
         f'    public static let statusbarHeight: CGFloat = {t["layout"]["statusbar"]}',
         f'    public static let contentGap: CGFloat = {t["layout"]["contentGap"]}',
         "",

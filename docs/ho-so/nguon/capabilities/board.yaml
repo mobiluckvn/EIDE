@@ -1,0 +1,198 @@
+- code: BOARD-01
+  id: board.build_passport
+  name: Dựng BoardPassport từ netlist/ảnh/BOM; suy ra bus/địa chỉ/pull-up
+  desc: Dựng BoardPassport từ netlist/ảnh/BOM; suy ra bus/địa chỉ/pull-up
+  input:
+    type: object
+    properties:
+      sources:
+        type: array
+        items:
+          type: string
+        description: netlist|bom|image ids
+      name:
+        type: string
+    required:
+    - sources
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      board_passport_id:
+        type: string
+      nets:
+        type: integer
+      warnings:
+        type: array
+        items:
+          type: string
+    required:
+    - board_passport_id
+    - nets
+    - warnings
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when:
+  - Từ ảnh
+  undo:
+    kind: supersede_facts
+  milestone: M2
+  impl: eide.board:build_passport
+  errors: []
+  example:
+    sources:
+    - src_net1
+    - src_bom1
+    name: robot-main
+- code: BOARD-02
+  id: board.check_pins
+  name: Xung đột chân/AF, reserved/boot, trùng địa chỉ bus
+  desc: Xung đột chân/AF, reserved/boot, trùng địa chỉ bus
+  input:
+    type: object
+    properties:
+      board:
+        type: string
+      plan:
+        type: object
+    required:
+    - board
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      conflicts:
+        type: array
+        items:
+          type: object
+        description: pin, kind, detail, severity
+    required:
+    - conflicts
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.board:check_pins
+  errors: []
+  example:
+    board: robot-main
+- code: BOARD-03
+  id: board.constraints
+  name: Sinh ràng buộc điện/bus cho Coder
+  desc: Sinh ràng buộc điện/bus cho Coder
+  input:
+    type: object
+    properties:
+      board:
+        type: string
+    required:
+    - board
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      constraints:
+        type: object
+        description: reserved_pins, bus_limits, voltage, current
+    required:
+    - constraints
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.board:constraints
+  errors: []
+  example:
+    board: robot-main
+- code: BOARD-04
+  id: board.propose_fix
+  name: Đề xuất phương án cho xung đột (remap AF, đổi chân)
+  desc: Đề xuất phương án cho xung đột (remap AF, đổi chân)
+  input:
+    type: object
+    properties:
+      conflict:
+        type: object
+    required:
+    - conflict
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      options:
+        type: array
+        items:
+          type: object
+        description: change, cost, touches_code
+    required:
+    - options
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Chạm mã passing
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.board:propose_fix
+  errors: []
+  example:
+    conflict:
+      pin: PB3
+- code: BOARD-05
+  id: board.mark_lab
+  name: Đánh dấu board là lab (không cơ cấu chấp hành) để tự nạp
+  desc: Đánh dấu board là lab (không cơ cấu chấp hành) để tự nạp
+  input:
+    type: object
+    properties:
+      board:
+        type: string
+      no_actuator:
+        type: boolean
+      current_limited:
+        type: boolean
+      by:
+        type: string
+    required:
+    - board
+    - no_actuator
+    - current_limited
+    - by
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      lab:
+        type: boolean
+    required:
+    - lab
+    additionalProperties: false
+  risk: R1
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn (một lần)
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.board:mark_lab
+  errors:
+  - E3000 nếu by=policy
+  - E1000 thiếu xác nhận
+  example:
+    board: nucleo-f411
+    no_actuator: true
+    current_limited: true
+    by: cong

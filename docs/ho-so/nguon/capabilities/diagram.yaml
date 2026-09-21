@@ -1,0 +1,551 @@
+- code: DIAGRAM-01
+  id: diagram.render
+  name: Vẽ lược đồ từ ngôn ngữ GEditor đã hỗ trợ (Mermaid, PlantUML, Graphviz/DOT, D2, W
+  desc: Vẽ lược đồ từ ngôn ngữ GEditor đã hỗ trợ (Mermaid, PlantUML, Graphviz/DOT, D2, WaveDrom, SVG); xem trong GEditor
+  input:
+    type: object
+    properties:
+      src:
+        type: string
+      lang:
+        type: string
+        enum:
+        - mermaid
+        - plantuml
+        - dot
+        - d2
+        - wavedrom
+        - svg
+      fmt:
+        type: string
+        enum:
+        - svg
+        - png
+    required:
+    - src
+    - lang
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      path:
+        type: string
+      lint:
+        type: array
+        items:
+          type: object
+    required:
+    - path
+    - lint
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.diagram:render
+  errors:
+  - E4001 thiếu renderer → env.install
+  - E4000 cú pháp
+  example:
+    src: graph TD; A-->B
+    lang: mermaid
+    fmt: svg
+- code: DIAGRAM-02
+  id: diagram.block
+  name: Sơ đồ khối hệ thống/board từ BOM + netlist (khối, bus, nguồn)
+  desc: Sơ đồ khối hệ thống/board từ BOM + netlist (khối, bus, nguồn)
+  input:
+    type: object
+    properties:
+      board:
+        type: string
+      bom:
+        type: array
+        items:
+          type: object
+    required:
+    - board
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Có BOM/netlist
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.diagram:block
+  errors: []
+  example:
+    board: robot-main
+- code: DIAGRAM-03
+  id: diagram.pinmap
+  name: Sơ đồ chân/kết nối module ↔ chip từ HwMap; bảng chân kèm theo
+  desc: Sơ đồ chân/kết nối module ↔ chip từ HwMap; bảng chân kèm theo
+  input:
+    type: object
+    properties:
+      board:
+        type: string
+      module_ids:
+        type: array
+        items:
+          type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+      table:
+        type: array
+        items:
+          type: object
+    required:
+    - diagram
+    - table
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Hộ chiếu
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:pinmap
+  errors: []
+  example:
+    board: robot-main
+- code: DIAGRAM-04
+  id: diagram.architecture
+  name: Sơ đồ kiến trúc phần mềm (lớp, module, phụ thuộc, luồng dữ liệu) theo C4 hoặc la
+  desc: Sơ đồ kiến trúc phần mềm (lớp, module, phụ thuộc, luồng dữ liệu) theo C4 hoặc layered
+  input:
+    type: object
+    properties:
+      module_ids:
+        type: array
+        items:
+          type: string
+      level:
+        type: string
+        enum:
+        - context
+        - container
+        - component
+      lang:
+        type: string
+        enum:
+        - mermaid
+        - plantuml
+        - d2
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:architecture
+  errors: []
+  example:
+    level: component
+    lang: mermaid
+- code: DIAGRAM-05
+  id: diagram.sequence
+  name: Sơ đồ tuần tự cho kịch bản/UC (ISR, task, giao tiếp ngoại vi)
+  desc: Sơ đồ tuần tự cho kịch bản/UC (ISR, task, giao tiếp ngoại vi)
+  input:
+    type: object
+    properties:
+      scenario:
+        type: string
+        description: UC id | feature | mô tả
+      lang:
+        type: string
+        enum:
+        - mermaid
+        - plantuml
+    required:
+    - scenario
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:sequence
+  errors:
+  - E5002
+  example:
+    scenario: F-04
+    lang: mermaid
+- code: DIAGRAM-06
+  id: diagram.state
+  name: Sơ đồ trạng thái từ FSM; đồng bộ hai chiều với mã máy trạng thái
+  desc: Sơ đồ trạng thái từ FSM; đồng bộ hai chiều với mã máy trạng thái
+  input:
+    type: object
+    properties:
+      module_id:
+        type: string
+      lang:
+        type: string
+        enum:
+        - mermaid
+        - plantuml
+    required:
+    - module_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:state
+  errors: []
+  example:
+    module_id: mod_motor
+    lang: mermaid
+- code: DIAGRAM-07
+  id: diagram.flow
+  name: Lưu đồ thuật toán/luồng nghiệp vụ; sinh từ mã C hoặc từ mô tả
+  desc: Lưu đồ thuật toán/luồng nghiệp vụ; sinh từ mã C hoặc từ mô tả
+  input:
+    type: object
+    properties:
+      source:
+        type: string
+        description: đường dẫn hàm C | mô tả
+      lang:
+        type: string
+        enum:
+        - mermaid
+        - dot
+    required:
+    - source
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:flow
+  errors:
+  - E5002
+  example:
+    source: src/control/pid.c:pid_step
+    lang: mermaid
+- code: DIAGRAM-08
+  id: diagram.timing
+  name: Giản đồ thời gian/tín hiệu (WaveDrom) từ timing của datasheet hoặc capture logic
+  desc: Giản đồ thời gian/tín hiệu (WaveDrom) từ timing của datasheet hoặc capture logic
+  input:
+    type: object
+    properties:
+      source:
+        type: string
+        description: fact ids timing | dataset_id
+    required:
+    - source
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+        description: WaveDrom JSON
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Fact có nguồn
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:timing
+  errors: []
+  example:
+    source: ds_1
+- code: DIAGRAM-09
+  id: diagram.memory_map
+  name: Sơ đồ bản đồ bộ nhớ/thanh ghi từ hộ chiếu và linker script
+  desc: Sơ đồ bản đồ bộ nhớ/thanh ghi từ hộ chiếu và linker script
+  input:
+    type: object
+    properties:
+      passport:
+        type: string
+      linker:
+        type: string
+    required:
+    - passport
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+        description: svg
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - Hộ chiếu
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:memory_map
+  errors: []
+  example:
+    passport: st.stm32f411ce@1.2
+    linker: build/fw.map
+- code: DIAGRAM-10
+  id: diagram.kg_view
+  name: Vẽ lát cắt đồ thị tri thức (fact, nguồn, mâu thuẫn, tác động) theo truy vấn
+  desc: Vẽ lát cắt đồ thị tri thức (fact, nguồn, mâu thuẫn, tác động) theo truy vấn
+  input:
+    type: object
+    properties:
+      query:
+        type: object
+        description: node, depth, filter
+    required:
+    - query
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+        description: DOT
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.diagram:kg_view
+  errors: []
+  example:
+    query:
+      node: part:bosch.bme280
+      depth: 2
+- code: DIAGRAM-11
+  id: diagram.gantt
+  name: Sơ đồ Gantt/mốc từ Plan; cập nhật theo tiến độ
+  desc: Sơ đồ Gantt/mốc từ Plan; cập nhật theo tiến độ
+  input:
+    type: object
+    properties:
+      plan_id:
+        type: string
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+    required:
+    - diagram
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M2
+  impl: eide.diagram:gantt
+  errors: []
+  example: {}
+- code: DIAGRAM-12
+  id: diagram.from_image
+  name: Nhận dạng sơ đồ trong ảnh (schematic, sơ đồ vẽ tay) → mã lược đồ chỉnh sửa được
+  desc: Nhận dạng sơ đồ trong ảnh (schematic, sơ đồ vẽ tay) → mã lược đồ chỉnh sửa được
+  input:
+    type: object
+    properties:
+      image:
+        type: string
+      target_lang:
+        type: string
+        enum:
+        - mermaid
+        - dot
+    required:
+    - image
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diagram:
+        type: object
+      confidence:
+        type: number
+    required:
+    - diagram
+    - confidence
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when:
+  - Độ tin cậy thấp
+  undo:
+    kind: delete_created_files
+  milestone: M3
+  impl: eide.diagram:from_image
+  errors:
+  - E5002
+  example:
+    image: whiteboard.jpg
+    target_lang: mermaid
+- code: DIAGRAM-13
+  id: diagram.lint
+  name: Kiểm cú pháp/tính nhất quán lược đồ (nút mồ côi, tên không khớp mã)
+  desc: Kiểm cú pháp/tính nhất quán lược đồ (nút mồ côi, tên không khớp mã)
+  input:
+    type: object
+    properties:
+      src:
+        type: string
+      lang:
+        type: string
+      model_ref:
+        type: string
+    required:
+    - src
+    - lang
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      issues:
+        type: array
+        items:
+          type: object
+        description: severity, line, message
+    required:
+    - issues
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.diagram:lint
+  errors: []
+  example:
+    src: …
+    lang: mermaid
+    model_ref: mod_graph
+- code: DIAGRAM-14
+  id: diagram.sync
+  name: Đồng bộ lược đồ ↔ mã/kiến trúc khi một bên đổi; cảnh báo lệch
+  desc: Đồng bộ lược đồ ↔ mã/kiến trúc khi một bên đổi; cảnh báo lệch
+  input:
+    type: object
+    properties:
+      diagram_id:
+        type: string
+      direction:
+        type: string
+        enum:
+        - to_code
+        - from_code
+        - check
+    required:
+    - diagram_id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      diff:
+        type: object
+      applied:
+        type: boolean
+    required:
+    - diff
+    - applied
+    additionalProperties: false
+  risk: R0
+  tier: T1*
+  grounding: []
+  ask_when:
+  - Lệch lớn
+  undo:
+    kind: git_revert
+  milestone: M3
+  impl: eide.diagram:sync
+  errors:
+  - E3000
+  example:
+    diagram_id: dg_1
+    direction: check

@@ -125,8 +125,17 @@ d("policy.learn_thresholds", {"days": "int"}, {"proposals": "arr<obj>!"}, ["POL-
 # Không để giao diện tự đọc `rules.yaml`: khi niêm không khớp, `whitelist.kiem` BỎ ba danh sách
 # khỏi biểu thức, nên thứ đang thi hành khác thứ ghi trong tệp. Một màn đọc tệp sẽ hiện một
 # chính sách không ai đang chạy — và người dùng đối chiếu nhầm cả buổi.
-d("policy.rules", {}, {"rules": "arr<obj>!", "signed": "bool!", "reason": "str # vì sao chưa niêm"},
-  ["Trả bảng quy tắc PolicyGate đang nạp, kèm trạng thái niêm danh sách trắng"],
+# v1.3 — thêm `boards` (DEV-135). `board.mark_lab` ghi `boards.<id> = {lab, has_actuator,
+# reason}` vào `autonomy.yaml`, và trước v1.3 KHÔNG năng lực nào trong 244 cái đọc ra
+# khoá ấy: màn S6 có đường GHI đầy đủ mà không có đường ĐỌC, nên nó phải nói "trạng thái
+# hiện tại chưa đọc lại được" thay vì hiện một ô nó không biết. Đặt ở đây chứ không thành
+# một năng lực mới vì POLICY-08 vốn đã là "bảng quy tắc ĐANG CÓ HIỆU LỰC + trạng thái
+# niêm" — trạng thái lab của board là một phần của đúng cấu hình đã niêm ấy, và cổng
+# `G-OPS-01` đọc chung nguồn.
+d("policy.rules", {}, {"rules": "arr<obj>!", "signed": "bool!", "reason": "str # vì sao chưa niêm",
+                       "boards": "obj! # <board_id> → {lab, has_actuator, reason}"},
+  ["Trả bảng quy tắc PolicyGate đang nạp, kèm trạng thái niêm danh sách trắng",
+   "`boards` đọc từ CÙNG cấu hình đã niêm mà `G-OPS-01` dùng — không đọc lại tệp"],
   [], "none", '{}', "S25")
 d("policy.set_autonomy", {"level": "enum:A0|A1|A2|A3|A4!", "board": "str", "by": "str!"}, {"effective": "str!"}, ["Nới lỏng (tăng mức) là R4 → ASK trừ by=human; siết → tức thì; ghi autonomy.yaml + ký; event.autonomy.changed"], ["E3000"], "restore_config", '{"level":"A2","board":"robot-ctrl","by":"cong"}', "TC-56")
 

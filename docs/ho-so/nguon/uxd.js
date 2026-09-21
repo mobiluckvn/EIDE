@@ -47,13 +47,23 @@ const S = [
  ['22', 'Registry', 'Gói; template; publish', 'registry.*', 'Giữ'],
  ['23', 'Models (Mô hình & chi phí)', 'Vai trò → mô hình; ngân sách; không offline mặc định', 'policy, gateway', 'Cập nhật'],
  ['24', 'Env (Môi trường)', 'doctor; cài tự động; tools.lock', 'env.*', 'Giữ'],
- ['25', 'FlowMap (Hành trình & cổng)', 'Bản đồ luồng P0–P7; quyết định của cổng theo từng bước', 'policy.decide', 'Sửa 17/09: trước ghi `—` trong khi panel nạp mặc định `policy.decide`. Lưu ý: bảng này lấy màn ĐẦU TIÊN khớp, mà màn 1 đã nhận `policy.*`, nên khai ở đây KHÔNG tự định tuyến được — xem DEV-122'],
+ ['25', 'FlowMap (Hành trình & cổng)', 'Bản đồ luồng P0–P7; quyết định của cổng theo từng bước', 'policy.decide', 'Sửa 17/09: trước ghi `—` trong khi panel nạp mặc định `policy.decide`. v1.3: luật khớp đổi thành **khớp cụ thể thắng khớp mẫu**, nên khai ở đây ĐÃ tự định tuyến được — xem DEV-122'],
  ['26', 'DiffMerge (Diff & cổng merge)', 'Diff hai cột; bốn cổng G1/G3/G4/G5 kèm lý do chặn; commit + tác giả máy-đọc-được + hạn hoàn tác', 'code.review, code.merge', 'Mới v2.0 — tách từ màn 14 theo hai CÂU HỎI khác nhau của người dùng; cùng một nguồn dữ liệu'],
  ['27', 'ChinhSach (Chính sách tự chủ)', 'Bảng quy tắc ĐANG CÓ HIỆU LỰC (chỉ đọc) + mức tự chủ + trạng thái niêm danh sách trắng', 'policy.rules, policy.set_autonomy', 'Mới v2.0 — trước đó không màn nào trả lời được câu "tác tử được phép làm tới đâu"'],
  ['28', 'Trạng thái/khung (Main shell)', 'Điều hướng theo nhóm (26 màn); thanh trạng thái tự chủ; dừng khẩn; tab tệp', 'policy.set_autonomy, policy.emergency_stop', 'Cập nhật v1.2'],
 ];
 c.push(T([500, 2600, 3200, 2200, 800], ['#', 'Màn hình', 'Nội dung chính', 'Năng lực gọi', 'v1.2'], S, { size: 19 }));
 c.push(SP());
+// v1.3 — DEV-122. Luật khớp phải viết ra, vì nó quyết định NT2 mở màn nào.
+c.push(P('**Luật khớp năng lực → màn (v1.3).** Cột "Năng lực gọi" nhận cả tên đầy đủ '
+  + '(`policy.decide`) lẫn mẫu nhóm (`policy.*`). Khi một năng lực khớp nhiều dòng: '
+  + '**(1) khớp cụ thể thắng khớp mẫu** — `policy.decide` khai ở màn 25 thắng `policy.*` khai '
+  + 'ở màn 1; **(2) cùng độ cụ thể thì màn số nhỏ thắng.**'));
+c.push(P('v1.0–v1.2 chỉ có luật (2), nên một mẫu rộng ở màn số nhỏ nuốt hết mọi khai báo sau '
+  + 'nó: cả 7 năng lực `policy.*` trỏ về màn Chat, kể cả hai cái vừa khai riêng cho màn 25 và '
+  + 'màn 28. Hệ quả không nằm ở tài liệu mà ở hành vi — quy tắc NT2 ("tác tử chạm tới đâu, màn '
+  + 'ấy tự mở") mở SAI ĐỊA CHỈ, và không ai thấy vì màn Chat vẫn mở ra bình thường. '
+  + 'Xem DEVIATIONS DEV-122.'));
 c.push(P('Ảnh chụp và mã HTML của 23 màn hình nằm trong `EIDE-UI-v1.2/` (mở `eide-workbench-v12-gallery.html`); màn hình sinh từ `gen.py` nên mọi sửa đổi thiết kế làm ở mã và sinh lại.'));
 c.push(H1('3. Sơ đồ điều hướng'));
 c.push(...CODE([
@@ -183,7 +193,12 @@ const TOKENS = {
   font: { ui: 'IBM Plex Sans', uiSize: 13, uiLine: 1.45, mono: 'IBM Plex Mono', monoSize: 12 },
   space: [4, 8, 12, 16, 24],
   radius: [6, 8, 10],
-  layout: { sidebar: 212, topbar: 52, statusbar: 26, contentGap: 16 },
+  // v1.3 — ba con số đổi theo bản demo v2.0 và UXC-31 §2.1: `topbar` 52 → 46,
+  // `sidebar` 212 → 198, thêm `rail` 236 (cột phải, trước chỉ có trong mã Swift).
+  // Mã đã dùng 46/198 từ đầu; token thì không, nên chúng là HẰNG CHẾT — không test nào
+  // đỏ, và người viết màn mới dùng `EideToken.topbarHeight` nhận một bố cục lệch 6 pt.
+  // Xem DEVIATIONS DEV-137.
+  layout: { sidebar: 198, topbar: 46, rail: 236, statusbar: 26, contentGap: 16 },
   // UXD-13 U10 / WCAG 2.2 AA: tương phản chữ trên nền ≥ 4,5:1. Ghi ra để test kiểm được,
   // chứ không để nó thành một câu trong tài liệu mà không ai đo.
   contrastMin: 4.5,

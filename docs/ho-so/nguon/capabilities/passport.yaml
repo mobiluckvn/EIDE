@@ -1,0 +1,342 @@
+- code: PASSPORT-01
+  id: passport.import
+  name: Ghi FactBatch qua cổng ghi duy nhất (merge tier, conflict, ledger)
+  desc: Ghi FactBatch qua cổng ghi duy nhất (merge tier, conflict, ledger)
+  input:
+    type: object
+    properties:
+      batch:
+        type: object
+        description: FactBatch
+      actor:
+        type: string
+    required:
+    - batch
+    - actor
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      written:
+        type: integer
+      merged:
+        type: integer
+      conflicts:
+        type: integer
+      batch_id:
+        type: string
+    required:
+    - written
+    - merged
+    - conflicts
+    - batch_id
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: supersede_facts
+  milestone: M0
+  impl: eide.passport:import
+  errors:
+  - E6001
+  - E6000
+  example:
+    batch:
+      facts: []
+    actor: extract.svd
+- code: PASSPORT-02
+  id: passport.query
+  name: Tra fact theo part/periph/reg/field hoặc câu hỏi NL; kèm trích dẫn/tầng/trạng th
+  desc: Tra fact theo part/periph/reg/field hoặc câu hỏi NL; kèm trích dẫn/tầng/trạng thái
+  input:
+    type: object
+    properties:
+      part:
+        type: string
+      peripheral:
+        type: string
+      register:
+        type: string
+      field:
+        type: string
+      q:
+        type: string
+        description: câu hỏi NL
+      include_history:
+        type: boolean
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      facts:
+        type: array
+        items:
+          type: object
+      citations:
+        type: array
+        items:
+          type: object
+      tiers:
+        type: object
+      latency_ms:
+        type: integer
+    required:
+    - facts
+    - citations
+    - tiers
+    - latency_ms
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.passport:query
+  errors: []
+  example:
+    part: st.stm32f411ce
+    peripheral: I2C1
+    register: CR1
+- code: PASSPORT-03
+  id: passport.list
+  name: Liệt kê hộ chiếu, phiên bản, huy hiệu
+  desc: Liệt kê hộ chiếu, phiên bản, huy hiệu
+  input:
+    type: object
+    properties:
+      kind:
+        type: string
+        enum:
+        - chip
+        - board
+        - isa
+        - part
+    required: []
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      passports:
+        type: array
+        items:
+          type: object
+    required:
+    - passports
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M0
+  impl: eide.passport:list
+  errors: []
+  example: {}
+- code: PASSPORT-04
+  id: passport.diff
+  name: 'So hai phiên bản hộ chiếu: fact thêm/bớt/đổi'
+  desc: 'So hai phiên bản hộ chiếu: fact thêm/bớt/đổi'
+  input:
+    type: object
+    properties:
+      a:
+        type: string
+      b:
+        type: string
+    required:
+    - a
+    - b
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      added:
+        type: array
+        items:
+          type: object
+      removed:
+        type: array
+        items:
+          type: object
+      changed:
+        type: array
+        items:
+          type: object
+    required:
+    - added
+    - removed
+    - changed
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.passport:diff
+  errors:
+  - E2000
+  example:
+    a: st.stm32f411ce@1.1
+    b: st.stm32f411ce@1.2
+- code: PASSPORT-05
+  id: passport.upgrade
+  name: Nâng ghim sang phiên bản mới; impact; đưa feature về failing
+  desc: Nâng ghim sang phiên bản mới; impact; đưa feature về failing
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+      version:
+        type: string
+    required:
+    - id
+    - version
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      impact:
+        type: object
+        description: stale_code_units, features_to_recheck
+    required:
+    - impact
+    additionalProperties: false
+  risk: R2
+  tier: T2
+  grounding: []
+  ask_when:
+  - Luôn (ảnh hưởng mã)
+  undo:
+    kind: restore_config
+  milestone: M2
+  impl: eide.passport:upgrade
+  errors:
+  - E2000
+  example:
+    id: st.stm32f411ce
+    version: '1.2'
+- code: PASSPORT-06
+  id: passport.verify_on_board
+  name: Sinh firmware ID/GPIO/UART, nạp, so, gắn huy hiệu
+  desc: Sinh firmware ID/GPIO/UART, nạp, so, gắn huy hiệu
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+      target:
+        type: string
+    required:
+    - id
+    - target
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      badge:
+        type: object
+      log_hash:
+        type: string
+    required:
+    - badge
+    - log_hash
+    additionalProperties: false
+  risk: R3
+  tier: T1
+  grounding:
+  - Board lab
+  ask_when:
+  - Board không lab; ID lệch
+  undo:
+    kind: reflash_known_good
+  milestone: M1
+  impl: eide.passport:verify_on_board
+  errors:
+  - E3000
+  - E4003
+  example:
+    id: st.stm32f411ce@1.2
+    target: nucleo-f411
+- code: PASSPORT-07
+  id: passport.export
+  name: Xuất hộ chiếu YAML/JSON có nguồn
+  desc: Xuất hộ chiếu YAML/JSON có nguồn
+  input:
+    type: object
+    properties:
+      id:
+        type: string
+      format:
+        type: string
+        enum:
+        - yaml
+        - json
+    required:
+    - id
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      file:
+        type: string
+    required:
+    - file
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: delete_created_files
+  milestone: M1
+  impl: eide.passport:export
+  errors: []
+  example:
+    id: st.stm32f411ce@1.2
+    format: yaml
+- code: PASSPORT-08
+  id: passport.resolve_address
+  name: Địa chỉ/hex → tên ngoại vi/thanh ghi (cho hover, .map)
+  desc: Địa chỉ/hex → tên ngoại vi/thanh ghi (cho hover, .map)
+  input:
+    type: object
+    properties:
+      address:
+        type: string
+      part:
+        type: string
+    required:
+    - address
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      subject:
+        type: string
+      facts:
+        type: array
+        items:
+          type: object
+    required:
+    - facts
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M3
+  impl: eide.passport:resolve_address
+  errors: []
+  example:
+    address: '0x40005400'

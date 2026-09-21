@@ -111,14 +111,16 @@ final class EideManLuongMoPhongTests: XCTestCase {
     /// ở đó như một công cụ tác tử tự viết.
     func testSimRunKhongLotVaoBangCongCuTuTao() async {
         let m = EideManCongCu()
-        await m.nap { ten, _ in
-            guard ten == "view.timeline" else { return ["status": "done", "result": [String: Any]()] }
-            return ["status": "done", "result": ["events": [
-                ["kind": "tool.report", "at": "2026-09-21T08:00:00+00:00",
-                 "data": ["tool": "sim.run", "passed": true]],
-                ["kind": "tool.report", "at": "2026-09-21T08:01:00+00:00",
-                 "data": ["tool": "crc16", "passed": true]],
-            ]]]
+        // v1.3 — nguồn là `view.artifacts kind=tool`, không còn `view.timeline` ([DEV-136]).
+        await m.nap { ten, tham in
+            guard ten == "caps.invoke",
+                  (tham["id"] as? String) == "view.artifacts" else {
+                return ["status": "done", "result": [String: Any]()]
+            }
+            return ["status": "done", "result": ["items": [
+                ["tool": "sim.run", "dat": 1, "tong": 1, "at": "2026-09-21T08:00:00+00:00"],
+                ["tool": "crc16", "dat": 1, "tong": 1, "at": "2026-09-21T08:01:00+00:00"],
+            ], "total": 2, "kind": "tool"]]
         }
         let van = Self.chu(m)
         XCTAssertTrue(van.contains("crc16"), van)
