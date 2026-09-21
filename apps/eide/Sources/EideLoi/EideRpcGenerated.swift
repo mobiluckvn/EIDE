@@ -25,6 +25,8 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case chatAnswer = "chat.answer"
     /// Từ session.turns
     case chatHistory = "chat.history"
+    /// Chạy tiếp một lượt đã lập kế hoạch (`state: planned`) — UXC-31 §2D.6. Người bấm "Đúng — làm đi" trên thẻ Ý hiểu thì lượt ấy mới rời trạng thái `planned`. Không có phương thức này thì `plan_only` là một ngõ cụt: chuỗi dựng xong rồi nằm đó vĩnh viễn, và hai nút của §2D.6 vẫn không có gì để bấm. DEV-140
+    case chatResume = "chat.resume"
     /// Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện
     case chatSend = "chat.send"
     /// GEditor tính stats native
@@ -236,5 +238,5 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
 }
 
 /// Số phương thức và mã lỗi lúc sinh — test hợp đồng đối chiếu với spec (API-15 §8).
-public let eideSoPhuongThuc = 64
+public let eideSoPhuongThuc = 65
 public let eideSoMaLoi = 31
