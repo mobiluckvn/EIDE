@@ -18,6 +18,36 @@ public final class EideDock: NSView {
     /// Người gõ xong và gửi.
     public var onGui: ((String) -> Void)?
 
+    /// **Lệnh mẫu theo pha — §2D.4.** Khoá là mã pha của BPD (`EideBanDoPha`), `nil` = chưa biết
+    /// dự án đang ở đâu.
+    ///
+    /// Mỗi câu là một lệnh **gõ thẳng vào được**, không phải một lời mô tả. Placeholder kiểu "hãy
+    /// ra lệnh cho tác tử" dạy được đúng một thứ: rằng ô này nhận chữ. Người mới đứng trước một ô
+    /// trống không biết hệ thống chờ câu dài tới đâu, cụ thể tới mức nào — và câu mẫu trả lời
+    /// đúng câu hỏi ấy.
+    public static let GOI_Y: [String?: String] = [
+        nil: "Ra lệnh cho tác tử bằng một câu tiếng Việt…",
+        "P0": "Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer",
+        "P1": "Ví dụ: nhập tệp SVD trong docs/ và dựng hộ chiếu chip",
+        "P2": "Ví dụ: lập kế hoạch đọc cảm biến DHT22 qua GPIO, có trích dẫn",
+        "P3": "Ví dụ: sinh mã đọc DHT22 theo kế hoạch, mỗi hằng số phải có fact",
+        "P4": "Ví dụ: chạy mô phỏng kịch bản dht22 và cho tôi xem kỳ vọng nào trượt",
+        "P5": "Ví dụ: firmware treo sau 3 giây — tìm nguyên nhân từ log serial",
+        "P6": "Ví dụ: đóng gói firmware kèm tài liệu và danh mục hằng số đã dùng",
+        "P7": "Ví dụ: viết yêu cầu cho tính năng đo nhiệt độ rồi vẽ lược đồ khối",
+    ]
+
+    /// Đặt pha hiện tại của dự án. `nil` = chưa biết, và khi ấy quay về câu chung chứ không đoán.
+    public func datPha(_ pha: String?) {
+        oGo.placeholderString = Self.GOI_Y[pha] ?? Self.GOI_Y[nil]!
+    }
+
+    /// Placeholder đang hiện — cho bài đo đọc.
+    public var goiYHienTai: String { oGo.placeholderString ?? "" }
+
+    /// Có lượt chạy nào đang chạy hay không — §2D.4 vế cuối.
+    public var dangChay = false
+
     public private(set) var cao: Cao = .chuan
     /// Số lượt đang hiện — cho bài kiểm đọc.
     public var soLuot: Int { cocLuot.arrangedSubviews.count }
@@ -70,7 +100,7 @@ public final class EideDock: NSView {
         cuon.hasVerticalScroller = true
         cuon.drawsBackground = false
 
-        oGo.placeholderString = "Ra lệnh cho tác tử bằng một câu tiếng Việt…"
+        oGo.placeholderString = Self.GOI_Y[nil]!
         oGo.font = EideToken.fontUI
         oGo.target = self
         oGo.action = #selector(_gui)
@@ -187,11 +217,24 @@ public final class EideDock: NSView {
         datCao(c, buoc: true)
     }
 
+    /// Gõ một câu rồi bấm Gửi — cho bài đo đi đúng đường người dùng đi.
+    public func guiDeTest(_ van: String) {
+        oGo.stringValue = van
+        _gui()
+    }
+
     @objc private func _gui() {
         let v = oGo.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !v.isEmpty else { return }
         oGo.stringValue = ""
         themLuot(.nguoi, v)
+        // §2D.4 — đang có Run thì NÓI RA rằng lệnh này xếp hàng sau nó. Không nói thì người dùng
+        // gõ xong, không thấy gì nhúc nhích, và gõ lại lần nữa; hai lệnh trùng nhau tốn tiền mô
+        // hình thật và có thể ghi tệp hai lần.
+        if dangChay {
+            themLuot(.heThong, "Xếp hàng sau lượt chạy hiện tại — tôi làm xong cái đang chạy "
+                     + "rồi mới tới câu này.")
+        }
         onGui?(v)
     }
 }

@@ -1613,14 +1613,19 @@ def _ghi_code_unit(root: Path, patch: dict[str, Any], sha: str) -> None:
         c.commit()
 
 
-def _dang_ky_undo(ctx: Context, sha: str, feature: str) -> str:
-    """`undo: git_revert`, cửa sổ 24 h theo `undo_window.merge` của POL-17 §3."""
+def _dang_ky_undo(ctx: Context, sha: str, feature: str, cap: str = "code.merge") -> str:
+    """`undo: git_revert`, cửa sổ 24 h theo `undo_window.merge` của POL-17 §3.
+
+    `cap` phải truyền đúng năng lực gọi. Nó là NHÃN người đọc trong khối "HOÀN TÁC ĐƯỢC" ở cột
+    phải, nên ghim cứng `code.merge` cho mọi người gọi sẽ dán tên một lần merge lên một lần
+    người bấm Lưu — người dùng đọc thấy tác tử vừa merge trong khi chính họ vừa sửa một tệp.
+    """
     from eide_core.undo import UndoService
     led = ctx.extra.get("ledger")
     if led is None:
         return ""
     reg = UndoService(led, (getattr(ctx.extra.get("gate"), "config", None) or {}))
-    return str(reg.register(f"commit:{sha}", "git_revert", cap="code.merge").get("deadline") or "")
+    return str(reg.register(f"commit:{sha}", "git_revert", cap=cap).get("deadline") or "")
 
 
 # ---------------------------------------------------------------- CODE-13 revert
@@ -2334,6 +2339,15 @@ def human_save(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                          {"path": rel, "commit": sha, "diff_summary": tom_tat, "by": ai},
                          actor="human")
         seq = int(rec.get("seq") or 0)
+        # UXC-31 §2F.5 — mục của NGƯỜI xuất hiện trong khối HOÀN TÁC ĐƯỢC **y như mục của tác
+        # tử: cùng cơ chế, không phân biệt.** Trước dòng này, một lần người bấm Lưu để lại
+        # `human.file_save` trong sổ cái và KHÔNG có gì trong `undo.list`, nên khối hoàn tác chỉ
+        # chứa việc của máy — đúng cái phân biệt mà §2F.5 cấm.
+        #
+        # `git_revert` chứ không một loại riêng: lời lưu này đã là một commit git, và đảo nó là
+        # đảo một commit. Thêm một `kind` mới sẽ phải sửa `KIND_WINDOW` trong POL-17 §5 — một
+        # thay đổi hợp đồng cho một việc mà cơ chế sẵn có làm đúng. Xem [DEV-141].
+        _dang_ky_undo(ctx, sha, rel, cap="code.human_save")
     return {"commit": sha, "seq": seq, "path": rel}
 
 

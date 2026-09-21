@@ -250,11 +250,59 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **192 test Swift** xanh. `apps/eide --tu-kiem`: **61/61**. Checklist UXC-31:
-**69 xong · 44 chưa · 4 chặn** (đầu phiên 20/09: 11 xong). `make check` thoát 0. Màn
+*Gói mới: **235 test Swift** xanh. `apps/eide --tu-kiem`: **65/65**. Checklist UXC-31:
+**83 xong · 30 chưa · 4 chặn** (đầu phiên 20/09: 11 xong). **Mục 2 đóng trọn**; §0 còn B1, §1 xong hết. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (15): §0 bất biến và §1 hệ thống thiết kế
+
+Bảy mục nữa: B3, B6, B7, B8, 1.2, 1.3, 1.4. Cả bảy **xanh ngay lần chạy đầu** — mã vốn đã đúng;
+việc ở đây là dựng bài kiểm để nó không trôi đi.
+
+**§1.2 và §1.3 hoá ra là CHECKLIST sai, không phải mã sai** [DEV-142]. §1.2 nói "San Francisco,
+SF Mono 12,5 pt", §1.3 nói "thẻ Run 9 pt". UXD-13 v2.0 nói IBM Plex Sans 13 / IBM Plex Mono 12
+và bộ bán kính `[6, 8, 10]` — không có 9. Ba con số ấy không có chỗ nào trong bộ hồ sơ sinh ra
+chúng, và quy tắc đọc in ngay đầu UXC-31 ghi rõ *"mâu thuẫn thì UXD-13 v2.0 thắng"*. Nên tick
+theo mã là đúng luật. Bài kiểm chốt mã vào **token** chứ không vào con số chép tay, để lần sau
+tài liệu đổi thì nó đỏ — chứ không lặng lẽ lệch đi như [DEV-137].
+
+**B1 để ngỏ, có chủ ý.** Phần đo được thì đã đo. Phần chưa đo được là mệnh đề tổng quát "không
+có đường nào" — nó phủ định *mọi* đường, mà một bài kiểm chỉ đi được những đường nó biết. Dòng
+đầu tài liệu ghi: không đánh dấu mục chưa có bài kiểm chứng minh.
+
+### Đã làm (14): bảy mục cuối của §2 — **§2 đóng**
+
+2.2 cỡ tối thiểu + dải hẹp 44 pt · 2.3 bài kiểm N7 · 2A.2 popover chuyển dự án · 2D.4 placeholder
+theo pha · 2D.6 thẻ Ý hiểu · 2E.6 báo cáo khi run xong · 2F.5 hoàn tác của người.
+
+**Ba mục hoá ra là lỗi ở tầng dưới, không phải việc của giao diện:**
+
+1. **§2.2 tự mâu thuẫn** [DEV-139]. "Cửa sổ tối thiểu 1100 × 700; **dưới ngưỡng** thì cột phải
+   thu lại" — mà một bề ngang tối thiểu đã được `NSWindow` cưỡng chế thì không bao giờ xuống
+   dưới được, nên dải icon 44 pt là mã chết theo nghĩa đen. Đọc là *tại* ngưỡng: giữ được cả
+   hai vế, không phải bịa thêm con số nào.
+2. **§2D.6 bị chặn một nửa** [DEV-140]. `chat.orchestrate` dựng chuỗi VÀ chạy nó trong cùng một
+   lời gọi, nên không có chỗ dừng để người gật đầu. Thẻ Ý hiểu in được câu và danh sách bước;
+   hai nút thì **không hiện**, và thẻ nói thẳng vì sao. Một nút "Đúng — làm đi" đặt trên việc đã
+   làm xong dạy người dùng rằng bấm hay không đều thế, rồi họ thôi đọc cả thẻ.
+3. **§2F.5 đo được, và lần đầu đo là KHÔNG ĐẠT** [DEV-141]. `code.human_save` ghi sổ cái mà
+   không gọi `undo.register`, nên khối "Hoàn tác được" chỉ chứa việc của MÁY — đúng sự phân biệt
+   §2F.5 cấm. Mục này trước ghi "chưa đo được"; *chưa đo* khác hẳn *đã đo và trượt*.
+
+**Ba lỗi thật khác, cả ba do phép đo ép ra:**
+
+- `_dang_ky_undo` ghim cứng `cap="code.merge"` cho mọi người gọi → nhãn cột phải sẽ dán tên một
+  lần merge lên một lần người bấm Lưu.
+- Đổi hằng ràng buộc TRONG `layout()` chỉ đánh dấu cần bố cục lại, nên cột phải báo `hep = true`
+  mà bề ngang vẫn 236 pt. Bắt được bằng `--tu-kiem` 17b trên cửa sổ thật.
+- `_chuTrong` của bài tự kiểm chỉ đọc `stringValue`, nên nó **mù** với placeholder và tiêu đề
+  nút — tức mù với hai trong ba phần của popover §2A.2, và báo HỎNG cho một popover dựng đúng.
+
+Và một bài kiểm tôi viết sai theo chiều ngược lại: đòi `undo.apply` đảo được nội dung tệp.
+`Router.undo_handlers` rỗng **theo thiết kế đã ghi** — mọi lần bấm trả `applied: false` kèm lý
+do. Đòi hệ thống hứa một thứ nó đang nói thẳng là chưa làm là ép mã đi nói dối cho bài xanh.
 
 ### Đã làm (13): bảy chỗ bấm của §2 — và hai ghi chú hôm qua tôi viết sai
 
@@ -484,9 +532,7 @@ dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ư
 
 **Làm tiếp — không cần phần cứng:**
 
-1. **7 mục §2 còn lại**: 2.2/2.3 (bài kiểm bố cục so ảnh với bản demo), 2A.2, 2D.4
-   (placeholder gợi ý theo pha), 2D.6 (thẻ "Ý hiểu" hai nút), 2E.6, 2F.5. Kèm một món nợ §9:
-   kéo tab hiện chỉ có đường CHUỘT, chưa có đường bàn phím.
+1. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm lần nào.
 2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
    dùng cách lùi (nạp lại, gộp 0,4 s).
 3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.

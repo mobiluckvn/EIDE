@@ -33,6 +33,20 @@ public final class EideKhung: NSView {
     public static let RONG_COT_TRAI: CGFloat = 198
     public static let RONG_COT_PHAI: CGFloat = 236
 
+    /// Cỡ cửa sổ tối thiểu — §2.2.
+    public static let CO_TOI_THIEU = NSSize(width: 1100, height: 700)
+    /// Dải hẹp của cột phải khi cửa sổ chạm ngưỡng — §2.2.
+    public static let RONG_COT_PHAI_HEP: CGFloat = 44
+
+    /// Cột phải tự thu khi bề ngang xuống tới đây.
+    ///
+    /// **Bằng đúng bề ngang tối thiểu, không phải một con số thứ hai.** §2.2 nói "cửa sổ tối
+    /// thiểu 1100 × 700; DƯỚI ngưỡng thì cột phải thu lại" — mà một bề ngang tối thiểu đã được
+    /// `NSWindow` cưỡng chế thì không bao giờ xuống dưới được, nên "dưới ngưỡng" theo nghĩa đen
+    /// là một trạng thái không tồn tại. Đọc là "TẠI ngưỡng" giữ được cả hai vế và không phải bịa
+    /// thêm một con số không có trong tài liệu — xem [DEV-139].
+    public static let NGUONG_HEP: CGFloat = CO_TOI_THIEU.width
+
     public let thanhTren = EideThanhTren()
     public let cotTrai = EideDieuHuong()
     public let thanhTab = EideThanhTab()
@@ -49,6 +63,11 @@ public final class EideKhung: NSView {
     /// việc gì làm với nó ngoài việc lo.
     public let nutTaiLai = NSButton(title: "Tải lại", target: nil, action: nil)
     private lazy var caoDaiCu = daiCu.heightAnchor.constraint(equalToConstant: 0)
+    private lazy var rongCotPhai =
+        cotPhai.widthAnchor.constraint(equalToConstant: Self.RONG_COT_PHAI)
+    /// Người đã tự bấm nút gấp: từ đó thôi tự động theo bề ngang. Một cột cứ tự bung ra mỗi lần
+    /// kéo cửa sổ, sau khi người dùng vừa cố ý gấp nó lại, là một cuộc cãi nhau với chính họ.
+    private var hepTay: Bool?
 
     /// Màn hình chào — chiếm TOÀN cửa sổ khi chưa có dự án (§3.1).
     public let manChao = EideManChao()
@@ -86,6 +105,7 @@ public final class EideKhung: NSView {
         nutTaiLai.translatesAutoresizingMaskIntoConstraints = false
         daiCu.addSubview(nutTaiLai)
         daiCu.isHidden = true
+        cotPhai.onDoiHep = { [weak self] h in self?.nguoiDoiCotPhai(h) }
 
         for v in [thanhTren, vienDo, cotTrai, thanhTab, daiCu, vungLamViec,
                   vachDock, dock, cotPhai, manChao, bangLenh] as [NSView] {
@@ -114,7 +134,7 @@ public final class EideKhung: NSView {
             cotPhai.topAnchor.constraint(equalTo: vienDo.bottomAnchor),
             cotPhai.trailingAnchor.constraint(equalTo: trailingAnchor),
             cotPhai.bottomAnchor.constraint(equalTo: bottomAnchor),
-            cotPhai.widthAnchor.constraint(equalToConstant: Self.RONG_COT_PHAI),
+            rongCotPhai,
 
             // ── cột giữa, hàng 1: thanh tab
             thanhTab.topAnchor.constraint(equalTo: vienDo.bottomAnchor),
@@ -161,6 +181,40 @@ public final class EideKhung: NSView {
             dock.trailingAnchor.constraint(equalTo: cotPhai.leadingAnchor),
             dock.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+    }
+
+    /// Cột phải hẹp hay đầy đủ — §2.2.
+    public func datCotPhaiHep(_ h: Bool) {
+        guard h != cotPhai.hep || rongCotPhai.constant != (h ? Self.RONG_COT_PHAI_HEP
+                                                             : Self.RONG_COT_PHAI) else { return }
+        cotPhai.datHep(h)
+        rongCotPhai.constant = h ? Self.RONG_COT_PHAI_HEP : Self.RONG_COT_PHAI
+    }
+
+    /// Tự thu cột phải khi cửa sổ chạm ngưỡng — §2.2.
+    ///
+    /// Trong `layout()` chứ không nghe `NSWindow.didResizeNotification`: khung nhìn này còn được
+    /// dựng NGOÀI cửa sổ (bài kiểm, `--chup`), và một luật bố cục chỉ chạy khi có cửa sổ là một
+    /// luật không bài nào đo được.
+    public override func layout() {
+        super.layout()
+        if hepTay == nil { datCotPhaiHep(frame.width <= Self.NGUONG_HEP) }
+    }
+
+    /// Cùng luật, chạy TRƯỚC lượt bố cục.
+    ///
+    /// Chỉ đặt trong `layout()` thì không đủ: đổi hằng của một ràng buộc TRONG lượt bố cục chỉ
+    /// đánh dấu cần bố cục lại, nên bề ngang cột vẫn là con số cũ cho tới lượt sau. Đo bằng
+    /// `--tu-kiem` 17b trên cửa sổ thật: `hep` đã `true` mà cột vẫn 236 pt.
+    public override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        if hepTay == nil { datCotPhaiHep(newSize.width <= Self.NGUONG_HEP) }
+    }
+
+    /// Người bấm nút gấp. Từ đây bề ngang cửa sổ thôi quyết định thay họ.
+    func nguoiDoiCotPhai(_ h: Bool) {
+        hepTay = h
+        datCotPhaiHep(h)
     }
 
     /// Bật/tắt dải "Dữ liệu cũ" — B6. Nói rõ CŨ BAO LÂU: người cần con số ấy để quyết có tin

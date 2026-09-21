@@ -226,6 +226,74 @@ public final class EidePhien {
         khung.cotPhai.onChonRun = { [weak self] _ in
             self?.moMan("S2", boiTacTu: false)
         }
+        khung.thanhTren.onDuAn = { [weak self] in
+            Task { await self?.moChonDuAn() }
+        }
+        chonDuAn.onChon = { [weak self] d in
+            guard let self else { return }
+            popChon.close()
+            Task { await self.doiDuAn(d.duong) }
+        }
+        chonDuAn.onTaoMoi = { [weak self] in
+            guard let self else { return }
+            popChon.close()
+            // Về màn chào chứ không mở một hộp thoại thứ hai: §3.1 đã có đúng một chỗ để tạo dự
+            // án, và hai đường tạo khác nhau là hai đường để lệch nhau.
+            khung.manChao.isHidden = false
+            khung.manChao.datTrangThai("", ban: false)
+        }
+    }
+
+    // MARK: - §2A.2 bộ chuyển dự án
+
+    public let chonDuAn = EideChonDuAn()
+    public lazy var popChon: NSPopover = {
+        let p = NSPopover()
+        p.contentViewController = chonDuAn
+        p.behavior = .transient
+        return p
+    }()
+
+    /// Mở popover chuyển dự án. Đọc `project.list` MỖI LẦN mở, không nhớ bản cũ: danh sách dự án
+    /// đổi ngoài ứng dụng (tạo bằng CLI, xoá bằng Finder), và một danh sách nhớ sẵn sẽ mời người
+    /// dùng mở một thư mục không còn tồn tại.
+    public func moChonDuAn() async {
+        let r = try? await EideDaemon.motLan(["project", "list"])
+        let ds = (r?.json?["projects"] as? [[String: Any]] ?? []).map(EideChonDuAn.DuAn.init)
+        chonDuAn.dat(ds)
+        if ds.isEmpty, let r, r.ma != 0 {
+            khung.dock.themLuot(.loi, "Không đọc được danh sách dự án: "
+                                + r.loi.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        let neo = khung.thanhTren.nutDuAn
+        guard neo.window != nil else { return }
+        popChon.show(relativeTo: neo.bounds, of: neo, preferredEdge: .maxY)
+    }
+
+    /// **Đổi dự án = thay TOÀN BỘ ngữ cảnh** — §2A.2.
+    ///
+    /// Đóng hết tab, bỏ hết thẻ Run, xoá mọi badge. Giữ lại bất cứ thứ gì của dự án cũ đều là một
+    /// lời nói dối cụ thể: một badge "Chờ tôi 2" còn sót lại trỏ vào hàng đợi của dự án KHÁC, và
+    /// người bấm Duyệt ở đó duyệt một việc họ không hề nhìn thấy.
+    ///
+    /// Bố cục thì giữ nguyên — cột trái, chiều cao vùng trao đổi, cột phải hẹp hay rộng là lựa
+    /// chọn của NGƯỜI, không thuộc về dự án nào.
+    public func doiDuAn(_ duong: String) async {
+        for t in khung.thanhTab.tab { khung.thanhTab.dong(t) }
+        khung.vungLamViec.dongMan()
+        for the in theRun.values { khung.dock.goThe(the) }
+        theRun.removeAll()
+        moiTheoMan.removeAll()
+        choTheoMan.removeAll()
+        manCua.removeAll()
+        motaCua.removeAll()
+        lanNguoiChon = nil
+        _veBadge()
+        khung.dock.themLuot(.heThong,
+            "Đổi sang dự án `\((duong as NSString).lastPathComponent)` — đã đóng hết tab của dự "
+            + "án cũ. Hàng đợi, thẻ chạy và huy hiệu đều thuộc về dự án đang mở.")
+        khung.anManChao()
+        await moDuAn(duong)
     }
 
     /// Khoảng "màn này là của tôi" sau một lần NGƯỜI tự chọn màn — §2C.3.
@@ -368,6 +436,9 @@ public final class EidePhien {
     /// `seq` sổ cái nghe được gần nhất. 0 = chưa nghe gì.
     private var seqNghe = 0
 
+    /// `seq` của lần đọc pha gần nhất — §2D.4. `-1` = chưa đọc lần nào, khác hẳn `0`.
+    private var seqPha = -1
+
     /// Màn ĐANG ĐÓNG có sự kiện chưa xem — §7.3 ("chỉ tăng badge nhóm").
     private var moiTheoMan: [String: Int] = [:]
 
@@ -504,6 +575,16 @@ public final class EidePhien {
         }
         do {
             let r = try await d.goi("chat.send", ["text": van])
+            // §2D.6 — thẻ Ý hiểu TRƯỚC câu "đang chạy": người đọc từ trên xuống, và thứ họ cần
+            // kiểm là ý hiểu, không phải mã lượt chạy.
+            if r["restate"] != nil || r["steps"] != nil {
+                let the = EideTheYHieu(
+                    van: (r["restate"] as? String) ?? "",
+                    buoc: (r["steps"] as? [[String: Any]] ?? []).compactMap { $0["cap"] as? String },
+                    muc: Self.mucTu(khung.thanhTren.mucHienTai),
+                    cho: false)
+                khung.dock.themThe(the)
+            }
             if let rid = r["run_id"] as? String {
                 khung.dock.themLuot(.tacTu, "Đang chạy (run \(rid.prefix(10))).")
             }
@@ -623,9 +704,64 @@ public final class EidePhien {
             // thẻ Run nằm trong vùng cao 48 pt là thẻ không ai thấy.
             khung.dock.datCao(.chuan)
         }
+        let truoc = the.trangThai
         the.nhan(p)
         if the.trangThai == .chan || the.trangThai == .xong || the.trangThai == .huy {
             Task { await _lamMoi() }
+        }
+        // §2E.6 — chỉ ở LẦN ĐẦU chuyển sang trạng thái kết thúc. `run.done` có thể tới nhiều lần
+        // (nghe lại sổ cái, nạp lại sau khi mất daemon), và mỗi lần in một báo cáo là vùng trao
+        // đổi đầy bản sao của cùng một việc.
+        guard truoc != the.trangThai else { return }
+        if the.trangThai == .xong {
+            Task { await _baoCao(ma) }
+        } else if the.trangThai == .huy {
+            khung.dock.themLuot(.cho, Self.cauHuy(p))
+        }
+    }
+
+    /// `" Tự chủ A2 "` → `"A2"`; `" ĐÃ DỪNG KHẨN · A0 "` → `"A0"`. Đọc từ chính huy hiệu người
+    /// đang nhìn, không giữ một bản sao thứ hai của mức tự chủ.
+    static func mucTu(_ nhan: String) -> String? {
+        nhan.split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .last { $0.count == 2 && $0.hasPrefix("A") && $0.last!.isNumber }
+            .map(String.init)
+    }
+
+    /// Câu cho một lượt chạy bị huỷ — §2E.6 vế sau: **ai huỷ, lúc nào.**
+    ///
+    /// Hai thứ ấy không trang trí. Một lượt chạy biến mất mà không nói ai cắt nó thì người dùng
+    /// phải đoán giữa "tôi bấm Dừng khẩn", "chính sách chặn" và "daemon chết" — ba nguyên nhân
+    /// dẫn tới ba việc sửa hoàn toàn khác nhau.
+    static func cauHuy(_ p: [String: Any]) -> String {
+        let ai = (p["by"] as? String) ?? (p["actor"] as? String) ?? "không rõ ai"
+        let luc = p["at"] is String ? EideManNhatKy.gio(p["at"] as? String)
+                                    : "không rõ lúc nào"
+        let vi = (p["reason"] as? String).map { " — \($0)" } ?? ""
+        return "Lượt chạy bị huỷ: \(ai), lúc \(luc)\(vi)."
+    }
+
+    /// §2E.6 — `run.done` → `chat.report_back` in báo cáo NGAY DƯỚI thẻ.
+    ///
+    /// Gọi năng lực thật chứ không tự tóm tắt từ các sự kiện đã nghe: CHAT-07 là chỗ duy nhất
+    /// biết đủ bốn thứ báo cáo cần (sản phẩm, cổng đã qua, chi phí, mục hoàn tác được), và ba
+    /// trong bốn thứ ấy giao diện không nghe được từ `event.run.progress`.
+    private func _baoCao(_ runId: String) async {
+        guard let d = daemon else { return }
+        do {
+            let r = try EideKetQua.boc(
+                try await d.goi("caps.invoke",
+                                ["id": "chat.report_back", "params": ["run_id": runId]]),
+                "chat.report_back")
+            let van = (r["text"] as? String) ?? ""
+            khung.dock.themLuot(.tacTu, van.isEmpty
+                ? "Lượt chạy xong. `chat.report_back` không trả câu tóm tắt nào — xem màn Nhật ký."
+                : van)
+        } catch {
+            // Báo cáo hỏng KHÔNG được nuốt: người vừa thấy một lượt chạy xong và đang chờ biết nó
+            // làm được gì. Im lặng ở đây đọc thành "xong rồi, không có gì để nói".
+            khung.dock.themLuot(.cho, "Lượt chạy xong, nhưng không lấy được báo cáo "
+                                + "(`chat.report_back`): \(error). Xem màn Nhật ký (S2).")
         }
     }
 
@@ -699,6 +835,24 @@ public final class EidePhien {
         }
         choTheoMan = theoMan
         _veBadge()
+
+        // §2D.4 — pha hiện tại của dự án, đọc từ CÙNG nguồn màn S3 dùng (`view.timeline` → lời
+        // gọi gần nhất có trong bản đồ BPD). Hai chỗ đoán pha bằng hai cách là hai chỗ có thể nói
+        // hai câu khác nhau về cùng một dự án.
+        //
+        // Chỉ đọc lại khi sổ cái ĐÃ NHÍCH. `_lamMoi()` chạy sau mỗi lần duyệt cổng, mỗi lần hoàn
+        // tác và mỗi lần một lượt chạy đổi trạng thái; `view.timeline` trên sổ cái 9 128 bản ghi
+        // đo được 0,47 s (18/09), nên đọc vô điều kiện là dán nửa giây vào mọi thao tác ấy để
+        // tính lại một con số không thể đổi khi không có bản ghi mới.
+        if seqNghe != seqPha {
+            seqPha = seqNghe
+            if let sk = (try? await d.goi("caps.invoke",
+                                          ["id": "view.timeline", "params": ["limit": 200]])),
+               let ds = ((sk["result"] as? [String: Any])?["events"]) as? [[String: Any]] {
+                khung.dock.datPha(EideManLuong.demTheoPha(ds).hienTai)
+            }
+        }
+        khung.dock.dangChay = theRun.values.contains { $0.trangThai == .chay }
     }
 
     /// `datetime.isoformat()` của Python ghi cả phần thập phân của giây (`…:45.123456+00:00`),

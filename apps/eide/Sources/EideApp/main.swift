@@ -21,6 +21,10 @@ final class UngDung: NSObject, NSApplicationDelegate {
                          styleMask: [.titled, .closable, .miniaturizable, .resizable],
                          backing: .buffered, defer: false)
         cuaSo.title = "EIDE"
+        // §2.2 — cỡ tối thiểu. Dưới 1100 × 700 thì năm vùng chen nhau tới mức vùng làm việc
+        // không còn đọc được, và cửa sổ nhỏ hơn thứ nó cần là cửa sổ người dùng tưởng mình dùng
+        // được rồi kết luận sản phẩm chật chội.
+        cuaSo.contentMinSize = EideKhung.CO_TOI_THIEU
         cuaSo.contentView = khung
         cuaSo.center()
 
@@ -45,6 +49,14 @@ final class UngDung: NSObject, NSApplicationDelegate {
                     try? await Task.sleep(nanoseconds: 1_200_000_000)
                     self.khung.layoutSubtreeIfNeeded()
                     self._chup(thuMuc.appendingPathComponent("khung.png"))
+                    // Cửa sổ ở đúng cỡ TỐI THIỂU — §2.2. Dải icon 44 pt chỉ hiện ra ở đây, và nó
+                    // là thứ duy nhất trong §2 mà một bài kiểm đọc số không thay được con mắt:
+                    // "44 pt" đúng không có nghĩa là ba con số trong đó còn đọc được.
+                    self.cuaSo.setContentSize(EideKhung.CO_TOI_THIEU)
+                    self.khung.layoutSubtreeIfNeeded()
+                    self._chup(thuMuc.appendingPathComponent("khung-toi-thieu.png"))
+                    self.cuaSo.setContentSize(NSSize(width: 1456, height: 838))
+                    self.khung.layoutSubtreeIfNeeded()
                     // Rồi một màn CÓ DỮ LIỆU: ảnh của khung rỗng không nói được gì về cách một
                     // bảng thật nằm trong đó.
                     for tien in ["Main", "ChinhSach", "NhatKy", "Passport", "XungDot", "Ingest", "Graph", "Board", "LamRo", "ReqArch", "DiagramView", "PlanDiff", "Doc", "Code", "DiffMerge", "Env", "Models", "ToolForge", "Registry", "FlowMap", "Sim"] {
@@ -112,8 +124,22 @@ final class UngDung: NSObject, NSApplicationDelegate {
         Task { await phien.khoiDong() }
     }
 
+    /// Mọi chữ NGƯỜI ĐỌC ĐƯỢC trong một cây khung nhìn.
+    ///
+    /// Gồm cả `placeholderString` và tiêu đề nút, không chỉ `stringValue`. Bản đầu chỉ đọc
+    /// `stringValue` nên nó mù với hai phần trong ba phần của popover §2A.2 — ô lọc là một
+    /// placeholder, "Dự án mới" là một tiêu đề nút — và bài kiểm báo HỎNG cho một popover dựng
+    /// đúng. Một hàm đo mù một nửa màn hình thì nó nói sai cả hai chiều.
     private func _chuTrong(_ v: NSView) -> String {
-        var ra = (v as? NSTextField)?.stringValue ?? ""
+        var ra = ""
+        if let t = v as? NSTextField {
+            ra += (t.attributedStringValue.string.isEmpty ? t.stringValue
+                                                          : t.attributedStringValue.string)
+            ra += " " + (t.placeholderString ?? "")
+        }
+        if let b = v as? NSButton {
+            ra += " " + (b.attributedTitle.string.isEmpty ? b.title : b.attributedTitle.string)
+        }
         for c in v.subviews { ra += "\n" + _chuTrong(c) }
         return ra
     }
@@ -252,6 +278,36 @@ final class UngDung: NSObject, NSApplicationDelegate {
                    && khung.thanhTab.tab.contains("NhatKy"),
             "(chiếm: \(chiem), đang mở: \(khung.vungLamViec.dangMo ?? "—"), "
             + "tab: \(khung.thanhTab.tab.count))")
+
+        // §2.2 — thu cửa sổ về đúng cỡ tối thiểu. Chỉ đo được trên cửa sổ THẬT: `contentMinSize`
+        // là thứ `NSWindow` cưỡng chế, và một bài kiểm dựng khung ngoài cửa sổ sẽ vui vẻ đặt bề
+        // ngang 800 pt — một trạng thái người dùng không bao giờ tới được.
+        cuaSo.setContentSize(EideKhung.CO_TOI_THIEU)
+        khung.layoutSubtreeIfNeeded()
+        do_("17. cửa sổ không co xuống dưới 1100 × 700 (§2.2)",
+            khung.frame.width >= 1100 && khung.frame.height >= 700,
+            String(format: "(%.0f × %.0f pt)", khung.frame.width, khung.frame.height))
+        do_("17b. chạm ngưỡng thì cột phải thu còn 44 pt và KHÔNG biến mất (§2.2)",
+            khung.cotPhai.hep && !khung.cotPhai.isHidden
+                && abs(khung.cotPhai.frame.width - 44) < 1,
+            String(format: "(hẹp: %@, rộng %.0f pt)", khung.cotPhai.hep ? "có" : "không",
+                   khung.cotPhai.frame.width))
+        cuaSo.setContentSize(NSSize(width: 1456, height: 838))
+        khung.layoutSubtreeIfNeeded()
+        do_("17c. nới cửa sổ ra thì cột phải đầy đủ trở lại",
+            !khung.cotPhai.hep, String(format: "(%.0f pt)", khung.cotPhai.frame.width))
+
+        // §2A.2 — popover chuyển dự án, neo vào nút tên dự án ở thanh trên.
+        await phien.moChonDuAn()
+        let chu = _chuTrong(phien.chonDuAn.view)
+        // Danh sách là dự án của WORKSPACE người dùng, không phải dự án tạm của bài kiểm — `tam`
+        // nằm ngoài workspace nên nó không được có mặt ở đây, và đòi nó là đòi sai.
+        do_("18. popover chuyển dự án có đủ ô lọc · danh sách · nút tạo mới (§2A.2)",
+            chu.contains("Lọc theo tên") && chu.contains("Dự án mới")
+                && !chu.contains("Không dự án nào khớp")
+                && phien.chonDuAn.loc("").count > 0,
+            "(\(phien.chonDuAn.loc("").count) dự án đọc từ `project.list`)")
+        phien.popChon.close()
 
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()

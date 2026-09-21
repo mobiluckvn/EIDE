@@ -587,6 +587,7 @@ class Daemon:
                                     "text": p["text"]}, self.ctx)
         if chuoi.status == "done" and chuoi.result:
             ra["run_id"] = chuoi.result.get("run_id")
+            ra.update(self._y_hieu(intent, chuoi.result))
             # Chuỗi dừng để chờ người thì NÓI RA nó chờ gì, ngay trong câu trả lời.
             #
             # Hợp đồng ghi `{intent_id, run_id?}` và "kết quả đến qua sự kiện" — đúng cho KẾT QUẢ.
@@ -597,6 +598,46 @@ class Daemon:
         else:
             ra["run"] = asdict(chuoi)
         return ra
+
+    def _y_hieu(self, intent: dict[str, Any], kq: dict[str, Any]) -> dict[str, Any]:
+        """`{restate, steps}` cho thẻ "Ý hiểu" của UXC-31 §2D.6.
+
+        §2D.6 đòi in ý hiểu **trước mọi chuỗi**, và câu ấy không phải trang trí: nó là chỗ duy
+        nhất người dùng bắt được một lệnh bị hiểu sai trước khi nó ghi tệp. Giao diện không tự
+        dựng được câu này — `intent` và `chain` chỉ tồn tại bên trong lời gọi này.
+
+        **Chuỗi đọc lại từ `run.graph`, không lấy từ kết quả `chat.orchestrate`.** CHAT-06 khai
+        `additionalProperties: false` và trả đúng `{run_id}`, nên thêm `steps` vào đó là sửa
+        schema trong `docs/spec/` — việc phải đi qua DEVIATIONS chứ không làm lặng lẽ. Báo cáo
+        run thì đã có sẵn mọi nút, và `_cho_gi` ngay dưới cũng đọc đúng nguồn ấy.
+
+        Thứ tự nút ghép lại từ bốn nhóm của báo cáo, nên nó là thứ tự ĐÃ CHẠY chứ không hẳn thứ
+        tự dự kiến — đủ cho một câu tóm tắt, và không đủ để dùng làm kế hoạch. Xem [DEV-140].
+
+        Gọi `chat.restate` qua Router như mọi lời gọi khác, nên nó vẫn đi qua chính sách và vẫn
+        vào sổ cái. Hỏng thì trả rỗng chứ **không** làm hỏng câu trả lời của `chat.send`: một
+        lượt chạy đã dựng xong không được mất `run_id` chỉ vì phần tóm tắt của nó lỗi.
+        """
+        from eide.caps.chat import doc_bao_cao
+        run_id = kq.get("run_id") or ""
+        if not run_id or not self.ctx.project_dir:
+            return {}
+        try:
+            bc = doc_bao_cao(Path(self.ctx.project_dir), run_id) or {}
+        except Exception:  # noqa: BLE001
+            return {}
+        buoc = [n for nhom in ("done", "waiting", "skipped", "failed")
+                for n in (bc.get(nhom) or []) if isinstance(n, dict) and n.get("cap")]
+        if not buoc:
+            return {}
+        try:
+            y = self.router.invoke("chat.restate",
+                                   {"intent": intent, "chain": buoc}, self.ctx)
+        except Exception:  # noqa: BLE001
+            return {"steps": buoc}
+        if y.status != "done" or not y.result:
+            return {"steps": buoc}
+        return {"restate": y.result.get("text") or "", "steps": buoc}
 
     def _cho_gi(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
         """Các nút đang chờ người, đọc từ báo cáo `run.graph` của chính lượt chạy vừa lập."""

@@ -87,6 +87,9 @@ public final class EideThanhTren: NSView {
 
     /// Hai giá trị cho bài đo đọc — KHÔNG phải trạng thái thứ hai: chúng đọc thẳng từ chính
     /// khung nhìn người dùng đang nhìn. Một bài kiểm đọc bản sao thì nó kiểm bản sao.
+    /// Nút tên dự án — popover §2A.2 neo vào đây.
+    public var nutDuAn: NSView { ten }
+
     public var tenDuAn: String { ten.title }
     public var mucHienTai: String {
         muc.attributedTitle.string.isEmpty ? muc.title : muc.attributedTitle.string

@@ -166,7 +166,13 @@ public final class EideTheRun: NSView {
         }
     }
 
-    private func _mauDoan(_ i: Int) -> NSColor {
+    private func _mauDoan(_ i: Int) -> NSColor { Self.mauBuoc(i, buoc: buoc, trangThai: trangThai) }
+
+    /// Màu một đoạn của thanh tiến độ — §1.4, bốn nghĩa bốn màu.
+    ///
+    /// Tách ra làm hàm tĩnh để đo được: đây là chỗ cả bốn màu ngữ nghĩa cùng xuất hiện, nên cũng
+    /// là chỗ một lần dùng chéo lộ ra rõ nhất.
+    public static func mauBuoc(_ i: Int, buoc: Int, trangThai: TrangThai) -> NSColor {
         if i < buoc { return EideToken.Mau.ok }
         if i == buoc && trangThai == .chan { return EideToken.Mau.warn }
         if i == buoc && trangThai == .chay { return EideToken.Mau.info }

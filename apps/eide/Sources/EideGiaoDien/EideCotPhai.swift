@@ -25,6 +25,16 @@ public final class EideCotPhai: NSView {
     /// Ba khối của cột — §2F.1. Dùng làm ĐÍCH cho hai bộ đếm ở thanh trên (§2A.4/2A.5).
     public enum Khoi { case dangChay, cho, hoanTac }
 
+    /// Người bấm nút gấp/mở cột — §2.2. `true` = xin dải hẹp.
+    public var onDoiHep: ((Bool) -> Void)?
+
+    /// Đang ở dải hẹp hay cột đầy đủ.
+    public private(set) var hep = false
+
+    private let nutGap = NSButton()
+    private let daiIcon = NSStackView()
+    private var dem: (chay: Int, cho: Int, hoanTac: Int) = (0, 0, 0)
+
     /// Số thẻ tối đa mỗi khối. Cột rộng 236 pt: 55 thẻ hoàn tác biến nó thành một cuộn dài vô
     /// nghĩa, và thứ người cần — mục MỚI NHẤT — nằm ngay đầu. Phần bị cắt KHÔNG im lặng: một
     /// dòng cuối khối nói còn bao nhiêu và xem ở đâu.
@@ -61,8 +71,30 @@ public final class EideCotPhai: NSView {
         cuon.hasVerticalScroller = true
         cuon.drawsBackground = false
         cuon.translatesAutoresizingMaskIntoConstraints = false
+
+        // Dải icon của §2.2. Ba mục, ĐÚNG ba mục và đúng thứ tự của cột đầy đủ — người dùng thu
+        // cột lại rồi bung ra phải thấy cùng một danh sách ở cùng một chỗ.
+        nutGap.bezelStyle = .inline
+        nutGap.font = EideToken.fontUI
+        nutGap.contentTintColor = EideToken.Mau.faint
+        nutGap.target = self
+        nutGap.action = #selector(_gap)
+        nutGap.translatesAutoresizingMaskIntoConstraints = false
+        daiIcon.orientation = .vertical
+        daiIcon.alignment = .centerX
+        daiIcon.spacing = 10
+        daiIcon.edgeInsets = NSEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        daiIcon.isHidden = true
+        daiIcon.translatesAutoresizingMaskIntoConstraints = false
         addSubview(cuon)
+        addSubview(daiIcon)
+        addSubview(nutGap)
         NSLayoutConstraint.activate([
+            nutGap.topAnchor.constraint(equalTo: topAnchor, constant: 6),
+            nutGap.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            daiIcon.topAnchor.constraint(equalTo: nutGap.bottomAnchor, constant: 4),
+            daiIcon.leadingAnchor.constraint(equalTo: leadingAnchor),
+            daiIcon.trailingAnchor.constraint(equalTo: trailingAnchor),
             cuon.topAnchor.constraint(equalTo: topAnchor),
             cuon.leadingAnchor.constraint(equalTo: leadingAnchor),
             cuon.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -75,12 +107,64 @@ public final class EideCotPhai: NSView {
         datDangChay([])
         datCho([])
         datHoanTac([])
+        datHep(false)
+    }
+
+    /// **Dải hẹp 44 pt — §2.2.** Ba con số vẫn hiện; cột KHÔNG bao giờ biến mất.
+    ///
+    /// "Không được ẩn hẳn" là điều khoản đáng kể nhất của §2.2: hàng đợi CHỜ TÔI là chỗ duy nhất
+    /// người dùng biết tác tử đang đợi mình, và một cột biến mất ở cửa sổ hẹp biến mọi mục chờ
+    /// thành im lặng. Dải hẹp giữ đúng ba con số ấy.
+    ///
+    /// Nút gấp luôn hiện ở cả hai trạng thái: gấp được mà không bung lại được thì người dùng mất
+    /// hẳn hàng đợi cho tới lần khởi động sau.
+    public func datHep(_ h: Bool) {
+        hep = h
+        cuon.isHidden = h
+        daiIcon.isHidden = !h
+        nutGap.title = h ? "⟨" : "⟩"
+        nutGap.toolTip = h ? "Mở rộng cột hàng đợi" : "Thu cột hàng đợi thành dải hẹp"
+        _veDai()
+    }
+
+    private func _veDai() {
+        for v in daiIcon.arrangedSubviews {
+            daiIcon.removeArrangedSubview(v)
+            v.removeFromSuperview()
+        }
+        guard hep else { return }
+        for (bieu, so, ten) in [("▶", dem.chay, "Đang chạy"),
+                                ("⏳", dem.cho, "Chờ tôi"),
+                                ("↩", dem.hoanTac, "Hoàn tác được")] {
+            let b = NSTextField(labelWithString: bieu)
+            b.font = EideToken.fontUI
+            b.alignment = .center
+            let n = NSTextField(labelWithString: "\(so)")
+            n.font = NSFont.boldSystemFont(ofSize: 11)
+            n.alignment = .center
+            // Khác 0 thì NỔI. Một dải hẹp đầy số xám cùng cỡ không nói được cái nào đang đợi.
+            n.textColor = so > 0 ? EideToken.Mau.warn : EideToken.Mau.faint
+            let o = NSStackView(views: [b, n])
+            o.orientation = .vertical
+            o.alignment = .centerX
+            o.spacing = 0
+            o.toolTip = "\(ten): \(so)"
+            o.setAccessibilityLabel("\(ten): \(so)")
+            daiIcon.addArrangedSubview(o)
+        }
+    }
+
+    @objc private func _gap() {
+        datHep(!hep)
+        onDoiHep?(hep)
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError() }
 
     public func datDangChay(_ ds: [(ma: String, dong: String)]) {
+        dem.chay = ds.count
+        _veDai()
         _do(cocDangChay, rong: "Không có lượt chạy nào.", ds.map { m in
             let b = NSButton(title: m.dong, target: self, action: #selector(_chonRun(_:)))
             b.bezelStyle = .inline
@@ -93,6 +177,8 @@ public final class EideCotPhai: NSView {
     }
 
     public func datCho(_ ds: [(ma: String, tieuDe: String, ly: String)]) {
+        dem.cho = ds.count
+        _veDai()
         nhanCho.stringValue = ds.isEmpty ? "CHỜ TÔI" : "CHỜ TÔI (\(ds.count))"
         _do(cocCho, rong: "Trống — không việc nào chờ anh.", ds.map { m in
             let t = NSTextField(labelWithString: m.tieuDe)
@@ -124,6 +210,8 @@ public final class EideCotPhai: NSView {
     }
 
     public func datHoanTac(_ ds: [(ma: String, nhan: String, han: String)]) {
+        dem.hoanTac = ds.count
+        _veDai()
         nhanHoanTac.stringValue = ds.isEmpty ? "HOÀN TÁC ĐƯỢC" : "HOÀN TÁC ĐƯỢC (\(ds.count))"
         _do(cocHoanTac, rong: "Chưa có mục nào trong cửa sổ hoàn tác.", ds.map { m in
             let t = NSTextField(labelWithString: m.nhan)
