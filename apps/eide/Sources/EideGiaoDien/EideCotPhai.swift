@@ -124,6 +124,7 @@ public final class EideCotPhai: NSView {
         daiIcon.isHidden = !h
         nutGap.title = h ? "⟨" : "⟩"
         nutGap.toolTip = h ? "Mở rộng cột hàng đợi" : "Thu cột hàng đợi thành dải hẹp"
+        nutGap.setAccessibilityLabel(nutGap.toolTip)
         _veDai()
     }
 

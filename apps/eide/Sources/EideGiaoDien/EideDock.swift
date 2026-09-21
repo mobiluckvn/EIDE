@@ -128,6 +128,11 @@ public final class EideDock: NSView {
             b.bezelStyle = .inline
             b.font = EideToken.fontUI
             b.toolTip = "Vùng trao đổi cao \(Int(c.rawValue)) pt"
+            // §9.2 — `toolTip` KHÔNG phải nhãn trợ năng, và `accessibilityLabel()` mặc định trả
+            // về chính tiêu đề, tức `▁`. VoiceOver khi ấy đọc một ký hiệu vô nghĩa.
+            b.setAccessibilityLabel(
+                ["Thu gọn vùng trao đổi", "Vùng trao đổi mức chuẩn", "Mở rộng vùng trao đổi"][
+                    [Cao.thuGon, .chuan, .moRong].firstIndex(of: c) ?? 1])
             b.identifier = NSUserInterfaceItemIdentifier("\(Int(c.rawValue))")
             nut.append(b)
         }
@@ -203,6 +208,15 @@ public final class EideDock: NSView {
         // sai ở mọi đường không có cửa sổ — và sai im lặng.
         if !buoc, let bien = oGo.currentEditor(), window?.firstResponder === bien { return }
         cao = c
+        // §9.4 — "Giảm chuyển động" của hệ điều hành. Đây là hoạt ảnh LỚN NHẤT trong cửa sổ:
+        // một khối 272 pt trượt lên xuống. Hai chỗ nhấp nháy nhỏ đã tôn trọng cờ này từ đầu,
+        // còn chỗ này thì không — tức người bật cờ ấy vì chuyển động làm họ chóng mặt vẫn nhận
+        // đúng chuyển động mạnh nhất.
+        guard !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else {
+            rangCao.constant = c.rawValue
+            superview?.layoutSubtreeIfNeeded()
+            return
+        }
         NSAnimationContext.runAnimationGroup {
             $0.duration = 0.15
             $0.timingFunction = CAMediaTimingFunction(name: .easeOut)

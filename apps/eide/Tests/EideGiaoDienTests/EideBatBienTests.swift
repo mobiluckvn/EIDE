@@ -146,6 +146,70 @@ final class EideBatBienTests: XCTestCase {
         XCTAssertLessThan(ProcessInfo.processInfo.systemUptime - t0, 1.0)
     }
 
+    // MARK: - §10.2 bài kiểm PHỦ ĐỊNH cho B1
+
+    /// **Tắt daemon → KHÔNG widget nào tự đổi trạng thái.**
+    ///
+    /// Đây là hình dạng đúng của một bài kiểm cho B1. B1 nói "không có đường nào hiển thị một
+    /// việc mà sổ cái không có sự kiện tương ứng" — một mệnh đề phủ định mọi đường, mà một bài
+    /// kiểm chỉ đi được những đường nó biết. Không kiểm trực tiếp được.
+    ///
+    /// Kiểm GIÁN TIẾP thì được, và §10.2 chỉ đúng cách: cắt nguồn sự thật rồi khẳng định màn
+    /// hình ĐỨNG YÊN. Một widget giữ trạng thái nguồn riêng sẽ tiếp tục nhúc nhích ở đây — đó
+    /// chính là thứ B1 cấm, và là thứ duy nhất trong B1 đo được.
+    func testTatDaemonThiKhongWidgetNaoTuDoiTrangThai() async {
+        let (k, ph) = dungKhung()
+        // Dựng một trạng thái CÓ NỘI DUNG trước: bài kiểm này vô nghĩa trên một cửa sổ trống —
+        // không có gì để đứng yên thì mọi thứ đều đứng yên.
+        ph.moMan("Main", boiTacTu: false)
+        ph.napSuKien("event.run.progress",
+                     ["kind": "run.started", "run_id": "r1", "text": "Dựng firmware",
+                      "steps": [["cap": "code.write"], ["cap": "code.build"]]])
+        ph.napSuKien("event.run.progress",
+                     ["kind": "run.step_started", "run_id": "r1", "cap": "code.write",
+                      "i": 1, "of": 2])
+        k.layoutSubtreeIfNeeded()
+
+        let truoc = Self.anh(k)
+        XCTAssertTrue(truoc.contains("bước 1/2"), "chưa dựng được trạng thái để đo — \(truoc)")
+
+        // Không daemon (bài kiểm này chưa từng nối), và bơm thời gian đi qua. Mọi widget đều
+        // phải giữ nguyên con số cuối cùng chúng NGHE ĐƯỢC.
+        await ph._lamMoi()
+        k.layoutSubtreeIfNeeded()
+        XCTAssertEqual(Self.anh(k), truoc, "có widget tự đổi trạng thái khi không còn nguồn")
+    }
+
+    /// Nửa còn lại: nghe được một sự kiện THẬT thì phải đổi. Không có vế này thì bài trên xanh
+    /// cho cả một giao diện chết hẳn.
+    func testNhungNgheDuocSuKienThatThiPhaiDoi() {
+        let (k, ph) = dungKhung()
+        ph.moMan("Main", boiTacTu: false)
+        ph.napSuKien("event.run.progress",
+                     ["kind": "run.started", "run_id": "r1", "text": "Dựng",
+                      "steps": [["cap": "a"], ["cap": "b"]]])
+        ph.napSuKien("event.run.progress",
+                     ["kind": "run.step_started", "run_id": "r1", "cap": "a", "i": 1, "of": 2])
+        let truoc = Self.anh(k)
+        ph.napSuKien("event.run.progress",
+                     ["kind": "run.step_started", "run_id": "r1", "cap": "b", "i": 2, "of": 2])
+        XCTAssertNotEqual(Self.anh(k), truoc, "nghe sự kiện thật mà màn hình không đổi")
+    }
+
+    /// Ảnh chụp trạng thái đọc được của cả khung — mọi chữ người nhìn thấy.
+    private static func anh(_ v: NSView) -> String {
+        var ra = ""
+        if let t = v as? NSTextField, !v.isHidden {
+            ra += (t.attributedStringValue.string.isEmpty ? t.stringValue
+                                                          : t.attributedStringValue.string) + "|"
+        }
+        if let b = v as? NSButton, !v.isHidden {
+            ra += (b.attributedTitle.string.isEmpty ? b.title : b.attributedTitle.string) + "|"
+        }
+        for c in v.subviews where !c.isHidden { ra += anh(c) }
+        return ra
+    }
+
     // MARK: - §1.2 / §1.3 chữ và bo góc
 
     /// **IBM Plex, không phải San Francisco.**

@@ -243,6 +243,11 @@ public final class EidePhien {
         khung.formThamSo.onChay = { [weak self] id, tham in
             Task { await self?.goiNangLuc(id, tham) }
         }
+        khung.modalHoi.onChon = { [weak self] thuan in
+            guard let self else { return }
+            let ma = daHoi
+            Task { await self._traLoiPEdit(thuan, ma) }
+        }
         khung.thanhTren.onDungKhan = { [weak self] in
             Task { await self?._dungKhan() }
         }
@@ -760,6 +765,99 @@ public final class EidePhien {
         }
     }
 
+    // MARK: - §9.1 điều hướng bằng bàn phím
+
+    /// ⌘1…⌘6 — nhảy tới nhóm thứ `i` ở cột trái, mở màn ĐẦU của nhóm.
+    ///
+    /// Mở màn đầu chứ không chỉ cuộn tới tiêu đề nhóm: một phím tắt đưa người tới một tiêu đề
+    /// rồi bắt họ bấm chuột tiếp thì nó chưa thay được cái bấm chuột nào.
+    @discardableResult
+    public func nhayNhom(_ i: Int) -> String? {
+        let nhom = EideManHinhDS.nhom
+        guard i >= 1, i <= nhom.count, let dau = nhom[i - 1].man.first else { return nil }
+        moMan(dau.tien, boiTacTu: false)
+        return dau.tien
+    }
+
+    /// ⌘W — đóng tab đang mở. Không tab nào thì KHÔNG đóng cửa sổ: ⌘W trong một IDE là "đóng
+    /// cái tôi đang xem", và để nó rơi xuống thành "đóng cả ứng dụng" là mất việc vì một phím.
+    @discardableResult
+    public func dongTabHienTai() -> Bool {
+        guard let t = khung.thanhTab.dangMo else { return false }
+        if let ke = khung.thanhTab.dong(t) {
+            moMan(ke, boiTacTu: false)
+        } else {
+            khung.vungLamViec.dongMan()
+        }
+        return true
+    }
+
+    /// ⌘S — `code.human_save` trên tệp đang mở ở S14.
+    ///
+    /// Không mở S14 thì NÓI RA. ⌘S là phản xạ mạnh nhất của người viết mã; bấm nó mà không có
+    /// gì xảy ra và không có lời nào là để họ tin rằng mình đã lưu.
+    public func luuTepHienTai() async {
+        guard let soan = khung.vungLamViec.manDangMo as? EideManSoanThao else {
+            return khung.dock.themLuot(.cho,
+                "⌘S lưu tệp của Trình soạn thảo (S14) — màn ấy đang không mở.")
+        }
+        guard soan.ban else {
+            return khung.dock.themLuot(.heThong, "Không có gì để lưu — bộ đệm chưa đổi.")
+        }
+        await soan.luu()
+    }
+
+    // MARK: - §6.1 modal P-EDIT-01
+
+    /// Quy tắc sinh ra modal §6.1. Một chuỗi, không phải một danh sách: P-EDIT-01 là quy tắc
+    /// DUY NHẤT nói về "tệp đích đang có sửa chưa lưu của người".
+    public static let LUAT_BAN = "P-EDIT-01"
+
+    /// Mở modal cho mục chờ `P-EDIT-01` đầu tiên trong hàng đợi — §6.1.
+    ///
+    /// Modal chứ không để nó nằm im trong cột phải: mục chờ ở cột phải là danh sách việc người
+    /// dùng xử lý *khi nào rảnh*, còn đây là một tác tử đang ĐỨNG ĐỢI trên đúng tệp người đang
+    /// gõ. Hai thứ ấy khác nhau về độ gấp, và trộn chúng làm một thì cái gấp chìm vào cái không.
+    ///
+    /// Chỉ mở MỘT lần cho một mục: `_lamMoi()` chạy sau mỗi lần duyệt, mỗi lần hoàn tác và mỗi
+    /// lần một lượt chạy đổi trạng thái, nên mở vô điều kiện sẽ dựng lại modal ngay sau khi
+    /// người vừa đóng nó.
+    private func _hoiPEdit(_ cho: [[String: Any]]) {
+        guard khung.modalHoi.isHidden else { return }
+        let muc = cho.first {
+            (($0["decision"] as? [String: Any])?["rule"] as? String) == Self.LUAT_BAN
+        }
+        guard let muc, let ma = muc["run_id"] as? String, ma != daHoi else { return }
+        daHoi = ma
+        let soan = khung.vungLamViec.manDangMo as? EideManSoanThao
+        khung.modalHoi.mo(
+            maCho: ma,
+            cap: (muc["cap"] as? String) ?? "một năng lực ghi mã",
+            tep: (soan?.ban ?? false) ? soan?.dangMo : nil,
+            vi: ((muc["decision"] as? [String: Any])?["reason"] as? String) ?? "")
+    }
+
+    /// Mục chờ đã hỏi rồi — đừng hỏi lại cùng một cái.
+    private var daHoi = ""
+
+    /// Người trả lời modal §6.1.
+    private func _traLoiPEdit(_ thuan: Bool, _ ma: String) async {
+        guard let d = daemon else { return }
+        // Vế thuận là HAI việc theo đúng thứ tự: lưu bản của người TRƯỚC, rồi mới cho tác tử
+        // chạy tiếp. Đảo thứ tự thì tác tử ghi lên tệp rồi bản của người mới lưu đè lại — và
+        // lúc ấy chính việc của tác tử biến mất, lặng lẽ.
+        if thuan, let soan = khung.vungLamViec.manDangMo as? EideManSoanThao, soan.ban {
+            await soan.luu()
+            if soan.ban {
+                khung.dock.themLuot(.loi, "Không lưu được bộ đệm — KHÔNG cho tác tử chạy tiếp. "
+                                    + "Sửa chỗ lưu hỏng trước, rồi duyệt lại ở cột phải.")
+                daHoi = ""
+                return
+            }
+        }
+        await _quyet(ma, thuan)
+    }
+
     /// `" Tự chủ A2 "` → `"A2"`; `" ĐÃ DỪNG KHẨN · A0 "` → `"A0"`. Đọc từ chính huy hiệu người
     /// đang nhìn, không giữ một bản sao thứ hai của mức tự chủ.
     static func mucTu(_ nhan: String) -> String? {
@@ -898,6 +996,7 @@ public final class EidePhien {
         }
         choTheoMan = theoMan
         _veBadge()
+        _hoiPEdit(cho)
 
         // §2D.4 — pha hiện tại của dự án, đọc từ CÙNG nguồn màn S3 dùng (`view.timeline` → lời
         // gọi gần nhất có trong bản đồ BPD). Hai chỗ đoán pha bằng hai cách là hai chỗ có thể nói

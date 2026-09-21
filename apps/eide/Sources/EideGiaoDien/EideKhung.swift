@@ -80,6 +80,8 @@ public final class EideKhung: NSView {
     /// Toast thêm SAU CÙNG nên nằm trên tất cả: nó là thứ báo một lệnh vừa bị cổng chặn, và một
     /// thông báo bị chính lớp phủ vừa sinh ra nó che mất thì không ai đọc được.
     public let formThamSo = EideFormThamSo()
+    /// Modal ASK §6.1 — đứng trên form tham số, dưới toast.
+    public let modalHoi = EideModalHoi()
     public let toast = EideToast()
 
     public override init(frame frameRect: NSRect) {
@@ -115,7 +117,8 @@ public final class EideKhung: NSView {
         cotPhai.onDoiHep = { [weak self] h in self?.nguoiDoiCotPhai(h) }
 
         for v in [thanhTren, vienDo, cotTrai, thanhTab, daiCu, vungLamViec,
-                  vachDock, dock, cotPhai, manChao, bangLenh, formThamSo, toast] as [NSView] {
+                  vachDock, dock, cotPhai, manChao, bangLenh, formThamSo,
+                  modalHoi, toast] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             addSubview(v)
         }
@@ -175,6 +178,11 @@ public final class EideKhung: NSView {
             formThamSo.leadingAnchor.constraint(equalTo: leadingAnchor),
             formThamSo.trailingAnchor.constraint(equalTo: trailingAnchor),
             formThamSo.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            modalHoi.topAnchor.constraint(equalTo: topAnchor),
+            modalHoi.leadingAnchor.constraint(equalTo: leadingAnchor),
+            modalHoi.trailingAnchor.constraint(equalTo: trailingAnchor),
+            modalHoi.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             // ── toast: giữa-trên, ngay dưới thanh trên. KHÔNG phủ toàn cửa sổ, vì nó không
             // chặn thao tác nào — người vẫn bấm được mọi thứ trong lúc nó hiện.

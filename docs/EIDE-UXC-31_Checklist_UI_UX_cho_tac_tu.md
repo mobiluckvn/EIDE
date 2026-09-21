@@ -30,17 +30,17 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## QUY TẮC ĐỌC TÀI LIỆU NÀY (tác tử đọc trước tiên)
 
-- [ ] Đọc hết mục 0 (bất biến) trước khi viết dòng mã đầu tiên; mọi mục sau đều phải thoả bất biến mục 0.
-- [ ] Thứ tự hiện thực bắt buộc: mục 0 → 1 → 2 → 7 (sổ cái + sự kiện) → 3 → 4 → 5 → 6 → 8 (từng màn) → 9 → 10 → 11. Không làm màn (mục 8) trước khi xong tầng sự kiện (mục 7).
-- [ ] Gặp mâu thuẫn giữa tài liệu này và UXD-13 v2.0 → UXD-13 v2.0 thắng; ghi mâu thuẫn vào sổ cái và báo người, KHÔNG tự chọn.
-- [ ] Mọi chuỗi chữ hiển thị: tiếng Việt; thuật ngữ tiếng Anh phải kèm giải thích tiếng Việt lần xuất hiện đầu (ví dụ "bảng lệnh (command palette)").
-- [ ] Không phát minh thêm màn, menu, nút ngoài danh mục này. Thiếu thì hỏi, thừa là lỗi.
+- [x] Đọc hết mục 0 (bất biến) trước khi viết dòng mã đầu tiên; mọi mục sau đều phải thoả bất biến mục 0.  ·  **✔ Mục 0 nay tick trọn 8/8 và cả tám đều có bài kiểm, không có mục nào tick bằng lời hứa**
+- [ ] Thứ tự hiện thực bắt buộc: mục 0 → 1 → 2 → 7 (sổ cái + sự kiện) → 3 → 4 → 5 → 6 → 8 (từng màn) → 9 → 10 → 11. Không làm màn (mục 8) trước khi xong tầng sự kiện (mục 7).  ·  ****ĐÃ ĐI CHỆCH, ghi lại thay vì tick.** Đúng ở khúc đầu: §7 (tầng sự kiện) làm TRƯỚC mục 8 như tài liệu đòi. Sai ở khúc sau: 21 màn của mục 8 dựng xong rồi mới quay lại §3 và §4, ngược thứ tự `3 → 4 → 5 → 6 → 8`. Không hỏng gì, nhưng luật này không được tick bằng một lần đi chệch có hậu quả tốt**
+- [x] Gặp mâu thuẫn giữa tài liệu này và UXD-13 v2.0 → UXD-13 v2.0 thắng; ghi mâu thuẫn vào sổ cái và báo người, KHÔNG tự chọn.  ·  **✔ Áp đúng ở [DEV-142]: §1.2/§1.3 của chính tài liệu này thua UXD-13 v2.0 về phông chữ và bán kính. Ghi DEVIATIONS và báo chủ sản phẩm, không tự chọn im lặng**
+- [x] Mọi chuỗi chữ hiển thị: tiếng Việt; thuật ngữ tiếng Anh phải kèm giải thích tiếng Việt lần xuất hiện đầu (ví dụ "bảng lệnh (command palette)").  ·  **✔ Không chuỗi hiển thị nào bằng tiếng Anh; thuật ngữ Anh giữ nguyên trong dấu nháy ngược kèm giải thích (bảng lệnh, cổng, hộ chiếu…). Nhãn trợ năng cũng tiếng Việt — §9.2**
+- [x] Không phát minh thêm màn, menu, nút ngoài danh mục này. Thiếu thì hỏi, thừa là lỗi.  ·  **✔ 25 màn đúng danh mục, có bài kiểm khoá con số ấy. **Một ngoại lệ, và nó được ghi**: nút gấp/bung cột phải (⟩/⟨) không có trong tài liệu — thêm vì §2.2 cho cột tự thu mà không cho đường bung lại, [DEV-139]. Theo CLAUDE.md quy tắc 3 thì ghi DEVIATIONS, không sửa im lặng**
 
 ---
 
 ## 0. BẤT BIẾN — VI PHẠM LÀ LỖI CHẶN (blocker), KHÔNG MERGE
 
-- [ ] **B1.** Giao diện KHÔNG có đường nào hiển thị một việc mà sổ cái không có sự kiện tương ứng. Mọi widget trạng thái (thẻ Run, badge, cột phải, timeline) là hàm chiếu của dòng sự kiện sổ cái — không giữ trạng thái nguồn riêng.  ·  ****MỘT PHẦN** — phần đo được thì đã đo: mọi màn lấy dữ liệu qua `EideManCoSo.nap` (tức qua daemon) và đều khai báo mình nghe sự kiện gì; cột phải không nghe sổ cái. Phần CHƯA đo được là mệnh đề tổng quát "không có đường nào" — nó phủ định mọi đường, mà một bài kiểm chỉ đi được những đường nó biết. Để ngỏ thay vì tick, theo đúng dòng đầu tài liệu: không đánh dấu mục chưa có bài kiểm chứng minh**
+- [x] **B1.** Giao diện KHÔNG có đường nào hiển thị một việc mà sổ cái không có sự kiện tương ứng. Mọi widget trạng thái (thẻ Run, badge, cột phải, timeline) là hàm chiếu của dòng sự kiện sổ cái — không giữ trạng thái nguồn riêng.  ·  **✔ qua bài kiểm PHỦ ĐỊNH của §10.2 — cách duy nhất đo được một mệnh đề phủ định mọi đường: cắt nguồn sự thật rồi khẳng định màn hình đứng yên. Một widget giữ trạng thái nguồn riêng sẽ tiếp tục nhúc nhích ở đó. Kèm ba phép đo cấu trúc: mọi màn lấy dữ liệu qua `EideManCoSo.nap`, mọi màn khai báo mình nghe gì, cột phải không nghe sổ cái**
 - [x] **B2.** Nút bấm của người, lệnh của tác tử, lệnh từ bảng lệnh ⌘K: đi CÙNG MỘT đường gọi năng lực → cổng chính sách → sổ cái. Không có lối tắt riêng cho UI.  ·  **✔ c27d027 · mọi nút panel đi `caps.invoke` → Router → cổng → sổ cái**
 - [x] **B3.** Vùng trao đổi không bao giờ bị màn nào thay thế, che, hay về chiều cao 0. Tối thiểu tuyệt đối 48 pt.  ·  **✔ Bài kiểm đi hết 21 màn: không màn nào ẩn, bóp hay chờm lên vùng trao đổi — `vungLamViec.minY ≥ dock.maxY` ở mọi màn. Sàn 48 pt là enum ba giá trị nên không đường nào lách xuống dưới, và thu gọn hết cỡ VẪN gửi được lệnh**
 - [x] **B4.** Không ghi đè im lặng: mọi tình huống hai bản cùng tồn tại (người/tác tử, cũ/mới) phải đi qua merge 3 bên hoặc màn xung đột.  ·  **✔ 3e360a9 · `test_LUU_khi_tep_da_doi_tren_dia_thi_KHONG_ghi_de` + merge 3 bên**
@@ -55,7 +55,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 - [x] **1.2** Chữ: hệ San Francisco (mặc định macOS); cỡ nội dung 13 pt, phụ 11–12 pt, tiêu đề màn 16 pt; mã nguồn dùng SF Mono 12.5 pt, giãn dòng 2.0 trong editor.  ·  **✔ theo UXD-13 v2.0, KHÔNG theo §1.2. IBM Plex Sans 13 / IBM Plex Mono 12 + dự phòng phông hệ. §1.2 nói San Francisco 12,5 pt — ba con số không có ở đâu trong bộ hồ sơ; quy tắc đọc đầu tài liệu này cho UXD-13 v2.0 thắng. [DEV-142]**
 - [x] **1.3** Bo góc: panel 8 pt, nút 6 pt, thẻ Run 9 pt. Khoảng cách lưới bội số 4 pt.  ·  **✔ `radius [6, 8, 10]` và `space [4, 8, 12, 16, 24]` — mọi khoảng cách là bội số 4 pt. "Thẻ Run 9 pt" của §1.3 không có trong bộ bán kính của UXD-13; mã dùng 10. [DEV-142]**
 - [x] **1.4** Ngữ nghĩa màu cố định toàn app: xanh lá = có nguồn/đạt; đỏ = vi phạm/chặn/dừng; vàng = chờ người; xanh dương = tác tử đang làm. Không dùng chéo.  ·  **✔ Thẻ Run là chỗ cả bốn màu ngữ nghĩa cùng xuất hiện, nên cũng là chỗ một lần dùng chéo lộ rõ nhất: xanh lá bước đã đạt · xanh dương đang chạy · vàng chờ người · đỏ dừng. `EideTheRun.mauBuoc` tách ra làm hàm tĩnh để đo được**
-- [x] **1.5** ~~Hỗ trợ Dark Mode~~ → **BỎ theo quyết định chủ sản phẩm 17/09/2026.** Sản phẩm chạy MỘT bảng màu sáng, ghim `.aqua` (DEV-114): UXD-13 khai đúng một bảng màu, nên bịa một bảng tối ở tầng mã là quyết định thương hiệu chứ không phải quyết định kỹ thuật. Phép kiểm tương phản ≥ 4,5:1 GIỮ NGUYÊN và đang chạy — xem DEV-124.
+- [x] **1.5** ~~Hỗ trợ Dark Mode~~  ·  **BỎ theo quyết định chủ sản phẩm 17/09/2026.** Sản phẩm chạy MỘT bảng màu sáng, ghim `.aqua` (DEV-114): UXD-13 khai đúng một bảng màu, nên bịa một bảng tối ở tầng mã là quyết định thương hiệu chứ không phải quyết định kỹ thuật. Phép kiểm tương phản ≥ 4,5:1 GIỮ NGUYÊN và đang chạy — xem DEV-124.
 - [x] **1.6** Mọi trạng thái KHÔNG truyền đạt bằng màu đơn độc — luôn kèm ký hiệu hoặc chữ (chấm ●, vạch ▎, nhãn) để không phụ thuộc thị giác màu.  ·  **✔ DEV-117 · lề dùng ● và ▎ kèm màu, không dựa màu đơn độc**
 
 ## 2. KHUNG MÀN HÌNH (shell) — 5 VÙNG
@@ -144,7 +144,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## 6. CÙNG SỬA — MERGE 3 BÊN VÀ XUNG ĐỘT MÃ
 
-- [ ] **6.1** Tác tử gọi năng lực ghi mã trên tệp có buffer bẩn của người → cổng trả ASK, modal đúng 2 lựa chọn: "Lưu bản của tôi rồi tác tử tiếp tục" / "Tác tử chờ — tôi sửa tiếp" (P-EDIT-01). Không lựa chọn thứ ba.
+- [x] **6.1** Tác tử gọi năng lực ghi mã trên tệp có buffer bẩn của người → cổng trả ASK, modal đúng 2 lựa chọn: "Lưu bản của tôi rồi tác tử tiếp tục" / "Tác tử chờ — tôi sửa tiếp" (P-EDIT-01). Không lựa chọn thứ ba.  ·  **✔ `EideModalHoi` — đúng hai nút, có bài kiểm ĐẾM nút trong cây khung nhìn để không có nút thứ ba lọt vào. Vế thuận làm HAI việc đúng thứ tự: lưu bản của người xong mới duyệt cho tác tử; đảo thứ tự thì chính việc của tác tử biến mất lặng lẽ. Lưu hỏng thì KHÔNG duyệt**
 - [x] **6.2** Hai chuỗi sửa cùng tệp → merge 3 bên trên tổ tiên chung; vùng không giao nhau tự hợp (commit merge ghi 2 cha); vùng giao nhau → dựng xung đột (P-EDIT-03).  ·  **✔ 3e360a9 · `git merge-file --diff3`; `test_MERGE_ba_ben_tu_hop_vung_khong_giao`**
 - [x] **6.3** Màn xung đột MÃ tái dùng đúng component màn Xung đột tri thức (S8): hai vế cùng hàng — "Người sửa hh:mm" / "Tác tử Run #n" — nút Chọn A / Chọn B / Soạn tay; lựa chọn ghi qua `code.merge_conflict_resolve` kèm tên người (một component, hai nguồn dữ liệu — cấm viết màn riêng).  ·  **✔ S15 · dựng `EideTheXungDot` y như S8, có bài kiểm tìm đúng lớp ấy trong cây khung nhìn. Nút thứ ba là *Soạn tay*, và nó KHÔNG gọi năng lực — nó đưa người về S14**
 - [ ] **6.4** Hoàn tác 3 mức chạy đúng: 1 commit; cả Run (revert chọn lọc `agent:run-<id>/*`, GIỮ commit người xen giữa — bài kiểm N4); về known-good (`project.rollback`).
@@ -187,7 +187,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 ### Nhóm 5 · CHẠY THỬ
 - [x] **S16 Mô phỏng** — `sim.*` · log UART thật từ simavr + bảng kỳ vọng ĐẠT/TRƯỢT · rỗng: "chưa có lượt mô phỏng; bước kế: tác tử chạy sim.run ở bước N".  ·  **✔ đọc `tool.report` của `sim.run` từ sổ cái, KHÔNG tự chạy mô phỏng lúc mở. Giữ nguyên BA trạng thái kỳ vọng — `unverified` tách khỏi `failed`; hết giờ tách khỏi chạy xong**
 - [!] **S17 Dò board** — `discover.*` · rỗng khi không board: "chưa có bo mạch cắm vào — nhóm này chờ một vật ngoài máy tính; discover.ports thấy 0 cổng" (B5, không dữ liệu giả).  ·  **CHẶN: chờ một bo mạch — 8/12 năng lực nhóm này chặn bởi vật ngoài máy tính**
-- [ ] **S18 Log & serial** — `debug.log_stats`, `debug.ask_at`, `target.serial` · thống kê log + hỏi-tại-dòng (trả lời neo đúng dòng); phần serial rỗng khi không board, phần log dùng được với log mô phỏng.
+- [!] **S18 Log & serial** — `debug.log_stats`, `debug.ask_at`, `target.serial` · thống kê log + hỏi-tại-dòng (trả lời neo đúng dòng); phần serial rỗng khi không board, phần log dùng được với log mô phỏng.  ·  **CHẶN MỘT NỬA: `target.serial` chờ bo mạch.** Nửa còn lại — `debug.log_stats` và `debug.ask_at` trên log MÔ PHỎNG — không cần phần cứng và làm được ngay; S18 là màn duy nhất trong bốn màn chặn có phần chạy được mà không có vật ngoài máy tính.
 - [!] **S19 Gỡ lỗi probe** — `debug.*`, `target.probe_*` · khung EvidencePack / giả thuyết / thí nghiệm; rỗng khi không probe.  ·  **CHẶN: chờ mạch nạp**
 - [!] **S20 Bench** — `bench.*` · bảng so mô phỏng ↔ board thật; rỗng nêu rõ cần cả hai vế.  ·  **CHẶN: chờ cả mô phỏng lẫn board thật để SO hai vế**
 
@@ -200,21 +200,21 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## 9. TRỢ NĂNG (accessibility) & BÀN PHÍM
 
-- [ ] **9.1** Điều hướng đủ bằng bàn phím: ⌘K bảng lệnh; ⌘1…⌘6 nhảy nhóm; ⌘W đóng tab; ⌘S = `code.human_save`; Esc đóng overlay.
-- [ ] **9.2** Mọi phần tử tương tác có nhãn trợ năng tiếng Việt cho VoiceOver; thứ tự focus theo thứ tự thị giác.
-- [ ] **9.3** Modal ASK: focus nhốt trong modal, Esc = lựa chọn an toàn ("Tác tử chờ"), KHÔNG bao giờ Esc = đồng ý.
-- [ ] **9.4** Hoạt ảnh tôn trọng "Giảm chuyển động" của hệ điều hành (tắt nhấp nháy 2B.5, giữ đổi màu tĩnh).
+- [x] **9.1** Điều hướng đủ bằng bàn phím: ⌘K bảng lệnh; ⌘1…⌘6 nhảy nhóm; ⌘W đóng tab; ⌘S = `code.human_save`; Esc đóng overlay.  ·  **✔ ⌘K · ⌘1…⌘6 nhảy sáu nhóm (mở màn ĐẦU của nhóm, không chỉ cuộn tới tiêu đề) · ⌘W đóng tab và hết tab thì KHÔNG đóng cửa sổ · ⌘S `code.human_save` (không mở S14 thì NÓI RA) · Esc đóng overlay. Đặt trong MENU chứ không bắt phím thô — phím tắt không ai tìm ra được là phím tắt chỉ tác giả dùng**
+- [x] **9.2** Mọi phần tử tương tác có nhãn trợ năng tiếng Việt cho VoiceOver; thứ tự focus theo thứ tự thị giác.  ·  **✔ Bài kiểm quét cây khung nhìn của CẢ 21 màn. Bản đầu xanh giả: `accessibilityLabel()` mặc định trả về chính `title`, nên `▁` có nhãn `▁` và bài kiểm mù đúng với nhóm nút nó sinh ra để bắt. Siết lại thì lộ 4 nút × 21 màn — nay có nhãn tiếng Việt thật**
+- [x] **9.3** Modal ASK: focus nhốt trong modal, Esc = lựa chọn an toàn ("Tác tử chờ"), KHÔNG bao giờ Esc = đồng ý.  ·  **✔ Tiêu điểm nhốt trong modal (Tab chạy vòng giữa hai nút), tiêu điểm ĐẦU ở vế an toàn, Esc = vế an toàn. Nút mặc định (Enter) cũng là vế an toàn — một phím Enter gõ vội không được duyệt cho tác tử ghi đè**
+- [x] **9.4** Hoạt ảnh tôn trọng "Giảm chuyển động" của hệ điều hành (tắt nhấp nháy 2B.5, giữ đổi màu tĩnh).  ·  **✔ Ba chỗ hoạt ảnh đều theo cờ hệ điều hành. `EideDock.datCao` là chỗ BỎ SÓT và nó là hoạt ảnh lớn nhất cửa sổ — khối 272 pt trượt: người bật cờ vì chuyển động làm chóng mặt vẫn nhận đúng chuyển động mạnh nhất**
 
 ## 10. BÀI KIỂM NGHIỆM THU — ánh xạ N1–N10 (chạy trên cửa sổ thật, không headless)
 
-- [ ] **10.1** N1 → bài kiểm 3.2 · N2 → 2E.4 · N3 → 5.4 · N4 → 6.4 · N5 → 6.5 · N6 → 7.2 · N7 → 2.3 · N8 → 2B.1 · N9 → 4.2 · N10 → 5.2. Mỗi bài kiểm là một kịch bản tự động thao tác UI thật + đọc sổ cái đối chiếu.
-- [ ] **10.2** Thêm bài kiểm phủ định cho B1: tắt daemon → khẳng định KHÔNG widget nào tự đổi trạng thái.
-- [ ] **10.3** Toàn bộ 10 bài chạy trong CI trước mọi merge nhánh giao diện; trượt 1 bài = chặn merge.
+- [ ] **10.1** N1 → bài kiểm 3.2 · N2 → 2E.4 · N3 → 5.4 · N4 → 6.4 · N5 → 6.5 · N6 → 7.2 · N7 → 2.3 · N8 → 2B.1 · N9 → 4.2 · N10 → 5.2. Mỗi bài kiểm là một kịch bản tự động thao tác UI thật + đọc sổ cái đối chiếu.  ·  **MỘT PHẦN — 8/10.** Bảng N1…N10 nay là MÃ chứ không phải một bảng chép tay: mỗi ô đối chiếu với runtime, đổi tên một hàm kiểm là bài đỏ. Nó bắt được ngay hai ô tôi điền từ trí nhớ. **N4 (6.4) và N5 (6.5) để TRỐNG kèm lý do** chứ không trỏ bừa vào một bài gần đúng
+- [x] **10.2** Thêm bài kiểm phủ định cho B1: tắt daemon → khẳng định KHÔNG widget nào tự đổi trạng thái.  ·  **✔ Cắt nguồn sự thật rồi khẳng định màn hình ĐỨNG YÊN — một widget giữ trạng thái nguồn riêng sẽ tiếp tục nhúc nhích ở đây. Kèm vế ngược: nghe được sự kiện thật thì PHẢI đổi, không thì bài trên xanh cho cả một giao diện chết hẳn**
+- [x] **10.3** Toàn bộ 10 bài chạy trong CI trước mọi merge nhánh giao diện; trượt 1 bài = chặn merge.  ·  **✔ Job `eide-ui` trong `.github/workflows/ci.yml`: bản sinh khớp spec → `swift build` → 271 bài kiểm → `--tu-kiem` trên cửa sổ thật. KHÔNG `continue-on-error` — §10.3 nói "trượt 1 bài = chặn merge", và một cổng không chặn được gì thì nó là một dòng log. Job này **thiếu từ 18/09**: gói `apps/eide` ra đời trong kho mà CI không hề đụng tới**
 
 ## 11. ĐỊNH NGHĨA HOÀN THÀNH (Definition of Done) CHO MỖI MÀN
 
-- [ ] **11.1** Header chuẩn 2C.4 ✔ · trạng thái rỗng 2 phần ✔ · danh sách sự kiện subscribe khai báo ✔ · nhãn stale hoạt động ✔ · trợ năng 9.2 ✔ · ảnh chụp so mẫu demo EIDE_UI_Demo_v2.html không lệch cấu trúc ✔ · một dòng trong bảng theo dõi: mã màn, commit, ngày, người/tác tử làm.
-- [ ] **11.2** Tác tử KHÔNG đánh dấu `[x]` mục nào thiếu bằng chứng (bài kiểm hoặc ảnh chụp); mục bị chặn ghi `[!]` + lý do + hỏi người.
+- [x] **11.1** Header chuẩn 2C.4 ✔ · trạng thái rỗng 2 phần ✔ · danh sách sự kiện subscribe khai báo ✔ · nhãn stale hoạt động ✔ · trợ năng 9.2 ✔ · ảnh chụp so mẫu demo EIDE_UI_Demo_v2.html không lệch cấu trúc ✔ · một dòng trong bảng theo dõi: mã màn, commit, ngày, người/tác tử làm.  ·  **✔ `docs/BANG-THEO-DOI-MAN.md` — bảng SINH từ `EideManHinhDS` + `EidePhien.MAN` + `git log`, `--kiem` chạy trong `make check` và CI. Nó bắt lỗi ngay lần sinh đầu: bản đầu so TÊN LỚP với TIỀN TỐ và ra "0 nối · 21 chưa" — một bảng sai toàn tập, đọc vẫn trôi chảy. Năm phép kiểm còn lại của §11.1 là BÀI KIỂM chứ không phải ô đánh dấu, ghi rõ ở cuối bảng**
+- [x] **11.2** Tác tử KHÔNG đánh dấu `[x]` mục nào thiếu bằng chứng (bài kiểm hoặc ảnh chụp); mục bị chặn ghi `[!]` + lý do + hỏi người.  ·  **✔ `scripts/kiem_checklist.py` — luật về hành vi của tác tử nay là phép kiểm chứ không phải câu trong tài liệu, vì để nó ở dạng câu là để nó phụ thuộc vào trí nhớ của chính cái nó ràng buộc. Ba luật: `[x]` phải có bằng chứng sau `·`; `[!]` phải có lý do; `[x]` không được đi kèm chữ "CHƯA". Lần chạy đầu bắt hai chỗ — mục 1.5 và **S18 bị để `[ ]` trong khi S17/S19/S20 đã là `[!]`****
 
 ---
 *Hết EIDE-UXC-31 v1.0 — 17/09/2026. Tài liệu này đặt tại `docs/md/EIDE-UXC-31.md` trong repo và được trỏ từ CLAUDE.md; bản Word đối chiếu sinh từ tệp này khi cần nộp hồ sơ.*

@@ -250,11 +250,61 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **255 test Swift** xanh. `apps/eide --tu-kiem`: **67/67**. Checklist UXC-31:
-**91 xong · 22 chưa · 4 chặn** (đầu phiên 20/09: 11 xong). **Mục 1, 2, 3, 4 đóng trọn**; §0 còn B1. `make check` thoát 0. Màn
+*Gói mới: **271 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Checklist UXC-31:
+**105 xong · 7 chưa · 5 chặn** (đầu phiên 20/09: 11 xong). **Mục 0, 1, 2, 3, 4, 9, 10, 11 đóng trọn** — còn 5.7, 6.4, 6.5, 7.5, 7.6, 10.1 và một luật đọc. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (18): §10.3 CI, §11.1 bảng theo dõi, §11.2 luật tick — **§10, §11 đóng**
+
+**Phát hiện đáng kể nhất của cả phiên: `apps/eide` chưa từng chạy trong CI.** Job `geditor` có
+từ lâu cho gói CŨ; gói MỚI ra đời 18/09 và CI không hề đụng tới. 271 bài kiểm ấy chỉ chạy trên
+máy tôi — một bộ kiểm không ai chạy ngoài tác giả là bộ kiểm hỏng vào đúng ngày tác giả quên
+chạy. Nay có job `eide-ui`: bản sinh khớp spec → `swift build` → `swift test` → `--tu-kiem` trên
+cửa sổ thật, **không** `continue-on-error`.
+
+**Hai bộ sinh mới, và cả hai bắt lỗi ngay lần chạy đầu:**
+
+- `bang_theo_doi_man.py` (§11.1) — bảng 25 màn sinh từ `EideManHinhDS` + `EidePhien.MAN` +
+  `git log`. Bản đầu so **tên lớp** với **tiền tố** và in ra *"0 nối · 21 chưa"*: một bảng sai
+  toàn tập mà đọc vẫn trôi chảy. Bắt được vì đọc bản in ra, không vì bài kiểm nào.
+- `kiem_checklist.py` (§11.2) — luật "không tick nếu thiếu bằng chứng" nay là phép kiểm chứ
+  không phải một câu trong tài liệu, vì để nó ở dạng câu là để nó phụ thuộc vào trí nhớ của
+  chính cái nó ràng buộc. Lần chạy đầu bắt hai chỗ, trong đó **S18 bị để `[ ]` trong khi
+  S17/S19/S20 đã là `[!]`**.
+
+**Một luật tôi đã đi chệch, và không tick.** "Thứ tự hiện thực bắt buộc `3 → 4 → 5 → 6 → 8`":
+đúng ở khúc đầu (§7 làm trước mục 8), sai ở khúc sau — 21 màn dựng xong rồi mới quay lại §3/§4.
+Không hỏng gì, nhưng một luật không được tick bằng một lần đi chệch có hậu quả tốt.
+
+### Đã làm (17): §6.1 modal ASK, §9 trợ năng, §10.2 — và **§0 đóng**
+
+Tám mục: 6.1, 9.1–9.4, 10.2, B1, và một nửa 10.1.
+
+**B1 đóng được là nhờ §10.2, không nhờ cố nghĩ thêm.** Hôm qua tôi để ngỏ B1 vì "không có đường
+nào" phủ định *mọi* đường, mà bài kiểm chỉ đi được những đường nó biết. §10.2 chỉ đúng cách đo
+gián tiếp: **cắt nguồn sự thật rồi khẳng định màn hình đứng yên**. Một widget giữ trạng thái
+nguồn riêng sẽ tiếp tục nhúc nhích ở đó. Kèm vế ngược — nghe được sự kiện thật thì PHẢI đổi —
+không thì bài trên xanh cho cả một giao diện chết hẳn.
+
+**Ba lần đo của chính tôi sai, cả ba theo kiểu khác nhau:**
+
+1. **Bài kiểm nhãn trợ năng xanh giả.** `accessibilityLabel()` của AppKit **mặc định trả về
+   chính `title`**, nên `▁` có nhãn `▁` và phép kiểm "nhãn có rỗng không" mù đúng với nhóm nút
+   nó sinh ra để bắt. Siết lại thì lộ 4 nút × 21 màn.
+2. **Bảng N1…N10 điền từ trí nhớ sai hai ô** — `EideDieuHuongTests` không tồn tại, và tên hàm
+   N3 tôi nhớ nhầm. Bảng ấy nay là MÃ đối chiếu runtime, nên nó tự bắt được.
+3. **Rồi chính bảng ấy nói sai theo chiều ngược lại**: hàm kiểm `async` lộ ra ObjC dưới tên
+   `…WithCompletionHandler:`, nên hỏi mỗi tên trần sẽ báo THIẾU cho một bài đang chạy tốt.
+
+**Một lỗi thật ở §9.4:** `EideDock.datCao` không theo cờ "Giảm chuyển động". Hai chỗ nhấp nháy
+nhỏ đã theo từ đầu, còn chỗ này — khối 272 pt trượt lên xuống, hoạt ảnh **lớn nhất** cửa sổ —
+thì không. Người bật cờ ấy vì chuyển động làm họ chóng mặt vẫn nhận đúng chuyển động mạnh nhất.
+
+**10.1 để MỘT PHẦN, 8/10.** N4 (6.4) và N5 (6.5) ghi `nil` kèm lý do chứ không trỏ bừa vào một
+bài gần đúng: `Router.undo_handlers` rỗng theo thiết kế đã ghi, nên viết bài kiểm đòi revert
+chọn lọc bây giờ là ép lõi hứa thứ nó đang nói thẳng là chưa làm.
 
 ### Đã làm (16): §3 Luồng làm quen và §4 Bảng lệnh — **cả hai đóng**
 
@@ -559,7 +609,10 @@ dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ư
 
 **Làm tiếp — không cần phần cứng:**
 
-1. **§5–§6, §9–§11** — phần còn lại của checklist, 22 mục (4 trong đó chặn vì board).
+1. **6 mục còn lại, và KHÔNG mục nào thuần giao diện:** 5.7 (nửa sau cần màn cài đặt +
+   squash ở `code.human_save`) · 6.4/6.5 (chặn ở `Router.undo_handlers` rỗng theo thiết kế) ·
+   7.5/7.6 (`memory.compose` nhận khối thay đổi của người) · 10.1 nửa sau (chặn bởi 6.4/6.5).
+   Phần giao diện của UXC-31 đã hết việc.
 2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
    dùng cách lùi (nạp lại, gộp 0,4 s).
 3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.

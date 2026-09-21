@@ -351,6 +351,26 @@ final class UngDung: NSObject, NSApplicationDelegate {
             "(\(khung.toast.chu))")
         khung.toast.an()
 
+        // §9.1 — ba phím tắt còn lại, đo trên phiên thật chứ không đọc bảng menu: một mục menu
+        // có `keyEquivalent` đúng mà `action` trỏ vào hư vô vẫn "có phím tắt".
+        do_("21. ⌘1…⌘6 nhảy đủ sáu nhóm (§9.1)",
+            (1...6).allSatisfy { phien.nhayNhom($0) != nil }
+                && phien.nhayNhom(7) == nil,
+            "(\(EideManHinhDS.nhom.count) nhóm)")
+        do_("21b. ⌘W đóng tab, hết tab thì KHÔNG đóng cửa sổ (§9.1)",
+            { var n = 0; while phien.dongTabHienTai() { n += 1; if n > 40 { break } }
+              return n > 0 && !phien.dongTabHienTai() }(),
+            "(còn \(khung.thanhTab.tab.count) tab)")
+
+        // §6.1 — modal ASK với ĐÚNG hai lựa chọn, và Esc là vế an toàn (§9.3).
+        khung.modalHoi.mo(maCho: "kiem", cap: "code.modify", tep: nil, vi: "bộ đệm bẩn")
+        khung.layoutSubtreeIfNeeded()
+        let sl = khung.modalHoi.nhanNut
+        khung.modalHoi.cancelOperation(nil)
+        do_("22. modal P-EDIT-01 đúng HAI lựa chọn, Esc = vế an toàn (§6.1, §9.3)",
+            sl.count == 2 && khung.modalHoi.isHidden,
+            "(\(sl.joined(separator: " | ")))")
+
         khung.datDuLieuCu(true, tre: 9)
         khung.layoutSubtreeIfNeeded()
         do_("9. dải Dữ liệu cũ nói rõ trễ bao lâu", khung.chuDaiCu.contains("9 giây"),
@@ -387,12 +407,39 @@ final class UngDung: NSObject, NSApplicationDelegate {
         dung.keyEquivalentModifierMask = [.command, .shift]
         dung.target = self
         lenh.submenu?.addItem(dung)
+
+        // §9.1 — điều hướng đủ bằng bàn phím. Đặt trong MENU chứ không bắt phím thô: menu là
+        // chỗ duy nhất macOS cho người dùng biết ứng dụng có những phím tắt gì, và một phím tắt
+        // không ai tìm ra được là một phím tắt chỉ tác giả dùng.
+        lenh.submenu?.addItem(NSMenuItem.separator())
+        let luu = NSMenuItem(title: "Lưu tệp (code.human_save)",
+                             action: #selector(_luuTep), keyEquivalent: "s")
+        luu.target = self
+        lenh.submenu?.addItem(luu)
+        let dongTab = NSMenuItem(title: "Đóng tab", action: #selector(_dongTab),
+                                 keyEquivalent: "w")
+        dongTab.target = self
+        lenh.submenu?.addItem(dongTab)
         goc.addItem(lenh)
+
+        let dh = NSMenuItem()
+        dh.submenu = NSMenu(title: "Điều hướng")
+        for (i, n) in EideManHinhDS.nhom.enumerated() {
+            let m = NSMenuItem(title: n.ten, action: #selector(_nhayNhom(_:)),
+                               keyEquivalent: "\(i + 1)")
+            m.tag = i + 1
+            m.target = self
+            dh.submenu?.addItem(m)
+        }
+        goc.addItem(dh)
 
         NSApp.mainMenu = goc
     }
 
     @objc private func _moBangLenh() { khung.bangLenh.mo() }
+    @objc private func _luuTep() { Task { await phien.luuTepHienTai() } }
+    @objc private func _dongTab() { phien.dongTabHienTai() }
+    @objc private func _nhayNhom(_ m: NSMenuItem) { phien.nhayNhom(m.tag) }
     @objc private func _dungKhan() { Task { await phien.dungKhan() } }
 
     private func _co(_ nhan: String) {

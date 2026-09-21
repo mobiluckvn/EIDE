@@ -140,33 +140,38 @@ public final class EideManSoanThao: EideManCoSo {
     /// Buffer bẩn — §5.3.
     public var ban: Bool { !duong.isEmpty && soanThao.string != goc }
 
-    @objc private func _luu() {
+    @objc private func _luu() { Task { [weak self] in await self?.luu() } }
+
+    /// Lưu, và **chờ được**.
+    ///
+    /// Tách khỏi `_luu()` vì modal §6.1 phải lưu bản của người XONG rồi mới cho tác tử chạy
+    /// tiếp. Một hàm bắn-rồi-quên không nói được lúc nào xong, nên chỗ gọi sẽ duyệt cho tác tử
+    /// trong khi lần ghi của người còn đang bay — và tác tử ghi trước, bản của người lưu đè lại
+    /// sau, làm chính việc của tác tử biến mất lặng lẽ.
+    public func luu() async {
         guard let goi = goiLoi, ban else { return }
-        Task { [weak self] in
-            guard let self else { return }
-            _xoaBang()
-            do {
-                let r = try await nangLuc(goi, "code.human_save", [
-                    "path": duong, "content": soanThao.string,
-                    // `base_content` là nội dung LÚC MỞ, không phải nội dung trên đĩa bây giờ.
-                    // Đó là cả cơ chế phát hiện E6004: lõi so nó với đĩa, và lệch nghĩa là ai
-                    // đó đã ghi trong lúc ta gõ.
-                    "base_content": goc, "by": EideManXungDot.nguoi(),
-                ])
-                goc = soanThao.string
-                _bang("Đã lưu — commit \(((r["commit"] as? String) ?? "?").prefix(10))"
-                      + ", seq \(EideManHoChieu.nguyen(r["seq"]) ?? 0). Mục hoàn tác đã vào cột "
-                      + "phải.", mau: EideToken.Mau.ok)
-                await capNhatLe(goi)
-            } catch let e as EideKetQua.Loi where e.maEide == "E6004" {
-                // §5.5: "TUYỆT ĐỐI không ghi đè (B4)". Màn KHÔNG có nút "ghi đè" — không phải
-                // vì quên, mà vì một nút như thế biến cả cơ chế merge ba bên thành tuỳ chọn.
-                _bang("⛔ Tệp đã đổi trên đĩa từ lúc anh mở — KHÔNG ghi đè. Bản của anh vẫn "
-                      + "nguyên trong bộ đệm. Mở màn Diff & cổng merge (S15) để hợp nhất ba bên.",
-                      mau: EideToken.Mau.bad)
-            } catch {
-                _bang("Không lưu được: \(error)", mau: EideToken.Mau.bad)
-            }
+        _xoaBang()
+        do {
+            let r = try await nangLuc(goi, "code.human_save", [
+                "path": duong, "content": soanThao.string,
+                // `base_content` là nội dung LÚC MỞ, không phải nội dung trên đĩa bây giờ.
+                // Đó là cả cơ chế phát hiện E6004: lõi so nó với đĩa, và lệch nghĩa là ai
+                // đó đã ghi trong lúc ta gõ.
+                "base_content": goc, "by": EideManXungDot.nguoi(),
+            ])
+            goc = soanThao.string
+            _bang("Đã lưu — commit \(((r["commit"] as? String) ?? "?").prefix(10))"
+                  + ", seq \(EideManHoChieu.nguyen(r["seq"]) ?? 0). Mục hoàn tác đã vào cột "
+                  + "phải.", mau: EideToken.Mau.ok)
+            await capNhatLe(goi)
+        } catch let e as EideKetQua.Loi where e.maEide == "E6004" {
+            // §5.5: "TUYỆT ĐỐI không ghi đè (B4)". Màn KHÔNG có nút "ghi đè" — không phải
+            // vì quên, mà vì một nút như thế biến cả cơ chế merge ba bên thành tuỳ chọn.
+            _bang("⛔ Tệp đã đổi trên đĩa từ lúc anh mở — KHÔNG ghi đè. Bản của anh vẫn "
+                  + "nguyên trong bộ đệm. Mở màn Diff & cổng merge (S15) để hợp nhất ba bên.",
+                  mau: EideToken.Mau.bad)
+        } catch {
+            _bang("Không lưu được: \(error)", mau: EideToken.Mau.bad)
         }
     }
 
@@ -286,6 +291,7 @@ public final class EideManSoanThao: EideManCoSo {
             .joined(separator: " | ")
     }
     public var leDeTest: EideLeSoanThao { le }
+
 }
 
 /// **Lề trái của trình soạn thảo** — §5.1.
