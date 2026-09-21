@@ -623,11 +623,20 @@ public final class EidePhien {
             // §2D.6 — thẻ Ý hiểu TRƯỚC câu "đang chạy": người đọc từ trên xuống, và thứ họ cần
             // kiểm là ý hiểu, không phải mã lượt chạy.
             if r["restate"] != nil || r["steps"] != nil {
+                // v1.3 — `state == "planned"` nghĩa là chuỗi ĐANG ĐỢI người gật đầu
+                // ([DEV-140]). Chỉ khi ấy hai nút của §2D.6 mới có nghĩa; mọi lúc khác chuỗi
+                // đã giao đi và một nút "Đúng — làm đi" trên nó là một nút không đảo được gì.
+                let cho = (r["state"] as? String) == "planned"
+                let ma = (r["run_id"] as? String) ?? ""
                 let the = EideTheYHieu(
                     van: (r["restate"] as? String) ?? "",
                     buoc: (r["steps"] as? [[String: Any]] ?? []).compactMap { $0["cap"] as? String },
                     muc: Self.mucTu(khung.thanhTren.mucHienTai),
-                    cho: false)
+                    cho: cho)
+                if cho {
+                    the.onDuyet = { [weak self] in Task { await self?.tiepTuc(ma, true) } }
+                    the.onSua = { [weak self] in Task { await self?.tiepTuc(ma, false) } }
+                }
                 khung.dock.themThe(the)
             }
             if let rid = r["run_id"] as? String {
@@ -856,6 +865,56 @@ public final class EidePhien {
             }
         }
         await _quyet(ma, thuan)
+    }
+
+    /// Đặt mức tự chủ — cho bài tự kiểm dựng đúng điều kiện của §2D.6.
+    @discardableResult
+    public func datMucDeTest(_ muc: String) async throws -> String {
+        guard let d = daemon else { return "" }
+        let r = try await d.goi("autonomy.set", ["level": muc, "by": "human:tu-kiem"])
+        await _lamMoi()
+        return (r["effective"] as? String) ?? muc
+    }
+
+    /// Kết quả lập kế hoạch — cho bài tự kiểm đo §2D.6 trên daemon thật.
+    public struct KeHoach {
+        public let ma: String
+        public let trangThai: String
+        public let soBuoc: Int
+    }
+
+    /// Gửi một câu và trả về trạng thái lập kế hoạch. Đi ĐÚNG đường `chat.send` mà người dùng
+    /// đi, nên nó đo cả phép quyết định `plan_only` theo mức tự chủ ở daemon.
+    public func lapKeHoachDeTest(_ van: String) async throws -> KeHoach {
+        guard let d = daemon else { return KeHoach(ma: "", trangThai: "—", soBuoc: 0) }
+        let r = try await d.goi("chat.send", ["text": van])
+        return KeHoach(ma: (r["run_id"] as? String) ?? "",
+                       trangThai: (r["state"] as? String) ?? "—",
+                       soBuoc: (r["steps"] as? [[String: Any]])?.count ?? 0)
+    }
+
+    /// Người trả lời thẻ Ý hiểu — §2D.6, [DEV-140].
+    ///
+    /// `thuan = false` là **HUỶ**, không phải "để đó": người bấm *Sửa ý hiểu* nói chuỗi này
+    /// sai, và để nó ở `planned` thì lần mở dự án sau nó vẫn nằm trong hàng đợi như một việc
+    /// đang chờ — người dùng phải nhớ rằng chính mình đã từ chối nó.
+    public func tiepTuc(_ runId: String, _ thuan: Bool) async {
+        guard let d = daemon, !runId.isEmpty else { return }
+        do {
+            let r = try await d.goi("chat.resume", ["run_id": runId, "approve": thuan])
+            let tt = (r["state"] as? String) ?? "?"
+            khung.dock.themLuot(thuan ? .heThong : .cho,
+                thuan ? "Đã duyệt ý hiểu — chuỗi chạy tiếp (\(tt))."
+                      : "Đã huỷ chuỗi. Gõ lại câu lệnh với ý anh muốn.")
+            for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) {
+                let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
+                khung.dock.themLuot(.cho, "Dừng ở `\(n["cap"] as? String ?? "?")` — "
+                                    + "cần anh cho biết: \(thieu).")
+            }
+        } catch {
+            khung.dock.themLuot(.loi, "\(error)")
+        }
+        await _lamMoi()
     }
 
     /// `" Tự chủ A2 "` → `"A2"`; `" ĐÃ DỪNG KHẨN · A0 "` → `"A0"`. Đọc từ chính huy hiệu người

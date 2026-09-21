@@ -12,7 +12,7 @@
 | S2 | Nhật ký | nối | `EideManDauTien.swift` | `4969443` | 2026-09-21 | Vũ Trí Công |
 | S3 | Bản đồ luồng | nối | `EideManLuongVaMoPhong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
 | S4 | Nhập tài liệu | nối | `EideManNhapTaiLieu.swift` | `57c9ad0` | 2026-09-20 | Vũ Trí Công |
-| S5 | Hộ chiếu chip | nối | `EideManHoChieu.swift` | `482cd03` | 2026-09-20 | Vũ Trí Công |
+| S5 | Hộ chiếu chip | nối | `EideManHoChieu.swift` | `15d508c` | 2026-09-21 | Vũ Trí Công |
 | S6 | Hộ chiếu mạch | nối | `EideManHoChieuMach.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
 | S7 | Bản đồ tri thức & hỏi đáp | nối | `EideManBanDoTriThuc.swift` | `f88d7d9` | 2026-09-20 | Vũ Trí Công |
 | S8 | Xung đột tri thức | nối | `EideManXungDot.swift` | `f88d7d9` | 2026-09-20 | Vũ Trí Công |

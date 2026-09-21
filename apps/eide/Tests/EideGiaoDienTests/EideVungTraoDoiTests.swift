@@ -78,14 +78,19 @@ final class EideVungTraoDoiTests: XCTestCase {
         XCTAssertTrue(Self.chu(t).contains("tự chạy, vẫn in ý hiểu"), Self.chu(t))
     }
 
-    /// A0/A1 và A2–A3 phải nói HAI câu khác nhau: một bên là đúng hợp đồng, bên kia là một
-    /// thiếu sót có thật của tầng dưới, và gộp chúng là giấu mất cái thứ hai.
-    func testA1NoiRoLaThieuSotChuKhongNoiLaBinhThuong() {
+    /// A0/A1 và A2–A3 phải nói HAI câu khác nhau — và từ v1.3 khác nhau theo nghĩa mới.
+    ///
+    /// A2–A3 không hỏi là ĐÚNG hợp đồng. A0/A1 không hỏi là **bất thường**: daemon đặt
+    /// `plan_only` cho hai mức ấy ([DEV-140]), nên chuỗi lẽ ra phải đang đợi; thấy câu này ở
+    /// A0/A1 nghĩa là daemon đọc một mức khác mức thanh trên đang hiện.
+    func testA1NoiRoDayLaBatThuongChuKhongNoiLaBinhThuong() {
         let a1 = EideTheYHieu.viSaoKhongHoi("A1")
-        XCTAssertTrue(a1.contains("DEV-140"), a1)
-        XCTAssertTrue(a1.contains("chưa có chỗ dừng"), a1)
+        XCTAssertTrue(a1.contains("đã được giao đi"), a1)
+        XCTAssertTrue(a1.contains("Dừng khẩn"), a1)
         let a2 = EideTheYHieu.viSaoKhongHoi("A2")
-        XCTAssertFalse(a2.contains("DEV-140"), "A2 đúng hợp đồng mà vẫn báo thiếu sót — \(a2)")
+        XCTAssertTrue(a2.contains("tự chạy, vẫn in ý hiểu"), a2)
+        XCTAssertFalse(a2.contains("đã được giao đi"),
+                       "A2 đúng hợp đồng mà vẫn báo bất thường — \(a2)")
     }
 
     func testCoChoDungThiDuHaiNutCuaTaiLieu() {

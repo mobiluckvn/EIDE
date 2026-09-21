@@ -141,6 +141,15 @@ final class UngDung: NSObject, NSApplicationDelegate {
         Task { await phien.khoiDong() }
     }
 
+    /// Bản tĩnh của `_chuTrong` — dùng được từ chỗ gọi tĩnh.
+    static func chuTrongTinh(_ v: NSView) -> String {
+        var ra = ""
+        if let t = v as? NSTextField { ra += t.stringValue + " " }
+        if let t = v as? NSTextView { ra += t.string + " " }
+        for c in v.subviews { ra += chuTrongTinh(c) }
+        return ra
+    }
+
     /// Mọi chữ NGƯỜI ĐỌC ĐƯỢC trong một cây khung nhìn.
     ///
     /// Gồm cả `placeholderString` và tiêu đề nút, không chỉ `stringValue`. Bản đầu chỉ đọc
@@ -231,6 +240,13 @@ final class UngDung: NSObject, NSApplicationDelegate {
         await phien._lamMoi()
         let mucTruoc = khung.thanhTren.mucHienTai
         do_("7. mức tự chủ đọc được từ daemon", mucTruoc.contains("A"), "(\(mucTruoc))")
+
+        // §2D.6 KHÔNG đo được ở đây: đường `chat.send` đi qua `chat.parse_intent`,
+        // tức qua mô hình, tức qua mạng và qua tiền — cùng lý do `--chup` không gọi nó.
+        // Luật "A0/A1 thì `plan_only`" kiểm ở `tests/test_dung_cho_gat_dau.py`, và
+        // `plan_only`/`chat.resume` kiểm end-to-end qua Router ở cùng tệp ấy.
+        // Ghi ra chứ không lặng lẽ bỏ: một phép đo biến mất khỏi danh sách trông y hệt
+        // một phép đo chưa ai nghĩ tới.
 
         await phien.dungKhan()
         await phien._lamMoi()

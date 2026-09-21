@@ -10,10 +10,10 @@ import EideLoi
 ///
 /// ## Hai nút, và khi nào chúng KHÔNG hiện
 ///
-/// §2D.6 đòi hai nút "Đúng — làm đi" / "Sửa ý hiểu" ở mức A1. Hai nút ấy chỉ có nghĩa nếu chuỗi
-/// đang ĐỢI — mà orchestrator hiện không có chỗ dừng nào giữa "dựng xong chuỗi" và "chạy bước
-/// đầu tiên" ([DEV-140]). Nên thẻ này nhận `cho: Bool`: đợi thật thì hiện nút, không đợi thì
-/// **nói ra mình không đợi** thay vì hiện hai nút bấm vào không đảo được gì.
+/// §2D.6 đòi hai nút "Đúng — làm đi" / "Sửa ý hiểu" ở mức A1, và chúng chỉ có nghĩa nếu chuỗi
+/// đang ĐỢI. Từ v1.3 chỗ dừng ấy có thật: `chat.orchestrate` nhận `plan_only`, `chat.resume`
+/// chạy tiếp hoặc huỷ ([DEV-140]). Thẻ nhận `cho: Bool` — `state == "planned"` thì hiện nút,
+/// không thì **nói ra mình không đợi** thay vì hiện hai nút bấm vào không đảo được gì.
 ///
 /// Một nút "Đúng — làm đi" đặt trên một việc đã làm xong là thứ tệ hơn không có nút: người dùng
 /// học được rằng bấm hay không bấm đều thế, rồi họ thôi đọc cả thẻ.
@@ -91,14 +91,18 @@ public final class EideTheYHieu: NSView {
 
     /// Vì sao thẻ không hỏi lại — và câu trả lời KHÁC NHAU theo mức tự chủ.
     ///
-    /// Ở A2–A3 thì đúng hợp đồng: §2D.6 viết "mức A2–A3 tự chạy nhưng vẫn in ý hiểu". Ở A0–A1
-    /// thì đó là một thiếu sót có thật của tầng dưới, và nói ra nó là việc của thẻ này.
+    /// Ở A2–A3 thì đúng hợp đồng: §2D.6 viết "mức A2–A3 tự chạy nhưng vẫn in ý hiểu".
+    ///
+    /// Ở A0–A1 thì từ v1.3 đây là một trạng thái BẤT THƯỜNG: daemon đặt `plan_only` cho hai mức
+    /// ấy, nên chuỗi lẽ ra phải đang đợi. Thấy câu này ở A0/A1 nghĩa là daemon đọc một mức tự
+    /// chủ khác mức thanh trên đang hiện — nói ra thay vì im, vì hai con số ấy lệch nhau là một
+    /// chuyện người dùng phải biết.
     public static func viSaoKhongHoi(_ muc: String?) -> String {
         let m = muc ?? "?"
         if m == "A0" || m == "A1" {
-            return "Mức \(m) — theo §2D.6 anh phải gật đầu trước. Orchestrator hiện chưa có chỗ "
-                 + "dừng giữa \"dựng xong chuỗi\" và \"chạy bước đầu\", nên chuỗi đã được giao "
-                 + "đi; các cổng chính sách vẫn chặn từng bước. Xem DEVIATIONS DEV-140."
+            return "Mức \(m) — theo §2D.6 anh phải gật đầu trước, nhưng lượt này đã được giao "
+                 + "đi. Thường là do daemon đọc mức tự chủ khác mức đang hiện ở đây; các cổng "
+                 + "chính sách vẫn chặn từng bước. Bấm Dừng khẩn nếu sai."
         }
         return "Mức \(m) — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn."
     }

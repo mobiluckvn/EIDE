@@ -145,6 +145,14 @@ d("chat.ground", {"intent": "obj!"}, {"grounded": "obj!"}, ["DPS-09 §4.2 tra pr
 d("chat.fill_defaults", {"intent": "obj!", "grounded": "obj!"}, {"intent": "obj!", "applied": "arr<obj>!"}, ["DPS-09 §4.3 thứ tự preferences → suy ra → autonomy.defaults → năng lực; ghi ledger"], [], "none", '{"intent":{},"grounded":{}}', "TC-61")
 d("chat.clarify", {"gaps": "arr<obj>!", "context": "obj"}, {"question": "obj!", "answer": "obj", "by": "enum:human|timeout"}, ["Gộp gaps thành một Question có options/default/timeout/remember_as; event.chat.question; chờ; timeout → default; memory.remember"], [], "none", '{"gaps":[{"slot":"board"}]}', "TC-61 timeout 120 s → mặc định")
 d("chat.restate", {"intent": "obj!", "chain": "arr<obj>!"}, {"text": "str!"}, ["Mẫu 'Tôi hiểu là … Tôi sẽ …' ≤ 2 câu; event.chat.restated"], [], "none", '{"intent":{},"chain":[]}', "TC-62")
-d("chat.orchestrate", {"intent": "obj!", "grounded": "obj!", "text": "str # câu lệnh gốc của người, để thẻ Run gọi tên việc bằng chính câu ấy"}, {"run_id": "str!"}, ["Chọn ChainTemplate theo trigger_intents hoặc planner → Chain; kiểm deterministic; Run planned→running; mỗi nút Router.invoke; on_ask; fail ≥ 2 → escalate; tiếp tục sau tắt máy"], ["E5002", "E3003"], "none", '{"intent":{},"grounded":{}}', "TC-63")
+# v1.3 — `plan_only` và `steps` (DEV-140). UXC-31 §2D.6 đòi in Ý hiểu **trước mọi chuỗi**
+# kèm hai nút "Đúng — làm đi"/"Sửa ý hiểu" ở mức A1. Hai nút ấy chỉ có nghĩa nếu chuỗi đang
+# ĐỢI, mà tới v1.2 năng lực này dựng chuỗi VÀ chạy nó trong cùng một lời gọi — không có trạng
+# thái trung gian nào giữa "chuỗi đã dựng" và "bước đầu tiên đã chạy". `plan_only` dừng sau
+# bước 3 (ghi `run.graph`, trạng thái `planned`); `chat.resume` chạy tiếp.
+#
+# `steps` trả ra để giao diện in được danh sách bước dự kiến mà không phải đọc ngược store —
+# và để `chat.restate` có `chain` thật thay vì một chuỗi dựng lại từ báo cáo đã chạy.
+d("chat.orchestrate", {"intent": "obj!", "grounded": "obj!", "text": "str # câu lệnh gốc của người, để thẻ Run gọi tên việc bằng chính câu ấy", "plan_only": "bool # dựng chuỗi và DỪNG ở trạng thái planned, không chạy nút nào", "resume_of": "str # run_id của một lượt đang planned — chạy tiếp CHÍNH nó, giữ nguyên run_id và đồ thị đã ghi"}, {"run_id": "str!", "state": "str! # planned|running|done|blocked|cancelled", "steps": "arr<obj>! # {id, cap} theo thứ tự chạy"}, ["Chọn ChainTemplate theo trigger_intents hoặc planner → Chain; kiểm deterministic; Run planned→running; mỗi nút Router.invoke; on_ask; fail ≥ 2 → escalate; tiếp tục sau tắt máy"], ["E5002", "E3003"], "none", '{"intent":{},"grounded":{}}', "TC-63")
 d("chat.report_back", {"run_id": "str!"}, {"report": "obj!", "text": "str!"}, ["Gom done/waiting/undo/cost; ≤ 10 dòng; event.chat.report; memory.progress"], [], "none", '{"run_id":"r_1"}', "TC-64")
 d("chat.decline", {"reason": "enum:not_in_passport|policy_reject|cannot|out_of_scope!", "detail": "str", "suggestions": "arr<str>"}, {"text": "str!"}, ["Câu trả lời trung thực có lý do và đề xuất (kg.request, hỏi người); ghi error_ledger nếu refusal"], [], "none", '{"reason":"not_in_passport","detail":"timing I2C BME280"}', "UC-H04")

@@ -423,11 +423,29 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     grounded = params.get("grounded") or {}
 
     root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
-    run_id = "r_" + secrets.token_hex(6)
 
-    # Bước 1 — mẫu trước, planner sau.
-    mau = chain_mod.chon_mau(ten_y_dinh)
-    chuoi, nguon = _dung_chuoi(mau, intent, grounded, ctx, run_id)
+    # v1.3 — chạy tiếp một lượt đang `planned` (DEV-140). Dùng LẠI đồ thị đã ghi và giữ nguyên
+    # `run_id`: người vừa đọc danh sách bước ấy rồi gật đầu, nên lập lại kế hoạch ở đây là chạy
+    # một chuỗi khác chuỗi họ đồng ý.
+    tiep = str(params.get("resume_of") or "")
+    if tiep:
+        kh = doc_ke_hoach(root, tiep) if root is not None else None
+        if kh is None or kh["state"] != "planned":
+            raise EideError("E2000", f"`{tiep}` không phải một lượt đang `planned`"
+                            + (f" (đang `{kh['state']}`)" if kh else ""),
+                            exists=[kh["state"]] if kh else [], candidates=["planned"],
+                            missing=[tiep])
+        run_id = tiep
+        chuoi = chain_mod.Chain([chain_mod.Nut.tu_dict(n)
+                                 for n in (kh["graph"].get("nodes") or [])])
+        nguon = "chạy tiếp kế hoạch đã duyệt"
+        intent = kh["intent"] or intent
+        ten_y_dinh = intent.get("intent", ten_y_dinh) if isinstance(intent, dict) else ten_y_dinh
+    else:
+        run_id = "r_" + secrets.token_hex(6)
+        # Bước 1 — mẫu trước, planner sau.
+        mau = chain_mod.chon_mau(ten_y_dinh)
+        chuoi, nguon = _dung_chuoi(mau, intent, grounded, ctx, run_id)
 
     # Bước 2 — kiểm deterministic. Ném E5002 (cấu trúc) hoặc E3003 (ngân sách).
     gate = ctx.extra.get("gate")
@@ -442,9 +460,24 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # Bước 3 — ghi kế hoạch xuống store TRƯỚC khi chạy: một chuỗi đang chạy dở mà máy tắt thì
     # phần đã làm vẫn phải đọc lại được, và `run.graph` là chỗ duy nhất giữ được điều đó.
     so_run = _so_run(root)
-    _ghi_run(root, run_id, chuoi, "running", intent)
     buoc_ds = [{"id": n.id, "cap": n.cap} for n in chain_mod.thu_tu_chay(chuoi)]
     led = ctx.extra.get("ledger")
+
+    # v1.3 — `plan_only` (DEV-140, UXC-31 §2D.6). Dừng ở ĐÂY: kế hoạch đã ghi, chưa nút nào
+    # chạy. Đó là trạng thái trung gian mà §2D.6 cần để hai nút "Đúng — làm đi" / "Sửa ý hiểu"
+    # có nghĩa; tới v1.2 không có nó, nên hai nút ấy sẽ nằm trên một chuỗi đã giao đi.
+    #
+    # KHÔNG ghi `run.started`: chưa có gì bắt đầu. Một thẻ Run hiện lên cho một lượt đang chờ
+    # người gật đầu là nói rằng tác tử đang làm việc trong khi nó đang đợi.
+    if params.get("plan_only"):
+        _ghi_run(root, run_id, chuoi, "planned", intent)
+        if led is not None:
+            led.append("intent", {"run_id": run_id, "n": so_run, "state": "planned",
+                                  "intent": ten_y_dinh, "steps": buoc_ds,
+                                  "text": str(params.get("text") or "")[:120]})
+        return {"run_id": run_id, "state": "planned", "steps": buoc_ds}
+
+    _ghi_run(root, run_id, chuoi, "running", intent)
     # `run.started` TRƯỚC hành động đầu tiên — quy tắc P-RUN-01 của UXD-13 v2.0. Thẻ Run phải
     # tồn tại trước khi có việc để hiển thị; ngược lại thì bước đầu chạy xong rồi giao diện mới
     # biết có một lượt chạy, và người dùng thấy tiến độ bắt đầu từ giữa chừng.
@@ -551,7 +584,7 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             led.append("run.done", {"run_id": run_id, "state": trang_thai, "done": len(ket_qua),
                                     "waiting": len(cho), "failed": len(hong)})
         _dang_ky_undo_run(root, run_id, led, ctx)
-    return {"run_id": run_id}
+    return {"run_id": run_id, "state": trang_thai, "steps": buoc_ds}
 
 
 def _dang_ky_undo_run(root: Path | None, run_id: str, led: Any, ctx: Context) -> None:
@@ -810,8 +843,14 @@ def _ghi_run(root: Path | None, run_id: str, chuoi: Any, state: str,
                 # `intent_id` là KHÓA NGOẠI sang bảng `intent`, không phải tên ý định. Chưa mã
                 # nào ghi bảng ấy (`chat.parse_intent` chỉ ghi sự kiện nhật ký), nên để NULL —
                 # truyền "kg.build" vào đây làm cả câu chèn hỏng vì ràng buộc khóa ngoại.
+                # `intent`/`text` đi CÙNG đồ thị. `chat.resume` cần cả hai để chạy tiếp mà
+                # không phải lập kế hoạch lần thứ hai — lập lại có thể ra một chuỗi KHÁC chuỗi
+                # người vừa đọc và vừa gật đầu. Giữ `nodes` nguyên chỗ cũ nên `run_dang_chay`
+                # không đổi.
                 (run_id, None,
-                 json.dumps(chuoi.as_dict(), ensure_ascii=False), state,
+                 json.dumps({**chuoi.as_dict(), "intent": intent,
+                             "text": str((intent or {}).get("_text") or "")},
+                            ensure_ascii=False), state,
                  json.dumps(report, ensure_ascii=False) if report else None,
                  datetime.now(UTC).isoformat()))
             c.commit()
@@ -863,6 +902,52 @@ def _lap_lai_neu_nguoi_sua(run_id: str, led: Any, router: Any, ctx: Context) -> 
     led.append("report", {"cap": "plan.replan", "run_id": run_id,
                           "for_seq": int(cuoi.get("seq") or 0), "status": tt,
                           "path": d.get("path"), **({"error": loi} if loi else {})})
+
+
+def doc_ke_hoach(root: Path, run_id: str) -> dict[str, Any] | None:
+    """`{state, intent, graph, text}` của một lượt chạy, hoặc `None` nếu không có.
+
+    Dùng cho `chat.resume` (UXC-31 §2D.6): người bấm "Đúng — làm đi" thì lượt ấy phải chạy tiếp
+    CHÍNH đồ thị đã ghi, không dựng lại. Dựng lại là lập kế hoạch lần thứ hai — có thể ra một
+    chuỗi khác chuỗi người vừa đọc và vừa gật đầu.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    try:
+        with store.open_store(db) as c:
+            row = c.execute("SELECT state, graph, report FROM run WHERE id=?",
+                            (run_id,)).fetchone()
+    except sqlite3.OperationalError:
+        return None
+    if not row:
+        return None
+    try:
+        g = json.loads(row[1]) if row[1] else {}
+    except (TypeError, ValueError):
+        g = {}
+    return {"state": row[0], "graph": g, "intent": g.get("intent") or {},
+            "text": g.get("text") or ""}
+
+
+def huy_ke_hoach(root: Path, run_id: str, led: Any) -> None:
+    """Huỷ một lượt đang `planned` — người bấm "Sửa ý hiểu".
+
+    HUỶ chứ không để nguyên: một lượt `planned` bị bỏ lại sẽ nằm trong hàng đợi ở lần mở dự án
+    sau như một việc đang chờ, và người dùng phải nhớ rằng chính mình đã từ chối nó.
+    """
+    db = store.store_path(root)
+    if db.exists():
+        try:
+            with store.open_store(db) as c:
+                c.execute("UPDATE run SET state='cancelled' WHERE id=? AND state='planned'",
+                          (run_id,))
+                c.commit()
+        except sqlite3.OperationalError:
+            pass
+    if led is not None:
+        led.append("run.cancelled", {"run_id": run_id, "by": "human",
+                                     "reason": "người sửa ý hiểu (UXC-31 §2D.6)"})
 
 
 def run_dang_chay(root: Path) -> list[tuple[str, set[str]]]:

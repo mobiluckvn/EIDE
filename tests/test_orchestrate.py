@@ -161,7 +161,11 @@ def test_orchestrate_chay_chuoi_qua_ROUTER(du_an):
     truoc = len([x for x in r.ledger.records() if x["kind"] == "cap.run.start"])
     out = r.invoke("chat.orchestrate",
                    {"intent": {"intent": "kg.build", "slots": {}}, "grounded": {}}, ctx).result
-    assert set(out) == {"run_id"}, "hợp đồng trả ĐÚNG {run_id} — CHAT-06 là bất đồng bộ"
+    # v1.3 — hợp đồng trả `{run_id, state, steps}` (DEV-140). CHAT-06 vẫn BẤT ĐỒNG BỘ:
+    # `state` và `steps` nói về KẾ HOẠCH, không phải kết quả; kết quả vẫn đi qua sự kiện
+    # và `run.report`. Trả cả báo cáo ra ngoài sẽ buộc bên gọi chờ hết chuỗi.
+    assert set(out) == {"run_id", "state", "steps"}, out
+    assert out["state"] == "done", out
     bc = doc_bao_cao(ctx.project_dir, out["run_id"])
     assert bc["state"] == "done", bc
     assert [n["cap"] for n in bc["done"]] == ["kg.build"]

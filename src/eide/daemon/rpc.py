@@ -140,6 +140,21 @@ ALIAS: dict[str, str] = {
 }
 
 
+def cho_nguoi_gat(muc: str) -> bool:
+    """Mức này có phải DỪNG chờ người gật đầu trước khi chạy chuỗi không — UXC-31 §2D.6.
+
+    Hàm riêng chứ không một biểu thức trong `chat_send`: đây là một LUẬT, và một luật nằm giữa
+    thân hàm thì không kiểm được nếu không dựng cả daemon, cả mô hình, cả mạng. Đường
+    `chat.send` đi qua `chat.parse_intent` tức qua mô hình — nên phép kiểm ấy sẽ đòi một khoá
+    API để đo một câu `if`.
+
+    A0/A1 dừng; A2 trở lên tự chạy nhưng vẫn in ý hiểu — nguyên văn §2D.6. Mức LẠ thì KHÔNG
+    dừng: mặc định an toàn ở đây là chạy tiếp, vì một mức gõ sai làm treo mọi lệnh sẽ trông y
+    hệt sản phẩm hỏng.
+    """
+    return muc in ("A0", "A1")
+
+
 def _autonomy_du_an(project: Path | None) -> dict[str, Any] | None:
     """`.eide/autonomy.yaml` của dự án, hoặc None.
 
@@ -247,6 +262,7 @@ class Daemon:
             "diagram.open": self.diagram_open, "diagram.save": self.diagram_save,
             "doc.open": self.doc_open, "hex.resolve": self.hex_resolve,
             "chat.send": self.chat_send, "chat.answer": self.chat_answer,
+            "chat.resume": self.chat_resume,
             "chat.history": self.chat_history, "debug.ask": self.debug_ask,
             "log.register": self.log_register,
             "job.status": self.job_status, "job.cancel": self.job_cancel,
@@ -585,11 +601,19 @@ class Daemon:
         neo = self.router.invoke("chat.ground", {"intent": intent}, self.ctx)
         grounded = (neo.result or {}).get("grounded", {}) if neo.status == "done" else {}
         ra: dict[str, Any] = {"intent_id": (y.result or {}).get("intent_id") or intent.get("intent")}
+        # v1.3 — §2D.6: mức A0/A1 thì DỪNG sau khi lập kế hoạch và chờ người gật đầu
+        # (DEV-140). A2–A3 tự chạy nhưng vẫn in ý hiểu — đúng chữ của §2D.6.
+        #
+        # Đọc mức từ cổng đang thi hành chứ không từ tham số: `autonomy.yaml` là thứ quyết định
+        # mọi cổng khác, và một chỗ đọc mức theo đường riêng là một chỗ sẽ lệch.
+        muc = str(self.ctx.autonomy or self.gate.config.get("autonomy") or "A2")
+        cho_gat = cho_nguoi_gat(muc)
         chuoi = self.router.invoke("chat.orchestrate",
                                    {"intent": intent, "grounded": grounded,
-                                    "text": p["text"]}, self.ctx)
+                                    "text": p["text"], "plan_only": cho_gat}, self.ctx)
         if chuoi.status == "done" and chuoi.result:
             ra["run_id"] = chuoi.result.get("run_id")
+            ra["state"] = chuoi.result.get("state")
             ra.update(self._y_hieu(intent, chuoi.result))
             # Chuỗi dừng để chờ người thì NÓI RA nó chờ gì, ngay trong câu trả lời.
             #
@@ -653,6 +677,44 @@ class Daemon:
             return []
         return [{"cap": n.get("cap", ""), "thieu": n.get("thieu") or [], "vi": n.get("vi", "")}
                 for n in (bc.get("waiting") or []) if n.get("thieu")]
+
+    def chat_resume(self, p: dict[str, Any]) -> dict[str, Any]:
+        """`{run_id, approve?}` — chạy tiếp một lượt đang ở `planned`, hoặc huỷ nó.
+
+        Nửa còn lại của `plan_only`: không có phương thức này thì kế hoạch dựng xong nằm đó
+        vĩnh viễn, và hai nút của UXC-31 §2D.6 vẫn không có gì để bấm.
+
+        **`approve: false` HUỶ, không phải "bỏ qua".** Người bấm "Sửa ý hiểu" là người nói chuỗi
+        này sai; để nó ở `planned` thì lần mở dự án sau nó vẫn nằm trong hàng đợi như một việc
+        đang chờ, và người dùng phải nhớ rằng mình đã từ chối nó.
+
+        Không tìm thấy lượt, hoặc lượt không còn ở `planned` → E2000 kèm trạng thái thật. Chạy
+        tiếp một lượt đã chạy rồi là chạy hai lần cùng một chuỗi.
+        """
+        from eide.caps.chat import doc_ke_hoach, huy_ke_hoach
+        run_id = str(p["run_id"])
+        if not self.ctx.project_dir:
+            raise EideError("E2000", "Chưa mở dự án nào", exists=[], candidates=[],
+                            missing=["project_dir"])
+        root = Path(self.ctx.project_dir)
+        kh = doc_ke_hoach(root, run_id)
+        if kh is None:
+            raise EideError("E2000", f"Không có lượt chạy `{run_id}`",
+                            exists=[], candidates=[], missing=[run_id])
+        if kh["state"] != "planned":
+            raise EideError("E2000", f"Lượt `{run_id}` đang ở `{kh['state']}`, không phải "
+                            "`planned` — chỉ một lượt đang chờ gật đầu mới chạy tiếp được",
+                            exists=[kh["state"]], candidates=["planned"], missing=[])
+        if p.get("approve") is False:
+            huy_ke_hoach(root, run_id, self.ledger)
+            return {"run_id": run_id, "state": "cancelled", "cho_nguoi": []}
+        r = self.router.invoke("chat.orchestrate",
+                               {"intent": kh["intent"], "grounded": {},
+                                "text": kh.get("text") or "", "resume_of": run_id}, self.ctx)
+        kq = r.result or {}
+        return {"run_id": kq.get("run_id") or run_id,
+                "state": kq.get("state") or r.status,
+                "cho_nguoi": self._cho_gi(self.ctx, kq.get("run_id") or run_id)}
 
     def chat_answer(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{question_id, option?, text?}` — thẻ câu hỏi gộp của UXD-13 U1.

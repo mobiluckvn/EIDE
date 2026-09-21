@@ -200,6 +200,12 @@
       text:
         type: string
         description: câu lệnh gốc của người, để thẻ Run gọi tên việc bằng chính câu ấy
+      plan_only:
+        type: boolean
+        description: dựng chuỗi và DỪNG ở trạng thái planned, không chạy nút nào
+      resume_of:
+        type: string
+        description: run_id của một lượt đang planned — chạy tiếp CHÍNH nó, giữ nguyên run_id và đồ thị đã ghi
     required:
     - intent
     - grounded
@@ -209,8 +215,18 @@
     properties:
       run_id:
         type: string
+      state:
+        type: string
+        description: planned|running|done|blocked|cancelled
+      steps:
+        type: array
+        items:
+          type: object
+        description: '{id, cap} theo thứ tự chạy'
     required:
     - run_id
+    - state
+    - steps
     additionalProperties: false
   risk: R0
   tier: T1

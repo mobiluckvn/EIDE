@@ -250,11 +250,44 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **271 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Python: **+20 bài** (hoàn tác ba mức, N4, N5, người sửa giữa chừng, tự lưu gộp). Checklist UXC-31:
-**111 xong · 1 chưa · 5 chặn** (đầu phiên 20/09: 11 xong). **Mọi mục làm được đã xong** — 5 mục chặn vì chờ bo mạch, và 1 luật đọc tôi cố ý không tick. `make check` thoát 0. Màn
+*Gói mới: **280 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Python: **+20 bài** (hoàn tác ba mức, N4, N5, người sửa giữa chừng, tự lưu gộp). Checklist UXC-31:
+**112 xong · 1 chưa · 5 chặn** (đầu phiên 20/09: 11 xong). **Mọi mục làm được đã xong** — 5 mục chặn vì chờ bo mạch, và 1 luật đọc tôi cố ý không tick. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (20): DEVIATIONS 15 → 1 trong một ngày
+
+Mười bốn mục đóng. Ba nhóm, và mỗi nhóm một kiểu hỏng khác nhau.
+
+**Nhóm 1 — TÀI LIỆU sai, mã đúng** (138, 139, 142, 143, 122, 137). UXC-31 lên v1.3: "San
+Francisco / SF Mono 12,5" và "thẻ Run 9 pt" là ba con số **không có ở đâu trong bộ hồ sơ**;
+"dưới ngưỡng 1100" là một trạng thái không tới được; "DENY" là một từ `PolicyGate` không bao
+giờ phát ra. Đáng nhớ nhất là DEV-137: mã dùng 46/198 còn token nói 52/212, và vì mã không
+đọc token nên hai con số ấy là **hằng chết** — không test nào đỏ. Nay `EideKhung` đọc thẳng
+token, và `make check-gen` đỏ nếu ai sửa một bên.
+
+**Nhóm 2 — đường ĐỌC còn thiếu** (135, 136). Cùng hình dạng, gặp lần thứ hai và thứ ba: một
+mục §8 đòi màn hiện một thứ, tầng dưới có đường GHI đầy đủ, **không có đường đọc**.
+`board.mark_lab` ghi `boards.<id>` mà không năng lực nào trong 244 cái đọc ra được.
+
+**Nhóm 3 — hai mục lớn ở lõi** (121, 140).
+
+DEV-121: mẫu chuỗi nay mang phần nối `${nX.field}`. Nhưng mắt xích thật nằm chỗ khác —
+`_dung_chuoi` vẫn dựng nút từ `buoc`, **bản văn xuôi**, nên `when` thật, `on_ask` và `args`
+đều bị bỏ. Đo lại Z-05: **14 nút thay vì 8**. Bản văn xuôi âm thầm nuốt 6 bước vì tên viết
+tắt không phân giải được — đúng điều §4.4 nói mẫu sinh ra để tránh. Sáu chỗ nối phải đoán thì
+để TRỐNG kèm lý do từng chỗ: viết bừa vào mẫu là biến một phỏng đoán thành đặc tả.
+
+DEV-140: CHAT-06 nhận `plan_only`/`resume_of`, API-15 thêm `chat.resume`. `plan_only` **không
+ghi `run.started`** — một thẻ Run cho lượt đang chờ người gật đầu là nói rằng tác tử đang làm
+việc trong khi nó đang đợi. `resume_of` giữ nguyên `run_id` và đồ thị: lập lại kế hoạch ở bước
+ấy có thể ra một chuỗi khác chuỗi người vừa gật đầu.
+
+**Hai phép đo của tôi sai, cả hai theo kiểu "đếm nhầm thứ":** đếm tổng `cap.run.start` để đo
+`plan_only` (chính lời gọi `chat.orchestrate` cũng ghi một bản), và đặt phép đo §2D.6 SAU dừng
+khẩn nên cổng chặn mọi thứ. Và một phép đo **không đo được**: `chat.send` đi qua mô hình, tức
+qua mạng và qua tiền — gỡ khỏi `--tu-kiem`, ghi rõ vì sao thay vì lặng lẽ bỏ.
 
 ### Đã làm (19): phần LÕI — 6.4, 6.5, 7.5, 7.6, 5.7, 10.1
 
