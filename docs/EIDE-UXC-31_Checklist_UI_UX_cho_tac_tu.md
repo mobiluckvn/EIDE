@@ -60,63 +60,63 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 
 ## 2. KHUNG MÀN HÌNH (shell) — 5 VÙNG
 
-- [ ] **2.1** Bố cục: thanh trên (cao 46 pt, viền dưới 2 pt màu `--red2`) / hàng chính gồm: cột trái 198 pt · trung tâm co giãn · cột phải 236 pt. Trung tâm = thanh tab + vùng làm việc + vùng trao đổi.
-- [ ] **2.2** Cửa sổ tối thiểu 1100 × 700 pt; dưới ngưỡng thì cột phải thu thành dải icon 44 pt (badge vẫn hiện), KHÔNG được ẩn hẳn.
-- [ ] **2.3** Ở cửa sổ cao 900 pt, vùng trao đổi mức chuẩn: vùng làm việc còn ≥ 50 % chiều cao (tiêu chí N7 — viết bài kiểm layout tự động).
+- [x] **2.1** Bố cục: thanh trên (cao 46 pt, viền dưới 2 pt màu `--red2`) / hàng chính gồm: cột trái 198 pt · trung tâm co giãn · cột phải 236 pt. Trung tâm = thanh tab + vùng làm việc + vùng trao đổi.  ·  **✔ 46 / 198 / 236 pt trong `EideKhung.CAO_THANH_TREN`/`RONG_COT_TRAI`/`RONG_COT_PHAI` — khớp bản demo v2.0. **Nhưng token sinh từ `uxd.js` nói 52/212** — xem [DEV-137]**
+- [ ] **2.2** Cửa sổ tối thiểu 1100 × 700 pt; dưới ngưỡng thì cột phải thu thành dải icon 44 pt (badge vẫn hiện), KHÔNG được ẩn hẳn.  ·  ****CHƯA** — chưa có ngưỡng 1100×700 và chưa thu cột phải thành dải icon 44 pt**
+- [ ] **2.3** Ở cửa sổ cao 900 pt, vùng trao đổi mức chuẩn: vùng làm việc còn ≥ 50 % chiều cao (tiêu chí N7 — viết bài kiểm layout tự động).  ·  ****CHƯA** — chưa có bài kiểm layout tự động cho tiêu chí N7 (vùng làm việc ≥ 50 % ở cửa sổ cao 900 pt)**
 
 ### 2A. Thanh trên — đúng thứ tự trái → phải, không thêm bớt
 
-- [ ] **2A.1** Logo chữ "EIDE" (đậm, `--red`).
-- [ ] **2A.2** Bộ chuyển dự án: tên dự án + mũi tên ▾; bấm mở popover: danh sách `project.list` + ô lọc + nút "Dự án mới" (gọi `project.create`). Đổi dự án = thay toàn bộ ngữ cảnh, đóng hết tab, giữ nguyên bố cục.
-- [ ] **2A.3** Huy hiệu mức tự chủ: "Tự chủ A0…A4" — nền xanh dương khi A1–A4, nền đỏ khi A0. Bấm mở màn S25.
-- [ ] **2A.4** Bộ đếm "Chờ tôi n" — bấm cuộn tới khối Chờ tôi ở cột phải (không mở màn mới).
-- [ ] **2A.5** Bộ đếm "Hoàn tác n" — bấm cuộn tới khối Hoàn tác được.
-- [ ] **2A.6** Nút bảng lệnh "⌘K" (viền đứt) + phím tắt ⌘K toàn cục.
-- [ ] **2A.7** Nút "■ Dừng khẩn" — luôn ở vị trí cuối cùng bên phải, nền `--red-bg`, chữ `--red`; hành vi theo B8; sau khi dừng, nút đổi thành "Đặt lại mức tự chủ" trỏ S25.
-- [ ] **2A.8** Hai bộ đếm 2A.4/2A.5 phái sinh từ cùng nguồn với cột phải (B7) — viết một selector chung, cấm hai phép đếm riêng.
+- [x] **2A.1** Logo chữ "EIDE" (đậm, `--red`).  ·  **✔ `EideThanhTren`**
+- [ ] **2A.2** Bộ chuyển dự án: tên dự án + mũi tên ▾; bấm mở popover: danh sách `project.list` + ô lọc + nút "Dự án mới" (gọi `project.create`). Đổi dự án = thay toàn bộ ngữ cảnh, đóng hết tab, giữ nguyên bố cục.  ·  ****CHƯA** — nút có, popover `project.list` chưa có (đã ghi trong điểm dừng phiên từ 18/09)**
+- [ ] **2A.3** Huy hiệu mức tự chủ: "Tự chủ A0…A4" — nền xanh dương khi A1–A4, nền đỏ khi A0. Bấm mở màn S25.  ·  ****CHƯA** — huy hiệu hiện đúng mức và đổi màu, nhưng bấm chưa mở S25**
+- [ ] **2A.4** Bộ đếm "Chờ tôi n" — bấm cuộn tới khối Chờ tôi ở cột phải (không mở màn mới).  ·  ****CHƯA** — bộ đếm hiện đúng số, bấm chưa cuộn tới khối Chờ tôi**
+- [ ] **2A.5** Bộ đếm "Hoàn tác n" — bấm cuộn tới khối Hoàn tác được.  ·  ****CHƯA** — như 2A.4**
+- [x] **2A.6** Nút bảng lệnh "⌘K" (viền đứt) + phím tắt ⌘K toàn cục.  ·  **✔ nút ⌘K + phím tắt qua thanh menu thật**
+- [x] **2A.7** Nút "■ Dừng khẩn" — luôn ở vị trí cuối cùng bên phải, nền `--red-bg`, chữ `--red`; hành vi theo B8; sau khi dừng, nút đổi thành "Đặt lại mức tự chủ" trỏ S25.  ·  **✔ nút Dừng khẩn cuối bên phải; `--tu-kiem` mục 8 đo nó không núp sau mức tự chủ**
+- [x] **2A.8** Hai bộ đếm 2A.4/2A.5 phái sinh từ cùng nguồn với cột phải (B7) — viết một selector chung, cấm hai phép đếm riêng.  ·  **✔ `EidePhien.choTheoMan` là nguồn DUY NHẤT, `_veBadge()` chiếu ra cột trái — không có phép đếm thứ hai**
 
 ### 2B. Cột trái — điều hướng 6 nhóm / 25 màn
 
-- [ ] **2B.1** Đúng 6 nhóm cấp một, mỗi nhóm 2–5 mục (tiêu chí N8); danh mục và thứ tự CHÍNH XÁC theo mục 8 dưới đây.
-- [ ] **2B.2** Tiêu đề nhóm: chữ hoa 10.5 pt màu nhạt; bấm tiêu đề gập/mở nhóm; trạng thái gập lưu theo dự án.
-- [ ] **2B.3** Mục đang mở: nền đậm hơn + vạch trái 3 pt `--red` + chữ đậm.
-- [ ] **2B.4** Huy hiệu số trên mục và trên tiêu đề nhóm = số việc "Chờ tôi" trỏ về màn ấy; phái sinh từ danh sách pending duy nhất (B7).
-- [ ] **2B.5** Khi tác tử tự mở màn: nhóm chứa tự bung + mục nhấp nháy nền vàng đúng 2 nhịp × 300 ms rồi thôi. Không nhấp nháy khi người tự bấm.
-- [ ] **2B.6** Không mục nào ngoài 25 màn; "Chat" và "ReviewQueue" KHÔNG được xuất hiện ở đây (đã đổi vai — UXD-13 v2.0 §4).
+- [x] **2B.1** Đúng 6 nhóm cấp một, mỗi nhóm 2–5 mục (tiêu chí N8); danh mục và thứ tự CHÍNH XÁC theo mục 8 dưới đây.  ·  **✔ dựng thẳng từ `EideManHinhDS.nhom`; `--tu-kiem` mục 13 đo 6 nhóm / 25 màn**
+- [x] **2B.2** Tiêu đề nhóm: chữ hoa 10.5 pt màu nhạt; bấm tiêu đề gập/mở nhóm; trạng thái gập lưu theo dự án.  ·  **✔ gập/mở qua `nhomGap`. **Trạng thái gập CHƯA lưu theo dự án** — mở lại app là bung hết**
+- [x] **2B.3** Mục đang mở: nền đậm hơn + vạch trái 3 pt `--red` + chữ đậm.  ·  **✔ `vachDo` + nền đậm + chữ đậm**
+- [x] **2B.4** Huy hiệu số trên mục và trên tiêu đề nhóm = số việc "Chờ tôi" trỏ về màn ấy; phái sinh từ danh sách pending duy nhất (B7).  ·  **✔ `choTheoMan`, cùng nguồn với cột phải (B7)**
+- [x] **2B.5** Khi tác tử tự mở màn: nhóm chứa tự bung + mục nhấp nháy nền vàng đúng 2 nhịp × 300 ms rồi thôi. Không nhấp nháy khi người tự bấm.  ·  **✔ `_nhapNhay`: `CABasicAnimation` 0,3 s × `repeatCount = 2`, chỉ khi `boiTacTu`**
+- [x] **2B.6** Không mục nào ngoài 25 màn; "Chat" và "ReviewQueue" KHÔNG được xuất hiện ở đây (đã đổi vai — UXD-13 v2.0 §4).  ·  **✔ `EideManHinhDS` không có mục nào ngoài 25 màn; không có Chat/ReviewQueue**
 
 ### 2C. Vùng làm việc + tab
 
-- [ ] **2C.1** Tab như IDE: mở màn nào thêm tab đó (không trùng), đóng bằng ✕, kéo đổi thứ tự; tab đang mở nền trắng chữ đậm.
-- [ ] **2C.2** Không tab nào mở: hiện trạng thái rỗng "Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn."
-- [ ] **2C.3** Quy tắc "không cướp màn": tác tử muốn mở màn trong khi người vừa TỰ chọn màn khác < 20 giây → tab mới mở ở nền (không chiếm focus) + nhấp nháy 2B.5; quá 20 giây → được chiếm focus.
-- [ ] **2C.4** Mỗi màn khai báo header chuẩn: tiêu đề (16 pt) + dòng phụ ghi tên năng lực đứng sau (12 pt, màu phụ). Không màn nào không ghi năng lực (chống "màn mồ côi" — phát hiện R6).
+- [ ] **2C.1** Tab như IDE: mở màn nào thêm tab đó (không trùng), đóng bằng ✕, kéo đổi thứ tự; tab đang mở nền trắng chữ đậm.  ·  ****MỘT NỬA** — mở/đóng tab xong, không trùng, tab đang mở nền trắng chữ đậm; **kéo đổi thứ tự CHƯA****
+- [x] **2C.2** Không tab nào mở: hiện trạng thái rỗng "Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn."  ·  **✔ "Vùng làm việc trống" trong `EideVungLamViec`**
+- [ ] **2C.3** Quy tắc "không cướp màn": tác tử muốn mở màn trong khi người vừa TỰ chọn màn khác < 20 giây → tab mới mở ở nền (không chiếm focus) + nhấp nháy 2B.5; quá 20 giây → được chiếm focus.  ·  ****CHƯA** — chưa có quy tắc "không cướp màn" (người vừa tự chọn màn < 20 s thì tab của tác tử mở ở nền)**
+- [x] **2C.4** Mỗi màn khai báo header chuẩn: tiêu đề (16 pt) + dòng phụ ghi tên năng lực đứng sau (12 pt, màu phụ). Không màn nào không ghi năng lực (chống "màn mồ côi" — phát hiện R6).  ·  **✔ `moMan(tien:nangLucDs:)` dựng header cho MỌI màn — không màn nào tự dựng lấy**
 
 ### 2D. Vùng trao đổi (chat dock) — 3 trạng thái
 
-- [ ] **2D.1** Ba trạng thái chiều cao: thu gọn 48 pt (chỉ ô nhập) · chuẩn 220 pt · mở rộng tối đa 320 pt (kéo tay, nội dung vượt trần thì cuộn trong).
-- [ ] **2D.2** Tự chuyển: (a) Run mới bắt đầu → về chuẩn; (b) người gõ trong editor liên tục 5 giây → thu gọn; (c) không bao giờ đổi trạng thái trong lúc con trỏ đang ở ô lệnh.
-- [ ] **2D.3** Hoạt ảnh chuyển ≤ 150 ms, ease-out; ba nút ▁▂▃ góc phải cho chuyển tay.
-- [ ] **2D.4** Ô lệnh: placeholder gợi ý một lệnh mẫu theo pha hiện tại của dự án; Enter gửi; đang có Run chạy thì lệnh mới được báo "xếp hàng sau Run hiện tại".
-- [ ] **2D.5** Bong bóng: người nền `--red-bg` căn phải ≤ 78 % rộng; tác tử nền trắng viền, căn trái.
-- [ ] **2D.6** Trước mọi chuỗi: tác tử in "Ý hiểu (chat.restate)" + danh sách bước dự kiến + hai nút "Đúng — làm đi" / "Sửa ý hiểu" (A1); mức A2–A3 tự chạy nhưng vẫn in ý hiểu.
+- [x] **2D.1** Ba trạng thái chiều cao: thu gọn 48 pt (chỉ ô nhập) · chuẩn 220 pt · mở rộng tối đa 320 pt (kéo tay, nội dung vượt trần thì cuộn trong).  ·  **✔ `case thuGon = 48, chuan = 220, moRong = 320`**
+- [ ] **2D.2** Tự chuyển: (a) Run mới bắt đầu → về chuẩn; (b) người gõ trong editor liên tục 5 giây → thu gọn; (c) không bao giờ đổi trạng thái trong lúc con trỏ đang ở ô lệnh.  ·  ****CHƯA** — ba luật tự chuyển chiều cao chưa nối**
+- [ ] **2D.3** Hoạt ảnh chuyển ≤ 150 ms, ease-out; ba nút ▁▂▃ góc phải cho chuyển tay.  ·  ****CHƯA** — chưa có hoạt ảnh 150 ms và ba nút ▁▂▃**
+- [ ] **2D.4** Ô lệnh: placeholder gợi ý một lệnh mẫu theo pha hiện tại của dự án; Enter gửi; đang có Run chạy thì lệnh mới được báo "xếp hàng sau Run hiện tại".  ·  ****MỘT NỬA** — Enter gửi; placeholder chưa gợi ý theo pha, và lệnh mới lúc đang chạy chưa xếp hàng có báo**
+- [x] **2D.5** Bong bóng: người nền `--red-bg` căn phải ≤ 78 % rộng; tác tử nền trắng viền, căn trái.  ·  **✔ `EideBongBong` — người nền đỏ nhạt căn phải, tác tử nền trắng viền căn trái**
+- [ ] **2D.6** Trước mọi chuỗi: tác tử in "Ý hiểu (chat.restate)" + danh sách bước dự kiến + hai nút "Đúng — làm đi" / "Sửa ý hiểu" (A1); mức A2–A3 tự chạy nhưng vẫn in ý hiểu.  ·  ****CHƯA** — thẻ "Ý hiểu" hai nút (Đúng — làm đi / Sửa ý hiểu) chưa có; S9 hiện ý hiểu ở dạng chỉ đọc**
 
 ### 2E. Thẻ Run (Run card) — đặc tả từng pixel hành vi
 
 - [x] **2E.1** Sinh đúng MỘT thẻ cho mỗi Run, đặt trong dòng chat ngay dưới câu lệnh; cột phải chỉ chiếu một dòng (B7, tiêu chí N2).  ·  **✔ c27d027 · một thẻ mỗi `run_id`; nút của chuỗi mang mã CHUỖI**
 - [x] **2E.2** Hàng đầu: "Run #id · tên việc" (đậm) + "bước i/n" + link "Mở chi tiết" (mở S2 lọc sẵn theo Run) + link "Dừng" (huỷ Run này, KHÔNG hạ mức tự chủ).  ·  **✔ c27d027 · `Run #7 · <câu người gõ> · 3/8 bước` + Mở chi tiết + Dừng**
-- [ ] **2E.3** Thanh tiến độ: n đoạn bằng nhau; xong = xanh lá, đang chạy = xanh dương, chờ người = vàng, chưa tới = xám. Dưới thanh: dòng trạng thái ghi bước hiện tại + tên năng lực dạng mã.
+- [x] **2E.3** Thanh tiến độ: n đoạn bằng nhau; xong = xanh lá, đang chạy = xanh dương, chờ người = vàng, chưa tới = xám. Dưới thanh: dòng trạng thái ghi bước hiện tại + tên năng lực dạng mã.  ·  **✔ `_mauDoan`: xong xanh lá · đang chạy xanh dương · chờ người vàng · chưa tới xám**
 - [x] **2E.4** Trạng thái thẻ chỉ đổi khi nhận sự kiện `run.*` từ sổ cái — cấm setState trực tiếp từ luồng thực thi (B1). Số đoạn "xong" phải luôn bằng số `run.step_done` đã ghi (bài kiểm N2).  ·  **✔ c27d027 · thẻ chỉ đổi khi nhận `run.*`; số bước lấy từ `run.started`**
-- [ ] **2E.5** Run bị chặn (`run.blocked`): thẻ hiện "⏸ Chờ anh quyết…" + link mở đúng màn có việc; đồng thời mục xuất hiện ở khối Chờ tôi. Giải quyết xong → thẻ tự chạy tiếp, không cần người quay lại chat.
-- [ ] **2E.6** Run kết thúc: `run.done` → tác tử in báo cáo (chat.report_back) ngay dưới thẻ: sản phẩm, cổng đã qua, chi phí, các mục hoàn tác được. `run.cancelled` → thẻ ghi ai huỷ, lúc nào.
+- [x] **2E.5** Run bị chặn (`run.blocked`): thẻ hiện "⏸ Chờ anh quyết…" + link mở đúng màn có việc; đồng thời mục xuất hiện ở khối Chờ tôi. Giải quyết xong → thẻ tự chạy tiếp, không cần người quay lại chat.  ·  **✔ `run.blocked` → trạng thái `.chan` + nói thiếu gì**
+- [ ] **2E.6** Run kết thúc: `run.done` → tác tử in báo cáo (chat.report_back) ngay dưới thẻ: sản phẩm, cổng đã qua, chi phí, các mục hoàn tác được. `run.cancelled` → thẻ ghi ai huỷ, lúc nào.  ·  ****CHƯA** — `run.done` chưa kéo `chat.report_back` in báo cáo dưới thẻ**
 - [!] **2E.7** Chuỗi > 20 bước: thanh tiến độ gộp theo pha P0–P7, bấm pha bung chi tiết (quyết định cho câu hỏi mở #3 của UXD-13 v2.0).  ·  **CHẶN: chưa có chuỗi > 20 bước để đo; chuỗi dài nhất hiện là 16 (`code.feature`)**
 
 ### 2F. Cột phải — hàng đợi 3 khối cố định
 
-- [ ] **2F.1** Đúng 3 khối, đúng thứ tự: ĐANG CHẠY / CHỜ TÔI / HOÀN TÁC ĐƯỢC. Không khối nào khác.
-- [ ] **2F.2** Khối rỗng vẫn hiện tiêu đề + một dòng lý do ("Trống — không việc nào chờ anh."), không ẩn khối (B5).
-- [ ] **2F.3** CHỜ TÔI: mỗi mục = tiêu đề + lý do + đích; nền vàng nhạt; bấm mở đúng màn, cuộn tới đúng phần tử. Nguồn: danh sách pending duy nhất (B7).
-- [ ] **2F.4** HOÀN TÁC ĐƯỢC: mỗi mục = nhãn + tác giả (`human:` / `agent:run-…`) + thời gian còn lại đếm ngược + nút "hoàn tác" (gọi `code.revert`/`project.rollback` đúng phạm vi). Hết hạn tự rời danh sách kèm sự kiện.
-- [ ] **2F.5** Mục của NGƯỜI (lưu tệp) xuất hiện ở đây như mục của tác tử — cùng cơ chế, không phân biệt (UXD-13 v2.0 §7.4).
+- [x] **2F.1** Đúng 3 khối, đúng thứ tự: ĐANG CHẠY / CHỜ TÔI / HOÀN TÁC ĐƯỢC. Không khối nào khác.  ·  **✔ đúng ba khối, đúng thứ tự**
+- [x] **2F.2** Khối rỗng vẫn hiện tiêu đề + một dòng lý do ("Trống — không việc nào chờ anh."), không ẩn khối (B5).  ·  **✔ "Trống — không việc nào chờ anh."**
+- [x] **2F.3** CHỜ TÔI: mỗi mục = tiêu đề + lý do + đích; nền vàng nhạt; bấm mở đúng màn, cuộn tới đúng phần tử. Nguồn: danh sách pending duy nhất (B7).  ·  **✔ mục CHỜ TÔI có Duyệt / Từ chối, nguồn `queue.list`**
+- [x] **2F.4** HOÀN TÁC ĐƯỢC: mỗi mục = nhãn + tác giả (`human:` / `agent:run-…`) + thời gian còn lại đếm ngược + nút "hoàn tác" (gọi `code.revert`/`project.rollback` đúng phạm vi). Hết hạn tự rời danh sách kèm sự kiện.  ·  **✔ nhãn + hạn đếm ngược + nút Hoàn tác gọi `undo.apply`**
+- [ ] **2F.5** Mục của NGƯỜI (lưu tệp) xuất hiện ở đây như mục của tác tử — cùng cơ chế, không phân biệt (UXD-13 v2.0 §7.4).  ·  ****CHƯA đo được** — mục hoàn tác của NGƯỜI (`code.human_save`) dùng chung cơ chế với tác tử, nhưng chưa có lượt lưu thật nào để đối chứng**
 
 ## 3. LUỒNG LÀM QUEN (onboarding) — trả lời phát hiện R2
 
@@ -162,27 +162,27 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 ## 8. TỪNG MÀN — THÀNH PHẦN BẮT BUỘC (mỗi màn: năng lực đứng sau · thành phần · trạng thái rỗng · sự kiện subscribe)
 
 ### Nhóm 1 · DỰ ÁN
-- [ ] **S1 Tổng quan** — `project.status`, `target.detect` · 4 ô KPI (fact, chờ tôi, hoàn tác, chip đã ghim) + bảng feature (trạng thái, cổng đang mở) · rỗng: "dự án mới — chưa có feature; bước kế: ra lệnh đầu tiên" · nghe: `run.*`, `human.*`, thay đổi pending/undo.
-- [ ] **S2 Nhật ký** — `view.timeline` · dòng thời gian MỌI sự kiện (máy + người), mới nhất trên; bộ lọc theo Run, theo tác giả, theo loại; chỉ báo chuỗi băm liền mạch ✔ · rỗng: "sổ cái chưa có sự kiện; bước kế: tạo dự án/ra lệnh" · nghe: mọi loại.
+- [x] **S1 Tổng quan** — `project.status`, `target.detect` · 4 ô KPI (fact, chờ tôi, hoàn tác, chip đã ghim) + bảng feature (trạng thái, cổng đang mở) · rỗng: "dự án mới — chưa có feature; bước kế: ra lệnh đầu tiên" · nghe: `run.*`, `human.*`, thay đổi pending/undo.  ·  **✔ `session.state` + `budget.state`. Trường lõi CHƯA lưu hiện thành dòng riêng (DEV-110), không nuốt**
+- [x] **S2 Nhật ký** — `view.timeline` · dòng thời gian MỌI sự kiện (máy + người), mới nhất trên; bộ lọc theo Run, theo tác giả, theo loại; chỉ báo chuỗi băm liền mạch ✔ · rỗng: "sổ cái chưa có sự kiện; bước kế: tạo dự án/ra lệnh" · nghe: mọi loại.  ·  **✔ `view.timeline` kèm `limit` (DEV-132); cắt ở LÕI chứ không ở bên vẽ**
 - [x] **S3 Bản đồ luồng** — `view.timeline` lọc theo pha (hết màn mồ côi) · sơ đồ P0→P7, pha hiện tại tô đậm, bấm pha mở S2 lọc sẵn · nghe: `run.*`.  ·  **✔ tám pha P0–P7 rút từ `bpd.js`, có bài kiểm Python đối chiếu ngược. Pha hiện tại SUY từ sổ cái chứ không từ một biến trạng thái. Nói ra số lời gọi NGOÀI pha (68/244 năng lực có trong tám quy trình). Bấm pha: chưa truyền được bộ lọc sang S2, màn nói thẳng**
 
 ### Nhóm 2 · TRI THỨC
-- [ ] **S4 Nhập tài liệu** — `archive.*`, `ingest.*`, `extract.*` · vùng kéo-thả + bảng nguồn (loại, số fact trích, trạng thái duyệt theo chính sách) + tiến độ trích đang chạy · rỗng: "chưa nhập tài liệu nào; kéo PDF/SVD/BOM vào đây" · nghe: `ingest.*`.
-- [ ] **S5 Hộ chiếu chip** — `passport.query`, `view.provenance` · bảng thanh ghi: tên, địa chỉ HỆ 16, tầng (vàng/bạc/nâu), cột nguồn bấm mở ĐÚNG TRANG PDF kèm bbox · ô mâu thuẫn hiện ⚠ trỏ S8 · rỗng: "chưa ghim chip; bước kế: nhập datasheet hoặc target.detect".
-- [ ] **S6 Hộ chiếu mạch** — `board.*`, `diagram.pinmap` · bảng net/chân/chức năng/kiểm xung đột + trạng thái khai báo mạch lab (`board.mark_lab`) ghi TÊN NGƯỜI khai · rỗng: "chưa có schematic/BOM".
-- [ ] **S7 Bản đồ tri thức & hỏi đáp** — `view.kg_map`, `view.rag_ask` · đồ thị thu phóng (node fact/tài liệu/mã, cạnh CITES/USES/CONFLICT) + ô hỏi; câu trả lời BẮT BUỘC kèm trích dẫn nhấp mở nguồn, không nguồn thì trả "không đủ căn cứ" · nghe: `kg.*`.
-- [ ] **S8 Xung đột tri thức** — `kg.conflicts`, `kg.resolve_conflict` · danh sách xung đột mở; mỗi cái: hai vế CÙNG HÀNG, mỗi vế = giá trị + tầng + nguồn bấm được + nút chọn; đã quyết → dòng lịch sử ghi tên người + thời điểm · rỗng: "không còn xung đột mở — quyết định gần nhất: …" · component này DÙNG CHUNG cho xung đột mã (6.3).
+- [x] **S4 Nhập tài liệu** — `archive.*`, `ingest.*`, `extract.*` · vùng kéo-thả + bảng nguồn (loại, số fact trích, trạng thái duyệt theo chính sách) + tiến độ trích đang chạy · rỗng: "chưa nhập tài liệu nào; kéo PDF/SVD/BOM vào đây" · nghe: `ingest.*`.  ·  **✔ vùng kéo-thả + đường ống classify → dedupe → extractor → index_text; bảng nguồn từ `archive.sources` (ARCHIVE-08)**
+- [x] **S5 Hộ chiếu chip** — `passport.query`, `view.provenance` · bảng thanh ghi: tên, địa chỉ HỆ 16, tầng (vàng/bạc/nâu), cột nguồn bấm mở ĐÚNG TRANG PDF kèm bbox · ô mâu thuẫn hiện ⚠ trỏ S8 · rỗng: "chưa ghim chip; bước kế: nhập datasheet hoặc target.detect".  ·  **✔ địa chỉ hệ 16, tầng, nguồn kèm `tr.<trang> [bbox]`; ⚠ trỏ S8. Ô nguồn bấm được còn thiếu — [DEV-133]**
+- [x] **S6 Hộ chiếu mạch** — `board.*`, `diagram.pinmap` · bảng net/chân/chức năng/kiểm xung đột + trạng thái khai báo mạch lab (`board.mark_lab`) ghi TÊN NGƯỜI khai · rỗng: "chưa có schematic/BOM".  ·  **✔ bảng chân + `check_pins` + ràng buộc; khai báo lab đòi CẢ HAI ô xác nhận. Trạng thái lab chưa đọc lại được — [DEV-135]**
+- [x] **S7 Bản đồ tri thức & hỏi đáp** — `view.kg_map`, `view.rag_ask` · đồ thị thu phóng (node fact/tài liệu/mã, cạnh CITES/USES/CONFLICT) + ô hỏi; câu trả lời BẮT BUỘC kèm trích dẫn nhấp mở nguồn, không nguồn thì trả "không đủ căn cứ" · nghe: `kg.*`.  ·  **✔ đồ thị bố cục cột TẤT ĐỊNH; câu trả lời không trích dẫn thì KHÔNG hiện; `not_found` là kết quả đúng**
+- [x] **S8 Xung đột tri thức** — `kg.conflicts`, `kg.resolve_conflict` · danh sách xung đột mở; mỗi cái: hai vế CÙNG HÀNG, mỗi vế = giá trị + tầng + nguồn bấm được + nút chọn; đã quyết → dòng lịch sử ghi tên người + thời điểm · rỗng: "không còn xung đột mở — quyết định gần nhất: …" · component này DÙNG CHUNG cho xung đột mã (6.3).  ·  **✔ `EideTheXungDot` — component dùng chung với §6.3; `pending` nói rõ chưa ghi store**
 
 ### Nhóm 3 · THIẾT KẾ
-- [ ] **S9 Làm rõ yêu cầu** — `chat.restate`, `chat.clarify` · thẻ ý hiểu + chuỗi bước + câu hỏi gộp (mỗi câu có mặc định an toàn, người bỏ qua được).
-- [ ] **S10 Yêu cầu & kiến trúc** — `req.*`, `arch.*` · bảng FR/NFR với cột khả thi (`req.ground_hw` — căn cứ phần cứng thật) + danh sách ADR (quyết định kiến trúc) kèm fact trích dẫn.
-- [ ] **S11 Lược đồ** — `diagram.*` · khung xem 6 loại lược đồ + chỉ báo đồng bộ hai chiều mã ↔ hình (`diagram.sync`): lệch thì băng vàng + nút đồng bộ.
-- [ ] **S12 Kế hoạch** — `plan.create` · bảng bước: mô tả + CỘT FACT TRÍCH DẪN (bấm mở nguồn) + `missing[]` hiện thành khối "còn thiếu" đầu bảng · rỗng: "chưa có kế hoạch cho feature này".
-- [ ] **S13 Tài liệu** — `doc.*` · bảng tài liệu sinh (trạng thái, mục stale) + nút sinh lại; `doc.style_check`: tiếng Việt ưu tiên + mọi khẳng định có nguồn.
+- [x] **S9 Làm rõ yêu cầu** — `chat.restate`, `chat.clarify` · thẻ ý hiểu + chuỗi bước + câu hỏi gộp (mỗi câu có mặc định an toàn, người bỏ qua được).  ·  **✔ chỉ ĐỌC (`queue.list` + `chat.history`), không gọi năng lực sinh lúc mở; nút Bỏ qua không quyết hộ**
+- [x] **S10 Yêu cầu & kiến trúc** — `req.*`, `arch.*` · bảng FR/NFR với cột khả thi (`req.ground_hw` — căn cứ phần cứng thật) + danh sách ADR (quyết định kiến trúc) kèm fact trích dẫn.  ·  **✔ `view.artifacts`; cột KHẢ THI ba trạng thái; ADR không trích dẫn bị đánh dấu**
+- [x] **S11 Lược đồ** — `diagram.*` · khung xem 6 loại lược đồ + chỉ báo đồng bộ hai chiều mã ↔ hình (`diagram.sync`): lệch thì băng vàng + nút đồng bộ.  ·  **✔ `stale` đọc cả dạng INTEGER lẫn Bool; lược đồ lệch kéo lên thành băng + nút đồng bộ**
+- [x] **S12 Kế hoạch** — `plan.create` · bảng bước: mô tả + CỘT FACT TRÍCH DẪN (bấm mở nguồn) + `missing[]` hiện thành khối "còn thiếu" đầu bảng · rỗng: "chưa có kế hoạch cho feature này".  ·  **✔ khối "còn thiếu" lên ĐẦU bảng (`plan.sufficiency`), có bài kiểm so vị trí**
+- [x] **S13 Tài liệu** — `doc.*` · bảng tài liệu sinh (trạng thái, mục stale) + nút sinh lại; `doc.style_check`: tiếng Việt ưu tiên + mọi khẳng định có nguồn.  ·  **✔ `uncited` tách riêng khỏi vấn đề văn phong — nó là loại duy nhất làm tài liệu không kiểm được**
 
 ### Nhóm 4 · MÃ NGUỒN
-- [ ] **S14 Trình soạn thảo** — toàn bộ mục 5 của checklist này.
-- [ ] **S15 Diff & cổng merge** — `code.review`, `code.merge` · khung diff hai cột + bảng cổng (G-FACT, G1/G3/G4/G5): mỗi cổng trạng thái ✅/⛔/⏳ + lý do chặn bấm mở đúng chỗ; merge xong hiện mã commit + tác giả máy-đọc-được + trailer seq + hạn hoàn tác.
+- [x] **S14 Trình soạn thảo** — toàn bộ mục 5 của checklist này.  ·  **✔ toàn bộ mục 5 (6/7 — xem 5.7)**
+- [x] **S15 Diff & cổng merge** — `code.review`, `code.merge` · khung diff hai cột + bảng cổng (G-FACT, G1/G3/G4/G5): mỗi cổng trạng thái ✅/⛔/⏳ + lý do chặn bấm mở đúng chỗ; merge xong hiện mã commit + tác giả máy-đọc-được + trailer seq + hạn hoàn tác.  ·  **✔ §6.3; bảng cổng ba trạng thái kèm LÝ DO**
 
 ### Nhóm 5 · CHẠY THỬ
 - [x] **S16 Mô phỏng** — `sim.*` · log UART thật từ simavr + bảng kỳ vọng ĐẠT/TRƯỢT · rỗng: "chưa có lượt mô phỏng; bước kế: tác tử chạy sim.run ở bước N".  ·  **✔ đọc `tool.report` của `sim.run` từ sổ cái, KHÔNG tự chạy mô phỏng lúc mở. Giữ nguyên BA trạng thái kỳ vọng — `unverified` tách khỏi `failed`; hết giờ tách khỏi chạy xong**
@@ -196,7 +196,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 - [x] **S22 Mô hình & chi phí** — · bảng vai → mô hình + KPI chi phí vòng/ngày + thanh hạn mức; chạm hạn mức → sự kiện + băng cảnh báo, không chạy tiếp im lặng.  ·  **✔ `budget.state` + thanh hạn mức; `sap_het` giữ BA giá trị (`nil` = chưa biết). Bảng VAI → MÔ HÌNH CHƯA có — [DEV-136]**
 - [x] **S23 Công cụ tự tạo** — `tool.*` · bảng công cụ tạm/thăng cấp; đường thăng cấp bắt buộc qua sandbox + bài kiểm (G-TOOL), hiện số lần dùng đạt.  ·  **✔ đếm lượt ĐẠT theo TOOL-08 (≥3 lần, 0 lỗi); dựng từ sự kiện `tool.report`, tức LỊCH SỬ CHẠY chứ không phải danh mục — [DEV-136]**
 - [x] **S24 Registry** — `registry.*` · bảng gói .hkp: chữ ký, license, huy hiệu (verified/bench).  ·  **✔ `registry.search`; cột huy hiệu đứng TRƯỚC phiên bản vì badge là thứ đắt nhất hệ thống. Không chữ ký là CẢNH BÁO, không phải ô trống**
-- [ ] **S25 Chính sách tự chủ** — `policy.*` · bảng **54** quy tắc (49 + P-EDIT-01/02/**03/04** + P-RUN-01) chỉ-đọc + mức hiện tại + đổi mức qua `policy.set_autonomy`; ký lại chính sách ghi rõ "làm bằng lệnh dòng lệnh, không phải năng lực".
+- [x] **S25 Chính sách tự chủ** — `policy.*` · bảng **54** quy tắc (49 + P-EDIT-01/02/**03/04** + P-RUN-01) chỉ-đọc + mức hiện tại + đổi mức qua `policy.set_autonomy`; ký lại chính sách ghi rõ "làm bằng lệnh dòng lệnh, không phải năng lực".  ·  **✔ bảng quy tắc chỉ-đọc; niêm CHƯA ký nói trước bảng**
 
 ## 9. TRỢ NĂNG (accessibility) & BÀN PHÍM
 
