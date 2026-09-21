@@ -650,14 +650,16 @@ class Daemon:
         run_id = kq.get("run_id") or ""
         if not run_id or not self.ctx.project_dir:
             return {}
+        goc = Path(self.ctx.project_dir)
         try:
-            bc = doc_bao_cao(Path(self.ctx.project_dir), run_id) or {}
+            bc = doc_bao_cao(goc, run_id) or {}
         except Exception:  # noqa: BLE001
             return {}
         buoc = [n for nhom in ("done", "waiting", "skipped", "failed")
                 for n in (bc.get(nhom) or []) if isinstance(n, dict) and n.get("cap")]
         if not buoc:
             return {}
+        buoc = self._theo_thu_tu_ke_hoach(goc, run_id, buoc)
         try:
             y = self.router.invoke("chat.restate",
                                    {"intent": intent, "chain": buoc}, self.ctx)
@@ -666,6 +668,35 @@ class Daemon:
         if y.status != "done" or not y.result:
             return {"steps": buoc}
         return {"restate": y.result.get("text") or "", "steps": buoc}
+
+    @staticmethod
+    def _theo_thu_tu_ke_hoach(goc: Path, run_id: str,
+                              buoc: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Sắp các bước theo thứ tự trong `run.graph` — thứ tự người đọc ĐANG ĐÁNH SỐ theo.
+
+        Báo cáo gom nút theo NHÓM TRẠNG THÁI (`done`, `waiting`, `skipped`, `failed`), nên ghép
+        bốn nhóm lại cho ra một thứ tự không có nghĩa gì với người đọc. Đo 21/09/2026, chặng A
+        bài CNC: thẻ Ý hiểu in "1. `req.classify` … 6. `req.elicit`" cho một chuỗi mà
+        `req.elicit` là nút ĐẦU TIÊN — nó bị đẩy xuống cuối chỉ vì nó đang `waiting`.
+
+        §2D.6 đặt thẻ này làm chỗ duy nhất người dùng bắt được một lệnh bị hiểu sai TRƯỚC khi
+        nó ghi tệp, và họ bắt bằng cách đọc trình tự. Một danh sách đánh số mà các số không chỉ
+        thứ tự thì tệ hơn một danh sách không đánh số: nó vẫn trông như một trình tự.
+
+        Không đọc được đồ thị thì giữ nguyên thứ tự cũ — một tóm tắt lộn xộn vẫn hơn không có.
+        """
+        from eide.caps.chat import doc_ke_hoach
+        try:
+            kh = doc_ke_hoach(goc, run_id) or {}
+        except Exception:  # noqa: BLE001
+            return buoc
+        thu_tu = {n.get("id"): i
+                  for i, n in enumerate((kh.get("graph") or {}).get("nodes") or [])
+                  if isinstance(n, dict)}
+        if not thu_tu:
+            return buoc
+        # Nút không có trong đồ thị xuống cuối, giữ nguyên thứ tự tương đối giữa chúng.
+        return sorted(buoc, key=lambda n: thu_tu.get(n.get("id"), len(thu_tu)))
 
     def _cho_gi(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
         """Các nút đang chờ người, đọc từ báo cáo `run.graph` của chính lượt chạy vừa lập."""

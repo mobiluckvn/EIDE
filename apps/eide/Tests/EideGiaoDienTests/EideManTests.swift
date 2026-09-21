@@ -107,6 +107,48 @@ final class EideTheRunTests: XCTestCase {
 
     private func _the() -> EideTheRun { EideTheRun(ma: "r1", van: "đọc BME280 qua I2C") }
 
+    private func _the(_ tong: Int) -> EideTheRun {
+        let t = _the()
+        t.nhan(["kind": "run.started", "run_id": "r1", "n": tong,
+                "steps": (0..<tong).map { ["id": "n\($0)", "cap": "kg.build"] }])
+        return t
+    }
+
+    // MARK: - `run.done` không có nghĩa là "xong" (bài CNC 21/09/2026)
+
+    /// Ba tín hiệu trên thẻ phải kể CÙNG một câu chuyện.
+    ///
+    /// Đo trên chặng A bài CNC: thẻ ghi `bước 6/6  ✅ Xong 0/6 bước` cho một chuỗi dừng ở nút
+    /// ĐẦU để hỏi người. Bộ đếm nói đã tới cuối, dòng chữ nói chưa làm gì, dấu ✅ nói mọi thứ
+    /// ổn. Nguyên nhân: `run.done` gán cứng `.xong` và `buoc = tong` rồi in số `done` THẬT ở
+    /// dòng dưới — hai nguồn khác nhau cho hai con số nằm cạnh nhau.
+    func testDungHoiNguoiThiKhongHienDauTickVaBoDemKhongNhayToiCuoi() {
+        let t = _the(6)
+        t.nhan(["kind": "run.done", "run_id": "r1", "state": "asked",
+                "done": 0, "waiting": 1, "failed": 0])
+        XCTAssertEqual(t.trangThai, .chan, "dừng hỏi người không phải là xong")
+        XCTAssertFalse(t.dongChu.contains("✅"), t.dongChu)
+        XCTAssertTrue(t.dongChu.contains("0/6"), t.dongChu)
+        XCTAssertTrue(t.demChu.contains("1/6"),
+                      "chuỗi dừng ở nút đầu thì bộ đếm phải nói bước 1, nhận: \(t.demChu)")
+    }
+
+    func testChayHetThiBoDemVaDongChuKhopNhau() {
+        let t = _the(6)
+        t.nhan(["kind": "run.done", "run_id": "r1", "state": "done", "done": 6])
+        XCTAssertEqual(t.trangThai, .xong)
+        XCTAssertTrue(t.dongChu.contains("✅") && t.dongChu.contains("6/6"), t.dongChu)
+        XCTAssertTrue(t.demChu.contains("6/6"), t.demChu)
+    }
+
+    /// Có nút hỏng thì đừng khoe dấu tick — người đọc sẽ đóng thẻ mà không xem Nhật ký.
+    func testCoNutHongThiNoiRa() {
+        let t = _the(4)
+        t.nhan(["kind": "run.done", "run_id": "r1", "state": "done", "done": 2, "failed": 2])
+        XCTAssertFalse(t.dongChu.contains("✅"), t.dongChu)
+        XCTAssertTrue(t.dongChu.contains("2 bước hỏng"), t.dongChu)
+    }
+
     func testMotLuotChayTronVenDiHetBonTrangThai() {
         let t = _the()
         XCTAssertEqual(t.trangThai, .chay)

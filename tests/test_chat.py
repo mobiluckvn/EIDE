@@ -482,3 +482,120 @@ def test_lenh_gach_cheo_KHONG_the_di_qua_bo_doan_y():
     # Ba màn đã dựng: không màn nào tới được bằng đường đoán ý.
     for i in ("passport.query", "view.rag_ask", "doc.generate"):
         assert i not in hop_le, f"{i} vào enum intent rồi — xem lại đường vào của ô lệnh"
+
+
+# ---------- _args_cho: một cái TÊN trùng nhau không có nghĩa là cùng một KIỂU
+
+def test_args_cho_khong_nhet_dict_y_dinh_vao_cho_doi_string():
+    """`code.modify` khai `intent: string` — "sửa cái gì". Chuỗi từng nhét cả dict vào đó.
+
+    Đo 21/09/2026 trên bài CNC, bước 5: cả chuỗi chết với E5002 "step4: … {'intent':
+    'arch.design', 'slots': {...}} is not of type 'string'". Người dùng nhận một câu lỗi
+    jsonschema cho một câu họ gõ bằng tiếng Việt, và không có gì họ làm được với nó.
+    """
+    from eide.caps.chat import _args_cho
+    y = {"intent": "arch.design", "slots": {"feature": "chống hỏng dữ liệu"},
+         "confidence": 0.8, "lang": "vi"}
+    a = _args_cho("code.modify", y, {})
+    assert a.get("intent") == "arch.design", f"phải rút phần dùng được, nhận: {a.get('intent')!r}"
+    assert not isinstance(a.get("intent"), dict)
+
+
+def test_args_cho_van_giu_dict_o_noi_schema_doi_object():
+    """Không được sửa bừa: `chat.ground` khai `intent` là object và phải nhận nguyên dict."""
+    from eide.caps.chat import _args_cho
+    y = {"intent": "arch.design", "slots": {}}
+    assert _args_cho("chat.ground", y, {}).get("intent") == y
+
+
+def test_hop_kieu_khong_cho_bool_lot_vao_cho_doi_so():
+    """`bool` là con của `int` trong Python nhưng không phải trong JSON Schema."""
+    from eide.caps.chat import _hop_kieu
+    assert not _hop_kieu(True, "number") and not _hop_kieu(True, "integer")
+    assert _hop_kieu(True, "boolean") and _hop_kieu(3, "number")
+    assert _hop_kieu("x", ["string", "null"]) and _hop_kieu(None, ["string", "null"])
+    assert _hop_kieu(object(), "kieu-la"), "kiểu lạ thì đừng chặn"
+
+
+# ---------- ý định phải có ĐƯỜNG ĐI, không rơi xuống planner
+
+def test_req_analyze_co_chuoi_mau_va_chuoi_do_tu_nối_duoc_reqset_ids():
+    """`req.analyze` từng rơi xuống planner, và planner bắt đầu từ GIỮA quy trình.
+
+    Đo 21/09/2026 trên bài CNC: tác tử hiểu đúng mong muốn ("bỏ hẳn việc cầm USB đi lại"), rồi
+    nhảy thẳng vào `arch.decompose` và đi hỏi người `reqset_ids` — đúng thứ mà `req.classify` lẽ
+    ra phải sinh ra hai bước trước đó. [DEV-147]
+    """
+    import json as _json
+    from eide_core.paths import spec_dir
+    ds = _json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
+    mau = [m for m in ds if "req.analyze" in (m.get("trigger_intents") or [])]
+    assert mau, "req.analyze phải có chuỗi mẫu"
+    nut = {n["id"]: n for n in mau[0]["nodes"]}
+    caps = [n["cap"] for n in mau[0]["nodes"]]
+    assert caps[0] == "req.elicit" and "req.classify" in caps, caps
+    # Mẫu phải TỰ MANG phần nối: `req.classify` trả `reqset` (mảng đối tượng) còn các nút sau
+    # đòi `reqset_ids` (mảng chuỗi) — một phép biến đổi thật, không phải trùng tên, nên
+    # `_noi_dau_ra` (chỉ nối khi tên trùng) không bắc được cầu này.
+    for n in mau[0]["nodes"]:
+        if n["cap"] in ("req.detect_conflict", "req.prioritize", "req.acceptance"):
+            assert n["args"].get("reqset_ids") == "${n2.reqset[*].id}", n
+
+
+def test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co():
+    """Đếm được bao nhiêu ý định còn rơi xuống planner — và KHÔNG để con số ấy âm thầm tăng.
+
+    19 ý định trong `dialog/intent.schema.json`; một ý định có đường đi khi nó có chuỗi mẫu
+    hoặc trùng tên một năng lực đã hiện thực. Phần còn lại rơi xuống planner, và planner phác
+    chuỗi từ văn xuôi nên hay bắt đầu từ giữa quy trình.
+
+    Test này KHÔNG đòi con số về 0 — nhiều ý định còn chờ năng lực chưa có. Nó chốt con số hiện
+    tại để một mẫu bị xoá hay một ý định mới thêm vào đều phải đi qua đây.
+    """
+    import json as _json
+
+    import eide.caps  # noqa: F401 — nạp registry
+    from eide_core.paths import spec_dir
+    from eide_core.registry import get_registry
+    r = get_registry()
+    ys = _json.loads((spec_dir() / "dialog" / "intent.schema.json")
+                     .read_text(encoding="utf-8"))["properties"]["intent"]["enum"]
+    co_mau = {t for m in _json.loads((spec_dir() / "dialog" / "chains.json")
+                                     .read_text(encoding="utf-8"))
+              for t in (m.get("trigger_intents") or [])}
+    roi = [y for y in ys
+           if y not in co_mau and not (y in r and r.get(y).implemented)]
+    assert "req.analyze" not in roi, "DEV-147 đã cho req.analyze một mẫu"
+    assert len(roi) == 9, f"{len(roi)} ý định rơi xuống planner: {roi}"
+    # `policy.stop` là nút Dừng khẩn. Nó ĐANG nằm trong danh sách rơi, và đó là một lỗ an toàn
+    # ghi riêng: một lệnh dừng mọi việc mà phải đi qua một lời gọi mô hình thì chỉ hoạt động khi
+    # mạng thông và mô hình trả lời đúng — tức là không hoạt động đúng lúc cần nó nhất.
+    assert "policy.stop" in roi, "nếu policy.stop hết rơi thì sửa cả ghi chú này"
+
+
+def test_restate_KHONG_in_dau_gach_ngang_khi_khong_rut_duoc_doi_tuong():
+    """Đo 21/09/2026, chặng A bài CNC bước 3: thẻ Ý hiểu ghi "Tôi hiểu là req.analyze: —."
+
+    Câu người dùng gõ là một ràng buộc rõ ràng ("bộ điều khiển chỉ đọc được USB, không có cổng
+    mạng"), nhưng `chat.parse_intent` không rút ra slot nào. §2D.6 dựng thẻ này để người bắt
+    được một lệnh bị HIỂU SAI trước khi nó ghi tệp — và một dấu gạch ngang không cho người ta
+    bắt gì cả: nó trông như một trường trống vô hại.
+    """
+    from eide.caps.chat import restate
+    from eide_core.router import Context
+    t = restate({"intent": {"intent": "req.analyze", "slots": {}},
+                 "chain": [{"cap": "req.elicit"}, {"cap": "req.classify"}]},
+                Context())["text"]
+    # Cấm dấu gạch ngang ĐỨNG THAY CHO đối tượng (`: —.`), không cấm mọi dấu gạch ngang: câu
+    # thay thế dùng một dấu gạch ngang ngắt ý hoàn toàn hợp lệ.
+    assert ": —" not in t, t
+    assert "KHÔNG rút được đối tượng" in t, t
+    assert "req.elicit" in t, "vẫn phải liệt kê các bước sắp chạy"
+
+
+def test_restate_van_noi_binh_thuong_khi_co_doi_tuong():
+    from eide.caps.chat import restate
+    from eide_core.router import Context
+    t = restate({"intent": {"intent": "req.analyze", "slots": {"idea": "gateway LAN sang USB"}},
+                 "chain": [{"cap": "req.elicit"}]}, Context())["text"]
+    assert "gateway LAN sang USB" in t and "KHÔNG rút được" not in t

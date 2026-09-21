@@ -1,0 +1,18 @@
+# Bài test 1 — CHẶNG A: tác tử hiểu mong muốn
+#
+# Mục tiêu của chặng này, và CHỈ chặng này: tác tử nắm được tôi muốn gì, và nếu chưa rõ
+# thì nó HỎI LẠI. Chưa phương án, chưa thiết kế, chưa mã.
+#
+# Bài cũ gộp cả tám giai đoạn vào một tệp và hỏng theo hai cách: planner sinh chuỗi 14–23
+# nút, vượt trần 12 của DPS-09 §4.4; và tôi không trả lời một câu hỏi nào của tác tử —
+# một bài độc thoại, không phải một cuộc trao đổi.
+#
+# Chạy:  .build/debug/EideApp --kich-ban kich-ban/cnc-1-hieu-yeu-cau.txt --ra ~/eide/cnc
+
+@tao Gateway LAN sang USB cho máy CNC Fangling F2300B
+
+# Nhịp 1 — nói mong muốn bằng lời của người dùng, không dùng thuật ngữ kỹ thuật nào
+Máy CNC ở xưởng tôi dùng bộ điều khiển Fangling F2300B. Mỗi lần có bản thiết kế mới tôi phải chép file G-code ra USB rồi mang xuống xưởng cắm vào máy. Tôi muốn bỏ hẳn việc cầm USB đi lại.
+
+# Nhịp 2 — nói ràng buộc quan trọng nhất, vẫn bằng lời người dùng
+Bộ điều khiển đó chỉ đọc được USB, nó không có cổng mạng và tôi không đổi được phần mềm trong nó.

@@ -629,5 +629,72 @@
    "discover.scan",
    "target.flash"
   ]
+ },
+ {
+  "ten": "Làm rõ yêu cầu (DEV-147)",
+  "chuoi": "req.elicit → req.classify → req.detect_conflict → req.prioritize → req.acceptance → report",
+  "buoc": [
+   "req.elicit",
+   "req.classify",
+   "req.detect_conflict",
+   "req.prioritize",
+   "req.acceptance",
+   "report"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "req.elicit",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "req.classify",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "raw": "${n1.raw}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "req.detect_conflict",
+    "when": "n2",
+    "on_ask": "parallel",
+    "args": {
+     "reqset_ids": "${n2.reqset[*].id}"
+    }
+   },
+   {
+    "id": "n4",
+    "cap": "req.prioritize",
+    "when": "n2",
+    "on_ask": "parallel",
+    "args": {
+     "reqset_ids": "${n2.reqset[*].id}"
+    }
+   },
+   {
+    "id": "n5",
+    "cap": "req.acceptance",
+    "when": "n2",
+    "on_ask": "parallel",
+    "args": {
+     "reqset_ids": "${n2.reqset[*].id}"
+    }
+   },
+   {
+    "id": "n6",
+    "cap": "chat.report_back",
+    "when": "n5",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "req.analyze"
+  ]
  }
 ]

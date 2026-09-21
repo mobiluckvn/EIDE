@@ -614,10 +614,32 @@ public final class EidePhien {
 
     // MARK: - lệnh và sự kiện
 
+    /// Số lời gọi `chat.send` đang bay. Không phải `Bool`: hai lượt gõ chồng nhau thì lượt xong
+    /// trước sẽ tắt cờ trong khi lượt sau còn đang bay.
+    private var guiDangBay = 0
+
+    /// Tin báo mở màn đã nói gần nhất — để không nói lại y hệt. Xem `_moTheoTacTu`.
+    private var danBaoMan = ""
+
+    /// Phiên có đang bận không — tín hiệu XÁC ĐỊNH cho bộ lái kịch bản (`--kich-ban`).
+    ///
+    /// `dock.dangChay` không dùng được vào việc này: nó chỉ được gán lại mỗi khi một sự kiện từ
+    /// daemon tới, nên giữa lúc `chat.send` được gọi và lúc sự kiện đầu tiên về, nó vẫn là
+    /// `false` — và bộ lái kết luận "xong" rồi chụp ảnh. Đo 21/09/2026 trên chặng A bài CNC:
+    /// bước 2 "xong" sau 10,6 s trong khi thẻ Run còn ghi `bước 1/6 ▶ đang chạy req.elicit`.
+    ///
+    /// Hai vế, vì một lượt chạy có hai giai đoạn và không vế nào phủ được cả hai: `guiDangBay`
+    /// phủ lúc đang đợi `chat.send` trả về, `theRun` phủ lúc các nút chạy tiếp ở daemon.
+    public var dangBan: Bool {
+        guiDangBay > 0 || theRun.values.contains { $0.trangThai == .chay }
+    }
+
     private func _gui(_ van: String) async {
         guard let d = daemon else {
             return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
         }
+        guiDangBay += 1
+        defer { guiDangBay -= 1 }
         do {
             let r = try await d.goi("chat.send", ["text": van])
             // §2D.6 — thẻ Ý hiểu TRƯỚC câu "đang chạy": người đọc từ trên xuống, và thứ họ cần
@@ -704,7 +726,19 @@ public final class EidePhien {
         let tien = EideManHinhDS.tatCa.first { man.hasPrefix($0.tien) }?.tien
         guard let tien, tien != khung.vungLamViec.dangMo else { return }
         let nhan = EideManHinhDS.nhan(tien)
-        if moMan(tien, boiTacTu: true) {
+        // NÓI MỘT LẦN cho mỗi màn. Một chuỗi sáu nút thường đọc đi đọc lại cùng một màn, và
+        // bản trước nói lại nguyên câu mỗi lần: đo 21/09/2026 trên chặng A bài CNC, câu §2C.3
+        // hiện BỐN lần liên tiếp, giống nhau từng chữ, trong một vùng trao đổi chỉ có ba lượt
+        // người gõ. Chuỗi càng dài thì tỉ lệ càng tệ — và người dùng học cách bỏ qua cả loại
+        // thông báo ấy, kể cả lần nó nói điều quan trọng.
+        //
+        // Khoá theo (màn, có mở được hay không): nếu lần sau màn ấy mở lên trước mặt thật thì
+        // đó là một tin KHÁC và phải nói.
+        let moDuoc = moMan(tien, boiTacTu: true)
+        let khoa = "\(tien)|\(moDuoc)"
+        defer { danBaoMan = khoa }
+        guard danBaoMan != khoa else { return }
+        if moDuoc {
             khung.dock.themLuot(.heThong, "→ mở màn \(nhan) (tác tử đang chạy `\(cap)`)")
         } else {
             khung.dock.themLuot(.heThong, "→ \(nhan) mở ở NỀN — anh vừa tự chọn màn khác chưa quá "

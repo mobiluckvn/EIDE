@@ -8,6 +8,7 @@ phần sinh mới dùng mô hình.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -48,14 +49,18 @@ def _c(*nut) -> Chain:
 # ---------- chuỗi mẫu (§4.4)
 
 
-def test_nam_chuoi_mau_sinh_tu_tai_lieu():
-    """§4.4 có đúng năm chuỗi mẫu, và chúng phải máy đọc được.
+def test_chuoi_mau_sinh_tu_tai_lieu():
+    """Bảng chuỗi mẫu phải máy đọc được — năm mục của §4.4 cộng mẫu thêm ở [DEV-147].
 
     Trước WI-CHAT-06 bảng ấy chỉ nằm trong văn xuôi, nên phần mã phải chép tay — cùng khuôn
     DEV-025/029/043/046. Nay sinh ra `dialog/chains.json`.
+
+    Con số 6 chốt ở đây cố ý: một mẫu bị xoá hay thêm đều phải đi qua test này. Mẫu thứ sáu
+    (`req.analyze`) thêm 21/09/2026 vì ý định ấy không có đường đi và rơi xuống planner — xem
+    `test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co` trong `test_chat.py`.
     """
     ds = mau()
-    assert len(ds) == 5
+    assert len(ds) == 6
     assert all(c["buoc"] and c["trigger_intents"] for c in ds)
 
 
@@ -360,3 +365,41 @@ def test_chuoi_CHAY_PHAN_LAM_DUOC_roi_moi_dung_hoi(du_an):
     thieu = kiem(Chain(nut), reg)
     assert [x["id"] for x in thieu] == ["n4"], "ba nút đầu đủ dữ kiện"
     assert set(thieu[0]["thieu"]) == {"reqset_ids", "passport"}
+
+
+def test_y_hieu_danh_so_buoc_THEO_KE_HOACH_khong_theo_trang_thai():
+    """Thẻ Ý hiểu đánh số theo trình tự chạy, không theo nhóm trạng thái của báo cáo.
+
+    Đo 21/09/2026, chặng A bài CNC: thẻ in "1. `req.classify` … 6. `req.elicit`" cho một chuỗi
+    mà `req.elicit` là nút ĐẦU TIÊN — nó bị đẩy xuống cuối chỉ vì nó đang `waiting`, còn báo
+    cáo thì gom nút theo `done → waiting → skipped → failed`.
+
+    §2D.6 đặt thẻ này làm chỗ duy nhất người dùng bắt được một lệnh bị hiểu sai TRƯỚC khi nó
+    ghi tệp, và họ bắt bằng cách đọc trình tự. Một danh sách đánh số mà các số không chỉ thứ tự
+    thì tệ hơn một danh sách không đánh số: nó vẫn trông như một trình tự.
+    """
+    from eide.daemon.rpc import Daemon
+    buoc = [{"id": "n2", "cap": "req.classify"}, {"id": "n3", "cap": "req.detect_conflict"},
+            {"id": "n1", "cap": "req.elicit"}]          # thứ tự "ghép bốn nhóm"
+    kh = {"graph": {"nodes": [{"id": "n1"}, {"id": "n2"}, {"id": "n3"}]}}
+    import eide.caps.chat as _c
+    cu = _c.doc_ke_hoach
+    _c.doc_ke_hoach = lambda *_a, **_k: kh
+    try:
+        ra = Daemon._theo_thu_tu_ke_hoach(Path("/khong-quan-trong"), "r_x", buoc)
+    finally:
+        _c.doc_ke_hoach = cu
+    assert [n["cap"] for n in ra] == ["req.elicit", "req.classify", "req.detect_conflict"]
+
+
+def test_y_hieu_giu_nguyen_thu_tu_khi_khong_doc_duoc_do_thi():
+    """Không đọc được đồ thị thì giữ nguyên — một tóm tắt lộn xộn vẫn hơn không có tóm tắt."""
+    import eide.caps.chat as _c
+    from eide.daemon.rpc import Daemon
+    buoc = [{"id": "n2", "cap": "b"}, {"id": "n1", "cap": "a"}]
+    cu = _c.doc_ke_hoach
+    _c.doc_ke_hoach = lambda *_a, **_k: None
+    try:
+        assert Daemon._theo_thu_tu_ke_hoach(Path("/x"), "r", buoc) == buoc
+    finally:
+        _c.doc_ke_hoach = cu

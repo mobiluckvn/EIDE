@@ -18,6 +18,11 @@ public final class EideTheRun: NSView {
 
     public let ma: String
     public private(set) var trangThai: TrangThai = .chay
+
+    /// Dòng trạng thái và bộ đếm bước đang hiện — cho bài đo đọc. Hai thứ này phải kể CÙNG một
+    /// câu chuyện, và chỉ đọc được cả hai mới kiểm được điều đó.
+    public var dongChu: String { dongHienTai.stringValue }
+    public var demChu: String { demBuoc.stringValue }
     public private(set) var buoc = 0        // số bước ĐÃ XONG
     public private(set) var tong = 0
     private var nhanBuoc: [String] = []
@@ -137,10 +142,36 @@ public final class EideTheRun: NSView {
             dongHienTai.stringValue = "⏸ Chờ anh: \(p["reason"] as? String ?? "chưa rõ")"
                 + (thieu.isEmpty ? "" : " — \(thieu)")
         case "run.done":
-            trangThai = (p["state"] as? String) == "cancelled" ? .huy : .xong
-            buoc = tong
-            dongHienTai.stringValue = trangThai == .huy
-                ? "✖ Đã huỷ" : "✅ Xong \(p["done"] as? Int ?? tong)/\(tong) bước"
+            // `run.done` KHÔNG có nghĩa là "xong": nó có nghĩa là lượt chạy đã dừng, và
+            // `state` nói vì sao — `done`, `asked` (dừng hỏi người), `cancelled`, hoặc có nút
+            // hỏng. Bản trước gán cứng `.xong` và `buoc = tong` rồi in số `done` THẬT ở dòng
+            // dưới, nên hai con số mâu thuẫn nằm cạnh nhau trên cùng một thẻ.
+            //
+            // Đo 21/09/2026, chặng A bài CNC: thẻ ghi `bước 6/6  ✅ Xong 0/6 bước` cho một
+            // chuỗi dừng ở nút ĐẦU để hỏi người. Bộ đếm nói đã tới cuối, dòng chữ nói chưa làm
+            // gì, dấu ✅ nói mọi thứ ổn — ba tín hiệu, ba câu chuyện khác nhau.
+            let ttRun = (p["state"] as? String) ?? "done"
+            let daXong = (p["done"] as? Int) ?? tong
+            let dangCho = (p["waiting"] as? Int) ?? 0
+            let daHong = (p["failed"] as? Int) ?? 0
+            // `buoc` mang nghĩa SỐ BƯỚC ĐÃ XONG (xem `testMotLuotChayTronVen…`), còn `_ve()`
+            // mới là chỗ cộng 1 để ra số thứ tự bước đang đứng. Bản trước gán cứng `= tong`,
+            // tức khai đã làm hết cả chuỗi kể cả khi chưa làm bước nào.
+            buoc = min(daXong, tong)
+            switch ttRun {
+            case "cancelled":
+                trangThai = .huy
+                dongHienTai.stringValue = "✖ Đã huỷ"
+            case "asked":
+                trangThai = .chan
+                dongHienTai.stringValue = "⏸ DỪNG, đang chờ anh — xong \(daXong)/\(tong) bước"
+                    + (dangCho > 0 ? ", \(dangCho) bước cần anh trả lời" : "")
+            default:
+                trangThai = .xong
+                dongHienTai.stringValue = daHong > 0
+                    ? "⚠ Dừng — xong \(daXong)/\(tong) bước, \(daHong) bước hỏng (xem Nhật ký)"
+                    : "✅ Xong \(daXong)/\(tong) bước"
+            }
         case "run.cancelled":
             trangThai = .huy
             dongHienTai.stringValue = "✖ Đã huỷ (Dừng khẩn)"

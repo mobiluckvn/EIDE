@@ -177,6 +177,16 @@ const CHUOI_MAU = [
   ['Thêm tính năng (Z-05)', 'chat.ground(dự án) → req.elicit(feature) → req.ground_hw → arch.map_hw(delta) → plan.create → code.module/integrate/test/review → code.merge → sim.run → [board lab? target.flash → target.observe] → doc.section → report', ['code.feature']],
   ['Bộ tài liệu (P7)', 'req.trace_matrix → diagram.* (theo loại tài liệu) → doc.generate(URD, SRS, SAD, SDD, STP) → doc.embed_diagram → doc.style_check → report', ['doc.write']],
   ['Dò board và nạp (Z-10)', 'discover.ports/probes → discover.chip_id → [khớp hộ chiếu?] → discover.link_speed → discover.auto_setup → policy.decide(G-OPS) → target.flash → target.serial/observe → report', ['discover.scan', 'target.flash']],
+  // Mẫu thứ SÁU, thêm v1.3 ([DEV-147]). `req.analyze` là một trong 19 ý định của
+  // `dialog/intent.schema.json` nhưng không mẫu nào nhận nó, và nó cũng không trùng tên một
+  // năng lực nào — nên nó rơi xuống planner, và planner phác chuỗi từ văn xuôi nên bắt đầu từ
+  // GIỮA quy trình. Đo 21/09/2026 trên bài CNC: tác tử hiểu đúng ("bỏ hẳn việc cầm USB đi
+  // lại"), rồi nhảy thẳng vào `arch.decompose` và đi hỏi người `reqset_ids` — đúng thứ mà
+  // `req.classify` lẽ ra phải sinh ra hai bước trước đó.
+  //
+  // Chưa mang mã Z: Z-01…Z-10 là một dãy có thật (PDA §M1) nhưng §4.4 chỉ trải ra năm mục, và
+  // mượn một mã mình không biết nội dung là đặt tên cho thứ của người khác.
+  ['Làm rõ yêu cầu (DEV-147)', 'req.elicit → req.classify → req.detect_conflict → req.prioritize → req.acceptance → report', ['req.analyze']],
 ];
 // §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
 // đọc: nó có nhánh điều kiện viết bằng chữ ("[template? … : …]"), ký hiệu nhóm ("extract.*"),
@@ -230,6 +240,18 @@ const CHUOI_NUT = {
       { module_ids: '${n10.module_graph.modules[*].id}' }],
     ['n12', 'diagram.block', 'n10', 'parallel'],
     ['n13', 'plan.create', 'n11'], ['n14', 'chat.report_back', 'n13'],
+  ],
+  // Sáu nút, dưới trần 12 của §4.4. Ba nút cuối cùng treo vào `n2` chứ không nối tiếp nhau:
+  // xung đột, ưu tiên và tiêu chí nghiệm thu đều chỉ cần tập yêu cầu, không cần kết quả của
+  // nhau — nối tiếp chúng là bắt người dùng đợi ba lượt mô hình nối đuôi cho ba việc chạy song
+  // song được.
+  'Làm rõ yêu cầu (DEV-147)': [
+    ['n1', 'req.elicit'],
+    ['n2', 'req.classify', 'n1', 'wait', { raw: '${n1.raw}' }],
+    ['n3', 'req.detect_conflict', 'n2', 'parallel', { reqset_ids: '${n2.reqset[*].id}' }],
+    ['n4', 'req.prioritize', 'n2', 'parallel', { reqset_ids: '${n2.reqset[*].id}' }],
+    ['n5', 'req.acceptance', 'n2', 'parallel', { reqset_ids: '${n2.reqset[*].id}' }],
+    ['n6', 'chat.report_back', 'n5'],
   ],
   'Dự án mới từ zip (Z-07)': [
     ['n1', 'project.create'], ['n2', 'archive.list', 'n1'],

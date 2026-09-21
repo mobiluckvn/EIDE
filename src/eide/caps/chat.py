@@ -311,9 +311,22 @@ def restate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     intent = params["intent"]
     chain = params["chain"]
     slots = intent.get("slots") or {}
-    doi_tuong = slots.get("project_name") or slots.get("idea") or slots.get("feature") or slots.get("question") or "—"
     caps = [n["cap"] for n in chain]
     tom = ", ".join(caps[:4]) + (f" và {len(caps) - 4} bước nữa" if len(caps) > 4 else "")
+    doi_tuong = (slots.get("project_name") or slots.get("idea") or slots.get("feature")
+                 or slots.get("question"))
+    if not doi_tuong:
+        # KHÔNG in dấu gạch ngang. Đo 21/09/2026, chặng A bài CNC bước 3: thẻ Ý hiểu ghi
+        # "Tôi hiểu là req.analyze: —." cho câu "bộ điều khiển đó chỉ đọc được USB, nó không có
+        # cổng mạng…" — một câu ràng buộc rõ ràng mà `chat.parse_intent` không rút ra slot nào.
+        #
+        # §2D.6 dựng thẻ này để người bắt được một lệnh bị HIỂU SAI trước khi nó ghi tệp. Một
+        # dấu gạch ngang không cho người ta bắt gì cả: nó trông như một trường trống vô hại,
+        # trong khi thứ nó đang nói là "tôi không rút được đối tượng nào từ câu của anh" —
+        # đúng lúc cần người đọc dừng lại và kiểm.
+        return {"text": f"Tôi hiểu là {intent.get('intent')}, nhưng KHÔNG rút được đối tượng "
+                        f"cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để "
+                        f"tôi chạy. Tôi sẽ {tom}."}
     return {"text": f"Tôi hiểu là {intent.get('intent')}: {doi_tuong}. Tôi sẽ {tom}."}
 
 
@@ -785,12 +798,57 @@ def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any],
     reg = get_registry()
     if cap not in reg:
         return {}
-    cho_phep = set(reg.get(cap).spec.input_schema.get("properties") or {})
+    thuoc_tinh = reg.get(cap).spec.input_schema.get("properties") or {}
+    cho_phep = set(thuoc_tinh)
     nguon: dict[str, Any] = {"intent": intent}
     if run_id:
         nguon["run_id"] = run_id
     nguon.update({**(grounded or {}), **((intent or {}).get("slots") or {})})
-    return {k: v for k, v in nguon.items() if k in cho_phep and v is not None}
+    ra: dict[str, Any] = {}
+    for k, v in nguon.items():
+        if k not in cho_phep or v is None:
+            continue
+        # KIỂM KIỂU trước khi gán. Một cái TÊN trùng nhau không có nghĩa là cùng một KIỂU, và
+        # `intent` là chỗ hai nghĩa ấy va nhau: ở đây nó là dict ý định của `chat.parse_intent`,
+        # còn `code.modify` khai `intent: string` — "sửa cái gì", một câu tiếng Việt.
+        #
+        # Đo 21/09/2026 trên bài CNC, bước 5: cả chuỗi chết với E5002 "step4: tham số không khớp
+        # input_schema của `code.modify` — {'intent': 'arch.design', 'slots': {...}} is not of
+        # type 'string'". Người dùng nhận một câu lỗi jsonschema cho một câu họ gõ bằng tiếng
+        # Việt, và không có gì họ làm được với nó.
+        #
+        # Dict rơi vào chỗ đòi string thì rút phần dùng được (`intent["intent"]`) thay vì bỏ
+        # hẳn: bỏ hẳn làm nút rơi về "thiếu tham số" và đi hỏi người một câu mà chuỗi đã biết.
+        if (kieu := thuoc_tinh[k].get("type")) and not _hop_kieu(v, kieu):
+            if kieu == "string" and k == "intent" and isinstance(v, dict) and v.get("intent"):
+                ra[k] = str(v["intent"])
+            continue
+        ra[k] = v
+    return ra
+
+
+# JSON type → kiểu Python. `int` KHÔNG nằm trong `boolean` dù `bool` là con của `int` trong
+# Python: một `True` lọt vào chỗ đòi số là thứ jsonschema bắt được còn `isinstance` thì không.
+_KIEU_JSON: dict[str, Any] = {
+    "string": str, "object": dict, "array": list, "boolean": bool,
+    "number": (int, float), "integer": int,
+}
+
+
+def _hop_kieu(v: Any, kieu: Any) -> bool:
+    """Giá trị có khớp `type` mà input_schema khai không.
+
+    `type` có thể là một danh sách (`["string", "null"]`) — khớp một cái là đủ. Kiểu lạ thì trả
+    `True`: không biết thì đừng chặn, để jsonschema ở `kiem()` nói lời cuối.
+    """
+    if isinstance(kieu, list):
+        return any(_hop_kieu(v, k) for k in kieu)
+    if kieu == "null":
+        return v is None
+    if kieu in ("number", "integer") and isinstance(v, bool):
+        return False
+    t = _KIEU_JSON.get(kieu)
+    return True if t is None else isinstance(v, t)
 
 
 def _uoc_chi_phi(chuoi: Any) -> float:

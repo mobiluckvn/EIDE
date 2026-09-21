@@ -8,8 +8,8 @@
 
 | Màn | Tên | TT | Tệp | Commit | Ngày | Người/tác tử |
 |---|---|---|---|---|---|---|
-| S1 | Tổng quan | nối | `EideManDauTien.swift` | `4969443` | 2026-09-21 | Vũ Trí Công |
-| S2 | Nhật ký | nối | `EideManDauTien.swift` | `4969443` | 2026-09-21 | Vũ Trí Công |
+| S1 | Tổng quan | nối | `EideManDauTien.swift` | `2335852` | 2026-09-21 | Vũ Trí Công |
+| S2 | Nhật ký | nối | `EideManDauTien.swift` | `2335852` | 2026-09-21 | Vũ Trí Công |
 | S3 | Bản đồ luồng | nối | `EideManLuongVaMoPhong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
 | S4 | Nhập tài liệu | nối | `EideManNhapTaiLieu.swift` | `57c9ad0` | 2026-09-20 | Vũ Trí Công |
 | S5 | Hộ chiếu chip | nối | `EideManHoChieu.swift` | `04754be` | 2026-09-21 | Vũ Trí Công |
@@ -32,7 +32,7 @@
 | S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S24 | Registry | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
-| S25 | Chính sách tự chủ | nối | `EideManDauTien.swift` | `4969443` | 2026-09-21 | Vũ Trí Công |
+| S25 | Chính sách tự chủ | nối | `EideManDauTien.swift` | `2335852` | 2026-09-21 | Vũ Trí Công |
 
 **21 nối · 4 chặn (chờ bo mạch) · 0 chưa.**
 
