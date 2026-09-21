@@ -360,3 +360,38 @@ def test_cong_G_SRC_duyet_duoc_nguon_hang_hop_le():
                             risk="R1", autonomy="A2", tier="T1", actor="agent")
     assert d.decision == "APPROVE", f"{d.rule_id}: {d.reason}"
     assert d.rule_id == "G-SRC-01"
+
+
+def test_ban_do_pha_cua_giao_dien_khop_BPD():
+    """Bản đồ P0–P7 trong `EideBanDoPha.swift` phải khớp `docs/ho-so/nguon/bpd.js`.
+
+    Màn Bản đồ luồng (S3) gán mỗi lời gọi vào một trong tám quy trình vận hành. Tự gán theo tên
+    nhóm năng lực (`code.* → P3`) nghe hợp lý và SAI: `code.human_save` là việc của người ở P5,
+    `doc.*` nằm ở P7 chứ không P6. Nguồn duy nhất đúng là BPD.
+
+    Hai danh sách ở hai ngôn ngữ thì sẽ trôi khỏi nhau — bài này là chỗ chúng gặp lại. Kiểm MỘT
+    CHIỀU: mọi năng lực giao diện gán cho một pha phải có mặt trong đúng khối ấy của `bpd.js`.
+    Chiều kia để lỏng, vì tài liệu thêm năng lực vào một quy trình không làm giao diện sai — chỉ
+    làm nó thiếu.
+    """
+    import re
+
+    goc = repo_root()
+    js = (goc / "docs" / "ho-so" / "nguon" / "bpd.js").read_text(encoding="utf-8")
+    moc = [(m.start(), re.search(r"P[0-7]", m.group(1)).group(0))
+           for m in re.finditer(r"proc\('([^']*P[0-7][^']*)',\s*'[^']+'", js)]
+    moc.append((len(js), None))
+    theo_bpd = {ma: set(re.findall(r"\b([a-z_]+\.[a-z_]+)\b", js[vt:moc[i + 1][0]]))
+                for i, (vt, ma) in enumerate(moc[:-1])}
+
+    sw = (goc / "apps" / "eide" / "Sources" / "EideGiaoDien"
+          / "EideBanDoPha.swift").read_text(encoding="utf-8")
+    khoi = re.findall(r'\.init\(ma: "(P[0-7])", ten: "[^"]*",\s*caps: \[(.*?)\]\)', sw, re.S)
+    assert len(khoi) == 8, f"giao diện khai {len(khoi)} pha, BPD có 8"
+
+    sai = {}
+    for ma, than in khoi:
+        for cap in re.findall(r'"([^"]+)"', than):
+            if cap not in theo_bpd.get(ma, set()):
+                sai.setdefault(ma, []).append(cap)
+    assert not sai, f"giao diện gán pha sai so với bpd.js: {sai}"

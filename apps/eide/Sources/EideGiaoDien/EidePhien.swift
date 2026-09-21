@@ -289,6 +289,8 @@ public final class EidePhien {
         EideManMoHinh.tien: { EideManMoHinh() },
         EideManCongCu.tien: { EideManCongCu() },
         EideManRegistry.tien: { EideManRegistry() },
+        EideManLuong.tien: { EideManLuong() },
+        EideManMoPhong.tien: { EideManMoPhong() },
     ]
 
 

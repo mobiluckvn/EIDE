@@ -37,8 +37,10 @@ public enum EideDangKySuKien {
         // chảy vào mọi chỗ mà không ai quyết; `TAT_CA` vẫn là một khai báo đọc được, và phép
         // kiểm dưới đây đòi **đúng một màn duy nhất** được dùng nó.
         "NhatKy": TAT_CA,
-        // S3 Bản đồ luồng — "nghe: run.*".
+        // S3 Bản đồ luồng — "nghe: run.*"; pha hiện tại suy từ lời gọi gần nhất.
         "FlowMap": ["event.run.progress"],
+        // S16 Mô phỏng — `sim.run` ghi `tool.report` vào sổ cái.
+        "Sim": ["event.tool.report", "event.run.progress"],
         // S4 Nhập tài liệu — "nghe: ingest.*"; sổ cái đổ chúng về `knowledge.changed`.
         "Ingest": ["event.knowledge.changed", "event.job.progress"],
         // S5 Hộ chiếu chip — fact đổi thì bảng fact phải đổi theo.

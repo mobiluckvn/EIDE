@@ -284,6 +284,10 @@ public final class EideManCongCu: EideManCoSo {
         for e in luot {
             let d = (e["data"] as? [String: Any]) ?? [:]
             let t = (d["tool"] as? String) ?? "?"
+            // `sim.run` cũng ghi `tool.report` (xem `sim.py`), nên không lọc thì nó hiện ra ở
+            // đây như một công cụ tác tử tự viết. Năng lực DỰNG SẴN mang id có dấu chấm
+            // (`ns.name`); công cụ tự tạo mang tên trần do `tool.write` đặt.
+            if t.contains(".") { continue }
             if (d["passed"] as? Bool) == true || EideManHoChieu.nguyen(d["passed"]) == 1 {
                 dat[t, default: 0] += 1
             } else {

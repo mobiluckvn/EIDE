@@ -164,7 +164,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 ### Nhóm 1 · DỰ ÁN
 - [ ] **S1 Tổng quan** — `project.status`, `target.detect` · 4 ô KPI (fact, chờ tôi, hoàn tác, chip đã ghim) + bảng feature (trạng thái, cổng đang mở) · rỗng: "dự án mới — chưa có feature; bước kế: ra lệnh đầu tiên" · nghe: `run.*`, `human.*`, thay đổi pending/undo.
 - [ ] **S2 Nhật ký** — `view.timeline` · dòng thời gian MỌI sự kiện (máy + người), mới nhất trên; bộ lọc theo Run, theo tác giả, theo loại; chỉ báo chuỗi băm liền mạch ✔ · rỗng: "sổ cái chưa có sự kiện; bước kế: tạo dự án/ra lệnh" · nghe: mọi loại.
-- [ ] **S3 Bản đồ luồng** — `view.timeline` lọc theo pha (hết màn mồ côi) · sơ đồ P0→P7, pha hiện tại tô đậm, bấm pha mở S2 lọc sẵn · nghe: `run.*`.
+- [x] **S3 Bản đồ luồng** — `view.timeline` lọc theo pha (hết màn mồ côi) · sơ đồ P0→P7, pha hiện tại tô đậm, bấm pha mở S2 lọc sẵn · nghe: `run.*`.  ·  **✔ tám pha P0–P7 rút từ `bpd.js`, có bài kiểm Python đối chiếu ngược. Pha hiện tại SUY từ sổ cái chứ không từ một biến trạng thái. Nói ra số lời gọi NGOÀI pha (68/244 năng lực có trong tám quy trình). Bấm pha: chưa truyền được bộ lọc sang S2, màn nói thẳng**
 
 ### Nhóm 2 · TRI THỨC
 - [ ] **S4 Nhập tài liệu** — `archive.*`, `ingest.*`, `extract.*` · vùng kéo-thả + bảng nguồn (loại, số fact trích, trạng thái duyệt theo chính sách) + tiến độ trích đang chạy · rỗng: "chưa nhập tài liệu nào; kéo PDF/SVD/BOM vào đây" · nghe: `ingest.*`.
@@ -185,7 +185,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 - [ ] **S15 Diff & cổng merge** — `code.review`, `code.merge` · khung diff hai cột + bảng cổng (G-FACT, G1/G3/G4/G5): mỗi cổng trạng thái ✅/⛔/⏳ + lý do chặn bấm mở đúng chỗ; merge xong hiện mã commit + tác giả máy-đọc-được + trailer seq + hạn hoàn tác.
 
 ### Nhóm 5 · CHẠY THỬ
-- [ ] **S16 Mô phỏng** — `sim.*` · log UART thật từ simavr + bảng kỳ vọng ĐẠT/TRƯỢT · rỗng: "chưa có lượt mô phỏng; bước kế: tác tử chạy sim.run ở bước N".
+- [x] **S16 Mô phỏng** — `sim.*` · log UART thật từ simavr + bảng kỳ vọng ĐẠT/TRƯỢT · rỗng: "chưa có lượt mô phỏng; bước kế: tác tử chạy sim.run ở bước N".  ·  **✔ đọc `tool.report` của `sim.run` từ sổ cái, KHÔNG tự chạy mô phỏng lúc mở. Giữ nguyên BA trạng thái kỳ vọng — `unverified` tách khỏi `failed`; hết giờ tách khỏi chạy xong**
 - [!] **S17 Dò board** — `discover.*` · rỗng khi không board: "chưa có bo mạch cắm vào — nhóm này chờ một vật ngoài máy tính; discover.ports thấy 0 cổng" (B5, không dữ liệu giả).  ·  **CHẶN: chờ một bo mạch — 8/12 năng lực nhóm này chặn bởi vật ngoài máy tính**
 - [ ] **S18 Log & serial** — `debug.log_stats`, `debug.ask_at`, `target.serial` · thống kê log + hỏi-tại-dòng (trả lời neo đúng dòng); phần serial rỗng khi không board, phần log dùng được với log mô phỏng.
 - [!] **S19 Gỡ lỗi probe** — `debug.*`, `target.probe_*` · khung EvidencePack / giả thuyết / thí nghiệm; rỗng khi không probe.  ·  **CHẶN: chờ mạch nạp**
