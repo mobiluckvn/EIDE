@@ -35,6 +35,27 @@ public final class EideManNhatKy: EideManCoSo {
              })
     }
 
+    /// **§7.3 diff render.** Một sự kiện mới = MỘT hàng chèn lên đầu, không nạp lại màn.
+    ///
+    /// Đây là màn đo ra con số tệ nhất của cách lùi: nạp lại ở mỗi sự kiện làm nó mất 7,68 s
+    /// (DEV-132), và ngay cả bản gộp 0,4 s vẫn tốn một lời gọi `view.timeline` 0,47 s cộng một
+    /// lượt dựng `NSTextField` ~200 ms cho mỗi lần. Ở đây: dựng lại chuỗi (~6 ms trên 120 hàng)
+    /// rồi gán vào chính khung nhìn đang có.
+    ///
+    /// Dữ liệu lấy từ CHÍNH sự kiện, không hỏi lại lõi — `event.*` mang đủ `at`/`kind`/`data`,
+    /// và hỏi lại là quay về đúng chi phí vừa tránh được.
+    ///
+    /// Trả `false` khi màn chưa dựng bảng (đang ở trạng thái rỗng): hàng đầu tiên phải đi qua
+    /// `napDuLieu` để bảng và tiêu đề ra đời cùng nhau.
+    public override func apDung(_ ten: String, _ p: [String: Any]) -> Bool {
+        guard ten.hasPrefix("event."), let luc = p["at"] as? String else { return false }
+        return themHangDau([Self.gio(luc),
+                            Self.ai(p["by"] as? String),
+                            (p["kind"] as? String) ?? (ten.dropFirst(6) + ""),
+                            Self.chiTiet((p["data"] as? [String: Any]) ?? p)],
+                           toiDa: Self.TOI_DA)
+    }
+
     /// `2026-09-18T16:04:21.123456+00:00` → `18/09 16:04:21`. Ngày ĐẦY ĐỦ chỉ tốn 6 ký tự và
     /// nó là khác biệt giữa "vừa xong" với "tuần trước" — thứ một dòng thời gian tồn tại để nói.
     public static func gio(_ s: String?) -> String {

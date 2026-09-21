@@ -212,6 +212,57 @@ open class EideManCoSo: NSView {
 
     public func bang(cot: [(ten: String, rong: CGFloat)], dong: [[String]],
                      bam: OBam = [:]) {
+        // Nhớ lại để `themHangDau` vẽ lại được mà không phải hỏi lõi — §7.3 diff render.
+        bangCot = cot
+        bangDong = dong
+        let s = chuoiBang(cot: cot, dong: dong, bam: bam)
+        guard !bam.isEmpty else {
+            let n = NSTextField(labelWithAttributedString: s)
+            n.lineBreakMode = .byWordWrapping
+            n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            them(n)
+            bangNhan = n
+            return
+        }
+        oBam = bam
+        let tv = EideBangBamDuoc(chu: s)
+        tv.onBam = { [weak self] o in
+            guard let viec = self?.oBam[o] else { return false }
+            viec()
+            return true
+        }
+        them(tv)
+        bangBamDuoc = tv
+    }
+
+    /// Cột và hàng của bảng gần nhất — §7.3.
+    private var bangCot: [(ten: String, rong: CGFloat)] = []
+    private var bangDong: [[String]] = []
+    private var bangNhan: NSTextField?
+
+    /// **Chèn một hàng lên ĐẦU bảng và vẽ lại — không hỏi lõi, không dựng lại khung nhìn.**
+    ///
+    /// Đây là diff render mà §7.3 đòi. Cách lùi (nạp lại cả màn) tốn một lời gọi `view.timeline`
+    /// 0,47 s cộng một lượt dựng `NSTextField` ~200 ms; ở đây chỉ dựng lại CHUỖI (~6 ms đo trên
+    /// bảng 120 hàng) rồi gán vào chính khung nhìn đang có.
+    ///
+    /// `toiDa` cắt từ đuôi: màn Nhật ký giữ 120 dòng mới nhất, và một bảng tự dài ra mãi theo
+    /// mỗi sự kiện sẽ chậm dần trong đúng phiên làm việc người ta đang theo dõi nó.
+    ///
+    /// Trả `false` khi chưa có bảng nào để chèn — bên gọi khi ấy phải nạp lại như cũ.
+    @discardableResult
+    public func themHangDau(_ hang: [String], toiDa: Int) -> Bool {
+        guard let n = bangNhan, !bangCot.isEmpty else { return false }
+        bangDong.insert(hang, at: 0)
+        if bangDong.count > toiDa { bangDong.removeLast(bangDong.count - toiDa) }
+        n.attributedStringValue = chuoiBang(cot: bangCot, dong: bangDong, bam: [:])
+        return true
+    }
+
+    /// Chuỗi thuộc tính của một bảng. Tách khỏi `bang()` để `themHangDau` dùng lại — hai phép
+    /// dựng bảng khác nhau là hai bảng sẽ trông khác nhau sau vài lần cập nhật.
+    public func chuoiBang(cot: [(ten: String, rong: CGFloat)], dong: [[String]],
+                          bam: OBam) -> NSAttributedString {
         var moc: CGFloat = 0
         var dung: [NSTextTab] = []
         for c in cot.dropLast() {
@@ -274,31 +325,16 @@ open class EideManCoSo: NSView {
             hang(d, dam: false, nen: i % 2 == 1 ? EideToken.Mau.bg : nil)
         }
         hangHienTai = -1
-
-        // MỘT khung nhìn cho cả bảng, kể cả khi có ô bấm được.
-        //
-        // `NSTextView` chỉ dùng khi thật sự cần — nó nặng hơn `NSTextField` và bảng hộ chiếu
-        // 287 hàng là chỗ đã đo hai lần để xuống 33 ms. Dựng một khung nhìn MỖI Ô thì còn tệ
-        // hơn nữa: hai bản trước làm thế và cả hai hỏng bố cục, một bản còn làm màn Nhật ký
-        // mất hơn một giây để vẽ. Nên ô bấm được là một `.link` trong CÙNG chuỗi thuộc tính,
-        // và `NSTextView` chỉ là thứ duy nhất trong AppKit chuyển một `.link` thành cú bấm.
-        guard !bam.isEmpty else {
-            let n = NSTextField(labelWithAttributedString: s)
-            n.lineBreakMode = .byWordWrapping
-            n.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-            them(n)
-            return
-        }
-        oBam = bam
-        let tv = EideBangBamDuoc(chu: s)
-        tv.onBam = { [weak self] o in
-            guard let viec = self?.oBam[o] else { return false }
-            viec()
-            return true
-        }
-        them(tv)
-        bangBamDuoc = tv
+        return s
     }
+
+    // MỘT khung nhìn cho cả bảng, kể cả khi có ô bấm được.
+    //
+    // `NSTextView` chỉ dùng khi thật sự cần — nó nặng hơn `NSTextField` và bảng hộ chiếu 287
+    // hàng là chỗ đã đo hai lần để xuống 33 ms. Dựng một khung nhìn MỖI Ô thì còn tệ hơn: hai
+    // bản trước làm thế và cả hai hỏng bố cục, một bản còn làm màn Nhật ký mất hơn một giây để
+    // vẽ. Nên ô bấm được là một `.link` trong CÙNG chuỗi thuộc tính, và `NSTextView` là thứ duy
+    // nhất trong AppKit chuyển một `.link` thành cú bấm. Xem `bang()` ở trên.
 
     /// Hàng đang dựng — để `hang()` biết ô nào bấm được mà không phải truyền thêm tham số qua
     /// một closure lồng nhau.
