@@ -70,6 +70,15 @@ d("view.rag_compare", {"question": "str!"}, {"comparison": "arr<obj>! # tier/sou
 d("view.doc_side_by_side", {"ref": "str! # fact_id | code_unit_id"}, {"left": "obj! # source, page, bbox", "right": "obj! # fact/code"}, ["Từ locator → trang PDF/ảnh với highlight; mã với dòng"], ["E2000"], "none", '{"ref":"f_9e0f"}', "Vùng bôi sáng đúng bbox")
 d("view.timeline", {"range": "obj # from|to ISO, hoặc days:int", "filter": "obj # by policy|human, kinds", "limit": "int # số sự kiện MỚI NHẤT trả về"}, {"events": "arr<obj>!", "total": "int! # tổng trước khi cắt"}, ["Từ ledger/decision_log/capability_run/store.write; sắp theo thời gian; lọc", "`limit` cắt từ ĐUÔI (mới nhất) và `total` luôn là số trước khi cắt — bên gọi phải biết mình đang xem một phần"], [], "none", '{"range":{"days":7},"limit":120}', "Sự kiện khớp ledger")
 d("view.export_map", {"view": "obj!", "format": "enum:dot|graphml|svg|png|mermaid!"}, {"file": "str!"}, ["Chuyển GraphView → định dạng; mermaid giới hạn 300 nút"], [], "delete_created_files", '{"view":{},"format":"mermaid"}', "Mermaid render được")
+d("view.artifacts",
+  {"kind": "enum:requirement|adr|plan|doc|diagram|module|board|feature!", "filter": "obj # trường → giá trị, khớp bằng", "limit": "int"},
+  {"items": "arr<obj>! # id + các trường chính của loại ấy, kèm at nếu có", "total": "int! # số trước khi cắt", "kind": "str!"},
+  ["Đọc THẲNG bảng tương ứng trong store; không gọi mô hình, không ghi gì",
+   "Mỗi loại trả các trường chính của nó, KHÔNG trả cả hàng: một bảng có cột nội dung dài (doc.body, diagram.src) sẽ kéo vài MB qua ống RPC cho một danh sách",
+   "Sắp mới nhất trước; `limit` cắt từ ĐẦU danh sách đã sắp, `total` luôn là số trước khi cắt"],
+  ["E1000 kind ngoài enum", "E2000 store chưa có"], "none",
+  '{"kind":"adr"}',
+  "Nhập 2 yêu cầu → kind=requirement trả 2 mục; kind lạ → E1000; dự án trống → items rỗng, total 0")
 
 # ---------- discover ----------
 d("discover.ports", {}, {"ports": "arr<obj>! # dev, vid, pid, product, serial, kind, driver_ok"}, ["pyserial list_ports + libusb (pyusb) → VID/PID; bảng VID/PID (TGT-19 §4) → kind; kiểm quyền mở (udev/driver) → driver_ok"], [], "none", '{}', "TC-80")

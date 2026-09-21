@@ -1047,3 +1047,112 @@ def _qua_loc_su_kien(e: dict[str, Any], loc: dict[str, Any]) -> bool:
     if by == "human":
         return e["by"] == "human"
     return not (by == "policy" and e["by"] == "human")
+
+
+# ---------------------------------------------------------------- VIEW-14 artifacts
+
+
+# Loại hiện vật → (bảng, cột trả về, cột sắp xếp).
+#
+# Cột được CHỌN TỪNG CÁI chứ không `SELECT *`, và đó là cả điểm của bảng này: `diagram.src`
+# giữ nguyên mã Mermaid của một lược đồ, `doc_artifact.sections` giữ cả cây mục. Kéo chúng qua
+# ống RPC cho một DANH SÁCH là vài MB để vẽ mươi dòng — cùng lớp lỗi với `view.timeline` trước
+# khi có `limit` ([DEV-132]).
+BANG_HIEN_VAT: dict[str, tuple[str, tuple[str, ...], str]] = {
+    "requirement": ("requirement",
+                    ("id", "kind", "text", "priority", "status", "feasibility", "updated_at"),
+                    "updated_at"),
+    "adr": ("adr", ("id", "title", "decision", "status", "citations", "at"), "at"),
+    "doc": ("doc_artifact",
+            ("id", "type", "path", "lang", "style_issues", "stale_sections", "at"), "at"),
+    "diagram": ("diagram", ("id", "kind", "lang", "path", "stale", "synced_with", "at"), "at"),
+    "module": ("module", ("id", "name", "responsibility", "arch_style", "status"), "id"),
+    "feature": ("feature", ("id", "title", "status", "requirement_ids", "updated_at"),
+                "updated_at"),
+    # `plan` không có bảng riêng: một kế hoạch là các BƯỚC của một feature (PRS-16 §4), nên
+    # `kind=plan` trả feature kèm trạng thái. Nói ra ở đây chứ không im lặng trả rỗng.
+    "plan": ("feature", ("id", "title", "status", "requirement_ids", "updated_at"),
+             "updated_at"),
+    "board": ("passport", ("id", "kind", "header", "badges", "pinned_by", "created_at"),
+              "created_at"),
+}
+
+# Cột chứa JSON — bung ra để bên gọi khỏi phải tự giải mã hai lần.
+COT_JSON = {"citations", "style_issues", "stale_sections", "requirement_ids", "header", "badges",
+            "pinned_by", "trace", "acceptance"}
+
+
+@capability("view.artifacts")
+def artifacts(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: VIEW-14 — CDS-12.2. tc: "Nhập 2 yêu cầu → kind=requirement trả 2 mục; kind lạ →
+    E1000; dự án trống → items rỗng, total 0".
+
+    ## Vì sao năng lực này tồn tại
+
+    Tới 20/09/2026, **không năng lực nào trong 243 cái liệt kê được một hiện vật kỹ nghệ ĐÃ
+    LƯU**. Dữ liệu có đủ trong store — `requirement`, `adr`, `doc_artifact`, `diagram`,
+    `module`, `feature` — nhưng mọi thứ chạm tới chúng đều là năng lực SINH: `req.classify`
+    nhận reqset qua tham số rồi ghi xuống, `arch.adr` tạo một ADR mới, `plan.create` tạo một kế
+    hoạch. Không có đường nào hỏi "dự án này đang có những gì".
+
+    Hệ quả đo được: bốn màn của nhóm THIẾT KẾ (S10 Yêu cầu & kiến trúc, S11 Lược đồ, S12 Kế
+    hoạch, S13 Tài liệu) không dựng được như UXC-31 §8 mô tả. Dựng chúng bằng cách gọi các năng
+    lực SINH lúc mở màn thì mỗi lần người dùng bấm vào cột trái là một lần tiêu tiền mô hình và
+    đổi trạng thái dự án.
+
+    **`R0` không có nghĩa là "chỉ đọc trạng thái có sẵn"** — đó là chỗ dễ nhầm nhất ở đây.
+    `req.elicit` là R0 nhưng gọi mô hình; `arch.adr` là R0 nhưng ghi tệp; `diagram.architecture`
+    là R0 nhưng dựng một lược đồ mới. Năng lực này thì đúng nghĩa: một câu SELECT, không mô
+    hình, không ghi, không tệp.
+
+    Một năng lực cho mọi loại chứ không bốn năng lực riêng (chủ sản phẩm chọn 20/09): danh mục
+    lên 244 thay vì 247, và S15/S16/S23/S24 sau này cần đúng phép ấy cho patch, lượt mô phỏng,
+    công cụ tự tạo, gói registry — thêm một loại là thêm một dòng vào `BANG_HIEN_VAT`.
+    """
+    loai = params["kind"]
+    if loai not in BANG_HIEN_VAT:
+        raise EideError("E1000", f"`kind={loai}` không phải loại hiện vật; có: "
+                        + ", ".join(sorted(BANG_HIEN_VAT)))
+    bang, cot, sap = BANG_HIEN_VAT[loai]
+
+    db = _db(ctx)
+    if not db.exists():
+        # Dự án chưa có store là "chưa có hiện vật nào", không phải một sự cố — cùng lý do với
+        # `archive.sources` (ARCHIVE-08): bắt bên gọi bắt lỗi để vẽ trạng thái rỗng thường gặp
+        # nhất là cách chắc chắn để nó nuốt một lỗi thật về sau.
+        return {"items": [], "total": 0, "kind": loai}
+
+    dk, tham = "", []
+    for k, v in (params.get("filter") or {}).items():
+        if k not in cot:
+            raise EideError("E1000", f"`filter.{k}` không phải cột của `{loai}`; có: "
+                            + ", ".join(cot))
+        dk += (" AND " if dk else " WHERE ") + f"{k} = ?"
+        tham.append(v)
+
+    with store.open_store(db) as c:
+        co = {r[1] for r in c.execute(f"PRAGMA table_info({bang})")}  # noqa: S608
+        lay = [x for x in cot if x in co]
+        rows = c.execute(f"SELECT {', '.join(lay)} FROM {bang}{dk}"  # noqa: S608
+                         f" ORDER BY {sap} DESC, id", tham).fetchall()
+
+    ds = []
+    for r in rows:
+        d: dict[str, Any] = {}
+        for k, v in zip(lay, r, strict=True):
+            # Cột JSON bung ra ngay: bên gọi nhận `citations` là một chuỗi thì nó phải tự
+            # `json.loads`, và nửa số bên gọi sẽ quên — rồi hiện ra một chuỗi có dấu ngoặc.
+            if k in COT_JSON and isinstance(v, str) and v:
+                try:
+                    v = json.loads(v)
+                except ValueError:
+                    pass
+            d[k] = v
+        ds.append(d)
+
+    tong = len(ds)
+    if (n := params.get("limit")) is not None:
+        if not isinstance(n, int) or n <= 0:
+            raise EideError("E1000", "limit phải là số nguyên dương")
+        ds = ds[:n]
+    return {"items": ds, "total": tong, "kind": loai}

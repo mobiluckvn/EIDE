@@ -3315,6 +3315,21 @@
   "m0": "chưa"
  },
  {
+  "code": "VIEW-14",
+  "ns": "view",
+  "name": "view.artifacts",
+  "desc": "Liệt kê hiện vật kỹ nghệ ĐÃ LƯU theo loại (yêu cầu, ADR, kế hoạch, tài liệu, lược đồ, module, board) — chỉ đọc, không sinh",
+  "inp": "kind, filter?",
+  "out": "items[]",
+  "risk": "R0",
+  "tier": "T1",
+  "ground": "—",
+  "ask": "—",
+  "ref": "UXC-31 §8 S10/S12/S13",
+  "ms": "M2",
+  "m0": "chưa"
+ },
+ {
   "code": "DISCOVER-01",
   "ns": "discover",
   "name": "discover.ports",

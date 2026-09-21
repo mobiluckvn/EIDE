@@ -17,6 +17,7 @@ import pytest
 
 from eide.caps.view import NGUONG_DIEM, TRAN_MERMAID, _moi_cau_co_trich_dan
 from eide_core import store
+from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.policy import PolicyGate
 from eide_core.router import Context, Router
@@ -511,3 +512,118 @@ def test_svg_thieu_graphviz_thi_bao_E4001(du_an, monkeypatch):
     run = r.invoke("view.export_map", {"view": _view_nho(), "format": "svg"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E4001"
     assert run.error["package"] == "graphviz"
+
+
+# ---------- VIEW-14 artifacts
+
+
+def _nap_hien_vat(root):
+    """Hai yêu cầu, một ADR, một tài liệu — đủ bốn loại màn THIẾT KẾ cần."""
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR REPLACE INTO requirement (id, kind, text, priority, status,"
+                  " feasibility, updated_at) VALUES ('FR-01','FR','Đọc DHT22 qua 1-Wire',"
+                  "'must','reviewed','ok','2026-09-20T08:00:00+00:00')")
+        c.execute("INSERT OR REPLACE INTO requirement (id, kind, text, priority, status,"
+                  " feasibility, updated_at) VALUES ('NFR-01','NFR','Chu kỳ đọc ≤ 2 s',"
+                  "'should','generated',NULL,'2026-09-21T08:00:00+00:00')")
+        c.execute("INSERT OR REPLACE INTO adr (id, title, decision, status, citations, at)"
+                  " VALUES ('ADR-01','Dùng bit-bang thay 1-Wire cứng','bit-bang','accepted',"
+                  "'[\"f_abc\"]','2026-09-20T09:00:00+00:00')")
+        c.execute("INSERT OR REPLACE INTO doc_artifact (id, type, path, lang, style_issues, at)"
+                  " VALUES ('DOC-01','SRS','docs/srs.md','vi','[]',"
+                  "'2026-09-20T10:00:00+00:00')")
+        c.commit()
+
+
+def test_VIEW14_liet_ke_hien_vat_da_luu(du_an):
+    """tc: "Nhập 2 yêu cầu → kind=requirement trả 2 mục".
+
+    Tới 20/09/2026 KHÔNG năng lực nào trong 243 cái liệt kê được một hiện vật kỹ nghệ đã lưu:
+    dữ liệu có đủ trong store nhưng mọi thứ chạm tới chúng đều là năng lực SINH. Bốn màn của
+    nhóm THIẾT KẾ vì thế không dựng được như UXC-31 §8 mô tả.
+    """
+    r, ctx, root = du_an
+    _nap_hien_vat(root)
+    out = r.invoke("view.artifacts", {"kind": "requirement"}, ctx).result
+    assert (out["total"], out["kind"]) == (2, "requirement")
+    # MỚI NHẤT TRƯỚC — câu hỏi của người mở màn luôn là "vừa có gì", không phải "hôm đầu có gì".
+    assert [x["id"] for x in out["items"]] == ["NFR-01", "FR-01"]
+    assert out["items"][0]["feasibility"] is None, "cột rỗng phải giữ None, không hoá chuỗi"
+
+
+def test_VIEW14_cot_JSON_bung_ra_khong_de_ben_goi_tu_giai(du_an):
+    """`citations` là JSON trong store. Trả về nguyên chuỗi thì bên gọi phải tự `json.loads`, và
+    nửa số bên gọi sẽ quên — rồi hiện ra một chuỗi có dấu ngoặc."""
+    r, ctx, root = du_an
+    _nap_hien_vat(root)
+    x = r.invoke("view.artifacts", {"kind": "adr"}, ctx).result["items"][0]
+    assert x["citations"] == ["f_abc"], x
+
+
+def test_VIEW14_khong_keo_cot_noi_dung_dai(du_an):
+    """`diagram.src` giữ nguyên mã Mermaid; `doc_artifact.sections` giữ cả cây mục. Kéo chúng
+    qua ống RPC cho một DANH SÁCH là vài MB để vẽ mươi dòng — cùng lớp lỗi với `view.timeline`
+    trước khi có `limit` (DEV-132)."""
+    r, ctx, root = du_an
+    _nap_hien_vat(root)
+    x = r.invoke("view.artifacts", {"kind": "doc"}, ctx).result["items"][0]
+    assert "sections" not in x, "kéo cả cây mục về cho một danh sách"
+    assert x["path"] == "docs/srs.md"
+
+
+def test_VIEW14_kind_la_thi_E1000_kem_danh_sach_dung(du_an):
+    """Nêu ra loại nào DÙNG ĐƯỢC, không chỉ nói loại này sai — bên gọi sửa được ngay.
+
+    E1000 của lớp kiểm `input_schema` NÉM ra ngoài chứ không thành run `failed`: chỉ lỗi từ
+    handler mới được Router bọc lại. Bài đầu của tôi viết `run.status == "failed"` và đỏ ngay —
+    ghi lại đây vì đó là bẫy thật, không phải chi tiết vặt.
+    """
+    r, ctx, _ = du_an
+    with pytest.raises(EideError) as e:
+        r.invoke("view.artifacts", {"kind": "khong-co-loai-nay"}, ctx)
+    assert e.value.code == "E1000"
+    assert "requirement" in str(e.value) and "adr" in str(e.value)
+
+
+def test_VIEW14_enum_trong_spec_khop_bang_hien_vat():
+    """Hai danh sách cho cùng một tập, ở hai tệp khác nhau — chúng sẽ trôi khỏi nhau.
+
+    `input_schema.kind.enum` (sinh từ `cds_data_c.py`) quyết định lời gọi nào ĐI QUA được, còn
+    `BANG_HIEN_VAT` quyết định lời gọi nào CHẠY được. Thêm một loại vào một bên: hoặc năng lực
+    nhận một `kind` rồi ném KeyError, hoặc nó biết đọc một loại mà không ai gọi tới được.
+    """
+    from eide.caps.view import BANG_HIEN_VAT
+    from eide_core.paths import spec_dir
+
+    cds = json.loads((spec_dir() / "cds.json").read_text(encoding="utf-8"))
+    c = next(x for x in cds if x["id"] == "view.artifacts")
+    assert set(c["input_schema"]["properties"]["kind"]["enum"]) == set(BANG_HIEN_VAT)
+
+
+def test_VIEW14_loc_theo_cot_va_chan_cot_khong_co(du_an):
+    r, ctx, root = du_an
+    _nap_hien_vat(root)
+    out = r.invoke("view.artifacts", {"kind": "requirement", "filter": {"kind": "NFR"}}, ctx).result
+    assert [x["id"] for x in out["items"]] == ["NFR-01"]
+    xau = r.invoke("view.artifacts", {"kind": "requirement", "filter": {"khong_co": 1}}, ctx)
+    assert xau.status == "failed" and xau.error["eide_code"] == "E1000"
+
+
+def test_VIEW14_limit_cat_nhung_total_giu_so_that(du_an):
+    """Cùng quy ước với `view.timeline`: `total` LUÔN là số trước khi cắt, để bên gọi biết mình
+    đang xem một phần."""
+    r, ctx, root = du_an
+    _nap_hien_vat(root)
+    out = r.invoke("view.artifacts", {"kind": "requirement", "limit": 1}, ctx).result
+    assert (len(out["items"]), out["total"]) == (1, 2)
+
+
+def test_VIEW14_du_an_trong_thi_rong_chu_khong_nem(tmp_path, workspace):
+    """Dự án chưa có store là "chưa có hiện vật nào", không phải một sự cố — cùng lý do với
+    `archive.sources` (ARCHIVE-08)."""
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+    res = r.invoke("project.create", {"text": "dự án trống"}, Context(project_dir=workspace)).result
+    run = r.invoke("view.artifacts", {"kind": "adr"},
+                   Context(project_dir=workspace / res["project_id"]))
+    assert run.status == "done", run.error
+    assert (run.result["items"], run.result["total"]) == ([], 0)

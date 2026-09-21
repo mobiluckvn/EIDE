@@ -496,3 +496,60 @@
   example:
     view: {}
     format: mermaid
+- code: VIEW-14
+  id: view.artifacts
+  name: Liệt kê hiện vật kỹ nghệ ĐÃ LƯU theo loại (yêu cầu, ADR, kế hoạch, tài liệu, lượ
+  desc: Liệt kê hiện vật kỹ nghệ ĐÃ LƯU theo loại (yêu cầu, ADR, kế hoạch, tài liệu, lược đồ, module, board) — chỉ đọc, không sinh
+  input:
+    type: object
+    properties:
+      kind:
+        type: string
+        enum:
+        - requirement
+        - adr
+        - plan
+        - doc
+        - diagram
+        - module
+        - board
+        - feature
+      filter:
+        type: object
+        description: trường → giá trị, khớp bằng
+      limit:
+        type: integer
+    required:
+    - kind
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          type: object
+        description: id + các trường chính của loại ấy, kèm at nếu có
+      total:
+        type: integer
+        description: số trước khi cắt
+      kind:
+        type: string
+    required:
+    - items
+    - total
+    - kind
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding: []
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M2
+  impl: eide.view:artifacts
+  errors:
+  - E1000 kind ngoài enum
+  - E2000 store chưa có
+  example:
+    kind: adr

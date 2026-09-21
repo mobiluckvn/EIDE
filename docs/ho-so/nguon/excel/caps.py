@@ -281,6 +281,7 @@ add("view", [
  ("view.doc_side_by_side", "Xem tài liệu gốc cạnh fact/mã đã trích: bôi sáng vùng nguồn trong PDF/ảnh", "fact_id|code_unit", "split view", "R0", "T1", "—", "—", "extract.pdf", "M1", "chưa"),
  ("view.timeline", "Dòng thời gian tri thức/quyết định: fact nhập, supersede, gate, merge, nạp — lọc theo ngày/người/AI", "range", "timeline", "R0", "T1", "—", "—", "memory.ledger", "M2", "chưa"),
  ("view.export_map", "Xuất bản đồ tri thức ra DOT/GraphML/SVG/PNG hoặc mã Mermaid để chèn tài liệu", "view, format", "file", "R0", "T1", "—", "—", "diagram.kg_view", "M1", "chưa"),
+ ("view.artifacts", "Liệt kê hiện vật kỹ nghệ ĐÃ LƯU theo loại (yêu cầu, ADR, kế hoạch, tài liệu, lược đồ, module, board) — chỉ đọc, không sinh", "kind, filter?", "items[]", "R0", "T1", "—", "—", "UXC-31 §8 S10/S12/S13", "M2", "chưa"),
 ])
 add("discover", [
  ("discover.ports", "Liệt kê cổng USB/serial/JTAG-SWD đang cắm; VID/PID, driver, quyền truy cập", "—", "ports[]", "R0", "T1", "—", "—", "UC-F02", "M2", "chưa"),
