@@ -250,11 +250,33 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **280 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Python: **+20 bài** (hoàn tác ba mức, N4, N5, người sửa giữa chừng, tự lưu gộp). Checklist UXC-31:
+*Gói mới: **287 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Python: **+20 bài** (hoàn tác ba mức, N4, N5, người sửa giữa chừng, tự lưu gộp). Checklist UXC-31:
 **112 xong · 1 chưa · 5 chặn** (đầu phiên 20/09: 11 xong). **Mọi mục làm được đã xong** — 5 mục chặn vì chờ bo mạch, và 1 luật đọc tôi cố ý không tick. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (21): DEV-133 nửa sau — **sổ DEVIATIONS về 0 mục `Mở`**
+
+Khung xem tài liệu gốc dựng bằng **PDFKit** (framework của hệ, không thêm phụ thuộc): mở đúng
+trang, bôi sáng bbox bằng `PDFAnnotation`. Annotation sống trong toạ độ TRANG nên nó đi theo
+khi người dùng cuộn và phóng to; một lớp vẽ trên khung nhìn phải tự theo dõi hai thứ ấy và sẽ
+trượt đúng lúc người ta nhìn kỹ nhất.
+
+**Không đẩy sang Preview**: `NSWorkspace` không có đường mở PDF ở một trang cho trước, nên
+người dùng sẽ nhận một tệp 400 trang mở ở trang 1 — và bbox mất hẳn. Hai thứ ấy chính là nội
+dung của mục này.
+
+**Tôi viết trùng một năng lực.** VIEW-11 hoá ra đã hiện thực từ trước; tôi viết một bản thứ hai
+trước khi kiểm, và `ruff` bắt được (F811). Bản đã có nay thêm hai thứ giao diện không tự biết:
+`uri` TUYỆT ĐỐI (đường tương đối mở từ thư mục làm việc của daemon trỏ vào chỗ khác chỗ người
+dùng nghĩ), và `bbox_dang`/`origin`.
+
+**Luật đọc bbox: khi cả hai cách đọc đều hợp lệ thì nói `khong-ro` chứ không chọn.** Bản đầu
+của tôi trả lời chắc chắn cho một đầu vào mơ hồ — `[72,530,73,531]` ra "rong-cao" trong khi nó
+gần như chắc chắn là hai góc. Bài kiểm bắt được, và phép sửa là siết LUẬT chứ không nới bài
+kiểm: dùng trần khổ giấy để loại trừ, và dưới ngưỡng phân biệt thì trả "không rõ". Giao diện
+gặp `khong-ro` thì **không vẽ** và nói vì sao.
 
 ### Đã làm (20): DEVIATIONS 15 → 1 trong một ngày
 
@@ -676,10 +698,9 @@ dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ư
 
 **Làm tiếp — không cần phần cứng:**
 
-1. **UXC-31 hết việc làm được.** Còn 5 mục chặn vì chờ bo mạch (S17–S20 và 9.x phần
-   phần cứng) và 1 luật đọc cố ý không tick. Việc kế tiếp không nằm trong checklist này:
-   **11 mục DEVIATIONS `Mở`** (DEV-121/122/131/132/133/135/136/137/139/140/141/142/143/144),
-   trong đó nhóm [134]/[135]/[136] cùng một hình dạng và nên đóng cùng một lượt.
+1. **Hết việc tồn.** UXC-31 còn 5 mục chặn vì chờ bo mạch (S17–S20) và 1 luật đọc cố ý
+   không tick; **sổ DEVIATIONS về 0 mục `Mở`** lần đầu kể từ 05/09. Việc kế tiếp là việc MỚI,
+   không phải việc dọn: bốn màn chờ phần cứng, và §7.3 diff render cho 20 màn còn lại.
 2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
    dùng cách lùi (nạp lại, gộp 0,4 s).
 3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.

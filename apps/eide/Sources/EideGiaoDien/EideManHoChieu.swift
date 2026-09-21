@@ -30,6 +30,8 @@ public final class EideManHoChieu: EideManCoSo {
     /// Giữ lại để hai cái nút dưới bảng gọi lõi được sau khi `napDuLieu` đã trả về.
     private var goiLoi: EideGoi?
     private let chonFact = NSPopUpButton()
+    /// Khung xem tài liệu gốc — công khai cho bài đo bấm vào rồi đọc trạng thái.
+    public private(set) var xemNguonPDF: EideXemNguon?
     private let cocNguon: NSStackView = {
         let s = NSStackView()
         s.orientation = .vertical
@@ -226,6 +228,13 @@ public final class EideManHoChieu: EideManCoSo {
         them(hang)
 
         them(cocNguon)
+
+        // Khung xem tài liệu gốc — [DEV-133] nửa sau. Ẩn tới khi người chọn một fact: một
+        // khung PDF trống chiếm 320 pt giữa màn là 320 pt không nói gì.
+        let kx = EideXemNguon()
+        kx.isHidden = true
+        xemNguonPDF = kx
+        them(kx)
     }
 
     @objc private func _xemNguon() {
@@ -234,11 +243,16 @@ public final class EideManHoChieu: EideManCoSo {
         xemNguon(fid)
     }
 
-    /// Hiện chuỗi nguồn của một fact. Dùng chung cho nút *Xem nguồn* và cho cú bấm thẳng vào ô
-    /// cột NGUỒN ([DEV-133]) — một đường, nên hai chỗ bấm không thể cho ra hai kết quả khác nhau.
+    /// Hiện chuỗi nguồn của một fact **và mở đúng trang tài liệu gốc** — [DEV-133].
     ///
-    /// Bấm vào ô cũng ĐỒNG BỘ popup bên dưới: người dùng vừa chỉ vào một hàng, và để popup nằm
-    /// ở một fact khác là để hai phần của cùng màn nói về hai fact.
+    /// Dùng chung cho nút *Xem nguồn* và cho cú bấm thẳng vào ô cột NGUỒN: một đường, nên hai
+    /// chỗ bấm không thể cho ra hai kết quả khác nhau. Bấm vào ô cũng ĐỒNG BỘ popup bên dưới —
+    /// người dùng vừa chỉ vào một hàng, và để popup nằm ở một fact khác là để hai phần của
+    /// cùng màn nói về hai fact.
+    ///
+    /// Hai lời gọi, không một: `view.provenance` trả CẢ chuỗi supersede (vì sao ta tin con số
+    /// này), còn `view.doc_side_by_side` trả đúng một chỗ để MỞ. Gộp lại thì một trong hai câu
+    /// hỏi bị trả lời bằng dữ liệu của câu kia.
     public func xemNguon(_ fid: String) {
         guard let goi = goiLoi else { return }
         if let nhan = factTheoNhan.first(where: { $0.value == fid })?.key {
@@ -252,6 +266,17 @@ public final class EideManHoChieu: EideManCoSo {
                 hienChuoi((r["chain"] as? [[String: Any]]) ?? [])
             } catch {
                 _themDongNguon("không đọc được chuỗi nguồn: \(error)", mau: EideToken.Mau.bad)
+            }
+            // Khung xem mở SAU chuỗi nguồn: nó là phần nặng nhất của màn, và người đọc bắt đầu
+            // từ chuỗi chứ không từ trang PDF.
+            guard let kx = xemNguonPDF else { return }
+            do {
+                let r = try await nangLuc(goi, "view.doc_side_by_side", ["ref": fid])
+                kx.isHidden = false
+                kx.mo((r["left"] as? [String: Any]) ?? [:])
+            } catch {
+                kx.isHidden = false
+                _ = kx.mo([:])
             }
         }
     }

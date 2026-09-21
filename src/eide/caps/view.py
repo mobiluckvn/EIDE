@@ -632,6 +632,68 @@ def _ghi_bam(idx: Any, moi: dict[str, str]) -> None:
 # ---------------------------------------------------------------- VIEW-11 doc_side_by_side
 
 
+#: Không khổ giấy nào có thật vượt quá ngưỡng này (A0 dọc ≈ 3370 pt; PDF kỹ thuật thường là
+#: A4/Letter ≈ 792–842 pt). Dùng làm dấu hiệu loại trừ, không làm phép kiểm hợp lệ.
+TRAN_TRANG_PT = 3400.0
+
+#: Dưới ngưỡng này thì hai cách đọc `bbox` cho ra hai vùng gần nhau tới mức không phân biệt
+#: được bằng hình học — và khi ấy câu trả lời đúng là "không rõ".
+NGUONG_PHAN_BIET_PT = 2.0
+
+
+def _sieu_bbox(b: Any) -> dict[str, Any]:
+    """`bbox` được ghi theo quy ước nào, và gốc toạ độ ở đâu — [DEV-133].
+
+    KHÔNG quy đổi (xem docstring của `view.doc_side_by_side`), chỉ NÓI RA cách đọc. Hai quy
+    ước cùng tồn tại trong các bộ trích: `[x, y, w, h]` và `[x0, y0, x1, y1]`. Bên vẽ không
+    phân biệt được thì nó sẽ đoán, và một vùng bôi sáng lệch chỗ còn tệ hơn không bôi — người
+    dùng sẽ đối chiếu con số với một vùng không phải nguồn của nó.
+
+    Phân biệt được vì hai góc luôn có `x1 > x0` và `y1 > y0`. Nhưng một ô bảng cao 1–2 pt cũng
+    thoả, nên **không chắc thì nói không chắc**: `"khong-ro"` để bên vẽ biết là không nên vẽ.
+
+    Gốc toạ độ PDF ở góc DƯỚI-trái — ghi ra vì `NSView` mặc định cũng dưới-trái nhưng `PDFView`
+    thì tuỳ `displayMode`, và một phép lật nhầm đưa vùng bôi sáng sang nửa kia của trang.
+    """
+    if not isinstance(b, (list, tuple)) or len(b) != 4:
+        return {"bbox_dang": "khong-ro", "origin": "duoi-trai"}
+    try:
+        x0, y0, a, d = (float(v) for v in b)
+    except (TypeError, ValueError):
+        return {"bbox_dang": "khong-ro", "origin": "duoi-trai"}
+    if a < 0 or d < 0:
+        return {"bbox_dang": "khong-ro", "origin": "duoi-trai"}
+    if not (a > x0 and d > y0):
+        # Đọc theo hai góc thì góc phải/trên phải LỚN HƠN góc trái/dưới. Không thoả nghĩa là
+        # chỉ còn một cách đọc — không có gì để phân vân.
+        return {"bbox_dang": "rong-cao", "origin": "duoi-trai"}
+    # Tới đây CẢ HAI cách đọc đều hợp lệ về hình học, nên phải có một dấu hiệu khác.
+    if x0 + a > TRAN_TRANG_PT or y0 + d > TRAN_TRANG_PT:
+        # Đọc theo rộng-cao thì hộp chạy ra ngoài mọi khổ giấy có thật — loại nó đi.
+        return {"bbox_dang": "hai-goc", "origin": "duoi-trai"}
+    if (a - x0) >= NGUONG_PHAN_BIET_PT and (d - y0) >= NGUONG_PHAN_BIET_PT:
+        return {"bbox_dang": "hai-goc", "origin": "duoi-trai"}
+    # Hộp quá nhỏ: đọc kiểu nào cũng ra một vùng trông hợp lý, và hai vùng ấy ở hai chỗ khác
+    # nhau. Nói KHÔNG RÕ chứ đừng chọn — chọn sai là chỉ vào một vùng không phải nguồn.
+    return {"bbox_dang": "khong-ro", "origin": "duoi-trai"}
+
+
+def _uri_tuyet_doi(ctx: Context, uri: Any) -> str | None:
+    """Đường dẫn tương đối → tuyệt đối theo thư mục dự án; URL giữ nguyên.
+
+    Giao diện mở tệp bằng đường dẫn này. Một đường tương đối mở từ thư mục làm việc của daemon
+    trỏ vào chỗ khác chỗ người dùng nghĩ — hoặc không trỏ vào đâu cả, và nút "mở nguồn" khi ấy
+    báo không tìm thấy một tệp đang nằm ngay trong dự án.
+    """
+    if not isinstance(uri, str) or not uri:
+        return None
+    if "://" in uri or uri.startswith("/"):
+        return uri
+    if not ctx.project_dir:
+        return uri
+    return str((Path(str(ctx.project_dir)).expanduser() / uri).resolve())
+
+
 @capability("view.doc_side_by_side")
 def doc_side_by_side(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: VIEW-11 — CDS-12.4. tc: "Vùng bôi sáng đúng bbox"; lỗi E2000.
@@ -649,8 +711,12 @@ def doc_side_by_side(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             " WHERE f.id = ?", (ref,)).fetchone()
         if f:
             loc = json.loads(f[5]) if f[5] else {}
-            return {"left": {"source_id": f[7], "uri": f[8], "kind": f[9],
+            return {"left": {"source_id": f[7], "uri": _uri_tuyet_doi(ctx, f[8]),
+                             "kind": f[9],
                              "page": loc.get("page"), "bbox": loc.get("bbox"),
+                             # v1.3 — siêu dữ liệu để bên vẽ biết PHẢI ĐỌC bbox thế nào
+                             # ([DEV-133]). Không quy đổi sang toạ độ màn hình: xem docstring.
+                             **_sieu_bbox(loc.get("bbox")),
                              "locator": loc},
                     "right": {"kind": "fact", "fact_id": f[0], "subject": f[1],
                               "predicate": f[2],
@@ -669,8 +735,9 @@ def doc_side_by_side(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                 " LEFT JOIN source s ON s.id = f.source_id WHERE f.id=?", (cites[0],)).fetchone()
             if r:
                 loc = json.loads(r[0]) if r[0] else {}
-                trai = {"source_id": r[1], "uri": r[2], "kind": r[3],
-                        "page": loc.get("page"), "bbox": loc.get("bbox"), "locator": loc}
+                trai = {"source_id": r[1], "uri": _uri_tuyet_doi(ctx, r[2]), "kind": r[3],
+                        "page": loc.get("page"), "bbox": loc.get("bbox"),
+                        **_sieu_bbox(loc.get("bbox")), "locator": loc}
     return {"left": trai or {"source_id": None, "uri": None, "note": "code_unit chưa trích dẫn "
                              "fact nào — chạy `code.annotate` để nối"},
             "right": {"kind": "code", "code_unit_id": cu[0], "path": cu[1], "symbol": cu[2],
