@@ -250,10 +250,39 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **118 test Swift** xanh. `apps/eide --tu-kiem`: **32/32**. `make check` thoát 0. Màn
+*Gói mới: **150 test Swift** xanh. `apps/eide --tu-kiem`: **46/46**. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (9): S14 Trình soạn thảo + S15 Diff & cổng merge — nhóm MÃ NGUỒN đóng
+
+UXC-31 mục 5 trọn (6/7 — xem ghi chú 5.7) và §6.3.
+
+**Đọc từ ĐĨA, ghi qua CỔNG.** Không RPC nào đọc mã nguồn, và đó là chủ ý: `code.human_save`
+nhận `base_content`, tức hợp đồng giả định bên gọi đã tự đọc tệp. Đọc một tệp không phải hành
+động cần chính sách; ghi thì có.
+
+**Lề hai dấu là luận điểm của cả sản phẩm trên một cột 26 pt**: ● xanh = hằng số trỏ về fact đã
+duyệt, ▎đỏ = hằng số phần cứng không nguồn và `G-FACT` sẽ chặn merge. Hai dấu khác nhau cả HÌNH
+lẫn MÀU — bản in đen trắng và mắt mù màu vẫn phải phân biệt được hai trạng thái trái ngược.
+
+**S14 KHÔNG có nút "ghi đè"** (§5.5). Không phải vì quên: một nút như thế biến cả cơ chế merge
+ba bên thành tuỳ chọn.
+
+**S15 dựng lại đúng `EideTheXungDot` của S8** (§6.3), có bài kiểm tìm đúng lớp ấy trong cây
+khung nhìn. Nút thứ ba là *Soạn tay* và nó KHÔNG gọi năng lực — nó đưa người về S14.
+
+### Đã làm (8): nhóm THIẾT KẾ S10–S13 + `view.artifacts` (VIEW-14)
+
+Chủ sản phẩm chốt hướng 2: MỘT năng lực cho mọi loại hiện vật thay vì bốn năng lực riêng.
+Danh mục lên **244**. Trước nó, **không cái nào trong 243** liệt kê được một hiện vật kỹ nghệ
+đã lưu — nên bốn màn hoặc không dựng được, hoặc mỗi lần mở là một lần tiêu tiền mô hình.
+
+`R0` **không** có nghĩa là "chỉ đọc trạng thái có sẵn": `req.elicit` là R0 nhưng gọi mô hình,
+`arch.adr` là R0 nhưng ghi tệp. Có một bài kiểm chạy cả bốn màn và cấm chín năng lực sinh.
+
+### Đã làm (7): S9 Làm rõ yêu cầu
 
 ### Đã làm (6): §7 Đồng bộ sự kiện — nền mà ta làm sau tám màn
 
@@ -406,8 +435,9 @@ bấm tạm nằm dưới bảng. Trang và bbox vẫn hiện đủ.
 **Một con số đáng nhớ:** trong `bang()`, dựng chuỗi có thuộc tính cho 287 hàng mất **6 ms**;
 dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ưu nhầm chỗ một vòng trước khi đo.
 
-**Làm tiếp:** nhóm THIẾT KẾ (S9 Làm rõ yêu cầu → S13 Tài liệu), rồi S14 Trình soạn thảo —
-nặng nhất, cả mục 5 của UXC-31. Xen vào: §7.3 nửa sau (diff render) cho từng màn khi chạm tới nó.
+**Làm tiếp:** S3 Bản đồ luồng · S16 Mô phỏng · S21–S24 (nhóm HỆ THỐNG). Còn **10 màn**,
+trong đó 4 chờ board. Xen vào: §7.3 nửa sau (diff render) — S14 là màn đầu tiên hiện thực
+`apDung`, còn 14 màn dùng cách lùi.
 **Rồi §7 Đồng bộ sự kiện** — chủ sản phẩm chốt 20/09 làm nó ngay sau nhóm TRI THỨC, trong khi còn
 5 màn phải sửa thay vì 21. Sau đó S14 Trình soạn thảo. Ba thứ CHƯA nối vẫn nguyên: `chat.answer`,
 phím tắt ngoài ⌘K/⌘⇧., bộ chuyển dự án.

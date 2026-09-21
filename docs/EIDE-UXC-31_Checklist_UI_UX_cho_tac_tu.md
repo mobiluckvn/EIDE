@@ -140,7 +140,7 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 - [x] **5.4** Nút "Lưu" gọi `code.human_save`: commit `human:<tên>` + sự kiện `human.file_save` + mục Hoàn tác — xuất hiện đủ ba nơi trong ≤ 1 giây (tiêu chí N3). Luôn APPROVE mọi mức tự chủ (P-EDIT-02).  ·  **✔ S14 · `code.human_save` kèm `by: human:<tên>`; commit + seq hiện ngay, mục hoàn tác vào cột phải**
 - [x] **5.5** Lưu gặp tệp trên đĩa đã đổi từ lúc mở → lỗi **`E6004 FILE_STALE`** (tên `E-SAVE-STALE` không vào được `errors.json`; chủ sản phẩm chốt 17/09) → tự chuyển luồng merge (mục 6), TUYỆT ĐỐI không ghi đè (B4).  ·  **✔ S14 · KHÔNG có nút ghi đè — một nút như thế biến merge ba bên thành tuỳ chọn. E6004 dẫn sang S15, bản của người nằm nguyên trong bộ đệm**
 - [x] **5.6** Tác tử đang sửa tệp người đang xem → băng xanh "🤖 Tác tử đang sửa tệp này (Run #n, bước k/m) — xem diff trực tiếp"; người vẫn gõ được.  ·  **✔ S14 · băng XANH, người vẫn gõ được; sự kiện của tệp KHÁC không làm phiền**
-- [ ] **5.7** Tự lưu (autosave): mặc định TẮT; bật trong cài đặt thì các lần tự lưu liên tiếp squash thành một commit khi người rời tệp (quyết định cho câu hỏi mở #1).
+- [ ] **5.7** Tự lưu (autosave): mặc định TẮT; bật trong cài đặt thì các lần tự lưu liên tiếp squash thành một commit khi người rời tệp (quyết định cho câu hỏi mở #1).  ·  **CHƯA — có chủ ý.** Mặc định TẮT thì đúng như tài liệu ghi, nhưng nửa sau ("bật trong cài đặt → squash các lần tự lưu liên tiếp thành một commit khi người rời tệp") chưa có: chưa có màn cài đặt nào để bật, và squash commit là việc của `code.human_save` chứ không của giao diện. Ghi ra vì commit ffddd7f nói nhầm mục 5 đã xong trọn 7/7 — thực tế 6/7
 
 ## 6. CÙNG SỬA — MERGE 3 BÊN VÀ XUNG ĐỘT MÃ
 
