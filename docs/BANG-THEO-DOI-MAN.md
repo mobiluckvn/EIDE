@@ -21,7 +21,7 @@
 | S11 | Lược đồ | nối | `EideManThietKe.swift` | `4471bcb` | 2026-09-21 | Vũ Trí Công |
 | S12 | Kế hoạch | nối | `EideManThietKe.swift` | `4471bcb` | 2026-09-21 | Vũ Trí Công |
 | S13 | Tài liệu | nối | `EideManThietKe.swift` | `4471bcb` | 2026-09-21 | Vũ Trí Công |
-| S14 | Trình soạn thảo | nối | `EideManSoanThao.swift` | `e0166a9` | 2026-09-21 | Vũ Trí Công |
+| S14 | Trình soạn thảo | nối | `EideManSoanThao.swift` | `6c7c6ec` | 2026-09-21 | Vũ Trí Công |
 | S15 | Diff & cổng merge | nối | `EideManDiffMerge.swift` | `ffddd7f` | 2026-09-21 | Vũ Trí Công |
 | S16 | Mô phỏng | nối | `EideManLuongVaMoPhong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
 | S17 | Dò board | chặn | — | — | — | — |

@@ -20,8 +20,11 @@ final class EideTieuChiTests: XCTestCase {
         ("N1", "3.2", "EideLamQuenBangLenhTests", "testTaoDuAnTrongHaiThaoTac"),
         ("N2", "2E.4", "EideTheRunTests", "testSuKienDenMuonKhongDayTienDoLUI"),
         ("N3", "5.4", "EideManMaNguonTests", "testBufferBanThiBangVangNoiRaHauQuaVoiTacTu"),
-        nil,   // N4 → 6.4
-        nil,   // N5 → 6.5
+        // N4 và N5 sống ở phía LÕI (pytest), không trong gói Swift — nên `lop` để rỗng và phép
+        // đối chiếu runtime bỏ qua chúng, đổi lại đòi một đường dẫn `tests/…::…` cụ thể.
+        ("N4", "6.4", "", "tests/test_undo_ba_muc.py::test_muc_2_revert_ca_run_GIU_commit_cua_nguoi"),
+        ("N5", "6.5", "",
+         "tests/test_undo_ba_muc.py::test_N5_khong_duong_nao_ghi_de_ma_khong_qua_merge_hay_xung_dot"),
         ("N6", "7.2", "EideBatBienTests", "testNhipTimDayHonHanCuVaHanDatNguongN6"),
         ("N7", "2.3", "EideBoCucTests", "testN7VungLamViecConItNhatMotNuaOCuaSoCao900"),
         ("N8", "2B.1", "EideKhungTests", "testDIEU_HUONG_SAU_nhom_moi_nhom_2_den_5_muc"),
@@ -29,31 +32,40 @@ final class EideTieuChiTests: XCTestCase {
         ("N10", "5.2", "EideManMaNguonTests", "testLeDanhDauDongCoChuThichFact"),
     ]
 
-    /// Vì sao hai ô để trống. Ghi ở đây chứ không trong một tệp tài liệu: lý do phải nằm cạnh
-    /// chỗ trống, nếu không thì người đọc bảng sau này tưởng ai đó quên điền.
-    static let CHAN: [String: String] = [
-        "N4": "6.4 hoàn tác 3 mức — `Router.undo_handlers` rỗng THEO THIẾT KẾ đã ghi trong "
-            + "`hoan_tac()`: chưa có hiện thực đảo nào, mọi lần bấm trả `applied: false` kèm lý "
-            + "do. Viết bài kiểm đòi revert chọn lọc bây giờ là ép lõi hứa thứ nó đang nói "
-            + "thẳng là chưa làm.",
-        "N5": "6.5 phủ định 'không nhánh nào ghi đè' — cùng hình dạng với B1: một mệnh đề phủ "
-            + "định MỌI đường, mà bài kiểm chỉ đi được những đường nó biết. Phần đo được đã đo "
-            + "ở 6.2 (merge 3 bên) và `test_LUU_khi_tep_da_doi_tren_dia_thi_KHONG_ghi_de`.",
+    /// Không còn ô trống nào.
+    static let CHAN: [String: String] = [:]
+
+    /// Ghi chú LỊCH SỬ: hai tiêu chí này từng để trống, và vì sao. Giữ lại vì nó nói ra điều gì
+    /// đã chặn — lần sau gặp lại cùng hình dạng thì nhận ra ngay.
+    static let TUNG_CHAN: [String: String] = [
+        "N4": "6.4 từng chặn vì `Router.undo_handlers` rỗng — mọi lần bấm Hoàn tác trả "
+            + "`applied: false`. Gỡ 21/09 bằng `src/eide/undo_handlers.py`, cộng hai lỗi gốc: "
+            + "`code.merge` commit không mang tác giả máy-đọc-được nên phép chọn lọc N4 luôn "
+            + "trả rỗng, và `rollback` từ chối chạy vì `.eide/` chưa theo dõi. [DEV-144]",
+        "N5": "6.5 phủ định 'không nhánh nào ghi đè' — vẫn KHÔNG chứng minh được theo nghĩa "
+            + "tuyệt đối (phủ định MỌI đường, cùng hình dạng B1). Nay kiểm ba lối ghi mà giao "
+            + "diện và tác tử thực sự dùng, và cả ba phải từ chối.",
     ]
 
-    /// Đủ mười ô, không thừa không thiếu.
+    /// Đủ mười ô — và nay KHÔNG ô nào trống.
     func testBangCoDungMuoiTieuChi() {
         XCTAssertEqual(Self.BANG.count, 10)
         let co = Self.BANG.compactMap { $0 }
-        XCTAssertEqual(co.count + Self.CHAN.count, 10, "ô trống không khớp số lý do đã ghi")
-        XCTAssertEqual(co.map(\.0) + Self.CHAN.keys.sorted(),
-                       ["N1", "N2", "N3", "N6", "N7", "N8", "N9", "N10", "N4", "N5"])
+        XCTAssertEqual(co.count, 10, "còn ô trống trong bảng nghiệm thu")
+        XCTAssertEqual(Set(co.map(\.0)).count, 10, "hai ô cùng tên tiêu chí")
+        XCTAssertTrue(Self.CHAN.isEmpty)
     }
 
     /// **Mỗi ô trỏ vào một hàm kiểm CÓ THẬT.** Đây là phần bảng chép tay không tự làm được: đổi
     /// tên một hàm thì bảng vẫn đọc trôi chảy trong khi nó đã trỏ vào chỗ trống.
     func testMoiTieuChiTroVaoMotBaiKiemCoThat() {
-        for o in Self.BANG.compactMap({ $0 }) {
+        // Ô có `lop` rỗng là bài kiểm phía LÕI (pytest) — runtime Swift không thấy được nó,
+        // nên chỉ đòi một đường dẫn `tests/<tệp>::<hàm>` để bảng vẫn truy về chỗ cụ thể.
+        for o in Self.BANG.compactMap({ $0 }) where o.2.isEmpty {
+            XCTAssertTrue(o.3.hasPrefix("tests/") && o.3.contains("::"),
+                          "\(o.0): ô lõi phải trỏ `tests/<tệp>::<hàm>` — \(o.3)")
+        }
+        for o in Self.BANG.compactMap({ $0 }) where !o.2.isEmpty {
             let ten = "EideGiaoDienTests.\(o.2)"
             guard let lop = NSClassFromString(ten) else {
                 return XCTFail("\(o.0): không có lớp kiểm `\(o.2)`")
@@ -68,9 +80,10 @@ final class EideTieuChiTests: XCTestCase {
         }
     }
 
-    /// Mỗi ô trống phải có lý do, và lý do phải nói ra CHỖ CHẶN chứ không chỉ nói "chưa làm".
-    func testMoiOTrongDeuCoLyDoCuThe() {
-        for (ma, vi) in Self.CHAN {
+    /// Ghi chú lịch sử vẫn phải trỏ vào chỗ cụ thể — một dòng "từng chặn, nay xong" mà không
+    /// nói chặn ở đâu thì lần sau gặp lại cùng vấn đề không ai nhận ra.
+    func testGhiChuLichSuVanTruyDuoc() {
+        for (ma, vi) in Self.TUNG_CHAN {
             XCTAssertGreaterThan(vi.count, 80, "\(ma): lý do quá ngắn để truy được")
             XCTAssertTrue(vi.contains("`") || vi.contains("6."),
                           "\(ma): lý do không trỏ vào mã hay mục nào")

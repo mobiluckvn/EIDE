@@ -14,6 +14,7 @@ với việc EIDE ghi `.eide/store.sqlite`. Xem DEV-065.
 """
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -94,6 +95,31 @@ def co_thay_doi(root: Path) -> bool:
     return bool(chay(root, "status", "--porcelain").stdout.strip())
 
 
+def thay_doi_can_chan(root: Path, bo_qua: tuple[str, ...] = ()) -> list[str]:
+    """Đường dẫn còn thay đổi chưa commit, **trừ** những tiền tố trong `bo_qua`.
+
+    Vì sao cần lọc, chứ không đơn giản bỏ hẳn phép kiểm tệp chưa theo dõi: một tệp mới chưa
+    commit KHÔNG xung đột với tag nào, nên `checkout -B` chạy trót lọt và **mang tệp dở dang ấy
+    sang** nhánh vừa quay lui. Kết quả là một bản "đã về trạng thái tốt" có lẫn mã đang viết dở
+    — đúng thứ người gọi rollback muốn thoát khỏi. (Có bài kiểm giữ chỗ này:
+    `test_tep_moi_chua_commit_cung_chan_rollback`.)
+
+    Vì sao vẫn phải lọc: **mọi dự án EIDE đều có `.eide/` chưa theo dõi**, nên phép kiểm không
+    lọc khiến `project.rollback` — lối thoát hiểm người ta tìm tới khi mọi thứ hỏng — từ chối
+    chạy trên mọi dự án thật. `.eide/` là trạng thái của chính EIDE, không phải mã người dùng
+    đang viết dở; mang nó sang nhánh mới là điều ĐÚNG, không phải rủi ro.
+
+    Xem [DEV-144].
+    """
+    ra: list[str] = []
+    for d in chay(root, "status", "--porcelain").stdout.splitlines():
+        duong = d[3:].strip().strip('"')
+        if not duong or duong.startswith(bo_qua):
+            continue
+        ra.append(duong)
+    return ra
+
+
 def tac_gia(ai: str) -> str:
     """Tác giả MÁY ĐỌC ĐƯỢC cho một commit — UXD-13 v2.0 §6.2 (quyết định Q1).
 
@@ -108,8 +134,57 @@ def tac_gia(ai: str) -> str:
     return f"{ai} <{ai.replace('/', '-')}@eide.local>"
 
 
+def tac_gia_tac_tu(ctx: Any) -> str:
+    """Tên máy-đọc-được cho một commit do TÁC TỬ tạo — `agent:run-<id>/step-<n>`.
+
+    Đọc từ `ctx.extra["chain"]` mà Orchestrator đặt trước mỗi nút; ngoài chuỗi thì lùi về
+    `agent:<session_id>`. Hai dạng khác nhau có chủ ý: chỉ commit SINH RA TRONG MỘT CHUỖI mới
+    hoàn tác được theo cả lượt chạy, còn một lời gọi đơn lẻ thì hoàn tác từng commit.
+    """
+    c = (getattr(ctx, "extra", None) or {}).get("chain") or {}
+    rid, i = c.get("run_id"), c.get("i")
+    if rid and i is not None:
+        return f"agent:run-{rid}/step-{i}"
+    return f"agent:{getattr(ctx, 'session_id', 'local')}"
+
+
+def commit_cua_run(root: Path, run_id: str) -> list[str]:
+    """SHA của mọi commit do `agent:run-<id>/*` tạo, **mới nhất trước**.
+
+    Đây là phép chọn lọc mà tiêu chí N4 đứng trên: hoàn tác cả một lượt chạy = revert đúng những
+    commit này và **giữ nguyên** commit của người xen giữa. Đọc từ chính lịch sử git chứ không
+    từ một bảng bên cạnh — bảng bên cạnh thì lệch, còn lịch sử thì không.
+
+    `--author` của git là một biểu thức chính quy trên chuỗi `Tên <thư>`, nên tiền tố
+    `agent:run-<id>/` khớp mọi `step-*` của đúng lượt chạy ấy và không khớp lượt nào khác.
+    """
+    if not la_kho(root):
+        return []
+    r = chay(root, "log", "--format=%H", f"--author=^agent:run-{re.escape(run_id)}/",
+             "--regexp-ignore-case", kiem=False)
+    if r.returncode != 0:
+        return []
+    return [d for d in r.stdout.split() if d]
+
+
+def dau_commit(root: Path) -> tuple[str, str, str]:
+    """`(sha, tác giả, thông điệp)` của HEAD — hoặc ba chuỗi rỗng khi kho chưa có commit nào."""
+    r = chay(root, "log", "-1", "--format=%H%x00%an%x00%B", kiem=False)
+    if r.returncode != 0 or not r.stdout.strip():
+        return ("", "", "")
+    p = r.stdout.split("\x00")
+    return (p[0].strip(), p[1].strip() if len(p) > 1 else "", p[2] if len(p) > 2 else "")
+
+
+def tep_cua_commit(root: Path, sha: str) -> list[str]:
+    """Đường dẫn các tệp một commit chạm tới."""
+    r = chay(root, "show", "--format=", "--name-only", sha, kiem=False)
+    return [d.strip() for d in r.stdout.splitlines() if d.strip()] if r.returncode == 0 else []
+
+
 def commit(root: Path, thong_diep: str, duong_dan: list[str], *,
-           ai: str | None = None, seq: int | None = None) -> str:
+           ai: str | None = None, seq: int | None = None, gop: bool = False) -> str:
+    """(xem docstring dưới) — `gop=True` GỘP vào commit ở đầu nhánh thay vì tạo commit mới."""
     """Thêm ĐÚNG các tệp được nêu rồi commit; trả SHA đầy đủ.
 
     `git add <đường dẫn>` chứ không `git add -A`: một patch chỉ được đưa vào commit đúng những
@@ -125,6 +200,11 @@ def commit(root: Path, thong_diep: str, duong_dan: list[str], *,
     if seq is not None:
         thong_diep = f"{thong_diep}\n\nEide-Ledger-Seq: {seq}"
     lenh = ["commit", "-q", "-m", thong_diep]
+    if gop:
+        # `--amend` là chỗ DUY NHẤT trong cả kho viết lại lịch sử, và nó chỉ dùng cho tự lưu
+        # (UXC-31 §5.7). Người gọi phải tự khẳng định commit ở đầu nhánh là của chính mạch tự
+        # lưu ấy — `git` không kiểm hộ, và gộp nhầm vào commit của người khác là mất một commit.
+        lenh.append("--amend")
     if ai:
         lenh += [f"--author={tac_gia(ai)}"]
     chay(root, *lenh, "--", *duong_dan)

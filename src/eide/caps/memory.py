@@ -242,6 +242,95 @@ def _c2_rang_buoc(root: Path) -> tuple[str, list[str]]:
     return "\n".join(dong), [str(f)]
 
 
+#: Trần dòng diff gửi NGUYÊN VĂN — UXC-31 §7.6.
+#:
+#: Trên trần thì tóm tắt bằng mô hình và **ghi rõ là đã tóm tắt**. Con số 200 đến từ tài liệu,
+#: không phải từ tôi; ranh giới của nó là ranh giới giữa "tác tử đọc được đúng thứ người sửa"
+#: và "một khối chiếm hết ngân sách C5, đẩy fact phần cứng ra ngoài".
+TRAN_DONG_DIFF = 200
+
+
+def _c5_nguoi_sua(root: Path, led: Any) -> tuple[str, list[str], bool] | None:
+    """Khối "thay đổi của người từ lượt trước" — §7.5, và phép cắt của §7.6.
+
+    Đọc từ SỔ CÁI chứ không từ `git log`: sổ cái biết lần lưu nào là của NGƯỜI
+    (`human.file_save`), còn `git log` chỉ biết một tác giả — và sau [DEV-144] thì tác giả ấy
+    phân biệt được, nhưng sổ cái vẫn là nguồn đúng vì nó cũng biết lượt nào đã kể rồi.
+
+    Mốc "từ lượt trước" = bản ghi `run.done` gần nhất. Mọi lần người lưu SAU mốc ấy là thứ tác
+    tử chưa từng thấy.
+
+    Trả `None` khi không có gì — khác hẳn trả một khối rỗng. Một khối C5 ghi "người không sửa
+    gì" vẫn tốn token và vẫn nói một điều không ai hỏi.
+    """
+    if led is None:
+        return None
+    try:
+        ban_ghi = list(led.records())
+    except Exception:  # noqa: BLE001 — sổ cái hỏng không được làm hỏng cả lượt compose
+        return None
+
+    moc = 0
+    for r in ban_ghi:
+        if r.get("kind") == "run.done":
+            moc = int(r.get("seq") or 0)
+    luu = [r for r in ban_ghi
+           if r.get("kind") == "human.file_save" and int(r.get("seq") or 0) > moc]
+    if not luu:
+        return None
+
+    from eide_core import git
+    dong: list[str] = []
+    nguon: list[str] = []
+    for r in luu:
+        d = r.get("data") or {}
+        duong, sha = d.get("path") or "?", d.get("commit") or ""
+        nguon.append(f"human.file_save:{sha[:10]}" if sha else f"human.file_save:{duong}")
+        dong.append(f"--- {duong} ({d.get('diff_summary') or 'không rõ thay đổi'})")
+        if not sha or not git.la_kho(root):
+            continue
+        p = git.chay(root, "show", "--format=", "--unified=3", sha, kiem=False)
+        if p.returncode == 0 and p.stdout.strip():
+            dong += p.stdout.rstrip("\n").split("\n")
+
+    if len(dong) <= TRAN_DONG_DIFF:
+        return ("Người đã sửa tay từ lượt trước — nền mã đã KHÁC:\n" + "\n".join(dong),
+                nguon, False)
+
+    # §7.6 — quá trần thì tóm tắt, và NÓI RA là đã tóm tắt. Không nói thì tác tử đọc một bản
+    # rút gọn như thể đó là toàn bộ thay đổi, rồi kết luận rằng phần nó không thấy là không có.
+    tom = _tom_tat_diff("\n".join(dong))
+    return (f"Người đã sửa tay từ lượt trước — nền mã đã KHÁC. **Diff {len(dong)} dòng, vượt "
+            f"trần {TRAN_DONG_DIFF} nên ĐÃ TÓM TẮT** (bản đầy đủ: `git show` các commit ở "
+            f"`sources`):\n{tom}", nguon, True)
+
+
+def _tom_tat_diff(van: str) -> str:
+    """Tóm tắt một diff dài. Mô hình hỏng thì lùi về phép cắt XÁC ĐỊNH, không ném.
+
+    Lùi về được là bắt buộc: một lượt chạy không được chết vì phần tóm tắt ngữ cảnh của nó gọi
+    mô hình không xong. Bản lùi giữ nguyên các dòng `+++`/`---`/`@@` — tức GIỮ được tệp nào và
+    vùng nào đổi, mất phần nội dung — nên nó vẫn nói đúng thứ quan trọng nhất.
+    """
+    try:
+        from eide_core.gateway import Gateway
+        r = Gateway().call(
+            role="intent",
+            messages=[{"role": "user",
+                       "content": "Tóm tắt diff sau trong ≤ 15 dòng tiếng Việt. Giữ NGUYÊN tên "
+                                  "tệp, tên hàm và mọi hằng số; nói rõ mỗi tệp đổi theo hướng "
+                                  f"nào.\n\n{van[:20000]}"}],
+            temperature=0)
+        d = (r.get("text") or "").strip()
+        if d:
+            return d
+    except Exception:  # noqa: BLE001 — xem docstring
+        pass
+    giu = [d for d in van.split("\n") if d.startswith(("--- ", "+++ ", "@@"))]
+    return ("(không gọi được mô hình để tóm tắt — giữ phần đầu mỗi vùng thay đổi)\n"
+            + "\n".join(giu[:60]))
+
+
 @capability("memory.compose")
 def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: MEMORY-01 — CDS-12.6; CXD-10 §4.1 (compose), §5 (cắt), §7 (E5001); API-15 §5.
@@ -284,6 +373,20 @@ def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         else:
             text, nguon = _c2_rang_buoc(root)
             b.add("C2", text, nguon, cacheable=True)
+
+    # C5 — **thay đổi của NGƯỜI từ lượt trước** (UXC-31 §7.5). Đặt ở C5 theo CXD-10 §3: lớp ấy
+    # là "tác vụ và mã liên quan", và không có mã nào liên quan hơn mã người vừa sửa bằng tay.
+    #
+    # Thiếu khối này thì tác tử bước vào lượt mới với một bản đồ mã đã cũ: nó đọc tệp từ store
+    # hoặc từ trí nhớ về lần nó tự ghi, rồi sinh một patch dựa trên nền đã không còn. Kết quả
+    # tốt nhất là một xung đột merge; tệ nhất là một patch trông hợp lý mà đè lên ý người dùng.
+    if co_du_an:
+        kh = _c5_nguoi_sua(root, ctx.extra.get("ledger"))
+        if kh is not None:
+            van, nguon, da_tom_tat = kh
+            b.add("C5", van, nguon)
+            if da_tom_tat:
+                b.compressions.append("human_diff:summarize")
 
     # C7 — lịch sử lượt, tối đa 2 lượt đã tóm tắt (CXD-10 §2, MEM-11)
     if co_du_an:

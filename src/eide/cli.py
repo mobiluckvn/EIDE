@@ -10,7 +10,7 @@ from pathlib import Path
 
 import yaml
 
-from eide import __version__
+from eide import __version__, undo_handlers
 from eide_core import store, tools, whitelist
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
@@ -38,7 +38,10 @@ def _router(project: Path | None = None) -> tuple[Router, Context]:
     gate = PolicyGate(config=_autonomy_cua_du_an(project),
                       sig_path=(project / ".eide" / "policy.sig") if project else None,
                       ledger=ledger)
-    return Router(gate=gate, ledger=ledger), Context(project_dir=project, extra={"gate": gate})
+    r = Router(gate=gate, ledger=ledger)
+    c = Context(project_dir=project, extra={"gate": gate})
+    undo_handlers.dang_ky(r, c)      # §6.4 — xem ghi chú ở `rpc.py`
+    return r, c
 
 
 def _print_run(run) -> int:

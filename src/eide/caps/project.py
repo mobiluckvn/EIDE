@@ -791,9 +791,16 @@ def rollback(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if not git.la_kho(root):
         raise EideError("E2000", f"{root.name} không phải kho git — không có gì để quay lui",
                         exists=[], candidates=[], missing=["git repo"])
-    if git.co_thay_doi(root):
-        raise EideError("E7001", "Working tree còn thay đổi chưa commit: quay lui bây giờ sẽ mất "
-                        "chúng. Commit hoặc `git stash` trước", root=str(root))
+    # Vẫn chặn tệp chưa commit — kể cả tệp MỚI, vì `checkout -B` mang nó sang nhánh vừa quay
+    # lui và trộn mã dở dang vào một bản "đã về trạng thái tốt". Nhưng `.eide/` thì bỏ qua: nó
+    # là trạng thái của chính EIDE, luôn chưa theo dõi trong mọi dự án, nên không lọc nó ra
+    # khiến năng lực này từ chối chạy trên MỌI dự án thật. [DEV-144]
+    ban = git.thay_doi_can_chan(root, bo_qua=(f"{EIDE_DIR}/", EIDE_DIR))
+    if ban:
+        raise EideError("E7001", "Working tree còn thay đổi chưa commit ("
+                        + ", ".join(ban[:5]) + ("…" if len(ban) > 5 else "")
+                        + "): quay lui bây giờ sẽ mất chúng, hoặc mang chúng sang bản đã quay "
+                        "lui. Commit hoặc `git stash` trước", root=str(root), paths=ban[:20])
 
     tag = params.get("tag") or _known_good_gan_nhat(root)
     if not tag:

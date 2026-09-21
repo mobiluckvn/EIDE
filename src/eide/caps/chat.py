@@ -493,6 +493,10 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         except EideError as e:
             hong.append({"id": nut.id, "cap": nut.cap, "error": {"eide_code": e.code, "message": str(e)}})
             continue
+        # §7.5 — người vừa sửa một tệp thuộc kế hoạch này. Lập lại TRƯỚC khi chạy nút kế tiếp:
+        # nút ấy sắp sinh mã trên một nền đã khác, và một patch dựa trên nền cũ hoặc xung đột
+        # merge, hoặc — tệ hơn — trông hợp lý mà đè lên ý người dùng.
+        _lap_lai_neu_nguoi_sua(run_id, led, router, ctx)
         i_buoc = next((k for k, b in enumerate(buoc_ds, 1) if b["id"] == nut.id), 0)
         # Ngữ cảnh chuỗi đi CÙNG lời gọi: Router ghi nó vào `cap.run.*`, nên mọi bước của một
         # Run gộp về một thẻ ở giao diện mà không cần bên nhận tự đoán.
@@ -546,7 +550,32 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         else:
             led.append("run.done", {"run_id": run_id, "state": trang_thai, "done": len(ket_qua),
                                     "waiting": len(cho), "failed": len(hong)})
+        _dang_ky_undo_run(root, run_id, led, ctx)
     return {"run_id": run_id}
+
+
+def _dang_ky_undo_run(root: Path | None, run_id: str, led: Any, ctx: Context) -> None:
+    """Mục hoàn tác **mức lượt chạy** — UXC-31 §6.4 mức 2, tiêu chí N4.
+
+    Chỉ đăng ký khi lượt chạy THẬT SỰ để lại commit. Một mục "hoàn tác cả lượt" trên một lượt
+    không ghi gì là một nút bấm vào để nhận E2000 — và người dùng học được rằng nút hoàn tác
+    thỉnh thoảng hỏng, chứ không học được rằng lượt ấy vốn không đổi gì.
+
+    Lỗi ở đây KHÔNG được làm hỏng lượt chạy: chuỗi đã chạy xong, kết quả đã ghi. Mất mục hoàn
+    tác là mất một tiện nghi; ném lỗi từ đây là mất cả `run_id` của một lượt đã hoàn thành.
+    """
+    if root is None:
+        return
+    try:
+        from eide_core import git
+        from eide_core.undo import UndoService
+        if not git.commit_cua_run(root, run_id):
+            return
+        gate = ctx.extra.get("gate")
+        UndoService(led, (getattr(gate, "config", None) or {})).register(
+            f"run:{run_id}", "git_revert", cap="chat.orchestrate")
+    except Exception:  # noqa: BLE001 — xem docstring
+        return
 
 
 def _dung_chuoi(mau: dict[str, Any] | None, intent: dict[str, Any],
@@ -742,6 +771,89 @@ def _ghi_run(root: Path | None, run_id: str, chuoi: Any, state: str,
         # Nuốt cả `sqlite3.Error` thì một lỗi lập trình (sai cột, sai khóa ngoại) trông y hệt
         # "chưa migrate", và nó đã che đúng lỗi khóa ngoại ở trên cho tới khi chạy tay câu SQL.
         pass
+
+
+def _lap_lai_neu_nguoi_sua(run_id: str, led: Any, router: Any, ctx: Context) -> None:
+    """Đọc cờ `plan.replan_needed` của `code.human_save` và gọi `plan.replan` — UXC-31 §7.5.
+
+    Cờ được ĂN: sau khi lập lại thì ghi `plan.replan_done` cùng `seq` của cờ, để vòng lặp sau
+    không lập lại mãi một lần sửa. Không ăn cờ thì mỗi nút còn lại của chuỗi đều gọi planner
+    một lần — một chuỗi 12 nút thành 12 lượt gọi mô hình cho cùng một lần người bấm ⌘S.
+
+    Hỏng thì ghi chú và chạy tiếp. Lập lại kế hoạch là một cải thiện; không lập được không
+    phải lý do để giết một chuỗi đang chạy dở.
+    """
+    if led is None or router is None:
+        return
+    try:
+        ban_ghi = list(led.records())
+    except Exception:  # noqa: BLE001
+        return
+    da_an = {int((r.get("data") or {}).get("for_seq") or 0) for r in ban_ghi
+             if r.get("kind") == "report"
+             and (r.get("data") or {}).get("cap") == "plan.replan"}
+    co = [r for r in ban_ghi
+          if r.get("kind") == "human.file_save"
+          and run_id in ((r.get("data") or {}).get("replan_for") or [])
+          and int(r.get("seq") or 0) not in da_an]
+    if not co:
+        return
+    cuoi = co[-1]
+    d = cuoi.get("data") or {}
+    duong = d.get("path") or "một tệp"
+    try:
+        r = router.invoke(
+            "plan.replan",
+            {"plan_id": run_id, "reason": "human_change",
+             "detail": f"người sửa `{duong}` ({d.get('diff_summary') or 'không rõ thay đổi'}); "
+                       "tệp này nằm trong kế hoạch đang chạy"}, ctx)
+        tt = r.status
+        loi = None
+    except Exception as e:  # noqa: BLE001 — xem docstring
+        tt, loi = "failed", str(e)[:200]
+    led.append("report", {"cap": "plan.replan", "run_id": run_id,
+                          "for_seq": int(cuoi.get("seq") or 0), "status": tt,
+                          "path": d.get("path"), **({"error": loi} if loi else {})})
+
+
+def run_dang_chay(root: Path) -> list[tuple[str, set[str]]]:
+    """`(run_id, tệp kế hoạch chạm tới)` cho mọi lượt chạy còn `running` — UXC-31 §7.5.
+
+    Đọc từ `graph`, KHÔNG từ `report`: một lượt đang chạy chưa có `report` (nó được ghi lúc
+    kết thúc), nên hỏi báo cáo ở đây luôn trả rỗng — và rỗng trông y hệt "kế hoạch này không
+    chạm tệp nào", tức luật §7.5 sẽ im lặng không bao giờ kích hoạt.
+
+    Tên tệp nằm rải trong `args` của từng nút dưới nhiều khoá (`path`, `file`, `files`), vì mỗi
+    năng lực đặt tên tham số theo hợp đồng riêng. Quét mọi khoá ấy thay vì chỉ một: bỏ sót một
+    khoá nghĩa là bỏ sót đúng nhóm năng lực dùng nó.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return []
+    try:
+        with store.open_store(db) as c:
+            rows = c.execute("SELECT id, graph FROM run WHERE state='running'").fetchall()
+    except sqlite3.OperationalError:
+        return []
+    ra: list[tuple[str, set[str]]] = []
+    for rid, g in rows:
+        tep: set[str] = set()
+        try:
+            d = json.loads(g) if g else {}
+        except (TypeError, ValueError):
+            d = {}
+        for nut in (d.get("nodes") or d.get("nut") or []):
+            args = (nut or {}).get("args") or {}
+            for k in ("path", "file", "target"):
+                if isinstance(args.get(k), str):
+                    tep.add(args[k])
+            for x in (args.get("files") or []):
+                if isinstance(x, str):
+                    tep.add(x)
+                elif isinstance(x, dict) and isinstance(x.get("path"), str):
+                    tep.add(x["path"])
+        ra.append((str(rid), tep))
+    return ra
 
 
 def doc_bao_cao(root: Path, run_id: str) -> dict[str, Any]:

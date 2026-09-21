@@ -1486,7 +1486,12 @@ def merge(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         {"Eide-Facts": patch.get("cites") or [], "Eide-Run": ctx.session_id,
          "Eide-Model": by.get("model_id"), "Eide-Prompt": _bam_prompt(patch),
          "Eide-Review": params["review_id"]})
-    sha = git.commit(root, tin_nhan, duong)
+    # Tác giả MÁY ĐỌC ĐƯỢC. Không có nó thì mọi commit của tác tử mang tên người dùng git của
+    # máy, và cả cơ chế "hoàn tác một lượt chạy" mà `git.tac_gia` mô tả không có dữ liệu để
+    # chạy: `--author=^agent:run-<id>/` không khớp gì, nên revert theo lượt luôn trả về rỗng
+    # — im lặng, vì rỗng trông y hệt "lượt chạy này chưa ghi gì".
+    sha = git.commit(root, tin_nhan, duong, ai=git.tac_gia_tac_tu(ctx),
+                     seq=(getattr(ctx.extra.get("ledger"), "_seq", 0) + 1))
     tag = git.dat_tag(root, f"known-good/{datetime.now(UTC).date().isoformat()}")
 
     _ghi_code_unit(root, patch, sha)
@@ -2331,12 +2336,29 @@ def human_save(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     ai = f"human:{params.get('by') or os.environ.get('USER') or 'nguoi-dung'}"
     tom_tat = _tom_tat_diff(cu, noi_dung)
     led = ctx.extra.get("ledger")
-    sha = git.commit(root, git.thong_diep("chore", rel, f"người sửa {rel} ({tom_tat})", {}),
-                     [rel], ai=ai, seq=(getattr(led, "_seq", 0) + 1) if led is not None else None)
+    # §5.7 — tự lưu: các lần liên tiếp GỘP thành một commit.
+    gop_vao = _gop_tu_luu(root, rel, ai) if _bat_tu_luu(root) else ""
+    trailer = {"Eide-Autosave": "1"} if _bat_tu_luu(root) else {}
+    sha = git.commit(root, git.thong_diep("chore", rel, f"người sửa {rel} ({tom_tat})", trailer),
+                     [rel], ai=ai, gop=bool(gop_vao),
+                     seq=(getattr(led, "_seq", 0) + 1) if led is not None else None)
+    if gop_vao and led is not None:
+        # Commit cũ KHÔNG còn tồn tại sau khi gộp. Để nguyên mục hoàn tác trỏ vào nó là để lại
+        # một nút bấm vào sẽ trả E7001 "không có commit" — tệ hơn không có nút, vì người dùng
+        # tưởng mình còn đường lui.
+        led.append("undo.expire", {"undo_ref": f"commit:{gop_vao}", "kind": "git_revert",
+                                   "reason": "gộp vào lần tự lưu kế tiếp (§5.7)"})
     seq = 0
     if led is not None:
+        # §7.5 — lần lưu này có chạm vào kế hoạch nào đang chạy không. Ghi vào CHÍNH bản ghi
+        # `human.file_save` chứ không thành một kiểu sự kiện riêng: API-15 khai 34 kiểu và
+        # `plan.replan_needed` không nằm trong đó — thêm một kiểu là sửa hợp đồng cho một dữ
+        # kiện vốn thuộc về sự việc đã có. Lần lưu LÀ sự việc; "nó trúng kế hoạch r_x" là một
+        # thuộc tính của nó.
+        cham = _ke_hoach_bi_cham(root, rel)
         rec = led.append("human.file_save",
-                         {"path": rel, "commit": sha, "diff_summary": tom_tat, "by": ai},
+                         {"path": rel, "commit": sha, "diff_summary": tom_tat, "by": ai,
+                          **({"replan_for": cham} if cham else {})},
                          actor="human")
         seq = int(rec.get("seq") or 0)
         # UXC-31 §2F.5 — mục của NGƯỜI xuất hiện trong khối HOÀN TÁC ĐƯỢC **y như mục của tác
@@ -2349,6 +2371,71 @@ def human_save(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         # thay đổi hợp đồng cho một việc mà cơ chế sẵn có làm đúng. Xem [DEV-141].
         _dang_ky_undo(ctx, sha, rel, cap="code.human_save")
     return {"commit": sha, "seq": seq, "path": rel}
+
+
+#: Khoá tùy chọn bật tự lưu — `preferences.yaml` (PROJECT-09, DDD-14 §6).
+#:
+#: **Mặc định TẮT**, đúng như §5.7: không có khoá thì không có tự lưu. Mặc định bật sẽ commit
+#: thay người dùng vào một kho họ chưa kịp hiểu cách EIDE dùng git.
+PREF_TU_LUU = "autosave"
+
+
+def _bat_tu_luu(root: Path) -> bool:
+    """Người đã bật tự lưu chưa. Đọc lỗi thì coi như TẮT — mặc định an toàn."""
+    try:
+        from eide.caps.project import _pref_db_all, _pref_yaml_all
+        d = {**_pref_yaml_all(), **_pref_db_all(root)}
+        return bool((d.get(PREF_TU_LUU) or {}).get("value"))
+    except Exception:  # noqa: BLE001 — xem docstring
+        return False
+
+
+def _gop_tu_luu(root: Path, rel: str, ai: str) -> str:
+    """SHA ở đầu nhánh nếu lần lưu này GỘP được vào nó — §5.7; rỗng nghĩa là tạo commit mới.
+
+    Bốn điều kiện, và bỏ bất kỳ điều nào cũng nuốt mất một commit của ai đó:
+
+    1. HEAD phải mang trailer `Eide-Autosave` — tức chính nó là một lần tự lưu;
+    2. cùng TÁC GIẢ — hai người cùng sửa một kho thì không gộp vào của nhau;
+    3. chạm ĐÚNG MỘT tệp, và là tệp này — "khi người rời tệp" của §5.7 chính là lúc điều kiện
+       này hỏng, nên mạch gộp tự kết thúc mà không cần ai báo;
+    4. tệp ấy không nằm trong một commit nào khác của mạch — bảo đảm bởi (3).
+
+    Một lần lưu TAY (không bật tự lưu) không mang trailer, nên nó cũng cắt mạch: đúng ý, vì
+    người vừa chủ động lưu là người vừa đánh dấu một mốc họ muốn giữ.
+    """
+    from eide_core import git
+    sha, tac_gia_head, tin = git.dau_commit(root)
+    if not sha or "Eide-Autosave:" not in tin:
+        return ""
+    if tac_gia_head != git.tac_gia(ai).split(" <", 1)[0]:
+        return ""
+    return sha if git.tep_cua_commit(root, sha) == [rel] else ""
+
+
+def _ke_hoach_bi_cham(root: Path, rel: str) -> list[str]:
+    """Mã các lượt chạy ĐANG CHẠY mà kế hoạch của chúng chạm tệp `rel` — UXC-31 §7.5.
+
+    **Chỉ ghi nhận, không tự gọi `plan.replan`.** Hai lý do, cả hai đều cụ thể: (a)
+    `code.human_save` không có Router trong tay, nên gọi thẳng một năng lực khác là đi vòng qua
+    cổng chính sách — đúng thứ B2 cấm; (b) lập lại kế hoạch giữa một lần bấm Lưu nghĩa là người
+    dùng bấm ⌘S rồi phải chờ một lượt gọi mô hình xong mới thấy chữ "đã lưu".
+
+    Orchestrator đọc dấu này trước mỗi nút và gọi `plan.replan(reason="human_change")` — đúng
+    chỗ, vì nó đã có Router và đang ở giữa một chuỗi.
+
+    "Cấm ghi đè" của §7.5 không cần thêm mã: `code.human_save` đã ghi TRƯỚC, nên kế hoạch lập
+    lại nhìn thấy nền mới. Chiều ngược lại — tác tử đè bản của người — do P-EDIT-01 và merge 3
+    bên chặn.
+
+    Đọc kế hoạch hỏng thì trả rỗng chứ không ném: không biết lần lưu có trúng kế hoạch hay
+    không là mất một tiện nghi; làm hỏng lần lưu là mất việc của người dùng.
+    """
+    try:
+        from eide.caps.chat import run_dang_chay
+        return [rid for rid, tep in run_dang_chay(root) if rel in tep]
+    except Exception:  # noqa: BLE001 — xem docstring
+        return []
 
 
 #: Xung đột mã đang mở, theo `conflict_id`. Sống trong tiến trình daemon: một xung đột chưa

@@ -16,7 +16,7 @@ from typing import Any, TextIO
 
 import yaml
 
-from eide import __version__
+from eide import __version__, undo_handlers
 from eide_core.errors import EideError, error_table
 from eide_core.ledger import Ledger, TheoDoiTep
 from eide_core.paths import nap_env, user_log
@@ -208,6 +208,9 @@ class Daemon:
         self.ledger = Ledger((project / ".eide" / "store" / "ledger.jsonl") if project else user_log() / "ledger.jsonl")
         self.router = Router(gate=self.gate, ledger=self.ledger)
         self.ctx = Context(project_dir=project, extra={"gate": self.gate})
+        # UXC-31 §6.4 — nối ba hiện thực hoàn tác. Quên chỗ này thì `undo.apply` vẫn trả một
+        # câu trả lời hợp lệ (`applied: false` kèm lý do), nên nút Hoàn tác chết IM LẶNG.
+        undo_handlers.dang_ky(self.router, self.ctx)
         # `phat` do lớp vận chuyển đưa vào (`serve_stdio`). Không có thì daemon chạy y như cũ —
         # CLI và test gọi `handle()` trực tiếp không cần kênh đẩy, và bắt chúng dựng một cái
         # giả chỉ để im lặng là thêm nghi thức không đổi lấy gì.

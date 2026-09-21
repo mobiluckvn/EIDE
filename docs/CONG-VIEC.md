@@ -250,11 +250,45 @@ chính là phụ lục đề án — sản phẩm tự viết tài liệu về m
 
 ## Điểm dừng phiên 20/09/2026 — BẮT ĐẦU PHIÊN SAU TỪ ĐÂY
 
-*Gói mới: **271 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Checklist UXC-31:
-**105 xong · 7 chưa · 5 chặn** (đầu phiên 20/09: 11 xong). **Mục 0, 1, 2, 3, 4, 9, 10, 11 đóng trọn** — còn 5.7, 6.4, 6.5, 7.5, 7.6, 10.1 và một luật đọc. `make check` thoát 0. Màn
+*Gói mới: **271 test Swift** xanh. `apps/eide --tu-kiem`: **70/70**. Python: **+20 bài** (hoàn tác ba mức, N4, N5, người sửa giữa chừng, tự lưu gộp). Checklist UXC-31:
+**111 xong · 1 chưa · 5 chặn** (đầu phiên 20/09: 11 xong). **Mọi mục làm được đã xong** — 5 mục chặn vì chờ bo mạch, và 1 luật đọc tôi cố ý không tick. `make check` thoát 0. Màn
 đã nối dữ liệu: **8/25** — và **nhóm TRI THỨC ĐÓNG TRỌN 5/5** (S4 Nhập tài liệu, S5 Hộ chiếu
 chip, S6 Hộ chiếu mạch, S7 Bản đồ tri thức, S8 Xung đột tri thức; cả năm làm trong ngày). Cùng
 với S1, S2, S25 của các nhóm khác. Danh mục năng lực lên **243** (thêm ARCHIVE-08).*
+
+### Đã làm (19): phần LÕI — 6.4, 6.5, 7.5, 7.6, 5.7, 10.1
+
+**§6.4 bị chặn bởi BA lỗi cùng lúc, và cả ba đều im lặng** [DEV-144]:
+
+1. `Router.undo_handlers` rỗng — mọi lần bấm Hoàn tác trả `applied: false` kèm lý do. Trung
+   thực, và vẫn là một nút không làm gì.
+2. `code.merge` commit **không truyền `ai=`**, nên cơ chế N4 mà `git.tac_gia` mô tả sẵn
+   (`--author=^agent:run-<id>/`) chưa bao giờ có dữ liệu. Revert theo lượt luôn trả rỗng — và
+   rỗng trông y hệt *"lượt này chưa ghi gì"*.
+3. `project.rollback` coi tệp **chưa theo dõi** là cây bẩn. Mọi dự án EIDE đều có `.eide/` chưa
+   theo dõi, nên lối thoát hiểm người ta tìm tới khi mọi thứ hỏng **từ chối chạy trên mọi dự án
+   thật**.
+
+**Phép sửa đầu tiên của tôi cho (3) rộng quá, và một bài kiểm cũ bắt được.** Tôi bỏ hẳn tệp chưa
+theo dõi khỏi phép kiểm; `test_tep_moi_chua_commit_cung_chan_rollback` đỏ, và lý lẽ của nó đúng
+— một tệp MỚI chưa commit không xung đột với tag nào, nên `checkout -B` mang nó sang nhánh vừa
+quay lui, trộn mã dở dang vào một bản "đã về trạng thái tốt". Chỉ `.eide/` được bỏ qua.
+
+**§7.5 — không bịa kiểu sự kiện mới.** Bản đầu tôi ghi `plan.replan_needed` vào sổ cái và nhận
+E6001: API-15 khai 34 kiểu, không có kiểu ấy. Thêm một kiểu là sửa hợp đồng cho một dữ kiện vốn
+thuộc về sự việc đã có — nên dấu `replan_for` nằm ngay trên bản ghi `human.file_save`. Lần lưu
+LÀ sự việc; "nó trúng kế hoạch r_x" là một thuộc tính của nó.
+
+**§5.7 — `git commit --amend` là chỗ DUY NHẤT trong cả kho viết lại lịch sử**, nên nó có bốn
+điều kiện chặn: HEAD phải mang trailer `Eide-Autosave`, cùng tác giả, chạm đúng một tệp, và là
+tệp này. *"Khi người rời tệp"* chính là lúc điều kiện thứ ba hỏng — mạch gộp tự kết thúc, không
+sự kiện nào phải phát, không trạng thái nào phải nhớ giữa hai lời gọi. Gộp xong thì **huỷ mục
+hoàn tác cũ**: nó trỏ vào một commit đã biến mất, và một nút lui bấm vào trả E7001 còn tệ hơn
+không có nút.
+
+**Một điều tôi KHÔNG xác nhận được:** job CI `eide-ui` thêm hôm qua chưa biết có chạy xanh trên
+GitHub không — máy này không có `gh`. Hai chỗ có thể hỏng trên runner: `--tu-kiem` cần phiên đồ
+hoạ để dựng `NSWindow`, và `python` trần (đã thêm `setup-python`). Ghi rõ trong chú thích §10.3.
 
 ### Đã làm (18): §10.3 CI, §11.1 bảng theo dõi, §11.2 luật tick — **§10, §11 đóng**
 
@@ -609,10 +643,10 @@ dựng `NSTextField` từ chuỗi ấy mất **~200 ms**. Tôi đã đi tối ư
 
 **Làm tiếp — không cần phần cứng:**
 
-1. **6 mục còn lại, và KHÔNG mục nào thuần giao diện:** 5.7 (nửa sau cần màn cài đặt +
-   squash ở `code.human_save`) · 6.4/6.5 (chặn ở `Router.undo_handlers` rỗng theo thiết kế) ·
-   7.5/7.6 (`memory.compose` nhận khối thay đổi của người) · 10.1 nửa sau (chặn bởi 6.4/6.5).
-   Phần giao diện của UXC-31 đã hết việc.
+1. **UXC-31 hết việc làm được.** Còn 5 mục chặn vì chờ bo mạch (S17–S20 và 9.x phần
+   phần cứng) và 1 luật đọc cố ý không tick. Việc kế tiếp không nằm trong checklist này:
+   **11 mục DEVIATIONS `Mở`** (DEV-121/122/131/132/133/135/136/137/139/140/141/142/143/144),
+   trong đó nhóm [134]/[135]/[136] cùng một hình dạng và nên đóng cùng một lượt.
 2. **§7.3 nửa sau** — diff render. S14 là màn DUY NHẤT đã hiện thực `apDung`; 20 màn còn lại
    dùng cách lùi (nạp lại, gộp 0,4 s).
 3. **§3 Luồng làm quen** (4 mục) và **§4 Bảng lệnh** (4 mục) — chưa chạm.

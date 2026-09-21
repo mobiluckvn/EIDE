@@ -395,3 +395,27 @@ def test_ban_do_pha_cua_giao_dien_khop_BPD():
             if cap not in theo_bpd.get(ma, set()):
                 sai.setdefault(ma, []).append(cap)
     assert not sai, f"giao diện gán pha sai so với bpd.js: {sai}"
+
+
+def test_bang_tieu_chi_N1_N10_tro_dung_bai_kiem_python():
+    """UXC-31 §10.1 — hai ô LÕI của bảng nghiệm thu phải trỏ vào hàm kiểm CÓ THẬT.
+
+    Bảng nằm trong `EideTieuChiTests.swift`; runtime Swift đối chiếu được tám ô Swift, nhưng
+    không thấy được hai ô Python. Không có phép kiểm này thì đổi tên một hàm pytest là bảng
+    nghiệm thu trỏ vào chỗ trống — lệch im lặng, đúng hình dạng mà chính bảng ấy sinh ra để
+    chặn.
+    """
+    import re
+    from pathlib import Path
+
+    goc = Path(__file__).resolve().parents[1]
+    swift = goc / "apps/eide/Tests/EideGiaoDienTests/EideTieuChiTests.swift"
+    if not swift.exists():           # gói giao diện có thể chưa checkout trong một số môi trường
+        return
+    o_loi = re.findall(r'"(tests/[\w./]+)::(\w+)"', swift.read_text(encoding="utf-8"))
+    assert len(o_loi) == 2, f"bảng §10.1 phải có đúng hai ô lõi, thấy {len(o_loi)}"
+    for tep, ham in o_loi:
+        f = goc / tep
+        assert f.exists(), f"bảng §10.1 trỏ vào tệp không có: {tep}"
+        assert f"def {ham}(" in f.read_text(encoding="utf-8"), \
+            f"bảng §10.1 trỏ vào hàm không có: {tep}::{ham}"
