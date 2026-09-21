@@ -285,6 +285,10 @@ public final class EidePhien {
         EideManTaiLieu.tien: { EideManTaiLieu() },
         EideManSoanThao.tien: { EideManSoanThao() },
         EideManDiffMerge.tien: { EideManDiffMerge() },
+        EideManMoiTruong.tien: { EideManMoiTruong() },
+        EideManMoHinh.tien: { EideManMoHinh() },
+        EideManCongCu.tien: { EideManCongCu() },
+        EideManRegistry.tien: { EideManRegistry() },
     ]
 
 

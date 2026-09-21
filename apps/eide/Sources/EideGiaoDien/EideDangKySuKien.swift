@@ -66,6 +66,14 @@ public enum EideDangKySuKien {
         // S15 Diff & cổng merge — xung đột mã tới qua hàng đợi, cổng qua `gate.*`.
         "DiffMerge": ["event.queue.changed", "event.gate.opened", "event.gate.decided",
                       "event.run.progress"],
+        // S21 Môi trường — công cụ đổi khi `env.install` chạy xong.
+        "Env": ["event.run.progress", "event.notice"],
+        // S22 Mô hình & chi phí — mỗi lời gọi mô hình là một lần tiêu tiền.
+        "Models": ["event.model.call", "event.notice"],
+        // S23 Công cụ tự tạo — `tool.report` là đúng tín hiệu "một công cụ vừa chạy".
+        "ToolForge": ["event.tool.report", "event.run.progress"],
+        // S24 Registry — gói mới vào registry qua `registry.publish`.
+        "Registry": ["event.knowledge.changed", "event.notice"],
         // S25 Chính sách — mức tự chủ và niêm.
         "ChinhSach": ["event.autonomy.changed", "event.notice"],
     ]

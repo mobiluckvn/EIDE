@@ -159,10 +159,14 @@ public final class EideManTongQuan: EideManCoSo {
 
         if let b = try? await doc(goi, "budget.state") {
             tieuDePhu("NGÂN SÁCH MÔ HÌNH")
+            // Tên khoá chép ĐÚNG từ `daemon/rpc.py::budget_state`. Bản đầu đoán ba tên khác
+            // (`spent_today`, `daily_limit`, `calls`) và cả ba đều không tồn tại, nên bảng này
+            // hiện `0,0000 USD` suốt từ 20/09 tới lúc màn S22 đọc lại hợp đồng — một bảng số
+            // liệu luôn bằng 0 trông y hệt một dự án chưa tiêu đồng nào.
             bang(cot: [("MỤC", 158), ("GIÁ TRỊ", 0)], dong: [
-                ["Hôm nay", String(format: "%.4f USD", (b["spent_today"] as? Double) ?? 0)],
-                ["Hạn ngày", String(format: "%.2f USD", (b["daily_limit"] as? Double) ?? 0)],
-                ["Số lời gọi", "\(b["calls"] as? Int ?? 0)"],
+                ["Hôm nay", String(format: "%.4f USD", (b["spent_usd"] as? Double) ?? 0)],
+                ["Hạn ngày", EideManMoHinh.oHanMuc(b["daily_budget_usd"])],
+                ["Số lời gọi", "\(EideManHoChieu.nguyen(b["calls_today"]) ?? 0)"],
             ])
         }
     }

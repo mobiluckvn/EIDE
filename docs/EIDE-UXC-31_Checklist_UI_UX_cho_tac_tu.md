@@ -192,10 +192,10 @@ P-EDIT-04, xem DEV-125). Mục 1.5 (Dark Mode) BỎ theo quyết định chủ s
 - [!] **S20 Bench** — `bench.*` · bảng so mô phỏng ↔ board thật; rỗng nêu rõ cần cả hai vế.  ·  **CHẶN: chờ cả mô phỏng lẫn board thật để SO hai vế**
 
 ### Nhóm 6 · HỆ THỐNG
-- [ ] **S21 Môi trường** — `env.doctor`, `tools.lock` · bảng công cụ: phiên bản, hash khớp lockfile ✅/⚠; nút sửa KHÔNG bao giờ chạy sudo.
-- [ ] **S22 Mô hình & chi phí** — · bảng vai → mô hình + KPI chi phí vòng/ngày + thanh hạn mức; chạm hạn mức → sự kiện + băng cảnh báo, không chạy tiếp im lặng.
-- [ ] **S23 Công cụ tự tạo** — `tool.*` · bảng công cụ tạm/thăng cấp; đường thăng cấp bắt buộc qua sandbox + bài kiểm (G-TOOL), hiện số lần dùng đạt.
-- [ ] **S24 Registry** — `registry.*` · bảng gói .hkp: chữ ký, license, huy hiệu (verified/bench).
+- [x] **S21 Môi trường** — `env.doctor`, `tools.lock` · bảng công cụ: phiên bản, hash khớp lockfile ✅/⚠; nút sửa KHÔNG bao giờ chạy sudo.  ·  **✔ `env.check` theo ISA; BA trạng thái (đạt / chưa cài / **có nhưng CŨ**) vì `ok=false` gộp mất hai việc khác hẳn nhau. Nút sửa gọi `env.guide_install` (R0) — KHÔNG `env.install` (R4), có bài kiểm cấm**
+- [x] **S22 Mô hình & chi phí** — · bảng vai → mô hình + KPI chi phí vòng/ngày + thanh hạn mức; chạm hạn mức → sự kiện + băng cảnh báo, không chạy tiếp im lặng.  ·  **✔ `budget.state` + thanh hạn mức; `sap_het` giữ BA giá trị (`nil` = chưa biết). Bảng VAI → MÔ HÌNH CHƯA có — [DEV-136]**
+- [x] **S23 Công cụ tự tạo** — `tool.*` · bảng công cụ tạm/thăng cấp; đường thăng cấp bắt buộc qua sandbox + bài kiểm (G-TOOL), hiện số lần dùng đạt.  ·  **✔ đếm lượt ĐẠT theo TOOL-08 (≥3 lần, 0 lỗi); dựng từ sự kiện `tool.report`, tức LỊCH SỬ CHẠY chứ không phải danh mục — [DEV-136]**
+- [x] **S24 Registry** — `registry.*` · bảng gói .hkp: chữ ký, license, huy hiệu (verified/bench).  ·  **✔ `registry.search`; cột huy hiệu đứng TRƯỚC phiên bản vì badge là thứ đắt nhất hệ thống. Không chữ ký là CẢNH BÁO, không phải ô trống**
 - [ ] **S25 Chính sách tự chủ** — `policy.*` · bảng **54** quy tắc (49 + P-EDIT-01/02/**03/04** + P-RUN-01) chỉ-đọc + mức hiện tại + đổi mức qua `policy.set_autonomy`; ký lại chính sách ghi rõ "làm bằng lệnh dòng lệnh, không phải năng lực".
 
 ## 9. TRỢ NĂNG (accessibility) & BÀN PHÍM
