@@ -144,6 +144,21 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # Một dự án không có lịch sử là một dự án mà "hoàn tác được trong 24 giờ" là lời hứa suông.
     from eide_core import git as _git
     _git.dam_bao_kho(root)
+    # KHỞI TẠO store ngay lúc tạo dự án — cùng lý do với `.git` ở trên, và cùng một lỗ hổng.
+    #
+    # `SUBDIRS` tạo THƯ MỤC `.eide/store/` nhưng không có ai tạo `store.sqlite` trong đó, nên
+    # tới 21/09/2026 mọi dự án mới đều mang một cái vỏ rỗng: `project.open` ném E6003 ngay lượt
+    # mở đầu tiên, và giao diện chết từ đấy. Đo bằng một phiên thật trên bài CNC — tám lượt gõ,
+    # không một câu trả lời nào.
+    #
+    # Triệu chứng thứ hai độc hơn vì nó IM: `Daemon._cho_gi` bọc `doc_bao_cao` trong
+    # `except Exception: return []`, nên E6003 ở đây biến thành "chuỗi không chờ gì cả" — tác tử
+    # dừng hỏi người, mà câu hỏi không bao giờ tới được người.
+    #
+    # Bảo người dùng chạy `eide migrate` tay là sai chỗ: store là một phần của dự án, không phải
+    # một bước cài đặt. DDD-14 §5 nói `user_version` phải bằng bản mới nhất mới mở được — vậy
+    # thì thứ tạo dự án phải để lại nó ở trạng thái mở được.
+    store.migrate(store.store_path(root))
     nxt = []
     if params.get("chip"):
         nxt.append("project.set_target")

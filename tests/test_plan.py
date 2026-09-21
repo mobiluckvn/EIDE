@@ -338,3 +338,38 @@ def test_G1_khong_tu_duyet_ke_hoach_cham_ISR():
                         risk="R1", tier="T1*")
     assert clock.decision == "ASK" and clock.rule_id == "G1-03", \
         f"đổi clock phải rơi vào G1-03, không phải {clock.rule_id}"
+
+
+def test_ten_tep_plan_khong_thoat_ra_khoi_thu_muc_du_an(tmp_path):
+    """`feature` đến từ câu người dùng gõ — một dấu `/` trong đó không được trỏ ra ngoài.
+
+    Không cần ai cố tình: một câu tiếng Việt bình thường như "vào/ra qua LAN" đã đủ.
+    """
+    from eide.caps.plan import ten_tep_plan
+    for doc in ["../../../etc/passwd", "vào/ra qua LAN", "a/b", "..", "/tuyet/doi"]:
+        t = ten_tep_plan(doc)
+        assert "/" not in t and ".." not in t, f"{doc!r} → {t!r}"
+        assert (tmp_path / f"{t}.json").resolve().parent == tmp_path.resolve()
+
+
+def test_ten_tep_plan_bi_chan_do_dai_nhung_khong_dung_hang(tmp_path):
+    """Cắt trần thôi thì hai feature khác nhau cùng đầu sẽ ghi đè kế hoạch của nhau.
+
+    Mất một kế hoạch là mất luôn quyết định cổng G1 gắn với nó — nên phải có hậu tố băm.
+    """
+    from eide.caps.plan import ten_tep_plan
+    dau = "thiết bị cắm vào cổng USB của bộ điều khiển và đóng vai một ổ USB, còn phía kia "
+    a, b = ten_tep_plan(dau + "nối LAN"), ten_tep_plan(dau + "nối Wi-Fi")
+    assert a != b, "hai feature khác nhau không được ra cùng một tên tệp"
+    assert len(a) < 64 and len(b) < 64, (a, b)
+
+
+def test_doc_plan_feature_van_doc_duoc_ke_hoach_ghi_truoc_ban_va(tmp_path):
+    """Một dự án đang chạy dở không được mất lịch sử vì một lần nâng cấp."""
+    import json as _json
+    from eide.caps.plan import EIDE_DIR, THU_MUC_PLAN, doc_plan_feature
+    thu = tmp_path / EIDE_DIR / THU_MUC_PLAN
+    thu.mkdir(parents=True)
+    (thu / "gateway.json").write_text(_json.dumps({"feature": "gateway", "plan": {"x": 1}}),
+                                      encoding="utf-8")
+    assert (doc_plan_feature(tmp_path, "gateway") or {}).get("plan") == {"x": 1}

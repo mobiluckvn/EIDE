@@ -640,7 +640,24 @@ public final class EidePhien {
                 khung.dock.themThe(the)
             }
             if let rid = r["run_id"] as? String {
-                khung.dock.themLuot(.tacTu, "Đang chạy (run \(rid.prefix(10))).")
+                khung.dock.themLuot(.tacTu, "Đang chạy (run \(rid.prefix(10))) — "
+                                    + "\(Self.trangThaiChuoi(r["state"])).")
+            }
+            // **Không có `run_id` = KHÔNG dựng được chuỗi, và điều đó phải NÓI RA.**
+            //
+            // Tới đây mọi nhánh trên đều có điều kiện, nên một `chat.send` trả về thứ không
+            // khớp nhánh nào đi qua lặng lẽ: người dùng gõ một câu, thấy bong bóng của chính
+            // mình, rồi không thấy gì nữa. Đo 21/09 bằng một phiên thật trên bài CNC — tám lượt
+            // gõ, KHÔNG một câu trả lời nào, và không một lỗi nào.
+            //
+            // `chat.send` trả `{intent_id}` trần khi `chat.parse_intent` hoặc `chat.orchestrate`
+            // hỏng: hợp đồng cho phép, nên chỗ này phải đọc được cả trường hợp ấy.
+            else {
+                let y = (r["intent_id"] as? String).map { " (ý hiểu: `\($0)`)" } ?? ""
+                khung.dock.themLuot(.loi,
+                    "Không dựng được chuỗi cho câu này\(y) — tác tử KHÔNG làm gì cả. "
+                    + Self.viSaoKhongCoChuoi(r)
+                    + " Xem màn Nhật ký (S2) để đọc lời gọi đã hỏng.")
             }
             // Chuỗi dừng chờ người thì NÓI RA nó chờ gì — không để nó đứng im mãi.
             for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) {
@@ -891,6 +908,39 @@ public final class EidePhien {
         return KeHoach(ma: (r["run_id"] as? String) ?? "",
                        trangThai: (r["state"] as? String) ?? "—",
                        soBuoc: (r["steps"] as? [[String: Any]])?.count ?? 0)
+    }
+
+    /// Trạng thái một lượt chạy, bằng tiếng người.
+    ///
+    /// `asked` là chỗ hay bị đọc nhầm nhất: nó KHÔNG phải lỗi và cũng không phải xong — chuỗi
+    /// dừng lại để hỏi. Hiện nguyên chữ `asked` thì người dùng không biết mình đang phải làm gì.
+    static func trangThaiChuoi(_ x: Any?) -> String {
+        switch (x as? String) ?? "" {
+        case "planned": return "đang chờ anh gật đầu"
+        case "running": return "đang chạy"
+        case "asked": return "DỪNG, đang chờ anh trả lời"
+        case "done": return "xong"
+        case "blocked": return "bị cổng chặn"
+        case "cancelled": return "đã huỷ"
+        default: return "trạng thái chưa rõ"
+        }
+    }
+
+    /// Đoán lý do chuỗi không dựng được, từ CHÍNH câu trả lời — không bịa.
+    ///
+    /// `chat.send` trả `asdict(run)` của lời gọi hỏng, nên `error.message` thường đã nói đủ.
+    /// Không có thì nói thẳng là không biết: một câu đoán sai đẩy người dùng đi sửa nhầm chỗ.
+    static func viSaoKhongCoChuoi(_ r: [String: Any]) -> String {
+        if let e = r["error"] as? [String: Any] {
+            let ma = (e["eide_code"] as? String).map { "\($0): " } ?? ""
+            return "Lý do — \(ma)\((e["message"] as? String) ?? "không rõ")."
+        }
+        if let run = r["run"] as? [String: Any],
+           let e = run["error"] as? [String: Any] {
+            let ma = (e["eide_code"] as? String).map { "\($0): " } ?? ""
+            return "Lý do — \(ma)\((e["message"] as? String) ?? "không rõ")."
+        }
+        return "Lõi không nói lý do."
     }
 
     /// Người trả lời thẻ Ý hiểu — §2D.6, [DEV-140].

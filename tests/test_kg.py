@@ -226,6 +226,11 @@ def test_resource_ready_khong_con_duong_nao_ra_False(tmp_path, workspace):
     r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
     res = r.invoke("project.create", {"text": "kho cũ"}, Context(project_dir=workspace)).result
     root = workspace / res["project_id"]
+    # Từ 21/09/2026 `project.create` tự di trú store lên bản mới nhất, nên không còn dựng được
+    # trạng thái "store cũ" chỉ bằng cách gọi `migrate(target=2)` — `migrate` không lùi, và một
+    # lệnh không làm gì sẽ để test xanh vì lý do sai. Xoá rồi dựng lại ở M1 mới đúng ý muốn đo.
+    st.store_path(root).unlink(missing_ok=True)
+    st.seal_path(st.store_path(root)).unlink(missing_ok=True)
     st.migrate(st.store_path(root), target=2)          # dừng ở M1: chưa có hw_map
     ctx = Context(project_dir=root, extra={"gate": PolicyGate(), "ledger": r.ledger})
     # E6003 bật ra từ Router trước cả handler (khi ghi decision_log), nên nó là ngoại lệ chứ

@@ -239,4 +239,50 @@ final class EideVungTraoDoiTests: XCTestCase {
         for c in v.subviews { ra += chu(c) }
         return ra
     }
+    // MARK: - `chat.send` hỏng thì PHẢI nói ra (bài CNC 21/09/2026)
+
+    /// Một phiên thật tám lượt gõ, KHÔNG một câu trả lời nào, và không một lỗi nào.
+    ///
+    /// Nguyên nhân ở `EidePhien._gui`: mọi nhánh thêm bong bóng đều có điều kiện (`restate`,
+    /// `run_id`, `cho_nguoi`), nên một câu trả lời không khớp nhánh nào đi qua lặng lẽ. Người
+    /// dùng thấy bong bóng của chính mình rồi thôi — và kết luận sản phẩm hỏng, đúng như nó
+    /// đang hỏng, chỉ là không có đường nào biết hỏng ở đâu.
+    ///
+    /// Đo phần QUYẾT ĐỊNH ra chữ chứ không dựng cả phiên: `_gui` đi qua daemon thật, tức qua
+    /// mô hình, tức qua mạng và qua tiền.
+    func testViSaoKhongCoChuoiNeuRaLoiThatChuKhongNoiChungChung() {
+        let r: [String: Any] = ["intent_id": "arch.design",
+                                "error": ["eide_code": "E6003",
+                                          "message": "Chưa có store tại .eide/store/store.sqlite"]]
+        let c = EidePhien.viSaoKhongCoChuoi(r)
+        XCTAssertTrue(c.contains("E6003"), "phải nêu MÃ lỗi, vì đó là thứ tra được: \(c)")
+        XCTAssertTrue(c.contains("store"), "phải nêu câu lỗi thật của lõi: \(c)")
+    }
+
+    /// Lỗi lồng trong `run` cũng phải moi ra — `chat.send` trả `asdict(run)` khi lời gọi hỏng.
+    func testViSaoKhongCoChuoiDocDuocLoiNamTrongRun() {
+        let r: [String: Any] = ["run": ["status": "failed",
+                                        "error": ["eide_code": "E5000",
+                                                  "message": "Vai trò intent không có nhà cung cấp"]]]
+        let c = EidePhien.viSaoKhongCoChuoi(r)
+        XCTAssertTrue(c.contains("E5000") && c.contains("nhà cung cấp"), c)
+    }
+
+    /// Không biết thì NÓI là không biết — một câu đoán đẩy người dùng đi sửa nhầm chỗ.
+    func testViSaoKhongCoChuoiKhongBiaKhiLoiKhongNoiGi() {
+        let c = EidePhien.viSaoKhongCoChuoi(["intent_id": "arch.design"])
+        XCTAssertTrue(c.contains("không nói lý do"), c)
+    }
+
+    /// `asked` KHÔNG phải lỗi và cũng không phải xong — nó là "đang chờ ANH".
+    ///
+    /// Hiện nguyên chữ `asked` thì người dùng ngồi đợi một chuỗi đang đợi họ. Đo trên bài CNC:
+    /// chuỗi `arch.design` dừng ở `arch.style_select` vì thiếu `reqset_ids`, trả `state: asked`.
+    func testTrangThaiAskedNoiRaLaDangChoNguoi() {
+        XCTAssertTrue(EidePhien.trangThaiChuoi("asked").contains("chờ anh"),
+                      EidePhien.trangThaiChuoi("asked"))
+        XCTAssertTrue(EidePhien.trangThaiChuoi("planned").contains("gật đầu"),
+                      EidePhien.trangThaiChuoi("planned"))
+        XCTAssertEqual(EidePhien.trangThaiChuoi("xyz"), "trạng thái chưa rõ")
+    }
 }

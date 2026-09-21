@@ -132,6 +132,10 @@ def test_user_version_cu_la_E6003(tmp_path, workspace):
     res = r0.invoke("project.create", {"text": "dự án đo điện áp"}, Context(project_dir=workspace)).result
     duong_dan = workspace / res["project_id"]
     db = store.store_path(duong_dan)
+    # `project.create` tự di trú từ 21/09/2026 ([DEV-145]), nên phải XOÁ store mới dựng lại được
+    # một bản cũ: `migrate` không lùi, và một lệnh không làm gì để test xanh vì lý do sai.
+    db.unlink(missing_ok=True)
+    store.seal_path(db).unlink(missing_ok=True)
     store.migrate(db, target=1, ledger=r0.ledger)          # dừng ở phiên bản cũ
     r = _router(tmp_path)
     run = r.invoke("project.open", {"project": str(duong_dan)}, Context(project_dir=workspace))
@@ -165,14 +169,46 @@ def test_mat_niem_phong_cung_la_E6000(tmp_path, workspace):
     assert run.error["eide_code"] == "E6000"
 
 
-def test_chua_migrate_bao_E6003_chu_khong_no(tmp_path, workspace):
-    """Dự án vừa tạo, chưa `eide migrate` — store chưa tồn tại."""
+def test_du_an_vua_tao_MO_DUOC_ngay_khong_phai_migrate_tay(tmp_path, workspace):
+    """Dự án vừa tạo phải mở được NGAY — [DEV-145], đảo chiều test cũ.
+
+    Test này trước đây khẳng định điều ngược lại: dự án mới tạo thì `project.open` ném E6003 và
+    người dùng phải chạy `eide migrate`. Nó xanh, và nó mô tả đúng mã — nhưng thứ nó bảo vệ là
+    một sản phẩm hỏng.
+
+    Đo ngày 21/09/2026 bằng một phiên giao diện thật (bài CNC Fangling F2300B): tạo dự án xong,
+    lượt mở đầu tiên ném E6003, và từ đó mọi lượt gõ đều rơi vào hư không — tám lượt, không một
+    câu trả lời nào. Người dùng không có đường nào biết phải chạy `eide migrate`: giao diện
+    không có nút ấy, và `eide migrate` là một lệnh dòng lệnh.
+
+    Store là MỘT PHẦN của dự án, không phải một bước cài đặt. Thứ tạo ra dự án phải để nó ở
+    trạng thái mở được — y như `.git` đã sửa hồi 17/09.
+    """
     r0 = _router(tmp_path)
-    res = r0.invoke("project.create", {"text": "dự án chưa di trú"}, Context(project_dir=workspace)).result
+    res = r0.invoke("project.create", {"text": "dự án vừa tạo"}, Context(project_dir=workspace)).result
+    assert store.store_path(workspace / res["project_id"]).exists(), "create phải để lại store"
+    r = _router(tmp_path)
+    run = r.invoke("project.open", {"project": str(workspace / res["project_id"])},
+                   Context(project_dir=workspace))
+    assert run.status == "done", f"dự án vừa tạo phải mở được ngay, nhận: {run.error}"
+
+
+def test_store_bi_xoa_van_bao_E6003_chu_khong_no(tmp_path, workspace):
+    """Nhánh E6003 vẫn phải sống: store BỊ XOÁ là chuyện khác với store chưa từng có.
+
+    [DEV-145] làm dự án mới luôn có store, nhưng nó không làm store thành bất tử — ai đó xoá
+    `.eide/store/` thì `project.open` vẫn phải nói E6003 kèm `remedy` chứ không nổ ra traceback.
+    """
+    r0 = _router(tmp_path)
+    res = r0.invoke("project.create", {"text": "dự án mất store"}, Context(project_dir=workspace)).result
+    db = store.store_path(workspace / res["project_id"])
+    db.unlink()
+    store.seal_path(db).unlink(missing_ok=True)
     r = _router(tmp_path)
     run = r.invoke("project.open", {"project": str(workspace / res["project_id"])},
                    Context(project_dir=workspace))
     assert run.status == "failed" and run.error["eide_code"] == "E6003"
+    assert run.error["remedy"] == "eide migrate"
 
 
 # ---------- niêm phong: đọc không được coi là ghi ----------

@@ -138,6 +138,14 @@ final class UngDung: NSObject, NSApplicationDelegate {
             Task { await self._tuKiem() }
             return
         }
+        // `--kich-ban <tệp> [--ra <thư mục>]`: chạy một PHIÊN thật qua đường giao diện, chụp
+        // ảnh và ghi nhật ký từng bước. Xem `KichBan.swift`.
+        if let i = args.firstIndex(of: "--kich-ban"), i + 1 < args.count {
+            let ra = (args.firstIndex(of: "--ra").flatMap { $0 + 1 < args.count ? args[$0 + 1] : nil })
+                ?? NSTemporaryDirectory() + "eide-kich-ban"
+            Task { await KichBan.chay(self, tep: args[i + 1], ra: URL(fileURLWithPath: ra)) }
+            return
+        }
         Task { await phien.khoiDong() }
     }
 
@@ -462,6 +470,10 @@ final class UngDung: NSObject, NSApplicationDelegate {
         print(String(format: "  [cỡ] %-16@ %.0f × %.0f", nhan as NSString,
                      khung.frame.width, khung.frame.height))
     }
+
+    /// Cho bộ lái kịch bản dùng lại — cùng một phép chụp, nên ảnh của hai chế độ
+    /// so được với nhau.
+    func _chupCong(_ url: URL) { _chup(url) }
 
     private func _chup(_ url: URL) {
         _co((url.lastPathComponent as NSString).deletingPathExtension)

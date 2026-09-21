@@ -1,0 +1,28 @@
+# Bài test 1 — Gateway LAN → USB cho bộ điều khiển CNC Fangling F2300B
+#
+# Tôi đóng vai chủ sản phẩm, giao việc cho tác tử EIDE qua ô lệnh của vùng trao đổi.
+# Mỗi dòng là một lượt gõ. Kịch bản đi đúng thứ tự anh yêu cầu:
+#   giải pháp → chọn một → thiết kế chi tiết → code → mô phỏng → sửa.
+
+@tao Gateway LAN sang USB cho máy CNC Fangling F2300B — chép file G-code qua mạng nội bộ thay cho cắm USB tay
+
+# 1. Bối cảnh và yêu cầu — để tác tử ghi thành yêu cầu có mã, đừng đoán
+Máy CNC của tôi dùng bộ điều khiển Fangling F2300B. Hiện mỗi lần đưa bản thiết kế xuống xưởng tôi phải chép file ra USB rồi cắm vào bộ điều khiển. Tôi muốn một thiết bị cắm vào cổng USB của bộ điều khiển và ĐÓNG VAI một ổ USB, còn phía kia nối mạng LAN để máy trong công ty chép file vào thẳng.
+
+# 2. Xin CÁC phương án, kèm đánh đổi — chưa chọn gì
+Hãy đưa cho tôi các phương án kỹ thuật khả thi cho việc này, mỗi phương án nêu rõ phần cứng cần, cách bộ điều khiển nhìn thấy thiết bị, rủi ro khi bộ điều khiển đang đọc mà mạng ghi vào, và chi phí ước lượng. Chưa cần chọn.
+
+# 3. Chọn một — và nói rõ vì sao chọn
+Tôi chọn phương án dùng một máy tính nhúng Linux có cổng USB OTG, chạy USB Mass Storage Gadget với một file ảnh đĩa, và một dịch vụ mạng để ghi file vào ảnh đĩa đó. Hãy lập thiết kế chi tiết cho phương án này.
+
+# 4. Chốt điểm nguy hiểm nhất trước khi code
+Điểm tôi lo nhất là hỏng dữ liệu khi bộ điều khiển đang đọc mà mình ghi vào ảnh đĩa. Hãy thiết kế cụ thể cách xử lý, và ghi thành yêu cầu kiểm thử được.
+
+# 5. Sinh mã
+Hãy sinh mã cho phần điều khiển gadget và dịch vụ nhận file qua LAN, theo đúng thiết kế trên.
+
+# 6. Chạy mô phỏng
+Chạy mô phỏng kịch bản: máy trong công ty chép một file G-code 2 MB trong khi bộ điều khiển đang đọc thư mục. Cho tôi xem kỳ vọng nào đạt, nào trượt.
+
+# 7. Sửa theo kết quả mô phỏng
+Dựa trên kết quả mô phỏng, hãy sửa thiết kế và mã cho phù hợp, rồi nói rõ anh đã đổi gì và vì sao.

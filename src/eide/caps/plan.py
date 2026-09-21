@@ -14,6 +14,7 @@ planner KHÔNG ĐƯỢC làm — "giả định tri thức chắc có".
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -293,16 +294,41 @@ def ghi_plan(root: Path, feature: str, plan: dict[str, Any], quyet_dinh: dict[st
     Ghi cả khi cổng trả ASK. Một kế hoạch đang chờ người vẫn là dữ liệu; `code.generate_module`
     đọc `decision` rồi từ chối, chứ không phải không tìm thấy gì rồi đoán.
     """
-    f = root / EIDE_DIR / THU_MUC_PLAN / f"{feature}.json"
+    f = root / EIDE_DIR / THU_MUC_PLAN / f"{ten_tep_plan(feature)}.json"
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(json.dumps({"feature": feature, "plan": plan, "decision": quyet_dinh,
                              "at": _bay_gio()}, ensure_ascii=False, indent=1), encoding="utf-8")
     return f
 
 
+def ten_tep_plan(feature: str) -> str:
+    """`feature` → tên tệp AN TOÀN, ổn định, và đảo ngược được qua trường `feature` trong JSON.
+
+    Trước 21/09/2026 `feature` được nối thẳng vào đường dẫn. Hai chuyện hỏng theo:
+
+    1. **Ghi ra ngoài dự án.** `feature` đến từ câu người dùng gõ qua `chat.send`, nên một câu có
+       `/` hay `..` trỏ tệp ra khỏi `.eide/plans/`. Không cần ai cố tình: một câu tiếng Việt bình
+       thường như "vào/ra qua LAN" đã đủ.
+    2. **Tên tệp dài bằng cả câu nói.** Đo trong dự án của bài CNC: một tệp kế hoạch tên
+       `thiết bị cắm vào cổng USB của bộ điều khiển và ĐÓNG VAI một ổ USB, còn phía kia…json`,
+       160 ký tự. Vượt 255 byte là `OSError` lúc ghi — trên một câu chỉ dài hơn chút nữa.
+
+    Hậu tố băm chứ không cắt trần: hai feature khác nhau cùng 48 ký tự đầu sẽ **ghi đè kế hoạch
+    của nhau**, và mất một kế hoạch là mất luôn quyết định cổng G1 gắn với nó.
+    """
+    from eide.caps.project import slugify
+    return f"{slugify(feature)}-{hashlib.sha256(feature.encode()).hexdigest()[:8]}"
+
+
 def doc_plan_feature(root: Path, feature: str) -> dict[str, Any] | None:
-    f = root / EIDE_DIR / THU_MUC_PLAN / f"{feature}.json"
-    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+    thu = root / EIDE_DIR / THU_MUC_PLAN
+    f = thu / f"{ten_tep_plan(feature)}.json"
+    if f.exists():
+        return json.loads(f.read_text(encoding="utf-8"))
+    # Kế hoạch ghi trước bản vá nằm dưới tên cũ. Đọc được bản cũ chứ không ghi ra nó: một dự án
+    # đang chạy dở không được mất lịch sử vì một lần nâng cấp.
+    cu = thu / f"{feature}.json"
+    return json.loads(cu.read_text(encoding="utf-8")) if cu.exists() else None
 
 
 def _bay_gio() -> str:

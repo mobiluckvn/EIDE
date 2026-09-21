@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import secrets
+import sys
 import threading
 from collections.abc import Callable
 from dataclasses import asdict, replace
@@ -673,7 +674,15 @@ class Daemon:
             return []
         try:
             bc = doc_bao_cao(Path(ctx.project_dir), run_id) or {}
-        except Exception:  # noqa: BLE001 — không đọc được báo cáo thì im, đừng làm hỏng câu trả lời
+        except Exception as e:  # noqa: BLE001 — hỏng ở đây không được làm hỏng cả câu trả lời
+            # NÓI RA, đừng chỉ nuốt. Tới 21/09/2026 nhánh này `return []` lặng lẽ, và một store
+            # thiếu (E6003) hiện ra y hệt "chuỗi không chờ gì cả": tác tử dừng hỏi người, câu
+            # hỏi không tới được người, và không có một dòng nào ở đâu nói vì sao.
+            #
+            # Vẫn trả `[]` chứ không ném: `cho_nguoi` là phần phụ của câu trả lời, và làm hỏng
+            # cả `chat.send` vì đọc hụt một báo cáo là đổi một lỗi im lấy một lỗi to hơn.
+            print(f"[chat.send] không đọc được báo cáo run {run_id}: "
+                  f"{type(e).__name__}: {e}", file=sys.stderr, flush=True)
             return []
         return [{"cap": n.get("cap", ""), "thieu": n.get("thieu") or [], "vi": n.get("vi", "")}
                 for n in (bc.get("waiting") or []) if n.get("thieu")]
