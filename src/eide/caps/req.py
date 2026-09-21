@@ -18,6 +18,7 @@ quy tắc, không nhờ mô hình nhận xét.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from datetime import UTC, datetime
@@ -137,7 +138,9 @@ def elicit(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     for i, r in enumerate(raw):
         r.setdefault("source", nguon[0] if nguon else "lệnh")
         r.setdefault("locator", {"index": i})
-    return {"raw": raw, "gaps": list(resp.data.get("gaps") or [])}
+    gaps = list(resp.data.get("gaps") or [])
+    ghi_clarification(_root(ctx), gaps, cap="req.elicit", ctx=ctx)
+    return {"raw": raw, "gaps": gaps}
 
 
 _SCHEMA_RAW = {
@@ -229,6 +232,45 @@ def _dem_theo_nhom(root: Path) -> dict[str, int]:
         elif (m := re.fullmatch(r"NFR-(\d+)", str(i))):
             dem["NFR"] = max(dem.get("NFR", 0), int(m.group(1)))
     return dem
+
+
+def ghi_clarification(root: Path, ds: list[dict[str, Any]], *, cap: str,
+                      ctx: Context | None = None) -> int:
+    """Ghi các điểm CẦN LÀM RÕ xuống store — [DEV-151].
+
+    Tới 21/09/2026 `req.elicit.gaps` và `req.detect_conflict.issues` được tính rồi vứt đi ngay:
+    không bảng nào giữ chúng, nên tab "Làm rõ yêu cầu" không có gì để hiện và lấp chỗ trống bằng
+    lịch sử trò chuyện. Tác tử tìm ra đúng thứ người cần biết, rồi quên nó trong cùng một nhịp.
+
+    Mã ổn định theo NỘI DUNG (`CL-<băm>`), không theo thứ tự: `req.detect_conflict` chạy lại sau
+    mỗi lần tập yêu cầu đổi, và một mã chạy theo thứ tự sẽ đẻ ra bản sao của cùng một điểm sau
+    mỗi lần chạy — người dùng trả lời một câu rồi thấy nó quay lại dưới mã khác.
+
+    KHÔNG ghi đè câu trả lời đã có: `INSERT OR IGNORE`, vì một điểm người đã trả lời mà bị dựng
+    lại thành `open` là xoá công của người.
+    """
+    db = store.store_path(root)
+    if not db.exists() or not ds:
+        return 0
+    now = datetime.now(UTC).isoformat()
+    run_id = ((ctx.extra.get("chain") or {}) if ctx is not None else {}).get("run_id")
+    n = 0
+    with store.open_store(db) as c:
+        for d in ds:
+            van = str(d.get("text") or d.get("question") or "").strip()
+            if not van:
+                continue
+            ma = "CL-" + hashlib.sha256(
+                f"{d.get('kind') or 'gap'}|{van}".encode()).hexdigest()[:10]
+            c.execute(
+                "INSERT OR IGNORE INTO clarification (id, kind, text, req_ids, suggestion,"
+                " source_cap, run_id, status, created_at) VALUES (?,?,?,?,?,?,?, 'open', ?)",
+                (ma, d.get("kind") or "gap", van,
+                 json.dumps(d.get("req_ids") or [], ensure_ascii=False),
+                 d.get("suggestion"), cap, run_id, now))
+            n += c.total_changes and 1 or 0
+        c.commit()
+    return n
 
 
 def _ghi_requirement(root: Path, ds: list[dict[str, Any]]) -> None:
@@ -361,6 +403,7 @@ def detect_conflict(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                                    "text": f"{dl}: {a[2]!r} ≠ {b[2]!r}",
                                    "suggestion": "chọn một ngưỡng, hoặc nêu điều kiện áp dụng "
                                                  "cho từng ngưỡng"})
+    ghi_clarification(root, issues, cap="req.detect_conflict", ctx=ctx)
     return {"issues": issues}
 
 
@@ -595,3 +638,88 @@ def change_impact(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                         "mà là đổi thiết kế (REQ-08 ask: tác động > ngưỡng)", rule="REQ-08",
                         gate="*", impact=ra)
     return {"impact": ra}
+
+
+@capability("req.answer_clarification")
+def answer_clarification(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: REQ-09 — CDS-12.1; UXC-31 §8 S9; DPS-09 D3; undo `restore_answer`. [DEV-151]
+
+    **Vế NGƯỜI của việc làm rõ yêu cầu.** Tác tử tìm ra điểm mờ (`req.elicit.gaps`) và chỗ mâu
+    thuẫn (`req.detect_conflict.issues`); tới 21/09/2026 không có đường nào cho người trả lời
+    chúng, nên bảng ở tab "Làm rõ yêu cầu" là bảng chỉ đọc và cuộc cộng tác dừng một chiều.
+
+    **Chỉ THÊM, không ghi đè.** Mỗi lần trả lời là một dòng mới trong `clarification_answer`;
+    `clarification.answer` chỉ là bản hiện hành cho đọc nhanh. Chủ sản phẩm đòi "rollback lại
+    theo TỪNG LẦN thay đổi", và một cột bị ghi đè không làm được điều đó — sổ cái cũng không,
+    vì `cap.run.start` chỉ giữ `args_hash`.
+
+    `actor` là `human:<tên>` chứ không phải `agent`: đây là việc của người, và một thay đổi của
+    người mang nhãn tác tử sẽ làm mọi phép truy trách nhiệm sau này sai.
+    """
+    root = _root(ctx)
+    ma = str(params["clar_id"]).strip()
+    van = str(params["answer"]).strip()
+    if not van:
+        raise EideError("E1000", "Câu trả lời rỗng — không ghi gì cả", missing=["answer"])
+    db = store.store_path(root)
+    now = datetime.now(UTC).isoformat()
+    ai = str(getattr(ctx, "actor", "") or "human")
+    with store.open_store(db) as c:
+        d = c.execute("SELECT status FROM clarification WHERE id=?", (ma,)).fetchone()
+        if d is None:
+            co = [r[0] for r in c.execute(
+                "SELECT id FROM clarification WHERE status='open' LIMIT 20")]
+            raise EideError("E2000", f"Không có điểm cần làm rõ nào mang mã `{ma}`",
+                            exists=co, candidates=[], missing=[ma])
+        so = int(c.execute("SELECT COUNT(*) FROM clarification_answer WHERE clar_id=?",
+                           (ma,)).fetchone()[0]) + 1
+        c.execute("INSERT INTO clarification_answer (id, clar_id, answer, answered_by, at)"
+                  " VALUES (?,?,?,?,?)", (f"{ma}#{so}", ma, van, ai, now))
+        c.execute("UPDATE clarification SET answer=?, answered_by=?, answered_at=?,"
+                  " status='answered' WHERE id=?", (van, ai, now, ma))
+        c.commit()
+    led = ctx.extra.get("ledger")
+    if led is not None:
+        led.append("human.file_save", {"clar_id": ma, "revision": so, "by": ai,
+                                       "cap": "req.answer_clarification"})
+        # ĐĂNG KÝ mục hoàn tác — không có dòng này thì `restore_answer` có hiện thực mà nút
+        # Hoàn tác không có gì để bấm: cột phải đọc `UndoService.list()`, không đọc sổ cái.
+        from eide_core.undo import UndoService
+        UndoService(led, (getattr(ctx.extra.get("gate"), "config", None) or {})).register(
+            # Mã hoàn tác mang SỐ BẢN: Router đánh dấu một `undo_ref` là đã dùng sau khi hoàn
+            # tác, nên dùng chung một mã cho mọi lần trả lời thì chỉ lùi được ĐÚNG MỘT bước —
+            # trong khi cả bảng lịch sử này sinh ra để lùi được từng lần.
+            f"clar:{ma}#{so}", "restore_answer", cap="req.answer_clarification")
+    return {"clar_id": ma, "status": "answered", "answer": van, "revision": so}
+
+
+def hoan_tac_cau_tra_loi(root: Path, clar_id: str) -> dict[str, Any]:
+    """Gỡ LẦN trả lời gần nhất, trả về bản trước đó — bộ hoàn tác `restore_answer`.
+
+    Đánh dấu `undone_at` chứ không xoá dòng: một lần hoàn tác cũng là một sự kiện, và xoá nó đi
+    thì lần sau không ai biết câu trả lời ấy từng tồn tại. Hoàn tác nhiều lần thì lùi dần từng
+    bước — đó là điều "rollback theo từng lần thay đổi" thật sự đòi hỏi.
+    """
+    db = store.store_path(root)
+    now = datetime.now(UTC).isoformat()
+    with store.open_store(db) as c:
+        r = c.execute("SELECT id, answer FROM clarification_answer WHERE clar_id=?"
+                      " AND undone_at IS NULL ORDER BY at DESC, id DESC LIMIT 1",
+                      (clar_id,)).fetchone()
+        if r is None:
+            raise EideError("E2000", f"`{clar_id}` chưa có câu trả lời nào để hoàn tác",
+                            exists=[], candidates=[], missing=[clar_id])
+        c.execute("UPDATE clarification_answer SET undone_at=? WHERE id=?", (now, r[0]))
+        truoc = c.execute("SELECT answer, answered_by FROM clarification_answer WHERE clar_id=?"
+                          " AND undone_at IS NULL ORDER BY at DESC, id DESC LIMIT 1",
+                          (clar_id,)).fetchone()
+        if truoc is None:
+            c.execute("UPDATE clarification SET answer=NULL, answered_by=NULL,"
+                      " answered_at=NULL, status='open' WHERE id=?", (clar_id,))
+        else:
+            c.execute("UPDATE clarification SET answer=?, answered_by=?, answered_at=?,"
+                      " status='answered' WHERE id=?", (truoc[0], truoc[1], now, clar_id))
+        c.commit()
+    return {"clar_id": clar_id, "da_go": r[1],
+            "quay_ve": truoc[0] if truoc else None,
+            "status": "answered" if truoc else "open"}

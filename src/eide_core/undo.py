@@ -23,6 +23,10 @@ KIND_WINDOW = {
     "reflash_known_good": "flash",
     "delete_created_files": "files",
     "restore_config": "files",
+    # [DEV-151] Loại thứ SÁU. Năm loại trên hoàn tác một tệp, một commit, hay cả dự án; không
+    # loại nào hoàn tác được MỘT DÒNG trong store — mà câu trả lời của người cho một điểm cần
+    # làm rõ đúng là một dòng như thế.
+    "restore_answer": "files",
 }
 
 _DON_VI = {"m": 1 / 60, "h": 1.0, "d": 24.0}

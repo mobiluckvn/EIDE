@@ -221,6 +221,17 @@ add("req", [
  ("req.trace_matrix", "Ma trận truy vết UR→FR→thiết kế→mã→test; phát hiện lỗ hổng", "project", "TraceMatrix (xlsx/md)", "R0", "T1", "—", "—", "STP-05", "M2", "chưa"),
  ("req.acceptance", "Sinh tiêu chí chấp nhận/kịch bản kiểm thử từ yêu cầu (Given-When-Then)", "ReqSet", "AC[]", "R0", "T1", "—", "—", "STP-05", "M2", "chưa"),
  ("req.change_impact", "Đánh giá tác động khi đổi yêu cầu: module, fact, test, tài liệu bị ảnh hưởng", "delta", "ImpactReport", "R0", "T1", "KG dự án", "Tác động > ngưỡng", "kg.impact", "M2", "chưa"),
+ # [DEV-151] Vế NGƯỜI (đặt CUỐI khối: mã REQ-xx gán theo vị trí, chèn
+ # giữa sẽ làm REQ-07/REQ-08 đổi nghĩa)
+ # Vế NGƯỜI của việc làm rõ yêu cầu. Tác tử tìm ra điểm mờ và chỗ mâu thuẫn;
+ # không có dòng này thì bảng ở tab "Làm rõ yêu cầu" là bảng chỉ đọc và cuộc cộng tác
+ # dừng lại ở một chiều. Rủi ro R1 vì nó ghi vào store; T0 vì đây là việc của NGƯỜI,
+ # không phải một suy luận của tác tử cần cổng chặn.
+ # T1 theo tiền lệ `code.human_save` (cùng loại việc). KHÔNG dùng T0: trong bộ này
+ # T0 nghĩa là "tác tử phải hỏi người trước khi làm", nên đặt nó lên một việc CỦA
+ # NGƯỜI thì sản phẩm hỏi người xin phép để người làm việc của chính mình — đo
+ # 22/09/2026, mọi lời gọi trả `pending` với lý do "mức T0 — mặc định hỏi người".
+ ("req.answer_clarification", "NGƯỜI trả lời một điểm cần làm rõ; lịch sử chỉ thêm nên hoàn tác được từng lần", "clar_id, answer", "Clarification'", "R1", "T1", "Điểm cần làm rõ đang mở", "—", "UXC-31 S9, DPS-09 D3", "M1", "chưa"),
 ])
 add("arch", [
  ("arch.style_select", "Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL) theo yêu cầu và tài nguyên chip", "ReqSet, passport", "ArchDecision", "R1", "T1*", "Hộ chiếu + NFR", "Đổi kiểu kiến trúc dự án đã có", "SAD-03", "M2", "chưa"),

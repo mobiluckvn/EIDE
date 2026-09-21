@@ -214,6 +214,12 @@ c.push(T([2000, 3300, 2200, 1800], ['Loại undo', 'Cách hoàn tác', 'Cửa s�
   ['reflash_known_good', 'Nạp lại artifact known-good gần nhất qua target.flash (được coi là R3 trên board lab, tự động)', 'flash (phiên)', 'target.flash, target.probe_write'],
   ['delete_created_files', 'Xóa tệp/thư mục do năng lực tạo (đường dẫn ghi trong CapabilityRun), không chạm tệp có sẵn', 'files (24h)', 'project.create, doc.generate, diagram.render, env.install_tool (gỡ gói)'],
   ['restore_config', 'Khôi phục tệp cấu hình từ bản sao trước (autonomy/target/constraints)', 'files (24h)', 'discover.auto_setup, policy.set_autonomy'],
+  // v1.3 — [DEV-151]. Loại hoàn tác thứ SÁU. Năm loại trước đều hoàn tác một tệp, một
+  // commit, hay cả dự án; không loại nào hoàn tác được MỘT DÒNG trong store. Mà câu trả
+  // lời của người cho một điểm cần làm rõ đúng là một dòng như thế — và chủ sản phẩm
+  // đòi "rollback theo TỪNG LẦN thay đổi", tức lùi dần từng bản trả lời chứ không chỉ
+  // xoá bản cuối. Lịch sử nằm ở `clarification_answer`, chỉ thêm, nên lùi được nhiều lần.
+  ['restore_answer', 'Gỡ LẦN trả lời gần nhất của một điểm cần làm rõ (đánh dấu undone_at, không xoá dòng) và khôi phục bản trả lời trước đó; hết bản trước thì điểm ấy về trạng thái open', 'files (24h)', 'req.answer_clarification'],
   ['none', 'Không hoàn tác (R0 đọc; hoặc R4 đã qua người)', '—', '—'],
 ]));
 c.push(SP());

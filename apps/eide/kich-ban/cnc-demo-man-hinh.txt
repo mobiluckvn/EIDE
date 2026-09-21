@@ -1,0 +1,11 @@
+# Demo trên màn hình — dự án CNC đã có sẵn 4 yêu cầu và 4 điểm cần làm rõ.
+#
+# Mở lại đúng dự án ấy rồi gõ bài test, để xem tác tử bổ sung gì vào những thứ đã có.
+
+@mo ~/eide/demo-cnc/gateway-lan-sang-usb-cho-may-cnc-fangling-f2300b
+
+# Nhịp 1 — kể việc bằng lời người dùng
+Máy CNC ở xưởng tôi dùng bộ điều khiển Fangling F2300B. Mỗi lần có bản thiết kế mới tôi phải chép file G-code ra USB rồi mang xuống xưởng cắm vào máy. Tôi muốn bỏ hẳn việc cầm USB đi lại.
+
+# Nhịp 2 — ràng buộc quan trọng nhất
+Bộ điều khiển đó chỉ đọc được USB, nó không có cổng mạng và tôi không đổi được phần mềm trong nó.

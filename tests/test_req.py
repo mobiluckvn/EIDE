@@ -11,6 +11,7 @@ Năm năng lực deterministic kiểm được không cần mô hình. Ba năng 
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -430,3 +431,95 @@ def _gia_lap(monkeypatch, data):
     import eide.caps.req as m
     monkeypatch.setattr(m, "_gateway", lambda ctx: _G())
     monkeypatch.setattr(m, "_ngu_canh", lambda ctx, t: "")
+
+
+# ---------- [DEV-151] điểm cần làm rõ: người và tác tử cùng làm
+
+def _du_an_co_diem(tmp_path, workspace):
+    from eide.caps.req import ghi_clarification
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+    root = Path(r.invoke("project.create", {"text": "thử làm rõ"},
+                         Context(project_dir=workspace)).result["path"])
+    ctx = Context(project_dir=root, actor="human:Vũ Trí Công",
+                  extra={"gate": PolicyGate(), "ledger": r.ledger, "router": r})
+    ghi_clarification(root, [{"kind": "unmeasurable", "text": "nhanh là bao nhiêu giây?",
+                              "suggestion": "nêu ngưỡng kèm đơn vị", "req_ids": ["UR-01"]}],
+                      cap="req.detect_conflict")
+    with store.open_store(store.store_path(root)) as c:
+        ma = c.execute("SELECT id FROM clarification").fetchone()[0]
+    return r, ctx, root, ma
+
+
+def test_diem_can_lam_ro_duoc_LUU_chu_khong_vut_di(tmp_path, workspace):
+    """`req.elicit.gaps` và `req.detect_conflict.issues` từng được tính rồi vứt đi.
+
+    Sản phẩm có một tab tên "Làm rõ yêu cầu", hai năng lực tính ra đúng dữ liệu ấy, và không có
+    bảng nào ở giữa — nên tab ấy lấp chỗ trống bằng lịch sử trò chuyện.
+    """
+    _, _, root, ma = _du_an_co_diem(tmp_path, workspace)
+    with store.open_store(store.store_path(root)) as c:
+        d = c.execute("SELECT kind, text, status FROM clarification WHERE id=?", (ma,)).fetchone()
+    assert d == ("unmeasurable", "nhanh là bao nhiêu giây?", "open")
+
+
+def test_ma_diem_on_dinh_theo_NOI_DUNG_khong_theo_thu_tu(tmp_path, workspace):
+    """`req.detect_conflict` chạy lại sau mỗi lần tập yêu cầu đổi.
+
+    Mã chạy theo thứ tự sẽ đẻ ra bản sao của cùng một điểm sau mỗi lần chạy — người dùng trả
+    lời một câu rồi thấy nó quay lại dưới mã khác.
+    """
+    from eide.caps.req import ghi_clarification
+    _, _, root, ma = _du_an_co_diem(tmp_path, workspace)
+    ghi_clarification(root, [{"kind": "unmeasurable", "text": "nhanh là bao nhiêu giây?"}],
+                      cap="req.detect_conflict")
+    with store.open_store(store.store_path(root)) as c:
+        assert c.execute("SELECT COUNT(*) FROM clarification").fetchone()[0] == 1
+
+
+def test_nguoi_tra_loi_roi_HOAN_TAC_lui_dan_tung_ban(tmp_path, workspace):
+    """"Mọi thứ phải được lưu lại sự thay đổi và rollback lại theo TỪNG LẦN thay đổi".
+
+    Một cột `answer` bị ghi đè không làm được điều đó, và sổ cái cũng không — `cap.run.start`
+    chỉ giữ `args_hash`, một mã băm. Nên lịch sử phải nằm trong `clarification_answer`.
+    """
+    from eide.undo_handlers import dang_ky
+    from eide_core.undo import UndoService
+    r, ctx, root, ma = _du_an_co_diem(tmp_path, workspace)
+    dang_ky(r, ctx)
+
+    for van in ("khoảng 8 MB", "chính xác 12 MB"):
+        run = r.invoke("req.answer_clarification", {"clar_id": ma, "answer": van}, ctx)
+        assert run.status == "done", run.decision
+
+    def hien():
+        with store.open_store(store.store_path(root)) as c:
+            return c.execute("SELECT status, answer FROM clarification WHERE id=?",
+                             (ma,)).fetchone()
+
+    assert hien() == ("answered", "chính xác 12 MB")
+    refs = [m["undo_ref"] for m in UndoService(r.ledger).list()
+            if m["undo_ref"].startswith("clar:")]
+    assert len(refs) == 2, "mỗi lần trả lời phải có mã hoàn tác RIÊNG, không dùng chung một mã"
+
+    assert r.hoan_tac(refs[0], by="human", ctx=ctx)["applied"] is True
+    assert hien() == ("answered", "khoảng 8 MB"), "phải quay về bản TRƯỚC, không phải rỗng"
+    assert r.hoan_tac(refs[1], by="human", ctx=ctx)["applied"] is True
+    assert hien() == ("open", None)
+
+
+def test_tra_loi_KHONG_bi_cong_hoi_lai_nguoi(tmp_path, workspace):
+    """Bậc T0 nghĩa là "tác tử phải hỏi người trước khi làm".
+
+    Đặt nó lên một việc CỦA NGƯỜI thì sản phẩm hỏi người xin phép để người làm việc của chính
+    mình — đo 22/09/2026, mọi lời gọi trả `pending` với lý do "mức T0 — mặc định hỏi người".
+    `code.human_save` là tiền lệ: cùng loại việc, bậc T1.
+    """
+    r, ctx, _, ma = _du_an_co_diem(tmp_path, workspace)
+    run = r.invoke("req.answer_clarification", {"clar_id": ma, "answer": "8 MB"}, ctx)
+    assert run.status == "done" and run.decision["decision"] == "APPROVE", run.decision
+
+
+def test_tra_loi_diem_khong_co_that_bao_E2000(tmp_path, workspace):
+    r, ctx, _, _ = _du_an_co_diem(tmp_path, workspace)
+    run = r.invoke("req.answer_clarification", {"clar_id": "CL-khong-co", "answer": "x"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E2000"

@@ -358,9 +358,16 @@ def report_back(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             cost += float(d.get("cost_usd") or 0)
     undo = UndoService(led, getattr(ctx.extra.get("gate"), "config", None)).list() if led else []
 
+    # SẢN PHẨM, không chỉ hoạt động. Báo cáo cũ liệt kê tên năng lực đã chạy và số tiền — thứ
+    # nói về MÁY. Người dùng hỏi thẳng: *"Xong 6/6 bước vậy kết quả từng bước là gì? Hiển thị ở
+    # đâu và tôi xem nó bằng cách nào? Làm sao biết kết quả đó đúng ý tôi?"*, và không dòng nào
+    # trong báo cáo cũ trả lời được một câu nào trong ba câu ấy.
+    ra_gi = _da_lam_ra_gi(ctx, params["run_id"])
+
     report = {"run_id": params["run_id"], "done": done, "waiting": waiting,
-              "undo": [u["undo_ref"] for u in undo], "cost": round(cost, 6)}
+              "ra": ra_gi, "undo": [u["undo_ref"] for u in undo], "cost": round(cost, 6)}
     dong = [f"Đã làm {len(done)} việc" + (f": {', '.join(dict.fromkeys(done))}" if done else ".")]
+    dong += _cau_san_pham(ra_gi)
     if waiting:
         dong.append(f"Đang chờ anh: {', '.join(dict.fromkeys(waiting))}.")
     if undo:
@@ -368,6 +375,89 @@ def report_back(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     if cost:
         dong.append(f"Chi phí mô hình: {cost:.4f} USD.")
     return {"report": report, "text": "\n".join(dong[:MAX_DONG_REPORT])}
+
+
+def _da_lam_ra_gi(ctx: Context, run_id: str) -> list[dict[str, Any]]:
+    """Các nút đã xong kèm TÓM TẮT ĐẦU RA của chúng, đọc từ `run.report`.
+
+    `tom_tat_ket_qua` đã giữ lại phần này lúc chạy chuỗi; tới đây chỉ việc đọc ra. Nút không có
+    `ra` (chuỗi chạy trước bản vá, hoặc năng lực không trả gì) thì bỏ qua — im lặng về một thứ
+    không biết tốt hơn đoán nó.
+    """
+    root = _root_bao_cao(ctx)
+    if root is None:
+        return []
+    try:
+        bc = doc_bao_cao(root, run_id) or {}
+    except Exception:  # noqa: BLE001
+        return []
+    return [{"cap": n.get("cap", "?"), "ra": n["ra"]}
+            for n in (bc.get("done") or []) if isinstance(n, dict) and n.get("ra")]
+
+
+def _root_bao_cao(ctx: Context) -> Path | None:
+    return Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+
+
+def _man_cho(cap: str) -> str:
+    """Màn nào hiện hiện vật của năng lực này — đọc từ `ui/screens.json`, không chép tay.
+
+    Bảng ấy khai `req.*` → S11 "Yêu cầu & kiến trúc". Chép tay một bảng thứ hai ở đây là tạo ra
+    một chỗ sẽ trôi, và trôi theo kiểu chỉ người dùng tới sai màn.
+    """
+    try:
+        ds = json.loads((spec_dir() / "ui" / "screens.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return ""
+    ns = cap.split(".", 1)[0]
+    for m in ds:
+        for k in (m.get("nang_luc") or []):
+            if k == cap or (k.endswith(".*") and k[:-2] == ns):
+                ten = str(m.get("man_hinh") or "")
+                return ten.split("(")[-1].rstrip(")") if "(" in ten else ten
+    return ""
+
+
+def _nhan_truong(cap: str, truong: str) -> str:
+    """Nhãn người đọc của một trường đầu ra — lấy từ `description` trong hợp đồng, nếu có.
+
+    KHÔNG tự đặt tên tiếng Việt cho trường nào hồ sơ chưa đặt: `reqset`, `gaps`, `raw` là tên
+    trong `output_schema`, và một bảng dịch viết ở đây là một bảng thứ hai sẽ trôi khỏi hợp
+    đồng. Chỉ 100/385 thuộc tính đầu ra có `description` (đo 21/09/2026) — chỗ thiếu hiện
+    nguyên tên trường, và [DEV-150] đề nghị bổ sung nhãn tiếng Việt vào cds ở v1.3.
+    """
+    try:
+        reg = get_registry()
+        if cap in reg:
+            t = ((reg.get(cap).spec.output_schema or {}).get("properties") or {}).get(truong)
+            if isinstance(t, dict) and t.get("description"):
+                return str(t["description"]).split(",")[0][:40]
+    except Exception:  # noqa: BLE001
+        pass
+    return truong
+
+
+def _cau_san_pham(ra_gi: list[dict[str, Any]]) -> list[str]:
+    """Một dòng cho mỗi thứ tác tử LÀM RA, kèm chỗ xem nó.
+
+    Chỉ nói con số và mã — cùng lý do với `tom_tat_ket_qua`: báo cáo là để người ĐỐI CHIẾU, nên
+    nó phải nói đúng thứ đã ghi chứ không phải một câu mô tả dễ nghe.
+    """
+    dong: list[str] = []
+    for m in ra_gi:
+        phan: list[str] = []
+        for k, v in (m["ra"] or {}).items():
+            if k.endswith("_ma") and isinstance(v, list):
+                continue
+            ma = (m["ra"] or {}).get(f"{k}_ma")
+            phan.append(f"{v} {_nhan_truong(m['cap'], k)}"
+                        + (f" ({', '.join(map(str, ma[:4]))}…)" if ma else ""))
+        if not phan:
+            continue
+        man = _man_cho(m["cap"])
+        dong.append(f"→ `{m['cap']}` làm ra: {'; '.join(phan)}"
+                    + (f" — xem ở màn {man}." if man else "."))
+    return dong
 
 
 LY_DO_VI = {
@@ -434,6 +524,16 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     intent = params["intent"]
     ten_y_dinh = intent.get("intent", "unknown") if isinstance(intent, dict) else str(intent)
     grounded = params.get("grounded") or {}
+    # CÂU CỦA NGƯỜI đi cùng ý định xuống tận từng nút. `_text` là quy ước đã có — `_ghi_run`
+    # đọc nó để ghi `run.graph.text` — nhưng cho tới 21/09/2026 KHÔNG NƠI NÀO GÁN nó, nên nửa
+    # dưới của quy ước chạy trên một chuỗi rỗng.
+    #
+    # Hậu quả đo được trên chặng A bài CNC: `req.elicit` hỏng ngay ở nút đầu với "không có đầu
+    # vào: cần `text`, `feature` hoặc `sources`". Năng lực có nhiệm vụ moi yêu cầu ra từ điều
+    # người dùng vừa nói KHÔNG NHẬN ĐƯỢC điều người dùng vừa nói — trong khi `chat.orchestrate`
+    # đang cầm sẵn nó, và schema của chính nó ghi "câu lệnh gốc của người".
+    if isinstance(intent, dict) and params.get("text"):
+        intent = {**intent, "_text": str(params["text"])}
 
     root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
 
@@ -561,7 +661,9 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         if run.status == "done":
             xong.add(nut.id)
             dau_ra[nut.id] = run.result or {}
-            ket_qua.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id})
+            ket_qua.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id,
+                            "ra": tom_tat_ket_qua(run.result or {}),
+                            "dau_ra": _cat_dau_ra(run.result or {})})
         elif run.status == "pending":
             cho.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id, "on_ask": nut.on_ask})
             if nut.on_ask == "wait":
@@ -580,8 +682,22 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # nói tác tử đang đợi người, trong khi chính người vừa bảo nó dừng.
     bi_huy = any((x.get("error") or {}).get("eide_code") == "E3002" for x in hong) or any(
         x.get("status") == "cancelled" for x in ket_qua)
+    # "asked" nghĩa là ĐANG HỎI NGƯỜI, và chỉ một nút có `thieu` mới hỏi được người: `thieu`
+    # là danh sách tham số bắt buộc còn trống, tức là nội dung câu hỏi. Nút ghi `vi: "chờ nút
+    # n1"` thì nó chờ một nút KHÁC, không chờ người — và nếu nút ấy đã hỏng thì nó chờ một thứ
+    # không bao giờ tới.
+    #
+    # Bản trước chỉ hỏi "có nút nào đang chờ không", nên một chuỗi có nút đầu HỎNG và năm nút
+    # sau kẹt theo bị gọi là "asked". Đo 21/09/2026, chặng A bài CNC: giao diện hiện "DỪNG,
+    # đang chờ anh trả lời" mà không kèm một câu hỏi nào, vì không có câu hỏi nào để kèm. Người
+    # dùng đứng trước một ngõ cụt hoàn chỉnh — sản phẩm đòi trả lời và không cho biết trả lời
+    # cái gì; thứ thật sự xảy ra là `req.elicit` hỏng và không ai nói ra.
+    hoi_nguoi = [x for x in cho if x.get("thieu")]
     trang_thai = ("cancelled" if bi_huy
-                  else "done" if not cho and not hong else ("asked" if cho else "failed"))
+                  else "done" if not cho and not hong
+                  else "asked" if hoi_nguoi
+                  else "failed" if hong
+                  else "asked")
     # Hợp đồng trả ĐÚNG `{run_id}` — CHAT-06 là bất đồng bộ theo thiết kế: tiến độ đi qua sự kiện
     # `cap.run.start`/`cap.run.finish` của từng nút (đã có sẵn vì mỗi nút đi qua Router), còn
     # báo cáo cuối nằm ở `run.report` (DDD-14 §2 Run, cột "JSON Report"). Trả cả báo cáo ra
@@ -803,6 +919,16 @@ def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any],
     nguon: dict[str, Any] = {"intent": intent}
     if run_id:
         nguon["run_id"] = run_id
+    # Thứ thứ BA mà chuỗi biết chắc mà slots không có: CÂU GỐC của người.
+    #
+    # `req.elicit` khai `text` là "câu yêu cầu thô" và đó đúng là thứ người vừa gõ; không đưa
+    # thì nút đầu của mọi chuỗi làm-rõ-yêu-cầu hỏng, và nó hỏng theo kiểu tệ nhất — báo "thiếu
+    # đầu vào" cho một đầu vào đang nằm sẵn trong cùng một lời gọi.
+    #
+    # Vẫn lọc qua `input_schema` và qua phép kiểm kiểu như mọi khóa khác, nên năng lực nào
+    # không khai `text` thì không nhận gì.
+    if (van := (intent or {}).get("_text")):
+        nguon["text"] = van
     nguon.update({**(grounded or {}), **((intent or {}).get("slots") or {})})
     ra: dict[str, Any] = {}
     for k, v in nguon.items():
@@ -849,6 +975,68 @@ def _hop_kieu(v: Any, kieu: Any) -> bool:
         return False
     t = _KIEU_JSON.get(kieu)
     return True if t is None else isinstance(v, t)
+
+
+#: Trường đầu ra KHÔNG đáng nhắc trong một câu báo cáo cho người: chúng là móc nối máy dùng.
+_BO_QUA_TOM_TAT = {"run_id", "next", "ok", "status", "result_hash"}
+
+
+#: Trần kích thước đầu ra giữ lại cho MỖI nút, tính bằng ký tự JSON.
+TRAN_DAU_RA = 40_000
+
+
+def _cat_dau_ra(ra: dict[str, Any]) -> dict[str, Any]:
+    """Giữ NGUYÊN đầu ra của một nút để người xem được, có trần và NÓI RA khi cắt.
+
+    Tới 21/09/2026 đầu ra mỗi nút được dùng để giải tham chiếu rồi vứt đi; sổ cái chỉ giữ
+    `result_hash`. Nên câu hỏi "việc 1 là việc gì, output là gì, tôi xem nó bằng cách nào" không
+    có chỗ nào trả lời được — sản phẩm làm ra kết quả rồi quên chúng ngay.
+
+    Có trần vì một nút sinh mã có thể trả về cả tệp, và `run.report` nằm trong một cột JSON của
+    store. Cắt thì GHI RÕ là đã cắt: một đầu ra bị cắt âm thầm là một đầu ra người đọc tưởng đã
+    xem hết.
+    """
+    van = json.dumps(ra, ensure_ascii=False)
+    if len(van) <= TRAN_DAU_RA:
+        return ra
+    return {"_cat": True,
+            "_vi": f"đầu ra {len(van)} ký tự, vượt trần {TRAN_DAU_RA} — giữ phần tóm tắt",
+            "_khoa": list(ra)}
+
+
+def tom_tat_ket_qua(ra: dict[str, Any]) -> dict[str, Any]:
+    """Tóm tắt ĐẦU RA của một nút thành thứ nói được cho người — suy từ chính nó, không bịa.
+
+    Tới 21/09/2026 kết quả mỗi nút được dùng để giải tham chiếu rồi vứt đi: báo cáo chỉ giữ
+    `{id, cap}`, và ledger chỉ giữ `result_hash` — một mã băm. Nên `chat.report_back` chỉ nói
+    được "Đã làm 6 việc: project.open, view.timeline, chat.parse_intent…", tức liệt kê NĂNG LỰC
+    đã chạy chứ không nói chúng LÀM RA CÁI GÌ.
+
+    Người dùng hỏi thẳng: *"Xong 6/6 bước vậy kết quả từng bước là gì? Hiển thị ở đâu? Làm sao
+    biết kết quả đó đúng ý tôi?"* — và sản phẩm không có chỗ nào trả lời được.
+
+    Chỉ ĐẾM và lấy MÃ, không diễn giải: `{"reqset": [...7 mục...]}` → `{"reqset": 7}` và danh
+    sách mã nếu đọc được. Một câu văn mô tả nội dung phải do mô hình viết, tức tốn tiền và có
+    thể lệch khỏi thứ thật sự đã ghi — mà mục đích của báo cáo là để người ĐỐI CHIẾU.
+    """
+    tom: dict[str, Any] = {}
+    for k, v in (ra or {}).items():
+        if k in _BO_QUA_TOM_TAT or v is None:
+            continue
+        if isinstance(v, list):
+            tom[k] = len(v)
+            ma = [x.get("id") for x in v if isinstance(x, dict) and x.get("id")]
+            if ma:
+                tom[f"{k}_ma"] = ma[:8]
+        elif isinstance(v, dict):
+            tom[k] = v.get("id") or f"{len(v)} trường"
+        elif isinstance(v, str):
+            # Chuỗi dài là NỘI DUNG (một câu trả lời, một đoạn mã) — báo cáo không phải chỗ
+            # dán lại cả nội dung, nhưng độ dài cho người biết có thứ để xem.
+            tom[k] = v if len(v) <= 80 else f"{len(v)} ký tự"
+        else:
+            tom[k] = v
+    return tom
 
 
 def _uoc_chi_phi(chuoi: Any) -> float:

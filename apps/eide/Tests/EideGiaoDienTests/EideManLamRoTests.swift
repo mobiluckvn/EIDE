@@ -20,7 +20,10 @@ final class EideManLamRoTests: XCTestCase {
         for cam in ["chat.restate", "chat.clarify", "caps.invoke"] {
             XCTAssertFalse(daGoi.contains(cam), "màn tự gọi `\(cam)` lúc mở — \(daGoi)")
         }
-        XCTAssertEqual(Set(daGoi), ["queue.list", "chat.history"], "\(daGoi)")
+        // `view.artifacts` thêm ở [DEV-151]: màn này nay đọc ĐIỂM CẦN LÀM RÕ — kết quả thật
+        // của việc làm rõ yêu cầu — chứ không chỉ hiện lịch sử trò chuyện. Nó vẫn là một lời
+        // gọi ĐỌC, nên bất biến "mở màn không sinh gì" ở trên giữ nguyên.
+        XCTAssertEqual(Set(daGoi), ["queue.list", "chat.history", "view.artifacts"], "\(daGoi)")
     }
 
     /// Hàng đợi trộn hai thứ: câu hỏi của `chat.clarify` và mục ASK của một năng lực bất kỳ bị
@@ -85,13 +88,17 @@ final class EideManLamRoTests: XCTestCase {
         XCTAssertNil(EideManLamRo.yHieuGanNhat([["role": "human", "text": "x"]]))
     }
 
-    /// Chưa trao đổi gì → trạng thái rỗng chỉ đúng đường: ý hiểu đến TỪ một câu lệnh.
-    func testChuaTraoDoiThiChiDuongRa() async {
+    /// Chưa có gì → trạng thái rỗng chỉ đúng đường tới thứ SINH RA nội dung của màn.
+    ///
+    /// Câu cũ nói "chưa có lượt trao đổi nào" vì màn này từng hiện lịch sử trò chuyện. Từ
+    /// [DEV-151] nội dung của nó là các ĐIỂM CẦN LÀM RÕ, nên câu rỗng phải chỉ tới hai năng lực
+    /// sinh ra chúng — chỉ sai chỗ thì người dùng đi làm một việc không dẫn tới đâu.
+    func testChuaCoDiemNaoThiChiDuongRa() async {
         let m = EideManLamRo()
         await m.nap { _, _ in ["status": "done", "result": ["items": [Any](), "turns": [Any]()]] }
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("chưa có lượt trao đổi nào"), van)
-        XCTAssertTrue(van.contains("vùng trao đổi"), van)
+        XCTAssertTrue(van.contains("chưa có điểm nào cần làm rõ"), van)
+        XCTAssertTrue(van.contains("req.elicit") && van.contains("req.detect_conflict"), van)
     }
 
     func testManDaNoiVaoBangManVaKhaiBaoNghe() {

@@ -323,3 +323,49 @@
     delta:
       req_id: FR-SNS-01
       new: …
+- code: REQ-09
+  id: req.answer_clarification
+  name: NGƯỜI trả lời một điểm cần làm rõ; lịch sử chỉ thêm nên hoàn tác được từng lần
+  desc: NGƯỜI trả lời một điểm cần làm rõ; lịch sử chỉ thêm nên hoàn tác được từng lần
+  input:
+    type: object
+    properties:
+      clar_id:
+        type: string
+      answer:
+        type: string
+    required:
+    - clar_id
+    - answer
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      clar_id:
+        type: string
+      status:
+        type: string
+      answer:
+        type: string
+      revision:
+        type: integer
+    required:
+    - clar_id
+    - status
+    - answer
+    - revision
+    additionalProperties: false
+  risk: R1
+  tier: T1
+  grounding:
+  - Điểm cần làm rõ đang mở
+  ask_when: []
+  undo:
+    kind: restore_answer
+  milestone: M1
+  impl: eide.req:answer_clarification
+  errors:
+  - E2000
+  example:
+    clar_id: CL-a1b2c3d4e5
+    answer: file lớn nhất 8 MB

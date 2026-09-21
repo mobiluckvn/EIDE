@@ -1185,11 +1185,18 @@ BANG_HIEN_VAT: dict[str, tuple[str, tuple[str, ...], str]] = {
     # một dòng ở đây để enum của hợp đồng và bảng này là MỘT nguồn: hai danh sách loại hiện vật
     # là hai chỗ sẽ lệch, và có bài kiểm đối chiếu chúng.
     "tool": ("tool_report", ("tool", "passed", "tong", "at"), "at"),
+    # [DEV-151] Điểm CẦN LÀM RÕ. Sắp theo `status` trước rồi `created_at`: cái đang `open` phải
+    # nổi lên trên cái đã trả lời — tab này tồn tại để người thấy thứ CÒN PHẢI LÀM, và một danh
+    # sách sắp theo thời gian sẽ đẩy chúng xuống dưới ngay khi có vài câu đã xong.
+    "clarification": ("clarification",
+                      ("id", "kind", "text", "req_ids", "suggestion", "status", "answer",
+                       "answered_by", "created_at"),
+                      "status"),
 }
 
 # Cột chứa JSON — bung ra để bên gọi khỏi phải tự giải mã hai lần.
 COT_JSON = {"citations", "style_issues", "stale_sections", "requirement_ids", "header", "badges",
-            "pinned_by", "trace", "acceptance"}
+            "pinned_by", "trace", "acceptance", "req_ids"}
 
 
 @capability("view.artifacts")

@@ -622,7 +622,10 @@ class Daemon:
             # Nhưng "tôi đang chờ anh cho biết `scenario`" không phải kết quả, nó là một câu hỏi,
             # và một câu hỏi nằm trong báo cáo dưới store là một câu hỏi không ai nghe thấy: giao
             # diện hiện "Đang chạy: code.feature" rồi đứng yên vĩnh viễn. Xem DEV-121.
-            ra["cho_nguoi"] = self._cho_gi(self.ctx, chuoi.result.get("run_id") or "")
+            ma_run = chuoi.result.get("run_id") or ""
+            ra["cho_nguoi"] = self._cho_gi(self.ctx, ma_run)
+            ra["hong"] = self._hong_gi(self.ctx, ma_run)
+            ra["buoc_ra"] = self._buoc_va_dau_ra(self.ctx, ma_run)
         else:
             ra["run"] = asdict(chuoi)
         return ra
@@ -718,6 +721,61 @@ class Daemon:
         return [{"cap": n.get("cap", ""), "thieu": n.get("thieu") or [], "vi": n.get("vi", "")}
                 for n in (bc.get("waiting") or []) if n.get("thieu")]
 
+    def _buoc_va_dau_ra(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
+        """Từng bước ĐÃ XONG kèm ĐẦU RA của nó — `{i, cap, ra, dau_ra}`.
+
+        Người dùng hỏi thẳng: *"Đã chạy xong 6/6 việc và thứ tôi nhận được là một thông báo. Tôi
+        cần việc 1 là việc gì, output là gì. Việc 2 là gì, output là gì — tôi cần phải xem được
+        nó."* Một dòng tóm tắt trong vùng trao đổi vẫn là THÔNG BÁO; thứ thiếu là chỗ mở ra đọc.
+
+        Đi cùng `chat.send` chứ không thêm một phương thức RPC mới: `cho_nguoi` và `hong` đã đi
+        đường này, và mô tả của `chat.send` đã nêu lý do — thứ nằm trong báo cáo dưới store là
+        thứ không ai nhìn thấy.
+        """
+        from eide.caps.chat import doc_bao_cao
+        if not run_id or not ctx.project_dir:
+            return []
+        try:
+            bc = doc_bao_cao(Path(ctx.project_dir), run_id) or {}
+        except Exception:  # noqa: BLE001
+            return []
+        ra = []
+        for i, n in enumerate((bc.get("done") or []), 1):
+            if not isinstance(n, dict):
+                continue
+            ra.append({"i": i, "cap": n.get("cap", "?"), "id": n.get("id", ""),
+                       "ra": n.get("ra") or {}, "dau_ra": n.get("dau_ra") or {}})
+        return ra
+
+    def _hong_gi(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
+        """Các nút đã HỎNG trong lượt chạy — cùng lý do với `cho_nguoi`, cho lỗi.
+
+        Mô tả của `chat.send` trong openrpc.json đã nêu nguyên tắc cho `cho_nguoi`: *"một câu
+        hỏi nằm trong báo cáo dưới store là câu hỏi không ai nghe thấy"*. Một LỖI nằm dưới store
+        cũng y hệt, và nó còn tệ hơn: câu hỏi ít ra làm người dùng chờ, còn lỗi im làm họ tin
+        rằng mọi thứ đang chạy.
+
+        Đo 21/09/2026, chặng A bài CNC: `req.elicit` hỏng ở nút đầu, năm nút sau kẹt theo, và
+        giao diện hiện "DỪNG, đang chờ anh trả lời" — không một chữ nào về nút hỏng, không một
+        đường nào để người dùng biết phải làm gì. Ngõ cụt hoàn chỉnh.
+        """
+        from eide.caps.chat import doc_bao_cao
+        if not run_id or not ctx.project_dir:
+            return []
+        try:
+            bc = doc_bao_cao(Path(ctx.project_dir), run_id) or {}
+        except Exception as e:  # noqa: BLE001
+            print(f"[chat.send] không đọc được báo cáo run {run_id}: "
+                  f"{type(e).__name__}: {e}", file=sys.stderr, flush=True)
+            return []
+        ra = []
+        for n in (bc.get("failed") or []):
+            e = n.get("error") or {}
+            ra.append({"cap": n.get("cap", ""),
+                       "ma": e.get("eide_code") or e.get("name") or "",
+                       "vi": e.get("message") or ""})
+        return ra
+
     def chat_resume(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{run_id, approve?}` — chạy tiếp một lượt đang ở `planned`, hoặc huỷ nó.
 
@@ -754,7 +812,9 @@ class Daemon:
         kq = r.result or {}
         return {"run_id": kq.get("run_id") or run_id,
                 "state": kq.get("state") or r.status,
-                "cho_nguoi": self._cho_gi(self.ctx, kq.get("run_id") or run_id)}
+                "cho_nguoi": self._cho_gi(self.ctx, kq.get("run_id") or run_id),
+                "hong": self._hong_gi(self.ctx, kq.get("run_id") or run_id),
+                "buoc_ra": self._buoc_va_dau_ra(self.ctx, kq.get("run_id") or run_id)}
 
     def chat_answer(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{question_id, option?, text?}` — thẻ câu hỏi gộp của UXD-13 U1.

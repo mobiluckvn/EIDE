@@ -403,3 +403,41 @@ def test_y_hieu_giu_nguyen_thu_tu_khi_khong_doc_duoc_do_thi():
         assert Daemon._theo_thu_tu_ke_hoach(Path("/x"), "r", buoc) == buoc
     finally:
         _c.doc_ke_hoach = cu
+
+
+# ---------- trạng thái phải NÓI ĐÚNG chuyện gì đang xảy ra
+
+
+def test_nut_dau_hong_thi_chuoi_la_failed_KHONG_phai_asked(du_an):
+    """"asked" nghĩa là ĐANG HỎI NGƯỜI. Nút chờ một nút khác thì không hỏi ai cả.
+
+    Đo 21/09/2026, chặng A bài CNC: `req.elicit` hỏng ở nút đầu, năm nút sau kẹt theo với
+    `vi: "chờ nút n1"`, và chuỗi tự khai `asked`. Giao diện hiện "DỪNG, đang chờ anh trả lời"
+    mà không kèm câu hỏi nào — vì không có câu hỏi nào để kèm. Người dùng đứng trước một ngõ
+    cụt hoàn chỉnh: sản phẩm đòi trả lời và không cho biết trả lời cái gì.
+    """
+    r, ctx, root = du_an
+    # `kg.neighborhood` đòi `node`; không đưa thì nút đầu hỏng, nút sau kẹt theo.
+    out = r.invoke("chat.orchestrate",
+                   {"intent": {"intent": "kg.build", "slots": {}}, "grounded": {},
+                    "text": "dựng đồ thị"}, ctx).result
+    bc = doc_bao_cao(root, out["run_id"])
+    if not bc.get("failed"):
+        pytest.skip("chuỗi này không sinh nút hỏng — cần một dựng khác để đo")
+    assert bc["state"] != "asked" or any(n.get("thieu") for n in bc.get("waiting") or []), \
+        "khai `asked` thì phải có ít nhất một nút thật sự hỏi người"
+
+
+def test_cau_cua_nguoi_di_toi_tan_nut(du_an):
+    """`req.elicit` phải nhận được CÂU NGƯỜI VỪA GÕ.
+
+    Năng lực có nhiệm vụ moi yêu cầu ra từ điều người dùng vừa nói mà không nhận được điều
+    người dùng vừa nói thì nó hỏng theo kiểu tệ nhất: báo "thiếu đầu vào" cho một đầu vào đang
+    nằm sẵn trong cùng một lời gọi. `chat.orchestrate` cầm sẵn `text` — schema của chính nó ghi
+    "câu lệnh gốc của người" — chỉ là chưa ai nối hai đầu lại.
+    """
+    from eide.caps.chat import _args_cho
+    y = {"intent": "req.analyze", "slots": {}, "_text": "máy CNC dùng Fangling F2300B"}
+    assert _args_cho("req.elicit", y, {}).get("text") == "máy CNC dùng Fangling F2300B"
+    # Năng lực không khai `text` thì KHÔNG nhận gì — không rải câu lệnh vào mọi ô chuỗi.
+    assert "text" not in _args_cho("kg.build", y, {})

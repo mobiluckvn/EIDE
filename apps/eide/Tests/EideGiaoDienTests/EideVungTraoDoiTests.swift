@@ -285,4 +285,14 @@ final class EideVungTraoDoiTests: XCTestCase {
                       EidePhien.trangThaiChuoi("planned"))
         XCTAssertEqual(EidePhien.trangThaiChuoi("xyz"), "trạng thái chưa rõ")
     }
+    /// `failed` phải nói rõ là KHÔNG chờ người — ngược hẳn với `asked`.
+    ///
+    /// Hai trạng thái này dẫn người dùng đi hai hướng đối lập: một bên "gõ câu trả lời đi",
+    /// một bên "đừng ngồi đợi, đi xem lỗi". Nói nhầm hướng thì họ ngồi đợi một câu hỏi không
+    /// bao giờ tới.
+    func testTrangThaiFailedNoiRoLaKhongChoNguoi() {
+        let c = EidePhien.trangThaiChuoi("failed")
+        XCTAssertTrue(c.contains("KHÔNG chờ anh"), c)
+        XCTAssertFalse(c.contains("đang chờ anh trả lời"), c)
+    }
 }

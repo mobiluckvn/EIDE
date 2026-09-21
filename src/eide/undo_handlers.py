@@ -44,6 +44,10 @@ def dang_ky(router: Any, ctx: Any) -> None:
     # trong một commit, nên đảo commit ấy là xoá chúng — và làm thế thì thao tác vẫn nằm trong
     # lịch sử, thay vì một lệnh `rm` không ai truy lại được.
     router.undo_handlers["delete_created_files"] = lambda m: _git_revert(router, ctx, m)
+    # [DEV-151] Hoàn tác MỘT LẦN trả lời điểm cần làm rõ. Không đi qua git vì dữ liệu nằm trong
+    # store, và không đi qua `restore_config` vì loại ấy đưa CẢ DỰ ÁN về known-good — hoàn tác
+    # một câu trả lời bằng cách lùi cả dự án là một phương thuốc tệ hơn bệnh.
+    router.undo_handlers["restore_answer"] = lambda m: _go_cau_tra_loi(ctx, m)
 
 
 def _du_an(ctx: Any) -> Path:
@@ -138,3 +142,20 @@ def _rollback(router: Any, ctx: Any, muc: dict[str, Any]) -> dict[str, Any]:
         raise EideError("E7001", f"`project.rollback` không chạy được: {_vi_sao(r)}",
                         run=r.run_id, cap="project.rollback")
     return {"muc": "known-good", **(r.result or {}).get("state", {})}
+
+
+def _go_cau_tra_loi(ctx: Any, muc: dict[str, Any]) -> dict[str, Any]:
+    """`restore_answer` — `undo_ref` dạng `clar:<id>`.
+
+    Lịch sử trong `clarification_answer` chỉ thêm, nên hoàn tác nhiều lần thì lùi dần từng bước
+    và câu trả lời TRƯỚC đó quay lại — không phải rỗng. Đó là điều "rollback theo từng lần thay
+    đổi" thật sự đòi hỏi, và là lý do bảng lịch sử tồn tại.
+    """
+    from eide.caps.req import hoan_tac_cau_tra_loi
+    ref = str(muc.get("undo_ref") or "")
+    if not ref.startswith("clar:"):
+        raise EideError("E2000", f"Không đọc được `undo_ref` `{ref}` — cần `clar:<id>`",
+                        exists=[], candidates=["clar:"], missing=[ref])
+    # `clar:<id>#<số bản>` — phần sau `#` chỉ để mỗi lần trả lời có một mã hoàn tác riêng;
+    # việc gỡ luôn là gỡ bản MỚI NHẤT còn hiệu lực, nên lùi đúng thứ tự người đã đi.
+    return hoan_tac_cau_tra_loi(_du_an(ctx), ref[5:].split("#", 1)[0])

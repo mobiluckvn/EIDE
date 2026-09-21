@@ -134,6 +134,13 @@ final class UngDung: NSObject, NSApplicationDelegate {
         // bước, in ra từng phép đo. Không chạm vào workspace thật của người dùng — bài tự kiểm
         // của bản cũ từng cài cờ dừng khẩn lên dự án đang làm dở và không ai biết vì sao hôm sau
         // tác tử ngồi im.
+        // `--du-an <đường dẫn>`: mở thẳng một dự án có sẵn. Không có cờ này thì phiên khởi
+        // động ở màn chào và người phải tự chọn — đúng cho dùng thật, nhưng không dùng được
+        // khi cần mở đúng một dự án để xem hoặc để trình bày.
+        if let i = args.firstIndex(of: "--du-an"), i + 1 < args.count {
+            let d = NSString(string: args[i + 1]).expandingTildeInPath
+            Task { @MainActor in await self.phien.moDuAn(d) }
+        }
         if args.contains("--tu-kiem") {
             Task { await self._tuKiem() }
             return

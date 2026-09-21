@@ -2565,6 +2565,21 @@
   "m0": "chưa"
  },
  {
+  "code": "REQ-09",
+  "ns": "req",
+  "name": "req.answer_clarification",
+  "desc": "NGƯỜI trả lời một điểm cần làm rõ; lịch sử chỉ thêm nên hoàn tác được từng lần",
+  "inp": "clar_id, answer",
+  "out": "Clarification'",
+  "risk": "R1",
+  "tier": "T1",
+  "ground": "Điểm cần làm rõ đang mở",
+  "ask": "—",
+  "ref": "UXC-31 S9, DPS-09 D3",
+  "ms": "M1",
+  "m0": "chưa"
+ },
+ {
   "code": "ARCH-01",
   "ns": "arch",
   "name": "arch.style_select",

@@ -146,6 +146,17 @@ public final class EidePhien {
             }
             try await _napRegistry(d)
             try await _moThat(d, duong)
+            // ẨN MÀN CHÀO — sau khi `project.open` CHẠY XONG, không trước.
+            //
+            // Tới 22/09/2026 chỉ `taoDuAn` gọi `anManChao()`, nên mọi đường mở một dự án CÓ SẴN
+            // (`--du-an`, `@mo` của bộ lái kịch bản, và nút mở dự án) đều để người dùng đứng lại
+            // ở màn tạo dự án trong khi daemon đã nối, tab đã thêm, phiên đã mở. Chủ sản phẩm
+            // nhìn màn hình và hỏi đúng câu ấy: "màn hình đang ở màn tạo dự án mà?"
+            //
+            // Đặt SAU `_moThat` vì đó là chỗ duy nhất biết dự án mở được thật: `project.open`
+            // ném E6000 (store bị ghi ngoài cổng) hay E6003 (chưa di trú) thì màn chào phải ở
+            // nguyên, vì nó là chỗ duy nhất người dùng làm được gì đó tiếp theo.
+            khung.anManChao()
             await _lamMoi()
             _batNhipTim()
         } catch {
@@ -661,6 +672,24 @@ public final class EidePhien {
                 }
                 khung.dock.themThe(the)
             }
+            // NÚT HỎNG nói TRƯỚC câu "đang chạy": người đọc từ trên xuống, và một lỗi đặt
+            // sau một câu nghe-ổn thì bị câu ấy che mất.
+            //
+            // Đo 21/09/2026, chặng A bài CNC: `req.elicit` hỏng ở nút đầu, năm nút sau kẹt
+            // theo, và màn hình chỉ có "DỪNG, đang chờ anh trả lời" — không một chữ về nút
+            // hỏng. Người dùng hỏi "vậy tôi trả lời cái gì?" và sản phẩm không có câu trả lời.
+            // KẾT QUẢ TỪNG BƯỚC, ngay sau thẻ Ý hiểu. Thứ tự đọc: tôi hiểu gì → tôi làm ra
+            // gì → còn gì chờ. Đặt kết quả sau câu "đang chạy" thì nó nằm dưới một dòng nghe
+            // như kết luận, và người đọc dừng ở dòng ấy.
+            if let br = r["buoc_ra"] as? [[String: Any]], !br.isEmpty {
+                khung.dock.themThe(EideTheKetQua(buoc: br))
+            }
+            for n in (r["hong"] as? [[String: Any]] ?? []) {
+                let ma = (n["ma"] as? String).map { "\($0): " } ?? ""
+                khung.dock.themLuot(.loi,
+                    "✖ Bước `\(n["cap"] as? String ?? "?")` HỎNG — \(ma)"
+                    + "\((n["vi"] as? String) ?? "lõi không nói lý do")")
+            }
             if let rid = r["run_id"] as? String {
                 khung.dock.themLuot(.tacTu, "Đang chạy (run \(rid.prefix(10))) — "
                                     + "\(Self.trangThaiChuoi(r["state"])).")
@@ -768,8 +797,26 @@ public final class EidePhien {
     private func _hoanTac(_ ma: String) async {
         guard let d = daemon else { return }
         do {
-            _ = try await d.goi("undo.apply", ["undo_ref": ma])
-            khung.dock.themLuot(.heThong, "Đã hoàn tác `\(ma.prefix(12))`.")
+            // ĐỌC câu trả lời. `undo.apply` trả `{applied, kind, reason?}` và `applied: false`
+            // là một câu trả lời HỢP LỆ, không phải lỗi: `Router.undo` trả nó khi loại hoàn tác
+            // ấy chưa có hiện thực. Bản trước `_ =` vứt nó đi rồi báo "Đã hoàn tác" vô điều
+            // kiện.
+            //
+            // Đo 21/09/2026: `cds.json` khai 5 loại hoàn tác — `supersede_facts` (18 năng lực)
+            // và `reflash_known_good` (5) CHƯA có hiện thực nào đăng ký. Với 23 năng lực ấy,
+            // người dùng bấm Hoàn tác, màn hình nói đã hoàn tác, và KHÔNG có gì được hoàn tác.
+            //
+            // Đây là kiểu nói dối tệ nhất trong sản phẩm này: nó làm người dùng tin rằng một
+            // thay đổi đã được gỡ bỏ, nên họ thôi tìm cách gỡ nó.
+            let r = try await d.goi("undo.apply", ["undo_ref": ma])
+            if (r["applied"] as? Bool) == false {
+                khung.dock.themLuot(.loi,
+                    "✖ KHÔNG hoàn tác được `\(ma.prefix(12))` — việc đã làm VẪN CÒN NGUYÊN. "
+                    + ((r["reason"] as? String) ?? "lõi không nói lý do") + ".")
+            } else {
+                khung.dock.themLuot(.heThong, "Đã hoàn tác `\(ma.prefix(12))`"
+                                    + ((r["kind"] as? String).map { " (\($0))" } ?? "") + ".")
+            }
         } catch {
             khung.dock.themLuot(.loi, "Không hoàn tác được: \(error)")
         }
@@ -953,6 +1000,7 @@ public final class EidePhien {
         case "planned": return "đang chờ anh gật đầu"
         case "running": return "đang chạy"
         case "asked": return "DỪNG, đang chờ anh trả lời"
+        case "failed": return "DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên"
         case "done": return "xong"
         case "blocked": return "bị cổng chặn"
         case "cancelled": return "đã huỷ"

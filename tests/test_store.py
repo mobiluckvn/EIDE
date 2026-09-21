@@ -35,7 +35,7 @@ BANG_M1 = {"acq_request", "permission", "decision_log", "capability_run", "inten
 # commit)" — cơ sở dữ liệu riêng như rag_chunk ở index.sqlite. Xem DEVIATIONS DEV-006.
 BANG_SESSION = {"session"}
 BANG_M2 = {"module", "hw_map", "adr", "doc_artifact", "discovery", "measurement"}
-BANG_M3 = {"debug_session"}
+BANG_M3 = {"debug_session", "clarification"}   # 0008 — [DEV-151]
 
 
 def tables(conn: sqlite3.Connection) -> set[str]:
@@ -53,16 +53,17 @@ def test_migrate_kho_moi_len_phien_ban_moi_nhat(tmp_path):
     db = tmp_path / "store.sqlite"
     kq = migrate(db)
     assert kq["from_version"] == 0
-    assert kq["to_version"] == LATEST_VERSION == 7
+    assert kq["to_version"] == LATEST_VERSION == 8   # 0008: clarification [DEV-151]
     assert [m["name"] for m in kq["applied"]] == ["0001_m0_base", "0002_m1_policy_runtime",
                                                   "0004_m2_engineering_hw",
                                                   "0005_m2_module_layer",
                                                   "0006_m2_fact_conflicts",
-                                                  "0007_m3_debug_session"]
+                                                  "0007_m3_debug_session",
+                                                  "0008_m3_clarification"]
     with sqlite3.connect(db) as c:
         assert tables(c) == BANG_M0 | BANG_M1 | BANG_M2 | BANG_M3
         assert "session" not in tables(c), "session thuộc session.sqlite, không thuộc store"
-        assert current_version(c) == 7
+        assert current_version(c) == LATEST_VERSION
 
 
 def test_migrate_chay_lai_khong_lam_gi(tmp_path):
@@ -92,12 +93,13 @@ def test_migrate_ghi_ledger_store_migrate(tmp_path):
     migrate(tmp_path / "store.sqlite", ledger=led)
     recs = [r for r in led.records() if r["kind"] == "store.migrate"]
     assert len(recs) == 1
-    assert recs[0]["data"] == {"from_version": 0, "to_version": 7,
+    assert recs[0]["data"] == {"from_version": 0, "to_version": 8,
                                "applied": ["0001_m0_base", "0002_m1_policy_runtime",
                                            "0004_m2_engineering_hw",
                                            "0005_m2_module_layer",
                                            "0006_m2_fact_conflicts",
-                                           "0007_m3_debug_session"]}
+                                           "0007_m3_debug_session",
+                                           "0008_m3_clarification"]}
     assert led.verify() == (True, 0)
 
 
