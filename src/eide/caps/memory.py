@@ -12,7 +12,7 @@ from typing import Any
 import yaml
 
 from eide_core import store
-from eide_core.composer import cau_hinh
+from eide_core.composer import cau_hinh, uoc_token
 from eide_core.errors import EideError
 from eide_core.memory import SessionMemory
 from eide_core.paths import spec_dir
@@ -218,6 +218,117 @@ def _c0_nang_luc(text: str, role: str, ctx: Context) -> tuple[str, list[str]]:
     return "\n".join(dong), nguon
 
 
+def _c5_tinh_nang(root: Path, task_ref: str) -> tuple[str, list[str]]:
+    """C5 — ĐỊNH NGHĨA của chính tính năng đang lập kế hoạch. [DEV-174a]
+
+    CXD-10 §2 đặt C5 là *"tác vụ và mã liên quan"*, và tác vụ ở đây CHÍNH LÀ tính năng. Nhưng
+    `plan.create` chỉ nói với mô hình đúng một chuỗi — `"Lập kế hoạch cho tính năng: F-01"` —
+    trong khi `.eide/FEATURES.json` giữ đủ tiêu đề, kỳ vọng đo được, ràng buộc và `touches`.
+
+    Đo 22/09/2026: tính năng F-01 ghi *"chu kỳ 1 giây (500ms mức cao, 500ms mức thấp)"*, và
+    planner vẫn khai `missing: ["Chưa có yêu cầu cụ thể về chu kỳ nhấp nháy (500ms hay
+    1000ms)"]` — nó hỏi lại đúng con số đang nằm trong tệp của dự án. Cổng G1-02 vì thế trả
+    ASK, và cả chuỗi đứng vì một câu hỏi không có thật.
+
+    Tác tử lập kế hoạch cho một mã hiệu mà không được đọc mã hiệu ấy nghĩa là gì thì nó chỉ còn
+    cách suy từ tên dự án — và suy sai là điều chắc chắn xảy ra, không phải rủi ro.
+    """
+    from eide.caps.code import _doc_feature
+
+    f = root / EIDE_DIR / "FEATURES.json"
+    if not task_ref or not f.exists():
+        return "", []
+    try:
+        # Dùng LẠI bộ đọc của `code.py` chứ không viết bộ thứ hai. `FEATURES.json` tồn tại ở
+        # HAI hình dạng trong kho — `{"features": [...]}` (thứ `project.create` và
+        # `memory.progress` ghi) và một danh sách trần (thứ vài chỗ khác ghi) — và `_doc_feature`
+        # đã xử lý cả hai từ trước. Bản đầu của tôi chỉ biết dạng thứ nhất; `make check` bắt
+        # được bằng bốn bài `test_code.py` đỏ vì `'list' object has no attribute 'get'`.
+        ft = _doc_feature(root, str(task_ref))
+    except (json.JSONDecodeError, AttributeError, TypeError):
+        # Tệp hỏng KHÔNG được làm hỏng cả lời gọi: ngữ cảnh thiếu một lớp còn chạy được, một
+        # ngoại lệ ở đây chặn mọi việc.
+        return "", []
+    if ft is None:
+        return "", []
+    dong = [f"## Tính năng đang lập kế hoạch: {ft.get('id')} — {ft.get('title', '')}"]
+    ky_vong = ft.get("expectation") or {}
+    if ky_vong.get("detail"):
+        # Kỳ vọng ĐO ĐƯỢC là thứ PLAN-01 bắt buộc phải có; đưa nó vào đây là đưa đúng tiêu chí
+        # mà kế hoạch phải dẫn tới, thay vì để mô hình tự nghĩ ra một tiêu chí dễ hơn.
+        dong.append(f"- Kỳ vọng ({ky_vong.get('kind', '?')}): {ky_vong['detail']}")
+    for k, nhan in (("constraints", "Ràng buộc"), ("touches", "Chạm tới")):
+        if ft.get(k):
+            dong.append(f"- {nhan}: " + "; ".join(str(x) for x in ft[k]))
+    if ft.get("status"):
+        dong.append(f"- Trạng thái: {ft['status']}")
+    return "\n".join(dong), [str(f)]
+
+
+def _c2_tra_loi_cua_nguoi(root: Path, tran_token: int) -> tuple[str, list[str], int]:
+    """C2 — CÂU TRẢ LỜI người đã cho cho từng điểm cần làm rõ. [DEV-174a]
+
+    ## Vì sao lớp này phải có
+
+    Đo 22/09/2026 trên dự án `nhap-nhay-led-tren-atmega328p`: planner hỏi hai câu rất cụ thể
+    (*"chưa rõ xung nhịp thực tế của board"*, *"chưa rõ chân GPIO nối với LED"*), người dùng
+    trả lời cả hai qua `req.answer_clarification` — cả hai về `answered` — rồi bảo tác tử lập
+    lại kế hoạch, và **nó hỏi y nguyên câu cũ**. Không lớp ngữ cảnh nào mang câu trả lời ấy
+    vào, nên vòng *hỏi → người trả lời → làm tiếp* không khép được: người dùng gõ vào một cái
+    hộp mà tác tử không bao giờ mở.
+
+    ## Vì sao là C2 chứ không phải C5 hay C7
+
+    CXD-10 §2 đặt C2 là **ràng buộc dự án**, và một câu trả lời kiểu "LED nối chân PB5, mức cao
+    là sáng" đúng là một ràng buộc — cùng họ với chân cấm và ngân sách RAM. Quan trọng hơn: C2
+    có `cut_priority = 9`, tức **không bao giờ bị cắt**. Một câu người đã trả lời mà bị bỏ đi
+    lúc ngữ cảnh chật là tệ nhất trong các cách quên: người dùng tin rằng họ đã nói rồi.
+
+    C7 (lịch sử lượt) thì bị cắt đầu tiên, và C5 là "tác vụ và mã liên quan" — câu trả lời của
+    người không phải mã.
+
+    ## Khối RIÊNG, không nhập vào khối ràng buộc
+
+    `_c2_rang_buoc` đánh dấu `cacheable=True` vì `constraints.yaml` gần như tĩnh. Danh sách câu
+    trả lời thì đổi mỗi lần người gõ một câu, nên nhập chung sẽ làm hỏng cache của cả khối.
+
+    ## Trần token, và nói ra khi cắt
+
+    C2 không cắt được, nên một dự án có trăm câu trả lời sẽ đẩy tổng vượt ngân sách và
+    `kiem_tran` từ chối gọi mô hình (E5001) — đổi một lỗi im lặng lấy một lỗi ồn ào. Nên cắt ở
+    đây, lấy câu MỚI NHẤT trước, và **ghi rõ đã bỏ bao nhiêu**: một danh sách bị xén âm thầm
+    đọc y hệt một danh sách đầy đủ.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return "", [], 0
+    with store.open_store(db) as c:
+        try:
+            ds = c.execute(
+                "SELECT id, text, answer, answered_by, answered_at FROM clarification"
+                " WHERE status='answered' AND answer IS NOT NULL AND answer <> ''"
+                " ORDER BY answered_at DESC, id DESC").fetchall()
+        except sqlite3.OperationalError:
+            return "", [], 0          # store cũ chưa có bảng (user_version < 8)
+    if not ds:
+        return "", [], 0
+
+    dau = ("## Người dùng ĐÃ TRẢ LỜI những điểm sau — coi đây là sự thật về dự án này và "
+           "KHÔNG hỏi lại:")
+    dong, nguon, bo = [], [], 0
+    for cid, hoi, tra, ai, _at in ds:
+        d = f"- {str(hoi).strip()}\n  → {str(tra).strip()}" + (f" ({ai})" if ai else "")
+        if uoc_token("\n".join([dau, *dong, d])) > tran_token and dong:
+            bo = len(ds) - len(dong)
+            break
+        dong.append(d)
+        nguon.append(f"clarification:{cid}")
+    if bo:
+        dong.append(f"- (còn {bo} câu đã trả lời nữa, cắt vì ngân sách C2 — hỏi lại bằng "
+                    "`view.artifacts kind=clarification` nếu cần)")
+    return "\n".join([dau, *dong]), nguon, bo
+
+
 def _c2_rang_buoc(root: Path) -> tuple[str, list[str]]:
     """C2 — constraints.yaml nén thành bảng khóa–giá trị (CXD-10 §4.3)."""
     f = root / EIDE_DIR / "constraints.yaml"
@@ -373,6 +484,17 @@ def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         else:
             text, nguon = _c2_rang_buoc(root)
             b.add("C2", text, nguon, cacheable=True)
+            # [DEV-174a] Khối RIÊNG, `cacheable=False`: `constraints.yaml` gần như tĩnh nên
+            # khối trên cache được, còn danh sách câu trả lời đổi mỗi lần người gõ một câu.
+            # Nhập chung là làm hỏng cache của cả hai.
+            #
+            # Trần = một nửa ngân sách C2 của vai trò: nửa kia để dành cho ràng buộc dự án, và
+            # C2 KHÔNG cắt được nên tràn ở đây thành E5001 "không gọi mô hình".
+            tran = max(120, int(b.budget.get("C2") or 600) // 2)
+            van, ng, bo = _c2_tra_loi_cua_nguoi(root, tran)
+            b.add("C2", van, ng)
+            if bo:
+                b.compressions.append(f"clarification:drop_{bo}")
 
     # C5 — **thay đổi của NGƯỜI từ lượt trước** (UXC-31 §7.5). Đặt ở C5 theo CXD-10 §3: lớp ấy
     # là "tác vụ và mã liên quan", và không có mã nào liên quan hơn mã người vừa sửa bằng tay.
@@ -380,6 +502,12 @@ def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # Thiếu khối này thì tác tử bước vào lượt mới với một bản đồ mã đã cũ: nó đọc tệp từ store
     # hoặc từ trí nhớ về lần nó tự ghi, rồi sinh một patch dựa trên nền đã không còn. Kết quả
     # tốt nhất là một xung đột merge; tệ nhất là một patch trông hợp lý mà đè lên ý người dùng.
+    # [DEV-174a] C5 — ĐỊNH NGHĨA của tính năng đang lập kế hoạch. Đứng TRƯỚC khối "người sửa"
+    # vì nó là chính tác vụ, còn khối kia là bối cảnh của tác vụ ấy.
+    if co_du_an:
+        van, ng = _c5_tinh_nang(root, params.get("task_ref", ""))
+        b.add("C5", van, ng)
+
     if co_du_an:
         kh = _c5_nguoi_sua(root, ctx.extra.get("ledger"))
         if kh is not None:
