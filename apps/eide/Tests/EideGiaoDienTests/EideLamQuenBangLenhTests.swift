@@ -72,12 +72,26 @@ final class EideLamQuenBangLenhTests: XCTestCase {
     /// Ba, không bốn. "Không tour dài" là nguyên văn §3.3, và thứ tư trở đi là thứ người dùng
     /// lướt qua — lướt qua một danh sách bốn mục thì họ lướt qua cả ba mục đầu.
     func testChaoDungBaThuVaKhongHonNua() {
-        let c = EidePhien.CHAO_BA_THU
+        let c = EidePhien.chaoBaThu(soNangLuc: 245)
         XCTAssertTrue(c.contains("1."), c)
         XCTAssertTrue(c.contains("2. ⌘K"), c)
         XCTAssertTrue(c.contains("3."), c)
         XCTAssertFalse(c.contains("4."), "chào bốn thứ — §3.3 nói không tour dài")
         XCTAssertTrue(c.contains("Dừng khẩn"), c)
+    }
+
+    /// Số năng lực đếm TỪ REGISTRY, không chép cứng.
+    ///
+    /// Con số cũ là "244" và nó sai ngay hôm danh mục lên 245. Một câu chào nói sai một con số
+    /// KIỂM ĐƯỢC là chỗ rẻ nhất để người dùng học rằng sản phẩm không đáng tin về những con số
+    /// nó đưa ra — và họ sẽ mang bài học ấy sang những con số đắt hơn.
+    func testSoNangLucTrongCauChaoDenTuRegistry() {
+        XCTAssertTrue(EidePhien.chaoBaThu(soNangLuc: 245).contains("245 năng lực"))
+        XCTAssertTrue(EidePhien.chaoBaThu(soNangLuc: 300).contains("300 năng lực"))
+        // Chưa nạp xong registry thì nói chung chung, KHÔNG bịa một con số.
+        let chua = EidePhien.chaoBaThu(soNangLuc: nil)
+        XCTAssertTrue(chua.contains("danh mục năng lực"), chua)
+        XCTAssertFalse(chua.contains("năng lực và") == false && chua.contains("244"), chua)
     }
 
     /// Sau khi làm quen thì S1 đang mở — câu chào nói về những thứ trên màn hình, nên màn hình
@@ -305,5 +319,33 @@ final class EideLamQuenBangLenhTests: XCTestCase {
         }
         for c in v.subviews { ra += chu(c) }
         return ra
+    }
+    // MARK: - gợi ý ô lệnh phải NÓI VỀ DỰ ÁN NÀY
+
+    /// Ba nguồn gợi ý cũ đều là hằng số về một dự án tưởng tượng.
+    ///
+    /// Trên một dự án CNC thật, ô lệnh mời người dùng "thử: robot hai bánh tự cân bằng trên
+    /// ATmega328P". Chủ sản phẩm gọi đúng tên: *"nút Gửi bạn đưa một câu chẳng liên quan gì để
+    /// gợi ý"*. Một gợi ý sai chủ đề tệ hơn không gợi ý — nó dạy người dùng rằng ô này không
+    /// biết họ đang làm gì, nên họ thôi đọc nó, kể cả lúc nó nói đúng bước kế tiếp.
+    func testGoiYNeuMaYeuCauTHATcuaDuAn() {
+        let yc: [[String: Any]] = [["id": "UR-CTL-02", "kind": "HW"],
+                                   ["id": "FR-GEN-01", "kind": "FR"]]
+        let c = EidePhien.goiYTuDuAn(yeuCau: yc, lamRoMo: 0) ?? ""
+        XCTAssertTrue(c.contains("UR-CTL-02"), "phải nêu MÃ thật của dự án: \(c)")
+        XCTAssertFalse(c.contains("ATmega328P"), c)
+    }
+
+    /// Yêu cầu đã đối chiếu hết mà còn điểm cần làm rõ → nhắc đúng chỗ tác tử đang chờ.
+    func testGoiYNhacDiemCanLamRoKhiDaDoiChieuHet() {
+        let yc: [[String: Any]] = [["id": "UR-01", "feasibility": "ok"]]
+        let c = EidePhien.goiYTuDuAn(yeuCau: yc, lamRoMo: 3) ?? ""
+        XCTAssertTrue(c.contains("3 điểm cần làm rõ"), c)
+    }
+
+    /// Dự án trắng → mời mô tả việc, KHÔNG nêu một mã bịa ra.
+    func testGoiYKhiDuAnChuaCoGi() {
+        let c = EidePhien.goiYTuDuAn(yeuCau: [], lamRoMo: 0) ?? ""
+        XCTAssertTrue(c.contains("Mô tả việc cần làm"), c)
     }
 }

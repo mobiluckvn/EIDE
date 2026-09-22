@@ -85,6 +85,7 @@ public final class EideManLamRo: EideManCoSo {
 
     /// Ô trả lời đang mở — `clar_id` của điểm người vừa bấm.
     private var dangTraLoi = ""
+    private var noiNut: EideNutTheoO?
     private let oTraLoi = NSTextField()
 
     private func _khoiTraLoi(_ ds: [[String: Any]]) {
@@ -112,6 +113,7 @@ public final class EideManLamRo: EideManCoSo {
         let luu = NSButton(title: "Lưu câu trả lời", target: self, action: #selector(_luuTraLoi))
         luu.bezelStyle = .rounded
         luu.keyEquivalent = "\r"
+        noiNut = EideNutTheoO.noi(oTraLoi, luu)
 
         let hang = NSStackView(views: [chon, oTraLoi, luu])
         hang.orientation = .horizontal
@@ -138,6 +140,7 @@ public final class EideManLamRo: EideManCoSo {
     public func traLoiDeTest(_ clarId: String, _ van: String) async {
         dangTraLoi = clarId
         oTraLoi.stringValue = van
+        noiNut?.capNhat()
         _luuTraLoi()
         // `_luuTraLoi` chạy trong một Task riêng; chờ nó xong rồi mới trả về, nếu không bài
         // kiểm chụp ảnh trước khi bảng kịp vẽ lại.
@@ -156,6 +159,7 @@ public final class EideManLamRo: EideManCoSo {
                                ["id": "req.answer_clarification",
                                 "params": ["clar_id": ma, "answer": van]])
             oTraLoi.stringValue = ""
+            noiNut?.capNhat()
             // Vẽ lại màn từ store: KHÔNG tự sửa bảng trên màn hình. Cập nhật tại chỗ nghĩa là
             // tin rằng lời gọi đã thành công — mà nó có thể bị cổng chặn, và khi ấy bảng nói
             // một đằng còn store một nẻo.

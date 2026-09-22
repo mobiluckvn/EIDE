@@ -80,7 +80,28 @@ public final class EideDock: NSView {
         _veGoiY()
     }
 
+    /// Gợi ý suy TỪ DỰ ÁN ĐANG MỞ — thắng mọi gợi ý chép cứng. `nil` = chưa có gì để gợi.
+    ///
+    /// Ba nguồn gợi ý cũ (`MAU` của màn chào, `GOI_Y` theo pha, câu chung) đều là hằng số viết
+    /// sẵn về một dự án tưởng tượng. Trên một dự án CNC thật, ô lệnh mời người dùng "thử: robot
+    /// hai bánh tự cân bằng trên ATmega328P" — chủ sản phẩm gọi đúng tên: *"nút Gửi bạn đưa một
+    /// câu chẳng liên quan gì để gợi ý"*.
+    ///
+    /// Một gợi ý sai chủ đề tệ hơn không gợi ý: nó dạy người dùng rằng ô này không biết họ đang
+    /// làm gì, nên họ thôi đọc nó — kể cả lúc nó nói đúng bước kế tiếp.
+    private var goiYDuAn: String?
+
+    /// Đặt gợi ý theo dự án. Phiên tính nó từ hiện vật THẬT trong store, không đoán.
+    public func datGoiYDuAn(_ cau: String?) {
+        goiYDuAn = cau
+        _veGoiY()
+    }
+
     private func _veGoiY() {
+        if let c = goiYDuAn, !c.isEmpty {
+            oGo.placeholderString = c
+            return
+        }
         if tuLuc != nil {
             oGo.placeholderString = "Thử: \(EideManChao.MAU[chiSoMau])"
             return
@@ -160,6 +181,11 @@ public final class EideDock: NSView {
         nutGui.keyEquivalent = "\r"
         nutGui.target = self
         nutGui.action = #selector(_gui)
+        // TẮT khi ô lệnh trống. `_gui` vốn đã `guard !v.isEmpty else { return }`, nhưng một nút
+        // nhìn như bấm được mà bấm vào không làm gì dạy người dùng đúng một điều: nút của ứng
+        // dụng này không đáng tin. Chủ sản phẩm nói thẳng: "gần như các nút không dùng được một
+        // nút nào cả" — và cái đầu tiên họ thử là cái to nhất, màu xanh, tên "Gửi".
+        EideNutTheoO.noi(oGo, nutGui)
         let hangNhap = NSStackView(views: [oGo, nutGui])
         hangNhap.orientation = .horizontal
         hangNhap.spacing = 8
@@ -287,6 +313,7 @@ public final class EideDock: NSView {
         let v = oGo.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !v.isEmpty else { return }
         oGo.stringValue = ""
+        nutGui.isEnabled = false        // ô vừa bị xoá → nút phải tắt theo ngay
         themLuot(.nguoi, v)
         // §2D.4 — đang có Run thì NÓI RA rằng lệnh này xếp hàng sau nó. Không nói thì người dùng
         // gõ xong, không thấy gì nhúc nhích, và gõ lại lần nữa; hai lệnh trùng nhau tốn tiền mô

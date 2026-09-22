@@ -68,20 +68,24 @@ public final class EideTheKetQua: NSView {
             // vùng trao đổi sẽ đẩy mọi thứ khác ra khỏi tầm mắt.
             let day = Self.dayDu(b["dau_ra"] as? [String: Any] ?? [:])
             if !day.isEmpty {
-                let o = NSTextView()
-                o.isEditable = false
-                o.drawsBackground = false
+                // `NSTextField(wrappingLabelWithString:)`, KHÔNG `NSTextView`.
+                //
+                // `NSTextView` trần trong một `NSStackView` không có chiều cao nội tại: nó cần
+                // một `NSScrollView` bọc ngoài hoặc một hệ chữ dựng tay. Bản trước bật
+                // `isHidden = false` cho một khung nhìn cao 0 pt — chủ sản phẩm bấm "Xem đầy
+                // đủ" và thấy "trắng trơn", đúng nghĩa: khung nhìn CÓ hiện, chỉ là không cao.
+                //
+                // Nhãn bọc dòng thì tự đo chiều cao theo nội dung, và đây là chỗ CHỈ ĐỌC nên
+                // không mất gì khi bỏ `NSTextView`.
+                let o = NSTextField(wrappingLabelWithString: day)
                 o.font = EideToken.fontMono
-                o.string = day
+                o.isSelectable = true          // người đọc phải copy được đầu ra ra ngoài
                 o.isHidden = true
-                o.translatesAutoresizingMaskIntoConstraints = false
-                o.heightAnchor.constraint(lessThanOrEqualToConstant: 260).isActive = true
 
-                let nut = NSButton(title: "Xem đầy đủ ▾", target: nil, action: nil)
+                let nut = NSButton(title: "Xem đầy đủ ▾", target: self,
+                                   action: #selector(_moRa(_:)))
                 nut.bezelStyle = .inline
                 nut.font = EideToken.fontUI
-                nut.target = self
-                nut.action = #selector(_moRa(_:))
                 nut.tag = coc.arrangedSubviews.count + 1   // vị trí của `o` sau khi thêm nút
                 coc.addArrangedSubview(nut)
                 coc.addArrangedSubview(o)
@@ -128,10 +132,26 @@ public final class EideTheKetQua: NSView {
     }
 
     @objc private func _moRa(_ n: NSButton) {
-        guard n.tag < coc.arrangedSubviews.count,
-              let o = coc.arrangedSubviews[n.tag] as? NSTextView else { return }
+        guard n.tag < coc.arrangedSubviews.count else { return }
+        let o = coc.arrangedSubviews[n.tag]
         o.isHidden.toggle()
         n.title = o.isHidden ? "Xem đầy đủ ▾" : "Thu lại ▴"
+        // Ép bố cục lại NGAY: `isHidden` trên một phần tử của `NSStackView` chỉ đổi bố cục ở
+        // vòng vẽ kế tiếp, và bài kiểm đọc chiều cao ngay sau khi bấm sẽ thấy nó chưa đổi.
+        window?.layoutIfNeeded()
+    }
+
+    /// Phần đầy đủ của bước `i` (1-based) đang HIỆN không, và cao bao nhiêu — cho bài đo.
+    ///
+    /// Trả cả chiều cao vì đó chính là chỗ bản trước hỏng: khung nhìn có `isHidden == false`
+    /// mà cao 0 pt thì người dùng thấy "trắng trơn", và một phép đo chỉ hỏi `isHidden` sẽ báo
+    /// ĐẠT.
+    public func phanDayDu(_ i: Int) -> (hien: Bool, cao: CGFloat)? {
+        let nhan = coc.arrangedSubviews.compactMap { $0 as? NSTextField }
+            .filter { $0.font == EideToken.fontMono }
+        guard i >= 1, i <= nhan.count else { return nil }
+        let v = nhan[i - 1]
+        return (!v.isHidden, v.fittingSize.height)
     }
 
     private func _phu(_ s: String) -> NSTextField {

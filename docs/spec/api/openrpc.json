@@ -141,7 +141,7 @@
         "name": "result",
         "schema": {
           "type": "object",
-          "description": "{intent_id, run_id?, cho_nguoi[], hong[], restate?, steps[]} — v1.3: `cho_nguoi[]` là các nút đang chờ người (`{cap, thieu[], vi}`), vì \"kết quả đến qua sự kiện\" đúng cho KẾT QUẢ nhưng một câu hỏi nằm trong báo cáo dưới store là câu hỏi không ai nghe thấy — giao diện hiện \"đang chạy\" rồi đứng yên vĩnh viễn (DEV-121). `hong[]` là các nút ĐÃ HỎNG (`{cap, ma, vi}`) theo đúng lập luận ấy, và còn gấp hơn: một câu hỏi im chỉ làm người dùng chờ, một lỗi im làm họ tin mọi thứ đang chạy (DEV-149). `restate`/`steps[]` là thẻ Ý hiểu của UXC-31 §2D.6 (DEV-140)"
+          "description": "{intent_id, state, run_id?, cho_nguoi[], hong[], buoc_ra[], restate?, steps[]} — v1.3 [DEV-154]: **trả về NGAY** với `state: \"running\"` khi chuỗi được giao xuống luồng nền; kết quả tới bằng `event.chat.restated` rồi `event.chat.report`. Đúng câu của chính hợp đồng này (\"bất đồng bộ theo thiết kế\") — bản trước chạy hết chuỗi mới trả lời, hai đến bốn phút, và vì giao diện chỉ có MỘT ống nên suốt thời gian ấy mọi lời gọi khác lẫn nhịp tim đều bị chặn. `plan_only` (A0/A1) giữ ĐỒNG BỘ: nó không chạy nút nào, và hai nút của §2D.6 cần `run_id` ngay trong câu trả lời. `cho_nguoi[]` là các nút đang chờ người (`{cap, thieu[], vi}`) — DEV-121; `hong[]` là các nút đã HỎNG (`{cap, ma, vi}`) — DEV-149; `buoc_ra[]` là đầu ra từng bước (`{i, cap, ra, dau_ra}`) — DEV-151. Ba trường ấy chỉ có mặt ở đường đồng bộ."
         }
       }
     },
@@ -893,7 +893,7 @@
           "name": "params",
           "schema": {
             "type": "object",
-            "description": "{intent_id, text}"
+            "description": "{intent_id, text, steps[], run_id, state} — v1.3 [DEV-154]: thêm `steps[]`, `run_id`, `state` để giao diện dựng được thẻ Ý hiểu của UXC-31 §2D.6 mà không phải hỏi lại. Phát NGAY khi chuỗi dựng xong, trước khi nó chạy hết: §2D.6 đặt thẻ này làm chỗ người bắt một lệnh bị hiểu sai TRƯỚC khi nó ghi tệp, nên phát muộn thì nó chỉ còn là một bản tường thuật."
           }
         }
       ],
@@ -931,7 +931,7 @@
           "name": "params",
           "schema": {
             "type": "object",
-            "description": "{run_id, done[], waiting[], undo_until?, cost_usd}"
+            "description": "{run_id, state, done[], waiting[], failed[], loi?, undo_until?, cost_usd?} — v1.3 [DEV-154]: `done[]` mang ĐẦU RA từng bước (`{i, cap, ra, dau_ra}`, DEV-151), `failed[]` các bước hỏng (`{cap, ma, vi}`), `loi` khi cả lượt không chạy được. Đây là chỗ kết quả của một lượt gõ tới giao diện từ khi `chat.send` thành bất đồng bộ."
           }
         }
       ],

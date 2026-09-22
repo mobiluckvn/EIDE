@@ -101,6 +101,8 @@ public final class EideManBanDoTriThuc: EideManCoSo {
         let nut = NSButton(title: "Hỏi", target: self, action: #selector(_hoi))
         nut.bezelStyle = .rounded
         nut.keyEquivalent = "\r"
+        // Nút chỉ sáng khi ô câu hỏi có chữ — xem `EideNutTheoO`.
+        EideNutTheoO.noi(oHoi, nut)
         let h = NSStackView(views: [oHoi, nut])
         h.orientation = .horizontal
         h.spacing = 8

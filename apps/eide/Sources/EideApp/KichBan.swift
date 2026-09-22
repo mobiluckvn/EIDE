@@ -118,8 +118,9 @@ enum KichBan {
                 ghi("**Tôi (người dùng):** \(lenh)")
                 // ĐÚNG đường người dùng đi: đặt chữ vào ô lệnh rồi bấm Gửi.
                 let truoc = ud.khung.dock.soLuot
+                let baoCaoTruoc = ud.phien.soBaoCao
                 ud.khung.dock.guiDeTest(lenh)
-                await cho(ud, sau: truoc)
+                await cho(ud, sau: truoc, baoCaoTruoc: baoCaoTruoc)
             }
 
             let giay = ProcessInfo.processInfo.systemUptime - t0
@@ -181,27 +182,30 @@ enum KichBan {
     /// Run còn ghi `bước 1/6 ▶ đang chạy req.elicit`.
     ///
     /// - Parameter sau: `dock.soLuot` đo NGAY TRƯỚC khi gõ.
-    private static func cho(_ ud: UngDung, sau moc: Int) async {
+    private static func cho(_ ud: UngDung, sau moc: Int, baoCaoTruoc: Int) async {
         let t0 = ProcessInfo.processInfo.systemUptime
         var truoc = -1
         var yen = 0
-        var daTraLoi = false
         while ProcessInfo.processInfo.systemUptime - t0 < HAN_GIAY {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
+            // [DEV-154] Mốc là BÁO CÁO ĐÃ VỀ, không phải "hết bận". `chat.send` nay trả về ngay
+            // với `state: "running"`, nên `dangBan` tắt sau vài giây trong khi chuỗi còn chạy
+            // vài phút — đợi theo nó là chụp ảnh một lượt chưa làm gì.
+            guard ud.phien.soBaoCao > baoCaoTruoc else { continue }
             let n = ud.khung.dock.soLuot
-            if n >= moc + 2 { daTraLoi = true }
             if n == truoc {
+                // Báo cáo về rồi vẫn đợi yên hẳn: nó sinh ra vài lượt liền nhau (thẻ Kết quả,
+                // dòng lỗi, câu hỏi chờ người), và chụp giữa chừng thì thiếu.
                 yen += 1
-                // `daTraLoi` là điều kiện THÊM, không thay thế: sau khi tác tử nói câu đầu nó
-                // còn nói tiếp (thẻ Run, câu hỏi chờ người), nên vẫn phải đợi yên hẳn.
-                if daTraLoi && yen >= 4 && !ud.phien.dangBan { return }
+                if yen >= 3 && !ud.phien.dangBan { return }
             } else {
                 yen = 0
                 truoc = n
             }
         }
-        print("  ⚠ quá hạn \(Int(HAN_GIAY)) s mà tác tử "
-              + (ud.khung.dock.soLuot >= moc + 2 ? "chưa nói xong" : "CHƯA NÓI GÌ")
-              + " — ghi lại và đi tiếp")
+        print("  ⚠ quá hạn \(Int(HAN_GIAY)) s — "
+              + (ud.phien.soBaoCao > baoCaoTruoc ? "báo cáo đã về nhưng vùng trao đổi chưa yên"
+                                                 : "CHƯA có báo cáo lượt chạy nào")
+              + ". Ghi lại và đi tiếp. (moc=\(moc))")
     }
 }

@@ -609,9 +609,33 @@ class Daemon:
         # mọi cổng khác, và một chỗ đọc mức theo đường riêng là một chỗ sẽ lệch.
         muc = str(self.ctx.autonomy or self.gate.config.get("autonomy") or "A2")
         cho_gat = cho_nguoi_gat(muc)
-        chuoi = self.router.invoke("chat.orchestrate",
-                                   {"intent": intent, "grounded": grounded,
-                                    "text": p["text"], "plan_only": cho_gat}, self.ctx)
+        tham_chuoi = {"intent": intent, "grounded": grounded,
+                      "text": p["text"], "plan_only": cho_gat}
+
+        # ---- CHẠY CHUỖI Ở LUỒNG NỀN. [DEV-154]
+        #
+        # Hợp đồng CHAT-06 ghi "bất đồng bộ theo thiết kế: tiến độ đi qua sự kiện, báo cáo cuối
+        # nằm ở `run.report`". Tới 22/09/2026 mã làm NGƯỢC: `chat.send` chạy hết chuỗi rồi mới
+        # trả lời — hai đến bốn phút cho một chuỗi sáu nút có mô hình.
+        #
+        # Phía giao diện chỉ có MỘT ống, nên suốt thời gian ấy `autonomy.get`, `queue.list`,
+        # `undo.list` và nhịp tim đều không chạy được; sau 6 giây màn hình tự treo biển "Dữ liệu
+        # cũ — không nghe được daemon N giây qua" trong khi daemon hoàn toàn khỏe, và mọi màn mở
+        # ra lúc ấy đứng ở "Đang đọc…". Chủ sản phẩm gọi đúng tên: "app đứng im".
+        #
+        # `parse_intent` và `ground` GIỮ ĐỒNG BỘ: vài giây, và chúng sinh ra `intent_id` mà hợp
+        # đồng khai trong kết quả. Chỉ phần chạy lâu đi xuống luồng nền.
+        #
+        # `plan_only` cũng giữ đồng bộ: nó KHÔNG chạy nút nào, chỉ dựng kế hoạch rồi dừng — và
+        # hai nút của §2D.6 cần `run_id` ngay trong câu trả lời để bấm được.
+        if not cho_gat and self.phat is not None:
+            import threading
+            ra["state"] = "running"
+            threading.Thread(target=self._chay_chuoi_nen, args=(intent, tham_chuoi),
+                             name=f"chuoi:{ra['intent_id']}", daemon=True).start()
+            return ra
+
+        chuoi = self.router.invoke("chat.orchestrate", tham_chuoi, self.ctx)
         if chuoi.status == "done" and chuoi.result:
             ra["run_id"] = chuoi.result.get("run_id")
             ra["state"] = chuoi.result.get("state")
@@ -629,6 +653,48 @@ class Daemon:
         else:
             ra["run"] = asdict(chuoi)
         return ra
+
+    def _chay_chuoi_nen(self, intent: dict[str, Any], tham: dict[str, Any]) -> None:
+        """Chạy chuỗi ở luồng nền, kết quả đi bằng SỰ KIỆN. [DEV-154]
+
+        Ba sự kiện, và cả ba đã được `openrpc.json` khai từ trước — không thêm loại mới:
+
+        * `event.chat.restated` — câu ý hiểu và danh sách bước (§2D.6). Phát NGAY khi chuỗi
+          dựng xong, trước khi nó chạy hết, vì đây là chỗ người dùng bắt được một lệnh bị hiểu
+          sai. Phát muộn thì nó chỉ còn là một bản tường thuật.
+        * `event.chat.report` — báo cáo cuối: từng bước làm ra gì, bước nào hỏng, còn gì chờ
+          người.
+        * `event.run.progress` — do chính `chat.orchestrate` phát ra từng nút, không cần gì ở đây.
+
+        KHÔNG để ngoại lệ thoát ra: luồng này không có ai bắt, và một ngoại lệ ở đây sẽ làm lượt
+        gõ ấy im lặng mãi mãi — đúng thứ vừa vá xong ở tầng khác.
+        """
+        try:
+            chuoi = self.router.invoke("chat.orchestrate", tham, self.ctx)
+        except Exception as e:  # noqa: BLE001
+            import traceback
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.flush()
+            self.phat("event.chat.report",  # type: ignore[misc]
+                      {"run_id": "", "done": [], "waiting": [], "failed": [],
+                       "loi": f"{type(e).__name__}: {e}"})
+            return
+        if chuoi.status != "done" or not chuoi.result:
+            self.phat("event.chat.report",  # type: ignore[misc]
+                      {"run_id": "", "done": [], "waiting": [], "failed": [],
+                       "loi": _vi_sao_run(chuoi)})
+            return
+        ma_run = chuoi.result.get("run_id") or ""
+        y = self._y_hieu(intent, chuoi.result)
+        self.phat("event.chat.restated",  # type: ignore[misc]
+                  {"intent_id": intent.get("intent") or "",
+                   "text": y.get("restate") or "", "steps": y.get("steps") or [],
+                   "run_id": ma_run, "state": chuoi.result.get("state") or ""})
+        self.phat("event.chat.report",  # type: ignore[misc]
+                  {"run_id": ma_run, "state": chuoi.result.get("state") or "",
+                   "done": self._buoc_va_dau_ra(self.ctx, ma_run),
+                   "waiting": self._cho_gi(self.ctx, ma_run),
+                   "failed": self._hong_gi(self.ctx, ma_run)})
 
     def _y_hieu(self, intent: dict[str, Any], kq: dict[str, Any]) -> dict[str, Any]:
         """`{restate, steps}` cho thẻ "Ý hiểu" của UXC-31 §2D.6.
@@ -1082,6 +1148,16 @@ class Daemon:
                         f"{type(e).__name__}: {e}")
 
 
+def _vi_sao_run(r: Any) -> str:
+    """Lý do THẬT một lời gọi không `done` — cho câu báo lỗi đi bằng sự kiện."""
+    e = getattr(r, "error", None) or {}
+    ma = e.get("eide_code") or ""
+    tin = e.get("message") or ""
+    if ma or tin:
+        return f"{ma}: {tin}".strip(": ")
+    return str(getattr(r, "status", "không rõ"))
+
+
 def _err(rid: Any, code: int, message: str, eide_code: str | None = None) -> dict[str, Any]:
     err: dict[str, Any] = {"code": code, "message": message}
     if eide_code:
@@ -1106,10 +1182,23 @@ def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:
     # cùng một lệnh là thứ người dùng không bao giờ truy ra được.
     nap_env()
 
+    # MỘT KHOÁ cho cả ống ra. [DEV-154]
+    #
+    # Từ khi chuỗi chạy ở luồng nền, có HAI người ghi vào `out`: vòng lặp chính (câu trả lời) và
+    # luồng chuỗi (sự kiện). Hai lời `write` xen vào nhau giữa dòng sẽ sinh ra một dòng JSON
+    # hỏng, và phía giao diện bỏ qua dòng ấy — tức mất đúng một câu trả lời hoặc một sự kiện,
+    # ngẫu nhiên, không dấu vết. `out.write` của Python không bảo đảm nguyên tử cho chuỗi nhiều
+    # byte, nên phải khoá tay.
+    khoa_ra = threading.Lock()
+
+    def ghi_ra(o: dict[str, Any]) -> None:
+        van = json.dumps(o, ensure_ascii=False) + "\n"
+        with khoa_ra:
+            out.write(van)
+            out.flush()
+
     def phat(ten: str, p: dict[str, Any]) -> None:
-        out.write(json.dumps({"jsonrpc": "2.0", "method": ten, "params": p},
-                             ensure_ascii=False) + "\n")
-        out.flush()
+        ghi_ra({"jsonrpc": "2.0", "method": ten, "params": p})
 
     d = Daemon(project, phat=phat)
     for line in inp:
@@ -1122,5 +1211,4 @@ def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:
             resp = _err(None, -32700, "JSON không hợp lệ")
         else:
             resp = d.handle(msg)
-        out.write(json.dumps(resp, ensure_ascii=False) + "\n")
-        out.flush()
+        ghi_ra(resp)

@@ -1,0 +1,25 @@
+# BÀI CNC TỪ ĐẦU — dự án MỚI HOÀN TOÀN, không dữ liệu nạp sẵn.
+#
+# Nhịp đi theo đúng cách chủ sản phẩm mô tả:
+#   người nói mong muốn → tác tử hiểu, hoặc hỏi lại → người xem kết quả ở tab bên trái
+#
+# Tôi nói bằng lời người dùng, KHÔNG mớm thuật ngữ kỹ thuật nào: không "USB gadget",
+# không "OTG", không "Mass Storage". Mớm lời giải vào câu hỏi thì không đo được tác tử
+# có tự nghĩ ra được không — mà đó mới là thứ cần kiểm.
+
+@tao Bỏ việc cầm USB xuống xưởng cho máy CNC
+
+# 1. Kể việc, bằng lời của người làm xưởng
+Máy CNC ở xưởng tôi dùng bộ điều khiển Fangling F2300B. Mỗi lần có bản thiết kế mới tôi phải chép file G-code ra USB rồi mang xuống xưởng cắm vào máy. Tôi muốn bỏ hẳn việc cầm USB đi lại.
+
+# 2. Ràng buộc quan trọng nhất
+Bộ điều khiển đó chỉ đọc được USB, nó không có cổng mạng và tôi không đổi được phần mềm trong nó.
+
+# 3. Điều tôi lo nhất
+Tôi lo nhất là đang cắt dở mà file bị hỏng hoặc máy đọc nhầm file cũ.
+
+# 4. XEM KẾT QUẢ — tác tử đã rút ra những yêu cầu nào
+@man ReqArch
+
+# 5. XEM TÁC TỬ HỎI LẠI NHỮNG GÌ
+@man LamRo

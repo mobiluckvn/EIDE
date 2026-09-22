@@ -88,6 +88,10 @@ public actor EideDaemon {
     private let tienTrinh = Process()
     private let vao = Pipe()
     private let ra = Pipe()
+    /// Ống stderr của daemon — nơi DUY NHẤT nói vì sao nó chết.
+    private let loi = Pipe()
+    /// Vòng đệm stderr. Ngoài actor vì `readabilityHandler` chạy ở luồng nền.
+    private let demLoi = DemLoiDaemon()
     private var soThuTu = 0
     private var dem = Data()
     private var onSuKien: (@Sendable (String, [String: Any]) -> Void)?
@@ -167,13 +171,42 @@ public actor EideDaemon {
         tienTrinh.arguments = Array(lenh.dropFirst()) + ["daemon", "-p", duAn]
         tienTrinh.standardInput = vao
         tienTrinh.standardOutput = ra
-        tienTrinh.standardError = FileHandle.nullDevice
+        // stderr KHÔNG ném vào `/dev/null`.
+        //
+        // Daemon in vết lỗi và các dòng quyết định chính sách ra stderr; ném chúng đi nghĩa là
+        // khi daemon chết, KHÔNG AI biết vì sao — kể cả `traceback.print_exc` mà chính daemon
+        // gọi. Đo 22/09/2026 trên bài CNC: daemon chết giữa bước 2, và chỗ duy nhất có thể nói
+        // lý do thì đã bị bịt.
+        tienTrinh.standardError = loi
         do {
             try tienTrinh.run()
         } catch {
             throw Loi.khongChay("\(error)")
         }
+        // ĐÓNG đầu ống KHÔNG dùng trong tiến trình CHA. Đây là lỗi làm cả giao diện treo.
+        //
+        // `Pipe` mở cả hai đầu ở cả hai tiến trình. Cha chỉ ĐỌC `ra`, nhưng vẫn giữ đầu GHI của
+        // nó; nên khi daemon chết, ống vẫn còn một người ghi — chính mình — và
+        // `availableData` KHÔNG BAO GIỜ thấy EOF. `_docDong` đứng đợi vĩnh viễn thay vì ném
+        // `Loi.mat("daemon đóng ống")`.
+        //
+        // Đo 22/09/2026: daemon chết giữa `chat.send`; thẻ Run đã nhận đủ sự kiện nên ghi
+        // "✅ Xong 6/6 bước", rồi màn hình đứng im mãi mãi — không lỗi, không hết giờ. Chủ sản
+        // phẩm nhìn màn hình và nói "vẫn là xong 6/6 bước, chẳng hiển thị thêm cái gì cả".
+        // Câu trả lời mang thẻ Ý hiểu, thẻ Kết quả và câu hỏi chờ người không bao giờ tới.
+        ra.fileHandleForWriting.closeFile()
+        vao.fileHandleForReading.closeFile()
+        // Gom stderr vào một vòng đệm để còn kèm vào thông điệp lỗi. Đọc nền, không chặn.
+        _batDocNen()
+        loi.fileHandleForReading.readabilityHandler = { [weak self] h in
+            let d = h.availableData
+            if d.isEmpty { h.readabilityHandler = nil; return }
+            self?.demLoi.them(String(data: d, encoding: .utf8) ?? "")
+        }
     }
+
+    /// Vài dòng cuối stderr, dạng đọc được — rỗng nếu daemon không nói gì.
+    public var loiCuoi: String { demLoi.cuoi() }
 
     /// Đăng ký người nghe `event.*`. CHỈ MỘT — hai người nghe một kênh là cách mất thông điệp.
     public func theoDoi(_ f: @escaping @Sendable (String, [String: Any]) -> Void) {
@@ -190,28 +223,43 @@ public actor EideDaemon {
 
     // MARK: - gọi
 
-    /// Chốt tuần tự hoá — bài học 2. Một mutex bất đồng bộ, không phải `Task` nối đuôi: một
-    /// `Task` chỉ bao phần CHỜ và hoàn thành ngay khi lời gọi trước bắt đầu đọc ống.
-    private var dangBan = false
-    private var hangCho: [CheckedContinuation<Void, Never>] = []
+    /// Các lời gọi ĐANG BAY, khớp theo `id` của JSON-RPC.
+    private var dangCho: [Int: CheckedContinuation<[String: Any], Error>] = [:]
+    /// Lý do ống đứt, nếu đã đứt. Lời gọi tới sau thì hỏng NGAY, không đợi vô ích.
+    private var daDut: String?
 
-    private func vaoHang() async {
-        while dangBan {
-            await withCheckedContinuation { hangCho.append($0) }
+    /// Gọi daemon. **Song song được** — nhiều lời gọi cùng bay, khớp về theo `id`.
+    ///
+    /// ## Vì sao bỏ mutex một-lời-gọi-một-lúc
+    ///
+    /// Bản trước xếp hàng mọi lời gọi và mỗi lời gọi tự đọc ống tới khi gặp câu trả lời của
+    /// chính nó. Điều đó làm `chat.send` — chạy đồng bộ cả chuỗi, hai đến bốn phút — **chặn
+    /// toàn bộ giao tiếp**: `autonomy.get`, `queue.list`, `undo.list` không chạy được, nhịp tim
+    /// không chạy được, nên sau 6 giây màn hình tự treo biển "Dữ liệu cũ — không nghe được
+    /// daemon N giây qua" trong khi daemon hoàn toàn khỏe. Mọi màn mở ra lúc ấy đứng ở
+    /// "Đang đọc…".
+    ///
+    /// JSON-RPC có `id` đúng để làm việc này; cái mutex đang bỏ thứ giao thức cho sẵn.
+    /// Hạn thời gian theo phương thức, giây. `nil` = không hạn.
+    ///
+    /// Không một hạn chung: `plane.hello` mà 3 giây không trả lời là daemon có vấn đề, còn
+    /// `chat.send` chạy cả chuỗi có mô hình thì hai phút là bình thường. Một hạn chung đủ rộng
+    /// cho `chat.send` thì vô dụng với `plane.hello`, và ngược lại thì cắt giữa việc thật.
+    ///
+    /// Những phương thức KHÔNG hạn là những phương thức có thể chạy lâu một cách hợp lệ. Chúng
+    /// không đợi vô hạn nữa nhờ `ongDut()`: ống đứt thì mọi lời gọi đang bay hỏng ngay.
+    public static func hanCua(_ phuongThuc: String) -> Double? {
+        switch phuongThuc {
+        case "plane.hello": return 5
+        case "autonomy.get", "autonomy.set", "queue.list", "undo.list", "stop": return 10
+        case "chat.send", "chat.resume", "caps.invoke": return nil
+        default: return 30
         }
-        dangBan = true
-    }
-
-    private func roiHang() {
-        dangBan = false
-        if !hangCho.isEmpty { hangCho.removeFirst().resume() }
     }
 
     @discardableResult
     public func goi(_ phuongThuc: String, _ thamSo: [String: Any] = [:]) async throws -> [String: Any] {
-        await vaoHang()
-        defer { roiHang() }
-
+        if let vi = daDut { throw Loi.mat(vi) }
         soThuTu += 1
         let id = soThuTu
         let yc: [String: Any] = ["jsonrpc": "2.0", "id": id,
@@ -219,26 +267,92 @@ public actor EideDaemon {
         guard let d = try? JSONSerialization.data(withJSONObject: yc) else {
             throw Loi.rpc(ma: -1, thongDiep: "không mã hoá được \(phuongThuc)", maEide: nil)
         }
-        try _gui(d)
-
-        // Bài học 1 — đọc tới khi gặp câu trả lời CỦA CHÍNH lời gọi này.
-        while true {
-            let dong = try _docDong()
-            guard let o = try? JSONSerialization.jsonObject(with: dong) as? [String: Any] else {
-                continue
+        if let han = Self.hanCua(phuongThuc) {
+            // Đặt một hẹn giờ HUỶ: quá hạn thì làm hỏng continuation ấy và nói rõ hạn là bao
+            // nhiêu. Không huỷ được lời gọi phía daemon — JSON-RPC không có đường ấy — nên câu
+            // trả lời tới muộn sẽ bị `nhanDong` bỏ qua vì `id` đã rút khỏi bảng.
+            Task { [weak self] in
+                try? await Task.sleep(nanoseconds: UInt64(han * 1_000_000_000))
+                await self?.quaHan(id, phuongThuc, han)
             }
-            if let ten = o["method"] as? String, o["id"] == nil {
-                onSuKien?(ten, (o["params"] as? [String: Any]) ?? [:])
-                continue
-            }
-            guard (o["id"] as? Int) == id else { continue }
-            if let e = o["error"] as? [String: Any] {
-                throw Loi.rpc(ma: e["code"] as? Int ?? -1,
-                              thongDiep: e["message"] as? String ?? "",
-                              maEide: (e["data"] as? [String: Any])?["eide_code"] as? String)
-            }
-            return o["result"] as? [String: Any] ?? [:]
         }
+        return try await withCheckedThrowingContinuation { cont in
+            dangCho[id] = cont
+            do { try _gui(d) } catch {
+                dangCho[id] = nil
+                cont.resume(throwing: error)
+            }
+        }
+    }
+
+    private func quaHan(_ id: Int, _ phuongThuc: String, _ han: Double) {
+        guard let c = dangCho.removeValue(forKey: id) else { return }   // đã trả lời rồi
+        c.resume(throwing: Loi.mat("`\(phuongThuc)` không trả lời trong \(Int(han)) giây — "
+                                   + "daemon còn sống nhưng không đáp"))
+    }
+
+    /// Vòng đọc NỀN — một cái duy nhất cho cả đời daemon.
+    ///
+    /// ## Vì sao phải có
+    ///
+    /// Trước bản này `onSuKien` được gọi ở đúng một chỗ: bên trong vòng đọc của `goi()`. Nghĩa
+    /// là **sự kiện chỉ tới được khi có một lời gọi đang bay**; giữa hai lời gọi chúng nằm
+    /// trong đệm ống. Thứ cứu tình huống ấy là nhịp tim — mỗi vài giây gọi `plane.hello`, và
+    /// vòng đọc của *nó* mới xả đệm ra. Tức tiến độ của tác tử tới được màn hình nhờ một hiệu
+    /// ứng phụ của phép kiểm sống-chết, và nó chậm đúng bằng chu kỳ nhịp tim.
+    ///
+    /// Đọc trên một `Task.detached` vì `availableData` CHẶN luồng. Chặn luồng của actor thì
+    /// `goi()` không vào được actor để đăng ký continuation — bế tắc.
+    private func _batDocNen() {
+        let ong = ra.fileHandleForReading
+        Task.detached { [weak self] in
+            var dem = Data()
+            while true {
+                // Tách dòng TRƯỚC khi đọc thêm: một lần `availableData` có thể mang về nhiều
+                // dòng, và bỏ sót chúng là bỏ sót sự kiện.
+                while let i = dem.firstIndex(of: 0x0A) {
+                    let d = Data(dem[dem.startIndex..<i])
+                    dem = Data(dem[dem.index(after: i)...])
+                    await self?.nhanDong(d)
+                }
+                let phan = ong.availableData
+                if phan.isEmpty {
+                    await self?.ongDut()
+                    return
+                }
+                dem.append(phan)
+            }
+        }
+    }
+
+    /// Một dòng từ daemon: câu trả lời (có `id`) hay sự kiện (không `id`).
+    private func nhanDong(_ d: Data) {
+        guard let o = try? JSONSerialization.jsonObject(with: d) as? [String: Any] else { return }
+        if let ten = o["method"] as? String, o["id"] == nil {
+            onSuKien?(ten, (o["params"] as? [String: Any]) ?? [:])
+            return
+        }
+        guard let id = o["id"] as? Int, let cont = dangCho.removeValue(forKey: id) else { return }
+        if let e = o["error"] as? [String: Any] {
+            cont.resume(throwing: Loi.rpc(ma: e["code"] as? Int ?? -1,
+                                          thongDiep: e["message"] as? String ?? "",
+                                          maEide: (e["data"] as? [String: Any])?["eide_code"] as? String))
+        } else {
+            cont.resume(returning: o["result"] as? [String: Any] ?? [:])
+        }
+    }
+
+    /// Ống đứt: làm HỎNG mọi lời gọi đang bay, không để chúng đợi mãi.
+    ///
+    /// Đây là chỗ bản trước hỏng nặng nhất. Daemon chết giữa `chat.send`, và lời gọi ấy đợi
+    /// vĩnh viễn — màn hình đứng ở trạng thái cuối nhận được, không lỗi, không hết giờ.
+    private func ongDut() {
+        let v = demLoi.cuoi()
+        let vi = "daemon đóng ống"
+            + (v.isEmpty ? " (daemon không in lý do nào ra stderr)" : " — daemon nói:\n\(v)")
+        daDut = vi
+        for (_, c) in dangCho { c.resume(throwing: Loi.mat(vi)) }
+        dangCho.removeAll()
     }
 
     private func _gui(_ d: Data) throws {
@@ -251,16 +365,31 @@ public actor EideDaemon {
         }
     }
 
-    private func _docDong() throws -> Data {
-        while true {
-            if let i = dem.firstIndex(of: 0x0A) {
-                let d = Data(dem[dem.startIndex..<i])
-                dem = Data(dem[dem.index(after: i)...])
-                return d
-            }
-            let phan = ra.fileHandleForReading.availableData
-            if phan.isEmpty { throw Loi.mat("daemon đóng ống") }
-            dem.append(phan)
+}
+
+/// Vòng đệm mấy dòng stderr gần nhất của daemon.
+///
+/// Một lớp có khoá riêng chứ không phải trường của `EideDaemon`: `readabilityHandler` chạy trên
+/// luồng nền của Foundation, còn `EideDaemon` là actor — chạm vào trạng thái của actor từ đó là
+/// một cuộc đua, và trình biên dịch chặn đúng chỗ ấy.
+///
+/// Giữ TRẦN dòng: daemon có thể in hàng nghìn dòng trong một phiên dài, và giữ hết chúng để
+/// dùng tám dòng cuối là đổi một lỗi khó chẩn đoán lấy một chỗ rò bộ nhớ.
+final class DemLoiDaemon: @unchecked Sendable {
+    private let khoa = NSLock()
+    private var dong: [String] = []
+    private let tran = 40
+
+    func them(_ s: String) {
+        khoa.lock(); defer { khoa.unlock() }
+        for d in s.split(separator: "\n", omittingEmptySubsequences: true) {
+            dong.append(String(d))
         }
+        if dong.count > tran { dong.removeFirst(dong.count - tran) }
+    }
+
+    func cuoi(_ n: Int = 8) -> String {
+        khoa.lock(); defer { khoa.unlock() }
+        return dong.suffix(n).joined(separator: "\n")
     }
 }

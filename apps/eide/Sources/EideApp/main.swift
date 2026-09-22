@@ -141,6 +141,20 @@ final class UngDung: NSObject, NSApplicationDelegate {
             let d = NSString(string: args[i + 1]).expandingTildeInPath
             Task { @MainActor in await self.phien.moDuAn(d) }
         }
+        // `--do-nut <đường dẫn dự án>`: mở LẦN LƯỢT mọi màn và dò nút chết. Trả mã thoát khác
+        // 0 nếu có nút nào không nối vào đâu — để `make check` dùng được.
+        if let i = args.firstIndex(of: "--do-nut"), i + 1 < args.count {
+            let d = NSString(string: args[i + 1]).expandingTildeInPath
+            Task { @MainActor in await self._doNut(d) }
+            return
+        }
+        // `--bam-thu <dự án>`: BẤM THẬT từng nút rồi so màn hình trước/sau. Một nút có nối
+        // nhưng bấm xong không đổi gì là một nút chết theo nghĩa người dùng.
+        if let i = args.firstIndex(of: "--bam-thu"), i + 1 < args.count {
+            let d = NSString(string: args[i + 1]).expandingTildeInPath
+            Task { @MainActor in await self._bamThu(d) }
+            return
+        }
         if args.contains("--tu-kiem") {
             Task { await self._tuKiem() }
             return
@@ -188,6 +202,116 @@ final class UngDung: NSObject, NSApplicationDelegate {
     /// Màn PHẢI có dữ liệu ngay trên một dự án vừa tạo: phiên, sổ cái và bảng quy tắc đều ra
     /// đời cùng dự án. Mọi màn khác đứng trên tri thức hoặc mã mà dự án mới chưa có.
     static let CAN_DU_LIEU: Set<String> = ["Main", "NhatKy", "ChinhSach"]
+
+    /// Mở mọi màn rồi dò nút chết — `--do-nut <dự án>`.
+    ///
+    /// Mở THẬT từng màn thay vì dựng từng lớp màn rời: một nút chỉ chết khi nó nằm trong cây
+    /// khung nhìn đã dựng xong với dữ liệu thật, và phần lớn nút của sản phẩm này chỉ ra đời
+    /// khi có dữ liệu để bấm.
+    private func _doNut(_ duAn: String) async {
+        await phien.moDuAn(duAn)
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+        var tong = 0
+        // Vùng trao đổi và thanh trên luôn có mặt — dò trước, một lần.
+        for (ten, v) in [("VÙNG TRAO ĐỔI", khung.dock as NSView),
+                         ("THANH TRÊN", khung.thanhTren as NSView),
+                         ("CỘT TRÁI", khung.cotTrai as NSView),
+                         ("CỘT PHẢI", khung.cotPhai as NSView)] {
+            let ds = EideDoNutChet.do_(v, ten: ten)
+            if !ds.isEmpty { print("\n\(ten): \(ds.count) nút chết\n\(EideDoNutChet.baoCao(ds))") }
+            tong += ds.count
+        }
+        for m in EideManHinhDS.tatCa {
+            _ = phien.moMan(m.tien, boiTacTu: false)
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            khung.layoutSubtreeIfNeeded()
+            let ds = EideDoNutChet.do_(khung.vungLamViec, ten: "MÀN \(m.tien)")
+            if !ds.isEmpty {
+                print("\nMÀN \(m.tien) (\(m.nhan)): \(ds.count) nút chết")
+                print(EideDoNutChet.baoCao(ds))
+            }
+            tong += ds.count
+        }
+        print("\n=== TỔNG: \(tong) nút chết trên \(EideManHinhDS.tatCa.count) màn + 4 vùng")
+        exit(tong == 0 ? 0 : 1)
+    }
+
+    /// Nút KHÔNG bấm thử: hạ cả phiên, hoặc đổi thứ khó dựng lại.
+    ///
+    /// Danh sách phải NGẮN và mỗi tên phải có lý do — một danh sách bỏ qua dài là cách biến
+    /// phép đo thành thứ luôn xanh.
+    static let KHONG_BAM: Set<String> = [
+        "Dừng khẩn",        // hạ cả phiên, mọi phép đo sau đó vô nghĩa
+        "Từ chối",          // quyết định không đảo được trên hàng đợi thật
+        "Hoàn tác",         // đổi dữ liệu dự án thật
+    ]
+
+    /// Bấm thật từng nút, so vân tay màn hình trước/sau — `--bam-thu <dự án>`.
+    private func _bamThu(_ duAn: String) async {
+        await phien.moDuAn(duAn)
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+        var imLang: [String] = []
+        var tongBam = 0
+
+        /// Chờ màn nạp XONG. Không có phép chờ này thì bộ đo chụp lúc màn còn trống, và một
+        /// màn trống không có nút nào — báo cáo khi ấy nói "0 nút chết" cho một màn chưa hề
+        /// được dò. Đo 22/09/2026: cả 25 màn góp đúng 0 nút.
+        func choNap() async {
+            let t0 = ProcessInfo.processInfo.systemUptime
+            while self._chuTrong(self.khung.vungLamViec).contains("Đang đọc…"),
+                  ProcessInfo.processInfo.systemUptime - t0 < 12 {
+                try? await Task.sleep(nanoseconds: 200_000_000)
+            }
+            try? await Task.sleep(nanoseconds: 400_000_000)
+            self.khung.layoutSubtreeIfNeeded()
+        }
+
+        func thu(_ goc: NSView, _ ten: String, moLai: @escaping () async -> Void) async {
+            await moLai()
+            await choNap()
+            let n = EideDoNutChet.nutDs(goc).count
+            for i in 0..<n {
+                await moLai()
+                await choNap()
+                let ds = EideDoNutChet.nutDs(goc)
+                guard i < ds.count else { break }
+                let (b, duong) = ds[i]
+                let nhan = b.title.isEmpty ? b.attributedTitle.string : b.title
+                if nhan.isEmpty || Self.KHONG_BAM.contains(nhan) { continue }
+                // Nút TẮT đang nói "chưa tới lượt bạn bấm" — đó là hành vi đúng, không phải nút
+                // chết. `EideNutTheoO` lo phần bật lại khi ô nhập có dữ liệu.
+                if !b.isEnabled { continue }
+                // `NSPopUpButton` MỞ MENU chứ không đổi màn hình, nên phép so trước/sau luôn
+                // báo nó im — một lời tố oan. Đo nó bằng thứ đúng với nó: có mục để chọn không.
+                if let pu = b as? NSPopUpButton {
+                    if pu.numberOfItems <= 1 {
+                        imLang.append("  ✖ [\(nhan)] danh sách thả xuống KHÔNG có mục nào"
+                                      + "\n     \(ten) · \(duong)")
+                    }
+                    tongBam += 1
+                    continue
+                }
+                let truoc = EideDoNutChet.vanTay(khung)
+                _ = b.target?.perform(b.action, with: b)
+                try? await Task.sleep(nanoseconds: 600_000_000)
+                khung.layoutSubtreeIfNeeded()
+                tongBam += 1
+                if EideDoNutChet.vanTay(khung) == truoc {
+                    imLang.append("  ✖ [\(nhan)] bấm xong màn hình KHÔNG đổi gì\n     \(ten) · \(duong)")
+                }
+            }
+        }
+
+        await thu(khung.dock, "VÙNG TRAO ĐỔI", moLai: {})
+        for m in EideManHinhDS.tatCa {
+            await thu(khung.vungLamViec, "MÀN \(m.tien)", moLai: { [weak self] in
+                _ = self?.phien.moMan(m.tien, boiTacTu: false)
+            })
+        }
+        print("\n=== BẤM \(tongBam) nút — \(imLang.count) nút KHÔNG làm gì")
+        if !imLang.isEmpty { print(imLang.joined(separator: "\n")) }
+        exit(imLang.isEmpty ? 0 : 1)
+    }
 
     private func _tuKiem() async {
         var dat = 0, hong = 0

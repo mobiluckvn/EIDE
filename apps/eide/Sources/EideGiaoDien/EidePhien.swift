@@ -108,16 +108,26 @@ public final class EidePhien {
     func lamQuen() {
         moMan("Main", boiTacTu: false)
         khung.dock.batDauLamQuen(dongHo())
-        khung.dock.themLuot(.tacTu, Self.CHAO_BA_THU)
+        khung.dock.themLuot(.tacTu, Self.chaoBaThu(soNangLuc: motaCua.isEmpty ? nil : motaCua.count))
         _batXoayMau()
     }
 
     /// Đúng ba thứ, theo đúng thứ tự §3.3: lệnh mẫu, ⌘K, Dừng khẩn.
-    public static let CHAO_BA_THU =
-        "Dự án đã sẵn sàng. Ba thứ cần biết, hết:\n"
-        + "1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.\n"
-        + "2. ⌘K mở bảng lệnh — tìm 244 năng lực và 25 màn theo tên hoặc mô tả.\n"
-        + "3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào."
+    ///
+    /// Số năng lực đếm TỪ REGISTRY của daemon đang nối, không chép cứng. Con số cũ là "244" và
+    /// nó sai ngay hôm danh mục lên 245 — một câu chào nói sai một con số kiểm được là chỗ rẻ
+    /// nhất để người dùng học rằng sản phẩm này không đáng tin về những con số nó đưa ra.
+    ///
+    /// `nil` khi chưa nạp xong registry: nói "danh mục năng lực" chung chung còn hơn in một số
+    /// bịa ra.
+    public static func chaoBaThu(soNangLuc: Int?) -> String {
+        let n = soNangLuc.map { "\($0) năng lực" } ?? "danh mục năng lực"
+        return "Dự án đã sẵn sàng. Ba thứ cần biết, hết:\n"
+            + "1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.\n"
+            + "2. ⌘K mở bảng lệnh — tìm \(n) và \(EideManHinhDS.tatCa.count) màn theo tên "
+            + "hoặc mô tả.\n"
+            + "3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào."
+    }
 
     /// Bộ xoay lệnh mẫu của §3.4. Dừng hẳn khi hết mười phút — `xoayMau` trả `false`.
     private func _batXoayMau() {
@@ -644,11 +654,21 @@ public final class EidePhien {
     /// `false` — và bộ lái kết luận "xong" rồi chụp ảnh. Đo 21/09/2026 trên chặng A bài CNC:
     /// bước 2 "xong" sau 10,6 s trong khi thẻ Run còn ghi `bước 1/6 ▶ đang chạy req.elicit`.
     ///
-    /// Hai vế, vì một lượt chạy có hai giai đoạn và không vế nào phủ được cả hai: `guiDangBay`
-    /// phủ lúc đang đợi `chat.send` trả về, `theRun` phủ lúc các nút chạy tiếp ở daemon.
-    public var dangBan: Bool {
-        guiDangBay > 0 || theRun.values.contains { $0.trangThai == .chay }
-    }
+    /// CHỈ một vế: `chat.send` có đang bay không.
+    ///
+    /// Bản đầu thêm vế "còn thẻ Run nào đang chạy" vì tôi tưởng các nút chạy tiếp ở daemon sau
+    /// khi `chat.send` trả về. Không phải: `chat.orchestrate` chạy ĐỒNG BỘ, nên lúc `chat.send`
+    /// trả lời thì chuỗi đã xong hoặc đã dừng để hỏi người.
+    ///
+    /// Vế thừa ấy làm treo cả bài đo. Mỗi lời gọi năng lực lồng bên trong (`plan.create`,
+    /// `chat.parse_intent`…) cũng dựng một thẻ Run riêng, và chúng KHÔNG nhận `run.done` của
+    /// chuỗi — nên một thẻ cũ ghim `dangBan` ở `true` vĩnh viễn.
+    ///
+    /// Đo 22/09/2026 trên bài CNC: daemon RẢNH (ngăn xếp đứng ở `read` trên stdin), ứng dụng
+    /// RẢNH (vòng lặp sự kiện), màn hình ghi "✅ Xong 6/6 bước" — mà bộ lái vẫn đợi thêm 15
+    /// phút cho tới khi hết hạn. Chủ sản phẩm nhìn màn hình và nói "vẫn lỗi như cũ, không có
+    /// bất kỳ một báo lỗi nào cả" — đúng, vì không có lỗi nào: chỉ có một phép chờ sai.
+    public var dangBan: Bool { guiDangBay > 0 }
 
     private func _gui(_ van: String) async {
         guard let d = daemon else {
@@ -658,6 +678,18 @@ public final class EidePhien {
         defer { guiDangBay -= 1 }
         do {
             let r = try await d.goi("chat.send", ["text": van])
+            // [DEV-154] `state: "running"` = chuỗi đang chạy Ở LUỒNG NỀN của daemon. Thẻ Ý hiểu
+            // và thẻ Kết quả tới sau, bằng `event.chat.restated` và `event.chat.report`.
+            //
+            // Nói MỘT câu ở đây chứ không im: giữa lúc nhận lệnh và lúc sự kiện đầu tiên về có
+            // thể mất vài chục giây, và một vùng trao đổi im trong vài chục giây là thứ người
+            // dùng đọc thành "nó không nhận lệnh của tôi".
+            if (r["state"] as? String) == "running" {
+                let y = (r["intent_id"] as? String).map { " (ý hiểu: `\($0)`)" } ?? ""
+                khung.dock.themLuot(.tacTu, "Đã nhận\(y) — đang làm. Tiến độ hiện ở thẻ Run, "
+                                    + "kết quả hiện ngay dưới đây khi xong.")
+                return
+            }
             // §2D.6 — thẻ Ý hiểu TRƯỚC câu "đang chạy": người đọc từ trên xuống, và thứ họ cần
             // kiểm là ý hiểu, không phải mã lượt chạy.
             if r["restate"] != nil || r["steps"] != nil {
@@ -739,6 +771,12 @@ public final class EidePhien {
         lucCuoiNghe = Date()
         _theoSeq(p)
         _dinhTuyen(ten, p)
+        // ---- [DEV-154] kết quả của một lượt gõ nay tới BẰNG SỰ KIỆN.
+        //
+        // `chat.send` trả về ngay với `state: "running"`; thẻ Ý hiểu và thẻ Kết quả từng bước
+        // đến sau, qua hai sự kiện mà `openrpc.json` đã khai từ trước.
+        if ten == "event.chat.restated" { _nhanYHieu(p); return }
+        if ten == "event.chat.report" { _nhanBaoCao(p); return }
         guard ten == "event.run.progress" else { return }
         _theoRun(p)
         guard let cap = p["cap"] as? String else { return }
@@ -1044,6 +1082,62 @@ public final class EidePhien {
         return "Lõi không nói lý do."
     }
 
+    /// `event.chat.restated` → thẻ Ý hiểu. [DEV-154]
+    ///
+    /// Thẻ này tới TRƯỚC thẻ kết quả, vì §2D.6 đặt nó làm chỗ người bắt một lệnh bị hiểu sai
+    /// trước khi nó ghi tệp. Tới sau thì nó chỉ còn là một bản tường thuật.
+    private func _nhanYHieu(_ p: [String: Any]) {
+        let cho = (p["state"] as? String) == "planned"
+        let ma = (p["run_id"] as? String) ?? ""
+        let the = EideTheYHieu(
+            van: (p["text"] as? String) ?? "",
+            buoc: (p["steps"] as? [[String: Any]] ?? []).compactMap { $0["cap"] as? String },
+            muc: Self.mucTu(khung.thanhTren.mucHienTai),
+            cho: cho)
+        if cho {
+            the.onDuyet = { [weak self] in Task { await self?.tiepTuc(ma, true) } }
+            the.onSua = { [weak self] in Task { await self?.tiepTuc(ma, false) } }
+        }
+        khung.dock.themThe(the)
+    }
+
+    /// `event.chat.report` → thẻ Kết quả từng bước, dòng lỗi, câu hỏi chờ người. [DEV-154]
+    ///
+    /// Thứ tự đọc: bước nào hỏng TRƯỚC (một lỗi đặt sau một câu nghe-ổn thì bị che), rồi làm
+    /// ra gì, rồi còn chờ gì.
+    /// Số báo cáo lượt chạy đã nhận. Mốc để bộ lái kịch bản biết một lượt gõ đã xong —
+    /// `chat.send` nay trả về ngay, nên "hết bận" không còn nghĩa là "xong việc". [DEV-154]
+    public private(set) var soBaoCao = 0
+
+    private func _nhanBaoCao(_ p: [String: Any]) {
+        soBaoCao += 1
+        if let vi = p["loi"] as? String, !vi.isEmpty {
+            khung.dock.themLuot(.loi, "✖ Lượt này KHÔNG chạy được — \(vi)")
+        }
+        for n in (p["failed"] as? [[String: Any]] ?? []) {
+            let ma = (n["ma"] as? String).map { "\($0): " } ?? ""
+            khung.dock.themLuot(.loi,
+                "✖ Bước `\(n["cap"] as? String ?? "?")` HỎNG — \(ma)"
+                + "\((n["vi"] as? String) ?? "lõi không nói lý do")")
+        }
+        if let br = p["done"] as? [[String: Any]], !br.isEmpty {
+            khung.dock.themThe(EideTheKetQua(buoc: br))
+        }
+        for n in (p["waiting"] as? [[String: Any]] ?? []) {
+            let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
+            khung.dock.themLuot(.cho, "Dừng ở `\(n["cap"] as? String ?? "?")` — "
+                + (thieu.isEmpty ? ((n["vi"] as? String) ?? "chờ người")
+                                 : "cần anh cho biết: \(thieu)"))
+        }
+        if let st = p["state"] as? String, !st.isEmpty {
+            khung.dock.themLuot(.tacTu, "Lượt chạy \(Self.trangThaiChuoi(st)).")
+        }
+        Task { [weak self] in
+            await self?._lamMoi()
+            await self?.veLaiManDangMo()
+        }
+    }
+
     /// Người trả lời thẻ Ý hiểu — §2D.6, [DEV-140].
     ///
     /// `thuan = false` là **HUỶ**, không phải "để đó": người bấm *Sửa ý hiểu* nói chuỗi này
@@ -1174,6 +1268,30 @@ public final class EidePhien {
     }
 
     /// Đọc lại trạng thái: mức tự chủ, hàng đợi, mục hoàn tác.
+    /// Gợi ý cho ô lệnh, suy từ HIỆN VẬT THẬT của dự án.
+    ///
+    /// Thứ tự ưu tiên là thứ tự việc thật sự chặn nhau: chưa có yêu cầu thì mô tả việc trước;
+    /// có yêu cầu mà chưa đối chiếu phần cứng thì đó là bước kế; còn điểm cần làm rõ thì nhắc
+    /// người trả lời, vì tác tử đang chờ đúng chỗ ấy.
+    ///
+    /// Trả `nil` khi không biết gợi gì — và khi ấy câu chép sẵn nhận lại quyền. Bịa một gợi ý
+    /// cho một trạng thái mình không hiểu là cách nhanh nhất làm người dùng thôi đọc ô này.
+    static func goiYTuDuAn(yeuCau: [[String: Any]], lamRoMo: Int) -> String? {
+        if yeuCau.isEmpty {
+            return lamRoMo > 0 ? nil
+                : "Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó"
+        }
+        let chuaXet = yeuCau.filter { ($0["feasibility"] as? String) == nil }
+        if let d = chuaXet.first, let ma = d["id"] as? String {
+            return "Thử: đối chiếu \(ma) với phần cứng thật"
+                + (chuaXet.count > 1 ? " (còn \(chuaXet.count) yêu cầu chưa đối chiếu)" : "")
+        }
+        if lamRoMo > 0 {
+            return "Còn \(lamRoMo) điểm cần làm rõ — trả lời ở tab Làm rõ yêu cầu"
+        }
+        return "Thử: lập kế hoạch cho \((yeuCau.first?["id"] as? String) ?? "yêu cầu đầu tiên")"
+    }
+
     /// Nhãn tiếng người cho loại điểm cần làm rõ — cùng bảng với màn S9, một nguồn.
     static func nhanLoaiLamRo(_ k: String) -> String { EideManLamRo.nhanLoai(k) }
 
@@ -1191,13 +1309,19 @@ public final class EidePhien {
         // sổ thật: tab Làm rõ yêu cầu hiện 5 dòng "CHỜ ANH" trong khi thanh trên ghi "Chờ tôi 0"
         // và cột phải ghi "Trống — không việc nào chờ anh". Hai chỗ trên CÙNG một khung hình nói
         // ngược nhau về cùng một việc, và người dùng không có cách nào biết chỗ nào đúng.
+        let goiYeuCau = try? await d.goi("caps.invoke",
+                                         ["id": "view.artifacts",
+                                          "params": ["kind": "requirement", "limit": 200]])
         let goiLamRo = try? await d.goi("caps.invoke",
                                         ["id": "view.artifacts",
                                          "params": ["kind": "clarification", "limit": 200]])
         let ketLamRo = goiLamRo?["result"] as? [String: Any]
         let lamRo = (ketLamRo?["items"] as? [[String: Any]]) ?? []
+        let yeuCau = ((goiYeuCau?["result"] as? [String: Any])?["items"]
+                      as? [[String: Any]]) ?? []
         let lamRoMo = lamRo.filter { (($0["status"] as? String) ?? "open") == "open" }
         khung.thanhTren.datDem(cho: cho.count + lamRoMo.count, hoanTac: ht.count)
+        khung.dock.datGoiYDuAn(Self.goiYTuDuAn(yeuCau: yeuCau, lamRoMo: lamRoMo.count))
         khung.cotPhai.onMoLamRo = { [weak self] in
             _ = self?.moMan(EideManLamRo.tien, boiTacTu: false)
         }
