@@ -205,4 +205,39 @@ final class EideDongBoSuKienTests: XCTestCase {
         ph.napSuKien("event.knowledge.changed", ["seq": 23, "kind": "store.write"])
         XCTAssertEqual(k.chuDaiCu, "", "báo động giả cho một sổ cái lành — \(k.chuDaiCu)")
     }
+    // MARK: - gộp nạp lại: KHÔNG được livelock [DEV-165]
+
+    /// Trong lúc một lượt nạp đang chạy, sự kiện mới chỉ ĐÁNH DẤU — không xếp lượt thứ hai.
+    ///
+    /// `_henNapLai` gỡ cờ chờ NGAY SAU khi ngủ, tức TRƯỚC `nap`. Nên sự kiện tới trong lúc nạp
+    /// lại xếp thêm một lượt, lượt ấy giết lượt đang chạy ([DEV-164]), rồi chính nó bị lượt sau
+    /// giết — LIVELOCK: màn không bao giờ nạp xong.
+    ///
+    /// Đo 22/09/2026 bằng ảnh chụp cửa sổ thật: tab "Làm rõ yêu cầu" mở ra chỉ có ba chữ "Đang
+    /// đọc…", bảng 5 điểm cần làm rõ không hiện dù store có đủ.
+    ///
+    /// Đây là lỗi mà [DEV-164] LÀM LỘ RA chứ không gây ra: trước đó hai lượt chồng nhau cùng
+    /// vẽ, nên màn vẫn hiện — sai nội dung, nhưng hiện.
+    func testDangNapThiSuKienMoiCHI_DANH_DAU() {
+        let (_, ph) = Self.dung()
+        XCTAssertTrue(ph.xepNapLai("NhatKy"), "lượt đầu phải chạy")
+        // Ba sự kiện nữa trong lúc lượt đầu còn chạy — KHÔNG lượt nào được bắt đầu.
+        for _ in 0..<3 {
+            XCTAssertFalse(ph.xepNapLai("NhatKy"),
+                           "xếp lượt thứ hai trong lúc lượt đầu chưa xong — livelock")
+        }
+        // Xong lượt đầu: có đánh dấu → phải nạp thêm ĐÚNG MỘT lượt.
+        XCTAssertTrue(ph.xongNapLai("NhatKy"), "nuốt mất sự kiện tới trong lúc nạp")
+        XCTAssertTrue(ph.xepNapLai("NhatKy"))
+        // Lần này không có sự kiện mới → DỪNG, không lặp vô hạn.
+        XCTAssertFalse(ph.xongNapLai("NhatKy"), "nạp lại mãi dù không còn sự kiện nào")
+    }
+
+    /// Hai màn khác nhau không chặn nhau.
+    func testGopNapLaiTachTheoMAN() {
+        let (_, ph) = Self.dung()
+        XCTAssertTrue(ph.xepNapLai("NhatKy"))
+        XCTAssertTrue(ph.xepNapLai("Main"), "màn khác bị chặn theo — sai")
+        XCTAssertFalse(ph.xongNapLai("Main"))
+    }
 }

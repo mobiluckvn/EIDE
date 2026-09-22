@@ -650,13 +650,59 @@ public final class EidePhien {
     /// Gộp không thay được diff render; nó là cách lùi TRUNG THỰC cho tới khi từng màn hiện
     /// thực `apDung`. Khác biệt đáng giữ: một lần nạp cho một chùm sự kiện, thay vì một lần
     /// nạp cho mỗi sự kiện.
-    private func _henNapLai(_ man: EideManCoSo, _ tien: String) {
-        guard let d = daemon, !choNapLai.contains(tien) else { return }
+    /// Màn nhận thêm sự kiện TRONG LÚC đang nạp — phải nạp thêm một lượt nữa sau khi xong.
+    private var banLai: Set<String> = []
+
+    /// Có nên BẮT ĐẦU một lượt nạp lại cho màn này không — phần QUYẾT ĐỊNH, tách khỏi phần gọi
+    /// daemon để đo được mà không cần một daemon thật.
+    ///
+    /// Tách ra vì bài kiểm đầu tiên tôi viết cho lỗi này XANH CẢ KHI BẢN VÁ BỊ VÔ HIỆU:
+    /// `EidePhien` trong bài kiểm không có daemon, nên `_henNapLai` thoát ngay ở dòng đầu và
+    /// đường nạp lại chưa bao giờ được chạm tới. Một bài kiểm không tái hiện được điều kiện thì
+    /// nó không đo gì cả — và nó tệ hơn không có, vì nó báo ĐẠT.
+    func xepNapLai(_ tien: String) -> Bool {
+        guard !choNapLai.contains(tien) else {
+            banLai.insert(tien)
+            return false
+        }
         choNapLai.insert(tien)
+        return true
+    }
+
+    /// Lượt nạp xong — trả `true` nếu có sự kiện tới trong lúc ấy và cần nạp thêm một lượt.
+    func xongNapLai(_ tien: String) -> Bool {
+        choNapLai.remove(tien)
+        return banLai.remove(tien) != nil
+    }
+
+    private func _henNapLai(_ man: EideManCoSo, _ tien: String) {
+        guard let d = daemon else { return }
+        // Đang có một lượt nạp chờ hoặc đang chạy cho màn này → chỉ ĐÁNH DẤU, không xếp thêm.
+        //
+        // Bản trước gỡ `choNapLai` NGAY SAU khi ngủ, tức TRƯỚC `nap`. Nên sự kiện tới trong lúc
+        // nạp lại xếp thêm một lượt nữa, lượt ấy giết lượt đang chạy ([DEV-164]), rồi chính nó
+        // bị lượt sau giết — một LIVELOCK: màn không bao giờ nạp xong.
+        //
+        // Đo 22/09/2026 bằng ảnh chụp cửa sổ thật: tab "Làm rõ yêu cầu" mở ra chỉ có ba chữ
+        // "Đang đọc…", bảng 5 điểm cần làm rõ không hiện, dù store có đủ. Cứ mỗi 0,4 s một lượt
+        // nạp mới lại bắt đầu và giết lượt trước.
+        //
+        // Đây là lỗi mà [DEV-164] LÀM LỘ RA chứ không gây ra: trước đó hai lượt chồng nhau cùng
+        // vẽ, nên màn vẫn hiện — sai nội dung, nhưng hiện. Sửa cuộc đua xong thì cái livelock
+        // vốn đã ở đó mới thành nhìn thấy được.
+        guard xepNapLai(tien) else { return }
         Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(Self.GOP_NAP * 1_000_000_000))
             guard let self else { return }
-            choNapLai.remove(tien)
+            defer {
+                // Có sự kiện mới trong lúc nạp → nạp thêm ĐÚNG MỘT lượt nữa. Không lặp vô hạn:
+                // lượt sau chỉ chạy nếu `banLai` lại được đánh dấu lần nữa.
+                if xongNapLai(tien),
+                   khung.vungLamViec.dangMo == tien,
+                   let dang = khung.vungLamViec.manDangMo {
+                    _henNapLai(dang, tien)
+                }
+            }
             // Người có thể đã chuyển màn trong lúc chờ — nạp lại một màn không còn trên màn
             // hình là tốn một lượt gọi lõi để không ai thấy.
             guard khung.vungLamViec.dangMo == tien,

@@ -9,8 +9,8 @@
 - `code.feature` — viết hoặc sửa MÃ cho một tính năng, cấu hình ngoại vi
 - `target.flash` — nạp firmware lên board thật
 - `debug.ask` — hỏi về một LỖI ĐANG XẢY RA: log, HardFault, vì sao không chạy
-- `req.analyze` — phân tích, làm rõ hoặc truy vết YÊU CẦU
-- `arch.design` — thiết kế kiến trúc, chia module, ánh xạ phần cứng, kiểm xung đột chân
+- `req.analyze` — phân tích, làm rõ hoặc truy vết YÊU CẦU — làm việc TRÊN CHÍNH tập yêu cầu: rút ra, gán mã, tìm chỗ mơ hồ/mâu thuẫn, viết tiêu chí nghiệm thu
+- `arch.design` — thiết kế kiến trúc: chia hệ thống thành MODULE/khối chức năng, chọn kiểu kiến trúc, ánh xạ phần cứng, kiểm xung đột chân, viết ADR
 - `diagram.draw` — vẽ một lược đồ
 - `doc.write` — viết MỘT tài liệu hoặc một mục tài liệu
 - `view.ask` — hỏi TRI THỨC ĐÃ CÓ: thanh ghi, thông số, "X là gì", "vì sao đã chọn Y" (ADR)
@@ -24,6 +24,7 @@ Phân biệt:
 - `view.ask` hỏi tri thức TĨNH đã có trong hộ chiếu; `debug.ask` hỏi về một hiện tượng ĐANG hỏng.
 - `doc.write` là một tài liệu; cả BỘ tài liệu là `big_command`.
 - `arch.design` gồm kiểm xung đột chân và ngân sách tài nguyên, không phải `debug.ask`.
+- `req.analyze` làm việc TRÊN yêu cầu (rút ra, gán mã, tìm mâu thuẫn); `arch.design` làm việc TỪ yêu cầu ĐỂ RA module. Động từ quyết định, không phải danh từ: "chia hệ thống thành các khối", "thiết kế", "kiến trúc", "module" → `arch.design` — KỂ CẢ khi câu mở đầu bằng "từ các yêu cầu đã có". Một câu nhắc tới yêu cầu không có nghĩa là nó xin phân tích yêu cầu.
 - `policy.set` gồm cả duyệt hàng đợi và hoàn tác, không phải `knowledge.build`.
 - `big_command` KHÔNG kéo theo `is_big = true`: "đo dòng tiêu thụ khi ngủ" là một bước (measure.power) nhưng nhóm `measure` chưa có ý định riêng nên vẫn mang nhãn `big_command`.
 - HƯỚNG ĐÃ CHỐT (DEV-035, 08/09/2026): nhóm năng lực nào còn thiếu thì thêm Ý ĐỊNH RIÊNG cho nhóm ấy, KHÔNG mở rộng nghĩa của `big_command`. `big_command` mô tả HÌNH DẠNG của lệnh (nhiều bước, nhiều nhóm), nên nhét thêm nghĩa "nhóm chưa có ý định" vào là trộn hai chiều phân loại khác nhau vào một nhãn. Việc thêm hoãn tới CHAT-06 `chat.orchestrate` vì lúc ấy Orchestrator phải chọn năng lực cho từng ý định nên bảng ánh xạ thiếu sẽ tự lộ ra; làm sớm thì phải gán nhãn lại cả 50 câu của TC-59 mà chưa có gì bắt buộc.

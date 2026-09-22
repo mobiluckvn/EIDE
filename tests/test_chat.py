@@ -607,3 +607,40 @@ def test_restate_van_noi_binh_thuong_khi_co_doi_tuong():
     t = restate({"intent": {"intent": "req.analyze", "slots": {"idea": "gateway LAN sang USB"}},
                  "chain": [{"cap": "req.elicit"}]}, Context())["text"]
     assert "gateway LAN sang USB" in t and "KHÔNG rút được" not in t
+
+
+def test_C0_phan_biet_req_analyze_voi_arch_design():
+    """Hai ý định hay lẫn nhất phải được phân biệt THẲNG trong C0. [DEV-165]
+
+    Đo 22/09/2026 trên bài CNC: câu "Từ các yêu cầu đã có, hãy chia hệ thống thành các khối
+    chức năng và nói rõ khối nào làm gì" bị hiểu thành `req.analyze` thay vì `arch.design`. Hệ
+    quả: tác tử phân tích yêu cầu lần nữa thay vì thiết kế, nên `module = 0`, và
+    `diagram.architecture` sau đó hỏng vì "chưa có module nào".
+
+    C0 đã có mục "phân biệt cặp hay lẫn" cho `view.ask`/`debug.ask` và `doc.write`/`big_command`,
+    nhưng không có dòng nào cho cặp này — mô hình phải tự suy từ hai mô tả một dòng, và câu mở
+    đầu bằng "từ các yêu cầu" kéo nó về phía sai.
+    """
+    from eide_core.paths import spec_dir
+    van = (spec_dir() / "dialog" / "intents.md").read_text(encoding="utf-8")
+    assert "`req.analyze` làm việc TRÊN yêu cầu" in van, "thiếu dòng phân biệt trong C0"
+    assert "chia hệ thống thành các khối" in van, "không nêu ĐÍCH DANH cụm gây lẫn"
+    # Mô tả của `arch.design` phải nói tới MODULE — đó là đầu ra phân biệt nó với `req.analyze`.
+    d = [x for x in van.splitlines() if x.startswith("- `arch.design`")]
+    assert d and "MODULE" in d[0], d
+
+
+def test_C0_du_mo_ta_cho_MOI_y_dinh_trong_enum():
+    """Mỗi ý định trong enum phải có một dòng mô tả trong C0 — nếu không, mô hình đoán từ tên.
+
+    Bài trên sửa một cặp; bài này giữ cho không ý định nào mới thêm mà quên mô tả. Trước
+    [DEV-021] danh sách C0 không hề được cấp cho mô hình, và TC-59 đo được 76%.
+    """
+    import json as _json
+
+    from eide_core.paths import spec_dir
+    ys = _json.loads((spec_dir() / "dialog" / "intent.schema.json")
+                     .read_text(encoding="utf-8"))["properties"]["intent"]["enum"]
+    van = (spec_dir() / "dialog" / "intents.md").read_text(encoding="utf-8")
+    thieu = [y for y in ys if f"- `{y}` —" not in van]
+    assert not thieu, f"ý định không có mô tả trong C0: {thieu}"
