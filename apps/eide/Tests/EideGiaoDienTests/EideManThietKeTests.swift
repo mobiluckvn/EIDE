@@ -214,3 +214,55 @@ final class EideManThietKeTests: XCTestCase {
         return ra
     }
 }
+
+/// **S12 — dòng "CÒN THIẾU" phải nói được thiếu CÁI GÌ.** [DEV-171]
+///
+/// `plan.sufficiency` trả `missing[]` gồm các ĐỐI TƯỢNG, và `EideManHoChieu.giaTri` đưa mọi
+/// đối tượng về `"{3 khoá}"`. Nên trước bản vá, dòng cảnh báo đọc ra đúng thế này:
+///
+///     ⚠ `F-01` — CÒN THIẾU 2 căn cứ: {3 khoá}, {3 khoá}
+///
+/// Đúng số lượng, không một chữ nào nói thiếu gì. Một cảnh báo không nói nổi nội dung của
+/// chính nó thì người dùng chỉ còn cách đoán — và đoán sai thì họ bỏ qua.
+@MainActor
+final class EideMoTaThieuTests: XCTestCase {
+
+    /// Loại quan trọng nhất: thứ tác tử HỎI NGƯỢC người. Nó nằm ở `text`, và `text` phải hiện
+    /// nguyên văn — đây là câu hỏi, không phải mã hiệu.
+    func testCauHoiCuaTacTuHienNguyenVan() {
+        let s = EideManKeHoach.moTaThieu([
+            "loai": "hoi_nguoi",
+            "text": "Chưa rõ tần số thạch anh (F_CPU) thực tế trên board mạch của người dùng",
+            "hanh_dong": "trả lời ở tab Làm rõ yêu cầu (S9)"])
+        XCTAssertEqual(s, "Chưa rõ tần số thạch anh (F_CPU) thực tế trên board mạch của người dùng")
+    }
+
+    func testQuyetDinhCongHienNguyenVan() {
+        let s = EideManKeHoach.moTaThieu([
+            "loai": "cong", "text": "Cổng G1 (G1-02) ASK: Thiếu tri thức → mở P1 trước"])
+        XCTAssertEqual(s, "Cổng G1 (G1-02) ASK: Thiếu tri thức → mở P1 trước")
+    }
+
+    /// Hai loại suy được: chúng KHÔNG có `text`, nên phải dựng câu từ các khoá.
+    func testThieuTriThucVaCongCuDungCau() {
+        XCTAssertEqual(
+            EideManKeHoach.moTaThieu(["loai": "tri_thuc", "predicate": "timing",
+                                      "hanh_dong": "search.missing hoặc kg.request"]),
+            "chưa có fact nào cho `timing`")
+        XCTAssertEqual(
+            EideManKeHoach.moTaThieu(["loai": "cong_cu", "ten": "avr-gcc",
+                                      "hanh_dong": "env.install"]),
+            "thiếu công cụ `avr-gcc`")
+    }
+
+    /// KHÔNG được quay lại `{3 khoá}` cho bất kỳ loại nào — kể cả loại thêm sau này.
+    func testLoaiLaVanKHONG_ra_ba_khoa() {
+        let s = EideManKeHoach.moTaThieu(["loai": "loai_moi_nao_do", "ten": "x"])
+        XCTAssertFalse(s.contains("khoá"), s)
+    }
+
+    /// `missing[]` của `plan.create` từng trộn chuỗi lẫn đối tượng. Chuỗi phải đi thẳng qua.
+    func testChuoiThuanDiThang() {
+        XCTAssertEqual(EideManKeHoach.moTaThieu("thiếu timing của I2C"), "thiếu timing của I2C")
+    }
+}

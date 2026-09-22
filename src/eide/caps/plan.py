@@ -177,6 +177,23 @@ def sufficiency(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """
     root = _root(ctx)
     task = params["task_ref"]
+    # (c) [DEV-171] thiếu KỸ NĂNG / phải XIN NGƯỜI — loại thứ ba mà docstring trên hứa và
+    # không nhánh nào sinh ra suốt từ đầu.
+    return _ket_qua_du(_thieu_co_ban(root, task) + _thieu_planner_khai(root, task))
+
+
+def _ket_qua_du(thieu: list[dict[str, Any]]) -> dict[str, Any]:
+    return {"sufficient": not thieu, "missing": thieu}
+
+
+def _thieu_co_ban(root: Path, task: str) -> list[dict[str, Any]]:
+    """Hai loại thiếu SUY ĐƯỢC từ store và từ máy — không cần kế hoạch nào tồn tại trước.
+
+    Tách khỏi `sufficiency()` vì `plan.create` gọi đúng phần này và KHÔNG được gọi phần (c):
+    (c) đọc `missing` của kế hoạch ĐÃ LƯU, nên nếu `plan.create` dùng nó thì mỗi lần lập lại kế
+    hoạch sẽ hút `missing` của lần trước vào lần này, ghi xuống, rồi lần sau lại hút tiếp —
+    danh sách ấy không bao giờ rỗng đi được, kể cả sau khi người đã trả lời.
+    """
     thieu: list[dict[str, Any]] = []
 
     # (a) tri thức: vị từ mà một tác vụ phần cứng thường cần nhưng store chưa có fact hiện hành.
@@ -194,8 +211,40 @@ def sufficiency(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # (b) công cụ: ISA của dự án cần toolchain nào (TGT-19), máy có chưa.
     for t in _cong_cu_can(root):
         thieu.append({"loai": "cong_cu", "ten": t, "hanh_dong": "env.install"})
+    return thieu
 
-    return {"sufficient": not thieu, "missing": thieu}
+
+def _thieu_planner_khai(root: Path, task: str) -> list[dict[str, Any]]:
+    """Thứ CHÍNH PLANNER nói nó không biết, cộng quyết định cổng G1 — [DEV-171].
+
+    Đây là nửa thiếu của bức tranh, và là nửa quan trọng hơn. Đo 22/09/2026 trên dự án
+    `nhap-nhay-led-tren-atmega328p` với hộ chiếu đủ 287 fact vàng: `plan.sufficiency` trả
+    `{"sufficient": true, "missing": []}` trong khi tệp kế hoạch ghi `decision {ASK, G1-02}` và
+    hai câu hỏi rất cụ thể — *"chưa rõ F_CPU thực tế trên board"*, *"chưa rõ chân GPIO nối với
+    LED"*. Màn S12 gọi năng lực này lúc vẽ, nên nó hiện "đủ" cho một kế hoạch đang bị chặn.
+
+    Hai nguồn sự thật cho cùng một câu hỏi, và cái người dùng NHÌN THẤY là cái sai.
+
+    Loại tri thức này hộ chiếu KHÔNG BAO GIỜ có: nó nằm trên bo mạch trước mặt người dùng. Nên
+    `hanh_dong` là "trả lời", không phải "đi tìm tài liệu" — khác hẳn (a).
+    """
+    d = doc_plan_feature(root, task)
+    if d is None:
+        return []
+    plan = d.get("plan") or {}
+    ra: list[dict[str, Any]] = [
+        {"loai": "hoi_nguoi", "text": str(m).strip(),
+         "hanh_dong": "trả lời ở tab Làm rõ yêu cầu (S9)"}
+        for m in (plan.get("missing") or []) if str(m).strip()]
+    qd = d.get("decision") or {}
+    if qd.get("decision") and qd["decision"] != "APPROVE":
+        # Quyết định cổng đứng CUỐI danh sách chứ không đầu: nó là HỆ QUẢ của những dòng trên,
+        # và đọc hệ quả trước nguyên nhân thì người dùng phải đọc ngược lên để hiểu vì sao.
+        ra.append({"loai": "cong", "text":
+                   f"Cổng {qd.get('gate') or 'G1'} ({qd.get('rule') or '?'}) "
+                   f"{qd['decision']}: {qd.get('reason') or ''}".strip(),
+                   "hanh_dong": "kế hoạch chưa qua cổng — `code.generate_module` sẽ từ chối"})
+    return ra
 
 
 def _vi_tu_can(task: str) -> set[str]:
@@ -265,9 +314,10 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         raise EideError("E5002", "Kế hoạch không qua được phép kiểm deterministic (PRS-16 §4): "
                         + "; ".join(loi), loi=loi)
 
-    du = sufficiency({"task_ref": feature}, ctx)
+    # `_thieu_co_ban` chứ KHÔNG phải `sufficiency()`: xem chú thích của `_thieu_co_ban` — gọi
+    # cả bộ ở đây tạo một vòng tự nuôi, `missing` của lần trước chảy vào lần này. [DEV-171]
     plan.setdefault("missing", [])
-    plan["missing"] += [m for m in du["missing"] if m not in plan["missing"]]
+    plan["missing"] += [m for m in _thieu_co_ban(root, feature) if m not in plan["missing"]]
 
     dac_trung = _dac_trung_G1(plan, ctx)
     gate = ctx.extra.get("gate")
@@ -277,7 +327,53 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                   "gate": d.gate} if d else {}
     plan["feature"] = feature
     ghi_plan(root, feature, plan, quyet_dinh)
+    if d is not None:
+        # [DEV-171] G1 là cổng THỨ HAI của lời gọi này: Router đã xét `plan.create` (T1*) trước
+        # khi handler chạy, còn G1 xét chính KẾ HOẠCH — thứ chỉ tồn tại sau đó. Vì Router không
+        # biết cổng ấy vừa chạy, quyết định của nó trước đây không vào `decision_log`, không vào
+        # hàng chờ, không vào đâu ngoài tệp kế hoạch.
+        #
+        # Khai nó ra đây rồi để Router ghi, thay vì tự ghi: Router là điểm gọi duy nhất và là
+        # chỗ duy nhất không quên được — cùng lập luận đã viết cho `undo.register` và `_niem_lai`.
+        ctx.extra.setdefault("cong_phu", []).append(
+            {"gate": d.gate, "decision": d.decision, "rule": d.rule_id, "reason": d.reason,
+             "features": dac_trung, "ve": feature})
+        _hoi_nguoi_ve_ke_hoach(root, feature, plan, d, ctx)
     return {"plan": plan, "decision": quyet_dinh}
+
+
+def _hoi_nguoi_ve_ke_hoach(root: Path, feature: str, plan: dict[str, Any], d: Any,
+                           ctx: Context) -> None:
+    """Đưa `plan.missing` lên tab Làm rõ yêu cầu — [DEV-171], cùng khuôn [DEV-160].
+
+    Đo 22/09/2026 trên dự án `nhap-nhay-led-tren-atmega328p` (hộ chiếu đủ, 287 fact vàng):
+    planner nêu đúng hai câu đáng hỏi — *"chưa rõ tần số thạch anh (F_CPU) thực tế trên board"*
+    và *"chưa rõ chân GPIO nối với LED"* — cổng G1-02 vì thế trả ASK, `code.generate_module` từ
+    chối bằng E3000, và **không câu nào lên được màn hình**. Người dùng nhìn thấy một kế hoạch
+    trông bình thường rồi không hiểu vì sao không sinh nổi mã.
+
+    Đó đúng là loại tri thức hộ chiếu KHÔNG BAO GIỜ có: nó nằm trên bo mạch trước mặt người
+    dùng, không nằm trong datasheet. Nên chỗ của nó là một câu hỏi cho người, không phải một
+    lần `search.fetch` nữa.
+
+    Ghi từng mục `missing` thành một dòng RIÊNG chứ không gộp: người trả lời được câu F_CPU mà
+    chưa tra ra chân LED, và một dòng gộp buộc họ hoặc trả lời cả hai hoặc không gì cả.
+    """
+    from eide.caps.req import ghi_clarification
+
+    if d.decision != "ASK":
+        return
+    thieu = [str(m).strip() for m in (plan.get("missing") or []) if str(m).strip()]
+    if not thieu:
+        # ASK vì lý do khác (G1-03 đổi kiến trúc, G1-99 mặc định). Vẫn phải nói ra, nếu không
+        # thì im lặng y như cũ — chỉ là im lặng ở một nhánh hiếm hơn.
+        thieu = [f"Kế hoạch `{feature}` cần anh duyệt: {d.reason}"]
+    ghi_clarification(root, [{
+        "kind": "gap",
+        "text": f"Kế hoạch `{feature}` đang chờ: {m}",
+        "suggestion": f"Trả lời ở đây rồi bảo tác tử lập lại kế hoạch cho `{feature}` "
+                      f"(cổng {d.gate} · {d.rule_id})",
+    } for m in thieu], cap="plan.create", ctx=ctx)
 
 
 THU_MUC_PLAN = "plans"

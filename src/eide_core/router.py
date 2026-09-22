@@ -14,6 +14,7 @@ import uuid
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 from eide_core import ledger as led_mod
@@ -184,6 +185,7 @@ class Router:
         if self.ledger is not None and reg.spec.undo in KIND_WINDOW:
             UndoService(self.ledger, getattr(self.gate, "config", None)).register(
                 run_id, reg.spec.undo, cap=cap_id)
+        self._ghi_cong_phu(run_id, cap_id, reg, ctx)
         self._niem_lai(ctx, commit_truoc)
         return CapabilityRun(run_id, cap_id, "done", result, dec, ms, undo=reg.spec.undo)
 
@@ -433,6 +435,36 @@ class Router:
                 c.commit()
         except sqlite3.OperationalError:
             pass
+
+    def _ghi_cong_phu(self, run_id: str, cap_id: str, reg: Any, ctx: Context) -> None:
+        """Ghi những cổng mà HANDLER tự chạy — [DEV-171].
+
+        Router xét cổng của một lời gọi TRƯỚC khi handler chạy, và xét trên tham số ĐẦU VÀO.
+        Vài cổng lại xét thứ chỉ ra đời SAU đó: G1 xét kế hoạch mà `plan.create` vừa sinh, và
+        không có cách nào xét nó trước khi nó tồn tại. Những cổng ấy nằm ngoài tầm Router.
+
+        Hậu quả đo được 22/09/2026: `plan.create` gọi thẳng `gate.decide("G1", …)`, trả ASK với
+        lý do "Thiếu tri thức → mở P1 trước", và quyết định ấy **không** sinh dòng `decision_log`
+        nào, không phát `gate.decision` nào. Store của dự án khi ấy: `decision_log` không có
+        dòng ASK, `acq_request` rỗng. Một quyết định chặn cả việc sinh mã mà không để lại dấu
+        vết nào là đúng thứ `_ghi_decision_log` được viết ra để ngăn.
+
+        Handler KHAI, Router GHI. Không bắt handler tự ghi vì cùng lý do đã viết cho
+        `undo.register`: nếu việc ghi nằm trong từng handler thì nó đúng tới khi ai đó quên một
+        chỗ, và quên ở đây thì không gì báo.
+
+        Khoá dòng là `<run_id>:<gate>` chứ không phải `run_id`: dòng chính của lời gọi đã chiếm
+        `run_id`, và `_cap_nhat_decision_log` điền `human_answer`/`undone_at` theo khoá ấy —
+        trùng khoá sẽ vừa hỏng chèn vừa làm hai quyết định khác nhau đè lên nhau.
+        """
+        ds = ctx.extra.pop("cong_phu", None)
+        if not ds:
+            return
+        for c in ds:
+            d = SimpleNamespace(gate=c.get("gate") or "?", decision=c.get("decision") or "ASK",
+                                rule_id=c.get("rule") or "", reason=c.get("reason") or "")
+            self._ghi_decision_log(f"{run_id}:{d.gate}", cap_id, reg, d, ctx,
+                                   c.get("features") or {})
 
     def _ghi_decision_log(self, run_id: str, cap_id: str, reg: Any, d: Any,
                           ctx: Context, features: dict[str, Any]) -> None:

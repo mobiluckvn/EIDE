@@ -153,12 +153,40 @@ public final class EideManKeHoach: EideManThietKe {
              })
     }
 
+    /// Một mục `missing` → một câu người đọc được. [DEV-171]
+    ///
+    /// `plan.sufficiency` trả `missing[]` gồm các ĐỐI TƯỢNG, và `giaTri` đưa mọi đối tượng về
+    /// `"{3 khoá}"`. Nên dòng cảnh báo trước bản này đọc ra: *"CÒN THIẾU 2 căn cứ: {3 khoá},
+    /// {3 khoá}"* — đúng số lượng, không một chữ nào nói thiếu CÁI GÌ. Một cảnh báo không nói
+    /// được nội dung của chính nó thì người dùng chỉ còn cách đoán, và đoán sai thì họ bỏ qua.
+    ///
+    /// Ba loại có ba hình dạng khác nhau vì chúng dẫn tới ba hành động khác nhau — đi tìm tài
+    /// liệu, cài công cụ, hay trả lời tác tử. Gộp chúng vào một câu chung là xoá đúng phần
+    /// thông tin khiến người dùng biết phải làm gì tiếp.
+    public static func moTaThieu(_ v: Any) -> String {
+        guard let o = v as? [String: Any] else { return EideManHoChieu.giaTri(v) }
+        if let t = o["text"] as? String, !t.isEmpty { return t }
+        switch o["loai"] as? String {
+        case "tri_thuc": return "chưa có fact nào cho `\(EideManHoChieu.giaTri(o["predicate"]))`"
+        case "cong_cu":  return "thiếu công cụ `\(EideManHoChieu.giaTri(o["ten"]))`"
+        default:
+            // Loại THÊM SAU NÀY. Rơi về `giaTri` ở đây là dựng lại đúng cái bẫy vừa gỡ: mục
+            // mới sẽ hiện `{2 khoá}` và không ai biết, vì dòng cảnh báo vẫn trông bình thường.
+            // Dựng câu từ chính các khoá — xấu hơn một câu viết tay, nhưng nói được nội dung.
+            let bo: Set<String> = ["loai", "hanh_dong"]
+            let phan = o.keys.sorted().filter { !bo.contains($0) }
+                        .map { "\($0)=\(EideManHoChieu.giaTri(o[$0]))" }
+            let ten = (o["loai"] as? String) ?? "chưa rõ loại"
+            return phan.isEmpty ? ten : ten + ": " + phan.joined(separator: " · ")
+        }
+    }
+
     private func _khoiConThieu(_ id: String, _ thieu: [Any]) {
         let n = NSTextField(wrappingLabelWithString:
-            "⚠ `\(id)` — CÒN THIẾU \(thieu.count) căn cứ: "
-            + thieu.prefix(6).map { EideManHoChieu.giaTri($0) }.joined(separator: ", ")
-            + (thieu.count > 6 ? "…" : "")
-            + ". Kế hoạch thiếu căn cứ vẫn chạy được từng bước và vẫn hỏng ở bước cuối.")
+            "⚠ `\(id)` — CÒN THIẾU \(thieu.count) căn cứ:\n"
+            + thieu.prefix(6).map { "   • " + Self.moTaThieu($0) }.joined(separator: "\n")
+            + (thieu.count > 6 ? "\n   • …" : "")
+            + "\nKế hoạch thiếu căn cứ vẫn chạy được từng bước và vẫn hỏng ở bước cuối.")
         n.font = EideToken.fontUI
         n.textColor = EideToken.Mau.warn
         n.wantsLayer = true
