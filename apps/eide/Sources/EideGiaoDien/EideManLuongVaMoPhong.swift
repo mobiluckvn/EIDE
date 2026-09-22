@@ -38,8 +38,32 @@ public final class EideManLuong: EideManCoSo {
                               + "vào một trong tám pha, và pha ấy sáng lên ở đây")
         }
 
+        // Quyết định cổng GẦN NHẤT của từng cổng, đọc từ chính sổ cái vừa kéo về. [DEV-185]
+        let quyet = Self.quyetGanNhat(ds)
+        let chan = Self.dangChan(ds)
+        // Nói CẢ khi không có gì chặn. Sự vắng mặt của một cảnh báo không phân biệt được
+        // "không cổng nào chặn" với "màn quên kiểm" — cùng lập luận với dòng niêm phong ở màn
+        // Chính sách. Người mở màn này ra khi công việc đứng, và câu trả lời "không phải do
+        // cổng" là một câu trả lời, không phải một chỗ trống.
+        if let c = chan {
+            _khoiDangChan(c)
+        } else {
+            let n = NSTextField(wrappingLabelWithString:
+                "✓ Không cổng nào đang chặn — quyết định gần nhất của mọi cổng đều là APPROVE. "
+                + "Việc đứng lại ở đây thì lý do nằm ở chỗ khác: xem bước HỎNG ở màn Nhật ký "
+                + "(S2), hoặc câu tác tử đang hỏi ở vùng trao đổi.")
+            n.font = EideToken.fontUI
+            n.textColor = EideToken.Mau.ok
+            n.wantsLayer = true
+            n.drawsBackground = true
+            n.backgroundColor = EideToken.Mau.okBg
+            them(n)
+        }
+
         tieuDePhu(hienTai.map { "ĐANG Ở \($0)" } ?? "CHƯA XÁC ĐỊNH ĐƯỢC PHA HIỆN TẠI")
-        for p in EideBanDoPha.PHA { them(_hangPha(p, so: dem[p.ma] ?? 0, hienTai: p.ma == hienTai)) }
+        for p in EideBanDoPha.PHA {
+            them(_hangPha(p, so: dem[p.ma] ?? 0, hienTai: p.ma == hienTai, quyet: quyet))
+        }
 
         if ngoai > 0 {
             // KHÔNG im lặng bỏ qua: 68 trong 244 năng lực có mặt trong tám quy trình, nên phần
@@ -76,8 +100,106 @@ public final class EideManLuong: EideManCoSo {
         return (dem, hienTai, ngoai)
     }
 
+    /// **Quyết định GẦN NHẤT của từng cổng** — `{cổng: (quyết, lý do, lúc)}`. [DEV-185]
+    ///
+    /// Đọc `gate.decision` từ sổ cái. Một bản đồ luồng chỉ đếm lời gọi trả lời được *"đã chạy
+    /// bao nhiêu"*; nó không trả lời được *"vì sao dừng ở đây"* — mà đó là câu người mở màn này
+    /// ra hỏi khi công việc đứng. Cổng là chỗ công việc dừng lại, nên cổng phải có mặt.
+    ///
+    /// Sổ cái sắp TĂNG dần nên lần gán cuối là quyết định mới nhất.
+    public static func quyetGanNhat(_ ds: [[String: Any]])
+        -> [String: (quyet: String, ly: String, luc: String)] {
+        var ra: [String: (quyet: String, ly: String, luc: String)] = [:]
+        for e in ds {
+            let d = (e["data"] as? [String: Any]) ?? [:]
+            guard let cong = d["gate"] as? String, !cong.isEmpty,
+                  let q = d["decision"] as? String, !q.isEmpty else { continue }
+            ra[cong] = (q, (d["reason"] as? String) ?? "", (e["at"] as? String) ?? "")
+        }
+        return ra
+    }
+
+    /// Cổng đang CHẶN — quyết định gần nhất của nó là `ASK` hoặc `REJECT`.
+    ///
+    /// Trả cổng mới nhất trong số ấy, không phải "cổng đầu tiên theo thứ tự pha": việc đang
+    /// đứng vì cái vừa chặn, còn một `ASK` từ hôm kia đã được người trả lời xong từ lâu.
+    public static func dangChan(_ ds: [[String: Any]])
+        -> (cong: String, quyet: String, ly: String, luc: String)? {
+        var ra: (String, String, String, String)?
+        for e in ds {
+            let d = (e["data"] as? [String: Any]) ?? [:]
+            guard let cong = d["gate"] as? String, !cong.isEmpty,
+                  let q = d["decision"] as? String else { continue }
+            // APPROVE của một cổng XOÁ trạng thái chặn của chính cổng ấy: người đã trả lời rồi.
+            // Không xoá thì một lần ASK bất kỳ trong lịch sử làm màn này báo "đang chặn" vĩnh
+            // viễn — và một cảnh báo không bao giờ tắt là một cảnh báo người ta thôi đọc.
+            if q == "APPROVE" {
+                if ra?.0 == cong { ra = nil }
+                continue
+            }
+            ra = (cong, q, (d["reason"] as? String) ?? "", (e["at"] as? String) ?? "")
+        }
+        return ra.map { (cong: $0.0, quyet: $0.1, ly: $0.2, luc: $0.3) }
+    }
+
+    /// Khối "đang bị chặn" — nổi bật, và kèm CÁCH GỠ.
+    ///
+    /// Cách gỡ chứ không chỉ lý do: người đọc "G3 ASK: chưa có reviewer khác hãng" vẫn không
+    /// biết phải làm gì tiếp, và màn này là chỗ duy nhất trong sản phẩm nhìn thấy cả luồng nên
+    /// nó là chỗ duy nhất trả lời được.
+    private func _khoiDangChan(_ c: (cong: String, quyet: String, ly: String, luc: String)) {
+        let pha = EideBanDoPha.PHA.first { $0.cong.contains(c.cong) }
+        let n = NSTextField(wrappingLabelWithString:
+            "⛔ ĐANG CHẶN ở cổng \(c.cong)"
+            + (pha.map { " (pha \($0.ma) — \($0.ten))" } ?? "")
+            + " — \(c.quyet)"
+            + (c.ly.isEmpty ? "" : ": \(c.ly)")
+            + "\nCÁCH GỠ: " + Self.cachGo(c.cong, c.quyet))
+        n.font = EideToken.fontUI
+        n.textColor = EideToken.Mau.bad
+        n.wantsLayer = true
+        n.drawsBackground = true
+        n.backgroundColor = EideToken.Mau.badBg
+        them(n)
+    }
+
+    /// Cách gỡ theo TỪNG cổng — POL-17 §2 và BPD §10 nói mỗi cổng cần bằng chứng gì.
+    ///
+    /// Một câu chung ("duyệt ở vùng trao đổi") đúng với `ASK` và vô dụng với `REJECT`: cổng từ
+    /// chối thì không có gì để duyệt, việc phải làm là sửa thứ nó từ chối. Hai tình huống, hai
+    /// câu.
+    public static func cachGo(_ cong: String, _ quyet: String) -> String {
+        guard quyet != "REJECT" else {
+            switch cong {
+            case "G1": return "Kế hoạch bị từ chối — sửa yêu cầu rồi bảo tác tử lập lại "
+                            + "(`plan.replan`); xem thiếu gì ở màn Kế hoạch (S13)."
+            case "G3": return "Diff bị từ chối — đọc lý do ở màn Diff & cổng merge (S19), sửa "
+                            + "mã rồi chạy lại bốn cổng công cụ."
+            default: return "Cổng từ chối — đọc lý do rồi sửa thứ bị từ chối; quyết định và "
+                          + "bằng chứng nằm ở màn Nhật ký (S2)."
+            }
+        }
+        switch cong {
+        case "G-SRC": return "Nguồn tài liệu lạ — duyệt hoặc từ chối ngay trong vùng trao đổi; "
+                           + "danh sách ứng viên kèm hash và giấy phép ở màn Nhập tài liệu (S3)."
+        case "G-FACT": return "Fact mâu thuẫn hoặc tin cậy thấp — mở màn Xung đột tri thức (S6) "
+                            + "chọn giá trị đúng, hoặc duyệt trong vùng trao đổi."
+        case "G1": return "Kế hoạch cần người gật — nút Duyệt nằm ngay trong vùng trao đổi; "
+                        + "căn cứ còn thiếu liệt kê ở màn Kế hoạch (S13)."
+        case "G3": return "Merge cần người gật — xem bốn cổng công cụ và bản review ở màn "
+                        + "Diff & cổng merge (S19), rồi duyệt trong vùng trao đổi."
+        case "G-OPS": return "Thao tác lên phần cứng — cần board đánh dấu `lab` (màn Hộ chiếu "
+                           + "mạch, S5) hoặc người cấp quyền cho phiên này."
+        case "G4": return "Cần bằng chứng vật lý — nạp và quan sát, hoặc xác nhận bằng mắt "
+                        + "trong vùng trao đổi."
+        case "G5": return "Phát hành cần chữ ký — chủ dự án ký ở `eide policy sign`."
+        default: return "Duyệt hoặc từ chối trong vùng trao đổi; bằng chứng ở màn Nhật ký (S2)."
+        }
+    }
+
     /// Một hàng pha — bấm được, mở S2 lọc sẵn theo đúng pha ấy.
-    private func _hangPha(_ p: EidePha, so: Int, hienTai: Bool) -> NSView {
+    private func _hangPha(_ p: EidePha, so: Int, hienTai: Bool,
+                          quyet: [String: (quyet: String, ly: String, luc: String)]) -> NSView {
         let b = NSButton(title: "\(p.ma) · \(p.ten)", target: self, action: #selector(_moNhatKy(_:)))
         b.bezelStyle = .inline
         b.identifier = NSUserInterfaceItemIdentifier(p.ma)
@@ -93,7 +215,29 @@ public final class EideManLuong: EideManCoSo {
         h.orientation = .horizontal
         h.spacing = 10
         h.alignment = .firstBaseline
-        return h
+
+        // Cổng canh pha, kèm quyết định GẦN NHẤT của từng cổng — §8 S3.
+        let c = NSTextField(wrappingLabelWithString: p.cong.isEmpty
+            ? "Cổng: BPD không đặt cổng rủi ro nào ở pha này."
+            : "Cổng: " + p.cong.map { g in
+                guard let q = quyet[g] else { return "\(g) (chưa có quyết định nào)" }
+                let ly = q.ly.isEmpty ? "" : " — \(q.ly)"
+                return "\(g) → \(q.quyet)\(ly) (\(EideManNhatKy.gio(q.luc)))"
+            }.joined(separator: "; "))
+        c.font = EideToken.fontUI
+        // Cổng đang chặn thì chính DÒNG của pha ấy đổi màu, không chỉ khối cảnh báo trên đầu:
+        // người đọc quét theo cột pha, và một cảnh báo ở đầu màn không nói được nó thuộc pha nào.
+        let coChan = p.cong.contains { g in
+            let q = quyet[g]?.quyet
+            return q == "ASK" || q == "REJECT"
+        }
+        c.textColor = coChan ? EideToken.Mau.bad : EideToken.Mau.faint
+
+        let coc = NSStackView(views: [h, c])
+        coc.orientation = .vertical
+        coc.alignment = .leading
+        coc.spacing = 1
+        return coc
     }
 
     /// "bấm pha mở S2 lọc sẵn" — §8 S3.

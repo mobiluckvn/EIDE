@@ -52,6 +52,14 @@ open class EideManCoSo: NSView {
     /// người đang viết dài, và màn nào mọc thêm một vùng như thế sau này cũng cần cùng luật.
     public var onNguoiGo: (() -> Void)?
 
+    /// Mở một màn KHÁC — tiền tố màn trong `EideManHinhDS`. [DEV-185]
+    ///
+    /// Nằm ở lớp cơ sở vì "bấm được sang đúng màn" là yêu cầu của nhiều màn, không riêng S1:
+    /// một con số tổng hợp mà không bấm vào được thì người đọc phải tự đi tìm chỗ xem chi tiết,
+    /// và họ đoán sai thì bỏ luôn. Màn không được tự gọi `EidePhien` — nó không biết phiên nào
+    /// đang giữ mình; phiên gắn móc này lúc dựng màn.
+    public var onMoMan: ((String) -> Void)?
+
     public let than = NSStackView()
 
     /// Thời gian lần nạp gần nhất, tách làm hai: chờ lõi, và vẽ. Tách vì hai con số ấy dẫn tới

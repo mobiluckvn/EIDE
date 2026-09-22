@@ -386,15 +386,41 @@ def test_ban_do_pha_cua_giao_dien_khop_BPD():
 
     sw = (goc / "apps" / "eide" / "Sources" / "EideGiaoDien"
           / "EideBanDoPha.swift").read_text(encoding="utf-8")
-    khoi = re.findall(r'\.init\(ma: "(P[0-7])", ten: "[^"]*",\s*caps: \[(.*?)\]\)', sw, re.S)
+    khoi = re.findall(r'\.init\(ma: "(P[0-7])", ten: "[^"]*",\s*caps: \[(.*?)\],'
+                      r'\s*cong: \[(.*?)\]\)', sw, re.S)
     assert len(khoi) == 8, f"giao diện khai {len(khoi)} pha, BPD có 8"
 
     sai = {}
-    for ma, than in khoi:
+    for ma, than, _ in khoi:
         for cap in re.findall(r'"([^"]+)"', than):
             if cap not in theo_bpd.get(ma, set()):
                 sai.setdefault(ma, []).append(cap)
     assert not sai, f"giao diện gán pha sai so với bpd.js: {sai}"
+
+    # ---- CỔNG canh mỗi pha — BPD §10 "Bảng tổng hợp cổng và tri thức sinh ra". [DEV-185]
+    #
+    # Bảng ấy viết theo chiều CỔNG → BƯỚC (`['G1', 'P2.4, P7.8', …]`); màn Bản đồ luồng cần
+    # chiều ngược lại. Nghịch đảo ở đây thay vì chép tay sang Swift: chép tay là dựng thêm một
+    # bản sao thứ ba của cùng một sự thật, và bản sao thứ ba luôn là bản trôi xa nhất.
+    #
+    # Kiểm HAI CHIỀU, khác với phần năng lực ở trên. Cổng chỉ có tám cái và mỗi cái đổi hành vi
+    # của một cổng an toàn: giao diện bịa thêm một cổng cho một pha là dọa người dùng bằng một
+    # cổng không có; BỎ SÓT một cổng là giấu đúng chỗ công việc sẽ dừng lại.
+    bang_cong = re.search(r"Bảng tổng hợp cổng.*?T\(\[[^\]]*\],\s*\[[^\]]*\],\s*\[(.*?)\]\)\);",
+                          js, re.S)
+    assert bang_cong, "không tìm thấy bảng cổng §10 trong bpd.js"
+    theo_cong: dict[str, set[str]] = {}
+    for g, buoc in re.findall(r"\['([^']+)',\s*'((?:P[0-7][^']*))'", bang_cong.group(1)):
+        for p in re.findall(r"P[0-7]", buoc):
+            theo_cong.setdefault(p, set()).add(g)
+
+    lech = {}
+    for ma, _, than_cong in khoi:
+        co = set(re.findall(r'"([^"]+)"', than_cong))
+        can = theo_cong.get(ma, set())
+        if co != can:
+            lech[ma] = {"giao diện": sorted(co), "bpd": sorted(can)}
+    assert not lech, f"cổng canh pha lệch khỏi bpd.js §10: {lech}"
 
 
 def test_bang_tieu_chi_N1_N10_tro_dung_bai_kiem_python():

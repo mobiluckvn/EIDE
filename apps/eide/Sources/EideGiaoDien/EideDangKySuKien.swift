@@ -78,6 +78,21 @@ public enum EideDangKySuKien {
         "Registry": ["event.knowledge.changed", "event.notice"],
         // S25 Chính sách — mức tự chủ và niêm.
         "ChinhSach": ["event.autonomy.changed", "event.notice"],
+        // ---- Bốn màn chạm phần cứng — [DEV-186].
+        //
+        // S17 Dò board — `event.discover.changed` là đúng tín hiệu "thứ cắm vào máy vừa đổi";
+        // `discover.status` cũng đẩy qua kênh ấy. Cắm/rút board là việc xảy ra SAU khi màn đã
+        // mở, nên không nghe thì bảng cổng nói về một máy của mười phút trước.
+        "Discovery": ["event.discover.changed", "event.run.progress"],
+        // S18 Log & serial — `event.serial.line` là từng dòng serial chảy về theo thời gian
+        // thực; đó chính là nửa "serial trực tiếp" của màn này.
+        "LogAssist": ["event.serial.line", "event.notice", "event.run.progress"],
+        // S19 Gỡ lỗi probe — thí nghiệm chạy qua Router (`run.progress`) và bị G-OPS chặn
+        // (`gate.opened`); cả hai đổi thứ màn đang hiện.
+        "Debug": ["event.run.progress", "event.gate.opened", "event.serial.line"],
+        // S21 Bench — `bench.run` tốn token nên mỗi lượt gọi mô hình là một tin đáng hiện;
+        // `tool.report` mang kết quả từng bài.
+        "Bench": ["event.tool.report", "event.model.call", "event.run.progress"],
     ]
 
     /// Màn nào cần nghe loại sự kiện này.

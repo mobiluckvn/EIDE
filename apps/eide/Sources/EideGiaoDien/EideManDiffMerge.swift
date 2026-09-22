@@ -50,11 +50,57 @@ public final class EideManDiffMerge: EideManCoSo {
         tieuDePhu("CỔNG TRÊN ĐƯỜNG MERGE")
         bang(cot: [("CỔNG", 96), ("TRẠNG THÁI", 110), ("LÝ DO / VIỆC CẦN LÀM", 0)], dong: cong)
 
+        await _khoiBonCongCu(goi)
+
         them(cocBao)
         guard xd.isEmpty else { return }
         // Không có xung đột KHÔNG có nghĩa là merge được: bảng cổng ở trên mới nói điều đó.
         _bao("Không có xung đột mã nào đang chờ. Bảng cổng phía trên nói đường merge đã thông "
              + "chưa — hai câu ấy khác nhau.", mau: EideToken.Mau.muted)
+    }
+
+    /// Bốn cổng công cụ mà G3 đòi — POL-17 G3, BPD §10 ("4 cổng công cụ đạt, reviewer khác
+    /// hãng PASS, diff trong phạm vi").
+    ///
+    /// Danh sách CỐ ĐỊNH và hiện đủ bốn dòng kể cả khi chưa chạy cái nào. Chỉ liệt kê những
+    /// công cụ ĐÃ có báo cáo thì một bảng trống đọc như "không có yêu cầu nào" — trong khi sự
+    /// thật là "bốn yêu cầu, chưa cái nào chạy".
+    public static let BON_CONG_CU = ["build", "static", "test", "size"]
+
+    /// **Kết quả 4 công cụ kiểm + reviewer khác hãng** — §8 S19. [DEV-185]
+    ///
+    /// Đây là BẰNG CHỨNG mà G3 dùng để quyết. Bảng cổng ở trên nói cổng đã quyết gì; khối này
+    /// nói dựa vào đâu. Thiếu nó thì người duyệt G3 bấm "Duyệt" mà không thấy thứ mình đang
+    /// duyệt — và POL-17 sinh ra chính là để chuyện đó không xảy ra.
+    private func _khoiBonCongCu(_ goi: @escaping EideGoi) async {
+        let r0 = try? await nangLuc(goi, "view.artifacts", ["kind": "tool", "limit": 50])
+        let bc = (r0?["items"] as? [[String: Any]]) ?? []
+        // Báo cáo mới nhất của mỗi công cụ — `view.artifacts` sắp theo `at`, nên lần gán sau
+        // đè lần trước.
+        var moiNhat: [String: [String: Any]] = [:]
+        for r in bc { if let t = r["tool"] as? String { moiNhat[t] = r } }
+
+        tieuDePhu("BẰNG CHỨNG CHO G3 — 4 CÔNG CỤ KIỂM + REVIEWER KHÁC HÃNG")
+        var dong: [[String]] = Self.BON_CONG_CU.map { t in
+            guard let r = moiNhat[t] else { return [t, "⏳ chưa chạy", "—", "—"] }
+            let dat = (r["passed"] as? Bool) ?? ((EideManHoChieu.nguyen(r["passed"]) ?? 0) == 1)
+            return [t, dat ? "✅ đạt" : "⛔ KHÔNG đạt",
+                    "\(EideManHoChieu.nguyen(r["tong"]) ?? 0)",
+                    EideManNhatKy.gio(r["at"] as? String)]
+        }
+        // Reviewer khác hãng là điều kiện THỨ NĂM và nó không phải một công cụ — `code.review`
+        // ghi báo cáo dưới tên riêng. Gộp vào cùng bảng vì với người duyệt, cả năm là một danh
+        // sách kiểm; tách ra hai bảng là để họ quên mất cái thứ năm.
+        if let r = moiNhat["review"] ?? moiNhat["reviewer"] {
+            let dat = (r["passed"] as? Bool) ?? false
+            dong.append(["reviewer khác hãng", dat ? "✅ PASS" : "⛔ KHÔNG PASS",
+                         "\(EideManHoChieu.nguyen(r["tong"]) ?? 0)",
+                         EideManNhatKy.gio(r["at"] as? String)])
+        } else {
+            dong.append(["reviewer khác hãng", "⏳ chưa chạy", "—",
+                         "`code.review` chấm checklist"])
+        }
+        bang(cot: [("CÔNG CỤ", 180), ("KẾT QUẢ", 130), ("SỐ MỤC", 84), ("LÚC", 0)], dong: dong)
     }
 
     /// Một mục chờ có phải XUNG ĐỘT MÃ không.

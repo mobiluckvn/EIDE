@@ -42,7 +42,11 @@ public final class EideManMoiTruong: EideManCoSo {
         let batBuoc = thieu.filter { ($0["required"] as? Bool) == true }
         if !thieu.isEmpty { _bangThieu(batBuoc.count, thieu.count) }
 
-        tieuDePhu("\(ds.count) CÔNG CỤ CỦA CHUỖI DỰNG `\(isa)`")
+        // Gọi thẳng tên "ISA" chứ không chỉ in giá trị của nó. `avr8` là một chuỗi ký tự; câu
+        // *"ISA của dự án này là avr8, và nó cần những công cụ sau"* mới là thứ người đọc dùng
+        // được — nhất là khi họ vừa từ màn Hộ chiếu chip sang để hiểu vì sao lệnh dựng hỏng.
+        tieuDePhu("ISA CỦA DỰ ÁN: `\(isa)` — CHUỖI DỰNG CẦN \(ds.count) CÔNG CỤ"
+                  + (thieu.isEmpty ? ", có đủ" : ", THIẾU \(thieu.count)"))
         bang(cot: [("CÔNG CỤ", 150), ("CẦN", 62), ("PHIÊN BẢN", 110), ("TỐI THIỂU", 92),
                    ("TRẠNG THÁI", 96), ("ĐƯỜNG DẪN", 0)],
              dong: ds.map { d in
@@ -175,25 +179,69 @@ public final class EideManMoHinh: EideManCoSo {
         // v1.3 — bảng VAI → MÔ HÌNH. `budget.state` nay trả `roles` ([DEV-136]); tới 21/09
         // khối này phải nói thẳng rằng không năng lực nào đọc `models.yaml`.
         let vai = (b["roles"] as? [String: Any]) ?? [:]
-        guard !vai.isEmpty else {
+        if vai.isEmpty {
             let n = NSTextField(wrappingLabelWithString:
-                "Bảng VAI → MÔ HÌNH rỗng — `models.yaml` chưa khai vai nào, hoặc daemon không "
-                + "đọc được tệp ấy. Hạn mức và chi phí phía trên vẫn đúng: chúng cộng từ SỔ "
-                + "CÁI, không từ cấu hình.")
+                "Bảng VAI TRÒ → MÔ HÌNH rỗng — `models.yaml` chưa khai vai trò nào, hoặc daemon "
+                + "không đọc được tệp ấy. Hạn mức và chi phí phía trên vẫn đúng: chúng cộng từ "
+                + "SỔ CÁI, không từ cấu hình.")
+            n.font = EideToken.fontUI
+            n.textColor = EideToken.Mau.muted
+            them(n)
+        } else {
+            tieuDePhu("\(vai.count) VAI TRÒ → MÔ HÌNH — thứ tự ứng viên là thứ tự Gateway THỬ, "
+                      + "không phải thứ tự ưu tiên viết tay")
+            bang(cot: [("VAI TRÒ", 130), ("NHIỆT", 60), ("SCHEMA", 110),
+                       ("ỨNG VIÊN (theo thứ tự thử)", 0)],
+                 dong: vai.keys.sorted().map { ten in
+                     let r = (vai[ten] as? [String: Any]) ?? [:]
+                     return [ten,
+                             Self.oNhiet(r["temperature"]),
+                             (r["output_schema"] as? String) ?? "—",
+                             Self.oUngVien(r["candidates"])]
+                 })
+        }
+
+        await _khoiLuotGoi(goi)
+    }
+
+    /// **Lượt gọi mô hình gần nhất: vai trò · token vào/ra · giá · độ trễ.** [DEV-185]
+    ///
+    /// Bảng VAI TRÒ → MÔ HÌNH ở trên nói CẤU HÌNH; con số chi phí nói TỔNG. Giữa hai thứ ấy
+    /// thiếu đúng cái người mở màn này cần khi thấy hoá đơn cao hơn dự tính: **lượt nào đã
+    /// tiêu**. Không có nó thì câu trả lời duy nhất cho "vì sao hôm nay 3 USD" là mở sổ cái
+    /// bằng tay và lọc `model.call`.
+    ///
+    /// Đọc từ sổ cái chứ không từ một bộ đếm riêng — cùng nguồn với `budget.state`, nên hai
+    /// con số trên cùng màn hình không bao giờ lệch nhau.
+    private func _khoiLuotGoi(_ goi: @escaping EideGoi) async {
+        let r = try? await doc(goi, "view.timeline", ["limit": 200])
+        let goiMo = (((r?["events"]) as? [[String: Any]]) ?? [])
+            .filter { ($0["kind"] as? String) == "model.call" }
+            .reversed().prefix(10)
+        tieuDePhu("LƯỢT GỌI MÔ HÌNH GẦN NHẤT")
+        guard !goiMo.isEmpty else {
+            let n = NSTextField(wrappingLabelWithString:
+                "Chưa có lượt gọi mô hình nào trong sổ cái — dự án này chưa tiêu token nào.")
             n.font = EideToken.fontUI
             n.textColor = EideToken.Mau.muted
             them(n)
             return
         }
-        tieuDePhu("\(vai.count) VAI → MÔ HÌNH — thứ tự ứng viên là thứ tự Gateway THỬ, "
-                  + "không phải thứ tự ưu tiên viết tay")
-        bang(cot: [("VAI", 130), ("NHIỆT", 60), ("SCHEMA", 110), ("ỨNG VIÊN (theo thứ tự thử)", 0)],
-             dong: vai.keys.sorted().map { ten in
-                 let r = (vai[ten] as? [String: Any]) ?? [:]
-                 return [ten,
-                         Self.oNhiet(r["temperature"]),
-                         (r["output_schema"] as? String) ?? "—",
-                         Self.oUngVien(r["candidates"])]
+        bang(cot: [("LÚC", 116), ("VAI TRÒ", 104), ("MÔ HÌNH", 168),
+                   ("TOKEN VÀO", 84), ("TOKEN RA", 78), ("GIÁ", 86), ("TRỄ", 0)],
+             dong: goiMo.map { e in
+                 let d = (e["data"] as? [String: Any]) ?? [:]
+                 // Lượt HỎNG cũng hiện, và hiện rõ là hỏng: một lượt gọi lỗi vẫn tốn token vào
+                 // ở phần lớn nhà cung cấp, nên giấu nó đi là giấu đúng phần chi phí người dùng
+                 // không hiểu vì sao có.
+                 let loi = (d["error_kind"] as? String).map { " ✖ \($0)" } ?? ""
+                 return [EideManNhatKy.gio(e["at"] as? String),
+                         (d["role"] as? String) ?? "—",
+                         ((d["model_id"] as? String) ?? "—") + loi,
+                         "\(EideManHoChieu.nguyen(d["tokens_in"]) ?? 0)",
+                         "\(EideManHoChieu.nguyen(d["tokens_out"]) ?? 0)",
+                         String(format: "%.4f USD", (d["cost_usd"] as? Double) ?? 0),
+                         EideManHoChieu.nguyen(d["latency_ms"]).map { "\($0) ms" } ?? "—"]
              })
     }
 

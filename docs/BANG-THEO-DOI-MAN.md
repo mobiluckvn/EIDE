@@ -24,17 +24,17 @@
 | S14 | Trình soạn thảo | nối | `EideManSoanThao.swift` | `6c7c6ec` | 2026-09-21 | Vũ Trí Công |
 | S15 | Diff & cổng merge | nối | `EideManDiffMerge.swift` | `ffddd7f` | 2026-09-21 | Vũ Trí Công |
 | S16 | Mô phỏng | nối | `EideManLuongVaMoPhong.swift` | `f0d3404` | 2026-09-21 | Vũ Trí Công |
-| S17 | Dò board | chặn | — | — | — | — |
-| S18 | Log & serial | chặn | — | — | — | — |
-| S19 | Gỡ lỗi probe | chặn | — | — | — | — |
-| S20 | Bench | chặn | — | — | — | — |
+| S17 | Dò board | nối | `EideManPhanCung.swift` | `—` | — | — |
+| S18 | Log & serial | nối | `EideManPhanCung.swift` | `—` | — | — |
+| S19 | Gỡ lỗi probe | nối | `EideManPhanCung.swift` | `—` | — | — |
+| S20 | Bench | nối | `EideManPhanCung.swift` | `—` | — | — |
 | S21 | Môi trường | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S24 | Registry | nối | `EideManHeThong.swift` | `cc5eb97` | 2026-09-21 | Vũ Trí Công |
 | S25 | Chính sách tự chủ | nối | `EideManDauTien.swift` | `2335852` | 2026-09-21 | Vũ Trí Công |
 
-**21 nối · 4 chặn (chờ bo mạch) · 0 chưa.**
+**25 nối · 0 chặn (chờ bo mạch) · 0 chưa.**
 
 Năm phép kiểm còn lại của §11.1 không nằm trong bảng này vì chúng là BÀI KIỂM, không
 phải một ô đánh dấu: header chuẩn 2C.4 và danh sách sự kiện khai báo do

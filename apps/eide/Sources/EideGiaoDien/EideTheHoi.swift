@@ -38,6 +38,9 @@ public final class EideTheHoi: NSView {
         case thieuThamSo(clarId: String, truong: [Truong])
         /// Cổng chính sách chặn, cần người quyết. `khoa` = `<run_id>:<gate>` của [DEV-176].
         case congChan(khoa: String, cong: String, quyTac: String, lyDo: String)
+        /// Một việc người phải bấm mới xong — [DEV-184]. Không phải cổng, không phải câu hỏi:
+        /// sản phẩm đã biết chính xác phải làm gì, chỉ cần người đồng ý cho làm.
+        case canLam(nhan: String, viec: String, moTa: String)
     }
 
     public struct Truong {
@@ -53,6 +56,8 @@ public final class EideTheHoi: NSView {
     public var onTraLoi: ((String, String) -> Void)?
     /// (khoá cổng, duyệt hay không, lý do) — [DEV-176] `gate.decide`.
     public var onQuyet: ((String, Bool, String) -> Void)?
+    /// Người bấm nút của `.canLam` — [DEV-184].
+    public var onLam: (() -> Void)?
 
     /// Nhãn các nút đang hiện — cho bài đo đọc, cùng khuôn `EideTheYHieu`.
     public private(set) var nhanNut: [String] = []
@@ -124,6 +129,17 @@ public final class EideTheHoi: NSView {
             d.spacing = 8
             o.setContentHuggingPriority(.defaultLow, for: .horizontal)
             hang.append(d)
+
+        case let .canLam(nhan, viec, moTa):
+            let c = NSTextField(wrappingLabelWithString: viec)
+            c.font = NSFont.boldSystemFont(ofSize: 12.5)
+            hang.append(c)
+            hang.append(_phu(moTa))
+            let nut = NSButton(title: nhan, target: self, action: #selector(_lam))
+            nut.bezelStyle = .rounded
+            nut.font = NSFont.boldSystemFont(ofSize: 12)
+            nhanNut = [nhan]
+            hang.append(nut)
         }
 
         let coc = NSStackView(views: hang)
@@ -138,8 +154,12 @@ public final class EideTheHoi: NSView {
             coc.leadingAnchor.constraint(equalTo: leadingAnchor),
             coc.trailingAnchor.constraint(equalTo: trailingAnchor),
             coc.bottomAnchor.constraint(equalTo: bottomAnchor),
-            o.widthAnchor.constraint(greaterThanOrEqualToConstant: 240),
         ])
+        // `.canLam` không có ô gõ, nên `o` không nằm trong cây khung nhìn — ràng buộc lên một
+        // view chưa có superview là một lỗi lúc chạy, không phải một cảnh báo.
+        if o.superview != nil {
+            o.widthAnchor.constraint(greaterThanOrEqualToConstant: 240).isActive = true
+        }
     }
 
     @available(*, unavailable)
@@ -176,6 +196,8 @@ public final class EideTheHoi: NSView {
         guard !v.isEmpty else { return }      // không gửi câu rỗng: nó ghi một dòng vô nghĩa
         onTraLoi?(clarId, v)
     }
+
+    @objc private func _lam() { onLam?() }
 
     @objc private func _duyet() { _quyet(true) }
     @objc private func _tuChoi() { _quyet(false) }

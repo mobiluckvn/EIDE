@@ -50,10 +50,20 @@ check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
 # và "xanh" của dự án khi ấy là một câu nói về nửa kho. Cùng lý do với `check-gen`: một cổng
 # phải tự chạy thì mới là cổng. Thiếu `swift` (Windows, máy CI không có Xcode) thì bỏ qua có
 # báo, không làm đỏ — cùng khuôn với cách `check-gen` xử lý khi thiếu `node`.
-check-swift:      ## build + test phần Swift, bỏ qua có báo nếu máy không có swift
+# `apps/geditor` KHÔNG còn nằm trong cổng — [DEV-187], chủ sản phẩm chốt 22/09/2026:
+# *"Chúng ta thống nhất bỏ GEditor rồi mà. Chúng ta viết lại và chỉ copy phần code có thể tận
+# dụng được của GEditor thôi."*
+#
+# Giữ nó trong `make check` có một cái giá đo được: 22/09/2026 một bài kiểm của geditor TREO 36
+# phút ở trạng thái `U`, giữ khoá SwiftPM, và mọi lượt `make check` sau đó đứng im chờ nó — cổng
+# của gói ĐANG PHÁT TRIỂN bị chặn bởi gói đã ngừng phát triển. Một cổng chỉ nên canh thứ mình
+# đang làm; canh thêm một kho bảo trì là mua rủi ro mà không mua được thông tin.
+#
+# `make geditor` vẫn còn để chạy tay khi cần lấy lại một phần mã cũ.
+check-swift:      ## build + test apps/eide, bỏ qua có báo nếu máy không có swift
 	@command -v swift >/dev/null \
-	 && $(MAKE) geditor eide-ui \
-	 || echo "bỏ qua check-swift: không có swift (cần Xcode/toolchain để dựng apps/geditor)"
+	 && $(MAKE) eide-ui \
+	 || echo "bỏ qua check-swift: không có swift (cần Xcode/toolchain để dựng apps/eide)"
 
 check-py: lint check-spec test check-secrets check-gen   ## chỉ phía Python — phần phụ thuộc venv theo kiến trúc
 
@@ -80,7 +90,7 @@ spec:             ## trạng thái hiện thực so với spec
 doctor:
 	$(PY) -m eide.cli doctor
 
-geditor:          ## build + test phần Swift (apps/geditor)
+geditor:          ## (BẢN DUY TRÌ — ngoài cổng) build + test apps/geditor, chạy tay khi cần
 	cd apps/geditor && swift build && swift test
 
 # apps/eide là GIAO DIỆN MỚI (18/09/2026); apps/geditor chỉ còn là bản duy trì. Tới 22/09 nó

@@ -156,6 +156,26 @@ final class EideVungTraoDoiTests: XCTestCase {
         XCTAssertTrue(van.contains("reviewer"), "không nói vì sao bị chặn — \(van)")
     }
 
+    /// **Một lỗi có ĐÚNG MỘT cách sửa thì cách ấy phải là một cái nút.** [DEV-184]
+    ///
+    /// E6003 lúc mở dự án cũ: bản trước in "→ chạy `eide migrate` trong thư mục dự án" rồi
+    /// dừng. Câu ấy đúng và vẫn là ngõ cụt trong ứng dụng — người dùng phải mở Terminal, biết
+    /// đường dẫn dự án, biết `eide` nằm ở đâu.
+    func testViecCoDungMotCachSuaThiHienThanhNUT() {
+        let t = EideTheHoi(cap: "project.open", loai: .canLam(
+            nhan: "Di trú ngay",
+            viec: "Dự án `x` dùng store của bản EIDE cũ, cần di trú mới mở được.",
+            moTa: "Lệnh sao lưu store hiện tại trước khi chạy (DDD-14 §5)."))
+        XCTAssertEqual(t.nhanNut, ["Di trú ngay"])
+        let van = Self.chu(t)
+        XCTAssertTrue(van.contains("store của bản EIDE cũ"), van)
+        XCTAssertTrue(van.contains("sao lưu"), "không nói nó sẽ sao lưu trước — \(van)")
+        var daBam = false
+        t.onLam = { daBam = true }
+        Self.bamNut(t, "Di trú ngay")
+        XCTAssertTrue(daBam, "nút không nối vào đâu")
+    }
+
     /// **Câu trả lời rỗng thì KHÔNG gửi.** Gửi nó đi là ghi một dòng vô nghĩa vào sổ làm rõ rồi
     /// coi câu hỏi đã xong — tác tử thôi hỏi, và không ai biết nó chạy tiếp bằng dữ kiện gì.
     func testCauTraLoiRongThiKhongGui() {

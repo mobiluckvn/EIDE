@@ -98,6 +98,13 @@ public final class EideManBanDoTriThuc: EideManCoSo {
     }
 
     private func _khungHoi() -> NSView {
+        // Nói TRƯỚC rằng hỏi xong sẽ có gì. Một tính năng chỉ lộ ra sau khi người dùng đã làm
+        // đúng một việc họ chưa có lý do để làm là một tính năng không ai tìm thấy.
+        let g = NSTextField(wrappingLabelWithString:
+            "Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước "
+            + "quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.")
+        g.font = EideToken.fontUI
+        g.textColor = EideToken.Mau.faint
         let nut = NSButton(title: "Hỏi", target: self, action: #selector(_hoi))
         nut.bezelStyle = .rounded
         nut.keyEquivalent = "\r"
@@ -107,7 +114,11 @@ public final class EideManBanDoTriThuc: EideManCoSo {
         h.orientation = .horizontal
         h.spacing = 8
         oHoi.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        return h
+        let coc = NSStackView(views: [h, g])
+        coc.orientation = .vertical
+        coc.alignment = .leading
+        coc.spacing = 3
+        return coc
     }
 
     @objc private func _hoi() {
@@ -146,10 +157,46 @@ public final class EideManBanDoTriThuc: EideManCoSo {
             tieuDePhuTrongTraLoi("\(cit.count) NGUỒN")
             for c in cit { _dongTrichDan(c) }
             _nutViSao()
+            await _veLanCan(goi, cit)
         } catch {
             _xoaTraLoi()
             _dong(Self.viSaoHong(error), mau: EideToken.Mau.bad)
         }
+    }
+
+    /// **Bản đồ LÂN CẬN của thứ vừa hỏi** — `view.kg_focus`, §8 S7. [DEV-185]
+    ///
+    /// Đồ thị đầy đủ ở trên trả lời *"dự án biết những gì"*. Sau một câu hỏi thì câu người cần
+    /// là hẹp hơn nhiều: *"cái này nối với những gì, và tôi tin nó tới đâu"* — tức là lân cận
+    /// của chính thứ vừa được trả lời, tô theo tầng và trạng thái duyệt. Bắt họ tự tìm nút ấy
+    /// trong một đồ thị vài trăm nút là bắt họ làm việc của màn.
+    ///
+    /// Nút gốc lấy từ TRÍCH DẪN, không từ câu chữ của câu trả lời: trích dẫn là thứ VIEW-07 bảo
+    /// đảm có thật trong store, còn tên rút từ câu văn thì có thể không khớp định danh nào.
+    ///
+    /// Hỏng thì im — lân cận là phần THÊM; làm hỏng cả câu trả lời vì nó là đổi một thứ có ích
+    /// lấy một màn trắng.
+    private func _veLanCan(_ goi: @escaping EideGoi, _ cit: [[String: Any]]) async {
+        let goc = cit.compactMap { c -> String? in
+            for k in ["node", "subject", "entity", "iri", "id"] {
+                if let v = c[k] as? String, !v.isEmpty { return v }
+            }
+            return nil
+        }.first
+        guard let goc,
+              let r = try? await nangLuc(goi, "view.kg_focus", ["node": goc, "depth": 2]),
+              let g = r["graph"] as? [String: Any] else { return }
+        let nut = ((g["nodes"] as? [[String: Any]]) ?? []).compactMap(EideNutDoThi.init)
+        guard !nut.isEmpty else { return }
+        let canh = ((g["edges"] as? [[String: Any]]) ?? []).compactMap(EideCanhDoThi.init)
+        tieuDePhuTrongTraLoi("BẢN ĐỒ LÂN CẬN CỦA `\(goc)` — \(nut.count) nút trong 2 bước, "
+                             + "tô theo tầng và trạng thái duyệt")
+        let d = EideDoThi()
+        d.dat(nut: nut, canh: canh)
+        d.translatesAutoresizingMaskIntoConstraints = false
+        d.heightAnchor.constraint(equalToConstant: 220).isActive = true
+        cocTraLoi.addArrangedSubview(d)
+        d.widthAnchor.constraint(equalTo: cocTraLoi.widthAnchor).isActive = true
     }
 
     /// Lỗi của `view.rag_ask` → câu người đọc làm được gì với nó.

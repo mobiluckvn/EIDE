@@ -143,7 +143,7 @@ final class EideManNhapTaiLieuTests: XCTestCase {
         let m = EideManNhapTaiLieu()
         await m.nap(Self.loiCoNguon())
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("LẦN NHẬP GẦN ĐÂY"), van)
+        XCTAssertTrue(van.contains("LƯỢT NHẬP GẦN ĐÂY"), van)
         XCTAssertTrue(van.contains("20/09 09:12"), van)
         XCTAssertTrue(van.contains("FACT MỚI"), "cột FACT trần đọc thành 'lần nhập hỏng' — \(van)")
     }

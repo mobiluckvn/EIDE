@@ -76,22 +76,37 @@ public final class EideManNhapTaiLieu: EideManCoSo {
         let cho = nguon.reduce(0) { $0 + (EideManHoChieu.nguyen($1["n_pending"]) ?? 0) }
         tieuDePhu("\(nguon.count) NGUỒN ĐÃ NHẬP"
                   + (cho > 0 ? " — \(cho) fact chưa dùng được làm hằng số phần cứng" : ""))
-        bang(cot: [("NGUỒN", 250), ("LOẠI", 104), ("TẦNG", 74), ("FACT", 64), ("CHƯA DUYỆT", 96),
-                   ("NHẬP LÚC", 0)],
+        bang(cot: [("NGUỒN", 230), ("LOẠI", 96), ("TẦNG", 70), ("FACT", 58), ("CHƯA DUYỆT", 92),
+                   ("AI ĐƯA VÀO", 116), ("GIẤY PHÉP", 104), ("NHẬP LÚC", 0)],
              dong: nguon.map { s in
                  [EideManHoChieu.tenTep((s["uri"] as? String) ?? "?"),
                   (s["kind"] as? String) ?? "—",
                   EideManHoChieu.nhanTang((s["tier"] as? String) ?? "", ""),
                   "\(EideManHoChieu.nguyen(s["n_facts"]) ?? 0)",
                   Self.oChuaDuyet(EideManHoChieu.nguyen(s["n_pending"]) ?? 0),
-                  // `added_at` đọc từ cột `fetched_at` của DDD-14 §2, và cột ấy RỖNG với tệp
-                  // người tự bỏ vào — chỉ `search.fetch` mới điền. Nói ra chứ không để ô trống.
+                  // **TÀI LIỆU TÁC TỬ TỰ TẢI VỀ phải phân biệt được với tệp người đưa vào.**
+                  // [DEV-185] Chỉ `search.fetch` điền `fetched_at` (DDD-14 §2), nên chính cột
+                  // ấy là câu trả lời — và đó là câu G-SRC tồn tại để hỏi: thứ này ở đâu ra?
+                  // Một bảng trộn hai loại nguồn làm người duyệt không biết dòng nào cần soi.
+                  (s["added_at"] as? String) == nil ? "tôi đưa vào" : "tác tử TỰ TẢI",
+                  Self.oGiayPhep(s["license"]),
                   (s["added_at"] as? String).map(EideManNhatKy.gio) ?? "tệp tại chỗ"]
              })
 
         let lan = await _lichSuNhap(goi)
-        guard !lan.isEmpty else { return }
-        tieuDePhu("\(lan.count) LẦN NHẬP GẦN ĐÂY — theo sổ cái")
+        guard !lan.isEmpty else {
+            // Không im. Bảng nguồn ở trên nói "đã có gì"; khối này nói "lần chạy gần đây ra
+            // sao" — và khi sổ cái không có lượt nhập nào thì đó cũng là một câu trả lời, nhất
+            // là với một dự án đang có nguồn (nguồn tới từ phiên trước, hoặc từ dòng lệnh).
+            let n = NSTextField(wrappingLabelWithString:
+                "Chưa có LƯỢT NHẬP nào trong sổ cái của phiên này — các nguồn ở trên vào dự án "
+                + "từ trước, hoặc qua `eide ingest` ở dòng lệnh.")
+            n.font = EideToken.fontUI
+            n.textColor = EideToken.Mau.muted
+            them(n)
+            return
+        }
+        tieuDePhu("\(lan.count) LƯỢT NHẬP GẦN ĐÂY — theo sổ cái")
         // "FACT MỚI", không phải "FACT". `store.write` đếm số fact GHI RA; một lô mà mọi fact
         // đã có sẵn thì gộp hết và con số ấy bằng 0 — đúng, nhưng đọc "FACT 0" thành "lần nhập
         // này hỏng". Đo 20/09 trên hai lượt `passport.import` gộp: bảng nói 2 lần nhập · 0 fact.
@@ -204,6 +219,18 @@ public final class EideManNhapTaiLieu: EideManCoSo {
     /// tử sinh mã. Viết nó ra thành chữ để nó thôi trông giống một ô trống.
     public static func oChuaDuyet(_ n: Int) -> String {
         n == 0 ? "— dùng được" : "\(n)"
+    }
+
+    /// Giấy phép của một nguồn. [DEV-185]
+    ///
+    /// **"Chưa rõ" KHÔNG phải "tự do dùng".** G-SRC-01 duyệt nguồn theo `allowed_licenses`, nên
+    /// một ô trống ở cột này là thứ người duyệt phải nhìn thấy chứ không phải thứ để làm đẹp
+    /// bảng bằng một dấu gạch ngang. Datasheet tải về từ một mirror lạ và datasheet tải từ
+    /// trang nhà sản xuất trông giống hệt nhau nếu cột này im.
+    public static func oGiayPhep(_ x: Any?) -> String {
+        guard let s = x as? String, !s.trimmingCharacters(in: .whitespaces).isEmpty
+        else { return "CHƯA RÕ" }
+        return s
     }
 
     /// Nhãn nhận dạng một lần nhập.

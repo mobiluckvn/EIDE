@@ -171,7 +171,39 @@ public final class EidePhien {
             _batNhipTim()
         } catch {
             khung.dock.themLuot(.loi, "\(error)")
+            // E6003 thoát ra ở ĐÂY, không phải ở `_moThat`. [DEV-184]
+            //
+            // `_napRegistry` chạy TRƯỚC và nó cũng chạm store, nên với một dự án chưa di trú thì
+            // `caps.list` hỏng trước khi `project.open` kịp được gọi. Đo 22/09/2026: đặt thẻ
+            // "Di trú ngay" ở mỗi nhánh bắt của `_moThat` thì nó chỉ hiện khi truyền TÊN dự án
+            // (đường đi lỗi), còn đường người dùng thật — đường dẫn đầy đủ — lại rơi vào nhánh
+            // này và chỉ in một dòng chữ.
+            //
+            // Bắt ở cả hai chỗ chứ không dời hẳn xuống đây: hai nhánh là hai lỗi khác nhau, và
+            // một ngày nào đó `_napRegistry` không còn chạm store thì nhánh kia vẫn phải đúng.
+            _moiDiTru(duong, "\(error)")
         }
+    }
+
+    /// Hiện thẻ "Di trú ngay" nếu lỗi này là E6003 — [DEV-184]. Trả `true` nếu đã hiện.
+    ///
+    /// Đọc mã lỗi từ chuỗi vì hai nhánh gọi nó ném hai KIỂU lỗi khác nhau (`EideKetQua.Loi` của
+    /// một lời gọi năng lực, và lỗi khởi động daemon). Bám vào kiểu thì phải sửa chỗ này mỗi lần
+    /// thêm một đường hỏng; bám vào mã lỗi thì đúng thứ API-15 §3 hứa là ổn định.
+    @discardableResult
+    private func _moiDiTru(_ duong: String, _ vi: String) -> Bool {
+        guard vi.contains("E6003") else { return false }
+        let ten = (duong as NSString).lastPathComponent
+        let the = EideTheHoi(cap: "project.open", loai: .canLam(
+            nhan: "Di trú ngay",
+            viec: "Dự án `\(ten)` dùng store của bản EIDE cũ, cần di trú mới mở được.",
+            moTa: "Lệnh sao lưu store hiện tại trước khi chạy (DDD-14 §5). "
+                + "Xong thì dự án tự mở lại."))
+        the.onLam = { [weak self] in
+            Task { await self?.diTru(duong) }
+        }
+        khung.dock.themThe(the)
+        return true
     }
 
     /// Gọi `project.open` THẬT, không chỉ bật daemon lên.
@@ -202,11 +234,48 @@ public final class EidePhien {
                                 + ". Gõ một câu tiếng Việt để bắt đầu.")
         } catch let e as EideKetQua.Loi {
             // E6003/E6000 không phải lỗi để nuốt: chúng có CÁCH SỬA, và cách ấy phải hiện ra.
-            let cach = e.maEide == "E6003" ? " → chạy `eide migrate` trong thư mục dự án."
+            let cach = e.maEide == "E6003" ? " → dự án của bản EIDE cũ."
                      : (e.maEide == "E6000"
                         ? " → store bị ghi ngoài EIDE; dựng lại chỉ mục trước khi làm tiếp." : "")
             khung.dock.themLuot(.loi, "Mở `\(ten)` không xong: \(e)\(cach)")
+            // E6003 có MỘT cách sửa, và sản phẩm biết chính xác cách ấy — nên nó phải là một
+            // cái nút. [DEV-184]
+            //
+            // Bản trước in "→ chạy `eide migrate` trong thư mục dự án" rồi dừng ở đó. Câu ấy
+            // đúng và vẫn là một ngõ cụt trong ứng dụng: người dùng phải mở Terminal, biết
+            // đường dẫn dự án, biết `eide` nằm ở đâu. Đo 22/09/2026 trên một dự án tạo trước
+            // [DEV-170]: 18 trong 20 màn mở ra trống, mỗi màn in đúng mã lỗi ấy.
+            //
+            // PROJECT-02 nói lõi KHÔNG tự di trú, và điều đó giữ nguyên — di trú đổi dữ liệu
+            // nên phải do người quyết. Thứ thiếu không phải một quyết định tự động mà là chỗ
+            // để quyết.
+            _moiDiTru(duong, e.maEide ?? "")
         }
+    }
+
+    /// Di trú store của một dự án rồi mở lại nó — [DEV-184].
+    ///
+    /// Chạy `eide migrate` một lần chứ không thêm một phương thức RPC: di trú đổi schema NGAY
+    /// DƯỚI CHÂN daemon đang chạy, nên sau đó phải mở lại dự án bằng mọi giá. Một lệnh một lần
+    /// làm đúng việc ấy và không để lại một daemon đang cầm store nửa cũ nửa mới.
+    public func diTru(_ duong: String) async {
+        khung.dock.themLuot(.heThong, "Đang di trú store… (sao lưu trước khi chạy)")
+        let r: (ma: Int32, json: [String: Any]?, van: String, loi: String)
+        do {
+            r = try await EideDaemon.motLan(["migrate", "-p", duong])
+        } catch {
+            return khung.dock.themLuot(.loi, "Không chạy được `eide migrate`: \(error)")
+        }
+        guard r.ma == 0 else {
+            let vi = r.loi.isEmpty ? r.van : r.loi
+            return khung.dock.themLuot(.loi, "Di trú KHÔNG xong — dự án giữ nguyên. "
+                + vi.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        // Nói ra ĐÃ ĐỔI GÌ, không chỉ "xong": di trú là thao tác đổi dữ liệu, và câu "xong"
+        // trần không cho người dùng cách nào biết nó đã động tới cái gì.
+        let v = (r.json?["to_version"] as? Int).map { " → user_version \($0)" } ?? ""
+        khung.dock.themLuot(.heThong, "Di trú xong\(v). Đang mở lại dự án…")
+        await moDuAn(duong)
     }
 
     private func _napRegistry(_ d: EideDaemon) async throws {
@@ -412,6 +481,7 @@ public final class EidePhien {
         if let tao = Self.MAN[tien] {
             let man = tao()
             man.onNguoiGo = { [weak self] in self?.nguoiGo() }
+            man.onMoMan = { [weak self] t in _ = self?.moMan(t, boiTacTu: false) }
             // Màn Làm rõ yêu cầu là màn DUY NHẤT cho tới nay mà người GHI vào từ bên trong nó.
             // Ghi xong thì thanh trên và cột phải phải đổi theo — chúng chiếu cùng một danh
             // sách việc chờ, và để chúng lệch nhau là để hai con số về cùng một thứ nằm cạnh
@@ -501,6 +571,12 @@ public final class EidePhien {
         EideManRegistry.tien: { EideManRegistry() },
         EideManLuong.tien: { EideManLuong() },
         EideManMoPhong.tien: { EideManMoPhong() },
+        // Bốn màn chạm phần cứng — [DEV-186]. Tới 22/09/2026 chúng có trong menu cột trái mà
+        // KHÔNG có mục nào ở bảng này, nên bấm vào mở ra một vùng làm việc trống.
+        EideManDoBoard.tien: { EideManDoBoard() },
+        EideManLog.tien: { EideManLog() },
+        EideManGoLoi.tien: { EideManGoLoi() },
+        EideManBench.tien: { EideManBench() },
     ]
 
 

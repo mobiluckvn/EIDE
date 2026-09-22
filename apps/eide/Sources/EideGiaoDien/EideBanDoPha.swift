@@ -16,32 +16,46 @@ public struct EidePha: Equatable {
     public let ma: String
     public let ten: String
     public let caps: [String]
+    /// Cổng CANH pha này — `EIDE-BPD` §10 "Bảng tổng hợp cổng và tri thức sinh ra". [DEV-185]
+    ///
+    /// Rỗng nghĩa là BPD không đặt cổng rủi ro nào ở pha này, KHÔNG phải "chưa tra". Hai thứ ấy
+    /// đọc giống nhau trên màn hình nên màn phải nói ra vế nào là vế nào.
+    public let cong: [String]
 
-    public init(ma: String, ten: String, caps: [String]) {
+    public init(ma: String, ten: String, caps: [String], cong: [String] = []) {
         self.ma = ma
         self.ten = ten
         self.caps = caps
+        self.cong = cong
     }
 }
 
 public enum EideBanDoPha {
     public static let PHA: [EidePha] = [
         .init(ma: "P0", ten: "Tiếp nhận lệnh ngôn ngữ tự nhiên (mới v1.1)",
-              caps: ["chat.clarify", "chat.command", "chat.fill_defaults", "chat.ground", "chat.orchestrate", "chat.parse_intent", "chat.report_back", "chat.restate", "policy.decide"]),
+              caps: ["chat.clarify", "chat.command", "chat.fill_defaults", "chat.ground", "chat.orchestrate", "chat.parse_intent", "chat.report_back", "chat.restate", "policy.decide"],
+              cong: ["Hội thoại"]),
         .init(ma: "P1", ten: "Nhận tri thức phần cứng",
-              caps: ["archive.explore", "bench.verify_passport", "discover.chip_id", "kg.build", "kg.resolve_conflict", "kg.review_facts", "passport.build", "policy.decide", "search.fetch", "search.missing", "search.rank", "search.registry", "view.doc_side_by_side", "view.rag_index"]),
+              caps: ["archive.explore", "bench.verify_passport", "discover.chip_id", "kg.build", "kg.resolve_conflict", "kg.review_facts", "passport.build", "policy.decide", "search.fetch", "search.missing", "search.rank", "search.registry", "view.doc_side_by_side", "view.rag_index"],
+              cong: ["G-SRC", "G-FACT", "G-OPS"]),
         .init(ma: "P2", ten: "Lập kế hoạch có trích dẫn",
-              caps: ["kg.conflicts", "policy.decide"]),
+              caps: ["kg.conflicts", "policy.decide"],
+              cong: ["G1"]),
         .init(ma: "P3", ten: "Sinh mã từ hộ chiếu",
-              caps: ["code.merge", "policy.decide"]),
+              caps: ["code.merge", "policy.decide"],
+              cong: ["G3"]),
         .init(ma: "P4", ten: "Xác minh trên mô phỏng và phần cứng",
-              caps: ["discover.ports", "policy.decide", "sim.build", "target.flash", "target.observe", "target.serial"]),
+              caps: ["discover.ports", "policy.decide", "sim.build", "target.flash", "target.observe", "target.serial"],
+              cong: ["G-OPS", "G4"]),
         .init(ma: "P5", ten: "Gỡ lỗi có chứng cứ",
-              caps: ["debug.experiment", "log.stats", "policy.decide"]),
+              caps: ["debug.experiment", "log.stats", "policy.decide"],
+              cong: ["G-OPS"]),
         .init(ma: "P6", ten: "Bàn giao, đóng gói và phát hành",
-              caps: ["policy.decide", "registry.publish"]),
+              caps: ["policy.decide", "registry.publish"],
+              cong: ["G5"]),
         .init(ma: "P7", ten: "Yêu cầu → kiến trúc → lược đồ → tài liệu (mới v1.1)",
-              caps: ["arch.adr", "arch.compare", "arch.decompose", "arch.interface_spec", "arch.map_hw", "arch.memory_budget", "arch.review", "arch.state_machine", "arch.style_select", "arch.timing_budget", "arch.to_plan", "board.check_pins", "diagram.block", "diagram.lint", "diagram.render", "diagram.stale", "diagram.sync", "doc.embed_diagram", "doc.generate", "doc.style_check", "doc.sync", "doc_artifact.stale_sections", "req.change_impact", "req.classify", "req.detect_conflict", "req.elicit", "req.ground_hw", "req.prioritize", "req.trace_matrix", "view.impact_map"]),
+              caps: ["arch.adr", "arch.compare", "arch.decompose", "arch.interface_spec", "arch.map_hw", "arch.memory_budget", "arch.review", "arch.state_machine", "arch.style_select", "arch.timing_budget", "arch.to_plan", "board.check_pins", "diagram.block", "diagram.lint", "diagram.render", "diagram.stale", "diagram.sync", "doc.embed_diagram", "doc.generate", "doc.style_check", "doc.sync", "doc_artifact.stale_sections", "req.change_impact", "req.classify", "req.detect_conflict", "req.elicit", "req.ground_hw", "req.prioritize", "req.trace_matrix", "view.impact_map"],
+              cong: ["Hội thoại", "G1"]),
     ]
 
     /// Pha của một năng lực. `nil` = năng lực không nằm trong quy trình nào của BPD — và đó là

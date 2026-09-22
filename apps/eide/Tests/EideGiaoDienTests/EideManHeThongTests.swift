@@ -114,7 +114,7 @@ final class EideManHeThongTests: XCTestCase {
                     "temperature": 0.0, "output_schema": "Intent"]]]]
         }
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("VAI → MÔ HÌNH"), van)
+        XCTAssertTrue(van.contains("VAI TRÒ → MÔ HÌNH"), van)
         XCTAssertTrue(van.contains("intent"), van)
         // Hiện CẢ bí danh lẫn tên thật: `models.yaml` viết bí danh, còn thứ người dùng đối
         // chiếu với hoá đơn là `model_id`.
@@ -129,7 +129,7 @@ final class EideManHeThongTests: XCTestCase {
         let m = EideManMoHinh()
         await m.nap { _, _ in ["status": "done", "result": ["spent_usd": 0.0, "calls_today": 0]] }
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("VAI → MÔ HÌNH rỗng"), van)
+        XCTAssertTrue(van.contains("VAI TRÒ → MÔ HÌNH rỗng"), van)
         XCTAssertTrue(van.contains("cộng từ SỔ CÁI"), van)
     }
 

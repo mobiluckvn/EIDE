@@ -178,10 +178,25 @@ final class UngDung: NSObject, NSApplicationDelegate {
     }
 
     /// Bản tĩnh của `_chuTrong` — dùng được từ chỗ gọi tĩnh.
+    ///
+    /// **Đọc cả NHÃN NÚT.** [DEV-183] Bản đầu chỉ đọc `NSTextField`/`NSTextView`, nên mọi thứ
+    /// màn hình nói bằng nút đều VÔ HÌNH với phép đo. Đo 22/09/2026: màn Bản đồ luồng vẽ tám
+    /// pha P0–P7 thành tám nút — bộ dò báo "CHƯA DỰNG 3/3" cho một màn đang hiện đủ cả tám,
+    /// và nếu tin vào đó thì việc tiếp theo là đi viết lại một màn không hỏng.
+    ///
+    /// `_chuTrong` (bản instance) đã đọc nút từ trước, và chính chỗ lệch giữa hai hàm đo cùng
+    /// một thứ là nguồn của lỗi này.
     static func chuTrongTinh(_ v: NSView) -> String {
         var ra = ""
-        if let t = v as? NSTextField { ra += t.stringValue + " " }
+        if let t = v as? NSTextField {
+            ra += (t.attributedStringValue.string.isEmpty ? t.stringValue
+                                                          : t.attributedStringValue.string) + " "
+            ra += (t.placeholderString ?? "") + " "
+        }
         if let t = v as? NSTextView { ra += t.string + " " }
+        if let b = v as? NSButton {
+            ra += (b.attributedTitle.string.isEmpty ? b.title : b.attributedTitle.string) + " "
+        }
         for c in v.subviews { ra += chuTrongTinh(c) }
         return ra
     }
@@ -244,6 +259,49 @@ final class UngDung: NSObject, NSApplicationDelegate {
     }
 
     /// Mở từng màn rồi so chữ hiển thị với hợp đồng nội dung — `--do-noi-dung <dự án>`.
+    /// Câu LÝ DO của trạng thái rỗng, nếu màn đang rỗng. [DEV-183]
+    ///
+    /// Luật B5 bắt mọi trạng thái rỗng nói lý do, và chính câu ấy là thứ phân biệt "dự án chưa
+    /// có hiện vật loại này" với "không nối được daemon nên màn nào cũng rỗng". Không in nó ra
+    /// thì hai tình huống ấy trông y hệt nhau trong báo cáo — và cái thứ hai là một sản phẩm
+    /// hỏng hoàn toàn đang được báo cáo là "không đo được".
+    static func lyDoRong(_ van: String) -> String? {
+        let moc = "Màn này đang rỗng — vì:"
+        guard let r = van.range(of: moc) else { return nil }
+        return van[r.upperBound...]
+            .prefix(while: { $0 != "\n" })
+            .trimmingCharacters(in: .whitespaces)
+    }
+
+    /// Câu lý do rỗng này nói màn HỎNG hay nói dự án chưa có dữ liệu?
+    ///
+    /// Bắt theo mã lỗi `E….` và theo cụm "không đọc được" — hai thứ mọi màn đều dùng khi lời
+    /// gọi năng lực ném. Danh sách phải hẹp: bắt rộng quá thì một câu rỗng bình thường có chữ
+    /// "không" bị gọi là hỏng, và cổng đỏ vì phép đo chứ không vì sản phẩm.
+    static func laLoi(_ ly: String) -> Bool {
+        if ly.contains("không đọc được") { return true }
+        // `E6003`, `E2000`… — chữ E rồi bốn chữ số.
+        let k = Array(ly)
+        for i in 0..<max(0, k.count - 4) where k[i] == "E" {
+            if k[(i + 1)...(i + 4)].allSatisfy({ $0.isNumber }) { return true }
+        }
+        return false
+    }
+
+    /// Chờ màn nạp xong — dùng chung cho `--do-noi-dung` và `--bam-thu`.
+    ///
+    /// Mốc "xong" là lúc chữ "Đang đọc…" biến mất. Trần 12 giây rồi đi tiếp: một màn treo phải
+    /// hiện ra thành một mục CHƯA DỰNG, không được treo cả phép đo.
+    private func _choNapXong() async {
+        let t0 = ProcessInfo.processInfo.systemUptime
+        while _chuTrong(khung.vungLamViec).contains("Đang đọc…"),
+              ProcessInfo.processInfo.systemUptime - t0 < 12 {
+            try? await Task.sleep(nanoseconds: 200_000_000)
+        }
+        try? await Task.sleep(nanoseconds: 400_000_000)
+        khung.layoutSubtreeIfNeeded()
+    }
+
     private func _doNoiDung(_ duAn: String) async {
         let goc = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         guard let hd = EideDoNoiDung.hopDong(goc) else {
@@ -254,7 +312,8 @@ final class UngDung: NSObject, NSApplicationDelegate {
         await phien.moDuAn(duAn)
         try? await Task.sleep(nanoseconds: 1_500_000_000)
 
-        var thieu = 0, du = 0, khongMan = 0
+        var thieu = 0, du = 0, khongMan = 0, khongDo = 0
+        var manRong: [String] = []
         for m in EideManHinhDS.tatCa {
             guard let can = hd[m.tien] else { continue }
             // MÀN KHÔNG DỰNG ĐƯỢC là một thất bại, không phải một màn rỗng.
@@ -271,22 +330,68 @@ final class UngDung: NSObject, NSApplicationDelegate {
                 continue
             }
             _ = phien.moMan(m.tien, boiTacTu: false)
-            try? await Task.sleep(nanoseconds: 900_000_000)
-            khung.layoutSubtreeIfNeeded()
+            // CHỜ MÀN NẠP XONG, không ngủ một khoảng cố định. [DEV-183]
+            //
+            // `--bam-thu` đã có phép chờ này từ 22/09; `--do-noi-dung` thì không, và nó đo
+            // trong lúc màn còn đang in "Đang đọc…". Hệ quả: hai lần chạy liên tiếp trên CÙNG
+            // một dự án ra 32/24/21 rồi 31/27/19 — cùng một mã, khác kết luận. Một cổng chập
+            // chờn tệ hơn không có cổng: nó dạy người ta chạy lại cho tới khi xanh.
+            await _choNapXong()
             let van = Self.chuTrongTinh(khung.vungLamViec)
             let hong = can.muc.filter { !EideDoNoiDung.daHien($0, trong: van) }
             du += can.muc.count - hong.count
-            thieu += hong.count
-            if !hong.isEmpty {
-                print("\n✖ \(can.ma) \(m.nhan) — thiếu \(hong.count)/\(can.muc.count):")
-                for h in hong {
-                    print("     · \(h.mo_ta)  [chờ: \(h.dau_hieu.joined(separator: " / "))]")
+            guard !hong.isEmpty else { continue }
+
+            // ---- "CHƯA DỰNG" khác "KHÔNG ĐO ĐƯỢC". [DEV-183]
+            //
+            // Bản đầu gộp cả hai thành "thiếu". Đo 22/09/2026 trên dự án `congvt1` — 0 fact,
+            // 0 hộ chiếu, 0 yêu cầu, 0 tính năng — bộ dò báo 48 mục thiếu trên 21 màn, trong
+            // khi phần lớn các màn ấy đang hiện ĐÚNG trạng thái rỗng mà luật B5 quy định.
+            //
+            // Tin vào con số ấy là đi viết lại 21 màn không hỏng, và tệ hơn: sau khi viết xong
+            // con số vẫn y nguyên, vì dấu hiệu cần tìm nằm trong dữ liệu chứ không nằm trong mã.
+            // Một phép đo không phân biệt được "màn thiếu mục này" với "dự án chưa có dữ liệu
+            // loại này" thì nó không đo cái nó tưởng nó đo.
+            //
+            // Màn đang ở trạng thái rỗng thì KHÔNG kết luận gì về nó — báo "không đo được" và
+            // nói ra cần dữ liệu gì. Muốn đo thật thì chạy trên một dự án có đủ hiện vật.
+            if let ly = Self.lyDoRong(van) {
+                // "Rỗng vì CHƯA CÓ dữ liệu" khác "rỗng vì KHÔNG ĐỌC ĐƯỢC dữ liệu".
+                //
+                // Cái đầu là trạng thái bình thường của một dự án mới và không kết luận gì về
+                // màn. Cái sau là màn HỎNG — và nó trông y hệt trên màn hình. Đo 22/09/2026:
+                // 18 trong 20 màn "rỗng" của một dự án có 290 fact thật ra đang in
+                // `E6003: store user_version=7, cần 10`; xếp chúng vào "không đo được" là giấu
+                // một sản phẩm hỏng sau một nhãn vô hại.
+                if Self.laLoi(ly) {
+                    thieu += hong.count
+                    print("\n✖ \(can.ma) \(m.nhan) — MÀN HỎNG, không đọc được dữ liệu "
+                          + "(\(hong.count)/\(can.muc.count) mục không đo được vì lý do này):"
+                          + "\n     → \(ly)")
+                    continue
                 }
+                khongDo += hong.count
+                manRong.append("\(can.ma) \(m.nhan) (\(hong.count) mục) — \(ly)")
+                continue
+            }
+            thieu += hong.count
+            print("\n✖ \(can.ma) \(m.nhan) — CHƯA DỰNG \(hong.count)/\(can.muc.count) "
+                  + "(màn CÓ dữ liệu, mục vẫn không hiện):")
+            for h in hong {
+                print("     · \(h.mo_ta)  [chờ: \(h.dau_hieu.joined(separator: " / "))]")
             }
         }
-        print("\n=== NỘI DUNG: \(du) mục đã hiện, \(thieu) còn thiếu"
+        if !manRong.isEmpty {
+            print("\n— KHÔNG ĐO ĐƯỢC \(khongDo) mục: màn đang ở trạng thái rỗng vì dự án này "
+                  + "chưa có dữ liệu loại ấy.\n  Chạy lại trên một dự án có đủ hiện vật mới "
+                  + "kết luận được.\n"
+                  + manRong.map { "     · " + $0 }.joined(separator: "\n"))
+        }
+        print("\n=== NỘI DUNG: \(du) mục đã hiện · \(thieu) CHƯA DỰNG · \(khongDo) không đo được"
               + (khongMan > 0 ? " · \(khongMan) màn KHÔNG MỞ ĐƯỢC" : ""))
-        exit(thieu == 0 ? 0 : 1)
+        // Chỉ "chưa dựng" và "không có màn" mới làm đỏ cổng. Để "không đo được" làm đỏ thì
+        // cổng này vĩnh viễn đỏ trên mọi dự án mới — và một cổng luôn đỏ là một cổng bị tắt.
+        exit(thieu == 0 && khongMan == 0 ? 0 : 1)
     }
 
     /// Nút KHÔNG bấm thử: hạ cả phiên, hoặc đổi thứ khó dựng lại.
