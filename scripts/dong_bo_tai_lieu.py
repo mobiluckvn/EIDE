@@ -34,6 +34,15 @@ NGUON = {
     "DEP": "sec_dep_con.js", "CON": "sec_dep_con.js", "DEV": "dev.js",
     "PLN": "excel/build_plan.py",
 }
+# Tài liệu VIẾT TAY, không sinh từ `docs/ho-so/nguon/`. [DEV-188]
+#
+# UXC-31 là checklist giao diện cho tác tử, sống dưới dạng Markdown trong `docs/` chứ không
+# phải docx sinh ra từ một tệp `.js`. Nó không có mặt ở đây tới 22/09/2026, nên `ma_tai_lieu`
+# lọc nó ra và **13 mục đụng UXC-31 rơi hết vào nhóm "(chưa rõ)"** — nhóm mà `main()` bỏ qua,
+# không sinh bản nháp nào. Tài liệu bị giao diện sửa nhiều nhất lại là tài liệu duy nhất
+# không được đồng bộ; càng nhiều màn được dựng thì lỗ này càng lớn.
+TU_VIET = {"UXC": "docs/EIDE-UXC-31_Checklist_UI_UX_cho_tac_tu.md"}
+
 # Mục nhắm vào tệp trong kho chứ không vào tài liệu — không cần bản nháp đồng bộ.
 KHONG_PHAI_TAI_LIEU = {"PLATFORM.md", "CLAUDE.md"}
 
@@ -88,7 +97,7 @@ def ma_tai_lieu(s: str) -> list[str]:
     """Rút mã tài liệu từ cột "Tài liệu / mục". Một mục có thể chạm nhiều tài liệu."""
     ra = []
     for m in re.findall(r"\b([A-Z]{3})-\d{2}\b", s):
-        if m in NGUON and m not in ra:
+        if (m in NGUON or m in TU_VIET) and m not in ra:
             ra.append(m)
     if not ra:
         for k in KHONG_PHAI_TAI_LIEU:
@@ -115,19 +124,30 @@ def main() -> int:
             continue
         p = thu_muc / f"{ngay}-{doc}.md"
         pb = _phien_ban_dich(ds)
-        dong = [
-            f"# Đồng bộ tài liệu {doc} — bản nháp {ngay}",
-            "",
-            f"Nguồn sinh phải sửa: `docs/ho-so/nguon/{NGUON.get(doc, '?')}`  ·  "
-            f"phiên bản đích: **{pb}**",
-            "",
-            "Bản nháp này do `scripts/dong_bo_tai_lieu.py` sinh từ `docs/DEVIATIONS.md`. "
-            "Nó **không** sửa docx và **không** sửa `docs/spec/`. Sau khi chủ sản phẩm duyệt: "
-            "sửa nguồn sinh → `scripts/sinh_tai_lieu.sh "
-            f"{NGUON.get(doc, '?').split('.')[0].split(' ')[0]}` → đổi trạng thái mục thành "
-            f"`Đã cập nhật tài liệu {pb}`.",
-            "",
-        ]
+        if doc in TU_VIET:
+            # Tài liệu viết tay: không có nguồn sinh, nên không có bước `sinh_tai_lieu.sh`.
+            # Nói thẳng điều đó thay vì in `docs/ho-so/nguon/?` — một đường dẫn không tồn tại
+            # gửi người đọc đi tìm một tệp không có.
+            dau = [
+                f"Tài liệu VIẾT TAY phải sửa: `{TU_VIET[doc]}`  ·  phiên bản đích: **{pb}**",
+                "",
+                "Bản nháp này do `scripts/dong_bo_tai_lieu.py` sinh từ `docs/DEVIATIONS.md`. "
+                "Tài liệu này **không** sinh từ `docs/ho-so/nguon/` — sau khi chủ sản phẩm "
+                "duyệt thì sửa thẳng tệp Markdown ở trên, rồi đổi trạng thái mục thành "
+                f"`Đã cập nhật tài liệu {pb}`.",
+            ]
+        else:
+            dau = [
+                f"Nguồn sinh phải sửa: `docs/ho-so/nguon/{NGUON.get(doc, '?')}`  ·  "
+                f"phiên bản đích: **{pb}**",
+                "",
+                "Bản nháp này do `scripts/dong_bo_tai_lieu.py` sinh từ `docs/DEVIATIONS.md`. "
+                "Nó **không** sửa docx và **không** sửa `docs/spec/`. Sau khi chủ sản phẩm "
+                "duyệt: sửa nguồn sinh → `scripts/sinh_tai_lieu.sh "
+                f"{NGUON.get(doc, '?').split('.')[0].split(' ')[0]}` → đổi trạng thái mục "
+                f"thành `Đã cập nhật tài liệu {pb}`.",
+            ]
+        dong = [f"# Đồng bộ tài liệu {doc} — bản nháp {ngay}", ""] + dau + [""]
         for d in sorted(ds, key=lambda x: x["ma"]):
             dong += [
                 f"## {d['ma']} — {d['trang_thai']}",
