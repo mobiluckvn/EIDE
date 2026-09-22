@@ -55,12 +55,13 @@ def test_chuoi_mau_sinh_tu_tai_lieu():
     Trước WI-CHAT-06 bảng ấy chỉ nằm trong văn xuôi, nên phần mã phải chép tay — cùng khuôn
     DEV-025/029/043/046. Nay sinh ra `dialog/chains.json`.
 
-    Con số 6 chốt ở đây cố ý: một mẫu bị xoá hay thêm đều phải đi qua test này. Mẫu thứ sáu
-    (`req.analyze`) thêm 21/09/2026 vì ý định ấy không có đường đi và rơi xuống planner — xem
+    Con số chốt ở đây cố ý: một mẫu bị xoá hay thêm đều phải đi qua test này. Tám mẫu = năm
+    của §4.4 + `req.analyze` ([DEV-147]) + `policy.stop` và `policy.set` ([DEV-155]). Cả ba mẫu
+    thêm đều vì cùng một lý do: ý định ấy không có đường đi và rơi xuống planner — xem
     `test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co` trong `test_chat.py`.
     """
     ds = mau()
-    assert len(ds) == 6
+    assert len(ds) == 8
     assert all(c["buoc"] and c["trigger_intents"] for c in ds)
 
 

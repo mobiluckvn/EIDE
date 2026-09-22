@@ -141,6 +141,38 @@ ALIAS: dict[str, str] = {
 }
 
 
+#: Câu người gõ khi muốn CẮT việc đang chạy. So sau khi bỏ dấu câu và hạ chữ thường.
+#:
+#: Chỉ những câu ĐỨNG MỘT MÌNH — xem `la_cau_dung`. Danh sách cố ý ngắn: mỗi mục thêm vào là
+#: một câu có thể bị hiểu nhầm, và một lần dừng nhầm giữa lúc tác tử đang làm đúng cũng là một
+#: lần người dùng mất công.
+CAU_DUNG = frozenset({
+    "dung", "dung khan", "dung ngay", "dung lai", "dung het", "dung tat ca",
+    "dung di", "dung het di", "thoi", "thoi dung", "dung tay",
+    "stop", "stop ngay", "halt", "abort", "emergency stop",
+})
+
+
+def la_cau_dung(van: str) -> bool:
+    """Câu này có phải một lệnh DỪNG đứng một mình không.
+
+    Bỏ dấu tiếng Việt trước khi so: người gõ vội hay gõ không dấu, và "dừng" với "dung" phải ra
+    cùng một kết quả — đúng lúc họ gõ vội nhất là lúc cần nó chạy nhất.
+
+    Đòi câu NGẮN và khớp TRỌN: "không dừng lại ở đó" hay "dừng khi nào xong thì báo tôi" là câu
+    nói về việc dừng, không phải lệnh dừng. So bằng `in` sẽ bắt cả hai, và một lệnh dừng nhầm
+    giữa chừng làm hỏng đúng thứ người ta đang chờ.
+    """
+    import unicodedata
+    t = van.strip().strip(".!?,;:").lower()
+    if len(t) > 24:
+        return False
+    t = t.replace("đ", "d")
+    t = unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode()
+    t = " ".join(t.split())
+    return t in CAU_DUNG
+
+
 def cho_nguoi_gat(muc: str) -> bool:
     """Mức này có phải DỪNG chờ người gật đầu trước khi chạy chuỗi không — UXC-31 §2D.6.
 
@@ -595,6 +627,26 @@ class Daemon:
         mà kênh sự kiện thì daemon chưa có (16 phương thức `event.*`, xem DOI-CHIEU §4). Cho tới
         khi có, panel hỏi lại bằng `caps.invoke` hoặc `queue.list`; `run_id` là thứ nối hai đầu.
         """
+        # ---- DỪNG KHẨN: đường tắt XÁC ĐỊNH, trước mọi lời gọi mô hình. [DEV-155]
+        #
+        # Người gõ "dừng" là người đang muốn CẮT một việc đang chạy sai. Bắt họ đợi một lượt
+        # gọi mô hình (2–5 giây, qua mạng, có thể hỏng) để máy hiểu rằng họ muốn dừng là đặt
+        # phép dừng lên trên chính thứ cần dừng — và khi mạng hỏng thì không dừng được.
+        #
+        # Trước bản này còn tệ hơn: ý định `policy.stop` không có chuỗi mẫu nào nhận và cũng
+        # không trùng tên năng lực nào (`policy.emergency_stop` mới là tên thật), nên nó RƠI
+        # XUỐNG PLANNER — tức lệnh dừng phải đi qua HAI lượt gọi mô hình.
+        #
+        # Nhận sai hai chiều KHÔNG cân nhau: dừng nhầm thì bật lại bằng một lần bấm, còn không
+        # dừng được thì tác tử chạy tiếp trên một việc người ta vừa bảo nó thôi. Nên quy tắc
+        # nghiêng về phía NHẬN — nhưng chỉ với câu NGẮN và đứng một mình, để "không dừng lại ở
+        # đó" hay "dừng khi nào xong thì báo" không bị hiểu thành lệnh dừng.
+        if la_cau_dung(p["text"]):
+            r = self.router.invoke("policy.emergency_stop", {}, self.ctx)
+            return {"intent_id": "policy.stop", "state": "done",
+                    "run": asdict(r) if r.status != "done" else None,
+                    "dung_khan": (r.result or {}) if r.status == "done" else {}}
+
         y = self.router.invoke("chat.parse_intent", {"text": p["text"]}, self.ctx)
         if y.status != "done":
             return asdict(y)

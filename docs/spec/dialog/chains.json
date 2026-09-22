@@ -696,5 +696,43 @@
   "trigger_intents": [
    "req.analyze"
   ]
+ },
+ {
+  "ten": "Dừng khẩn (DEV-155)",
+  "chuoi": "policy.emergency_stop",
+  "buoc": [
+   "policy.emergency_stop"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "policy.emergency_stop",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "policy.stop"
+  ]
+ },
+ {
+  "ten": "Đổi mức tự chủ (DEV-155)",
+  "chuoi": "policy.set_autonomy",
+  "buoc": [
+   "policy.set_autonomy"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "policy.set_autonomy",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "policy.set"
+  ]
  }
 ]

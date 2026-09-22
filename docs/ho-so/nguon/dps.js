@@ -187,6 +187,14 @@ const CHUOI_MAU = [
   // Chưa mang mã Z: Z-01…Z-10 là một dãy có thật (PDA §M1) nhưng §4.4 chỉ trải ra năm mục, và
   // mượn một mã mình không biết nội dung là đặt tên cho thứ của người khác.
   ['Làm rõ yêu cầu (DEV-147)', 'req.elicit → req.classify → req.detect_conflict → req.prioritize → req.acceptance → report', ['req.analyze']],
+  // [DEV-155] Hai ý định CHÍNH SÁCH. Chúng không trùng tên năng lực nào — tên thật là
+  // `policy.emergency_stop` và `policy.set_autonomy` — nên trước v1.3 chúng rơi xuống
+  // planner, tức một lệnh DỪNG phải đi qua hai lượt gọi mô hình để được thi hành.
+  //
+  // Mỗi mẫu đúng MỘT nút: đây là hai việc tức thời, không có gì để lập kế hoạch. Một chuỗi
+  // nhiều bước ở đây chỉ thêm chỗ để hỏng.
+  ['Dừng khẩn (DEV-155)', 'policy.emergency_stop', ['policy.stop']],
+  ['Đổi mức tự chủ (DEV-155)', 'policy.set_autonomy', ['policy.set']],
 ];
 // §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
 // đọc: nó có nhánh điều kiện viết bằng chữ ("[template? … : …]"), ký hiệu nhóm ("extract.*"),
@@ -245,6 +253,11 @@ const CHUOI_NUT = {
   // xung đột, ưu tiên và tiêu chí nghiệm thu đều chỉ cần tập yêu cầu, không cần kết quả của
   // nhau — nối tiếp chúng là bắt người dùng đợi ba lượt mô hình nối đuôi cho ba việc chạy song
   // song được.
+  'Dừng khẩn (DEV-155)': [['n1', 'policy.emergency_stop']],
+  // `level` và `by` là hai tham số BẮT BUỘC mà chuỗi không suy được: mức mới đến từ câu người
+  // nói, tên người đến từ phiên. Để trống thì nút dừng ở "thiếu tham số" và HỎI — đúng hơn là
+  // đoán một mức tự chủ.
+  'Đổi mức tự chủ (DEV-155)': [['n1', 'policy.set_autonomy']],
   'Làm rõ yêu cầu (DEV-147)': [
     ['n1', 'req.elicit'],
     ['n2', 'req.classify', 'n1', 'wait', { raw: '${n1.raw}' }],
