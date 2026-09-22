@@ -82,3 +82,39 @@ def test_so_quyet_dinh_trong_NHAT_KY_khop_voi_BANG(tmp_path, workspace):
                         if x["kind"] == "gate.decision" and x["data"].get("action_cap")
                         in ("project.status",))
     assert trong_bang == trong_nhat_ky == 3, (trong_bang, trong_nhat_ky)
+
+
+def test_append_dong_thoi_KHONG_gay_chuoi_bam(tmp_path):
+    """Sổ cái là một CHUỖI BĂM; ghi đồng thời từ hai luồng phải không làm gãy nó. [DEV-162]
+
+    Tới [DEV-154] daemon còn đơn luồng nên `append` không cần khoá. Từ khi chuỗi chạy ở luồng
+    nền, có HAI người ghi sổ cùng lúc: luồng chuỗi và vòng lặp chính phục vụ `view.timeline`,
+    `queue.list`… `self._seq += 1` không nguyên tử và `_last_hash` bị ghi đè chéo.
+
+    Đo 22/09/2026 bằng ảnh chụp cửa sổ thật giữa một lượt CNC: giao diện treo biển "thiếu 1 bản
+    ghi sổ cái (seq 22…22)". Thứ hỏng không phải một badge — `verify()` sẽ báo chuỗi băm gãy,
+    và bằng chứng của cả phiên làm việc mất giá trị.
+    """
+    import threading
+
+    led = Ledger(tmp_path / "l.jsonl")
+    loi: list[Exception] = []
+
+    def ghi(n: int) -> None:
+        try:
+            for i in range(60):
+                led.append("session.open", {"luong": n, "i": i})
+        except Exception as e:  # noqa: BLE001
+            loi.append(e)
+
+    ts = [threading.Thread(target=ghi, args=(n,)) for n in range(4)]
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+
+    assert not loi, loi
+    recs = led.records()
+    assert len(recs) == 240, f"mất bản ghi: {len(recs)}/240"
+    assert [r["seq"] for r in recs] == list(range(1, 241)), "seq trùng hoặc nhảy cóc"
+    assert led.verify() == (True, 0), "chuỗi băm gãy"

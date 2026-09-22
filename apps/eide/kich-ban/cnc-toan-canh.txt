@@ -1,0 +1,31 @@
+# BÀI CNC TOÀN CẢNH — dự án trắng đi tới hiện vật, một lượt chạy không ngắt.
+#
+# Gộp cả hai chặng để thấy TOÀN BỘ vòng, sau sáu mục vừa sửa (DEV-156…161).
+# Tôi nói bằng lời người làm xưởng, KHÔNG mớm thuật ngữ kỹ thuật nào.
+
+@tao Bỏ việc cầm USB xuống xưởng cho máy CNC
+
+# ---- A. HIỂU VIỆC
+Máy CNC ở xưởng tôi dùng bộ điều khiển Fangling F2300B. Mỗi lần có bản thiết kế mới tôi phải chép file G-code ra USB rồi mang xuống xưởng cắm vào máy. Tôi muốn bỏ hẳn việc cầm USB đi lại.
+
+Bộ điều khiển đó chỉ đọc được USB, nó không có cổng mạng và tôi không đổi được phần mềm trong nó.
+
+Tôi lo nhất là đang cắt dở mà file bị hỏng hoặc máy đọc nhầm file cũ.
+
+# ---- B. XEM TÁC TỬ RÚT RA GÌ
+@man ReqArch
+
+# ---- C. XEM TÁC TỬ HỎI LẠI GÌ — và TRẢ LỜI
+@man LamRo
+@tra-loi-dau File G-code lớn nhất khoảng 8 MB; chép xong trong 20 giây là chấp nhận được
+
+# ---- D. THIẾT KẾ — từ yêu cầu ra kiến trúc
+Từ các yêu cầu đã có, hãy chia hệ thống thành các khối chức năng và nói rõ khối nào làm gì.
+
+# ---- E. LƯỢC ĐỒ
+Vẽ lược đồ khối cho thiết kế vừa rồi.
+
+# ---- F. TOÀN CẢNH
+@man ReqArch
+@man LamRo
+@man Main

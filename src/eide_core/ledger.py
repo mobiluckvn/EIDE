@@ -67,6 +67,8 @@ class Ledger:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._last_hash = GENESIS
         self._seq = 0
+        # Khoá cho khối gán số + nối băm + ghi tệp — xem `append`. [DEV-162]
+        self._khoa = threading.RLock()
         # Người quan sát — gọi SAU khi bản ghi đã xuống đĩa và chuỗi băm đã nối.
         #
         # Đây là chỗ duy nhất trong hệ thống thấy được MỌI việc đã xảy ra, nên nó là chỗ đúng để
@@ -109,13 +111,32 @@ class Ledger:
             # câu người gõ — vì mỗi lời gọi năng lực có `run_id` riêng, và gộp theo nó thì một
             # chuỗi sáu nút vẫn là sáu việc.
             data = {**data, "chain": dict(c)}
-        self._seq += 1
-        rec = {"seq": self._seq, "ts": datetime.now(UTC).isoformat(), "kind": kind, "actor": actor,
-               "data": che_bi_mat(data), "prev_hash": self._last_hash}
-        rec["hash"] = _hash(rec)
-        with self.path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
-        self._last_hash = rec["hash"]
+        # KHOÁ cả khối gán số, nối băm và ghi tệp. [DEV-162]
+        #
+        # Sổ cái là một CHUỖI BĂM: mỗi bản ghi mang `prev_hash` của bản trước, và đó là toàn bộ
+        # bảo đảm "không ai sửa được lịch sử mà không bị phát hiện". Ba trường tạo nên nó —
+        # `self._seq`, `self._last_hash`, và dòng ghi ra tệp — phải đổi CÙNG NHAU.
+        #
+        # Tới [DEV-154] daemon còn đơn luồng nên không cần khoá. Từ khi chuỗi chạy ở luồng nền,
+        # có HAI người ghi sổ cùng lúc: luồng chuỗi và vòng lặp chính phục vụ `view.timeline`,
+        # `queue.list`… `self._seq += 1` không nguyên tử, `_last_hash` bị ghi đè chéo, và hai
+        # dòng có thể xen vào nhau giữa tệp.
+        #
+        # Đo 22/09/2026 bằng ảnh chụp cửa sổ thật giữa một lượt CNC: giao diện treo biển "thiếu
+        # 1 bản ghi sổ cái (seq 22…22)" — đúng dấu hiệu một `seq` bị nuốt. Nếu để nguyên thì thứ
+        # hỏng không phải một badge: `verify()` sẽ báo chuỗi băm gãy, và bằng chứng của cả phiên
+        # làm việc mất giá trị.
+        #
+        # `RLock` chứ không `Lock`: người quan sát in-process chạy NGAY trong `append` (xem dưới),
+        # và một người quan sát ghi sổ lại sẽ tự khoá chính mình bằng `Lock` thường.
+        with self._khoa:
+            self._seq += 1
+            rec = {"seq": self._seq, "ts": datetime.now(UTC).isoformat(), "kind": kind,
+                   "actor": actor, "data": che_bi_mat(data), "prev_hash": self._last_hash}
+            rec["hash"] = _hash(rec)
+            with self.path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
+            self._last_hash = rec["hash"]
         # ĐÁNH DẤU `seq` cho mọi bộ theo dõi tệp TRƯỚC khi phát in-process.
         #
         # Hai đường cùng dẫn tới một người nhận: `_quan_sat` chạy ngay, bộ theo dõi tệp đọc lại
