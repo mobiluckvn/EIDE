@@ -13,6 +13,9 @@ public typealias EideGoi = @MainActor (String, [String: Any]) async throws -> [S
 /// Bản cũ để mỗi màn tự dựng lấy header, tự quyết trạng thái rỗng, tự bắt lỗi — và kết quả là
 /// 26 cách nói "không có dữ liệu", trong đó bốn cách là im lặng. Ở đây ba thứ ấy nằm trong lớp
 /// cơ sở, nên một màn mới KHÔNG THỂ quên chúng.
+/// Lượt nạp bị một lượt mới thay thế — không phải lỗi, chỉ là tín hiệu rút lui.
+struct LoiNapCu: Error {}
+
 @MainActor
 open class EideManCoSo: NSView {
 
@@ -77,7 +80,37 @@ open class EideManCoSo: NSView {
 
     /// Nạp và tự lo phần hỏng. Màn KHÔNG được tự nuốt lỗi: một màn rỗng vì lỗi và một màn rỗng
     /// vì chưa có dữ liệu là hai trạng thái khác nhau, và người dùng phải phân biệt được.
+    /// Số thế hệ nạp. Một lượt nạp CŨ không được ghi vào màn của lượt mới. [DEV-164]
+    ///
+    /// `nap` mở đầu bằng `xoa()`, nên hai lượt chồng nhau đánh nhau trên cùng một cây khung
+    /// nhìn: lượt sau xoá sạch những gì lượt trước vừa vẽ, rồi lượt trước tỉnh dậy và vẽ tiếp
+    /// vào màn của lượt sau.
+    ///
+    /// Đo 22/09/2026 bằng ảnh chụp cửa sổ thật giữa một lượt CNC: màn Tổng quan hiện `Đang
+    /// đọc…` (của lượt B) cạnh bảng `NGÂN SÁCH MÔ HÌNH` (của lượt A), và **thiếu hẳn** bảng
+    /// `PHIÊN LÀM VIỆC` — đúng dấu vết của cuộc đua ấy. Nhãn chờ không bao giờ tắt vì lượt A
+    /// gỡ nhãn của CHÍNH NÓ, thứ `xoa()` đã tháo ra từ lâu.
+    ///
+    /// Trước [DEV-154] hiếm khi xảy ra vì mọi lời gọi xếp hàng một. Từ khi gọi song song được,
+    /// `veLaiManDangMo` và `_henNapLai` dễ dàng chạm vào một màn còn đang nạp.
+    private var theHe = 0
+
+    /// Thế hệ của lượt nạp đang chạy, đi theo TASK chứ không theo đối tượng.
+    ///
+    /// `@TaskLocal` là thứ duy nhất làm được: `doc()` được gọi từ bên trong `napDuLieu` của một
+    /// lượt nạp cụ thể, và nó cần biết mình thuộc lượt nào — một biến của màn thì luôn mang giá
+    /// trị của lượt MỚI NHẤT, tức đúng thứ không phân biệt được.
+    @TaskLocal static var theHeCuaToi: Int = -1
+
     public final func nap(_ goi: @escaping EideGoi) async {
+        theHe += 1
+        let cua_toi = theHe
+        await EideManCoSo.$theHeCuaToi.withValue(cua_toi) {
+            await _nap(goi, cua_toi)
+        }
+    }
+
+    private func _nap(_ goi: @escaping EideGoi, _ cua_toi: Int) async {
         xoa()
         // Nhãn chờ phải SỐNG QUA lời gọi. Bản đầu gọi `xoa()` ngay trong `do` — tức xoá nó ở
         // cùng một lượt chạy, trước cả `await` đầu tiên — nên nó chưa bao giờ hiện lên một điểm
@@ -89,10 +122,15 @@ open class EideManCoSo: NSView {
         let t0 = ProcessInfo.processInfo.systemUptime
         do {
             try await napDuLieu(goi)
+        } catch is LoiNapCu {
+            return          // lượt mới đã tiếp quản — rút lui lặng lẽ, không dọn gì
         } catch {
             rong(vi: "không đọc được: \(error)", buocKe: "kiểm tra daemon còn sống, rồi mở lại màn")
         }
         msTong = (ProcessInfo.processInfo.systemUptime - t0) * 1000
+        // Lượt nạp CŨ thì rút lui lặng lẽ: nó vừa vẽ vào màn của lượt mới, và dọn thêm ở đây
+        // sẽ xoá cả thứ của lượt mới. Thứ nó vẽ nhầm đã có `xoa()` của lượt sau lo.
+        guard cua_toi == theHe else { return }
         than.removeArrangedSubview(cho)
         cho.removeFromSuperview()
         if than.arrangedSubviews.isEmpty {
@@ -108,7 +146,22 @@ open class EideManCoSo: NSView {
         let t0 = ProcessInfo.processInfo.systemUptime
         let r = try await goi(ten, tham)
         msGoi += (ProcessInfo.processInfo.systemUptime - t0) * 1000
+        // DỪNG một lượt nạp đã CŨ, ngay sau `await`. [DEV-164]
+        //
+        // Không có chỗ này thì lượt cũ tỉnh dậy và vẽ tiếp vào màn của lượt mới — đo được trên
+        // màn Tổng quan: bảng `NGÂN SÁCH` của lượt A nằm cạnh nhãn `Đang đọc…` của lượt B, và
+        // bảng `PHIÊN LÀM VIỆC` biến mất vì `xoa()` của B đã tháo nó ra.
+        //
+        // Ném chứ không `return`: `napDuLieu` của mỗi màn viết thẳng một mạch, không có chỗ nào
+        // kiểm giá trị trả về, nên chỉ một ngoại lệ mới cuốn được cả mạch ấy về.
+        try _dungNeuCu()
         return try EideKetQua.boc(r, ten)
+    }
+
+    /// Ném `LoiNapCu` nếu lượt nạp này đã bị một lượt mới thay thế.
+    func _dungNeuCu() throws {
+        let t = EideManCoSo.theHeCuaToi
+        if t >= 0 && t != theHe { throw LoiNapCu() }
     }
 
     /// Gọi thẳng một năng lực qua `caps.invoke`.

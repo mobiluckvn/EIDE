@@ -266,3 +266,47 @@ final class EideBangLenhTests: XCTestCase {
         return ra
     }
 }
+
+/// Hai lượt nạp chồng nhau không được đánh nhau trên một màn — [DEV-164].
+@MainActor
+final class EideNapChongNhauTests: XCTestCase {
+
+    /// Đo 22/09/2026 bằng ảnh chụp cửa sổ thật giữa một lượt CNC: màn Tổng quan hiện
+    /// `Đang đọc…` (của lượt B) cạnh bảng `NGÂN SÁCH MÔ HÌNH` (của lượt A), và THIẾU HẲN bảng
+    /// `PHIÊN LÀM VIỆC`.
+    ///
+    /// Dấu vết ấy khớp chính xác một cuộc đua: `nap` mở đầu bằng `xoa()`, nên lượt sau xoá sạch
+    /// những gì lượt trước vừa vẽ, rồi lượt trước tỉnh dậy và vẽ tiếp vào màn của lượt sau.
+    /// Nhãn chờ không bao giờ tắt vì lượt A gỡ nhãn của CHÍNH NÓ — thứ `xoa()` đã tháo từ lâu.
+    ///
+    /// Trước [DEV-154] hiếm khi xảy ra vì mọi lời gọi xếp hàng một.
+    func testLuotNapCU_KhongVeVaoManCuaLuotMOI() async {
+        let m = EideManChậm()
+        // A bắt đầu, dừng ở `await` đầu tiên.
+        let a = Task { await m.nap { _, _ in
+            try? await Task.sleep(nanoseconds: 400_000_000)
+            return ["status": "done", "result": [String: Any]()]
+        } }
+        try? await Task.sleep(nanoseconds: 80_000_000)
+        // B tiếp quản trong lúc A còn đang đợi.
+        await m.nap { _, _ in ["status": "done", "result": [String: Any]()] }
+        _ = await a.value
+
+        let van = EideManLamRoTests.chu(m)
+        XCTAssertFalse(van.contains("Đang đọc…"),
+                       "nhãn chờ của lượt cũ còn lại — \(van)")
+        XCTAssertEqual(m.soLanVe, 1, "lượt CŨ vẫn vẽ vào màn: \(m.soLanVe) lần")
+    }
+}
+
+/// Màn giả: `napDuLieu` có một `await` ở giữa để dựng được cuộc đua.
+@MainActor
+final class EideManChậm: EideManCoSo {
+    var soLanVe = 0
+    override class var tien: String { "Main" }
+    override func napDuLieu(_ goi: @escaping EideGoi) async throws {
+        _ = try await doc(goi, "session.state")
+        soLanVe += 1
+        tieuDePhu("XONG")
+    }
+}
