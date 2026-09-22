@@ -16,7 +16,7 @@
 | S6 | Hộ chiếu mạch | nối | `EideManHoChieuMach.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
 | S7 | Bản đồ tri thức & hỏi đáp | nối | `EideManBanDoTriThuc.swift` | `7c752e6` | 2026-09-22 | Vũ Trí Công |
 | S8 | Xung đột tri thức | nối | `EideManXungDot.swift` | `f88d7d9` | 2026-09-20 | Vũ Trí Công |
-| S9 | Làm rõ yêu cầu | nối | `EideManLamRo.swift` | `7c752e6` | 2026-09-22 | Vũ Trí Công |
+| S9 | Làm rõ yêu cầu | nối | `EideManLamRo.swift` | `c3570bc` | 2026-09-22 | Vũ Trí Công |
 | S10 | Yêu cầu & kiến trúc | nối | `EideManThietKe.swift` | `4471bcb` | 2026-09-21 | Vũ Trí Công |
 | S11 | Lược đồ | nối | `EideManThietKe.swift` | `4471bcb` | 2026-09-21 | Vũ Trí Công |
 | S12 | Kế hoạch | nối | `EideManThietKe.swift` | `4471bcb` | 2026-09-21 | Vũ Trí Công |
