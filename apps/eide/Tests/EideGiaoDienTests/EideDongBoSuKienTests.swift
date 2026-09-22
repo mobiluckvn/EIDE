@@ -165,17 +165,22 @@ final class EideDongBoSuKienTests: XCTestCase {
         let (_, ph) = Self.dung()
         ph.moMan("Main", boiTacTu: false)
         // Sáu nút của CÙNG một chuỗi — người dùng đếm là MỘT việc.
+        // Payload ĐÚNG như daemon gửi: nó `pop("chain")` và thay bằng `run_id` của CHUỖI +
+        // `node_id` + `i`/`of` ([DEV-167]). Bản trước gửi `chain` nguyên trong gói — một hình
+        // dạng không tồn tại trên đường dây, nên bài kiểm đo một giao thức tưởng tượng.
         for i in 1...6 {
             ph.napSuKien("event.run.progress",
                          ["seq": i, "kind": "cap.run.finish", "cap": "req.classify",
-                          "run_id": "cap-\(i)", "chain": ["run_id": "r_abc", "i": i, "of": 6]])
+                          "run_id": "r_abc", "cr_run_id": "cap-\(i)",
+                          "node_id": "n\(i)", "i": i, "of": 6])
         }
         XCTAssertEqual(ph.chuaXem("FlowMap"), 1,
                        "sáu nút của một chuỗi phải là MỘT việc, nhận \(ph.chuaXem("FlowMap"))")
         // Một chuỗi KHÁC là một việc khác.
         ph.napSuKien("event.run.progress",
                      ["seq": 9, "kind": "cap.run.finish", "cap": "sim.run",
-                      "run_id": "cap-9", "chain": ["run_id": "r_xyz", "i": 1, "of": 1]])
+                      "run_id": "r_xyz", "cr_run_id": "cap-9",
+                      "node_id": "n1", "i": 1, "of": 1])
         XCTAssertEqual(ph.chuaXem("FlowMap"), 2)
     }
 
@@ -239,5 +244,34 @@ final class EideDongBoSuKienTests: XCTestCase {
         XCTAssertTrue(ph.xepNapLai("NhatKy"))
         XCTAssertTrue(ph.xepNapLai("Main"), "màn khác bị chặn theo — sai")
         XCTAssertFalse(ph.xongNapLai("Main"))
+    }
+    /// `gate.decision` của một lời gọi ĐỌC là TIẾNG VỌNG, không phải việc mới. [DEV-169]
+    ///
+    /// Router ghi năng lực bị xét vào `action_cap`, không `cap` — nên phép hỏi `p["cap"] != nil`
+    /// của bộ lọc tiếng vọng không thấy nó, và MỌI quyết định cổng đi thẳng qua, kể cả quyết
+    /// định cho một lời gọi mà chính một màn vừa phát ra để tự vẽ.
+    ///
+    /// Đo 22/09/2026 trên bài CNC: 109 khoá việc từ `gate.decision` trên tổng 119, và huy hiệu
+    /// `Nhật ký 120` trên một dự án có 5 yêu cầu.
+    func testGateDecisionCuaLoiGoiDOC_khongTinhLaViecMoi() {
+        let (_, ph) = Self.dung()
+        ph.moMan("Main", boiTacTu: false)
+        for i in 1...20 {
+            ph.napSuKien("event.gate.decided",
+                         ["seq": i, "kind": "gate.decision", "action_cap": "view.timeline",
+                          "run_id": "cap\(i)", "decision": "APPROVE"])
+        }
+        XCTAssertEqual(ph.chuaXem("NhatKy"), 0,
+                       "20 quyết định cổng của lời gọi đọc tính thành \(ph.chuaXem("NhatKy")) việc")
+    }
+
+    /// Vế còn lại: quyết định cổng của một NÚT CHUỖI vẫn phải tính.
+    func testGateDecisionCuaNUT_CHUOI_van_tinh() {
+        let (_, ph) = Self.dung()
+        ph.moMan("Main", boiTacTu: false)
+        ph.napSuKien("event.gate.decided",
+                     ["seq": 1, "kind": "gate.decision", "action_cap": "code.generate_module",
+                      "run_id": "r_abc", "node_id": "n3", "i": 3, "of": 8, "decision": "ASK"])
+        XCTAssertEqual(ph.chuaXem("NhatKy"), 1, "nuốt mất việc thật của chuỗi")
     }
 }

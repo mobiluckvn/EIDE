@@ -602,14 +602,21 @@ public final class EidePhien {
         // còn `gate.decision` → `event.gate.decided` của CÙNG lời gọi đọc ấy vẫn lọt — nên màn
         // Xung đột tri thức (khai nghe `gate.decided`) tự nạp lại chính mình, vô tận. Mỗi lời
         // gọi năng lực sinh ra ba bản ghi sổ cái, nên bịt một đường còn hai.
-        guard p["cap"] != nil else { return true }
-        // Mang `chain` = thuộc một LƯỢT CHẠY của tác tử, tức đúng thứ bộ lọc này muốn giữ.
+        // `cap` HOẶC `action_cap` — hai tên cho cùng một thứ. [DEV-169]
         //
-        // Bộ lọc sinh ra để chặn "tiếng vọng": `cap.run.*` của một lời gọi lẻ mà chính một màn
-        // phát ra để tự vẽ. Tiếng vọng KHÔNG bao giờ có `chain` — nó không thuộc chuỗi nào.
-        // Trước [DEV-156] `chain` chưa đáng tin nên bộ lọc phải dựa vào `node_id`; nay sổ cái
-        // đóng dấu lượt chạy lên mọi bản ghi, nên đây là tín hiệu tốt hơn và rộng hơn.
-        if p["chain"] != nil { return true }
+        // `gate.decision` khai năng lực trong `action_cap` (Router ghi thế để phân biệt "năng
+        // lực bị xét" với "năng lực đang chạy"), nên phép hỏi `p["cap"] != nil` không thấy nó
+        // và MỌI quyết định cổng đi thẳng qua bộ lọc — kể cả quyết định cho một lời gọi đọc mà
+        // chính một màn vừa phát ra để tự vẽ.
+        //
+        // Đo 22/09/2026 trên bài CNC: 109 khoá việc từ `gate.decision` trên tổng 119, và huy
+        // hiệu `Nhật ký 120` trên một dự án có 5 yêu cầu. Mỗi lần màn tự vẽ lại là một "việc
+        // mới cho anh" theo cách đếm ấy.
+        //
+        // Bỏ dòng `p["chain"] != nil` thêm ở [DEV-156]: nó là MÃ CHẾT — daemon `pop("chain")`
+        // trước khi gửi, nên khoá ấy không bao giờ có mặt ở đây. Một điều kiện không bao giờ
+        // đúng nằm trong một bộ lọc là chỗ người đọc sau sẽ tin nhầm.
+        guard p["cap"] != nil || p["action_cap"] != nil else { return true }
         let loai = (p["kind"] as? String) ?? ""
         return loai.hasPrefix("run.") || p["node_id"] != nil
     }
