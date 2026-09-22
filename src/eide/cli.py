@@ -10,7 +10,7 @@ from pathlib import Path
 
 import yaml
 
-from eide import __version__, undo_handlers
+from eide import __version__, gate_handlers, undo_handlers
 from eide_core import store, tools, whitelist
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
@@ -41,6 +41,9 @@ def _router(project: Path | None = None) -> tuple[Router, Context]:
     r = Router(gate=gate, ledger=ledger)
     c = Context(project_dir=project, extra={"gate": gate})
     undo_handlers.dang_ky(r, c)      # §6.4 — xem ghi chú ở `rpc.py`
+    # [DEV-176] Cách DUYỆT cổng do handler chạy (G1 trên kế hoạch). Cùng khuôn
+    # `undo_handlers`: quên một chỗ thì nút Duyệt chết im lặng ở bề mặt ấy.
+    gate_handlers.dang_ky(r, c)
     return r, c
 
 

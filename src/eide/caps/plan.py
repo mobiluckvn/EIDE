@@ -323,8 +323,11 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     gate = ctx.extra.get("gate")
     d = gate.decide("G1", dac_trung, risk="R1", autonomy=ctx.autonomy,
                     tier="T1*", actor=ctx.actor) if gate else None
+    # [DEV-176] `run_id` đi theo quyết định: khoá cổng phụ là `<run_id>:<gate>`, nên
+    # đường duyệt phải tra ngược được từ mã lượt chạy về đúng kế hoạch này. Không có nó
+    # thì chỉ còn cách đoán "bản mới nhất", và đoán sai là duyệt nhầm một kế hoạch khác.
     quyet_dinh = {"decision": d.decision, "rule": d.rule_id, "reason": d.reason,
-                  "gate": d.gate} if d else {}
+                  "gate": d.gate, "run_id": ctx.extra.get("cap_run_id")} if d else {}
     plan["feature"] = feature
     ghi_plan(root, feature, plan, quyet_dinh)
     if d is not None:

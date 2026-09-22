@@ -29,7 +29,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, TextIO
 
-from eide import __version__, undo_handlers
+from eide import __version__, gate_handlers, undo_handlers
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger
 from eide_core.paths import spec_dir, user_log
@@ -108,6 +108,9 @@ class McpServer:
         self.router = Router(gate=self.gate, ledger=self.ledger)
         self.ctx = Context(project_dir=project, extra={"gate": self.gate, "ledger": self.ledger})
         undo_handlers.dang_ky(self.router, self.ctx)      # §6.4 — xem ghi chú ở `rpc.py`
+        # [DEV-176] Cách DUYỆT cổng do handler chạy (G1 trên kế hoạch). Cùng khuôn
+        # `undo_handlers`: quên một chỗ thì nút Duyệt chết im lặng ở bề mặt ấy.
+        gate_handlers.dang_ky(self.router, self.ctx)
         self.tools = dung_tool()
         self._theo_ten = {t["name"]: t for t in self.tools}
 

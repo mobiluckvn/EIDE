@@ -61,6 +61,10 @@ class Router:
         # Hàm hoàn tác theo loại (POL-17 §5). Rỗng lúc này: các loại cần năng lực chưa hiện
         # thực. Đăng ký từ ngoài để `undo.apply` không phải biết về từng nhóm năng lực.
         self.undo_handlers: dict[str, Any] = {}
+        # [DEV-176] Cách DUYỆT một cổng do handler chạy, theo tên cổng (`G1`, …). Rỗng ở đây vì
+        # cách duyệt phụ thuộc HIỆN VẬT mà cổng phán lên, và hiện vật thuộc về từng nhóm năng
+        # lực — cùng lập luận với `undo_handlers` ngay trên.
+        self.cong_phu_handlers: dict[str, Any] = {}
 
     def invoke(self, cap_id: str, params: dict[str, Any] | None = None, ctx: Context | None = None,
                features: dict[str, Any] | None = None) -> CapabilityRun:
@@ -252,6 +256,12 @@ class Router:
         if goc is None:
             # Không có trong RAM ⇒ có thể là mục của một phiên daemon TRƯỚC. Đọc lại từ M1.
             goc = self._doc_cho(run_id, ctx_goi_y)
+        if cho is None and goc is None and ":" in run_id:
+            # [DEV-176] Cổng do HANDLER chạy — khoá `<run_id>:<gate>` mà `_ghi_cong_phu` đặt.
+            # Những cổng ấy không nằm trong hàng chờ của Router (xem `_ghi_cong_phu`), nên tới
+            # đây thì hai nhánh trên đều rỗng và bản trước ném E2000 cho một câu hỏi đang hiện
+            # ngay trước mắt người dùng.
+            return self._quyet_dinh_cong_phu(run_id, quyet, by, note, ctx_goi_y)
         if cho is None and goc is None:
             raise EideError("E2000", f"Không có mục đang chờ với id {run_id}",
                             exists=[r.run_id for r in self.queue], candidates=[], missing=[run_id])
@@ -273,6 +283,48 @@ class Router:
                                   else "người từ chối"})
         ctx_nguoi = replace(ctx, actor="human")
         return self.invoke(cap_id, params, ctx_nguoi, features)
+
+    def _quyet_dinh_cong_phu(self, khoa: str, quyet: str, by: str, note: str,
+                             ctx: Context | None) -> CapabilityRun:
+        """Người duyệt một cổng do HANDLER chạy — [DEV-176].
+
+        ## Vì sao cần nhánh riêng
+
+        `quyet_dinh()` ở trên chạy tiếp một LỜI GỌI đang treo: nó còn giữ `(cap, params, ctx)`
+        trong hàng chờ và chỉ việc gọi lại với `actor="human"`. Cổng phụ không có gì để chạy
+        tiếp — lời gọi sinh ra nó đã `done` từ lâu. `plan.create` chạy xong, ghi kế hoạch xuống
+        đĩa, rồi cổng G1 phán lên chính cái kế hoạch ấy. Thứ người duyệt là **hiện vật**, không
+        phải một lời gọi.
+
+        ## Vì sao Router không tự biết cách duyệt
+
+        Hiện vật thuộc về từng nhóm năng lực: G1 phán lên tệp kế hoạch của `plan.*`. `eide_core`
+        không được phụ thuộc `eide.caps` — cùng lập luận đã viết cho `undo_handlers`. Nên đăng
+        ký từ ngoài, và quên đăng ký thì nút chết IM LẶNG ở đúng bề mặt ấy.
+
+        ## Hậu quả trước bản này
+
+        Đo 22/09/2026: cổng G1-03 "Đổi kiến trúc" trả ASK cho kế hoạch nhấp nháy LED (bước 1
+        chạm `clock` vì đặt `F_CPU`). Nhờ [DEV-171] câu hỏi ấy HIỆN ĐƯỢC ở tab Làm rõ yêu cầu
+        và có dòng `decision_log`. Nhưng bấm duyệt thì `quyet_dinh` không tìm thấy mục nào và
+        ném E2000. Người dùng đọc được câu hỏi và không có đường nào trả lời nó — chuỗi đứng
+        vĩnh viễn ở đúng chỗ tác tử làm đúng.
+        """
+        run_id, _, cong = khoa.partition(":")
+        ham = self.cong_phu_handlers.get(cong)
+        if ham is None:
+            raise EideError("E2000", f"Không có cách duyệt cổng `{cong}` — mã `{khoa}`",
+                            exists=sorted(self.cong_phu_handlers), candidates=[], missing=[cong])
+        self._cap_nhat_decision_log(ctx or Context(), khoa, human_answer=quyet.upper())
+        self._log("gate.human", {"gate_id": khoa, "decision": quyet.upper(), "by": by,
+                                 "note": note})
+        kq = ham(khoa, quyet, note, ctx) or {}
+        tt = "done" if quyet == "approve" else "rejected"
+        return CapabilityRun(khoa, kq.get("cap") or f"gate:{cong}", tt, kq,
+                             {"decision": quyet.upper(), "rule": f"{cong}-HUMAN",
+                              "reason": note or "người quyết định", "gate": cong}, 0,
+                             None if quyet == "approve"
+                             else {"code": "E3001", "message": note or "người từ chối"})
 
     # ---- người hoàn tác một việc đã tự làm (API-15 §2 `undo.apply`)
     def hoan_tac(self, undo_ref: str, by: str = "human",

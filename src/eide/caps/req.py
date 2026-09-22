@@ -21,6 +21,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import secrets
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -752,6 +753,37 @@ def answer_clarification(params: dict[str, Any], ctx: Context) -> dict[str, Any]
         # `fdfafbb4e45f` — cần `clar:<id>`". Thay vì dựng một mã song song, `clarification_answer`
         # nay ghi `run_id`, nên mã của Router trỏ thẳng vào ĐÚNG bản trả lời.
     return {"clar_id": ma, "status": "answered", "answer": van, "revision": so}
+
+
+def ghi_tra_loi(root: Path, khop: Any, van: str, boi: str = "human") -> int:
+    """Đánh dấu các điểm cần làm rõ KHỚP `khop(text)` là đã trả lời — [DEV-176].
+
+    Dùng khi câu trả lời không do người gõ vào ô nhập mà đến từ một thao tác khác: người bấm
+    Duyệt cho một cổng, và điểm cần làm rõ do chính cổng ấy sinh ra ([DEV-171]) coi như đã có
+    đáp án. Để nó `open` là bắt người dùng nhìn mãi một câu họ vừa trả lời xong.
+
+    Ghi CẢ vào `clarification_answer` chứ không chỉ đổi `status`: lịch sử chỉ-thêm là nền của
+    hoàn tác `restore_answer` ([DEV-151]), và một câu trả lời không có dòng lịch sử thì không
+    hoàn tác được — người bấm Duyệt nhầm sẽ không có đường lùi.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return 0
+    now = datetime.now(UTC).isoformat()
+    n = 0
+    with store.open_store(db) as c:
+        ds = c.execute("SELECT id, text FROM clarification WHERE status='open'").fetchall()
+        for cid, text in ds:
+            if not khop(text or ""):
+                continue
+            c.execute("INSERT INTO clarification_answer (id, clar_id, answer, answered_by, at)"
+                      " VALUES (?,?,?,?,?)",
+                      ("ca_" + secrets.token_hex(8), cid, van, boi, now))
+            c.execute("UPDATE clarification SET answer=?, answered_by=?, answered_at=?,"
+                      " status='answered' WHERE id=?", (van, boi, now, cid))
+            n += 1
+        c.commit()
+    return n
 
 
 def hoan_tac_cau_tra_loi(root: Path, khoa: str) -> dict[str, Any]:
