@@ -15,12 +15,31 @@ import EideLoi
 /// trạng thái rỗng khác: nói LÝ DO rỗng, rồi nói BƯỚC KẾ TIẾP.
 public final class EideManChao: NSView {
 
-    /// Người bấm tạo dự án, kèm câu mô tả họ vừa gõ (có thể rỗng).
-    public var onTao: ((String) -> Void)?
+    /// Người bấm tạo dự án, kèm câu mô tả họ vừa gõ (có thể rỗng) và THƯ MỤC lưu.
+    ///
+    /// `nil` = để lõi dùng workspace mặc định. Truyền chuỗi rỗng thay cho `nil` sẽ thành
+    /// `--dir ""` và tạo dự án ở thư mục hiện hành của tiến trình — một chỗ người dùng không
+    /// chọn và không đoán được.
+    public var onTao: ((String, String?) -> Void)?
 
     private let o = NSTextField()
     private let nut = NSButton()
     private let nhanTt = NSTextField(labelWithString: "")
+    private let nhanThuMuc = NSTextField(labelWithString: "")
+
+    /// Thư mục người đã chọn; `nil` = workspace mặc định.
+    public private(set) var thuMuc: String?
+
+    /// Workspace mặc định — CÙNG đường dẫn `project_dir_default()` của `eide_core.paths`.
+    ///
+    /// Viết lại ở đây vì màn chào chạy TRƯỚC khi có daemon để hỏi, và câu "dự án sẽ nằm ở đâu"
+    /// phải trả lời được ngay lúc ấy. Đây là BẢN SAO THỨ HAI của một hằng số, tức là một chỗ sẽ
+    /// lệch: nếu `defaults.project_dir` đổi thì màn chào sẽ nói một đường và lõi ghi một nẻo.
+    /// Rủi ro chấp nhận được vì người dùng chỉ đọc nó rồi bấm "Đổi…"; nếu `project_dir` thành
+    /// thứ cấu hình được thật thì phải hỏi lõi, không sửa hằng số này.
+    public static var macDinh: String {
+        (NSHomeDirectory() as NSString).appendingPathComponent("eide")
+    }
 
     /// Đang tạo dự án hay không. Cửa duy nhất chặn bấm hai lần — `project.create` không phải
     /// lệnh bình thường: bấm đúp sinh hai thư mục, và cái thứ hai người dùng không biết là mình
@@ -74,7 +93,26 @@ public final class EideManChao: NSView {
         nhanTt.textColor = EideToken.Mau.bad
         nhanTt.isHidden = true
 
-        let hop = NSStackView(views: [chao, ly, g, o, nut, nhanTt])
+        // ---- CHỖ LƯU dự án, nói ra TRƯỚC khi tạo.
+        //
+        // §3.1 đòi màn này chỉ có ĐÚNG MỘT nút chính, và điều đó vẫn đúng: "Đổi…" là nút phụ
+        // nằm trong một dòng thông tin, không phải một ngã rẽ ngang hàng với "Tạo dự án".
+        //
+        // Nhưng dòng thông tin ấy phải có. `project.create` ghi vào `~/eide` khi không ai nói
+        // gì, và tới 22/09/2026 màn chào không hề nói ra điều đó: người dùng tạo dự án xong
+        // phải đi tìm nó. Một trạng thái rỗng có "bước kế tiếp" mà giấu KẾT QUẢ của bước ấy thì
+        // mới làm xong một nửa luật B5.
+        nhanThuMuc.font = EideToken.fontUI
+        nhanThuMuc.textColor = EideToken.Mau.muted
+        let doi = NSButton(title: "Đổi…", target: self, action: #selector(_chonThuMuc))
+        doi.bezelStyle = .inline
+        doi.font = EideToken.fontUI
+        let hangThuMuc = NSStackView(views: [nhanThuMuc, doi])
+        hangThuMuc.orientation = .horizontal
+        hangThuMuc.spacing = 8
+        _veThuMuc()
+
+        let hop = NSStackView(views: [chao, ly, g, o, hangThuMuc, nut, nhanTt])
         hop.orientation = .vertical
         hop.alignment = .leading
         hop.spacing = 12
@@ -110,11 +148,37 @@ public final class EideManChao: NSView {
     /// Gõ câu mô tả — cho bài đo đi đúng đường người dùng đi.
     public func datMoTaDeTest(_ van: String) { o.stringValue = van }
 
+    /// Chọn thư mục mà KHÔNG mở hộp thoại hệ thống — `NSOpenPanel` là modal, và một bài kiểm
+    /// chạy headless sẽ treo ở đó thay vì đỏ.
+    public func datThuMucDeTest(_ duong: String?) {
+        thuMuc = duong
+        _veThuMuc()
+    }
+
+    private func _veThuMuc() {
+        nhanThuMuc.stringValue = "Lưu tại: " + (thuMuc ?? Self.macDinh)
+            + (thuMuc == nil ? "  (mặc định)" : "")
+    }
+
+    @objc private func _chonThuMuc() {
+        let hop = NSOpenPanel()
+        hop.canChooseDirectories = true
+        hop.canChooseFiles = false
+        hop.canCreateDirectories = true
+        hop.allowsMultipleSelection = false
+        hop.prompt = "Chọn"
+        hop.message = "Chọn thư mục workspace — dự án mới sẽ nằm trong thư mục này."
+        hop.directoryURL = URL(fileURLWithPath: thuMuc ?? Self.macDinh)
+        guard hop.runModal() == .OK, let u = hop.url else { return }
+        thuMuc = u.path
+        _veThuMuc()
+    }
+
     @objc private func _tao() {
         guard !dangBan else { return }
         let v = o.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
         // Ô rỗng thì dùng chính câu gợi ý, KHÔNG gửi chuỗi rỗng: `project.create` sẽ tạo một dự
         // án tên "" ở đâu đó, và người dùng có một thư mục rác mà không biết vì sao.
-        onTao?(v.isEmpty ? goiY : v)
+        onTao?(v.isEmpty ? goiY : v, thuMuc)
     }
 }

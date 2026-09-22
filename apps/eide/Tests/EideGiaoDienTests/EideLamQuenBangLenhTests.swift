@@ -14,15 +14,25 @@ final class EideLamQuenBangLenhTests: XCTestCase {
 
     // MARK: - §3.1 màn chào
 
-    /// **ĐÚNG MỘT nút chính.** Người vừa cài xong có đúng một việc phải làm; mọi nút thứ hai là
-    /// một ngã rẽ họ phải cân nhắc trước khi biết sản phẩm làm gì.
+    /// **ĐÚNG MỘT nút chính.** Người vừa cài xong có đúng một việc phải làm; mọi nút thứ hai
+    /// NGANG HÀNG là một ngã rẽ họ phải cân nhắc trước khi biết sản phẩm làm gì.
+    ///
+    /// Từ 22/09/2026 màn này có thêm "Đổi…" để chọn thư mục lưu ([DEV-182], chủ sản phẩm yêu
+    /// cầu). Nên phép đo đổi từ ĐẾM NÚT sang đếm nút CHÍNH — đúng chữ của §3.1. Đếm nút là một
+    /// phép đo dễ viết cho một điều khoản nói về thứ khác: một nút phụ nằm trong dòng thông tin
+    /// không phải một ngã rẽ, còn hai nút cùng cỡ cạnh nhau thì có, dù đếm ra cùng con số.
+    ///
+    /// "Nút chính" ở đây = nút có phím tắt Enter. Đó cũng chính là thứ quyết định người dùng đi
+    /// đâu khi họ gõ xong và bấm Enter mà không nhìn.
     func testManChaoDungMotNutChinhVaKhongCotPhai() {
         let (k, _) = dungKhung()
         k.layoutSubtreeIfNeeded()
         XCTAssertTrue(k.dangChao)
         let nut = Self.nut(k.manChao)
-        XCTAssertEqual(nut.count, 1, "màn chào có \(nut.count) nút: \(nut)")
-        XCTAssertTrue(nut[0].contains("Tạo dự án đầu tiên"), nut[0])
+        let chinh = Self.nutChinh(k.manChao)
+        XCTAssertEqual(chinh.count, 1, "màn chào có \(chinh.count) nút CHÍNH: \(chinh)")
+        XCTAssertTrue(chinh[0].contains("Tạo dự án đầu tiên"), chinh[0])
+        XCTAssertLessThanOrEqual(nut.count, 2, "màn chào có \(nut.count) nút: \(nut)")
         // Màn chào phủ TOÀN cửa sổ, nên cột phải nằm dưới nó — "không cột phải lúc này".
         XCTAssertEqual(k.manChao.frame, k.frame, "màn chào không phủ toàn cửa sổ")
     }
@@ -45,7 +55,7 @@ final class EideLamQuenBangLenhTests: XCTestCase {
     func testTaoDuAnTrongHaiThaoTac() {
         let (k, _) = dungKhung()
         var daTao: String?
-        k.manChao.onTao = { daTao = $0 }
+        k.manChao.onTao = { van, _ in daTao = van }
 
         var thaoTac = 0
         k.manChao.datMoTaDeTest("đọc DHT22 trên ATmega328P")   // thao tác 1: gõ
@@ -62,9 +72,52 @@ final class EideLamQuenBangLenhTests: XCTestCase {
     func testBoTrongOVanTaoDuocBangCauGoiY() {
         let (k, _) = dungKhung()
         var daTao: String?
-        k.manChao.onTao = { daTao = $0 }
+        k.manChao.onTao = { van, _ in daTao = van }
         XCTAssertTrue(Self.bam(k.manChao, chua: "Tạo dự án đầu tiên"))
         XCTAssertEqual(daTao, k.manChao.goiY, "bỏ trống ô thì không tạo được gì")
+    }
+
+    // MARK: - [DEV-182] chọn thư mục lưu dự án
+
+    /// **Màn chào NÓI RA dự án sẽ nằm ở đâu.**
+    ///
+    /// B5 đòi trạng thái rỗng nói lý do và bước kế tiếp; nó cũng phải nói KẾT QUẢ của bước ấy.
+    /// Tới 22/09/2026 màn này im về chỗ lưu, `project.create` ghi vào `~/eide`, và người dùng
+    /// tạo xong phải đi tìm dự án của chính mình.
+    func testManChaoNoiRoDuAnSeNamO_DAU() {
+        let (k, _) = dungKhung()
+        let van = Self.chu(k.manChao)
+        XCTAssertTrue(van.contains("Lưu tại"), "không nói chỗ lưu — \(van)")
+        XCTAssertTrue(van.contains("eide"), van)
+        XCTAssertTrue(van.contains("mặc định"), "không nói đây là mặc định đổi được — \(van)")
+    }
+
+    /// Chọn thư mục khác thì thư mục ấy ĐI THEO xuống `project.create`, và màn hiện đúng nó.
+    ///
+    /// Đo cả hai vế: một màn hiện đúng đường dẫn nhưng không truyền nó đi là một màn nói dối,
+    /// và lỗi ấy im lặng — dự án vẫn được tạo, chỉ ở nhầm chỗ.
+    func testChonThuMucKhacThiDuongDanDI_THEO_xuongLenhTao() {
+        let (k, _) = dungKhung()
+        var nhan: (String, String?)?
+        k.manChao.onTao = { van, thu in nhan = (van, thu) }
+        k.manChao.datThuMucDeTest("/Volumes/Data/du-an")
+        XCTAssertTrue(Self.chu(k.manChao).contains("/Volumes/Data/du-an"),
+                      Self.chu(k.manChao))
+        XCTAssertFalse(Self.chu(k.manChao).contains("mặc định"),
+                       "đã chọn thư mục riêng mà vẫn ghi là mặc định")
+        k.manChao.datMoTaDeTest("đọc DHT22")
+        XCTAssertTrue(Self.bam(k.manChao, chua: "Tạo dự án đầu tiên"))
+        XCTAssertEqual(nhan?.1, "/Volumes/Data/du-an", "thư mục người chọn không đi theo")
+    }
+
+    /// Không chọn gì thì truyền `nil`, KHÔNG truyền chuỗi rỗng: `--dir ""` tạo dự án ở thư mục
+    /// hiện hành của tiến trình — một chỗ người dùng không chọn và không đoán được.
+    func testKhongChonThiTruyenNilChuKhongPhaiChuoiRong() {
+        let (k, _) = dungKhung()
+        var nhan: (String, String?)?
+        k.manChao.onTao = { van, thu in nhan = (van, thu) }
+        XCTAssertTrue(Self.bam(k.manChao, chua: "Tạo dự án đầu tiên"))
+        XCTAssertNil(nhan?.1 ?? nil, "truyền \(String(describing: nhan?.1)) thay vì nil")
     }
 
     // MARK: - §3.3 chào đúng BA thứ
@@ -295,6 +348,16 @@ final class EideLamQuenBangLenhTests: XCTestCase {
         }
         for c in v.subviews where bam(c, chua: chua) { return true }
         return false
+    }
+
+    /// Nút CHÍNH = nút nhận phím Enter. Xem `testManChaoDungMotNutChinhVaKhongCotPhai`.
+    private static func nutChinh(_ v: NSView) -> [String] {
+        var ra: [String] = []
+        if let b = v as? NSButton, !v.isHidden, b.keyEquivalent == "\r", !b.title.isEmpty {
+            ra.append(b.title)
+        }
+        for c in v.subviews where !c.isHidden { ra += nutChinh(c) }
+        return ra
     }
 
     private static func nutBat(_ v: NSView, chua: String) -> Bool {
