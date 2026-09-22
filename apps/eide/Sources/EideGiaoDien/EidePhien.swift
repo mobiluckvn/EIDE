@@ -1003,7 +1003,14 @@ public final class EidePhien {
         // Một lời gọi THUỘC một chuỗi thì vẫn nhận: daemon đã đổi `run_id` của nó sang mã chuỗi
         // và gắn `node_id`, nên nó là một bước chứ không phải một lượt chạy riêng.
         let loai = (p["kind"] as? String) ?? ""
-        guard loai.hasPrefix("run.") || p["node_id"] != nil else { return }
+        // `as? String` chứ KHÔNG `!= nil`. JSON `null` tới đây thành `NSNull`, và `NSNull` khác
+        // `nil` — nên phép so cũ cho lọt mọi bản ghi có khoá `node_id` rỗng. [DEV-167]
+        //
+        // Vá cả hai đầu: daemon thôi gửi khoá rỗng, và chỗ này thôi tin rằng "có khoá" nghĩa là
+        // "có giá trị". Một bên sửa là đủ để hết triệu chứng, nhưng cùng một nhầm lẫn sẽ quay
+        // lại ở khoá khác — `null` đi qua JSON là chuyện thường xuyên.
+        let laNut = (p["node_id"] as? String).map { !$0.isEmpty } ?? false
+        guard loai.hasPrefix("run.") || laNut else { return }
         let the: EideTheRun
         if let co = theRun[ma] {
             the = co

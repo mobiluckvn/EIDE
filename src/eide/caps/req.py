@@ -166,11 +166,45 @@ def classify(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """
     raw = params["raw"]
     root = _root(ctx)
+    LOI_NHAC = ("Phân loại từng yêu cầu và viết lại thành CÂU ĐO ĐƯỢC "
+                "(có đơn vị và ngưỡng khi có thể).\n")
     resp = _gateway(ctx).run(
-        "architect",
-        "Phân loại từng yêu cầu và viết lại thành CÂU ĐO ĐƯỢC (có đơn vị và ngưỡng khi có thể).\n"
-        + json.dumps(raw, ensure_ascii=False),
+        "architect", LOI_NHAC + json.dumps(raw, ensure_ascii=False),
         _SCHEMA_CLASSIFY, system_extra=_ngu_canh(ctx, "phân loại yêu cầu"))
+
+    # HỎI LẠI MỘT LẦN nếu câu yêu cầu bị mất dấu. [DEV-168]
+    #
+    # Lời nhắc vai trò `architect` nay đòi tiếng Việt CÓ DẤU, nhưng một lời nhắc là bảo đảm
+    # MỀM — đo 22/09/2026 trên bài CNC: trong cùng một dự án, ba yêu cầu mất dấu và hai yêu cầu
+    # có dấu. Câu yêu cầu là thứ người dùng đọc và ký duyệt, và chữ không dấu vừa khó đọc vừa
+    # mơ hồ ("can" là *cần* hay *căn* hay *cân*).
+    #
+    # Một lần, không lặp: cùng khuôn với phép sửa schema của Gateway ("sai schema sau 1 lần
+    # sửa" → E5002). Hỏi mãi thì một mô hình không làm được sẽ đốt tiền của người dùng cho tới
+    # khi hết ngân sách.
+    #
+    # Lần hai vẫn hỏng thì GIỮ NGUYÊN bản hỏng chứ không tự thêm dấu: khôi phục dấu tiếng Việt
+    # là việc của một mô hình, và đoán sai một dấu làm đổi nghĩa câu yêu cầu — tệ hơn để nguyên
+    # chữ không dấu mà người đọc biết là chưa chuẩn.
+    hong = [r.get("text", "") for r in (resp.data.get("reqset") or [])
+            if thieu_dau_tieng_viet(r.get("text", ""))]
+    if hong:
+        lai = _gateway(ctx).run(
+            "architect",
+            LOI_NHAC
+            + "LƯU Ý: lần trước bạn viết tiếng Việt KHÔNG DẤU. Viết lại CÓ DẤU đầy đủ; "
+              "định danh kỹ thuật (USB, FAT32, CRC32) giữ nguyên.\n"
+            + json.dumps(raw, ensure_ascii=False),
+            _SCHEMA_CLASSIFY, system_extra=_ngu_canh(ctx, "phân loại yêu cầu"))
+        con = [r.get("text", "") for r in (lai.data.get("reqset") or [])
+               if thieu_dau_tieng_viet(r.get("text", ""))]
+        led = ctx.extra.get("ledger")
+        if led is not None:
+            led.append("model.call", {"cap": "req.classify", "vi": "viết lại vì thiếu dấu",
+                                      "truoc": len(hong), "sau": len(con)})
+        # Chỉ nhận bản mới khi nó THẬT SỰ tốt hơn: một lần viết lại tệ hơn vẫn là một lần đổi.
+        if len(con) < len(hong):
+            resp = lai
 
     dem = _dem_theo_nhom(root)
     reqset = []
@@ -232,6 +266,32 @@ def _dem_theo_nhom(root: Path) -> dict[str, int]:
         elif (m := re.fullmatch(r"NFR-(\d+)", str(i))):
             dem["NFR"] = max(dem.get("NFR", 0), int(m.group(1)))
     return dem
+
+
+#: Từ tiếng Việt CHỈ tồn tại khi có dấu. Gặp chúng viết trần là dấu chắc chắn đã mất dấu, không
+#: phải người dùng cố ý viết tiếng Anh. Danh sách ngắn và chọn từ rất phổ biến trong câu yêu cầu.
+_TU_MAT_DAU = frozenset("""
+he thong phai duoc khong va cua cho voi tu den trong ngoai truoc sau khi neu thi ma
+thoi gian toi da thieu bao nhieu dung sai gia tri muc nguong ket noi thanh cong
+""".split())
+
+
+def thieu_dau_tieng_viet(van: str) -> bool:
+    """Câu này có phải tiếng Việt BỊ MẤT DẤU không. [DEV-168]
+
+    Đo 22/09/2026 trên bài CNC: trong cùng một dự án, ba yêu cầu mất dấu ("He thong phai cung
+    cap giao dien mang…") và hai yêu cầu có dấu. Câu yêu cầu là thứ người dùng đọc và ký duyệt;
+    chữ không dấu vừa khó đọc vừa MƠ HỒ — "can" là *cần* hay *căn* hay *cân*.
+
+    Nhận diện bằng TỪ, không bằng phép đếm dấu: một câu tiếng Anh hợp lệ ("USB Mass Storage
+    Class") cũng không có dấu nào, và chặn nó là chặn nhầm. Chỉ khi thấy những từ CHỈ TỒN TẠI
+    trong tiếng Việt viết trần mới kết luận.
+
+    Không tự sửa: khôi phục dấu tiếng Việt là việc của một mô hình, và đoán sai một dấu làm đổi
+    nghĩa câu yêu cầu — tệ hơn để nguyên chữ không dấu mà người đọc biết là chưa chuẩn.
+    """
+    tu = {t.strip(".,;:()[]") for t in van.lower().split()}
+    return len(tu & _TU_MAT_DAU) >= 3
 
 
 def ghi_clarification(root: Path, ds: list[dict[str, Any]], *, cap: str,

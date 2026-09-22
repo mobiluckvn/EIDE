@@ -84,3 +84,42 @@ def test_y_dinh_policy_co_chuoi_mau_khong_roi_xuong_planner():
     kich = {t: m for m in ds for t in (m.get("trigger_intents") or [])}
     assert [n["cap"] for n in kich["policy.stop"]["nodes"]] == ["policy.emergency_stop"]
     assert [n["cap"] for n in kich["policy.set"]["nodes"]] == ["policy.set_autonomy"]
+
+
+def test_loi_goi_LE_khong_gui_khoa_node_id_rong(tmp_path):
+    """Lời gọi LẺ không được mang `node_id` — kể cả `null`. [DEV-167]
+
+    Từ [DEV-156] mọi bản ghi sổ cái đều mang `chain`, và với lời gọi lẻ thì dấu ấy chỉ có
+    `{run_id, cap}`. Bản trước gán `node_id = None` vô điều kiện; trong JSON đó là `null`, và
+    phía Swift đọc `null` thành `NSNull` — thứ KHÁC `nil`. Nên bộ lọc `p["node_id"] != nil` cho
+    lọt mọi lời gọi lẻ, mỗi cái sinh một thẻ Run đứng mãi ở "đang lập kế hoạch".
+
+    Một khoá có mặt với giá trị rỗng và một khoá vắng mặt là hai điều khác nhau ở mọi ngôn ngữ
+    nhận — nên đừng gửi khoá rỗng.
+    """
+    from eide.daemon.rpc import Daemon
+    ra: list[tuple[str, dict]] = []
+    d = Daemon(project=None, phat=lambda t, p: ra.append((t, p)))
+    d._tu_so_cai({"kind": "cap.run.start", "ts": "2026-09-22T00:00:00Z", "seq": 1,
+                       "actor": "agent",
+                       "data": {"run_id": "abc123", "cap": "view.timeline",
+                                "chain": {"run_id": "abc123", "cap": "view.timeline"}}})
+    assert ra, "không phát sự kiện nào"
+    p = ra[-1][1]
+    assert "node_id" not in p, f"lời gọi lẻ vẫn mang `node_id`: {p.get('node_id')!r}"
+    assert p["run_id"] == "abc123"
+
+
+def test_nut_cua_CHUOI_van_doi_run_id_sang_ma_chuoi(tmp_path):
+    """Vế còn lại: một nút THẬT của chuỗi vẫn phải gom về thẻ của chuỗi."""
+    from eide.daemon.rpc import Daemon
+    ra: list[tuple[str, dict]] = []
+    d = Daemon(project=None, phat=lambda t, p: ra.append((t, p)))
+    d._tu_so_cai({"kind": "cap.run.start", "ts": "2026-09-22T00:00:00Z", "seq": 2,
+                       "actor": "agent",
+                       "data": {"run_id": "cap999", "cap": "req.classify",
+                                "chain": {"run_id": "r_chuoi", "node_id": "n2",
+                                          "i": 2, "of": 6}}})
+    p = ra[-1][1]
+    assert p["run_id"] == "r_chuoi" and p["node_id"] == "n2"
+    assert p["cr_run_id"] == "cap999" and (p["i"], p["of"]) == (2, 6)

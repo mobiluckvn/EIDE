@@ -471,10 +471,28 @@ class Daemon:
         # không chỗ nào là nguồn chính". Đổi ở ĐÂY, một chỗ, thay vì bắt mỗi bên nhận tự gom.
         if isinstance(d.get("chain"), dict):
             ch = d.pop("chain")
-            d["cr_run_id"] = d.get("run_id")
-            d["run_id"] = ch.get("run_id")
-            d["node_id"] = ch.get("node_id")
-            d["i"], d["of"] = ch.get("i"), ch.get("of")
+            # CHỈ đổi khi đây thật sự là một NÚT của chuỗi. [DEV-167]
+            #
+            # Từ [DEV-156] mọi bản ghi sổ cái đều mang `chain`, kể cả lời gọi LẺ — và với lời
+            # gọi lẻ thì dấu ấy chỉ có `{run_id, cap}`, không `node_id`.
+            #
+            # Bản trước gán `node_id = None` vô điều kiện. Trong JSON đó là `null`, và phía Swift
+            # đọc `null` thành `NSNull` — thứ KHÁC `nil`. Nên bộ lọc `p["node_id"] != nil` của
+            # giao diện cho lọt MỌI lời gọi lẻ, mỗi cái sinh một thẻ Run riêng. Thẻ ấy không bao
+            # giờ nhận `run.started` (không có `n`/`steps`) nên đứng mãi ở "đang lập kế hoạch",
+            # và không bao giờ nhận `run.done` nên thanh tiến độ chạy vĩnh viễn.
+            #
+            # Đo 22/09/2026 bằng ảnh chụp cửa sổ thật: hai thẻ `cded59a8`, `648c5d33` treo suốt
+            # phiên — mã 12 hex của lời gọi lẻ, không phải mã chuỗi (`r_…`).
+            #
+            # Không gửi khoá mang `null` là quy tắc chung đáng giữ: một khoá có mặt với giá trị
+            # rỗng và một khoá vắng mặt là hai điều khác nhau ở mọi ngôn ngữ nhận.
+            if ch.get("node_id"):
+                d["cr_run_id"] = d.get("run_id")
+                d["run_id"] = ch.get("run_id")
+                d["node_id"] = ch.get("node_id")
+                if ch.get("i") is not None:
+                    d["i"], d["of"] = ch.get("i"), ch.get("of")
         self.phat(ten, {**d, "kind": kind, "at": rec.get("ts"), "seq": rec.get("seq"),
                         "actor": rec.get("actor")})
 

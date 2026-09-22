@@ -555,3 +555,55 @@ def test_tra_loi_diem_khong_co_that_bao_E2000(tmp_path, workspace):
     r, ctx, _, _ = _du_an_co_diem(tmp_path, workspace)
     run = r.invoke("req.answer_clarification", {"clar_id": "CL-khong-co", "answer": "x"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E2000"
+
+
+# ---------- [DEV-168] tiếng Việt CÓ DẤU trong câu yêu cầu
+
+def test_bat_tieng_viet_mat_dau_KHONG_bat_nham_tieng_anh():
+    """Nhận diện bằng TỪ, không bằng phép đếm dấu.
+
+    Một câu tiếng Anh hợp lệ ("USB Mass Storage Class") cũng không có dấu nào, và chặn nó là
+    chặn nhầm. Chỉ khi thấy những từ CHỈ TỒN TẠI trong tiếng Việt viết trần mới kết luận.
+    """
+    from eide.caps.req import thieu_dau_tieng_viet as f
+    assert f("He thong phai cung cap giao dien mang de nhan file G-code")
+    assert f("Thoi gian cap nhat he thong file tu luc hoan tat nhan file")
+    assert not f("Hệ thống phải tải hoàn tất và xác minh tính toàn vẹn của file")
+    assert not f("USB Mass Storage Class (MSC) compatible with USB 2.0 standard")
+    assert not f("Thiết bị phải giao tiếp với bộ điều khiển CNC qua cổng USB")
+    assert not f("")
+
+
+def test_classify_HOI_LAI_MOT_LAN_khi_mat_dau(tmp_path, workspace, monkeypatch):
+    """Lời nhắc là bảo đảm MỀM — phải có phép kiểm xác định đi kèm. [DEV-168]
+
+    Đo 22/09/2026 trên bài CNC: trong CÙNG một dự án, ba yêu cầu mất dấu và hai yêu cầu có dấu.
+    Câu yêu cầu là thứ người dùng đọc và ký duyệt; chữ không dấu vừa khó đọc vừa mơ hồ — "can"
+    là *cần* hay *căn* hay *cân*.
+
+    MỘT lần, không lặp: cùng khuôn với phép sửa schema của Gateway. Hỏi mãi thì một mô hình
+    không làm được sẽ đốt tiền của người dùng cho tới khi hết ngân sách.
+    """
+    import yaml
+
+    from eide_core.gateway import EchoPort, Gateway
+    from eide_core.paths import spec_dir
+
+    r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+    root = Path(r.invoke("project.create", {"text": "thử dấu"},
+                         Context(project_dir=workspace)).result["path"])
+    # Lần đầu mất dấu, lần hai có dấu.
+    echo = EchoPort([
+        {"reqset": [{"kind": "FR", "text": "He thong phai cung cap giao dien mang cho file"}]},
+        {"reqset": [{"kind": "FR", "text": "Hệ thống phải cung cấp giao diện mạng cho file"}]},
+    ])
+    cfg = yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8"))
+    ctx = Context(project_dir=root,
+                  extra={"gate": PolicyGate(), "ledger": r.ledger,
+                         "gateway": Gateway(config=cfg, ledger=r.ledger,
+                                            ports={"gemini": echo, "claude": echo})})
+    out = r.invoke("req.classify", {"raw": [{"text": "cần giao diện mạng"}]}, ctx)
+    assert out.status == "done", out.error
+    assert len(echo.goi) == 2, f"phải hỏi lại ĐÚNG một lần, nhận {len(echo.goi)} lời gọi"
+    assert "KHÔNG DẤU" in echo.goi[1]["user"], "lần hỏi lại không nói rõ vì sao"
+    assert out.result["reqset"][0]["text"].startswith("Hệ thống"), out.result

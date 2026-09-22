@@ -1,0 +1,50 @@
+{"id":1,"text":"Tạo cho anh dự án robot hai bánh tự cân bằng","intent":"project.create","slots":"idea=robot hai bánh tự cân bằng","is_big":true}
+{"id":2,"text":"Mở dự án robot-ctrl","intent":"project.open","slots":"project_name=robot-ctrl","is_big":false}
+{"id":3,"text":"Đây là bộ tài liệu board, hãy dựng tri thức, môi trường và mô phỏng rồi viết firmware đọc BME280 phát UART","intent":"big_command","slots":"path=<đính kèm>; feature=đọc BME280 phát UART","is_big":true}
+{"id":4,"text":"Làm hết đi","intent":"big_command","slots":"—","is_big":true}
+{"id":5,"text":"Nhập cái zip này","intent":"knowledge.build","slots":"path=<đính kèm>","is_big":false}
+{"id":6,"text":"Chip này có bao nhiêu kênh ADC?","intent":"view.ask","slots":"question=…","is_big":false}
+{"id":7,"text":"Địa chỉ I2C của BME280 là gì","intent":"view.ask","slots":"question=…; mentions=BME280","is_big":false}
+{"id":8,"text":"Cài môi trường cho STM32","intent":"env.setup","slots":"chip=STM32","is_big":false}
+{"id":9,"text":"Thiếu công cụ gì thì cài luôn","intent":"env.setup","slots":"—","is_big":false}
+{"id":10,"text":"Chạy mô phỏng thử","intent":"sim.run","slots":"—","is_big":false}
+{"id":11,"text":"Mô phỏng cái robot xem sao","intent":"sim.run","slots":"idea=robot","is_big":false}
+{"id":12,"text":"Viết firmware đọc nhiệt độ","intent":"code.feature","slots":"feature=đọc nhiệt độ","is_big":false}
+{"id":13,"text":"Thêm tính năng đọc MPU6050 qua I2C1","intent":"code.feature","slots":"feature=đọc MPU6050 qua I2C1; mentions=MPU6050,I2C1","is_big":false}
+{"id":14,"text":"Sửa lỗi NACK trên I2C","intent":"debug.ask","slots":"question=NACK I2C","is_big":false}
+{"id":15,"text":"Nạp lên board","intent":"target.flash","slots":"—","is_big":false}
+{"id":16,"text":"Nạp lại bản known-good","intent":"target.flash","slots":"feature=known-good","is_big":false}
+{"id":17,"text":"Dừng","intent":"policy.stop","slots":"—","is_big":false}
+{"id":18,"text":"Dừng tự chủ","intent":"policy.stop","slots":"—","is_big":false}
+{"id":19,"text":"Đặt mức tự chủ A2 cho board robot","intent":"policy.set","slots":"level=A2; board=robot","is_big":false}
+{"id":20,"text":"Phân tích yêu cầu từ README","intent":"req.analyze","slots":"path=README","is_big":false}
+{"id":21,"text":"Thiết kế kiến trúc cho firmware này","intent":"arch.design","slots":"—","is_big":false}
+{"id":22,"text":"Vẽ sơ đồ kiến trúc","intent":"diagram.draw","slots":"diagram_kind=architecture","is_big":false}
+{"id":23,"text":"Vẽ sơ đồ chân cho board","intent":"diagram.draw","slots":"diagram_kind=pinmap","is_big":false}
+{"id":24,"text":"Vẽ máy trạng thái của module motor","intent":"diagram.draw","slots":"diagram_kind=state; mentions=motor","is_big":false}
+{"id":25,"text":"Viết SRS","intent":"doc.write","slots":"doc_type=SRS","is_big":false}
+{"id":26,"text":"Viết hướng dẫn bring-up cho board","intent":"doc.write","slots":"doc_type=bringup","is_big":false}
+{"id":27,"text":"Viết bộ tài liệu đầy đủ","intent":"big_command","slots":"doc_type=all","is_big":true}
+{"id":28,"text":"Board nào đang cắm?","intent":"discover.scan","slots":"—","is_big":false}
+{"id":29,"text":"Dò tốc độ serial tối ưu","intent":"discover.scan","slots":"kind=link_speed","is_big":false}
+{"id":30,"text":"Cho anh xem bản đồ tri thức","intent":"view.ask","slots":"diagram_kind=kg_map","is_big":false}
+{"id":31,"text":"Fact này lấy từ đâu?","intent":"view.ask","slots":"question=provenance","is_big":false}
+{"id":32,"text":"Bắt đầu với chip ESP32-C3","intent":"project.create","slots":"chip=ESP32-C3","is_big":false}
+{"id":33,"text":"Tạo dự án cho board này (kèm ảnh)","intent":"project.create","slots":"path=<ảnh>","is_big":false}
+{"id":34,"text":"Create a new project for a balancing robot","intent":"project.create","slots":"idea=balancing robot; lang=en","is_big":true}
+{"id":35,"text":"Flash it","intent":"target.flash","slots":"lang=en","is_big":false}
+{"id":36,"text":"What is the base address of I2C1?","intent":"view.ask","slots":"mentions=I2C1; lang=en","is_big":false}
+{"id":37,"text":"Tiếp tục việc hôm qua","intent":"project.open","slots":"—","is_big":false}
+{"id":38,"text":"Hoàn tác merge vừa rồi","intent":"policy.set","slots":"undo=last_merge","is_big":false}
+{"id":39,"text":"Tại sao anh chọn RTOS?","intent":"view.ask","slots":"question=explain decision","is_big":false}
+{"id":40,"text":"Kiểm tra xung đột chân","intent":"arch.design","slots":"diagram_kind=check_pins","is_big":false}
+{"id":41,"text":"Tìm datasheet A4988","intent":"knowledge.build","slots":"mentions=A4988","is_big":false}
+{"id":42,"text":"Tải datasheet từ trang này (link)","intent":"knowledge.build","slots":"path=<url>","is_big":false}
+{"id":43,"text":"Duyệt hết fact chờ đi","intent":"policy.set","slots":"approve=pending_facts","is_big":false}
+{"id":44,"text":"So sánh datasheet với errata về I2C","intent":"view.ask","slots":"question=compare I2C","is_big":false}
+{"id":45,"text":"Đóng gói hộ chiếu này lên registry lớp","intent":"big_command","slots":"publish=internal","is_big":false}
+{"id":46,"text":"Chạy benchmark với Gemini","intent":"big_command","slots":"bench; model=gemini","is_big":false}
+{"id":47,"text":"Xóa dự án test-1","intent":"project.delete","slots":"project_name=test-1 (R4 → hỏi, POL-17 GEN-03)","is_big":false}
+{"id":48,"text":"abc xyz","intent":"unknown","slots":"—; confidence < 0,6","is_big":false}
+{"id":49,"text":"Cấu hình I2C1 400 kHz trên PB6/PB7","intent":"code.feature","slots":"mentions=I2C1,PB6,PB7","is_big":false}
+{"id":50,"text":"Đo dòng tiêu thụ khi ngủ","intent":"big_command","slots":"measure=current; mode=sleep","is_big":false}
