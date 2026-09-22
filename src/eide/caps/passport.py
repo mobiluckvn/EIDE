@@ -89,7 +89,7 @@ def import_(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         if pid:
             _bao_dam_passport(c, pid, batch)
         for f in facts:
-            kq, fid = _gop_mot(c, f, actor)
+            kq, fid = _gop_mot(c, f, actor, ctx.extra.get("cap_run_id"))
             if kq == "ghi":
                 ghi += 1
             elif kq == "gop":
@@ -161,7 +161,8 @@ def _kiem_nguon(c: Any, facts: list[dict[str, Any]]) -> None:
             missing_sources=thieu)
 
 
-def _gop_mot(c: Any, f: dict[str, Any], actor: str) -> tuple[str, str]:
+def _gop_mot(c: Any, f: dict[str, Any], actor: str,
+             run_id: str | None = None) -> tuple[str, str]:
     """Ba dòng của bảng KAD-07 §5.1. Trả (kết_quả, fact_id đang hiện hành)."""
     gt = json.dumps(f["value"], ensure_ascii=False, sort_keys=True)
     cu = c.execute(
@@ -178,19 +179,19 @@ def _gop_mot(c: Any, f: dict[str, Any], actor: str) -> tuple[str, str]:
 
     khac = [(fid, tier_cu) for fid, gt_cu, tier_cu in cu if not _cung_gia_tri(gt_cu, gt)]
     if not khac:
-        return "ghi", _chen(c, f, "normalized", None, actor)
+        return "ghi", _chen(c, f, "normalized", None, actor, run_id)
 
     cao_nhat = max(TIER.get(t, 0) for _, t in khac)
     if TIER[f["tier"]] > cao_nhat:
         # Dòng 2: tier cao hơn thì thay thế. `supersedes` trỏ về fact CŨ NHẤT trong nhóm bị thay
         # — cột ấy là đường truy nguyên, nên nó phải trỏ tới cái gì đó chứ không được để trống
         # khi thay nhiều fact cùng lúc.
-        moi = _chen(c, f, "normalized", khac[0][0], actor)
+        moi = _chen(c, f, "normalized", khac[0][0], actor, run_id)
         c.execute(f"UPDATE fact SET status='superseded' WHERE id IN "  # noqa: S608
                   f"({','.join('?' * len(khac))})", [x for x, _ in khac])
         return "ghi", moi
     # Dòng 3: bằng hoặc thấp hơn thì KHÔNG ghi đè — ghi vào với status conflict để người xử lý.
-    return "xung_dot", _chen(c, f, "conflict", None, actor)
+    return "xung_dot", _chen(c, f, "conflict", None, actor, run_id)
 
 
 def _cung_gia_tri(a: str, b: str) -> bool:
@@ -200,13 +201,14 @@ def _cung_gia_tri(a: str, b: str) -> bool:
         return a == b
 
 
-def _chen(c: Any, f: dict[str, Any], status: str, supersedes: str | None, actor: str) -> str:
+def _chen(c: Any, f: dict[str, Any], status: str, supersedes: str | None, actor: str,
+          run_id: str | None = None) -> str:
     fid = "f_" + secrets.token_hex(8)
     c.execute(
         "INSERT INTO fact (id, subject, predicate, value, unit, source_id, locator, method,"
         " tier, confidence, status, confirmed_by, confirmed_at, supersedes, layer,"
-        " conflicts_with)"
-        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        " conflicts_with, run_id)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (fid, f["subject"], f["predicate"], json.dumps(f["value"], ensure_ascii=False),
          f.get("unit"), f["source_id"],
          json.dumps(f["locator"], ensure_ascii=False) if f.get("locator") else None,
@@ -217,7 +219,10 @@ def _chen(c: Any, f: dict[str, Any], status: str, supersedes: str | None, actor:
          # DDD-14 §2 v1.4 (DEV-077): cạnh CONFLICTS_WITH khai được, không chỉ suy được. Cổng ghi
          # này là chỗ DUY NHẤT vào store, nên trường mới phải đi qua đây — nếu không thì không
          # năng lực trích xuất nào khai nổi một cạnh.
-         json.dumps(f["conflicts_with"], ensure_ascii=False) if f.get("conflicts_with") else None))
+         json.dumps(f["conflicts_with"], ensure_ascii=False) if f.get("conflicts_with") else None,
+         # [DEV-170] Lượt chạy đã tạo fact này. Cổng ghi này là chỗ DUY NHẤT vào store, nên
+         # đóng dấu ở đây là đóng một lần cho mọi năng lực trích xuất.
+         run_id))
     return fid
 
 

@@ -68,3 +68,47 @@ final class EidePhienTests: XCTestCase {
         return ra
     }
 }
+
+/// `EidePhien.doiLaiGi` — dòng chữ người dùng ĐỌC sau khi bấm Hoàn tác. [DEV-170]
+///
+/// "Đã hoàn tác (supersede_facts)" trả lời sai câu hỏi họ đang hỏi: họ không hỏi loại hoàn tác
+/// là gì, họ hỏi cái gì vừa đổi. Tên loại là từ vựng của POL-17 §5, không phải của người bấm.
+@MainActor
+final class EideHoanTacNoiGiTests: XCTestCase {
+
+    func testRutFactThiNoiRoBaoNhieuVaTraLaiBaoNhieu() {
+        let s = EidePhien.doiLaiGi(["kind": "supersede_facts",
+                                    "superseded": ["f_1", "f_2"], "restored": ["f_0"],
+                                    "kept": [] as [Any]])
+        XCTAssertEqual(s, " — rút 2 fact, trả 1 fact cũ về")
+    }
+
+    /// Fact BỎ QUA cũng phải hiện. Một lượt chạy tạo mười fact mà người đã duyệt tám, bấm hoàn
+    /// tác xong chỉ thấy "rút 2 fact" sẽ đọc thành "tám cái kia mất đâu rồi".
+    func testFactGiuNguyenCungPhaiHien() {
+        let s = EidePhien.doiLaiGi(["superseded": [] as [Any], "restored": [] as [Any],
+                                    "kept": [["fact": "f_9", "vi_sao": "người đã xác nhận"]]])
+        XCTAssertEqual(s, " — giữ nguyên 1 fact")
+    }
+
+    func testLuiCauTraLoiThiNoiQuayVeBanNao() {
+        XCTAssertEqual(EidePhien.doiLaiGi(["clar_id": "CL-abc", "quay_ve": "8 MB, 20 giây"]),
+                       " — quay về: 8 MB, 20 giây")
+        XCTAssertEqual(EidePhien.doiLaiGi(["clar_id": "CL-abc"]),
+                       " — điểm này về chưa trả lời")
+    }
+
+    func testDaoCommitThiNoiSoCommit() {
+        XCTAssertEqual(EidePhien.doiLaiGi(["muc": "run", "reverted": 3]), " — đảo 3 commit")
+        XCTAssertEqual(EidePhien.doiLaiGi(["muc": "commit", "commit": "abcdef1234567",
+                                           "revert_commit": "9876543210fed"]),
+                       " — commit 98765432")
+    }
+
+    /// Loại nào không có gì để nói thì IM, chứ không bịa một con số cho đủ câu. `restore_config`
+    /// trả về trạng thái dự án, không trả về số đếm nào.
+    func testKhongCoGiDeNoiThiImLang() {
+        XCTAssertEqual(EidePhien.doiLaiGi(["muc": "known-good", "tag": "v0.1"]), "")
+        XCTAssertEqual(EidePhien.doiLaiGi(["superseded": [] as [Any]]), "")
+    }
+}

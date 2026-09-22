@@ -7,7 +7,7 @@ PY ?= $(shell [ -x .venv-arm/bin/python ] && echo .venv-arm/bin/python || \
               ([ -x .venv-x86/bin/python ] && echo .venv-x86/bin/python || echo python3))
 export PYTHONPATH := src
 
-.PHONY: setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor clean
+.PHONY: setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor eide-ui eide-ui-nut eidekit clean
 
 setup:            ## cài môi trường phát triển theo kiến trúc máy
 	bash scripts/setup-mac.sh
@@ -51,7 +51,7 @@ check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
 # báo, không làm đỏ — cùng khuôn với cách `check-gen` xử lý khi thiếu `node`.
 check-swift:      ## build + test phần Swift, bỏ qua có báo nếu máy không có swift
 	@command -v swift >/dev/null \
-	 && $(MAKE) geditor \
+	 && $(MAKE) geditor eide-ui \
 	 || echo "bỏ qua check-swift: không có swift (cần Xcode/toolchain để dựng apps/geditor)"
 
 check-py: lint check-spec test check-secrets check-gen   ## chỉ phía Python — phần phụ thuộc venv theo kiến trúc
@@ -81,6 +81,39 @@ doctor:
 
 geditor:          ## build + test phần Swift (apps/geditor)
 	cd apps/geditor && swift build && swift test
+
+# apps/eide là GIAO DIỆN MỚI (18/09/2026); apps/geditor chỉ còn là bản duy trì. Tới 22/09 nó
+# nằm NGOÀI `make check`: `check-swift` chỉ gọi `geditor`, nên 307 bài của gói mới và hai bộ
+# dò nút chỉ chạy khi có người nhớ gõ tay. Một cổng phải tự chạy thì mới là cổng — đúng câu đã
+# viết ở `check-swift` cho `make geditor`, mà rồi quên áp cho gói kế tiếp.
+#
+# Ba tầng đo, và tầng sau bắt thứ tầng trước mù:
+#   swift test   — từng bộ phận
+#   --tu-kiem    — một PHIÊN, 70 phép đo, tự dựng dự án tạm (không chạm workspace thật)
+#   --do-nut     — nút nào KHÔNG nối vào đâu
+#   --bam-thu    — nút có nối nhưng BẤM XONG màn hình không đổi gì: chết theo nghĩa người dùng
+#
+# Hai bộ dò cuối cần một dự án có thật để mở, nên tạo một dự án dùng-một-lần rồi xoá. `--do-nut`
+# và `--bam-thu` đều `exit 1` khi có nút chết, nên make tự đỏ.
+eide-ui:          ## build + test + dò nút chết của GIAO DIỆN MỚI (apps/eide)
+	cd apps/eide && swift build && swift test
+	@$(MAKE) eide-ui-nut
+
+# Ba bộ đo dưới đây DỰNG CỬA SỔ THẬT, nên chúng cần một phiên đồ hoạ. Trên máy CI không có
+# `launchctl managername` = Aqua (ssh, Linux, runner headless) thì bỏ qua có báo — cùng khuôn
+# với cách `check-gen` xử lý khi thiếu `node`. Bỏ qua IM LẶNG mới là thứ phải tránh: nó biến
+# một cổng không chạy được thành một cổng "đã xanh".
+eide-ui-nut:      ## chỉ ba bộ dò giao diện — cần phiên đồ hoạ (Aqua)
+	@[ "$$(launchctl managername 2>/dev/null)" = "Aqua" ] || \
+	 { echo "bỏ qua dò nút: không có phiên đồ hoạ (cần Aqua; ssh/CI headless không dựng NSWindow được)"; exit 0; }; \
+	 apps/eide/.build/debug/EideApp --tu-kiem || exit 1; \
+	 goc=$$(mktemp -d); \
+	 duan=$$($(PY) -m eide.cli project new "đo nút giao diện" --dir $$goc/ws --chip atmega328p \
+	         | $(PY) -c 'import sys,json;s=sys.stdin.read();print(json.loads(s[s.index("{"):])["path"])'); \
+	 echo "dự án dùng một lần: $$duan"; \
+	 apps/eide/.build/debug/EideApp --do-nut "$$duan" && \
+	 apps/eide/.build/debug/EideApp --bam-thu "$$duan"; \
+	 ma=$$?; rm -rf $$goc; exit $$ma
 
 eidekit:          ## chỉ EIDEKit — client JSON-RPC của panel GEditor (WI-021)
 	cd apps/geditor && swift build --target EIDEKit && swift test --filter EIDEKitTests

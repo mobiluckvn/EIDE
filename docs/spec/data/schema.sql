@@ -28,11 +28,13 @@ CREATE TABLE IF NOT EXISTS fact (
   confirmed_at TEXT,
   supersedes TEXT REFERENCES fact(id),
   layer TEXT NOT NULL DEFAULT 'C',
-  conflicts_with TEXT
+  conflicts_with TEXT,
+  run_id TEXT
 );
 CREATE INDEX IF NOT EXISTS ix_fact_0 ON fact (subject, predicate, status);
 CREATE INDEX IF NOT EXISTS ix_fact_1 ON fact (source_id);
 CREATE INDEX IF NOT EXISTS ix_fact_2 ON fact (status);
+CREATE INDEX IF NOT EXISTS ix_fact_3 ON fact (run_id);
 CREATE TABLE IF NOT EXISTS passport (
   id TEXT PRIMARY KEY,
   kind TEXT NOT NULL,
@@ -327,36 +329,29 @@ CREATE TABLE IF NOT EXISTS capability (
   impl TEXT,
   ui TEXT
 );
-CREATE VIRTUAL TABLE IF NOT EXISTS rag_chunk_fts USING fts5(text, keywords, content='rag_chunk', content_rowid='rowid');
-
--- [DEV-151] Điểm CẦN LÀM RÕ mà tác tử tìm ra (`req.elicit.gaps`, `req.detect_conflict.issues`).
--- Bảng riêng chứ không nhét vào `requirement`: phần lớn điểm cần làm rõ không phải một yêu cầu
--- — `gaps` có trước khi có mã nào, `issues` trỏ tới nhiều yêu cầu cùng lúc. `answer` nằm cùng
--- bảng vì câu trả lời của người là một phần của chính điểm ấy.
 CREATE TABLE IF NOT EXISTS clarification (
-  id           TEXT PRIMARY KEY,
-  kind         TEXT NOT NULL,
-  text         TEXT NOT NULL,
-  req_ids      TEXT,
-  suggestion   TEXT,
-  source_cap   TEXT,
-  run_id       TEXT,
-  status       TEXT NOT NULL DEFAULT 'open',
-  answer       TEXT,
-  answered_by  TEXT,
-  created_at   TEXT,
-  answered_at  TEXT
+  id TEXT PRIMARY KEY,
+  kind TEXT NOT NULL,
+  text TEXT NOT NULL,
+  req_ids TEXT,
+  suggestion TEXT,
+  source_cap TEXT,
+  run_id TEXT,
+  status TEXT NOT NULL DEFAULT 'open',
+  answer TEXT,
+  answered_by TEXT,
+  created_at TEXT,
+  answered_at TEXT
 );
-CREATE INDEX IF NOT EXISTS idx_clarification_status ON clarification (status);
-
--- [DEV-151] Lịch sử câu trả lời, CHỈ THÊM — `clarification.answer` là bản hiện hành.
+CREATE INDEX IF NOT EXISTS ix_clarification_0 ON clarification (status);
 CREATE TABLE IF NOT EXISTS clarification_answer (
-  id          TEXT PRIMARY KEY,
-  clar_id     TEXT NOT NULL REFERENCES clarification(id),
-  answer      TEXT NOT NULL,
+  id TEXT PRIMARY KEY,
+  clar_id TEXT NOT NULL REFERENCES clarification(id),
+  answer TEXT NOT NULL,
   answered_by TEXT NOT NULL,
-  at          TEXT NOT NULL,
-  run_id      TEXT,
-  undone_at   TEXT
+  at TEXT NOT NULL,
+  run_id TEXT,
+  undone_at TEXT
 );
-CREATE INDEX IF NOT EXISTS idx_clar_answer ON clarification_answer (clar_id, at);
+CREATE INDEX IF NOT EXISTS ix_clarification_answer_0 ON clarification_answer (clar_id, at);
+CREATE VIRTUAL TABLE IF NOT EXISTS rag_chunk_fts USING fts5(text, keywords, content='rag_chunk', content_rowid='rowid');

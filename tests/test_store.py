@@ -53,14 +53,15 @@ def test_migrate_kho_moi_len_phien_ban_moi_nhat(tmp_path):
     db = tmp_path / "store.sqlite"
     kq = migrate(db)
     assert kq["from_version"] == 0
-    assert kq["to_version"] == LATEST_VERSION == 9   # 0008 clarification, 0009 run_id [DEV-151]
+    assert kq["to_version"] == LATEST_VERSION == 10  # 0009 clar run_id [DEV-151], 0010 fact.run_id [DEV-170]
     assert [m["name"] for m in kq["applied"]] == ["0001_m0_base", "0002_m1_policy_runtime",
                                                   "0004_m2_engineering_hw",
                                                   "0005_m2_module_layer",
                                                   "0006_m2_fact_conflicts",
                                                   "0007_m3_debug_session",
                                                   "0008_m3_clarification",
-                                           "0009_m3_clar_answer_run"]
+                                           "0009_m3_clar_answer_run",
+                                           "0010_m3_fact_run"]
     with sqlite3.connect(db) as c:
         assert tables(c) == BANG_M0 | BANG_M1 | BANG_M2 | BANG_M3
         assert "session" not in tables(c), "session thuộc session.sqlite, không thuộc store"
@@ -94,14 +95,15 @@ def test_migrate_ghi_ledger_store_migrate(tmp_path):
     migrate(tmp_path / "store.sqlite", ledger=led)
     recs = [r for r in led.records() if r["kind"] == "store.migrate"]
     assert len(recs) == 1
-    assert recs[0]["data"] == {"from_version": 0, "to_version": 9,
+    assert recs[0]["data"] == {"from_version": 0, "to_version": 10,
                                "applied": ["0001_m0_base", "0002_m1_policy_runtime",
                                            "0004_m2_engineering_hw",
                                            "0005_m2_module_layer",
                                            "0006_m2_fact_conflicts",
                                            "0007_m3_debug_session",
                                            "0008_m3_clarification",
-                                           "0009_m3_clar_answer_run"]}
+                                           "0009_m3_clar_answer_run",
+                                           "0010_m3_fact_run"]}
     assert led.verify() == (True, 0)
 
 

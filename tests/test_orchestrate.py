@@ -504,9 +504,9 @@ def test_cau_hoi_neu_ENUM_de_nguoi_CHON_thay_vi_doan():
     Enum suy từ hợp đồng, không bịa. Đây là thứ dùng được NGAY trong khi `description` của
     phần lớn tham số vẫn còn trống — xem [DEV-161].
     """
+    import eide.caps.req as _req
     from eide.caps.chat import _ghi_cau_hoi_chuoi
     from eide_core.chain import Nut
-    import eide.caps.req as _req
     da = []
     cu = _req.ghi_clarification
     _req.ghi_clarification = lambda root, ds, **k: da.extend(ds)

@@ -25,6 +25,8 @@ lời ấy TRUNG THỰC và đã được viết có chủ ý, nhưng nó vẫn 
 """
 from __future__ import annotations
 
+import secrets
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -48,6 +50,10 @@ def dang_ky(router: Any, ctx: Any) -> None:
     # store, và không đi qua `restore_config` vì loại ấy đưa CẢ DỰ ÁN về known-good — hoàn tác
     # một câu trả lời bằng cách lùi cả dự án là một phương thuốc tệ hơn bệnh.
     router.undo_handlers["restore_answer"] = lambda m: _go_cau_tra_loi(ctx, m)
+    # [DEV-170] Loại hoàn tác ĐÔNG NHẤT: 18 năng lực khai nó (mọi `extract.*`, `passport.import`,
+    # `kg.*`, `board.build_passport`, `registry.pull`). Tới 22/09/2026 chưa cái nào hoàn tác
+    # được — xem chú thích `_go_facts`.
+    router.undo_handlers["supersede_facts"] = lambda m: _go_facts(ctx, m)
 
 
 def _du_an(ctx: Any) -> Path:
@@ -142,6 +148,84 @@ def _rollback(router: Any, ctx: Any, muc: dict[str, Any]) -> dict[str, Any]:
         raise EideError("E7001", f"`project.rollback` không chạy được: {_vi_sao(r)}",
                         run=r.run_id, cap="project.rollback")
     return {"muc": "known-good", **(r.result or {}).get("state", {})}
+
+
+def _go_facts(ctx: Any, muc: dict[str, Any]) -> dict[str, Any]:
+    """`supersede_facts` — POL-17 §5, cửa sổ `facts` (72h).
+
+    Nguyên văn hợp đồng: *"Với mỗi fact tự duyệt: tạo fact mới supersedes với status =
+    superseded, khôi phục fact trước (nếu có) thành hiện hành; ghi lý do `undo:<decision_id>`"*.
+
+    Ba mệnh đề, và từng mệnh đề có lý do riêng:
+
+    1. **Không xoá dòng.** KAD-07 §4.1 đặt bất biến "fact là bản ghi bất biến có nguồn". Một lần
+       hoàn tác xoá dòng đi thì sau này không ai trả lời được vì sao con số ấy từng có mặt — mà
+       đó đúng là câu hỏi người ta hỏi khi đọc lại một quyết định cũ.
+    2. **Bia mộ cũng mang `status = superseded`.** Dòng mới trỏ về dòng bị rút (`supersedes`) nên
+       chuỗi đọc ngược được; nhưng nó KHÔNG được là fact hiện hành, vì nó không khẳng định gì.
+       Cho nó `confidence = 0.0` và `method = manual` là nói đúng thế bằng dữ liệu.
+    3. **Khôi phục fact TRƯỚC.** Nếu lượt chạy đã thay một fact cũ, rút lượt chạy đi mà không
+       trả fact cũ về hiện hành thì store mất trắng một tri thức vốn có trước khi tác tử chạy —
+       hoàn tác hoá ra phá nhiều hơn lượt chạy nó hoàn tác.
+
+    Chỉ đụng **fact tự duyệt**. Fact người đã xác nhận (`status = verified`) thì lượt chạy không
+    còn là tác giả duy nhất của nó nữa, và POL-17 nói rõ "với mỗi fact TỰ duyệt". Fact đã bị một
+    lượt sau thay (`status = superseded`) cũng để yên: rút nó ra là can thiệp vào một thay đổi
+    mới hơn mà người dùng không hề yêu cầu hoàn tác.
+
+    ## Vì sao tới 22/09/2026 loại này mới chạy được
+
+    Không phải vì thủ tục khó. Vì bảng `fact` không có cột nào nói fact đến từ LƯỢT CHẠY nào, nên
+    câu đầu tiên của thủ tục — "mỗi fact của lượt này" — không có chỗ hỏi. `store.write` trong sổ
+    cái mang `batch_id`, nhưng `fact` không lưu lại. DEV-170 thêm `fact.run_id` (migration 0010)
+    và đóng dấu tại HAI cổng ghi duy nhất: `kg.supersede` và `passport._chen`.
+    """
+    from eide.caps.kg import _quen_cache
+    from eide_core import store
+
+    run_id = str(muc.get("undo_ref") or "")
+    if not run_id:
+        raise EideError("E2000", "Mục hoàn tác không có `undo_ref` — không biết rút fact của "
+                        "lượt chạy nào", exists=[], candidates=[], missing=["undo_ref"])
+    db = store.store_path(_du_an(ctx))
+    ly_do = f"undo:{run_id}"
+    now = datetime.now(UTC).isoformat()
+    rut: list[str] = []
+    tra_lai: list[str] = []
+    giu: list[dict[str, str]] = []
+    with store.open_store(db) as c:
+        ds = c.execute(
+            "SELECT id, subject, predicate, value, unit, source_id, tier, layer, status,"
+            " confirmed_by, supersedes FROM fact WHERE run_id=?", (run_id,)).fetchall()
+        for (fid, subject, predicate, value, unit, source_id, tier, layer, status,
+             confirmed_by, truoc) in ds:
+            if status == "verified" or (confirmed_by and confirmed_by != "policy"):
+                giu.append({"fact": fid, "vi_sao": "người đã xác nhận — không phải fact tự duyệt"})
+                continue
+            if status == "superseded":
+                giu.append({"fact": fid, "vi_sao": "một lượt sau đã thay fact này"})
+                continue
+            c.execute(
+                "INSERT INTO fact (id, subject, predicate, value, unit, source_id, locator,"
+                " method, tier, confidence, status, confirmed_by, confirmed_at, supersedes,"
+                " layer, run_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                ("f_" + secrets.token_hex(8), subject, predicate, value, unit, source_id, None,
+                 "manual", tier, 0.0, "superseded", ly_do, now, fid, layer, run_id))
+            c.execute("UPDATE fact SET status='superseded' WHERE id=?", (fid,))
+            rut.append(fid)
+            if truoc:
+                # Fact trước về hiện hành. `reviewed` nếu nó từng được ai đó duyệt, `normalized`
+                # nếu không — hai trạng thái "hiện hành" mà KAD-07 phân biệt.
+                cu = c.execute("SELECT status, confirmed_by FROM fact WHERE id=?",
+                               (truoc,)).fetchone()
+                if cu and cu[0] == "superseded":
+                    c.execute("UPDATE fact SET status=? WHERE id=?",
+                              ("reviewed" if cu[1] else "normalized", truoc))
+                    tra_lai.append(truoc)
+        c.commit()
+    _quen_cache(db)
+    return {"run_id": run_id, "reason": ly_do, "superseded": rut, "restored": tra_lai,
+            "kept": giu, "facts": len(rut)}
 
 
 def _go_cau_tra_loi(ctx: Any, muc: dict[str, Any]) -> dict[str, Any]:

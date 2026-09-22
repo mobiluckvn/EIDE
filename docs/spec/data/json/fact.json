@@ -122,6 +122,10 @@
   "conflicts_with": {
    "type": "array",
    "description": "JSON fact ids mà fact này phủ định (KAD-07 §6.3)"
+  },
+  "run_id": {
+   "type": "string",
+   "description": "CapabilityRun đã tạo fact này (truy nguồn + hoàn tác)"
   }
  },
  "additionalProperties": false

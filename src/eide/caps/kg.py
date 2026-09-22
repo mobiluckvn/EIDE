@@ -200,13 +200,15 @@ def supersede(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         now = datetime.now(UTC).isoformat()
         c.execute(
             "INSERT INTO fact (id, subject, predicate, value, unit, source_id, locator, method,"
-            " tier, confidence, status, confirmed_by, confirmed_at, supersedes, layer)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            " tier, confidence, status, confirmed_by, confirmed_at, supersedes, layer, run_id)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (nid, moi.get("subject", cu[0]), moi.get("predicate", cu[1]),
              json.dumps(moi.get("value"), ensure_ascii=False), moi.get("unit"),
              moi.get("source_id", cu[2]), json.dumps(moi.get("locator")) if moi.get("locator") else None,
              moi.get("method", "manual"), moi.get("tier", cu[3]), float(moi.get("confidence", 1.0)),
-             "reviewed", actor, now, old, moi.get("layer", cu[4])))
+             "reviewed", actor, now, old, moi.get("layer", cu[4]),
+             # [DEV-170] Lượt chạy đã tạo fact này — Router đặt `cap_run_id` cho mọi lời gọi.
+             ctx.extra.get("cap_run_id")))
         c.execute("UPDATE fact SET status='superseded' WHERE id=?", (old,))
         c.commit()
     _quen_cache(db)

@@ -24,8 +24,15 @@ entity("Fact", "fact", "Bản ghi tri thức bất biến có nguồn (KAD-07)",
  # predicate) khác giá trị. Errata phủ định datasheet theo cách phép suy ấy không thấy: mục
  # errata là `predicate: other` với subject riêng, nên nó không bao giờ trùng cặp khoá với fact
  # nó phủ định. Trường này là chỗ KHAI cạnh ấy; hai đường cùng tồn tại.
- ("conflicts_with", A, "TEXT", 0, "JSON fact ids mà fact này phủ định (KAD-07 §6.3)", None)],
- indexes=("(subject, predicate, status)", "(source_id)", "(status)"), layer="L-A/L-B/L-C")
+ ("conflicts_with", A, "TEXT", 0, "JSON fact ids mà fact này phủ định (KAD-07 §6.3)", None),
+ # v1.5 (DEV-170): LƯỢT CHẠY đã tạo fact này. `source_id` trả lời "fact này rút từ tài liệu
+ # nào"; nó KHÔNG trả lời "lượt trích xuất nào đã rút nó ra" — và một tài liệu đúng vẫn có thể
+ # bị một lượt đọc sai. POL-17 §5 `supersede_facts` bắt đầu bằng "với mỗi fact tự duyệt [của
+ # lượt này]", nên thiếu cột này thì 18 năng lực khai loại hoàn tác ấy không cái nào hoàn tác
+ # nổi: câu hỏi đầu tiên của thủ tục không có chỗ nào để hỏi.
+ ("run_id", S, "TEXT", 0, "CapabilityRun đã tạo fact này (truy nguồn + hoàn tác)", None)],
+ indexes=("(subject, predicate, status)", "(source_id)", "(status)", "(run_id)"),
+ layer="L-A/L-B/L-C")
 entity("Passport", "passport", "Hộ chiếu chip/board/ISA: tập fact có phiên bản", [
  ("id", S, "TEXT PRIMARY KEY", 1, "ns.part@semver, ví dụ st.stm32f411ce@1.2.0", None), ("kind", S, "TEXT NOT NULL", 1, "", ["chip","board","isa","part"]),
  ("header", O, "TEXT NOT NULL", 1, "JSON/YAML: tên, họ, lõi, gói, nguồn gốc", None), ("created_at", DT, "TEXT NOT NULL", 1, "", None), ("badges", A, "TEXT", 0, "JSON: verified_on_board, bench", None), ("pinned_by", A, "TEXT", 0, "Dự án ghim", None)])
@@ -104,6 +111,32 @@ entity("Capability", "capability", "Khai báo năng lực (nạp từ YAML, bả
  ("code", S, "TEXT PRIMARY KEY", 1, "EXTRACT-05", None), ("id", S, "TEXT UNIQUE NOT NULL", 1, "extract.bom", None), ("ns", S, "TEXT NOT NULL", 1, "", None), ("name", S, "TEXT NOT NULL", 1, "", None), ("desc", S, "TEXT", 0, "", None),
  ("input_schema", O, "TEXT", 0, "JSON Schema", None), ("output_schema", O, "TEXT", 0, "JSON Schema", None), ("risk", S, "TEXT NOT NULL", 1, "", ["R0","R1","R2","R3","R4"]), ("tier", S, "TEXT NOT NULL", 1, "", ["T1","T1*","T2","T3"]),
  ("grounding", A, "TEXT", 0, "JSON", None), ("ask_when", A, "TEXT", 0, "JSON", None), ("undo_kind", S, "TEXT", 0, "", ["supersede_facts","git_revert","reflash_known_good","delete_created_files","restore_config","none"]), ("milestone", S, "TEXT", 0, "", None), ("impl", S, "TEXT", 0, "module:function", None), ("ui", O, "TEXT", 0, "JSON {screen, action}", None)], since="M1")
+# v1.5 (DEV-170) — hai bảng này đã có trong kho từ DEV-151 (migration 0008/0009) nhưng chỉ tồn
+# tại dưới dạng SQL viết tay CHÈN THÊM vào cuối `data/schema.sql`. Mà `schema.sql` là bản SINH:
+# ai chạy lại `gen_ddd.py` là xoá sạch chúng mà không một cổng nào kêu. Đưa vào mô hình là cách
+# duy nhất làm tệp sinh trở lại đúng nghĩa tệp sinh.
+entity("Clarification", "clarification",
+ "Điểm CẦN LÀM RÕ tác tử tìm ra (req.elicit.gaps, req.detect_conflict.issues)", [
+ ("id", S, "TEXT PRIMARY KEY", 1, "CL-<sha8> theo nội dung — hỏi lại cùng một điểm không sinh dòng mới", None),
+ ("kind", S, "TEXT NOT NULL", 1, "", ["gap","conflict","assumption"]),
+ ("text", S, "TEXT NOT NULL", 1, "Câu hỏi hiện lên tab Làm rõ yêu cầu", None),
+ ("req_ids", A, "TEXT", 0, "JSON mã yêu cầu liên quan", None),
+ ("suggestion", S, "TEXT", 0, "Gợi ý trả lời, hoặc JSON enum lựa chọn", None),
+ ("source_cap", S, "TEXT", 0, "Năng lực đã nêu điểm này", None),
+ ("run_id", S, "TEXT", 0, "CapabilityRun đã nêu", None),
+ ("status", S, "TEXT NOT NULL DEFAULT 'open'", 1, "", ["open","answered","dropped"]),
+ ("answer", S, "TEXT", 0, "Bản trả lời HIỆN HÀNH (lịch sử ở clarification_answer)", None),
+ ("answered_by", S, "TEXT", 0, "", None), ("created_at", DT, "TEXT", 0, "", None),
+ ("answered_at", DT, "TEXT", 0, "", None)],
+ indexes=("(status)",), layer="L-C", since="M3")
+entity("ClarificationAnswer", "clarification_answer",
+ "Lịch sử trả lời, CHỈ THÊM — nền của hoàn tác `restore_answer` (POL-17 §5)", [
+ ("id", S, "TEXT PRIMARY KEY", 1, "", None),
+ ("clar_id", S, "TEXT NOT NULL REFERENCES clarification(id)", 1, "", None),
+ ("answer", S, "TEXT NOT NULL", 1, "", None), ("answered_by", S, "TEXT NOT NULL", 1, "", None),
+ ("at", DT, "TEXT NOT NULL", 1, "", None), ("run_id", S, "TEXT", 0, "", None),
+ ("undone_at", DT, "TEXT", 0, "Đã bị hoàn tác lúc nào — dòng KHÔNG bị xoá", None)],
+ indexes=("(clar_id, at)",), layer="L-C", since="M3")
 
 YAML_FILES = [
  ("constraints.yaml", "Ràng buộc dự án (K6)", "chip, board, isa, toolchain, ecosystem (bare|hal|esp-idf|zephyr), reserved_pins[], bus_limits{}, memory_budget{flash_pct, ram_pct}, sensitive, conventions{}", "M0"),
@@ -132,6 +165,12 @@ MIGRATIONS = [
  # điều khác nhau về cùng một store.
  ("0005_m2_module_layer", "M2", "cột module.layer (DEV-069); user_version=5"),
  ("0006_m2_fact_conflicts", "M2", "cột fact.conflicts_with (DEV-077); user_version=6"),
- ("(M3) debug_session", "M3", "chưa có migration — bảng của mốc M3"),
  ("0006_rename_eide", "M1", "Đổi thư mục .hkw → .eide (giữ symlink đọc); không đổi schema"),
+ # v1.5 — bốn dòng dưới đây có trong kho từ trước nhưng bảng này chưa ghi (DEV-170). Bảng mô
+ # tả migration ĐÃ CÓ, nên thiếu một dòng nghĩa là tài liệu và `eide migrate` nói hai điều khác
+ # nhau về cùng một store — đúng lỗi mà ghi chú ở dòng 0005 bên trên đã cảnh báo.
+ ("0007_m3_debug_session", "M3", "bảng debug_session; user_version=7"),
+ ("0008_m3_clarification", "M3", "clarification + clarification_answer (DEV-149); user_version=8"),
+ ("0009_m3_clar_answer_run", "M3", "cột clarification_answer.run_id (DEV-151); user_version=9"),
+ ("0010_m3_fact_run", "M3", "cột fact.run_id + ix_fact_3 (DEV-170); user_version=10"),
 ]

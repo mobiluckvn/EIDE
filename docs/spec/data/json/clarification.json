@@ -1,0 +1,71 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/clarification.json",
+ "title": "Clarification",
+ "description": "Điểm CẦN LÀM RÕ tác tử tìm ra (req.elicit.gaps, req.detect_conflict.issues)",
+ "type": "object",
+ "required": [
+  "id",
+  "kind",
+  "text",
+  "status"
+ ],
+ "properties": {
+  "id": {
+   "type": "string",
+   "description": "CL-<sha8> theo nội dung — hỏi lại cùng một điểm không sinh dòng mới"
+  },
+  "kind": {
+   "type": "string",
+   "enum": [
+    "gap",
+    "conflict",
+    "assumption"
+   ]
+  },
+  "text": {
+   "type": "string",
+   "description": "Câu hỏi hiện lên tab Làm rõ yêu cầu"
+  },
+  "req_ids": {
+   "type": "array",
+   "description": "JSON mã yêu cầu liên quan"
+  },
+  "suggestion": {
+   "type": "string",
+   "description": "Gợi ý trả lời, hoặc JSON enum lựa chọn"
+  },
+  "source_cap": {
+   "type": "string",
+   "description": "Năng lực đã nêu điểm này"
+  },
+  "run_id": {
+   "type": "string",
+   "description": "CapabilityRun đã nêu"
+  },
+  "status": {
+   "type": "string",
+   "enum": [
+    "open",
+    "answered",
+    "dropped"
+   ]
+  },
+  "answer": {
+   "type": "string",
+   "description": "Bản trả lời HIỆN HÀNH (lịch sử ở clarification_answer)"
+  },
+  "answered_by": {
+   "type": "string"
+  },
+  "created_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "answered_at": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}

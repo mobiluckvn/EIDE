@@ -948,6 +948,30 @@ public final class EidePhien {
         await _lamMoi()
     }
 
+    /// "Đã hoàn tác (supersede_facts)" trả lời sai câu hỏi người dùng đang hỏi.
+    ///
+    /// Họ không hỏi loại hoàn tác là gì — họ hỏi **cái gì vừa đổi**. Tên loại là từ vựng của
+    /// POL-17, không phải của người bấm nút. Mỗi loại trả về những trường khác nhau, nên đọc
+    /// đúng trường của loại ấy và nói ra bằng tiếng Việt; loại nào không có gì để nói thì im,
+    /// chứ không bịa một con số cho đủ câu.
+    static func doiLaiGi(_ r: [String: Any]) -> String {
+        var y: [String] = []
+        if let n = (r["superseded"] as? [Any])?.count, n > 0 { y.append("rút \(n) fact") }
+        if let n = (r["restored"] as? [Any])?.count, n > 0 { y.append("trả \(n) fact cũ về") }
+        if let n = (r["kept"] as? [Any])?.count, n > 0 { y.append("giữ nguyên \(n) fact") }
+        if let n = r["reverted"] as? Int, n > 0 { y.append("đảo \(n) commit") }
+        if let c = r["revert_commit"] as? String, !c.isEmpty { y.append("commit \(c.prefix(8))") }
+        if let c = r["commit"] as? String, r["revert_commit"] == nil, !c.isEmpty {
+            y.append("commit \(c.prefix(8))")
+        }
+        if r["clar_id"] != nil {
+            // `restore_answer` lùi MỘT bước trong lịch sử, nên phải nói rõ về bản nào — "đã
+            // hoàn tác" mà không nói quay về đâu thì người dùng vẫn phải đi mở tab để xem.
+            y.append((r["quay_ve"] as? String).map { "quay về: \($0)" } ?? "điểm này về chưa trả lời")
+        }
+        return y.isEmpty ? "" : " — " + y.joined(separator: ", ")
+    }
+
     private func _hoanTac(_ ma: String) async {
         guard let d = daemon else { return }
         do {
@@ -962,6 +986,10 @@ public final class EidePhien {
             //
             // Đây là kiểu nói dối tệ nhất trong sản phẩm này: nó làm người dùng tin rằng một
             // thay đổi đã được gỡ bỏ, nên họ thôi tìm cách gỡ nó.
+            //
+            // 22/09/2026 [DEV-170]: `supersede_facts` đã có hiện thực. Còn lại
+            // `reflash_known_good` (5 năng lực) — nó chờ `target.flash`, một năng lực chạm
+            // PHẦN CỨNG chưa viết, nên nhánh "chưa có hiện thực" bên dưới vẫn phải giữ.
             let r = try await d.goi("undo.apply", ["undo_ref": ma])
             if (r["applied"] as? Bool) == false {
                 khung.dock.themLuot(.loi,
@@ -969,7 +997,8 @@ public final class EidePhien {
                     + ((r["reason"] as? String) ?? "lõi không nói lý do") + ".")
             } else {
                 khung.dock.themLuot(.heThong, "Đã hoàn tác `\(ma.prefix(12))`"
-                                    + ((r["kind"] as? String).map { " (\($0))" } ?? "") + ".")
+                                    + ((r["kind"] as? String).map { " (\($0))" } ?? "")
+                                    + Self.doiLaiGi(r) + ".")
             }
         } catch {
             khung.dock.themLuot(.loi, "Không hoàn tác được: \(error)")
