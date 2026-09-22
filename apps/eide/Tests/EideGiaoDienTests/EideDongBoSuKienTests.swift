@@ -70,9 +70,15 @@ final class EideDongBoSuKienTests: XCTestCase {
         ph.napSuKien("event.knowledge.changed", ["seq": 11, "kind": "store.write"])
         XCTAssertEqual(k.chuDaiCu, "", "liền mạch mà vẫn báo thiếu")
 
+        // Hở NHỎ không báo: không phải bản ghi sổ cái nào cũng sinh sự kiện lên giao diện —
+        // `context.bundle`, `session.open` là việc nội bộ và daemon cố ý không chuyển tiếp.
+        // Xem `NGUONG_HO` và [DEV-163].
         ph.napSuKien("event.knowledge.changed", ["seq": 15, "kind": "store.write"])
-        XCTAssertTrue(k.chuDaiCu.contains("thiếu 3 bản ghi"), k.chuDaiCu)
-        XCTAssertTrue(k.chuDaiCu.contains("seq 12…14"), k.chuDaiCu)
+        XCTAssertEqual(k.chuDaiCu, "", "hở 3 seq là bình thường — \(k.chuDaiCu)")
+
+        ph.napSuKien("event.knowledge.changed", ["seq": 40, "kind": "store.write"])
+        XCTAssertTrue(k.chuDaiCu.contains("thiếu 24 bản ghi"), k.chuDaiCu)
+        XCTAssertTrue(k.chuDaiCu.contains("seq 16…39"), k.chuDaiCu)
         XCTAssertFalse(k.chuDaiCu.contains("không nghe được daemon"),
                        "dùng chung câu với mất daemon — \(k.chuDaiCu)")
     }
@@ -92,7 +98,7 @@ final class EideDongBoSuKienTests: XCTestCase {
     func testBamTaiLaiXoaDaiVaNapLaiMan() {
         let (k, ph) = Self.dung()
         ph.napSuKien("event.knowledge.changed", ["seq": 2])
-        ph.napSuKien("event.knowledge.changed", ["seq": 9])
+        ph.napSuKien("event.knowledge.changed", ["seq": 90])
         XCTAssertNotEqual(k.chuDaiCu, "")
         ph._taiLai()
         XCTAssertEqual(k.chuDaiCu, "", "bấm Tải lại mà dải vẫn còn")
@@ -183,5 +189,20 @@ final class EideDongBoSuKienTests: XCTestCase {
         ph.napSuKien("event.knowledge.changed", ["seq": 1, "kind": "store.write"])
         ph.napSuKien("event.knowledge.changed", ["seq": 2, "kind": "store.write"])
         XCTAssertEqual(ph.chuaXem("Passport"), 2)
+    }
+    /// Hở NHỎ là bình thường — báo nó là dạy người dùng bỏ qua cảnh báo. [DEV-163]
+    ///
+    /// Đo 22/09/2026 trên một lượt CNC: 5/78 bản ghi không sinh sự kiện (`context.bundle` 4,
+    /// `session.open` 1), và giao diện treo biển "thiếu 1 bản ghi sổ cái (seq 22…22)" trong khi
+    /// tệp sổ cái HOÀN TOÀN LÀNH — `verify()` trả `(True, 0)`.
+    ///
+    /// Một cảnh báo toàn vẹn kêu sai tệ hơn không có cảnh báo: nó kêu ở mọi phiên bình thường,
+    /// người dùng học cách bỏ qua, rồi lần sổ cái gãy THẬT thì nó kêu và không ai nhìn.
+    func testHoNhoKhongBaoDongVIcoLoaiKHONGlenGiaoDien() {
+        let (k, ph) = Self.dung()
+        ph.napSuKien("event.knowledge.changed", ["seq": 20, "kind": "store.write"])
+        // Đúng hình dạng đã đo: `context.bundle` xen vào giữa, giao diện nhảy 21 → 23.
+        ph.napSuKien("event.knowledge.changed", ["seq": 23, "kind": "store.write"])
+        XCTAssertEqual(k.chuDaiCu, "", "báo động giả cho một sổ cái lành — \(k.chuDaiCu)")
     }
 }

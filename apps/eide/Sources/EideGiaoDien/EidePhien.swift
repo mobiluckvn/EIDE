@@ -554,11 +554,31 @@ public final class EidePhien {
     ///
     /// Nhảy quãng khác mất daemon, và khác ở chỗ nguy hơn: mất daemon là không nghe thấy gì,
     /// còn nhảy quãng là màn hình VẪN đang cập nhật nên trông như đang đúng.
+    /// Khoảng trống `seq` PHẢI LỚN mới đáng báo. [DEV-163]
+    ///
+    /// Không phải bản ghi sổ cái nào cũng sinh một sự kiện lên giao diện — daemon cố ý chỉ
+    /// chuyển tiếp những loại người dùng cần thấy. `context.bundle` và `session.open` là việc
+    /// nội bộ và không có tên sự kiện nào; chúng để lại một lỗ trong dãy `seq` mà giao diện
+    /// nhận được.
+    ///
+    /// Đo 22/09/2026 trên một lượt CNC: 5/78 bản ghi không sinh sự kiện, và giao diện treo biển
+    /// "thiếu 1 bản ghi sổ cái (seq 22…22)" trong khi tệp sổ cái HOÀN TOÀN LÀNH — 78 bản ghi,
+    /// không thiếu, không trùng, `verify()` trả `(True, 0)`.
+    ///
+    /// Một cảnh báo toàn vẹn kêu sai là thứ tệ hơn không có cảnh báo: nó kêu ở mọi phiên làm
+    /// việc bình thường, người dùng học cách bỏ qua, rồi lần sổ cái gãy thật thì nó kêu và
+    /// không ai nhìn.
+    ///
+    /// `NGUONG_HO` là số loại nội bộ liên tiếp có thể xảy ra giữa hai sự kiện. Không dùng một
+    /// danh sách loại: giao diện không được biết loại nào daemon chuyển tiếp — đó là chi tiết
+    /// của phía kia, và một bản sao của nó ở đây là một chỗ sẽ trôi.
+    static let NGUONG_HO = 8
+
     private func _theoSeq(_ p: [String: Any]) {
         guard let seq = p["seq"] as? Int, seq > 0 else { return }
         defer { seqNghe = max(seqNghe, seq) }
         // Bản ghi ĐẦU TIÊN nghe được không nói lên điều gì: daemon có thể đã chạy từ trước.
-        guard seqNghe > 0, seq > seqNghe + 1 else { return }
+        guard seqNghe > 0, seq - seqNghe > Self.NGUONG_HO else { return }
         khung.datNhayQuang(seqNghe, seq)
     }
 
