@@ -657,7 +657,8 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             # vì `req.elicit.gaps` và `req.detect_conflict.issues` đều về đó ([DEV-151]). Một
             # câu hỏi của chuỗi cũng đúng là loại ấy — đưa nó đi nơi khác là bắt người dùng nhớ
             # hai chỗ cho cùng một việc.
-            _ghi_cau_hoi_chuoi(root, run_id, nut, can_nguoi[nut.id])
+            muc_cho = cho[-1]
+            muc_cho.update(_ghi_cau_hoi_chuoi(root, run_id, nut, can_nguoi[nut.id]))
             if nut.on_ask == "wait":
                 break
             continue
@@ -1111,7 +1112,69 @@ def _ghi_loi_chan_chuoi(root: Path | None, run_id: str, nut: Any,
     }], cap=nut.cap)
 
 
-def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any, thieu: list[str]) -> None:
+# Tham số mà EIDE BIẾT tập giá trị, dù `input_schema` không khai `enum`. [DEV-181]
+#
+# Đo 22/09/2026: tác tử hỏi `isa`, chủ sản phẩm trả lời *"isa cho cái gì? Tôi cần bạn tư vấn
+# mà"*. Câu ấy đúng — một công cụ 223 năng lực mà bắt người dùng đoán nghĩa một tên trường thì
+# nó chưa làm xong việc của nó. Mà EIDE có sẵn câu trả lời: ba manifest trong `docs/spec/isa/`,
+# bảng `passport` trong store. Không nói ra là giấu thứ mình đang cầm.
+HOI_BANG_TIENG_NGUOI = {
+    "isa": "Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)",
+    "chip": "Dùng con chip nào?",
+    "board": "Chạy trên bo mạch nào?",
+    "passport": "Chưa ghim hộ chiếu chip — chip nào?",
+    "scenario": "Chạy kịch bản mô phỏng nào?",
+    "target": "Nạp vào đâu?",
+    "feature": "Việc này thuộc tính năng nào?",
+    "reqset_ids": "Dựa trên những yêu cầu nào?",
+}
+
+
+def _lua_chon(khoa: str, root: Path | None, tt: dict[str, Any]) -> list[dict[str, str]]:
+    """Tập giá trị hợp lệ của một tham số — suy từ KHO và STORE, không bịa.
+
+    Ba nguồn, theo thứ tự chắc chắn giảm dần:
+      1. `enum` trong `input_schema` — hợp đồng nói thẳng.
+      2. Manifest ISA trong `docs/spec/isa/` — `isa` là tập đóng và nằm trong kho.
+      3. Bảng `passport` của dự án — `chip`/`board` là thứ dự án NÀY đã có.
+
+    Trả rỗng khi không biết. Một danh sách lựa chọn bịa ra còn tệ hơn không có: người dùng chọn
+    một giá trị không tồn tại rồi bước sau mới hỏng, và lúc ấy lỗi trỏ vào chỗ khác.
+    """
+    t = tt.get(khoa) if isinstance(tt.get(khoa), dict) else {}
+    if t.get("enum"):
+        return [{"gia_tri": str(x), "giai_thich": ""} for x in t["enum"]]
+
+    if khoa == "isa":
+        import yaml
+
+        from eide_core.paths import spec_dir
+        ra = []
+        for f in sorted((spec_dir() / "isa").glob("*.yaml")):
+            d = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+            if not d.get("id") or not d.get("toolchain"):
+                continue        # `probes.yaml` không phải một ISA
+            mau = [str(x).lstrip("^") for x in (d.get("family_patterns") or [])][:4]
+            ra.append({"gia_tri": str(d["id"]),
+                       "giai_thich": ", ".join(mau) if mau else ""})
+        return ra
+
+    if khoa in ("chip", "board", "passport") and root is not None:
+        from eide_core import store
+        db = store.store_path(root)
+        if not db.exists():
+            return []
+        loai = "board" if khoa == "board" else "chip"
+        with store.open_store(db) as c:
+            rows = c.execute("SELECT id FROM passport WHERE kind=? ORDER BY id",
+                             (loai,)).fetchall()
+        return [{"gia_tri": str(r[0]), "giai_thich": "hộ chiếu đã có trong dự án"}
+                for r in rows]
+    return []
+
+
+def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
+                       thieu: list[str]) -> dict[str, Any]:
     """Một nút chờ người → một dòng trong `clarification`, hiện ở tab S9. [DEV-160]
 
     Câu hỏi viết bằng TIẾNG NGƯỜI chứ không dán tên tham số: "cần `reqset_ids`, `passport`" là
@@ -1123,7 +1186,7 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any, thieu: list[str
     phải của một yêu cầu — trộn hai thứ vào cột `req_ids` sẽ làm bảng truy vết trỏ sai.
     """
     if root is None or not thieu:
-        return
+        return {}
     from eide.caps.req import ghi_clarification
     reg = get_registry()
     tt = {}
@@ -1132,20 +1195,48 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any, thieu: list[str
 
     def _ta(k: str) -> str:
         t = tt.get(k) if isinstance(tt.get(k), dict) else {}
-        if t.get("description"):
-            return f"`{k}` ({t['description']})"
-        # ENUM là thứ dùng được NGAY: nó biến một câu hỏi mở thành một câu hỏi chọn.
-        # "`type`" bắt người dùng đoán; "`type` — chọn một: URD, SRS, SAD…" thì trả lời được.
-        # Suy từ hợp đồng, không bịa.
-        if t.get("enum"):
-            return f"`{k}` — chọn một: " + ", ".join(map(str, t["enum"]))
-        return f"`{k}`"
+        # [DEV-181] Thứ tự: câu hỏi TIẾNG NGƯỜI → mô tả hợp đồng → tên trần.
+        #
+        # Nhánh cuối là nhánh đã bắn trúng chủ sản phẩm 22/09/2026: `isa` không có
+        # `description` nên câu hỏi in ra đúng bốn chữ "cần anh cho biết: isa", và người dùng
+        # trả lời bằng một câu hỏi ngược. Bảng `HOI_BANG_TIENG_NGUOI` lấp đúng chỗ ấy cho các
+        # tham số hay hỏi; tên trần vẫn giữ làm đường lui, vì bịa một lời giải thích còn tệ hơn.
+        hoi = HOI_BANG_TIENG_NGUOI.get(k) or t.get("description")
+        cau = f"{hoi} (`{k}`)" if hoi else f"`{k}`"
+        lc = _lua_chon(k, root, tt)
+        if lc:
+            cau += "\n   Chọn một: " + "; ".join(
+                f"{x['gia_tri']}" + (f" — {x['giai_thich']}" if x["giai_thich"] else "")
+                for x in lc)
+        return cau
 
     ghi_clarification(root, [{
         "kind": "gap",
-        "text": f"Bước `{nut.cap}` đang chờ anh cho biết: " + ", ".join(_ta(k) for k in thieu),
-        "suggestion": f"Trả lời ở đây rồi bảo tác tử chạy tiếp lượt {run_id[:10]}",
+        "text": f"Bước `{nut.cap}` đang chờ anh cho biết:\n" + "\n".join(
+            "• " + _ta(k) for k in thieu),
+        "suggestion": f"Trả lời ở đây hoặc ngay trong vùng trao đổi, rồi bảo tác tử chạy tiếp "
+                      f"lượt {run_id[:10]}",
     }], cap=nut.cap)
+    # [DEV-181] Trả CẤU TRÚC về cho vùng trao đổi, không chỉ ghi xuống store.
+    #
+    # Tab Làm rõ yêu cầu là SỔ GHI; vùng trao đổi là CUỘC TRÒ CHUYỆN. Chủ sản phẩm chốt
+    # 22/09/2026: *"Agent hỏi gì thì phải hiển thị ở vùng trao đổi thì tôi mới biết trả lời"*.
+    # Muốn vẽ được ô trả lời ở đó thì gói `waiting` phải mang theo CÂU HỎI và LỰA CHỌN — một
+    # dòng chữ "cần anh cho biết: isa" thì vẽ được cái gì.
+    #
+    # `clar_id` băm theo NỘI DUNG ([DEV-151]) nên tính lại được ở đây mà vẫn trùng với dòng vừa
+    # ghi — không cần `ghi_clarification` trả về, và hai đường tính ra cùng một mã là một bất
+    # biến rẻ hơn một tham số trả về.
+    import hashlib
+    van = f"Bước `{nut.cap}` đang chờ anh cho biết:\n" + "\n".join("• " + _ta(k) for k in thieu)
+    return {
+        "clar_id": "CL-" + hashlib.sha256(f"gap|{van}".encode()).hexdigest()[:10],
+        "hoi": van,
+        "truong": [{"khoa": k,
+                    "hoi": HOI_BANG_TIENG_NGUOI.get(k)
+                           or (tt.get(k) or {}).get("description") or k,
+                    "lua_chon": _lua_chon(k, root, tt)} for k in thieu],
+    }
 
 
 def _uoc_chi_phi(chuoi: Any) -> float:

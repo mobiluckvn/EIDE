@@ -234,7 +234,7 @@ def _thieu_planner_khai(root: Path, task: str) -> list[dict[str, Any]]:
     plan = d.get("plan") or {}
     ra: list[dict[str, Any]] = [
         {"loai": "hoi_nguoi", "text": str(m).strip(),
-         "hanh_dong": "trả lời ở tab Làm rõ yêu cầu (S9)"}
+         "hanh_dong": "trả lời ngay ở vùng trao đổi, hoặc ở tab Làm rõ yêu cầu (S9)"}
         for m in (plan.get("missing") or []) if str(m).strip()]
     qd = d.get("decision") or {}
     if qd.get("decision") and qd["decision"] != "APPROVE":
@@ -243,7 +243,8 @@ def _thieu_planner_khai(root: Path, task: str) -> list[dict[str, Any]]:
         ra.append({"loai": "cong", "text":
                    f"Cổng {qd.get('gate') or 'G1'} ({qd.get('rule') or '?'}) "
                    f"{qd['decision']}: {qd.get('reason') or ''}".strip(),
-                   "hanh_dong": "kế hoạch chưa qua cổng — `code.generate_module` sẽ từ chối"})
+                   "hanh_dong": "kế hoạch chưa qua cổng — `code.generate_module` sẽ từ chối; "
+                                "duyệt ở vùng trao đổi [DEV-181]"})
     return ra
 
 

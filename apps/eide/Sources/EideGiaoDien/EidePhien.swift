@@ -286,8 +286,8 @@ public final class EidePhien {
         }
         // Nối ở ĐÂY chứ không trong `khoiDong()`: một nút chỉ sống khi một hàm khác được gọi
         // là một nút chết trong mọi đường chạy quên gọi hàm ấy — và `--chup` là một đường như thế.
-        khung.manChao.onTao = { [weak self] van in
-            Task { await self?.taoDuAn(van) }
+        khung.manChao.onTao = { [weak self] van, thu in
+            Task { await self?.taoDuAn(van, thuMuc: thu) }
         }
         khung.cotPhai.onChonRun = { [weak self] _ in
             self?.moMan("S2", boiTacTu: false)
@@ -787,6 +787,7 @@ public final class EidePhien {
         }
         guiDangBay += 1
         defer { guiDangBay -= 1 }
+        vanGanNhat = van          // [DEV-181] — thứ sẽ gửi lại nếu chuỗi dừng để hỏi
         do {
             let r = try await d.goi("chat.send", ["text": van])
             // [DEV-154] `state: "running"` = chuỗi đang chạy Ở LUỒNG NỀN của daemon. Thẻ Ý hiểu
@@ -859,11 +860,7 @@ public final class EidePhien {
                     + " Xem màn Nhật ký (S2) để đọc lời gọi đã hỏng.")
             }
             // Chuỗi dừng chờ người thì NÓI RA nó chờ gì — không để nó đứng im mãi.
-            for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) {
-                let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
-                khung.dock.themLuot(.cho, "Dừng ở `\(n["cap"] as? String ?? "?")` — "
-                                    + "cần anh cho biết: \(thieu).")
-            }
+            for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) { _hienCauHoi(n) }
         } catch {
             khung.dock.themLuot(.loi, "\(error)")
         }
@@ -934,11 +931,14 @@ public final class EidePhien {
     /// Không đoán kết quả: chỉ khi daemon trả lời xong mới đọc lại hàng đợi. Cột phải là bản
     /// chiếu (B7) — nếu nó tự xoá thẻ trước, một lần từ chối bị chính sách chặn sẽ biến mất khỏi
     /// màn hình mà việc vẫn còn nằm trong hàng đợi.
-    private func _quyet(_ ma: String, _ thuan: Bool) async {
+    /// `ghiChu` đi thẳng vào `note?` của API-15 §2 — ô "lý do" trên thẻ hứa *ghi vào sổ quyết
+    /// định*, nên đánh rơi nó ở đây là để sản phẩm nói dối một câu nhỏ mỗi lần người dùng gõ.
+    private func _quyet(_ ma: String, _ thuan: Bool, ghiChu: String = "") async {
         guard let d = daemon else { return }
         do {
             let r = try await d.goi("gate.decide",
-                                    ["gate_id": ma, "decision": thuan ? "approve" : "reject"])
+                                    ["gate_id": ma, "decision": thuan ? "approve" : "reject",
+                                     "note": ghiChu])
             let tt = r["status"] as? String ?? "?"
             khung.dock.themLuot(thuan ? .heThong : .cho,
                 "\(thuan ? "Đã duyệt" : "Đã từ chối") `\(r["cap"] as? String ?? ma)` — \(tt).")
@@ -1270,18 +1270,117 @@ public final class EidePhien {
         if let br = p["done"] as? [[String: Any]], !br.isEmpty {
             khung.dock.themThe(EideTheKetQua(buoc: br))
         }
-        for n in (p["waiting"] as? [[String: Any]] ?? []) {
-            let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
-            khung.dock.themLuot(.cho, "Dừng ở `\(n["cap"] as? String ?? "?")` — "
-                + (thieu.isEmpty ? ((n["vi"] as? String) ?? "chờ người")
-                                 : "cần anh cho biết: \(thieu)"))
-        }
+        if let v = p["van"] as? String, !v.isEmpty { vanGanNhat = v }
+        for n in (p["waiting"] as? [[String: Any]] ?? []) { _hienCauHoi(n) }
         if let st = p["state"] as? String, !st.isEmpty {
             khung.dock.themLuot(.tacTu, "Lượt chạy \(Self.trangThaiChuoi(st)).")
         }
         Task { [weak self] in
             await self?._lamMoi()
             await self?.veLaiManDangMo()
+        }
+    }
+
+    /// Câu gõ gần nhất của người — để gửi LẠI sau khi họ trả lời một câu hỏi. [DEV-181]
+    ///
+    /// Giữ ở đây chứ không đọc ngược vùng trao đổi: bong bóng trên màn là thứ để ĐỌC, dùng nó
+    /// làm nguồn dữ liệu thì mỗi lần đổi cách hiển thị lại đổi cả hành vi.
+    public private(set) var vanGanNhat = ""
+
+    /// Một mục `waiting`/`cho_nguoi` → một THẺ HỎI trong vùng trao đổi. [DEV-181]
+    ///
+    /// Trước đây chỗ này in một dòng chữ: *"Dừng ở `env.check` — cần anh cho biết: isa"*. Câu ấy
+    /// đúng và vô dụng: nó nêu tên một tham số, không nêu một câu hỏi, và không có chỗ nào để
+    /// trả lời. Chủ sản phẩm đọc xong hỏi lại đúng hai câu — *"Tôi cần tìm chỗ nào để trả lời?"*
+    /// và *"isa cho cái gì? Tôi cần bạn tư vấn mà"*.
+    ///
+    /// Lõi nay gửi kèm `clar_id`, `hoi` (tiếng Việt) và `truong[].lua_chon` (tập giá trị hợp lệ
+    /// đọc từ `docs/spec/isa/` hoặc bảng passport). Thiếu `clar_id` thì KHÔNG dựng thẻ — một ô
+    /// trả lời không biết ghi câu trả lời vào đâu còn tệ hơn một dòng chữ, vì nó hứa hẹn.
+    private func _hienCauHoi(_ n: [String: Any]) {
+        let cap = (n["cap"] as? String) ?? "?"
+        let clarId = (n["clar_id"] as? String) ?? ""
+        let truong: [EideTheHoi.Truong] = (n["truong"] as? [[String: Any]] ?? []).map { t in
+            EideTheHoi.Truong(
+                khoa: (t["khoa"] as? String) ?? "",
+                hoi: (t["hoi"] as? String) ?? ((t["khoa"] as? String) ?? ""),
+                luaChon: (t["lua_chon"] as? [[String: Any]] ?? []).map {
+                    (giaTri: ($0["gia_tri"] as? String) ?? "",
+                     giaiThich: ($0["giai_thich"] as? String) ?? "")
+                })
+        }
+        guard !clarId.isEmpty, !truong.isEmpty else {
+            let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
+            return khung.dock.themLuot(.cho, "Dừng ở `\(cap)` — "
+                + (thieu.isEmpty ? ((n["vi"] as? String) ?? "chờ người")
+                                 : "cần anh cho biết: \(thieu)")
+                + " — mở tab Làm rõ yêu cầu để trả lời.")
+        }
+        let the = EideTheHoi(cap: cap, loai: .thieuThamSo(clarId: clarId, truong: truong))
+        the.onTraLoi = { [weak self] ma, van in
+            Task { await self?.traLoiCauHoi(ma, van) }
+        }
+        khung.dock.themThe(the)
+    }
+
+    /// Ghi câu trả lời rồi CHẠY LẠI câu gốc. [DEV-181]
+    ///
+    /// Hai việc, không một: `req.answer_clarification` đóng điểm cần làm rõ, nhưng chuỗi đã dừng
+    /// từ trước và không có gì đánh thức nó. Chỉ ghi thôi thì người dùng trả lời xong ngồi nhìn
+    /// một màn hình không đổi — nửa vòng lặp, đúng chỗ hỏng mà thẻ này sinh ra để vá.
+    ///
+    /// Chạy lại bằng chính câu gõ cũ chứ không "tiếp tục từ nút đang dở": lượt mới đọc câu trả
+    /// lời qua lớp C2 (CXD-10 §2, `memory._c2_tra_loi_cua_nguoi`), nên nó không hỏi lại — và nó
+    /// đi qua cổng chính sách một lần nữa như mọi lượt khác, thay vì có một đường vòng riêng.
+    public func traLoiCauHoi(_ clarId: String, _ van: String) async {
+        guard let d = daemon else { return }
+        khung.dock.themLuot(.nguoi, van)
+        do {
+            _ = try await d.goi("caps.invoke",
+                                ["id": "req.answer_clarification",
+                                 "params": ["clar_id": clarId, "answer": van]])
+        } catch {
+            return khung.dock.themLuot(.loi, "Không ghi được câu trả lời: \(error)")
+        }
+        await _lamMoi()
+        await veLaiManDangMo()
+        guard !vanGanNhat.isEmpty else {
+            return khung.dock.themLuot(.tacTu, "Đã ghi câu trả lời. Gõ lại việc anh cần để "
+                                       + "tác tử chạy tiếp với dữ kiện này.")
+        }
+        khung.dock.themLuot(.tacTu, "Đã ghi câu trả lời — chạy lại việc cũ với dữ kiện này.")
+        await _gui(vanGanNhat)
+    }
+
+    /// Cổng đã hiện thẻ trong vùng trao đổi — để không in lại mỗi nhịp làm mới.
+    private var daHienCong: Set<String> = []
+
+    /// Mục bị CỔNG chặn → thẻ Duyệt/Từ chối **ngay trong vùng trao đổi**. [DEV-181]
+    ///
+    /// Chủ sản phẩm chốt 22/09/2026: *"nút duyệt hoặc phê duyệt luôn ở ô trả lời chat"*. Cột
+    /// phải vẫn giữ nguyên thẻ chờ — nó là chỗ TRA CỨU còn treo bao nhiêu việc; vùng trao đổi
+    /// là chỗ ĐỐI THOẠI, và một câu hỏi chỉ hiện ở chỗ tra cứu là câu hỏi người đang trò chuyện
+    /// không nghe thấy. Cùng lập luận với thẻ hỏi thiếu tham số ngay trên.
+    ///
+    /// Đọc từ `queue.list` chứ không từ `event.gate.opened`: `gate.decide` cần `gate_id`, và mã
+    /// ấy là `run_id` của mục chờ — sự kiện cổng không mang nó. Dựng thẻ từ một nguồn không có
+    /// mã thì được một nút bấm vào không đâu.
+    private func _hienCongChan(_ cho: [[String: Any]]) {
+        let con = Set(cho.compactMap { $0["run_id"] as? String })
+        daHienCong.formIntersection(con)   // mục đã quyết xong thì quên đi: lần sau là tin MỚI
+        for m in cho {
+            guard let ma = m["run_id"] as? String, !daHienCong.contains(ma) else { continue }
+            let qd = (m["decision"] as? [String: Any]) ?? [:]
+            daHienCong.insert(ma)
+            let the = EideTheHoi(cap: (m["cap"] as? String) ?? "?", loai: .congChan(
+                khoa: ma,
+                cong: (qd["gate"] as? String) ?? "?",
+                quyTac: (qd["rule_id"] as? String) ?? (qd["rule"] as? String) ?? "—",
+                lyDo: (qd["reason"] as? String) ?? "chính sách không nói lý do"))
+            the.onQuyet = { [weak self] khoa, thuan, ly in
+                Task { await self?._quyet(khoa, thuan, ghiChu: ly) }
+            }
+            khung.dock.themThe(the)
         }
     }
 
@@ -1298,11 +1397,7 @@ public final class EidePhien {
             khung.dock.themLuot(thuan ? .heThong : .cho,
                 thuan ? "Đã duyệt ý hiểu — chuỗi chạy tiếp (\(tt))."
                       : "Đã huỷ chuỗi. Gõ lại câu lệnh với ý anh muốn.")
-            for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) {
-                let thieu = (n["thieu"] as? [String] ?? []).joined(separator: ", ")
-                khung.dock.themLuot(.cho, "Dừng ở `\(n["cap"] as? String ?? "?")` — "
-                                    + "cần anh cho biết: \(thieu).")
-            }
+            for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) { _hienCauHoi(n) }
         } catch {
             khung.dock.themLuot(.loi, "\(error)")
         }
@@ -1486,6 +1581,7 @@ public final class EidePhien {
                                traLoiChu: true)
         }
         khung.cotPhai.datCho(mucCho)
+        _hienCongChan(cho)
         // Sổ cái trả theo thứ tự GHI (cũ trước). Cột phải chỉ hiện 8 thẻ, nên phải đảo: việc
         // người muốn hoàn tác gần như luôn là việc vừa xảy ra.
         khung.cotPhai.datHoanTac(ht.reversed().map {

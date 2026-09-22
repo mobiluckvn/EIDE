@@ -765,3 +765,37 @@ def test_ts_hong_khong_tinh_vao_ngay_nao(workspace):
                              "prev_hash": "0" * 64, "hash": "d" * 64},
                             ensure_ascii=False) + "\n")
     assert d.budget_state({})["spent_usd"] == 0.0
+
+
+def test_cho_nguoi_mang_theo_CAU_HOI_chu_khong_chi_ten_tham_so(du_an_rpc):
+    """`_cho_gi` phải giữ `clar_id`/`hoi`/`truong` — [DEV-181].
+
+    Đây là chỗ đã cắt mất chúng một lần. `_ghi_cau_hoi_chuoi` dựng câu hỏi bằng tiếng Việt và
+    tập giá trị hợp lệ, ghi đủ vào `run.report.waiting`; `_cho_gi` đọc lại rồi chỉ chép ba
+    trường `cap/thieu/vi` sang. Hệ quả: vùng trao đổi in được đúng tên tham số thô — "cần anh
+    cho biết: isa" — và chủ sản phẩm gõ lại *"isa cho cái gì? Tôi cần bạn tư vấn mà"*.
+
+    Cắt ở đây là một lỗi IM LẶNG: phía lõi có test xanh, phía Swift có test xanh, chỉ khúc nối
+    giữa hai bên đánh rơi dữ liệu. Nên bài kiểm đặt đúng ở khúc nối, không ở hai đầu.
+    """
+    from eide.caps.chat import _ghi_run
+
+    class _Chuoi:
+        def as_dict(self):
+            return {"nodes": []}
+
+    d, root = du_an_rpc
+    _ghi_run(root, "r-hoi", _Chuoi(), "asked", {},
+             report={"state": "asked", "done": [], "skipped": [], "failed": [],
+                     "waiting": [{"id": "n1", "cap": "env.check", "thieu": ["isa"],
+                                  "vi": "cần anh cho biết: isa",
+                                  "clar_id": "CL-1234567890",
+                                  "hoi": "Chip thuộc kiến trúc tập lệnh nào?",
+                                  "truong": [{"khoa": "isa", "hoi": "…nào?",
+                                              "lua_chon": [{"gia_tri": "avr8",
+                                                            "giai_thich": "ATmega"}]}]}]})
+    cho = d._cho_gi(d.ctx, "r-hoi")
+    assert len(cho) == 1, cho
+    assert cho[0]["clar_id"] == "CL-1234567890", "mất mã điểm cần làm rõ — không trả lời được"
+    assert cho[0]["hoi"], "mất câu hỏi tiếng người, chỉ còn tên tham số"
+    assert cho[0]["truong"][0]["lua_chon"][0]["gia_tri"] == "avr8", "mất tập giá trị hợp lệ"

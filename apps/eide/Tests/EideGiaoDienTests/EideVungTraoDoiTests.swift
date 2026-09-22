@@ -93,6 +93,162 @@ final class EideVungTraoDoiTests: XCTestCase {
                        "A2 đúng hợp đồng mà vẫn báo bất thường — \(a2)")
     }
 
+    // MARK: - [DEV-181] thẻ HỎI trong vùng trao đổi
+
+    private static func theHoiMau() -> EideTheHoi {
+        EideTheHoi(cap: "env.check", loai: .thieuThamSo(clarId: "CL-abc123", truong: [
+            .init(khoa: "isa", hoi: "Chip của thiết bị thuộc kiến trúc tập lệnh nào?",
+                  luaChon: [(giaTri: "avr8", giaiThich: "ATmega, ATtiny"),
+                            (giaTri: "armv7e-m", giaiThich: "STM32F4, nRF52")])]))
+    }
+
+    /// **Câu hỏi bằng tiếng người, không phải tên tham số.**
+    ///
+    /// Đo đúng chỗ hỏng chủ sản phẩm gặp 22/09/2026: màn hình in "cần anh cho biết: isa", và
+    /// câu họ gõ lại là *"isa cho cái gì? Tôi cần bạn tư vấn mà"*. Một thẻ hỏi mà người đọc
+    /// xong vẫn không biết nó hỏi gì thì chưa hơn được dòng chữ nó thay thế.
+    func testTheHoiInCauHoiTiengNguoiChuKhongPhaiTenThamSo() {
+        let van = Self.chu(Self.theHoiMau())
+        XCTAssertTrue(van.contains("kiến trúc tập lệnh"), "không có câu hỏi tiếng người — \(van)")
+        XCTAssertTrue(van.contains("env.check"), "không nói hỏi vì bước nào — \(van)")
+    }
+
+    /// Tập giá trị đóng thì hiện thành NÚT BẤM kèm giải thích — người chọn, không gõ lại.
+    func testTapGiaTriDongHienThanhNutChuKhongBatGoLai() {
+        let van = Self.chu(Self.theHoiMau())
+        XCTAssertTrue(van.contains("avr8"), van)
+        XCTAssertTrue(van.contains("ATmega"), "có giá trị mà không nói nó là chip gì — \(van)")
+        XCTAssertTrue(van.contains("Trả lời"), "không có nút gửi — \(van)")
+    }
+
+    /// **Ô gõ tự do vẫn còn, và nó BỔ SUNG chứ không ghi đè lựa chọn.**
+    ///
+    /// Người chọn `armv7e-m` rồi gõ thêm tên bo mạch là đang nói thêm, không phải đổi ý. Ghi đè
+    /// thì mất một nửa ý họ — và họ không có cách nào biết nửa ấy đã mất.
+    func testOGoTuDoGopVoiLuaChonChuKhongGhiDe() {
+        let t = Self.theHoiMau()
+        Self.bam(t, "avr8")
+        Self.go(t, "bo Arduino Uno")
+        let tl = t.cauTraLoi()
+        XCTAssertTrue(tl.contains("avr8"), "mất lựa chọn đã bấm — \(tl)")
+        XCTAssertTrue(tl.contains("Arduino Uno"), "mất chữ người gõ thêm — \(tl)")
+    }
+
+    /// Một trường chỉ giữ MỘT giá trị: bấm `armv7e-m` sau `avr8` là đổi ý, không phải chọn cả hai.
+    func testBamHaiLanTrongCungMotTruongThiGiuCaiSau() {
+        let t = Self.theHoiMau()
+        Self.bam(t, "avr8")
+        Self.bam(t, "armv7e-m")
+        let tl = t.cauTraLoi()
+        XCTAssertTrue(tl.contains("armv7e-m"), tl)
+        XCTAssertFalse(tl.contains("avr8"), "giữ cả hai giá trị cho một trường — \(tl)")
+    }
+
+    /// **Cổng chặn cũng hỏi NGAY Ở ĐÂY.** Chủ sản phẩm chốt 22/09/2026: *"nút duyệt hoặc phê
+    /// duyệt luôn ở ô trả lời chat"*. Với người dùng, "thiếu tham số" và "cổng chặn" đều là
+    /// *tác tử đang hỏi tôi*; tách đôi là bắt họ học một phân loại của hệ thống.
+    func testCongChanHienNutDuyetNgayTrongVungTraoDoi() {
+        let t = EideTheHoi(cap: "code.merge", loai: .congChan(
+            khoa: "r1:G3", cong: "G3", quyTac: "MERGE-02", lyDo: "chưa có reviewer khác hãng"))
+        XCTAssertEqual(t.nhanNut, ["Duyệt", "Từ chối"])
+        let van = Self.chu(t)
+        XCTAssertTrue(van.contains("G3") && van.contains("MERGE-02"), van)
+        XCTAssertTrue(van.contains("reviewer"), "không nói vì sao bị chặn — \(van)")
+    }
+
+    /// **Câu trả lời rỗng thì KHÔNG gửi.** Gửi nó đi là ghi một dòng vô nghĩa vào sổ làm rõ rồi
+    /// coi câu hỏi đã xong — tác tử thôi hỏi, và không ai biết nó chạy tiếp bằng dữ kiện gì.
+    func testCauTraLoiRongThiKhongGui() {
+        let t = Self.theHoiMau()
+        var daGui = false
+        t.onTraLoi = { _, _ in daGui = true }
+        Self.bamNut(t, "Trả lời")
+        XCTAssertFalse(daGui, "gửi một câu trả lời rỗng")
+    }
+
+    /// Bấm Trả lời thì gửi ĐÚNG mã điểm cần làm rõ — sai mã là ghi câu trả lời vào một câu hỏi
+    /// khác, và cả hai câu hỏi cùng hỏng trong im lặng.
+    func testBamTraLoiGuiDungMaDiemCanLamRo() {
+        let t = Self.theHoiMau()
+        var nhan: (String, String)?
+        t.onTraLoi = { ma, van in nhan = (ma, van) }
+        Self.bam(t, "avr8")
+        Self.bamNut(t, "Trả lời")
+        XCTAssertEqual(nhan?.0, "CL-abc123")
+        XCTAssertTrue(nhan?.1.contains("avr8") ?? false, "\(nhan as Any)")
+    }
+
+    /// **Báo cáo có câu hỏi ĐỦ dữ kiện → thẻ hỏi hiện ngay trong vùng trao đổi.**
+    ///
+    /// Đi qua `napSuKien` chứ không gọi thẳng chỗ dựng thẻ: chủ sản phẩm nhận câu hỏi bằng
+    /// `event.chat.report`, nên đó mới là đường cần xanh. Một bài kiểm gọi tắt sẽ xanh kể cả
+    /// khi sự kiện không nối vào đâu — đúng lỗi đã xảy ra với `--do-nut`.
+    func testBaoCaoCoCauHoiThiHIEN_O_TRA_LOI_ngayTrongVungTraoDoi() {
+        let (k, ph) = dungKhung()
+        ph.napSuKien("event.chat.report", [
+            "run_id": "r1", "state": "asked", "done": [], "failed": [],
+            "van": "nối LAN cho máy CNC",
+            "waiting": [["cap": "env.check", "thieu": ["isa"], "clar_id": "CL-9",
+                         "hoi": "Chip thuộc kiến trúc nào?",
+                         "truong": [["khoa": "isa", "hoi": "Chip thuộc kiến trúc nào?",
+                                     "lua_chon": [["gia_tri": "avr8",
+                                                   "giai_thich": "ATmega"]]]]]]])
+        let van = Self.chu(k.dock)
+        XCTAssertTrue(van.contains("Chip thuộc kiến trúc nào?"), van)
+        XCTAssertTrue(van.contains("Trả lời"), "không có ô trả lời trong vùng trao đổi — \(van)")
+        XCTAssertEqual(ph.vanGanNhat, "nối LAN cho máy CNC", "không giữ câu gốc để chạy lại")
+    }
+
+    /// **Thiếu `clar_id` thì KHÔNG vẽ ô trả lời.**
+    ///
+    /// Một ô trả lời không biết ghi câu trả lời vào đâu tệ hơn một dòng chữ, vì nó HỨA: người
+    /// dùng gõ, bấm, rồi không có gì xảy ra và họ không biết vì sao. Thà nói thẳng còn treo
+    /// gì và chỉ sang tab Làm rõ.
+    func testThieuMaDiemCanLamRoThiNoiThangChuKhongVeMotONutChet() {
+        let (k, ph) = dungKhung()
+        ph.napSuKien("event.chat.report", [
+            "run_id": "r1", "state": "asked", "done": [], "failed": [],
+            "waiting": [["cap": "env.check", "thieu": ["isa"], "vi": "cần anh cho biết: isa"]]])
+        let van = Self.chu(k.dock)
+        XCTAssertTrue(van.contains("Làm rõ yêu cầu"), "không chỉ chỗ trả lời được — \(van)")
+        XCTAssertFalse(van.contains("Trả lời"), "vẽ nút Trả lời mà không có chỗ ghi — \(van)")
+    }
+
+    private static func bam(_ v: NSView, _ giaTri: String) {
+        for n in nutTrong(v) where n.identifier?.rawValue.hasSuffix("|" + giaTri) == true {
+            n.state = .on
+            _ = n.target?.perform(n.action, with: n)
+            return
+        }
+        XCTFail("không có nút cho giá trị \(giaTri)")
+    }
+
+    private static func bamNut(_ v: NSView, _ nhan: String) {
+        for n in nutTrong(v) where n.title == nhan {
+            _ = n.target?.perform(n.action, with: n)
+            return
+        }
+        XCTFail("không có nút \(nhan)")
+    }
+
+    /// Đi HẾT cây view, không dừng ở hai tầng: ô gõ nằm trong `NSStackView` lồng trong
+    /// `NSStackView`, và một đầu dò nông báo "không có ô gõ" cho một thẻ có đủ ô — đỏ vì phép
+    /// đo mù, đúng thứ bẫy đã ghi ở `chu(_:)` ngay dưới.
+    private static func go(_ v: NSView, _ van: String) {
+        guard let o = oGoTrong(v) else { return XCTFail("không có ô gõ tự do") }
+        o.stringValue = van
+    }
+
+    private static func oGoTrong(_ v: NSView) -> NSTextField? {
+        if let t = v as? NSTextField, t.isEditable { return t }
+        for c in v.subviews { if let t = oGoTrong(c) { return t } }
+        return nil
+    }
+
+    private static func nutTrong(_ v: NSView) -> [NSButton] {
+        (v as? NSButton).map { [$0] } ?? v.subviews.flatMap { nutTrong($0) }
+    }
+
     func testCoChoDungThiDuHaiNutCuaTaiLieu() {
         let t = EideTheYHieu(van: "x", buoc: ["a"], muc: "A1", cho: true)
         XCTAssertEqual(t.nhanNut, ["Đúng — làm đi", "Sửa ý hiểu"])

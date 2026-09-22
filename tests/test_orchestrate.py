@@ -514,4 +514,37 @@ def test_cau_hoi_neu_ENUM_de_nguoi_CHON_thay_vi_doan():
         _ghi_cau_hoi_chuoi(Path("/x"), "r_1", Nut(id="n1", cap="doc.generate"), ["type"])
     finally:
         _req.ghi_clarification = cu
-    assert da and "chọn một: URD" in da[0]["text"], da
+    assert da and "Chọn một: URD" in da[0]["text"], da
+
+
+def test_cau_hoi_tra_ve_CAU_TRUC_cho_vung_trao_doi():
+    """[DEV-181] Tab Làm rõ yêu cầu là SỔ GHI; vùng trao đổi là CUỘC TRÒ CHUYỆN.
+
+    Chủ sản phẩm chốt 22/09/2026: *"Agent hỏi gì thì phải hiển thị ở vùng trao đổi thì tôi mới
+    biết trả lời"*. Vẽ được ô trả lời ở đó thì gói `waiting` phải mang CÂU HỎI và LỰA CHỌN —
+    một dòng chữ "cần anh cho biết: isa" thì vẽ được cái gì.
+    """
+    import eide.caps.req as _req
+    from eide.caps.chat import _ghi_cau_hoi_chuoi
+    from eide_core.chain import Nut
+    cu = _req.ghi_clarification
+    _req.ghi_clarification = lambda root, ds, **k: None
+    try:
+        ra = _ghi_cau_hoi_chuoi(Path("/x"), "r_1", Nut(id="n1", cap="env.check"), ["isa"])
+    finally:
+        _req.ghi_clarification = cu
+    assert ra["clar_id"].startswith("CL-")
+    t = ra["truong"][0]
+    assert t["khoa"] == "isa"
+    # Câu hỏi bằng TIẾNG NGƯỜI, không phải tên trường trần.
+    assert "kiến trúc" in t["hoi"].lower() and t["hoi"] != "isa"
+    # Lựa chọn suy từ KHO: ba manifest trong docs/spec/isa/.
+    assert {x["gia_tri"] for x in t["lua_chon"]} == {"armv7e-m", "avr8", "rv32imac"}
+    assert any("STM32" in x["giai_thich"] for x in t["lua_chon"])
+
+
+def test_tham_so_KHONG_biet_tap_gia_tri_thi_khong_bia():
+    """Một danh sách lựa chọn bịa ra tệ hơn không có: người dùng chọn một giá trị không tồn tại
+    rồi bước sau mới hỏng, và lúc ấy lỗi trỏ vào chỗ khác."""
+    from eide.caps.chat import _lua_chon
+    assert _lua_chon("mot_tham_so_la", None, {}) == []

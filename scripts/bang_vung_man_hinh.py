@@ -129,9 +129,13 @@ DE_XUAT: dict[str, tuple[str, str, str]] = {
   "Tác tử định làm gì, theo thứ tự nào, dựa trên căn cứ gì.",
   "• Khối CÒN THIẾU đầu bảng, nói rõ thiếu gì và ai trả lời được\n"
   "• Từng bước: mục tiêu · năng lực · fact trích dẫn · điều kiện xong\n"
-  "• Quyết định cổng G1 + nút DUYỆT ngay trên màn\n"
+  # Chủ sản phẩm chốt 22/09/2026: *"nút duyệt hoặc phê duyệt luôn ở ô trả lời chat"*. Màn này
+  # HIỆN quyết định cổng G1 (ai quyết, theo quy tắc nào, lúc nào) và chỉ sang vùng trao đổi;
+  # nó không mọc thêm một nút duyệt thứ hai. Hai nút duyệt cho cùng một việc, ở hai chỗ, là hai
+  # chỗ phải giữ đồng bộ — và là hai câu trả lời khác nhau cho câu "tôi duyệt ở đâu".
+  "• Quyết định cổng G1: ai quyết, quy tắc nào, lúc nào (duyệt ở vùng trao đổi)\n"
   "• Ước lượng chi phí so với hạn ngày",
-  "Duyệt kế hoạch; Từ chối kèm lý do; Lập lại"),
+  "Mở vùng trao đổi để duyệt; Lập lại"),
  "Doc": (
   "Bộ tài liệu gửi được cho người khác.",
   "• Danh sách tài liệu: loại · phiên bản · ngày sinh · mục nào STALE\n"

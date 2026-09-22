@@ -788,7 +788,13 @@ class Daemon:
                   {"run_id": ma_run, "state": chuoi.result.get("state") or "",
                    "done": self._buoc_va_dau_ra(self.ctx, ma_run),
                    "waiting": self._cho_gi(self.ctx, ma_run),
-                   "failed": self._hong_gi(self.ctx, ma_run)})
+                   "failed": self._hong_gi(self.ctx, ma_run),
+                   # CÂU GỐC đi kèm báo cáo [DEV-181]. Trả lời một câu hỏi rồi mà chuỗi vẫn nằm
+                   # im thì người dùng mới đi được nửa vòng: câu trả lời vào store, còn việc họ
+                   # nhờ thì vẫn chưa ai làm. Có câu gốc ở đây, vùng trao đổi gửi lại được chính
+                   # nó ngay sau khi ghi câu trả lời — và lượt mới đọc được câu trả lời ấy qua
+                   # lớp C2 của CXD-10 (`memory._c2_tra_loi_cua_nguoi`).
+                   "van": tham.get("text") or ""})
 
     def _y_hieu(self, intent: dict[str, Any], kq: dict[str, Any]) -> dict[str, Any]:
         """`{restate, steps}` cho thẻ "Ý hiểu" của UXC-31 §2D.6.
@@ -878,7 +884,14 @@ class Daemon:
             print(f"[chat.send] không đọc được báo cáo run {run_id}: "
                   f"{type(e).__name__}: {e}", file=sys.stderr, flush=True)
             return []
-        return [{"cap": n.get("cap", ""), "thieu": n.get("thieu") or [], "vi": n.get("vi", "")}
+        # `clar_id`/`hoi`/`truong` đi kèm, không cắt: đó là câu hỏi bằng tiếng người và tập giá
+        # trị hợp lệ mà `_ghi_cau_hoi_chuoi` vừa dựng [DEV-181]. Bản trước chỉ giữ `thieu` — tên
+        # tham số thô — nên vùng trao đổi in được "cần anh cho biết: isa" và chủ sản phẩm gõ lại
+        # đúng câu *"isa cho cái gì? Tôi cần bạn tư vấn mà"*. Cắt ở đây thì thẻ hỏi phía Swift
+        # không có gì để vẽ ngoài chính cái tên ấy.
+        return [{"cap": n.get("cap", ""), "thieu": n.get("thieu") or [], "vi": n.get("vi", ""),
+                 "clar_id": n.get("clar_id", ""), "hoi": n.get("hoi", ""),
+                 "truong": n.get("truong") or []}
                 for n in (bc.get("waiting") or []) if n.get("thieu")]
 
     def _buoc_va_dau_ra(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
