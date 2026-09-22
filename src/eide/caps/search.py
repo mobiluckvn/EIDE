@@ -974,7 +974,7 @@ def reference_projects(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     dùng năng lực này ở bước 2 và nó phải đi tiếp được khi registry rỗng: một dự án mới vẫn
     dựng được mà không cần mẫu nào.
     """
-    from eide.caps.registry import _doc_index, _kho
+    from eide.caps.registry import _doc_index
 
     idx = [g for g in _doc_index() if g.get("kind") == "template"]
     # CHỈ `idea` — SEARCH-09 `input_schema` khai `additionalProperties: false`, nên một tham số
@@ -991,8 +991,17 @@ def reference_projects(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                        "badges": g.get("badges") or [],
                        "score": round(n + 0.5 * len(g.get("badges") or []), 2)})
     ra.sort(key=lambda x: (-x["score"], x["id"] or ""))
-    kq: dict[str, Any] = {"candidates": ra}
-    if not idx:
-        kq["warning"] = (f"registry chưa có mẫu dự án nào ({_kho()}). Dự án mới vẫn dựng được "
-                         "mà không cần mẫu — bước này không chặn chuỗi Z-01.")
-    return kq
+    # [DEV-180] Khoá là `templates`, KHÔNG phải `candidates`.
+    #
+    # `output_schema` của SEARCH-09 khai đúng một trường `templates` và `additionalProperties:
+    # false`. Bản trước trả `{"candidates": …}` kèm `warning` — sai tên khoá VÀ thừa một khoá,
+    # nên `Registry.validate_output` bác mọi lần gọi bằng E1004. Không phải "hỏng khi registry
+    # rỗng": hỏng LUÔN LUÔN, kể cả khi tìm thấy mẫu.
+    #
+    # Hình dạng cũ chép từ `search.registry` — năng lực ấy đúng là trả `candidates`. Hai hợp
+    # đồng khác nhau, một cái nhìn giống nhau, và không phép kiểm nào chạy `search.*` qua Router
+    # nên nó sống tới lúc chủ sản phẩm gõ một câu thật vào app 22/09/2026.
+    #
+    # `warning` bỏ đi vì schema cấm trường lạ. Thông tin "registry chưa có mẫu nào" không mất:
+    # `templates: []` nói điều ấy, và lớp giao diện đã có cơ chế "màn rỗng CÓ LÝ DO".
+    return {"templates": ra}

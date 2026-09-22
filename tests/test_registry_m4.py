@@ -250,12 +250,18 @@ def test_search_registry_RONG_thi_canh_bao_chu_khong_nem(du_an):
 
 def test_reference_projects_RONG_khong_chan_chuoi_Z01(du_an):
     """Chuỗi Z-01 dùng năng lực này ở bước 2 và nó phải đi tiếp được khi registry rỗng: một dự
-    án mới vẫn dựng được mà không cần mẫu nào."""
+    án mới vẫn dựng được mà không cần mẫu nào.
+
+    [DEV-180] Khoá là `templates`, KHÔNG phải `candidates`. Bài này trước đây khẳng định
+    `candidates` + `warning` — tức mã hoá đúng cái bug: hợp đồng SEARCH-09 khai một trường
+    `templates` và `additionalProperties: false`, nên mọi lần gọi đều bị `validate_output` bác
+    bằng E1004. Bài kiểm XANH suốt trong khi năng lực hỏng 100% số lần, vì nó gọi thẳng hàm
+    chứ không đi qua Router. Cùng họ với [DEV-145]."""
     from eide.caps.search import reference_projects
 
     _, ctx, _ = du_an
     kq = reference_projects({"idea": "robot cân bằng hai bánh"}, ctx)
-    assert kq["candidates"] == [] and "không chặn chuỗi Z-01" in kq["warning"]
+    assert kq == {"templates": []}, kq
 
 
 def test_reference_projects_khop_theo_TU(du_an, kho):
@@ -269,7 +275,7 @@ def test_reference_projects_khop_theo_TU(du_an, kho):
         {"id": "den-led@1.0.0", "kind": "template", "keywords": ["led", "nhấp", "nháy"]},
         {"id": "khong-phai-mau@1.0.0", "kind": "passport", "keywords": ["robot"]},
     ])
-    ds = reference_projects({"idea": "robot cân bằng dùng mpu6050"}, ctx)["candidates"]
+    ds = reference_projects({"idea": "robot cân bằng dùng mpu6050"}, ctx)["templates"]
     assert ds[0]["id"] == "robot-can-bang@1.0.0"
     assert all(x["kind"] == "template" for x in ds), "chỉ mẫu dự án, không lẫn hộ chiếu"
 
@@ -282,3 +288,16 @@ def test_ca_nam_nang_luc_registry_da_gan_hien_thuc():
     assert {c.spec.id for c in reg.list(ns="registry", implemented=True)} == {
         "registry.seed", "registry.search", "registry.pull", "registry.pack",
         "registry.publish"}
+
+
+def test_reference_projects_QUA_DUOC_phep_kiem_dau_ra(du_an):
+    """[DEV-180] Phép đo bắt được lỗi mà hai bài trên đã mù: gọi QUA ROUTER.
+
+    Hai bài kia gọi thẳng hàm nên không đi qua `Registry.validate_output`. Năng lực trả sai
+    hình dạng vẫn xanh — và nó sống như thế tới khi chủ sản phẩm gõ một câu thật vào app
+    22/09/2026, chuỗi Z-01 dừng ở bước 2 với `E1004`.
+    """
+    r, ctx, _ = du_an
+    run = r.invoke("search.reference_projects", {"idea": "robot cân bằng"}, ctx)
+    assert run.status == "done", run.error
+    assert run.result == {"templates": []}, run.result
