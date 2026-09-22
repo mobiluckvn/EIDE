@@ -170,6 +170,51 @@ def chon_engine(isa: str, man: dict[str, Any], chip: str = "") -> dict[str, Any]
                     missing=thu, isa=isa, remedy="env.guide_install")
 
 
+def iri_chip_trong_store(root: Path, chip: str) -> str:
+    """Tên người dùng gõ → IRI chủ thể THẬT trong store. [DEV-173]
+
+    `extract.atdf`/`extract.svd` sinh IRI có TIỀN TỐ HÃNG (`chip:microchip.atmega328p`), theo
+    KAD-07 §4 — hai hãng có thể đặt trùng tên phần, nên IRI phải phân biệt được. Nhưng người
+    dùng gõ `atmega328p`, và ghép thẳng `chip:` vào đó cho ra một IRI không tồn tại.
+
+    Đo 22/09/2026, hộ chiếu đủ 287 fact vàng: `sim.build_platform {chip: atmega328p}` báo *"Chưa
+    có hộ chiếu vàng: không fact `memory_size` nào đã duyệt"*, trong khi store có BA fact
+    `memory_size` tầng vàng. Cùng truy vấn ấy với `chip:microchip.atmega328p` trả 3 dòng. Nguyên
+    nhân là cái tên, và thông điệp lỗi đẩy người dùng đi chạy `extract.svd` cho một hộ chiếu đã
+    có sẵn.
+
+    Tra bảng `passport` — đúng bảng `project.set_target::_ghim` đã tra, nên hai năng lực nói
+    cùng một thứ tiếng về cùng một con chip. Không tìm thấy thì trả dạng ghép thẳng: ở đó không
+    có hộ chiếu nào, và người gọi cần một IRI để NÓI RA trong thông điệp lỗi.
+    """
+    db = store.store_path(root)
+    goc = _iri_chip(chip)
+    ten = goc[len("chip:"):]
+    if "." in ten or not db.exists():   # đã có tiền tố hãng rồi thì đừng đoán lại
+        return goc
+    with store.open_store(db) as c:
+        rows = [r[0] for r in c.execute(
+            "SELECT id FROM passport WHERE kind='chip' AND (id = ? OR id LIKE ?) ORDER BY id",
+            (ten, f"%{ten}%@%")).fetchall()]
+    # `microchip.atmega328p@1.0.0` → `chip:microchip.atmega328p`: chủ thể fact KHÔNG mang phiên
+    # bản. Hộ chiếu có phiên bản vì nó là một BẢN MÔ TẢ; fact thì nói về con chip.
+    return f"chip:{rows[-1].split('@', 1)[0]}" if rows else goc
+
+
+def _co_fact_nao(root: Path, iri: str) -> bool:
+    """Có fact nào mang IRI này không — bất kể tầng hay trạng thái. [DEV-173]
+
+    Dùng để phân biệt "chưa có hộ chiếu" với "có hộ chiếu nhưng fact chưa đủ tin cậy". Hai câu
+    ấy dẫn tới hai việc khác nhau: đi tải tài liệu, hay chạy `kg.review_facts`.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return False
+    with store.open_store(db) as c:
+        return c.execute("SELECT 1 FROM fact WHERE subject = ? OR subject LIKE ? LIMIT 1",
+                         (iri, iri + "/%")).fetchone() is not None
+
+
 def _facts_nen_tang(root: Path, chip: str) -> dict[str, Any]:
     """Bản đồ bộ nhớ + ngoại vi của chip, đọc từ hộ chiếu trong store.
 
@@ -179,7 +224,7 @@ def _facts_nen_tang(root: Path, chip: str) -> dict[str, Any]:
     đó — sai một offset thì mọi thanh ghi lệch và triệu chứng trông y hệt lỗi trong mã.
     """
     db = store.store_path(root)
-    goc = _iri_chip(chip)
+    goc = iri_chip_trong_store(root, chip)   # [DEV-173] không ghép chuỗi — tra hộ chiếu
     ra: dict[str, Any] = {"memory": {}, "periph": {}, "cites": []}
     if not db.exists():
         return ra
@@ -297,10 +342,22 @@ def build_platform(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     eng = chon_engine(isa, man, chip)
     nen = _facts_nen_tang(root, chip)
     if not nen["memory"]:
-        raise EideError("E2000", f"Chưa có hộ chiếu vàng cho `{_iri_chip(chip)}`: không fact "
+        # [DEV-173] HAI trường hợp, và gộp chúng là gửi người dùng đi sai hướng — đúng lỗi đã
+        # xảy ra: hộ chiếu có sẵn 287 fact vàng, thông điệp bảo đi chạy `extract.svd`.
+        iri = iri_chip_trong_store(root, chip)
+        co_ho_chieu = iri != _iri_chip(chip) or _co_fact_nao(root, iri)
+        if co_ho_chieu:
+            raise EideError(
+                "E2000",
+                f"Hộ chiếu `{iri}` có trong store nhưng không fact `memory_size` nào dùng được "
+                "(cần tầng vàng, hoặc đã qua `kg.review_facts`) — nền tảng mô phỏng phải biết "
+                "kích thước FLASH/RAM trước khi nạp firmware",
+                exists=[iri], candidates=["kg.review_facts", "extract.svd"],
+                missing=["fact memory_size đã duyệt"])
+        raise EideError("E2000", f"Chưa có hộ chiếu vàng cho `{iri}`: không fact "
                         "`memory_size` nào đã duyệt — chạy `extract.svd` hoặc `registry.pull`",
                         exists=[], candidates=["extract.svd", "registry.pull"],
-                        missing=[f"hộ chiếu vàng cho {_iri_chip(chip)}"])
+                        missing=[f"hộ chiếu vàng cho {iri}"])
 
     pho = _phu_song(chip, nen)
     d = _thu_muc_sim(root)
