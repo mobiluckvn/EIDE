@@ -5,13 +5,11 @@ interrupts: {model: vector_table, priority_bits: 0}
 toolchain:
   compiler: {name: avr-gcc, min: "7.3", check: "avr-gcc --version"}
   tools: [{name: avrdude, min: "7.0"}, {name: avr-size, package: {macos: avr-gcc, linux: binutils-avr}}]
-  # [DEV-172] `brew install avr-gcc` KHÔNG chạy được: tap `osx-cross/avr` nay chỉ có formula
-  # đánh số (`avr-gcc@8`…`@15`), nên lệnh cũ trả "No available formula". Thêm `brew trust` vì
-  # Homebrew từ chối nạp formula của tap bên thứ ba cho tới khi được tin.
-  #
-  # `avr-gcc@14` là KEG-ONLY: Homebrew cố ý không nối nó vào `bin/`. `tools.which()` tìm thêm
-  # trong `/opt/homebrew/opt/*/bin` nên EIDE vẫn thấy — nhưng người dùng gõ `avr-gcc` trong
-  # terminal thì không, và đó là lý do dòng này phải nói ra chứ không im lặng cài xong.
+  # [DEV-172] Ba chỗ hỏng trong dòng cũ "brew install avr-gcc avrdude": tap osx-cross/avr
+  # nay chỉ còn formula ĐÁNH SỐ (avr-gcc@8…@15) nên lệnh ấy trả "No available formula";
+  # Homebrew từ chối nạp formula của tap bên thứ ba cho tới khi "brew trust"; và
+  # avr-gcc@14 là KEG-ONLY nên cài xong "which avr-gcc" vẫn không thấy — chỗ ấy
+  # eide_core.tools.which() lo, bằng cách tìm thêm trong /opt/homebrew/opt/*/bin.
   install: {macos: ["brew tap osx-cross/avr && brew trust osx-cross/avr && brew install avr-gcc@14 avrdude"], linux: ["apt install gcc-avr avr-libc avrdude"], windows: ["winget install AVRDudes.AVRDUDE"]}
   build: {cmd: "make -C . MCU={mcu} F_CPU={f_cpu}", artifact: "build/*.elf"}
 flash: {adapters: [avrdude, pymcuprog], default: avrdude, cmd: {avrdude: "avrdude -c {programmer} -p {part} -P {port} -U flash:w:{hex}:i"}, verify: true}

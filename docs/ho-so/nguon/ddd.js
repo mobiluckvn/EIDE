@@ -3,7 +3,7 @@ const { P, H1, H2, H3, CAP, SP, T, IMG, CODE, build } = require('./eaa_doc');
 const { metaNew, refParas } = require('./eide_common');
 const D = JSON.parse(fs.readFileSync('ddd.json', 'utf8'));
 const m = metaNew('EIDE-DDD-14', 'Từ điển dữ liệu', 'TỪ ĐIỂN DỮ LIỆU, DDL VÀ DI TRÚ (DDD)',
-  'Nguồn duy nhất cho mọi thực thể của EIDE: từ điển dữ liệu 27 thực thể / 253 trường, JSON Schema 2020-12, DDL SQLite, thứ tự di trú từ M0, schema các tệp YAML, quy ước định danh',
+  'Nguồn duy nhất cho mọi thực thể của EIDE: từ điển dữ liệu 29 thực thể / 275 trường, JSON Schema 2020-12, DDL SQLite, thứ tự di trú từ M0, schema các tệp YAML, quy ước định danh',
   [['Tài liệu trước', 'EIDE-SDD-04 §3, EIDE-SAD-03 §5, EIDE-MEM-11 §3, EIDE-POL-17 §4'], ['Tệp kèm', 'ddd_model.py (nguồn), data/json/*.json (27 JSON Schema), data/schema.sql (DDL), gen_ddd.py'], ['Dùng khi', 'Hiện thực pydantic models, migration, kiểm hợp lệ khi ghi; sinh tài liệu API']],
   'Phát hành lần đầu — bổ sung lĩnh vực L05/L31; sinh tự động từ ddd_model.py',
   [['1.1', '07/09/2026', 'Vũ Trí Công',
@@ -23,7 +23,22 @@ const m = metaNew('EIDE-DDD-14', 'Từ điển dữ liệu', 'TỪ ĐIỂN DỮ 
     + 'gọi năng lực nên đưa vào niêm thì phải niêm lại liên tục, và một niêm phong viết lại liên '
     + 'tục thì không còn là niêm phong (DEV-047).'],
    ['1.4', '07/09/2026', 'Vũ Trí Công',
-    '§5: `user_version` của `0004_m2_engineering_hw` sửa 3 → 4 và `0005_m3_debug` sửa 4 → 5; thêm quy tắc `user_version` LUÔN bằng số hiệu tệp migration chạy sau cùng của store chính, còn số hiệu cấp cho cơ sở dữ liệu riêng (0003 index, 0003b session) bị bỏ trống trong dãy một cách cố ý. Với cách đếm số migration đã chạy, bất kỳ số hiệu nào bị một cơ sở dữ liệu riêng dùng tiếp về sau đều làm lệch toàn bộ phiên bản phía sau (DEV-056).']]);
+    '§5: `user_version` của `0004_m2_engineering_hw` sửa 3 → 4 và `0005_m3_debug` sửa 4 → 5; thêm quy tắc `user_version` LUÔN bằng số hiệu tệp migration chạy sau cùng của store chính, còn số hiệu cấp cho cơ sở dữ liệu riêng (0003 index, 0003b session) bị bỏ trống trong dãy một cách cố ý. Với cách đếm số migration đã chạy, bất kỳ số hiệu nào bị một cơ sở dữ liệu riêng dùng tiếp về sau đều làm lệch toàn bộ phiên bản phía sau (DEV-056).'],
+   ['1.5', '22/09/2026', 'Vũ Trí Công',
+    '§2: thêm trường `Fact.run_id` — LƯỢT CHẠY đã tạo fact này (migration 0010, chỉ mục '
+    + '`ix_fact_3`). `source_id` trả lời "fact rút từ tài liệu nào"; nó KHÔNG trả lời "lượt '
+    + 'trích xuất nào đã rút nó ra", và một tài liệu đúng vẫn có thể bị một lượt đọc sai. '
+    + 'Thiếu cột này thì 18 năng lực khai hoàn tác `supersede_facts` không cái nào hoàn tác '
+    + 'nổi: câu đầu tiên của thủ tục POL-17 §5 — "với mỗi fact tự duyệt CỦA LƯỢT NÀY" — không '
+    + 'có chỗ nào để hỏi (DEV-170). '
+    + '§2: thêm hai thực thể `Clarification` và `ClarificationAnswer` của DEV-151. Chúng đã có '
+    + 'trong kho từ migration 0008/0009 nhưng chỉ tồn tại dưới dạng SQL viết tay CHÈN vào cuối '
+    + '`data/schema.sql` — mà tệp ấy là bản SINH, nên ai chạy lại `gen_ddd.py` là xoá sạch hai '
+    + 'bảng mà không cổng nào kêu (DEV-170). '
+    + '§5: bổ sung bốn dòng migration 0007…0010 đã có trong kho nhưng bảng lịch chưa ghi, và '
+    + 'bỏ dòng "(M3) debug_session — chưa có migration" nay đã sai. Bảng này mô tả migration ĐÃ '
+    + 'CÓ; thiếu một dòng nghĩa là tài liệu và `eide migrate` nói hai điều khác nhau về cùng '
+    + 'một store (DEV-170).']]);
 const c = [];
 c.push(H1('1. Nguyên tắc và quy ước'));
 c.push(P('Tài liệu này được sinh từ một mô hình duy nhất (`ddd_model.py`); mọi thay đổi schema phải sửa mô hình rồi sinh lại JSON Schema, DDL và tài liệu — không sửa tay ba nơi. Quy ước: (1) mọi id có tiền tố loại + 16 hex (f_, src_, cr_, d_, r_, it_, dg_, doc_, dv_, e_, m_, tr_, ds_, cu_, acq_), trừ id có nghĩa (F-nn, ADR-nn, UR-/FR-, passport ns.part@semver, module mod_<slug>); (2) IRI subject theo KAD-07 §6.1: `chip:<vendor>.<part>[/periph:X[/reg:Y[/field:Z]]]`, `board:<id>[/net:N|/pin:P]`, `part:<vendor>.<mpn>`, `isa:<id>`; (3) cột JSON lưu TEXT (UTF-8) và được kiểm bằng JSON Schema tương ứng trước khi ghi; (4) thời gian ISO-8601 UTC; (5) mọi bảng có cột `at` hoặc `created_at` để dòng thời gian (view.timeline); (6) SQLite WAL, foreign_keys=ON, user_version tăng theo migration; (7) ba tệp cơ sở dữ liệu: `store.sqlite` (commit Git), `session.sqlite` (không commit), `index/index.sqlite` (không commit, tái dựng được).'));
