@@ -563,9 +563,25 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # Bước 2 — kiểm deterministic. Ném E5002 (cấu trúc) hoặc E3003 (ngân sách).
     gate = ctx.extra.get("gate")
     nguong = ((getattr(gate, "config", None) or {}).get("thresholds") or {})
+    # [DEV-179] Ngưỡng số nút là `chain_max_nodes`, KHÔNG phải `plan_max_steps`.
+    #
+    # Hai con số ấy đo hai thứ khác nhau. `plan_max_steps` (POL-17 §2 G1-01, mặc định 12) là
+    # ngưỡng của một KẾ HOẠCH KỸ THUẬT — danh sách bước mà một con người ngồi đọc và duyệt;
+    # PRS-16 §4 còn cấm planner chia nhỏ quá 12 bước vì lý do ấy. Còn chuỗi là ĐỒ THỊ ĐIỀU PHỐI
+    # nội bộ của tác tử: người dùng không đọc nó, và độ dài của nó phản ánh số năng lực cần gọi
+    # chứ không phải độ phức tạp mà người phải theo dõi.
+    #
+    # Đo 22/09/2026, chủ sản phẩm gõ thẳng vào app một câu mô tả việc CNC LAN→USB: ý định
+    # `project.create` → mẫu Z-01 → E5002 *"14 nút vượt ngưỡng 12"*. Đối chiếu chính
+    # `dialog/chains.json` của bộ hồ sơ: Z-01 "Dự án mới từ ý tưởng" 14 nút, Z-05 "Thêm tính
+    # năng" 16, Z-07 "Dự án mới từ zip" 23. **BA trên bốn mẫu chuỗi lớn của sản phẩm không bao
+    # giờ chạy được** — tác tử chọn đúng mẫu, rồi phép kiểm bác bỏ chính mẫu của mình.
+    #
+    # `chain.TRAN_NUT` = 24 là ngưỡng của chính module chuỗi, và 24 ≥ 23 phủ được mọi mẫu.
+    tran = int(nguong.get("chain_max_nodes") or chain_mod.TRAN_NUT)
     thieu_du_kien = chain_mod.kiem(
         chuoi, get_registry(),
-        tran_nut=int(nguong.get("plan_max_steps") or chain_mod.TRAN_NUT),
+        tran_nut=tran,
         chi_phi_uoc=_uoc_chi_phi(chuoi),
         ngan_sach=float(nguong.get("plan_max_cost_usd") or 0) or None)
     can_nguoi = {x["id"]: x["thieu"] for x in thieu_du_kien}
@@ -681,6 +697,17 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                 break           # dừng cả chuỗi: các nút sau phụ thuộc chỗ này
         else:
             hong.append({"id": nut.id, "cap": nut.cap, "error": run.error})
+            # [DEV-178] Nút HỎNG kèm lời khuyên dùng được cũng là một việc chờ người — đưa nó
+            # đi cùng chỗ với nút bị chặn vì thiếu tham số.
+            #
+            # [DEV-160] đã đưa câu hỏi của nút ASK về tab Làm rõ yêu cầu, nhưng chỉ nhánh ấy.
+            # Đo 22/09/2026 trên bài CNC: chuỗi "Vẽ lược đồ" chạy `view.artifacts(module)` →
+            # 0 mục → `diagram.architecture` hỏng với *"Chưa có module nào — chạy
+            # `arch.decompose` trước"*. Thông điệp ấy ĐÚNG và DÙNG ĐƯỢC, nhưng nó chỉ sống ở
+            # một dòng trong vùng trao đổi: store có 4 điểm cần làm rõ và không cái nào là nó.
+            # Người dùng đóng cửa sổ trò chuyện, mở tab, và thứ đang chặn họ không có ở đó —
+            # đúng cái trôi mà [DEV-160] viết ra để chặn.
+            _ghi_loi_chan_chuoi(root, run_id, nut, run.error or {})
             if len(hong) >= int(nguong.get("fail_retries") or 2):
                 # POL-17 §6: thất bại lặp → leo thang, không thử mãi.
                 if router is not None:
@@ -1048,6 +1075,40 @@ def tom_tat_ket_qua(ra: dict[str, Any]) -> dict[str, Any]:
         else:
             tom[k] = v
     return tom
+
+
+def _ghi_loi_chan_chuoi(root: Path | None, run_id: str, nut: Any,
+                        loi: dict[str, Any]) -> None:
+    """Một nút HỎNG kèm lời khuyên dùng được → một dòng ở tab S9. [DEV-178]
+
+    Cùng lý do với `_ghi_cau_hoi_chuoi` ngay dưới, chỉ khác nhánh: [DEV-160] đưa câu hỏi của
+    nút ASK về tab Làm rõ yêu cầu, nhưng nút HỎNG thì không. Đo 22/09/2026 trên bài CNC: chuỗi
+    "Vẽ lược đồ" hỏng ở `diagram.architecture` với *"Chưa có module nào — chạy `arch.decompose`
+    trước"* — một câu đúng, dùng được ngay, và chỉ sống trong vùng trao đổi. Store có 4 điểm
+    cần làm rõ, không cái nào là nó.
+
+    **Chỉ ghi lỗi CÓ ĐƯỜNG RA.** E5000/E5002 (mô hình trả sai schema) hay E7001 là chuyện của
+    máy, không phải việc người làm được; đưa chúng lên tab "Làm rõ yêu cầu" là biến chỗ ấy
+    thành sọt rác lỗi, và một tab đầy thứ không hành động được là một tab người ta thôi mở.
+    Bảng dưới là các mã mà thông điệp của chúng luôn kèm việc cụ thể cho người hoặc cho tác tử.
+    """
+    ma = str(loi.get("eide_code") or "")
+    if root is None or ma not in ("E2000", "E4001", "E6003", "E3000"):
+        return
+    tin = str(loi.get("message") or "").strip()
+    if not tin:
+        return
+    # `candidates` của E2000 là danh sách năng lực chạy được tiếp — nói ra thì người dùng khỏi
+    # phải đọc ngược thông điệp để đoán.
+    ung = [str(x) for x in (loi.get("candidates") or []) if x]
+    from eide.caps.req import ghi_clarification
+    ghi_clarification(root, [{
+        "kind": "gap",
+        "text": f"Bước `{nut.cap}` dừng: {tin}",
+        "suggestion": ("Chạy: " + ", ".join(f"`{x}`" for x in ung[:4]) + ". "
+                       if ung else "")
+                      + f"Rồi bảo tác tử chạy lại lượt {run_id[:10]}.",
+    }], cap=nut.cap)
 
 
 def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any, thieu: list[str]) -> None:
