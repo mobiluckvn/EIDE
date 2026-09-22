@@ -210,3 +210,147 @@ def test_van_trong_ngan_sach(du_an):
         _clar(root, f"CL-{i}", f"{HOI} {i}", f"{TRA} {i}", at=f"2026-09-22T10:0{i}:00+00:00")
     b = compose({"role": "planner", "task_ref": "F-01"}, ctx)["bundle"]
     assert b["total_tokens"] <= b["budget"]["total"]
+
+
+# ---------- (3) [DEV-175] C4 — fact phần cứng, Graph-RAG hai bước (CXD-10 §4.5)
+
+
+def _fact(root, fid, subject, vi_tu="offset", gt=1, tier="gold", status="normalized",
+          src="src_a", unit=None):
+    with store.open_store(store.store_path(root)) as c:
+        c.execute("INSERT OR IGNORE INTO source (id,uri,sha256,kind,tier,license)"
+                  " VALUES (?, 'file:///x', ?, 'atdf', 'gold', 'vendor-doc')",
+                  (src, src + "hash"))
+        c.execute("INSERT INTO fact (id,subject,predicate,value,unit,source_id,method,tier,"
+                  "confidence,status,layer) VALUES (?,?,?,?,?,?, 'parser', ?, 1.0, ?, 'A')",
+                  (fid, subject, vi_tu, json.dumps(gt), unit, src, tier, status))
+        c.commit()
+
+
+CHIP = "chip:microchip.atmega328p"
+PORTB = f"{CHIP}/periph:PORT/reg:PORTB"
+DDRB = f"{CHIP}/periph:PORT/reg:DDRB"
+ADC = f"{CHIP}/periph:ADC/reg:ADCSRA"
+
+
+def test_C4_co_mat_va_mang_dung_thanh_ghi_tac_vu_cham(du_an):
+    """Phép đo trung tâm của [DEV-175]: trước bản vá, C4 được cấp 2500 token và dùng 0 — tác tử
+    lập kế hoạch cho con chip mà không đọc một dòng nào của hộ chiếu nó vừa trích ra."""
+    _r, ctx, root = du_an
+    _feature(root)                                  # touches: PB5, PORTB, DDRB
+    _fact(root, "f_portb", PORTB, gt=37)
+    _fact(root, "f_adc", ADC, gt=122)
+    kh = _khoi(compose({"role": "planner", "task_ref": "F-01"}, ctx)["bundle"], "C4")
+    assert kh, "C4 vẫn rỗng"
+    assert "f_portb" in kh[0]["text"]
+    assert kh[0]["sources"] == ["fact:f_portb"], "ADC không dính tới việc bật một chân"
+
+
+def test_hai_buoc_DI_DUOC_hai_buoc(du_an):
+    """Mã giả CXD-10 §4.5 viết `frontier = nxt - set(scored) | frontier`, mà `scored` vừa cập
+    nhật ngay trong vòng lặp nên phép trừ luôn rỗng: biên đứng yên ở hạt giống và "hai bước"
+    đi được đúng MỘT bước. Đây là phép đo giữ bản sửa."""
+    from eide.caps.kg import _do_thi_tu_store
+    from eide.caps.memory import _cham_diem
+    _r, _ctx, root = du_an
+    _fact(root, "f_portb", PORTB, gt=37)
+    _fact(root, "f_portc", f"{CHIP}/periph:PORT/reg:PORTC", gt=40)
+    g = _do_thi_tu_store(root)
+    mot = _cham_diem(g, [PORTB], sau=1)
+    hai = _cham_diem(g, [PORTB], sau=2)
+    assert len(hai) > len(mot), (len(mot), len(hai))
+    # PORTC là anh em của PORTB qua `periph:PORT` — đúng hai bước.
+    assert f"{CHIP}/periph:PORT/reg:PORTC" in hai
+
+
+def test_chip_chi_la_DUONG_LUI(du_an):
+    """`if not seeds:` của §4.5. Cho nút chip vào hạt giống LUÔN LUÔN thì hai bước chạm tới mọi
+    thanh ghi, và C4 đầy 2500 token bằng ACSR/FUSE/WDTCSR — đo được trên bài nhấp nháy LED."""
+    from eide.caps.kg import _do_thi_tu_store
+    from eide.caps.memory import _doc_feature_an_toan, _nut_hat_giong
+    _r, _ctx, root = du_an
+    _fact(root, "f_portb", PORTB, gt=37)
+    _fact(root, "f_adc", ADC, gt=122)
+    g = _do_thi_tu_store(root)
+
+    _feature(root)                                    # CÓ touches
+    assert _nut_hat_giong(g, root, _doc_feature_an_toan(root, "F-01")) == [PORTB, DDRB] or \
+           set(_nut_hat_giong(g, root, _doc_feature_an_toan(root, "F-01"))) == {PORTB}
+    _feature(root, touches=[])                        # KHÔNG touches → lùi về chip
+    hat = _nut_hat_giong(g, root, _doc_feature_an_toan(root, "F-01"))
+    assert hat == [] or hat == [CHIP], hat
+
+
+def test_khop_theo_DOAN_IRI_khong_theo_chuoi_con(du_an):
+    """`PB5` là chuỗi con của `PB50`, mà hai chân ấy không liên quan gì nhau."""
+    from eide.caps.kg import _do_thi_tu_store
+    from eide.caps.memory import _nut_hat_giong
+    _r, _ctx, root = du_an
+    _fact(root, "f_a", f"{CHIP}/periph:PORT/reg:PORTB/field:PB50", gt=1)
+    g = _do_thi_tu_store(root)
+    hat = _nut_hat_giong(g, root, {"touches": ["PB5"]})
+    assert all("PB50" not in h for h in hat), hat
+
+
+def test_fact_mau_thuan_LUON_co_mat_va_co_nhan(du_an):
+    """§4.5: "Fact mâu thuẫn luôn có mặt kèm nhãn CONFLICT để mô hình không tự chọn (phải nói
+    'không xác định')". Cắt bớt một vế vì hết ngân sách là để nó tự chọn — và nó sẽ chọn, im
+    lặng, không nói rằng có hai."""
+    _r, ctx, root = du_an
+    _feature(root)
+    for i in range(30):
+        _fact(root, f"f_pad{i}", PORTB, vi_tu="description", gt="x" * 60)
+    _fact(root, "f_xung_dot", DDRB, gt=99, status="conflict")
+    kh = _khoi(compose({"role": "planner", "task_ref": "F-01"}, ctx)["bundle"], "C4")
+    t = kh[0]["text"]
+    assert "f_xung_dot" in t and "⚠CONFLICT" in t
+    # Đứng trên mọi fact thường.
+    assert t.index("f_xung_dot") < t.index("f_pad0")
+
+
+def test_cat_theo_ngan_sach_va_NOI_RA(du_an):
+    """Một bảng bị xén âm thầm đọc y hệt một bảng đầy đủ."""
+    from eide.caps.memory import _c4_fact_phan_cung
+    _r, _ctx, root = du_an
+    _feature(root)
+    for i in range(60):
+        _fact(root, f"f_{i:03d}", PORTB, gt=i)
+    van, nguon, bo = _c4_fact_phan_cung(root, "F-01", 200)
+    assert bo > 0 and f"còn {bo} fact nữa" in van
+    assert len(nguon) + bo == 60
+
+
+def test_fact_da_bi_thay_KHONG_vao_ngu_canh(du_an):
+    """Đưa bản đã bị thay vào là đưa đúng con số vừa bị bác bỏ."""
+    from eide.caps.memory import _c4_fact_phan_cung
+    _r, _ctx, root = du_an
+    _feature(root)
+    _fact(root, "f_cu", PORTB, gt=1, status="superseded")
+    _fact(root, "f_moi", PORTB, gt=37)
+    van, nguon, _bo = _c4_fact_phan_cung(root, "F-01", 2500)
+    assert "f_moi" in van and "f_cu" not in van and nguon == ["fact:f_moi"]
+
+
+def test_vi_tu_quan_trong_len_truoc(du_an):
+    """PRED_W của §4.5: `offset` = 1,0 còn `description` = 0,3 ("chỉ khi còn ngân sách")."""
+    from eide.caps.memory import _c4_fact_phan_cung
+    _r, _ctx, root = du_an
+    _feature(root)
+    _fact(root, "f_mota", PORTB, vi_tu="description", gt="cổng B")
+    _fact(root, "f_offset", PORTB, vi_tu="offset", gt=37)
+    van, _n, _b = _c4_fact_phan_cung(root, "F-01", 2500)
+    assert van.index("f_offset") < van.index("f_mota")
+
+
+def test_vai_tro_khong_co_ngan_sach_C4_thi_khong_co_lop(du_an):
+    """`intent` khai `C4: null` trong CXD-10 §3."""
+    _r, ctx, root = du_an
+    _feature(root)
+    _fact(root, "f_portb", PORTB, gt=37)
+    assert _khoi(compose({"role": "intent", "task_ref": "F-01"}, ctx)["bundle"], "C4") == []
+
+
+def test_khong_co_fact_nao_thi_khong_them_lop_rong(du_an):
+    _r, ctx, root = du_an
+    _feature(root)
+    assert _khoi(compose({"role": "planner", "task_ref": "F-01"}, ctx)["bundle"], "C4") == []

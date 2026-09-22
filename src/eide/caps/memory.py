@@ -218,6 +218,206 @@ def _c0_nang_luc(text: str, role: str, ctx: Context) -> tuple[str, list[str]]:
     return "\n".join(dong), nguon
 
 
+# CXD-10 §4.5 — trọng số cạnh và vị từ, viết đúng con số tài liệu nêu.
+#
+# Tên cạnh LỆCH giữa tài liệu và đồ thị đã hiện thực, và lệch có lý do: §4.5 liệt kê
+# `HAS/CONNECTS/USES/APPLIES_TO/CONFLICTS_WITH`, còn `eide_core.kg.CANH` dựng
+# `HAS/ABOUT/CITES/USES/SUPERSEDES/CONFLICTS_WITH/EVIDENCED_BY` (KAD-07 §6.3). Ánh xạ ở đây
+# chứ không đổi đồ thị: đồ thị là thứ `kg.*` và `view.*` đã dùng, còn bảng này chỉ là trọng số
+# của một phép chọn. Xem [DEV-175].
+TRONG_SO_CANH = {
+    "HAS": 1.0,          # chuỗi tổ tiên IRI: chip → periph → reg → field
+    "ABOUT": 1.0,        # fact → subject. Cạnh THIẾT YẾU: không có nó thì không tới được fact
+    "CONFLICTS_WITH": 1.0,   # luôn đưa mâu thuẫn (§4.5)
+    "USES": 0.8,
+    "CITES": 0.8,
+    "EVIDENCED_BY": 0.6,     # vai trò của `APPLIES_TO` trong tài liệu
+    # `SUPERSEDES` cố ý KHÔNG có mặt: đi theo nó là đi ngược về bản fact đã bị thay, tức đưa
+    # vào ngữ cảnh đúng con số vừa bị bác bỏ.
+}
+
+TRONG_SO_VI_TU = {
+    "base_address": 1.0, "offset": 1.0, "bit_range": 1.0, "reset_value": 1.0,
+    "address": 1.0, "net": 1.0,
+    "enum": 0.9, "pin_function": 0.9, "irq": 0.9,
+    "voltage_range": 0.8, "timing": 0.8,
+    "description": 0.3,      # §4.5: "chỉ khi còn ngân sách"
+}
+VI_TU_MAC_DINH = 0.5
+SAU_GRAPH_RAG = 2
+
+
+def _nut_hat_giong(g: Any, root: Path, ft: dict[str, Any] | None) -> list[str]:
+    """`seeds = subjects_in(task)` — CXD-10 §4.5. [DEV-175]
+
+    Hai nguồn, và cần cả hai:
+
+    1. `touches` của tính năng — `["PB5", "PORTB", "DDRB"]`. Đây là TÊN TRẦN, không phải IRI,
+       nên phải khớp về nút: `PORTB` nằm trong `chip:microchip.atmega328p/periph:PORT/reg:PORTB`.
+       Khớp theo ĐOẠN IRI chứ không theo chuỗi con — `PB5` là chuỗi con của `PB50` mà hai chân
+       ấy không liên quan gì nhau.
+    2. Chip đã ghim trong `constraints.yaml`. Không có nó thì một tính năng chưa khai `touches`
+       cho ra tập hạt giống rỗng, và C4 im lặng trống — đúng trạng thái trước bản vá này.
+    """
+    from eide.caps.sim import iri_chip_trong_store
+
+    hat: list[str] = []
+    tu = {str(t).strip().lower() for t in ((ft or {}).get("touches") or []) if str(t).strip()}
+    if tu:
+        for nid in g.nut:
+            doan = [d.split(":", 1)[-1].lower() for d in str(nid).split("/")]
+            if any(d in tu for d in doan):
+                hat.append(nid)
+    if hat:
+        return list(dict.fromkeys(hat))
+
+    # ĐƯỜNG LUI, và chỉ đường lui — `if not seeds:` của §4.5.
+    #
+    # Bản đầu của tôi cho nút chip vào hạt giống LUÔN LUÔN. Đo trên bài nhấp nháy LED: từ
+    # `chip:microchip.atmega328p` thì hai bước chạm tới MỌI thanh ghi, nên C4 đầy 2500 token
+    # bằng ACSR, FUSE, WDTCSR, EEAR — không cái nào liên quan tới việc bật một chân. Tập ấy
+    # trông "nhiều tri thức hơn" mà thật ra là pha loãng: PORTB và DDRB chỉ còn đứng đầu nhờ
+    # điểm thưởng hạt giống, và 21 fact bị trần cắt đi để nhường chỗ cho bộ định thời chó giữ.
+    #
+    # Rộng hơn vẫn tốt hơn RỖNG khi tác vụ chưa khai `touches` — nhưng chỉ khi ấy.
+    chip = iri_chip_trong_store(root, _chip_da_ghim(root) or "")
+    return [chip] if chip and chip != "chip:" and chip in g.nut else []
+
+
+def _chip_da_ghim(root: Path) -> str | None:
+    f = root / EIDE_DIR / "constraints.yaml"
+    if not f.exists():
+        return None
+    t = (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).get("target") or {}
+    return ((t.get("pins") or {}).get("chip") or t.get("chip") or "").split("@", 1)[0] or None
+
+
+def _cham_diem(g: Any, hat: list[str], sau: int = SAU_GRAPH_RAG) -> dict[str, float]:
+    """Graph-RAG `sau` bước, `w = TRONG_SO_CANH[loại] / bước`, giữ điểm CAO NHẤT — §4.5.
+
+    Giữ max chứ không cộng dồn: một nút tới được bằng nhiều đường không vì thế mà quan trọng
+    hơn — nó chỉ được nối nhiều hơn. Cộng dồn sẽ đẩy những nút trung tâm của đồ thị (chip, bus)
+    lên đầu mọi truy vấn, bất kể tác vụ đang hỏi gì.
+    """
+    diem: dict[str, float] = {}
+    bien = set(hat)
+    da_mo = set(hat)          # nút ĐÃ nở — khác hẳn `diem`, và đó là cả vấn đề bên dưới
+    for buoc in range(1, sau + 1):
+        moi: set[str] = set()
+        for n in bien:
+            for loai, b, _huong in g.ke.get(n, []):
+                w = TRONG_SO_CANH.get(loai)
+                if w is None:
+                    continue
+                diem[b] = max(diem.get(b, 0.0), w / buoc)
+                moi.add(b)
+        # [DEV-175] Trừ theo `da_mo`, KHÔNG theo `diem`.
+        #
+        # Mã giả của CXD-10 §4.5 viết `frontier = nxt - set(scored) | frontier`, nhưng `scored`
+        # vừa được cập nhật ngay trong vòng lặp nên `nxt ⊆ scored` và phép trừ luôn cho tập
+        # rỗng: biên đứng yên ở tập hạt giống, và bước 2 chỉ nở lại đúng hạt giống ấy với trọng
+        # số w/2. Tức "Graph-RAG hai bước" đi được đúng MỘT bước.
+        #
+        # Đo trên dự án `nhap-nhay-led-tren-atmega328p`: sửa xong, số nút chấm điểm từ 12 lên
+        # 300 — và đó mới là tập mà thứ tự cắt của §3 ("C4 fact xa 2 bước" cắt trước "C4 fact 1
+        # bước") giả định là có tồn tại.
+        bien = moi - da_mo
+        da_mo |= moi
+        if not bien:
+            break
+    for n in hat:                       # hạt giống luôn đứng đầu
+        diem[n] = 1.0
+    return diem
+
+
+def _c4_fact_phan_cung(root: Path, task_ref: str, tran_token: int) -> tuple[str, list[str], int]:
+    """C4 — bảng FACT PHẦN CỨNG chọn bằng Graph-RAG hai bước. CXD-10 §2, §4.5. [DEV-175]
+
+    ## Vì sao lớp này phải có
+
+    Đo 22/09/2026 trên dự án `nhap-nhay-led-tren-atmega328p` sau khi `extract.atdf` nạp **287
+    fact vàng**: gói ngữ cảnh của vai trò `planner` vẫn có đúng `['C1','C0','C2']`. C4 được cấp
+    **2500 token và dùng 0**. Tác tử lập kế hoạch cho con chip mà không được đọc một dòng nào
+    của hộ chiếu nó vừa tự trích ra — nó tự nói ra điều đó trong `missing`: *"chưa được cung
+    cấp trong tài liệu phần cứng (C4/C2)"*.
+
+    ## Vì sao Graph-RAG chứ không đổ cả hộ chiếu
+
+    287 fact ≈ 7000 token, gần gấp ba ngân sách C4 của planner. Đổ thẳng thì `vua_ngan_sach`
+    cắt C4 (cut_priority 4) và ta quay lại đúng chỗ cũ, chỉ tốn thêm tiền. §4.5 chọn theo
+    KHOẢNG CÁCH tới thứ tác vụ đang chạm: `touches: ["PB5","PORTB","DDRB"]` dẫn thẳng tới
+    `reg:PORTB`, `reg:DDRB` và các bit của chúng, bỏ qua 200 thanh ghi của ADC/TWI/SPI.
+
+    ## Fact mâu thuẫn LUÔN có mặt
+
+    §4.5 nói rõ, và lý do quan trọng hơn quy tắc: mô hình thấy hai giá trị khác nhau cho cùng
+    một thứ thì phải nói "không xác định". Cắt bớt một vế vì hết ngân sách là để nó tự chọn —
+    và nó sẽ chọn, im lặng, không nói rằng có hai.
+    """
+    from eide.caps.kg import _do_thi_tu_store
+
+    ft = _doc_feature_an_toan(root, task_ref)
+    g = _do_thi_tu_store(root)
+    if g is None:
+        return "", [], 0
+    hat = _nut_hat_giong(g, root, ft)
+    if not hat:
+        return "", [], 0
+
+    diem = _cham_diem(g, hat)
+    db = store.store_path(root)
+    with store.open_store(db) as c:
+        rows = c.execute(
+            "SELECT id, subject, predicate, value, unit, tier, status, source_id FROM fact"
+            " WHERE status NOT IN ('superseded','rejected')"
+            "   AND (tier = 'gold' OR status IN ('reviewed','verified','conflict'))").fetchall()
+
+    xep: list[tuple[float, tuple]] = []
+    for r in rows:
+        fid, subject, vi_tu, *_ = r
+        d = max(diem.get(fid, 0.0), diem.get(subject, 0.0))
+        if d <= 0:
+            continue
+        w = TRONG_SO_VI_TU.get(vi_tu, VI_TU_MAC_DINH) * (1.0 if r[5] == "gold" else 0.8)
+        xep.append((d * w, r))
+    if not xep:
+        return "", [], 0
+    # Mâu thuẫn lên ĐẦU và không bao giờ bị trần cắt mất — `always_include` của §4.5.
+    xep.sort(key=lambda x: (x[1][6] != "conflict", -x[0], x[1][0]))
+
+    dau = ["## Fact phần cứng (hiện hành; TRÍCH DẪN id khi dùng con số)",
+           "| id | subject | predicate | value | unit | tier | src |",
+           "|---|---|---|---|---|---|---|"]
+    dong, nguon, bo = [], [], 0
+    for _d, (fid, subject, vi_tu, gt, don_vi, tier, tt, src) in xep:
+        try:
+            v = json.loads(gt)
+        except (ValueError, TypeError):
+            v = gt
+        nhan = " ⚠CONFLICT" if tt == "conflict" else ""
+        d = (f"| {fid} | {subject} | {vi_tu} | {v} | {don_vi or ''} | {tier}{nhan} | "
+             f"{src or ''} |")
+        if uoc_token("\n".join([*dau, *dong, d])) > tran_token and dong:
+            bo = len(xep) - len(dong)
+            break
+        dong.append(d)
+        nguon.append(f"fact:{fid}")
+    if bo:
+        dong.append(f"| … | (còn {bo} fact nữa, cắt theo ngân sách C4) | | | | | |")
+    return "\n".join([*dau, *dong]), nguon, bo
+
+
+def _doc_feature_an_toan(root: Path, task_ref: str) -> dict[str, Any] | None:
+    from eide.caps.code import _doc_feature
+
+    if not task_ref or not (root / EIDE_DIR / "FEATURES.json").exists():
+        return None
+    try:
+        return _doc_feature(root, str(task_ref))
+    except (json.JSONDecodeError, AttributeError, TypeError):
+        return None
+
+
 def _c5_tinh_nang(root: Path, task_ref: str) -> tuple[str, list[str]]:
     """C5 — ĐỊNH NGHĨA của chính tính năng đang lập kế hoạch. [DEV-174a]
 
@@ -495,6 +695,15 @@ def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             b.add("C2", van, ng)
             if bo:
                 b.compressions.append(f"clarification:drop_{bo}")
+
+    # [DEV-175] C4 — fact phần cứng, chọn bằng Graph-RAG hai bước (CXD-10 §4.5). Vai trò nào
+    # có ngân sách C4 thì có lớp này; `intent` khai `null` nên không.
+    if co_du_an and b.budget.get("C4"):
+        van, ng, bo = _c4_fact_phan_cung(root, params.get("task_ref", ""),
+                                         int(b.budget["C4"]))
+        b.add("C4", van, ng)
+        if bo:
+            b.compressions.append(f"fact:drop_{bo}")
 
     # C5 — **thay đổi của NGƯỜI từ lượt trước** (UXC-31 §7.5). Đặt ở C5 theo CXD-10 §3: lớp ấy
     # là "tác vụ và mã liên quan", và không có mã nào liên quan hơn mã người vừa sửa bằng tay.

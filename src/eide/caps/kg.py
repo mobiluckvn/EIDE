@@ -41,6 +41,32 @@ def _store(ctx: Context) -> Path:
     return db
 
 
+def _do_thi_tu_store(root: Path) -> dothi.DoThi | None:
+    """Đồ thị của một dự án, tra bằng ĐƯỜNG DẪN thay vì `Context` — [DEV-175].
+
+    `memory.compose` cần đồ thị để chọn fact cho lớp C4 (CXD-10 §4.5), nhưng nó không phải một
+    năng lực `kg.*` và không nên dựng một `Context` giả chỉ để đi qua `_store`. Dùng CHUNG
+    `_CACHE` với `_do_thi`: hai bộ nhớ đệm cho cùng một đồ thị nghĩa là dựng lại hai lần sau
+    mỗi lần ghi store, và ở dự án có vài nghìn fact đó là chi phí thấy được.
+
+    Trả `None` thay vì ném khi chưa có store: thiếu một lớp ngữ cảnh thì lời gọi vẫn chạy được,
+    còn một ngoại lệ ở đây chặn mọi việc.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    with store.open_store(db) as c:
+        digest = store.content_digest(c)
+        khoa = (str(db), digest)
+        if khoa in _CACHE:
+            return _CACHE[khoa]
+        g = dothi.dung(c, digest)
+    for k in [k for k in _CACHE if k[0] == str(db)]:
+        del _CACHE[k]
+    _CACHE[khoa] = g
+    return g
+
+
 def _do_thi(ctx: Context, force: bool = False) -> tuple[dothi.DoThi, bool]:
     """Trả (đồ thị, đã dùng cache)."""
     db = _store(ctx)
