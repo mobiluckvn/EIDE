@@ -7,7 +7,7 @@ PY ?= $(shell [ -x .venv-arm/bin/python ] && echo .venv-arm/bin/python || \
               ([ -x .venv-x86/bin/python ] && echo .venv-x86/bin/python || echo python3))
 export PYTHONPATH := src
 
-.PHONY: setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor eide-ui eide-ui-nut eidekit clean
+.PHONY: setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor eide-ui eide-ui-nut eide-noi-dung eidekit clean
 
 setup:            ## cài môi trường phát triển theo kiến trúc máy
 	bash scripts/setup-mac.sh
@@ -41,6 +41,7 @@ check-gen:        ## bản sinh trong docs/spec/ còn khớp nguồn không
 	$(PY) scripts/gen_ui_swift.py --kiem
 	$(PY) scripts/bang_theo_doi_man.py --kiem
 	$(PY) scripts/kiem_checklist.py
+	$(PY) scripts/gen_man_can_hien.py --kiem
 	@command -v node >/dev/null && node scripts/gen_spec_tu_nguon.js --kiem \
 	 || echo "bỏ qua check-gen: không có node (cần để đối chiếu docs/spec với docs/ho-so/nguon)"
 
@@ -114,6 +115,22 @@ eide-ui-nut:      ## chỉ ba bộ dò giao diện — cần phiên đồ hoạ 
 	 apps/eide/.build/debug/EideApp --do-nut "$$duan" && \
 	 apps/eide/.build/debug/EideApp --bam-thu "$$duan"; \
 	 ma=$$?; rm -rf $$goc; exit $$ma
+
+# Bộ dò NỘI DUNG hỏi một câu khác hẳn hai bộ trên: "màn này có hiện thứ nó PHẢI hiện không".
+# Hợp đồng nội dung ở `docs/spec/ui/man_can_hien.json`, sinh từ cột "DỮ LIỆU PHẢI HIỆN" của
+# `docs/EIDE-VUNG-MAN-HINH.xlsx` (chủ sản phẩm duyệt 22/09/2026).
+#
+# HÔM NAY NÓ ĐỎ, và đó là điểm: 28/77 mục đã hiện, 4 màn không mở được. Nó là thước đo khoảng
+# cách còn lại, nên KHÔNG nối vào `eide-ui` (cổng phải xanh để commit được) — chạy riêng bằng
+# `make eide-noi-dung`, và nối vào cổng khi tiến về 77/77.
+#
+# Cần một dự án CÓ DỮ LIỆU THẬT: màn rỗng thì mọi mục đều "thiếu" và con số mất nghĩa.
+eide-noi-dung:    ## đo màn có hiện đủ dữ liệu không — cần DUAN=<đường dẫn dự án>
+	@[ -n "$(DUAN)" ] || { echo "cần DUAN=<đường dẫn dự án có dữ liệu>"; exit 2; }
+	@[ "$$(launchctl managername 2>/dev/null)" = "Aqua" ] || \
+	 { echo "bỏ qua: không có phiên đồ hoạ"; exit 0; }
+	$(PY) scripts/gen_man_can_hien.py
+	apps/eide/.build/debug/EideApp --do-noi-dung "$(DUAN)"
 
 eidekit:          ## chỉ EIDEKit — client JSON-RPC của panel GEditor (WI-021)
 	cd apps/geditor && swift build --target EIDEKit && swift test --filter EIDEKitTests

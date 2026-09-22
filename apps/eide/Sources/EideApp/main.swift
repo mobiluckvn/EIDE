@@ -150,6 +150,13 @@ final class UngDung: NSObject, NSApplicationDelegate {
         }
         // `--bam-thu <dự án>`: BẤM THẬT từng nút rồi so màn hình trước/sau. Một nút có nối
         // nhưng bấm xong không đổi gì là một nút chết theo nghĩa người dùng.
+        // `--do-noi-dung <dự án>`: mở từng màn và hỏi MỘT câu khác hẳn hai bộ dò kia —
+        // "màn này có hiện thứ nó phải hiện không". Xem `EideDoNoiDung`.
+        if let i = args.firstIndex(of: "--do-noi-dung"), i + 1 < args.count {
+            let d = NSString(string: args[i + 1]).expandingTildeInPath
+            Task { @MainActor in await self._doNoiDung(d) }
+            return
+        }
         if let i = args.firstIndex(of: "--bam-thu"), i + 1 < args.count {
             let d = NSString(string: args[i + 1]).expandingTildeInPath
             Task { @MainActor in await self._bamThu(d) }
@@ -234,6 +241,52 @@ final class UngDung: NSObject, NSApplicationDelegate {
         }
         print("\n=== TỔNG: \(tong) nút chết trên \(EideManHinhDS.tatCa.count) màn + 4 vùng")
         exit(tong == 0 ? 0 : 1)
+    }
+
+    /// Mở từng màn rồi so chữ hiển thị với hợp đồng nội dung — `--do-noi-dung <dự án>`.
+    private func _doNoiDung(_ duAn: String) async {
+        let goc = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        guard let hd = EideDoNoiDung.hopDong(goc) else {
+            print("✖ chưa có docs/spec/ui/man_can_hien.json — chạy "
+                  + "`python scripts/gen_man_can_hien.py` trước")
+            exit(2)
+        }
+        await phien.moDuAn(duAn)
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+
+        var thieu = 0, du = 0, khongMan = 0
+        for m in EideManHinhDS.tatCa {
+            guard let can = hd[m.tien] else { continue }
+            // MÀN KHÔNG DỰNG ĐƯỢC là một thất bại, không phải một màn rỗng.
+            //
+            // Hỏi `EidePhien.MAN` chứ KHÔNG hỏi giá trị trả về của `moMan`: hàm ấy chỉ canh
+            // danh sách MENU (`EideManHinhDS`), nên bốn mục có trong menu mà không có lớp màn
+            // vẫn được nó trả `true` — nó mở tab, xoá badge, rồi đặt một vùng làm việc trống.
+            // Đó đúng là chỗ `--do-nut` mù: đếm nút trên vùng trống thì "0 nút chết".
+            guard EidePhien.MAN[m.tien] != nil else {
+                print("\n✖ \(can.ma) \(m.nhan) — KHÔNG CÓ MÀN: có trong menu cột trái, "
+                      + "không có lớp nào trong EidePhien.MAN; bấm vào mở ra vùng trống")
+                khongMan += 1
+                thieu += can.muc.count
+                continue
+            }
+            _ = phien.moMan(m.tien, boiTacTu: false)
+            try? await Task.sleep(nanoseconds: 900_000_000)
+            khung.layoutSubtreeIfNeeded()
+            let van = Self.chuTrongTinh(khung.vungLamViec)
+            let hong = can.muc.filter { !EideDoNoiDung.daHien($0, trong: van) }
+            du += can.muc.count - hong.count
+            thieu += hong.count
+            if !hong.isEmpty {
+                print("\n✖ \(can.ma) \(m.nhan) — thiếu \(hong.count)/\(can.muc.count):")
+                for h in hong {
+                    print("     · \(h.mo_ta)  [chờ: \(h.dau_hieu.joined(separator: " / "))]")
+                }
+            }
+        }
+        print("\n=== NỘI DUNG: \(du) mục đã hiện, \(thieu) còn thiếu"
+              + (khongMan > 0 ? " · \(khongMan) màn KHÔNG MỞ ĐƯỢC" : ""))
+        exit(thieu == 0 ? 0 : 1)
     }
 
     /// Nút KHÔNG bấm thử: hạ cả phiên, hoặc đổi thứ khó dựng lại.

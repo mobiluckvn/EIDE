@@ -1,0 +1,731 @@
+{
+ "FlowMap": {
+  "ma": "S25",
+  "ten": "FlowMap (Hành trình & cổng)",
+  "muc": [
+   {
+    "mo_ta": "Bản đồ P0–P7, tô màu bước đã qua / đang làm / chưa tới",
+    "dau_hieu": [
+     "P0",
+     "P7"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Mỗi bước: cổng nào canh, quyết định gần nhất của cổng ấy + lý do",
+    "dau_hieu": [
+     "Cổng"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Bước đang bị chặn hiện nổi bật kèm CÁCH GỠ",
+    "dau_hieu": [
+     "CÁCH GỠ",
+     "đang chặn"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Main": {
+  "ma": "S2",
+  "ten": "Main (Tổng quan)",
+  "muc": [
+   {
+    "mo_ta": "Tính năng: n passing / n tổng, cái đang làm dở",
+    "dau_hieu": [
+     "passing"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Đang chờ tôi: số mục + 3 cái gần nhất, bấm được sang đúng màn",
+    "dau_hieu": [
+     "Đang chờ",
+     "chờ tôi"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Hoàn tác được: số mục + hạn sớm nhất",
+    "dau_hieu": [
+     "Hoàn tác"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Chip/board đã ghim + ISA + trạng thái hộ chiếu",
+    "dau_hieu": [
+     "Chip",
+     "ISA"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Chi phí mô hình hôm nay / hạn ngày",
+    "dau_hieu": [
+     "Chi phí",
+     "USD"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "3 việc tác tử vừa làm xong (có giờ)",
+    "dau_hieu": [
+     "vừa làm xong",
+     "Vừa xong"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "NhatKy": {
+  "ma": "S8",
+  "ten": "NhatKy (Nhật ký hoạt động)",
+  "muc": [
+   {
+    "mo_ta": "Thời điểm · loại · năng lực · kết quả · chi phí",
+    "dau_hieu": [
+     "Năng lực",
+     "Kết quả"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Lọc: chỉ việc của tôi / chỉ việc tác tử tự làm / chỉ lỗi / chỉ cổng",
+    "dau_hieu": [
+     "Lọc",
+     "Chỉ lỗi"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Mỗi dòng nói bằng tiếng Việt việc gì đã xảy ra, không dán tên sự kiện",
+    "dau_hieu": [
+     "Việc"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Board": {
+  "ma": "S6",
+  "ten": "Board (Hộ chiếu mạch)",
+  "muc": [
+   {
+    "mo_ta": "Bảng net/pin, nguồn (netlist/BOM/ảnh sơ đồ)",
+    "dau_hieu": [
+     "Net",
+     "Pin"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "XUNG ĐỘT chân hiện trên cùng, kèm đề xuất sửa",
+    "dau_hieu": [
+     "Xung đột"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Board đã đánh dấu 'lab' hay chưa (quyết định R3)",
+    "dau_hieu": [
+     "lab"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Graph": {
+  "ma": "S7",
+  "ten": "Graph → RagAsk (Bản đồ tri thức & hỏi đáp)",
+  "muc": [
+   {
+    "mo_ta": "Ô hỏi + câu trả lời kèm fact id và nguồn",
+    "dau_hieu": [
+     "Hỏi"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Bản đồ lân cận của thứ đang hỏi, tô màu theo tầng/trạng thái",
+    "dau_hieu": [
+     "lân cận"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Đường truy nguồn: fact → tài liệu → trang",
+    "dau_hieu": [
+     "truy nguồn",
+     "trang"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Ingest": {
+  "ma": "S4",
+  "ten": "Ingest (Nhập tài liệu)",
+  "muc": [
+   {
+    "mo_ta": "Danh mục NGUỒN: tên · loại · tầng tin cậy · số fact rút được · ngày",
+    "dau_hieu": [
+     "NGUỒN",
+     "Tầng"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Lượt nhập gần nhất: tiến độ, cái nào hỏng và vì sao",
+    "dau_hieu": [
+     "Lượt nhập"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Tài liệu tác tử TỰ tải về (nói rõ từ đâu, giấy phép gì)",
+    "dau_hieu": [
+     "tự tải",
+     "Giấy phép"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Passport": {
+  "ma": "S5",
+  "ten": "Passport (Hộ chiếu chip)",
+  "muc": [
+   {
+    "mo_ta": "Bộ nhớ (FLASH/RAM/EEPROM), ngoại vi, chân, thanh ghi",
+    "dau_hieu": [
+     "FLASH",
+     "RAM"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Mỗi con số kèm: tầng (vàng/bạc/đồng), trạng thái duyệt, NGUỒN + số trang",
+    "dau_hieu": [
+     "Nguồn",
+     "Tầng"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Số fact chưa duyệt — bấm được sang duyệt",
+    "dau_hieu": [
+     "chưa duyệt"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Phiên bản hộ chiếu đã ghim cho dự án",
+    "dau_hieu": [
+     "@",
+     "đã ghim"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "XungDot": {
+  "ma": "S9",
+  "ten": "XungDot (Xung đột tri thức)",
+  "muc": [
+   {
+    "mo_ta": "Hai bên ĐẶT CÙNG HÀNG: giá trị, nguồn, tầng, độ tin, ngày",
+    "dau_hieu": [
+     "Nguồn",
+     "Tầng"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Vì sao máy cho là mâu thuẫn (suy ra hay được khai)",
+    "dau_hieu": [
+     "suy ra",
+     "được khai"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Hệ quả: mã nào đang dùng con số này",
+    "dau_hieu": [
+     "Hệ quả",
+     "đang dùng"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "DiagramView": {
+  "ma": "S12",
+  "ten": "DiagramView (Lược đồ)",
+  "muc": [
+   {
+    "mo_ta": "Hình + mã nguồn của hình cạnh nhau",
+    "dau_hieu": [
+     "Lược đồ"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Cờ LỆCH khi mã đổi mà hình chưa sinh lại",
+    "dau_hieu": [
+     "LỆCH"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Lược đồ nào đang dùng trong tài liệu nào",
+    "dau_hieu": [
+     "Dùng trong",
+     "Tài liệu"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Doc": {
+  "ma": "S13",
+  "ten": "Doc (Tài liệu)",
+  "muc": [
+   {
+    "mo_ta": "Danh sách tài liệu: loại · phiên bản · ngày sinh · mục nào STALE",
+    "dau_hieu": [
+     "Tài liệu"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Xem trước nội dung; lỗi style check",
+    "dau_hieu": [
+     "style"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Lược đồ đã nhúng",
+    "dau_hieu": [
+     "Lược đồ"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "LamRo": {
+  "ma": "S10",
+  "ten": "LamRo (Làm rõ yêu cầu)",
+  "muc": [
+   {
+    "mo_ta": "Từng câu hỏi: hỏi gì, vì bước nào, lựa chọn có sẵn (nếu là tập đóng)",
+    "dau_hieu": [
+     "Câu hỏi",
+     "Bước"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Ô trả lời ngay trên dòng; lịch sử trả lời + nút hoàn tác từng lần",
+    "dau_hieu": [
+     "Trả lời"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Câu đã trả lời xếp xuống dưới, không mất",
+    "dau_hieu": [
+     "Đã trả lời"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "PlanDiff": {
+  "ma": "S14",
+  "ten": "PlanDiff (Kế hoạch & mã)",
+  "muc": [
+   {
+    "mo_ta": "Khối CÒN THIẾU đầu bảng, nói rõ thiếu gì và ai trả lời được",
+    "dau_hieu": [
+     "CÒN THIẾU"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Từng bước: mục tiêu · năng lực · fact trích dẫn · điều kiện xong",
+    "dau_hieu": [
+     "Bước",
+     "Năng lực"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Quyết định cổng G1 + nút DUYỆT ngay trên màn",
+    "dau_hieu": [
+     "Cổng",
+     "G1"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Ước lượng chi phí so với hạn ngày",
+    "dau_hieu": [
+     "Ước",
+     "USD"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "ReqArch": {
+  "ma": "S11",
+  "ten": "ReqArch (Yêu cầu & kiến trúc)",
+  "muc": [
+   {
+    "mo_ta": "ReqSet: mã · loại · ưu tiên · nội dung · tiêu chí nghiệm thu",
+    "dau_hieu": [
+     "Mã",
+     "Ưu tiên"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Yêu cầu KHÔNG đo được đánh dấu riêng",
+    "dau_hieu": [
+     "không đo được"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Ma trận truy vết yêu cầu ↔ module ↔ mã ↔ test",
+    "dau_hieu": [
+     "truy vết"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "ADR: quyết định kiến trúc + lý do + phương án đã loại",
+    "dau_hieu": [
+     "ADR"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Code": {
+  "ma": "S15",
+  "ten": "Code (Mã nguồn)",
+  "muc": [
+   {
+    "mo_ta": "Cây tệp + nội dung; hằng số tô màu, hover ra fact + nguồn",
+    "dau_hieu": [
+     "Tệp"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Vi phạm constant-guard hiện đỏ tại dòng",
+    "dau_hieu": [
+     "constant-guard",
+     "Vi phạm"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Tệp nào do tác tử viết, tệp nào tôi sửa tay",
+    "dau_hieu": [
+     "tác tử viết",
+     "người sửa"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "DiffMerge": {
+  "ma": "S26",
+  "ten": "DiffMerge (Diff & cổng merge)",
+  "muc": [
+   {
+    "mo_ta": "Diff hai cột, theo tệp",
+    "dau_hieu": [
+     "Diff"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "G1/G3/G4/G5: đạt hay chặn, LÝ DO chặn, cần gì để qua",
+    "dau_hieu": [
+     "G3",
+     "G5"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Kết quả 4 công cụ kiểm + reviewer khác hãng",
+    "dau_hieu": [
+     "reviewer",
+     "Công cụ"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Bench": {
+  "ma": "S21",
+  "ten": "Bench",
+  "muc": [
+   {
+    "mo_ta": "Bài CF/BF/BC: điểm, thời gian, chi phí",
+    "dau_hieu": [
+     "CF",
+     "BC"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Huy hiệu đạt được; so với lần chạy trước",
+    "dau_hieu": [
+     "Huy hiệu"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Debug": {
+  "ma": "S19",
+  "ten": "Debug (Gỡ lỗi probe)",
+  "muc": [
+   {
+    "mo_ta": "Giả thuyết đang xét + bằng chứng ủng hộ/phản bác",
+    "dau_hieu": [
+     "Giả thuyết"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "EvidencePack: log, số đo, thanh ghi đọc được",
+    "dau_hieu": [
+     "EvidencePack",
+     "Bằng chứng"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Thí nghiệm tiếp theo tác tử đề nghị",
+    "dau_hieu": [
+     "Thí nghiệm"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Discovery": {
+  "ma": "S17",
+  "ten": "Discovery (Dò board)",
+  "muc": [
+   {
+    "mo_ta": "Cổng/probe tìm thấy, ID chip đọc được, tốc độ",
+    "dau_hieu": [
+     "Cổng",
+     "probe"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Đối chiếu với chip đã ghim: KHỚP hay LỆCH",
+    "dau_hieu": [
+     "KHỚP",
+     "LỆCH"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Bus quét được, nguồn điện",
+    "dau_hieu": [
+     "Bus"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "LogAssist": {
+  "ma": "S18",
+  "ten": "LogAssist (Log & serial)",
+  "muc": [
+   {
+    "mo_ta": "Log có lọc theo mẫu lỗi; serial trực tiếp",
+    "dau_hieu": [
+     "Lọc",
+     "serial"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Hỏi tại dòng → trả lời kèm fact/mã liên quan",
+    "dau_hieu": [
+     "Hỏi tại dòng"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Sim": {
+  "ma": "S16",
+  "ten": "Sim (Mô phỏng)",
+  "muc": [
+   {
+    "mo_ta": "Nền tảng mô phỏng: engine, chip, bản đồ bộ nhớ (kèm fact trích dẫn)",
+    "dau_hieu": [
+     "engine",
+     "FLASH"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Kịch bản + kết quả từng lần chạy: đạt/hỏng, số đo, log",
+    "dau_hieu": [
+     "Kịch bản"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Ngoại vi nào mô phỏng được, cái nào KHÔNG (nói thẳng)",
+    "dau_hieu": [
+     "Ngoại vi",
+     "unsupported"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "ChinhSach": {
+  "ma": "S27",
+  "ten": "ChinhSach (Chính sách tự chủ)",
+  "muc": [
+   {
+    "mo_ta": "Mức tự chủ hiện tại + nghĩa của nó bằng tiếng Việt",
+    "dau_hieu": [
+     "Tự chủ",
+     "A2"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Bảng quy tắc ĐANG CÓ HIỆU LỰC, quy tắc nào vừa chặn việc gì",
+    "dau_hieu": [
+     "Quy tắc"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Trạng thái niêm phong chính sách",
+    "dau_hieu": [
+     "Niêm"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Env": {
+  "ma": "S24",
+  "ten": "Env (Môi trường)",
+  "muc": [
+   {
+    "mo_ta": "Từng công cụ: có/không, phiên bản, đường dẫn",
+    "dau_hieu": [
+     "Công cụ",
+     "Phiên bản"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "ISA của dự án cần gì, thiếu cái nào hiện ĐỎ",
+    "dau_hieu": [
+     "ISA"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Lệnh cài CHẠY ĐƯỢC cho đúng máy này",
+    "dau_hieu": [
+     "brew",
+     "Lệnh cài"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Models": {
+  "ma": "S23",
+  "ten": "Models (Mô hình & chi phí)",
+  "muc": [
+   {
+    "mo_ta": "Vai trò → mô hình đang dùng",
+    "dau_hieu": [
+     "Vai trò"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Chi phí hôm nay / hạn ngày, theo vai trò",
+    "dau_hieu": [
+     "Chi phí",
+     "USD"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Lượt gọi gần nhất: vai trò, token, giá",
+    "dau_hieu": [
+     "token"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "Registry": {
+  "ma": "S22",
+  "ten": "Registry",
+  "muc": [
+   {
+    "mo_ta": "Gói có sẵn: hộ chiếu chip, mẫu dự án, skill",
+    "dau_hieu": [
+     "Gói"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Chữ ký + giấy phép từng gói",
+    "dau_hieu": [
+     "Chữ ký",
+     "Giấy phép"
+    ],
+    "do_duoc": true
+   }
+  ]
+ },
+ "ToolForge": {
+  "ma": "S20",
+  "ten": "ToolForge (Công cụ tự tạo)",
+  "muc": [
+   {
+    "mo_ta": "Danh sách công cụ tự tạo: làm gì, đã test chưa, dùng bao nhiêu lần",
+    "dau_hieu": [
+     "Công cụ"
+    ],
+    "do_duoc": true
+   },
+   {
+    "mo_ta": "Mã công cụ + kết quả test",
+    "dau_hieu": [
+     "test"
+    ],
+    "do_duoc": true
+   }
+  ]
+ }
+}

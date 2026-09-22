@@ -112,3 +112,54 @@ final class EideHoanTacNoiGiTests: XCTestCase {
         XCTAssertEqual(EidePhien.doiLaiGi(["superseded": [] as [Any]]), "")
     }
 }
+
+/// `EideDoNoiDung.daHien` — phép đo của cổng kiểm soát nội dung màn. [chặng 0b]
+///
+/// Phép đo cũng phải có phép đo: một bộ dò so chữ sai sẽ hoặc xanh mù (bỏ sót màn rỗng) hoặc
+/// đỏ oan (đỏ vì hoa thường), và cả hai đều dẫn tới cùng một kết cục — người ta tắt nó đi.
+@MainActor
+final class EideDoNoiDungTests: XCTestCase {
+
+    private func muc(_ dau: [String], do_duoc: Bool = true) -> EideDoNoiDung.Muc {
+        EideDoNoiDung.Muc(mo_ta: "x", dau_hieu: dau, do_duoc: do_duoc)
+    }
+
+    func testCHI_CAN_MOT_dau_hieu_khop() {
+        // Một khối dữ liệu diễn đạt được vài cách. Bắt khớp HẾT mọi mẩu chữ biến bộ dò thành
+        // phép so giao diện từng pixel — đỏ mỗi lần đổi chữ, và vì thế bị tắt.
+        let m = muc(["Tầng", "tier"])
+        XCTAssertTrue(EideDoNoiDung.daHien(m, trong: "Bảng nguồn · tier · số fact"))
+        XCTAssertTrue(EideDoNoiDung.daHien(m, trong: "Cột Tầng tin cậy"))
+        XCTAssertFalse(EideDoNoiDung.daHien(m, trong: "màn này chưa có gì"))
+    }
+
+    /// Nhãn có thể viết "Tầng" hay "TẦNG" hay "tang"; một bộ dò đỏ vì chữ hoa là bộ dò dạy
+    /// người ta bỏ qua nó.
+    func testBO_QUA_hoa_thuong_va_dau_tieng_Viet() {
+        XCTAssertTrue(EideDoNoiDung.daHien(muc(["Tầng"]), trong: "CỘT TANG TIN CAY"))
+        XCTAssertTrue(EideDoNoiDung.daHien(muc(["CÒN THIẾU"]), trong: "khối còn thiếu"))
+    }
+
+    /// Mục chưa có dấu hiệu thì KHÔNG kết tội màn — nhưng script sinh đếm và in chúng ra, nên
+    /// chúng không im lặng biến mất khỏi báo cáo.
+    func testMuc_CHUA_do_duoc_thi_khong_ket_toi() {
+        XCTAssertTrue(EideDoNoiDung.daHien(muc([], do_duoc: false), trong: ""))
+    }
+
+    func testDau_hieu_rong_khong_khop_bua() {
+        XCTAssertFalse(EideDoNoiDung.daHien(muc([""]), trong: "bất kỳ chữ gì"))
+    }
+
+    /// Hợp đồng nội dung phải ĐỌC ĐƯỢC từ kho — thiếu tệp thì cổng phải nói ra, không âm thầm
+    /// xanh vì không có gì để so.
+    func testDoc_duoc_hop_dong_tu_kho() throws {
+        let goc = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+        guard let hd = EideDoNoiDung.hopDong(goc) else {
+            throw XCTSkip("chạy ngoài gốc kho — không tìm thấy docs/spec/ui/man_can_hien.json")
+        }
+        XCTAssertGreaterThanOrEqual(hd.count, 25)
+        XCTAssertNotNil(hd["PlanDiff"])
+        XCTAssertTrue(hd.values.allSatisfy { !$0.muc.isEmpty })
+    }
+}
