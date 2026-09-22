@@ -261,15 +261,28 @@ def _nut_hat_giong(g: Any, root: Path, ft: dict[str, Any] | None) -> list[str]:
     """
     from eide.caps.sim import iri_chip_trong_store
 
-    hat: list[str] = []
     tu = {str(t).strip().lower() for t in ((ft or {}).get("touches") or []) if str(t).strip()}
     if tu:
+        # Đếm xem mỗi nút khớp BAO NHIÊU từ trên đường IRI của nó, rồi chỉ giữ hạng cao nhất.
+        #
+        # [DEV-177] Trên AVR tên thanh ghi là DUY NHẤT TOÀN CỤC (`PORTB` chỉ có một), nên khớp
+        # một từ là đủ. Trên ARM thì KHÔNG: `CR1` có trong I2C1, SPI1, ADC, TIM… — hàng chục
+        # ngoại vi. Đo với `touches: ["I2C1", "CR1"]`, phép khớp một-từ gieo cả
+        # `periph:SPI1/reg:CR1`; trên SVD thật của STM32F411 (~50 ngoại vi) nó sẽ gieo ~40 nút
+        # và hai bước làm ngập C4 — đúng kiểu pha loãng vừa sửa cho nút chip ở trên.
+        #
+        # Xếp hạng giải được vì `touches` của một tính năng thường nêu CẢ ngoại vi lẫn thanh
+        # ghi: `I2C1/reg:CR1` khớp hai từ, `SPI1/reg:CR1` khớp một. Khi mọi nút chỉ khớp một từ
+        # — đúng trường hợp AVR — thì hạng cao nhất là 1 và tập giữ nguyên như cũ.
+        diem_khop: dict[str, int] = {}
         for nid in g.nut:
             doan = [d.split(":", 1)[-1].lower() for d in str(nid).split("/")]
-            if any(d in tu for d in doan):
-                hat.append(nid)
-    if hat:
-        return list(dict.fromkeys(hat))
+            n = sum(1 for d in doan if d in tu)
+            if n:
+                diem_khop[nid] = n
+        if diem_khop:
+            cao = max(diem_khop.values())
+            return [nid for nid, n in diem_khop.items() if n == cao]
 
     # ĐƯỜNG LUI, và chỉ đường lui — `if not seeds:` của §4.5.
     #

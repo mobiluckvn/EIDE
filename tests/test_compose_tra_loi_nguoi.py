@@ -354,3 +354,72 @@ def test_khong_co_fact_nao_thi_khong_them_lop_rong(du_an):
     _r, ctx, root = du_an
     _feature(root)
     assert _khoi(compose({"role": "planner", "task_ref": "F-01"}, ctx)["bundle"], "C4") == []
+
+
+# ---------- (4) [DEV-177] Đa dòng chip: ARM/RISC-V không giống AVR
+
+
+I2C1 = "chip:st.stm32f411ce/periph:I2C1"
+SPI1 = "chip:st.stm32f411ce/periph:SPI1"
+
+
+def test_ten_thanh_ghi_TRUNG_NHAU_giua_cac_ngoai_vi(du_an):
+    """Trên AVR tên thanh ghi là DUY NHẤT TOÀN CỤC (`PORTB` chỉ có một), nên khớp một từ là đủ.
+    Trên ARM thì KHÔNG: `CR1` có trong I2C1, SPI1, ADC, TIM… — hàng chục ngoại vi.
+
+    Đo với `touches: ["I2C1","CR1"]`: phép khớp một-từ gieo cả `SPI1/reg:CR1`, và trên SVD thật
+    của STM32F411 (~50 ngoại vi) một chữ `CR1` sẽ gieo ~40 nút — hai bước từ đó làm ngập C4,
+    đúng kiểu pha loãng đã phải sửa cho nút chip.
+    """
+    from eide.caps.kg import _do_thi_tu_store
+    from eide.caps.memory import _nut_hat_giong
+    _r, _ctx, root = du_an
+    _fact(root, "f_i2c", I2C1, vi_tu="base_address", gt=0x40005400)
+    _fact(root, "f_i2c_cr1", f"{I2C1}/reg:CR1", gt=0)
+    _fact(root, "f_spi_cr1", f"{SPI1}/reg:CR1", gt=0)
+    g = _do_thi_tu_store(root)
+    hat = _nut_hat_giong(g, root, {"touches": ["I2C1", "CR1"]})
+    assert all("SPI1" not in h for h in hat), hat
+    assert any(h.endswith("periph:I2C1/reg:CR1") for h in hat), hat
+
+
+def test_AVR_khop_MOT_tu_van_giu_nguyen(du_an):
+    """Khi MỌI nút chỉ khớp một từ — đúng trường hợp AVR — hạng cao nhất là 1 và tập giữ nguyên.
+    Phép xếp hạng không được làm hẹp cái vốn đã đúng."""
+    from eide.caps.kg import _do_thi_tu_store
+    from eide.caps.memory import _nut_hat_giong
+    _r, _ctx, root = du_an
+    _fact(root, "f_portb", PORTB, gt=37)
+    _fact(root, "f_ddrb", DDRB, gt=36)
+    g = _do_thi_tu_store(root)
+    hat = _nut_hat_giong(g, root, {"touches": ["PORTB", "DDRB", "PB5"]})
+    assert {h.rsplit(":", 1)[-1] for h in hat} == {"PORTB", "DDRB"}
+
+
+def test_IRI_SAU_bon_tang_cua_SVD(du_an):
+    """AVR có IRI ba tầng (`chip/periph/reg`); SVD của ARM có BỐN (`…/field:PE`). Thuật toán hai
+    bước phải với tới thanh ghi ở cả hai hình dạng cây."""
+    from eide.caps.memory import _c4_fact_phan_cung
+    _r, _ctx, root = du_an
+    _fact(root, "f_cr1", f"{I2C1}/reg:CR1", gt=0)
+    _fact(root, "f_pe", f"{I2C1}/reg:CR1/field:PE", vi_tu="bit_range", gt="0:0")
+    _fact(root, "f_cr2", f"{I2C1}/reg:CR2", gt=4)
+    _feature(root, touches=["I2C1", "CR1"])
+    van, nguon, _b = _c4_fact_phan_cung(root, "F-01", 2500)
+    assert len(nguon) == 3, van
+    assert "field:PE" in van and "reg:CR2" in van
+
+
+def test_quy_chuan_ten_chip_cho_moi_hang(du_an):
+    """`project.set_target` và C4 phải nói cùng một thứ tiếng về cùng con chip, bất kể hãng:
+    `st.`, `sifive.`, `microchip.` — tiền tố do `extract.*` sinh theo KAD-07 §4."""
+    from eide.caps.sim import iri_chip_trong_store
+    _r, _ctx, root = du_an
+    with store.open_store(store.store_path(root)) as c:
+        for pid in ("st.stm32f411ce@1.2.0", "sifive.fe310@1.0.0"):
+            c.execute("INSERT INTO passport (id,kind,header,created_at)"
+                      " VALUES (?,'chip',?, '2026-09-22T00:00:00+00:00')",
+                      (pid, json.dumps({"name": pid})))
+        c.commit()
+    assert iri_chip_trong_store(root, "stm32f411ce") == "chip:st.stm32f411ce"
+    assert iri_chip_trong_store(root, "fe310") == "chip:sifive.fe310"
