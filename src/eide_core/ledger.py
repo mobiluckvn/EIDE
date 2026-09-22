@@ -47,6 +47,20 @@ def event_kinds() -> set[str]:
     return kinds
 
 
+#: Lượt chạy đang thi hành TRÊN LUỒNG NÀY. Thread-local vì từ [DEV-154] mỗi chuỗi chạy trên
+#: một luồng riêng, và một biến toàn cục sẽ trộn dấu của hai chuỗi song song.
+_NGU_CANH = threading.local()
+
+
+def dat_chuoi_dang_chay(c: dict[str, Any] | None) -> None:
+    """Đặt lượt chạy đang thi hành. Router gọi quanh mỗi lời gọi năng lực."""
+    _NGU_CANH.chuoi = c
+
+
+def chuoi_dang_chay() -> dict[str, Any] | None:
+    return getattr(_NGU_CANH, "chuoi", None)
+
+
 class Ledger:
     def __init__(self, path: Path) -> None:
         self.path = path
@@ -72,6 +86,29 @@ class Ledger:
     def append(self, kind: str, data: dict[str, Any], actor: str = "agent") -> dict[str, Any]:
         if kind not in event_kinds():
             raise EideError("E6001", f"Kiểu sự kiện ledger không có trong API-15: {kind}")
+        # ĐÓNG DẤU lượt chạy đang thi hành lên MỌI bản ghi. [DEV-156]
+        #
+        # Đo 22/09/2026 trên bài CNC: 633 bản ghi từ ba câu người gõ, trong đó 48 bản ghi
+        # (`model.call`, `context.bundle`, `undo.register`, `intent`) KHÔNG mang mã lượt chạy
+        # nào. Nghĩa là không truy được một lời gọi mô hình thuộc về câu lệnh nào — và đó là
+        # câu hỏi đầu tiên người ta hỏi khi nhìn hoá đơn.
+        #
+        # Hệ quả thấy ngay trên giao diện: huy hiệu cột trái đếm từng bản ghi vì không có gì để
+        # gộp theo, nên ba câu gõ ra `Nhật ký 470`, `DỰ ÁN 993`.
+        #
+        # Đóng dấu ở ĐÂY chứ không bắt từng chỗ gọi tự nhớ: `append` là cửa duy nhất mọi bản
+        # ghi đi qua, và "bắt từng nơi tự nhớ" là đúng khuôn lỗi đã lặp ba lần trong kho này
+        # (niêm store, đăng ký hoàn tác, phát sự kiện).
+        c = chuoi_dang_chay()
+        if c and not data.get("chain"):
+            # Đóng dấu KỂ CẢ khi bản ghi đã có `run_id`. Hai trường khác nghĩa nhau:
+            # `run_id` là mã của LỜI GỌI NÀY, `chain.run_id` là mã ĐƠN VỊ VIỆC nó thuộc về.
+            #
+            # Bản trước bỏ qua khi có `run_id`, tưởng rằng thế là đã truy được. Đo trên bài
+            # CNC: `gate.decision` vẫn ra 158 khoá việc khác nhau trong khi cả phiên chỉ có ba
+            # câu người gõ — vì mỗi lời gọi năng lực có `run_id` riêng, và gộp theo nó thì một
+            # chuỗi sáu nút vẫn là sáu việc.
+            data = {**data, "chain": dict(c)}
         self._seq += 1
         rec = {"seq": self._seq, "ts": datetime.now(UTC).isoformat(), "kind": kind, "actor": actor,
                "data": che_bi_mat(data), "prev_hash": self._last_hash}

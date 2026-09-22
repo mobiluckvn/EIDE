@@ -631,6 +631,17 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             if led is not None:
                 led.append("run.blocked", {"run_id": run_id, "node_id": nut.id, "cap": nut.cap,
                                            "reason": "thiếu tham số", "missing": can_nguoi[nut.id]})
+            # CÂU HỎI ĐI VỀ CHỖ NGƯỜI TÌM. [DEV-160]
+            #
+            # Tới 22/09/2026 câu hỏi của một nút bị chặn chỉ sống ở hai nơi tạm: một dòng trong
+            # vùng trao đổi, và `run.report.waiting` dưới store. Cả hai đều trôi — vùng trao đổi
+            # cuộn đi sau vài lượt gõ, còn báo cáo thì không màn nào hiện.
+            #
+            # Tab "Làm rõ yêu cầu" đã là chỗ người tìm khi muốn biết "tác tử đang chờ gì ở tôi",
+            # vì `req.elicit.gaps` và `req.detect_conflict.issues` đều về đó ([DEV-151]). Một
+            # câu hỏi của chuỗi cũng đúng là loại ấy — đưa nó đi nơi khác là bắt người dùng nhớ
+            # hai chỗ cho cùng một việc.
+            _ghi_cau_hoi_chuoi(root, run_id, nut, can_nguoi[nut.id])
             if nut.on_ask == "wait":
                 break
             continue
@@ -1037,6 +1048,43 @@ def tom_tat_ket_qua(ra: dict[str, Any]) -> dict[str, Any]:
         else:
             tom[k] = v
     return tom
+
+
+def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any, thieu: list[str]) -> None:
+    """Một nút chờ người → một dòng trong `clarification`, hiện ở tab S9. [DEV-160]
+
+    Câu hỏi viết bằng TIẾNG NGƯỜI chứ không dán tên tham số: "cần `reqset_ids`, `passport`" là
+    tiếng của hợp đồng, và người dùng không có cách nào biết `passport` nghĩa là hộ chiếu chip
+    đã ghim. Mô tả trong `input_schema` là chỗ duy nhất trong kho nói được điều đó bằng lời —
+    thiếu mô tả thì hiện nguyên tên trường, vì bịa một lời giải thích còn tệ hơn.
+
+    `req_ids` để trống và `source_cap` ghi năng lực đang chờ: đây là câu hỏi của MỘT BƯỚC, không
+    phải của một yêu cầu — trộn hai thứ vào cột `req_ids` sẽ làm bảng truy vết trỏ sai.
+    """
+    if root is None or not thieu:
+        return
+    from eide.caps.req import ghi_clarification
+    reg = get_registry()
+    tt = {}
+    if nut.cap in reg:
+        tt = (reg.get(nut.cap).spec.input_schema or {}).get("properties") or {}
+
+    def _ta(k: str) -> str:
+        t = tt.get(k) if isinstance(tt.get(k), dict) else {}
+        if t.get("description"):
+            return f"`{k}` ({t['description']})"
+        # ENUM là thứ dùng được NGAY: nó biến một câu hỏi mở thành một câu hỏi chọn.
+        # "`type`" bắt người dùng đoán; "`type` — chọn một: URD, SRS, SAD…" thì trả lời được.
+        # Suy từ hợp đồng, không bịa.
+        if t.get("enum"):
+            return f"`{k}` — chọn một: " + ", ".join(map(str, t["enum"]))
+        return f"`{k}`"
+
+    ghi_clarification(root, [{
+        "kind": "gap",
+        "text": f"Bước `{nut.cap}` đang chờ anh cho biết: " + ", ".join(_ta(k) for k in thieu),
+        "suggestion": f"Trả lời ở đây rồi bảo tác tử chạy tiếp lượt {run_id[:10]}",
+    }], cap=nut.cap)
 
 
 def _uoc_chi_phi(chuoi: Any) -> float:

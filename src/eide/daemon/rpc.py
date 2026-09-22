@@ -6,6 +6,7 @@ project.list. Tên/tham số/kết quả bám openrpc.json; test_specs_consisten
 from __future__ import annotations
 
 import json
+import queue
 import secrets
 import sys
 import threading
@@ -653,6 +654,26 @@ class Daemon:
         intent = (y.result or {}).get("intent") or {}
         neo = self.router.invoke("chat.ground", {"intent": intent}, self.ctx)
         grounded = (neo.result or {}).get("grounded", {}) if neo.status == "done" else {}
+
+        # ---- BƯỚC ③ của DPS-09 §2: "đủ thông tin = fill_defaults + clarify". [DEV-159]
+        #
+        # `chat.fill_defaults` (CHAT-03) đã hiện thực và có test riêng, nhưng tới 22/09/2026
+        # KHÔNG NƠI NÀO GỌI NÓ trong luồng chính — `chat_send` đi thẳng từ `ground` sang
+        # `orchestrate`. Một trong bốn trách nhiệm của tầng hiểu lệnh bị bỏ hẳn.
+        #
+        # Hệ quả đo được trên chặng B bài CNC: chuỗi dừng để hỏi người những ô trống mà §4.3 đã
+        # quy định CÁCH ĐIỀN — theo thứ tự preferences → suy ra → autonomy.defaults → năng lực.
+        # Câu trả lời của người cho một ô trống đáng lẽ được NHỚ (D8), nhưng không có bước này
+        # thì mỗi lượt gõ lại hỏi lại từ đầu, và số câu hỏi không bao giờ giảm theo thời gian —
+        # đúng thứ §7 hứa là sẽ giảm.
+        #
+        # Hỏng thì đi tiếp với ý định chưa điền: thiếu một mặc định làm chuỗi dừng để HỎI, còn
+        # làm hỏng cả `chat.send` vì không điền được một ô trống là đổi một câu hỏi lấy một
+        # ngõ cụt.
+        dien = self.router.invoke("chat.fill_defaults",
+                                  {"intent": intent, "grounded": grounded}, self.ctx)
+        if dien.status == "done" and (dien.result or {}).get("intent"):
+            intent = dien.result["intent"]
         ra: dict[str, Any] = {"intent_id": (y.result or {}).get("intent_id") or intent.get("intent")}
         # v1.3 — §2D.6: mức A0/A1 thì DỪNG sau khi lập kế hoạch và chờ người gật đầu
         # (DEV-140). A2–A3 tự chạy nhưng vẫn in ý hiểu — đúng chữ của §2D.6.
@@ -1234,20 +1255,39 @@ def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:
     # cùng một lệnh là thứ người dùng không bao giờ truy ra được.
     nap_env()
 
-    # MỘT KHOÁ cho cả ống ra. [DEV-154]
+    # MỘT NGƯỜI GHI DUY NHẤT, qua hàng đợi. [DEV-157]
     #
-    # Từ khi chuỗi chạy ở luồng nền, có HAI người ghi vào `out`: vòng lặp chính (câu trả lời) và
-    # luồng chuỗi (sự kiện). Hai lời `write` xen vào nhau giữa dòng sẽ sinh ra một dòng JSON
-    # hỏng, và phía giao diện bỏ qua dòng ấy — tức mất đúng một câu trả lời hoặc một sự kiện,
-    # ngẫu nhiên, không dấu vết. `out.write` của Python không bảo đảm nguyên tử cho chuỗi nhiều
-    # byte, nên phải khoá tay.
-    khoa_ra = threading.Lock()
+    # Từ khi chuỗi chạy ở luồng nền ([DEV-154]) có HAI người ghi vào `out`: vòng lặp chính (câu
+    # trả lời) và luồng chuỗi (sự kiện). Hai lời `write` xen giữa dòng sinh ra một dòng JSON
+    # hỏng mà giao diện bỏ qua — mất đúng một câu trả lời hoặc một sự kiện, ngẫu nhiên, không
+    # dấu vết.
+    #
+    # Bản đầu bọc `write` trong một `threading.Lock`. Nó đúng về tính nguyên tử nhưng mở ra một
+    # bế tắc: `write` vào một ống ĐẦY sẽ CHẶN, và nó chặn TRONG LÚC GIỮ KHOÁ — mọi luồng khác
+    # đứng theo, kể cả luồng đang định đọc bớt ống ra. Đo 22/09/2026: daemon treo 11 phút giữa
+    # một lượt `chat.send`, một luồng kẹt ở `lock_PyThread_acquire_lock`, trong khi giao diện
+    # vẫn đang đọc bình thường.
+    #
+    # Hàng đợi bỏ hẳn lớp khoá: người sinh thông điệp chỉ `put` (không bao giờ chặn lâu), và
+    # đúng MỘT luồng ghi ra ống. Ống đầy thì chỉ luồng ấy chờ — đúng chỗ phải chờ.
+    hang_ra: queue.Queue[dict[str, Any] | None] = queue.Queue()
+
+    def _bom_ra() -> None:
+        while True:
+            o = hang_ra.get()
+            if o is None:
+                return
+            try:
+                out.write(json.dumps(o, ensure_ascii=False) + "\n")
+                out.flush()
+            except (BrokenPipeError, ValueError):
+                return          # giao diện đóng ống — không còn ai nghe, thôi ghi
+
+    luong_ra = threading.Thread(target=_bom_ra, name="eide-ghi-ra", daemon=True)
+    luong_ra.start()
 
     def ghi_ra(o: dict[str, Any]) -> None:
-        van = json.dumps(o, ensure_ascii=False) + "\n"
-        with khoa_ra:
-            out.write(van)
-            out.flush()
+        hang_ra.put(o)
 
     def phat(ten: str, p: dict[str, Any]) -> None:
         ghi_ra({"jsonrpc": "2.0", "method": ten, "params": p})
@@ -1264,3 +1304,10 @@ def serve_stdio(inp: TextIO, out: TextIO, project: Path | None = None) -> None:
         else:
             resp = d.handle(msg)
         ghi_ra(resp)
+
+    # XẢ HẾT hàng đợi trước khi về. Không có bước này thì `serve_stdio` trả về ngay khi hết đầu
+    # vào, tiến trình đóng, và những dòng còn trong hàng đợi KHÔNG BAO GIỜ tới nơi — bên gọi
+    # nhận một ống rỗng cho những lời gọi nó đã hỏi. Đo 22/09/2026: hai bài `test_rpc` đỏ ngay
+    # sau khi đổi sang luồng ghi, và cả hai đỏ vì đọc đầu ra trước khi có ai kịp ghi.
+    hang_ra.put(None)
+    luong_ra.join(timeout=5)

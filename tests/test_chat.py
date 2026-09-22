@@ -566,7 +566,7 @@ def test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co():
     roi = [y for y in ys
            if y not in co_mau and not (y in r and r.get(y).implemented)]
     assert "req.analyze" not in roi, "DEV-147 đã cho req.analyze một mẫu"
-    assert len(roi) == 7, f"{len(roi)} ý định rơi xuống planner: {roi}"
+    assert len(roi) == 5, f"{len(roi)} ý định rơi xuống planner: {roi}"
     # `policy.stop` và `policy.set` KHÔNG còn rơi ([DEV-155]).
     #
     # `policy.stop` là nút Dừng khẩn. Một lệnh dừng mọi việc mà phải đi qua một lời gọi mô hình
@@ -577,8 +577,8 @@ def test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co():
         assert y not in roi, f"{y} lại rơi xuống planner — xem [DEV-155]"
     # Bảy cái còn lại đều chờ một năng lực chưa có hoặc một mẫu chưa viết; không cái nào chạm
     # tới an toàn. Ghi ra đây để lần sau ai đọc con số 7 biết nó gồm những gì.
-    assert set(roi) == {"env.setup", "debug.ask", "arch.design", "diagram.draw",
-                        "view.ask", "unknown", "project.delete"}, roi
+    assert set(roi) == {"env.setup", "debug.ask", "view.ask",
+                        "unknown", "project.delete"}, roi
 
 
 def test_restate_KHONG_in_dau_gach_ngang_khi_khong_rut_duoc_doi_tuong():

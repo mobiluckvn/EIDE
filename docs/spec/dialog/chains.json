@@ -489,21 +489,21 @@
     "id": "n2",
     "cap": "diagram.block",
     "when": "n1",
-    "on_ask": "parallel",
+    "on_ask": "skip",
     "args": {}
    },
    {
     "id": "n3",
     "cap": "diagram.architecture",
     "when": "n1",
-    "on_ask": "parallel",
+    "on_ask": "skip",
     "args": {}
    },
    {
     "id": "n4",
     "cap": "diagram.state",
     "when": "n1",
-    "on_ask": "parallel",
+    "on_ask": "skip",
     "args": {}
    },
    {
@@ -714,6 +714,127 @@
   ],
   "trigger_intents": [
    "policy.stop"
+  ]
+ },
+ {
+  "ten": "Thiết kế kiến trúc (DEV-158)",
+  "chuoi": "view.artifacts(requirement) → arch.style_select → arch.decompose → arch.interface_spec → arch.adr → arch.review → report",
+  "buoc": [
+   "view.artifacts(requirement)",
+   "arch.style_select",
+   "arch.decompose",
+   "arch.interface_spec",
+   "arch.adr",
+   "arch.review",
+   "report"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "view.artifacts",
+    "when": null,
+    "on_ask": "wait",
+    "args": {
+     "kind": "requirement",
+     "limit": 200
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "arch.style_select",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "reqset_ids": "${n1.items[*].id}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "arch.decompose",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {
+     "reqset_ids": "${n1.items[*].id}",
+     "style": "${n2.decision.style}"
+    }
+   },
+   {
+    "id": "n4",
+    "cap": "arch.interface_spec",
+    "when": "n3",
+    "on_ask": "parallel",
+    "args": {
+     "module_ids": "${n3.module_graph.modules[*].id}"
+    }
+   },
+   {
+    "id": "n5",
+    "cap": "arch.adr",
+    "when": "n2",
+    "on_ask": "parallel",
+    "args": {
+     "decision": "${n2.decision}"
+    }
+   },
+   {
+    "id": "n6",
+    "cap": "arch.review",
+    "when": "n3",
+    "on_ask": "parallel",
+    "args": {
+     "module_ids": "${n3.module_graph.modules[*].id}"
+    }
+   },
+   {
+    "id": "n7",
+    "cap": "chat.report_back",
+    "when": "n6",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "arch.design"
+  ]
+ },
+ {
+  "ten": "Vẽ lược đồ (DEV-158)",
+  "chuoi": "view.artifacts(module) → diagram.architecture → report",
+  "buoc": [
+   "view.artifacts(module)",
+   "diagram.architecture",
+   "report"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "view.artifacts",
+    "when": null,
+    "on_ask": "wait",
+    "args": {
+     "kind": "module",
+     "limit": 200
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "diagram.architecture",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "module_ids": "${n1.items[*].id}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "chat.report_back",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "diagram.draw"
   ]
  },
  {

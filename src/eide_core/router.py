@@ -16,6 +16,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from eide_core import ledger as led_mod
 from eide_core import store
 from eide_core.errors import EideError
 from eide_core.ledger import Ledger, che_bi_mat
@@ -108,11 +109,22 @@ class Router:
         # nút gọi năng lực nào cũng ghi `cap.run.*` ở đây, nên nối quan hệ "nút này thuộc chuỗi
         # kia" ở đây là nối một lần cho mọi năng lực hiện có lẫn mọi năng lực thêm sau.
         chuoi = ctx.extra.get("chain") or {}
+        # ĐÓNG DẤU TỪ ĐÂY, trước bản ghi đầu tiên. [DEV-156]
+        #
+        # Bản trước đặt dấu ngay trước khi gọi handler, tức SAU `cap.run.start` và sau
+        # `gate.decision` của `_ghi_decision_log`. Đo trên bài CNC: `gate.decision` có 177 khoá
+        # việc khác nhau trong khi `cap.run.start` chỉ có 75 — hai loại bản ghi của CÙNG một
+        # lời gọi rơi vào hai đơn vị việc khác nhau, và huy hiệu đếm gấp đôi.
+        #
+        # Một lời gọi năng lực sinh ba bản ghi; cả ba phải mang cùng một dấu, nếu không thì
+        # "đóng dấu lên mọi bản ghi" đúng chữ mà sai nghĩa.
+        led_mod.dat_chuoi_dang_chay(dict(chuoi) if chuoi else {"run_id": run_id, "cap": cap_id})
         self._log("cap.run.start", {"run_id": run_id, "cap": cap_id, "actor": ctx.actor,
                                     "args_hash": _h(params), "decision": dec,
                                     **({"chain": dict(chuoi)} if chuoi else {})})
         self._ghi_decision_log(run_id, cap_id, reg, d, ctx, features)
         if d.decision == ASK:
+            led_mod.dat_chuoi_dang_chay(None)
             run = CapabilityRun(run_id, cap_id, "pending", None, dec, 0, undo=reg.spec.undo)
             self.queue.append(run)
             # Giữ tham số để `quyet_dinh()` chạy tiếp được. Trong RAM cho lần gọi ngay, VÀ
@@ -127,6 +139,7 @@ class Router:
         if d.decision != "APPROVE":
             self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
                                      "status": "rejected", "error": "E3001"})
+            led_mod.dat_chuoi_dang_chay(None)
             return CapabilityRun(run_id, cap_id, "rejected", None, dec, 0, {"code": "E3001", "message": d.reason})
         # Nhiều năng lực phải tự ghi sự kiện nghiệp vụ của mình vào ledger (API-15 §5:
         # session.open, store.write, acq.state, tool.report…). Router là điểm gọi duy nhất và
@@ -154,10 +167,12 @@ class Router:
             result = reg.handler(params, ctx)  # type: ignore[misc]
             self.registry.validate_output(cap_id, result)
         except EideError as e:
+            led_mod.dat_chuoi_dang_chay(None)
             ms = int((time.perf_counter() - t0) * 1000)
             self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
                                      **({"chain": dict(chuoi)} if chuoi else {}), "status": "failed", "error": e.code, "duration_ms": ms})
             return CapabilityRun(run_id, cap_id, "failed", None, dec, ms, e.to_rpc()["data"] | {"message": str(e)})
+        led_mod.dat_chuoi_dang_chay(None)
         ms = int((time.perf_counter() - t0) * 1000)
         self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
                                      **({"chain": dict(chuoi)} if chuoi else {}), "status": "done", "result_hash": _h(result),

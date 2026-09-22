@@ -146,4 +146,42 @@ final class EideDongBoSuKienTests: XCTestCase {
         let k = EideKhung(frame: NSRect(x: 0, y: 0, width: 1456, height: 838))
         return (k, EidePhien(khung: k))
     }
+    /// Badge đếm ĐƠN VỊ VIỆC, không đếm gói tin giao thức. [DEV-156]
+    ///
+    /// `event.run.progress` gánh hai khái niệm: sự kiện của CHUỖI và `cap.run.*` của từng lời
+    /// gọi lẻ — kể cả những lời gọi do chính một màn phát ra để tự vẽ. Đếm từng cái thì một
+    /// chuỗi sáu nút thành vài chục.
+    ///
+    /// Đo 22/09/2026 trên bài CNC: ba câu gõ ra `Nhật ký 470`, `Mã nguồn 713`, `DỰ ÁN 993`,
+    /// trên một dự án có đúng 7 yêu cầu. Con số ấy không sai về số học, nhưng nó trả lời một
+    /// câu hỏi không ai hỏi — và người ta thôi nhìn badge.
+    func testBadgeDemMotChuoiLaMOTviec() {
+        let (_, ph) = Self.dung()
+        ph.moMan("Main", boiTacTu: false)
+        // Sáu nút của CÙNG một chuỗi — người dùng đếm là MỘT việc.
+        for i in 1...6 {
+            ph.napSuKien("event.run.progress",
+                         ["seq": i, "kind": "cap.run.finish", "cap": "req.classify",
+                          "run_id": "cap-\(i)", "chain": ["run_id": "r_abc", "i": i, "of": 6]])
+        }
+        XCTAssertEqual(ph.chuaXem("FlowMap"), 1,
+                       "sáu nút của một chuỗi phải là MỘT việc, nhận \(ph.chuaXem("FlowMap"))")
+        // Một chuỗi KHÁC là một việc khác.
+        ph.napSuKien("event.run.progress",
+                     ["seq": 9, "kind": "cap.run.finish", "cap": "sim.run",
+                      "run_id": "cap-9", "chain": ["run_id": "r_xyz", "i": 1, "of": 1]])
+        XCTAssertEqual(ph.chuaXem("FlowMap"), 2)
+    }
+
+    /// Lời gọi LẺ không thuộc chuỗi nào thì mỗi bản ghi sổ cái là một việc.
+    ///
+    /// Phép gộp chỉ đúng khi có thứ để gộp THEO. Gộp theo `kind` sẽ làm hai lần `store.write`
+    /// rời nhau thành một, và giấu mất một việc.
+    func testBadgeKhongGopHAIviecROINHAUthanhMOT() {
+        let (_, ph) = Self.dung()
+        ph.moMan("Main", boiTacTu: false)
+        ph.napSuKien("event.knowledge.changed", ["seq": 1, "kind": "store.write"])
+        ph.napSuKien("event.knowledge.changed", ["seq": 2, "kind": "store.write"])
+        XCTAssertEqual(ph.chuaXem("Passport"), 2)
+    }
 }

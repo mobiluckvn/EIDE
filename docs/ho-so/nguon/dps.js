@@ -194,6 +194,19 @@ const CHUOI_MAU = [
   // Mỗi mẫu đúng MỘT nút: đây là hai việc tức thời, không có gì để lập kế hoạch. Một chuỗi
   // nhiều bước ở đây chỉ thêm chỗ để hỏng.
   ['Dừng khẩn (DEV-155)', 'policy.emergency_stop', ['policy.stop']],
+  // [DEV-158] Hai ý định THIẾT KẾ. Trước v1.3 chúng rơi xuống planner, và planner phác
+  // chuỗi từ văn xuôi nên bắt đầu từ giữa quy trình rồi đi hỏi người `reqset_ids` — ĐÚNG
+  // thứ đang nằm trong store ngay dưới chân nó.
+  //
+  // Nút ĐẦU là `view.artifacts`: cú pháp `${nX.field}` chỉ trỏ tới nút TRƯỚC, không đọc
+  // được store. Nhưng `view.artifacts` là một năng lực, nên cho nó làm nút đầu thì phần
+  // còn lại của chuỗi nối được vào dữ liệu đã có — không phải hỏi lại người thứ họ đã nói.
+  ['Thiết kế kiến trúc (DEV-158)', 'view.artifacts(requirement) → arch.style_select → arch.decompose → arch.interface_spec → arch.adr → arch.review → report', ['arch.design']],
+  // `diagram.architecture` chứ KHÔNG `diagram.block`: block vẽ lược đồ BO MẠCH và đòi
+  // `board`, còn người nói "vẽ lược đồ khối cho thiết kế" muốn lược đồ KIẾN TRÚC — thứ
+  // không cần tham số bắt buộc nào. Dẫn sai năng lực thì chuỗi dừng để hỏi một bo mạch mà
+  // dự án phần mềm không có.
+  ['Vẽ lược đồ (DEV-158)', 'view.artifacts(module) → diagram.architecture → report', ['diagram.draw']],
   ['Đổi mức tự chủ (DEV-155)', 'policy.set_autonomy', ['policy.set']],
 ];
 // §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
@@ -254,6 +267,25 @@ const CHUOI_NUT = {
   // nhau — nối tiếp chúng là bắt người dùng đợi ba lượt mô hình nối đuôi cho ba việc chạy song
   // song được.
   'Dừng khẩn (DEV-155)': [['n1', 'policy.emergency_stop']],
+  'Thiết kế kiến trúc (DEV-158)': [
+    ['n1', 'view.artifacts', null, 'wait', { kind: 'requirement', limit: 200 }],
+    // `passport` KHÔNG suy được: dự án chưa ghim chip nào thì không có gì để suy. Để trống
+    // để nút dừng và HỎI — đúng hơn là đoán một con chip.
+    ['n2', 'arch.style_select', 'n1', 'wait', { reqset_ids: '${n1.items[*].id}' }],
+    ['n3', 'arch.decompose', 'n2', 'wait',
+      { reqset_ids: '${n1.items[*].id}', style: '${n2.decision.style}' }],
+    ['n4', 'arch.interface_spec', 'n3', 'parallel',
+      { module_ids: '${n3.module_graph.modules[*].id}' }],
+    ['n5', 'arch.adr', 'n2', 'parallel', { decision: '${n2.decision}' }],
+    ['n6', 'arch.review', 'n3', 'parallel',
+      { module_ids: '${n3.module_graph.modules[*].id}' }],
+    ['n7', 'chat.report_back', 'n6'],
+  ],
+  'Vẽ lược đồ (DEV-158)': [
+    ['n1', 'view.artifacts', null, 'wait', { kind: 'module', limit: 200 }],
+    ['n2', 'diagram.architecture', 'n1', 'wait', { module_ids: '${n1.items[*].id}' }],
+    ['n3', 'chat.report_back', 'n2'],
+  ],
   // `level` và `by` là hai tham số BẮT BUỘC mà chuỗi không suy được: mức mới đến từ câu người
   // nói, tên người đến từ phiên. Để trống thì nút dừng ở "thiếu tham số" và HỎI — đúng hơn là
   // đoán một mức tự chủ.
@@ -295,9 +327,18 @@ const CHUOI_NUT = {
     ['n14', 'target.observe', 'n13', 'skip'], ['n15', 'doc.section', 'n11', 'skip'],
     ['n16', 'chat.report_back', 'n6'],
   ],
+  // [DEV-159] Ba lược đồ chuyển `parallel` → `skip`.
+  //
+  // `parallel` nghĩa là "nút này chờ người, các nhánh KHÔNG phụ thuộc vẫn chạy tiếp" — nhưng
+  // nó vẫn để lại một câu hỏi treo và cả lượt chạy kết thúc ở `asked`. Đo 22/09/2026 trên bài
+  // CNC: `diagram.block` đòi `board`, và một dự án phần mềm chưa có bo mạch nào thì câu hỏi ấy
+  // KHÔNG BAO GIỜ trả lời được — nên bộ tài liệu dừng vì một lược đồ không áp dụng được.
+  //
+  // `skip` đúng hơn: lược đồ bo mạch là thứ CÓ THÌ TỐT, không phải điều kiện để viết tài liệu.
+  // Một thứ tuỳ chọn mà chặn được cả chuỗi thì nó không còn là tuỳ chọn.
   'Bộ tài liệu (P7)': [
-    ['n1', 'req.trace_matrix'], ['n2', 'diagram.block', 'n1', 'parallel'],
-    ['n3', 'diagram.architecture', 'n1', 'parallel'], ['n4', 'diagram.state', 'n1', 'parallel'],
+    ['n1', 'req.trace_matrix'], ['n2', 'diagram.block', 'n1', 'skip'],
+    ['n3', 'diagram.architecture', 'n1', 'skip'], ['n4', 'diagram.state', 'n1', 'skip'],
     ['n5', 'doc.generate', 'n1'], ['n6', 'doc.embed_diagram', 'n5', 'skip'],
     ['n7', 'doc.style_check', 'n5', 'skip'], ['n8', 'chat.report_back', 'n5'],
   ],

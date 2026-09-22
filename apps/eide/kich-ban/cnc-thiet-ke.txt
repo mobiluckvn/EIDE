@@ -1,0 +1,22 @@
+# CHẶNG B — từ yêu cầu ra HIỆN VẬT XEM ĐƯỢC.
+#
+# Chặng A dừng ở "làm rõ yêu cầu": dữ liệu có trong store, nhưng thư mục dự án
+# trống trơn — không tài liệu, không lược đồ, không mã. Chủ sản phẩm hỏi đúng
+# chỗ ấy: "sau khi chạy xong tôi không có gì để xem cả à?"
+#
+# Chặng này đi tiếp trên CÙNG dự án, xin ba thứ mở ra đọc được.
+
+@mo ~/eide/demo-day-du/du-an/bo-viec-cam-usb-xuong-xuong-cho-may-cnc
+
+# 1. Kiến trúc — chia hệ thống thành các khối
+Từ các yêu cầu đã có, hãy chia hệ thống thành các khối chức năng và nói rõ khối nào làm gì.
+
+# 2. Lược đồ — thứ nhìn được
+Vẽ lược đồ khối cho thiết kế vừa rồi.
+
+# 3. Tài liệu — thứ tôi gửi được cho người khác
+Viết tài liệu yêu cầu cho dự án này.
+
+# 4. Xem kết quả ở tab bên trái
+@man DiagramView
+@man Doc

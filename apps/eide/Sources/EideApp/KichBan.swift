@@ -85,6 +85,17 @@ enum KichBan {
                 let d = NSString(string: String(lenh.dropFirst(4))).expandingTildeInPath
                 ghi("**Tôi (người dùng):** mở lại dự án — `\((d as NSString).lastPathComponent)`")
                 await ud.phien.moDuAn(d)
+            } else if lenh.hasPrefix("@tra-loi-dau ") {
+                // Trả lời điểm cần làm rõ ĐANG MỞ ĐẦU TIÊN — như người đọc dòng trên cùng rồi
+                // trả lời nó. Mã băm theo nội dung nên kịch bản không biết trước được.
+                let van = String(lenh.dropFirst(13)).trimmingCharacters(in: .whitespaces)
+                if let m = ud.khung.vungLamViec.manDangMo as? EideManLamRo,
+                   let ma = m.maDiemDauTien {
+                    ghi("**Tôi (người dùng):** trả lời điểm `\(ma)` → “\(van)”")
+                    await m.traLoiDeTest(ma, van)
+                } else {
+                    ghi("(không có điểm nào đang mở để trả lời — `@man LamRo` trước)")
+                }
             } else if lenh.hasPrefix("@tra-loi ") {
                 // GÕ VÀO Ô TRẢ LỜI của màn Làm rõ yêu cầu rồi bấm Lưu — `<mã> | <câu trả lời>`.
                 // Đi qua đúng nút người bấm, không gọi tắt xuống năng lực.

@@ -126,11 +126,19 @@ public final class EideManLamRo: EideManCoSo {
         ghi.textColor = EideToken.Mau.muted
         them(ghi)
         dangTraLoi = (mo.first?["id"] as? String) ?? ""
+        maDiemDauTien = mo.first?["id"] as? String
     }
 
     @objc private func _chonDiem(_ n: NSPopUpButton) {
         dangTraLoi = (n.selectedItem?.representedObject as? String) ?? ""
     }
+
+    /// Mã điểm cần làm rõ ĐANG MỞ đầu tiên trong bảng — cho bài kiểm.
+    ///
+    /// Mã băm theo NỘI DUNG (xem `ghi_clarification`), nên một kịch bản viết sẵn không thể
+    /// biết trước nó. Lấy từ chính bảng đang hiện là cách một người dùng cũng làm: họ đọc dòng
+    /// trên cùng rồi trả lời nó.
+    public private(set) var maDiemDauTien: String?
 
     /// Gõ câu trả lời rồi bấm Lưu — ĐÚNG đường người dùng đi.
     ///

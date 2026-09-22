@@ -55,13 +55,14 @@ def test_chuoi_mau_sinh_tu_tai_lieu():
     Trước WI-CHAT-06 bảng ấy chỉ nằm trong văn xuôi, nên phần mã phải chép tay — cùng khuôn
     DEV-025/029/043/046. Nay sinh ra `dialog/chains.json`.
 
-    Con số chốt ở đây cố ý: một mẫu bị xoá hay thêm đều phải đi qua test này. Tám mẫu = năm
-    của §4.4 + `req.analyze` ([DEV-147]) + `policy.stop` và `policy.set` ([DEV-155]). Cả ba mẫu
-    thêm đều vì cùng một lý do: ý định ấy không có đường đi và rơi xuống planner — xem
-    `test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co` trong `test_chat.py`.
+    Con số chốt ở đây cố ý: một mẫu bị xoá hay thêm đều phải đi qua test này. Mười mẫu = năm
+    của §4.4 + `req.analyze` ([DEV-147]) + `policy.stop`/`policy.set` ([DEV-155]) +
+    `arch.design`/`diagram.draw` ([DEV-158]). Cả năm mẫu thêm đều vì CÙNG một lý do: ý định ấy
+    không có đường đi và rơi xuống planner, mà planner phác chuỗi từ văn xuôi nên bắt đầu từ
+    giữa quy trình rồi đi hỏi người thứ đang nằm sẵn trong store.
     """
     ds = mau()
-    assert len(ds) == 8
+    assert len(ds) == 10
     assert all(c["buoc"] and c["trigger_intents"] for c in ds)
 
 
@@ -442,3 +443,75 @@ def test_cau_cua_nguoi_di_toi_tan_nut(du_an):
     assert _args_cho("req.elicit", y, {}).get("text") == "máy CNC dùng Fangling F2300B"
     # Năng lực không khai `text` thì KHÔNG nhận gì — không rải câu lệnh vào mọi ô chuỗi.
     assert "text" not in _args_cho("kg.build", y, {})
+
+
+def test_chuoi_thiet_ke_DOC_STORE_thay_vi_hoi_lai_nguoi(du_an):
+    """Mẫu `arch.design` phải lấy `reqset_ids` TỪ STORE, không đi hỏi người. [DEV-158]
+
+    Đo 22/09/2026, chặng B bài CNC: dự án có 7 yêu cầu với mã đầy đủ trong store, mà chuỗi vẫn
+    dừng ở `arch.style_select` để hỏi `reqset_ids` — đúng thứ đang nằm dưới chân nó. Planner
+    phác chuỗi từ văn xuôi nên không biết nối gì với gì.
+
+    Cú pháp `${nX.field}` chỉ trỏ tới nút TRƯỚC, không đọc được store. Nhưng `view.artifacts`
+    LÀ một năng lực, nên cho nó làm nút đầu thì phần còn lại nối được vào dữ liệu đã có.
+    """
+    kich = {t: m for m in mau() for t in (m.get("trigger_intents") or [])}
+    nut = {n["id"]: n for n in kich["arch.design"]["nodes"]}
+    assert nut["n1"]["cap"] == "view.artifacts"
+    assert nut["n1"]["args"]["kind"] == "requirement"
+    assert nut["n2"]["args"]["reqset_ids"] == "${n1.items[*].id}", \
+        "reqset_ids phải nối vào nút đọc store, không để trống cho nút đi hỏi người"
+    # `passport` CỐ Ý để trống: dự án chưa ghim chip nào thì không có gì để suy, và đoán một
+    # con chip tệ hơn hỏi.
+    assert "passport" not in nut["n2"]["args"]
+
+
+def test_ve_luoc_do_dung_diagram_architecture_khong_phai_block():
+    """`diagram.block` vẽ lược đồ BO MẠCH và đòi `board`. [DEV-158]
+
+    Người nói "vẽ lược đồ khối cho thiết kế" muốn lược đồ KIẾN TRÚC — `diagram.architecture`,
+    thứ không cần tham số bắt buộc nào. Dẫn sai năng lực thì chuỗi dừng để hỏi một bo mạch mà
+    một dự án phần mềm không có, và người dùng không hiểu vì sao mình bị hỏi về phần cứng.
+    """
+    kich = {t: m for m in mau() for t in (m.get("trigger_intents") or [])}
+    caps = [n["cap"] for n in kich["diagram.draw"]["nodes"]]
+    assert "diagram.architecture" in caps and "diagram.block" not in caps, caps
+
+
+def test_cau_hoi_cua_chuoi_di_VE_TAB_lam_ro_yeu_cau(du_an):
+    """Một nút chờ người phải để lại câu hỏi ở chỗ người TÌM. [DEV-160]
+
+    Tới 22/09/2026 câu hỏi ấy chỉ sống ở hai nơi tạm: một dòng trong vùng trao đổi, và
+    `run.report.waiting` dưới store. Cả hai đều trôi — vùng trao đổi cuộn đi sau vài lượt gõ,
+    còn báo cáo thì không màn nào hiện.
+
+    Tab "Làm rõ yêu cầu" đã là chỗ người tìm khi muốn biết "tác tử đang chờ gì ở tôi"
+    ([DEV-151]); bắt họ nhớ hai chỗ cho cùng một việc là bắt họ quên một chỗ.
+    """
+    r, ctx, root = du_an
+    r.invoke("chat.orchestrate",
+             {"intent": {"intent": "doc.write", "slots": {}}, "grounded": {},
+              "text": "viết tài liệu"}, ctx)
+    with store.open_store(store.store_path(root)) as c:
+        ds = c.execute("SELECT source_cap, text FROM clarification").fetchall()
+    assert ds, "chuỗi dừng chờ người mà không để lại câu hỏi nào ở tab S9"
+    assert any("đang chờ anh cho biết" in t for _, t in ds), ds
+
+
+def test_cau_hoi_neu_ENUM_de_nguoi_CHON_thay_vi_doan():
+    """`type` bắt người dùng đoán; `type` — chọn một: URD, SRS… thì trả lời được. [DEV-160]
+
+    Enum suy từ hợp đồng, không bịa. Đây là thứ dùng được NGAY trong khi `description` của
+    phần lớn tham số vẫn còn trống — xem [DEV-161].
+    """
+    from eide.caps.chat import _ghi_cau_hoi_chuoi
+    from eide_core.chain import Nut
+    import eide.caps.req as _req
+    da = []
+    cu = _req.ghi_clarification
+    _req.ghi_clarification = lambda root, ds, **k: da.extend(ds)
+    try:
+        _ghi_cau_hoi_chuoi(Path("/x"), "r_1", Nut(id="n1", cap="doc.generate"), ["type"])
+    finally:
+        _req.ghi_clarification = cu
+    assert da and "chọn một: URD" in da[0]["text"], da

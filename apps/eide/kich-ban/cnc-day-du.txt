@@ -1,0 +1,38 @@
+# BÀI CNC ĐẦY ĐỦ — từ dự án trắng tới vòng cộng tác khép kín.
+#
+# Đi đúng nhịp chủ sản phẩm mô tả:
+#   người nói mong muốn → tác tử hiểu và HỎI LẠI → người xem kết quả ở tab bên trái
+#   → người TRẢ LỜI → sửa lại → HOÀN TÁC từng lần
+#
+# Tôi nói bằng lời người làm xưởng, KHÔNG mớm một thuật ngữ kỹ thuật nào: không
+# "USB gadget", không "OTG", không "Mass Storage". Mớm lời giải vào câu hỏi thì
+# không đo được tác tử có tự nghĩ ra hay không — mà đó mới là thứ cần kiểm.
+
+@tao Bỏ việc cầm USB xuống xưởng cho máy CNC
+
+# ---- 1. KỂ VIỆC
+Máy CNC ở xưởng tôi dùng bộ điều khiển Fangling F2300B. Mỗi lần có bản thiết kế mới tôi phải chép file G-code ra USB rồi mang xuống xưởng cắm vào máy. Tôi muốn bỏ hẳn việc cầm USB đi lại.
+
+# ---- 2. RÀNG BUỘC KHÔNG ĐỔI ĐƯỢC
+Bộ điều khiển đó chỉ đọc được USB, nó không có cổng mạng và tôi không đổi được phần mềm trong nó.
+
+# ---- 3. ĐIỀU TÔI LO NHẤT
+Tôi lo nhất là đang cắt dở mà file bị hỏng hoặc máy đọc nhầm file cũ.
+
+# ---- 4. XEM TÁC TỬ RÚT RA NHỮNG YÊU CẦU GÌ
+@man ReqArch
+
+# ---- 5. XEM TÁC TỬ HỎI LẠI NHỮNG GÌ
+@man LamRo
+
+# ---- 6. TÔI TRẢ LỜI — vế NGƯỜI của việc cộng tác
+@tra-loi-dau File G-code lớn nhất khoảng 8 MB; chép xong trong 20 giây là chấp nhận được
+
+# ---- 7. TÔI SỬA LẠI CÂU TRẢ LỜI
+@tra-loi-dau Đo lại rồi: file lớn nhất 12 MB, cho phép 30 giây
+
+# ---- 8. HOÀN TÁC — phải quay về câu TRẢ LỜI TRƯỚC, không phải rỗng
+@hoan-tac moi-nhat
+
+# ---- 9. XEM LẠI TOÀN CẢNH
+@man Main

@@ -22,17 +22,27 @@ def _mau(ma: str) -> dict:
 
 
 def test_mau_mang_phan_noi_va_tham_chieu_dung_cu_phap():
-    """Mọi `args` trong mẫu phải là tham chiếu ĐỌC ĐƯỢC — một chuỗi gõ sai cú pháp sẽ đi thẳng
-    vào chuỗi như một giá trị nguyên, và nút nhận một chuỗi `"${n8.patch}"` làm patch."""
+    """Tham chiếu trong mẫu phải ĐỌC ĐƯỢC và trỏ vào nút CÓ THẬT.
+
+    Một chuỗi gõ sai cú pháp đi thẳng vào chuỗi như một giá trị nguyên, và nút nhận một chuỗi
+    `"${n8.patch}"` làm patch.
+
+    `args` cũng được phép mang GIÁ TRỊ HẰNG — `{kind: "requirement"}` của `view.artifacts` là
+    một tham số cố định, không phải một phép nối ([DEV-158]). Bản đầu của bài này đòi MỌI `args`
+    là tham chiếu, nên nó cấm luôn cả thứ hợp lệ. Phân biệt bằng chính cú pháp: chuỗi có dạng
+    `${...}` thì phải giải được; còn lại là hằng.
+    """
     d = json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
     tong = 0
     for c in d:
         ids = {n["id"] for n in c["nodes"]}
         for n in c["nodes"]:
             for k, v in (n.get("args") or {}).items():
+                if not (isinstance(v, str) and v.startswith("${")):
+                    continue                      # hằng — kiểm kiểu ở bài dưới
                 tong += 1
                 m = chain_mod.tach_tham_chieu(v)
-                assert m is not None, f"{c['ten']} {n['id']}.{k} không phải tham chiếu: {v!r}"
+                assert m is not None, f"{c['ten']} {n['id']}.{k} sai cú pháp tham chiếu: {v!r}"
                 assert m[0] in ids, f"{c['ten']} {n['id']}.{k} trỏ nút không có: {m[0]}"
     assert tong >= 8, f"mẫu chỉ mang {tong} phép nối — DEV-121 điền ít nhất 8"
 
@@ -54,6 +64,14 @@ def test_moi_phep_noi_khop_HAI_DAU_hop_dong():
             for k, v in (n.get("args") or {}).items():
                 assert nhan and k in (nhan["input_schema"].get("properties") or {}), \
                     f"{c['ten']} {n['id']}: `{k}` không phải tham số của `{n['cap']}`"
+                if not (isinstance(v, str) and v.startswith("${")):
+                    # Hằng: kiểm nó khớp `enum` nếu hợp đồng khai enum. Một `kind` gõ sai sẽ bị
+                    # Router chặn bằng E1000 lúc CHẠY, tức sau khi vài nút trước đã ghi.
+                    t = (nhan["input_schema"]["properties"] or {})[k]
+                    if isinstance(t, dict) and t.get("enum"):
+                        assert v in t["enum"], \
+                            f"{c['ten']} {n['id']}: `{k}={v!r}` ngoài enum {t['enum']}"
+                    continue
                 nguon_id, duong = chain_mod.tach_tham_chieu(v)
                 nguon = caps.get(theo_id[nguon_id]["cap"])
                 dau = duong.split(".")[0].split("[")[0]

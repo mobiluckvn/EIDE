@@ -378,7 +378,7 @@ public final class EidePhien {
     /// trao đổi khác hẳn giữa "đã mở màn X" và "đã thêm tab X ở nền", và một câu nói sai chỗ
     /// dạy người dùng nhìn nhầm chỗ.
     @discardableResult
-    public func moMan(_ tien: String, boiTacTu: Bool) -> Bool {
+    public func moMan(_ tien: String, boiTacTu: Bool, khoaViec: String? = nil) -> Bool {
         // Tiền tố lạ thì NÓI RA. Trước phép kiểm này, `moMan("S3")` chạy trót lọt: cột trái
         // không chọn gì, tab mang nhãn "S3", vùng làm việc ghi nhận một màn không tồn tại — và
         // một bài tự kiểm khẳng định cả ba thứ ấy vẫn ĐẠT.
@@ -394,7 +394,9 @@ public final class EidePhien {
            tien != khung.vungLamViec.dangMo {
             khung.thanhTab.moNen(tien)
             khung.cotTrai.nhayMuc(tien)
-            moiTheoMan[tien, default: 0] += 1
+            // Khoá việc của chuỗi đang chạy, nếu bên gọi biết. Tác tử mở CÙNG một màn sáu
+            // lần trong một chuỗi là MỘT thứ để xem, không phải sáu.
+            moiTheoMan[tien, default: []].insert(khoaViec ?? "mo-nen")
             _veBadge()
             return false
         }
@@ -511,7 +513,35 @@ public final class EidePhien {
     private var seqPha = -1
 
     /// Màn ĐANG ĐÓNG có sự kiện chưa xem — §7.3 ("chỉ tăng badge nhóm").
-    private var moiTheoMan: [String: Int] = [:]
+    /// Các ĐƠN VỊ VIỆC chưa xem, theo màn. Tập hợp chứ không phải số đếm.
+    ///
+    /// Badge phải trả lời câu "có bao nhiêu việc mới ở màn này mà tôi chưa xem". Bản trước cộng
+    /// 1 cho MỖI SỰ KIỆN, và `event.run.progress` gánh hai khái niệm khác hẳn nhau: sự kiện của
+    /// CHUỖI, và `cap.run.*` của từng lời gọi lẻ — kể cả những lời gọi do chính một màn phát ra
+    /// để tự vẽ. Một chuỗi sáu nút sinh vài chục sự kiện.
+    ///
+    /// Đo 22/09/2026 trên bài CNC: ba câu gõ ra huy hiệu `Nhật ký 470`, `Mã nguồn 713`,
+    /// `DỰ ÁN 993`, trên một dự án có đúng 7 yêu cầu. Người dùng đọc "470" thành "470 thứ phải
+    /// xem"; thật ra là 470 gói tin giao thức từ ba câu. Một con số như thế không sai theo
+    /// nghĩa số học, nhưng nó trả lời một câu hỏi không ai hỏi — và người ta thôi nhìn badge.
+    private var moiTheoMan: [String: Set<String>] = [:]
+
+    /// Khoá của một ĐƠN VỊ VIỆC, suy từ chính sự kiện.
+    ///
+    /// Ưu tiên `chain.run_id`: mọi nút của một chuỗi mang cùng khoá ấy, nên một câu người gõ =
+    /// MỘT việc, đúng như người dùng đếm. Không có chuỗi thì `run_id` của lời gọi lẻ.
+    ///
+    /// Không thuộc lượt chạy nào thì mỗi BẢN GHI SỔ CÁI là một việc (`seq`) — hai lần
+    /// `store.write` rời nhau đúng là hai việc, và gộp chúng theo loại sẽ giấu mất một. Phép
+    /// gộp chỉ đúng khi có thứ để gộp THEO: một lượt chạy.
+    static func khoaViec(_ p: [String: Any]) -> String {
+        if let c = p["chain"] as? [String: Any], let r = c["run_id"] as? String, !r.isEmpty {
+            return r
+        }
+        if let r = p["run_id"] as? String, !r.isEmpty { return r }
+        if let q = p["seq"] as? Int { return "seq:\(q)" }
+        return (p["kind"] as? String) ?? "?"
+    }
 
     /// Mục CHỜ TÔI theo màn, phái sinh từ hàng đợi (B7). Badge = trường này cộng `moiTheoMan`.
     private var choTheoMan: [String: Int] = [:]
@@ -553,6 +583,13 @@ public final class EidePhien {
         // Xung đột tri thức (khai nghe `gate.decided`) tự nạp lại chính mình, vô tận. Mỗi lời
         // gọi năng lực sinh ra ba bản ghi sổ cái, nên bịt một đường còn hai.
         guard p["cap"] != nil else { return true }
+        // Mang `chain` = thuộc một LƯỢT CHẠY của tác tử, tức đúng thứ bộ lọc này muốn giữ.
+        //
+        // Bộ lọc sinh ra để chặn "tiếng vọng": `cap.run.*` của một lời gọi lẻ mà chính một màn
+        // phát ra để tự vẽ. Tiếng vọng KHÔNG bao giờ có `chain` — nó không thuộc chuỗi nào.
+        // Trước [DEV-156] `chain` chưa đáng tin nên bộ lọc phải dựa vào `node_id`; nay sổ cái
+        // đóng dấu lượt chạy lên mọi bản ghi, nên đây là tín hiệu tốt hơn và rộng hơn.
+        if p["chain"] != nil { return true }
         let loai = (p["kind"] as? String) ?? ""
         return loai.hasPrefix("run.") || p["node_id"] != nil
     }
@@ -566,8 +603,9 @@ public final class EidePhien {
         let can = EideDangKySuKien.manCan(ten)
         guard !can.isEmpty else { return }
         let dangMo = khung.vungLamViec.dangMo
+        let khoa = Self.khoaViec(p)
         for tien in can where tien != dangMo {
-            moiTheoMan[tien, default: 0] += 1
+            moiTheoMan[tien, default: []].insert(khoa)
         }
         _veBadge()
         guard let dangMo, can.contains(dangMo), let man = khung.vungLamViec.manDangMo else { return }
@@ -614,7 +652,7 @@ public final class EidePhien {
     /// không hỏi "việc ấy thuộc loại nào". Tách làm hai dãy số sẽ bắt họ học một bảng chú giải.
     private func _veBadge() {
         var g = choTheoMan
-        for (tien, n) in moiTheoMan { g[tien, default: 0] += n }
+        for (tien, ds) in moiTheoMan { g[tien, default: 0] += ds.count }
         khung.cotTrai.choTheoMan = g
     }
 
@@ -626,7 +664,7 @@ public final class EidePhien {
     }
 
     /// Cho bài đo đọc số sự kiện chưa xem.
-    public func chuaXem(_ tien: String) -> Int { moiTheoMan[tien] ?? 0 }
+    public func chuaXem(_ tien: String) -> Int { moiTheoMan[tien]?.count ?? 0 }
 
     /// `seq` nghe được gần nhất — cho bài đo.
     public var seqDangNghe: Int { seqNghe }
@@ -806,7 +844,7 @@ public final class EidePhien {
         //
         // Khoá theo (màn, có mở được hay không): nếu lần sau màn ấy mở lên trước mặt thật thì
         // đó là một tin KHÁC và phải nói.
-        let moDuoc = moMan(tien, boiTacTu: true)
+        let moDuoc = moMan(tien, boiTacTu: true, khoaViec: Self.khoaViec(p))
         let khoa = "\(tien)|\(moDuoc)"
         defer { danBaoMan = khoa }
         guard danBaoMan != khoa else { return }

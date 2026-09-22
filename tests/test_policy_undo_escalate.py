@@ -216,8 +216,13 @@ def test_escalate_ghi_ledger(tmp_path):
     r.invoke("policy.escalate", {"reason": "budget_low", "ref": "run_3"}, Context())
     q = [x for x in r.ledger.records() if x["kind"] == "policy.escalate"]
     assert len(q) == 1
-    assert q[0]["data"] == {"ref": "run_3", "reason": "budget_low",
-                            "channels": ["queue", "chat", "notify"], "level": "notify"}
+    # `chain` là dấu lượt chạy mà `Ledger.append` đóng lên MỌI bản ghi ([DEV-156]) — so tập
+    # con thay vì so bằng, vì nội dung của mục này mới là thứ test muốn đo.
+    assert {k: v for k, v in q[0]["data"].items() if k != "chain"} == {
+        "ref": "run_3", "reason": "budget_low",
+        "channels": ["queue", "chat", "notify"], "level": "notify"}
+    assert (q[0]["data"].get("chain") or {}).get("cap") == "policy.escalate", \
+        "bản ghi phải truy được về lời gọi đã sinh ra nó"
     assert not [x for x in r.ledger.records() if x["kind"] == "question"], "không mượn kiểu nữa"
     assert r.ledger.verify() == (True, 0)
 
