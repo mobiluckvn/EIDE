@@ -52,10 +52,41 @@ def infer_name(text: str) -> str:
     return t.strip(" .:") or text.strip()
 
 
+def _goc_khong_so(s: str) -> str:
+    """Bỏ phần ĐÁNH SỐ ở cuối tên: `congvt2` → `congvt`, `cnc-A2` và `cnc-B2` → cùng `cnc`.
+
+    Một chữ cái trước số cũng bị bỏ, vì loạt thật hay đánh chỉ mục bằng chữ (`cnc-A2`, `cnc-B2`,
+    `toan-canh-v8`) — nhưng CHỈ khi có gạch nối đứng trước nó. Không có điều kiện ấy thì
+    `hoan-tac5` thành `hoan-ta`, tức là nuốt mất chữ cái cuối của một từ thật, và phép so gốc
+    hoá ra so hai thứ không phải gốc.
+
+    Chỉ bỏ khi CÓ số: `may-cnc` giữ nguyên, nên `may-cnc` ↔ `may-cnv` vẫn là gõ nhầm.
+    """
+    return re.sub(r"(?:[-_][A-Za-z]?)?\d+$", "", s)
+
+
 def _similar(a: str, b: str) -> bool:
-    """Trùng gần: Levenshtein ≤ 2 hoặc ≥ 2 từ khóa chung (CDS PROJECT-01 bước 2)."""
+    """Trùng gần: Levenshtein ≤ 2 hoặc ≥ 2 từ khóa chung (CDS PROJECT-01 bước 2).
+
+    ## Tên khác nhau ĐÚNG ở phần số cuối là một LOẠT CÓ CHỦ Ý, không phải gõ nhầm — [DEV-198]
+
+    Phép Levenshtein ≤ 2 sinh ra để bắt gõ nhầm (`robot-hai-bnah` ↔ `robot-hai-banh`). Nhưng
+    `congvt1` ↔ `congvt2` cũng lệch đúng một ký tự, và đó là cách người ta đánh số phiên bản
+    thử nghiệm — chủ ý, không phải lỗi.
+
+    Đo 23/09/2026 trên workspace của chủ sản phẩm: **37 trên 52 dự án có tên kết thúc bằng
+    số** (`cnc-A2…A6`, `cnc-v2…v4`, `toan-canh-v2…v8`, `hoan-tac…hoan-tac5`). Với luật cũ, gần
+    như MỌI lần tạo dự án mới đều bị hỏi "có phải anh nhầm không" — và một lời hỏi hỏi mãi là
+    lời hỏi người ta bấm qua mà không đọc, tức là nó thôi bảo vệ được gì.
+
+    Bỏ số cuối rồi mới so: gốc KHÁC nhau thì vẫn xét gõ nhầm như cũ; gốc GIỐNG hệt thì đây là
+    một loạt, cho qua. `robot-hai-bnah` ↔ `robot-hai-banh` không có số nên không đổi gì.
+    """
     if a == b:
         return True
+    ga, gb = _goc_khong_so(a), _goc_khong_so(b)
+    if ga == gb and (a != ga or b != gb):
+        return False                       # cùng gốc, khác số ⇒ loạt có chủ ý
     if abs(len(a) - len(b)) <= 2 and _lev(a, b) <= 2:
         return True
     return len(set(a.split("-")) & set(b.split("-")) - {"du", "an", "robot"}) >= 2

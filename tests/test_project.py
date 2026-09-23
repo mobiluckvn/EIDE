@@ -37,11 +37,27 @@ def test_duplicate_is_E2001(tmp_path, workspace):
 
 
 def test_similar_name_returns_existing(tmp_path, workspace):
+    """Gõ NHẦM thì trả `existing` để Orchestrator hỏi (CDS PROJECT-01 bước 2).
+
+    Bản trước bài kiểm này dùng cặp *"robot cân bằng hai bánh"* ↔ *"… v2"* — mà `-v2` là một
+    loạt có chủ ý, không phải gõ nhầm ([DEV-198]). Bài kiểm khi ấy đang bảo vệ đúng cái lỗi chủ
+    sản phẩm báo. Ý ĐỊNH của nó vẫn đúng và được giữ nguyên; chỉ đổi dữ liệu sang một lỗi gõ
+    thật, để nó kiểm thứ nó định kiểm.
+    """
+    r = _router(tmp_path)
+    ctx = Context(project_dir=workspace)
+    r.invoke("project.create", {"text": "robot cân bằng hai bánh"}, ctx)
+    run = r.invoke("project.create", {"text": "robot cân bằng hai bnáh"}, ctx)
+    assert run.status == "done" and run.result["created"] is False and run.result["existing"]
+
+
+def test_hau_to_v2_la_mot_LOAT_nen_tao_that(tmp_path, workspace):
+    """`… v2` sau một dự án đã có thì TẠO, không hỏi — cùng hình dạng với `congvt1` → `congvt2`."""
     r = _router(tmp_path)
     ctx = Context(project_dir=workspace)
     r.invoke("project.create", {"text": "robot cân bằng hai bánh"}, ctx)
     run = r.invoke("project.create", {"text": "robot cân bằng hai bánh v2"}, ctx)
-    assert run.status == "done" and run.result["created"] is False and run.result["existing"]
+    assert run.status == "done" and run.result["created"] is True
 
 
 def test_list_orders_by_last_open(tmp_path, workspace):
@@ -91,3 +107,83 @@ def test_hai_du_an_khac_dau_khong_va_cham(tmp_path, workspace):
     assert r.invoke("project.create", {"text": "dự án đo điện áp"}, ctx).status == "done"
     run = r.invoke("project.create", {"text": "dự án o ien ap"}, ctx)
     assert run.status == "done", "tên khác nhau không được va chạm slug"
+
+
+# ---------------------------------------------------------------- tên gần giống [DEV-198]
+
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize("a,b", [
+    ("congvt2", "congvt1"),
+    ("cnc-v3", "cnc-v2"),
+    ("toan-canh-v8", "toan-canh-v7"),
+    ("hoan-tac5", "hoan-tac"),
+    ("nhat-ky-test-3", "nhat-ky-test-1"),
+    ("cnc-A2", "cnc-B2"),      # loạt đánh chỉ mục bằng CHỮ, không chỉ bằng số
+    ("cnc-A7", "cnc-B1"),
+    ("thiet-ke-v4", "thiet-ke-v2"),
+])
+def test_ten_khac_nhau_o_SO_CUOI_la_mot_LOAT_chu_khong_phai_go_nham(a, b):
+    """**Đánh số là chủ ý, không phải lỗi.**
+
+    Levenshtein ≤ 2 của PROJECT-01 bước 2 sinh ra để bắt gõ nhầm, nhưng `congvt1` ↔ `congvt2`
+    cũng lệch đúng một ký tự. Đo 23/09/2026 trên workspace chủ sản phẩm: **37 trên 52 dự án có
+    tên kết thúc bằng số**. Với luật cũ, gần như MỌI lần tạo dự án mới đều bị hỏi "có nhầm
+    không" — và một lời hỏi hỏi mãi là lời hỏi người ta bấm qua mà không đọc.
+    """
+    from eide.caps.project import _similar
+    assert not _similar(a, b), f"{a} vs {b} bị coi là gõ nhầm"
+
+
+@pytest.mark.parametrize("a,b", [
+    ("robot-hai-bnah", "robot-hai-banh"),
+    ("may-cnv", "may-cnc"),
+    ("den-lde", "den-led"),
+    ("may-cnc-lan-usb", "may-cnc-lan"),
+])
+def test_GO_NHAM_that_thi_van_bat_duoc(a, b):
+    """Nới luật cho loạt đánh số KHÔNG được làm mất phép bắt gõ nhầm — đó là việc gốc của nó."""
+    from eide.caps.project import _similar
+    assert _similar(a, b), f"{a} vs {b} lọt lưới gõ nhầm"
+
+
+def test_VAN_TAO_thi_tao_that_chu_khong_phai_mot_loi_tu_choi(workspace):
+    """PROJECT-01 bước 2: tên gần giống thì "trả `existing` để Orchestrator **HỎI**".
+
+    Một câu hỏi phải có đường trả lời "CÓ". Không có `create_when_exists="new"` thì `ask` là
+    một lời từ chối đội lốt câu hỏi.
+    """
+    from eide_core.ledger import Ledger
+    from eide_core.policy import PolicyGate
+    from eide_core.router import Context, Router
+
+    r = Router(gate=PolicyGate(), ledger=Ledger(workspace / "l.jsonl"))
+    r.invoke("project.create", {"text": "may cnc lan"}, Context(project_dir=workspace))
+
+    ctx = Context(project_dir=workspace)
+    cho = r.invoke("project.create", {"text": "may cnc lan usb"}, ctx)
+    assert cho.result["created"] is False, "không hỏi khi tên gần giống"
+    assert cho.result["existing"], "hỏi mà không nói giống cái nào"
+
+    ctx2 = Context(project_dir=workspace)
+    ctx2.extra["create_when_exists"] = "new"
+    van = r.invoke("project.create", {"text": "may cnc lan usb"}, ctx2)
+    assert van.result["created"] is True, "trả lời CÓ mà vẫn không tạo"
+    assert (workspace / van.result["project_id"] / ".eide").is_dir()
+
+
+def test_bo_so_cuoi_khong_duoc_NUOT_chu_cai_cua_mot_tu_that():
+    """`hoan-tac5` → `hoan-tac`, KHÔNG phải `hoan-ta`.
+
+    Luật bỏ chỉ mục phải nhận cả loạt đánh bằng chữ (`cnc-A2` ↔ `cnc-B2`), nhưng nếu bỏ chữ cái
+    trước số mà không đòi có gạch nối đứng trước thì `hoan-tac5` mất luôn chữ `c` cuối của một
+    TỪ THẬT. Khi ấy phép "so gốc" đang so hai thứ không phải gốc, và nó sai âm thầm — `hoan-tac5`
+    ↔ `hoan-tac` quay lại bị hỏi, đúng cái lỗi vừa sửa.
+    """
+    from eide.caps.project import _goc_khong_so, _similar
+    assert _goc_khong_so("hoan-tac5") == "hoan-tac"
+    assert _goc_khong_so("cnc-A2") == _goc_khong_so("cnc-B2") == "cnc"
+    assert _goc_khong_so("may-cnc") == "may-cnc", "không có số thì không bỏ gì"
+    assert not _similar("hoan-tac5", "hoan-tac")

@@ -73,10 +73,11 @@ public final class EidePhien {
     /// `project.create` có thể trả `created=false` kèm `existing[]` khi thấy tên GẦN GIỐNG. Lúc
     /// ấy tuyệt đối không tự chọn: cái người dùng muốn có thể là dự án cũ, và tạo thêm bản thứ
     /// hai gần trùng tên là cách chắc chắn nhất để họ mất việc trong cái còn lại.
-    public func taoDuAn(_ van: String, thuMuc: String? = nil) async {
+    public func taoDuAn(_ van: String, thuMuc: String? = nil, vanTao: Bool = false) async {
         khung.manChao.datTrangThai("Đang tạo dự án…", ban: true)
         var tham = ["project", "new", van]
         if let thuMuc { tham += ["--dir", thuMuc] }
+        if vanTao { tham += ["--van-tao"] }
         guard let r = try? await EideDaemon.motLan(tham) else {
             return khung.manChao.datTrangThai("Không tìm thấy lệnh `eide` trên máy này.", ban: false)
         }
@@ -86,10 +87,17 @@ public final class EidePhien {
                 loi.trimmingCharacters(in: .whitespacesAndNewlines), ban: false)
         }
         if (j["created"] as? Bool) == false {
+            // HỎI, không TỪ CHỐI — [DEV-198]. PROJECT-01 bước 2 nói tên gần giống thì "trả
+            // `existing` để Orchestrator HỎI". Bản trước in một câu từ chối và chỉ sang
+            // `eide project list` — một lệnh dòng lệnh, giữa màn hình dựng cho người chưa từng
+            // mở Terminal. Một câu hỏi phải có đường trả lời "CÓ".
             let ten = (j["existing"] as? [[String: Any]] ?? []).compactMap { $0["id"] as? String }
-            return khung.manChao.datTrangThai(
-                "Workspace đã có dự án tên gần giống (\(ten.joined(separator: ", "))). "
-                + "Gõ một tên khác, hoặc mở dự án cũ bằng `eide project list`.", ban: false)
+            khung.manChao.onVanTao = { [weak self] in
+                Task { await self?.taoDuAn(van, thuMuc: thuMuc, vanTao: true) }
+            }
+            return khung.manChao.hoiTenGanGiong(
+                "Workspace đã có dự án tên gần giống: \(ten.joined(separator: ", ")). "
+                + "Anh muốn mở dự án cũ, đổi tên, hay vẫn tạo dự án mới?")
         }
         khung.manChao.datTrangThai("", ban: false)
         khung.anManChao()

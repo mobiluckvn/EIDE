@@ -93,6 +93,12 @@ public final class EideManChao: NSView {
         nhanTt.textColor = EideToken.Mau.bad
         nhanTt.isHidden = true
 
+        nutVanTao.target = self
+        nutVanTao.action = #selector(_vanTao)
+        nutVanTao.bezelStyle = .rounded
+        nutVanTao.font = NSFont.boldSystemFont(ofSize: 12)
+        nutVanTao.isHidden = true
+
         // ---- CHỖ LƯU dự án, nói ra TRƯỚC khi tạo.
         //
         // §3.1 đòi màn này chỉ có ĐÚNG MỘT nút chính, và điều đó vẫn đúng: "Đổi…" là nút phụ
@@ -112,7 +118,7 @@ public final class EideManChao: NSView {
         hangThuMuc.spacing = 8
         _veThuMuc()
 
-        let hop = NSStackView(views: [chao, ly, g, o, hangThuMuc, nut, nhanTt])
+        let hop = NSStackView(views: [chao, ly, g, o, hangThuMuc, nut, nhanTt, nutVanTao])
         hop.orientation = .vertical
         hop.alignment = .leading
         hop.spacing = 12
@@ -143,6 +149,30 @@ public final class EideManChao: NSView {
         nhanTt.stringValue = van
         nhanTt.isHidden = van.isEmpty
         nhanTt.textColor = ban ? EideToken.Mau.muted : EideToken.Mau.bad
+        nutVanTao.isHidden = true
+    }
+
+    /// Người bấm "Vẫn tạo" sau khi đọc danh sách tên gần giống — [DEV-198].
+    public var onVanTao: (() -> Void)?
+
+    private let nutVanTao = NSButton(title: "Vẫn tạo", target: nil, action: nil)
+
+    /// **Câu HỎI, không phải lời từ chối.** [DEV-198]
+    ///
+    /// PROJECT-01 bước 2 viết: tên gần giống thì *"trả `existing` để Orchestrator **HỎI**"*.
+    /// Giao diện tới 23/09/2026 biến nó thành một lời từ chối, và lối thoát duy nhất nó đưa ra
+    /// là `eide project list` — một lệnh dòng lệnh, giữa một màn hình dựng lên cho người chưa
+    /// từng mở Terminal.
+    ///
+    /// Một câu hỏi phải có đường trả lời "CÓ". Không có nút này thì "ask" và "reject" là một
+    /// thứ, và người dùng chỉ còn cách đổi tên dự án của mình cho vừa lòng một phép so chuỗi.
+    public func hoiTenGanGiong(_ van: String) {
+        dangBan = false
+        nut.isEnabled = true
+        nhanTt.stringValue = van
+        nhanTt.isHidden = false
+        nhanTt.textColor = EideToken.Mau.warn
+        nutVanTao.isHidden = false
     }
 
     /// Gõ câu mô tả — cho bài đo đi đúng đường người dùng đi.
@@ -173,6 +203,8 @@ public final class EideManChao: NSView {
         thuMuc = u.path
         _veThuMuc()
     }
+
+    @objc private func _vanTao() { onVanTao?() }
 
     @objc private func _tao() {
         guard !dangBan else { return }

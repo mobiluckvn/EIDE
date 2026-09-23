@@ -142,6 +142,14 @@ def cmd_project_new(a) -> int:
         p["dir"] = str(a.dir)
     if a.chip:
         p["chip"] = a.chip
+    # `--van-tao`: người đã đọc danh sách tên gần giống và vẫn muốn tạo. [DEV-198]
+    #
+    # PROJECT-01 bước 2 nói tên gần giống thì "trả `existing` để Orchestrator HỎI" — tức đây là
+    # một CÂU HỎI, và một câu hỏi phải có đường trả lời "có". Không có cờ này thì `ask` là một
+    # lời từ chối đội lốt câu hỏi: bên gọi đọc `created: false` rồi không làm gì được ngoài đổi
+    # tên. Tên trùng ĐÚNG vẫn ném E2001 như cũ — cờ này không mở đường ghi đè.
+    if getattr(a, "van_tao", False):
+        ctx.extra["create_when_exists"] = "new"
     return _print_run(r.invoke("project.create", p, ctx))
 
 
@@ -304,6 +312,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("text")
     p.add_argument("--dir", type=Path)
     p.add_argument("--chip")
+    p.add_argument("--van-tao", action="store_true",
+                   help="đã xem danh sách tên gần giống và vẫn muốn tạo (PROJECT-01 bước 2)")
     p.set_defaults(fn=cmd_project_new)
 
     p = proj.add_parser("list")
