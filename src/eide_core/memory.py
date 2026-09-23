@@ -28,6 +28,14 @@ from eide_core.ledger import Ledger
 SCRATCH_MAX = 20      # MEM-11 §3: "≤ 20 dòng"
 TURNS_GIU = 5         # số lượt gần nhất giữ nguyên văn; cũ hơn bị gộp (§3 "≥ 3 lượt cũ")
 TURNS_GOP = 3
+# Trần số BẢN TÓM TẮT giữ lại. Vượt thì gộp tiếp — nén nhiều tầng. [DEV-197]
+#
+# §3 nói "3 lượt cũ gộp thành một TurnSummary" và không nói gì về việc gộp chính các bản tóm
+# tắt, nên bản đầu để chúng tích lại: đo 23/09/2026 với 1000 lượt trao đổi ra **331 bản tóm
+# tắt, tệp phiên 160 KB**. Không làm tràn ngữ cảnh (C7 lọc bỏ tóm tắt và chỉ lấy 2 lượt nguyên
+# văn), nhưng là một chỗ phình không có trần — và một phiên dài ngày thì đọc/ghi cả tệp ấy ở
+# MỖI lượt gõ.
+TOM_TAT_TRAN = 8
 
 
 def _now() -> str:
@@ -159,7 +167,28 @@ class SessionMemory:
             con = [t for t in self.turns if t not in cu]
             truoc = [t for t in con if t["by"] == "summary"]
             self.turns = truoc + [gop] + [t for t in con if t["by"] != "summary"]
+        self._nen_tom_tat()
         self._ghi()
+
+    def _nen_tom_tat(self) -> None:
+        """Gộp chính các BẢN TÓM TẮT khi chúng vượt trần — nén nhiều tầng. [DEV-197]
+
+        Giữ `n` (số lượt gốc) qua mỗi tầng gộp, nên câu "lần trước đã trao đổi N lượt" của
+        MEM-11 §5 vẫn đúng sau bao nhiêu lần nén: **đếm được là bất biến, chi tiết thì không.**
+        Đó cũng là ranh giới của cả cơ chế này — nén được phép làm mất chi tiết, không được
+        phép làm sai con số.
+
+        Gộp nửa CŨ NHẤT chứ không gộp hết: lượt gần đây vẫn còn hình dạng riêng, còn lượt xa
+        thì chỉ cần biết "đã có ngần này việc xảy ra".
+        """
+        tt = [t for t in self.turns if t["by"] == "summary"]
+        if len(tt) <= TOM_TAT_TRAN:
+            return
+        cu = tt[: len(tt) - TOM_TAT_TRAN // 2]
+        gop = {"by": "summary", "n": sum(int(t.get("n") or 1) for t in cu), "at": cu[-1]["at"],
+               "text": f"({sum(int(t.get('n') or 1) for t in cu)} lượt cũ hơn đã nén) "
+                       + " · ".join(t["text"][:24] for t in cu[-3:])}
+        self.turns = [gop] + [t for t in self.turns if t not in cu]
 
     # ---- nội bộ
     def _ghi(self) -> None:

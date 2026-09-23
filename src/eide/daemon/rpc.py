@@ -940,6 +940,7 @@ class Daemon:
                    "done": self._buoc_va_dau_ra(self.ctx, ma_run),
                    "waiting": self._cho_gi(self.ctx, ma_run),
                    "failed": hong,
+                   "nen": self._nen_gi(ma_run),
                    # CÂU GỐC đi kèm báo cáo [DEV-181]. Trả lời một câu hỏi rồi mà chuỗi vẫn nằm
                    # im thì người dùng mới đi được nửa vòng: câu trả lời vào store, còn việc họ
                    # nhờ thì vẫn chưa ai làm. Có câu gốc ở đây, vùng trao đổi gửi lại được chính
@@ -1017,6 +1018,43 @@ class Daemon:
             return buoc
         # Nút không có trong đồ thị xuống cuối, giữ nguyên thứ tự tương đối giữa chúng.
         return sorted(buoc, key=lambda n: thu_tu.get(n.get("id"), len(thu_tu)))
+
+    def _nen_gi(self, run_id: str) -> list[str]:
+        """Ngữ cảnh của lượt này đã BỎ những gì — [DEV-197].
+
+        ## Thứ tràn không phải bộ nhớ, mà là sự chú ý — và nó tràn IM LẶNG
+
+        Đo 23/09/2026: gói ngữ cảnh KHÔNG bao giờ vượt ngân sách (682–950 token trên 9 000, kể
+        cả khi dự án có 2 000 lượt chạy và 1 000 điểm làm rõ). Cơ chế chống tràn chạy đúng: C2
+        tự chặn trần, mọi lớp khác cắt được, và `kiem_tran` THÀ KHÔNG GỌI mô hình còn hơn để
+        nhà cung cấp cắt mất phần cuối.
+
+        Nhưng ở 1 000 điểm làm rõ, nó **bỏ 992 câu trả lời của người dùng và giữ 8** — và con
+        số ấy chỉ nằm trong `context.bundle` dưới sổ cái. Người dùng trả lời một câu hỏi rồi
+        lượt sau tác tử hỏi lại y hệt, mà không có chỗ nào nói vì sao. Quên im lặng còn khó
+        chịu hơn báo lỗi: người ta kết luận sản phẩm không nghe mình.
+
+        Chỉ đưa lên hai loại ĐÁNG KỂ với người dùng: câu trả lời của chính họ bị bỏ, và một lớp
+        ngữ cảnh bị cắt hẳn. `history:summarize` hay `code:function_only` là việc nội bộ của
+        phép nén — nói ra chúng là dựng lại đúng thứ tiếng ồn vừa dọn ở bộ theo dõi.
+        """
+        ra: list[str] = []
+        try:
+            for rec in self.ledger.records()[-400:]:
+                if rec.get("kind") != "context.bundle":
+                    continue
+                d = rec.get("data") or {}
+                if (d.get("chain") or {}).get("run_id") not in (run_id, None) and run_id:
+                    continue
+                for n in d.get("compressions") or []:
+                    if n.startswith("clarification:drop_"):
+                        ra.append(f"bỏ {n.rsplit('_', 1)[-1]} câu anh đã trả lời (ngân sách C2) "
+                                  "— tác tử có thể hỏi lại; xem đủ ở tab Làm rõ yêu cầu")
+                    elif n.startswith("cut:"):
+                        ra.append(f"cắt hẳn lớp ngữ cảnh {n[4:]} vì vượt ngân sách vai trò")
+        except Exception:  # noqa: BLE001 — phần phụ, không được làm hỏng báo cáo
+            return []
+        return list(dict.fromkeys(ra))[:3]
 
     def _cho_gi(self, ctx: Any, run_id: str) -> list[dict[str, Any]]:
         """Các nút đang chờ người, đọc từ báo cáo `run.graph` của chính lượt chạy vừa lập."""

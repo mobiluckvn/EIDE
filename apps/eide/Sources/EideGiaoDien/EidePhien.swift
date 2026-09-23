@@ -1359,6 +1359,13 @@ public final class EidePhien {
             khung.dock.themThe(EideTheKetQua(buoc: br))
         }
         if let v = p["van"] as? String, !v.isEmpty { vanGanNhat = v }
+        // **NÓI RA phần ngữ cảnh đã bị cắt** — [DEV-197]. Gói ngữ cảnh không bao giờ tràn (đo
+        // được: 682–950 token trên 9 000 kể cả với 2 000 lượt chạy), nhưng ở 1 000 điểm làm rõ
+        // nó BỎ 992 câu trả lời của người dùng để vừa ngân sách. Không nói ra thì người dùng
+        // trả lời một câu rồi lượt sau bị hỏi lại y hệt, và họ kết luận sản phẩm không nghe.
+        for n in (p["nen"] as? [String] ?? []) {
+            khung.dock.themLuot(.heThong, "⚠ Ngữ cảnh lượt này đã \(n).")
+        }
         for n in (p["waiting"] as? [[String: Any]] ?? []) { _hienCauHoi(n) }
         if let st = p["state"] as? String, !st.isEmpty {
             khung.dock.themLuot(.tacTu, "Lượt chạy \(Self.trangThaiChuoi(st)).")
