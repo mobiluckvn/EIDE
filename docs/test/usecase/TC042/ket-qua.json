@@ -27,7 +27,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "SAU [DEV-202]: chuỗi `ingest.index_text → view.rag_index → view.rag_ask → chat.report_back` chạy trọn 4/4. Trả lời: “Bit 1 (TXDMAEN) trong thanh ghi SPI_CR2 bật yêu cầu DMA cho SPI2 TX, thông tin này nằm ở trang 412 [1].” Kèm trích dẫn có đường dẫn tệp, đoạn văn gốc và điểm khớp 0,525.\n\nGhi chú: Khớp CHÍNH XÁC đáp án cài sẵn trong `du-lieu/dap-an.json` (TXDMAEN, SPI_CR2, trang 412). Trước đó ca này chết bằng E5002 “chuỗi rỗng”.",
- "giay": 30.3,
+ "giay": 28.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -46,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 30.3,
+   "giay": 28.5,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

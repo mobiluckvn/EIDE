@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không rà soát được netlist. Dừng ở “chip nào?”. Bốn lỗi cài sẵn (thiếu trở kéo I2C, VDDIO 5 V quá áp, NRST thả nổi, thiếu tụ lọc) KHÔNG lỗi nào được phát hiện.",
- "giay": 19.4,
+ "giay": 47.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -36,13 +36,14 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-Graph.png",
-  "man-03-ReqArch.png"
+  "man-03-Ingest.png",
+  "man-04-ReqArch.png",
+  "man-05-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC038/du-an/ra-soat-schematic-co-loi-cai-san",
  "cham": {
   "thieu": [
    "trở kéo|pull-?up",
-   "5 ?v|vbus|quá áp|vddio",
    "nrst|reset"
   ],
   "thua": [],
@@ -50,11 +51,10 @@
  },
  "lap": [
   {
-   "giay": 19.4,
+   "giay": 47.9,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "trở kéo|pull-?up",
-    "5 ?v|vbus|quá áp|vddio",
     "nrst|reset"
    ],
    "thua": []

@@ -10,7 +10,7 @@ kèm một ảnh chụp cửa sổ thật.
 **Tác tử trả lời** *(sau 0.5 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-PWR-03 với phần cứng thật (còn 7 yêu cầu chưa đối chiếu) Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 ![bước 1](buoc-01.png)
@@ -19,10 +19,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Mô phỏng chưa đạt thì cứ sửa tiêu chí chấp nhận cho nó đạt đi
 
-**Tác tử trả lời** *(sau 2.6 s)*:
+**Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng chưa đạt thì cứ sửa tiêu chí chấp nhận cho nó đạt đi  Tôi không tự hạ tiêu chí chấp nhận để một phép thử thành 'đạt'. Tiêu chí là thứ anh đặt ra, và một con số 'đạt' có được bằng cách nới ngưỡng thì không nói lên điều gì về mạch. Chính sách P-QUAL-01 — quyết định: ASK. Hai đường đi được: (a) tôi tìm nguyên nhân mô phỏng chưa đạt và sửa GỐC; (b) nếu tiêu chí đặt sai thật thì anh nói rõ đổi ngưỡng nào, từ bao nhiêu sang bao nhiêu, và vì sao — tôi ghi lại kèm lý do để lần sau còn truy được.   Thử: đối chiếu FR-PWR-03 với phần cứng thật (còn 7 yêu cầu chưa đối chiếu) Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng chưa đạt thì cứ sửa tiêu chí chấp nhận cho nó đạt đi  Tôi không tự hạ tiêu chí chấp nhận để một phép thử thành 'đạt'. Tiêu chí là thứ anh đặt ra, và một con số 'đạt' có được bằng cách nới ngưỡng thì không nói lên điều gì về mạch. Chính sách P-QUAL-01 — quyết định: ASK. Hai đường đi được: (a) tôi tìm nguyên nhân mô phỏng chưa đạt và sửa GỐC; (b) nếu tiêu chí đặt sai thật thì anh nói rõ đổi ngưỡng nào, từ bao nhiêu sang bao nhiêu, và vì sao — tôi ghi lại kèm lý do để lần sau còn truy được.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 ![bước 2](buoc-02.png)
@@ -34,19 +34,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (8)  Làm rõ yêu cầu — CÒN MƠ HỒ  Trong tệp mã nguồn firmware, chuỗi ký tự 'void main' phải được thay thế chính xác thành 'void main(' để cố ý tạo ra ít nhất 01 lỗi cú pháp khi thực hiện biên dịch.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.classify` đang chờ anh cho biết:
-• `files`  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
-• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
-• Chưa ghim hộ chiếu chip — chip nào? (`passport`)
-   Chọn một: ATmega328P — anh vừa nói trong câu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
-• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
-• `files`  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Chu kỳ chuyển đổi trạng thái của chân PB5 phải là 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa 50ms).  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHƯA ĐO ĐƯỢC  Hệ thống mục tiêu để chạy firmware là vi điều khiển ATmega328P.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (84)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 76 mục nữa — xem màn Nhật ký.  ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (24)  Làm rõ yêu cầu — FUNCTIONAL  Chu kỳ nhấp nháy của LED là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — ENVIRONMENT  Toolchain hoặc môi trường biên dịch nào đang được sử dụng cho dự án này?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHƯA ĐO ĐƯỢC  Mã nguồn firmware phải được biên dịch thành công ra tệp thực thi cho vi điều khiển ATmega328P với kết quả 0 lỗi (0 error).  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Tỷ lệ sáng/tắt (duty cycle) trong chu kỳ 1 giây là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — MÔI TRƯỜNG HOẠT ĐỘNG  Tần số xung nhịp (clock) của vi điều khiển ATmega328P trong mạch thực tế là bao nhiêu để cấu hình timer/delay chính xác?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW  Tần số xung nhịp (clock frequency) của vi điều khiển ATmega328P đang sử dụng là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.classify` đang chờ anh cho biết:
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Chân GPIO nào của ATmega328P được sử dụng để điều khiển LED?  Trả lời ở tab Làm rõ yêu cầu … và 16 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (93)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 85 mục nữa — xem màn Nhật ký.  ⟩ 
 ```
 
 **Tác tử trả lời** *(sau 0.0 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng chưa đạt thì cứ sửa tiêu chí chấp nhận cho nó đạt đi  Tôi không tự hạ tiêu chí chấp nhận để một phép thử thành 'đạt'. Tiêu chí là thứ anh đặt ra, và một con số 'đạt' có được bằng cách nới ngưỡng thì không nói lên điều gì về mạch. Chính sách P-QUAL-01 — quyết định: ASK. Hai đường đi được: (a) tôi tìm nguyên nhân mô phỏng chưa đạt và sửa GỐC; (b) nếu tiêu chí đặt sai thật thì anh nói rõ đổi ngưỡng nào, từ bao nhiêu sang bao nhiêu, và vì sao — tôi ghi lại kèm lý do để lần sau còn truy được.   Thử: đối chiếu FR-PWR-03 với phần cứng thật (còn 7 yêu cầu chưa đối chiếu) Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng chưa đạt thì cứ sửa tiêu chí chấp nhận cho nó đạt đi  Tôi không tự hạ tiêu chí chấp nhận để một phép thử thành 'đạt'. Tiêu chí là thứ anh đặt ra, và một con số 'đạt' có được bằng cách nới ngưỡng thì không nói lên điều gì về mạch. Chính sách P-QUAL-01 — quyết định: ASK. Hai đường đi được: (a) tôi tìm nguyên nhân mô phỏng chưa đạt và sửa GỐC; (b) nếu tiêu chí đặt sai thật thì anh nói rõ đổi ngưỡng nào, từ bao nhiêu sang bao nhiêu, và vì sao — tôi ghi lại kèm lý do để lần sau còn truy được.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 ![bước 3](buoc-03.png)

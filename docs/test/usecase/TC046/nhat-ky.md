@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “không có linh kiện tương đương”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `khong-co-linh-kien-tuong-duong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Tìm thay thế cho SEN42 — con này đặc thù, nếu không có pin-to-pin thì nói rõ phải sửa mạch và firmware những gì
 
-**Tác tử trả lời** *(sau 12.7 s)*:
+**Tác tử trả lời** *(sau 12.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `khong-co-linh-kien-tuong-duong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -38,7 +38,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   "chunks" : 0,
   "status" : {
   }
-}  TÁC TỬ HỎI  ·  ingest.index_text  files   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+}  TÁC TỬ HỎI  ·  ingest.index_text  Đọc những tệp nào? (đường dẫn đầy đủ)   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -46,7 +46,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 ```
 TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
 Cần làm rõ	THIẾU THÔNG TIN	Bước `ingest.index_text` đang chờ anh cho biết:
-• `files`
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -57,8 +57,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_3f3e5ace489c
-Mở lúc	23/09 13:10:21
+Phiên	s_e800f7741bab
+Mở lúc	23/09 14:08:00
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -81,7 +81,7 @@ Số lời gọi	1
 ```
 Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
 Cần làm rõ	THIẾU THÔNG TIN	Bước `ingest.index_text` đang chờ anh cho biết:
-• `files`
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -92,8 +92,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_3f3e5ace489c
-Mở lúc	23/09 13:10:21
+Phiên	s_e800f7741bab
+Mở lúc	23/09 14:08:00
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -127,10 +127,10 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 
 ```
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
-• `files`  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  view.rag_index  còn 23 giờ  Hoàn tác ⟩ 
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  view.rag_index  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 6.9 s)*:
+**Tác tử trả lời** *(sau 7.0 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `khong-co-linh-kien-tuong-duong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -140,7 +140,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   "chunks" : 0,
   "status" : {
   }
-}  TÁC TỬ HỎI  ·  ingest.index_text  files   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+}  TÁC TỬ HỎI  ·  ingest.index_text  Đọc những tệp nào? (đường dẫn đầy đủ)   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 
 **Màn đang mở — `Graph`:**

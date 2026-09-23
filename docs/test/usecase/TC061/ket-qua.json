@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không xuất được hồ sơ sản xuất.\n\nGhi chú: EIDE KHÔNG có năng lực layout PCB/Gerber/DRC nào trong 245 năng lực — đây là khoảng trống của sản phẩm, không phải lỗi lượt chạy.",
- "giay": 50.3,
+ "giay": 61.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 50.3,
+   "giay": 61.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

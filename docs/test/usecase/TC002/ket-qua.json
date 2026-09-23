@@ -27,7 +27,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Hiểu đúng ý định `arch.design` nhưng dừng ngay ở “Chưa ghim hộ chiếu chip — chip nào?”. Không có phương án nào được đề xuất, nên không có gì để so sánh chi phí/độ khó/rủi ro.\n\nGhi chú: Gốc ở TC001: nó dừng trước khi ghi được yêu cầu nào xuống store nên màn Yêu cầu & kiến trúc rỗng.",
- "giay": 11.2,
+ "giay": 22.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -46,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 11.2,
+   "giay": 22.5,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "so sánh|ưu|nhược"

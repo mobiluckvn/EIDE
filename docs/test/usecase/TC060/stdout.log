@@ -9,10 +9,10 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC060/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.3 s)*:
+**Tác tử trả lời** *(sau 0.4 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 ![bước 1](buoc-01.png)
@@ -23,10 +23,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC060/buoc-02.png
 
-**Tác tử trả lời** *(sau 11.7 s)*:
+**Tác tử trả lời** *(sau 15.8 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.build_platform`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.build_platform`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `Sim`:**
@@ -54,10 +54,10 @@ Mô phỏng  sim.build_platform · sim.mock_peripheral · sim.model_plant · +3 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (4)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.classify` đang chờ anh cho biết:
-• `files`  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
-• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
-• `files`  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải hỗ trợ cập nhật OTA sử dụng kiến trúc phân vùng A/B, yêu cầu xác thực chữ ký số (ví dụ: ECDSA/SHA256) cho firmware mới, và tự động quay lui (rollback) về phân vùng cũ nếu firmware mới không xác nhận hoạt động ổn định trong vòng 10 giây sau khi khởi động.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (6)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (10)  Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải tự động quay lui (rollback) về phân vùng cũ đang hoạt động ổn định nếu firmware mới không khởi động thành công hoặc không vượt qua kiểm tra sức khỏe (health check) trong vòng 10 giây.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.classify` đang chờ anh cho biết:
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Vi điều khiển (MCU) mục tiêu là loại nào để xác định dung lượng và cấu trúc sector của bộ nhớ Flash?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — LOGIC  Tiêu chí nào xác định firmware mới hoạt động tốt để chốt (confirm) bản cập nhật và ngăn chặn việc quay lui (rollback)?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — COMMUNICATION  Giao thức và đường truyền nào được sử dụng để tải bản cập nhật OTA từ máy chủ?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
+• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SOFTWARE  Dự án có sử dụng bootloader mã nguồn mở có sẵn hay cần thiết kế bootloader tùy chỉnh từ đầu?  Trả lời ở tab Làm rõ yêu cầu … và 2 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (6)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
 ```
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC060/buoc-03.png
@@ -65,7 +65,7 @@ Mô phỏng  sim.build_platform · sim.mock_peripheral · sim.model_plant · +3 
 **Tác tử trả lời** *(sau 2.3 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.build_platform`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.build_platform`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `Sim`:**

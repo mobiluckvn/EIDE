@@ -409,7 +409,9 @@ def test_trang_thai_du_an_la_nguon_tra_loi_chu_khong_phai_cau_hoi(tmp_path):
                                                   "isa": "avr8", "board": None}}),
         encoding="utf-8")
     ra = _trang_thai_du_an(Context(project_dir=goc))
-    assert ra["project"] == "du-an-x"
+    # ĐƯỜNG DẪN, không phải id — [DEV-207]. `ctx.project_dir` đã trỏ vào chính dự án, còn
+    # `project.open` giải id tương đối với thư mục được truyền, nên id cho ra `<dự án>/<dự án>`.
+    assert ra["project"] == str(goc)
     assert ra["isa"] == "avr8"
     assert ra["passport"] == "at.atmega328p@1.0.0", "hộ chiếu phải giữ PHIÊN BẢN đã ghim"
     assert _trang_thai_du_an(None) == {}
@@ -570,3 +572,31 @@ def test_nut_dau_cua_moi_mau_phai_DU_DU_KIEN_de_chay():
         "Nút đầu dừng hỏi người bằng TÊN TRƯỜNG TRẦN — người dùng không có cách nào biết nó là "
         f"gì: {la}. Hoặc cấp tham số từ một nút trước, hoặc thêm câu hỏi tiếng người vào "
         "`HOI_BANG_TIENG_NGUOI` / `description` của hợp đồng.")
+
+
+def test_nut_TUY_CHON_thieu_tham_so_thi_BO_chu_khong_hoi(daemon_du_an, monkeypatch):
+    """`on_ask: "skip"` nghĩa là "không có cũng chạy được" — mà thứ không cần thì không hỏi.
+
+    Đo 23/09/2026 sau [DEV-202]: **18 trên 68 ca** hiện câu *"Đọc những tệp nào? (đường dẫn
+    đầy đủ)"* cho những câu hỏi CHẲNG LIÊN QUAN TỆP NÀO — "tính thời gian dùng pin", "cảm biến
+    I2C không phản hồi". Nút `ingest.index_text` mang `skip` đúng như thiết kế, và vẫn đăng ký
+    một câu hỏi vào `waiting`.
+
+    Một câu hỏi không liên quan đứng cạnh câu trả lời làm người đọc nghi ngờ cả câu trả lời.
+    """
+    from eide.caps.chat import orchestrate
+    from eide_core import chain as chain_mod
+    from eide_core.router import Context
+
+    d, root = daemon_du_an
+    chuoi = chain_mod.Chain([
+        chain_mod.Nut(id="n1", cap="ingest.index_text", args={}, on_ask="skip"),
+        chain_mod.Nut(id="n2", cap="project.status", args={}),
+    ])
+    monkeypatch.setattr("eide.caps.chat._dung_chuoi", lambda *a, **k: (chuoi, "test"))
+    ctx = Context(project_dir=root)
+    ctx.extra["router"] = d.router
+    ra = orchestrate({"intent": {"intent": "view.ask"}, "grounded": {}}, ctx)
+    cho = [x["cap"] for x in (ra.get("waiting") or [])]
+    assert "ingest.index_text" not in cho, \
+        f"nút tuỳ chọn vẫn hỏi người: {cho}"

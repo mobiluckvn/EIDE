@@ -641,6 +641,23 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         # 17/09/2026 chúng nằm chung rổ với lỗi cấu trúc, nên một câu hỏi đáng lẽ hỏi người lại
         # giết cả chuỗi NGAY LÚC LẬP, kể cả phần đầu đã đủ dữ kiện để chạy.
         if nut.id in can_nguoi:
+            # NÚT TUỲ CHỌN thiếu tham số thì BỎ HẲN, không hỏi người. [DEV-207]
+            #
+            # `on_ask: "skip"` tới nay chỉ có nghĩa "đừng chặn chuỗi" — nút vẫn đăng ký một câu
+            # hỏi vào `cho`, nên người dùng vẫn thấy nó ở "ĐANG CHỜ TÔI". Với một nút LÀM GIÀU
+            # thì đó là tiếng ồn thuần tuý.
+            #
+            # Đo 23/09/2026 sau [DEV-202]: 18 ca hiện câu "Đọc những tệp nào? (đường dẫn đầy
+            # đủ)" cho những câu hỏi CHẲNG LIÊN QUAN TỆP NÀO — "tính thời gian dùng pin",
+            # "cảm biến I2C không phản hồi". Nút `ingest.index_text` mang `skip` đúng như thiết
+            # kế, và vẫn hỏi. Một câu hỏi không liên quan đứng cạnh câu trả lời làm người đọc
+            # nghi ngờ cả câu trả lời.
+            #
+            # `skip` nghĩa là "không có cũng chạy được" — mà thứ không cần thì không hỏi.
+            if nut.on_ask == "skip":
+                bo_qua.append({"id": nut.id, "cap": nut.cap,
+                               "vi": "tuỳ chọn, thiếu " + ", ".join(can_nguoi[nut.id])})
+                continue
             cho.append({"id": nut.id, "cap": nut.cap, "on_ask": nut.on_ask,
                         "thieu": can_nguoi[nut.id],
                         "vi": "cần anh cho biết: " + ", ".join(can_nguoi[nut.id])})
@@ -1015,8 +1032,17 @@ def _trang_thai_du_an(ctx: Context | None) -> dict[str, Any]:
         return {}
     tg = dict(d.get("target") or {})
     ra: dict[str, Any] = {}
-    if (pid := (d.get("project") or {}).get("id")) or goc.name:
-        ra["project"] = pid or goc.name
+    # ĐƯỜNG DẪN, không phải id. [DEV-207]
+    #
+    # `project.open.project` khai "id hoặc đường dẫn", và id NGẮN GỌN hơn nên trông đúng hơn.
+    # Nhưng `ctx.project_dir` ở đây đã trỏ thẳng vào chính dự án ấy, còn `project.open` giải id
+    # tương đối với thư mục được truyền — nên id cho ra `<dự án>/<dự án>`. Đo 23/09/2026 trên
+    # TC065: `✖ project.open HỎNG — E2000: Không tìm thấy dự án 'do-nhiet-do-sen42-qua-i2c'
+    # trong .../TC008/du-an/do-nhiet-do-sen42-qua-i2c`. Một hồi quy do chính [DEV-203] gây ra:
+    # nó chữa việc tác tử HỎI NGƯỢC đường dẫn, rồi thay bằng một giá trị sai.
+    #
+    # Đường dẫn tuyệt đối không mơ hồ ở bất kỳ thư mục gốc nào — đó là lý do chọn nó.
+    ra["project"] = str(goc)
     for k in ("chip", "board", "isa"):
         if tg.get(k):
             ra[k] = tg[k]

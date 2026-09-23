@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Rút ra hai yêu cầu có số liệu tốt (4K 24 fps độ trễ < 200 ms qua LoRa; 43 800 giờ trên pin CR2032 220 mAh ⇒ ≤ 5 µA) và tự đánh dấu một yêu cầu “✖ KHÔNG ĐO ĐƯỢC”. Nhưng KHÔNG hề nói hai yêu cầu ấy mâu thuẫn nhau và bất khả thi vật lý; báo “✅ Xong 6/6 bước”.\n\nGhi chú: Điểm cộng: không đưa ra thiết kế giả vờ khả thi. `req.detect_conflict` có chạy nhưng không bắt được mâu thuẫn băng thông/năng lượng.",
- "giay": 53.4,
+ "giay": 84.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -39,21 +39,17 @@
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC005/du-an/truyen-4k-qua-lora",
  "cham": {
-  "thieu": [
-   "mâu thuẫn|bất khả thi|không khả thi|không thể"
-  ],
+  "thieu": [],
   "thua": [],
-  "so_bo": "Nghi Không đạt"
+  "so_bo": "Cần người đọc"
  },
  "lap": [
   {
-   "giay": 53.4,
-   "so_bo": "Nghi Không đạt",
-   "thieu": [
-    "mâu thuẫn|bất khả thi|không khả thi|không thể"
-   ],
+   "giay": 84.9,
+   "so_bo": "Cần người đọc",
+   "thieu": [],
    "thua": []
   }
  ],
- "qua_sang": 0
+ "qua_sang": 1
 }

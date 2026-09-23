@@ -23,14 +23,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC064/buoc-02.png
 
-**Tác tử trả lời** *(sau 10.9 s)*:
+**Tác tử trả lời** *(sau 9.4 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 2/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/4 bước, 2 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `ingest.index_text`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.rag_index`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, chat.report_back.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 2/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/4 bước, 2 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `ingest.index_text`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.rag_index`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, chat.report_back.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
   "chunks" : 0,
   "status" : {
   }
-}  TÁC TỬ HỎI  ·  ingest.index_text  files   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+}  TÁC TỬ HỎI  ·  ingest.index_text  Đọc những tệp nào? (đường dẫn đầy đủ)   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `Graph`:**
@@ -68,8 +68,8 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
-• `files`  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (9)  view.rag_index  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.prioritize  còn 23 giờ  Hoàn tác … và 1 mục nữa — xem màn Nhật ký.  ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (3)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
+• Đọc những tệp nào? (đường dẫn đầy đủ) (`files`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — MISSING_REQUIREMENTS  Danh sách các yêu cầu (requirements) cụ thể của dự án này là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — MISSING_ARTIFACTS  Tài liệu thiết kế, mã nguồn và các kịch bản kiểm thử (test cases) hiện tại đang được lưu trữ ở đâu hoặc có nội dung như thế nào?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (22)  view.rag_index  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 14 mục nữa — xem màn Nhật ký.  ⟩ 
 ```
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC064/buoc-03.png
@@ -77,11 +77,11 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 **Tác tử trả lời** *(sau 4.6 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 2/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/4 bước, 2 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `ingest.index_text`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.rag_index`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, chat.report_back.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 2/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/4 bước, 2 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `ingest.index_text`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.rag_index`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, chat.report_back.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
   "chunks" : 0,
   "status" : {
   }
-}  TÁC TỬ HỎI  ·  ingest.index_text  files   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+}  TÁC TỬ HỎI  ·  ingest.index_text  Đọc những tệp nào? (đường dẫn đầy đủ)   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `Graph`:**

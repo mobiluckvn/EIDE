@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không đối chiếu được BOM với netlist (E1000 “không nhận ra định dạng nén”).",
- "giay": 40.0,
+ "giay": 49.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 40.0,
+   "giay": 49.4,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

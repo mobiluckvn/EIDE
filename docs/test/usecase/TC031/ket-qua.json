@@ -29,7 +29,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không đề xuất phép đo nào (đo điện áp SDA/SCL, quét địa chỉ). Chỉ hỏi ngược “Loại MCU đang dùng?”, “Framework nào?”.\n\nGhi chú: ĐIỂM CỘNG: không lao vào sửa code vô ích.",
- "giay": 13.9,
+ "giay": 12.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -48,7 +48,7 @@
  },
  "lap": [
   {
-   "giay": 13.9,
+   "giay": 12.5,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "đo|kiểm tra|quét địa chỉ|scan"

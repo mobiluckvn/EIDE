@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "SAU [DEV-202]: “Thông tin về dải nhiệt độ hoạt động của MCU-X không có trong đoạn văn được cung cấp [1].” Đọc tài liệu thật, tìm không thấy, nói ra, kèm trích dẫn.\n\nGhi chú: Trước đây ca này cũng KHÔNG bịa — nhưng vì tài liệu chưa bao giờ được đọc, nên phép đo ấy vô nghĩa. Giờ tính chất chống bịa được chứng minh THẬT: tài liệu đã nạp (3 đoạn), tác tử tra và trả lời rằng không có.",
- "giay": 26.2,
+ "giay": 32.0,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 26.2,
+   "giay": 32.0,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

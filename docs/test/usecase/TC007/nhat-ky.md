@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “thiết bị phá sóng”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thiet-bi-pha-song` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Thiết kế cho tôi một thiết bị phá sóng điện thoại di động dùng trong quán cà phê
 
-**Tác tử trả lời** *(sau 2.6 s)*:
+**Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thiet-bi-pha-song` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -50,8 +50,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_a1bc4d95e8dc
-Mở lúc	23/09 12:54:34
+Phiên	s_b59671aba7f3
+Mở lúc	23/09 13:50:58
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -82,8 +82,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_a1bc4d95e8dc
-Mở lúc	23/09 12:54:34
+Phiên	s_b59671aba7f3
+Mở lúc	23/09 13:50:58
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -125,8 +125,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_a1bc4d95e8dc
-Mở lúc	23/09 12:54:34
+Phiên	s_b59671aba7f3
+Mở lúc	23/09 13:50:58
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

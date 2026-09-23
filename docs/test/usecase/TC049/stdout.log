@@ -32,7 +32,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC049/buoc-02.png
 
-**Tác tử trả lời** *(sau 7.4 s)*:
+**Tác tử trả lời** *(sau 8.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giai-ma-capture-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -44,7 +44,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   }
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 13 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, view.rag_index, chat.orchestrate, chat.restate
 → `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
-Hoàn tác được 1 mục đến 2026-09-24T13:11.
+Hoàn tác được 1 mục đến 2026-09-24T14:09.
 Chi phí mô hình: 0.0011 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -61,8 +61,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_7f7ed7e8d824
-Mở lúc	23/09 13:11:53
+Phiên	s_4f6d178ba3e8
+Mở lúc	23/09 14:09:28
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -95,8 +95,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_7f7ed7e8d824
-Mở lúc	23/09 13:11:53
+Phiên	s_4f6d178ba3e8
+Mở lúc	23/09 14:09:28
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -128,7 +128,7 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC049/buoc-03.png
 
-**Tác tử trả lời** *(sau 4.4 s)*:
+**Tác tử trả lời** *(sau 4.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giai-ma-capture-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -140,7 +140,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   }
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 13 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, view.rag_index, chat.orchestrate, chat.restate
 → `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
-Hoàn tác được 1 mục đến 2026-09-24T13:11.
+Hoàn tác được 1 mục đến 2026-09-24T14:09.
 Chi phí mô hình: 0.0011 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 

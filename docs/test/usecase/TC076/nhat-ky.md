@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt
 
-**Tác tử trả lời** *(sau 7.3 s)*:
+**Tác tử trả lời** *(sau 7.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `cong-cu-tra-log-rong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -53,8 +53,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cf75bb0fc607
-Mở lúc	23/09 13:21:56
+Phiên	s_dfcf57051b53
+Mở lúc	23/09 14:20:49
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -88,8 +88,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cf75bb0fc607
-Mở lúc	23/09 13:21:56
+Phiên	s_dfcf57051b53
+Mở lúc	23/09 14:20:49
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
