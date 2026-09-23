@@ -225,7 +225,7 @@ const CHUOI_MAU = [
   // Câu HỎI. `${_text}` = chính câu người dùng gõ — mẫu là chỗ DUY NHẤT được quyền nói tham
   // số nào nhận nó (xem `_noi_dau_ra` trong chat.py và DEV-121); viết bảng ánh xạ tên vào mã
   // là tự nghĩ ra hành vi.
-  ['Trả lời câu hỏi (DEV-201)', 'view.rag_index → view.rag_ask → chat.report_back', ['view.ask']],
+  ['Trả lời câu hỏi (DEV-201)', 'ingest.index_text → view.rag_index → view.rag_ask → chat.report_back', ['view.ask']],
   // CHẨN ĐOÁN. Cũng bắt đầu bằng trả lời, vì một câu "cảm biến I2C không phản hồi, làm sao
   // biết lỗi phần cứng hay phần mềm" là một CÂU HỎI trước khi là một phiên gỡ lỗi. Ba nút
   // `debug.*` mang `on_ask: skip`: khi dự án đã có bằng chứng (log, capture) thì chúng chạy
@@ -247,7 +247,7 @@ const CHUOI_MAU = [
   // Hệ quả đo được: câu của người dùng bị biến thành một ĐƯỜNG DẪN TỆP rồi báo E2000 "Không
   // có tệp …/tim-tren-mang-datasheet-moi-nhat-cua-sen42" — một lỗi TỆP cho một việc TÌM MẠNG.
   // Mười ba ca kiểm thử chết ở đúng chỗ này.
-  ['Việc lớn chưa rõ (DEV-201)', 'view.artifacts(requirement) → req.elicit → req.classify → chat.report_back', ['big_command']],
+  ['Việc lớn chưa rõ (DEV-201)', 'view.artifacts(requirement) → ingest.classify → ingest.index_text → req.elicit → req.classify → chat.report_back', ['big_command']],
   ['Đổi mức tự chủ (DEV-155)', 'policy.set_autonomy', ['policy.set']],
 ];
 // §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
@@ -339,10 +339,22 @@ const CHUOI_NUT = {
   // của một năng lực có nhiệm vụ TRẢ LỜI CÂU HỎI — không có cách nào nhận được câu hỏi.
   // `_args_cho` chỉ ghép khi TÊN trùng khít, và nó cố ý từ chối bảng ánh xạ tên ("viết vào
   // mã là tự nghĩ ra hành vi"); chú thích ấy cũng chỉ luôn chỗ đúng để khai — chính mẫu.
+  // [DEV-202] `ingest.index_text` đứng đầu và KHÔNG có nút nào phụ thuộc nó.
+  //
+  // Người dùng gõ "Đọc /…/rm-mcux-v3.1.md rồi cho tôi biết bit nào bật DMA cho SPI2 TX".
+  // `chat.parse_intent` rút đúng `slots.path` và `slots.question` — dữ liệu vẫn nằm đó từ
+  // đầu, chỉ là không nút nào tiêu thụ. Tới bản trước, mọi đường dẫn đều đi qua
+  // `archive.list` (năng lực LIỆT KÊ KHO NÉN) và nhận E1000 "Không nhận ra định dạng nén của
+  // dem_xung.c" — một câu lỗi đúng của một năng lực bị gọi sai việc.
+  //
+  // Không nút nào phụ thuộc n1 là CÓ CHỦ Ý: câu hỏi không kèm đường dẫn thì n1 hỏng (thiếu
+  // `files`), và nếu `view.rag_index` chờ nó thì mọi câu hỏi thường cũng chết theo. Một nút
+  // làm giàu phải hỏng được mà không kéo ai theo.
   'Trả lời câu hỏi (DEV-201)': [
-    ['n1', 'view.rag_index', null, 'skip'],
-    ['n2', 'view.rag_ask', 'n1', 'wait', { question: '${_text}' }],
-    ['n3', 'chat.report_back', 'n2'],
+    ['n1', 'ingest.index_text', null, 'skip', { files: ['${_path}'] }],
+    ['n2', 'view.rag_index', null, 'skip'],
+    ['n3', 'view.rag_ask', 'n2', 'wait', { question: '${_text}' }],
+    ['n4', 'chat.report_back', 'n3'],
   ],
   // Ba nút `debug.*` mang `skip`: có bằng chứng thì làm giàu câu trả lời, chưa có thì bỏ
   // qua. Để `wait` thì một câu hỏi chẩn đoán bình thường sẽ dừng lại đòi `evidence_ids` —
@@ -386,11 +398,15 @@ const CHUOI_NUT = {
   'Chưa hiểu, hỏi lại (DEV-201)': [['n1', 'chat.clarify']],
   // Việc lớn chưa rõ: RÚT YÊU CẦU, không giải nén kho tài liệu. `view.artifacts` đứng đầu
   // vì nó đọc được store — cùng lý lẽ với mẫu thiết kế của [DEV-158].
+  // [DEV-202] Người dùng nêu tên một tệp thì ĐỌC nó, không đem nó đi giải nén. Hai nút nhập
+  // mang `skip` và không ai phụ thuộc — câu không kèm tệp thì chúng hỏng lặng lẽ.
   'Việc lớn chưa rõ (DEV-201)': [
     ['n1', 'view.artifacts', null, 'skip', { kind: 'requirement' }],
-    ['n2', 'req.elicit', 'n1'],
-    ['n3', 'req.classify', 'n2', 'wait', { raw: '${n2.raw}' }],
-    ['n4', 'chat.report_back', 'n3'],
+    ['n2', 'ingest.classify', null, 'skip', { files: ['${_path}'] }],
+    ['n3', 'ingest.index_text', null, 'skip', { files: ['${_path}'] }],
+    ['n4', 'req.elicit', null],
+    ['n5', 'req.classify', 'n4', 'wait', { raw: '${n4.raw}' }],
+    ['n6', 'chat.report_back', 'n5'],
   ],
   'Làm rõ yêu cầu (DEV-147)': [
     ['n1', 'req.elicit'],

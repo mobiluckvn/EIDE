@@ -304,3 +304,62 @@ def test_moi_mau_moi_phai_chay_duoc_it_nhat_MOT_nut():
         if nut and not any(c in reg and reg.get(c).implemented for c in nut):
             rong.append(str(m.get("ten") or m.get("trigger_intents")))
     assert not rong, f"mẫu không có nút nào chạy được: {rong}"
+
+
+# ──────────────────────────────────────── BB6 — đọc được tệp người dùng nêu tên trong câu
+
+def test_thay_token_goc_di_sau_vao_list():
+    """`ingest.index_text` nhận `files: arr<str>`, nên mẫu viết `{files: ['${_path}']}`.
+
+    Thay ở tầng một thì khoá ấy đi nguyên xuống năng lực dưới dạng chuỗi bảy ký tự — và năng
+    lực sẽ đi tìm một tệp tên `${_path}`.
+    """
+    from eide.caps.chat import _thay_goc
+    goc = {"${_text}": "câu gốc", "${_path}": "/tmp/a.md"}
+    ra = _thay_goc({"files": ["${_path}"], "question": "${_text}"}, goc, {})
+    assert ra == {"files": ["/tmp/a.md"], "question": "câu gốc"}
+
+
+def test_thu_da_rut_duoc_THANG_token_duong_lui():
+    """`chat.parse_intent` rút `slots.question` gọn hơn cả câu — token chỉ là đường lùi.
+
+    Đo 23/09/2026: câu "Đọc /…/rm-mcux-v3.1.md rồi cho tôi biết bit nào bật DMA cho SPI2 TX"
+    cho `slots.question` = "bit nào bật DMA cho SPI2 TX". Đè `${_text}` lên đó là đổi một câu
+    hỏi gọn lấy cả câu có kèm đường dẫn.
+    """
+    from eide.caps.chat import _thay_goc
+    ra = _thay_goc({"question": "${_text}"},
+                   {"${_text}": "Đọc /tmp/a.md rồi cho tôi biết X"},
+                   {"question": "X"})
+    assert ra["question"] == "X"
+
+
+def test_token_khong_giai_duoc_thi_BO_KHOA():
+    """Giữ nguyên `${_path}` là gửi bảy ký tự ấy xuống năng lực; bỏ đi thì nút hỏi người."""
+    from eide.caps.chat import _thay_goc
+    ra = _thay_goc({"files": ["${_path}"], "question": "${_text}"},
+                   {"${_text}": "", "${_path}": ""}, {})
+    assert ra == {}
+
+
+def test_cau_co_duong_dan_tep_KHONG_con_di_qua_archive_list():
+    """Mọi đường dẫn từng đi qua `archive.list` — năng lực LIỆT KÊ KHO NÉN.
+
+    Hệ quả đo được trên sáu ca: *"E1000: Không nhận ra định dạng nén của dem_xung.c"* — một
+    câu lỗi đúng của một năng lực bị gọi sai việc, và nó chặn cả nhóm rà soát thiết kế, phân
+    tích log, hỏi đáp datasheet.
+    """
+    ch = json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
+    ms = ch["chains"] if isinstance(ch, dict) and "chains" in ch else ch
+    theo = {m["ten"]: m for m in (ms.values() if isinstance(ms, dict) else ms)}
+    for ten in ("Trả lời câu hỏi (DEV-201)", "Việc lớn chưa rõ (DEV-201)"):
+        nut = theo[ten]["nodes"]
+        caps = [n["cap"] for n in nut]
+        assert "ingest.index_text" in caps, f"{ten}: không đọc được tệp người dùng nêu tên"
+        assert not any(c.startswith("archive.") for c in caps), \
+            f"{ten}: vẫn đem tệp thường đi giải nén"
+        # Nút nhập KHÔNG được có ai phụ thuộc: câu không kèm tệp thì nó hỏng, và một nút làm
+        # giàu phải hỏng được mà không kéo cả chuỗi theo.
+        nhap = {n["id"] for n in nut if n["cap"].startswith("ingest.")}
+        keo = [n["id"] for n in nut if n.get("when") in nhap]
+        assert not keo, f"{ten}: {keo} phụ thuộc nút nhập tệp — câu không kèm tệp sẽ chết theo"

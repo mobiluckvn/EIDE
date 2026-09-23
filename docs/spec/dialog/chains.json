@@ -838,8 +838,9 @@
  },
  {
   "ten": "Trả lời câu hỏi (DEV-201)",
-  "chuoi": "view.rag_index → view.rag_ask → chat.report_back",
+  "chuoi": "ingest.index_text → view.rag_index → view.rag_ask → chat.report_back",
   "buoc": [
+   "ingest.index_text",
    "view.rag_index",
    "view.rag_ask",
    "chat.report_back"
@@ -847,24 +848,35 @@
   "nodes": [
    {
     "id": "n1",
+    "cap": "ingest.index_text",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "files": [
+      "${_path}"
+     ]
+    }
+   },
+   {
+    "id": "n2",
     "cap": "view.rag_index",
     "when": null,
     "on_ask": "skip",
     "args": {}
    },
    {
-    "id": "n2",
+    "id": "n3",
     "cap": "view.rag_ask",
-    "when": "n1",
+    "when": "n2",
     "on_ask": "wait",
     "args": {
      "question": "${_text}"
     }
    },
    {
-    "id": "n3",
+    "id": "n4",
     "cap": "chat.report_back",
-    "when": "n2",
+    "when": "n3",
     "on_ask": "wait",
     "args": {}
    }
@@ -1115,9 +1127,11 @@
  },
  {
   "ten": "Việc lớn chưa rõ (DEV-201)",
-  "chuoi": "view.artifacts(requirement) → req.elicit → req.classify → chat.report_back",
+  "chuoi": "view.artifacts(requirement) → ingest.classify → ingest.index_text → req.elicit → req.classify → chat.report_back",
   "buoc": [
    "view.artifacts(requirement)",
+   "ingest.classify",
+   "ingest.index_text",
    "req.elicit",
    "req.classify",
    "chat.report_back"
@@ -1134,24 +1148,46 @@
    },
    {
     "id": "n2",
-    "cap": "req.elicit",
-    "when": "n1",
-    "on_ask": "wait",
-    "args": {}
+    "cap": "ingest.classify",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "files": [
+      "${_path}"
+     ]
+    }
    },
    {
     "id": "n3",
-    "cap": "req.classify",
-    "when": "n2",
-    "on_ask": "wait",
+    "cap": "ingest.index_text",
+    "when": null,
+    "on_ask": "skip",
     "args": {
-     "raw": "${n2.raw}"
+     "files": [
+      "${_path}"
+     ]
     }
    },
    {
     "id": "n4",
+    "cap": "req.elicit",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n5",
+    "cap": "req.classify",
+    "when": "n4",
+    "on_ask": "wait",
+    "args": {
+     "raw": "${n4.raw}"
+    }
+   },
+   {
+    "id": "n6",
     "cap": "chat.report_back",
-    "when": "n3",
+    "when": "n5",
     "on_ask": "wait",
     "args": {}
    }

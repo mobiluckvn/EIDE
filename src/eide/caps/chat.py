@@ -832,7 +832,7 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
     for n in giu:
         args = dict(_args_cho(n["cap"], intent, grounded, run_id))
         args.update(n.get("args") or {})
-        # `${_text}` — CÂU GỐC của người dùng. [DEV-201]
+        # `${_text}` và `${_path}` — CÂU GỐC và ĐƯỜNG DẪN người dùng vừa nói. [DEV-201/202]
         #
         # Cú pháp `${nX.field}` chỉ trỏ sang một nút chạy TRƯỚC; không có gì trỏ sang chính lời
         # người nói. Hệ quả: `view.rag_ask.question` — tham số của năng lực có nhiệm vụ TRẢ LỜI
@@ -842,12 +842,10 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
         # Giải bằng MẪU chứ không bằng một bảng ánh xạ tên trong mã, đúng ranh giới mà
         # `_noi_dau_ra` đã vạch: ánh xạ kiểu `chip → passport` là tri thức không có trong tài
         # liệu nào, còn "tham số này nhận câu gốc" là điều chỉ mẫu mới có quyền nói (DEV-121).
-        if (van := str((intent or {}).get("_text") or "")):
-            args = {k: (van if v == "${_text}" else v) for k, v in args.items()}
-        else:
-            # Không có câu gốc thì BỎ khoá ấy đi, để nút rơi về "thiếu tham số" và hỏi người —
-            # giữ nguyên chuỗi `${_text}` là gửi thẳng bảy ký tự ấy xuống năng lực.
-            args = {k: v for k, v in args.items() if v != "${_text}"}
+        goc = {"${_text}": str((intent or {}).get("_text") or ""),
+               "${_path}": str(((intent or {}).get("slots") or {}).get("path") or "")}
+        san_co = _args_cho(n["cap"], intent, grounded, run_id)
+        args = _thay_goc(args, goc, san_co)
         # Tham chiếu tới một nút ĐÃ BỊ BỎ là một tham chiếu không bao giờ giải được — và nó
         # sẽ giết cả chuỗi ở phép kiểm deterministic. Bỏ nó đi, để nút rơi về "thiếu tham số"
         # và hỏi người: một câu hỏi người trả lời được tốt hơn một chuỗi chết.
@@ -857,6 +855,45 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
         ra.append(chain_mod.Nut(id=n["id"], cap=n["cap"], args=args,
                                 when=n.get("when") if n.get("when") in con else None,
                                 on_ask=n.get("on_ask") or "wait"))
+    return ra
+
+
+def _thay_goc(args: dict[str, Any], goc: dict[str, str],
+              san_co: dict[str, Any]) -> dict[str, Any]:
+    """Thay `${_text}` / `${_path}` bằng lời người dùng vừa nói. [DEV-202]
+
+    Ba luật, mỗi luật vì một lỗi đo được:
+
+    1. **Đi sâu vào list.** `ingest.index_text` nhận `files: arr<str>`, nên mẫu viết
+       ``{files: ['${_path}']}``. Chỉ thay ở tầng một thì khoá ấy đi nguyên xuống năng lực
+       dưới dạng chuỗi bảy ký tự.
+    2. **Nhường chỗ cho thứ đã rút được.** `chat.parse_intent` rút `slots.question` = *"bit nào
+       bật DMA cho SPI2 TX"* từ câu *"Đọc /…/rm-mcux-v3.1.md rồi cho tôi biết bit nào bật DMA
+       cho SPI2 TX"*, và `_args_cho` đã ghép nó vào `question` vì trùng tên. Mẫu mà đè
+       ``${_text}`` lên đó là đổi một câu hỏi gọn lấy cả câu có kèm đường dẫn — kém hơn.
+       Nên token ở đây là ĐƯỜNG LÙI, không phải lệnh ghi đè.
+    3. **Không có giá trị thì BỎ khoá.** Giữ nguyên ``${_path}`` là gửi bảy ký tự ấy xuống
+       năng lực; bỏ đi thì nút rơi về "thiếu tham số" và hỏi người — một câu hỏi trả lời được.
+    """
+    def _di(v: Any) -> Any:
+        if isinstance(v, str):
+            return goc.get(v, v) if v in goc else v
+        if isinstance(v, list):
+            return [_di(x) for x in v]
+        if isinstance(v, dict):
+            return {k: _di(x) for k, x in v.items()}
+        return v
+
+    ra: dict[str, Any] = {}
+    for k, v in args.items():
+        if isinstance(v, str) and v in goc and san_co.get(k):
+            ra[k] = san_co[k]                  # luật 2 — thứ đã rút được thắng
+            continue
+        moi = _di(v)
+        # luật 3 — token không giải được thì bỏ hẳn khoá ấy.
+        if moi == "" or (isinstance(moi, list) and any(x == "" for x in moi)):
+            continue
+        ra[k] = moi
     return ra
 
 

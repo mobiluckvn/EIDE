@@ -26,8 +26,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 18.6,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không rà soát được netlist. Dừng ở “chip nào?”. Bốn lỗi cài sẵn (thiếu trở kéo I2C, VDDIO 5 V quá áp, NRST thả nổi, thiếu tụ lọc) KHÔNG lỗi nào được phát hiện.",
+ "giay": 23.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -49,7 +50,7 @@
  },
  "lap": [
   {
-   "giay": 18.6,
+   "giay": 23.7,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "trở kéo|pull-?up",
