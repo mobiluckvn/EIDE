@@ -157,7 +157,12 @@ def style_select(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """
     root = _root(ctx)
     ds = _doc_requirement(root, params["reqset_ids"])
-    dk = _dieu_kien(root, ds, params["passport"])
+    # `passport` TUỲ CHỌN — [DEV-211]. Nó chỉ dùng cho MỘT tín hiệu trong bốn: RAM. Ba tín hiệu
+    # còn lại (số chu kỳ khác nhau, số deadline dưới 10 ms, số giao tiếp chặn) đến từ chính các
+    # YÊU CẦU. Và `_ram_tu_passport` đã trả `None` đúng nghĩa "chưa biết" từ trước, còn
+    # `_kieu_theo_quy_tac` đã nói "quy tắc RAM không áp dụng" — hiện thực lường trước rồi, chỉ
+    # hợp đồng ép hỏi.
+    dk = _dieu_kien(root, ds, params.get("passport") or "")
     loai, vi_sao = _kieu_theo_quy_tac(dk)
 
     cu = {m["arch_style"] for m in _doc_module(root)} - {None}

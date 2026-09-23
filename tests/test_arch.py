@@ -618,3 +618,32 @@ def test_to_plan_ghi_feature_trang_thai_failing(du_an):
     r.invoke("arch.to_plan", {"module_ids": ["mod_a"]}, ctx)
     with store.open_store(store.store_path(root)) as c:
         assert c.execute("SELECT status FROM feature WHERE id='mod_a'").fetchone()[0] == "failing"
+
+
+def test_chon_kieu_kien_truc_KHONG_doi_ho_chieu_chip(du_an, monkeypatch):
+    """Chọn kiểu kiến trúc KHÔNG phụ thuộc mã chip — [DEV-211].
+
+    `passport` chỉ nuôi MỘT tín hiệu trong bốn của quy tắc ARCH-01: RAM. Ba tín hiệu còn lại —
+    số chu kỳ khác nhau, số deadline dưới 10 ms, số giao tiếp chặn — đến từ chính các YÊU CẦU.
+
+    Và người ta chọn kiến trúc RỒI mới chọn chip, không ngược lại. Bắt ghim hộ chiếu trước là
+    đảo ngược thứ tự thiết kế. Đo 23/09/2026: bốn ca (TC002, TC008, TC027, TC041) dừng ở
+    *"Chưa ghim hộ chiếu chip — chip nào?"* cho một quyết định không cần biết chip.
+
+    Hiện thực đã lường trước từ lâu: `_ram_tu_passport` trả `None` nghĩa "chưa biết" và
+    `_kieu_theo_quy_tac` nói "quy tắc RAM không áp dụng". Chỉ hợp đồng ép hỏi.
+    """
+    r, ctx, root = du_an
+    from eide.caps.req import _ghi_requirement
+    _ghi_requirement(root, [
+        {"id": "FR-COM-01", "kind": "FR", "text": "Đọc cảm biến qua I2C và chờ phản hồi"},
+        {"id": "FR-COM-02", "kind": "FR", "text": "Nhận lệnh qua UART và chờ dữ liệu về"}])
+    _gia_lap(monkeypatch, {"reasons": ["hai giao tiếp chặn"], "style": "rtos"})
+    # KHÔNG truyền `passport` — đó chính là thứ bài này đo.
+    run = r.invoke("arch.style_select", {"reqset_ids": ["FR-COM-01", "FR-COM-02"]}, ctx)
+    assert run.status == "done", f"vẫn đòi hộ chiếu: {run.error}"
+    qd = run.result["decision"]
+    assert qd.get("style"), "không chọn được kiểu kiến trúc nào"
+    # Phải NÓI RA rằng quy tắc RAM chưa áp dụng được — im lặng là giấu một phần cơ sở quyết định.
+    assert any("RAM" in str(x) for x in (qd.get("reasons") or [])), \
+        f"không nói rõ quy tắc RAM chưa áp dụng: {qd.get('reasons')}"
