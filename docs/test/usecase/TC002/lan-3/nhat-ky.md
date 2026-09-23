@@ -1,0 +1,91 @@
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `bo-chuyen-lan-sang-usb-cho-tv`
+
+**Tác tử trả lời** *(sau 0.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo
+
+**Tác tử trả lời** *(sau 6.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 2/7  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/7 bước, 1 bước cần anh trả lời  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select.  1. `view.artifacts`  2. `arch.style_select`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+  "items" : [
+  ],
+  "kind" : "requirement",
+  "total" : 0
+}  TÁC TỬ HỎI  ·  arch.style_select  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử ở vùng trao đổi; `req.elicit` → `req.classify` ghi yêu cầu xuống store  
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 2 tab tác tử đã mở:** Graph, ReqArch
+
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-01-Graph.png)
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử ở vùng trao đổi; `req.elicit` → `req.classify` ghi yêu cầu xuống store  
+```
+
+![ReqArch](man-02-ReqArch.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (2)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
+• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.style_select` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  project.create  còn 23 giờ  Hoàn tác ⟩ 
+```
+
+**Tác tử trả lời** *(sau 4.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 2/7  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/7 bước, 1 bước cần anh trả lời  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select.  1. `view.artifacts`  2. `arch.style_select`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+  "items" : [
+  ],
+  "kind" : "requirement",
+  "total" : 0
+}  TÁC TỬ HỎI  ·  arch.style_select  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử ở vùng trao đổi; `req.elicit` → `req.classify` ghi yêu cầu xuống store  
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-3`.

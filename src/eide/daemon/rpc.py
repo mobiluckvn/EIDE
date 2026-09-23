@@ -21,9 +21,14 @@ import yaml
 from eide import __version__, gate_handlers, undo_handlers
 from eide_core.errors import EideError, error_table
 from eide_core.ledger import Ledger, TheoDoiTep
-from eide_core.paths import nap_env, user_log
+from eide_core.paths import nap_env, spec_dir, user_log
 from eide_core.policy import NANG_LUC_BE_MAT_NGUOI, PolicyGate
 from eide_core.registry import get_registry
+from eide_core.request_ops import (
+    mo_ta_hau_qua,
+    nang_luc_cho,
+    thao_tac_trong_cau,
+)
 from eide_core.router import Context, Router
 from eide_core.undo import UndoService
 
@@ -700,6 +705,66 @@ class Daemon:
             print(f"[chat] không ghi được lượt vào M2: {type(e).__name__}: {e}",
                   file=sys.stderr, flush=True)
 
+    def _thao_tac_khong_dao_nguoc(self, ops: list[str], van: str) -> dict[str, Any]:
+        """Câu này gọi tên một thao tác không đảo ngược — hỏi CỔNG, rồi nói thật. [DEV-200]
+
+        Ba việc, theo thứ tự ấy:
+
+        1. **Hỏi PolicyGate thật**, không tự quyết. Quy tắc G-OPS-02 đã có và đã đúng; chỗ này
+           chỉ cấp cho nó đặc trưng ``op`` mà trước nay không ai cấp. Tự quyết ở đây là dựng
+           một chính sách thứ hai song song với chính sách đã có — đúng thứ sinh ra lệch lạc
+           mà DEV-012 đã cảnh báo.
+        2. **Nói HẬU QUẢ bằng tiếng người**, kèm mã quy tắc để tra lại được.
+        3. **Nói thật về việc làm được hay không.** Tới 23/09/2026 không một năng lực
+           ``target.*`` ghi nào được hiện thực. Nếu chỉ dừng ở "anh xác nhận chứ?" thì ta hứa
+           một việc không có thật, và người dùng gật đầu xong sẽ nhận một lỗi khác hẳn.
+
+        KHÔNG chạy gì, kể cả khi cổng trả APPROVE: năng lực chưa có thì không có gì để chạy.
+        Khi ``target.erase_fuse`` được hiện thực, chỗ này dựng một lượt chạy có cổng thay vì
+        trả lời suông — còn phép nhận diện và câu hỏi xác nhận thì giữ nguyên.
+        """
+        op = ops[0]
+        ten_nl, da_co = nang_luc_cho(op, get_registry())
+        qd: dict[str, Any] = {}
+        try:
+            # `tier="T3"` theo đúng bậc mà CDS-12 khai cho `target.erase_fuse` — không để mặc
+            # định T2, vì bậc là thứ tầng ngưỡng cứng của POL-17 §2 đọc để quyết.
+            d = self.gate.decide("G-OPS", {"op": op}, risk="R4", tier="T3",
+                                 autonomy=str(self.ctx.autonomy or "A2"))
+            qd = d if isinstance(d, dict) else asdict(d)
+        except Exception as e:  # noqa: BLE001
+            print(f"[chat] không hỏi được cổng cho `{op}`: {type(e).__name__}: {e}",
+                  file=sys.stderr, flush=True)
+
+        quy_tac = qd.get("rule_id") or qd.get("rule") or "G-OPS-02"
+        dong = [
+            f"DỪNG — câu này nói tới một thao tác KHÔNG ĐẢO NGƯỢC: {mo_ta_hau_qua(op)}.",
+            f"Chính sách {quy_tac} xếp việc này vào nhóm phải hỏi anh trước "
+            f"(quyết định: {qd.get('decision', 'ASK')}).",
+        ]
+        if len(ops) > 1:
+            dong.append("Câu còn nhắc tới: "
+                        + "; ".join(f"{mo_ta_hau_qua(x)}" for x in ops[1:]) + ".")
+        dong.append(
+            f"`{ten_nl}` CHƯA được hiện thực ở bản này, nên EIDE chưa làm được việc ấy. "
+            f"Tôi dừng ở đây thay vì chạy một việc khác."
+            if not da_co else
+            f"`{ten_nl}` đã có. Anh xác nhận thì tôi chạy, và lượt ấy vẫn đi qua cổng G-OPS "
+            f"như mọi thao tác R4 khác.")
+
+        # Ghi bằng `gate.decision` — kiểu sự kiện API-15 ĐÃ CÓ cho đúng việc này, nên nó hiện
+        # ngay ở màn Nhật ký dưới bộ lọc "Chỉ cổng". Dựng một kiểu sự kiện mới cho một quyết
+        # định cổng là tách đôi chỗ người đi tìm khi rà lại sau sự cố.
+        if self.ledger is not None:
+            self.ledger.append("gate.decision", {
+                "gate": "G-OPS", "decision": qd.get("decision", "ASK"), "rule_id": quy_tac,
+                "reason": qd.get("reason") or f"thao tác không đảo ngược: {op}",
+                "risk": "R4", "tier": "T3", "op": op, "ops": ops,
+                "action_cap": ten_nl, "implemented": da_co,
+                "autonomy_level": str(self.ctx.autonomy or "A2"), "by": "agent",
+                "text": van[:200]})
+        return {"intent_id": "unknown", "state": "done", "loi": " ".join(dong)}
+
     def _tro_nguoc(self, loai: str, van: str) -> dict[str, Any]:
         """Giải "làm lại" / "tiếp tục" thành một việc CỤ THỂ. [DEV-196]
 
@@ -808,6 +873,18 @@ class Daemon:
         # việc mới và chạy nhầm. Tra bảng `run` cho câu trả lời chắc chắn, không tốn token.
         if (tro := la_cau_tro_nguoc(p["text"])):
             return self._tro_nguoc(tro, p["text"])
+
+        # ---- THAO TÁC KHÔNG ĐẢO NGƯỢC — chặn TRƯỚC khi mô hình phân loại. [DEV-200]
+        #
+        # Cùng chỗ và cùng lý lẽ với `la_cau_tro_nguoc` ngay trên: bảng 19 ý định không có giá
+        # trị nào diễn đạt được "xoá toàn bộ flash" hay "ghi option bytes", nên để mô hình phân
+        # loại thì nó rơi vào `target.flash` — và cổng R3 duyệt ĐÚNG theo luật của nó, cho một
+        # việc đáng lẽ phải qua G-OPS-02.
+        #
+        # Đây là phòng thủ lớp HAI: nó đọc chính câu người dùng gõ, không đọc ý định, nên nó
+        # vẫn nổ kể cả khi định tuyến sai. An toàn không được nằm sau một phép đoán.
+        if (ops := thao_tac_trong_cau(p["text"], spec_dir() / "policy" / "rules.yaml")):
+            return self._thao_tac_khong_dao_nguoc(ops, p["text"])
 
         y = self.router.invoke("chat.parse_intent", {"text": p["text"]}, self.ctx)
         if y.status != "done":

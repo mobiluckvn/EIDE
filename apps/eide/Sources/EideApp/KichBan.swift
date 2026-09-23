@@ -175,8 +175,9 @@ enum KichBan {
                 // ĐÚNG đường người dùng đi: đặt chữ vào ô lệnh rồi bấm Gửi.
                 let truoc = ud.khung.dock.soLuot
                 let baoCaoTruoc = ud.phien.soBaoCao
+                let ngayTruoc = ud.phien.soLuotTraLoiNgay
                 ud.khung.dock.guiDeTest(lenh)
-                await cho(ud, sau: truoc, baoCaoTruoc: baoCaoTruoc)
+                await cho(ud, sau: truoc, baoCaoTruoc: baoCaoTruoc, ngayTruoc: ngayTruoc)
             }
 
             let giay = ProcessInfo.processInfo.systemUptime - t0
@@ -261,12 +262,22 @@ enum KichBan {
     /// Run còn ghi `bước 1/6 ▶ đang chạy req.elicit`.
     ///
     /// - Parameter sau: `dock.soLuot` đo NGAY TRƯỚC khi gõ.
-    private static func cho(_ ud: UngDung, sau moc: Int, baoCaoTruoc: Int) async {
+    private static func cho(_ ud: UngDung, sau moc: Int, baoCaoTruoc: Int,
+                            ngayTruoc: Int = 0) async {
         let t0 = ProcessInfo.processInfo.systemUptime
         var truoc = -1
         var yen = 0
         while ProcessInfo.processInfo.systemUptime - t0 < HAN_GIAY {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
+            // MỐC THỨ HAI: lượt được tầng deterministic trả lời thẳng, không sinh chuỗi nào
+            // nên không bao giờ có báo cáo. [DEV-200]
+            //
+            // Đo 23/09/2026 trên TC035: câu trả lời hiện ra tức thì, còn bộ lái đợi trọn 900
+            // giây rồi ghi "quá hạn" — một phép đo báo sai về đúng thứ nó vừa đo đúng.
+            if ud.phien.soLuotTraLoiNgay > ngayTruoc {
+                try? await Task.sleep(nanoseconds: 1_500_000_000)   // để chữ vẽ xong
+                return
+            }
             // [DEV-154] Mốc là BÁO CÁO ĐÃ VỀ, không phải "hết bận". `chat.send` nay trả về ngay
             // với `state: "running"`, nên `dangBan` tắt sau vài giây trong khi chuỗi còn chạy
             // vài phút — đợi theo nó là chụp ảnh một lượt chưa làm gì.

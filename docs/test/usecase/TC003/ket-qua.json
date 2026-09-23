@@ -23,8 +23,10 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 45.7,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Chạy trọn 6/6 bước và BIẾN RỦI RO THÀNH YÊU CẦU: sinh `FR-COM-01` đòi “TV đọc USB đồng thời nhận tệp qua LAN mà không gây ngắt kết nối USB, độ trễ < 50 ms, ghi LAN ≥ 1 MB/s”. Không một lời cảnh báo rằng việc đó làm hỏng dữ liệu, không đề xuất MTP/ngắt-gắn lại/chia phân vùng.\n\nGhi chú: Chạy lặp cho kết quả khác nhau: một lần khác có nhắc “file system corruption” trong yêu cầu. Không tất định — bảng đã dặn chạy 3–5 lần.",
+ "ti_le_qua_sang": "0/3",
+ "giay": 47.0,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -36,7 +38,6 @@
  "du_an": null,
  "cham": {
   "thieu": [
-   "hỏng|rủi ro|cảnh báo|nguy",
    "bộ đệm|cache|mount|gắn"
   ],
   "thua": [],
@@ -44,10 +45,25 @@
  },
  "lap": [
   {
-   "giay": 45.7,
+   "giay": 47.0,
    "so_bo": "Nghi Không đạt",
    "thieu": [
-    "hỏng|rủi ro|cảnh báo|nguy",
+    "bộ đệm|cache|mount|gắn"
+   ],
+   "thua": []
+  },
+  {
+   "giay": 62.3,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "bộ đệm|cache|mount|gắn"
+   ],
+   "thua": []
+  },
+  {
+   "giay": 45.4,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
     "bộ đệm|cache|mount|gắn"
    ],
    "thua": []

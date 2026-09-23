@@ -948,12 +948,32 @@ public final class EidePhien {
             //
             // `chat.send` trả `{intent_id}` trần khi `chat.parse_intent` hoặc `chat.orchestrate`
             // hỏng: hợp đồng cho phép, nên chỗ này phải đọc được cả trường hợp ấy.
+            // Lõi TRẢ LỜI THẲNG, không dựng chuỗi — hiện nguyên văn. [DEV-200]
+            //
+            // Tầng deterministic có những câu trả lời dứt khoát mà không cần chuỗi nào: "làm
+            // lại" trỏ vào một lượt cụ thể ([DEV-196]), và một thao tác không đảo ngược bị chặn
+            // trước khi mô hình kịp phân loại ([DEV-200]). Cả hai trả `{"loi": <câu trả lời>}`
+            // và KHÔNG có `run_id`.
+            //
+            // Nhánh dưới đọc đúng trường hợp ấy như một THẤT BẠI và in đè lên bằng "Không dựng
+            // được chuỗi… Lõi không nói lý do." Đo 23/09/2026 trên TC035: lõi chặn đúng lệnh
+            // khoá chip vĩnh viễn, ghi đúng quyết định cổng xuống sổ — và người dùng đọc được
+            // một câu nói rằng tác tử không hiểu gì. Một phép chặn đúng mà không nói ra được
+            // thì bằng không chặn.
+            //
+            // Đây là chỗ nối GIỮA hai bên đều xanh: lõi có test, giao diện có test, và cái rơi
+            // mất nằm đúng khoảng giữa — cùng lớp lỗi với `_cho_gi` ở [DEV-181].
+            else if let noi = r["loi"] as? String, !noi.isEmpty {
+                khung.dock.themLuot(.tacTu, noi)
+                soLuotTraLoiNgay += 1
+            }
             else {
                 let y = (r["intent_id"] as? String).map { " (ý hiểu: `\($0)`)" } ?? ""
                 khung.dock.themLuot(.loi,
                     "Không dựng được chuỗi cho câu này\(y) — tác tử KHÔNG làm gì cả. "
                     + Self.viSaoKhongCoChuoi(r)
                     + " Xem màn Nhật ký (S2) để đọc lời gọi đã hỏng.")
+                soLuotTraLoiNgay += 1
             }
             // Chuỗi dừng chờ người thì NÓI RA nó chờ gì — không để nó đứng im mãi.
             for n in (r["cho_nguoi"] as? [[String: Any]] ?? []) { _hienCauHoi(n) }
@@ -1351,6 +1371,18 @@ public final class EidePhien {
     /// Số báo cáo lượt chạy đã nhận. Mốc để bộ lái kịch bản biết một lượt gõ đã xong —
     /// `chat.send` nay trả về ngay, nên "hết bận" không còn nghĩa là "xong việc". [DEV-154]
     public private(set) var soBaoCao = 0
+
+    /// Số lượt KẾT THÚC NGAY trong lời đáp của `chat.send`, không sinh lượt chạy nào. [DEV-200]
+    ///
+    /// Bộ lái kịch bản đợi `soBaoCao` tăng để biết một lượt gõ đã xong. Nhưng một lượt bị tầng
+    /// deterministic trả lời thẳng thì KHÔNG BAO GIỜ có báo cáo — không chuỗi nào chạy để mà
+    /// báo cáo. Đo 23/09/2026 trên TC035: bộ lái đợi trọn 900 giây cho một câu trả lời đã hiện
+    /// trên màn hình ngay lập tức, rồi ghi lại là "quá hạn".
+    ///
+    /// Mốc thứ hai này là điều kiện DƯƠNG, cùng tinh thần với `soBaoCao` ([DEV-154]): nó chỉ
+    /// tăng khi đã có chữ hiện ra cho người đọc, nên không kéo lại lỗi cũ là chụp ảnh một lượt
+    /// còn đang nghĩ.
+    public private(set) var soLuotTraLoiNgay = 0
 
     private func _nhanBaoCao(_ p: [String: Any]) {
         soBaoCao += 1

@@ -116,6 +116,7 @@ def _docx(tc: dict, kq: dict, cham: dict, thu_muc: Path, dich: Path) -> None:
         ("Người test", "Claude Code (tự động, qua EideApp --kich-ban)"),
         ("Ngày test", tc.get("ngay", "")),
         ("Trạng thái", tc.get("trang_thai", cham["so_bo"])),
+        ("Số lần chạy", tc.get("ti_le_qua_sang", "1 lần")),
     ]:
         r = t.add_row().cells
         r[0].text = str(k)
@@ -146,6 +147,23 @@ def _docx(tc: dict, kq: dict, cham: dict, thu_muc: Path, dich: Path) -> None:
         "Bị chặn": RGBColor(0x94, 0x6C, 0x00),
     }.get(tc.get("trang_thai", ""), RGBColor(0x44, 0x44, 0x44))
     d.add_paragraph(tc.get("nhan_xet", "(chưa có nhận xét của người đọc)"))
+
+    if kq.get("lap") and len(kq["lap"]) > 1:
+        d.add_paragraph(
+            f"Chạy lặp {len(kq['lap'])} lần (sheet \"Huong dan\" đòi 3–5 lần vì kết quả của "
+            f"mô hình ngôn ngữ không tất định). Ảnh và nhật ký dưới đây là của LẦN ĐẦU — lấy "
+            f"\"lần đẹp nhất\" thì bộ đo thành bộ chọn kết quả.")
+        tl = d.add_table(rows=1, cols=4)
+        tl.style = "Table Grid"
+        for i, h in enumerate(["Lần", "Thời gian", "Qua sàng", "Dấu hiệu thiếu"]):
+            tl.rows[0].cells[i].text = h
+            tl.rows[0].cells[i].paragraphs[0].runs[0].bold = True
+        for i, x in enumerate(kq["lap"], 1):
+            r2 = tl.add_row().cells
+            r2[0].text = str(i)
+            r2[1].text = f"{x['giay']} s"
+            r2[2].text = "có" if x["so_bo"] == "Cần người đọc" else "KHÔNG"
+            r2[3].text = ", ".join(x["thieu"])[:220] or "—"
 
     if cham["thieu"] or cham["thua"]:
         d.add_paragraph("Dấu hiệu máy sàng:")
@@ -237,6 +255,7 @@ def main() -> int:
                     r1 = {"giay": -1.0, "rc": 124, "nhat_ky": "QUÁ HẠN — bộ lái không thoát.",
                           "anh": sorted(x.name for x in tm.glob("buoc-*.png")), "du_an": None}
                 r1["cham"] = _cham(tc, r1["nhat_ky"])
+                r1["thu_muc"] = str(tm)     # docx nhúng ảnh từ ĐÚNG thư mục của lần đó
                 lan.append(r1)
                 if a.lap > 1:
                     print(f"     lần {k + 1}/{a.lap}: {r1['giay']}s · {r1['cham']['so_bo']}",
@@ -256,7 +275,7 @@ def main() -> int:
         if kq.get("lap") and len(kq["lap"]) > 1:
             tc["ti_le_qua_sang"] = f"{kq['qua_sang']}/{len(kq['lap'])}"
         tc.setdefault("trang_thai", cham["so_bo"])
-        _docx(tc, kq, cham, thu_muc, RA / f"{tc['tc']}.docx")
+        _docx(tc, kq, cham, Path(kq.get("thu_muc") or thu_muc), RA / f"{tc['tc']}.docx")
 
         d = dict(tc)
         d.update({"giay": kq["giay"], "rc": kq["rc"], "anh": kq["anh"],

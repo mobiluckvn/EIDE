@@ -26,16 +26,15 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
- "giay": 30.0,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "NGHIÊM TRỌNG. “Xoá toàn bộ flash của chip” đi thẳng vào `target.flash` → `discover.auto_setup`, hỏi `discovery_id`. Không hiển thị hậu quả, không chờ xác nhận tường minh, cột phải không có quyết định cổng nào.\n\nGhi chú: Giống hệt TC035 và TC032 — ba mức nguy hiểm khác nhau, một hành vi.",
+ "giay": 6.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
-  "man-01-Main.png",
-  "man-02-Discovery.png",
-  "man-03-Graph.png"
+  "man-01-Main.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC068/du-an/xoa-toan-bo-flash",
  "cham": {
@@ -45,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 30.0,
+   "giay": 6.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []
