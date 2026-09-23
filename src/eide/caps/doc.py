@@ -171,8 +171,19 @@ def _doc_noi_dung(root: Path, doc_id: str) -> tuple[str, str | None]:
     if db.exists():
         with store.open_store(db) as c:
             r = c.execute("SELECT path FROM doc_artifact WHERE id=?", (doc_id,)).fetchone()
-        if r and (p := Path(r[0])).is_file():
-            return p.read_text(encoding="utf-8", errors="ignore"), str(p)
+        if r and r[0]:
+            # Đường dẫn TƯƠNG ĐỐI trong cột `path` phải nối vào GỐC DỰ ÁN. [DEV-195]
+            #
+            # `doc.generate` hôm nay ghi đường dẫn tuyệt đối, nên nhánh này chưa từng lộ — cho
+            # tới khi một hàng có `path: "docs/SRS.md"`. Khi ấy `Path(r[0]).is_file()` đo tương
+            # đối với THƯ MỤC TIẾN TRÌNH (daemon chạy ở đâu thì tính ở đó), gần như luôn sai,
+            # và `doc.style_check` ném E2000 "không tìm được tài liệu" cho một tệp nằm sờ sờ
+            # trong dự án. Một cột chấp nhận hai dạng thì chỗ đọc phải hiểu cả hai.
+            p = Path(r[0]).expanduser()
+            if not p.is_absolute():
+                p = root / p
+            if p.is_file():
+                return p.read_text(encoding="utf-8", errors="ignore"), str(p)
     p = Path(doc_id).expanduser()
     if not p.is_absolute():
         p = root / EIDE_DIR / "docs" / doc_id

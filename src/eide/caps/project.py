@@ -240,7 +240,54 @@ def open_project(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                              ledger=led)
     ctx.extra["session_id"] = phien.session_id
     summary["session_id"] = phien.session_id
+    # Bước 5 của MEM-11 §5: **báo cáo "lần trước đã… còn chờ… tôi đề nghị…"**. [DEV-196]
+    summary["tiep_tuc"] = _bao_cao_tiep_tuc(root, truoc, stale)
     return {"summary": summary, "migrated": False, "stale_runs": stale}
+
+
+def _bao_cao_tiep_tuc(root: Path, truoc: SessionMemory | None,
+                      stale: list[str]) -> dict[str, Any]:
+    """`{dong[], run_id?, de_nghi?}` — mở dự án ra là biết ngay việc đang dở.
+
+    ## Thủ tục này đã viết trong tài liệu từ lâu và chưa bao giờ chạy
+
+    MEM-11 §5 quy định trọn năm bước, kể cả câu đích: *"lần trước đã… còn chờ… tôi đề nghị…"*
+    ≤ 10 dòng, mục tiêu **tiếp tục ≤ 15 phút và ≤ 1 câu hỏi**. Bước 4 (`summarize_session`) có
+    hiện thực và được gọi đúng chỗ; bước 5 thì không, nên người dùng mở dự án ra và nhận đúng
+    một câu "Đã mở X — n tính năng".
+    """
+    dong: list[str] = []
+    luot = None
+    if truoc is not None and truoc.turns:
+        n = len([t for t in truoc.turns if t.get("by") != "summary"])
+        cuoi = next((t for t in reversed(truoc.turns) if t.get("by") == "human"), None)
+        dong.append(f"Lần trước: {n} lượt trao đổi"
+                    + (f'; câu cuối anh gõ: "{str(cuoi["text"])[:100]}"' if cuoi else ""))
+
+    from eide.caps.memory import luot_gan_nhat_chua_xong
+    luot = luot_gan_nhat_chua_xong(root)
+    if luot:
+        if luot["state"] == "asked":
+            thieu = ", ".join(x for w in (luot["waiting"] or []) for x in (w.get("thieu") or []))
+            dong.append(f'Còn chờ anh: lượt {luot["run_id"][:10]} dừng để hỏi'
+                        + (f" — cần {thieu}" if thieu else ""))
+        else:
+            hong = ", ".join(f'`{x.get("cap", "?")}`' for x in (luot["failed"] or [])[:2])
+            dong.append(f'Việc dở: lượt {luot["run_id"][:10]} ({luot["state"]})'
+                        + (f" — hỏng ở {hong}" if hong else ""))
+        if luot["text"]:
+            dong.append(f'Việc gốc: "{luot["text"][:120]}"')
+        # ĐỀ NGHỊ phải là một câu người GÕ ĐƯỢC, không phải một lời khuyên chung. Người đọc
+        # "anh nên tiếp tục việc dở" vẫn phải tự nghĩ ra cách nói; "gõ: tiếp tục" thì không.
+        dong.append("Tôi đề nghị: gõ **"
+                    + ("tiếp tục" if luot["state"] == "asked" else "làm lại")
+                    + "** — tôi biết chính xác lượt nào.")
+    elif stale:
+        dong.append(f"{len(stale)} lượt chạy còn dở từ phiên trước.")
+
+    return {"dong": dong[:10], "run_id": (luot or {}).get("run_id"),
+            "de_nghi": ("tiếp tục" if (luot or {}).get("state") == "asked"
+                        else "làm lại" if luot else None)}
 
 
 @capability("project.status")

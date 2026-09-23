@@ -431,6 +431,63 @@ def _doc_feature_an_toan(root: Path, task_ref: str) -> dict[str, Any] | None:
         return None
 
 
+def luot_gan_nhat_chua_xong(root: Path) -> dict[str, Any] | None:
+    """Lượt chạy GẦN NHẤT chưa kết thúc tốt — `{run_id, state, text, failed[], waiting[]}`.
+
+    Dùng chung cho hai chỗ, và đó là lý do nó đứng ở đây chứ không nằm trong `compose`: lớp C6
+    đọc nó để tác tử BIẾT, còn đường tắt "làm lại" của daemon đọc nó để GIẢI THAM CHIẾU. Hai
+    bản đọc khác nhau sẽ trỏ vào hai lượt khác nhau đúng lúc người dùng cần chúng trỏ vào một.
+
+    "Chưa xong" gồm cả `asked` (đang chờ người) lẫn `failed`/`running`: *"làm lại"* và
+    *"tiếp tục"* là hai câu khác nhau, và phân biệt được chúng đòi biết lượt trước dừng vì hỏng
+    hay vì đang hỏi.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    try:
+        with store.open_store(db) as c:
+            r = c.execute(
+                "SELECT id, state, working, report FROM run"
+                " WHERE state IS NOT NULL AND state <> 'done'"
+                " ORDER BY rowid DESC LIMIT 1").fetchone()
+    except Exception:  # noqa: BLE001 — store hỏng không được làm hỏng cả lượt gõ
+        return None
+    if not r:
+        return None
+    lam = json.loads(r[2]) if r[2] else {}
+    bc = json.loads(r[3]) if r[3] else {}
+    return {"run_id": r[0], "state": r[1],
+            "text": str(lam.get("text") or ""),
+            "failed": bc.get("failed") or [],
+            "waiting": bc.get("waiting") or []}
+
+
+def _c6_luot_gan_nhat(root: Path, tran: int) -> tuple[str, list[str]]:
+    """C6 — lượt chạy gần nhất và nó dừng ở đâu. [DEV-196]
+
+    Nói NGUYÊN VĂN câu người đã gõ, không tóm tắt: đó là thứ một lệnh "làm lại" trỏ vào, và một
+    bản tóm tắt làm mất đúng các chi tiết (tên chip, số hiệu bo) khiến lượt sau khác lượt trước.
+    """
+    luot = luot_gan_nhat_chua_xong(root)
+    if not luot:
+        return "", []
+    dong = [f"LƯỢT CHẠY GẦN NHẤT ({luot['run_id'][:10]}) — trạng thái: {luot['state']}"]
+    if luot["text"]:
+        dong.append(f'Người đã yêu cầu: "{luot["text"][:400]}"')
+    for x in (luot["failed"] or [])[:4]:
+        e = x.get("error") or {}
+        ma = e.get("eide_code") if isinstance(e, dict) else str(e or "")
+        vi = (e.get("message") if isinstance(e, dict) else "") or x.get("vi") or ""
+        dong.append(f"  ✖ HỎNG ở `{x.get('cap', '?')}` — {ma} {str(vi)[:160]}")
+    for x in (luot["waiting"] or [])[:4]:
+        thieu = ", ".join(x.get("thieu") or [])
+        dong.append(f"  ⏸ ĐANG CHỜ NGƯỜI ở `{x.get('cap', '?')}`"
+                    + (f" — cần: {thieu}" if thieu else ""))
+    van = "\n".join(dong)
+    return van[: max(200, tran * 4)], [luot["run_id"]]
+
+
 def _c5_tinh_nang(root: Path, task_ref: str) -> tuple[str, list[str]]:
     """C5 — ĐỊNH NGHĨA của chính tính năng đang lập kế hoạch. [DEV-174a]
 
@@ -737,6 +794,23 @@ def compose(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             b.add("C5", van, nguon)
             if da_tom_tat:
                 b.compressions.append("human_diff:summarize")
+
+    # C6 — **phản hồi công cụ: lượt chạy gần nhất và nó dừng ở đâu.** [DEV-196]
+    #
+    # CXD-10 §2 khai C6 là "phản hồi công cụ", và tới 23/09/2026 **không lớp C6 nào được dựng**
+    # — `compose` đi thẳng từ C5 sang C7. Hệ quả đo được: tác tử bước vào mỗi lượt mà không
+    # biết lượt trước của chính nó đã chạy tới đâu.
+    #
+    # Đó là gốc của *"bảo làm lại thì Agent không biết việc gì"*: câu "làm lại" không có tiền
+    # lệ nào để trỏ vào, vì bảng `run` — nơi giữ câu gõ gốc, trạng thái, và các nút đã HỎNG —
+    # chưa bao giờ đi vào ngữ cảnh. Dữ liệu vẫn nằm đó; chỉ là không ai đọc.
+    #
+    # Nói cả lượt ĐANG CHỜ NGƯỜI, không chỉ lượt hỏng: "tiếp tục" và "làm lại" là hai câu khác
+    # nhau, và phân biệt được chúng đòi biết lượt trước dừng vì hỏng hay vì đang hỏi.
+    if co_du_an and b.budget.get("C6"):
+        van, ng = _c6_luot_gan_nhat(root, int(b.budget["C6"]))
+        if van:
+            b.add("C6", van, ng)
 
     # C7 — lịch sử lượt, tối đa 2 lượt đã tóm tắt (CXD-10 §2, MEM-11)
     if co_du_an:

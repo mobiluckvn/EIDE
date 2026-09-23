@@ -232,6 +232,17 @@ public final class EidePhien {
             khung.dock.themLuot(.tacTu, "Đã mở `\(ten)` — \(n) tính năng trong hồ sơ"
                                 + (dau.map { ", đang dở: \($0)" } ?? "")
                                 + ". Gõ một câu tiếng Việt để bắt đầu.")
+            // **BÁO CÁO TIẾP TỤC** — MEM-11 §5 bước 5, [DEV-196].
+            //
+            // "lần trước đã… còn chờ… tôi đề nghị…". Thủ tục này viết trong tài liệu từ lâu và
+            // chưa bao giờ chạy: người dùng mở dự án ra và nhận đúng một câu "đã mở X", rồi tự
+            // đi tìm việc đang dở giữa 75 lượt `asked`. Mục tiêu của §5 là **tiếp tục ≤ 15
+            // phút và ≤ 1 câu hỏi** — không nói ra việc dở thì không cách nào đạt.
+            let tt = (r["tiep_tuc"] as? [String: Any]) ?? [:]
+            let dong = (tt["dong"] as? [String]) ?? []
+            if !dong.isEmpty {
+                khung.dock.themLuot(.cho, dong.joined(separator: "\n"))
+            }
         } catch let e as EideKetQua.Loi {
             // E6003/E6000 không phải lỗi để nuốt: chúng có CÁCH SỬA, và cách ấy phải hiện ra.
             let cach = e.maEide == "E6003" ? " → dự án của bản EIDE cũ."

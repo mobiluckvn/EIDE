@@ -154,6 +154,51 @@ CAU_DUNG = frozenset({
 })
 
 
+# Câu TRỎ NGƯỢC về lượt trước — [DEV-196]. Hai nhóm, và chúng dẫn tới hai việc khác nhau:
+# LÀM LẠI chạy lại từ đầu câu cũ; TIẾP TỤC chỉ gỡ chỗ đang chờ rồi đi tiếp.
+CAU_LAM_LAI = frozenset({
+    "lam lai", "lam lai di", "chay lai", "chay lai di", "thu lai", "thu lai di",
+    "lam lai viec do", "lam lai viec vua roi", "chay lai viec do", "retry", "lam lai lan nua",
+})
+CAU_TIEP_TUC = frozenset({
+    "tiep tuc", "tiep tuc di", "tiep di", "lam tiep", "lam tiep di", "chay tiep",
+    "chay tiep di", "continue", "tiep", "di tiep",
+})
+
+
+def _chuan(van: str) -> str:
+    """Bỏ dấu, hạ chữ thường, gộp khoảng trắng — dùng chung cho mọi phép nhận câu ngắn."""
+    import unicodedata
+    t = van.strip().strip(".!?,;:").lower().replace("đ", "d")
+    t = unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode()
+    return " ".join(t.split())
+
+
+def la_cau_tro_nguoc(van: str) -> str | None:
+    """`"lam_lai"` / `"tiep_tuc"` / `None` — câu này có TRỎ NGƯỢC về lượt trước không.
+
+    ## Vì sao xác định, không nhờ mô hình
+
+    Chủ sản phẩm gặp đúng chuyện này 23/09/2026: một việc hỏng, bảo *"làm lại"*, và tác tử
+    **không biết làm lại việc gì**. Nguyên nhân gốc là ngữ cảnh (xem [DEV-196] về C6/C7), nhưng
+    kể cả khi mô hình có ngữ cảnh thì vẫn không nên để nó ĐOÁN tham chiếu: đoán sai ở đây nghĩa
+    là chạy lại một việc KHÁC việc người đang nói tới — và việc ấy có thể ghi tệp, có thể nạp
+    firmware. Sai im lặng, tốn tiền, khó lần.
+
+    Cùng khuôn `la_cau_dung` của [DEV-155] và cùng lý do: câu NGẮN, khớp TRỌN. "làm lại phần
+    giao tiếp I2C thôi" là một yêu cầu MỚI có chữ "làm lại" trong đó, không phải lệnh trỏ ngược
+    — để `in` bắt nó là biến một câu cụ thể thành một lệnh mơ hồ.
+    """
+    t = _chuan(van)
+    if len(t) > 24:
+        return None
+    if t in CAU_LAM_LAI:
+        return "lam_lai"
+    if t in CAU_TIEP_TUC:
+        return "tiep_tuc"
+    return None
+
+
 def la_cau_dung(van: str) -> bool:
     """Câu này có phải một lệnh DỪNG đứng một mình không.
 
@@ -637,6 +682,76 @@ class Daemon:
             return {"subject": None, "facts": []}
         return run.result or {"subject": None, "facts": []}
 
+    def _ghi_luot(self, by: str, text: str, run_id: str | None = None) -> None:
+        """Ghi một lượt vào M2 — [DEV-196]. Hỏng thì im, KHÔNG làm hỏng lượt gõ.
+
+        Trí nhớ hội thoại là thứ làm sản phẩm thông minh hơn; nó không phải thứ được phép làm
+        sản phẩm ngừng chạy. Một phiên chưa mở (người gõ trước khi `project.open` xong) là
+        chuyện thường, không phải sự cố.
+        """
+        if not self.ctx.project_dir or not text:
+            return
+        try:
+            from eide_core.memory import SessionMemory
+            phien = SessionMemory.gan_nhat(Path(self.ctx.project_dir))
+            if phien is not None:
+                phien.them_luot(by, text, run_id)
+        except Exception as e:  # noqa: BLE001
+            print(f"[chat] không ghi được lượt vào M2: {type(e).__name__}: {e}",
+                  file=sys.stderr, flush=True)
+
+    def _tro_nguoc(self, loai: str, van: str) -> dict[str, Any]:
+        """Giải "làm lại" / "tiếp tục" thành một việc CỤ THỂ. [DEV-196]
+
+        Ba đường ra, và cả ba đều NÓI RÕ nó hiểu anh đang nói về lượt nào — người dùng phải
+        kiểm được suy luận này trước khi nó chạy, vì chạy lại một việc sai tốn đúng bằng chạy
+        một việc sai.
+
+        1. **Không có lượt nào chưa xong** → nói thẳng, không đoán. Đây là chỗ bản cũ im lặng
+           rồi để mô hình bịa ra một việc.
+        2. **Lượt đang CHỜ NGƯỜI** (`asked`) → "tiếp tục" hợp lý hơn "làm lại": chuỗi chưa
+           hỏng, nó đang đợi. Chỉ ra thiếu gì và trả `run_id` để giao diện mở đúng chỗ trả lời.
+        3. **Lượt HỎNG** → chạy lại CÂU GÕ GỐC (`run.working.text`). Không dựng lại chuỗi cũ:
+           lượt mới đi qua `chat.ground` và `fill_defaults` một lần nữa, nên nó thấy những gì
+           đã đổi từ lần trước — kể cả câu trả lời anh vừa cho ở tab Làm rõ.
+        """
+        if not self.ctx.project_dir:
+            return {"intent_id": "unknown", "state": "done",
+                    "loi": "Chưa mở dự án nào nên chưa có lượt chạy nào để nói tới."}
+        from eide.caps.memory import luot_gan_nhat_chua_xong
+        luot = luot_gan_nhat_chua_xong(Path(self.ctx.project_dir))
+        if not luot:
+            return {"intent_id": "unknown", "state": "done",
+                    "loi": "Không có lượt chạy nào đang dở — mọi lượt gần đây đều đã xong. "
+                           "Anh muốn làm lại việc nào thì nói tên việc ấy."}
+
+        goc = luot["text"]
+        if luot["state"] == "asked" and luot["waiting"]:
+            thieu = ", ".join(
+                x for w in luot["waiting"] for x in (w.get("thieu") or []))
+            return {"intent_id": "chat.resume", "state": "asked", "run_id": luot["run_id"],
+                    "cho_nguoi": self._cho_gi(self.ctx, luot["run_id"]),
+                    # Câu gốc chỉ in khi CÓ. Lượt ghi trước [DEV-181] không lưu `working.text`,
+                    # và `Việc gốc: ""` đọc như một lỗi chứ không như một chỗ thiếu dữ liệu.
+                    "loi": f'Lượt gần nhất ({luot["run_id"][:10]}) chưa hỏng — nó ĐANG CHỜ anh'
+                           + (f" cho biết: {thieu}. " if thieu else ". ")
+                           + (f'Việc gốc: "{goc[:120]}". ' if goc else "")
+                           + "Trả lời ngay ở vùng trao đổi thì nó chạy tiếp."}
+
+        if not goc:
+            return {"intent_id": "unknown", "state": "done",
+                    "loi": f'Lượt gần nhất ({luot["run_id"][:10]}, {luot["state"]}) không lưu lại câu '
+                           "gõ gốc nên tôi không dựng lại được. Anh gõ lại việc cần làm giúp tôi."}
+
+        hong = ", ".join(f"`{x.get('cap', '?')}`" for x in (luot["failed"] or [])[:3])
+        print(f'[chat] "{van}" → chạy lại lượt {luot["run_id"][:10]} ({luot["state"]}): "{goc[:80]}"',
+              file=sys.stderr, flush=True)
+        ra = self.chat_send({"text": goc})
+        ra["lam_lai_cua"] = luot["run_id"]
+        ra["loi_dan"] = (f'Làm lại việc của lượt {luot["run_id"][:10]}: "{goc[:120]}"'
+                         + (f" — lần trước hỏng ở {hong}." if hong else "."))
+        return ra
+
     def chat_send(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{text}` → `{intent_id, run_id?}` — ô lệnh của UXD-13 U1.
 
@@ -668,6 +783,31 @@ class Daemon:
             return {"intent_id": "policy.stop", "state": "done",
                     "run": asdict(r) if r.status != "done" else None,
                     "dung_khan": (r.result or {}) if r.status == "done" else {}}
+
+        # ---- GHI LƯỢT CỦA NGƯỜI vào M2, TRƯỚC khi hiểu. [DEV-196]
+        #
+        # `SessionMemory.them_luot` tồn tại từ WI-007 và **không một dòng mã nào trong cả kho
+        # gọi nó**. Đo 23/09/2026 trên 52 dự án trong workspace: MỌI dự án đều `turns = 0`.
+        # Ba thứ chết theo, và cả ba đều im lặng:
+        #
+        #   * lớp **C7 (lịch sử lượt)** của CXD-10 §2 luôn rỗng — mô hình không bao giờ thấy
+        #     lượt trước, nên "làm lại việc vừa rồi" không có tiền lệ nào để trỏ vào;
+        #   * `chat.history` trả rỗng — mở lại app là mất sạch hội thoại;
+        #   * `memory.summarize_session` được gọi đúng chỗ ở `project.open` nhưng tóm tắt một
+        #     danh sách rỗng, nên báo cáo "lần trước đã…" của MEM-11 §5 không bao giờ có nội dung.
+        #
+        # Ghi TRƯỚC khi gọi mô hình: một câu gõ ra rồi thì nó đã xảy ra, bất kể lượt hiểu có
+        # thành hay không. Ghi sau thì mọi câu làm `parse_intent` hỏng sẽ biến mất khỏi lịch sử
+        # — đúng những câu cần xem lại nhất.
+        self._ghi_luot("human", p["text"])
+
+        # ---- TRỎ NGƯỢC: "làm lại" / "tiếp tục" — giải tham chiếu XÁC ĐỊNH. [DEV-196]
+        #
+        # Đứng trước `parse_intent` vì bảng 19 ý định không có giá trị nào cho hai câu này: để
+        # mô hình xử lý thì tốt nhất là `unknown` ("tôi không hiểu"), tệ nhất là nó ĐOÁN ra một
+        # việc mới và chạy nhầm. Tra bảng `run` cho câu trả lời chắc chắn, không tốn token.
+        if (tro := la_cau_tro_nguoc(p["text"])):
+            return self._tro_nguoc(tro, p["text"])
 
         y = self.router.invoke("chat.parse_intent", {"text": p["text"]}, self.ctx)
         if y.status != "done":
@@ -784,11 +924,22 @@ class Daemon:
                   {"intent_id": intent.get("intent") or "",
                    "text": y.get("restate") or "", "steps": y.get("steps") or [],
                    "run_id": ma_run, "state": chuoi.result.get("state") or ""})
+        # Lượt của TÁC TỬ vào M2 — [DEV-196]. Một lịch sử chỉ có câu của người là một lịch sử
+        # không đọc được: "làm lại" trỏ vào việc tác tử vừa làm, nên việc ấy phải có mặt.
+        tt = chuoi.result.get("state") or ""
+        hong = self._hong_gi(self.ctx, ma_run)
+        self._ghi_luot("agent",
+                       f"lượt {ma_run[:10]} → {tt}"
+                       + ("; HỎNG: " + ", ".join(
+                           f"{x.get('cap', '?')} ({x.get('ma', '')})" for x in hong[:3])
+                          if hong else ""),
+                       ma_run)
+
         self.phat("event.chat.report",  # type: ignore[misc]
                   {"run_id": ma_run, "state": chuoi.result.get("state") or "",
                    "done": self._buoc_va_dau_ra(self.ctx, ma_run),
                    "waiting": self._cho_gi(self.ctx, ma_run),
-                   "failed": self._hong_gi(self.ctx, ma_run),
+                   "failed": hong,
                    # CÂU GỐC đi kèm báo cáo [DEV-181]. Trả lời một câu hỏi rồi mà chuỗi vẫn nằm
                    # im thì người dùng mới đi được nửa vòng: câu trả lời vào store, còn việc họ
                    # nhờ thì vẫn chưa ai làm. Có câu gốc ở đây, vùng trao đổi gửi lại được chính
