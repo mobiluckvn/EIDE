@@ -40,6 +40,11 @@ def test_mau_mang_phan_noi_va_tham_chieu_dung_cu_phap():
             for k, v in (n.get("args") or {}).items():
                 if not (isinstance(v, str) and v.startswith("${")):
                     continue                      # hằng — kiểm kiểu ở bài dưới
+                # `${_text}` — câu gốc của người dùng, KHÔNG phải tham chiếu nút. [DEV-201]
+                # Mẫu là chỗ duy nhất được quyền nói tham số nào nhận lời người nói (DEV-121);
+                # `_tu_nodes` thay nó lúc dựng chuỗi, nên nó không bao giờ tới phép kiểm chuỗi.
+                if v == "${_text}":
+                    continue
                 tong += 1
                 m = chain_mod.tach_tham_chieu(v)
                 assert m is not None, f"{c['ten']} {n['id']}.{k} sai cú pháp tham chiếu: {v!r}"
@@ -64,6 +69,12 @@ def test_moi_phep_noi_khop_HAI_DAU_hop_dong():
             for k, v in (n.get("args") or {}).items():
                 assert nhan and k in (nhan["input_schema"].get("properties") or {}), \
                     f"{c['ten']} {n['id']}: `{k}` không phải tham số của `{n['cap']}`"
+                if v == "${_text}":
+                    # Câu gốc của người là một chuỗi — tham số nhận nó phải nhận chuỗi.
+                    t = (nhan["input_schema"]["properties"] or {})[k]
+                    assert (t or {}).get("type") in (None, "string"), \
+                        f"{c['ten']} {n['id']}: `{k}` nhận `${{_text}}` nhưng kiểu là {t.get('type')}"
+                    continue
                 if not (isinstance(v, str) and v.startswith("${")):
                     # Hằng: kiểm nó khớp `enum` nếu hợp đồng khai enum. Một `kind` gõ sai sẽ bị
                     # Router chặn bằng E1000 lúc CHẠY, tức sau khi vài nút trước đã ghi.

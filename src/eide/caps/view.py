@@ -373,8 +373,24 @@ def rag_ask(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     k = int(params.get("k") or K_MAC_DINH)
     idx = RagIndex(_root(ctx))
     if not idx.path.exists():
-        raise EideError("E5002", "Chưa có chỉ mục RAG — chạy `view.rag_index` trước",
-                        remedy="view.rag_index")
+        # PHÂN BIỆT hai trạng thái mà bản trước gộp làm một. [DEV-201]
+        #
+        # "Chưa chạy `view.rag_index`" và "đã chạy nhưng dự án chưa có tài liệu nào" trông
+        # giống nhau từ đây — cả hai đều không có tệp chỉ mục — nhưng bước kế tiếp của người
+        # dùng thì ngược nhau. Đo 23/09/2026 trên TC042/TC056 sau khi mẫu chuỗi `view.ask`
+        # được bù: chuỗi chạy `view.rag_index` (0 chunks) rồi `view.rag_ask` bảo người dùng
+        # "chạy `view.rag_index` trước" — tức chỉ họ đi làm đúng thứ vừa làm xong.
+        #
+        # Một câu lỗi sai hướng đắt hơn một câu lỗi cộc lốc: nó tiêu thời gian của người đọc
+        # để đi tới một chỗ không có gì.
+        co_tai_lieu = any((_root(ctx) / d).is_dir() and any((_root(ctx) / d).iterdir())
+                          for d in ("docs", "datasheets", ".eide/ingest"))
+        raise EideError(
+            "E5002",
+            "Chưa có chỉ mục RAG — chạy `view.rag_index` trước" if co_tai_lieu else
+            "Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. "
+            "Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.",
+            remedy="view.rag_index" if co_tai_lieu else "ingest.index_text")
 
     doan = _truy_hoi(ctx, idx, q, k, params.get("scope"))
     tid = "tr_" + secrets.token_hex(6)

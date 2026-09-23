@@ -317,8 +317,7 @@
    }
   ],
   "trigger_intents": [
-   "knowledge.build",
-   "big_command"
+   "knowledge.build"
   ]
  },
  {
@@ -835,6 +834,330 @@
   ],
   "trigger_intents": [
    "diagram.draw"
+  ]
+ },
+ {
+  "ten": "Trả lời câu hỏi (DEV-201)",
+  "chuoi": "view.rag_index → view.rag_ask → chat.report_back",
+  "buoc": [
+   "view.rag_index",
+   "view.rag_ask",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "view.rag_index",
+    "when": null,
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "view.rag_ask",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "question": "${_text}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "chat.report_back",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "view.ask"
+  ]
+ },
+ {
+  "ten": "Chẩn đoán (DEV-201)",
+  "chuoi": "view.rag_index → view.rag_ask → debug.hypothesize → debug.experiment → debug.propose_fix → chat.report_back",
+  "buoc": [
+   "view.rag_index",
+   "view.rag_ask",
+   "debug.hypothesize",
+   "debug.experiment",
+   "debug.propose_fix",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "view.rag_index",
+    "when": null,
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "view.rag_ask",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "question": "${_text}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "debug.hypothesize",
+    "when": "n2",
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n4",
+    "cap": "debug.experiment",
+    "when": "n3",
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n5",
+    "cap": "debug.propose_fix",
+    "when": "n3",
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n6",
+    "cap": "chat.report_back",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "debug.ask"
+  ]
+ },
+ {
+  "ten": "Chạy mô phỏng (DEV-201)",
+  "chuoi": "sim.build_platform → sim.scenario → sim.run → chat.report_back",
+  "buoc": [
+   "sim.build_platform",
+   "sim.scenario",
+   "sim.run",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "sim.build_platform",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "sim.scenario",
+    "when": "n1",
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n3",
+    "cap": "sim.run",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {
+     "scenario": "${n2.scenario_path}"
+    }
+   },
+   {
+    "id": "n4",
+    "cap": "chat.report_back",
+    "when": "n3",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "sim.run"
+  ]
+ },
+ {
+  "ten": "Mở lại dự án (DEV-201)",
+  "chuoi": "project.open → project.status → view.artifacts(requirement) → chat.report_back",
+  "buoc": [
+   "project.open",
+   "project.status",
+   "view.artifacts(requirement)",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "project.open",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "project.status",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n3",
+    "cap": "view.artifacts",
+    "when": "n2",
+    "on_ask": "skip",
+    "args": {
+     "kind": "requirement"
+    }
+   },
+   {
+    "id": "n4",
+    "cap": "chat.report_back",
+    "when": "n3",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "project.open"
+  ]
+ },
+ {
+  "ten": "Dựng môi trường (DEV-201)",
+  "chuoi": "env.detect → env.check → env.guide_install → chat.report_back",
+  "buoc": [
+   "env.detect",
+   "env.check",
+   "env.guide_install",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "env.detect",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "env.check",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n3",
+    "cap": "env.guide_install",
+    "when": "n2",
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n4",
+    "cap": "chat.report_back",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "env.setup"
+  ]
+ },
+ {
+  "ten": "Lưu trữ dự án (DEV-201)",
+  "chuoi": "project.archive → chat.report_back",
+  "buoc": [
+   "project.archive",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "project.archive",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "chat.report_back",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "project.delete"
+  ]
+ },
+ {
+  "ten": "Chưa hiểu, hỏi lại (DEV-201)",
+  "chuoi": "chat.clarify",
+  "buoc": [
+   "chat.clarify"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "chat.clarify",
+    "when": null,
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "unknown"
+  ]
+ },
+ {
+  "ten": "Việc lớn chưa rõ (DEV-201)",
+  "chuoi": "view.artifacts(requirement) → req.elicit → req.classify → chat.report_back",
+  "buoc": [
+   "view.artifacts(requirement)",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "view.artifacts",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "kind": "requirement"
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "req.elicit",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n3",
+    "cap": "req.classify",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {
+     "raw": "${n2.raw}"
+    }
+   },
+   {
+    "id": "n4",
+    "cap": "chat.report_back",
+    "when": "n3",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "big_command"
   ]
  },
  {

@@ -12,6 +12,7 @@ mỗi lần.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -312,8 +313,29 @@ def test_kiem_trich_dan_theo_cau(t, ok):
     assert _moi_cau_co_trich_dan(t) is ok
 
 
-def test_chua_lap_chi_muc_thi_bao_E5002(du_an):
+def test_du_an_CHUA_CO_TAI_LIEU_thi_noi_dung_thu_do(du_an):
+    """Hai trạng thái từng bị gộp làm một, và bước kế tiếp của người dùng thì ngược nhau. [DEV-201]
+
+    "Chưa chạy `view.rag_index`" và "đã chạy nhưng dự án chưa có tài liệu nào" trông giống hệt
+    nhau từ trong năng lực — cả hai đều không có tệp chỉ mục. Đo 23/09/2026 trên TC042/TC056
+    sau khi mẫu chuỗi `view.ask` được bù: chuỗi chạy `view.rag_index` (0 chunks) rồi
+    `view.rag_ask` bảo người dùng *"chạy `view.rag_index` trước"* — chỉ họ đi làm đúng thứ
+    vừa làm xong.
+    """
     r, ctx, _ = du_an
+    run = r.invoke("view.rag_ask", {"question": "gì đó"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"
+    assert "chưa có tài liệu nào" in run.error["message"], \
+        "dự án rỗng mà vẫn chỉ người dùng đi chạy lại chỉ mục"
+    assert run.error.get("remedy") == "ingest.index_text"
+
+
+def test_co_tai_lieu_ma_chua_lap_chi_muc_thi_chi_dung_view_rag_index(du_an):
+    """Nhánh còn lại: có tài liệu thật thì bước kế tiếp đúng là lập chỉ mục."""
+    r, ctx, _ = du_an
+    d = Path(ctx.project_dir) / "docs"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "ds.md").write_text("VDD 3,3 V", encoding="utf-8")
     run = r.invoke("view.rag_ask", {"question": "gì đó"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
     assert "view.rag_index" in str(run.error)

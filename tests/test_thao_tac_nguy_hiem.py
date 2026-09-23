@@ -238,3 +238,69 @@ def test_lượt_bi_chan_duoc_GHI_SO(daemon_du_an):
     assert dong[-1]["data"]["op"] == "erase_all"
     assert dong[-1]["data"]["rule_id"] == "G-OPS-02"
     assert dong[-1]["data"]["decision"] == "ASK", "cổng phải HỎI, không được tự duyệt"
+
+
+# ──────────────────────────────────────────── BB1 — bảng ý định → mẫu chuỗi phải TOÀN PHẦN
+
+#: Ý định CỐ Ý không có mẫu chuỗi, kèm lý do. Hiện trống — và nên giữ trống.
+Y_DINH_KHONG_MAU: dict[str, str] = {}
+
+
+def test_moi_y_dinh_deu_co_mau_chuoi():
+    """**Mọi giá trị của một bảng điều phối phải có người nhận.**
+
+    Đo 23/09/2026 trước bài kiểm này: 19 ý định, 10 mẫu, phủ 12 giá trị. Bảy ý định rơi xuống
+    planner — và planner phác chuỗi từ văn xuôi nên hoặc bắt đầu từ giữa quy trình, hoặc trả
+    về chuỗi rỗng rồi lượt bị bác bỏ bằng E5002. Nặng nhất: `view.ask` là ý định của MỌI CÂU
+    HỎI, nên **sản phẩm không trả lời được một câu hỏi nào**.
+
+    Đây là lần thứ TƯ cùng một lớp lỗi được vá từng dòng: DEV-147, DEV-155, DEV-158, DEV-201.
+    Ba lần trước đều sửa đúng thể hiện và để nguyên cái lớp. Bài kiểm này đóng lớp: một ý định
+    thêm vào sau này không lọt qua được.
+    """
+    import re
+
+    ints = json.loads((spec_dir() / "dialog" / "intent.schema.json").read_text(encoding="utf-8"))
+    gia_tri = set(json.loads(re.findall(r'"enum"\s*:\s*(\[[^\]]*\])', json.dumps(ints))[0]))
+
+    ch = json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
+    ms = ch["chains"] if isinstance(ch, dict) and "chains" in ch else ch
+    nhan: set[str] = set()
+    for m in (ms.values() if isinstance(ms, dict) else ms):
+        nhan |= set(m.get("trigger_intents") or [])
+
+    thieu = sorted(gia_tri - nhan - set(Y_DINH_KHONG_MAU))
+    assert not thieu, (
+        f"Ý định không mẫu chuỗi nào nhận: {thieu}. Không mẫu thì rơi xuống planner, và một "
+        "chuỗi ứng tác giao cho người dùng dưới dạng câu hỏi tham số khó hiểu hoặc mã lỗi. "
+        "Hoặc thêm mẫu vào `docs/ho-so/nguon/dps.js`, hoặc khai vào Y_DINH_KHONG_MAU kèm lý do.")
+
+
+def test_mau_chuoi_khong_tro_toi_nang_luc_khong_co_that():
+    """Một mẫu trỏ tới năng lực không tồn tại là một mẫu sẽ rụng hết nút lúc chạy.
+
+    `_tu_nodes` bỏ lặng lẽ mọi nút chưa hiện thực, nên một tên gõ sai không gây lỗi — nó chỉ
+    làm chuỗi ngắn đi, và người dùng nhận một việc làm dở mà không ai báo.
+    """
+    reg = get_registry()
+    ch = json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
+    ms = ch["chains"] if isinstance(ch, dict) and "chains" in ch else ch
+    la: list[str] = []
+    for m in (ms.values() if isinstance(ms, dict) else ms):
+        for n in (m.get("nodes") or []):
+            if n.get("cap") and n["cap"] not in reg:
+                la.append(f"{m.get('ten', '?')}/{n['id']}: {n['cap']}")
+    assert not la, f"mẫu trỏ tới năng lực không có trong danh mục: {la}"
+
+
+def test_moi_mau_moi_phai_chay_duoc_it_nhat_MOT_nut():
+    """Mẫu mà mọi nút đều chưa hiện thực thì bằng không có mẫu — chuỗi rỗng, E5002 như cũ."""
+    reg = get_registry()
+    ch = json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
+    ms = ch["chains"] if isinstance(ch, dict) and "chains" in ch else ch
+    rong: list[str] = []
+    for m in (ms.values() if isinstance(ms, dict) else ms):
+        nut = [n.get("cap") for n in (m.get("nodes") or [])]
+        if nut and not any(c in reg and reg.get(c).implemented for c in nut):
+            rong.append(str(m.get("ten") or m.get("trigger_intents")))
+    assert not rong, f"mẫu không có nút nào chạy được: {rong}"

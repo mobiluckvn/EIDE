@@ -175,7 +175,7 @@ c.push(P('Với `is_big = true`, Orchestrator lập đồ thị chuỗi bằng m
 // hiện trong bảng của tài liệu vì tài liệu đã nêu mã kịch bản Z-xx ngay ở cột đầu.
 const CHUOI_MAU = [
   ['Dự án mới từ ý tưởng (Z-01)', 'project.create → search.reference_projects → [template? registry.pull : req.elicit] → passport.pull → board.build_passport(template) → env.check/install_tool → sim.build → req.classify → arch.style_select/decompose/map_hw → diagram.block/architecture → plan.create → chat.report_back', ['project.create']],
-  ['Dự án mới từ zip (Z-07)', 'project.create → archive.explore/classify → extract.* → passport.build → board.build_passport → board.check_pins → search.missing → search.web/vendor → search.fetch → kg.review_facts → view.rag_index → env.* → sim.build/run(hello) → req.elicit(README) → plan.create → code.* → sim.run(test) → doc.bringup_guide → report', ['knowledge.build', 'big_command']],
+  ['Dự án mới từ zip (Z-07)', 'project.create → archive.explore/classify → extract.* → passport.build → board.build_passport → board.check_pins → search.missing → search.web/vendor → search.fetch → kg.review_facts → view.rag_index → env.* → sim.build/run(hello) → req.elicit(README) → plan.create → code.* → sim.run(test) → doc.bringup_guide → report', ['knowledge.build']],
   ['Thêm tính năng (Z-05)', 'chat.ground(dự án) → req.elicit(feature) → req.ground_hw → arch.map_hw(delta) → plan.create → code.module/integrate/test/review → code.merge → sim.run → [board lab? target.flash → target.observe] → doc.section → report', ['code.feature']],
   ['Bộ tài liệu (P7)', 'req.trace_matrix → diagram.* (theo loại tài liệu) → doc.generate(URD, SRS, SAD, SDD, STP) → doc.embed_diagram → doc.style_check → report', ['doc.write']],
   ['Dò board và nạp (Z-10)', 'discover.ports/probes → discover.chip_id → [khớp hộ chiếu?] → discover.link_speed → discover.auto_setup → policy.decide(G-OPS) → target.flash → target.serial/observe → report', ['discover.scan', 'target.flash']],
@@ -209,6 +209,45 @@ const CHUOI_MAU = [
   // không cần tham số bắt buộc nào. Dẫn sai năng lực thì chuỗi dừng để hỏi một bo mạch mà
   // dự án phần mềm không có.
   ['Vẽ lược đồ (DEV-158)', 'view.artifacts(module) → diagram.architecture → report', ['diagram.draw']],
+  // ───────────────────────────────────────────────────────────── [DEV-201] bảy ý định bị bỏ rơi
+  //
+  // Đo 23/09/2026 trên bộ 76 usecase: bảng có 19 ý định nhưng chỉ 10 mẫu, phủ 12 giá trị.
+  // BẢY ý định không mẫu nào nhận, nên chúng rơi xuống planner — và planner phác chuỗi từ
+  // văn xuôi nên hoặc bắt đầu từ giữa quy trình, hoặc trả về CHUỖI RỖNG rồi lượt bị bác bỏ
+  // bằng E5002. Hệ quả nặng nhất: `view.ask` là ý định của MỌI CÂU HỎI, nên tới bản này
+  // **sản phẩm không trả lời được một câu hỏi nào**.
+  //
+  // Đây là lần thứ TƯ cùng một lớp lỗi được vá từng dòng — DEV-147 (`req.analyze`),
+  // DEV-155 (hai ý định chính sách), DEV-158 (hai ý định thiết kế), và bây giờ. Nên lần này
+  // kèm một phép kiểm toàn phần (`test_moi_y_dinh_deu_co_mau_chuoi`): bảng không được thủng
+  // nữa, và một ý định thêm vào sau này không lọt qua được.
+
+  // Câu HỎI. `${_text}` = chính câu người dùng gõ — mẫu là chỗ DUY NHẤT được quyền nói tham
+  // số nào nhận nó (xem `_noi_dau_ra` trong chat.py và DEV-121); viết bảng ánh xạ tên vào mã
+  // là tự nghĩ ra hành vi.
+  ['Trả lời câu hỏi (DEV-201)', 'view.rag_index → view.rag_ask → chat.report_back', ['view.ask']],
+  // CHẨN ĐOÁN. Cũng bắt đầu bằng trả lời, vì một câu "cảm biến I2C không phản hồi, làm sao
+  // biết lỗi phần cứng hay phần mềm" là một CÂU HỎI trước khi là một phiên gỡ lỗi. Ba nút
+  // `debug.*` mang `on_ask: skip`: khi dự án đã có bằng chứng (log, capture) thì chúng chạy
+  // và làm giàu câu trả lời; chưa có thì bỏ qua, KHÔNG chặn cả chuỗi để đi hỏi `evidence_ids`.
+  ['Chẩn đoán (DEV-201)', 'view.rag_index → view.rag_ask → debug.hypothesize → debug.experiment → debug.propose_fix → chat.report_back', ['debug.ask']],
+  // MÔ PHỎNG. `sim.build_platform` trước: nền tảng chưa dựng thì `sim.run` không có gì để
+  // chạy, và đó đúng là trạng thái mà màn Mô phỏng báo ở bốn ca kiểm thử.
+  ['Chạy mô phỏng (DEV-201)', 'sim.build_platform → sim.scenario → sim.run → chat.report_back', ['sim.run']],
+  // MỞ LẠI DỰ ÁN. `project.status` sau `project.open` để tác tử có cái mà thuật lại; không
+  // có nó thì câu "tiếp tục dự án này, trước đó đã chốt gì" không có nguồn nào để trả lời.
+  ['Mở lại dự án (DEV-201)', 'project.open → project.status → view.artifacts(requirement) → chat.report_back', ['project.open']],
+  ['Dựng môi trường (DEV-201)', 'env.detect → env.check → env.guide_install → chat.report_back', ['env.setup']],
+  ['Lưu trữ dự án (DEV-201)', 'project.archive → chat.report_back', ['project.delete']],
+  // KHÔNG HIỂU. Mẫu một nút: hỏi lại cho có trọng tâm. Không có mẫu thì `unknown` rơi xuống
+  // planner, và planner ĐOÁN ra một việc — đúng thứ tệ nhất cho một câu chưa hiểu được.
+  ['Chưa hiểu, hỏi lại (DEV-201)', 'chat.clarify', ['unknown']],
+  // `big_command` tách khỏi mẫu giải nén Z-07. Nó là thùng chứa mọi câu chưa phân loại được,
+  // còn Z-07 là quy trình MỞ MỘT KHO TÀI LIỆU, mở đầu bằng `project.create → archive.list`.
+  // Hệ quả đo được: câu của người dùng bị biến thành một ĐƯỜNG DẪN TỆP rồi báo E2000 "Không
+  // có tệp …/tim-tren-mang-datasheet-moi-nhat-cua-sen42" — một lỗi TỆP cho một việc TÌM MẠNG.
+  // Mười ba ca kiểm thử chết ở đúng chỗ này.
+  ['Việc lớn chưa rõ (DEV-201)', 'view.artifacts(requirement) → req.elicit → req.classify → chat.report_back', ['big_command']],
   ['Đổi mức tự chủ (DEV-155)', 'policy.set_autonomy', ['policy.set']],
 ];
 // §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
@@ -292,6 +331,67 @@ const CHUOI_NUT = {
   // nói, tên người đến từ phiên. Để trống thì nút dừng ở "thiếu tham số" và HỎI — đúng hơn là
   // đoán một mức tự chủ.
   'Đổi mức tự chủ (DEV-155)': [['n1', 'policy.set_autonomy']],
+
+  // ─────────────────────────────────────────────────────── [DEV-201] dạng máy chạy được
+  //
+  // `${_text}` là CÂU GỐC của người dùng. Cú pháp `${nX.field}` chỉ trỏ được sang một nút
+  // trước; không có gì trỏ sang chính lời người nói, nên `view.rag_ask.question` — tham số
+  // của một năng lực có nhiệm vụ TRẢ LỜI CÂU HỎI — không có cách nào nhận được câu hỏi.
+  // `_args_cho` chỉ ghép khi TÊN trùng khít, và nó cố ý từ chối bảng ánh xạ tên ("viết vào
+  // mã là tự nghĩ ra hành vi"); chú thích ấy cũng chỉ luôn chỗ đúng để khai — chính mẫu.
+  'Trả lời câu hỏi (DEV-201)': [
+    ['n1', 'view.rag_index', null, 'skip'],
+    ['n2', 'view.rag_ask', 'n1', 'wait', { question: '${_text}' }],
+    ['n3', 'chat.report_back', 'n2'],
+  ],
+  // Ba nút `debug.*` mang `skip`: có bằng chứng thì làm giàu câu trả lời, chưa có thì bỏ
+  // qua. Để `wait` thì một câu hỏi chẩn đoán bình thường sẽ dừng lại đòi `evidence_ids` —
+  // đúng lỗi "hỏi tham số năng lực thay vì trả lời bài toán" mà bộ kiểm thử đo được.
+  'Chẩn đoán (DEV-201)': [
+    ['n1', 'view.rag_index', null, 'skip'],
+    ['n2', 'view.rag_ask', 'n1', 'wait', { question: '${_text}' }],
+    ['n3', 'debug.hypothesize', 'n2', 'skip'],
+    ['n4', 'debug.experiment', 'n3', 'skip'],
+    ['n5', 'debug.propose_fix', 'n3', 'skip'],
+    ['n6', 'chat.report_back', 'n2'],
+  ],
+  'Chạy mô phỏng (DEV-201)': [
+    ['n1', 'sim.build_platform', null, 'wait'],
+    ['n2', 'sim.scenario', 'n1', 'skip'],
+    // `scenario_path`, KHÔNG `scenario`: `sim.scenario` trả ra đường dẫn tệp kịch bản, và
+    // `sim.run.scenario` nhận chính đường dẫn ấy. Bài kiểm `test_moi_phep_noi_khop_HAI_DAU`
+    // bắt được chỗ này — một phép nối sai tên thì chuỗi chết ở phép kiểm deterministic, sau
+    // khi vài nút trước đã ghi xuống store.
+    ['n3', 'sim.run', 'n2', 'wait', { scenario: '${n2.scenario_path}' }],
+    ['n4', 'chat.report_back', 'n3'],
+  ],
+  // `project` để TRỐNG có chủ ý: `_args_cho` điền nó từ dự án đang mở. Điền cứng ở đây thì
+  // mẫu quyết định thay phiên làm việc, và câu "tiếp tục dự án này" sẽ mở nhầm dự án khác.
+  'Mở lại dự án (DEV-201)': [
+    ['n1', 'project.open'],
+    ['n2', 'project.status', 'n1'],
+    ['n3', 'view.artifacts', 'n2', 'skip', { kind: 'requirement' }],
+    ['n4', 'chat.report_back', 'n3'],
+  ],
+  'Dựng môi trường (DEV-201)': [
+    ['n1', 'env.detect'],
+    ['n2', 'env.check', 'n1', 'wait'],
+    ['n3', 'env.guide_install', 'n2', 'skip'],
+    ['n4', 'chat.report_back', 'n2'],
+  ],
+  'Lưu trữ dự án (DEV-201)': [
+    ['n1', 'project.archive'],
+    ['n2', 'chat.report_back', 'n1'],
+  ],
+  'Chưa hiểu, hỏi lại (DEV-201)': [['n1', 'chat.clarify']],
+  // Việc lớn chưa rõ: RÚT YÊU CẦU, không giải nén kho tài liệu. `view.artifacts` đứng đầu
+  // vì nó đọc được store — cùng lý lẽ với mẫu thiết kế của [DEV-158].
+  'Việc lớn chưa rõ (DEV-201)': [
+    ['n1', 'view.artifacts', null, 'skip', { kind: 'requirement' }],
+    ['n2', 'req.elicit', 'n1'],
+    ['n3', 'req.classify', 'n2', 'wait', { raw: '${n2.raw}' }],
+    ['n4', 'chat.report_back', 'n3'],
+  ],
   'Làm rõ yêu cầu (DEV-147)': [
     ['n1', 'req.elicit'],
     ['n2', 'req.classify', 'n1', 'wait', { raw: '${n1.raw}' }],

@@ -549,8 +549,16 @@ def test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co():
     hoặc trùng tên một năng lực đã hiện thực. Phần còn lại rơi xuống planner, và planner phác
     chuỗi từ văn xuôi nên hay bắt đầu từ giữa quy trình.
 
-    Test này KHÔNG đòi con số về 0 — nhiều ý định còn chờ năng lực chưa có. Nó chốt con số hiện
-    tại để một mẫu bị xoá hay một ý định mới thêm vào đều phải đi qua đây.
+    **Con số ấy nay PHẢI bằng 0** — [DEV-201].
+
+    Bản trước của bài kiểm này cố ý không đòi về 0: nó chốt con số 5 và ghi rằng năm ý định còn
+    lại *"đều chờ một năng lực chưa có hoặc một mẫu chưa viết; không cái nào chạm tới an toàn"*.
+    Câu ấy đúng về an toàn và sai về hậu quả: `view.ask` là ý định của MỌI CÂU HỎI, nên suốt
+    thời gian con số 5 được coi là chấp nhận được, **sản phẩm không trả lời được một câu hỏi
+    nào** — đo trên 10 ca của bộ kiểm thử usecase, tất cả kết thúc bằng E5002 "chuỗi rỗng".
+
+    Bài học: một bài kiểm chốt món nợ mà không đặt hạn cho nó thì bảo vệ con số, không bảo vệ
+    người dùng.
     """
     import json as _json
 
@@ -566,7 +574,9 @@ def test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co():
     roi = [y for y in ys
            if y not in co_mau and not (y in r and r.get(y).implemented)]
     assert "req.analyze" not in roi, "DEV-147 đã cho req.analyze một mẫu"
-    assert len(roi) == 5, f"{len(roi)} ý định rơi xuống planner: {roi}"
+    assert roi == [], (
+        f"{len(roi)} ý định rơi xuống planner: {roi}. Từ [DEV-201] bảng phải TOÀN PHẦN — "
+        "xem `test_moi_y_dinh_deu_co_mau_chuoi` trong tests/test_thao_tac_nguy_hiem.py")
     # `policy.stop` và `policy.set` KHÔNG còn rơi ([DEV-155]).
     #
     # `policy.stop` là nút Dừng khẩn. Một lệnh dừng mọi việc mà phải đi qua một lời gọi mô hình
@@ -575,10 +585,9 @@ def test_moi_y_dinh_deu_co_duong_di_hoac_duoc_ghi_la_chua_co():
     # planner, tức HAI lượt gọi mô hình.
     for y in ("policy.stop", "policy.set"):
         assert y not in roi, f"{y} lại rơi xuống planner — xem [DEV-155]"
-    # Bảy cái còn lại đều chờ một năng lực chưa có hoặc một mẫu chưa viết; không cái nào chạm
-    # tới an toàn. Ghi ra đây để lần sau ai đọc con số 7 biết nó gồm những gì.
-    assert set(roi) == {"env.setup", "debug.ask", "view.ask",
-                        "unknown", "project.delete"}, roi
+    # Năm ý định từng nằm đây — `env.setup`, `debug.ask`, `view.ask`, `unknown`,
+    # `project.delete` — đã có mẫu từ [DEV-201]. Danh sách trống, và phép khẳng định ở trên
+    # giữ nó trống.
 
 
 def test_restate_KHONG_in_dau_gach_ngang_khi_khong_rut_duoc_doi_tuong():

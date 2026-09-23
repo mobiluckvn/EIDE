@@ -62,7 +62,9 @@ def test_chuoi_mau_sinh_tu_tai_lieu():
     giữa quy trình rồi đi hỏi người thứ đang nằm sẵn trong store.
     """
     ds = mau()
-    assert len(ds) == 10
+    # 10 → 18 ở [DEV-201]: bảy ý định bị bỏ rơi được bù mẫu, và `big_command` tách khỏi mẫu
+    # giải nén Z-07. Bảng ý định → mẫu chuỗi nay TOÀN PHẦN (19/19), có phép kiểm riêng giữ.
+    assert len(ds) == 18
     assert all(c["buoc"] and c["trigger_intents"] for c in ds)
 
 
@@ -209,9 +211,16 @@ def test_nut_ASK_lam_chuoi_dung_khi_on_ask_wait(du_an):
 
 
 def test_chuoi_rong_khi_khong_co_mau_va_y_dinh_khong_phai_nang_luc(du_an):
-    """Nói ra là rỗng chứ không giả vờ đã làm gì: `unknown` không ánh xạ sang năng lực nào."""
+    """Nói ra là rỗng chứ không giả vờ đã làm gì.
+
+    Ví dụ đổi ở [DEV-201]: bài này từng dùng `unknown`, nhưng `unknown` NAY CÓ MẪU
+    (`chat.clarify` — hỏi lại cho có trọng tâm), nên nó không còn là ví dụ của "không mẫu nào
+    khớp". Dùng một ý định bịa hẳn: sau khi bảng thành toàn phần, đó là cách duy nhất còn lại
+    để đi vào nhánh này — và nhánh ấy vẫn phải đúng, vì nó là chỗ hệ thống thú nhận nó bí.
+    """
     r, ctx, _ = du_an
-    run = r.invoke("chat.orchestrate", {"intent": {"intent": "unknown"}, "grounded": {}}, ctx)
+    run = r.invoke("chat.orchestrate",
+                   {"intent": {"intent": "khong.ton.tai"}, "grounded": {}}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
     assert "chuỗi rỗng" in run.error["message"]
 
@@ -255,8 +264,21 @@ def test_khong_dung_duoc_chuoi_thi_NOI_RA(du_an):
     """Trả "không dựng được chuỗi" rồi để `kiem()` báo chuỗi rỗng — thật thà hơn là im lặng trả
     một run_id cho một việc chưa hề bắt đầu."""
     r, ctx, _ = du_an
-    run = r.invoke("chat.orchestrate", {"intent": {"intent": "unknown"}, "grounded": {}}, ctx)
+    run = r.invoke("chat.orchestrate",
+                   {"intent": {"intent": "khong.ton.tai"}, "grounded": {}}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+def test_unknown_NAY_hoi_lai_chu_khong_con_la_ngo_cut(du_an):
+    """`unknown` là câu tác tử chưa hiểu — và câu trả lời đúng là HỎI LẠI, không phải một mã lỗi.
+
+    Trước [DEV-201] ý định này không mẫu nào nhận nên nó rơi xuống planner; tốt nhất planner
+    trả chuỗi rỗng và người dùng nhận E5002, tệ nhất nó ĐOÁN ra một việc rồi chạy.
+    """
+    r, ctx, _ = du_an
+    run = r.invoke("chat.orchestrate", {"intent": {"intent": "unknown"}, "grounded": {}}, ctx)
+    assert run.status != "failed" or run.error["eide_code"] != "E5002", \
+        "`unknown` lại rơi về chuỗi rỗng — xem [DEV-201]"
 
 
 # ---------- nối dữ liệu giữa các nút: `${nX.field}` (DEV-121)

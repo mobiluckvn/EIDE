@@ -832,6 +832,22 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
     for n in giu:
         args = dict(_args_cho(n["cap"], intent, grounded, run_id))
         args.update(n.get("args") or {})
+        # `${_text}` — CÂU GỐC của người dùng. [DEV-201]
+        #
+        # Cú pháp `${nX.field}` chỉ trỏ sang một nút chạy TRƯỚC; không có gì trỏ sang chính lời
+        # người nói. Hệ quả: `view.rag_ask.question` — tham số của năng lực có nhiệm vụ TRẢ LỜI
+        # CÂU HỎI — không có cách nào nhận được câu hỏi, vì `_args_cho` chỉ ghép khi TÊN trùng
+        # khít và `question` không trùng `text`.
+        #
+        # Giải bằng MẪU chứ không bằng một bảng ánh xạ tên trong mã, đúng ranh giới mà
+        # `_noi_dau_ra` đã vạch: ánh xạ kiểu `chip → passport` là tri thức không có trong tài
+        # liệu nào, còn "tham số này nhận câu gốc" là điều chỉ mẫu mới có quyền nói (DEV-121).
+        if (van := str((intent or {}).get("_text") or "")):
+            args = {k: (van if v == "${_text}" else v) for k, v in args.items()}
+        else:
+            # Không có câu gốc thì BỎ khoá ấy đi, để nút rơi về "thiếu tham số" và hỏi người —
+            # giữ nguyên chuỗi `${_text}` là gửi thẳng bảy ký tự ấy xuống năng lực.
+            args = {k: v for k, v in args.items() if v != "${_text}"}
         # Tham chiếu tới một nút ĐÃ BỊ BỎ là một tham chiếu không bao giờ giải được — và nó
         # sẽ giết cả chuỗi ở phép kiểm deterministic. Bỏ nó đi, để nút rơi về "thiếu tham số"
         # và hỏi người: một câu hỏi người trả lời được tốt hơn một chuỗi chết.
