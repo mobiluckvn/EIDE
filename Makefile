@@ -106,9 +106,10 @@ geditor:          ## (BẢN DUY TRÌ — ngoài cổng) build + test apps/gedito
 #
 # Hai bộ dò cuối cần một dự án có thật để mở, nên tạo một dự án dùng-một-lần rồi xoá. `--do-nut`
 # và `--bam-thu` đều `exit 1` khi có nút chết, nên make tự đỏ.
-eide-ui:          ## build + test + dò nút chết của GIAO DIỆN MỚI (apps/eide)
+eide-ui:          ## build + test + dò nút chết + dò NỘI DUNG của GIAO DIỆN MỚI (apps/eide)
 	cd apps/eide && swift build && swift test
 	@$(MAKE) eide-ui-nut
+	@$(MAKE) eide-noi-dung
 
 # Ba bộ đo dưới đây DỰNG CỬA SỔ THẬT, nên chúng cần một phiên đồ hoạ. Trên máy CI không có
 # `launchctl managername` = Aqua (ssh, Linux, runner headless) thì bỏ qua có báo — cùng khuôn
@@ -130,17 +131,21 @@ eide-ui-nut:      ## chỉ ba bộ dò giao diện — cần phiên đồ hoạ 
 # Hợp đồng nội dung ở `docs/spec/ui/man_can_hien.json`, sinh từ cột "DỮ LIỆU PHẢI HIỆN" của
 # `docs/EIDE-VUNG-MAN-HINH.xlsx` (chủ sản phẩm duyệt 22/09/2026).
 #
-# HÔM NAY NÓ ĐỎ, và đó là điểm: 28/77 mục đã hiện, 4 màn không mở được. Nó là thước đo khoảng
-# cách còn lại, nên KHÔNG nối vào `eide-ui` (cổng phải xanh để commit được) — chạy riêng bằng
-# `make eide-noi-dung`, và nối vào cổng khi tiến về 77/77.
+# 23/09/2026 nó ĐẠT 77/77 trên dự án mẫu, nên từ nay nó NẰM TRONG CỔNG ([DEV-193]). Khi còn
+# 28/77 thì nó là thước đo khoảng cách và phải đứng ngoài — một cổng luôn đỏ là một cổng bị
+# tắt. Đủ rồi thì ngược lại: để ngoài cổng nghĩa là mục đầu tiên rụng đi sẽ không ai thấy.
 #
-# Cần một dự án CÓ DỮ LIỆU THẬT: màn rỗng thì mọi mục đều "thiếu" và con số mất nghĩa.
-eide-noi-dung:    ## đo màn có hiện đủ dữ liệu không — cần DUAN=<đường dẫn dự án>
-	@[ -n "$(DUAN)" ] || { echo "cần DUAN=<đường dẫn dự án có dữ liệu>"; exit 2; }
+# Cần một dự án CÓ DỮ LIỆU THẬT: màn rỗng thì mọi mục đều "thiếu" và con số mất nghĩa. `DUAN`
+# bỏ trống thì tự dựng dự án mẫu — xem `scripts/du_an_mau.py` và giới hạn của nó ghi ở đó.
+eide-noi-dung:    ## đo màn có hiện đủ dữ liệu không — DUAN=<dự án>, bỏ trống thì dựng dự án mẫu
 	@[ "$$(launchctl managername 2>/dev/null)" = "Aqua" ] || \
 	 { echo "bỏ qua: không có phiên đồ hoạ"; exit 0; }
 	$(PY) scripts/gen_man_can_hien.py
-	apps/eide/.build/debug/EideApp --do-noi-dung "$(DUAN)"
+	@D="$(DUAN)"; \
+	 if [ -z "$$D" ]; then $(PY) scripts/du_an_mau.py >/dev/null || exit 1; \
+	    D=$$($(PY) -c "import pathlib;print(sorted(pathlib.Path.home().joinpath('eide').glob('mau-do-giao-dien*'))[-1])"); \
+	 fi; \
+	 apps/eide/.build/debug/EideApp --do-noi-dung "$$D"
 
 eidekit:          ## chỉ EIDEKit — client JSON-RPC của panel GEditor (WI-021)
 	cd apps/geditor && swift build --target EIDEKit && swift test --filter EIDEKitTests

@@ -121,9 +121,6 @@ public final class EideManYeuCau: EideManThietKe {
              })
     }
 
-    /// Ô cột KHẢ THI — **`nil` là một câu trả lời thứ ba.**
-    ///
-    /// "Chưa đối chiếu" khác hẳn "đối chiếu rồi và không đạt", và gộp chúng thành một ô trống
     /// **Ma trận TRUY VẾT yêu cầu ↔ module ↔ mã ↔ test** — §8 S10, [DEV-191].
     ///
     /// `req.trace_matrix` (REQ-06) sinh tệp và trả `gaps[]` — những yêu cầu KHÔNG nối được về
@@ -158,6 +155,9 @@ public final class EideManYeuCau: EideManThietKe {
         return n
     }
 
+    /// Ô cột KHẢ THI — **`nil` là một câu trả lời thứ ba.**
+    ///
+    /// "Chưa đối chiếu" khác hẳn "đối chiếu rồi và không đạt", và gộp chúng thành một ô trống
     /// là đúng loại im lặng cả kho này tránh: một yêu cầu chưa ai kiểm trông y hệt một yêu cầu
     /// đã kiểm và sạch.
     public static func oKhaThi(_ x: Any?) -> String {
@@ -309,16 +309,30 @@ public final class EideManLuocDo: EideManThietKe {
         let lech = ld.dong.filter { Self.laLech($0) }
         if !lech.isEmpty { _bangLech(lech) }
 
+        // "Lược đồ nào đang DÙNG TRONG tài liệu nào" — chiều ngược của `nhungLuocDo`, cùng một
+        // nguồn sự thật là văn bản tài liệu. Một lược đồ không nằm trong tài liệu nào là lược
+        // đồ chỉ mình tác tử nhìn thấy; đó là thông tin, không phải chỗ trống.
+        let tlds = ((try? await hienVat(goi, "doc"))??.dong) ?? []
+        let nhung = EideManTaiLieu.nhungLuocDo(duAnGoc,
+                                     tep: tlds.compactMap { $0["path"] as? String },
+                                     luocDo: ld.dong)
+        var dungO: [String: [String]] = [:]
+        for (tep, ds) in nhung {
+            for ma in ds { dungO[ma, default: []].append((tep as NSString).lastPathComponent) }
+        }
+
         tieuDePhu("\(ld.tong) LƯỢC ĐỒ" + (lech.isEmpty ? "" : " · \(lech.count) LỆCH VỚI MÃ"))
-        bang(cot: [("MÃ", 120), ("LOẠI", 116), ("NGÔN NGỮ", 84), ("ĐỒNG BỘ", 128),
-                   ("DỰNG LÚC", 132), ("ĐƯỜNG DẪN", 0)],
+        bang(cot: [("MÃ", 120), ("LOẠI", 110), ("NGÔN NGỮ", 80), ("ĐỒNG BỘ", 124),
+                   ("DÙNG TRONG TÀI LIỆU", 170), ("DỰNG LÚC", 124), ("ĐƯỜNG DẪN", 0)],
              dong: ld.dong.map { d in
-                 [(d["id"] as? String) ?? "?",
-                  (d["kind"] as? String) ?? "—",
-                  (d["lang"] as? String) ?? "—",
-                  Self.oDongBo(d),
-                  EideManNhatKy.gio(d["at"] as? String),
-                  (d["path"] as? String) ?? "—"]
+                 let ma = (d["id"] as? String) ?? "?"
+                 return [ma,
+                         (d["kind"] as? String) ?? "—",
+                         (d["lang"] as? String) ?? "—",
+                         Self.oDongBo(d),
+                         dungO[ma]?.joined(separator: ", ") ?? "chưa tài liệu nào nhúng",
+                         EideManNhatKy.gio(d["at"] as? String),
+                         (d["path"] as? String) ?? "—"]
              })
         them(cocBao)
     }
@@ -423,17 +437,94 @@ public final class EideManTaiLieu: EideManThietKe {
         let khongNguon = tl.dong.reduce(0) { $0 + Self.soKhongNguon($1["style_issues"]) }
         if !cu.isEmpty || khongNguon > 0 { _bangCanhBao(cu.count, khongNguon) }
 
+        // Liên kết lược đồ ↔ tài liệu đọc từ chính tệp văn bản — xem `nhungLuocDo`.
+        let ld = ((try? await hienVat(goi, "diagram"))??.dong) ?? []
+        let nhung = Self.nhungLuocDo(duAnGoc,
+                                     tep: tl.dong.compactMap { $0["path"] as? String },
+                                     luocDo: ld)
+
         tieuDePhu("\(tl.tong) TÀI LIỆU ĐÃ SINH")
         bang(cot: [("MÃ", 98), ("LOẠI", 86), ("NGÔN NGỮ", 76), ("MỤC CŨ", 84),
-                   ("VẤN ĐỀ", 150), ("ĐƯỜNG DẪN", 0)],
+                   ("VẤN ĐỀ", 130), ("LƯỢC ĐỒ ĐÃ NHÚNG", 150), ("ĐƯỜNG DẪN", 0)],
              dong: tl.dong.map { d in
-                 [(d["id"] as? String) ?? "?",
-                  (d["type"] as? String) ?? "—",
-                  (d["lang"] as? String) ?? "—",
-                  Self.oMucCu(d["stale_sections"]),
-                  Self.oVanDe(d["style_issues"]),
-                  (d["path"] as? String) ?? "—"]
+                 let p = (d["path"] as? String) ?? "—"
+                 return [(d["id"] as? String) ?? "?",
+                         (d["type"] as? String) ?? "—",
+                         (d["lang"] as? String) ?? "—",
+                         Self.oMucCu(d["stale_sections"]),
+                         Self.oVanDe(d["style_issues"]),
+                         (nhung[p]?.joined(separator: ", ")).map { $0.isEmpty ? "—" : $0 }
+                            ?? "không hình nào",
+                         p]
              })
+
+        await _khoiVanPhong(goi, tl.dong)
+    }
+
+    /// **Lỗi văn phong — `doc.style_check` (DOC-06).** §8 S12, [DEV-193].
+    ///
+    /// Cột VẤN ĐỀ ở bảng trên đọc `style_issues` mà `view.artifacts` trả về — và cột ấy CHỈ có
+    /// dữ liệu nếu một lượt `doc.style_check` đã chạy và ghi xuống store. Trên một tài liệu vừa
+    /// sinh thì nó trống, nên màn im lặng về đúng thứ DOC-06 tồn tại để nói.
+    ///
+    /// Chạy kiểm NGAY khi mở màn được vì `doc.style_check` chỉ ĐỌC: nó không sửa tài liệu,
+    /// không ghi tệp, không chạm phần cứng. Khác hẳn `sim.build_platform` ở màn Mô phỏng —
+    /// ranh giới là "có ghi gì không", không phải "có tốn thời gian không".
+    private func _khoiVanPhong(_ goi: @escaping EideGoi, _ ds: [[String: Any]]) async {
+        tieuDePhu("KIỂM VĂN PHONG — `doc.style_check`")
+        var dong: [[String]] = []
+        for d in ds.prefix(6) {
+            guard let ma = d["id"] as? String else { continue }
+            guard let r = try? await nangLuc(goi, "doc.style_check", ["doc_id": ma]) else {
+                dong.append([ma, "không chạy được", "—"])
+                continue
+            }
+            let issues = (r["issues"] as? [[String: Any]]) ?? []
+            let khongNguon = Self.soKhongNguon(issues)
+            dong.append([ma,
+                         issues.isEmpty ? "✓ sạch" : "\(issues.count) vấn đề",
+                         khongNguon > 0
+                            ? "\(khongNguon) khẳng định KHÔNG NGUỒN — tài liệu không kiểm được"
+                            : (issues.first.map { EideManHoChieu.giaTri($0["text"] ?? $0["kind"]) }
+                               ?? "—")])
+        }
+        guard !dong.isEmpty else {
+            return them(EideManYeuCau.chuTK("Không tài liệu nào để kiểm văn phong.",
+                                   mau: EideToken.Mau.muted))
+        }
+        bang(cot: [("TÀI LIỆU", 110), ("KẾT QUẢ", 130), ("ĐÁNG CHÚ Ý NHẤT", 0)], dong: dong)
+    }
+
+    /// **Lược đồ nào nhúng trong tài liệu nào** — `{đường dẫn tài liệu: [mã lược đồ]}`.
+    /// §8 S11 và §8 S12, [DEV-193].
+    ///
+    /// ## Nguồn sự thật là CHÍNH TỆP TÀI LIỆU, không phải một bảng
+    ///
+    /// `doc.embed_diagram` chèn hình vào văn bản và trả về số hình; nó KHÔNG ghi một dòng liên
+    /// kết nào xuống store. Nên câu *"lược đồ này đang dùng ở đâu"* chỉ trả lời được bằng cách
+    /// đọc tài liệu. Dựng thêm một bảng liên kết là dựng một bản sao thứ hai sẽ trôi: xoá một
+    /// hình khỏi văn bản mà bảng vẫn giữ dòng cũ thì màn nói sai theo hướng nguy hiểm — người
+    /// đọc tin rằng hình còn ở đó.
+    ///
+    /// Bắt theo MÃ lược đồ và theo TÊN TỆP: `![Hình 1](diagrams/kien-truc.svg)` và
+    /// `<!-- eide:diagram D-001 -->` đều là cách chèn có thật trong kho.
+    public static func nhungLuocDo(_ goc: String?, tep: [String],
+                                   luocDo: [[String: Any]]) -> [String: [String]] {
+        guard let goc else { return [:] }
+        var ra: [String: [String]] = [:]
+        for t in tep {
+            let duong = (goc as NSString).appendingPathComponent(t)
+            guard let van = try? String(contentsOfFile: duong, encoding: .utf8) else { continue }
+            for ld in luocDo {
+                let ma = (ld["id"] as? String) ?? ""
+                let p = (ld["path"] as? String) ?? ""
+                let ten = p.isEmpty ? "" : (p as NSString).lastPathComponent
+                let khop = (!ma.isEmpty && van.contains(ma))
+                    || (!ten.isEmpty && van.contains((ten as NSString).deletingPathExtension))
+                if khop { ra[t, default: []].append(ma.isEmpty ? ten : ma) }
+            }
+        }
+        return ra
     }
 
     /// Số vấn đề loại `uncited` — tách riêng vì nó là loại duy nhất làm tài liệu KHÔNG KIỂM ĐƯỢC.

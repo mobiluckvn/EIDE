@@ -100,10 +100,10 @@ def _seed(goc: Path) -> dict[str, int]:
 
         # --- nguồn + fact: nền của hộ chiếu chip (S5) và bản đồ tri thức (S7)
         them("source", {"id": "s_mau_ds", "uri": "ATmega328P-datasheet.pdf", "kind": "datasheet",
-                        "tier": "vàng", "license": "vendor-eula", "fetched_at": _now(),
+                        "tier": "gold", "license": "vendor-eula", "fetched_at": _now(),
                         "size_bytes": 12_345_678, "hash": "mau" * 10})
         them("source", {"id": "s_mau_svd", "uri": "ATmega328P.svd", "kind": "svd",
-                        "tier": "vàng", "license": "Apache-2.0", "fetched_at": _now(),
+                        "tier": "gold", "license": "Apache-2.0", "fetched_at": _now(),
                         "size_bytes": 234_567, "hash": "svd" * 10})
         # Hộ chiếu TRƯỚC fact: `passport_fact.passport_id → passport.id`.
         them("passport", {"id": "microchip.atmega328p@1.0.0", "kind": "chip",
@@ -131,7 +131,7 @@ def _seed(goc: Path) -> dict[str, int]:
                           "value": json.dumps(int(gt)),
                           "unit": dv, "source_id": "s_mau_ds",
                           "locator": json.dumps({"page": 12 + i, "bbox": [72, 100, 300, 140]}),
-                          "method": "parser", "tier": "vàng", "confidence": 0.95,
+                          "method": "parser", "tier": "gold", "confidence": 0.95,
                           "status": "normalized", "layer": "K2"})
             them("passport_fact", {"passport_id": "microchip.atmega328p@1.0.0",
                                    "fact_id": f"f_mau_{i}"})
@@ -140,7 +140,7 @@ def _seed(goc: Path) -> dict[str, int]:
                       "predicate": "base_address", "value": json.dumps(76), "unit": "byte",
                       "source_id": "s_mau_svd",
                       "locator": json.dumps({"path": "svd:SPI"}), "method": "parser",
-                      "tier": "bạc", "confidence": 0.7, "status": "pending", "layer": "K2"})
+                      "tier": "silver", "confidence": 0.7, "status": "pending", "layer": "K2"})
         them("passport_fact", {"passport_id": "microchip.atmega328p@1.0.0",
                                "fact_id": "f_mau_pending"})
         # Hai fact CÙNG chủ thể + vị từ, khác giá trị → một XUNG ĐỘT thật cho S8. `method` khác
@@ -149,13 +149,13 @@ def _seed(goc: Path) -> dict[str, int]:
                       "predicate": "page_size", "value": json.dumps(128), "unit": "byte",
                       "source_id": "s_mau_ds",
                       "locator": json.dumps({"page": 12}), "method": "parser",
-                      "tier": "vàng", "confidence": 0.95, "status": "normalized",
+                      "tier": "gold", "confidence": 0.95, "status": "normalized",
                       "layer": "K2"})
         them("fact", {"id": "f_mau_b", "subject": f"{CHIP}/mem:FLASH",
                       "predicate": "page_size", "value": json.dumps(64), "unit": "byte",
                       "source_id": "s_mau_svd",
                       "locator": json.dumps({"path": "svd:memory"}), "method": "inferred",
-                      "tier": "bạc", "confidence": 0.6, "status": "conflict",
+                      "tier": "silver", "confidence": 0.6, "status": "conflict",
                       "conflicts_with": "f_mau_a", "layer": "K2"})
 
         # --- module TRƯỚC `hw_map`: khoá ngoại `hw_map.module_id → module.id`. Thứ tự chèn là
@@ -243,6 +243,22 @@ def _seed(goc: Path) -> dict[str, int]:
              {"decision": "ASK", "rule": "G1-02", "gate": "G1",
               "reason": "thiếu tri thức: tần số thạch anh", "run_id": "r_mau"})
 
+    # --- TỆP tài liệu và lược đồ THẬT. Liên kết "lược đồ nào dùng trong tài liệu nào" đọc từ
+    # chính văn bản (`doc.embed_diagram` chèn hình mà không ghi liên kết nào xuống store), nên
+    # thiếu tệp thì cả S11 lẫn S12 không có gì để nối.
+    (goc / "diagrams").mkdir(exist_ok=True)
+    (goc / "diagrams" / "kien-truc.mmd").write_text(
+        "graph TD\n  A[cam_bien] --> B[i2c]\n  B --> C[uart]\n", encoding="utf-8")
+    (goc / "docs").mkdir(exist_ok=True)
+    (goc / "docs" / "SRS.md").write_text(
+        "# SRS — dự án mẫu\n\n"
+        "## 3.1 Giao tiếp cảm biến\n\n"
+        "Hệ thống đọc nhiệt độ qua I2C mỗi 1000 ms [f_mau_0].\n\n"
+        "<!-- eide:diagram D-001 -->\n"
+        "![Hình 1 — kiến trúc](../diagrams/kien-truc.mmd)\n\n"
+        "## 3.2 Hiệu năng\n\n"
+        "Hệ thống phải phản hồi nhanh.\n", encoding="utf-8")
+
     # --- mã nguồn: S14 cây tệp + constant-guard
     (goc / "src").mkdir(exist_ok=True)
     (goc / "src" / "cam_bien.c").write_text(
@@ -265,6 +281,20 @@ def _seed(goc: Path) -> dict[str, int]:
         "f_cpu": 16_000_000, "mcu": "atmega328p",
     }
     ct.write_text(yaml.safe_dump(d, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+    # --- NỀN TẢNG MÔ PHỎNG: gọi năng lực THẬT, không viết tay `sim/platform.json`.
+    #
+    # Màn Mô phỏng chỉ ĐỌC tệp ấy (nó không tự dựng, vì `sim.build_platform` ghi vào dự án).
+    # Viết tay một tệp nền tảng thì fixture sẽ hợp lệ kể cả khi năng lực hỏng — đúng loại
+    # "xanh giả" mà cả bộ đo này sinh ra để chặn. Gọi thẳng handler thay vì qua Router vì lớp
+    # này là fixture: nó không giả vờ đi qua cổng, và chỗ khác trong script cũng ghi thẳng.
+    try:
+        from eide.caps.sim import build_platform
+        from eide_core.router import Context as _Ctx
+        build_platform({"chip": "microchip.atmega328p", "board": "arduino-uno"},
+                       _Ctx(project_dir=goc))
+    except Exception as e:  # noqa: BLE001 — nói ra, đừng nuốt: thiếu nền tảng thì S16 rỗng
+        print(f"  (!) sim.build_platform không chạy được: {type(e).__name__}: {e}")
 
     store.write_seal(store.store_path(goc))
     return dem

@@ -104,7 +104,19 @@ public enum EideDoNoiDung {
     /// trang nào cũng có một chữ "chưa" ở đâu đó, và bộ dò sẽ báo thiếu mọi thứ.
     private static func _phuDinh(_ v: String, _ r: Range<String.Index>) -> Bool {
         let dau = v.index(r.lowerBound, offsetBy: -28, limitedBy: v.startIndex) ?? v.startIndex
-        let truoc = String(v[dau..<r.lowerBound])
+        var truoc = String(v[dau..<r.lowerBound])
+        // DỪNG ở ranh giới câu. Nhìn lui 28 ký tự mà vắt qua dòng trước thì nó bắt phải chữ
+        // "chưa" của một câu KHÁC — một âm tính giả, ngược hẳn lỗi mà luật này sinh ra để chặn.
+        //
+        // Đo 23/09/2026 ở màn Kế hoạch: khối CÒN THIẾU in hai gạch đầu dòng,
+        // "• tần số thạch anh CHƯA có fact" rồi "• Cổng G1 (G1-02) ASK: …". Dấu hiệu `Cổng`
+        // khớp đúng chỗ, nhưng chữ "chưa" của gạch đầu dòng TRƯỚC lọt vào cửa sổ nhìn lui, nên
+        // mục bị báo thiếu trong khi màn hiện đủ — và tôi suýt kết luận rằng nó cần sửa lõi.
+        for x in ["\n", "•", "·", "\t", "↵"] {
+            if let i = truoc.range(of: x, options: .backwards) {
+                truoc = String(truoc[i.upperBound...])
+            }
+        }
         for t in ["chua ", "khong ", "trong -", "chua co", "khong co"] where truoc.contains(t) {
             return true
         }

@@ -32,10 +32,20 @@ public final class EideManLuong: EideManCoSo {
         }
 
         let (dem, hienTai, ngoai) = Self.demTheoPha(ds)
-        guard dem.values.reduce(0, +) > 0 else {
-            return rong(vi: "sổ cái chưa có lời gọi năng lực nào thuộc tám quy trình P0–P7",
-                        buocKe: "ra lệnh cho tác tử ở vùng trao đổi — mọi việc nó làm đều rơi "
-                              + "vào một trong tám pha, và pha ấy sáng lên ở đây")
+        // **Chưa có lời gọi nào KHÔNG được kết thúc màn.** [DEV-193]
+        //
+        // Lý do màn này tồn tại là "hết màn mồ côi": bản đồ tám pha nói cho người mới biết THỨ
+        // TỰ làm việc, và thứ tự ấy có nghĩa trước khi có lời gọi đầu tiên — đúng lúc người
+        // dùng cần nó nhất. Trả `rong()` ở đây còn vứt luôn khối CỔNG và khối CÁCH GỠ, hai thứ
+        // §8 S3 đòi; đúng lớp lỗi vừa sửa ở màn Hộ chiếu mạch.
+        //
+        // Đo được vì bộ dò chạy trên một dự án mẫu DỰNG MỚI mỗi lượt: chạy tay thì sổ cái đã
+        // tích lời gọi của chính những lượt đo trước và màn xanh, chạy trong cổng thì đỏ.
+        if dem.values.reduce(0, +) == 0 {
+            them(EideManMoPhong.chuMP("Sổ cái chưa có lời gọi năng lực nào thuộc tám quy trình P0–P7 — "
+                            + "bản đồ dưới đây là THỨ TỰ làm việc, chưa phải tiến độ. Ra lệnh ở "
+                            + "vùng trao đổi: mọi việc tác tử làm đều rơi vào một trong tám pha.",
+                            mau: EideToken.Mau.muted))
         }
 
         // Quyết định cổng GẦN NHẤT của từng cổng, đọc từ chính sổ cái vừa kéo về. [DEV-185]
@@ -45,6 +55,10 @@ public final class EideManLuong: EideManCoSo {
         // "không cổng nào chặn" với "màn quên kiểm" — cùng lập luận với dòng niêm phong ở màn
         // Chính sách. Người mở màn này ra khi công việc đứng, và câu trả lời "không phải do
         // cổng" là một câu trả lời, không phải một chỗ trống.
+        // Nhãn khối in TRƯỚC cả hai nhánh: khối chỉ xuất hiện khi CÓ chuyện là khối người dùng
+        // không biết là nó tồn tại, và phép đo không phân biệt được "màn thiếu khối" với
+        // "hôm nay không có gì chặn".
+        tieuDePhu("BƯỚC ĐANG BỊ CHẶN — VÀ CÁCH GỠ")
         if let c = chan {
             _khoiDangChan(c)
         } else {
@@ -343,38 +357,43 @@ public final class EideManMoPhong: EideManCoSo {
     /// gộp thành một con số.
     private func _khoiNenTang(_ goi: @escaping EideGoi) async {
         tieuDePhu("NỀN TẢNG MÔ PHỎNG")
-        let st = try? await nangLuc(goi, "project.status")
-        let tg = ((st?["report"]) as? [String: Any])?["target"] as? [String: Any] ?? [:]
-        let chip = EideManHoChieu.giaTri(tg["chip"])
-        guard !chip.isEmpty, chip != "—" else {
-            return them(Self.chuMP("Dự án chưa ghim chip nên chưa dựng được nền tảng mô phỏng — "
-                                   + "`sim.build_platform` nhận `chip` bắt buộc.",
-                                   mau: EideToken.Mau.muted))
+        // ĐỌC nền tảng đã dựng, KHÔNG gọi `sim.build_platform` lúc mở màn. [DEV-193]
+        //
+        // Năng lực ấy GHI: nó sinh cả thư mục `sim/` kèm tệp nền tảng. Gọi nó khi người dùng
+        // bấm vào một mục menu là ghi vào dự án của họ vì một cái bấm nhầm — đúng thứ nguyên
+        // tắc "không màn nào tự chạm phần cứng khi mở" cấm, và nó cũng đi qua cổng nên trên
+        // A2 màn sẽ đẻ ra một câu hỏi duyệt mỗi lần mở.
+        //
+        // `sim/platform.json` là kết quả của lần dựng gần nhất: đọc tệp là đọc SỰ THẬT về nền
+        // tảng đang dùng, không phải một bản dựng lại có thể khác.
+        let goc = duAnGoc.map { URL(fileURLWithPath: $0) }
+        let f = goc?.appendingPathComponent("sim/platform.json")
+        guard let f, let d = try? Data(contentsOf: f),
+              let nt = (try? JSONSerialization.jsonObject(with: d)) as? [String: Any] else {
+            return them(Self.chuMP(
+                "Nền tảng mô phỏng chưa dựng cho dự án này — `sim.build_platform` sinh "
+                + "`sim/platform.json` từ hộ chiếu chip (cần fact `memory_size` tầng vàng). "
+                + "Bảo tác tử dựng nó ở vùng trao đổi; màn này CHỈ ĐỌC, không tự dựng vì "
+                + "`sim.build_platform` ghi tệp vào dự án.", mau: EideToken.Mau.muted))
         }
-        guard let r = try? await nangLuc(goi, "sim.build_platform", ["chip": chip]) else {
-            return them(Self.chuMP("Không dựng được nền tảng cho `\(chip)` — "
-                                   + "`sim.build_platform` không chạy được (thường vì hộ chiếu "
-                                   + "chưa đủ fact bộ nhớ).", mau: EideToken.Mau.warn))
-        }
-        let cv = (r["coverage"] as? [String: Any]) ?? [:]
-        let bn = (cv["memory"] as? [String: Any]) ?? [:]
+        let bn = (nt["memory"] as? [String: Any]) ?? [:]
         var dong: [[String]] = [
-            ["Engine", EideManHoChieu.giaTri(r["engine"])
-                + (((cv["fallback_used"] as? Bool) ?? false)
-                   ? " (LÙI từ `\(EideManHoChieu.giaTri(cv["engine_requested"]))`)" : "")],
-            ["Chip", chip],
+            ["Engine", EideManHoChieu.giaTri(nt["engine"])],
+            ["Chip", EideManHoChieu.giaTri(nt["chip"])],
+            ["Board", EideManHoChieu.giaTri(nt["board"])],
+            ["ISA", EideManHoChieu.giaTri(nt["isa"])],
         ]
         for k in bn.keys.sorted() { dong.append(["Bộ nhớ · \(k)", EideManHoChieu.giaTri(bn[k])]) }
-        let cites = (cv["cites"] as? [Any]) ?? []
+        let cites = (nt["cites"] as? [Any]) ?? []
         dong.append(["Fact trích dẫn", cites.isEmpty
-                     ? "KHÔNG có — bản đồ bộ nhớ không truy được về fact nào"
+                     ? "nền tảng không ghi lại fact nào — xem `coverage.cites` của lần dựng"
                      : "\(cites.count) fact: " + cites.prefix(3)
                         .map { EideManHoChieu.giaTri($0) }.joined(separator: ", ")])
         bang(cot: [("MỤC", 178), ("GIÁ TRỊ", 0)], dong: dong)
 
         tieuDePhu("NGOẠI VI — MÔ PHỎNG ĐƯỢC HAY KHÔNG")
-        let co = (cv["modeled"] as? [Any]) ?? []
-        let khong = (cv["unsupported"] as? [[String: Any]]) ?? []
+        let co = (nt["modeled"] as? [Any]) ?? []
+        let khong = (nt["unsupported"] as? [[String: Any]]) ?? []
         var hang: [[String]] = co.map { [EideManHoChieu.giaTri($0), "✓ có mô hình", "—"] }
         hang += khong.map { p in
             [EideManHoChieu.giaTri(p["name"]), "✖ KHÔNG mô phỏng được",

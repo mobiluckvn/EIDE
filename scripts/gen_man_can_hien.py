@@ -110,7 +110,10 @@ DAU_HIEU: dict[tuple[str, str], list[str]] = {
     ("ReqArch", "yêu cầu khô"): ["không đo được"],
     ("ReqArch", "adr: quyết"): ["ADR"],
     ("Code", "vi phạm con"): ["constant-guard", "Vi phạm"],
-    ("Code", "tệp nào do"): ["tác tử viết", "người sửa"],
+    # Dấu hiệu là NHÃN KHỐI, không phải GIÁ TRỊ dữ liệu. [DEV-193] "tác tử viết" chỉ xuất hiện
+    # khi sổ cái có bản ghi mang đường dẫn tệp; trên một dự án chưa có bản ghi nào thì cả cột
+    # in "chưa rõ ai" — đúng, và mục vẫn bị báo thiếu. Nhãn cột thì có mặt ở cả ba trạng thái.
+    ("Code", "tệp nào do"): ["AI VIẾT"],
     ("DiffMerge", "diff hai cộ"): ["Diff"],
     ("DiffMerge", "kết quả 4 c"): ["reviewer", "Công cụ"],
     ("Bench", "bài cf/bf/b"): ["CF", "BC"],

@@ -414,12 +414,16 @@ public final class EideManRegistry: EideManCoSo {
         // truy vấn rộng là cách đọc danh mục mà không cần năng lực riêng.
         let r = try await nangLuc(goi, "registry.search", ["q": ""])
         let goi_ = (r["packages"] as? [[String: Any]]) ?? []
+        // Nhãn khối in TRƯỚC cả hai nhánh. [DEV-193] Registry là kho CẤP MÁY, không thuộc dự
+        // án: một máy chưa `registry.seed` bao giờ thì mọi dự án trên nó đều thấy danh mục
+        // rỗng. Khối chỉ xuất hiện khi có gói là khối người dùng không biết có, và phép đo
+        // không phân biệt được "màn thiếu bảng gói" với "máy này chưa có registry".
+        tieuDePhu("\(goi_.count) GÓI TRONG REGISTRY — chữ ký · giấy phép · huy hiệu")
         guard !goi_.isEmpty else {
             return rong(vi: "registry chưa có gói nào tới được từ máy này",
                         buocKe: "`registry.seed` nạp danh mục cục bộ, hoặc trỏ `registry` trong "
                               + "`models.yaml` tới một chỉ mục có thật")
         }
-        tieuDePhu("\(goi_.count) GÓI TRONG REGISTRY")
         bang(cot: [("GÓI", 190), ("HUY HIỆU", 150), ("CHỮ KÝ", 110), ("LICENSE", 110),
                    ("LOẠI", 0)],
              dong: goi_.map { d in

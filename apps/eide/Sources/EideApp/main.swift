@@ -368,7 +368,15 @@ final class UngDung: NSObject, NSApplicationDelegate {
             //
             // Màn đang ở trạng thái rỗng thì KHÔNG kết luận gì về nó — báo "không đo được" và
             // nói ra cần dữ liệu gì. Muốn đo thật thì chạy trên một dự án có đủ hiện vật.
-            if let ly = Self.lyDoRong(van) {
+            // "Không đo được" chỉ đúng khi màn KHÔNG vẽ được gì. [DEV-193]
+            //
+            // `rong(vi:buocKe:)` chỉ THÊM chữ, không xoá — nên một màn vẽ xong ba khối rồi nói
+            // "còn khối thứ tư chưa có dữ liệu" vẫn mang câu "Màn này đang rỗng — vì:". Bản
+            // trước thấy câu ấy là xoá sổ cả màn: màn Mô phỏng vẽ đủ bảng nền tảng (engine, bộ
+            // nhớ, ngoại vi) mà cả bốn mục bị xếp "không đo được", nên phần VỪA LÀM XONG không
+            // được tính. Đòi `hong.count == can.muc.count` thì nhãn ấy chỉ rơi vào màn thật sự
+            // trắng.
+            if hong.count == can.muc.count, let ly = Self.lyDoRong(van) {
                 // "Rỗng vì CHƯA CÓ dữ liệu" khác "rỗng vì KHÔNG ĐỌC ĐƯỢC dữ liệu".
                 //
                 // Cái đầu là trạng thái bình thường của một dự án mới và không kết luận gì về

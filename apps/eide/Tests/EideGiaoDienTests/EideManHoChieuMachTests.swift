@@ -21,19 +21,34 @@ final class EideManHoChieuMachTests: XCTestCase {
 
     /// Ghim board mà store chưa có net là một trạng thái RIÊNG: bản đồ chân dựng từ netlist chứ
     /// không từ tên board, nên "chưa có schematic" ở đây sẽ đẩy người đi làm lại việc đã làm.
-    func testGhimBoardMaChuaCoNetThiNoiDungLyDo() async {
+    /// **`diagram.pinmap` hỏng KHÔNG được kết thúc màn** — [DEV-193].
+    ///
+    /// Bản trước trả `rong()` ngay tại đó và bài kiểm này khẳng định câu "chưa có net nào".
+    /// Câu ấy đúng, nhưng cái giá là cả hai khối còn lại của §8 S6 — XUNG ĐỘT CHÂN và khai báo
+    /// mạch lab — biến mất cùng nó, trong khi `board.check_pins` chạy trên chính netlist và
+    /// vẫn có kết quả. Chú thích ngay dưới guard ấy đã cảnh báo đúng tình huống này cho guard
+    /// KẾ TIẾP, nhưng guard trên thì không ai sửa.
+    ///
+    /// Nay kiểm thứ thật sự quan trọng: màn NÓI RA vì sao bảng chân trống, và hai khối kia
+    /// vẫn còn.
+    func testPinmapHongVanGiuKhoiXungDotVaKhoiLab() async {
         let m = EideManHoChieuMach()
         await m.nap { _, tham in
             switch (tham["id"] as? String) ?? "" {
             case "project.status":
                 return ["status": "done", "result": ["report": ["target": ["board": "uno-v3"]]]]
+            case "board.check_pins":
+                return ["status": "done", "result": ["conflicts": []]]
             default:
                 return ["status": "failed", "cap": "diagram.pinmap",
                         "error": ["eide_code": "E2000", "message": "Không thấy store"]]
             }
         }
         let van = Self.chu(m)
-        XCTAssertTrue(van.contains("chưa có net nào"), van)
+        XCTAssertTrue(van.contains("XUNG ĐỘT CHÂN"),
+                      "mất khối xung đột chân vì một lời gọi KHÁC hỏng — \(van)")
+        XCTAssertTrue(van.contains("chưa ánh xạ được chân MCU"),
+                      "không nói vì sao bảng chân trống — \(van)")
         XCTAssertFalse(van.contains("chưa có schematic/BOM"), "nhầm hai trạng thái rỗng — \(van)")
     }
 

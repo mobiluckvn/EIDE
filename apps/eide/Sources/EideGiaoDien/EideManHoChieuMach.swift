@@ -46,12 +46,15 @@ public final class EideManHoChieuMach: EideManCoSo {
                               + "`board.build_passport` dựng hộ chiếu mạch từ chúng")
         }
 
-        guard let pm = try await nangLucNeuCo(goi, "diagram.pinmap", ["board": board]) else {
-            return rong(vi: "board `\(board)` đã ghim nhưng store chưa có net nào của nó",
-                        buocKe: "nhập netlist ở màn Nhập tài liệu (S4) — bản đồ chân dựng từ "
-                              + "netlist chứ không từ tên board")
-        }
-        let hang = (pm["table"] as? [[String: Any]]) ?? []
+        // **`diagram.pinmap` KHÔNG chạy được cũng không được kết thúc màn.** [DEV-193]
+        //
+        // Đây đúng cái bẫy mà chú thích mấy dòng dưới đã ghi, chỉ khác là nó nằm ở guard TRÊN:
+        // bản đồ chân cần fact `pin_function` của hộ chiếu chip, còn `board.check_pins` và
+        // `board.constraints` chạy trên chính netlist và vẫn có kết quả. Trả `rong()` ở đây là
+        // vứt cả xung đột chân lẫn khối khai báo lab — hai thứ §8 S6 đòi — vì một lời gọi thứ
+        // ba không có dữ liệu.
+        let pm = try? await nangLucNeuCo(goi, "diagram.pinmap", ["board": board])
+        let hang = ((pm ?? nil)?["table"] as? [[String: Any]]) ?? []
 
         // Xung đột đọc RIÊNG chứ không lấy cờ `conflict` của bảng chân: cờ ấy chỉ nói có/không,
         // còn `check_pins` nói xung đột LOẠI GÌ và NẶNG tới đâu — mà đó là thứ quyết định người
@@ -61,7 +64,16 @@ public final class EideManHoChieuMach: EideManCoSo {
         let theoChan = Dictionary(grouping: xd) { ($0["pin"] as? String) ?? "" }
 
         _dongBoard(tg)
-        if !xd.isEmpty { _bangXungDot(xd) }
+        // Khối XUNG ĐỘT CHÂN in nhãn ở cả hai nhánh — §8 S6 đòi nó "hiện trên cùng", và một
+        // khối chỉ xuất hiện khi có chuyện thì người dùng không biết máy đã kiểm hay chưa.
+        tieuDePhu("XUNG ĐỘT CHÂN")
+        if !xd.isEmpty {
+            _bangXungDot(xd)
+        } else {
+            _ghiChu(vi: "không xung đột chân nào — `board.check_pins` đã chạy trên netlist của "
+                      + "`\(board)` và không thấy chân nào bị hai net tranh nhau",
+                    buocKe: "nhập thêm netlist hoặc ràng buộc nếu mạch còn phần chưa khai")
+        }
 
         // **Bảng chân rỗng KHÔNG được kết thúc màn.** `diagram.pinmap` cần fact `pin_function`
         // của hộ chiếu CHIP để ánh xạ `U1 chân 28` → `PB6/SCL`; chưa nhập datasheet chân thì
