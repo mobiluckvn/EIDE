@@ -30,7 +30,31 @@ const m = metaNew('EIDE-API-15', 'Đặc tả giao diện lập trình', 'ĐẶC
    ['1.6', '07/09/2026', 'Vũ Trí Công',
     '§3: danh sách tool nhanh nay IN RA từ chính literal sinh `api/mcp_tools.json`. Trước đó văn '
     + 'xuôi liệt kê 16 tên không khớp năng lực nào trong khi literal có 12 id thật — hai danh sách '
-    + 'trong cùng một tài liệu, và literal mới là thứ sinh ra tệp (DEV-045).']]);
+    + 'trong cùng một tài liệu, và literal mới là thứ sinh ra tệp (DEV-045).'],
+   ['2.0', '23/09/2026', 'Vũ Trí Công',
+    'Đồng bộ 24 mục DEVIATIONS theo `docs/sync/2026-09-22-API.md`. Năm nhóm thay đổi. '
+    + '**(a) §2 `chat.send` BẤT ĐỒNG BỘ theo thiết kế** — trả về NGAY với `state: "running"`, '
+    + 'kết quả đến bằng `event.chat.restated` rồi `event.chat.report`; bản trước chạy hết chuỗi '
+    + 'mới trả lời, hai đến bốn phút, và vì giao diện chỉ có MỘT ống nên suốt thời gian ấy mọi '
+    + 'lời gọi khác lẫn nhịp tim đều bị chặn (DEV-154). '
+    + '**(b) §2 `cho_nguoi[]` và `event.chat.report` mang CÂU HỎI, không chỉ tên tham số** — '
+    + 'thêm `clar_id`, `hoi` (tiếng Việt), `truong[].lua_chon` (tập giá trị hợp lệ), và `van` '
+    + '(câu gõ gốc, để trả lời xong thì chạy lại được). Không đổi kiểu schema: hai payload ấy '
+    + 'khai `type: object` + mô tả, nên thêm trường là làm RÕ chứ không phá hợp đồng (DEV-181). '
+    + '**(c) §2 `gate.decide` nhận thêm khoá `<run_id>:<gate>`** cho cổng do HANDLER chạy — G1 '
+    + 'xét chính KẾ HOẠCH, thứ chỉ tồn tại sau khi handler chạy, nên Router không biết cổng ấy '
+    + 'vừa chạy và quyết định của nó trước đây không vào `decision_log`, không vào hàng đợi, '
+    + 'không vào đâu ngoài tệp kế hoạch (DEV-176). '
+    + '**(d) §3 lỗi nội bộ KHÔNG mượn mã EIDE** — ngoại lệ ngoài `EideError` trả JSON-RPC '
+    + '`-32603` kèm tên loại ngoại lệ và in vết ra stderr, KHÔNG gắn `eide_code`: gắn một mã '
+    + 'EIDE cho một lỗi hiện thực là nói với bên gọi rằng đây là tình huống nghiệp vụ đã lường '
+    + 'trước (DEV-153). '
+    + '**(e) §7 mọi bản ghi sổ cái mang `chain`** — mã LƯỢT CHẠY đang thi hành, đóng dấu từ '
+    + 'trước bản ghi đầu tiên và gỡ ở cả bốn đường ra; sáu kiểu sự kiện vòng đời một lượt chạy '
+    + '(`run.started`, `run.step_started`/`step_done`, `run.blocked`, `run.done`/`cancelled`); '
+    + 'và `Ledger.append` khoá cả khối *gán số → nối băm → ghi tệp* bằng `RLock` — thiếu khoá '
+    + 'thì hai luồng cùng ghi làm ĐỨT chuỗi băm, tức hỏng đúng thứ sổ cái tồn tại để bảo đảm '
+    + '(DEV-123, DEV-156, DEV-162, DEV-167).']]);
 const quick = ['passport.query', 'kg.conflicts', 'kg.impact', 'kg.request', 'code.review', 'env.build', 'target.flash', 'target.serial', 'target.probe_read', 'report.export', 'view.rag_ask', 'discover.ports'];
 const c = [];
 c.push(H1('1. Nguyên tắc'));
@@ -40,16 +64,17 @@ c.push(P('Socket: `~/.eide/run/eided.sock` (macOS/Linux), named pipe trên Windo
 const RPC = [
  ['plane.hello', '{plugin_version, client}', '{api_version, daemon_version, project?, capabilities_hash}', 'Handshake; từ chối khi major khác'],
  ['project.list / project.open / project.close', '{} / {path|id} / {}', '{projects[]} / {project, state_summary} / {}', 'Mở dự án = M2 SessionMemory mới'],
- ['budget.state', '{}', '{daily_budget_usd, spent_usd, remaining_usd, calls_today, warn_pct, sap_het}', 'Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5'],
+ ['budget.state', '{}', '{daily_budget_usd, spent_usd, remaining_usd, calls_today, warn_pct, sap_het, roles}', 'Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5. `roles` là bảng vai trò → mô hình đang cấu hình (`{<vai>: {candidates[], temperature?, output_schema?}}`), đọc từ CÙNG `models.yaml` mà Gateway dùng để chọn mô hình; nằm ở đây chứ không thành một năng lực mới vì nó là CẤU HÌNH, không phải hiện vật trong store, và màn S20 đọc chung một đường với chi phí — DEV-136'],
  ['session.state', '{}', '{session_id, opened_at, autonomy_effective, stopped, turns, undo_items, permits[], board?}', 'Đọc M2 của phiên đang mở (MEM-11 §2). `permits`/`board` rỗng cho tới khi SessionMemory lưu chúng — DEV-110'],
- ['chat.send', '{text, attachments?[]}', '{intent_id, run_id?}', 'Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện'],
+ ['chat.send', '{text, attachments?[]}', '{intent_id, state, run_id?, cho_nguoi[], hong[], buoc_ra[], restate?, steps[]}', 'BẤT ĐỒNG BỘ theo thiết kế: **trả về NGAY** với `state: "running"` khi chuỗi được giao xuống luồng nền; kết quả tới bằng `event.chat.restated` rồi `event.chat.report`. Bản trước chạy hết chuỗi mới trả lời — hai đến bốn phút — và vì giao diện chỉ có MỘT ống nên suốt thời gian ấy mọi lời gọi khác lẫn nhịp tim đều bị chặn (DEV-154). `plan_only` (A0/A1) giữ ĐỒNG BỘ: nó không chạy nút nào, và hai nút của §2D.6 cần `run_id` ngay trong câu trả lời. Ba trường chỉ có ở đường đồng bộ: `cho_nguoi[]` các nút đang chờ người (DEV-121), `hong[]` các nút đã HỎNG `{cap, ma, vi}` (DEV-149), `buoc_ra[]` đầu ra từng bước `{i, cap, ra, dau_ra}` (DEV-151). Mỗi mục `cho_nguoi[]` mang `{cap, thieu[], vi, clar_id, hoi, truong[]{khoa, hoi, lua_chon[]}}` — CÂU HỎI bằng tiếng Việt và tập giá trị hợp lệ, không chỉ tên tham số (DEV-181)'],
+ ['chat.resume', '{run_id, approve?: bool}', '{run_id, state, cho_nguoi[]}', 'Chạy tiếp một lượt đã lập kế hoạch (`state: planned`) — UXC-31 §2D.6. Người bấm "Đúng — làm đi" trên thẻ Ý hiểu thì `approve: true`; bấm "Sửa ý hiểu" thì `approve: false` và lượt bị HUỶ (`state: cancelled`) chứ không để treo. Không có phương thức này thì `plan_only` là một ngõ cụt: chuỗi dựng xong rồi nằm đó vĩnh viễn, và hai nút của §2D.6 vẫn không có gì để bấm (DEV-140). Nó có trong `openrpc.json` từ lúc ấy nhưng KHÔNG có trong bảng này tới v2.0 — sinh lại tài liệu sẽ xoá mất nó, xem [DEV-194]'],
  ['chat.answer', '{question_id, option?, text?}', '{}', 'Trả lời câu hỏi gộp'],
  ['chat.history', '{limit?, before?}', '{turns[]}', 'Từ session.turns'],
  ['caps.list', '{ns?, tier?, risk?, screen?}', '{capabilities[]{code, id, name, desc, risk, tier, ui}}', 'Từ registry'],
  ['caps.describe', '{id}', '{capability (đủ 13 trường + schema)}', ''],
  ['caps.invoke', '{id, args, run_id?}', '{status: ok|pending|rejected, result?, run_id, undo_until?, gate_id?, error?}', 'Đường gọi duy nhất; tool nặng trả job_id trong result'],
  ['queue.list', '{kind: ask|done|all, gate?, limit?}', '{items[]{id, kind, gate, cap, summary, risk, evidence[], deadline?, undo_ref?}}', 'Hàng đợi chờ tôi / đã làm'],
- ['gate.decide', '{gate_id, decision: approve|reject, note?}', '{}', 'Người quyết định mục ASK'],
+ ['gate.decide', '{gate_id, decision: approve|reject, note?}', '{}', 'Người quyết định mục ASK. `gate_id` nhận HAI dạng: mã lượt chạy của một mục chờ thường, và `<run_id>:<gate>` cho **cổng phụ** — cổng do chính handler chạy chứ không do Router (G1 xét KẾ HOẠCH, thứ chỉ tồn tại sau khi `plan.create` chạy xong). Không có dạng thứ hai thì quyết định của cổng phụ không vào `decision_log`, không vào hàng đợi, không vào đâu ngoài tệp kế hoạch — DEV-176'],
  ['undo.list / undo.apply', '{} / {undo_ref}', '{items[]} / {result}', 'Hoàn tác việc tự làm'],
  ['autonomy.get / autonomy.set', '{} / {level, board?}', '{effective, project, boards{}} / {}', 'set là R4 khi nới lỏng → gate'],
  ['stop', '{}', '{}', 'Dừng khẩn < 1 s'],
@@ -68,8 +93,8 @@ c.push(T([2600, 2400, 2600, 1700], ['Phương thức', 'Tham số', 'Kết quả
 c.push(SP());
 c.push(H2('2.1. Sự kiện (daemon → plugin)'));
 const EV = [
- ['event.chat.restated', '{intent_id, text}', 'Thẻ "tôi hiểu là…"'], ['event.chat.question', '{question_id, text, options[], default, timeout_s, remember_as?}', 'Thẻ câu hỏi gộp'],
- ['event.chat.report', '{run_id, done[], waiting[], undo_until?, cost_usd}', 'Thẻ báo cáo cuối'], ['event.run.progress', '{run_id, n?, node_id?, cap, state, i?, of?, steps[]?, pct?, reason?}', 'Dòng tiến độ chuỗi. `run_id` là mã LƯỢT CHẠY: một lời gọi năng lực lẻ mang mã của chính nó, còn một nút trong chuỗi mang mã của CHUỖI — nên mọi bước của một Run gộp về một thẻ. Sửa v2.0: trước đó mọi nút mang mã riêng và sinh một thẻ mỗi nút'],
+ ['event.chat.restated', '{intent_id, text, steps[], run_id, state}', 'Thẻ "tôi hiểu là…". `steps[]`, `run_id`, `state` để giao diện dựng thẳng thẻ Ý hiểu của UXC-31 §2D.6 mà không phải hỏi lại. Phát NGAY khi chuỗi dựng xong, trước khi nó chạy hết: §2D.6 đặt thẻ này làm chỗ người bắt một lệnh bị hiểu sai TRƯỚC khi nó ghi tệp, nên phát muộn thì nó chỉ còn là một bản tường thuật (DEV-154)'], ['event.chat.question', '{question_id, text, options[], default, timeout_s, remember_as?}', 'Thẻ câu hỏi gộp'],
+ ['event.chat.report', '{run_id, state, done[], waiting[], failed[], van, loi?, undo_until?, cost_usd}', 'Thẻ báo cáo cuối. `waiting[]` mang CÙNG hình dạng với `chat.send.cho_nguoi[]` — kèm `clar_id`, `hoi`, `truong[].lua_chon` — vì cùng một câu hỏi phải trả lời được ở cả hai đường. `van` là CÂU GÕ GỐC: trả lời một câu hỏi rồi mà chuỗi vẫn nằm im thì người dùng mới đi được nửa vòng, nên vùng trao đổi gửi lại chính nó sau khi ghi câu trả lời (DEV-181). `failed[]` và `loi` để một lượt gõ LUÔN được trả lời — bản trước im lặng khi không dựng được chuỗi (DEV-146)'], ['event.run.progress', '{run_id, n?, node_id?, cap, state, i?, of?, steps[]?, pct?, reason?}', 'Dòng tiến độ chuỗi. `run_id` là mã LƯỢT CHẠY: một lời gọi năng lực lẻ mang mã của chính nó, còn một nút trong chuỗi mang mã của CHUỖI — nên mọi bước của một Run gộp về một thẻ. Sửa v2.0: trước đó mọi nút mang mã riêng và sinh một thẻ mỗi nút'],
  ['event.queue.changed', '{kind, added[], removed[]}', ''], ['event.gate.opened', '{gate_id, gate, cap, summary, risk, evidence[]}', 'Mục ASK mới'],
  ['event.undo.registered', '{undo_ref, deadline}', ''], ['event.undo.expired', '{undo_ref}', ''], ['event.autonomy.changed', '{effective, reason}', 'Kể cả STOP'],
  ['event.discover.changed', 'Discovery', 'Cắm/rút board'], ['event.serial.line', '{port, ts, line}', ''],
@@ -125,7 +150,7 @@ const ERR = [
  ['E1000', 'INVALID_ARGS', 'Tham số không khớp input_schema', 'Trả chi tiết trường sai; không ghi run'],
  ['E1001', 'UNKNOWN_CAPABILITY', 'id không có trong registry', ''],
  ['E1002', 'API_VERSION', 'Phiên bản plugin/daemon không tương thích', 'Handshake'],
- ['E1003', 'UNAUTHORIZED', 'Token REST sai', ''],
+ ['E1003', 'UNAUTHORIZED', 'Token REST sai', 'CHƯA hợp đồng nào khai — chỉ dùng ở tầng REST (§4), không ở năng lực; DEV-092'],
  // E1000 là tham số VÀO sai; E5002 là đầu ra MÔ HÌNH sai schema. Kết quả của một năng lực
  // không khớp `output_schema` không thuộc cả hai: đó là lỗi hiện thực, và Registry kiểm nó
  // ở mọi lời gọi để bắt sớm (STP-05). Trước v1.5 phải mượn E6001 SCHEMA_VIOLATION, vốn dành
@@ -148,8 +173,8 @@ const ERR = [
  ['E5003', 'CONSTANT_GUARD', 'Hằng số không nguồn trong mã', 'violations[]'],
  ['E6000', 'STORE_INTEGRITY', 'Hash store lệch / ghi ngoài cổng', 'Yêu cầu rebuild'],
  ['E6001', 'SCHEMA_VIOLATION', 'Ghi sai JSON Schema (DDD-14)', ''],
- ['E6002', 'CONFLICT', 'Fact mâu thuẫn cần người', ''],
- ['E6003', 'MIGRATION_REQUIRED', 'user_version cũ', 'eide migrate'],
+ ['E6002', 'CONFLICT', 'Fact mâu thuẫn cần người', 'CHƯA hợp đồng nào khai — `kg.conflicts` trả danh sách thay vì ném; DEV-092'],
+ ['E6003', 'MIGRATION_REQUIRED', 'user_version cũ', '`eide migrate` — lõi KHÔNG tự di trú (CDS-12.3 PROJECT-02: di trú đổi dữ liệu nên phải do NGƯỜI quyết, và nó sao lưu trước khi chạy). Bên gọi phải cho người một CHỖ để quyết: bản desktop hiện một thẻ có nút *Di trú ngay* trong vùng trao đổi, không in một dòng bảo ra dòng lệnh gõ — DEV-184'],
  // v2.0 — hai lỗi của luồng NGƯỜI lưu tệp (UXD-13 v2.0 §7.1). Cùng họ E6xxx vì đây là toàn vẹn
  // dữ liệu: bản trên đĩa và bản trong bộ đệm đã rẽ nhánh. Tài liệu v2.0 và checklist UXC-31 đặt
  // tên `E-SAVE-STALE`/`E-SAVE-RO`; tên phi số không vào được `errors.json` (lớp lỗi từ chối mọi
@@ -167,6 +192,7 @@ fs.mkdirSync('api', { recursive: true });
 fs.writeFileSync('api/errors.json', JSON.stringify(ERR.map(e => ({ code: e[0], name: e[1], meaning: e[2], handling: e[3] })), null, 1));
 c.push(SP());
 c.push(P('Lỗi JSON-RPC: `{code: -32000 - <mã EIDE>, message, data: {eide_code, payload}}`; REST: HTTP 400 (E1xxx), 409 (E2001, E6002), 202 (E3000 pending), 403 (E3001/E3002/E1003), 424 (E4xxx), 502 (E5000), 500 (E6xxx). CLI ánh xạ sang mã thoát §5.'));
+c.push(P('**Lỗi NỘI BỘ không mượn mã EIDE** (v2.0, DEV-153). Ngoại lệ không phải `EideError` — một `AttributeError`, một khoá thiếu, một lỗi lập trình — trả JSON-RPC `-32603 Internal error` kèm TÊN LOẠI ngoại lệ trong `message` và vết đầy đủ ra `stderr`; **không** gắn `eide_code`. Bảng §3 là danh mục các tình huống đã LƯỜNG TRƯỚC và mỗi mã nói cho bên gọi biết phải làm gì; gắn một mã trong đó cho một lỗi hiện thực là nói rằng đây là chuyện bình thường, và bên gọi sẽ xử lý nó theo cột "Xử lý" — tức là làm sai. Daemon cũng phải bắt MỌI ngoại lệ chứ không chỉ ba loại đã biết: một ngoại lệ lọt ra ngoài làm vỡ ống stdio, và khi ấy không phải một lời gọi hỏng mà là mọi lời gọi sau đó cùng hỏng.'));
 c.push(H1('7. Ledger: sự kiện và schema'));
 const LED = [
  ['context.bundle', '{role, hash, tokens{C0..C7}, sources[], compressions[], model_id}', 'CXD-10'],
@@ -217,6 +243,8 @@ c.push(T([2400, 5200, 1700], ['Loại sự kiện', 'Trường', 'Nguồn'], LED
 fs.writeFileSync('api/ledger_events.json', JSON.stringify(LED.map(l => ({ kind: l[0], fields: l[1], source: l[2] })), null, 1));
 c.push(SP());
 c.push(P('Định dạng JSONL: `{ts, kind, request_id, session_id, project, prev_hash, hash, data}`; `hash = sha256(prev_hash + canonical(data))` để chống sửa (TC-MM-08); tệp xoay theo ngày `ledger/YYYY-MM-DD.jsonl`; bộ lọc che chuỗi giống khóa API (regex `sk-|AIza|Bearer `) trước khi ghi.'));
+c.push(P('**`chain` — mã LƯỢT CHẠY, đóng dấu lên MỌI bản ghi** (v2.0, DEV-156). `Ledger.append` gắn mã lượt chạy đang thi hành từ trước bản ghi đầu tiên của mỗi lời gọi và gỡ ở cả bốn đường ra. Không có nó thì không đếm được ĐƠN VỊ VIỆC: một lời gọi năng lực sinh sáu bản ghi (`context.bundle`, `model.call`, `gate.decision`, `cap.run.start/finish`…), nên mọi bộ đếm phái sinh từ sổ cái — huy hiệu cột trái, hàng đợi, thẻ Run — đếm thành sáu việc thay vì một. Bản ghi của lời gọi LẺ cũng mang `chain`, và bên đọc phân biệt hai loại bằng `node_id`: nút của chuỗi có, lời gọi lẻ không (DEV-167). Đọc `node_id` phải kiểm KIỂU chứ không kiểm sự tồn tại — một khoá mang chuỗi rỗng vẫn "tồn tại".'));
+c.push(P('**Nối băm là thao tác KHÔNG chia cắt được** (v2.0, DEV-162). `Ledger.append` khoá cả khối *gán số thứ tự → nối băm với bản ghi trước → ghi tệp* bằng một `RLock`. Trước đó ba bước ấy hở: hai luồng cùng ghi thì bản ghi sau có thể nối vào một `prev_hash` đã cũ, và chuỗi băm ĐỨT — tức là hỏng đúng thứ sổ cái tồn tại để bảo đảm. Daemon chạy chuỗi ở luồng nền song song với luồng trả lời JSON-RPC (DEV-154), nên đây không phải tình huống lý thuyết.'));
 c.push(H1('8. Sinh tự động và test hợp đồng'));
 c.push(P('`eide api gen` đọc registry và sinh: `api/openrpc.json` (phương thức khung + `caps.invoke` với `oneOf` theo id được thay bằng mô tả phẳng để tuân thủ mẫu số chung), `api/mcp_tools.json`, tài liệu md. Test hợp đồng: (1) mọi tool MCP compile trên 3 adapter; (2) mọi phương thức JSON-RPC có ví dụ chạy được trong `tests/contract/rpc/*.json`; (3) plugin Swift dùng bộ mã sinh từ openrpc.json (không viết tay chuỗi phương thức); (4) mã lỗi trong mã nguồn chỉ được lấy từ `api/errors.json`.'));
 // openrpc skeleton

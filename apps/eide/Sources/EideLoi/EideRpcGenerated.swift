@@ -14,7 +14,7 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case autonomyGet = "autonomy.get"
     /// set là R4 khi nới lỏng → gate
     case autonomySet = "autonomy.set"
-    /// Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5
+    /// Ngân sách ngày: hạn từ models.yaml, đã tiêu cộng từ SỔ CÁI (nhiều tiến trình cùng tiêu), ngưỡng cảnh báo từ defaults.yaml — APD-08 §5. `roles` là bảng vai trò → mô hình đang cấu hình (`{<vai>: {candidates[], temperature?, output_schema?}}`), đọc từ CÙNG `models.yaml` mà Gateway dùng để chọn mô hình; nằm ở đây chứ không thành một năng lực mới vì nó là CẤU HÌNH, không phải hiện vật trong store, và màn S20 đọc chung một đường với chi phí — DEV-136
     case budgetState = "budget.state"
     case capsDescribe = "caps.describe"
     /// Đường gọi duy nhất; tool nặng trả job_id trong result
@@ -25,9 +25,9 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case chatAnswer = "chat.answer"
     /// Từ session.turns
     case chatHistory = "chat.history"
-    /// Chạy tiếp một lượt đã lập kế hoạch (`state: planned`) — UXC-31 §2D.6. Người bấm "Đúng — làm đi" trên thẻ Ý hiểu thì lượt ấy mới rời trạng thái `planned`. Không có phương thức này thì `plan_only` là một ngõ cụt: chuỗi dựng xong rồi nằm đó vĩnh viễn, và hai nút của §2D.6 vẫn không có gì để bấm. DEV-140
+    /// Chạy tiếp một lượt đã lập kế hoạch (`state: planned`) — UXC-31 §2D.6. Người bấm "Đúng — làm đi" trên thẻ Ý hiểu thì `approve: true`; bấm "Sửa ý hiểu" thì `approve: false` và lượt bị HUỶ (`state: cancelled`) chứ không để treo. Không có phương thức này thì `plan_only` là một ngõ cụt: chuỗi dựng xong rồi nằm đó vĩnh viễn, và hai nút của §2D.6 vẫn không có gì để bấm (DEV-140). Nó có trong `openrpc.json` từ lúc ấy nhưng KHÔNG có trong bảng này tới v2.0 — sinh lại tài liệu sẽ xoá mất nó, xem [DEV-194]
     case chatResume = "chat.resume"
-    /// Đưa lệnh vào Orchestrator; kết quả đến qua sự kiện
+    /// BẤT ĐỒNG BỘ theo thiết kế: **trả về NGAY** với `state: "running"` khi chuỗi được giao xuống luồng nền; kết quả tới bằng `event.chat.restated` rồi `event.chat.report`. Bản trước chạy hết chuỗi mới trả lời — hai đến bốn phút — và vì giao diện chỉ có MỘT ống nên suốt thời gian ấy mọi lời gọi khác lẫn nhịp tim đều bị chặn (DEV-154). `plan_only` (A0/A1) giữ ĐỒNG BỘ: nó không chạy nút nào, và hai nút của §2D.6 cần `run_id` ngay trong câu trả lời. Ba trường chỉ có ở đường đồng bộ: `cho_nguoi[]` các nút đang chờ người (DEV-121), `hong[]` các nút đã HỎNG `{cap, ma, vi}` (DEV-149), `buoc_ra[]` đầu ra từng bước `{i, cap, ra, dau_ra}` (DEV-151). Mỗi mục `cho_nguoi[]` mang `{cap, thieu[], vi, clar_id, hoi, truong[]{khoa, hoi, lua_chon[]}}` — CÂU HỎI bằng tiếng Việt và tập giá trị hợp lệ, không chỉ tên tham số (DEV-181)
     case chatSend = "chat.send"
     /// GEditor tính stats native
     case debugAsk = "debug.ask"
@@ -44,9 +44,9 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case eventChatIntent = "event.chat.intent"
     /// Thẻ câu hỏi gộp
     case eventChatQuestion = "event.chat.question"
-    /// Thẻ báo cáo cuối
+    /// Thẻ báo cáo cuối. `waiting[]` mang CÙNG hình dạng với `chat.send.cho_nguoi[]` — kèm `clar_id`, `hoi`, `truong[].lua_chon` — vì cùng một câu hỏi phải trả lời được ở cả hai đường. `van` là CÂU GÕ GỐC: trả lời một câu hỏi rồi mà chuỗi vẫn nằm im thì người dùng mới đi được nửa vòng, nên vùng trao đổi gửi lại chính nó sau khi ghi câu trả lời (DEV-181). `failed[]` và `loi` để một lượt gõ LUÔN được trả lời — bản trước im lặng khi không dựng được chuỗi (DEV-146)
     case eventChatReport = "event.chat.report"
-    /// Thẻ "tôi hiểu là…"
+    /// Thẻ "tôi hiểu là…". `steps[]`, `run_id`, `state` để giao diện dựng thẳng thẻ Ý hiểu của UXC-31 §2D.6 mà không phải hỏi lại. Phát NGAY khi chuỗi dựng xong, trước khi nó chạy hết: §2D.6 đặt thẻ này làm chỗ người bắt một lệnh bị hiểu sai TRƯỚC khi nó ghi tệp, nên phát muộn thì nó chỉ còn là một bản tường thuật (DEV-154)
     case eventChatRestated = "event.chat.restated"
     case eventDiagramStale = "event.diagram.stale"
     /// Cắm/rút board
@@ -73,7 +73,7 @@ public enum EideMethod: String, CaseIterable, Sendable {
     case eventToolReport = "event.tool.report"
     case eventUndoExpired = "event.undo.expired"
     case eventUndoRegistered = "event.undo.registered"
-    /// Người quyết định mục ASK
+    /// Người quyết định mục ASK. `gate_id` nhận HAI dạng: mã lượt chạy của một mục chờ thường, và `<run_id>:<gate>` cho **cổng phụ** — cổng do chính handler chạy chứ không do Router (G1 xét KẾ HOẠCH, thứ chỉ tồn tại sau khi `plan.create` chạy xong). Không có dạng thứ hai thì quyết định của cổng phụ không vào `decision_log`, không vào hàng đợi, không vào đâu ngoài tệp kế hoạch — DEV-176
     case gateDecide = "gate.decide"
     case hexResolve = "hex.resolve"
     /// Tool nặng (build, flash, extract, render, install)
@@ -205,7 +205,7 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
         case .invalidArgs: return "Trả chi tiết trường sai; không ghi run"
         case .unknownCapability: return ""
         case .apiVersion: return "Handshake"
-        case .unauthorized: return ""
+        case .unauthorized: return "CHƯA hợp đồng nào khai — chỉ dùng ở tầng REST (§4), không ở năng lực; DEV-092"
         case .outputSchema: return "Registry kiểm sau mỗi lời gọi"
         case .groundingFailed: return "Payload {exists[], candidates[], missing[]} để Orchestrator hỏi/dùng luôn"
         case .alreadyExists: return "Kèm phương án reuse|clone|new"
@@ -224,8 +224,8 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
         case .constantGuard: return "violations[]"
         case .storeIntegrity: return "Yêu cầu rebuild"
         case .schemaViolation: return ""
-        case .conflict: return ""
-        case .migrationRequired: return "eide migrate"
+        case .conflict: return "CHƯA hợp đồng nào khai — `kg.conflicts` trả danh sách thay vì ném; DEV-092"
+        case .migrationRequired: return "`eide migrate` — lõi KHÔNG tự di trú (CDS-12.3 PROJECT-02: di trú đổi dữ liệu nên phải do NGƯỜI quyết, và nó sao lưu trước khi chạy). Bên gọi phải cho người một CHỖ để quyết: bản desktop hiện một thẻ có nút *Di trú ngay* trong vùng trao đổi, không in một dòng bảo ra dòng lệnh gõ — DEV-184"
         case .fileStale: return "Chuyển luồng merge 3 bên"
         case .fileReadonly: return "Nói rõ đường dẫn; không thử lại im lặng"
         case .undoExpired: return ""

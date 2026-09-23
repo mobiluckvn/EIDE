@@ -21,7 +21,7 @@
   "code": "E1003",
   "name": "UNAUTHORIZED",
   "meaning": "Token REST sai",
-  "handling": ""
+  "handling": "CHƯA hợp đồng nào khai — chỉ dùng ở tầng REST (§4), không ở năng lực; DEV-092"
  },
  {
   "code": "E1004",
@@ -135,13 +135,13 @@
   "code": "E6002",
   "name": "CONFLICT",
   "meaning": "Fact mâu thuẫn cần người",
-  "handling": ""
+  "handling": "CHƯA hợp đồng nào khai — `kg.conflicts` trả danh sách thay vì ném; DEV-092"
  },
  {
   "code": "E6003",
   "name": "MIGRATION_REQUIRED",
   "meaning": "user_version cũ",
-  "handling": "eide migrate"
+  "handling": "`eide migrate` — lõi KHÔNG tự di trú (CDS-12.3 PROJECT-02: di trú đổi dữ liệu nên phải do NGƯỜI quyết, và nó sao lưu trước khi chạy). Bên gọi phải cho người một CHỖ để quyết: bản desktop hiện một thẻ có nút *Di trú ngay* trong vùng trao đổi, không in một dòng bảo ra dòng lệnh gõ — DEV-184"
  },
  {
   "code": "E6004",
