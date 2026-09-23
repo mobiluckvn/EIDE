@@ -185,13 +185,19 @@ public final class EideManLamRo: EideManCoSo {
         let mo = ds.filter { (($0["status"] as? String) ?? "open") == "open" }
         tieuDePhu("\(ds.count) ĐIỂM CẦN LÀM RÕ"
                   + (mo.count < ds.count ? " — \(mo.count) chưa trả lời" : ""))
-        bang(cot: [("LOẠI", 140), ("YÊU CẦU", 130), ("TRẠNG THÁI", 110), ("NỘI DUNG", 0)],
+        // Cột nói ĐÚNG thứ nó chứa. [DEV-191] "NỘI DUNG" là một nhãn đúng với mọi bảng trên
+        // đời; ở đây ô ấy chứa CÂU HỎI của tác tử, và "VÌ BƯỚC NÀO" là thứ §8 S9 đòi nói ra —
+        // một câu hỏi không gắn với bước sinh ra nó thì người trả lời không biết nó phục vụ gì.
+        bang(cot: [("LOẠI", 140), ("YÊU CẦU", 130), ("TRẠNG THÁI", 110),
+                   ("VÌ BƯỚC NÀO", 150), ("CÂU HỎI", 0)],
              dong: ds.map { d in
                  let req = (d["req_ids"] as? [Any])?.map { "\($0)" }.joined(separator: ", ")
                  let tl = (d["answer"] as? String).map { "đã trả lời: \($0)" }
                  return [Self.nhanLoai((d["kind"] as? String) ?? "?"),
                          (req?.isEmpty == false ? req! : "—"),
                          (((d["status"] as? String) ?? "open") == "open" ? "CHỜ ANH" : "xong"),
+                         // `source_cap` là năng lực đã dừng lại để hỏi — đúng "vì bước nào".
+                         (d["source_cap"] as? String).map { "`\($0)`" } ?? "—",
                          ((d["text"] as? String) ?? "")
                              + ((d["suggestion"] as? String).map { "\n   ↳ tác tử đề xuất: \($0)" } ?? "")
                              + (tl.map { "\n   ↳ \($0)" } ?? "")]

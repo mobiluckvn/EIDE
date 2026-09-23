@@ -218,10 +218,10 @@ public final class EideManMoHinh: EideManCoSo {
         let goiMo = (((r?["events"]) as? [[String: Any]]) ?? [])
             .filter { ($0["kind"] as? String) == "model.call" }
             .reversed().prefix(10)
-        tieuDePhu("LƯỢT GỌI MÔ HÌNH GẦN NHẤT")
+        tieuDePhu("LƯỢT GỌI MÔ HÌNH GẦN NHẤT — vai trò · token · giá · độ trễ")
         guard !goiMo.isEmpty else {
             let n = NSTextField(wrappingLabelWithString:
-                "Chưa có lượt gọi mô hình nào trong sổ cái — dự án này chưa tiêu token nào.")
+                "Sổ cái chưa ghi lượt gọi mô hình nào — dự án này chưa tiêu token nào.")
             n.font = EideToken.fontUI
             n.textColor = EideToken.Mau.muted
             them(n)

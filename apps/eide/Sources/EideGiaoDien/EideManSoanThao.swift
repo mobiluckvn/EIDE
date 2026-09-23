@@ -46,23 +46,86 @@ public final class EideManSoanThao: EideManCoSo {
         cocBang.alignment = .leading
         cocBang.spacing = 4
 
-        let bc = try await nangLuc(goi, "project.status")
-        thuMuc = (bc["report"] as? [String: Any])?["path"] as? String
-            ?? (bc["report"] as? [String: Any])?["project_dir"] as? String
+        // Thư mục dự án lấy từ PHIÊN, không hỏi lõi — [DEV-189]. `project.status` không trả
+        // `path` và hợp đồng PROJECT-08 cũng không khai trường ấy, nên đường cũ luôn trả `nil`
+        // và màn này chưa bao giờ mở ra được nội dung.
+        thuMuc = duAnGoc
 
         let ds = Self.quetTep(thuMuc)
         guard !ds.isEmpty else {
             return rong(vi: thuMuc == nil
-                            ? "chưa biết thư mục dự án — `project.status` không trả `path`"
+                            ? "chưa mở dự án nào nên chưa biết quét tệp ở đâu"
                             : "không tìm thấy tệp mã nào trong dự án",
                         buocKe: "bảo tác tử sinh mã (`code.generate_module`), hoặc thêm tệp "
                               + "`.c`/`.h` vào thư mục dự án rồi mở lại màn")
         }
 
         _dungThanhTep(ds)
+        await _bangAiViet(goi, ds)
         them(cocBang)
         _dungSoanThao()
         await moTep(goi, ds[0])
+    }
+
+    /// **Tệp nào do tác tử viết, tệp nào tôi sửa tay** — §8 S14. [DEV-190]
+    ///
+    /// ## Ba trạng thái, và trạng thái thứ ba là trạng thái thường gặp nhất
+    ///
+    /// Nguồn duy nhất đáng tin là SỔ CÁI: `human.file_save` ghi đường dẫn người lưu, và lời gọi
+    /// `code.*` ghi đường dẫn tác tử ghi. Tệp không có trong bản ghi nào thì **không ai biết ai
+    /// viết nó** — nó có thể được chép vào bằng tay, sinh ra trước khi dự án có sổ cái, hoặc
+    /// đến từ một mẫu dự án.
+    ///
+    /// Điền "tác tử viết" cho mọi tệp không phải của người là suy luận sai và suy sai về đúng
+    /// phía nguy hiểm: nó nói với người dùng rằng một tệp đã đi qua cổng G-FACT trong khi không
+    /// có gì bảo đảm thế. Đo 23/09/2026 trên dự án `doc-cam-bien-dht22…`: sổ cái 2 119 bản ghi,
+    /// **không một bản ghi nào mang đường dẫn tệp**, và kho git của dự án chưa có commit nào —
+    /// tức là với dự án ấy câu trả lời đúng cho cả hai tệp là "chưa rõ ai".
+    private func _bangAiViet(_ goi: @escaping EideGoi, _ ds: [String]) async {
+        var cuaNguoi: [String: String] = [:]      // đường dẫn → lúc lưu
+        var cuaTacTu: [String: String] = [:]      // đường dẫn → năng lực đã ghi
+        if let r = try? await doc(goi, "view.timeline", ["limit": 400]),
+           let es = r["events"] as? [[String: Any]] {
+            for e in es {
+                let kind = (e["kind"] as? String) ?? ""
+                let d = (e["data"] as? [String: Any]) ?? [:]
+                let luc = EideManNhatKy.gio(e["at"] as? String)
+                for p in Self.duongDanTrong(d) {
+                    if kind == "human.file_save" { cuaNguoi[p] = luc }
+                    else if kind.hasPrefix("cap.run") || kind == "store.write" {
+                        cuaTacTu[p] = (d["cap"] as? String) ?? "tác tử"
+                    }
+                }
+            }
+        }
+        tieuDePhu("AI VIẾT TỆP NÀO — theo sổ cái")
+        bang(cot: [("TỆP", 300), ("AI VIẾT", 0)],
+             dong: ds.map { p in
+                 let ten = (p as NSString).lastPathComponent
+                 if let t = cuaNguoi.first(where: { $0.key.hasSuffix(ten) })?.value {
+                     return [p, "tôi sửa tay (\(t))"]
+                 }
+                 if let c = cuaTacTu.first(where: { $0.key.hasSuffix(ten) })?.value {
+                     return [p, "tác tử viết — `\(c)`"]
+                 }
+                 return [p, "chưa rõ ai — sổ cái không có bản ghi nào mang tệp này"]
+             })
+    }
+
+    /// Mọi đường dẫn tệp nằm trong `data` của một bản ghi sổ cái.
+    ///
+    /// Đọc bốn tên khoá vì bốn nguồn ghi bốn kiểu (`path`, `file`, `paths[]`, `files[]{path}`);
+    /// một hàm đọc đúng MỘT tên sẽ im lặng bỏ sót ba nguồn kia.
+    public static func duongDanTrong(_ d: [String: Any]) -> [String] {
+        var ra: [String] = []
+        for k in ["path", "file"] { if let s = d[k] as? String, !s.isEmpty { ra.append(s) } }
+        for k in ["paths", "files"] {
+            for x in (d[k] as? [Any]) ?? [] {
+                if let s = x as? String { ra.append(s) }
+                else if let o = x as? [String: Any], let s = o["path"] as? String { ra.append(s) }
+            }
+        }
+        return ra
     }
 
     // MARK: - mở tệp
@@ -119,10 +182,17 @@ public final class EideManSoanThao: EideManCoSo {
         le.dat(khongNguon: Set(vp.compactMap { EideManHoChieu.nguyen($0["line"]) }),
                coFact: Self.dongCoFact(soanThao.string))
         _xoaBang()
+        // Gọi đúng TÊN phép kiểm: `constant-guard`. [DEV-190] Băng cũ nói đúng việc — "hằng số
+        // phần cứng không trỏ fact" — mà không nói đó là vi phạm của phép kiểm nào, nên người
+        // dùng không tra được nó ở đâu và không biết chạy lại bằng cách gì.
         if !vp.isEmpty {
-            _bang("▎ \(vp.count) hằng số phần cứng KHÔNG trỏ fact — `G-FACT` sẽ chặn merge. "
+            _bang("▎ VI PHẠM constant-guard: \(vp.count) hằng số phần cứng KHÔNG trỏ fact — "
+                  + "`G-FACT` sẽ chặn merge. "
                   + (vp.first.flatMap { $0["reason"] as? String } ?? ""),
                   mau: EideToken.Mau.bad)
+        } else {
+            _bang("✓ constant-guard: không hằng số phần cứng nào thiếu fact trong tệp này.",
+                  mau: EideToken.Mau.ok)
         }
     }
 
@@ -194,6 +264,11 @@ public final class EideManSoanThao: EideManCoSo {
     // MARK: - dựng khung nhìn
 
     private func _dungThanhTep(_ ds: [String]) {
+        // Khối có TÊN. [DEV-190] Thanh này chỉ in đường dẫn tệp, nên không chữ nào trên màn nói
+        // đây là cây tệp của dự án — người mở màn lần đầu thấy một hộp thả xuống không nhãn, và
+        // bộ dò nội dung cũng không có gì để bám. Một khối dữ liệu không tự giới thiệu thì cả
+        // người lẫn phép đo đều phải đoán.
+        tieuDePhu("TỆP MÃ TRONG DỰ ÁN — \(ds.count) tệp")
         chonTep.removeAllItems()
         chonTep.addItems(withTitles: ds)
         chonTep.target = self

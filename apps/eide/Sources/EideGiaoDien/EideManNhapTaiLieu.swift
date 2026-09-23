@@ -93,6 +93,10 @@ public final class EideManNhapTaiLieu: EideManCoSo {
                   (s["added_at"] as? String).map(EideManNhatKy.gio) ?? "tệp tại chỗ"]
              })
 
+        // Nhãn khối in TRƯỚC, không phụ thuộc có dữ liệu hay không. [DEV-191] Khối chỉ xuất
+        // hiện khi có dữ liệu là khối mà người dùng không biết là nó tồn tại — và phép đo cũng
+        // không phân biệt được "màn thiếu khối này" với "dự án chưa có dữ liệu loại này".
+        tieuDePhu("LƯỢT NHẬP GẦN ĐÂY — theo sổ cái")
         let lan = await _lichSuNhap(goi)
         guard !lan.isEmpty else {
             // Không im. Bảng nguồn ở trên nói "đã có gì"; khối này nói "lần chạy gần đây ra
@@ -106,7 +110,6 @@ public final class EideManNhapTaiLieu: EideManCoSo {
             them(n)
             return
         }
-        tieuDePhu("\(lan.count) LƯỢT NHẬP GẦN ĐÂY — theo sổ cái")
         // "FACT MỚI", không phải "FACT". `store.write` đếm số fact GHI RA; một lô mà mọi fact
         // đã có sẵn thì gộp hết và con số ấy bằng 0 — đúng, nhưng đọc "FACT 0" thành "lần nhập
         // này hỏng". Đo 20/09 trên hai lượt `passport.import` gộp: bảng nói 2 lần nhập · 0 fact.

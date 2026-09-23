@@ -323,8 +323,15 @@ def conflict_board(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                 return n.get("value")
 
         def _ve(n: dict[str, Any]) -> dict[str, Any]:
+            # `method` đi kèm — [DEV-191]. UXC-31 §8 S8 đòi màn nói *"vì sao máy cho là mâu
+            # thuẫn: suy ra hay được khai"*, và câu trả lời nằm ở cách fact ra đời: đọc thẳng
+            # từ một nguồn (`parser`, `pdf_table`, `svd`) là ĐƯỢC KHAI, còn `inferred`/`model`
+            # là SUY RA. Hai loại ấy đòi hai cách xử lý khác nhau — một cái sai thì sửa nguồn,
+            # cái kia sai thì sửa luật suy — nên gộp chúng là bỏ mất nửa thông tin người duyệt
+            # cần. Trường đã có sẵn trong node của `kg.conflicts`, chỉ chưa ai chuyển ra.
             return {"fact_id": n.get("id"), "value": _gt(n), "tier": n.get("tier"),
-                    "status": n.get("status"), "source": n.get("source_uri")}
+                    "status": n.get("status"), "source": n.get("source_uri"),
+                    "method": n.get("method")}
 
         rows.append({
             # `conflict_id` là id THẬT — dạng `<fact_a>:<fact_b>` mà `kg.resolve_conflict` nhận.

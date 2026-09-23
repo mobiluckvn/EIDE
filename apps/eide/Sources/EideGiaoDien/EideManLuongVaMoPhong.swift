@@ -273,6 +273,12 @@ public final class EideManMoPhong: EideManCoSo {
     public override class var tien: String { "Sim" }
 
     public override func napDuLieu(_ goi: @escaping EideGoi) async throws {
+        // NỀN TẢNG trước LƯỢT CHẠY. [DEV-191] Nền tảng trả lời *"máy này mô phỏng được cái
+        // gì"* — câu phải đọc TRƯỚC khi đọc kết quả một lượt chạy, vì nó là thứ giải thích vì
+        // sao một kỳ vọng không chấm được. Khối này không phụ thuộc vào việc đã chạy `sim.run`
+        // hay chưa, nên nó hiện cả trên dự án mới ghim chip.
+        await _khoiNenTang(goi)
+
         guard let r = try? await doc(goi, "view.timeline", ["limit": 400]),
               let ds = r["events"] as? [[String: Any]] else {
             return rong(vi: "không đọc được sổ cái", buocKe: "kiểm daemon còn sống")
@@ -319,6 +325,75 @@ public final class EideManMoPhong: EideManCoSo {
     /// **`unverified` KHÔNG phải `failed`.** Một dòng `unverified` kéo cả lượt chạy xuống
     /// `passed=false`, nhưng lý do thì khác hẳn: "firmware làm sai" và "EIDE chưa nhìn thấy
     /// được" là hai câu dẫn tới hai việc khác nhau.
+    /// **Nền tảng mô phỏng: engine · chip · bản đồ bộ nhớ · ngoại vi mô phỏng được hay KHÔNG.**
+    /// §8 S16, [DEV-191].
+    ///
+    /// ## `sim.build_platform` trả đủ từ [DEV-173] và tới nay không màn nào gọi
+    ///
+    /// Nó trả `{platform_dir, engine, coverage{memory, modeled, unsupported, cites, observes}}`
+    /// — đúng bốn thứ §8 S16 đòi, kèm `cites` là các fact mà bản đồ bộ nhớ dựng lên từ đó. Màn
+    /// chỉ đọc `tool.report` của một lượt `sim.run` ĐÃ chạy, nên trên một dự án vừa ghim chip
+    /// nó không nói được gì về khả năng mô phỏng của chính con chip ấy.
+    ///
+    /// ## Ngoại vi KHÔNG mô phỏng được quan trọng hơn phần mô phỏng được
+    ///
+    /// Kỳ vọng đặt lên một ngoại vi không có mô hình trả `unverified` chứ không `failed`, và
+    /// người đọc cần biết TRƯỚC điều đó — nếu không họ đọc "chưa quan sát được" thành "chưa
+    /// chạy tới" rồi đi tìm lỗi ở chỗ không có lỗi. Nên `unsupported` in ra kèm địa chỉ, không
+    /// gộp thành một con số.
+    private func _khoiNenTang(_ goi: @escaping EideGoi) async {
+        tieuDePhu("NỀN TẢNG MÔ PHỎNG")
+        let st = try? await nangLuc(goi, "project.status")
+        let tg = ((st?["report"]) as? [String: Any])?["target"] as? [String: Any] ?? [:]
+        let chip = EideManHoChieu.giaTri(tg["chip"])
+        guard !chip.isEmpty, chip != "—" else {
+            return them(Self.chuMP("Dự án chưa ghim chip nên chưa dựng được nền tảng mô phỏng — "
+                                   + "`sim.build_platform` nhận `chip` bắt buộc.",
+                                   mau: EideToken.Mau.muted))
+        }
+        guard let r = try? await nangLuc(goi, "sim.build_platform", ["chip": chip]) else {
+            return them(Self.chuMP("Không dựng được nền tảng cho `\(chip)` — "
+                                   + "`sim.build_platform` không chạy được (thường vì hộ chiếu "
+                                   + "chưa đủ fact bộ nhớ).", mau: EideToken.Mau.warn))
+        }
+        let cv = (r["coverage"] as? [String: Any]) ?? [:]
+        let bn = (cv["memory"] as? [String: Any]) ?? [:]
+        var dong: [[String]] = [
+            ["Engine", EideManHoChieu.giaTri(r["engine"])
+                + (((cv["fallback_used"] as? Bool) ?? false)
+                   ? " (LÙI từ `\(EideManHoChieu.giaTri(cv["engine_requested"]))`)" : "")],
+            ["Chip", chip],
+        ]
+        for k in bn.keys.sorted() { dong.append(["Bộ nhớ · \(k)", EideManHoChieu.giaTri(bn[k])]) }
+        let cites = (cv["cites"] as? [Any]) ?? []
+        dong.append(["Fact trích dẫn", cites.isEmpty
+                     ? "KHÔNG có — bản đồ bộ nhớ không truy được về fact nào"
+                     : "\(cites.count) fact: " + cites.prefix(3)
+                        .map { EideManHoChieu.giaTri($0) }.joined(separator: ", ")])
+        bang(cot: [("MỤC", 178), ("GIÁ TRỊ", 0)], dong: dong)
+
+        tieuDePhu("NGOẠI VI — MÔ PHỎNG ĐƯỢC HAY KHÔNG")
+        let co = (cv["modeled"] as? [Any]) ?? []
+        let khong = (cv["unsupported"] as? [[String: Any]]) ?? []
+        var hang: [[String]] = co.map { [EideManHoChieu.giaTri($0), "✓ có mô hình", "—"] }
+        hang += khong.map { p in
+            [EideManHoChieu.giaTri(p["name"]), "✖ KHÔNG mô phỏng được",
+             EideManHoChieu.giaTri(p["base"] ?? p["addr"] ?? p["reason"])]
+        }
+        guard !hang.isEmpty else {
+            return them(Self.chuMP("Nền tảng không kê ngoại vi nào — hộ chiếu chip chưa có fact "
+                                   + "ngoại vi.", mau: EideToken.Mau.muted))
+        }
+        bang(cot: [("NGOẠI VI", 200), ("TRẠNG THÁI", 200), ("ĐỊA CHỈ / LÝ DO", 0)], dong: hang)
+    }
+
+    static func chuMP(_ s: String, mau: NSColor) -> NSTextField {
+        let n = NSTextField(wrappingLabelWithString: s)
+        n.font = EideToken.fontUI
+        n.textColor = mau
+        return n
+    }
+
     public static func oKetQua(_ x: Any?) -> String {
         switch (x as? String) ?? "" {
         case "passed": return "✅ đạt"

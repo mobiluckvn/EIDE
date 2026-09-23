@@ -56,9 +56,75 @@ public enum EideDoNoiDung {
     /// So không phân biệt hoa thường và bỏ dấu tiếng Việt: nhãn có thể viết "Tầng" hay "TẦNG",
     /// và một bộ dò đỏ vì chữ hoa là một bộ dò dạy người ta bỏ qua nó.
     public static func daHien(_ muc: Muc, trong van: String) -> Bool {
-        guard muc.do_duoc else { return true }        // chưa đo được thì không kết tội
+        khop(muc, trong: van) != nil
+    }
+
+    /// Dấu hiệu nào khớp, và khớp Ở CÂU NÀO — `nil` nghĩa là không mục nào khớp. [DEV-190]
+    ///
+    /// ## Một phép đo chỉ trả `true`/`false` thì không ai soi lại được nó
+    ///
+    /// Đo 23/09/2026 khi rà soát 77 mục: dấu hiệu `engine` của S16 khớp câu *"engine hiện có
+    /// không có kênh để nhìn"* — một câu về kỳ vọng chưa quan sát được, không phải bảng nền
+    /// tảng mô phỏng mà mục ấy đòi. Mục được đếm là ĐÃ HIỆN trong khi màn không hề gọi
+    /// `sim.build_platform`. Ngược lại, dấu hiệu `constant-guard` của S14 báo THIẾU trong khi
+    /// màn có đủ: nó in "▎ n hằng số phần cứng KHÔNG trỏ fact — `G-FACT` sẽ chặn merge", đúng
+    /// việc ấy nhưng không dùng đúng chữ ấy.
+    ///
+    /// Hai lỗi ngược chiều nhau, cùng một gốc: **`true`/`false` không mang bằng chứng.** Trả
+    /// kèm câu khớp thì người đọc báo cáo tự thấy ngay dấu hiệu nào bắt nhầm.
+    public static func khop(_ muc: Muc, trong van: String) -> (dau: String, cau: String)? {
+        guard muc.do_duoc else { return ("(chưa đo được)", "") }
         let v = _thuong(van)
-        return muc.dau_hieu.contains { _thuong($0).isEmpty == false && v.contains(_thuong($0)) }
+        for d in muc.dau_hieu where !_thuong(d).isEmpty {
+            var tu = v.startIndex
+            while let r = v.range(of: _thuong(d), range: tu..<v.endIndex) {
+                if !_phuDinh(v, r) { return (d, _cauQuanh(van, v, r)) }
+                tu = r.upperBound
+            }
+        }
+        return nil
+    }
+
+    /// Chỗ khớp này có nằm trong một câu PHỦ ĐỊNH không? [DEV-190]
+    ///
+    /// ## Màn nói "chưa có X" đang được tính là "đã hiện X"
+    ///
+    /// Lỗ hệ thống, đo 23/09/2026 bằng chính bản in bằng chứng vừa thêm:
+    ///
+    /// * S4 mục *"Lượt nhập gần nhất"* khớp câu **"Chưa có LƯỢT NHẬP nào trong sổ cái"**;
+    /// * S3 mục *"bước đang bị chặn kèm CÁCH GỠ"* khớp câu **"Không cổng nào đang chặn"**;
+    /// * S1 mục *"Hoàn tác được: số mục + hạn sớm nhất"* khớp ô **"Mục hoàn tác 0"** của bảng
+    ///   phiên làm việc — một dòng khác hẳn khối mà mục ấy đòi.
+    ///
+    /// Trạng thái rỗng CÓ LÝ DO là đúng luật B5 và phải giữ; nhưng nó không được tính là đã
+    /// hiện nội dung. Nếu tính thì một màn chỉ cần nói "chưa có gì" là qua được mọi phép đo —
+    /// tức là cổng thưởng cho đúng thứ nó phải bắt.
+    ///
+    /// Bắt theo CỬA SỔ 28 ký tự ngay trước chỗ khớp, không quét cả màn: cả màn thì gần như
+    /// trang nào cũng có một chữ "chưa" ở đâu đó, và bộ dò sẽ báo thiếu mọi thứ.
+    private static func _phuDinh(_ v: String, _ r: Range<String.Index>) -> Bool {
+        let dau = v.index(r.lowerBound, offsetBy: -28, limitedBy: v.startIndex) ?? v.startIndex
+        let truoc = String(v[dau..<r.lowerBound])
+        for t in ["chua ", "khong ", "trong -", "chua co", "khong co"] where truoc.contains(t) {
+            return true
+        }
+        return false
+    }
+
+    /// Cắt ~90 ký tự quanh chỗ khớp, trên chuỗi GỐC (còn dấu) để người đọc được.
+    ///
+    /// Chỉ số tính trên chuỗi đã bỏ dấu; `folding` giữ nguyên số ký tự với tiếng Việt nên hai
+    /// chuỗi cùng độ dài và chỉ số dùng chung được. Lệch thì cắt lệch vài ký tự — chấp nhận
+    /// được cho một dòng bằng chứng, và vẫn đúng câu.
+    private static func _cauQuanh(_ goc: String, _ v: String, _ r: Range<String.Index>) -> String {
+        let n = v.distance(from: v.startIndex, to: r.lowerBound)
+        guard goc.count == v.count else { return String(goc.prefix(90)) }
+        let dau = max(0, n - 40), cuoi = min(goc.count, n + 50)
+        let a = goc.index(goc.startIndex, offsetBy: dau)
+        let b = goc.index(goc.startIndex, offsetBy: cuoi)
+        return String(goc[a..<b])
+            .replacingOccurrences(of: "\n", with: " ↵ ")
+            .trimmingCharacters(in: .whitespaces)
     }
 
     private static func _thuong(_ s: String) -> String {

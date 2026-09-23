@@ -154,7 +154,7 @@ final class UngDung: NSObject, NSApplicationDelegate {
         // "màn này có hiện thứ nó phải hiện không". Xem `EideDoNoiDung`.
         if let i = args.firstIndex(of: "--do-noi-dung"), i + 1 < args.count {
             let d = NSString(string: args[i + 1]).expandingTildeInPath
-            Task { @MainActor in await self._doNoiDung(d) }
+            Task { @MainActor in await self._doNoiDung(d, chiTiet: args.contains("--chi-tiet")) }
             return
         }
         if let i = args.firstIndex(of: "--bam-thu"), i + 1 < args.count {
@@ -302,7 +302,7 @@ final class UngDung: NSObject, NSApplicationDelegate {
         khung.layoutSubtreeIfNeeded()
     }
 
-    private func _doNoiDung(_ duAn: String) async {
+    private func _doNoiDung(_ duAn: String, chiTiet: Bool = false) async {
         let goc = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         guard let hd = EideDoNoiDung.hopDong(goc) else {
             print("✖ chưa có docs/spec/ui/man_can_hien.json — chạy "
@@ -340,6 +340,19 @@ final class UngDung: NSObject, NSApplicationDelegate {
             let van = Self.chuTrongTinh(khung.vungLamViec)
             let hong = can.muc.filter { !EideDoNoiDung.daHien($0, trong: van) }
             du += can.muc.count - hong.count
+            // `--chi-tiet`: in BẰNG CHỨNG của từng mục đã hiện — dấu hiệu nào khớp, ở câu nào.
+            // Không có nó thì "58 mục đã hiện" là một con số không ai soi lại được, và đúng hai
+            // lỗi ngược chiều đã sống sót nhờ thế (xem `EideDoNoiDung.khop`).
+            if chiTiet {
+                print("\n▸ \(can.ma) \(m.nhan)")
+                for muc in can.muc {
+                    guard let k = EideDoNoiDung.khop(muc, trong: van) else {
+                        print("   ✖ \(muc.mo_ta)\n       chờ: \(muc.dau_hieu.joined(separator: " / "))")
+                        continue
+                    }
+                    print("   ✓ \(muc.mo_ta)\n       «\(k.dau)» ← \(k.cau)")
+                }
+            }
             guard !hong.isEmpty else { continue }
 
             // ---- "CHƯA DỰNG" khác "KHÔNG ĐO ĐƯỢC". [DEV-183]

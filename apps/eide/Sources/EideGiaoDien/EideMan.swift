@@ -60,6 +60,16 @@ open class EideManCoSo: NSView {
     /// đang giữ mình; phiên gắn móc này lúc dựng màn.
     public var onMoMan: ((String) -> Void)?
 
+    /// Thư mục dự án đang mở. [DEV-189]
+    ///
+    /// Phiên biết đường dẫn này từ lúc `moDuAn`, nên màn KHÔNG phải đi hỏi lõi. Trước 23/09/2026
+    /// màn Trình soạn thảo hỏi `project.status.report["path"]` — một trường **không tồn tại**:
+    /// PROJECT-08 khai `report` gồm `features, gates_open, undo_items, cost_today, autonomy,
+    /// target`, không có `path`. Hệ quả là S14 hiện trạng thái rỗng *"chưa biết thư mục dự án"*
+    /// trên MỌI dự án, tức màn chưa bao giờ chạy — và bộ dò nội dung xếp nó vào nhóm "dự án
+    /// chưa có dữ liệu" nên lỗi sống sót qua nhiều lượt đo.
+    public var duAnGoc: String?
+
     public let than = NSStackView()
 
     /// Thời gian lần nạp gần nhất, tách làm hai: chờ lõi, và vẽ. Tách vì hai con số ấy dẫn tới

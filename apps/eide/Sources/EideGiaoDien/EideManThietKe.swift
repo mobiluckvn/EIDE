@@ -59,20 +59,56 @@ public final class EideManYeuCau: EideManThietKe {
         }
 
         if !yc.dong.isEmpty {
+            // **Yêu cầu KHÔNG ĐO ĐƯỢC, đánh dấu riêng** — §8 S10, [DEV-191].
+            //
+            // `req.detect_conflict` đã trả `issues[] {kind: "unmeasurable", req_ids}` từ trước
+            // và **không màn nào đọc**. Đây là cột khác hẳn KHẢ THI: một yêu cầu "hệ thống phải
+            // phản hồi nhanh" hoàn toàn KHẢ THI trên con chip đã ghim, mà không ai chấm được nó
+            // đạt hay trượt — nên nó sẽ trôi tới tận lúc nghiệm thu rồi thành một cuộc tranh
+            // luận. Đánh dấu ở đây là chỗ rẻ nhất để bắt.
+            //
+            // Tính ở LÕI chứ không viết lại phép đo trong Swift: `do_duoc` chuẩn hoá đơn vị
+            // ("400 kHz" = "0,4 MHz"), và một bản sao thứ hai của luật ấy sẽ lệch.
+            // `reqset_ids` BẮT BUỘC (REQ-04). Gọi thiếu thì E1000, `try?` nuốt, và cột dưới in
+            // "✓ có ngưỡng đo" cho MỌI yêu cầu — một câu trả lời SAI, tệ hơn hẳn một ô trống.
+            // Đo 23/09/2026 trên dự án mẫu: `NFR-001 "phản hồi nhanh và ổn định"` được đánh dấu
+            // đo được, đúng loại lỗi mà chính mục này sinh ra để bắt.
+            var khongDo: Set<String> = []
+            var goiY: [String: String] = [:]
+            let maYC = yc.dong.compactMap { $0["id"] as? String }
+            if let r = try? await nangLuc(goi, "req.detect_conflict", ["reqset_ids": maYC]),
+               let issues = r["issues"] as? [[String: Any]] {
+                for i in issues where (i["kind"] as? String) == "unmeasurable" {
+                    for x in (i["req_ids"] as? [Any]) ?? [] {
+                        let ma = EideManHoChieu.giaTri(x)
+                        khongDo.insert(ma)
+                        goiY[ma] = (i["suggestion"] as? String) ?? ""
+                    }
+                }
+            }
             let chuaXet = yc.dong.filter { ($0["feasibility"] as? String) == nil }.count
+            // Nói CẢ con số 0. Một phép rà chỉ lên tiếng khi có vấn đề thì không phân biệt được
+            // "đã rà, sạch" với "chưa rà" — và người đọc mặc định hiểu theo vế thứ nhất.
             tieuDePhu("\(yc.tong) YÊU CẦU"
-                      + (chuaXet > 0 ? " — \(chuaXet) CHƯA đối chiếu phần cứng" : ""))
+                      + (chuaXet > 0 ? " — \(chuaXet) CHƯA đối chiếu phần cứng" : "")
+                      + " · \(khongDo.count) yêu cầu KHÔNG ĐO ĐƯỢC")
             bang(cot: [("MÃ", 86), ("LOẠI", 62), ("ƯU TIÊN", 78), ("TRẠNG THÁI", 96),
-                       ("KHẢ THI", 130), ("NỘI DUNG", 0)],
+                       ("KHẢ THI", 130), ("ĐO ĐƯỢC", 150), ("NỘI DUNG", 0)],
                  dong: yc.dong.map { d in
-                     [(d["id"] as? String) ?? "?",
-                      (d["kind"] as? String) ?? "—",
-                      (d["priority"] as? String) ?? "—",
-                      (d["status"] as? String) ?? "—",
-                      Self.oKhaThi(d["feasibility"]),
-                      (d["text"] as? String) ?? "—"]
+                     let ma = (d["id"] as? String) ?? "?"
+                     return [ma,
+                             (d["kind"] as? String) ?? "—",
+                             (d["priority"] as? String) ?? "—",
+                             (d["status"] as? String) ?? "—",
+                             Self.oKhaThi(d["feasibility"]),
+                             khongDo.contains(ma)
+                                ? "✖ KHÔNG ĐO ĐƯỢC — " + (goiY[ma] ?? "thiếu ngưỡng kèm đơn vị")
+                                : "✓ có ngưỡng đo",
+                             (d["text"] as? String) ?? "—"]
                  })
         }
+
+        await _maTranTruyVet(goi)
 
         guard !adr.isEmpty else { return }
         tieuDePhu("\(adr.count) QUYẾT ĐỊNH KIẾN TRÚC (ADR)")
@@ -88,6 +124,40 @@ public final class EideManYeuCau: EideManThietKe {
     /// Ô cột KHẢ THI — **`nil` là một câu trả lời thứ ba.**
     ///
     /// "Chưa đối chiếu" khác hẳn "đối chiếu rồi và không đạt", và gộp chúng thành một ô trống
+    /// **Ma trận TRUY VẾT yêu cầu ↔ module ↔ mã ↔ test** — §8 S10, [DEV-191].
+    ///
+    /// `req.trace_matrix` (REQ-06) sinh tệp và trả `gaps[]` — những yêu cầu KHÔNG nối được về
+    /// một module, một đơn vị mã hay một bài kiểm. Màn hiện `gaps` chứ không hiện cả ma trận:
+    /// ma trận đầy đủ là một bảng hàng trăm ô, còn thứ người mở màn này cần biết là **chỗ đứt**.
+    /// Nối đủ thì nói ra là đủ — cùng lý do với con số 0 của phép rà đo được ở trên.
+    private func _maTranTruyVet(_ goi: @escaping EideGoi) async {
+        tieuDePhu("MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test")
+        guard let r = try? await nangLuc(goi, "req.trace_matrix", ["format": "md"]) else {
+            return them(Self.chuTK("Không dựng được ma trận truy vết — `req.trace_matrix` "
+                                   + "không chạy được.", mau: EideToken.Mau.warn))
+        }
+        let gaps = (r["gaps"] as? [[String: Any]]) ?? []
+        let tep = (r["file"] as? String) ?? ""
+        them(Self.chuTK("Ma trận đầy đủ: `\(tep.isEmpty ? "—" : tep)`",
+                        mau: EideToken.Mau.muted))
+        guard !gaps.isEmpty else {
+            return them(Self.chuTK("✓ Không chỗ đứt nào — mọi yêu cầu đều nối được về module, "
+                                   + "mã và bài kiểm.", mau: EideToken.Mau.ok))
+        }
+        bang(cot: [("YÊU CẦU", 110), ("ĐỨT Ở ĐÂU", 0)],
+             dong: gaps.prefix(20).map { g in
+                 [EideManHoChieu.giaTri(g["req_id"] ?? g["id"]),
+                  EideManHoChieu.giaTri(g["missing"] ?? g["reason"] ?? g["kind"])]
+             })
+    }
+
+    static func chuTK(_ s: String, mau: NSColor) -> NSTextField {
+        let n = NSTextField(wrappingLabelWithString: s)
+        n.font = EideToken.fontUI
+        n.textColor = mau
+        return n
+    }
+
     /// là đúng loại im lặng cả kho này tránh: một yêu cầu chưa ai kiểm trông y hệt một yêu cầu
     /// đã kiểm và sạch.
     public static func oKhaThi(_ x: Any?) -> String {

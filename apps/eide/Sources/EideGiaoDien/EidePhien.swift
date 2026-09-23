@@ -482,6 +482,7 @@ public final class EidePhien {
             let man = tao()
             man.onNguoiGo = { [weak self] in self?.nguoiGo() }
             man.onMoMan = { [weak self] t in _ = self?.moMan(t, boiTacTu: false) }
+            man.duAnGoc = duAn                    // [DEV-189]
             // Màn Làm rõ yêu cầu là màn DUY NHẤT cho tới nay mà người GHI vào từ bên trong nó.
             // Ghi xong thì thanh trên và cột phải phải đổi theo — chúng chiếu cùng một danh
             // sách việc chờ, và để chúng lệch nhau là để hai con số về cùng một thứ nằm cạnh

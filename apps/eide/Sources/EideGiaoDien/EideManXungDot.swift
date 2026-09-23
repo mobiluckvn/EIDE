@@ -67,6 +67,51 @@ public final class EideManXungDot: EideManCoSo {
         tieuDePhu("\(rows.count) XUNG ĐỘT ĐANG MỞ")
         for r in rows { them(_the(r)) }
         them(cocBao)
+        await _bangHeQua(goi, rows)
+    }
+
+    /// **HỆ QUẢ: mã nào đang dùng con số này** — §8 S8. [DEV-191]
+    ///
+    /// ## Vì sao cột này quyết định thứ tự làm việc
+    ///
+    /// Hai xung đột trông giống hệt nhau trên bảng — cùng hai vế, cùng hai tầng — nhưng một cái
+    /// chạm ba module đã sinh mã còn cái kia chưa ai dùng tới. Chọn sai giá trị ở cái thứ nhất
+    /// làm hỏng firmware đang chạy; ở cái thứ hai thì không. Không có cột này thì người duyệt
+    /// quyết theo thứ tự bảng, tức theo ngẫu nhiên.
+    ///
+    /// `kg.impact` nhận `fact_id` và trả `{stale_code_units, features, docs, diagrams}` — nó đã
+    /// hiện thực từ trước và **không màn nào gọi**. Gọi cho vế A của từng xung đột: hai vế nói
+    /// về CÙNG một chủ thể và vị từ, nên thứ dùng chúng là một.
+    private func _bangHeQua(_ goi: @escaping EideGoi, _ rows: [[String: Any]]) async {
+        tieuDePhu("HỆ QUẢ — MÃ VÀ HIỆN VẬT ĐANG DÙNG CON SỐ NÀY")
+        var dong: [[String]] = []
+        for r in rows.prefix(12) {
+            let a = (r["a"] as? [String: Any]) ?? [:]
+            guard let fid = a["fact_id"] as? String else { continue }
+            let ten = "\(EideManHoChieu.duoiCung((r["subject"] as? String) ?? "?"))"
+                + " · \((r["predicate"] as? String) ?? "?")"
+            guard let k = try? await nangLuc(goi, "kg.impact", ["fact_id": fid]) else {
+                dong.append([ten, "không đọc được `kg.impact`", "—", "—"])
+                continue
+            }
+            func gom(_ x: Any?) -> String {
+                let ds = (x as? [Any]) ?? []
+                guard !ds.isEmpty else { return "—" }
+                return ds.prefix(3).map { EideManHoChieu.giaTri($0) }.joined(separator: ", ")
+                     + (ds.count > 3 ? " +\(ds.count - 3)" : "")
+            }
+            dong.append([ten, gom(k["stale_code_units"]), gom(k["features"]),
+                         gom(k["docs"]) + " / " + gom(k["diagrams"])])
+        }
+        guard !dong.isEmpty else {
+            let n = NSTextField(wrappingLabelWithString:
+                "Chưa tính được hệ quả — không xung đột nào có `fact_id` để tra.")
+            n.font = EideToken.fontUI
+            n.textColor = EideToken.Mau.muted
+            return them(n)
+        }
+        bang(cot: [("XUNG ĐỘT", 240), ("MÃ ĐANG DÙNG", 200), ("TÍNH NĂNG", 150),
+                   ("TÀI LIỆU / LƯỢC ĐỒ", 0)], dong: dong)
     }
 
     // MARK: - dựng thẻ
@@ -110,10 +155,33 @@ public final class EideManXungDot: EideManCoSo {
             phu.append(("nguồn", EideManHoChieu.tenTep(s)))
         }
         if let f = d["fact_id"] as? String { phu.append(("fact", String(f.suffix(8)))) }
+        // VÌ SAO máy cho là mâu thuẫn — [DEV-191]. `method` nói fact này ra đời thế nào, và đó
+        // là thứ quyết định người duyệt phải sửa ở đâu: một fact ĐƯỢC KHAI sai thì sửa nguồn
+        // (nhập lại, đổi trang), một fact SUY RA sai thì sửa luật suy. Hai việc khác hẳn nhau.
+        phu.append(("vì sao", Self.viSaoMauThuan(d["method"])))
         return EideVeXungDot(nhan: "\(nhan) · \(tang)",
                              giaTri: EideManHoChieu.giaTriTheoViTu(d["value"], viTu),
                              phu: phu,
                              khoa: nhan.lowercased())
+    }
+
+    /// `fact.method` → *"được khai"* hay *"suy ra"*. [DEV-191]
+    ///
+    /// Không bịa cho giá trị lạ: `method` là chuỗi tự do trong DDD-14 và sẽ có giá trị mới khi
+    /// thêm extractor. Cái nào chưa xếp được thì in nguyên và nói là chưa xếp — đọc hơi thô,
+    /// nhưng nó ĐÚNG, còn gọi bừa một fact suy ra thành "được khai" thì đẩy người duyệt đi sửa
+    /// nhầm chỗ.
+    public static func viSaoMauThuan(_ x: Any?) -> String {
+        let m = ((x as? String) ?? "").lowercased()
+        if m.isEmpty { return "chưa rõ — fact không ghi `method`" }
+        for k in ["parser", "pdf", "svd", "atdf", "table", "header", "netlist", "bom"]
+        where m.contains(k) {
+            return "ĐƯỢC KHAI từ nguồn (`\(m)`)"
+        }
+        for k in ["infer", "model", "llm", "derive", "suy"] where m.contains(k) {
+            return "SUY RA (`\(m)`)"
+        }
+        return "chưa xếp loại được (`\(m)`)"
     }
 
     /// Nhãn tầng BÊN TRONG một thẻ xung đột — khác nhãn ở màn Hộ chiếu chip đúng một điểm.
