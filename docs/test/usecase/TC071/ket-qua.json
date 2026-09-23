@@ -1,0 +1,30 @@
+{
+ "tc": "TC071",
+ "uc": "UC18",
+ "loai": "Unhappy",
+ "ten": "Người dùng không có quyền nạp thiết bị sản xuất",
+ "uu_tien": "P3",
+ "tien_dk": "Phân quyền theo vai trò",
+ "vao": "Tài khoản thường ra lệnh nạp",
+ "cho": "Bị từ chối, có thông báo rõ ràng",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần nhiều tài khoản người dùng có vai trò khác nhau. EIDE hiện là ứng dụng một người trên máy cá nhân, không có khái niệm tài khoản hay vai trò — đây là một KHOẢNG TRỐNG của sản phẩm, không phải thiếu sót của môi trường kiểm thử.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

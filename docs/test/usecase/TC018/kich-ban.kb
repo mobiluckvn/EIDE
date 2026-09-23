@@ -1,0 +1,4 @@
+# TC018 — Thiếu toolchain hoặc sai phiên bản
+@tao firmware STM32 cần toolchain ARM
+Viết firmware nhấp nháy LED cho STM32F103 rồi biên dịch bằng arm-none-eabi-gcc
+@quet-man

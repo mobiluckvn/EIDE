@@ -1,0 +1,58 @@
+{
+ "tc": "TC005",
+ "uc": "UC01",
+ "loai": "Unhappy",
+ "ten": "Yêu cầu mâu thuẫn hoặc bất khả thi vật lý",
+ "uu_tien": "P1",
+ "tien_dk": "Phiên mới",
+ "vao": "Nhập: 'Truyền 4K qua LoRa thời gian thực, pin nút áo dùng 5 năm'",
+ "cho": "Agent chỉ ra mâu thuẫn bằng số liệu (băng thông LoRa, dung lượng pin), đề xuất nới ràng buộc nào; không đưa ra thiết kế giả vờ khả thi",
+ "che_do": "ui",
+ "buoc": [
+  "@tao truyền 4K qua LoRa",
+  "Truyền video 4K thời gian thực qua LoRa, dùng pin nút áo chạy 5 năm",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "mâu thuẫn|bất khả thi|không khả thi|không thể",
+   "kbps|kb/s|băng thông|bit/s|mah|dung lượng pin"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 58.5,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-ReqArch.png",
+  "man-03-Graph.png",
+  "man-04-NhatKy.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC005/du-an/truyen-4k-qua-lora",
+ "cham": {
+  "thieu": [
+   "mâu thuẫn|bất khả thi|không khả thi|không thể"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 58.5,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "mâu thuẫn|bất khả thi|không khả thi|không thể"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

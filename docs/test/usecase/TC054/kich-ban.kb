@@ -1,0 +1,4 @@
+# TC054 — Giảm dòng tiêu thụ ở chế độ chờ
+@tao giảm dòng tiêu thụ chế độ chờ
+Firmware ATmega328P của tôi tốn 12 mA ở chế độ chờ. Giảm xuống và cho tôi số đo trước/sau
+@quet-man

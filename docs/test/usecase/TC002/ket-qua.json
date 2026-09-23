@@ -1,0 +1,57 @@
+{
+ "tc": "TC002",
+ "uc": "UC01",
+ "loai": "Happy",
+ "ten": "Đề xuất nhiều phương án có so sánh",
+ "uu_tien": "P1",
+ "tien_dk": "Đã xác nhận đặc tả ở TC trước",
+ "vao": "Yêu cầu agent đề xuất giải pháp",
+ "cho": "Có 2–4 phương án (ví dụ: SBC Linux làm USB gadget; MCU + Ethernet PHY + thẻ nhớ; dùng DLNA/SMB thay vì USB). Mỗi phương án có chi phí ước tính, độ khó, rủi ro, nguồn tham khảo",
+ "che_do": "ui",
+ "buoc": [
+  "Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo",
+  "@quet-man"
+ ],
+ "noi_tiep": true,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "phương án",
+   "chi phí|giá",
+   "rủi ro",
+   "so sánh|ưu|nhược"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 15.1,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Graph.png",
+  "man-02-ReqArch.png"
+ ],
+ "du_an": null,
+ "cham": {
+  "thieu": [
+   "so sánh|ưu|nhược"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 15.1,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "so sánh|ưu|nhược"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

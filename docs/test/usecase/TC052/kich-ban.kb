@@ -1,0 +1,4 @@
+# TC052 — Sinh và chạy unit test với mock phần cứng
+@tao unit test có mock phần cứng
+Viết unit test chạy trên máy chủ cho hàm trong /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, mock phần ngắt, rồi chạy và báo độ phủ
+@quet-man

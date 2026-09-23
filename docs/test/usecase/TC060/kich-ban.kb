@@ -1,0 +1,4 @@
+# TC060 — Gói firmware sai chữ ký
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC058/du-an/ota-phan-vung-a-b
+Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log
+@quet-man

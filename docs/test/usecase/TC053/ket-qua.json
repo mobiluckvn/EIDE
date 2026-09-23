@@ -1,0 +1,30 @@
+{
+ "tc": "TC053",
+ "uc": "UC11",
+ "loai": "Unhappy",
+ "ten": "Test ổn định kém (flaky) trên HIL",
+ "uu_tien": "P3",
+ "tien_dk": "Bàn thử có nhiễu",
+ "vao": "Chạy lặp 20 lần",
+ "cho": "Agent phát hiện kết quả không ổn định và báo cáo, không kết luận đạt chỉ từ 1 lần",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần bàn thử HIL (phần cứng trong vòng lặp) để chạy lặp 20 lần trên thiết bị thật. Không có bàn thử thì không có nguồn dao động nào để đo tính ổn định.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

@@ -1,0 +1,30 @@
+{
+ "tc": "TC030",
+ "uc": "UC05",
+ "loai": "Happy",
+ "ten": "Gỡ lỗi cùng: đọc log, breakpoint, thanh ghi",
+ "uu_tien": "P1",
+ "tien_dk": "Firmware chạy sai trên mạch",
+ "vao": "Mô tả hiện tượng",
+ "cho": "Agent thu thập log UART/RTT, đặt breakpoint, đọc thanh ghi ngoại vi, đưa giả thuyết, kiểm chứng, sửa, nạp lại tới khi đúng",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần mạch thật đang chạy để đọc log UART/RTT, đặt breakpoint và đọc thanh ghi ngoại vi. Không có mạch thì không có gì để gỡ lỗi.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

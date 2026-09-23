@@ -1,0 +1,60 @@
+{
+ "tc": "TC018",
+ "uc": "UC03",
+ "loai": "Unhappy",
+ "ten": "Thiếu toolchain hoặc sai phiên bản",
+ "uu_tien": "P1",
+ "tien_dk": "Máy chưa cài arm-none-eabi-gcc",
+ "vao": "Biên dịch",
+ "cho": "Agent phát hiện, hướng dẫn/đề nghị cài đặt (hỏi trước khi cài), không báo biên dịch thành công giả",
+ "che_do": "ui",
+ "buoc": [
+  "@tao firmware STM32 cần toolchain ARM",
+  "Viết firmware nhấp nháy LED cho STM32F103 rồi biên dịch bằng arm-none-eabi-gcc",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "không tìm thấy|thiếu|chưa cài|không có toolchain|cài đặt"
+  ],
+  "khong_duoc_co": [
+   "biên dịch thành công|build thành công|0 lỗi 0 cảnh báo"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 50.6,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-ReqArch.png",
+  "man-03-Graph.png",
+  "man-04-NhatKy.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC018/du-an/firmware-stm32-can-toolchain-arm",
+ "cham": {
+  "thieu": [],
+  "thua": [
+   "biên dịch thành công|build thành công|0 lỗi 0 cảnh báo"
+  ],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 50.6,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [],
+   "thua": [
+    "biên dịch thành công|build thành công|0 lỗi 0 cảnh báo"
+   ]
+  }
+ ],
+ "qua_sang": 0
+}

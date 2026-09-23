@@ -1,0 +1,4 @@
+# TC027 — Mã nguồn không khớp với thiết kế
+@tao mã nguồn không khớp thiết kế
+Netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net nối SEN42 vào I2C1 (PB6/PB7), còn firmware /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c lại dùng ngắt ngoài INT0. Đối chiếu hai thứ và chỉ ra chỗ không khớp
+@quet-man

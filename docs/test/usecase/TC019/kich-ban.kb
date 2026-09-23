@@ -1,0 +1,4 @@
+# TC019 — Trình mô phỏng không hỗ trợ ngoại vi
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p
+Mô phỏng luôn cả phần ADC và phần Ethernet PHY của mạch này
+@quet-man

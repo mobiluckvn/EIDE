@@ -1,0 +1,5 @@
+# Bảng địa chỉ → hàm (trích từ mach.elf bằng arm-none-eabi-nm, đã sắp xếp)
+08002A04 T doc_cau_hinh
+08002A3C T kiem_crc
+08001C40 T main
+08001D10 T khoi_dong_i2c

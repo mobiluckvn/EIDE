@@ -1,0 +1,63 @@
+{
+ "tc": "TC038",
+ "uc": "UC06",
+ "loai": "Happy",
+ "ten": "Rà soát schematic phát hiện lỗi đã cài sẵn",
+ "uu_tien": "P1",
+ "tien_dk": "Schematic cố ý thiếu tụ lọc, thiếu kéo lên nRST",
+ "vao": "Yêu cầu rà soát",
+ "cho": "Phát hiện đủ lỗi đã cài, có mức nghiêm trọng, vị trí (ký hiệu linh kiện/net), đề xuất sửa",
+ "che_do": "ui",
+ "buoc": [
+  "@tao rà soát schematic có lỗi cài sẵn",
+  "Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net. Liệt kê từng lỗi kèm mức nghiêm trọng, vị trí (ký hiệu linh kiện hoặc tên net) và cách sửa",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "trở kéo|pull-?up",
+   "5 ?v|vbus|quá áp|vddio",
+   "nrst|reset",
+   "nghiêm trọng|mức|nặng"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 18.6,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-Graph.png",
+  "man-03-ReqArch.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC038/du-an/ra-soat-schematic-co-loi-cai-san",
+ "cham": {
+  "thieu": [
+   "trở kéo|pull-?up",
+   "5 ?v|vbus|quá áp|vddio",
+   "nrst|reset"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 18.6,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "trở kéo|pull-?up",
+    "5 ?v|vbus|quá áp|vddio",
+    "nrst|reset"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

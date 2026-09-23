@@ -1,0 +1,75 @@
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `nhap-nhay-led-atmega328p`
+
+**Tác tử trả lời** *(sau 0.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Mô phỏng luôn cả phần ADC và phần Ethernet PHY của mạch này
+
+**Tác tử trả lời** *(sau 6.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng luôn cả phần ADC và phần Ethernet PHY của mạch này  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Mô phỏng luôn cả phần ADC và phần Ethernet PHY của mạch này  bước 1/1  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/1 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.run`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run: ADC và phần Ethernet PHY. Tôi sẽ sim.run.  1. `sim.run`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.run  artifact  Chạy kịch bản mô phỏng nào?   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `Sim`:**
+
+```
+NỀN TẢNG MÔ PHỎNG  Nền tảng mô phỏng chưa dựng cho dự án này — `sim.build_platform` sinh `sim/platform.json` từ hộ chiếu chip (cần fact `memory_size` tầng vàng). Bảo tác tử dựng nó ở vùng trao đổi; màn này CHỈ ĐỌC, không tự dựng vì `sim.build_platform` ghi tệp vào dự án.  Màn này đang rỗng — vì: chưa có lượt mô phỏng nào trong dự án này  Bước kế tiếp: bước kế: tác tử chạy `sim.run` — cần một kịch bản (`sim.scenario`) và một firmware đã dựng (`code.build`)  
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 1 tab tác tử đã mở:** Sim
+
+### Tab `Sim`
+
+```
+Mô phỏng  sim.build_platform · sim.mock_peripheral · sim.model_plant · +3 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  NỀN TẢNG MÔ PHỎNG  Nền tảng mô phỏng chưa dựng cho dự án này — `sim.build_platform` sinh `sim/platform.json` từ hộ chiếu chip (cần fact `memory_size` tầng vàng). Bảo tác tử dựng nó ở vùng trao đổi; màn này CHỈ ĐỌC, không tự dựng vì `sim.build_platform` ghi tệp vào dự án.  Màn này đang rỗng — vì: chưa có lượt mô phỏng nào trong dự án này  Bước kế tiếp: bước kế: tác tử chạy `sim.run` — cần một kịch bản (`sim.scenario`) và một firmware đã dựng (`code.build`)  
+```
+
+![Sim](man-01-Sim.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (8)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/bien-dich-lai-va-tu-sua-loi-neu-co  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
+• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' bằng 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra lỗi cú pháp, được xác nhận khi quá trình biên dịch thất bại và trả về mã lỗi khác 0.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHƯA ĐO ĐƯỢC  Firmware phải cấu hình và điều khiển chân PB5 của vi điều khiển ATmega328P làm ngõ ra (output) để giao tiếp với LED.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Firmware phải đảo trạng thái logic của chân PB5 với chu kỳ chính xác 1 giây (500ms bật, 500ms tắt), độ trễ sai số không vượt quá ±5%.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/neu-truoc-tieu-chi-dat-roi-chay-mo-phong-va-ket-  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.run` đang chờ anh cho biết:
+• `artifact`
+• Chạy kịch bản mô phỏng nào? (`scenario`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (34)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác project.create  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 26 mục nữa — xem màn Nhật ký.  ⟩ 
+```
+
+**Tác tử trả lời** *(sau 2.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng luôn cả phần ADC và phần Ethernet PHY của mạch này  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Mô phỏng luôn cả phần ADC và phần Ethernet PHY của mạch này  bước 1/1  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/1 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.run`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run: ADC và phần Ethernet PHY. Tôi sẽ sim.run.  1. `sim.run`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.run  artifact  Chạy kịch bản mô phỏng nào?   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `Sim`:**
+
+```
+NỀN TẢNG MÔ PHỎNG  Nền tảng mô phỏng chưa dựng cho dự án này — `sim.build_platform` sinh `sim/platform.json` từ hộ chiếu chip (cần fact `memory_size` tầng vàng). Bảo tác tử dựng nó ở vùng trao đổi; màn này CHỈ ĐỌC, không tự dựng vì `sim.build_platform` ghi tệp vào dự án.  Màn này đang rỗng — vì: chưa có lượt mô phỏng nào trong dự án này  Bước kế tiếp: bước kế: tác tử chạy `sim.run` — cần một kịch bản (`sim.scenario`) và một firmware đã dựng (`code.build`)  
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC019`.

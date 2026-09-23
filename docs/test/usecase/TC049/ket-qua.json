@@ -1,0 +1,55 @@
+{
+ "tc": "TC049",
+ "uc": "UC10",
+ "loai": "Happy",
+ "ten": "Giải mã file capture I2C tìm lỗi NACK",
+ "uu_tien": "P2",
+ "tien_dk": "File .csv từ logic analyzer",
+ "vao": "Tải lên, hỏi nguyên nhân",
+ "cho": "Agent giải mã đúng khung, chỉ ra NACK tại địa chỉ nào, giả thuyết nguyên nhân có bằng chứng",
+ "che_do": "ui",
+ "buoc": [
+  "@tao giải mã capture I2C",
+  "Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/log/i2c-capture.csv, chỉ ra có NACK ở địa chỉ nào và vì sao",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "0x44",
+   "nack"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 29.9,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC049/du-an/giai-ma-capture-i2c",
+ "cham": {
+  "thieu": [
+   "0x44"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 29.9,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "0x44"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

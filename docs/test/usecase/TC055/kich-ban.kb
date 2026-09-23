@@ -1,0 +1,4 @@
+# TC055 — Tối ưu làm hỏng chức năng
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho
+Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui
+@quet-man

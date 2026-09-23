@@ -1,0 +1,55 @@
+{
+ "tc": "TC011",
+ "uc": "UC02",
+ "loai": "Unhappy",
+ "ten": "Datasheet nhiều phiên bản mâu thuẫn",
+ "uu_tien": "P2",
+ "tien_dk": "Có 2 phiên bản datasheet khác nhau",
+ "vao": "Cung cấp 2 phiên bản",
+ "cho": "Agent chỉ ra điểm khác nhau, dùng bản mới nhất/có errata, ghi rõ bản đã dùng",
+ "che_do": "ui",
+ "buoc": [
+  "@tao hai bản datasheet mâu thuẫn",
+  "Tôi để hai bản datasheet của SEN42 ở /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/ds-sen42-v1.0.md và /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/ds-sen42-v2.2.md. So hai bản, chỉ ra điểm khác nhau và nói rõ dùng bản nào",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "0x44|0x45",
+   "rev 2.2|bản mới|rev2.2|2\\.2"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 904.3,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC011/du-an/hai-ban-datasheet-mau-thuan",
+ "cham": {
+  "thieu": [
+   "0x44|0x45"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 904.3,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "0x44|0x45"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

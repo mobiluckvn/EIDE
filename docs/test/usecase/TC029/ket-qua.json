@@ -1,0 +1,30 @@
+{
+ "tc": "TC029",
+ "uc": "UC05",
+ "loai": "Happy",
+ "ten": "Nhận diện bộ nạp và nạp thành công",
+ "uu_tien": "P1",
+ "tien_dk": "Mạch + ST-Link cắm vào máy",
+ "vao": "Yêu cầu nạp firmware",
+ "cho": "Agent nhận diện đúng MCU (ID chip), hiển thị tóm tắt sẽ nạp gì vào đâu, hỏi xác nhận, nạp, kiểm tra (verify) thành công",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần mạch mẫu thật + bộ nạp (ST-Link/J-Link/CMSIS-DAP) cắm vào máy chạy tác tử. Máy kiểm thử không có thiết bị nào gắn ngoài. Không giả lập được: chính việc NHẬN DIỆN chip qua bộ nạp là thứ cần đo.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

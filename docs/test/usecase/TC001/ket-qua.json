@@ -1,0 +1,64 @@
+{
+ "tc": "TC001",
+ "uc": "UC01",
+ "loai": "Happy",
+ "ten": "Ý tưởng LAN→USB cho TV được làm rõ đầy đủ",
+ "uu_tien": "P1",
+ "tien_dk": "Phiên mới",
+ "vao": "Nhập: 'Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem'. Trả lời các câu hỏi làm rõ của agent",
+ "cho": "Agent hỏi ít nhất: loại TV/định dạng hệ thống file TV đọc được, dung lượng, tốc độ mạng, có cần xem trong lúc đang copy không, nguồn cấp, ngân sách. Đưa ra đặc tả yêu cầu để người dùng xác nhận",
+ "che_do": "ui",
+ "buoc": [
+  "@tao bộ chuyển LAN sang USB cho TV",
+  "Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "hệ thống tệp|hệ thống file|định dạng|fat32|exfat|ntfs",
+   "dung lượng",
+   "tốc độ|mạng|lan",
+   "nguồn|điện",
+   "ngân sách|chi phí",
+   "hỏi|làm rõ|cần anh|chờ anh"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 14.3,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-Env.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv",
+ "cham": {
+  "thieu": [
+   "hệ thống tệp|hệ thống file|định dạng|fat32|exfat|ntfs",
+   "dung lượng",
+   "nguồn|điện"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 14.3,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "hệ thống tệp|hệ thống file|định dạng|fat32|exfat|ntfs",
+    "dung lượng",
+    "nguồn|điện"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

@@ -1,0 +1,4 @@
+# TC031 — Phân biệt lỗi phần cứng và phần mềm
+@tao cảm biến I2C không phản hồi
+Cảm biến I2C của tôi không phản hồi. Chỉ tôi cách xác định là lỗi phần cứng hay phần mềm
+@quet-man

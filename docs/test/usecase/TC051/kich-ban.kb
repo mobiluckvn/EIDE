@@ -1,0 +1,4 @@
+# TC051 — Log bị cắt/không đủ dữ liệu
+@tao log bị cắt
+Thiết bị chết, log tôi chỉ bắt được đúng dòng `[00:00:03.2] khoi dong OK`. Nguyên nhân là gì?
+@quet-man

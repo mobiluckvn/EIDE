@@ -1,0 +1,30 @@
+{
+ "tc": "TC034",
+ "uc": "UC05",
+ "loai": "Unhappy",
+ "ten": "Sai MCU đích",
+ "uu_tien": "P1",
+ "tien_dk": "Firmware cho STM32F103 nhưng mạch là F401",
+ "vao": "Nạp",
+ "cho": "Agent phát hiện ID chip không khớp, dừng lại trước khi nạp",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần một mạch thật có MCU KHÁC với MCU đích để đọc ra ID chip không khớp. Không có phần cứng thì không có ID chip nào để so.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

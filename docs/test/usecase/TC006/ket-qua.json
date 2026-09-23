@@ -1,0 +1,57 @@
+{
+ "tc": "TC006",
+ "uc": "UC01",
+ "loai": "Unhappy",
+ "ten": "Người dùng đổi yêu cầu giữa chừng",
+ "uu_tien": "P2",
+ "tien_dk": "Đã có đặc tả v1 và phương án",
+ "vao": "Nhập: 'À thêm nữa, phải chạy bằng pin'",
+ "cho": "Agent cập nhật đặc tả (v2), đánh giá lại phương án bị ảnh hưởng, nói rõ phần nào phải làm lại",
+ "che_do": "ui",
+ "buoc": [
+  "À thêm nữa, phải chạy bằng pin",
+  "@quet-man"
+ ],
+ "noi_tiep": true,
+ "sau": "TC003",
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "cập nhật|v2|phiên bản|đặc tả",
+   "ảnh hưởng|làm lại|xem lại"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 40.5,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-ReqArch.png",
+  "man-02-Graph.png"
+ ],
+ "du_an": null,
+ "cham": {
+  "thieu": [
+   "cập nhật|v2|phiên bản|đặc tả",
+   "ảnh hưởng|làm lại|xem lại"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 40.5,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "cập nhật|v2|phiên bản|đặc tả",
+    "ảnh hưởng|làm lại|xem lại"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

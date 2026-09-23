@@ -1,0 +1,81 @@
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `ma-tran-truy-vet`
+
+**Tác tử trả lời** *(sau 0.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?
+
+**Tác tử trả lời** *(sau 37.9 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 1/6  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/6 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ arch.decompose.  1. `arch.decompose`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  arch.decompose  Dựa trên những yêu cầu nào?  style   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tạo ra một báo cáo ma trận truy vết liên kết 100% các yêu cầu với tài liệu thiết kế, module mã nguồn và kịch bản kiểm thử tương ứng, đồng thời đánh dấu cảnh báo cho các yêu cầu có số lượng kịch bản kiểm thử bằng 0.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-PWR-01	—
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 1 tab tác tử đã mở:** ReqArch
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tạo ra một báo cáo ma trận truy vết liên kết 100% các yêu cầu với tài liệu thiết kế, module mã nguồn và kịch bản kiểm thử tương ứng, đồng thời đánh dấu cảnh báo cho các yêu cầu có số lượng kịch bản kiểm thử bằng 0.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-PWR-01	—
+```
+
+![ReqArch](man-01-ReqArch.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (3)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.decompose` đang chờ anh cho biết:
+• Dựa trên những yêu cầu nào? (`reqset_ids`)
+• `style`  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `view.ask` đang chờ: Tài liệu thiết kế hiện tại trước khi đổi sang ATmega328P để đối chiếu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `view.ask` đang chờ: Yêu cầu chi tiết về giao diện đầu vào/đầu ra (UI/UX hoặc giao thức) của tính năng view.ask  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (7)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.prioritize  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
+```
+
+**Tác tử trả lời** *(sau 2.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 1/6  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/6 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ arch.decompose.  1. `arch.decompose`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  arch.decompose  Dựa trên những yêu cầu nào?  style   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tạo ra một báo cáo ma trận truy vết liên kết 100% các yêu cầu với tài liệu thiết kế, module mã nguồn và kịch bản kiểm thử tương ứng, đồng thời đánh dấu cảnh báo cho các yêu cầu có số lượng kịch bản kiểm thử bằng 0.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-PWR-01	—
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC064`.

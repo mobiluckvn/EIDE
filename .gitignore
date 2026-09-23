@@ -33,3 +33,12 @@ _incoming/
 .eide/
 *.sqlite
 *.sqlite-journal
+
+# Bằng chứng kiểm thử usecase: ảnh chụp và docx từng ca (135 MB + 182 MB).
+# Chúng nằm trên đĩa để chủ sản phẩm rà, KHÔNG vào git — một kho đồ án không nên
+# mang 300 MB nhị phân sinh lại được. Sinh lại bằng:
+#   python scripts/kiem_usecase.py --lai            (chạy lại cả bộ, tốn lời gọi mô hình)
+#   hoặc dựng docx từ ket-qua.json đã có, không chạy lại kịch bản.
+docs/test/usecase/*/*.png
+docs/test/usecase/TC*.docx
+docs/test/usecase/*/du-an/

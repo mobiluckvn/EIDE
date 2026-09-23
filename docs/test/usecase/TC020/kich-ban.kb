@@ -1,0 +1,4 @@
+# TC020 — Firmware treo/vòng lặp vô hạn trong mô phỏng
+@tao firmware treo vòng lặp
+Viết firmware ATmega328P có vòng lặp `while(1);` không thoát rồi chạy mô phỏng
+@quet-man

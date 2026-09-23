@@ -1,0 +1,4 @@
+# TC059 — Mất điện giữa lúc cập nhật
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC058/du-an/ota-phan-vung-a-b
+Mô phỏng mất điện đúng lúc đang ghi phân vùng B. Thiết bị phải khởi động lại bằng bản cũ
+@quet-man

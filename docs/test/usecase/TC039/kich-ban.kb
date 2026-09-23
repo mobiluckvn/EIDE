@@ -1,0 +1,4 @@
+# TC039 — Rà soát code phát hiện race condition
+@tao rà soát code tìm race condition
+Rà soát /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, tìm lỗi tranh chấp giữa ngắt và vòng lặp chính
+@quet-man

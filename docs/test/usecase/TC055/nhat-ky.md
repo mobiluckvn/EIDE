@@ -1,0 +1,98 @@
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `giam-dong-tieu-thu-che-do-cho`
+
+**Tác tử trả lời** *(sau 0.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giam-dong-tieu-thu-che-do-cho` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui
+
+**Tác tử trả lời** *(sau 6.8 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giam-dong-tieu-thu-che-do-cho` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  bước 2/23  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/23 bước, 1 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `archive.list`)  → mở màn Môi trường (tác tử đang chạy `env.check`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ project.create, archive.list, env.check.  1. `project.create`  2. `archive.list`  3. `env.check`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `archive.list` HỎNG — E2000: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho/chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch  KẾT QUẢ TỪNG BƯỚC  1. `project.create` — 1 created · 0 existing · 137 ký tự path · chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch project_id  Xem đầy đủ ▾ {
+  "created" : true,
+  "existing" : [
+  ],
+  "next" : [
+    "search.reference_projects"
+  ],
+  "path" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC054\/du-an\/giam-dong-tieu-thu-che-do-cho\/chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch",
+  "project_id" : "chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch"
+}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+```
+
+**Màn đang mở — `Env`:**
+
+```
+Màn này đang rỗng — vì: dự án chưa ghim ISA — `env.check` kiểm chuỗi công cụ THEO ISA, không theo máy  Bước kế tiếp: ghim chip ở màn Hộ chiếu chip (S5) — `project.set_target` suy ISA từ `family_patterns` của manifest  
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 2 tab tác tử đã mở:** Ingest, Env
+
+### Tab `Ingest`
+
+```
+Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  Màn này đang rỗng — vì: chưa nhập tài liệu nào vào dự án này  Bước kế tiếp: kéo PDF/SVD/BOM vào vùng trên, hoặc chạy `eide ingest <tệp>` ở dòng lệnh  
+```
+
+![Ingest](man-01-Ingest.png)
+
+### Tab `Env`
+
+```
+Môi trường  env.check · env.detect · env.guide_install · +4 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Màn này đang rỗng — vì: dự án chưa ghim ISA — `env.check` kiểm chuỗi công cụ THEO ISA, không theo máy  Bước kế tiếp: ghim chip ở màn Hộ chiếu chip (S5) — `project.set_target` suy ISA từ `family_patterns` của manifest  
+```
+
+![Env](man-02-Env.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (3)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
+• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho/chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho/firmware-atmega328p-cua-toi-ton-12-ma-o-che-do-c  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (2)  project.create  còn 23 giờ  Hoàn tác project.create  còn 23 giờ  Hoàn tác ⟩ 
+```
+
+**Tác tử trả lời** *(sau 4.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giam-dong-tieu-thu-che-do-cho` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  bước 2/23  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/23 bước, 1 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `archive.list`)  → mở màn Môi trường (tác tử đang chạy `env.check`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ project.create, archive.list, env.check.  1. `project.create`  2. `archive.list`  3. `env.check`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `archive.list` HỎNG — E2000: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho/chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch  KẾT QUẢ TỪNG BƯỚC  1. `project.create` — 1 created · 0 existing · 137 ký tự path · chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch project_id  Xem đầy đủ ▾ {
+  "created" : true,
+  "existing" : [
+  ],
+  "next" : [
+    "search.reference_projects"
+  ],
+  "path" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC054\/du-an\/giam-dong-tieu-thu-che-do-cho\/chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch",
+  "project_id" : "chay-lai-test-hoi-quy-sau-khi-toi-uu-neu-hong-ch"
+}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+```
+
+**Màn đang mở — `Env`:**
+
+```
+Màn này đang rỗng — vì: dự án chưa ghim ISA — `env.check` kiểm chuỗi công cụ THEO ISA, không theo máy  Bước kế tiếp: ghim chip ở màn Hộ chiếu chip (S5) — `project.set_target` suy ISA từ `family_patterns` của manifest  
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC055`.

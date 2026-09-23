@@ -1,0 +1,4 @@
+# TC013 — Mức logic/điện áp không tương thích
+@tao nối cảm biến 5V vào MCU 3V3
+Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây
+@quet-man

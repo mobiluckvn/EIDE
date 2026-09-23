@@ -1,0 +1,53 @@
+{
+ "tc": "TC015",
+ "uc": "UC03",
+ "loai": "Happy",
+ "ten": "Sinh code, biên dịch thành công",
+ "uu_tien": "P1",
+ "tien_dk": "Có thiết kế với MCU phổ biến (ví dụ STM32F4)",
+ "vao": "Yêu cầu viết firmware cho chức năng chính",
+ "cho": "Dự án biên dịch không lỗi, cảnh báo (warning) được giải thích hoặc xử lý; cấu hình clock/pin khớp schematic",
+ "che_do": "ui",
+ "buoc": [
+  "@tao nhấp nháy LED ATmega328P",
+  "Viết firmware nhấp nháy LED chân PB5 chu kỳ 1 giây cho ATmega328P rồi biên dịch",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "biên dịch|build|compile"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 62.2,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-ReqArch.png",
+  "man-03-Graph.png",
+  "man-04-NhatKy.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p",
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": [
+  {
+   "giay": 62.2,
+   "so_bo": "Cần người đọc",
+   "thieu": [],
+   "thua": []
+  }
+ ],
+ "qua_sang": 1
+}

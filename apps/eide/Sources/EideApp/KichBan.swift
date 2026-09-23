@@ -117,6 +117,51 @@ enum KichBan {
                 ghi("**Tôi (người dùng):** bấm Hoàn tác cho `\(ma)`")
                 ud.khung.cotPhai.bamHoanTacDeTest(ma)
                 try? await Task.sleep(nanoseconds: 2_500_000_000)
+            } else if lenh == "@quet-man" {
+                // QUÉT MỌI TAB tác tử đã mở — [DEV-199].
+                //
+                // Vùng làm việc chỉ giữ MỘT màn sống (`xoaThan` rồi `datMan`); những tab khác
+                // chỉ là mục ở cột trái, nội dung nằm dưới store cho tới khi có người bấm vào.
+                // Nên đọc "màn đang mở" là đọc đúng một trong số N thứ tác tử vừa làm ra.
+                //
+                // Đo 23/09/2026: TC005 chạy trọn `req.elicit`…`req.detect_conflict` 6/6 bước,
+                // nhật ký ghi "màn trống" — vì màn đang hiện là Main, còn kết quả nằm ở tab Yêu
+                // cầu & kiến trúc đang nằm nền. Ba lần liên tiếp tôi suýt kết luận sản phẩm
+                // không làm gì, cả ba lần đều là thước đo nhìn thiếu chỗ.
+                //
+                // Quét = bấm lần lượt từng tab, đúng việc người rà soát sẽ làm.
+                let ds = ud.khung.thanhTab.tab
+                ghi("**Quét \(ds.count) tab tác tử đã mở:** \(ds.joined(separator: ", "))")
+                for (k, tien) in ds.enumerated() {
+                    _ = ud.phien.moMan(tien, boiTacTu: false)
+                    try? await Task.sleep(nanoseconds: 2_000_000_000)
+                    ud.khung.layoutSubtreeIfNeeded()
+                    let chu = UngDung.chuTrongTinh(ud.khung.vungLamViec).split(separator: "\n")
+                        .map(String.init)
+                        .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                    let anh = "man-\(String(format: "%02d", k + 1))-\(tien).png"
+                    ud._chupCong(ra.appendingPathComponent(anh))
+                    ghi("")
+                    ghi("### Tab `\(tien)`")
+                    ghi("")
+                    ghi("```")
+                    ghi(chu.isEmpty ? "(màn trống)" : chu.joined(separator: "\n"))
+                    ghi("```")
+                    ghi("")
+                    ghi("![\(tien)](\(anh))")
+                }
+                // CỘT PHẢI cũng phải vào nhật ký: quyết định cổng, mục hoàn tác và cảnh báo
+                // an toàn hiện ở đó, không ở vùng trao đổi. Thiếu nó thì những TC hỏi "tác tử
+                // có xin xác nhận trước thao tác không đảo ngược không" (TC035, TC068) không
+                // có chỗ nào để đọc câu trả lời.
+                let phai = UngDung.chuTrongTinh(ud.khung.cotPhai).split(separator: "\n")
+                    .map(String.init).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                ghi("")
+                ghi("### Cột phải (cổng, hoàn tác, an toàn)")
+                ghi("")
+                ghi("```")
+                ghi(phai.isEmpty ? "(cột phải trống)" : phai.joined(separator: "\n"))
+                ghi("```")
             } else if lenh.hasPrefix("@man ") {
                 // MỞ MỘT TAB, như người bấm vào cột trái. Không có chỉ thị này thì bộ lái chỉ
                 // chụp được màn đang mở sẵn, và mọi khẳng định về "tab X hiện gì" là suy đoán
@@ -162,6 +207,29 @@ enum KichBan {
                 .map(String.init).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             ghi(nay.isEmpty ? "(tác tử không nói gì)" : nay.joined(separator: "\n"))
             ghi("```")
+
+            // ĐỌC CẢ MÀN ĐANG MỞ, không chỉ vùng trao đổi. [DEV-199]
+            //
+            // Vùng trao đổi là nơi tác tử NÓI; nhưng phần lớn thứ nó LÀM ra — yêu cầu đã rút,
+            // bảng so sánh phương án, danh sách phát hiện khi rà soát — được vẽ vào màn bên
+            // phải, không vào bong bóng chat. Bản đầu chỉ đọc `khung.dock`, nên một lượt chạy
+            // `req.elicit` + `req.classify` + `req.detect_conflict` xong 6/6 bước hiện ra trong
+            // nhật ký y như một lượt không làm gì.
+            //
+            // Đo 23/09/2026 trên TC003: nhật ký cho thấy tác tử "không cảnh báo gì", trong khi
+            // thứ nó viết nằm nguyên trên màn Yêu cầu & kiến trúc. Suýt nữa thì kết luận sản
+            // phẩm không trả lời người dùng — từ một thước đo chỉ nhìn một góc màn hình.
+            if let man = ud.khung.vungLamViec.manDangMo {
+                let ten = type(of: man).tien
+                let chu = UngDung.chuTrongTinh(man).split(separator: "\n")
+                    .map(String.init).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                ghi("")
+                ghi("**Màn đang mở — `\(ten)`:**")
+                ghi("")
+                ghi("```")
+                ghi(chu.isEmpty ? "(màn trống)" : chu.joined(separator: "\n"))
+                ghi("```")
+            }
             ghi("")
             ghi("![bước \(buoc)](\(anh))")
             ghi("")

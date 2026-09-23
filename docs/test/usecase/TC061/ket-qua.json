@@ -1,0 +1,53 @@
+{
+ "tc": "TC061",
+ "uc": "UC15",
+ "loai": "Happy",
+ "ten": "Xuất bộ hồ sơ sản xuất",
+ "uu_tien": "P3",
+ "tien_dk": "Thiết kế đã duyệt",
+ "vao": "Yêu cầu xuất",
+ "cho": "Gerber, drill, BOM, file gắp đặt đầy đủ, qua DRC theo năng lực nhà sản xuất đã chọn",
+ "che_do": "ui",
+ "buoc": [
+  "@tao xuất hồ sơ sản xuất",
+  "Xuất bộ hồ sơ sản xuất cho mạch này: Gerber, file khoan, BOM, file gắp đặt, và chạy DRC theo năng lực nhà sản xuất",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "gerber|drc|khoan|gắp đặt|không hỗ trợ|không có"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 23.9,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-Ingest.png",
+  "man-03-Graph.png",
+  "man-04-Env.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC061/du-an/xuat-ho-so-san-xuat",
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": [
+  {
+   "giay": 23.9,
+   "so_bo": "Cần người đọc",
+   "thieu": [],
+   "thua": []
+  }
+ ],
+ "qua_sang": 1
+}

@@ -1,0 +1,4 @@
+# TC015 — Sinh code, biên dịch thành công
+@tao nhấp nháy LED ATmega328P
+Viết firmware nhấp nháy LED chân PB5 chu kỳ 1 giây cho ATmega328P rồi biên dịch
+@quet-man

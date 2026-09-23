@@ -1,0 +1,55 @@
+{
+ "tc": "TC050",
+ "uc": "UC10",
+ "loai": "Happy",
+ "ten": "Phân tích HardFault",
+ "uu_tien": "P1",
+ "tien_dk": "Log có giá trị CFSR, PC, LR",
+ "vao": "Tải log + file .elf",
+ "cho": "Agent xác định loại lỗi (ví dụ truy cập bộ nhớ không hợp lệ), dòng code gây lỗi",
+ "che_do": "ui",
+ "buoc": [
+  "@tao phân tích HardFault",
+  "Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/log/hardfault.log và bảng /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/log/anh-xa-ham.txt. Xác định loại lỗi và hàm nào gây ra",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "doc_cau_hinh",
+   "null|0x00000000|con trỏ|memmanage|truy cập"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 30.0,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC050/du-an/phan-tich-hardfault",
+ "cham": {
+  "thieu": [
+   "doc_cau_hinh"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 30.0,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "doc_cau_hinh"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

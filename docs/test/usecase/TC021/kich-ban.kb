@@ -1,0 +1,4 @@
+# TC021 — Vượt dung lượng Flash/RAM
+@tao vượt dung lượng flash
+Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch
+@quet-man

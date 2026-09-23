@@ -1,0 +1,30 @@
+{
+ "tc": "TC067",
+ "uc": "UC17",
+ "loai": "Unhappy",
+ "ten": "Hai người sửa cùng dự án",
+ "uu_tien": "P3",
+ "tien_dk": null,
+ "vao": "Hai phiên cùng sửa một file",
+ "cho": "Phát hiện xung đột, không ghi đè im lặng",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần hai phiên người dùng chạy song song trên cùng một dự án. Bộ lái kịch bản chạy một tiến trình một phiên; dựng phiên thứ hai đòi thay đổi chính bộ lái, tức là đổi công cụ đo giữa lúc đang đo.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

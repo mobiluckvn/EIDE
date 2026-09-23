@@ -1,0 +1,58 @@
+{
+ "tc": "TC042",
+ "uc": "UC07",
+ "loai": "Happy",
+ "ten": "Trả lời câu hỏi thanh ghi có trích trang",
+ "uu_tien": "P1",
+ "tien_dk": "Tải reference manual STM32F4",
+ "vao": "Hỏi: bit nào bật DMA cho SPI2 TX?",
+ "cho": "Trả lời đúng (tên thanh ghi, bit), kèm số trang/mục tài liệu",
+ "che_do": "ui",
+ "buoc": [
+  "@tao hỏi đáp thanh ghi",
+  "Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Bit nào bật DMA cho SPI2 TX? Trả lời kèm số trang",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "txdmaen",
+   "spi_cr2|cr2",
+   "412|trang"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 27.9,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC042/du-an/hoi-dap-thanh-ghi",
+ "cham": {
+  "thieu": [
+   "txdmaen",
+   "spi_cr2|cr2"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 27.9,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "txdmaen",
+    "spi_cr2|cr2"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

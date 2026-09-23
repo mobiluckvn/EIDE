@@ -1,0 +1,4 @@
+# TC047 — Port từ STM32 HAL sang ESP-IDF
+@tao port STM32 HAL sang ESP-IDF
+Chuyển firmware đọc SEN42 qua I2C từ STM32 HAL sang ESP-IDF. Lập bảng ánh xạ ngoại vi trước rồi chuyển mã
+@quet-man

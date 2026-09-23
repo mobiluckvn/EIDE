@@ -1,0 +1,89 @@
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `bo-chuyen-lan-sang-usb-cho-tv`
+
+**Tác tử trả lời** *(sau 0.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu UR-PWR-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?
+
+**Tác tử trả lời** *(sau 23.1 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?  bước 1/3  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/3 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.adr`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?. Tôi sẽ arch.adr.  1. `arch.adr`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  arch.adr  title, context, options[], choice, consequences   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu UR-PWR-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+UR-PWR-01	HW	M	generated	chưa đối chiếu	✓ có ngưỡng đo	Thiết bị phải hoạt động được bằng nguồn pin độc lập (điện áp đầu vào từ 3.0V đến 4.2V).
+FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải cho phép TV đọc dữ liệu qua giao diện USB Mass Storage đồng thời với việc nhận và lưu trữ tệp tin mới qua giao diện LAN mà không gây ngắt kết nối USB, đảm bảo độ trễ phản hồi yêu cầu đọc của USB dưới 50ms và tốc độ ghi qua LAN đạt tối thiểu 1 MB/s.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-COM-01	—
+UR-PWR-01	—
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 1 tab tác tử đã mở:** ReqArch
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+UR-PWR-01	HW	M	generated	chưa đối chiếu	✓ có ngưỡng đo	Thiết bị phải hoạt động được bằng nguồn pin độc lập (điện áp đầu vào từ 3.0V đến 4.2V).
+FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải cho phép TV đọc dữ liệu qua giao diện USB Mass Storage đồng thời với việc nhận và lưu trữ tệp tin mới qua giao diện LAN mà không gây ngắt kết nối USB, đảm bảo độ trễ phản hồi yêu cầu đọc của USB dưới 50ms và tốc độ ghi qua LAN đạt tối thiểu 1 MB/s.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-COM-01	—
+UR-PWR-01	—
+```
+
+![ReqArch](man-01-ReqArch.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (4)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
+• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.adr` đang chờ anh cho biết:
+• title, context, options[], choice, consequences (`decision`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.style_select` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `view.ask` đang chờ: Chưa rõ tài liệu dự án được lưu trữ ở đâu (đường dẫn archive).  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (77)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 69 mục nữa — xem màn Nhật ký.  ⟩ 
+```
+
+**Tác tử trả lời** *(sau 2.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?  bước 1/3  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/3 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.adr`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Quyết định ban đầu của chúng ta về định dạng hệ thống tệp là gì?. Tôi sẽ arch.adr.  1. `arch.adr`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  arch.adr  title, context, options[], choice, consequences   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu UR-PWR-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+UR-PWR-01	HW	M	generated	chưa đối chiếu	✓ có ngưỡng đo	Thiết bị phải hoạt động được bằng nguồn pin độc lập (điện áp đầu vào từ 3.0V đến 4.2V).
+FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải cho phép TV đọc dữ liệu qua giao diện USB Mass Storage đồng thời với việc nhận và lưu trữ tệp tin mới qua giao diện LAN mà không gây ngắt kết nối USB, đảm bảo độ trễ phản hồi yêu cầu đọc của USB dưới 50ms và tốc độ ghi qua LAN đạt tối thiểu 1 MB/s.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-COM-01	—
+UR-PWR-01	—
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC074`.

@@ -1,0 +1,4 @@
+# TC048 — Ngoại vi không có tương đương
+@tao ngoại vi không có tương đương
+Port firmware này sang ATmega328P — chip đó không có DAC. Xử lý thế nào?
+@quet-man

@@ -1,0 +1,53 @@
+{
+ "tc": "TC048",
+ "uc": "UC09",
+ "loai": "Unhappy",
+ "ten": "Ngoại vi không có tương đương",
+ "uu_tien": "P2",
+ "tien_dk": "MCU mới không có DAC",
+ "vao": "Yêu cầu port",
+ "cho": "Agent chỉ ra chức năng không port trực tiếp được, đề xuất thay thế (PWM + lọc RC, DAC ngoài)",
+ "che_do": "ui",
+ "buoc": [
+  "@tao ngoại vi không có tương đương",
+  "Port firmware này sang ATmega328P — chip đó không có DAC. Xử lý thế nào?",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "không có|thiếu",
+   "pwm|lọc|rc|dac ngoài|thay"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 15.6,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-Graph.png",
+  "man-03-ReqArch.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC048/du-an/ngoai-vi-khong-co-tuong-duong",
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": [
+  {
+   "giay": 15.6,
+   "so_bo": "Cần người đọc",
+   "thieu": [],
+   "thua": []
+  }
+ ],
+ "qua_sang": 1
+}

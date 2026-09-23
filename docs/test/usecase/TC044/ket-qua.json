@@ -1,0 +1,30 @@
+{
+ "tc": "TC044",
+ "uc": "UC07",
+ "loai": "Unhappy",
+ "ten": "Tài liệu là bản scan chất lượng kém",
+ "uu_tien": "P3",
+ "tien_dk": "PDF scan mờ",
+ "vao": "Hỏi thông số trong bảng",
+ "cho": "Agent cảnh báo độ tin cậy OCR, đề nghị kiểm chứng",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần một bản scan datasheet chất lượng kém để đo cảnh báo độ tin cậy OCR. EIDE có năng lực `extract.ocr` nhưng bộ dữ liệu mẫu chưa có bản scan nào; dựng một ảnh scan giả sẽ đo chính ảnh tôi dựng chứ không đo tài liệu thật.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

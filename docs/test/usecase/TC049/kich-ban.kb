@@ -1,0 +1,4 @@
+# TC049 — Giải mã file capture I2C tìm lỗi NACK
+@tao giải mã capture I2C
+Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/log/i2c-capture.csv, chỉ ra có NACK ở địa chỉ nào và vì sao
+@quet-man

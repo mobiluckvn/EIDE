@@ -1,0 +1,4 @@
+# TC038 — Rà soát schematic phát hiện lỗi đã cài sẵn
+@tao rà soát schematic có lỗi cài sẵn
+Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net. Liệt kê từng lỗi kèm mức nghiêm trọng, vị trí (ký hiệu linh kiện hoặc tên net) và cách sửa
+@quet-man

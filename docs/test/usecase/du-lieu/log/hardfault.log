@@ -1,0 +1,10 @@
+[00:00:03.214] khoi dong OK, phien ban 1.4.2
+[00:00:03.400] i2c: quet dia chi... thay 0x45
+[00:00:12.887] doc cau hinh tu flash
+*** HARDFAULT ***
+R0  = 0x00000000  R1  = 0x20001A40  R2  = 0x0000000C  R3  = 0x00000000
+R12 = 0x00000000  LR  = 0x08001C4D  PC  = 0x08002A1E  PSR = 0x61000000
+CFSR  = 0x00000082
+HFSR  = 0x40000000
+MMFAR = 0x00000000
+BFAR  = 0x00000000

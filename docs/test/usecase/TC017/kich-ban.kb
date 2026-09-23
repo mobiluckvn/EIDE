@@ -1,0 +1,5 @@
+# TC017 — Lỗi biên dịch – agent tự sửa
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p
+Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp
+Biên dịch lại và tự sửa lỗi nếu có
+@quet-man

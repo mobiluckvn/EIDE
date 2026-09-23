@@ -1,0 +1,4 @@
+# TC024 — Sửa lỗi theo từng thay đổi nhỏ có giải thích
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san
+Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do
+@quet-man

@@ -1,0 +1,57 @@
+{
+ "tc": "TC003",
+ "uc": "UC01",
+ "loai": "Unhappy",
+ "ten": "Agent phát hiện rủi ro kỹ thuật ẩn của ý tưởng",
+ "uu_tien": "P1",
+ "tien_dk": "Phương án USB Mass Storage được chọn",
+ "vao": "Yêu cầu: 'TV đang đọc USB, mình vẫn copy phim mới vào qua LAN'",
+ "cho": "Agent cảnh báo: khi thiết bị ghi vào hệ thống file mà TV đang gắn (mount) sẽ gây hỏng dữ liệu vì TV có bộ đệm riêng; đề xuất cách xử lý (ngắt–kết nối lại USB sau khi copy, dùng MTP, hoặc chia phân vùng). Không im lặng làm theo",
+ "che_do": "ui",
+ "buoc": [
+  "TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc",
+  "@quet-man"
+ ],
+ "noi_tiep": true,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "hỏng|rủi ro|cảnh báo|nguy",
+   "bộ đệm|cache|mount|gắn"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 45.7,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-ReqArch.png",
+  "man-02-Graph.png"
+ ],
+ "du_an": null,
+ "cham": {
+  "thieu": [
+   "hỏng|rủi ro|cảnh báo|nguy",
+   "bộ đệm|cache|mount|gắn"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 45.7,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "hỏng|rủi ro|cảnh báo|nguy",
+    "bộ đệm|cache|mount|gắn"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

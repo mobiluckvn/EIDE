@@ -1,0 +1,4 @@
+# TC050 — Phân tích HardFault
+@tao phân tích HardFault
+Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/log/hardfault.log và bảng /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/log/anh-xa-ham.txt. Xác định loại lỗi và hàm nào gây ra
+@quet-man

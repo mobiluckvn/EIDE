@@ -1,0 +1,30 @@
+{
+ "tc": "TC033",
+ "uc": "UC05",
+ "loai": "Unhappy",
+ "ten": "Nạp thất bại giữa chừng",
+ "uu_tien": "P1",
+ "tien_dk": "Rút cáp khi đang nạp",
+ "vao": "Nạp",
+ "cho": "Agent phát hiện, báo trạng thái chip có thể không nhất quán, hướng dẫn khôi phục (connect under reset, bootloader ROM)",
+ "che_do": "chan",
+ "buoc": [],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": "Cần cắt kết nối GIỮA LÚC đang nạp một mạch thật. Không có mạch và bộ nạp thì không tạo được trạng thái chip không nhất quán để đo cách tác tử khôi phục.",
+ "cach_lam": null,
+ "dau_hieu": {},
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 0.0,
+ "rc": 0,
+ "anh": [],
+ "du_an": null,
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": null,
+ "qua_sang": null
+}

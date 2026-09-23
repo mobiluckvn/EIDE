@@ -1,0 +1,58 @@
+{
+ "tc": "TC031",
+ "uc": "UC05",
+ "loai": "Happy",
+ "ten": "Phân biệt lỗi phần cứng và phần mềm",
+ "uu_tien": "P1",
+ "tien_dk": "Mạch hàn thiếu điện trở kéo lên I2C",
+ "vao": "Mô tả: cảm biến I2C không phản hồi",
+ "cho": "Agent đề xuất phép đo cụ thể (đo điện áp SDA/SCL, quét địa chỉ) để kết luận lỗi phần cứng, không sửa code vô ích",
+ "che_do": "ui",
+ "buoc": [
+  "@tao cảm biến I2C không phản hồi",
+  "Cảm biến I2C của tôi không phản hồi. Chỉ tôi cách xác định là lỗi phần cứng hay phần mềm",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "đo|kiểm tra|quét địa chỉ|scan",
+   "sda|scl|điện áp|trở kéo"
+  ],
+  "khong_duoc_co": [
+   "tôi đã sửa code|đã sửa firmware cho anh"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Nghi Không đạt",
+ "giay": 31.0,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC031/du-an/cam-bien-i2c-khong-phan-hoi",
+ "cham": {
+  "thieu": [
+   "sda|scl|điện áp|trở kéo"
+  ],
+  "thua": [],
+  "so_bo": "Nghi Không đạt"
+ },
+ "lap": [
+  {
+   "giay": 31.0,
+   "so_bo": "Nghi Không đạt",
+   "thieu": [
+    "sda|scl|điện áp|trở kéo"
+   ],
+   "thua": []
+  }
+ ],
+ "qua_sang": 0
+}

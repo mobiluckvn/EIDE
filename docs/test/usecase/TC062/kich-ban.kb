@@ -1,0 +1,4 @@
+# TC062 — BOM không khớp schematic
+@tao BOM không khớp schematic
+BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất
+@quet-man

@@ -1,0 +1,4 @@
+# TC041 — Báo động giả (false positive) nhiều
+@tao đo báo động giả
+Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi
+@quet-man

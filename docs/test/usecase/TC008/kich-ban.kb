@@ -1,0 +1,4 @@
+# TC008 — Tìm tài liệu và chọn linh kiện có trích nguồn
+@tao đo nhiệt độ SEN42 qua I2C
+Lên thiết kế mạch đọc cảm biến SEN42 qua I2C rồi in ra UART. Chọn linh kiện chính, mỗi linh kiện kèm datasheet và lý do chọn, thông số quan trọng phải trích trang tài liệu
+@quet-man

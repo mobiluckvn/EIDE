@@ -1,0 +1,53 @@
+{
+ "tc": "TC052",
+ "uc": "UC11",
+ "loai": "Happy",
+ "ten": "Sinh và chạy unit test với mock phần cứng",
+ "uu_tien": "P2",
+ "tien_dk": "Có module driver",
+ "vao": "Yêu cầu viết test",
+ "cho": "Test chạy trên máy chủ, có báo cáo đạt/không đạt và độ phủ",
+ "che_do": "ui",
+ "buoc": [
+  "@tao unit test có mock phần cứng",
+  "Viết unit test chạy trên máy chủ cho hàm trong /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, mock phần ngắt, rồi chạy và báo độ phủ",
+  "@quet-man"
+ ],
+ "noi_tiep": false,
+ "sau": null,
+ "ly_do_chan": null,
+ "cach_lam": null,
+ "dau_hieu": {
+  "phai_co": [
+   "test",
+   "chạy|run|đạt|pass"
+  ]
+ },
+ "ngay": "23/09/2026",
+ "trang_thai": "Cần người đọc",
+ "giay": 18.9,
+ "rc": 0,
+ "anh": [
+  "buoc-01.png",
+  "buoc-02.png",
+  "buoc-03.png",
+  "man-01-Main.png",
+  "man-02-Ingest.png",
+  "man-03-Env.png"
+ ],
+ "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC052/du-an/unit-test-co-mock-phan-cung",
+ "cham": {
+  "thieu": [],
+  "thua": [],
+  "so_bo": "Cần người đọc"
+ },
+ "lap": [
+  {
+   "giay": 18.9,
+   "so_bo": "Cần người đọc",
+   "thieu": [],
+   "thua": []
+  }
+ ],
+ "qua_sang": 1
+}
