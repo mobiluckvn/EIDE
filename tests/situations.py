@@ -261,4 +261,16 @@ SITUATIONS: dict[str, tuple[str, dict, dict]] = {
 
     "S53": ("*", {"action": {"chain_started_without_event": True}},
             {"risk": "R1", "autonomy": "A2"}),
+
+    # [DEV-204] Ba quy tắc xét CHÍNH YÊU CẦU, không xét năng lực sắp chạy. Đặc trưng viết LỒNG:
+    # `_env` dựng đối tượng lồng nhau và `when` đọc theo đường chấm; viết phẳng thì quy tắc
+    # không khớp và cổng lặng lẽ rơi xuống ngưỡng cứng (ASK HARD-R4 thay cho REJECT P-LAW-01).
+    "S54": ("*", {"request": {"illegal": True}},
+            {"risk": "R4", "tier": "T3", "autonomy": "A2"}),
+
+    "S55": ("*", {"request": {"physical_danger": True}},
+            {"risk": "R3", "tier": "T2", "autonomy": "A2"}),
+
+    "S56": ("*", {"requirement": {"lowers_acceptance": True}},
+            {"risk": "R2", "tier": "T2", "autonomy": "A2"}),
 }

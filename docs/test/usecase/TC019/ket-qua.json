@@ -25,8 +25,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
- "giay": 9.8,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không nói được ngoại vi nào không mô phỏng được. Hỏi “Chạy kịch bản mô phỏng nào?”; màn Mô phỏng ghi rõ nền tảng chưa dựng và vì sao.\n\nGhi chú: ĐIỂM CỘNG: không tuyên bố “đạt” cho phần chưa mô phỏng.",
+ "giay": 9.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -42,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 9.8,
+   "giay": 9.9,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

@@ -183,6 +183,27 @@ rules:
     reason: "Cơ cấu chấp hành / board có động cơ"
     priority: 1
     features: ["op","has_actuator"]
+  - id: P-LAW-01
+    gate: "*"
+    when: "request.illegal"
+    decision: REJECT
+    reason: "Yêu cầu vi phạm pháp luật — không hỗ trợ phần vi phạm"
+    priority: 1
+    features: ["request.illegal"]
+  - id: P-SAFE-01
+    gate: "*"
+    when: "request.physical_danger"
+    decision: ASK
+    reason: "Nguy hiểm vật lý cho người — an toàn trước, hỏi sau"
+    priority: 1
+    features: ["request.physical_danger"]
+  - id: P-QUAL-01
+    gate: "*"
+    when: "requirement.lowers_acceptance"
+    decision: ASK
+    reason: "Nới tiêu chí chấp nhận phải do người duyệt, không do tác tử tự ghi"
+    priority: 1
+    features: ["requirement.lowers_acceptance"]
   - id: G-OPS-04
     gate: "G-OPS"
     when: "op == \"install\" and package in trusted_packages"

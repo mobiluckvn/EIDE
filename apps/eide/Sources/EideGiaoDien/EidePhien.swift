@@ -879,6 +879,13 @@ public final class EidePhien {
 
     private func _gui(_ van: String) async {
         guard let d = daemon else {
+            // Lượt KẾT THÚC NGAY tại đây — đếm nó, đừng để ai đợi một việc đã xong. [DEV-205]
+            //
+            // Đo 23/09/2026 trên TC022: câu trả lời hiện ra tức thì, bộ lái đợi trọn 900 giây
+            // rồi ghi "quá hạn". Cùng lớp lỗi với nhánh `loi` — mọi đường kết thúc sớm phải
+            // đi qua cùng một mốc, nếu không thì mỗi lần thêm một đường tắt là thêm một chỗ
+            // treo.
+            soLuotTraLoiNgay += 1
             return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
         }
         guiDangBay += 1
@@ -1591,6 +1598,13 @@ public final class EidePhien {
     /// một năng lực có thể ghi tệp hoặc nạp firmware là cách nhanh nhất để mất lòng tin.
     public func goiNangLuc(_ id: String) async {
         guard daemon != nil else {
+            // Lượt KẾT THÚC NGAY tại đây — đếm nó, đừng để ai đợi một việc đã xong. [DEV-205]
+            //
+            // Đo 23/09/2026 trên TC022: câu trả lời hiện ra tức thì, bộ lái đợi trọn 900 giây
+            // rồi ghi "quá hạn". Cùng lớp lỗi với nhánh `loi` — mọi đường kết thúc sớm phải
+            // đi qua cùng một mốc, nếu không thì mỗi lần thêm một đường tắt là thêm một chỗ
+            // treo.
+            soLuotTraLoiNgay += 1
             return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
         }
         // §4.4 — cần tham số bắt buộc thì MỞ FORM, không gọi thiếu. Gọi thiếu trả E1000
@@ -1606,6 +1620,13 @@ public final class EidePhien {
     /// Gọi một năng lực với tham số đã có. Đường chung của bảng lệnh và form §4.4.
     public func goiNangLuc(_ id: String, _ tham: [String: Any]) async {
         guard let d = daemon else {
+            // Lượt KẾT THÚC NGAY tại đây — đếm nó, đừng để ai đợi một việc đã xong. [DEV-205]
+            //
+            // Đo 23/09/2026 trên TC022: câu trả lời hiện ra tức thì, bộ lái đợi trọn 900 giây
+            // rồi ghi "quá hạn". Cùng lớp lỗi với nhánh `loi` — mọi đường kết thúc sớm phải
+            // đi qua cùng một mốc, nếu không thì mỗi lần thêm một đường tắt là thêm một chỗ
+            // treo.
+            soLuotTraLoiNgay += 1
             return khung.dock.themLuot(.cho, "Chưa mở dự án nào — tạo hoặc mở một dự án trước.")
         }
         khung.dock.themLuot(.nguoi, tham.isEmpty ? "/\(id)"

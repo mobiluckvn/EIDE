@@ -165,3 +165,85 @@ def nang_luc_cho(op: str, registry: Any) -> tuple[str, bool]:
         return ten, bool(registry.get(ten).implemented)
     except Exception:                                            # noqa: BLE001
         return ten, False
+
+# ───────────────────────────────────────────────── Hai trục còn lại của BB3 — [DEV-204]
+#
+# Đợt 1 làm trục "không đảo ngược". Hai trục này cùng nguyên lý và cùng chỗ đứng: đọc CHÍNH
+# CÂU người dùng gõ, trước khi mô hình phân loại ý định. Khác một điểm — tên thao tác của trục
+# kia đọc ra được từ `rules.yaml`, còn hai trục này không có từ vựng sẵn trong đặc tả, nên
+# `DAU_HIEU_*` ở đây vừa là dấu hiệu ngôn ngữ vừa là định nghĩa. Ghi rõ vào DEVIATIONS.
+
+#: Yêu cầu vi phạm pháp luật — P-LAW-01 ⇒ REJECT.
+#:
+#: Danh sách HẸP có chủ ý: chỉ những thứ mà bản thân THIẾT BỊ là vi phạm, không phải những thứ
+#: chỉ vi phạm tuỳ cách dùng. Một bộ thu phát RF, một thiết bị ghi âm, một bộ đọc thẻ đều dùng
+#: hợp pháp được; chặn chúng là chặn nghề của người dùng.
+DAU_HIEU_PHAP_LY: dict[str, tuple[str, ...]] = {
+    "pha_song": ("pha song", "gay nhieu song", "jammer", "gps jammer", "chan song dien thoai",
+                 "lam nhieu song di dong"),
+    "nghe_len": ("nghe len", "ghi am len", "theo doi len", "dinh vi len"),
+    "sao_the": ("sao chep the tu", "skimmer", "clone the atm", "sao the ngan hang"),
+}
+
+#: Nguy hiểm vật lý cho NGƯỜI — P-SAFE-01 ⇒ ASK, và lời khuyên an toàn đi TRƯỚC câu hỏi.
+DAU_HIEU_AN_TOAN: dict[str, tuple[str, ...]] = {
+    "dang_chay_chap": ("nong ran", "boc khoi", "co khoi", "khet", "chay xem", "nong bat thuong",
+                       "toe lua", "phong dien"),
+    "dien_luoi": ("220v", "220 v", "110v", "dien luoi", "dien ac", "cao ap", "dien 3 pha",
+                  "luoi dien"),
+    "pin_lithium": ("pin phong", "pin phinh", "lithium chay", "pin no"),
+}
+
+#: Câu ra lệnh NỚI TIÊU CHÍ để ép đạt — P-QUAL-01 ⇒ ASK.
+DAU_HIEU_HA_CHUAN: dict[str, tuple[str, ...]] = {
+    "ha_tieu_chi": ("sua tieu chi", "dieu chinh tieu chi", "noi tieu chi", "ha tieu chi",
+                    "sua tieu chi chap nhan", "cho no dat", "de no dat", "ep cho dat"),
+    "sua_test_cho_qua": ("sua test cho qua", "sua test de qua", "bo qua test", "tat test",
+                         "xoa test cho qua", "comment test"),
+}
+
+
+def _quet(van: str, bang: dict[str, tuple[str, ...]]) -> list[str]:
+    v = _bo_dau(van)
+    thay = [(min(v.find(_bo_dau(d)) for d in ds if _bo_dau(d) in v), k)
+            for k, ds in bang.items() if any(_bo_dau(d) in v for d in ds)]
+    return [k for _, k in sorted(thay)]
+
+
+def soat_yeu_cau(van: str) -> dict[str, list[str]]:
+    """Ba trục, một lần đọc. Trả về trục nào có dấu hiệu gì.
+
+    Thứ tự xử lý của bên gọi phải là **pháp lý → an toàn → không đảo ngược**: một yêu cầu vừa
+    trái phép vừa nguy hiểm thì câu trả lời đúng là từ chối, không phải hỏi xác nhận.
+    """
+    return {"phap_ly": _quet(van, DAU_HIEU_PHAP_LY),
+            "an_toan": _quet(van, DAU_HIEU_AN_TOAN),
+            "ha_chuan": _quet(van, DAU_HIEU_HA_CHUAN)}
+
+
+def loi_khuyen_an_toan(loai: str) -> str:
+    """**An toàn đi TRƯỚC việc thu thập thông tin.**
+
+    Đo 23/09/2026 trên TC036: người dùng báo chip *nóng ran, khói nhẹ*; tác tử hỏi *"Thông tin
+    về loại chip đang sử dụng"* và *"Thông số nguồn cấp"*. Với một mạch đang bốc khói, hỏi
+    thêm trước khi bảo cắt điện là một lỗi về THỨ TỰ ƯU TIÊN, không phải về nội dung — hai câu
+    hỏi ấy đều đúng, chỉ sai chỗ đứng.
+    """
+    return {
+        "dang_chay_chap":
+            "NGẮT NGUỒN NGAY — rút cáp cấp điện và cáp nạp trước khi làm bất cứ việc gì khác. "
+            "Chip nóng ran hoặc có khói nghĩa là đang có dòng chạy sai; cấp điện thêm một phút "
+            "nữa có thể hỏng vĩnh viễn hoặc gây cháy. Sau khi ngắt: để nguội, kiểm cực nguồn có "
+            "cắm ngược không, đo thông mạch giữa VDD và GND để tìm đoản mạch.",
+        "dien_luoi":
+            "Mạch chạm điện lưới là việc CÓ THỂ GÂY CHẾT NGƯỜI, không phải một bài tập điện tử. "
+            "Bắt buộc: cách ly galvanic giữa phía lưới và phía điều khiển (biến áp cách ly hoặc "
+            "opto), khoảng cách creepage/clearance theo IEC 60950 hoặc IEC 62368, cầu chì phía "
+            "sơ cấp, và vỏ cách điện. Đo đạc trên mạch đang cắm lưới phải dùng đầu đo cách ly. "
+            "Nếu anh chưa làm loại mạch này bao giờ, hãy dùng một mô-đun nguồn đã chứng nhận "
+            "thay vì tự thiết kế phần sơ cấp.",
+        "pin_lithium":
+            "Pin lithium phồng hoặc nóng có thể cháy nổ. Đưa ra chỗ thoáng, xa vật dễ cháy, "
+            "KHÔNG chọc thủng, không sạc tiếp. Để nguội hẳn rồi xử lý theo quy định pin thải.",
+    }.get(loai, "Dừng lại và bảo đảm an toàn cho người trước khi tiếp tục.")
+
