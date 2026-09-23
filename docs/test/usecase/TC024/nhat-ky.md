@@ -7,10 +7,10 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** mở lại dự án — `nhap-thiet-ke-kicad-co-san`
 
-**Tác tử trả lời** *(sau 0.4 s)*:
+**Tác tử trả lời** *(sau 0.3 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-UI-01 với phần cứng thật Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
 ```
 
 ![bước 1](buoc-01.png)
@@ -19,10 +19,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do
 
-**Tác tử trả lời** *(sau 30.4 s)*:
+**Tác tử trả lời** *(sau 28.5 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
   "grounded" : {
     "candidates" : [
     ],
@@ -31,28 +31,34 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "HW",
       "suggestion" : "STM32, ESP32, AVR, hoặc một dòng chip cụ thể khác.",
-      "text" : "Mã nguồn dem_xung.c được biên dịch và chạy trên vi điều khiển hoặc nền tảng phần cứng nào?"
-    },
-    {
-      "kind" : "NFR",
-      "suggestion" : "Ví dụ: Tối đa 10kHz (có thể dùng ngắt GPIO) hoặc 1MHz (bắt buộc dùng Hardware Timer).",
-      "text" : "Yêu cầu về tần số đếm xung tối đa và độ chính xác là bao nhiêu để đảm bảo mã sau khi sửa đáp ứng được hiệu năng thực tế?"
+      "text" : "Mã nguồn dem_xung.c được biên dịch và chạy trên dòng vi điều khiển nào?"
     },
     {
       "kind" : "FR",
-      "suggestion" : "Cung cấp log lỗi biên dịch hoặc mô tả hành vi sai hiện tại (ví dụ: đếm thiếu xung, tràn biến).",
-      "text" : "Các lỗi hiện tại trong tệp là lỗi biên dịch (syntax), lỗi logic đếm sai, hay lỗi cấu hình ngoại vi?"
+      "suggestion" : "Lỗi cú pháp (syntax), lỗi logic đếm sai, hay lỗi cấu hình thanh ghi\/ngắt phần cứng.",
+      "text" : "Các lỗi cần sửa trong tệp chủ yếu thuộc loại nào?"
+    },
+    {
+      "kind" : "NFR",
+      "suggestion" : "Dưới 1kHz (có thể dùng ngắt GPIO), hoặc trên 100kHz (cần dùng Timer\/Counter phần cứng).",
+      "text" : "Tần số xung tối đa cần đếm là bao nhiêu để đảm bảo mã nguồn xử lý kịp thời mà không bị sót?"
+    },
+    {
+      "kind" : "ACCEPTANCE",
+      "suggestion" : "Mã nguồn biên dịch thành công không có cảnh báo, vượt qua các bài kiểm thử (unit test), hoặc chạy thực tế trên board mạch đếm đúng số xung.",
+      "text" : "Tiêu chí nghiệm thu cho việc sửa lỗi này là gì?"
     }
   ],
   "raw" : [
     {
       "kind_guess" : "FR",
       "locator" : {
+        "index" : 0
       },
       "source" : "user_input",
       "text" : "Đọc \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do"
@@ -65,26 +71,24 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "id" : "FR-SNS-01",
       "kind" : "CR",
       "locator" : {
+        "index" : 0
       },
       "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải đọc tệp \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, phát hiện và sửa các lỗi trong mã nguồn. Mỗi thay đổi (100%) phải được trình bày thành một mục riêng biệt bao gồm chính xác 1 đoạn mã diff và ít nhất 1 câu giải thích lý do sửa đổi."
+      "text" : "Hệ thống phải đọc tệp '\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c', phát hiện và sửa các lỗi hiện có, xuất ra kết quả dưới dạng danh sách các thay đổi, trong đó 100% các thay đổi phải bao gồm 1 đoạn mã diff và 1 câu giải thích lý do."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
-2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa các lỗi trong mã nguồn. Mỗi thay đổi (100%) phải được trình bày thành một mục riêng biệt bao gồm chính xác 1 đoạn mã diff và ít nhất 1 câu giải thích lý do sửa đổi.
-FR-UI-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp netlist tại đường dẫn /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và trích xuất thành công 100% thông tin về loại MCU, danh sách ngoại vi và các kết nối vật lý, sau đó hiển thị bản tóm tắt để người dùng xác nhận trước khi chuyển sang trạng thái tiếp theo.
+1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp '/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c', phát hiện và sửa các lỗi hiện có, xuất ra kết quả dưới dạng danh sách các thay đổi, trong đó 100% các thay đổi phải bao gồm 1 đoạn mã diff và 1 câu giải thích lý do.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-SNS-01	—
 FR-SNS-01	—
-FR-UI-01	—
-FR-UI-01	—
 ```
 
 ![bước 2](buoc-02.png)
@@ -96,14 +100,11 @@ FR-UI-01	—
 ### Tab `ReqArch`
 
 ```
-Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa các lỗi trong mã nguồn. Mỗi thay đổi (100%) phải được trình bày thành một mục riêng biệt bao gồm chính xác 1 đoạn mã diff và ít nhất 1 câu giải thích lý do sửa đổi.
-FR-UI-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp netlist tại đường dẫn /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và trích xuất thành công 100% thông tin về loại MCU, danh sách ngoại vi và các kết nối vật lý, sau đó hiển thị bản tóm tắt để người dùng xác nhận trước khi chuyển sang trạng thái tiếp theo.
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp '/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c', phát hiện và sửa các lỗi hiện có, xuất ra kết quả dưới dạng danh sách các thay đổi, trong đó 100% các thay đổi phải bao gồm 1 đoạn mã diff và 1 câu giải thích lý do.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-SNS-01	—
 FR-SNS-01	—
-FR-UI-01	—
-FR-UI-01	—
 ```
 
 ![ReqArch](man-01-ReqArch.png)
@@ -111,7 +112,7 @@ FR-UI-01	—
 ### Tab `Graph`
 
 ```
-Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  36 NÚT · 51 CẠNH  Bấm một nút để xem định danh đầy đủ.  tầng: bronze · gold · silver   |   trạng thái: conflict · rejected · superseded   |   cạnh: CITES xanh · USES lục · CONFLICTS_WITH đỏ đậm · SUPERSEDES nét đứt   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  
 ```
 
 ![Graph](man-02-Graph.png)
@@ -119,14 +120,14 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (8)  Làm rõ yêu cầu — HW  Mã nguồn dem_xung.c được biên dịch và chạy trên vi điều khiển hoặc nền tảng phần cứng nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — NFR  Yêu cầu về tần số đếm xung tối đa và độ chính xác là bao nhiêu để đảm bảo mã sau khi sửa đáp ứng được hiệu năng thực tế?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Các lỗi hiện tại trong tệp là lỗi biên dịch (syntax), lỗi logic đếm sai, hay lỗi cấu hình ngoại vi?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
-• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — NGUỒN CẤP VÀ MÔI TRƯỜNG  Thiết bị sẽ hoạt động trong môi trường nào và có yêu cầu về nguồn cấp ra sao?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — TIÊU CHÍ NGHIỆM THU  Có yêu cầu về hiệu năng thời gian thực hay tiêu chí nghiệm thu cụ thể nào cho firmware không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa các lỗi trong mã nguồn. Mỗi thay đổi (100%) phải được trình bày thành một mục riêng biệt bao gồm chính xác 1 đoạn mã diff và ít nhất 1 câu giải thích lý do sửa đổi.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHỨC NĂNG CỤ THỂ  Mạch này được thiết kế để thực hiện chức năng chính là gì?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (44)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 36 mục nữa — xem màn Nhật ký.  ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (6)  Làm rõ yêu cầu — HW  Mã nguồn dem_xung.c được biên dịch và chạy trên dòng vi điều khiển nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Các lỗi cần sửa trong tệp chủ yếu thuộc loại nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — NFR  Tần số xung tối đa cần đếm là bao nhiêu để đảm bảo mã nguồn xử lý kịp thời mà không bị sót?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — ACCEPTANCE  Tiêu chí nghiệm thu cho việc sửa lỗi này là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (2)  req.classify  còn 23 giờ  Hoàn tác extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 4.6 s)*:
+**Tác tử trả lời** *(sau 4.5 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
   "grounded" : {
     "candidates" : [
     ],
@@ -135,28 +136,34 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "HW",
       "suggestion" : "STM32, ESP32, AVR, hoặc một dòng chip cụ thể khác.",
-      "text" : "Mã nguồn dem_xung.c được biên dịch và chạy trên vi điều khiển hoặc nền tảng phần cứng nào?"
-    },
-    {
-      "kind" : "NFR",
-      "suggestion" : "Ví dụ: Tối đa 10kHz (có thể dùng ngắt GPIO) hoặc 1MHz (bắt buộc dùng Hardware Timer).",
-      "text" : "Yêu cầu về tần số đếm xung tối đa và độ chính xác là bao nhiêu để đảm bảo mã sau khi sửa đáp ứng được hiệu năng thực tế?"
+      "text" : "Mã nguồn dem_xung.c được biên dịch và chạy trên dòng vi điều khiển nào?"
     },
     {
       "kind" : "FR",
-      "suggestion" : "Cung cấp log lỗi biên dịch hoặc mô tả hành vi sai hiện tại (ví dụ: đếm thiếu xung, tràn biến).",
-      "text" : "Các lỗi hiện tại trong tệp là lỗi biên dịch (syntax), lỗi logic đếm sai, hay lỗi cấu hình ngoại vi?"
+      "suggestion" : "Lỗi cú pháp (syntax), lỗi logic đếm sai, hay lỗi cấu hình thanh ghi\/ngắt phần cứng.",
+      "text" : "Các lỗi cần sửa trong tệp chủ yếu thuộc loại nào?"
+    },
+    {
+      "kind" : "NFR",
+      "suggestion" : "Dưới 1kHz (có thể dùng ngắt GPIO), hoặc trên 100kHz (cần dùng Timer\/Counter phần cứng).",
+      "text" : "Tần số xung tối đa cần đếm là bao nhiêu để đảm bảo mã nguồn xử lý kịp thời mà không bị sót?"
+    },
+    {
+      "kind" : "ACCEPTANCE",
+      "suggestion" : "Mã nguồn biên dịch thành công không có cảnh báo, vượt qua các bài kiểm thử (unit test), hoặc chạy thực tế trên board mạch đếm đúng số xung.",
+      "text" : "Tiêu chí nghiệm thu cho việc sửa lỗi này là gì?"
     }
   ],
   "raw" : [
     {
       "kind_guess" : "FR",
       "locator" : {
+        "index" : 0
       },
       "source" : "user_input",
       "text" : "Đọc \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do"
@@ -169,19 +176,20 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "id" : "FR-SNS-01",
       "kind" : "CR",
       "locator" : {
+        "index" : 0
       },
       "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải đọc tệp \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, phát hiện và sửa các lỗi trong mã nguồn. Mỗi thay đổi (100%) phải được trình bày thành một mục riêng biệt bao gồm chính xác 1 đoạn mã diff và ít nhất 1 câu giải thích lý do sửa đổi."
+      "text" : "Hệ thống phải đọc tệp '\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c', phát hiện và sửa các lỗi hiện có, xuất ra kết quả dưới dạng danh sách các thay đổi, trong đó 100% các thay đổi phải bao gồm 1 đoạn mã diff và 1 câu giải thích lý do."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `Graph`:**
 
 ```
- Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+36 NÚT · 51 CẠNH  Bấm một nút để xem định danh đầy đủ.  tầng: bronze · gold · silver   |   trạng thái: conflict · rejected · superseded   |   cạnh: CITES xanh · USES lục · CONFLICTS_WITH đỏ đậm · SUPERSEDES nét đứt   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  
 ```
 
 ![bước 3](buoc-03.png)

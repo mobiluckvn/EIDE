@@ -26,16 +26,14 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không nêu tiêu chí, không chạy mô phỏng. `archive.list` hỏng E2000 trên đường dẫn bịa từ câu người dùng (“…neu-truoc-tieu-chi-dat-roi-chay-mo-phong-va-ket-”).",
- "giay": 45.5,
+ "giay": 34.0,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Graph.png",
-  "man-02-Ingest.png",
-  "man-03-ReqArch.png",
-  "man-04-NhatKy.png"
+  "man-02-ReqArch.png"
  ],
  "du_an": null,
  "cham": {
@@ -45,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 45.5,
+   "giay": 34.0,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

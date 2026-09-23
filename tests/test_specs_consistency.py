@@ -445,3 +445,45 @@ def test_bang_tieu_chi_N1_N10_tro_dung_bai_kiem_python():
         assert f.exists(), f"bảng §10.1 trỏ vào tệp không có: {tep}"
         assert f"def {ham}(" in f.read_text(encoding="utf-8"), \
             f"bảng §10.1 trỏ vào hàm không có: {tep}::{ham}"
+
+
+def test_chuoi_sinh_cds_CHAY_DUOC_va_sinh_lai_dung_cai_dang_co():
+    """**Tài liệu = mã** chỉ đúng khi phép sinh CHẠY ĐƯỢC. [DEV-214]
+
+    Đo 23/09/2026 khi sửa [DEV-211]: `docs/ho-so/nguon/gen_cds.py` ném `FileNotFoundError:
+    caps.json` — tệp đầu vào không còn trong kho. Hệ quả: mọi thay đổi hợp đồng năng lực phải
+    sửa TAY bốn tệp sinh (`nguon/cds.json`, `spec/cds.json`, hai `capabilities/*.yaml`), và
+    mỗi lần sửa tay là một lần bốn bản có thể lệch nhau mà không ai biết.
+
+    Bài kiểm này chạy phép sinh vào một thư mục tạm rồi so với bản đang có. Nó bắt được cả hai
+    kiểu hỏng: phép sinh chết, và phép sinh chạy nhưng cho ra thứ khác bản đã commit.
+    """
+    import shutil
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    nguon = repo_root() / "docs/ho-so/nguon"
+    if not (nguon / "gen_cds.py").exists():
+        pytest.skip("kho không có nguồn sinh cds")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp) / "nguon"
+        shutil.copytree(nguon, t)
+        r = subprocess.run([sys.executable, "gen_cds.py"], cwd=t,
+                           capture_output=True, text=True, check=False)
+        assert r.returncode == 0, (
+            f"`gen_cds.py` KHÔNG chạy được — chuỗi 'tài liệu = mã' đứt:\n{r.stderr[-600:]}")
+        assert "missing: []" in r.stdout, f"có năng lực thiếu chi tiết: {r.stdout.strip()}"
+
+        moi = json.loads((t / "cds.json").read_text(encoding="utf-8"))
+        cu = json.loads((nguon / "cds.json").read_text(encoding="utf-8"))
+        tm = {x.get("id") or x["name"]: x for x in (moi.values() if isinstance(moi, dict) else moi)}
+        tc = {x.get("id") or x["name"]: x for x in (cu.values() if isinstance(cu, dict) else cu)}
+        assert set(tm) == set(tc), f"danh mục lệch: {sorted(set(tm) ^ set(tc))[:5]}"
+        lech = [f"{n}.{k}" for n in tc for k in set(tc[n]) | set(tm[n])
+                if tc[n].get(k) != tm[n].get(k)]
+        assert not lech, (
+            f"sinh lại ra khác bản đã commit ({len(lech)} trường): {lech[:6]}. "
+            "Sửa nguồn (`cds_data_*.py`, `caps.json`) rồi chạy `python gen_cds.py`, "
+            "đừng sửa tay tệp sinh.")

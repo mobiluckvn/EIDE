@@ -30,7 +30,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "SAU [DEV-203]: `env.check` không còn hỏi ISA khi câu đã nêu chip (suy qua `family_patterns`). Nhưng ca này vẫn không đạt vì lý do khác: tác tử không hỏi câu nào trong sáu câu đề bài chờ (định dạng hệ thống tệp TV đọc được, dung lượng, tốc độ mạng, xem trong lúc copy, nguồn, ngân sách) và không đưa đặc tả để xác nhận.\n\nGhi chú: Câu nói của người dùng còn bị hiểu thành `project.create` và tạo thêm một dự án LỒNG trong dự án vừa tạo.",
- "giay": 15.7,
+ "giay": 13.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -51,7 +51,7 @@
  },
  "lap": [
   {
-   "giay": 15.7,
+   "giay": 13.5,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "hệ thống tệp|hệ thống file|định dạng|fat32|exfat|ntfs",

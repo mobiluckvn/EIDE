@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “vượt dung lượng flash”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `vuot-dung-luong-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,13 +28,13 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch
 
-**Tác tử trả lời** *(sau 46.0 s)*:
+**Tác tử trả lời** *(sau 46.5 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `vuot-dung-luong-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: mảng hằng 64 KB. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: mảng hằng 64 KB. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
   "grounded" : {
     "candidates" : [
     ],
@@ -43,17 +43,27 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "HW",
-      "suggestion" : "Thêm IC bộ nhớ ngoài (SPI Flash\/EEPROM) hoặc giảm kích thước mảng dữ liệu xuống dưới 30 KB để vừa với bộ nhớ nội.",
-      "text" : "Vi điều khiển ATmega328P chỉ có 32 KB Flash, làm sao để chứa được mảng hằng số có kích thước lên tới 64 KB?"
+      "suggestion" : "Sử dụng IC nhớ ngoài (như SPI Flash W25Q64, EEPROM) hoặc áp dụng thuật toán nén dữ liệu nếu mảng có tính lặp lại cao.",
+      "text" : "Làm thế nào để lưu trữ mảng hằng 64 KB khi bộ nhớ Flash của ATmega328P chỉ có giới hạn tối đa là 32 KB?"
     },
     {
       "kind" : "FR",
-      "suggestion" : "Đọc dữ liệu từ mảng để xuất ra UART, hoặc dùng làm bảng tra cứu (lookup table) để điều khiển ngoại vi.",
-      "text" : "Firmware này có chức năng cụ thể gì khác ngoài việc khai báo mảng và biên dịch không?"
+      "suggestion" : "Dùng làm bảng tra cứu (lookup table), lưu trữ mẫu âm thanh, hoặc dữ liệu hiển thị.",
+      "text" : "Mục đích sử dụng của mảng hằng 64 KB này là gì?"
+    },
+    {
+      "kind" : "FR",
+      "suggestion" : "Đọc và gửi dữ liệu qua UART, xuất tín hiệu ra ngoại vi, hoặc đây chỉ là bài kiểm tra giới hạn biên dịch (stress test).",
+      "text" : "Firmware cần thực hiện chức năng cụ thể gì với mảng dữ liệu này sau khi biên dịch thành công?"
+    },
+    {
+      "kind" : "ENV",
+      "suggestion" : "Sử dụng avr-gcc thuần túy, Arduino IDE, hoặc PlatformIO.",
+      "text" : "Dự án yêu cầu sử dụng trình biên dịch (compiler) và môi trường phát triển nào?"
     }
   ],
   "raw" : [
@@ -61,21 +71,21 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "kind_guess" : "FR",
       "locator" : {
       },
-      "source" : "user",
+      "source" : "Mô tả",
       "text" : "Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch"
     }
   ]
-}  3. `req.classify` — 3 codes_assigned · 3 reqset (UR-CTL-01, FR-PWR-01, FR-PWR-02)  Xem đầy đủ ▾ {
-  "codes_assigned" : 3,
+}  3. `req.classify` — 2 codes_assigned · 2 reqset (UR-CTL-01, FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 2,
   "reqset" : [
     {
       "id" : "UR-CTL-01",
       "kind" : "HW",
       "locator" : {
       },
-      "source" : "user",
+      "source" : "Mô tả",
       "status" : "generated",
-      "text" : "Firmware phải được cấu hình đích danh cho vi điều khiển ATmega328P với giới hạn phần cứng tối đa là 32768 bytes (32 KB) Flash và 2048 bytes (2 KB) RAM."
+      "text" : "Firmware phải được cấu hình biên dịch cho vi điều khiển ATmega328P với giới hạn bộ nhớ vật lý được xác định là 32 KB Flash và 2 KB RAM."
     },
     {
       "id" : "FR-PWR-01",
@@ -83,32 +93,21 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "locator" : null,
       "source" : "lệnh",
       "status" : "generated",
-      "text" : "Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB)."
-    },
-    {
-      "id" : "FR-PWR-02",
-      "kind" : "FR",
-      "locator" : null,
-      "source" : "lệnh",
-      "status" : "generated",
-      "text" : "Hệ thống phải thực hiện quá trình biên dịch mã nguồn chứa mảng hằng 64 KB và xuất ra kết quả biên dịch (log) để xác nhận trạng thái cấp phát bộ nhớ."
+      "text" : "Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?  ATmega328P   — anh vừa nói trong câu  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 3 yêu cầu chưa đối chiếu) Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?  ATmega328P   — anh vừa nói trong câu  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
-3 YÊU CẦU — 3 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB).
-FR-PWR-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện quá trình biên dịch mã nguồn chứa mảng hằng 64 KB và xuất ra kết quả biên dịch (log) để xác nhận trạng thái cấp phát bộ nhớ.
-UR-CTL-01	HW	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải được cấu hình đích danh cho vi điều khiển ATmega328P với giới hạn phần cứng tối đa là 32768 bytes (32 KB) Flash và 2048 bytes (2 KB) RAM.
+2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash.
+UR-CTL-01	HW	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải được cấu hình biên dịch cho vi điều khiển ATmega328P với giới hạn bộ nhớ vật lý được xác định là 32 KB Flash và 2 KB RAM.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC021/du-an/vuot-dung-luong-flash/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-PWR-01	—
 FR-PWR-01	—
-FR-PWR-02	—
-FR-PWR-02	—
 UR-CTL-01	—
 UR-CTL-01	—
 ```
@@ -117,16 +116,16 @@ UR-CTL-01	—
 
 ## Bước 3
 
-**Quét 4 tab tác tử đã mở:** Main, ReqArch, NhatKy, Graph
+**Quét 4 tab tác tử đã mở:** Main, NhatKy, ReqArch, Graph
 
 ### Tab `Main`
 
 ```
-Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 5 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	MÂU THUẪN	bộ nhớ: 'Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB).' ≠ 'Firmware phải được cấu hình đích danh cho vi điều khiển ATmega328P với giới hạn phần cứng tối đa là 32768 bytes (32 KB) Flash và 2048 bytes (2 KB) RAM.'
-Cần làm rõ	CÒN MƠ HỒ	Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB).
-Cần làm rõ	HW	Vi điều khiển ATmega328P chỉ có 32 KB Flash, làm sao để chứa được mảng hằng số có kích thước lên tới 64 KB?
- …và 2 mục nữa — xem đủ ở cột phải.  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 7 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	HW	Làm thế nào để lưu trữ mảng hằng 64 KB khi bộ nhớ Flash của ATmega328P chỉ có giới hạn tối đa là 32 KB?
+Cần làm rõ	MÂU THUẪN	bộ nhớ: 'Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash.' ≠ 'Firmware phải được cấu hình biên dịch cho vi điều khiển ATmega328P với giới hạn bộ nhớ vật lý được xác định là 32 KB Flash và 2 KB RAM.'
+Cần làm rõ	FR	Mục đích sử dụng của mảng hằng 64 KB này là gì?
+ …và 4 mục nữa — xem đủ ở cột phải.  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
 ISA	chưa biết — tác tử sẽ hỏi khi cần
@@ -136,166 +135,163 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_96b170dad431
-Mở lúc	23/09 13:58:37
+Phiên	s_2fe3890fe8e5
+Mở lúc	23/09 23:40:04
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0101 USD
+Hôm nay	0.0166 USD
 Hạn ngày	5.00 USD
-Số lời gọi	3
+Số lời gọi	5
 ```
 
 ![Main](man-01-Main.png)
 
-### Tab `ReqArch`
-
-```
-Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  3 YÊU CẦU — 3 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB).
-FR-PWR-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện quá trình biên dịch mã nguồn chứa mảng hằng 64 KB và xuất ra kết quả biên dịch (log) để xác nhận trạng thái cấp phát bộ nhớ.
-UR-CTL-01	HW	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải được cấu hình đích danh cho vi điều khiển ATmega328P với giới hạn phần cứng tối đa là 32768 bytes (32 KB) Flash và 2048 bytes (2 KB) RAM.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC021/du-an/vuot-dung-luong-flash/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-PWR-01	—
-FR-PWR-01	—
-FR-PWR-02	—
-FR-PWR-02	—
-UR-CTL-01	—
-UR-CTL-01	—
-```
-
-![ReqArch](man-02-ReqArch.png)
-
 ### Tab `NhatKy`
 
 ```
-Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 358 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
-23/09 13:59:28	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 13:59:28	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:28	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:26	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 13:59:26	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 13:59:26	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 13:59:26	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:26	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:26	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 13:59:26	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 13:59:26	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:26	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:26	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:26	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:26	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:26	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:26	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:26	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:26	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:26	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:23	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 13:59:23	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 13:59:23	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:23	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:23	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-23/09 13:59:23	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-23/09 13:59:23	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:23	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:23	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:23	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:23	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:23	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:23	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-23/09 13:59:23	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-23/09 13:59:23	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:23	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 13:59:20	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 13:59:20	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:20	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 13:59:20	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 13:59:20	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:20	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 13:59:19	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 13:59:19	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 13:59:19	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 13:59:19	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 13:59:19	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 1237 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
+23/09 23:40:53	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:53	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:53	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:51	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:51	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:51	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:51	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:51	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 23:40:51	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 23:40:51	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:51	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:51	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:51	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:51	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:51	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:51	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 23:40:51	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 23:40:51	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:51	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+23/09 23:40:49	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+23/09 23:40:49	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:49	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+23/09 23:40:49	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+23/09 23:40:49	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+23/09 23:40:49	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:49	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 23:40:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 23:40:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 23:40:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 23:40:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
 ```
 
-![NhatKy](man-03-NhatKy.png)
+![NhatKy](man-02-NhatKy.png)
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash.
+UR-CTL-01	HW	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải được cấu hình biên dịch cho vi điều khiển ATmega328P với giới hạn bộ nhớ vật lý được xác định là 32 KB Flash và 2 KB RAM.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC021/du-an/vuot-dung-luong-flash/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-PWR-01	—
+FR-PWR-01	—
+UR-CTL-01	—
+UR-CTL-01	—
+```
+
+![ReqArch](man-03-ReqArch.png)
 
 ### Tab `Graph`
 
@@ -308,18 +304,18 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (5)  Làm rõ yêu cầu — MÂU THUẪN  bộ nhớ: 'Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB).' ≠ 'Firmware phải được cấu hình đích danh cho vi điều khiển ATmega328P với giới hạn phần cứng tối đa là 32768 bytes (32 KB) Flash và 2048 bytes (2 KB) RAM.'  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB).  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW  Vi điều khiển ATmega328P chỉ có 32 KB Flash, làm sao để chứa được mảng hằng số có kích thước lên tới 64 KB?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (7)  Làm rõ yêu cầu — HW  Làm thế nào để lưu trữ mảng hằng 64 KB khi bộ nhớ Flash của ATmega328P chỉ có giới hạn tối đa là 32 KB?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — MÂU THUẪN  bộ nhớ: 'Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash.' ≠ 'Firmware phải được cấu hình biên dịch cho vi điều khiển ATmega328P với giới hạn bộ nhớ vật lý được xác định là 32 KB Flash và 2 KB RAM.'  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Mục đích sử dụng của mảng hằng 64 KB này là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Firmware cần thực hiện chức năng cụ thể gì với mảng dữ liệu này sau khi biên dịch thành công?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
 • Chưa ghim hộ chiếu chip — chip nào? (`passport`)
-   Chọn một: ATmega328P — anh vừa nói trong câu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Firmware này có chức năng cụ thể gì khác ngoài việc khai báo mảng và biên dịch không?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  req.classify  còn 23 giờ  Hoàn tác ⟩ 
+   Chọn một: ATmega328P — anh vừa nói trong câu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — ENV  Dự án yêu cầu sử dụng trình biên dịch (compiler) và môi trường phát triển nào?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  req.classify  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 9.3 s)*:
+**Tác tử trả lời** *(sau 9.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `vuot-dung-luong-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: mảng hằng 64 KB. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: mảng hằng 64 KB. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
   "grounded" : {
     "candidates" : [
     ],
@@ -328,17 +324,27 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "HW",
-      "suggestion" : "Thêm IC bộ nhớ ngoài (SPI Flash\/EEPROM) hoặc giảm kích thước mảng dữ liệu xuống dưới 30 KB để vừa với bộ nhớ nội.",
-      "text" : "Vi điều khiển ATmega328P chỉ có 32 KB Flash, làm sao để chứa được mảng hằng số có kích thước lên tới 64 KB?"
+      "suggestion" : "Sử dụng IC nhớ ngoài (như SPI Flash W25Q64, EEPROM) hoặc áp dụng thuật toán nén dữ liệu nếu mảng có tính lặp lại cao.",
+      "text" : "Làm thế nào để lưu trữ mảng hằng 64 KB khi bộ nhớ Flash của ATmega328P chỉ có giới hạn tối đa là 32 KB?"
     },
     {
       "kind" : "FR",
-      "suggestion" : "Đọc dữ liệu từ mảng để xuất ra UART, hoặc dùng làm bảng tra cứu (lookup table) để điều khiển ngoại vi.",
-      "text" : "Firmware này có chức năng cụ thể gì khác ngoài việc khai báo mảng và biên dịch không?"
+      "suggestion" : "Dùng làm bảng tra cứu (lookup table), lưu trữ mẫu âm thanh, hoặc dữ liệu hiển thị.",
+      "text" : "Mục đích sử dụng của mảng hằng 64 KB này là gì?"
+    },
+    {
+      "kind" : "FR",
+      "suggestion" : "Đọc và gửi dữ liệu qua UART, xuất tín hiệu ra ngoại vi, hoặc đây chỉ là bài kiểm tra giới hạn biên dịch (stress test).",
+      "text" : "Firmware cần thực hiện chức năng cụ thể gì với mảng dữ liệu này sau khi biên dịch thành công?"
+    },
+    {
+      "kind" : "ENV",
+      "suggestion" : "Sử dụng avr-gcc thuần túy, Arduino IDE, hoặc PlatformIO.",
+      "text" : "Dự án yêu cầu sử dụng trình biên dịch (compiler) và môi trường phát triển nào?"
     }
   ],
   "raw" : [
@@ -346,21 +352,21 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "kind_guess" : "FR",
       "locator" : {
       },
-      "source" : "user",
+      "source" : "Mô tả",
       "text" : "Viết firmware cho ATmega328P (32 KB Flash, 2 KB RAM) có một mảng hằng 64 KB rồi biên dịch"
     }
   ]
-}  3. `req.classify` — 3 codes_assigned · 3 reqset (UR-CTL-01, FR-PWR-01, FR-PWR-02)  Xem đầy đủ ▾ {
-  "codes_assigned" : 3,
+}  3. `req.classify` — 2 codes_assigned · 2 reqset (UR-CTL-01, FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 2,
   "reqset" : [
     {
       "id" : "UR-CTL-01",
       "kind" : "HW",
       "locator" : {
       },
-      "source" : "user",
+      "source" : "Mô tả",
       "status" : "generated",
-      "text" : "Firmware phải được cấu hình đích danh cho vi điều khiển ATmega328P với giới hạn phần cứng tối đa là 32768 bytes (32 KB) Flash và 2048 bytes (2 KB) RAM."
+      "text" : "Firmware phải được cấu hình biên dịch cho vi điều khiển ATmega328P với giới hạn bộ nhớ vật lý được xác định là 32 KB Flash và 2 KB RAM."
     },
     {
       "id" : "FR-PWR-01",
@@ -368,18 +374,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "locator" : null,
       "source" : "lệnh",
       "status" : "generated",
-      "text" : "Mã nguồn firmware phải khai báo một mảng dữ liệu hằng số (const) có kích thước chính xác là 65536 bytes (64 KB)."
-    },
-    {
-      "id" : "FR-PWR-02",
-      "kind" : "FR",
-      "locator" : null,
-      "source" : "lệnh",
-      "status" : "generated",
-      "text" : "Hệ thống phải thực hiện quá trình biên dịch mã nguồn chứa mảng hằng 64 KB và xuất ra kết quả biên dịch (log) để xác nhận trạng thái cấp phát bộ nhớ."
+      "text" : "Mã nguồn firmware phải khai báo một mảng hằng số (const) có kích thước chính xác là 64 KB (65536 bytes) và thực hiện quá trình biên dịch để kiểm tra phản hồi của trình biên dịch khi vượt quá dung lượng Flash."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?  ATmega328P   — anh vừa nói trong câu  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 3 yêu cầu chưa đối chiếu) Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?  ATmega328P   — anh vừa nói trong câu  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `Graph`:**

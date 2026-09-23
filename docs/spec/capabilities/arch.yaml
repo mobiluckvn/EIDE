@@ -1,9 +1,7 @@
 - code: ARCH-01
   id: arch.style_select
-  name: 'Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL)
-    theo '
-  desc: Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL)
-    theo yêu cầu và tài nguyên chip
+  name: 'Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL) theo '
+  desc: Chọn kiểu kiến trúc firmware (super-loop, event-driven, RTOS, layered/HAL) theo yêu cầu và tài nguyên chip
   input:
     type: object
     properties:
@@ -43,10 +41,8 @@
     passport: st.stm32f411ce@1.2
 - code: ARCH-02
   id: arch.decompose
-  name: Phân rã hệ thống thành module/lớp/thành phần với trách nhiệm, giao diện, phụ
-    thu
-  desc: Phân rã hệ thống thành module/lớp/thành phần với trách nhiệm, giao diện, phụ
-    thuộc
+  name: Phân rã hệ thống thành module/lớp/thành phần với trách nhiệm, giao diện, phụ thu
+  desc: Phân rã hệ thống thành module/lớp/thành phần với trách nhiệm, giao diện, phụ thuộc
   input:
     type: object
     properties:
@@ -249,10 +245,8 @@
     - mod_bme280
 - code: ARCH-07
   id: arch.state_machine
-  name: Thiết kế máy trạng thái cho module/thiết bị; kiểm tính đầy đủ chuyển trạng
-    thái
-  desc: Thiết kế máy trạng thái cho module/thiết bị; kiểm tính đầy đủ chuyển trạng
-    thái
+  name: Thiết kế máy trạng thái cho module/thiết bị; kiểm tính đầy đủ chuyển trạng thái
+  desc: Thiết kế máy trạng thái cho module/thiết bị; kiểm tính đầy đủ chuyển trạng thái
   input:
     type: object
     properties:
@@ -284,10 +278,8 @@
     module_id: mod_motor
 - code: ARCH-08
   id: arch.adr
-  name: 'Ghi Architecture Decision Record: bối cảnh, phương án, quyết định, hệ quả,
-    fact '
-  desc: 'Ghi Architecture Decision Record: bối cảnh, phương án, quyết định, hệ quả,
-    fact trích dẫn'
+  name: 'Ghi Architecture Decision Record: bối cảnh, phương án, quyết định, hệ quả, fact '
+  desc: 'Ghi Architecture Decision Record: bối cảnh, phương án, quyết định, hệ quả, fact trích dẫn'
   input:
     type: object
     properties:
@@ -327,10 +319,8 @@
       choice: rtos
 - code: ARCH-09
   id: arch.review
-  name: 'Rà kiến trúc theo checklist nhúng (coupling, ISR ngắn, lock, watchdog, bảo
-    mật) '
-  desc: Rà kiến trúc theo checklist nhúng (coupling, ISR ngắn, lock, watchdog, bảo
-    mật) → phát hiện
+  name: 'Rà kiến trúc theo checklist nhúng (coupling, ISR ngắn, lock, watchdog, bảo mật) '
+  desc: Rà kiến trúc theo checklist nhúng (coupling, ISR ngắn, lock, watchdog, bảo mật) → phát hiện
   input:
     type: object
     properties:

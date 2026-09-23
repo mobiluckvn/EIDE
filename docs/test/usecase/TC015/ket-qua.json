@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "SAU [DEV-203]: rút ra ba yêu cầu tốt rồi vẫn dừng ở `req.ground_hw` — NHƯNG câu hỏi nay mang sẵn câu trả lời: “Chưa ghim hộ chiếu chip — chip nào? **ATmega328P — anh vừa nói trong câu**”. Người dùng bấm một cái thay vì gõ lại thứ vừa nói. Vẫn chưa sinh mã và chưa biên dịch, nên chưa đạt tiêu chí của đề bài.\n\nGhi chú: Vì sao vẫn HỎI chứ không tự ghim: hộ chiếu là `ns.part@semver`, mà dự án chưa nhập datasheet nào cho ATmega328P. Ghép tên chip trần vào `passport` sẽ tra ra rỗng trong im lặng — đúng lỗi “câu trả lời sai tệ hơn ô trống” của [DEV-183].",
- "giay": 59.4,
+ "giay": 47.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 59.4,
+   "giay": 47.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

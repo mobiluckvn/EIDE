@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Có báo lỗi nhưng SAI LÝ DO: nói “không nhận ra định dạng nén của mach.PcbDoc” thay vì “định dạng Altium không nằm trong danh sách hỗ trợ”. Không đề xuất xuất netlist/PDF thay thế.",
- "giay": 28.0,
+ "giay": 23.8,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -36,7 +36,8 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-Ingest.png",
-  "man-03-Graph.png"
+  "man-03-Code.png",
+  "man-04-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC025/du-an/dinh-dang-thiet-ke-khong-ho-tro",
  "cham": {
@@ -46,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 28.0,
+   "giay": 23.8,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

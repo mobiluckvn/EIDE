@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Dự án có 1200 tệp nguồn, tổng 40 MB. Sửa lỗi tràn bộ đệm trong module giao tiếp. Nói rõ anh đã đọc những tệp nào
 
-**Tác tử trả lời** *(sau 17.5 s)*:
+**Tác tử trả lời** *(sau 18.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `du-an-rat-lon` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -40,8 +40,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   }
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 13 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, view.rag_index, chat.orchestrate, chat.restate
 → `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
-Hoàn tác được 1 mục đến 2026-09-24T14:02.
-Chi phí mô hình: 0.0009 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+Hoàn tác được 1 mục đến 2026-09-24T23:43.
+Chi phí mô hình: 0.0010 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -57,15 +57,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8adb6e10e2bb
-Mở lúc	23/09 14:02:15
+Phiên	s_1e8698bce3b0
+Mở lúc	23/09 23:43:08
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -89,15 +89,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8adb6e10e2bb
-Mở lúc	23/09 14:02:15
+Phiên	s_1e8698bce3b0
+Mở lúc	23/09 23:43:08
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -130,8 +130,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   }
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 13 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, view.rag_index, chat.orchestrate, chat.restate
 → `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
-Hoàn tác được 1 mục đến 2026-09-24T14:02.
-Chi phí mô hình: 0.0009 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+Hoàn tác được 1 mục đến 2026-09-24T23:43.
+Chi phí mô hình: 0.0010 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
 **Màn đang mở — `Graph`:**

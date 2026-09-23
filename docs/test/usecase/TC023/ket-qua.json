@@ -27,7 +27,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không tóm tắt được thiết kế. `archive.list` hỏng E1000: “Không nhận ra định dạng nén của mach-khong-loi.net” — netlist bị đối xử như tệp nén.",
- "giay": 34.3,
+ "giay": 21.8,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -35,8 +35,8 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-Ingest.png",
-  "man-03-Graph.png",
-  "man-04-Code.png",
+  "man-03-Code.png",
+  "man-04-Graph.png",
   "man-05-Board.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san",
@@ -50,7 +50,7 @@
  },
  "lap": [
   {
-   "giay": 34.3,
+   "giay": 21.8,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "mcu-x|u1",

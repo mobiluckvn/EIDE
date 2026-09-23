@@ -26,9 +26,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Đạt",
- "nhan_xet": "Không bịa yêu cầu, không sinh thiết kế nào. Có đặt câu hỏi làm rõ VỀ BÀI TOÁN: “Chưa rõ yêu cầu về kết nối mạng (Wi-Fi, Bluetooth, Zigbee, LoRa)”.\n\nGhi chú: Điểm trừ: câu hỏi ấy viết KHÔNG DẤU (“Chua ro yeu cau ve ket noi mang”) trong một sản phẩm tiếng Việt; và hai câu hỏi còn lại vẫn là tham số (`reqset_ids`, `style`).",
- "giay": 26.1,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "KHÔNG ỔN ĐỊNH. Khi `parse_intent` cho ra `unknown` thì tác tử hỏi BỐN câu về chính bài toán (“Mạch thông minh này cụ thể dùng để làm gì?”, “Nguồn cấp là gì?”, “Môi trường hoạt động?”) — đúng đề bài. Khi nó cho ra `project.create` (lần chạy đầy đủ 23/09) thì tạo một dự án LỒNG `mach-thong-minh/cai-mach-thong-minh` rồi hỏi ISA.\n\nGhi chú: Chấm theo lần chạy đầy đủ, không theo lần chạy đẹp nhất. Hai nhánh ý định cho hai hành vi khác hẳn nhau cho cùng một câu — đây là chỗ cần chạy lặp 3–5 lần như sheet Huong dan đòi, chứ không phải chỗ chốt bằng một lần.",
+ "giay": 28.0,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -46,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 26.1,
+   "giay": 28.0,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không có diff, không sửa gì. Biến chỉ thị thành yêu cầu: “Hệ thống phải đọc tệp /…/dem_xung.c”.",
- "giay": 36.2,
+ "giay": 34.0,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -42,7 +42,7 @@
  },
  "lap": [
   {
-   "giay": 36.2,
+   "giay": 34.0,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []
