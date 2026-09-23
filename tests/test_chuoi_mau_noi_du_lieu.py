@@ -43,7 +43,9 @@ def test_mau_mang_phan_noi_va_tham_chieu_dung_cu_phap():
                 # `${_text}` — câu gốc của người dùng, KHÔNG phải tham chiếu nút. [DEV-201]
                 # Mẫu là chỗ duy nhất được quyền nói tham số nào nhận lời người nói (DEV-121);
                 # `_tu_nodes` thay nó lúc dựng chuỗi, nên nó không bao giờ tới phép kiểm chuỗi.
-                if v == "${_text}":
+                # [DEV-208] `${_path}` cũng là token GỐC, không phải tham chiếu nút. Trước đó
+                # nó chỉ xuất hiện trong list (`{files: ['${_path}']}`) nên chưa gặp dạng trần.
+                if v in ("${_text}", "${_path}"):
                     continue
                 tong += 1
                 m = chain_mod.tach_tham_chieu(v)
@@ -69,8 +71,8 @@ def test_moi_phep_noi_khop_HAI_DAU_hop_dong():
             for k, v in (n.get("args") or {}).items():
                 assert nhan and k in (nhan["input_schema"].get("properties") or {}), \
                     f"{c['ten']} {n['id']}: `{k}` không phải tham số của `{n['cap']}`"
-                if v == "${_text}":
-                    # Câu gốc của người là một chuỗi — tham số nhận nó phải nhận chuỗi.
+                if v in ("${_text}", "${_path}"):
+                    # Câu gốc / đường dẫn của người là CHUỖI — tham số nhận nó phải nhận chuỗi.
                     t = (nhan["input_schema"]["properties"] or {})[k]
                     assert (t or {}).get("type") in (None, "string"), \
                         f"{c['ten']} {n['id']}: `{k}` nhận `${{_text}}` nhưng kiểu là {t.get('type')}"

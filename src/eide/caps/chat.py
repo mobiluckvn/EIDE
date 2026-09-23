@@ -714,7 +714,8 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             if nut.on_ask == "wait":
                 break           # dừng cả chuỗi: các nút sau phụ thuộc chỗ này
         else:
-            hong.append({"id": nut.id, "cap": nut.cap, "error": run.error})
+            hong.append({"id": nut.id, "cap": nut.cap, "error": run.error,
+                         "bat_buoc": nut.on_ask != "skip"})
             # [DEV-178] Nút HỎNG kèm lời khuyên dùng được cũng là một việc chờ người — đưa nó
             # đi cùng chỗ với nút bị chặn vì thiếu tham số.
             #
@@ -726,7 +727,24 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             # Người dùng đóng cửa sổ trò chuyện, mở tab, và thứ đang chặn họ không có ở đó —
             # đúng cái trôi mà [DEV-160] viết ra để chặn.
             _ghi_loi_chan_chuoi(root, run_id, nut, run.error or {})
-            if len(hong) >= int(nguong.get("fail_retries") or 2):
+            # NÚT TUỲ CHỌN HỎNG KHÔNG TÍNH VÀO NGƯỠNG LEO THANG. [DEV-209]
+            #
+            # POL-17 §6 đếm thất bại để khỏi thử mãi — đúng với nút BẮT BUỘC. Nhưng một nút
+            # `on_ask: "skip"` là nút làm giàu: nó hỏng là chuyện dự kiến, và tính nó vào
+            # ngưỡng thì chuỗi chết vì đúng những bước nó được phép bỏ qua.
+            #
+            # Đo 23/09/2026 trên TC038: chuỗi rà soát netlist có bốn nút `skip`. Hai nút không
+            # phụ thuộc ai — `code.static` (thiếu ISA) và `view.rag_ask` (chưa có tài liệu) —
+            # chạy TRƯỚC theo thứ tự khai, cùng hỏng, chạm ngưỡng 2, và `board.check_pins`
+            # KHÔNG BAO GIỜ được chạy dù `extract.kicad_netlist` ngay trước đó vừa dựng xong
+            # hộ chiếu bo mạch cho nó. Việc chính chết vì hai việc phụ.
+            #
+            # Cùng nguyên lý với [DEV-207]: `skip` nghĩa là "không có cũng chạy được" — thứ
+            # không cần thì không hỏi, và hỏng cũng không được kéo ai theo.
+            if nut.on_ask == "skip":
+                continue
+            if len([x for x in hong if x.get("bat_buoc", True)]) >= int(
+                    nguong.get("fail_retries") or 2):
                 # POL-17 §6: thất bại lặp → leo thang, không thử mãi.
                 if router is not None:
                     router.invoke("policy.escalate",
@@ -859,10 +877,18 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
         # Giải bằng MẪU chứ không bằng một bảng ánh xạ tên trong mã, đúng ranh giới mà
         # `_noi_dau_ra` đã vạch: ánh xạ kiểu `chip → passport` là tri thức không có trong tài
         # liệu nào, còn "tham số này nhận câu gốc" là điều chỉ mẫu mới có quyền nói (DEV-121).
-        goc = {"${_text}": str((intent or {}).get("_text") or ""),
-               "${_path}": str(((intent or {}).get("slots") or {}).get("path") or "")}
+        # ĐƯỜNG DẪN: tra bảng trước, slots sau. [DEV-208]
+        #
+        # `slots.path` do mô hình điền nên không tất định — đo 23/09/2026: TC042 nạp được tệp,
+        # TC043 (câu cùng hình dạng, cùng tệp, cùng lần chạy) thì không. Biểu thức chính quy
+        # đọc chính câu chữ thì cho cùng một kết quả mọi lần.
+        from eide_core.request_ops import duong_dan_trong_cau
+        van_goc = str((intent or {}).get("_text") or "")
+        dds = duong_dan_trong_cau(van_goc) or \
+            [x for x in [str(((intent or {}).get("slots") or {}).get("path") or "")] if x]
+        goc = {"${_text}": van_goc, "${_path}": dds[0] if dds else ""}
         san_co = _args_cho(n["cap"], intent, grounded, run_id, ctx)
-        args = _thay_goc(args, goc, san_co)
+        args = _thay_goc(args, goc, san_co, dds)
         # Tham chiếu tới một nút ĐÃ BỊ BỎ là một tham chiếu không bao giờ giải được — và nó
         # sẽ giết cả chuỗi ở phép kiểm deterministic. Bỏ nó đi, để nút rơi về "thiếu tham số"
         # và hỏi người: một câu hỏi người trả lời được tốt hơn một chuỗi chết.
@@ -876,14 +902,16 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
 
 
 def _thay_goc(args: dict[str, Any], goc: dict[str, str],
-              san_co: dict[str, Any]) -> dict[str, Any]:
+              san_co: dict[str, Any], duong_dan: list[str] | None = None) -> dict[str, Any]:
     """Thay `${_text}` / `${_path}` bằng lời người dùng vừa nói. [DEV-202]
 
     Ba luật, mỗi luật vì một lỗi đo được:
 
-    1. **Đi sâu vào list.** `ingest.index_text` nhận `files: arr<str>`, nên mẫu viết
-       ``{files: ['${_path}']}``. Chỉ thay ở tầng một thì khoá ấy đi nguyên xuống năng lực
-       dưới dạng chuỗi bảy ký tự.
+    1. **Đi sâu vào list, và MỘT `${_path}` trong list nở ra TẤT CẢ đường dẫn.**
+       `ingest.index_text` nhận `files: arr<str>`, nên mẫu viết ``{files: ['${_path}']}``. Chỉ
+       thay ở tầng một thì khoá ấy đi nguyên xuống năng lực dưới dạng chuỗi bảy ký tự; còn thay
+       bằng đúng một đường dẫn thì câu *"tôi để hai bản datasheet ở A và B, so hai bản"*
+       (TC011) mất một vế ngay trước khi bắt đầu so.
     2. **Nhường chỗ cho thứ đã rút được.** `chat.parse_intent` rút `slots.question` = *"bit nào
        bật DMA cho SPI2 TX"* từ câu *"Đọc /…/rm-mcux-v3.1.md rồi cho tôi biết bit nào bật DMA
        cho SPI2 TX"*, và `_args_cho` đã ghép nó vào `question` vì trùng tên. Mẫu mà đè
@@ -896,7 +924,14 @@ def _thay_goc(args: dict[str, Any], goc: dict[str, str],
         if isinstance(v, str):
             return goc.get(v, v) if v in goc else v
         if isinstance(v, list):
-            return [_di(x) for x in v]
+            ra_l: list[Any] = []
+            for x in v:
+                # Luật 1b — `['${_path}']` nở ra MỌI đường dẫn người dùng nêu.
+                if x == "${_path}" and duong_dan:
+                    ra_l += list(duong_dan)
+                else:
+                    ra_l.append(_di(x))
+            return ra_l
         if isinstance(v, dict):
             return {k: _di(x) for k, x in v.items()}
         return v

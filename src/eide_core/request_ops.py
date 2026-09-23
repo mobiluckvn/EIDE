@@ -247,3 +247,37 @@ def loi_khuyen_an_toan(loai: str) -> str:
             "KHÔNG chọc thủng, không sạc tiếp. Để nguội hẳn rồi xử lý theo quy định pin thải.",
     }.get(loai, "Dừng lại và bảo đảm an toàn cho người trước khi tiếp tục.")
 
+
+
+# ─────────────────────────────────────────────── Đường dẫn tệp trong câu — [DEV-208]
+
+#: Đường dẫn tuyệt đối hoặc `~/…`, tới ranh giới khoảng trắng hoặc dấu câu kết thúc.
+#:
+#: Không nhận đường dẫn TƯƠNG ĐỐI: "trong docs/ có gì" thì `docs/` là một cách nói, không phải
+#: một tệp; nhận nó vào sẽ đi mở một thứ người dùng không trỏ tới.
+_DUONG_DAN = re.compile(r"(?:^|\s)((?:~|/)[^\s,;]+[^\s,;.])")
+
+
+def duong_dan_trong_cau(van: str) -> list[str]:
+    """Mọi đường dẫn tệp người dùng nêu trong câu, theo thứ tự xuất hiện, đã bỏ trùng.
+
+    **Vì sao tra bảng thay vì nhờ mô hình.** `chat.parse_intent` CÓ điền `slots.path`, và token
+    `${_path}` của [DEV-202] đọc ô ấy. Nhưng việc điền là do mô hình làm, nên nó không tất
+    định — và đo được ngay trong cùng một lần chạy ngày 23/09/2026: **TC042 nạp được tệp và
+    trả lời đúng kèm trang 412, còn TC043 — câu cùng hình dạng, cùng tệp — thì `view.rag_ask`
+    hỏng E5002 "dự án chưa có tài liệu nào"**. Cùng bản build, cùng một phút.
+
+    Một đường dẫn tuyệt đối trong câu là thứ nhận ra bằng biểu thức chính quy. Cùng lý lẽ với
+    `thao_tac_trong_cau` ([DEV-200]) và `la_cau_tro_nguoc` ([DEV-196]): thứ nào tra bảng được
+    thì đừng nhờ mô hình.
+
+    Trả về NHIỀU đường dẫn, không chỉ một — `slots.path` là một chuỗi đơn nên câu *"tôi để hai
+    bản datasheet ở A và B, so hai bản"* (TC011) chỉ giữ được một, và phép so hai bản mất một
+    vế ngay trước khi bắt đầu.
+    """
+    ra: list[str] = []
+    for m in _DUONG_DAN.finditer(" " + (van or "")):
+        d = m.group(1)
+        if d not in ra:
+            ra.append(d)
+    return ra

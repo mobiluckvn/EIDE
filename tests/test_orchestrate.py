@@ -64,7 +64,9 @@ def test_chuoi_mau_sinh_tu_tai_lieu():
     ds = mau()
     # 10 → 18 ở [DEV-201]: bảy ý định bị bỏ rơi được bù mẫu, và `big_command` tách khỏi mẫu
     # giải nén Z-07. Bảng ý định → mẫu chuỗi nay TOÀN PHẦN (19/19), có phép kiểm riêng giữ.
-    assert len(ds) == 18
+    # 18 → 22 ở [DEV-208]: bốn mẫu cho bốn động từ (rà soát, tìm, tính, chạy). Không năng lực
+    # nào mới — cả bốn chỉ nối vào thứ đã hiện thực từ lâu.
+    assert len(ds) == 22
     assert all(c["buoc"] and c["trigger_intents"] for c in ds)
 
 

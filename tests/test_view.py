@@ -649,3 +649,70 @@ def test_VIEW14_du_an_trong_thi_rong_chu_khong_nem(tmp_path, workspace):
                    Context(project_dir=workspace / res["project_id"]))
     assert run.status == "done", run.error
     assert (run.result["items"], run.result["total"]) == ([], 0)
+
+
+def test_cau_KHONG_TIM_THAY_duoc_mien_luat_trich_dan(du_an, monkeypatch):
+    """Một mâu thuẫn nằm ngay trong cùng một năng lực. [DEV-208]
+
+    Câu nhắc BẢO mô hình *"không có trong đoạn nào thì nói rõ là không có"*, rồi
+    `_moi_cau_co_trich_dan` BÁC BỎ đúng câu ấy — một câu nói "thứ này không có trong tài liệu"
+    thì chẳng có gì để trích.
+
+    Đo 23/09/2026 trên TC043 (câu hỏi cố ý không có trong tài liệu mẫu): `view.rag_ask` hỏng
+    với *"Câu trả lời có câu không kèm trích dẫn [n]"*. Lần chạy khác lại qua, vì mô hình tình
+    cờ gắn `[1]` vào cuối. Một luật đúng, áp cho một trường hợp nó không nói tới, và kết quả
+    phụ thuộc cách hành văn.
+    """
+    from eide.caps import view as v
+
+    class _Resp:
+        def __init__(self, d):
+            self.data = d
+
+    class _GW:
+        def run(self, *a, **k):
+            return _Resp({"answer": "Thông tin này không có trong các đoạn được cung cấp.",
+                          "not_found": True})
+
+    r, ctx, _ = du_an
+    d = Path(ctx.project_dir) / "docs"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "ds.md").write_text("VDD 3,3 V", encoding="utf-8")
+    r.invoke("ingest.index_text", {"files": [str(d / "ds.md")]}, ctx)
+    # Ghim truy hồi: bài này đo LUẬT TRÍCH DẪN, không đo chất lượng truy hồi. Để điểm thật
+    # quyết định thì bài kiểm đỏ khi ngưỡng 0,35 đổi — một thứ chẳng liên quan gì tới nó.
+    monkeypatch.setattr(v, "_truy_hoi", lambda *a, **k: [
+        {"text": "VDD 3,3 V", "source_id": "src_x", "score": 0.9, "locator": {}}])
+    monkeypatch.setattr(v, "_gateway", lambda _c: _GW())
+    run = r.invoke("view.rag_ask", {"question": "VDD điện áp"}, ctx)
+    assert run.status == "done", f"câu 'không tìm thấy' vẫn bị bác: {run.error}"
+    assert run.result["not_found"] is True
+    assert "không có" in run.result["answer"]
+
+
+def test_cau_CO_TRA_LOI_ma_thieu_trich_dan_thi_VAN_bi_bac(du_an, monkeypatch):
+    """Nới luật cho câu "không tìm thấy" KHÔNG được làm mất việc gốc của luật.
+
+    VIEW-05 đòi 100% citations để một con số đi vào thiết kế luôn truy được về nguồn. Miễn trừ
+    chỉ dành cho câu THÚ NHẬN KHÔNG CÓ — thứ không thể có nguồn.
+    """
+    from eide.caps import view as v
+
+    class _Resp:
+        def __init__(self, d):
+            self.data = d
+
+    class _GW:
+        def run(self, *a, **k):
+            return _Resp({"answer": "Điện áp cấp của chip này là 3,3 V.", "not_found": False})
+
+    r, ctx, _ = du_an
+    d = Path(ctx.project_dir) / "docs"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "ds.md").write_text("VDD 3,3 V", encoding="utf-8")
+    r.invoke("ingest.index_text", {"files": [str(d / "ds.md")]}, ctx)
+    monkeypatch.setattr(v, "_truy_hoi", lambda *a, **k: [
+        {"text": "VDD 3,3 V", "source_id": "src_x", "score": 0.9, "locator": {}}])
+    monkeypatch.setattr(v, "_gateway", lambda _c: _GW())
+    run = r.invoke("view.rag_ask", {"question": "VDD điện áp"}, ctx)
+    assert run.status == "failed" and run.error["eide_code"] == "E5002"

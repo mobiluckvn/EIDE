@@ -403,23 +403,41 @@ def rag_ask(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     resp = _gateway(ctx).run(
         "writer",
         "Trả lời câu hỏi CHỈ bằng thông tin trong các đoạn dưới. Mỗi câu phải kết thúc bằng "
-        "chỉ số nguồn dạng [n]. Không có trong đoạn nào thì nói rõ là không có.\n\n"
+        "chỉ số nguồn dạng [n]. Nếu các đoạn KHÔNG chứa câu trả lời thì đặt `not_found` = true "
+        "và viết một câu nói rõ là không có — câu ấy không cần trích dẫn.\n\n"
         f"Câu hỏi: {q}\n\n"
         + "\n\n".join(f"[{i}] {d['text'][:1500]}" for i, d in enumerate(du, 1)),
         _SCHEMA_ANSWER)
     cau_tra_loi = (resp.data.get("answer") or "").strip()
-    if not _moi_cau_co_trich_dan(cau_tra_loi):
+    # CÂU "KHÔNG CÓ" ĐƯỢC MIỄN LUẬT TRÍCH DẪN. [DEV-208]
+    #
+    # Một mâu thuẫn nằm ngay trong cùng một năng lực: câu nhắc BẢO mô hình *"không có trong
+    # đoạn nào thì nói rõ là không có"*, rồi `_moi_cau_co_trich_dan` BÁC BỎ đúng câu ấy —
+    # một câu nói "thứ này không có trong tài liệu" thì chẳng có gì để trích.
+    #
+    # Đo 23/09/2026 trên TC043 (câu hỏi cố ý không có trong tài liệu mẫu): `view.rag_ask` hỏng
+    # với *"Câu trả lời có câu không kèm trích dẫn [n] — VIEW-05 bước 1 đòi 100% citations"*.
+    # Lần chạy khác lại qua, vì mô hình tình cờ gắn `[1]` vào cuối. Một luật đúng, áp cho một
+    # trường hợp nó không nói tới, và kết quả phụ thuộc cách hành văn.
+    #
+    # `not_found` là CỜ do mô hình đặt, không phải phép dò chuỗi: dò chữ "không có" sẽ bắt
+    # nhầm mọi câu trả lời thật có chứa hai chữ ấy.
+    khong_thay = bool(resp.data.get("not_found"))
+    if not khong_thay and not _moi_cau_co_trich_dan(cau_tra_loi):
         raise EideError("E5002", "Câu trả lời có câu không kèm trích dẫn [n] — VIEW-05 bước 1 "
                         "đòi 100% citations", answer=cau_tra_loi[:300], trace_id=tid)
     return {"answer": cau_tra_loi,
             "citations": [{"n": i, "source_id": d["source_id"], "locator": d.get("locator"),
                            "snippet": d["text"][:300], "score": d["score"]}
                           for i, d in enumerate(du, 1)],
-            "trace_id": tid, "not_found": False}
+            "trace_id": tid, "not_found": khong_thay}
 
 
 _SCHEMA_ANSWER = {"type": "object", "required": ["answer"],
-                  "properties": {"answer": {"type": "string"}}}
+                  "properties": {"answer": {"type": "string"},
+                                 # [DEV-208] Mô hình tự khai "không tìm thấy" thay vì để mã dò
+                                 # chuỗi — dò chữ "không có" sẽ bắt nhầm câu trả lời thật.
+                                 "not_found": {"type": "boolean"}}}
 
 
 def _moi_cau_co_trich_dan(t: str) -> bool:

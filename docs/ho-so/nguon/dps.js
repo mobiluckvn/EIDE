@@ -61,6 +61,12 @@ const INTENT_SCHEMA = {
       'sim.run', 'code.feature', 'target.flash', 'debug.ask', 'req.analyze', 'arch.design',
       'diagram.draw', 'doc.write', 'view.ask', 'discover.scan', 'policy.stop', 'policy.set',
       'big_command', 'unknown',
+      // [DEV-208] Bốn ĐỘNG TỪ mà người dùng gõ nhiều nhất và enum chưa có tên. Chính mô tả
+      // của `big_command` dưới đây đã thú nhận chỗ trống: "CŨNG dùng tạm cho lệnh MỘT bước
+      // thuộc nhóm chưa có ý định riêng (registry, bench, measure, passport, kg, tool,
+      // search…)". Đo 23/09/2026: 14 trên 57 ca trượt rơi vào `big_command` rồi được xử lý
+      // như một yêu cầu cần RÚT, trong khi người dùng nhờ RÀ SOÁT, TÌM, TÍNH, CHẠY.
+      'review.ask', 'search.ask', 'compute.ask', 'tool.run',
       // DEV-021: POL-17 GEN-03 có quy tắc chặn `action.is_delete_project`, nhưng enum không
       // có cách nào NÓI điều đó — nên bộ 50 câu phải gán "Xóa dự án test-1" thành
       // `project.create`, tức dạy tầng hiểu lệnh đọc "xóa" thành "tạo". Thêm ý định thật.
@@ -100,6 +106,10 @@ const INTENT_MO_TA = [
   ['policy.stop',     'dừng khẩn, dừng mọi việc đang chạy (kể cả "dừng tự chủ")'],
   ['policy.set',      'đổi mức tự chủ, DUYỆT/từ chối mục chờ, HOÀN TÁC việc đã làm'],
   ['big_command',     'lệnh gồm NHIỀU bước thuộc nhiều nhóm: "làm hết đi", "dựng tri thức rồi viết firmware", "bộ tài liệu đầy đủ". CŨNG dùng tạm cho lệnh MỘT bước thuộc nhóm chưa có ý định riêng (registry, bench, measure, passport, kg, tool, search…) — khi ấy `is_big` vẫn là false'],
+  ['review.ask',      'RÀ SOÁT một hiện vật có sẵn: netlist, schematic, mã nguồn, BOM — "kiểm giúp", "có lỗi gì không", "đối chiếu X với Y"'],
+  ['search.ask',      'TÌM tài liệu hoặc linh kiện: datasheet, errata, mạch tham khảo, linh kiện thay thế, tình trạng vòng đời'],
+  ['compute.ask',     'TÍNH một con số kỹ thuật: thời gian dùng pin, tản nhiệt, trở hạn dòng, timing — tính bằng code có kiểm chứng, không nhẩm'],
+  ['tool.run',        'CHẠY một lệnh hoặc kịch bản người dùng đưa'],
   ['unknown',         'không hiểu, hoặc mơ hồ tới mức đoán sẽ sai'],
 ];
 // Hai cặp hay lẫn, nêu thẳng thay vì để mô hình suy:
@@ -134,7 +144,8 @@ c.push(...CODE([
   '{ "type": "object", "required": ["intent", "slots", "is_big", "confidence"],',
   '  "properties": {',
   '    "intent": {"type": "string", "enum": ["project.create", "project.open", "knowledge.build", "env.setup", "sim.run", "code.feature", "target.flash",',
-  '                                          "debug.ask", "req.analyze", "arch.design", "diagram.draw", "doc.write", "view.ask", "discover.scan", "policy.stop", "policy.set", "big_command", "unknown"]},',
+  '                                          "debug.ask", "req.analyze", "arch.design", "diagram.draw", "doc.write", "view.ask", "discover.scan", "policy.stop", "policy.set", "big_command", "unknown",',
+  '                                          "review.ask", "search.ask", "compute.ask", "tool.run", "project.delete"]},',
   '    "slots": {"type": "object", "properties": {"project_name": {"type": "string"}, "idea": {"type": "string"}, "chip": {"type": "string"}, "board": {"type": "string"},',
   '              "path": {"type": "string"}, "feature": {"type": "string"}, "doc_type": {"type": "string"}, "diagram_kind": {"type": "string"}, "question": {"type": "string"}, "level": {"type": "string"}}},',
   '    "is_big": {"type": "boolean"}, "confidence": {"type": "number", "minimum": 0, "maximum": 1}, "lang": {"type": "string", "enum": ["vi", "en"]},',
@@ -248,6 +259,18 @@ const CHUOI_MAU = [
   // có tệp …/tim-tren-mang-datasheet-moi-nhat-cua-sen42" — một lỗi TỆP cho một việc TÌM MẠNG.
   // Mười ba ca kiểm thử chết ở đúng chỗ này.
   ['Việc lớn chưa rõ (DEV-201)', 'view.artifacts(requirement) → ingest.classify → ingest.index_text → req.elicit → req.classify → chat.report_back', ['big_command']],
+  // ───────────────────────────────────────────── [DEV-208] Bốn động từ, bốn mẫu.
+  //
+  // KHÔNG năng lực nào mới. Cả bốn chuỗi dưới đây chỉ nối vào thứ đã hiện thực từ lâu —
+  // `search.web`, `tool.write`, `tool.run`, `env.sandbox`, `code.static`,
+  // `extract.kicad_netlist`. Đo 23/09/2026: 29 năng lực `extract.*`/`ingest.*`/`archive.*` và
+  // cả bộ `tool.*` đều hiện thực xong. Thứ thiếu suốt từ đầu là TÊN GỌI để với tới chúng.
+  ['Rà soát hiện vật (DEV-208)', 'ingest.index_text → extract.kicad_netlist → board.check_pins → board.propose_fix → code.static → view.rag_ask → chat.report_back', ['review.ask']],
+  ['Tìm tài liệu / linh kiện (DEV-208)', 'search.web → search.fetch → chat.report_back', ['search.ask']],
+  // UC13 đòi đúng chữ này: "tính bằng code/công thức có kiểm chứng (KHÔNG nhẩm)". `tool.write`
+  // sinh một công cụ nhỏ rồi `tool.run` chạy nó — con số ra từ mã chạy được, tái lập được.
+  ['Tính toán kỹ thuật (DEV-208)', 'tool.write → tool.run → chat.report_back', ['compute.ask']],
+  ['Chạy lệnh trong hộp cát (DEV-208)', 'env.sandbox → chat.report_back', ['tool.run']],
   ['Đổi mức tự chủ (DEV-155)', 'policy.set_autonomy', ['policy.set']],
 ];
 // §4.4 — dạng MÁY DÙNG ĐƯỢC của năm chuỗi trên. Cột `chuoi` ở trên là văn xuôi cho người
@@ -407,6 +430,47 @@ const CHUOI_NUT = {
   // Bài học: bù một mẫu chuỗi mà không kiểm nút đầu có đủ dữ kiện để chạy thì mẫu ấy chỉ đổi
   // chỗ hỏng, không sửa nó. `req.elicit` không đòi tham số bắt buộc nào và nhận `text` — nó
   // rút ra điểm mơ hồ TỪ CHÍNH CÂU người dùng vừa gõ, rồi `chat.clarify` mới có cái để hỏi.
+  // [DEV-208] Bốn mẫu động từ.
+  // [DEV-209] Netlist đi đường FACT, không đường toàn văn.
+  //
+  // `ingest.index_text` CỐ Ý chỉ nhận README/ghi chú — ARCHIVE-07 bước 1, và docstring nêu lý
+  // do đúng: "đổ datasheet vào FTS5 sẽ khiến `memory.retrieve` trả về đoạn văn không trích dẫn
+  // được, cạnh tranh chỗ với fact có trích dẫn". Nên một tệp `.net` cho `0 indexed`, và nới
+  // bộ lọc ấy ra là phá một ràng buộc có lý.
+  //
+  // Đường đúng: `extract.kicad_netlist` đã dựng hộ chiếu bo mạch (đo 23/09/2026 trên TC038:
+  // "6 nets · 6 parts", `board_passport_id = mach-co-loi@1.0.0`), và `board.check_pins` đọc
+  // chính hộ chiếu ấy rồi trả `conflicts` có `severity` — đúng thứ đề bài chờ: "mức nghiêm
+  // trọng, vị trí, đề xuất sửa". `board.propose_fix` lo vế đề xuất.
+  'Rà soát hiện vật (DEV-208)': [
+    ['n1', 'ingest.index_text', null, 'skip', { files: ['${_path}'] }],
+    ['n2', 'extract.kicad_netlist', null, 'skip', { file: '${_path}' }],
+    ['n3', 'board.check_pins', 'n2', 'skip', { board: '${n2.board_passport_id}' }],
+    ['n4', 'board.propose_fix', 'n3', 'skip', { conflict: '${n3.conflicts[0]}' }],
+    ['n5', 'code.static', null, 'skip'],
+    ['n6', 'view.rag_ask', null, 'skip', { question: '${_text}' }],
+    ['n7', 'chat.report_back', 'n2'],
+  ],
+  'Tìm tài liệu / linh kiện (DEV-208)': [
+    ['n1', 'search.web', null, 'wait', { query: '${_text}' }],
+    ['n2', 'search.fetch', 'n1', 'skip', { candidate: '${n1.candidates[0]}' }],
+    ['n3', 'chat.report_back', 'n1'],
+  ],
+  // `spec` là object nên câu người dùng đi vào một khoá bên trong; `args` để rỗng — công cụ
+  // vừa sinh ra đã mang sẵn con số trong chính mã của nó.
+  'Tính toán kỹ thuật (DEV-208)': [
+    // `name` bắt buộc — `ToolSpec.__post_init__` đòi "chỉ chữ, số và gạch dưới", và để trống
+    // thì hỏng ngay ở nút đầu với E1000. Tên cố định chứ không sinh theo câu hỏi: công cụ
+    // tính toán dùng lại được, và một cái tên mới mỗi lần gõ sẽ đẻ ra rác trong registry.
+    ['n1', 'tool.write', null, 'wait',
+      { spec: { name: 'tinh_toan_ky_thuat', purpose: '${_text}' } }],
+    ['n2', 'tool.run', 'n1', 'wait', { tool_id: '${n1.tool_id}', args: {} }],
+    ['n3', 'chat.report_back', 'n2'],
+  ],
+  'Chạy lệnh trong hộp cát (DEV-208)': [
+    ['n1', 'env.sandbox', null, 'wait', { cmd: ['/bin/sh', '${_path}'] }],
+    ['n2', 'chat.report_back', 'n1'],
+  ],
   'Chưa hiểu, hỏi lại (DEV-201)': [
     ['n1', 'req.elicit'],
     ['n2', 'chat.clarify', 'n1', 'wait', { gaps: '${n1.gaps}' }],

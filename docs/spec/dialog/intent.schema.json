@@ -28,6 +28,10 @@
         "policy.set",
         "big_command",
         "unknown",
+        "review.ask",
+        "search.ask",
+        "compute.ask",
+        "tool.run",
         "project.delete"
       ]
     },

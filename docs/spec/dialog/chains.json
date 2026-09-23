@@ -1215,6 +1215,199 @@
   ]
  },
  {
+  "ten": "Rà soát hiện vật (DEV-208)",
+  "chuoi": "ingest.index_text → extract.kicad_netlist → board.check_pins → board.propose_fix → code.static → view.rag_ask → chat.report_back",
+  "buoc": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "board.propose_fix",
+   "code.static",
+   "view.rag_ask",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "ingest.index_text",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "files": [
+      "${_path}"
+     ]
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "extract.kicad_netlist",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "file": "${_path}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "board.check_pins",
+    "when": "n2",
+    "on_ask": "skip",
+    "args": {
+     "board": "${n2.board_passport_id}"
+    }
+   },
+   {
+    "id": "n4",
+    "cap": "board.propose_fix",
+    "when": "n3",
+    "on_ask": "skip",
+    "args": {
+     "conflict": "${n3.conflicts[0]}"
+    }
+   },
+   {
+    "id": "n5",
+    "cap": "code.static",
+    "when": null,
+    "on_ask": "skip",
+    "args": {}
+   },
+   {
+    "id": "n6",
+    "cap": "view.rag_ask",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "question": "${_text}"
+    }
+   },
+   {
+    "id": "n7",
+    "cap": "chat.report_back",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "review.ask"
+  ]
+ },
+ {
+  "ten": "Tìm tài liệu / linh kiện (DEV-208)",
+  "chuoi": "search.web → search.fetch → chat.report_back",
+  "buoc": [
+   "search.web",
+   "search.fetch",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "search.web",
+    "when": null,
+    "on_ask": "wait",
+    "args": {
+     "query": "${_text}"
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "search.fetch",
+    "when": "n1",
+    "on_ask": "skip",
+    "args": {
+     "candidate": "${n1.candidates[0]}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "chat.report_back",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "search.ask"
+  ]
+ },
+ {
+  "ten": "Tính toán kỹ thuật (DEV-208)",
+  "chuoi": "tool.write → tool.run → chat.report_back",
+  "buoc": [
+   "tool.write",
+   "tool.run",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "tool.write",
+    "when": null,
+    "on_ask": "wait",
+    "args": {
+     "spec": {
+      "name": "tinh_toan_ky_thuat",
+      "purpose": "${_text}"
+     }
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "tool.run",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "tool_id": "${n1.tool_id}",
+     "args": {}
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "chat.report_back",
+    "when": "n2",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "compute.ask"
+  ]
+ },
+ {
+  "ten": "Chạy lệnh trong hộp cát (DEV-208)",
+  "chuoi": "env.sandbox → chat.report_back",
+  "buoc": [
+   "env.sandbox",
+   "chat.report_back"
+  ],
+  "nodes": [
+   {
+    "id": "n1",
+    "cap": "env.sandbox",
+    "when": null,
+    "on_ask": "wait",
+    "args": {
+     "cmd": [
+      "/bin/sh",
+      "${_path}"
+     ]
+    }
+   },
+   {
+    "id": "n2",
+    "cap": "chat.report_back",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {}
+   }
+  ],
+  "trigger_intents": [
+   "tool.run"
+  ]
+ },
+ {
   "ten": "Đổi mức tự chủ (DEV-155)",
   "chuoi": "policy.set_autonomy",
   "buoc": [

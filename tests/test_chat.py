@@ -72,7 +72,11 @@ def test_moi_nhan_deu_nam_trong_enum_cua_schema():
 def test_schema_intent_dung_dps09():
     s = intent_schema()
     assert s["required"] == ["intent", "slots", "is_big", "confidence"]
-    assert len(s["properties"]["intent"]["enum"]) == 19   # +project.delete, DEV-021
+    # 19 → 23 ở [DEV-208]: bốn ĐỘNG TỪ mà người dùng gõ nhiều nhất và enum chưa có tên —
+    # `review.ask`, `search.ask`, `compute.ask`, `tool.run`. Chính mô tả của `big_command`
+    # đã thú nhận chỗ trống ("dùng tạm cho lệnh MỘT bước thuộc nhóm chưa có ý định riêng"),
+    # và 14 trên 57 ca trượt rơi vào đó rồi bị xử lý như một yêu cầu cần RÚT.
+    assert len(s["properties"]["intent"]["enum"]) == 23   # +project.delete DEV-021, +4 DEV-208
 
 
 # ---------- CHAT-01 chat.parse_intent ----------
