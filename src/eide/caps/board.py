@@ -48,7 +48,17 @@ def _root(ctx: Context) -> Path:
 
 
 def _bid(board: str) -> str:
-    return f"board:{re.sub(r'[^A-Za-z0-9_.-]+', '-', board).lower()}"
+    """`board:<tên>` — BỎ hậu tố `@phiên-bản`. [DEV-212]
+
+    `extract.kicad_netlist` trả `board_passport_id` dạng `mach-co-loi@1.0.0`, còn fact `net`
+    và `package` được ghi theo TÊN board trần (`board:mach-co-loi`). Truyền id hộ chiếu vào
+    `doc_net` vì thế tra ra rỗng — và `board.check_pins` trả `0 conflicts` cho một bo mạch có
+    bốn lỗi cài sẵn.
+
+    Đo 23/09/2026 trên TC038: `doc_net(root, "mach-co-loi@1.0.0")` → 0 net;
+    `doc_net(root, "mach-co-loi")` → 6 net. Cùng một bo mạch, hai cách gọi tên.
+    """
+    return f"board:{re.sub(r'[^A-Za-z0-9_.-]+', '-', board.split('@')[0]).lower()}"
 
 
 def doc_net(root: Path, board: str) -> dict[str, list[dict[str, str]]]:
@@ -334,6 +344,22 @@ def check_pins(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     root = _root(ctx)
     board = str(params["board"])
     nets = doc_net(root, board)
+    # KHÔNG CÓ DỮ LIỆU ≠ KHÔNG CÓ LỖI. [DEV-212]
+    #
+    # Trả `{"conflicts": []}` khi chưa tra được net nào là nói "bo mạch này sạch" cho một bo
+    # mạch chưa hề được đọc. Đo 23/09/2026 trên TC038: `check_pins` báo 0 xung đột cho netlist
+    # có bốn lỗi cài sẵn, chỉ vì tên board truyền vào mang hậu tố `@1.0.0`.
+    #
+    # Đây đúng khuôn hỏng của [DEV-183] — cột "✓ có ngưỡng đo" hiện cho MỌI yêu cầu vì lời gọi
+    # bên dưới hỏng và bị nuốt. Một câu trả lời trấn an rút từ hư không nguy hiểm hơn một ô
+    # trống: người đọc tin nó và thôi kiểm.
+    if not nets:
+        co = _cac_board(root)
+        raise EideError("E2000", f"Chưa tra được net nào cho board `{board}` — chưa chạy "
+                        "`extract.kicad_netlist`, hoặc tên board không khớp"
+                        + (f" (board đang có net: {', '.join(co)})" if co else "")
+                        + ". KHÔNG kết luận bo mạch sạch khi chưa đọc được nó.",
+                        exists=co, candidates=co, missing=[f"net:{board}"])
     du_kien = _hw_map_du_kien(params.get("plan") or {})
 
     xung_dot: list[dict[str, Any]] = []
@@ -341,6 +367,8 @@ def check_pins(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     xung_dot += _chan_giu(root, nets, du_kien)
     xung_dot += _trung_dia_chi(root, board, nets)
     xung_dot += _thieu_pullup(nets)
+    xung_dot += _qua_ap_mien_nguon(nets)
+    xung_dot += _reset_tha_noi(nets)
     return {"conflicts": xung_dot}
 
 
@@ -437,6 +465,73 @@ def _thieu_pullup(nets: dict[str, list[dict[str, str]]]) -> list[dict[str, Any]]
             ra.append({"pin": ten, "kind": "missing_pullup", "severity": "major",
                        "detail": f"net I2C `{ten}` không có điện trở kéo lên — bus sẽ im lặng, "
                                  "và triệu chứng giống hệt cảm biến hỏng"})
+    return ra
+
+
+#: Tên net gợi ý miền 5 V. Không đoán theo giá trị — netlist không mang điện áp, chỉ mang TÊN,
+#: và tên là thứ người thiết kế cố ý đặt.
+RE_NET_5V = re.compile(r"(^|[_+\-])(5V|5V0|VBUS|VUSB|VIN)($|[_\-])", re.I)
+
+#: Chân nguồn của một IC. `VDDIO`/`VCCIO` là chân nhạy nhất: nó cấp cho tầng đệm I/O và thường
+#: có trần thấp hơn cả `VDD` lõi.
+RE_CHAN_NGUON = re.compile(r"^(VDD|VDDIO|VCC|VCCIO|AVDD|VDDA)", re.I)
+
+#: Chân reset. `NRST`/`RESET#`/`~RESET` — cùng một thứ, ba cách viết.
+RE_CHAN_RESET = re.compile(r"(^|[_/])~?(N?RST|RESET)#?($|[_/])", re.I)
+
+
+def _qua_ap_mien_nguon(nets: dict[str, list[dict[str, str]]]) -> list[dict[str, Any]]:
+    """Chân nguồn của IC nằm trên net 5 V — [DEV-212].
+
+    Đây là lỗi đắt nhất trong bốn lỗi mẫu, vì nó **hỏng ngay lần cắm đầu tiên** và hỏng vĩnh
+    viễn: `VDDIO` của một cảm biến 3,6 V nối thẳng vào VBUS thì chip chết trước khi ai kịp đọc
+    một dòng log. Và nó là loại lỗi mắt người dễ bỏ qua nhất — trên sơ đồ, một dây nối tới
+    `VBUS` trông y hệt một dây nối tới `+3V3`.
+
+    KHÔNG đọc trị số điện áp từ đâu cả: netlist không mang điện áp, nó mang TÊN NET. Tên là thứ
+    người thiết kế cố ý đặt, nên `VBUS_5V` là một tuyên bố, không phải một phỏng đoán. Bộ ổn áp
+    thì được miễn — `VIN` của một LDO nằm trên 5 V là đúng việc của nó.
+    """
+    ra: list[dict[str, Any]] = []
+    for ten, nodes in sorted(nets.items()):
+        if not RE_NET_5V.search(ten):
+            continue
+        for n in nodes:
+            cn = (n.get("pinfunction") or "")
+            if not RE_CHAN_NGUON.match(cn):
+                continue
+            if cn.upper().startswith("VIN"):        # LDO/DC-DC: đầu vào ở 5 V là đúng
+                continue
+            ra.append({
+                "pin": f"{n.get('ref')}.{n.get('pin')}", "kind": "overvoltage",
+                "severity": "blocker",
+                "detail": f"chân `{cn}` của `{n.get('ref')}` nằm trên net `{ten}` — miền 5 V. "
+                          f"Chân nguồn của IC thường có trần 3,6 V; cấp 5 V là hỏng ngay lần "
+                          f"cắm đầu tiên. Kiểm datasheet, và nếu cần 5 V thì thêm bộ chuyển mức."})
+    return ra
+
+
+def _reset_tha_noi(nets: dict[str, list[dict[str, str]]]) -> list[dict[str, Any]]:
+    """Net reset chỉ có ĐÚNG MỘT nút — [DEV-212].
+
+    Một chân reset không có gì níu thì nó là một ăng-ten: board tự khởi động lại khi có nhiễu,
+    lúc có lúc không, và người ta đi tìm lỗi trong firmware suốt nhiều ngày. Đúng loại lỗi mà
+    TC037 mô tả — "thỉnh thoảng tự khởi động lại, không tái hiện được".
+
+    Một nút nghĩa là chỉ có chính chân MCU: không trở kéo lên, không tụ, không nút bấm.
+    """
+    ra: list[dict[str, Any]] = []
+    for ten, nodes in sorted(nets.items()):
+        co_reset = any(RE_CHAN_RESET.search(n.get("pinfunction") or "") for n in nodes) \
+            or RE_CHAN_RESET.search(ten)
+        if co_reset and len(nodes) == 1:
+            n = nodes[0]
+            ra.append({
+                "pin": f"{n.get('ref')}.{n.get('pin')}", "kind": "floating_reset",
+                "severity": "major",
+                "detail": f"net reset `{ten}` chỉ có một nút (`{n.get('ref')}.{n.get('pin')}`) "
+                          f"— không trở kéo lên, không tụ. Chân reset thả nổi là một ăng-ten: "
+                          f"board tự khởi động lại khi có nhiễu, lúc có lúc không."})
     return ra
 
 

@@ -51,7 +51,8 @@
  },
  "TC040": {
   "loi_cai_san": [],
-  "ghi_chu": "mạch đã sửa hết bốn lỗi của TC038 — tác tử báo LỖI ở đây là báo động giả"
+  "ghi_chu": "mạch đã sửa hết bốn lỗi của TC038 — tác tử báo LỖI ở đây là báo động giả",
+  "sua_23_09": "Bản đầu của chính bộ dữ liệu này SAI: `C4` pin 1 nằm trên CẢ `+3V3` lẫn `NRST` — một tụ không thể có một chân trên hai net. `board.check_pins` bắt được (`af_conflict`, blocker) ngay lần đầu chạy thật. Nếu không phát hiện thì TC040 — bài đo BÁO ĐỘNG GIẢ — sẽ đo trên một mạch không sạch, và mọi kết luận về tỉ lệ báo sai đều vô nghĩa. C4 nay chỉ thuộc NRST."
  },
  "TC039": {
   "dong": "doc_so_xung() — return so_xung;",

@@ -185,7 +185,7 @@ Tụ lọc 100 nF sát chân VDD.
       (node (ref "R1") (pin "1")) (node (ref "R2") (pin "1"))
       (node (ref "R3") (pin "1"))
       (node (ref "C1") (pin "1")) (node (ref "C2") (pin "1"))
-      (node (ref "C3") (pin "1")) (node (ref "C4") (pin "1")))
+      (node (ref "C3") (pin "1")))
     (net (code 2) (name "GND")
       (node (ref "U1") (pin "24") (pinfunction "VSS"))
       (node (ref "U2") (pin "4") (pinfunction "GND"))
@@ -208,8 +208,14 @@ Tụ lọc 100 nF sát chân VDD.
       (node (ref "R3") (pin "2"))
       (node (ref "C4") (pin "1")))))
 """)
-    dap_an["TC040"] = {"loi_cai_san": [], "ghi_chu": "mạch đã sửa hết bốn lỗi của TC038 — "
-                                                    "tác tử báo LỖI ở đây là báo động giả"}
+    dap_an["TC040"] = {
+        "loi_cai_san": [],
+        "ghi_chu": "mạch đã sửa hết bốn lỗi của TC038 — tác tử báo LỖI ở đây là báo động giả",
+        "sua_23_09": "Bản đầu của chính bộ dữ liệu này SAI: `C4` pin 1 nằm trên CẢ `+3V3` lẫn "
+                     "`NRST` — một tụ không thể có một chân trên hai net. `board.check_pins` "
+                     "bắt được (`af_conflict`, blocker) ngay lần đầu chạy thật. Nếu không phát "
+                     "hiện thì TC040 — bài đo BÁO ĐỘNG GIẢ — sẽ đo trên một mạch không sạch, "
+                     "và mọi kết luận về tỉ lệ báo sai đều vô nghĩa. C4 nay chỉ thuộc NRST."}
 
     # ---------------------------------------------------------------- TC039: race condition
     _ghi("code/dem_xung.c", """\

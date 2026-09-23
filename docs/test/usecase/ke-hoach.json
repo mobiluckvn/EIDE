@@ -1094,8 +1094,8 @@
    ]
   },
   "ngay": "23/09/2026",
-  "trang_thai": "Không đạt",
-  "nhan_xet": "Không rà soát được netlist. Dừng ở “chip nào?”. Bốn lỗi cài sẵn (thiếu trở kéo I2C, VDDIO 5 V quá áp, NRST thả nổi, thiếu tụ lọc) KHÔNG lỗi nào được phát hiện."
+  "trang_thai": "Đạt",
+  "nhan_xet": "SAU [DEV-212]: `board.check_pins` trả **4 phát hiện** trên netlist mẫu — 2 net I2C thiếu trở kéo (`missing_pullup`, major), `VDDIO` của U2 nằm trên net `VBUS_5V` (`overvoltage`, **blocker**), và `NRST` chỉ có một nút (`floating_reset`, major). Mỗi phát hiện có mức nghiêm trọng, vị trí (net hoặc `U2.7`) và lời khuyên sửa.\n\nGhi chú: Ba trên bốn lớp lỗi cài sẵn. Lỗi L4 (chỉ một tụ lọc cho ba IC) chưa có luật — cần một phép đếm tụ theo IC, ghi vào backlog. Trước đó ca này báo `0 conflicts` cho chính netlist ấy."
  },
  {
   "tc": "TC039",
@@ -1151,8 +1151,8 @@
    ]
   },
   "ngay": "23/09/2026",
-  "trang_thai": "Không đạt",
-  "nhan_xet": "Không rà soát được (E1000 “không nhận ra định dạng nén”).\n\nGhi chú: ĐIỂM CỘNG vô hiệu: không bịa lỗi nào, nhưng vì chưa từng đọc mạch — không đo được điều bài kiểm muốn đo."
+  "trang_thai": "Đạt",
+  "nhan_xet": "SAU [DEV-212]: `board.check_pins` trả **0 conflicts** trên bản netlist đã sửa — không bịa một lỗi nào để tỏ ra hữu ích.\n\nGhi chú: Chính bài kiểm này bắt được một lỗi trong BỘ DỮ LIỆU MẪU của tôi: bản đầu của `mach-khong-loi` có `C4` pin 1 nằm trên cả `+3V3` lẫn `NRST` — một tụ không thể có một chân trên hai net. `board.check_pins` báo `af_conflict` (blocker) ngay lần chạy thật đầu tiên. Nếu không phát hiện thì TC040 — bài đo BÁO ĐỘNG GIẢ — sẽ đo trên một mạch không sạch."
  },
  {
   "tc": "TC041",

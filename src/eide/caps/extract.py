@@ -2476,7 +2476,15 @@ def _netlist_xml(noi_dung: str) -> tuple[dict[str, dict[str, Any]], dict[str, li
     nets: dict[str, list[dict[str, str]]] = {}
     for n in goc.findall(".//nets/net"):
         ten = n.get("name") or f"Net-{n.get('code')}"
-        nets[ten] = [{"ref": nd.get("ref") or "", "pin": nd.get("pin") or ""}
+        # GIỮ `pinfunction`. [DEV-212]
+        #
+        # Netlist mang sẵn vai trò của từng chân (`VDD`, `VDDIO`, `NRST`, `PB7/I2C1_SDA`) và
+        # bản trước vứt nó đi, chỉ giữ `ref` + `pin`. Không có vai trò thì KHÔNG luật điện nào
+        # suy được gì — kể cả `_chan_hai_chuc_nang`, vốn mang đúng tên ấy. Đo 23/09/2026:
+        # `VDDIO` của SEN42 nối thẳng vào `VBUS_5V` không bị phát hiện, vì tới chỗ kiểm thì
+        # chỉ còn `{ref: U2, pin: 7}` — một cặp số không nói lên điều gì.
+        nets[ten] = [{"ref": nd.get("ref") or "", "pin": nd.get("pin") or "",
+                      "pinfunction": nd.get("pinfunction") or ""}
                      for nd in n.findall("node")]
     return parts, nets
 
@@ -2545,7 +2553,8 @@ def _netlist_sexp(noi_dung: str) -> tuple[dict[str, dict[str, Any]], dict[str, l
     for kh in _lay(goc, "nets"):
         for nt in _lay(kh, "net"):
             ten = _gia_tri(nt, "name") or f"Net-{_gia_tri(nt, 'code')}"
-            nets[ten] = [{"ref": _gia_tri(nd, "ref") or "", "pin": _gia_tri(nd, "pin") or ""}
+            nets[ten] = [{"ref": _gia_tri(nd, "ref") or "", "pin": _gia_tri(nd, "pin") or "",
+                          "pinfunction": _gia_tri(nd, "pinfunction") or ""}
                          for nd in _lay(nt, "node")]
     return parts, nets
 

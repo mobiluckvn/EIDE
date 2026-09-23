@@ -98,11 +98,14 @@ def test_doc_duoc_ca_hai_dang_netlist(du_an):
     parts, nets = doc_netlist(_netlist(root))
     assert set(parts) == {"U1", "U2", "R1", "R2"}
     assert parts["U1"]["mpn"] == "STM32F411CEU6"
-    assert nets["/I2C1_SCL"] == [{"ref": "U1", "pin": "42"}, {"ref": "U2", "pin": "4"},
-                                 {"ref": "R1", "pin": "1"}]
+    # So theo (ref, pin): từ [DEV-212] mỗi nút còn mang `pinfunction` — vai trò chân, thứ mọi
+    # luật điện cần. Khẳng định trên dict đầy đủ sẽ đỏ mỗi lần netlist mang thêm một trường.
+    assert [(n["ref"], n["pin"]) for n in nets["/I2C1_SCL"]] == [
+        ("U1", "42"), ("U2", "4"), ("R1", "1")]
 
     parts2, nets2 = doc_netlist(_netlist(root, NETLIST_XML, "robot.xml"))
-    assert parts2["U2"]["mpn"] == "BME280" and nets2["/SCL"] == [{"ref": "U2", "pin": "4"}]
+    assert parts2["U2"]["mpn"] == "BME280"
+    assert [(n["ref"], n["pin"]) for n in nets2["/SCL"]] == [("U2", "4")]
 
 
 def test_netlist_sinh_fact_net_va_package(du_an):
@@ -761,3 +764,84 @@ def test_bang_co_cau_chap_hanh_doc_tu_SPEC_khong_nhung_trong_ma(du_an, monkeypat
                         lambda: [{"id": "x", "name": "chỉ rơ-le", "patterns": ["RELAY"]}])
     assert m.mark_lab({**XAC_NHAN, "board": "i1"}, _ctx_nguoi(ctx)) == {"lab": True}, \
         "DRV8833 không còn trong bảng thì không được bắt nữa"
+
+
+# ---------- [DEV-212] Luật điện: bắt được lỗi thật, KHÔNG bịa lỗi trên mạch sạch
+
+def _nap_netlist(r, ctx, ten_tep: str) -> str:
+    from pathlib import Path as _P
+    f = _P("docs/test/usecase/du-lieu") / ten_tep
+    run = r.invoke("extract.kicad_netlist", {"file": str(f.resolve())}, ctx)
+    assert run.status == "done", run.error
+    return run.result["board_passport_id"]
+
+
+def test_bat_duoc_ba_lop_loi_dien_cai_san(du_an):
+    """Ba lớp lỗi điện trên netlist mẫu — [DEV-212].
+
+    Hợp đồng BOARD-02 đã ghi *"thiếu pull-up I2C"* trong danh sách quy tắc từ đầu; hai luật kia
+    (quá áp miền nguồn, reset thả nổi) thêm vào cùng tinh thần. Đây là những lỗi mà mắt người
+    dễ bỏ qua nhất: trên sơ đồ, một dây nối tới `VBUS` trông y hệt một dây nối tới `+3V3`.
+    """
+    r, ctx, _ = du_an
+    bid = _nap_netlist(r, ctx, "mach-co-loi.net")
+    kq = r.invoke("board.check_pins", {"board": bid}, ctx)
+    assert kq.status == "done", kq.error
+    loai = {x["kind"] for x in kq.result["conflicts"]}
+    assert "missing_pullup" in loai, "không thấy I2C thiếu trở kéo"
+    assert "overvoltage" in loai, "không thấy chân nguồn IC nằm trên net 5 V"
+    assert "floating_reset" in loai, "không thấy chân reset thả nổi"
+    qa = [x for x in kq.result["conflicts"] if x["kind"] == "overvoltage"]
+    assert qa[0]["severity"] == "blocker", "quá áp phải là blocker — hỏng ngay lần cắm đầu"
+
+
+def test_mach_SACH_thi_KHONG_bao_loi_nao(du_an):
+    """Nới luật để bắt được lỗi KHÔNG được đổi lấy báo động giả.
+
+    Một bộ rà soát báo lỗi trên mạch đúng thì người dùng thôi đọc nó — và khi ấy nó không còn
+    bảo vệ được gì. Đây là vế thứ hai, và là vế dễ quên.
+
+    Chính bài kiểm này đã bắt được một lỗi trong BỘ DỮ LIỆU MẪU: bản đầu của `mach-khong-loi`
+    có `C4` pin 1 nằm trên cả `+3V3` lẫn `NRST` — một tụ không thể có một chân trên hai net.
+    Nếu không phát hiện thì TC040 (đo báo động giả) sẽ đo trên một mạch không sạch.
+    """
+    r, ctx, _ = du_an
+    bid = _nap_netlist(r, ctx, "mach-khong-loi.net")
+    kq = r.invoke("board.check_pins", {"board": bid}, ctx)
+    assert kq.status == "done", kq.error
+    assert kq.result["conflicts"] == [], \
+        f"báo động giả trên mạch sạch: {[x['kind'] for x in kq.result['conflicts']]}"
+
+
+def test_KHONG_TRA_DUOC_NET_thi_bao_loi_chu_khong_noi_mach_sach(du_an):
+    """**Không có dữ liệu ≠ không có lỗi.** [DEV-212]
+
+    Trả `conflicts: []` khi chưa tra được net nào là nói "bo mạch này sạch" cho một bo mạch
+    chưa hề được đọc. Đo 23/09/2026: `check_pins` báo 0 xung đột cho netlist có bốn lỗi cài
+    sẵn, chỉ vì tên board truyền vào mang hậu tố `@1.0.0` còn fact ghi theo tên trần.
+
+    Đúng khuôn hỏng của [DEV-183] — một câu trả lời trấn an rút từ hư không nguy hiểm hơn một
+    ô trống, vì người đọc tin nó và thôi kiểm.
+    """
+    r, ctx, _ = du_an
+    kq = r.invoke("board.check_pins", {"board": "board-khong-ton-tai"}, ctx)
+    assert kq.status == "failed" and kq.error["eide_code"] == "E2000"
+    assert "KHÔNG kết luận bo mạch sạch" in kq.error["message"]
+
+
+def test_id_ho_chieu_va_ten_board_tra_ra_CUNG_MOT_bo_mach(du_an):
+    """`extract.kicad_netlist` trả `mach-co-loi@1.0.0`; fact ghi `board:mach-co-loi`."""
+    from eide.caps.board import doc_net
+    r, ctx, root = du_an
+    _nap_netlist(r, ctx, "mach-co-loi.net")
+    assert len(doc_net(root, "mach-co-loi@1.0.0")) == len(doc_net(root, "mach-co-loi")) > 0
+
+
+def test_netlist_GIU_vai_tro_chan(du_an):
+    """Không có `pinfunction` thì không luật điện nào suy được gì."""
+    from eide.caps.board import doc_net
+    r, ctx, root = du_an
+    _nap_netlist(r, ctx, "mach-co-loi.net")
+    nodes = doc_net(root, "mach-co-loi")["VBUS_5V"]
+    assert any(n.get("pinfunction") == "VDDIO" for n in nodes), \
+        f"vai trò chân bị vứt mất khi rút netlist: {nodes}"
