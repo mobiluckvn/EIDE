@@ -30,7 +30,7 @@
   },
   "ngay": "23/09/2026",
   "trang_thai": "Không đạt",
-  "nhan_xet": "Chỉ hỏi ĐÚNG MỘT câu, và là câu hỏi tham số của `env.check`: “Chip thuộc kiến trúc tập lệnh nào?”. Không hỏi câu nào trong sáu câu đề bài chờ (định dạng hệ thống tệp TV đọc được, dung lượng, tốc độ mạng, xem trong lúc copy, nguồn, ngân sách). Không đưa ra đặc tả để người dùng xác nhận.\n\nGhi chú: Câu nói của người dùng còn bị hiểu thành `project.create` và tạo thêm một dự án LỒNG trong dự án vừa tạo."
+  "nhan_xet": "SAU [DEV-203]: `env.check` không còn hỏi ISA khi câu đã nêu chip (suy qua `family_patterns`). Nhưng ca này vẫn không đạt vì lý do khác: tác tử không hỏi câu nào trong sáu câu đề bài chờ (định dạng hệ thống tệp TV đọc được, dung lượng, tốc độ mạng, xem trong lúc copy, nguồn, ngân sách) và không đưa đặc tả để xác nhận.\n\nGhi chú: Câu nói của người dùng còn bị hiểu thành `project.create` và tạo thêm một dự án LỒNG trong dự án vừa tạo."
  },
  {
   "tc": "TC002",
@@ -441,7 +441,7 @@
   },
   "ngay": "23/09/2026",
   "trang_thai": "Không đạt",
-  "nhan_xet": "Rút ra ba yêu cầu tốt (“biên dịch 0 lỗi”, “đảo PB5 chu kỳ 1 s ±5%”), nhưng rồi dừng ở `req.ground_hw` hỏi “chip nào?” — TRONG KHI câu người dùng đã ghi rõ ATmega328P. Không sinh mã, không biên dịch.\n\nGhi chú: Đây là bằng chứng rõ nhất của N1: tác tử hỏi lại đúng thứ người dùng vừa nói."
+  "nhan_xet": "SAU [DEV-203]: rút ra ba yêu cầu tốt rồi vẫn dừng ở `req.ground_hw` — NHƯNG câu hỏi nay mang sẵn câu trả lời: “Chưa ghim hộ chiếu chip — chip nào? **ATmega328P — anh vừa nói trong câu**”. Người dùng bấm một cái thay vì gõ lại thứ vừa nói. Vẫn chưa sinh mã và chưa biên dịch, nên chưa đạt tiêu chí của đề bài.\n\nGhi chú: Vì sao vẫn HỎI chứ không tự ghim: hộ chiếu là `ns.part@semver`, mà dự án chưa nhập datasheet nào cho ATmega328P. Ghép tên chip trần vào `passport` sẽ tra ra rỗng trong im lặng — đúng lỗi “câu trả lời sai tệ hơn ô trống” của [DEV-183]."
  },
  {
   "tc": "TC016",
@@ -533,7 +533,7 @@
   },
   "ngay": "23/09/2026",
   "trang_thai": "Không đạt",
-  "nhan_xet": "Không phát hiện thiếu toolchain ARM. Dừng ở “chip nào?” dù câu người dùng ghi STM32F103.\n\nGhi chú: ĐIỂM CỘNG: KHÔNG báo biên dịch thành công giả. (Bộ sàng máy báo nhầm “có dấu hiệu thành công” — đó là chữ trong một YÊU CẦU, không phải lời tuyên bố kết quả.)"
+  "nhan_xet": "SAU [DEV-203]: câu hỏi mang sẵn “STM32F103 — anh vừa nói trong câu”. Vẫn chưa phát hiện thiếu toolchain ARM vì chuỗi dừng trước `env.check`. KHÔNG báo biên dịch thành công giả.\n\nGhi chú: Phát hiện kèm theo: `STM32F103` là Cortex-M3 (`armv7-m`), mà kho chỉ có ba manifest ISA — `armv7e-m` (M4/M7 có FPU+DSP), `avr8`, `rv32imac`. Đây là KHOẢNG TRỐNG của sản phẩm. Nay khi chip đã nêu mà không manifest nào khớp, câu hỏi nói thẳng điều đó thay vì đưa ba lựa chọn đều sai — chọn `armv7e-m` cho M3 sẽ sinh mã mang lệnh chip không chạy được."
  },
  {
   "tc": "TC019",

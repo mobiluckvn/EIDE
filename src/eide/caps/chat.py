@@ -658,7 +658,7 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             # câu hỏi của chuỗi cũng đúng là loại ấy — đưa nó đi nơi khác là bắt người dùng nhớ
             # hai chỗ cho cùng một việc.
             muc_cho = cho[-1]
-            muc_cho.update(_ghi_cau_hoi_chuoi(root, run_id, nut, can_nguoi[nut.id]))
+            muc_cho.update(_ghi_cau_hoi_chuoi(root, run_id, nut, can_nguoi[nut.id], intent))
             if nut.on_ask == "wait":
                 break
             continue
@@ -830,7 +830,7 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
     con = {n["id"] for n in giu}
     ra = []
     for n in giu:
-        args = dict(_args_cho(n["cap"], intent, grounded, run_id))
+        args = dict(_args_cho(n["cap"], intent, grounded, run_id, ctx))
         args.update(n.get("args") or {})
         # `${_text}` và `${_path}` — CÂU GỐC và ĐƯỜNG DẪN người dùng vừa nói. [DEV-201/202]
         #
@@ -844,7 +844,7 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
         # liệu nào, còn "tham số này nhận câu gốc" là điều chỉ mẫu mới có quyền nói (DEV-121).
         goc = {"${_text}": str((intent or {}).get("_text") or ""),
                "${_path}": str(((intent or {}).get("slots") or {}).get("path") or "")}
-        san_co = _args_cho(n["cap"], intent, grounded, run_id)
+        san_co = _args_cho(n["cap"], intent, grounded, run_id, ctx)
         args = _thay_goc(args, goc, san_co)
         # Tham chiếu tới một nút ĐÃ BỊ BỎ là một tham chiếu không bao giờ giải được — và nó
         # sẽ giết cả chuỗi ở phép kiểm deterministic. Bỏ nó đi, để nút rơi về "thiếu tham số"
@@ -989,8 +989,69 @@ def _chuoi_tu_planner(intent: dict[str, Any], grounded: dict[str, Any],
     return nut
 
 
+def _trang_thai_du_an(ctx: Context | None) -> dict[str, Any]:
+    """Thứ dự án ĐANG MỞ đã biết — nguồn thứ ba của thứ tự giải tham số. [DEV-203]
+
+    Trước bản này `_args_cho` chỉ đọc slots của ý định và kết quả grounding, nên một tham số mà
+    câu trả lời đang nằm ngay trong dự án đang mở vẫn bị đem đi hỏi người. Đo 23/09/2026:
+
+    * TC065 — người dùng mở một dự án rồi gõ *"tiếp tục dự án này, trước đó đã chốt gì?"*; tác
+      tử hỏi ngược **"id hoặc đường dẫn"** của chính dự án đang mở.
+    * TC001 — `env.check` hỏi *"chip thuộc kiến trúc tập lệnh nào?"* trong khi `constraints.yaml`
+      giữ sẵn `target.isa` ngay khi chip được ghim.
+
+    Một câu hỏi mà câu trả lời nằm trong trạng thái của chính phiên làm việc là một câu hỏi
+    không được phép hỏi: nó dạy người dùng rằng tác tử không nhớ gì.
+    """
+    if ctx is None or not getattr(ctx, "project_dir", None):
+        return {}
+    goc = Path(ctx.project_dir).expanduser()
+    f = goc / EIDE_DIR / "constraints.yaml"
+    if not f.is_dir() and not f.exists():
+        return {}
+    try:
+        d = yaml.safe_load(f.read_text(encoding="utf-8")) or {} if f.exists() else {}
+    except Exception:                                            # noqa: BLE001
+        return {}
+    tg = dict(d.get("target") or {})
+    ra: dict[str, Any] = {}
+    if (pid := (d.get("project") or {}).get("id")) or goc.name:
+        ra["project"] = pid or goc.name
+    for k in ("chip", "board", "isa"):
+        if tg.get(k):
+            ra[k] = tg[k]
+    # `passport` = CHIP ĐÃ GHIM KÈM PHIÊN BẢN (`st.stm32f411ce@1.2.0`), thứ `project.set_target`
+    # ghi vào `target.chip`. Ghim phiên bản chính là giá trị của PROJECT-06; một tham số tên
+    # `passport` nhận tên chip trần sẽ mất đúng phần ấy.
+    if tg.get("chip"):
+        ra["passport"] = tg["chip"]
+    return ra
+
+
+def _suy_tu_loi_nguoi(intent: dict[str, Any] | None) -> dict[str, Any]:
+    """Thứ SUY RA ĐƯỢC từ chính câu người dùng vừa nói — nguồn thứ hai. [DEV-203]
+
+    Chỉ một phép suy, và nó có trong kho chứ không do tôi nghĩ ra: **chip → ISA** qua
+    `family_patterns` của các manifest `docs/spec/isa/` (PROJECT-06, `_isa_tu_chip`). Người gõ
+    *"viết firmware nhấp nháy LED cho ATmega328P"* thì ISA là `avr8`, và hỏi lại *"chip thuộc
+    kiến trúc tập lệnh nào?"* là hỏi một điều vừa được trả lời.
+
+    **Cố ý KHÔNG suy `passport` từ `chip`.** Hộ chiếu là `ns.part@semver`; một tên chip trần
+    nhét vào đó sẽ tra ra RỖNG trong im lặng, và một câu trả lời sai đắt hơn một ô trống — đúng
+    bài học của cột "✓ có ngưỡng đo" hiện cho mọi yêu cầu ở [DEV-183]. Chip người dùng nêu vì
+    thế đi đường khác: nó thành một LỰA CHỌN trong câu hỏi, để người xác nhận (`_lua_chon`).
+    """
+    slots = (intent or {}).get("slots") or {}
+    ra: dict[str, Any] = {}
+    if (chip := slots.get("chip")):
+        from eide.caps.project import _isa_tu_chip
+        if (isa := _isa_tu_chip(str(chip))):
+            ra["isa"] = isa
+    return ra
+
+
 def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any],
-              run_id: str = "") -> dict[str, Any]:
+              run_id: str = "", ctx: Context | None = None) -> dict[str, Any]:
     """Ghép tham số cho một nút từ slots của ý định và kết quả grounding.
 
     Chỉ lấy khóa CÓ TRONG input_schema của năng lực: thừa một khóa là E1000 ở Router, và phép
@@ -1021,7 +1082,12 @@ def _args_cho(cap: str, intent: dict[str, Any], grounded: dict[str, Any],
     # không khai `text` thì không nhận gì.
     if (van := (intent or {}).get("_text")):
         nguon["text"] = van
-    nguon.update({**(grounded or {}), **((intent or {}).get("slots") or {})})
+    # THỨ TỰ GIẢI THAM SỐ — [DEV-203]. Hỏi người là bước CUỐI, không phải bước đầu:
+    #   ① trạng thái dự án đang mở  ② kết quả grounding  ③ slots của ý định  ④ mới hỏi người.
+    # Slots đứng sau cùng vì nó là thứ người VỪA NÓI: một chip nêu trong câu phải thắng chip
+    # ghim từ tuần trước, nếu không thì đổi mục tiêu bằng lời nói sẽ không có tác dụng.
+    nguon.update({**_trang_thai_du_an(ctx), **_suy_tu_loi_nguoi(intent),
+                  **(grounded or {}), **((intent or {}).get("slots") or {})})
     ra: dict[str, Any] = {}
     for k, v in nguon.items():
         if k not in cho_phep or v is None:
@@ -1227,7 +1293,7 @@ def _lua_chon(khoa: str, root: Path | None, tt: dict[str, Any]) -> list[dict[str
 
 
 def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
-                       thieu: list[str]) -> dict[str, Any]:
+                       thieu: list[str], intent: dict[str, Any] | None = None) -> dict[str, Any]:
     """Một nút chờ người → một dòng trong `clarification`, hiện ở tab S9. [DEV-160]
 
     Câu hỏi viết bằng TIẾNG NGƯỜI chứ không dán tên tham số: "cần `reqset_ids`, `passport`" là
@@ -1246,6 +1312,25 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
     if nut.cap in reg:
         tt = (reg.get(nut.cap).spec.input_schema or {}).get("properties") or {}
 
+    def _lc(k: str) -> list[dict[str, str]]:
+        """Lựa chọn cho một ô trống — kể cả thứ NGƯỜI VỪA NÓI. [DEV-203]
+
+        `_lua_chon` suy từ hợp đồng, manifest ISA và bảng passport của dự án — ba nguồn chắc
+        chắn. Nó không biết một nguồn thứ tư: chính câu người dùng vừa gõ. Đo 23/09/2026,
+        TC015: người gõ *"viết firmware … cho ATmega328P"*, tác tử hỏi lại *"Chưa ghim hộ
+        chiếu chip — chip nào?"* với danh sách trống.
+
+        Chip người dùng nêu vào đây dưới dạng LỰA CHỌN chứ không bị ghép thẳng vào `passport`:
+        hộ chiếu là `ns.part@semver`, một tên trần nhét vào sẽ tra ra rỗng trong im lặng. Đưa
+        nó ra cho người XÁC NHẬN thì con người là phép kiểm — và họ chỉ phải bấm một cái thay
+        vì gõ lại thứ vừa nói.
+        """
+        ds = _lua_chon(k, root, tt)
+        chip = str(((intent or {}).get("slots") or {}).get("chip") or "").strip()
+        if chip and k in ("passport", "chip") and not any(x["gia_tri"] == chip for x in ds):
+            ds = [{"gia_tri": chip, "giai_thich": "anh vừa nói trong câu"}, *ds]
+        return ds
+
     def _ta(k: str) -> str:
         t = tt.get(k) if isinstance(tt.get(k), dict) else {}
         # [DEV-181] Thứ tự: câu hỏi TIẾNG NGƯỜI → mô tả hợp đồng → tên trần.
@@ -1256,7 +1341,18 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
         # tham số hay hỏi; tên trần vẫn giữ làm đường lui, vì bịa một lời giải thích còn tệ hơn.
         hoi = HOI_BANG_TIENG_NGUOI.get(k) or t.get("description")
         cau = f"{hoi} (`{k}`)" if hoi else f"`{k}`"
-        lc = _lua_chon(k, root, tt)
+        # [DEV-203] Chip đã nêu mà không manifest ISA nào khớp thì đó là một KHOẢNG TRỐNG của
+        # sản phẩm, không phải một câu hỏi. Đo: `STM32F103` là Cortex-M3 (`armv7-m`), trong khi
+        # kho chỉ có `armv7e-m` (M4/M7 có FPU+DSP), `avr8`, `rv32imac`. Đưa ba lựa chọn ấy ra
+        # là mời người dùng chọn một ISA sai, rồi mã sinh ra mang lệnh chip không chạy được.
+        if k == "isa":
+            chip = str(((intent or {}).get("slots") or {}).get("chip") or "").strip()
+            if chip:
+                from eide.caps.project import _isa_tu_chip
+                if not _isa_tu_chip(chip):
+                    cau += (f"\n   Lưu ý: `{chip}` không khớp manifest ISA nào EIDE đang có "
+                            f"(armv7e-m, avr8, rv32imac) — chip này chưa được hỗ trợ.")
+        lc = _lc(k)
         if lc:
             cau += "\n   Chọn một: " + "; ".join(
                 f"{x['gia_tri']}" + (f" — {x['giai_thich']}" if x["giai_thich"] else "")
@@ -1288,7 +1384,7 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
         "truong": [{"khoa": k,
                     "hoi": HOI_BANG_TIENG_NGUOI.get(k)
                            or (tt.get(k) or {}).get("description") or k,
-                    "lua_chon": _lua_chon(k, root, tt)} for k in thieu],
+                    "lua_chon": _lc(k)} for k in thieu],
     }
 
 

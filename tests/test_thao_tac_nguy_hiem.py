@@ -363,3 +363,64 @@ def test_cau_co_duong_dan_tep_KHONG_con_di_qua_archive_list():
         nhap = {n["id"] for n in nut if n["cap"].startswith("ingest.")}
         keo = [n["id"] for n in nut if n.get("when") in nhap]
         assert not keo, f"{ten}: {keo} phụ thuộc nút nhập tệp — câu không kèm tệp sẽ chết theo"
+
+
+# ─────────────────────────────── BB4 — hỏi người là bước CUỐI, không phải bước đầu
+
+def test_isa_suy_duoc_tu_chip_nguoi_dung_vua_noi():
+    """Người gõ "… cho ATmega328P" thì ISA là `avr8` — hỏi lại là hỏi điều vừa được trả lời.
+
+    Phép suy này CÓ TRONG KHO (`family_patterns` của `docs/spec/isa/`, PROJECT-06), không do
+    mã tự nghĩ ra. Đo 23/09/2026 trên TC001/TC015: tác tử hỏi *"Chip thuộc kiến trúc tập lệnh
+    nào?"* ngay sau một câu đã nêu tên chip.
+    """
+    from eide.caps.chat import _suy_tu_loi_nguoi
+    assert _suy_tu_loi_nguoi({"slots": {"chip": "ATmega328P"}}) == {"isa": "avr8"}
+    assert _suy_tu_loi_nguoi({"slots": {"chip": "ESP32-C3"}}) == {"isa": "rv32imac"}
+    assert _suy_tu_loi_nguoi({"slots": {}}) == {}
+
+
+def test_KHONG_suy_passport_tu_ten_chip_tran():
+    """Hộ chiếu là `ns.part@semver`; tên trần nhét vào sẽ tra ra RỖNG trong im lặng.
+
+    Một câu trả lời sai đắt hơn một ô trống — bài học của cột "✓ có ngưỡng đo" hiện cho MỌI
+    yêu cầu ở [DEV-183]. Chip người dùng nêu đi đường khác: thành lựa chọn để người xác nhận.
+    """
+    from eide.caps.chat import _suy_tu_loi_nguoi
+    assert "passport" not in _suy_tu_loi_nguoi({"slots": {"chip": "ATmega328P"}})
+
+
+def test_trang_thai_du_an_la_nguon_tra_loi_chu_khong_phai_cau_hoi(tmp_path):
+    """TC065: mở một dự án rồi hỏi "tiếp tục dự án này" — tác tử hỏi ngược "id hoặc đường dẫn".
+
+    Câu trả lời nằm trong chính phiên làm việc. Một câu hỏi như thế dạy người dùng rằng tác tử
+    không nhớ gì.
+    """
+    import yaml as _yaml
+
+    from eide.caps.chat import _trang_thai_du_an
+    from eide.caps.project import EIDE_DIR
+    from eide_core.router import Context
+
+    goc = tmp_path / "du-an-x"
+    (goc / EIDE_DIR).mkdir(parents=True)
+    (goc / EIDE_DIR / "constraints.yaml").write_text(_yaml.safe_dump(
+        {"project": {"id": "du-an-x"}, "target": {"chip": "at.atmega328p@1.0.0",
+                                                  "isa": "avr8", "board": None}}),
+        encoding="utf-8")
+    ra = _trang_thai_du_an(Context(project_dir=goc))
+    assert ra["project"] == "du-an-x"
+    assert ra["isa"] == "avr8"
+    assert ra["passport"] == "at.atmega328p@1.0.0", "hộ chiếu phải giữ PHIÊN BẢN đã ghim"
+    assert _trang_thai_du_an(None) == {}
+
+
+def test_chip_khong_co_manifest_ISA_thi_NOI_RA_chu_khong_dua_thuc_don_sai():
+    """`STM32F103` là Cortex-M3 (`armv7-m`); kho chỉ có `armv7e-m` (M4/M7 có FPU+DSP).
+
+    Đưa ba lựa chọn hiện có ra là mời người dùng chọn một ISA sai, rồi mã sinh ra mang lệnh
+    chip không chạy được. Đây là khoảng trống của sản phẩm, không phải một câu hỏi.
+    """
+    from eide.caps.project import _isa_tu_chip
+    assert _isa_tu_chip("STM32F103") is None
+    assert _isa_tu_chip("STM32F411CE") == "armv7e-m"

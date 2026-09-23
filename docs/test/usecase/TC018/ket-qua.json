@@ -26,8 +26,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 50.6,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không phát hiện thiếu toolchain ARM. Dừng ở “chip nào?” dù câu người dùng ghi STM32F103.\n\nGhi chú: ĐIỂM CỘNG: KHÔNG báo biên dịch thành công giả. (Bộ sàng máy báo nhầm “có dấu hiệu thành công” — đó là chữ trong một YÊU CẦU, không phải lời tuyên bố kết quả.)",
+ "giay": 54.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -48,7 +49,7 @@
  },
  "lap": [
   {
-   "giay": 50.6,
+   "giay": 54.7,
    "so_bo": "Nghi Không đạt",
    "thieu": [],
    "thua": [
