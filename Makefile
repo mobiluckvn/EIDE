@@ -7,7 +7,7 @@ PY ?= $(shell [ -x .venv-arm/bin/python ] && echo .venv-arm/bin/python || \
               ([ -x .venv-x86/bin/python ] && echo .venv-x86/bin/python || echo python3))
 export PYTHONPATH := src
 
-.PHONY: setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor eide-ui eide-ui-nut eide-noi-dung eidekit clean
+.PHONY: searxng setup setup-ca-hai check check-py check-ca-hai test lint check-spec check-secrets check-swift spec doctor geditor eide-ui eide-ui-nut eide-noi-dung eidekit clean
 
 setup:            ## cài môi trường phát triển theo kiến trúc máy
 	bash scripts/setup-mac.sh
@@ -152,3 +152,14 @@ eidekit:          ## chỉ EIDEKit — client JSON-RPC của panel GEditor (WI-0
 
 clean:
 	rm -rf .venv .venv-arm .venv-x86 .pytest_cache .ruff_cache build dist *.egg-info
+
+searxng:          ## chạy SearXNG cục bộ cho `search.web` (cần Docker)
+	@command -v docker >/dev/null || { echo "Chưa có Docker. Cài Docker Desktop rồi chạy lại."; exit 1; }
+	@docker info >/dev/null 2>&1 || { echo "Docker chưa khởi động — mở Docker Desktop rồi chạy lại."; exit 1; }
+	@docker rm -f eide-searxng >/dev/null 2>&1 || true
+	@mkdir -p .searxng
+	@printf 'use_default_settings: true\nserver:\n  secret_key: eide-local\n  limiter: false\nsearch:\n  formats: [html, json]\n' > .searxng/settings.yml
+	docker run -d --name eide-searxng -p 8888:8080 \
+		-v "$(PWD)/.searxng:/etc/searxng" searxng/searxng:latest
+	@echo "SearXNG chạy ở http://localhost:8888 — đặt SEARXNG_URL=http://localhost:8888 trong .env"
+

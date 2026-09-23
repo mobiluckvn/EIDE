@@ -360,10 +360,10 @@
   "nhom": "N1 — hỏi tham số năng lực thay vì hỏi bài toán (kể cả hỏi lại thứ người dùng vừa nói)"
  },
  "TC061": {
-  "trang_thai": "Không đạt",
-  "ket_qua": "Không xuất được hồ sơ sản xuất.",
-  "ghi_chu": "EIDE KHÔNG có năng lực layout PCB/Gerber/DRC nào trong 245 năng lực — đây là khoảng trống của sản phẩm, không phải lỗi lượt chạy.",
-  "nhom": "N9 — thiếu năng lực (sản phẩm chưa có phần này)"
+  "trang_thai": "Bỏ qua",
+  "nhom": "",
+  "ket_qua": "NGOÀI PHẠM VI v1.3 — chủ sản phẩm chốt 24/09/2026: phần PCB (bố trí mạch in, Gerber, drill, file gắp đặt, DRC) chưa làm trong sản phẩm này.",
+  "ghi_chu": "Đổi nhãn từ “Không đạt” sang “Bỏ qua”: đây không phải lỗi, đây là thứ chưa định làm. Gọi một khoảng trống phạm vi là lỗi thì bảng kết quả nói sai về sản phẩm."
  },
  "TC062": {
   "trang_thai": "Không đạt",
@@ -420,15 +420,15 @@
   "nhom": "N4 — không có cửa chặn an toàn/pháp lý ở mức NỘI DUNG yêu cầu"
  },
  "TC071": {
-  "trang_thai": "Bị chặn",
-  "ket_qua": "Cần nhiều tài khoản người dùng có vai trò khác nhau.",
-  "ghi_chu": "EIDE không có khái niệm tài khoản hay vai trò — đây là KHOẢNG TRỐNG CỦA SẢN PHẨM, không phải thiếu sót của môi trường kiểm thử.",
-  "nhom": "N9 — thiếu năng lực (sản phẩm chưa có phần này)"
+  "trang_thai": "Bỏ qua",
+  "nhom": "",
+  "ket_qua": "NGOÀI PHẠM VI v1.3 — chủ sản phẩm chốt 24/09/2026: EIDE là ứng dụng một người trên máy cá nhân, không có khái niệm tài khoản hay vai trò.",
+  "ghi_chu": "Trước đó ghi “Bị chặn (cần nhiều tài khoản)” — sai loại: không phải môi trường kiểm thử thiếu, mà là sản phẩm cố ý không có phần ấy."
  },
  "TC072": {
   "trang_thai": "Không đạt",
   "ket_qua": "Không báo lỗi mạng. `archive.list` hỏng E2000 trên đường dẫn bịa từ câu người dùng — người dùng nhận được một lỗi TỆP cho một việc TÌM MẠNG.",
-  "ghi_chu": "",
+  "ghi_chu": " CHỜ CẤU HÌNH: `search.web` cần một máy chủ SearXNG; chủ sản phẩm chốt dùng SearXNG nhưng tạm hoãn dựng. `make searxng` đã sẵn sàng.",
   "nhom": "N3 — câu của người dùng bị biến thành ĐƯỜNG DẪN TỆP rồi archive.list báo không có"
  },
  "TC073": {

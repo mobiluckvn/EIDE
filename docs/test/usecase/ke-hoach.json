@@ -1743,8 +1743,8 @@
    ]
   },
   "ngay": "23/09/2026",
-  "trang_thai": "Không đạt",
-  "nhan_xet": "Không xuất được hồ sơ sản xuất.\n\nGhi chú: EIDE KHÔNG có năng lực layout PCB/Gerber/DRC nào trong 245 năng lực — đây là khoảng trống của sản phẩm, không phải lỗi lượt chạy."
+  "trang_thai": "Bỏ qua",
+  "nhan_xet": "NGOÀI PHẠM VI v1.3 — chủ sản phẩm chốt 24/09/2026: phần PCB (bố trí mạch in, Gerber, drill, file gắp đặt, DRC) chưa làm trong sản phẩm này.\n\nGhi chú: Đổi nhãn từ “Không đạt” sang “Bỏ qua”: đây không phải lỗi, đây là thứ chưa định làm. Gọi một khoảng trống phạm vi là lỗi thì bảng kết quả nói sai về sản phẩm."
  },
  {
   "tc": "TC062",
@@ -2015,8 +2015,8 @@
   "cach_lam": null,
   "dau_hieu": {},
   "ngay": "23/09/2026",
-  "trang_thai": "Bị chặn",
-  "nhan_xet": "Cần nhiều tài khoản người dùng có vai trò khác nhau.\n\nGhi chú: EIDE không có khái niệm tài khoản hay vai trò — đây là KHOẢNG TRỐNG CỦA SẢN PHẨM, không phải thiếu sót của môi trường kiểm thử."
+  "trang_thai": "Bỏ qua",
+  "nhan_xet": "NGOÀI PHẠM VI v1.3 — chủ sản phẩm chốt 24/09/2026: EIDE là ứng dụng một người trên máy cá nhân, không có khái niệm tài khoản hay vai trò.\n\nGhi chú: Trước đó ghi “Bị chặn (cần nhiều tài khoản)” — sai loại: không phải môi trường kiểm thử thiếu, mà là sản phẩm cố ý không có phần ấy."
  },
  {
   "tc": "TC072",
@@ -2047,7 +2047,7 @@
   },
   "ngay": "23/09/2026",
   "trang_thai": "Không đạt",
-  "nhan_xet": "Không báo lỗi mạng. `archive.list` hỏng E2000 trên đường dẫn bịa từ câu người dùng — người dùng nhận được một lỗi TỆP cho một việc TÌM MẠNG."
+  "nhan_xet": "Không báo lỗi mạng. `archive.list` hỏng E2000 trên đường dẫn bịa từ câu người dùng — người dùng nhận được một lỗi TỆP cho một việc TÌM MẠNG.\n\nGhi chú:  CHỜ CẤU HÌNH: `search.web` cần một máy chủ SearXNG; chủ sản phẩm chốt dùng SearXNG nhưng tạm hoãn dựng. `make searxng` đã sẵn sàng."
  },
  {
   "tc": "TC073",
