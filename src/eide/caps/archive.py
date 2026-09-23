@@ -129,6 +129,36 @@ def classify(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     return {"classification": ra}
 
 
+#: Phần mở rộng → năng lực đúng để đọc nó. Chỉ những loại EIDE THẬT SỰ có bộ rút trích.
+_NEN_DUNG: dict[str, str] = {
+    ".net": "extract.kicad_netlist", ".kicad_net": "extract.kicad_netlist",
+    ".svd": "extract.svd", ".atdf": "extract.atdf", ".edc": "extract.edc",
+    ".h": "extract.header_c", ".c": "extract.header_c",
+    ".pdf": "extract.pdf_layout", ".csv": "extract.bom",
+    ".md": "ingest.index_text", ".txt": "ingest.index_text",
+    ".png": "extract.image_schematic", ".jpg": "extract.image_schematic",
+    ".dts": "extract.dt_binding", ".dtsi": "extract.dt_binding",
+}
+
+
+def _khong_phai_kho_nen(p: Path) -> str:
+    """Nói tệp này KHÔNG PHẢI kho nén, và chỉ đúng chỗ nên đi. [DEV-210]
+
+    Câu cũ — *"Không nhận ra định dạng nén của mach-hong.net"* — đúng về mặt kỹ thuật và sai
+    về mặt hướng dẫn: người dùng vừa gọi tệp ấy là NETLIST, và câu trả lời nói về nén. Họ sẽ
+    đi tìm xem mình nén sai kiểu gì, trong khi việc cần làm là mở nó bằng bộ đọc netlist.
+
+    Đo 23/09/2026 trên TC026 (tệp netlist cố ý làm hỏng): đề bài chờ *"báo lỗi cụ thể"*, và
+    một câu lỗi chỉ sai hướng thì tốn thời gian người đọc để đi tới một chỗ không có gì —
+    cùng bài học với [DEV-202].
+    """
+    nl = _NEN_DUNG.get(p.suffix.lower())
+    if nl:
+        return (f"`{p.name}` không phải kho nén — đây là tệp `{p.suffix}`, đọc bằng `{nl}`. "
+                f"(Nếu anh chờ một kho nén thì tệp này có thể đã hỏng.)")
+    return f"Không nhận ra định dạng nén của {p.name}"
+
+
 def _nhan_dang(p: Path) -> tuple[str, float, str]:
     """Chữ ký nội dung TRƯỚC, phần mở rộng sau — thứ tự của bước 1."""
     if not p.exists():
@@ -459,7 +489,7 @@ def _liet_ke(p: Path, sau: int, muc: int) -> list[dict[str, Any]]:
         return _liet_ke_zip(p, sau, muc)
     if dd in ("tar", "gz", "xz", "bz2"):
         return _liet_ke_tar(p, sau, muc)
-    raise EideError("E1000", f"Không nhận ra định dạng nén của {p.name}", file=str(p))
+    raise EideError("E1000", _khong_phai_kho_nen(p), file=str(p))
 
 
 def _muc(ten: str, kt: int, nen: int, muc: int) -> dict[str, Any]:
@@ -627,7 +657,7 @@ def _giai_nen(p: Path, dich: Path, gh: dict[str, Any], loc: list[str] | None,
         raise EideError("E4001", f"Giải nén {dd} cần `{exe}` — chạy `eide env install {goi}`",
                         tool=exe, package=goi)
     else:
-        raise EideError("E1000", f"Không nhận ra định dạng nén của {p.name}", file=str(p))
+        raise EideError("E1000", _khong_phai_kho_nen(p), file=str(p))
 
 
 def _giai_zip(p: Path, dich: Path, gh: dict[str, Any], loc: list[str] | None,

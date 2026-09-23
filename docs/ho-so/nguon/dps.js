@@ -499,9 +499,26 @@ const CHUOI_NUT = {
     ['n5', 'req.acceptance', 'n2', 'parallel', { reqset_ids: '${n2.reqset[*].id}' }],
     ['n6', 'chat.report_back', 'n5'],
   ],
+  // [DEV-210] Ba nút `archive.*` mang `skip`, và một đường NHẬP TỆP THƯỜNG chạy song song.
+  //
+  // Z-07 là quy trình "dự án mới từ ZIP", nên nút đầu là `archive.list`. Nhưng `knowledge.build`
+  // cũng là ý định của câu *"đọc netlist /…/mach-hong.net và liệt kê linh kiện"* — một TỆP
+  // THƯỜNG. Đo 23/09/2026 trên TC026: `✖ archive.list E1000: Không nhận ra định dạng nén của
+  // mach-hong.net`. Câu lỗi ấy có báo lỗi, nhưng báo SAI LÝ DO — tệp ấy hỏng/cụt, không phải
+  // sai định dạng nén — và nó chặn luôn `ingest.*` phía sau vì chúng treo vào `archive.unpack`.
+  //
+  // `n2b` đứng độc lập, không ai phụ thuộc nó và nó không phụ thuộc ai: kho nén thì đường
+  // `archive.*` lo, tệp thường thì đường này lo, và không đường nào giết đường kia.
+  //
+  // ĐÚNG MỘT nút thêm vào, không hai. Z-07 đã 23 nút và `chain.TRAN_NUT` là 24 ([DEV-179]);
+  // thêm cả `ingest.classify` nữa là 25 và `test_moi_mau_chuoi_deu_vua_NGUONG_MAC_DINH` đỏ.
+  // Nới trần để nhét vừa thứ mình vừa viết là đổi thước cho vừa vật — `n4` đã classify rồi,
+  // còn thứ làm cho một tệp thường TRẢ LỜI ĐƯỢC là `index_text`.
   'Dự án mới từ zip (Z-07)': [
-    ['n1', 'project.create'], ['n2', 'archive.list', 'n1'],
-    ['n3', 'archive.unpack', 'n2'], ['n4', 'ingest.classify', 'n3'],
+    ['n1', 'project.create'],
+    ['n2', 'archive.list', 'n1', 'skip'],
+    ['n2b', 'ingest.index_text', null, 'skip', { files: ['${_path}'] }],
+    ['n3', 'archive.unpack', 'n2', 'skip'], ['n4', 'ingest.classify', 'n3', 'skip'],
     ['n5', 'ingest.hash_dedupe', 'n4'], ['n6', 'extract.svd', 'n5', 'skip'],
     ['n7', 'extract.atdf', 'n5', 'skip'], ['n8', 'extract.pdf_layout', 'n5', 'skip'],
     ['n9', 'extract.pdf_register_map', 'n8', 'skip'], ['n10', 'passport.import', 'n6'],

@@ -165,21 +165,32 @@
     "id": "n2",
     "cap": "archive.list",
     "when": "n1",
-    "on_ask": "wait",
+    "on_ask": "skip",
     "args": {}
+   },
+   {
+    "id": "n2b",
+    "cap": "ingest.index_text",
+    "when": null,
+    "on_ask": "skip",
+    "args": {
+     "files": [
+      "${_path}"
+     ]
+    }
    },
    {
     "id": "n3",
     "cap": "archive.unpack",
     "when": "n2",
-    "on_ask": "wait",
+    "on_ask": "skip",
     "args": {}
    },
    {
     "id": "n4",
     "cap": "ingest.classify",
     "when": "n3",
-    "on_ask": "wait",
+    "on_ask": "skip",
     "args": {}
    },
    {

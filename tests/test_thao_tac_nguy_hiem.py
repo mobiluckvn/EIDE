@@ -600,3 +600,40 @@ def test_nut_TUY_CHON_thieu_tham_so_thi_BO_chu_khong_hoi(daemon_du_an, monkeypat
     cho = [x["cap"] for x in (ra.get("waiting") or [])]
     assert "ingest.index_text" not in cho, \
         f"nút tuỳ chọn vẫn hỏi người: {cho}"
+
+
+def test_tep_KHONG_PHAI_kho_nen_thi_chi_dung_nang_luc_doc_no():
+    """Câu lỗi phải chỉ đúng chỗ, không chỉ đúng sự thật. [DEV-210]
+
+    Câu cũ — *"Không nhận ra định dạng nén của mach-hong.net"* — đúng về kỹ thuật và sai về
+    hướng dẫn: người dùng vừa gọi tệp ấy là NETLIST, và câu trả lời nói về NÉN. Họ đi tìm xem
+    mình nén sai kiểu gì, trong khi việc cần làm là mở nó bằng bộ đọc netlist.
+
+    Một câu lỗi chỉ sai hướng tốn thời gian người đọc để đi tới một chỗ không có gì — cùng bài
+    học với [DEV-202] (`view.rag_ask` bảo chạy lại thứ vừa chạy xong).
+    """
+    from pathlib import Path as _P
+
+    from eide.caps.archive import _khong_phai_kho_nen
+    from eide_core.registry import get_registry as _reg
+
+    r = _reg()
+    for ten, mong in [("mach-hong.net", "extract.kicad_netlist"),
+                      ("dem_xung.c", "extract.header_c"),
+                      ("ghi-chu.md", "ingest.index_text")]:
+        v = _khong_phai_kho_nen(_P(ten))
+        assert "không phải kho nén" in v, f"{ten}: vẫn nói về định dạng nén"
+        assert mong in v, f"{ten}: không chỉ tới `{mong}`"
+        assert mong in r, f"`{mong}` không có trong danh mục — lời chỉ dẫn trỏ vào hư không"
+    # Đuôi lạ thì KHÔNG bịa một năng lực: giữ câu cũ.
+    assert "Không nhận ra định dạng nén" in _khong_phai_kho_nen(_P("x.PcbDoc"))
+
+
+def test_moi_nang_luc_duoc_CHI_TOI_deu_co_that():
+    """Bảng gợi ý trỏ vào một năng lực không tồn tại là lời khuyên dẫn người dùng vào ngõ cụt."""
+    from eide.caps.archive import _NEN_DUNG
+    from eide_core.registry import get_registry as _reg
+
+    r = _reg()
+    la = sorted({v for v in _NEN_DUNG.values() if v not in r})
+    assert not la, f"gợi ý trỏ tới năng lực không có: {la}"

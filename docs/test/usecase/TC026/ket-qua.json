@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Có báo lỗi nhưng sai lý do (“không nhận ra định dạng nén”) thay vì “tệp cụt/hỏng”. \n\nGhi chú: ĐIỂM CỘNG: không suy đoán phần thiếu.",
- "giay": 22.7,
+ "giay": 18.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -46,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 22.7,
+   "giay": 18.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []
