@@ -118,8 +118,8 @@
    ]
   },
   "ngay": "23/09/2026",
-  "trang_thai": "Đạt",
-  "nhan_xet": "Không bịa yêu cầu, không sinh thiết kế nào. Có đặt câu hỏi làm rõ VỀ BÀI TOÁN: “Chưa rõ yêu cầu về kết nối mạng (Wi-Fi, Bluetooth, Zigbee, LoRa)”.\n\nGhi chú: Điểm trừ: câu hỏi ấy viết KHÔNG DẤU (“Chua ro yeu cau ve ket noi mang”) trong một sản phẩm tiếng Việt; và hai câu hỏi còn lại vẫn là tham số (`reqset_ids`, `style`)."
+  "trang_thai": "Không đạt",
+  "nhan_xet": "KHÔNG ỔN ĐỊNH. Khi `parse_intent` cho ra `unknown` thì tác tử hỏi BỐN câu về chính bài toán (“Mạch thông minh này cụ thể dùng để làm gì?”, “Nguồn cấp là gì?”, “Môi trường hoạt động?”) — đúng đề bài. Khi nó cho ra `project.create` (lần chạy đầy đủ 23/09) thì tạo một dự án LỒNG `mach-thong-minh/cai-mach-thong-minh` rồi hỏi ISA.\n\nGhi chú: Chấm theo lần chạy đầy đủ, không theo lần chạy đẹp nhất. Hai nhánh ý định cho hai hành vi khác hẳn nhau cho cùng một câu — đây là chỗ cần chạy lặp 3–5 lần như sheet Huong dan đòi, chứ không phải chỗ chốt bằng một lần."
  },
  {
   "tc": "TC005",
@@ -147,8 +147,8 @@
    ]
   },
   "ngay": "23/09/2026",
-  "trang_thai": "Không đạt",
-  "nhan_xet": "Rút ra hai yêu cầu có số liệu tốt (4K 24 fps độ trễ < 200 ms qua LoRa; 43 800 giờ trên pin CR2032 220 mAh ⇒ ≤ 5 µA) và tự đánh dấu một yêu cầu “✖ KHÔNG ĐO ĐƯỢC”. Nhưng KHÔNG hề nói hai yêu cầu ấy mâu thuẫn nhau và bất khả thi vật lý; báo “✅ Xong 6/6 bước”.\n\nGhi chú: Điểm cộng: không đưa ra thiết kế giả vờ khả thi. `req.detect_conflict` có chạy nhưng không bắt được mâu thuẫn băng thông/năng lượng."
+  "trang_thai": "Đạt",
+  "nhan_xet": "SAU [DEV-206]: chỉ ra mâu thuẫn BẰNG SỐ — “Pin nút áo (ví dụ CR2032) chỉ có dung lượng khoảng 220mAh, không thể cấp nguồn cho cảm biến 4K và vi điều khiển xử lý video liên tục”. Kèm 5 điểm cần làm rõ (môi trường, khả thi/nguồn…). Không đưa ra thiết kế giả vờ khả thi.\n\nGhi chú: Đúng chữ đề bài chờ: “chỉ ra mâu thuẫn bằng số liệu… đề xuất nới ràng buộc nào”. Trước [DEV-206] `req.elicit` trả 0 gaps nên không có chỗ nào nói ra điều này."
  },
  {
   "tc": "TC006",
@@ -1240,8 +1240,8 @@
    ]
   },
   "ngay": "23/09/2026",
-  "trang_thai": "Đạt",
-  "nhan_xet": "SAU [DEV-202]: “Thông tin về dải nhiệt độ hoạt động của MCU-X không có trong đoạn văn được cung cấp [1].” Đọc tài liệu thật, tìm không thấy, nói ra, kèm trích dẫn.\n\nGhi chú: Trước đây ca này cũng KHÔNG bịa — nhưng vì tài liệu chưa bao giờ được đọc, nên phép đo ấy vô nghĩa. Giờ tính chất chống bịa được chứng minh THẬT: tài liệu đã nạp (3 đoạn), tác tử tra và trả lời rằng không có."
+  "trang_thai": "Không đạt",
+  "nhan_xet": "KHÔNG ỔN ĐỊNH. Lần chạy riêng: đọc tài liệu và trả lời đúng “không có trong đoạn văn được cung cấp [1]”. Lần chạy đầy đủ 23/09: `view.rag_ask` hỏng E5002 “dự án chưa có tài liệu nào” — tệp trong câu KHÔNG được nạp.\n\nGhi chú: Nguyên nhân: `${_path}` phụ thuộc `chat.parse_intent` điền `slots.path`, mà việc ấy không tất định. Cùng lần chạy, TC042 (câu cùng hình dạng) lại nạp được và trả lời đúng kèm trang 412. Cần rút đường dẫn XÁC ĐỊNH từ câu chữ, không nhờ mô hình."
  },
  {
   "tc": "TC044",
@@ -1855,7 +1855,7 @@
   },
   "ngay": "23/09/2026",
   "trang_thai": "Không đạt",
-  "nhan_xet": "Mở lại dự án rồi hỏi “Tiếp tục dự án này, trước đó đã chốt những gì?” — tác tử hỏi ngược “id hoặc đường dẫn” của dự án, dù dự án ĐANG MỞ. Không khôi phục được quyết định nào.\n\nGhi chú: Đây chính là điều anh báo trước đây: tác tử không biết việc đang dở là việc gì."
+  "nhan_xet": "SAU [DEV-207]: hồi quy đã sửa — `project.open` chạy XONG, trả `summary` 14 trường kèm `previous_session` và `tiep_tuc`. Nhưng `previous_session.summary` là `null`, nên nó KHÔNG thuật lại được quyết định nào đã chốt — đúng thứ đề bài hỏi.\n\nGhi chú: [DEV-203] cấp `project` = id làm `project.open` đi tìm `<dự án>/<dự án>` và hỏng E2000; [DEV-207] đổi sang đường dẫn tuyệt đối. Phần còn thiếu là NỘI DUNG khôi phục, không phải đường đi."
  },
  {
   "tc": "TC066",
