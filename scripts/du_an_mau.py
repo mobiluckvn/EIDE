@@ -124,29 +124,37 @@ def _seed(goc: Path) -> dict[str, int]:
             (f"{CHIP}/periph:TWI", "base_address", "184", "byte"),
             (f"{CHIP}/periph:USART0", "base_address", "192", "byte"),
         ]):
-            them("fact", {"id": f"f_mau_{i}", "subject": ch, "predicate": vt, "value": gt,
-                          "unit": dv, "source_id": "s_mau_ds", "locator": f"tr.{12 + i}",
+            # `value` và `locator` là JSON trong store (DDD-14 §2) — ghi chuỗi trần làm
+            # `passport.query` ném `JSONDecodeError` và cả màn Hộ chiếu chip trắng. Một fixture
+            # sai định dạng đo ra "màn hỏng" cho một màn không hỏng.
+            them("fact", {"id": f"f_mau_{i}", "subject": ch, "predicate": vt,
+                          "value": json.dumps(int(gt)),
+                          "unit": dv, "source_id": "s_mau_ds",
+                          "locator": json.dumps({"page": 12 + i, "bbox": [72, 100, 300, 140]}),
                           "method": "parser", "tier": "vàng", "confidence": 0.95,
                           "status": "normalized", "layer": "K2"})
             them("passport_fact", {"passport_id": "microchip.atmega328p@1.0.0",
                                    "fact_id": f"f_mau_{i}"})
         # Một fact CHƯA DUYỆT — S5 đòi "số fact chưa duyệt, bấm được sang duyệt".
         them("fact", {"id": "f_mau_pending", "subject": f"{CHIP}/periph:SPI",
-                      "predicate": "base_address", "value": "76", "unit": "byte",
-                      "source_id": "s_mau_svd", "locator": "svd:SPI", "method": "parser",
+                      "predicate": "base_address", "value": json.dumps(76), "unit": "byte",
+                      "source_id": "s_mau_svd",
+                      "locator": json.dumps({"path": "svd:SPI"}), "method": "parser",
                       "tier": "bạc", "confidence": 0.7, "status": "pending", "layer": "K2"})
         them("passport_fact", {"passport_id": "microchip.atmega328p@1.0.0",
                                "fact_id": "f_mau_pending"})
         # Hai fact CÙNG chủ thể + vị từ, khác giá trị → một XUNG ĐỘT thật cho S8. `method` khác
         # nhau để cột "vì sao mâu thuẫn" có cả hai vế ĐƯỢC KHAI và SUY RA.
         them("fact", {"id": "f_mau_a", "subject": f"{CHIP}/mem:FLASH",
-                      "predicate": "page_size", "value": "128", "unit": "byte",
-                      "source_id": "s_mau_ds", "locator": "tr.12", "method": "parser",
+                      "predicate": "page_size", "value": json.dumps(128), "unit": "byte",
+                      "source_id": "s_mau_ds",
+                      "locator": json.dumps({"page": 12}), "method": "parser",
                       "tier": "vàng", "confidence": 0.95, "status": "normalized",
                       "layer": "K2"})
         them("fact", {"id": "f_mau_b", "subject": f"{CHIP}/mem:FLASH",
-                      "predicate": "page_size", "value": "64", "unit": "byte",
-                      "source_id": "s_mau_svd", "locator": "svd:memory", "method": "inferred",
+                      "predicate": "page_size", "value": json.dumps(64), "unit": "byte",
+                      "source_id": "s_mau_svd",
+                      "locator": json.dumps({"path": "svd:memory"}), "method": "inferred",
                       "tier": "bạc", "confidence": 0.6, "status": "conflict",
                       "conflicts_with": "f_mau_a", "layer": "K2"})
 

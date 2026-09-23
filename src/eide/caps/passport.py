@@ -269,12 +269,31 @@ def query(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             sql += " WHERE " + " AND ".join(dk)
         rows = c.execute(sql + " ORDER BY f.subject, f.predicate", tham).fetchall()
 
+    def _doc(x: Any) -> Any:
+        """`value`/`locator` là JSON trong store — nhưng MỘT ô hỏng không được giết cả câu trả
+        lời. [DEV-192]
+
+        `json.loads` trần ném `JSONDecodeError`, và `Daemon.handle` đổi nó thành một lỗi nội bộ
+        không mã: màn Hộ chiếu chip hiện "không đọc được … JSONDecodeError" và **cả bốn khối
+        biến mất**. Một fact ghi sai định dạng là fact ĐÁNG SOI NHẤT trong store, và cách xử lý
+        cũ giấu nó cùng với 290 fact lành.
+
+        Trả nguyên chuỗi khi không phải JSON — đúng cách `view.conflict_board._gt` đã làm từ
+        trước cho cùng cột ấy; hai chỗ đọc cùng một dữ liệu thì phải chịu được cùng một loại hư.
+        """
+        if x is None:
+            return None
+        try:
+            return json.loads(x)
+        except (TypeError, ValueError):
+            return x
+
     facts, cit, tiers = [], {}, {"gold": 0, "silver": 0, "bronze": 0}
     for r in rows:
         facts.append({"id": r[0], "subject": r[1], "predicate": r[2],
-                      "value": json.loads(r[3]), "unit": r[4], "tier": r[5],
+                      "value": _doc(r[3]), "unit": r[4], "tier": r[5],
                       "status": r[6], "method": r[7], "confidence": r[8],
-                      "locator": json.loads(r[9]) if r[9] else None,
+                      "locator": _doc(r[9]),
                       "source_id": r[10]})
         tiers[r[5]] = tiers.get(r[5], 0) + 1
         cit[r[10]] = {"source_id": r[10], "uri": r[11], "kind": r[12], "tier": r[13]}

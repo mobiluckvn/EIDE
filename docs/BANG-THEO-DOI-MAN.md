@@ -10,28 +10,28 @@
 |---|---|---|---|---|---|---|
 | S1 | Tổng quan | nối | `EideManDauTien.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
 | S2 | Nhật ký | nối | `EideManDauTien.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S3 | Bản đồ luồng | nối | `EideManLuongVaMoPhong.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S4 | Nhập tài liệu | nối | `EideManNhapTaiLieu.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
+| S3 | Bản đồ luồng | nối | `EideManLuongVaMoPhong.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S4 | Nhập tài liệu | nối | `EideManNhapTaiLieu.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
 | S5 | Hộ chiếu chip | nối | `EideManHoChieu.swift` | `04754be` | 2026-09-21 | Vũ Trí Công |
 | S6 | Hộ chiếu mạch | nối | `EideManHoChieuMach.swift` | `9c8f839` | 2026-09-21 | Vũ Trí Công |
 | S7 | Bản đồ tri thức & hỏi đáp | nối | `EideManBanDoTriThuc.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S8 | Xung đột tri thức | nối | `EideManXungDot.swift` | `f88d7d9` | 2026-09-20 | Vũ Trí Công |
-| S9 | Làm rõ yêu cầu | nối | `EideManLamRo.swift` | `c3570bc` | 2026-09-22 | Vũ Trí Công |
-| S10 | Yêu cầu & kiến trúc | nối | `EideManThietKe.swift` | `718e1d2` | 2026-09-22 | Vũ Trí Công |
-| S11 | Lược đồ | nối | `EideManThietKe.swift` | `718e1d2` | 2026-09-22 | Vũ Trí Công |
-| S12 | Kế hoạch | nối | `EideManThietKe.swift` | `718e1d2` | 2026-09-22 | Vũ Trí Công |
-| S13 | Tài liệu | nối | `EideManThietKe.swift` | `718e1d2` | 2026-09-22 | Vũ Trí Công |
-| S14 | Trình soạn thảo | nối | `EideManSoanThao.swift` | `6c7c6ec` | 2026-09-21 | Vũ Trí Công |
+| S8 | Xung đột tri thức | nối | `EideManXungDot.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S9 | Làm rõ yêu cầu | nối | `EideManLamRo.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S10 | Yêu cầu & kiến trúc | nối | `EideManThietKe.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S11 | Lược đồ | nối | `EideManThietKe.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S12 | Kế hoạch | nối | `EideManThietKe.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S13 | Tài liệu | nối | `EideManThietKe.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S14 | Trình soạn thảo | nối | `EideManSoanThao.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
 | S15 | Diff & cổng merge | nối | `EideManDiffMerge.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S16 | Mô phỏng | nối | `EideManLuongVaMoPhong.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
+| S16 | Mô phỏng | nối | `EideManLuongVaMoPhong.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
 | S17 | Dò board | nối | `EideManPhanCung.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
 | S18 | Log & serial | nối | `EideManPhanCung.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
 | S19 | Gỡ lỗi probe | nối | `EideManPhanCung.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
 | S20 | Bench | nối | `EideManPhanCung.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S21 | Môi trường | nối | `EideManHeThong.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
-| S24 | Registry | nối | `EideManHeThong.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
+| S21 | Môi trường | nối | `EideManHeThong.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S22 | Mô hình & chi phí | nối | `EideManHeThong.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S23 | Công cụ tự tạo | nối | `EideManHeThong.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
+| S24 | Registry | nối | `EideManHeThong.swift` | `d2d615b` | 2026-09-23 | Vũ Trí Công |
 | S25 | Chính sách tự chủ | nối | `EideManDauTien.swift` | `d17ca68` | 2026-09-22 | Vũ Trí Công |
 
 **25 nối · 0 chặn (chờ bo mạch) · 0 chưa.**
