@@ -241,7 +241,7 @@ const CHUOI_MAU = [
   ['Lưu trữ dự án (DEV-201)', 'project.archive → chat.report_back', ['project.delete']],
   // KHÔNG HIỂU. Mẫu một nút: hỏi lại cho có trọng tâm. Không có mẫu thì `unknown` rơi xuống
   // planner, và planner ĐOÁN ra một việc — đúng thứ tệ nhất cho một câu chưa hiểu được.
-  ['Chưa hiểu, hỏi lại (DEV-201)', 'chat.clarify', ['unknown']],
+  ['Chưa hiểu, hỏi lại (DEV-201)', 'req.elicit → chat.clarify → chat.report_back', ['unknown']],
   // `big_command` tách khỏi mẫu giải nén Z-07. Nó là thùng chứa mọi câu chưa phân loại được,
   // còn Z-07 là quy trình MỞ MỘT KHO TÀI LIỆU, mở đầu bằng `project.create → archive.list`.
   // Hệ quả đo được: câu của người dùng bị biến thành một ĐƯỜNG DẪN TỆP rồi báo E2000 "Không
@@ -395,7 +395,26 @@ const CHUOI_NUT = {
     ['n1', 'project.archive'],
     ['n2', 'chat.report_back', 'n1'],
   ],
-  'Chưa hiểu, hỏi lại (DEV-201)': [['n1', 'chat.clarify']],
+  // [DEV-206] `req.elicit` ĐỨNG TRƯỚC, và `chat.clarify` nhận `gaps` của nó.
+  //
+  // Bản [DEV-201] đặt một nút `chat.clarify` đơn lẻ. Nhưng năng lực ấy đòi `gaps` — danh sách
+  // điểm còn mơ hồ — mà không nút nào sinh ra, nên tác tử đi hỏi người dùng đúng chữ `gaps`.
+  // Đo lại 23/09/2026 trên TC004: màn Làm rõ yêu cầu hiện "Bước `chat.clarify` đang chờ anh
+  // cho biết: • `gaps`". Một câu hỏi bằng tiếng của hợp đồng, hỏi người dùng về một khái niệm
+  // nội bộ — và TỆ HƠN cái nó thay thế: trước đó `unknown` rơi xuống planner, và planner ít
+  // ra còn hỏi được "Chưa rõ yêu cầu về kết nối mạng (Wi-Fi, Bluetooth, Zigbee, LoRa)".
+  //
+  // Bài học: bù một mẫu chuỗi mà không kiểm nút đầu có đủ dữ kiện để chạy thì mẫu ấy chỉ đổi
+  // chỗ hỏng, không sửa nó. `req.elicit` không đòi tham số bắt buộc nào và nhận `text` — nó
+  // rút ra điểm mơ hồ TỪ CHÍNH CÂU người dùng vừa gõ, rồi `chat.clarify` mới có cái để hỏi.
+  'Chưa hiểu, hỏi lại (DEV-201)': [
+    ['n1', 'req.elicit'],
+    ['n2', 'chat.clarify', 'n1', 'wait', { gaps: '${n1.gaps}' }],
+    // `n3` treo vào `n1` chứ không `n2`: mô tả đã đủ rõ thì `gaps` rỗng và `chat.clarify`
+    // hỏng với E1000 — nhưng lượt vẫn phải BÁO CÁO. Treo vào nút hỏng là để một lượt không
+    // có gì để hỏi kết thúc bằng sự im lặng. [DEV-206]
+    ['n3', 'chat.report_back', 'n1'],
+  ],
   // Việc lớn chưa rõ: RÚT YÊU CẦU, không giải nén kho tài liệu. `view.artifacts` đứng đầu
   // vì nó đọc được store — cùng lý lẽ với mẫu thiết kế của [DEV-158].
   // [DEV-202] Người dùng nêu tên một tệp thì ĐỌC nó, không đem nó đi giải nén. Hai nút nhập

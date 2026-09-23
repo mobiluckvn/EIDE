@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “rà soát mạch không có lỗi”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ra-soat-mach-khong-co-loi` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,31 +28,26 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không
 
-**Tác tử trả lời** *(sau 14.4 s)*:
+**Tác tử trả lời** *(sau 17.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ra-soat-mach-khong-co-loi` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  bước 2/23  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/23 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Môi trường mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ project.create, archive.list, env.check.  1. `project.create`  2. `archive.list`  3. `env.check`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `archive.list` HỎNG — E1000: Không nhận ra định dạng nén của mach-khong-loi.net  KẾT QUẢ TỪNG BƯỚC  1. `project.create` — 1 created · 0 existing · 133 ký tự path · ra-soat-netlist-users-congvt-documents-eide-docs project_id  Xem đầy đủ ▾ {
-  "created" : true,
-  "existing" : [
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  bước 2/7  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/7 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select.  1. `view.artifacts`  2. `arch.style_select`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+  "items" : [
   ],
-  "next" : [
-    "search.reference_projects"
-  ],
-  "path" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC040\/du-an\/ra-soat-mach-khong-co-loi\/ra-soat-netlist-users-congvt-documents-eide-docs",
-  "project_id" : "ra-soat-netlist-users-congvt-documents-eide-docs"
-}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+  "kind" : "requirement",
+  "total" : 0
+}  TÁC TỬ HỎI  ·  arch.style_select  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 
 **Màn đang mở — `Main`:**
 
 ```
 TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Bước `env.check` đang chờ anh cho biết:
-• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
-   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V
+Cần làm rõ	THIẾU THÔNG TIN	Bước `arch.style_select` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -63,8 +58,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_adda670592f5
-Mở lúc	23/09 07:39:48
+Phiên	s_67926eed8bc9
+Mở lúc	23/09 13:07:40
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -80,15 +75,14 @@ Số lời gọi	1
 
 ## Bước 3
 
-**Quét 4 tab tác tử đã mở:** Main, Graph, Ingest, Env
+**Quét 3 tab tác tử đã mở:** Main, Graph, ReqArch
 
 ### Tab `Main`
 
 ```
 Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Bước `env.check` đang chờ anh cho biết:
-• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
-   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V
+Cần làm rõ	THIẾU THÔNG TIN	Bước `arch.style_select` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -99,8 +93,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_adda670592f5
-Mở lúc	23/09 07:39:48
+Phiên	s_67926eed8bc9
+Mở lúc	23/09 13:07:40
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -122,52 +116,39 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 
 ![Graph](man-02-Graph.png)
 
-### Tab `Ingest`
+### Tab `ReqArch`
 
 ```
-Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  Màn này đang rỗng — vì: chưa nhập tài liệu nào vào dự án này  Bước kế tiếp: kéo PDF/SVD/BOM vào vùng trên, hoặc chạy `eide ingest <tệp>` ở dòng lệnh  
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử ở vùng trao đổi; `req.elicit` → `req.classify` ghi yêu cầu xuống store  
 ```
 
-![Ingest](man-03-Ingest.png)
-
-### Tab `Env`
-
-```
-Môi trường  env.check · env.detect · env.guide_install · +4 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Màn này đang rỗng — vì: dự án chưa ghim ISA — `env.check` kiểm chuỗi công cụ THEO ISA, không theo máy  Bước kế tiếp: ghim chip ở màn Hộ chiếu chip (S5) — `project.set_target` suy ISA từ `family_patterns` của manifest  
-```
-
-![Env](man-04-Env.png)
+![ReqArch](man-03-ReqArch.png)
 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
-• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
-   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  project.create  còn 23 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.style_select` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 9.1 s)*:
+**Tác tử trả lời** *(sau 6.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ra-soat-mach-khong-co-loi` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  bước 2/23  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/23 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Môi trường mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ project.create, archive.list, env.check.  1. `project.create`  2. `archive.list`  3. `env.check`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `archive.list` HỎNG — E1000: Không nhận ra định dạng nén của mach-khong-loi.net  KẾT QUẢ TỪNG BƯỚC  1. `project.create` — 1 created · 0 existing · 133 ký tự path · ra-soat-netlist-users-congvt-documents-eide-docs project_id  Xem đầy đủ ▾ {
-  "created" : true,
-  "existing" : [
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và cho biết có lỗi gì không  bước 2/7  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/7 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select.  1. `view.artifacts`  2. `arch.style_select`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+  "items" : [
   ],
-  "next" : [
-    "search.reference_projects"
-  ],
-  "path" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC040\/du-an\/ra-soat-mach-khong-co-loi\/ra-soat-netlist-users-congvt-documents-eide-docs",
-  "project_id" : "ra-soat-netlist-users-congvt-documents-eide-docs"
-}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+  "kind" : "requirement",
+  "total" : 0
+}  TÁC TỬ HỎI  ·  arch.style_select  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: nhấp nháy LED và đo dòng tiêu thụ trên ESP32-C3 Gửi 
 ```
 
-**Màn đang mở — `Env`:**
+**Màn đang mở — `ReqArch`:**
 
 ```
-Màn này đang rỗng — vì: dự án chưa ghim ISA — `env.check` kiểm chuỗi công cụ THEO ISA, không theo máy  Bước kế tiếp: ghim chip ở màn Hộ chiếu chip (S5) — `project.set_target` suy ISA từ `family_patterns` của manifest  
+Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử ở vùng trao đổi; `req.elicit` → `req.classify` ghi yêu cầu xuống store  
 ```
 
 ![bước 3](buoc-03.png)

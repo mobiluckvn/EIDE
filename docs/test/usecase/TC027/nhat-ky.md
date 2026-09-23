@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “mã nguồn không khớp thiết kế”
 
-**Tác tử trả lời** *(sau 0.6 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-nguon-khong-khop-thiet-ke` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net nối SEN42 vào I2C1 (PB6/PB7), còn firmware /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c lại dùng ngắt ngoài INT0. Đối chiếu hai thứ và chỉ ra chỗ không khớp
 
-**Tác tử trả lời** *(sau 16.9 s)*:
+**Tác tử trả lời** *(sau 11.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-nguon-khong-khop-thiet-ke` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -39,7 +39,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ],
   "kind" : "requirement",
   "total" : 0
-}  TÁC TỬ HỎI  ·  arch.style_select  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+}  TÁC TỬ HỎI  ·  arch.style_select  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -58,8 +58,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d42a45b877f2
-Mở lúc	23/09 07:35:20
+Phiên	s_ba3a735de1d7
+Mở lúc	23/09 13:05:29
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -93,8 +93,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d42a45b877f2
-Mở lúc	23/09 07:35:20
+Phiên	s_ba3a735de1d7
+Mở lúc	23/09 13:05:29
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2

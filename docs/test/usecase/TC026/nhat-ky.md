@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “tệp thiết kế hỏng”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tep-thiet-ke-hong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Đọc netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-hong.net và liệt kê các linh kiện trong đó
 
-**Tác tử trả lời** *(sau 14.8 s)*:
+**Tác tử trả lời** *(sau 22.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tep-thiet-ke-hong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -63,8 +63,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_7cb9c7aea761
-Mở lúc	23/09 07:34:55
+Phiên	s_60c1dd325331
+Mở lúc	23/09 13:04:55
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -99,8 +99,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_7cb9c7aea761
-Mở lúc	23/09 07:34:55
+Phiên	s_60c1dd325331
+Mở lúc	23/09 13:04:55
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -146,7 +146,7 @@ Môi trường  env.check · env.detect · env.guide_install · +4 nữa  Vùng 
    Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  project.create  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 9.2 s)*:
+**Tác tử trả lời** *(sau 9.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tep-thiet-ke-hong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:

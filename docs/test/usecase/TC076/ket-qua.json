@@ -26,7 +26,8 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
+ "trang_thai": "Đạt",
+ "nhan_xet": "Không kết luận “đạt”. Hỏi “Chạy kịch bản mô phỏng nào?” và màn Mô phỏng ghi rõ nền tảng chưa dựng cùng lý do.\n\nGhi chú: Chưa chủ động “phát hiện bất thường” — nhưng tính chất cốt lõi mà bài kiểm bảo vệ (không tuyên bố đạt từ log rỗng) thì giữ được.",
  "giay": 13.2,
  "rc": 0,
  "anh": [

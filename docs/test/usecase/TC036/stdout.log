@@ -9,7 +9,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC036/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.9 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -32,7 +32,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC036/buoc-02.png
 
-**Tác tử trả lời** *(sau 2.7 s)*:
+**Tác tử trả lời** *(sau 2.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -54,8 +54,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_231b00a18db8
-Mở lúc	23/09 12:18:19
+Phiên	s_d51d90e83248
+Mở lúc	23/09 13:06:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -88,8 +88,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_231b00a18db8
-Mở lúc	23/09 12:18:19
+Phiên	s_d51d90e83248
+Mở lúc	23/09 13:06:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -111,7 +111,7 @@ Số lời gọi	0
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC036/buoc-03.png
 
-**Tác tử trả lời** *(sau 2.3 s)*:
+**Tác tử trả lời** *(sau 2.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -133,8 +133,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_231b00a18db8
-Mở lúc	23/09 12:18:19
+Phiên	s_d51d90e83248
+Mở lúc	23/09 13:06:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

@@ -24,16 +24,19 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 15.9,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không đo, không tối ưu. `archive.list` hỏng E2000 trên đường dẫn bịa từ câu người dùng.",
+ "giay": 58.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-Ingest.png",
-  "man-03-Env.png"
+  "man-02-Graph.png",
+  "man-03-Ingest.png",
+  "man-04-ReqArch.png",
+  "man-05-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho",
  "cham": {
@@ -45,7 +48,7 @@
  },
  "lap": [
   {
-   "giay": 15.9,
+   "giay": 58.4,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "ngủ|sleep|power"

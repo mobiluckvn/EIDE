@@ -19,59 +19,65 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?
 
-**Tác tử trả lời** *(sau 37.9 s)*:
+**Tác tử trả lời** *(sau 10.9 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 1/6  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/6 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ arch.decompose.  1. `arch.decompose`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  arch.decompose  Dựa trên những yêu cầu nào?  style   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 2/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/4 bước, 2 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `ingest.index_text`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.rag_index`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, chat.report_back.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
+  "chunks" : 0,
+  "status" : {
+  }
+}  TÁC TỬ HỎI  ·  ingest.index_text  files   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
-**Màn đang mở — `ReqArch`:**
+**Màn đang mở — `Graph`:**
 
 ```
-1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tạo ra một báo cáo ma trận truy vết liên kết 100% các yêu cầu với tài liệu thiết kế, module mã nguồn và kịch bản kiểm thử tương ứng, đồng thời đánh dấu cảnh báo cho các yêu cầu có số lượng kịch bản kiểm thử bằng 0.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-PWR-01	—
+ Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
 ```
 
 ![bước 2](buoc-02.png)
 
 ## Bước 3
 
-**Quét 1 tab tác tử đã mở:** ReqArch
+**Quét 2 tab tác tử đã mở:** Ingest, Graph
 
-### Tab `ReqArch`
+### Tab `Ingest`
 
 ```
-Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tạo ra một báo cáo ma trận truy vết liên kết 100% các yêu cầu với tài liệu thiết kế, module mã nguồn và kịch bản kiểm thử tương ứng, đồng thời đánh dấu cảnh báo cho các yêu cầu có số lượng kịch bản kiểm thử bằng 0.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-PWR-01	—
+Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  Màn này đang rỗng — vì: chưa nhập tài liệu nào vào dự án này  Bước kế tiếp: kéo PDF/SVD/BOM vào vùng trên, hoặc chạy `eide ingest <tệp>` ở dòng lệnh  
 ```
 
-![ReqArch](man-01-ReqArch.png)
+![Ingest](man-01-Ingest.png)
+
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-02-Graph.png)
 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (3)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.decompose` đang chờ anh cho biết:
-• Dựa trên những yêu cầu nào? (`reqset_ids`)
-• `style`  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `view.ask` đang chờ: Tài liệu thiết kế hiện tại trước khi đổi sang ATmega328P để đối chiếu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `view.ask` đang chờ: Yêu cầu chi tiết về giao diện đầu vào/đầu ra (UI/UX hoặc giao thức) của tính năng view.ask  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (7)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.prioritize  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `ingest.index_text` đang chờ anh cho biết:
+• `files`  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (9)  view.rag_index  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.prioritize  còn 23 giờ  Hoàn tác … và 1 mục nữa — xem màn Nhật ký.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.3 s)*:
+**Tác tử trả lời** *(sau 4.6 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 1/6  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/6 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ arch.decompose.  1. `arch.decompose`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  arch.decompose  Dựa trên những yêu cầu nào?  style   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tôi vừa đổi MCU sang ATmega328P. Tài liệu còn đúng không?  bước 2/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/4 bước, 2 bước cần anh trả lời  → mở màn Nhập tài liệu (tác tử đang chạy `ingest.index_text`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.rag_index`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Tài liệu còn đúng không?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, chat.report_back.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
+  "chunks" : 0,
+  "status" : {
+  }
+}  TÁC TỬ HỎI  ·  ingest.index_text  files   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
-**Màn đang mở — `ReqArch`:**
+**Màn đang mở — `Graph`:**
 
 ```
-1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tạo ra một báo cáo ma trận truy vết liên kết 100% các yêu cầu với tài liệu thiết kế, module mã nguồn và kịch bản kiểm thử tương ứng, đồng thời đánh dấu cảnh báo cho các yêu cầu có số lượng kịch bản kiểm thử bằng 0.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-PWR-01	—
+ Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
 ```
 
 ![bước 3](buoc-03.png)

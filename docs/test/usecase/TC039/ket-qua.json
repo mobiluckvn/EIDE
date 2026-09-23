@@ -24,14 +24,16 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 26.6,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không đọc được tệp nguồn, không chỉ ra được `doc_so_xung()`. Cột phải trống hoàn toàn.",
+ "giay": 14.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
-  "man-01-Main.png"
+  "man-01-Main.png",
+  "man-02-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC039/du-an/ra-soat-code-tim-race-condition",
  "cham": {
@@ -43,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 26.6,
+   "giay": 14.7,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "doc_so_xung|so_xung"

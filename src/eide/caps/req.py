@@ -131,9 +131,29 @@ def elicit(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                         thieu=["text", "feature", "sources"])
     if not text:
         text = "Đọc các nguồn sau và tách yêu cầu: " + ", ".join(nguon)
+    # HỎI CẢ `gaps`, không chỉ `raw`. [DEV-206]
+    #
+    # Hợp đồng REQ-01 khai đầu ra `gaps` và `ghi_clarification` ngay dưới đây ghi chúng xuống
+    # tab Làm rõ yêu cầu — nhưng câu nhắc chỉ bảo "tách yêu cầu thô", không một chữ nào về
+    # điểm còn thiếu. Nửa dưới của hợp đồng vì thế chạy trên một danh sách gần như luôn rỗng.
+    #
+    # Đo 23/09/2026 trên TC004, câu mơ hồ nhất của cả bộ đề — *"Làm cho mình cái mạch thông
+    # minh"* — cho ra **0 gaps**, rồi `chat.clarify` hỏng với E1000 "clarify cần ít nhất một
+    # gap". Một câu không thể mơ hồ hơn mà bộ moi yêu cầu không thấy gì thiếu.
+    #
+    # Nói rõ gap LÀ GÌ, và nói bằng ví dụ của chính nghề nhúng: thiếu một thứ như vậy thì
+    # không thiết kế tiếp được. Không có định nghĩa thì mô hình trả về những câu chung chung
+    # kiểu "cần thêm thông tin", và một câu hỏi như thế không giúp ai trả lời.
     resp = _gateway(ctx).run(
         "architect",
-        f"Tách yêu cầu thô từ mô tả sau. Mỗi CÂU một yêu cầu, giữ nguyên văn.\n\n{text}",
+        "Tách yêu cầu thô từ mô tả sau. Mỗi CÂU một yêu cầu, giữ nguyên văn.\n\n"
+        "Đồng thời liệt kê `gaps` — những điều CÒN THIẾU mà nếu không biết thì không thiết kế "
+        "tiếp được: chức năng cụ thể, giao tiếp/giao thức, nguồn cấp và ngân sách năng lượng, "
+        "môi trường hoạt động, ràng buộc kích thước/giá, số lượng sản xuất, tiêu chí nghiệm "
+        "thu. Mỗi gap là một CÂU HỎI cụ thể hỏi được người dùng, viết bằng tiếng Việt, kèm "
+        "`suggestion` là một hai lựa chọn gợi ý nếu có. Mô tả càng mơ hồ thì càng nhiều gap; "
+        "mô tả đã đủ chi tiết thì để `gaps` rỗng.\n\n"
+        f"Mô tả:\n{text}",
         _SCHEMA_RAW, system_extra=_ngu_canh(ctx, text))
     raw = list(resp.data.get("raw") or [])
     for i, r in enumerate(raw):
@@ -152,7 +172,12 @@ _SCHEMA_RAW = {
             "properties": {"text": {"type": "string"}, "source": {"type": "string"},
                            "locator": {"type": "object"},
                            "kind_guess": {"type": "string"}}}},
-        "gaps": {"type": "array", "items": {"type": "object"}},
+        # `text` bắt buộc: một gap không có câu hỏi thì không hỏi được ai. [DEV-206]
+        "gaps": {"type": "array", "items": {
+            "type": "object", "required": ["text"],
+            "properties": {"text": {"type": "string"},
+                           "suggestion": {"type": "string"},
+                           "kind": {"type": "string"}}}},
     },
 }
 

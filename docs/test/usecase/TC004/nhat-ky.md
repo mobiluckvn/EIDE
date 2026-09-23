@@ -1,0 +1,291 @@
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** tạo dự án — “mạch thông minh”
+
+**Tác tử trả lời** *(sau 0.8 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-thong-minh` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+(màn trống)
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Làm cho mình cái mạch thông minh
+
+**Tác tử trả lời** *(sau 36.2 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-thong-minh` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Làm cho mình cái mạch thông minh  Đã nhận (ý hiểu: `unknown`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Làm cho mình cái mạch thông minh  bước 2/3  Mở chi tiết Dừng khẩn ▶ đang chạy `chat.clarify`  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Làm rõ yêu cầu (tác tử đang chạy `chat.clarify`)  ✖ Lượt này KHÔNG chạy được — KeyError: 'slot'   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+```
+
+**Màn đang mở — `LamRo`:**
+
+```
+4 ĐIỂM CẦN LÀM RÕ  LOẠI	YÊU CẦU	TRẠNG THÁI	VÌ BƯỚC NÀO	CÂU HỎI
+ENVIRONMENT	—	CHỜ ANH	—	Mạch sẽ hoạt động ở môi trường nào và có giới hạn kích thước không?
+   ↳ tác tử đề xuất: Ví dụ: trong nhà, ngoài trời chống nước, kích thước phải nhét vừa đế âm tường...
+POWER	—	CHỜ ANH	—	Nguồn cấp cho mạch là gì và có yêu cầu tiết kiệm pin không?
+   ↳ tác tử đề xuất: Ví dụ: cắm điện 220V, dùng pin sạc 3.7V, nguồn adapter 12V...
+FUNCTIONALITY	—	CHỜ ANH	—	Mạch thông minh này cụ thể dùng để làm gì?
+   ↳ tác tử đề xuất: Ví dụ: công tắc nhà thông minh, trạm đo nhiệt độ độ ẩm, bộ điều khiển động cơ...
+CONNECTIVITY	—	CHỜ ANH	—	Mạch có cần kết nối không dây hoặc có dây với thiết bị khác không?
+   ↳ tác tử đề xuất: Ví dụ: Wi-Fi, Bluetooth, Zigbee, RS485...
+  — chọn điểm cần trả lời —  Câu trả lời của anh — gõ rồi bấm Lưu Lưu câu trả lời Câu trả lời ghi tác giả `human:<tên>` và HOÀN TÁC ĐƯỢC từng lần — mỗi lần lưu là một bản mới, không ghi đè bản trước.  1 LƯỢT TRAO ĐỔI GẦN ĐÂY  LÚC	AI	NỘI DUNG
+23/09 13:45:03	người	Làm cho mình cái mạch thông minh
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 5 tab tác tử đã mở:** Main, ReqArch, Graph, NhatKy, LamRo
+
+### Tab `Main`
+
+```
+Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 4 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	ENVIRONMENT	Mạch sẽ hoạt động ở môi trường nào và có giới hạn kích thước không?
+Cần làm rõ	POWER	Nguồn cấp cho mạch là gì và có yêu cầu tiết kiệm pin không?
+Cần làm rõ	FUNCTIONALITY	Mạch thông minh này cụ thể dùng để làm gì?
+ …và 1 mục nữa — xem đủ ở cột phải.  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_31bf045db5db
+Mở lúc	23/09 13:45:03
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	1
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0057 USD
+Hạn ngày	5.00 USD
+Số lời gọi	2
+```
+
+![Main](man-01-Main.png)
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử ở vùng trao đổi; `req.elicit` → `req.classify` ghi yêu cầu xuống store  
+```
+
+![ReqArch](man-02-ReqArch.png)
+
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-03-Graph.png)
+
+### Tab `NhatKy`
+
+```
+Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 695 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
+23/09 13:45:46	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:46	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:46	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:44	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
+23/09 13:45:44	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
+23/09 13:45:44	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:44	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:42	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:42	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:42	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:42	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:42	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:42	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:42	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:42	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:39	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:39	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:39	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:39	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:39	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:39	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:39	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:39	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:39	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:39	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:39	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:39	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:39	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:39	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:39	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:39	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+23/09 13:45:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+23/09 13:45:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+23/09 13:45:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+23/09 13:45:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+```
+
+![NhatKy](man-04-NhatKy.png)
+
+### Tab `LamRo`
+
+```
+Làm rõ yêu cầu  chat.clarify · chat.parse_intent · chat.restate  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  4 ĐIỂM CẦN LÀM RÕ  LOẠI	YÊU CẦU	TRẠNG THÁI	VÌ BƯỚC NÀO	CÂU HỎI
+ENVIRONMENT	—	CHỜ ANH	—	Mạch sẽ hoạt động ở môi trường nào và có giới hạn kích thước không?
+   ↳ tác tử đề xuất: Ví dụ: trong nhà, ngoài trời chống nước, kích thước phải nhét vừa đế âm tường...
+POWER	—	CHỜ ANH	—	Nguồn cấp cho mạch là gì và có yêu cầu tiết kiệm pin không?
+   ↳ tác tử đề xuất: Ví dụ: cắm điện 220V, dùng pin sạc 3.7V, nguồn adapter 12V...
+FUNCTIONALITY	—	CHỜ ANH	—	Mạch thông minh này cụ thể dùng để làm gì?
+   ↳ tác tử đề xuất: Ví dụ: công tắc nhà thông minh, trạm đo nhiệt độ độ ẩm, bộ điều khiển động cơ...
+CONNECTIVITY	—	CHỜ ANH	—	Mạch có cần kết nối không dây hoặc có dây với thiết bị khác không?
+   ↳ tác tử đề xuất: Ví dụ: Wi-Fi, Bluetooth, Zigbee, RS485...
+  — chọn điểm cần trả lời —  Câu trả lời của anh — gõ rồi bấm Lưu Lưu câu trả lời Câu trả lời ghi tác giả `human:<tên>` và HOÀN TÁC ĐƯỢC từng lần — mỗi lần lưu là một bản mới, không ghi đè bản trước.  1 LƯỢT TRAO ĐỔI GẦN ĐÂY  LÚC	AI	NỘI DUNG
+23/09 13:45:03	người	Làm cho mình cái mạch thông minh
+```
+
+![LamRo](man-05-LamRo.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (4)  Làm rõ yêu cầu — ENVIRONMENT  Mạch sẽ hoạt động ở môi trường nào và có giới hạn kích thước không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — POWER  Nguồn cấp cho mạch là gì và có yêu cầu tiết kiệm pin không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FUNCTIONALITY  Mạch thông minh này cụ thể dùng để làm gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CONNECTIVITY  Mạch có cần kết nối không dây hoặc có dây với thiết bị khác không?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
+```
+
+**Tác tử trả lời** *(sau 11.6 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-thong-minh` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Làm cho mình cái mạch thông minh  Đã nhận (ý hiểu: `unknown`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Làm cho mình cái mạch thông minh  bước 2/3  Mở chi tiết Dừng khẩn ▶ đang chạy `chat.clarify`  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Làm rõ yêu cầu (tác tử đang chạy `chat.clarify`)  ✖ Lượt này KHÔNG chạy được — KeyError: 'slot'   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+```
+
+**Màn đang mở — `LamRo`:**
+
+```
+4 ĐIỂM CẦN LÀM RÕ  LOẠI	YÊU CẦU	TRẠNG THÁI	VÌ BƯỚC NÀO	CÂU HỎI
+ENVIRONMENT	—	CHỜ ANH	—	Mạch sẽ hoạt động ở môi trường nào và có giới hạn kích thước không?
+   ↳ tác tử đề xuất: Ví dụ: trong nhà, ngoài trời chống nước, kích thước phải nhét vừa đế âm tường...
+POWER	—	CHỜ ANH	—	Nguồn cấp cho mạch là gì và có yêu cầu tiết kiệm pin không?
+   ↳ tác tử đề xuất: Ví dụ: cắm điện 220V, dùng pin sạc 3.7V, nguồn adapter 12V...
+FUNCTIONALITY	—	CHỜ ANH	—	Mạch thông minh này cụ thể dùng để làm gì?
+   ↳ tác tử đề xuất: Ví dụ: công tắc nhà thông minh, trạm đo nhiệt độ độ ẩm, bộ điều khiển động cơ...
+CONNECTIVITY	—	CHỜ ANH	—	Mạch có cần kết nối không dây hoặc có dây với thiết bị khác không?
+   ↳ tác tử đề xuất: Ví dụ: Wi-Fi, Bluetooth, Zigbee, RS485...
+  — chọn điểm cần trả lời —  Câu trả lời của anh — gõ rồi bấm Lưu Lưu câu trả lời Câu trả lời ghi tác giả `human:<tên>` và HOÀN TÁC ĐƯỢC từng lần — mỗi lần lưu là một bản mới, không ghi đè bản trước.  1 LƯỢT TRAO ĐỔI GẦN ĐÂY  LÚC	AI	NỘI DUNG
+23/09 13:45:03	người	Làm cho mình cái mạch thông minh
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC004`.

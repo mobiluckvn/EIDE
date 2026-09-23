@@ -23,8 +23,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
- "giay": 24.9,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không rà soát được (E1000 “không nhận ra định dạng nén”).\n\nGhi chú: ĐIỂM CỘNG vô hiệu: không bịa lỗi nào, nhưng vì chưa từng đọc mạch — không đo được điều bài kiểm muốn đo.",
+ "giay": 25.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -32,8 +33,7 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-Graph.png",
-  "man-03-Ingest.png",
-  "man-04-Env.png"
+  "man-03-ReqArch.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC040/du-an/ra-soat-mach-khong-co-loi",
  "cham": {
@@ -43,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 24.9,
+   "giay": 25.7,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

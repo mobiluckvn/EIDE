@@ -6,8 +6,6 @@ kèm một ảnh chụp cửa sổ thật.
 ## Bước 1
 
 **Tôi (người dùng):** mở lại dự án — `bo-chuyen-lan-sang-usb-cho-tv`
-  [cỡ] buoc-01 1456 × 838
-đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-2/buoc-01.png
 
 **Tác tử trả lời** *(sau 0.3 s)*:
 
@@ -20,10 +18,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 ## Bước 2
 
 **Tôi (người dùng):** Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo
-  [cỡ] buoc-02 1456 × 838
-đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-2/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 5.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 2/7  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 1/7 bước, 1 bước cần anh trả lời  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select.  1. `view.artifacts`  2. `arch.style_select`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
@@ -45,8 +41,6 @@ Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện v
 ## Bước 3
 
 **Quét 2 tab tác tử đã mở:** Graph, ReqArch
-  [cỡ] man-01-Graph 1456 × 838
-đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-2/man-01-Graph.png
 
 ### Tab `Graph`
 
@@ -55,8 +49,6 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ```
 
 ![Graph](man-01-Graph.png)
-  [cỡ] man-02-ReqArch 1456 × 838
-đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-2/man-02-ReqArch.png
 
 ### Tab `ReqArch`
 
@@ -74,8 +66,6 @@ Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 n�
    Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `arch.style_select` đang chờ anh cho biết:
 • Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  project.create  còn 23 giờ  Hoàn tác ⟩ 
 ```
-  [cỡ] buoc-03 1456 × 838
-đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-2/buoc-03.png
 
 **Tác tử trả lời** *(sau 4.5 s)*:
 
@@ -98,6 +88,4 @@ Màn này đang rỗng — vì: chưa có yêu cầu nào — chưa có hiện v
 
 ---
 
-Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC002/lan-2`.
-
---- stderr ---
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC002`.

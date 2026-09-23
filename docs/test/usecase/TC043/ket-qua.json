@@ -26,9 +26,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Không đạt",
- "nhan_xet": "Không trả lời được: “✖ Lượt này KHÔNG chạy được — E5002: chuỗi rỗng”. Có nói rõ “Nội dung tệp … chưa được cung cấp trong ngữ cảnh hiện tại”.\n\nGhi chú: ĐIỂM CỘNG QUAN TRỌNG: KHÔNG bịa một dải nhiệt độ nào (tài liệu cố ý không có mục này). Nhưng nói “chưa được cung cấp” khác với “không có trong tài liệu”.",
- "giay": 27.9,
+ "trang_thai": "Đạt",
+ "nhan_xet": "SAU [DEV-202]: “Thông tin về dải nhiệt độ hoạt động của MCU-X không có trong đoạn văn được cung cấp [1].” Đọc tài liệu thật, tìm không thấy, nói ra, kèm trích dẫn.\n\nGhi chú: Trước đây ca này cũng KHÔNG bịa — nhưng vì tài liệu chưa bao giờ được đọc, nên phép đo ấy vô nghĩa. Giờ tính chất chống bịa được chứng minh THẬT: tài liệu đã nạp (3 đoạn), tác tử tra và trả lời rằng không có.",
+ "giay": 26.2,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 27.9,
+   "giay": 26.2,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

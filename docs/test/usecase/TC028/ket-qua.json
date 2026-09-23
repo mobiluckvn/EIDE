@@ -23,17 +23,16 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
- "giay": 64.2,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không nói phạm vi đã đọc, không khoanh vùng tệp. Biến đề bài thành yêu cầu “Hệ thống phải xử lý dự án 1200 tệp, 40 MB”.",
+ "giay": 19.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-ReqArch.png",
-  "man-03-Graph.png",
-  "man-04-NhatKy.png"
+  "man-02-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC028/du-an/du-an-rat-lon",
  "cham": {
@@ -43,7 +42,7 @@
  },
  "lap": [
   {
-   "giay": 64.2,
+   "giay": 19.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

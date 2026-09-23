@@ -520,3 +520,53 @@ def test_luot_qua_han_thi_NOI_RA_chu_khong_im_lang(daemon_du_an, monkeypatch):
             if x.get("kind") == "run.blocked"
             and (x.get("data") or {}).get("reason") == "qua_han_luot"]
     assert dong, "quá hạn mà không ghi sổ"
+
+
+def test_nut_dau_cua_moi_mau_phai_DU_DU_KIEN_de_chay():
+    """**Bù một mẫu mà nút đầu thiếu tham số bắt buộc thì chỉ đổi chỗ hỏng.** [DEV-206]
+
+    Đo 23/09/2026 khi chạy lại đủ 76 ca: mẫu `unknown` của [DEV-201] là một nút `chat.clarify`
+    đơn lẻ, mà năng lực ấy đòi `gaps` — không nút nào sinh ra. Tác tử đi hỏi người dùng đúng
+    chữ `gaps`, tức một câu hỏi bằng tiếng của hợp đồng về một khái niệm nội bộ. Và nó TỆ HƠN
+    cái nó thay thế: trước đó `unknown` rơi xuống planner, planner ít ra còn hỏi được "Chưa rõ
+    yêu cầu về kết nối mạng".
+
+    Tính chất đúng KHÔNG phải "cấm hỏi ở bước một". `policy.set_autonomy` đòi `level` và `by`,
+    và `dps.js` đã ghi rõ vì sao để trống: *"mức mới đến từ câu người nói, tên người đến từ
+    phiên… để trống thì nút dừng ở 'thiếu tham số' và HỎI — đúng hơn là đoán một mức tự chủ"*.
+    Đó là một câu hỏi chính đáng.
+
+    Tính chất đúng là: **được hỏi, miễn hỏi bằng TIẾNG NGƯỜI.** Một tham số mà người dùng có
+    thể trả lời phải có câu hỏi bằng lời — trong `HOI_BANG_TIENG_NGUOI` hoặc trong `description`
+    của hợp đồng. Thiếu cả hai thì câu hỏi in ra đúng tên trường, và người dùng không có cách
+    nào biết `gaps` nghĩa là gì.
+    """
+    reg = get_registry()
+    ch = json.loads((spec_dir() / "dialog" / "chains.json").read_text(encoding="utf-8"))
+    ms = ch["chains"] if isinstance(ch, dict) and "chains" in ch else ch
+    #: Tham số mà `_args_cho` điền được từ ý định/phiên, nên nút đầu KHÔNG phải hỏi người.
+    tu_dong = {"intent", "run_id", "text", "project", "chip", "board", "isa", "passport",
+               "question", "path", "files", "kind"}
+    la: list[str] = []
+    for m in (ms.values() if isinstance(ms, dict) else ms):
+        nut = [n for n in (m.get("nodes") or []) if not n.get("when")]
+        for n in nut:
+            cap = n.get("cap")
+            if cap not in reg or not reg.get(cap).implemented:
+                continue
+            ins = reg.get(cap).spec.input_schema or {}
+            tt = ins.get("properties") or {}
+            can = set(ins.get("required") or [])
+            thieu = can - set(n.get("args") or {}) - tu_dong
+            if not thieu or n.get("on_ask") == "skip":
+                continue
+            from eide.caps.chat import HOI_BANG_TIENG_NGUOI
+            cam = [k for k in sorted(thieu)
+                   if not HOI_BANG_TIENG_NGUOI.get(k)
+                   and not (tt.get(k) or {}).get("description")]
+            if cam:
+                la.append(f"{m.get('ten')}/{n['id']} `{cap}`: {cam}")
+    assert not la, (
+        "Nút đầu dừng hỏi người bằng TÊN TRƯỜNG TRẦN — người dùng không có cách nào biết nó là "
+        f"gì: {la}. Hoặc cấp tham số từ một nút trước, hoặc thêm câu hỏi tiếng người vào "
+        "`HOI_BANG_TIENG_NGUOI` / `description` của hợp đồng.")

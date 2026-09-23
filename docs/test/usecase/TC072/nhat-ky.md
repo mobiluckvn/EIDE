@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Tìm trên mạng datasheet mới nhất của SEN42
 
-**Tác tử trả lời** *(sau 6.7 s)*:
+**Tác tử trả lời** *(sau 6.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -52,6 +52,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 2 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
 Cần làm rõ	THIẾU THÔNG TIN	Bước `env.check` đang chờ anh cho biết:
 • Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Lưu ý: `SEN42` không khớp manifest ISA nào EIDE đang có (armv7e-m, avr8, rv32imac) — chip này chưa được hỗ trợ.
    Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V
 Cần làm rõ	THIẾU THÔNG TIN	Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/du-an/mat-mang-khi-tim-tai-lieu/tim-tren-mang-datasheet-moi-nhat-cua-sen42
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
@@ -64,8 +65,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_6613123c09a4
-Mở lúc	23/09 07:50:33
+Phiên	s_24463591f0ae
+Mở lúc	23/09 13:20:52
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -89,6 +90,7 @@ Số lời gọi	1
 Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 2 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
 Cần làm rõ	THIẾU THÔNG TIN	Bước `env.check` đang chờ anh cho biết:
 • Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Lưu ý: `SEN42` không khớp manifest ISA nào EIDE đang có (armv7e-m, avr8, rv32imac) — chip này chưa được hỗ trợ.
    Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V
 Cần làm rõ	THIẾU THÔNG TIN	Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/du-an/mat-mang-khi-tim-tai-lieu/tim-tren-mang-datasheet-moi-nhat-cua-sen42
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
@@ -101,8 +103,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_6613123c09a4
-Mở lúc	23/09 07:50:33
+Phiên	s_24463591f0ae
+Mở lúc	23/09 13:20:52
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -137,10 +139,11 @@ Môi trường  env.check · env.detect · env.guide_install · +4 nữa  Vùng 
 ```
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (2)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
 • Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
+   Lưu ý: `SEN42` không khớp manifest ISA nào EIDE đang có (armv7e-m, avr8, rv32imac) — chip này chưa được hỗ trợ.
    Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `archive.list` dừng: Không có tệp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/du-an/mat-mang-khi-tim-tai-lieu/tim-tren-mang-datasheet-moi-nhat-cua-sen42  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  project.create  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 6.9 s)*:
+**Tác tử trả lời** *(sau 6.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:

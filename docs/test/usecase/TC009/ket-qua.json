@@ -24,8 +24,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
- "giay": 29.1,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "`diagram.architecture` dừng với E2000: “Chưa có module nào — chạy `arch.decompose` trước; sơ đồ kiến trúc phải vẽ từ ModuleGraph có thật, không đoán”. Không có sơ đồ khối, schematic hay pinout nào.\n\nGhi chú: ĐIỂM CỘNG QUAN TRỌNG: năng lực TỪ CHỐI vẽ từ phỏng đoán. Rào chắn đúng; cái sai là bộ lập kế hoạch không xếp `arch.decompose` vào trước.",
+ "giay": 29.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -43,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 29.1,
+   "giay": 29.4,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

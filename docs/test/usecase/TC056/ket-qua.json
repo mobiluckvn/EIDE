@@ -27,14 +27,15 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không tính được. Không công thức, không đơn vị, không giả định.",
- "giay": 13.9,
+ "giay": 17.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-Graph.png"
+  "man-02-Ingest.png",
+  "man-03-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC056/du-an/tinh-thoi-gian-dung-pin",
  "cham": {
@@ -44,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 13.9,
+   "giay": 17.4,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

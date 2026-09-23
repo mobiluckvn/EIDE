@@ -23,15 +23,17 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Cần người đọc",
- "giay": 38.9,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Hiểu “tóm tắt lại dự án này” thành một việc KIẾN TRÚC về hệ thống LLM: hỏi “Tài liệu kiến trúc hiện tại của hệ thống dịch vụ LLM” và `arch.decompose`.",
+ "giay": 16.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-ReqArch.png"
+  "man-02-Ingest.png",
+  "man-03-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC073/du-an/dich-vu-llm-qua-tai",
  "cham": {
@@ -41,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 38.9,
+   "giay": 16.9,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

@@ -1246,6 +1246,19 @@ HOI_BANG_TIENG_NGUOI = {
     "target": "Nạp vào đâu?",
     "feature": "Việc này thuộc tính năng nào?",
     "reqset_ids": "Dựa trên những yêu cầu nào?",
+    # [DEV-206] Hai tham số của `policy.set_autonomy`. `dps.js` cố ý để trống chúng trong mẫu —
+    # "mức mới đến từ câu người nói, tên người đến từ phiên" — nên chúng CHẮC CHẮN sẽ được hỏi,
+    # và tới 23/09/2026 câu hỏi in ra đúng hai chữ `level` và `by`. Đổi mức tự chủ là một trong
+    # những việc người dùng làm nhiều nhất, và nó hỏi bằng tiếng của hợp đồng.
+    "level": "Đặt mức tự chủ nào? (A0 tác tử không tự làm gì · A4 tự làm nhiều nhất)",
+    "by": "Ai là người quyết định việc này? (ghi vào sổ cái để sau còn truy được)",
+    # Tham số hay gặp khác của các mẫu mới ([DEV-201]) — không có `description` trong hợp đồng.
+    "gaps": "Những điểm nào trong yêu cầu còn chưa rõ?",
+    "files": "Đọc những tệp nào? (đường dẫn đầy đủ)",
+    "artifact": "Chạy trên tệp nhị phân nào?",
+    "evidence_ids": "Dựa trên bằng chứng nào đã thu thập?",
+    "session_id": "Phiên gỡ lỗi nào?",
+    "tool": "Công cụ nào?",
 }
 
 

@@ -1108,15 +1108,33 @@
  },
  {
   "ten": "Chưa hiểu, hỏi lại (DEV-201)",
-  "chuoi": "chat.clarify",
+  "chuoi": "req.elicit → chat.clarify → chat.report_back",
   "buoc": [
-   "chat.clarify"
+   "req.elicit",
+   "chat.clarify",
+   "chat.report_back"
   ],
   "nodes": [
    {
     "id": "n1",
-    "cap": "chat.clarify",
+    "cap": "req.elicit",
     "when": null,
+    "on_ask": "wait",
+    "args": {}
+   },
+   {
+    "id": "n2",
+    "cap": "chat.clarify",
+    "when": "n1",
+    "on_ask": "wait",
+    "args": {
+     "gaps": "${n1.gaps}"
+    }
+   },
+   {
+    "id": "n3",
+    "cap": "chat.report_back",
+    "when": "n1",
     "on_ask": "wait",
     "args": {}
    }

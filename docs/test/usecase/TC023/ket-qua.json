@@ -25,33 +25,38 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 19.1,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không tóm tắt được thiết kế. `archive.list` hỏng E1000: “Không nhận ra định dạng nén của mach-khong-loi.net” — netlist bị đối xử như tệp nén.",
+ "giay": 53.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-Ingest.png",
-  "man-03-Env.png"
+  "man-02-Graph.png",
+  "man-03-Ingest.png",
+  "man-04-ReqArch.png",
+  "man-05-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san",
  "cham": {
   "thieu": [
    "mcu-x|u1",
-   "sen42|u2"
+   "sen42|u2",
+   "i2c|sda|scl"
   ],
   "thua": [],
   "so_bo": "Nghi Không đạt"
  },
  "lap": [
   {
-   "giay": 19.1,
+   "giay": 53.4,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "mcu-x|u1",
-    "sen42|u2"
+    "sen42|u2",
+    "i2c|sda|scl"
    ],
    "thua": []
   }

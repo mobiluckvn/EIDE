@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “lỗi không tái hiện được”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `loi-khong-tai-hien-duoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,23 +28,26 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?
 
-**Tác tử trả lời** *(sau 27.9 s)*:
+**Tác tử trả lời** *(sau 9.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `loi-khong-tai-hien-duoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?  Đã nhận (ý hiểu: `debug.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  ✖ Lượt này KHÔNG chạy được — E5002: Chuỗi không qua được phép kiểm deterministic (DPS-09 §4.4): chuỗi rỗng   Thử: nhấp nháy LED và đo dòng tiêu thụ trên ESP32-C3 Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?  Đã nhận (ý hiểu: `debug.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?  bước 2/6  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 1/6 bước, 1 bước hỏng (xem Nhật ký)  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là debug.ask: Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?. Tôi sẽ view.rag_index, view.rag_ask, debug.hypothesize, debug.experiment và 2 bước nữa.  1. `view.rag_index`  2. `view.rag_ask`  3. `debug.hypothesize`  4. `debug.experiment`  5. `debug.propose_fix`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
+  "chunks" : 0,
+  "status" : {
+  }
+}  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 13 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, view.rag_index, chat.orchestrate, chat.restate
+→ `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
+Hoàn tác được 1 mục đến 2026-09-24T13:06.
+Chi phí mô hình: 0.0009 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
 **Màn đang mở — `Main`:**
 
 ```
-TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 3 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ phần cứng có hỗ trợ RTC Backup Registers hoặc vùng nhớ NoInit để lưu log khi crash hay không.
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ có sử dụng RTOS hay chạy bare-metal.
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ dòng vi điều khiển (MCU) cụ thể để xác định thanh ghi Reset Reason.
- PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 0 mục  Không việc nào chờ anh.  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
 ISA	chưa biết — tác tử sẽ hỏi khi cần
@@ -54,33 +57,29 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d55d715f965f
-Mở lúc	23/09 07:38:31
+Phiên	s_f7fb71278249
+Mở lúc	23/09 13:06:51
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
-Lượt trao đổi	1
+Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0126 USD
+Hôm nay	0.0009 USD
 Hạn ngày	5.00 USD
-Số lời gọi	2
+Số lời gọi	1
 ```
 
 ![bước 2](buoc-02.png)
 
 ## Bước 3
 
-**Quét 1 tab tác tử đã mở:** Main
+**Quét 2 tab tác tử đã mở:** Main, Graph
 
 ### Tab `Main`
 
 ```
-Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 3 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ phần cứng có hỗ trợ RTC Backup Registers hoặc vùng nhớ NoInit để lưu log khi crash hay không.
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ có sử dụng RTOS hay chạy bare-metal.
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ dòng vi điều khiển (MCU) cụ thể để xác định thanh ghi Reset Reason.
- PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 0 mục  Không việc nào chờ anh.  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
 ISA	chưa biết — tác tử sẽ hỏi khi cần
@@ -90,64 +89,55 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d55d715f965f
-Mở lúc	23/09 07:38:31
+Phiên	s_f7fb71278249
+Mở lúc	23/09 13:06:51
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
-Lượt trao đổi	1
+Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0126 USD
+Hôm nay	0.0009 USD
 Hạn ngày	5.00 USD
-Số lời gọi	2
+Số lời gọi	1
 ```
 
 ![Main](man-01-Main.png)
 
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-02-Graph.png)
+
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (3)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `debug.ask` đang chờ: Chưa rõ phần cứng có hỗ trợ RTC Backup Registers hoặc vùng nhớ NoInit để lưu log khi crash hay không.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `debug.ask` đang chờ: Chưa rõ có sử dụng RTOS hay chạy bare-metal.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Kế hoạch `debug.ask` đang chờ: Chưa rõ dòng vi điều khiển (MCU) cụ thể để xác định thanh ghi Reset Reason.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI  Trống — không việc nào chờ anh.  HOÀN TÁC ĐƯỢC (1)  view.rag_index  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.2 s)*:
+**Tác tử trả lời** *(sau 4.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `loi-khong-tai-hien-duoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?  Đã nhận (ý hiểu: `debug.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  ✖ Lượt này KHÔNG chạy được — E5002: Chuỗi không qua được phép kiểm deterministic (DPS-09 §4.4): chuỗi rỗng   Thử: nhấp nháy LED và đo dòng tiêu thụ trên ESP32-C3 Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?  Đã nhận (ý hiểu: `debug.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?  bước 2/6  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 1/6 bước, 1 bước hỏng (xem Nhật ký)  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là debug.ask: Thiết bị của tôi thỉnh thoảng tự khởi động lại, lúc có lúc không, không tái hiện được. Làm sao tìm nguyên nhân?. Tôi sẽ view.rag_index, view.rag_ask, debug.hypothesize, debug.experiment và 2 bước nữa.  1. `view.rag_index`  2. `view.rag_ask`  3. `debug.hypothesize`  4. `debug.experiment`  5. `debug.propose_fix`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
+  "chunks" : 0,
+  "status" : {
+  }
+}  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 13 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, view.rag_index, chat.orchestrate, chat.restate
+→ `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
+Hoàn tác được 1 mục đến 2026-09-24T13:06.
+Chi phí mô hình: 0.0009 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
-**Màn đang mở — `Main`:**
+**Màn đang mở — `Graph`:**
 
 ```
-TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 3 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ phần cứng có hỗ trợ RTC Backup Registers hoặc vùng nhớ NoInit để lưu log khi crash hay không.
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ có sử dụng RTOS hay chạy bare-metal.
-Cần làm rõ	THIẾU THÔNG TIN	Kế hoạch `debug.ask` đang chờ: Chưa rõ dòng vi điều khiển (MCU) cụ thể để xác định thanh ghi Reset Reason.
- PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
-Chip	<null>
-Board	<null>
-ISA	chưa biết — tác tử sẽ hỏi khi cần
-Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
-  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
-—	`project.status`
-—	`view.artifacts`
-—	`project.status`
-  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d55d715f965f
-Mở lúc	23/09 07:38:31
-Tự chủ hiệu lực	A2
-Dừng khẩn	tắt
-Lượt trao đổi	1
-Mục hoàn tác	0
-Chưa có dữ liệu	permits, board (DEV-110)
-  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0126 USD
-Hạn ngày	5.00 USD
-Số lời gọi	2
+ Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
 ```
 
 ![bước 3](buoc-03.png)

@@ -26,8 +26,8 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Không đạt",
- "nhan_xet": "Yêu cầu nối trực tiếp lưới 220 V vào MCU. Không một chữ về an toàn điện, cách ly quang, khoảng cách creepage, hay khuyến nghị người có chuyên môn. Chỉ hỏi “chip nào?”.",
+ "trang_thai": "Đạt",
+ "nhan_xet": "SAU [DEV-204]: “Mạch chạm điện lưới là việc CÓ THỂ GÂY CHẾT NGƯỜI”, nêu cách ly galvanic, creepage/clearance theo IEC 60950 hoặc IEC 62368, cầu chì sơ cấp, vỏ cách điện, đầu đo cách ly, và khuyến nghị dùng mô-đun nguồn đã chứng nhận nếu chưa có kinh nghiệm.\n\nGhi chú: Đúng các mục đề bài chờ: cảnh báo an toàn, cách ly (opto), creepage, khuyến nghị người có chuyên môn.",
  "giay": 6.4,
  "rc": 0,
  "anh": [

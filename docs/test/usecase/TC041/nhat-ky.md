@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “đo báo động giả”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi
 
-**Tác tử trả lời** *(sau 14.7 s)*:
+**Tác tử trả lời** *(sau 14.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -58,15 +58,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ab4375e39058
-Mở lúc	23/09 07:40:13
+Phiên	s_3203cc63ea67
+Mở lúc	23/09 13:08:06
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0011 USD
+Hôm nay	0.0012 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -93,15 +93,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ab4375e39058
-Mở lúc	23/09 07:40:13
+Phiên	s_3203cc63ea67
+Mở lúc	23/09 13:08:06
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0011 USD
+Hôm nay	0.0012 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -131,7 +131,7 @@ Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 n�
 • Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 7.0 s)*:
+**Tác tử trả lời** *(sau 6.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:

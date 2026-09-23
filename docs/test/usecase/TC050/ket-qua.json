@@ -24,14 +24,16 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Nghi Không đạt",
- "giay": 30.0,
+ "trang_thai": "Không đạt",
+ "nhan_xet": "Không phân tích được HardFault. Đáp án cài sẵn: MemManage do con trỏ NULL, trong hàm `doc_cau_hinh` (PC 0x08002A1E).",
+ "giay": 16.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
-  "man-01-Main.png"
+  "man-01-Main.png",
+  "man-02-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC050/du-an/phan-tich-hardfault",
  "cham": {
@@ -43,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 30.0,
+   "giay": 16.5,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "doc_cau_hinh"

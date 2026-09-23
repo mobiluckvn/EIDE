@@ -28,22 +28,21 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt
 
-**Tác tử trả lời** *(sau 7.4 s)*:
+**Tác tử trả lời** *(sau 7.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `cong-cu-tra-log-rong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  bước 1/1  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/1 bước, 1 bước cần anh trả lời  → Mô phỏng mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.run.  1. `sim.run`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.run  artifact  Chạy kịch bản mô phỏng nào?   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → Mô phỏng mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
 
 ```
 TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Bước `sim.run` đang chờ anh cho biết:
-• `artifact`
-• Chạy kịch bản mô phỏng nào? (`scenario`)
+Cần làm rõ	THIẾU THÔNG TIN	Bước `sim.build_platform` đang chờ anh cho biết:
+• Dùng con chip nào? (`chip`)
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -54,8 +53,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e1a8552267e9
-Mở lúc	23/09 07:52:36
+Phiên	s_cf75bb0fc607
+Mở lúc	23/09 13:21:56
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -77,9 +76,8 @@ Số lời gọi	1
 
 ```
 Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	THIẾU THÔNG TIN	Bước `sim.run` đang chờ anh cho biết:
-• `artifact`
-• Chạy kịch bản mô phỏng nào? (`scenario`)
+Cần làm rõ	THIẾU THÔNG TIN	Bước `sim.build_platform` đang chờ anh cho biết:
+• Dùng con chip nào? (`chip`)
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -90,8 +88,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e1a8552267e9
-Mở lúc	23/09 07:52:36
+Phiên	s_cf75bb0fc607
+Mở lúc	23/09 13:21:56
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -116,18 +114,17 @@ Mô phỏng  sim.build_platform · sim.mock_peripheral · sim.model_plant · +3 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.run` đang chờ anh cho biết:
-• `artifact`
-• Chạy kịch bản mô phỏng nào? (`scenario`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
+• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 4.5 s)*:
+**Tác tử trả lời** *(sau 4.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `cong-cu-tra-log-rong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  bước 1/1  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/1 bước, 1 bước cần anh trả lời  → Mô phỏng mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.run.  1. `sim.run`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.run  artifact  Chạy kịch bản mô phỏng nào?   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy mô phỏng cho dự án này rồi kết luận đạt hay không đạt  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → Mô phỏng mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Sim`:**
