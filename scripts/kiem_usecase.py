@@ -31,6 +31,8 @@ import sys
 import time
 from pathlib import Path
 
+import thu_toan_canh
+
 GOC = Path(__file__).resolve().parent.parent
 APP = GOC / "apps/eide/.build/debug/EideApp"
 KE_HOACH = GOC / "docs/test/usecase/ke-hoach.json"
@@ -270,6 +272,16 @@ def main() -> int:
                 du_an[tc["tc"]] = du_an_truoc = Path(kq["du_an"])
             elif tc.get("noi_tiep") and du_an_truoc is not None:
                 du_an[tc["tc"]] = du_an_truoc          # chuỗi nối tiếp giữ nguyên dự án gốc
+
+        # GOM TOÀN CẢNH ngay sau khi chạy, trước khi ca sau đụng vào gì. [DEV-217]
+        # Bằng chứng của một ca nằm rải ở sáu nơi (nhật ký, stdout, ledger, store, session,
+        # cấu hình); gom muộn thì một ca `noi_tiep` đã ghi đè lên trạng thái cần đọc.
+        try:
+            _tc = thu_toan_canh.thu(thu_muc, Path(kq["du_an"]) if kq.get("du_an") else None)
+            thu_toan_canh.viet(_tc, thu_muc)
+        except Exception as e:                                  # noqa: BLE001
+            # Gom log hỏng KHÔNG được làm hỏng lượt đo.
+            print(f"     ⚠ gom toàn cảnh {tc['tc']} hỏng: {e}", flush=True)
 
         cham = kq.get("cham") or _cham(tc, kq["nhat_ky"])
         if kq.get("lap") and len(kq["lap"]) > 1:

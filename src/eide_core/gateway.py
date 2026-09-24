@@ -30,6 +30,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -397,6 +398,41 @@ class Gateway:
         if error_kind:
             d["error_kind"] = error_kind
         self.ledger.append("model.call", d)
+        self._ghi_day_du(d, system, user, resp)
+
+    def _ghi_day_du(self, d: dict[str, Any], system: str, user: str,
+                    resp: ModelResponse | None) -> None:
+        """Bản ghi ĐẦY ĐỦ câu nhắc và câu trả lời — chỉ khi `EIDE_LOG_LLM` bật. [DEV-217]
+
+        Ledger cố tình chỉ giữ `request_hash`/`prompt_hash`: API-15 §5 liệt kê đúng các trường
+        ấy, và câu nhắc mang nguyên nội dung dự án — yêu cầu, mã, trích datasheet. Đổ cả văn
+        bản vào ledger là đổi schema của một sự kiện đã đặc tả, VÀ biến một tệp vốn chia sẻ
+        được thành tệp không chia sẻ được.
+
+        Nhưng băm thì không truy lỗi được. Cả đợt [DEV-216] mất nhiều vòng đo chỉ vì không ai
+        đọc được mô hình đã NHẬN gì và TRẢ gì — thủ phạm thật (vòng lặp khuôn câu về radio
+        FM/AM, DECT, PBX) chỉ lộ ra khi in thẳng đầu ra bị cắt ra xem, bằng một script rời
+        nằm ngoài sản phẩm.
+
+        Nên: tệp RIÊNG, cạnh ledger, TẮT theo mặc định. `EIDE_LOG_LLM` đã có sẵn trong
+        `.env.example` từ đầu và chưa nối vào đâu — đây là chỗ nó thuộc về.
+        """
+        if not os.environ.get("EIDE_LOG_LLM") or self.ledger is None:
+            return
+        f = Path(self.ledger.path).parent / "llm-day-du.jsonl"
+        ban = dict(d)
+        ban["system"] = system
+        ban["user"] = user
+        ban["raw"] = resp.raw if resp else None
+        ban["data"] = resp.data if resp else None
+        ban["ts"] = datetime.now(UTC).isoformat()
+        try:
+            with f.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(ban, ensure_ascii=False) + "\n")
+        except OSError:
+            # Ghi log hỏng KHÔNG được làm hỏng lời gọi mô hình — đây là dụng cụ chẩn đoán,
+            # không phải một phần của hợp đồng năng lực.
+            pass
 
 
 # ---------------------------------------------------------------- phụ trợ
