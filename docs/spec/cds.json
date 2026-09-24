@@ -1361,7 +1361,7 @@
      "items": {
       "type": "object"
      },
-     "description": "file, kind, tier, extractor, confidence"
+     "description": "file, kind, tier, extractor, confidence, family, scan?, unsupported?, can_xac_nhan?"
     }
    },
    "required": [
@@ -1372,7 +1372,10 @@
   "steps": [
    "Chữ ký nội dung (magic, XML root, từ khóa) trước phần mở rộng",
    "Bảng kind → tier/extractor (svd/atdf/edc/binding/header: gold; pdf hãng: silver; ảnh: silver-vision; readme/md: context)",
-   "PDF: phân biệt datasheet/reference manual/errata/schematic-pdf theo tiêu đề trang 1"
+   "PDF: phân biệt datasheet/reference manual/errata/schematic-pdf theo tiêu đề trang 1",
+   "`family` theo chín họ của AAD-33 §4 (archive|netlist|source|script|log|capture|pdf|image|unknown) — trục riêng với `kind`, quyết định ĐƯỢC LÀM GÌ với tệp; `archive.list` chỉ nhận `archive`",
+   "Định dạng nhận ra được mà không đọc được (.PcbDoc, .SchDoc, .brd…) → `unsupported` kèm đường ra, không báo \"không nhận ra định dạng nén\"",
+   "family=script → quét tĩnh (eide_core.script_scan): lệnh phá hoại, đọc khoá riêng → `scan` kèm trích dòng, và `can_xac_nhan: true` khi có mức major/blocker — TÊN cổng chưa chốt, xem DEVIATIONS DEV-221"
   ],
   "errors": [],
   "undo": "none",
@@ -1472,6 +1475,17 @@
    "properties": {
     "indexed": {
      "type": "integer"
+    },
+    "suspect": {
+     "type": "array",
+     "items": {
+      "type": "object"
+     },
+     "description": "đoạn bị loại vì có mẫu chèn lệnh: file, chunk, findings[]"
+    },
+    "canh_bao": {
+     "type": "string",
+     "description": "câu cảnh báo cho người, tiếng Việt"
     }
    },
    "required": [
@@ -1480,12 +1494,13 @@
    "additionalProperties": false
   },
   "steps": [
-   "Chỉ tài liệu ngữ cảnh (README, ghi chú): chunk + FTS5 (view.rag_index gọi bên trong)"
+   "Chỉ tài liệu ngữ cảnh (README, ghi chú): chunk + FTS5 (view.rag_index gọi bên trong)",
+   "Quét mẫu P-INJ từng đoạn TRƯỚC khi vào chỉ mục (AAD-33 §2.3, §5.3 bước 4): đoạn nghi bị LOẠI khỏi chỉ mục, ghi ledger `error/suspect_injection`, trả về trong `suspect[]`; số thứ tự `chunk` giữ nguyên để trích dẫn cũ không trỏ sai chỗ"
   ],
   "errors": [],
   "undo": "none",
   "example": "{\"files\":[\"README.md\"]}",
-  "tc": "Truy vấn từ khóa tìm thấy",
+  "tc": "Truy vấn từ khóa tìm thấy; đoạn có \"ignore previous instructions\" bị loại và báo ra",
   "volume": 2
  },
  {

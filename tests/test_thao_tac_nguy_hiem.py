@@ -625,8 +625,15 @@ def test_tep_KHONG_PHAI_kho_nen_thi_chi_dung_nang_luc_doc_no():
         assert "không phải kho nén" in v, f"{ten}: vẫn nói về định dạng nén"
         assert mong in v, f"{ten}: không chỉ tới `{mong}`"
         assert mong in r, f"`{mong}` không có trong danh mục — lời chỉ dẫn trỏ vào hư không"
-    # Đuôi lạ thì KHÔNG bịa một năng lực: giữ câu cũ.
-    assert "Không nhận ra định dạng nén" in _khong_phai_kho_nen(_P("x.PcbDoc"))
+    # Đuôi KHÔNG CÓ BỘ ĐỌC thì không được bịa một năng lực. Trước Đ2 chỗ này trả về câu chung
+    # "Không nhận ra định dạng nén"; nay `.PcbDoc` là một định dạng NHẬN RA ĐƯỢC mà EIDE không
+    # đọc, nên câu lỗi nói đúng tên định dạng và đúng đường ra (TC025) — vẫn không gợi ý năng
+    # lực nào.
+    v = _khong_phai_kho_nen(_P("x.PcbDoc"))
+    assert "Altium" in v and "netlist" in v
+    assert "extract." not in v, "không được gợi ý một bộ đọc cho định dạng không đọc được"
+    # Đuôi thật sự LẠ (không bộ đọc, không trong bảng không-hỗ-trợ) vẫn nói thẳng là không biết.
+    assert "Không nhận ra định dạng" in _khong_phai_kho_nen(_P("x.qzx9"))
 
 
 def test_moi_nang_luc_duoc_CHI_TOI_deu_co_that():

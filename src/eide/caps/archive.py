@@ -99,6 +99,57 @@ GOC_XML: dict[str, str] = {
 
 DOC_DAU = 4096                   # đủ để thấy thẻ gốc XML mà không đọc cả tệp 40 MB
 
+# ─────────────────────────────────────────────── HỌ TỆP theo AAD-33 §4 / AGD-32 Đ2 — [DEV-234]
+#
+# v1.4 đòi phân loại thành chín HỌ: archive | netlist | source | script | log | capture | pdf |
+# image | unknown. Đó là một TRỤC KHÁC với `kind` đang có, và cả hai đều cần thiết:
+#
+#   * `kind` trả lời "bộ đọc nào rút được fact từ tệp này" (svd → extract.svd). Nó bị ràng buộc
+#     bởi enum `source.kind` của DDD-14 §2, có ràng buộc trong lược đồ store, và `search.*` lọc
+#     theo nó. Thêm `script`/`log`/`capture` vào đó là đổi lược đồ dữ liệu giữa một đợt sửa định
+#     tuyến — và `script` không phải một "nguồn tri thức", nó không sinh fact nào.
+#   * `family` trả lời "được phép làm gì với tệp này" — và đó là thứ Đ2 cần: `archive.list` CHỈ
+#     nhận `archive`; `script` phải qua bộ quét tĩnh; `capture` đi bộ giải mã tín hiệu.
+#
+# Đo 23/09/2026: netlist, .c, .sh, .PcbDoc đều bị đưa vào `archive.list` và nhận câu
+# "không nhận ra định dạng nén" (TC023, 025, 026, 062, 070).
+HO_TU_KIND: dict[str, str] = {
+    "archive": "archive", "netlist": "netlist", "kicad": "netlist",
+    "header": "source", "pdf": "pdf", "image": "image",
+    "svd": "source", "atdf": "source", "edc": "source", "binding": "source",
+    "md": "source", "readme": "source", "html": "source",
+    "csv": "capture", "docx": "pdf", "xlsx": "capture",
+}
+
+#: Đuôi tệp → họ, cho những họ mà `kind` của DDD-14 không có tên. Chỉ xét khi chữ ký nội dung
+#: không khẳng định được gì.
+HO_TU_DUOI: dict[str, str] = {
+    ".sh": "script", ".bash": "script", ".zsh": "script", ".ps1": "script", ".bat": "script",
+    ".cmd": "script", ".py": "script", ".pl": "script", ".rb": "script", ".tcl": "script",
+    ".mk": "script", ".lua": "script", ".js": "script",
+    ".c": "source", ".cpp": "source", ".cc": "source", ".h": "source", ".hpp": "source",
+    ".s": "source", ".asm": "source", ".rs": "source", ".ld": "source", ".cmake": "source",
+    ".log": "log", ".txt": "log", ".out": "log",
+    # `.csv` KHÔNG có ở đây: nó đi qua `_ho_bang` vì cùng một đuôi mang cả bản ghi máy phân tích
+    # logic lẫn một BOM, và chỉ tiêu đề cột phân biệt được hai thứ.
+    ".sal": "capture", ".vcd": "capture", ".pcap": "capture",
+    ".pcapng": "capture", ".wav": "capture",
+    ".net": "netlist", ".kicad_net": "netlist", ".kicad_sch": "netlist",
+    ".kicad_pcb": "netlist", ".cir": "netlist", ".sp": "netlist",
+}
+
+#: Định dạng NHẬN RA ĐƯỢC nhưng EIDE không đọc — mỗi dòng là một câu lỗi nói đúng lý do và đúng
+#: đường ra. TC025: *"định dạng Altium (.PcbDoc) không hỗ trợ — xuất netlist/PDF"*.
+KHONG_HO_TRO: dict[str, tuple[str, str]] = {
+    ".pcbdoc": ("Altium PCB", "xuất netlist (.net) hoặc PDF từ Altium rồi nạp lại"),
+    ".schdoc": ("Altium schematic", "xuất netlist (.net) hoặc PDF từ Altium rồi nạp lại"),
+    ".brd": ("Eagle/Altium board", "xuất netlist hoặc PDF"),
+    ".sch": ("Eagle schematic", "xuất netlist (.net) hoặc PDF"),
+    ".ddb": ("Altium design database", "xuất từng tệp con ra netlist/PDF"),
+    ".step": ("mô hình cơ khí STEP", "dùng bản vẽ 2D hoặc PDF nếu cần kích thước"),
+    ".dsn": ("OrCAD design", "xuất netlist hoặc PDF"),
+}
+
 
 def _root(ctx: Context) -> Path:
     root = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
@@ -124,9 +175,101 @@ def classify(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         p = Path(f).expanduser()
         kind, cf, vi = _nhan_dang(p)
         tier, extractor = BANG_KIND.get(kind, ("bronze", None))
-        ra.append({"file": str(p), "kind": kind, "tier": tier, "extractor": extractor,
-                   "confidence": cf, "vi_sao": vi})
+        muc: dict[str, Any] = {"file": str(p), "kind": kind, "tier": tier,
+                               "extractor": extractor, "confidence": cf, "vi_sao": vi,
+                               "family": ho_tep(p, kind)}
+        # Tệp KHÔNG ĐỌC ĐƯỢC thì nói đúng định dạng và đúng đường ra, ngay tại chỗ phân loại.
+        if (kt := KHONG_HO_TRO.get(p.suffix.lower())):
+            muc["family"] = "unknown"
+            muc["extractor"] = None
+            muc["unsupported"] = {"format": kt[0], "loi_khuyen": kt[1]}
+            muc["vi_sao"] = f"định dạng {kt[0]} ({p.suffix}) không hỗ trợ — {kt[1]}"
+        # Script đi qua bộ quét tĩnh NGAY tại cửa vào, không chờ tới lúc chạy. [Đ2.2]
+        #
+        # Chỗ đứng có ý nghĩa: người dùng thấy kết quả quét khi họ NẠP tệp, tức lúc họ còn nhớ
+        # mình vừa đưa vào cái gì và vì sao. Chờ tới lúc chạy thì cảnh báo hiện giữa một chuỗi
+        # đang chạy, và đó là lúc người ta bấm Duyệt nhanh nhất.
+        if muc["family"] == "script":
+            from eide_core.script_scan import quet_tep
+            kq = quet_tep(p)
+            muc["scan"] = kq.to_dict()
+            muc["scan"]["canh_bao"] = kq.cau_canh_bao()
+            # CỐ Ý KHÔNG đặt tên cổng ở đây. `registry._gate_tu_spec` rút tên cổng bằng cách
+            # QUÉT CHỮ trong `steps`/`ask_when` của hợp đồng (DEV-041/DEV-054), nên một chữ
+            # "G-WL" viết vào hợp đồng làm cả `ingest.classify` bị cổng R4 chặn ở cửa —
+            # phân loại một tệp thành "đổi danh sách trắng". Và tên cổng đúng cho việc này
+            # còn đang chờ chủ sản phẩm chốt (DEV-221: tám cổng v1.4 ↔ cổng đang có).
+            #
+            # Ở đây chỉ nói SỰ THẬT ĐO ĐƯỢC: script này cần người xác nhận trước khi chạy.
+            # Ai dựng thẻ cổng thì đọc `can_xac_nhan` và `scan.canh_bao`.
+            muc["can_xac_nhan"] = kq.can_hoi
+        ra.append(muc)
     return {"classification": ra}
+
+
+def ho_tep(p: Path, kind: str) -> str:
+    """Họ tệp theo chín loại của AAD-33 §4 — `kind` trước, đuôi tệp sau, `unknown` là câu cuối.
+
+    Shebang thắng cả hai: một tệp không đuôi mở đầu bằng `#!/bin/bash` là script, bất kể
+    `_nhan_dang` gọi nó là gì. Đây là chỗ [DEV-234] ghi nhận hai trục song song (`kind` cho bộ
+    đọc, `family` cho quyền làm gì) và vì sao không gộp chúng.
+    """
+    from eide_core.script_scan import la_script
+    if la_script(p):
+        return "script"
+    if p.suffix.lower() in KHONG_HO_TRO:
+        return "unknown"
+    # Đuôi tệp THẮNG chữ ký nội dung cho hai họ này, và chỉ cho hai họ này.
+    #
+    # `.sal` (Saleae) và `.kicad_sch` là ĐỊNH DẠNG CHỨA: bên trong là zip hoặc s-expression, nên
+    # chữ ký nội dung gọi chúng là `archive`/`csv`. Để chữ ký thắng thì một bản ghi máy phân tích
+    # logic đi vào `archive.list` và người dùng nhận một danh sách tệp con thay vì tín hiệu —
+    # cùng loại lỗi mà `_trong_zip` đã chặn cho `.docx`.
+    if (ho_duoi := HO_TU_DUOI.get(p.suffix.lower())) in ("capture", "netlist"):
+        return ho_duoi
+    if kind in ("csv", "xlsx"):
+        return _ho_bang(p)
+    if kind in ("md", "readme") and p.suffix.lower() in (".log", ".txt", ".out") and _co_ve_la_log(p):
+        return "log"
+    if (ho := HO_TU_KIND.get(kind)):
+        return ho
+    return HO_TU_DUOI.get(p.suffix.lower(), "unknown")
+
+
+def _co_ve_la_log(p: Path) -> bool:
+    """Tệp `.txt`/`.log` này là NHẬT KÝ hay là văn bản?
+
+    `_nhan_dang` gọi cả hai đuôi ấy là `md` (đúng cho `kind`: không có bộ đọc riêng). Nhưng họ
+    tệp thì khác nhau: `analyze.log` đọc nhật ký, còn một tệp ghi chú `.txt` thì không. Dấu hiệu
+    của nhật ký là DÒNG CÓ DẤU THỜI GIAN hoặc mức log — đọc được từ vài dòng đầu, không cần đoán.
+    """
+    try:
+        dau = p.open("rb").read(1024).decode("utf-8", errors="ignore")
+    except OSError:
+        return False
+    dong = [d for d in dau.splitlines() if d.strip()][:10]
+    if not dong:
+        return False
+    mau = re.compile(r"^\s*(?:\[|\()?\d{1,4}[-:./]\d{1,2}[-:.\d]*|"
+                     r"\b(?:ERROR|WARN(?:ING)?|INFO|DEBUG|TRACE|FATAL)\b", re.I)
+    return sum(1 for d in dong if mau.search(d)) >= max(2, len(dong) // 2)
+
+
+def _ho_bang(p: Path) -> str:
+    """Một bảng CSV/XLSX là `capture` hay `source`? Đọc tiêu đề cột, không đoán theo đuôi.
+
+    Cùng một đuôi `.csv` mang hai thứ khác hẳn nhau: bản xuất của máy phân tích logic (Saleae →
+    `Time [s], Channel 0, …`) và một BOM. Gán bừa một trong hai thì bảng BOM đi vào bộ giải mã
+    tín hiệu, hoặc ngược lại — và cả hai lần đều báo lỗi về một thứ người dùng không hỏi.
+    """
+    try:
+        dau = p.open("rb").read(512).decode("utf-8", errors="ignore").lower()
+    except OSError:
+        return "source"
+    if re.search(r"\btime\b|\btimestamp\b|\bsample\b", dau) and \
+            re.search(r"\bchannel\b|\bd\d\b|\banalog\b|\bdigital\b|\bscl\b|\bsda\b", dau):
+        return "capture"
+    return "source"
 
 
 #: Phần mở rộng → năng lực đúng để đọc nó. Chỉ những loại EIDE THẬT SỰ có bộ rút trích.
@@ -152,11 +295,53 @@ def _khong_phai_kho_nen(p: Path) -> str:
     một câu lỗi chỉ sai hướng thì tốn thời gian người đọc để đi tới một chỗ không có gì —
     cùng bài học với [DEV-202].
     """
-    nl = _NEN_DUNG.get(p.suffix.lower())
-    if nl:
-        return (f"`{p.name}` không phải kho nén — đây là tệp `{p.suffix}`, đọc bằng `{nl}`. "
-                f"(Nếu anh chờ một kho nén thì tệp này có thể đã hỏng.)")
-    return f"Không nhận ra định dạng nén của {p.name}"
+    # ① Định dạng nhận ra được nhưng không đọc được — nói tên định dạng và đường ra (TC025).
+    if (kt := KHONG_HO_TRO.get(p.suffix.lower())):
+        return (f"`{p.name}` là định dạng {kt[0]} ({p.suffix}) — EIDE không đọc trực tiếp. "
+                f"Cách đi tiếp: {kt[1]}.")
+    # ② Có dấu vết kho nén nhưng mở không được → CỤT hoặc HỎNG, không phải "lạ định dạng" (TC026).
+    if (hong := _dau_hieu_hong(p)):
+        return f"`{p.name}` {hong} — tệp có vẻ bị cắt giữa hoặc hỏng, hãy nạp lại bản đầy đủ."
+    # ③ Tệp lành, chỉ là loại khác — chỉ đúng bộ đọc của nó ([DEV-210]).
+    if (nl := _NEN_DUNG.get(p.suffix.lower())):
+        return f"`{p.name}` không phải kho nén — đây là tệp `{p.suffix}`, đọc bằng `{nl}`."
+    if (ho := ho_tep(p, _nhan_dang(p)[0])) == "script":
+        return (f"`{p.name}` là một script, không phải kho nén. Nó được quét tĩnh trước khi chạy "
+                f"và chỉ chạy trong sandbox của dự án.")
+    if ho != "unknown":
+        return (f"`{p.name}` không phải kho nén — nó thuộc họ `{ho}`. `archive.list` chỉ mở được "
+                f"tệp nén (zip/tar/gz/xz/7z/rar).")
+    return (f"Không nhận ra định dạng của `{p.name}`: không có chữ ký kho nén nào, và phần mở "
+            f"rộng `{p.suffix or '(không có)'}` cũng không nói được đây là gì.")
+
+
+def _dau_hieu_hong(p: Path) -> str | None:
+    """Tệp này có dấu vết một kho nén CỤT/HỎNG không — trả về mô tả ngắn, hoặc `None`.
+
+    Ba dấu hiệu, và cả ba là điều đọc được mà không cần giải nén:
+    - đúng chữ ký zip ở đầu nhưng `zipfile` không đọc được bảng mục;
+    - có chuỗi `PK\\x03\\x04` ở đâu đó sau byte đầu (tệp bị chèn thêm hoặc mất phần đầu);
+    - chữ ký gzip/xz/7z/rar ở đầu nhưng phần thân rỗng.
+    """
+    try:
+        dau = p.open("rb").read(DOC_DAU)
+        kich_thuoc = p.stat().st_size
+    except OSError:
+        return None
+    if dau.startswith(b"PK\x03\x04"):
+        import zipfile
+        try:
+            with zipfile.ZipFile(p) as z:
+                z.namelist()
+        except (zipfile.BadZipFile, OSError):
+            return "có chữ ký zip ở đầu nhưng không đọc được bảng mục"
+        return None
+    for sig, _ in CHU_KY_NEN:
+        if dau.startswith(sig) and kich_thuoc <= len(sig) + 32:
+            return "có chữ ký kho nén nhưng gần như không có nội dung"
+    if b"PK\x03\x04" in dau[1:]:
+        return "có chữ ký zip ở giữa tệp chứ không ở đầu"
+    return None
 
 
 def _nhan_dang(p: Path) -> tuple[str, float, str]:
@@ -315,10 +500,12 @@ def index_text(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     và có tier. Đổ datasheet vào FTS5 sẽ khiến `memory.retrieve` trả về đoạn văn không trích dẫn
     được, cạnh tranh chỗ với fact có trích dẫn — và bên gọi không phân biệt được hai loại.
     """
+    from eide_core.inject_scan import loc_doan
     from eide_core.rag import Doan, RagIndex
     root = _root(ctx)
     idx = RagIndex(root)
     doan: list[Doan] = []
+    nghi_ngo: list[dict[str, Any]] = []
     for f in params["files"]:
         p = Path(f).expanduser()
         if not p.is_file():
@@ -330,10 +517,36 @@ def index_text(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         except (UnicodeDecodeError, OSError):
             continue
         sid = "src_" + bam_tep(p)[:16]
-        for i, khuc in enumerate(_chia_doan(noi_dung)):
-            doan.append(Doan(id=f"rc_{bam_tep(p)[:12]}_{i:03d}", source_id=sid, text=khuc,
+        khuc_ds = _chia_doan(noi_dung)
+        # P-INJ — [Đ2.3, AAD-33 §2.3, §5.3 bước 4].
+        #
+        # Loại TRƯỚC khi vào chỉ mục, không đánh dấu rồi vẫn nạp: một đoạn đã ở trong chỉ mục là
+        # một đoạn sẽ có ngày đi vào prompt, có thể nhiều tháng sau, trong một lượt không ai còn
+        # nhớ tệp ấy từ đâu. `chunk` giữ nguyên số thứ tự gốc để trích dẫn cũ không trỏ sai chỗ.
+        giu, nghi = loc_doan(khuc_ds)
+        for muc in nghi:
+            nghi_ngo.append({"file": str(p), **muc})
+        for i, text in giu:
+            doan.append(Doan(id=f"rc_{bam_tep(p)[:12]}_{i:03d}", source_id=sid, text=text,
                              locator={"file": str(p), "chunk": i}))
-    return {"indexed": idx.them(doan)}
+
+    if nghi_ngo and (led := ctx.extra.get("ledger")) is not None:
+        for muc in nghi_ngo[:10]:
+            led.append("error", {"kind": "suspect_injection", "role": "ingest",
+                                 "evidence": f"{muc['file']}#{muc['chunk']}: "
+                                             f"{(muc['findings'][0]['text'] if muc['findings'] else '')[:150]}",
+                                 "task_ref": "ingest.index_text"})
+    ra: dict[str, Any] = {"indexed": idx.them(doan)}
+    if nghi_ngo:
+        so_dong = sum(int(m.get("so_dong_bo") or 0) for m in nghi_ngo)
+        bo_han = sum(1 for m in nghi_ngo if m.get("bo_han"))
+        ra["suspect"] = nghi_ngo
+        ra["canh_bao"] = (
+            f"Đã bỏ {so_dong} dòng trông như CHỈ THỊ cho tác tử (không phải nội dung kỹ thuật) "
+            f"khỏi chỉ mục, ở {len(nghi_ngo)} đoạn"
+            + (f"; {bo_han} đoạn bị bỏ hẳn vì phần còn lại quá ngắn" if bo_han else "")
+            + ". Phần còn lại của tài liệu vẫn dùng bình thường — xem `suspect` để biết dòng nào.")
+    return ra
 
 
 # ---------------------------------------------------------------- ARCHIVE-08 sources
@@ -462,6 +675,17 @@ def list_(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     p = Path(params["path"]).expanduser()
     if not p.is_file():
         raise EideError("E2000", f"Không có tệp {p}", exists=[], candidates=[], missing=[str(p)])
+    # CỬA MỘT CHIỀU: chỉ tệp thuộc họ `archive` được vào đây. [Đ2.1, AAD-33 §4]
+    #
+    # Trước bản này, mọi đường dẫn mà tầng hiểu lệnh rút ra đều rơi vào năng lực này, và nó là
+    # nơi năm ca chết: netlist, .c, .sh, .PcbDoc đều nhận câu "không nhận ra định dạng nén"
+    # (TC023, 025, 026, 062, 070). Câu ấy đúng về kỹ thuật và sai về hướng — người dùng vừa gọi
+    # tệp đó là NETLIST, còn câu trả lời nói về nén, nên họ đi tìm xem mình nén sai kiểu gì.
+    #
+    # Phép kiểm đứng ở ĐÂY, không ở bên gọi: đây là cửa, và một cửa tự canh mình thì không có
+    # đường vòng nào. `_khong_phai_kho_nen` ([DEV-210]) lo phần chỉ đúng chỗ nên đi.
+    if (ho := ho_tep(p, _nhan_dang(p)[0])) != "archive":
+        raise EideError("E1000", _khong_phai_kho_nen(p), file=str(p), family=ho)
     sau = min(int(params.get("depth") or 1), GIOI_HAN["depth"])
     return {"entries": _liet_ke(p, sau, 0)}
 
@@ -514,7 +738,16 @@ def _doan_loai(ten: str) -> str:
 def _liet_ke_zip(p: Path, sau: int, muc: int) -> list[dict[str, Any]]:
     import zipfile
     ra = []
-    with zipfile.ZipFile(p) as z:
+    # Kho nén CỤT phải ra một mã lỗi EIDE, không ra một `BadZipFile` trần. [Đ2.1, TC026]
+    #
+    # Một ngoại lệ của thư viện chuẩn thoát lên Router thành "lỗi nội bộ": người dùng nhận
+    # `File is not a zip file` cho một tệp mà chữ ký zip của nó nằm ngay bốn byte đầu — câu ấy
+    # vừa mâu thuẫn với điều họ thấy, vừa không nói phải làm gì.
+    try:
+        z_thu = zipfile.ZipFile(p)
+    except (zipfile.BadZipFile, OSError):
+        raise EideError("E1000", _khong_phai_kho_nen(p), file=str(p)) from None
+    with z_thu as z:
         for i in z.infolist():
             if i.is_dir():
                 continue
@@ -529,7 +762,11 @@ def _liet_ke_zip(p: Path, sau: int, muc: int) -> list[dict[str, Any]]:
 def _liet_ke_tar(p: Path, sau: int, muc: int) -> list[dict[str, Any]]:
     import tarfile
     ra = []
-    with tarfile.open(p) as t:
+    try:
+        t_thu = tarfile.open(p)
+    except (tarfile.TarError, OSError):
+        raise EideError("E1000", _khong_phai_kho_nen(p), file=str(p)) from None
+    with t_thu as t:
         for i in t.getmembers():
             if not i.isfile():
                 continue

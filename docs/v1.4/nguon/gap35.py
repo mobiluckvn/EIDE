@@ -33,7 +33,7 @@ DO = "F8CBAD"          # KHÔNG
 CAM = "FFE699"         # MỘT PHẦN / KHÁC
 LUC = "C6EFCE"         # CÓ
 
-MAU_TRANG_THAI = {"KHÔNG": DO, "MỘT PHẦN": CAM, "KHÁC": CAM, "CÓ": LUC, "XONG Đ1": "A9D08E"}
+MAU_TRANG_THAI = {"KHÔNG": DO, "MỘT PHẦN": CAM, "KHÁC": CAM, "CÓ": LUC, "XONG Đ1": "A9D08E", "XONG Đ2": "A9D08E"}
 VIEN = Border(*(Side(style="thin", color="BFBFBF"),) * 4)
 
 
@@ -108,8 +108,8 @@ def sheet_huong_dan(wb) -> None:
         ("KHÔNG", "Không có dòng mã nào làm việc này."),
         ("KHÁC", "Mã làm việc ấy nhưng theo cách khác thiết kế (tên khác, chỗ khác, cơ chế "
                  "khác) — phải chốt: sửa mã hay cập nhật tài liệu (ghi DEVIATIONS)."),
-        ("XONG Đ1", "Đã hiện thực ngày 24/09/2026; cột cuối ghi tệp và BÀI KIỂM canh nó. "
-                    "`make check-py` xanh: ruff, 1975 test, check-spec, check-gen."),
+        ("XONG Đ1 / XONG Đ2", "Đã hiện thực ngày 24/09/2026; cột cuối ghi tệp và BÀI KIỂM canh "
+                    "nó. `make check-py` xanh: ruff, 2011 test, check-spec, check-gen."),
         ("", ""),
         ("KẾT LUẬN NGẮN", ""),
         ("Vấn đề kiến trúc lớn nhất",
@@ -1060,6 +1060,18 @@ XONG: dict[str, tuple[str, str]] = {
               "Bảng cạnh bên thay vì bọc {value,origin} — [DEV-231]. Canh bởi "
               "::test_slot_mo_hinh_khong_duoc_dung_de_chay, ::test_dx_thang_mo_hinh, "
               "::test_duong_song_chay_dx_truoc_mo_hinh"),
+    "G-021": ("XONG Đ2", "src/eide_core/inject_scan.py (mới) — 8 mẫu P-INJ, lọc theo DÒNG "
+              "(không bỏ cả đoạn: bỏ cả đoạn cho phép kẻ tấn công xoá tri thức của tệp bằng một "
+              "dòng, [DEV-236]); nối vào ingest.index_text, đoạn nghi KHÔNG vào chỉ mục và được "
+              "báo qua `suspect[]`. Canh bởi tests/test_classify_v14.py::"
+              "test_doan_chen_lenh_bi_loai_khoi_chi_muc, ::test_loc_theo_dong_giu_phan_ky_thuat, "
+              "::test_khong_bao_dong_gia_tren_van_ban_ky_thuat"),
+    "G-151": ("XONG Đ2", "src/eide_core/script_scan.py (mới) — 12 mẫu (rm từ gốc, dd, mkfs, đọc "
+              "~/.ssh, curl|sh, exfil, sudo, eval/base64) + cờ `co_the_con_thieu`; "
+              "ingest.classify quét ngay tại cửa nạp và trả `can_xac_nhan` + trích dòng. TÊN cổng "
+              "chưa đặt ([DEV-235]: một chữ \"G-WL\" trong hợp đồng làm chính ingest.classify bị "
+              "cổng R4 chặn). Canh bởi ::test_script_bi_quet_tinh_va_phai_hoi, "
+              "::test_canh_bao_trich_dung_dong_lenh, ::test_script_lanh_khong_bat_canh_bao"),
     "G-041": ("XONG Đ1", "docs/ho-so/nguon/dps.js::INTENT_SCHEMA → sinh lại "
               "docs/spec/dialog/intent.schema.json (node scripts/gen_spec_tu_nguon.js); "
               "`make check-gen` xanh. Canh bởi ::test_luoc_do_intent_v2_khong_con_slot_chuoi_don, "
@@ -1237,9 +1249,9 @@ CAPS = [
     ("nlu.split_channels", "Mới", "S1a §2.4 — tách DIRECTIVE/PRODUCT/DATA", "KHÔNG", "—", "Đ4",
      "4 ca", "Viết CDS-12 mới; llm=parse, temperature 0"),
     ("ingest.classify", "Đổi", "Magic bytes + đuôi → archive|netlist|source|script|log|capture|"
-     "pdf|image|unknown; mỗi loại một bộ đọc; lỗi đúng lý do", "MỘT PHẦN",
-     "src/eide/caps/archive.py:114 (có magic bytes, câu lỗi đã sửa DEV-210); thiếu script/log/"
-     "capture và chưa chặn archive.list", "Đ2", "5 ca",
+     "pdf|image|unknown; mỗi loại một bộ đọc; lỗi đúng lý do", "XONG Đ2",
+     "XONG 24/09: family theo 9 họ + script/log/capture + KHONG_HO_TRO (Altium…) + archive.list "
+     "là cửa một chiều — src/eide/caps/archive.py::ho_tep, list_, _khong_phai_kho_nen", "Đ2", "5 ca",
      "Cập nhật CDS-12.2 ARCHIVE-05 + hợp đồng produces"),
     ("passport.propose", "Mới", "Từ chips[] → thẻ đề nghị 3 lựa chọn; nút không cần Fact vẫn "
      "chạy; nút cần Fact đánh dấu chờ", "KHÔNG",
@@ -1569,6 +1581,7 @@ def sheet_thong_ke(wb) -> None:
         ("KHÁC (mã làm theo cách khác)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"KHÁC\")"),
         ("CÓ (đúng thiết kế)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"CÓ\")"),
         ("XONG Đ1 (đã sửa 24/09/2026)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"XONG Đ1\")"),
+        ("XONG Đ2 (đã sửa 24/09/2026)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"XONG Đ2\")"),
         ("", None),
         ("THEO ĐỢT", None),
         ("Đợt 1", f"=COUNTIF('Ra soat (GAP)'!J2:J{n},\"Đợt 1\")"),
@@ -1601,8 +1614,8 @@ def sheet_thong_ke(wb) -> None:
         ("Manifest ISA trong docs/spec/isa/", 3),
         ("Phương thức JSON-RPC trong openrpc.json", 65),
         ("Loại sự kiện sổ cái", 24),
-        ("Tệp test trong tests/", 81),
-        ("Mục DEVIATIONS đã dùng", "DEV-001 … DEV-233 (220–229 mâu thuẫn tài liệu, 230–233 từ Đ1)"),
+        ("Tệp test trong tests/", 83),
+        ("Mục DEVIATIONS đã dùng", "DEV-001 … DEV-236 (220–229 mâu thuẫn tài liệu, 230–233 Đ1, 234–236 Đ2)"),
     ]
     for a, b in hang:
         ws.append([a, b])

@@ -184,7 +184,7 @@
   "Nhóm": "B. NLU (L2)",
   "Tài liệu §": "AAD-33 §2.3 (P-INJ)",
   "Yêu cầu thiết kế (1 câu)": "S0 quét mẫu chèn lệnh trong DỮ LIỆU (\"ignore previous instructions\", lệnh shell) → đánh dấu tài liệu nghi ngờ, cảnh báo, không thực thi, ghi sổ",
-  "Trạng thái": "KHÔNG",
+  "Trạng thái": "XONG Đ2",
   "Bằng chứng trong mã (tệp:dòng)": "Không có bộ quét injection nào trong src/ (grep \"injection|ignore previous\" = 0)",
   "Ca đo liên quan": "TC014",
   "Hành động đề xuất": "Thêm luật P-INJ vào s0_rules.yaml + quét ở ingest.index_text và loại đoạn nghi khỏi khối RAG của prompt",
@@ -192,7 +192,7 @@
   "Đợt": "Đợt 1",
   "Công": "M",
   "Ghi chú / DEV đề nghị": "",
-  "Đã làm 24/09/2026": ""
+  "Đã làm 24/09/2026": "src/eide_core/inject_scan.py (mới) — 8 mẫu P-INJ, lọc theo DÒNG (không bỏ cả đoạn: bỏ cả đoạn cho phép kẻ tấn công xoá tri thức của tệp bằng một dòng, [DEV-236]); nối vào ingest.index_text, đoạn nghi KHÔNG vào chỉ mục và được báo qua `suspect[]`. Canh bởi tests/test_classify_v14.py::test_doan_chen_lenh_bi_loai_khoi_chi_muc, ::test_loc_theo_dong_giu_phan_ky_thuat, ::test_khong_bao_dong_gia_tren_van_ban_ky_thuat"
  },
  {
   "ID": "G-022",
@@ -1024,7 +1024,7 @@
   "Nhóm": "H. Thực thi (L6)",
   "Tài liệu §": "AAD-33 §8.1, AGD-32 §8",
   "Yêu cầu thiết kế (1 câu)": "Script người đưa vào được ingest.classify nhận là \"script\", quét tĩnh (lệnh phá hoại, đọc khoá riêng) → ASK kèm trích dòng nguy hiểm; chạy vẫn trong sandbox",
-  "Trạng thái": "KHÔNG",
+  "Trạng thái": "XONG Đ2",
   "Bằng chứng trong mã (tệp:dòng)": "src/eide/caps/archive.py:160–199 `_nhan_dang` không có loại `script`/`log`/`capture`; không có bộ quét tĩnh. TC070 \"an toàn\" chỉ vì .sh bị nhận nhầm là tệp nén",
   "Ca đo liên quan": "TC070",
   "Hành động đề xuất": "Thêm loại script/log/capture + bộ quét tĩnh + thẻ ASK",
@@ -1032,7 +1032,7 @@
   "Đợt": "Đợt 1",
   "Công": "M",
   "Ghi chú / DEV đề nghị": "An toàn phải do THIẾT KẾ: ca này đang đạt nhờ tai nạn (brief §6).",
-  "Đã làm 24/09/2026": ""
+  "Đã làm 24/09/2026": "src/eide_core/script_scan.py (mới) — 12 mẫu (rm từ gốc, dd, mkfs, đọc ~/.ssh, curl|sh, exfil, sudo, eval/base64) + cờ `co_the_con_thieu`; ingest.classify quét ngay tại cửa nạp và trả `can_xac_nhan` + trích dòng. TÊN cổng chưa đặt ([DEV-235]: một chữ \"G-WL\" trong hợp đồng làm chính ingest.classify bị cổng R4 chặn). Canh bởi ::test_script_bi_quet_tinh_va_phai_hoi, ::test_canh_bao_trich_dung_dong_lenh, ::test_script_lanh_khong_bat_canh_bao"
  },
  {
   "ID": "G-152",
