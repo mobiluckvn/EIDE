@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không đọc được tệp nguồn, không chỉ ra được `doc_so_xung()`. Cột phải trống hoàn toàn.",
- "giay": 21.6,
+ "giay": 21.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 21.6,
+   "giay": 21.3,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "doc_so_xung|so_xung"

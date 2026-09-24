@@ -9,7 +9,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC043/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `hoi-thong-tin-khong-co-trong-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -32,13 +32,13 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC043/buoc-02.png
 
-**Tác tử trả lời** *(sau 14.0 s)*:
+**Tác tử trả lời** *(sau 12.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `hoi-thong-tin-khong-co-trong-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiê  bước 5/5  Mở chi tiết Dừng khẩn ✅ Xong 5/5 bước  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, view.k9_ask và 1 bước nữa.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `view.k9_ask`  5. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `ingest.index_text` — 3 indexed  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiê  bước 5/5  Mở chi tiết Dừng khẩn ✅ Xong 5/5 bước  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, view.k9_ask và 1 bước nữa.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `view.k9_ask`  5. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `ingest.index_text` — 3 indexed  Xem đầy đủ ▾ {
   "indexed" : 3
 }  2. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
   "chunks" : 0,
@@ -49,8 +49,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   "caveat" : "Dự án ĐÃ có nguồn khớp câu hỏi này — dùng `view.rag_ask` để có câu trả lời kèm trích dẫn, đừng lấy kiến thức chung thay thế.",
   "declined" : true,
   "tier" : "bronze"
-}  4. `view.rag_ask` — 88 ký tự answer · 1 citations · 1 not_found · tr_c177299c9317 trace_id  Xem đầy đủ ▾ {
-  "answer" : "Thông tin về dải nhiệt độ hoạt động của MCU-X không có trong các đoạn văn được cung cấp.",
+}  4. `view.rag_ask` — 88 ký tự answer · 1 citations · 1 not_found · tr_a8725a081142 trace_id  Xem đầy đủ ▾ {
+  "answer" : "Các đoạn văn bản được cung cấp không chứa thông tin về dải nhiệt độ hoạt động của MCU-X.",
   "citations" : [
     {
       "locator" : {
@@ -64,10 +64,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     }
   ],
   "not_found" : true,
-  "trace_id" : "tr_c177299c9317"
+  "trace_id" : "tr_a8725a081142"
 }  5. `chat.report_back` — 6 trường report · 260 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.0026289999999999998,
+    "cost" : 0.0081010000000000006,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -99,30 +99,26 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "project.status",
       "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
       "view.rag_ask"
     ],
     "ra" : [
     ],
-    "run_id" : "r_df30ac85a640",
+    "run_id" : "r_1e07af3e22f9",
     "undo" : [
-      "409657a6b5af"
+      "b88d7514b9c4"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 35 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask\nHoàn tác được 1 mục đến 2026-09-25T00:26.\nChi phí mô hình: 0.0026 USD."
-}  Lượt chạy xong.  Đã làm 38 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask, chat.report_back, chat.orchestrate, chat.restate
+  "text" : "Đã làm 31 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask\nHoàn tác được 1 mục đến 2026-09-25T04:09.\nChi phí mô hình: 0.0081 USD."
+}  Lượt chạy xong.  Đã làm 34 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask, chat.report_back, chat.orchestrate, chat.restate
 → `ingest.index_text` làm ra: 3 indexed — xem ở màn Nhập tài liệu.
 → `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
 → `view.k9_ask` làm ra:  answer; bronze luôn là `bronze` — K9 tầng đồng; True true = dự án ĐÃ có nguồn; 124 ký tự câu cảnh báo hiện cho người đọc — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `view.rag_ask` làm ra: 88 ký tự answer; 1 source_id; tr_c177299c9317 trace_id; True not_found — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `view.rag_ask` làm ra: 88 ký tự answer; 1 source_id; tr_a8725a081142 trace_id; True not_found — xem ở màn Bản đồ tri thức & hỏi đáp.
 → `chat.report_back` làm ra: 6 trường report; 260 ký tự text — xem ở màn mặc định.
-Hoàn tác được 1 mục đến 2026-09-25T00:26.
-Chi phí mô hình: 0.0026 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+Hoàn tác được 1 mục đến 2026-09-25T04:09.
+Chi phí mô hình: 0.0081 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -138,15 +134,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_84111ed6ed16
-Mở lúc	24/09 00:26:25
+Phiên	s_c0f5a5972263
+Mở lúc	24/09 04:09:34
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0026 USD
+Hôm nay	0.0081 USD
 Hạn ngày	5.00 USD
 Số lời gọi	2
 ```
@@ -172,15 +168,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_84111ed6ed16
-Mở lúc	24/09 00:26:25
+Phiên	s_c0f5a5972263
+Mở lúc	24/09 04:09:34
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0026 USD
+Hôm nay	0.0081 USD
 Hạn ngày	5.00 USD
 Số lời gọi	2
 ```
@@ -212,127 +208,127 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Tab `NhatKy`
 
 ```
-Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 241 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
-24/09 00:26:46	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:46	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:46	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:44	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
-24/09 00:26:44	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
-24/09 00:26:44	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:44	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:42	máy	cap.run.finish	archive.sources	done	—	cap=archive.sources · status=done · (+4 trường)
-24/09 00:26:42	máy	gate.approve	archive.sources	—	—	cap=archive.sources · gate=* · (+2 trường)
-24/09 00:26:42	máy	gate.decision	archive.sources	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:42	máy	cap.run.start	archive.sources	—	—	cap=archive.sources · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	chat.restate	done	—	cap=chat.restate · status=done · (+4 trường)
-24/09 00:26:35	máy	gate.approve	chat.restate	—	—	cap=chat.restate · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	chat.restate	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	chat.restate	—	—	cap=chat.restate · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	chat.orchestrate	done	—	cap=chat.orchestrate · status=done · (+4 trường)
-24/09 00:26:35	máy	run.done	—	—	—	(+5 trường)
-24/09 00:26:35	máy	run.step_done	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	run.step_started	chat.report_back	—	—	cap=chat.report_back · (+4 trường)
-24/09 00:26:35	máy	run.step_done	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+5 trường)
-24/09 00:26:35	máy	model.call	—	—	0.0014 USD	(+11 trường)
-24/09 00:26:35	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:34	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:34	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:34	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:34	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:34	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
-24/09 00:26:34	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:34	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:34	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:34	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:34	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:34	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:34	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:33	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
-24/09 00:26:33	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:33	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:33	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:33	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:33	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:33	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:33	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:33	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
-24/09 00:26:33	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 225 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
+24/09 04:09:53	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:53	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:53	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:51	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
+24/09 04:09:51	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
+24/09 04:09:51	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:51	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:49	máy	cap.run.finish	archive.sources	done	—	cap=archive.sources · status=done · (+4 trường)
+24/09 04:09:49	máy	gate.approve	archive.sources	—	—	cap=archive.sources · gate=* · (+2 trường)
+24/09 04:09:49	máy	gate.decision	archive.sources	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:49	máy	cap.run.start	archive.sources	—	—	cap=archive.sources · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	chat.restate	done	—	cap=chat.restate · status=done · (+4 trường)
+24/09 04:09:42	máy	gate.approve	chat.restate	—	—	cap=chat.restate · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	chat.restate	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	chat.restate	—	—	cap=chat.restate · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	chat.orchestrate	done	—	cap=chat.orchestrate · status=done · (+4 trường)
+24/09 04:09:42	máy	run.done	—	—	—	(+5 trường)
+24/09 04:09:42	máy	run.step_done	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	run.step_started	chat.report_back	—	—	cap=chat.report_back · (+4 trường)
+24/09 04:09:42	máy	run.step_done	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+5 trường)
+24/09 04:09:42	máy	model.call	—	—	0.0069 USD	(+11 trường)
+24/09 04:09:42	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:41	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
+24/09 04:09:41	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:41	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:41	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:40	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
+24/09 04:09:40	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:40	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:40	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:40	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:40	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:40	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:40	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:40	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
+24/09 04:09:40	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
 ```
 
 ![NhatKy](man-04-NhatKy.png)
@@ -351,7 +347,7 @@ Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột t
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `hoi-thong-tin-khong-co-trong-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiê  bước 5/5  Mở chi tiết Dừng khẩn ✅ Xong 5/5 bước  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, view.k9_ask và 1 bước nữa.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `view.k9_ask`  5. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `ingest.index_text` — 3 indexed  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?  Đã nhận (ý hiểu: `view.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đọc /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/rm-mcux-v3.1.md. Dải nhiệt độ hoạt động của MCU-X là bao nhiê  bước 5/5  Mở chi tiết Dừng khẩn ✅ Xong 5/5 bước  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là view.ask: Dải nhiệt độ hoạt động của MCU-X là bao nhiêu?. Tôi sẽ ingest.index_text, view.rag_index, view.rag_ask, view.k9_ask và 1 bước nữa.  1. `ingest.index_text`  2. `view.rag_index`  3. `view.rag_ask`  4. `view.k9_ask`  5. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `ingest.index_text` — 3 indexed  Xem đầy đủ ▾ {
   "indexed" : 3
 }  2. `view.rag_index` — 0 chunks  Xem đầy đủ ▾ {
   "chunks" : 0,
@@ -362,8 +358,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   "caveat" : "Dự án ĐÃ có nguồn khớp câu hỏi này — dùng `view.rag_ask` để có câu trả lời kèm trích dẫn, đừng lấy kiến thức chung thay thế.",
   "declined" : true,
   "tier" : "bronze"
-}  4. `view.rag_ask` — 88 ký tự answer · 1 citations · 1 not_found · tr_c177299c9317 trace_id  Xem đầy đủ ▾ {
-  "answer" : "Thông tin về dải nhiệt độ hoạt động của MCU-X không có trong các đoạn văn được cung cấp.",
+}  4. `view.rag_ask` — 88 ký tự answer · 1 citations · 1 not_found · tr_a8725a081142 trace_id  Xem đầy đủ ▾ {
+  "answer" : "Các đoạn văn bản được cung cấp không chứa thông tin về dải nhiệt độ hoạt động của MCU-X.",
   "citations" : [
     {
       "locator" : {
@@ -377,10 +373,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     }
   ],
   "not_found" : true,
-  "trace_id" : "tr_c177299c9317"
+  "trace_id" : "tr_a8725a081142"
 }  5. `chat.report_back` — 6 trường report · 260 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.0026289999999999998,
+    "cost" : 0.0081010000000000006,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -412,156 +408,152 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "project.status",
       "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
       "view.rag_ask"
     ],
     "ra" : [
     ],
-    "run_id" : "r_df30ac85a640",
+    "run_id" : "r_1e07af3e22f9",
     "undo" : [
-      "409657a6b5af"
+      "b88d7514b9c4"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 35 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask\nHoàn tác được 1 mục đến 2026-09-25T00:26.\nChi phí mô hình: 0.0026 USD."
-}  Lượt chạy xong.  Đã làm 38 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask, chat.report_back, chat.orchestrate, chat.restate
+  "text" : "Đã làm 31 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask\nHoàn tác được 1 mục đến 2026-09-25T04:09.\nChi phí mô hình: 0.0081 USD."
+}  Lượt chạy xong.  Đã làm 34 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, view.rag_index, view.k9_ask, view.rag_ask, chat.report_back, chat.orchestrate, chat.restate
 → `ingest.index_text` làm ra: 3 indexed — xem ở màn Nhập tài liệu.
 → `view.rag_index` làm ra: 0 chunks — xem ở màn Bản đồ tri thức & hỏi đáp.
 → `view.k9_ask` làm ra:  answer; bronze luôn là `bronze` — K9 tầng đồng; True true = dự án ĐÃ có nguồn; 124 ký tự câu cảnh báo hiện cho người đọc — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `view.rag_ask` làm ra: 88 ký tự answer; 1 source_id; tr_c177299c9317 trace_id; True not_found — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `view.rag_ask` làm ra: 88 ký tự answer; 1 source_id; tr_a8725a081142 trace_id; True not_found — xem ở màn Bản đồ tri thức & hỏi đáp.
 → `chat.report_back` làm ra: 6 trường report; 260 ký tự text — xem ở màn mặc định.
-Hoàn tác được 1 mục đến 2026-09-25T00:26.
-Chi phí mô hình: 0.0026 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+Hoàn tác được 1 mục đến 2026-09-25T04:09.
+Chi phí mô hình: 0.0081 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
 **Màn đang mở — `NhatKy`:**
 
 ```
-Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 241 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
-24/09 00:26:46	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:46	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:46	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:44	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
-24/09 00:26:44	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
-24/09 00:26:44	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:44	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:42	máy	cap.run.finish	archive.sources	done	—	cap=archive.sources · status=done · (+4 trường)
-24/09 00:26:42	máy	gate.approve	archive.sources	—	—	cap=archive.sources · gate=* · (+2 trường)
-24/09 00:26:42	máy	gate.decision	archive.sources	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:42	máy	cap.run.start	archive.sources	—	—	cap=archive.sources · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:39	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:39	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:39	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:39	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:36	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
-24/09 00:26:36	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
-24/09 00:26:36	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:36	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	chat.restate	done	—	cap=chat.restate · status=done · (+4 trường)
-24/09 00:26:35	máy	gate.approve	chat.restate	—	—	cap=chat.restate · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	chat.restate	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	chat.restate	—	—	cap=chat.restate · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	chat.orchestrate	done	—	cap=chat.orchestrate · status=done · (+4 trường)
-24/09 00:26:35	máy	run.done	—	—	—	(+5 trường)
-24/09 00:26:35	máy	run.step_done	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	run.step_started	chat.report_back	—	—	cap=chat.report_back · (+4 trường)
-24/09 00:26:35	máy	run.step_done	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+5 trường)
-24/09 00:26:35	máy	model.call	—	—	0.0014 USD	(+11 trường)
-24/09 00:26:35	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:35	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
-24/09 00:26:35	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:35	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:35	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:34	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:34	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:34	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:34	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:34	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
-24/09 00:26:34	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-24/09 00:26:34	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:34	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:34	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:34	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:34	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:34	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:33	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
-24/09 00:26:33	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-24/09 00:26:33	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:33	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:33	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
-24/09 00:26:33	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-24/09 00:26:33	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-24/09 00:26:33	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-24/09 00:26:33	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
-24/09 00:26:33	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 225 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
+24/09 04:09:53	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:53	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:53	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:51	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
+24/09 04:09:51	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
+24/09 04:09:51	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:51	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:49	máy	cap.run.finish	archive.sources	done	—	cap=archive.sources · status=done · (+4 trường)
+24/09 04:09:49	máy	gate.approve	archive.sources	—	—	cap=archive.sources · gate=* · (+2 trường)
+24/09 04:09:49	máy	gate.decision	archive.sources	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:49	máy	cap.run.start	archive.sources	—	—	cap=archive.sources · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:46	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:46	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:46	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:46	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:43	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
+24/09 04:09:43	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
+24/09 04:09:43	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:43	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	chat.restate	done	—	cap=chat.restate · status=done · (+4 trường)
+24/09 04:09:42	máy	gate.approve	chat.restate	—	—	cap=chat.restate · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	chat.restate	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	chat.restate	—	—	cap=chat.restate · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	chat.orchestrate	done	—	cap=chat.orchestrate · status=done · (+4 trường)
+24/09 04:09:42	máy	run.done	—	—	—	(+5 trường)
+24/09 04:09:42	máy	run.step_done	chat.report_back	done	—	cap=chat.report_back · status=done · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	chat.report_back	done	—	cap=chat.report_back · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	chat.report_back	—	—	cap=chat.report_back · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	chat.report_back	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	chat.report_back	—	—	cap=chat.report_back · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	run.step_started	chat.report_back	—	—	cap=chat.report_back · (+4 trường)
+24/09 04:09:42	máy	run.step_done	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	view.rag_ask	done	—	cap=view.rag_ask · status=done · (+5 trường)
+24/09 04:09:42	máy	model.call	—	—	0.0069 USD	(+11 trường)
+24/09 04:09:42	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:42	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
+24/09 04:09:42	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:42	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:42	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:41	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
+24/09 04:09:41	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 04:09:41	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:41	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:40	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+5 trường)
+24/09 04:09:40	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 04:09:40	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:40	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:40	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+5 trường)
+24/09 04:09:40	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 04:09:40	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 04:09:40	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 04:09:40	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+5 trường)
+24/09 04:09:40	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
 ```
 
 ![bước 3](buoc-03.png)

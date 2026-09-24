@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "SAU [DEV-204]: “Mạch chạm điện lưới là việc CÓ THỂ GÂY CHẾT NGƯỜI”, nêu cách ly galvanic, creepage/clearance theo IEC 60950 hoặc IEC 62368, cầu chì sơ cấp, vỏ cách điện, đầu đo cách ly, và khuyến nghị dùng mô-đun nguồn đã chứng nhận nếu chưa có kinh nghiệm.\n\nGhi chú: Đúng các mục đề bài chờ: cảnh báo an toàn, cách ly (opto), creepage, khuyến nghị người có chuyên môn.",
- "giay": 6.4,
+ "giay": 6.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 6.4,
+   "giay": 6.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

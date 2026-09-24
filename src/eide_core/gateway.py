@@ -100,10 +100,19 @@ class _KhongCo:
 
 
 class GatewayError(Exception):
-    """Lỗi khi gọi mô hình. `kind` khớp từ vựng của `policy.fallback_on`."""
+    """Lỗi khi gọi mô hình. `kind` khớp từ vựng của `policy.fallback_on`.
 
-    def __init__(self, kind: str, message: str) -> None:
+    Mang theo `raw` và `usage` vì **đầu ra DỞ DANG là bằng chứng quan trọng nhất của một lời
+    gọi hỏng, và nó chỉ tồn tại ở đây.** [DEV-217] Lời gọi thành công ghi được `resp.raw`;
+    lời gọi hỏng thì trước đây ghi `raw=None` — tức đúng những ca cần soi nhất lại là những ca
+    không để lại gì. Cả [DEV-216] xoay quanh việc đọc cho được một đầu ra bị cắt.
+    """
+
+    def __init__(self, kind: str, message: str, raw: str | None = None,
+                 usage: dict[str, Any] | None = None) -> None:
         self.kind = kind
+        self.raw = raw
+        self.usage = usage or {}
         super().__init__(message)
 
 
@@ -162,7 +171,7 @@ class GeminiPort(ModelPort):
         text = "".join(p.get("text", "") for p in (cand.get("content") or {}).get("parts", []))
         u = d.get("usageMetadata") or {}
         stop = str(cand.get("finishReason", "stop")).lower()
-        _kiem_cat(stop, model, max_output, u.get("thoughtsTokenCount", 0))   # [DEV-216]
+        _kiem_cat(stop, model, max_output, u.get("thoughtsTokenCount", 0), text, u)  # DEV-216
         # Token nghĩ CÓ bị tính tiền. Bỏ nó khỏi `tokens_out` thì `cost_usd` —
         # và trần `daily_budget_usd` dựng trên nó — hụt đúng phần đắt nhất: ở phép
         # đo trên, 1037/1223 token đầu ra (85%) vô hình với ngân sách. [DEV-216]
@@ -370,7 +379,7 @@ class Gateway:
                                      anh=anh)
             except GatewayError as e:
                 loi = e
-                self._log(role, uv["model"], system, user, None, error_kind=e.kind)
+                self._log(role, uv["model"], system, user, None, error_kind=e.kind, loi=e)
                 if e.kind in lui and i + 1 < len(ds):
                     continue          # còn đường lui thì thử ứng viên sau
                 break
@@ -382,7 +391,8 @@ class Gateway:
                         kind=getattr(loi, "kind", "unknown"))
 
     def _log(self, role: str, model: str, system: str, user: str,
-             resp: ModelResponse | None, error_kind: str | None = None) -> None:
+             resp: ModelResponse | None, error_kind: str | None = None,
+             loi: GatewayError | None = None) -> None:
         if self.ledger is None:
             return
         d: dict[str, Any] = {
@@ -398,10 +408,11 @@ class Gateway:
         if error_kind:
             d["error_kind"] = error_kind
         self.ledger.append("model.call", d)
-        self._ghi_day_du(d, system, user, resp)
+        self._ghi_day_du(d, system, user, resp, loi)
 
     def _ghi_day_du(self, d: dict[str, Any], system: str, user: str,
-                    resp: ModelResponse | None) -> None:
+                    resp: ModelResponse | None,
+                    loi: GatewayError | None = None) -> None:
         """Bản ghi ĐẦY ĐỦ câu nhắc và câu trả lời — chỉ khi `EIDE_LOG_LLM` bật. [DEV-217]
 
         Ledger cố tình chỉ giữ `request_hash`/`prompt_hash`: API-15 §5 liệt kê đúng các trường
@@ -423,8 +434,12 @@ class Gateway:
         ban = dict(d)
         ban["system"] = system
         ban["user"] = user
-        ban["raw"] = resp.raw if resp else None
+        # Lời gọi HỎNG cũng phải để lại đầu ra dở dang — xem GatewayError. [DEV-217]
+        ban["raw"] = resp.raw if resp else (loi.raw if loi else None)
         ban["data"] = resp.data if resp else None
+        if loi is not None:
+            ban["loi"] = str(loi)
+            ban["usage_khi_hong"] = loi.usage
         ban["ts"] = datetime.now(UTC).isoformat()
         try:
             with f.open("a", encoding="utf-8") as fh:
@@ -445,7 +460,8 @@ def _h(s: str) -> str:
 LY_DO_CAT = {"max_tokens", "length", "maxtokens", "max_output_tokens"}
 
 
-def _kiem_cat(stop: str, model: str, max_output: int, nghi: int = 0) -> None:
+def _kiem_cat(stop: str, model: str, max_output: int, nghi: int = 0,
+              raw: str | None = None, usage: dict[str, Any] | None = None) -> None:
     """Đầu ra bị cắt thì NÓI ĐÚNG LÀ BỊ CẮT, và nói đúng AI đã ăn hết chỗ. [DEV-216]
 
     Cả hai cổng đều ĐỌC `finishReason`/`stop_reason` — nhưng chúng đọc nó ở vị trí đối số đứng
@@ -481,12 +497,13 @@ def _kiem_cat(stop: str, model: str, max_output: int, nghi: int = 0) -> None:
             "truncated",
             f"Đầu ra của `{model}` BỊ CẮT: phần NGHĨ tiêu {nghi}/{max_output} token nên "
             f"không còn chỗ viết câu trả lời. Nới `max_output` KHÔNG cứu được vì phần nghĩ "
-            f"giãn theo — hạ `thinkingBudget`, hoặc chọn mô hình không suy luận cho vai trò này.")
+            f"giãn theo — hạ `thinkingBudget`, hoặc chọn mô hình không suy luận cho vai trò này.",
+            raw, usage)
     raise GatewayError(
         "truncated",
         f"Đầu ra của `{model}` BỊ CẮT vì chạm trần {max_output} token "
         f"(lý do dừng: {stop}). Không phải mô hình trả sai định dạng — nới "
-        f"`max_output` của vai trò này trong `models.yaml`, hoặc hỏi ngắn lại.")
+        f"`max_output` của vai trò này trong `models.yaml`, hoặc hỏi ngắn lại.", raw, usage)
 
 
 def _doc_json(text: str) -> dict[str, Any]:

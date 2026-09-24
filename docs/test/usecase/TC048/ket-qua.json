@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Dừng ở “chip nào?”. Không nói DAC không có tương đương, không đề xuất PWM + lọc RC.",
- "giay": 112.9,
+ "giay": 137.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 112.9,
+   "giay": 137.4,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

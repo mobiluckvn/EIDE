@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Dừng ở “Chưa ghim hộ chiếu chip — chip nào?”. Không chọn linh kiện nào, không datasheet, không trích trang.",
- "giay": 152.6,
+ "giay": 148.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 152.6,
+   "giay": 148.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

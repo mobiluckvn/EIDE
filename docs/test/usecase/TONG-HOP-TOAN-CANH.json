@@ -1,0 +1,64 @@
+[
+ {
+  "tc": "TC001",
+  "state": "asked",
+  "xong": [
+   "project.create",
+   "search.reference_projects"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "env.check→isa"
+  ],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2507,
+  "tokens_out": 95,
+  "cost_usd": 0.001,
+  "su_kien": 124,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC002",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC008",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "arch.style_select",
+   "arch.decompose",
+   "arch.interface_spec",
+   "arch.review",
+   "chat.report_back"
+  ],
+  "hong": [
+   "arch.adr:E5000"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 6,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 8585,
+  "tokens_out": 6967,
+  "cost_usd": 0.0955,
+  "su_kien": 360,
+  "gate_ask": 0
+ }
+]

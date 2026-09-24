@@ -23,62 +23,119 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC009/buoc-02.png
 
-**Tác tử trả lời** *(sau 32.6 s)*:
+**Tác tử trả lời** *(sau 6.6 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-nhiet-do-sen42-qua-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-nhiet-do-sen42-qua-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  bước 3/3  Mở chi tiết Dừng khẩn ✅ Xong 3/3 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Lược đồ (tác tử đang chạy `diagram.architecture`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 7 items (mod_srv_log, mod_hal_uart, mod_hal_timer, mod_hal_i2c…) · module kind · 7 total  Xem đầy đủ ▾ {
   "items" : [
-  ],
-  "kind" : "requirement",
-  "total" : 0
-}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
-  "gaps" : [
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: STM32F103C8T6, ESP32, Arduino Uno, Raspberry Pi Pico...",
-      "text" : "Bạn đang sử dụng dòng vi điều khiển (MCU) hoặc board phát triển nào để giao tiếp với cảm biến SEN42?"
+      "arch_style" : "super_loop",
+      "id" : "mod_srv_log",
+      "name" : "Service Log",
+      "responsibility" : "Định dạng dữ liệu thành chuỗi văn bản và gửi ra UART.",
+      "status" : "proposed"
     },
     {
-      "kind" : "FR",
-      "suggestion" : "Ví dụ: In ra cổng Serial\/UART, hiển thị lên màn hình OLED\/LCD, hoặc gửi qua Wi-Fi\/Bluetooth.",
-      "text" : "Dữ liệu nhiệt độ đọc được từ SEN42 sẽ được xử lý, hiển thị hay truyền đi như thế nào?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_uart",
+      "name" : "HAL UART",
+      "responsibility" : "Cung cấp giao diện truyền nhận dữ liệu qua UART.",
+      "status" : "proposed"
     },
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: Cấp nguồn qua cổng USB (5V), dùng pin Lipo (3.7V), hoặc adapter ngoài.",
-      "text" : "Hệ thống sẽ được cấp nguồn từ đâu và điện áp hoạt động mong muốn là bao nhiêu?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_timer",
+      "name" : "HAL Timer",
+      "responsibility" : "Cung cấp các hàm tạo trễ (delay) và đếm thời gian hệ thống.",
+      "status" : "proposed"
     },
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: Dùng I2C1 mặc định, hoặc map sang các chân AF (Alternate Function) khác.",
-      "text" : "Bạn có yêu cầu chỉ định cụ thể chân I2C (SDA, SCL) nào trên vi điều khiển không, hay để hệ thống tự chọn chân mặc định?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_i2c",
+      "name" : "HAL I2C",
+      "responsibility" : "Cung cấp giao diện giao tiếp I2C cơ bản với phần cứng vi điều khiển.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_drv_sen42",
+      "name" : "Driver SEN42",
+      "responsibility" : "Khởi tạo, cấu hình và đọc dữ liệu nhiệt độ từ cảm biến SEN42 qua I2C.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_ctrl_temp",
+      "name" : "Control Temperature",
+      "responsibility" : "Quản lý chu kỳ lấy mẫu nhiệt độ và kiểm tra tính hợp lệ của dữ liệu.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_app_main",
+      "name" : "App Main",
+      "responsibility" : "Vòng lặp chính (super loop) điều phối việc đọc nhiệt độ định kỳ và in kết quả.",
+      "status" : "proposed"
     }
   ],
-  "raw" : [
-    {
-      "kind_guess" : "FR",
-      "locator" : {
+  "kind" : "module",
+  "total" : 7
+}  2. `diagram.architecture` — 6 trường diagram  Xem đầy đủ ▾ {
+  "diagram" : {
+    "edges" : [
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_ctrl_temp"
       },
-      "source" : "user_prompt",
-      "text" : "Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này"
-    }
-  ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
-  "codes_assigned" : 1,
-  "reqset" : [
-    {
-      "id" : "FR-SNS-01",
-      "kind" : "FR",
-      "locator" : {
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_srv_log"
       },
-      "source" : "user_prompt",
-      "status" : "generated",
-      "text" : "Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42."
-    }
-  ]
-}  4. `chat.report_back` — 6 trường report · 357 ký tự text  Xem đầy đủ ▾ {
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_hal_timer"
+      },
+      {
+        "from" : "mod_ctrl_temp",
+        "label" : "",
+        "to" : "mod_drv_sen42"
+      },
+      {
+        "from" : "mod_drv_sen42",
+        "label" : "",
+        "to" : "mod_hal_i2c"
+      },
+      {
+        "from" : "mod_drv_sen42",
+        "label" : "",
+        "to" : "mod_hal_timer"
+      },
+      {
+        "from" : "mod_srv_log",
+        "label" : "",
+        "to" : "mod_hal_uart"
+      }
+    ],
+    "lang" : "mermaid",
+    "level" : "component",
+    "model_ref" : "module",
+    "nodes" : [
+      "mod_app_main",
+      "mod_ctrl_temp",
+      "mod_drv_sen42",
+      "mod_hal_i2c",
+      "mod_hal_timer",
+      "mod_hal_uart",
+      "mod_srv_log"
+    ],
+    "src" : "flowchart TB\n  mod_app_main[\"App Main\\napp\"]\n  mod_ctrl_temp[\"Control Temperature\\ncontrol\"]\n  mod_drv_sen42[\"Driver SEN42\\ndriver\"]\n  mod_hal_i2c[\"HAL I2C\\nhal\"]\n  mod_hal_timer[\"HAL Timer\\nhal\"]\n  mod_hal_uart[\"HAL UART\\nhal\"]\n  mod_srv_log[\"Service Log\\nservice\"]\n  mod_app_main --> mod_ctrl_temp\n  mod_app_main --> mod_srv_log\n  mod_app_main --> mod_hal_timer\n  mod_ctrl_temp --> mod_drv_sen42\n  mod_drv_sen42 --> mod_hal_i2c\n  mod_drv_sen42 --> mod_hal_timer\n  mod_srv_log --> mod_hal_uart\n"
+  }
+}  3. `chat.report_back` — 6 trường report · 353 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.062204000000000002,
+    "cost" : 0.087531999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -119,28 +176,32 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.artifacts",
       "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
       "arch.style_select",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
       "project.status",
       "view.artifacts",
       "project.status",
@@ -192,46 +253,33 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "chat.ground",
       "chat.fill_defaults",
       "view.artifacts",
-      "view.kg_map",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.elicit",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.classify"
+      "diagram.architecture"
     ],
     "ra" : [
     ],
-    "run_id" : "r_eeacb591b5c1",
+    "run_id" : "r_0fb22f27a613",
     "undo" : [
-      "2d4bf2278602",
-      "9cceec42e2b1",
-      "565b8a36435c",
-      "3ccf871a3c3d"
+      "61d4e5966b81",
+      "23da784d7ab8",
+      "307194c24f02",
+      "c61eca4078db"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 121 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, req.elicit, req.classify\nHoàn tác được 4 mục đến 2026-09-25T00:10.\nChi phí mô hình: 0.0622 USD."
-}  Lượt chạy xong.  Đã làm 125 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, req.elicit, req.classify
-→ `view.artifacts` làm ra: 0 id + các trường chính của loại ấy; 0 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `req.elicit` làm ra: 1 text; 4 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 1 Requirement (FR-SNS-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 357 ký tự text — xem ở màn mặc định.
-Hoàn tác được 4 mục đến 2026-09-25T00:10.
-Chi phí mô hình: 0.0622 USD.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+  "text" : "Đã làm 117 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, diagram.architecture\nHoàn tác được 4 mục đến 2026-09-25T03:56.\nChi phí mô hình: 0.0875 USD."
+}  Lượt chạy xong.  Đã làm 122 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, diagram.architecture
+→ `view.artifacts` làm ra: 7 id + các trường chính của loại ấy (mod_srv_log, mod_hal_uart, mod_hal_timer, mod_hal_i2c…); 7 số trước khi cắt; module kind — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `diagram.architecture` làm ra: 6 trường diagram — xem ở màn Lược đồ.
+→ `chat.report_back` làm ra: 6 trường report; 353 ký tự text — xem ở màn mặc định.
+Hoàn tác được 4 mục đến 2026-09-25T03:56.
+Chi phí mô hình: 0.0875 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
-**Màn đang mở — `ReqArch`:**
+**Màn đang mở — `DiagramView`:**
 
 ```
-1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC008/du-an/do-nhiet-do-sen42-qua-i2c/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+Màn này đang rỗng — vì: chưa có lược đồ nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử dựng lược đồ (`diagram.architecture`, `diagram.sequence`, `diagram.pinmap`…) — chúng ghi vào store  
 ```
 
 ![bước 2](buoc-02.png)
@@ -245,59 +293,116 @@ FR-SNS-01	—
 **Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-nhiet-do-sen42-qua-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-nhiet-do-sen42-qua-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  bước 3/3  Mở chi tiết Dừng khẩn ✅ Xong 3/3 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Lược đồ (tác tử đang chạy `diagram.architecture`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 7 items (mod_srv_log, mod_hal_uart, mod_hal_timer, mod_hal_i2c…) · module kind · 7 total  Xem đầy đủ ▾ {
   "items" : [
-  ],
-  "kind" : "requirement",
-  "total" : 0
-}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
-  "gaps" : [
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: STM32F103C8T6, ESP32, Arduino Uno, Raspberry Pi Pico...",
-      "text" : "Bạn đang sử dụng dòng vi điều khiển (MCU) hoặc board phát triển nào để giao tiếp với cảm biến SEN42?"
+      "arch_style" : "super_loop",
+      "id" : "mod_srv_log",
+      "name" : "Service Log",
+      "responsibility" : "Định dạng dữ liệu thành chuỗi văn bản và gửi ra UART.",
+      "status" : "proposed"
     },
     {
-      "kind" : "FR",
-      "suggestion" : "Ví dụ: In ra cổng Serial\/UART, hiển thị lên màn hình OLED\/LCD, hoặc gửi qua Wi-Fi\/Bluetooth.",
-      "text" : "Dữ liệu nhiệt độ đọc được từ SEN42 sẽ được xử lý, hiển thị hay truyền đi như thế nào?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_uart",
+      "name" : "HAL UART",
+      "responsibility" : "Cung cấp giao diện truyền nhận dữ liệu qua UART.",
+      "status" : "proposed"
     },
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: Cấp nguồn qua cổng USB (5V), dùng pin Lipo (3.7V), hoặc adapter ngoài.",
-      "text" : "Hệ thống sẽ được cấp nguồn từ đâu và điện áp hoạt động mong muốn là bao nhiêu?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_timer",
+      "name" : "HAL Timer",
+      "responsibility" : "Cung cấp các hàm tạo trễ (delay) và đếm thời gian hệ thống.",
+      "status" : "proposed"
     },
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: Dùng I2C1 mặc định, hoặc map sang các chân AF (Alternate Function) khác.",
-      "text" : "Bạn có yêu cầu chỉ định cụ thể chân I2C (SDA, SCL) nào trên vi điều khiển không, hay để hệ thống tự chọn chân mặc định?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_i2c",
+      "name" : "HAL I2C",
+      "responsibility" : "Cung cấp giao diện giao tiếp I2C cơ bản với phần cứng vi điều khiển.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_drv_sen42",
+      "name" : "Driver SEN42",
+      "responsibility" : "Khởi tạo, cấu hình và đọc dữ liệu nhiệt độ từ cảm biến SEN42 qua I2C.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_ctrl_temp",
+      "name" : "Control Temperature",
+      "responsibility" : "Quản lý chu kỳ lấy mẫu nhiệt độ và kiểm tra tính hợp lệ của dữ liệu.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_app_main",
+      "name" : "App Main",
+      "responsibility" : "Vòng lặp chính (super loop) điều phối việc đọc nhiệt độ định kỳ và in kết quả.",
+      "status" : "proposed"
     }
   ],
-  "raw" : [
-    {
-      "kind_guess" : "FR",
-      "locator" : {
+  "kind" : "module",
+  "total" : 7
+}  2. `diagram.architecture` — 6 trường diagram  Xem đầy đủ ▾ {
+  "diagram" : {
+    "edges" : [
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_ctrl_temp"
       },
-      "source" : "user_prompt",
-      "text" : "Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này"
-    }
-  ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
-  "codes_assigned" : 1,
-  "reqset" : [
-    {
-      "id" : "FR-SNS-01",
-      "kind" : "FR",
-      "locator" : {
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_srv_log"
       },
-      "source" : "user_prompt",
-      "status" : "generated",
-      "text" : "Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42."
-    }
-  ]
-}  4. `chat.report_back` — 6 trường report · 357 ký tự text  Xem đầy đủ ▾ {
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_hal_timer"
+      },
+      {
+        "from" : "mod_ctrl_temp",
+        "label" : "",
+        "to" : "mod_drv_sen42"
+      },
+      {
+        "from" : "mod_drv_sen42",
+        "label" : "",
+        "to" : "mod_hal_i2c"
+      },
+      {
+        "from" : "mod_drv_sen42",
+        "label" : "",
+        "to" : "mod_hal_timer"
+      },
+      {
+        "from" : "mod_srv_log",
+        "label" : "",
+        "to" : "mod_hal_uart"
+      }
+    ],
+    "lang" : "mermaid",
+    "level" : "component",
+    "model_ref" : "module",
+    "nodes" : [
+      "mod_app_main",
+      "mod_ctrl_temp",
+      "mod_drv_sen42",
+      "mod_hal_i2c",
+      "mod_hal_timer",
+      "mod_hal_uart",
+      "mod_srv_log"
+    ],
+    "src" : "flowchart TB\n  mod_app_main[\"App Main\\napp\"]\n  mod_ctrl_temp[\"Control Temperature\\ncontrol\"]\n  mod_drv_sen42[\"Driver SEN42\\ndriver\"]\n  mod_hal_i2c[\"HAL I2C\\nhal\"]\n  mod_hal_timer[\"HAL Timer\\nhal\"]\n  mod_hal_uart[\"HAL UART\\nhal\"]\n  mod_srv_log[\"Service Log\\nservice\"]\n  mod_app_main --> mod_ctrl_temp\n  mod_app_main --> mod_srv_log\n  mod_app_main --> mod_hal_timer\n  mod_ctrl_temp --> mod_drv_sen42\n  mod_drv_sen42 --> mod_hal_i2c\n  mod_drv_sen42 --> mod_hal_timer\n  mod_srv_log --> mod_hal_uart\n"
+  }
+}  3. `chat.report_back` — 6 trường report · 353 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.062204000000000002,
+    "cost" : 0.087531999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -338,28 +443,32 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.artifacts",
       "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
       "arch.style_select",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
       "project.status",
       "view.artifacts",
       "project.status",
@@ -411,53 +520,40 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "chat.ground",
       "chat.fill_defaults",
       "view.artifacts",
-      "view.kg_map",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.elicit",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.classify"
+      "diagram.architecture"
     ],
     "ra" : [
     ],
-    "run_id" : "r_eeacb591b5c1",
+    "run_id" : "r_0fb22f27a613",
     "undo" : [
-      "2d4bf2278602",
-      "9cceec42e2b1",
-      "565b8a36435c",
-      "3ccf871a3c3d"
+      "61d4e5966b81",
+      "23da784d7ab8",
+      "307194c24f02",
+      "c61eca4078db"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 121 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, req.elicit, req.classify\nHoàn tác được 4 mục đến 2026-09-25T00:10.\nChi phí mô hình: 0.0622 USD."
-}  Lượt chạy xong.  Đã làm 125 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, req.elicit, req.classify
-→ `view.artifacts` làm ra: 0 id + các trường chính của loại ấy; 0 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `req.elicit` làm ra: 1 text; 4 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 1 Requirement (FR-SNS-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 357 ký tự text — xem ở màn mặc định.
-Hoàn tác được 4 mục đến 2026-09-25T00:10.
-Chi phí mô hình: 0.0622 USD.  Không có màn nào mang tiền tố `SoDo` trong danh mục 25 màn.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+  "text" : "Đã làm 117 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, diagram.architecture\nHoàn tác được 4 mục đến 2026-09-25T03:56.\nChi phí mô hình: 0.0875 USD."
+}  Lượt chạy xong.  Đã làm 122 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, diagram.architecture
+→ `view.artifacts` làm ra: 7 id + các trường chính của loại ấy (mod_srv_log, mod_hal_uart, mod_hal_timer, mod_hal_i2c…); 7 số trước khi cắt; module kind — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `diagram.architecture` làm ra: 6 trường diagram — xem ở màn Lược đồ.
+→ `chat.report_back` làm ra: 6 trường report; 353 ký tự text — xem ở màn mặc định.
+Hoàn tác được 4 mục đến 2026-09-25T03:56.
+Chi phí mô hình: 0.0875 USD.  Không có màn nào mang tiền tố `SoDo` trong danh mục 25 màn.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
-**Màn đang mở — `ReqArch`:**
+**Màn đang mở — `DiagramView`:**
 
 ```
-1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC008/du-an/do-nhiet-do-sen42-qua-i2c/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+Màn này đang rỗng — vì: chưa có lược đồ nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử dựng lược đồ (`diagram.architecture`, `diagram.sequence`, `diagram.pinmap`…) — chúng ghi vào store  
 ```
 
 ![bước 3](buoc-03.png)
 
 ## Bước 4
 
-**Quét 2 tab tác tử đã mở:** Graph, ReqArch
+**Quét 2 tab tác tử đã mở:** Graph, DiagramView
   [cỡ] man-01-Graph 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC009/man-01-Graph.png
 
@@ -468,85 +564,138 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ```
 
 ![Graph](man-01-Graph.png)
-  [cỡ] man-02-ReqArch 1456 × 838
-đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC009/man-02-ReqArch.png
+  [cỡ] man-02-DiagramView 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC009/man-02-DiagramView.png
 
-### Tab `ReqArch`
+### Tab `DiagramView`
 
 ```
-Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC008/du-an/do-nhiet-do-sen42-qua-i2c/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+Lược đồ  diagram.architecture · diagram.block · diagram.flow · +10 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Màn này đang rỗng — vì: chưa có lược đồ nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử dựng lược đồ (`diagram.architecture`, `diagram.sequence`, `diagram.pinmap`…) — chúng ghi vào store  
 ```
 
-![ReqArch](man-02-ReqArch.png)
+![DiagramView](man-02-DiagramView.png)
 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (5)  Làm rõ yêu cầu — HW  Bạn đang sử dụng dòng vi điều khiển (MCU) hoặc board phát triển nào để giao tiếp với cảm biến SEN42?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW  Hệ thống sẽ được cấp nguồn từ đâu và điện áp hoạt động mong muốn là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Dữ liệu nhiệt độ đọc được từ SEN42 sẽ được xử lý, hiển thị hay truyền đi như thế nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW  Bạn có yêu cầu chỉ định cụ thể chân I2C (SDA, SCL) nào trên vi điều khiển không, hay để hệ thống tự chọn chân mặc định?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (4)  req.classify  còn 23 giờ  Hoàn tác arch.interface_spec  còn 23 giờ  Hoàn tác arch.decompose  còn 23 giờ  Hoàn tác arch.style_select  còn 23 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI  Trống — không việc nào chờ anh.  HOÀN TÁC ĐƯỢC (4)  diagram.architecture  còn 23 giờ  Hoàn tác arch.interface_spec  còn 23 giờ  Hoàn tác arch.decompose  còn 23 giờ  Hoàn tác arch.style_select  còn 23 giờ  Hoàn tác ⟩ 
 ```
   [cỡ] buoc-04 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC009/buoc-04.png
 
-**Tác tử trả lời** *(sau 4.6 s)*:
+**Tác tử trả lời** *(sau 4.5 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-nhiet-do-sen42-qua-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-nhiet-do-sen42-qua-i2c` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này  bước 3/3  Mở chi tiết Dừng khẩn ✅ Xong 3/3 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Lược đồ (tác tử đang chạy `diagram.architecture`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 7 items (mod_srv_log, mod_hal_uart, mod_hal_timer, mod_hal_i2c…) · module kind · 7 total  Xem đầy đủ ▾ {
   "items" : [
-  ],
-  "kind" : "requirement",
-  "total" : 0
-}  2. `req.elicit` — 4 gaps · 1 raw  Xem đầy đủ ▾ {
-  "gaps" : [
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: STM32F103C8T6, ESP32, Arduino Uno, Raspberry Pi Pico...",
-      "text" : "Bạn đang sử dụng dòng vi điều khiển (MCU) hoặc board phát triển nào để giao tiếp với cảm biến SEN42?"
+      "arch_style" : "super_loop",
+      "id" : "mod_srv_log",
+      "name" : "Service Log",
+      "responsibility" : "Định dạng dữ liệu thành chuỗi văn bản và gửi ra UART.",
+      "status" : "proposed"
     },
     {
-      "kind" : "FR",
-      "suggestion" : "Ví dụ: In ra cổng Serial\/UART, hiển thị lên màn hình OLED\/LCD, hoặc gửi qua Wi-Fi\/Bluetooth.",
-      "text" : "Dữ liệu nhiệt độ đọc được từ SEN42 sẽ được xử lý, hiển thị hay truyền đi như thế nào?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_uart",
+      "name" : "HAL UART",
+      "responsibility" : "Cung cấp giao diện truyền nhận dữ liệu qua UART.",
+      "status" : "proposed"
     },
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: Cấp nguồn qua cổng USB (5V), dùng pin Lipo (3.7V), hoặc adapter ngoài.",
-      "text" : "Hệ thống sẽ được cấp nguồn từ đâu và điện áp hoạt động mong muốn là bao nhiêu?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_timer",
+      "name" : "HAL Timer",
+      "responsibility" : "Cung cấp các hàm tạo trễ (delay) và đếm thời gian hệ thống.",
+      "status" : "proposed"
     },
     {
-      "kind" : "HW",
-      "suggestion" : "Ví dụ: Dùng I2C1 mặc định, hoặc map sang các chân AF (Alternate Function) khác.",
-      "text" : "Bạn có yêu cầu chỉ định cụ thể chân I2C (SDA, SCL) nào trên vi điều khiển không, hay để hệ thống tự chọn chân mặc định?"
+      "arch_style" : "super_loop",
+      "id" : "mod_hal_i2c",
+      "name" : "HAL I2C",
+      "responsibility" : "Cung cấp giao diện giao tiếp I2C cơ bản với phần cứng vi điều khiển.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_drv_sen42",
+      "name" : "Driver SEN42",
+      "responsibility" : "Khởi tạo, cấu hình và đọc dữ liệu nhiệt độ từ cảm biến SEN42 qua I2C.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_ctrl_temp",
+      "name" : "Control Temperature",
+      "responsibility" : "Quản lý chu kỳ lấy mẫu nhiệt độ và kiểm tra tính hợp lệ của dữ liệu.",
+      "status" : "proposed"
+    },
+    {
+      "arch_style" : "super_loop",
+      "id" : "mod_app_main",
+      "name" : "App Main",
+      "responsibility" : "Vòng lặp chính (super loop) điều phối việc đọc nhiệt độ định kỳ và in kết quả.",
+      "status" : "proposed"
     }
   ],
-  "raw" : [
-    {
-      "kind_guess" : "FR",
-      "locator" : {
+  "kind" : "module",
+  "total" : 7
+}  2. `diagram.architecture` — 6 trường diagram  Xem đầy đủ ▾ {
+  "diagram" : {
+    "edges" : [
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_ctrl_temp"
       },
-      "source" : "user_prompt",
-      "text" : "Xuất sơ đồ khối, sơ đồ nguyên lý và bảng phân chân cho thiết kế này"
-    }
-  ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
-  "codes_assigned" : 1,
-  "reqset" : [
-    {
-      "id" : "FR-SNS-01",
-      "kind" : "FR",
-      "locator" : {
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_srv_log"
       },
-      "source" : "user_prompt",
-      "status" : "generated",
-      "text" : "Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42."
-    }
-  ]
-}  4. `chat.report_back` — 6 trường report · 357 ký tự text  Xem đầy đủ ▾ {
+      {
+        "from" : "mod_app_main",
+        "label" : "",
+        "to" : "mod_hal_timer"
+      },
+      {
+        "from" : "mod_ctrl_temp",
+        "label" : "",
+        "to" : "mod_drv_sen42"
+      },
+      {
+        "from" : "mod_drv_sen42",
+        "label" : "",
+        "to" : "mod_hal_i2c"
+      },
+      {
+        "from" : "mod_drv_sen42",
+        "label" : "",
+        "to" : "mod_hal_timer"
+      },
+      {
+        "from" : "mod_srv_log",
+        "label" : "",
+        "to" : "mod_hal_uart"
+      }
+    ],
+    "lang" : "mermaid",
+    "level" : "component",
+    "model_ref" : "module",
+    "nodes" : [
+      "mod_app_main",
+      "mod_ctrl_temp",
+      "mod_drv_sen42",
+      "mod_hal_i2c",
+      "mod_hal_timer",
+      "mod_hal_uart",
+      "mod_srv_log"
+    ],
+    "src" : "flowchart TB\n  mod_app_main[\"App Main\\napp\"]\n  mod_ctrl_temp[\"Control Temperature\\ncontrol\"]\n  mod_drv_sen42[\"Driver SEN42\\ndriver\"]\n  mod_hal_i2c[\"HAL I2C\\nhal\"]\n  mod_hal_timer[\"HAL Timer\\nhal\"]\n  mod_hal_uart[\"HAL UART\\nhal\"]\n  mod_srv_log[\"Service Log\\nservice\"]\n  mod_app_main --> mod_ctrl_temp\n  mod_app_main --> mod_srv_log\n  mod_app_main --> mod_hal_timer\n  mod_ctrl_temp --> mod_drv_sen42\n  mod_drv_sen42 --> mod_hal_i2c\n  mod_drv_sen42 --> mod_hal_timer\n  mod_srv_log --> mod_hal_uart\n"
+  }
+}  3. `chat.report_back` — 6 trường report · 353 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.062204000000000002,
+    "cost" : 0.087531999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -587,28 +736,32 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.artifacts",
       "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.timeline",
       "arch.style_select",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
       "project.status",
       "view.artifacts",
       "project.status",
@@ -660,46 +813,33 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "chat.ground",
       "chat.fill_defaults",
       "view.artifacts",
-      "view.kg_map",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.elicit",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.classify"
+      "diagram.architecture"
     ],
     "ra" : [
     ],
-    "run_id" : "r_eeacb591b5c1",
+    "run_id" : "r_0fb22f27a613",
     "undo" : [
-      "2d4bf2278602",
-      "9cceec42e2b1",
-      "565b8a36435c",
-      "3ccf871a3c3d"
+      "61d4e5966b81",
+      "23da784d7ab8",
+      "307194c24f02",
+      "c61eca4078db"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 121 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, req.elicit, req.classify\nHoàn tác được 4 mục đến 2026-09-25T00:10.\nChi phí mô hình: 0.0622 USD."
-}  Lượt chạy xong.  Đã làm 125 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, req.elicit, req.classify
-→ `view.artifacts` làm ra: 0 id + các trường chính của loại ấy; 0 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `req.elicit` làm ra: 1 text; 4 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 1 Requirement (FR-SNS-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 357 ký tự text — xem ở màn mặc định.
-Hoàn tác được 4 mục đến 2026-09-25T00:10.
-Chi phí mô hình: 0.0622 USD.  Không có màn nào mang tiền tố `SoDo` trong danh mục 25 màn.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+  "text" : "Đã làm 117 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, diagram.architecture\nHoàn tác được 4 mục đến 2026-09-25T03:56.\nChi phí mô hình: 0.0875 USD."
+}  Lượt chạy xong.  Đã làm 122 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, arch.style_select, arch.decompose, view.kg_map, arch.interface_spec, arch.review, chat.report_back, chat.orchestrate, chat.restate, diagram.architecture
+→ `view.artifacts` làm ra: 7 id + các trường chính của loại ấy (mod_srv_log, mod_hal_uart, mod_hal_timer, mod_hal_i2c…); 7 số trước khi cắt; module kind — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `diagram.architecture` làm ra: 6 trường diagram — xem ở màn Lược đồ.
+→ `chat.report_back` làm ra: 6 trường report; 353 ký tự text — xem ở màn mặc định.
+Hoàn tác được 4 mục đến 2026-09-25T03:56.
+Chi phí mô hình: 0.0875 USD.  Không có màn nào mang tiền tố `SoDo` trong danh mục 25 màn.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
-**Màn đang mở — `ReqArch`:**
+**Màn đang mở — `DiagramView`:**
 
 ```
-1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải xuất 03 tài liệu thiết kế bao gồm: 1 sơ đồ khối, 1 sơ đồ nguyên lý và 1 bảng phân chân (pinout) thể hiện đầy đủ 100% kết nối I2C với cảm biến SEN42.
-  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC008/du-an/do-nhiet-do-sen42-qua-i2c/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+Màn này đang rỗng — vì: chưa có lược đồ nào — chưa có hiện vật nào thuộc loại này trong store  Bước kế tiếp: ra lệnh cho tác tử dựng lược đồ (`diagram.architecture`, `diagram.sequence`, `diagram.pinmap`…) — chúng ghi vào store  
 ```
 
 ![bước 4](buoc-04.png)

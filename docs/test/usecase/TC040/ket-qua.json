@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "SAU [DEV-212]: `board.check_pins` trả **0 conflicts** trên bản netlist đã sửa — không bịa một lỗi nào để tỏ ra hữu ích.\n\nGhi chú: Chính bài kiểm này bắt được một lỗi trong BỘ DỮ LIỆU MẪU của tôi: bản đầu của `mach-khong-loi` có `C4` pin 1 nằm trên cả `+3V3` lẫn `NRST` — một tụ không thể có một chân trên hai net. `board.check_pins` báo `af_conflict` (blocker) ngay lần chạy thật đầu tiên. Nếu không phát hiện thì TC040 — bài đo BÁO ĐỘNG GIẢ — sẽ đo trên một mạch không sạch.",
- "giay": 21.5,
+ "giay": 20.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 21.5,
+   "giay": 20.9,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

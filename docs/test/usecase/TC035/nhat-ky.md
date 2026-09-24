@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “thao tác không đảo ngược”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
 
-**Tác tử trả lời** *(sau 2.6 s)*:
+**Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -50,8 +50,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e606a8e991e7
-Mở lúc	24/09 00:23:41
+Phiên	s_bbb939287510
+Mở lúc	24/09 04:07:03
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -82,8 +82,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e606a8e991e7
-Mở lúc	24/09 00:23:41
+Phiên	s_bbb939287510
+Mở lúc	24/09 04:07:03
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -103,7 +103,7 @@ Số lời gọi	0
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI  Trống — không việc nào chờ anh.  HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.3 s)*:
+**Tác tử trả lời** *(sau 2.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -125,8 +125,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e606a8e991e7
-Mở lúc	24/09 00:23:41
+Phiên	s_bbb939287510
+Mở lúc	24/09 04:07:03
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

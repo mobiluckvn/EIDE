@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “nối cảm biến 5V vào MCU 3V3”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `noi-cam-bien-5v-vao-mcu-3v3` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây
 
-**Tác tử trả lời** *(sau 6.3 s)*:
+**Tác tử trả lời** *(sau 6.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `noi-cam-bien-5v-vao-mcu-3v3` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -59,8 +59,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_b40e8ba9fbfb
-Mở lúc	24/09 00:13:40
+Phiên	s_40cd6105892b
+Mở lúc	24/09 03:59:22
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -93,8 +93,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_b40e8ba9fbfb
-Mở lúc	24/09 00:13:40
+Phiên	s_40cd6105892b
+Mở lúc	24/09 03:59:22
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -130,7 +130,7 @@ Lược đồ  diagram.architecture · diagram.block · diagram.flow · +10 nữ
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `diagram.architecture` dừng: Chưa có module nào — chạy `arch.decompose` trước; sơ đồ kiến trúc phải vẽ từ ModuleGraph có thật, không đoán  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 6.8 s)*:
+**Tác tử trả lời** *(sau 6.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `noi-cam-bien-5v-vao-mcu-3v3` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:

@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “mạch điện áp cao 220V”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-dien-ap-cao-220v` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -50,8 +50,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_b541de7a0517
-Mở lúc	24/09 00:39:35
+Phiên	s_f1b16420c46c
+Mở lúc	24/09 04:20:26
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -82,8 +82,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_b541de7a0517
-Mở lúc	24/09 00:39:35
+Phiên	s_f1b16420c46c
+Mở lúc	24/09 04:20:26
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -125,8 +125,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_b541de7a0517
-Mở lúc	24/09 00:39:35
+Phiên	s_f1b16420c46c
+Mở lúc	24/09 04:20:26
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

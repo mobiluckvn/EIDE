@@ -1,0 +1,834 @@
+# Toàn cảnh — TC017
+Dự án: `None`
+
+## 1. Người gõ gì
+
+```
+# TC017 — Lỗi biên dịch – agent tự sửa
+@mo /Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p
+Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp
+Biên dịch lại và tự sửa lỗi nếu có
+@quet-man
+
+```
+
+## 2. Gọi mô hình — 0 lời gọi đầy đủ, 0 bản ghi trong ledger
+
+> Không có bản ghi đầy đủ — `EIDE_LOG_LLM` chưa bật lúc chạy ca này.
+
+## 3. Ledger — 0 sự kiện
+
+| loại sự kiện | số lần |
+|---|---|
+
+<details><summary>Toàn bộ sự kiện</summary>
+
+```json
+[]
+```
+</details>
+
+## 4. Hiện vật (store.sqlite)
+
+| bảng | số dòng |
+|---|---|
+
+<details><summary>Toàn bộ nội dung</summary>
+
+```json
+{}
+```
+</details>
+
+## 5. Trí nhớ phiên (session.sqlite)
+
+| bảng | số dòng |
+|---|---|
+
+<details><summary>Toàn bộ nội dung</summary>
+
+```json
+{}
+```
+</details>
+
+## 6. Cấu hình có hiệu lực
+
+## 7. Tệp hiện vật
+
+
+
+## 8. Nhật ký giao diện
+
+```
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `nhap-nhay-led-atmega328p`
+
+**Tác tử trả lời** *(sau 0.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-CTL-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp
+
+**Tác tử trả lời** *(sau 17.2 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: đổi `void main` thành `void main(` để tạo một lỗi cú pháp. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "missing_info",
+      "suggestion" : "main.c, app.c",
+      "text" : "Tệp firmware cụ thể nào cần được sửa đổi?"
+    },
+    {
+      "kind" : "missing_context",
+      "suggestion" : "Kiểm tra hệ thống CI\/CD, kiểm tra công cụ phân tích lỗi",
+      "text" : "Mục đích của việc tạo lỗi cú pháp này là gì?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "text" : "Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-01",
+      "kind" : "CR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "status" : "generated",
+      "text" : "Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 3 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+3 YÊU CẦU — 3 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.
+FR-CTL-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải điều khiển mức logic của chân PB5 trên ATmega328P luân phiên thay đổi giữa mức cao và mức thấp với chu kỳ 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa +/- 10ms).
+FR-CTL-02	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải được biên dịch thành công không có lỗi (0 errors) ra tệp thực thi (.hex/.elf) dành cho kiến trúc vi điều khiển AVR ATmega328P.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-CTL-01	—
+FR-CTL-01	—
+FR-CTL-02	—
+FR-CTL-02	—
+FR-PWR-01	—
+FR-PWR-01	—
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Tôi (người dùng):** Biên dịch lại và tự sửa lỗi nếu có
+
+**Tác tử trả lời** *(sau 20.5 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: đổi `void main` thành `void main(` để tạo một lỗi cú pháp. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "missing_info",
+      "suggestion" : "main.c, app.c",
+      "text" : "Tệp firmware cụ thể nào cần được sửa đổi?"
+    },
+    {
+      "kind" : "missing_context",
+      "suggestion" : "Kiểm tra hệ thống CI\/CD, kiểm tra công cụ phân tích lỗi",
+      "text" : "Mục đích của việc tạo lỗi cú pháp này là gì?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "text" : "Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-01",
+      "kind" : "CR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "status" : "generated",
+      "text" : "Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.  Biên dịch lại và tự sửa lỗi nếu có  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Biên dịch lại và tự sửa lỗi nếu có  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "Hardware",
+      "suggestion" : "Chân PB5 (LED built-in trên Arduino Uno) hoặc một chân GPIO cụ thể khác.",
+      "text" : "LED được kết nối với chân nào của vi điều khiển ATmega328P?"
+    },
+    {
+      "kind" : "Functional",
+      "suggestion" : "1Hz (500ms bật, 500ms tắt) hoặc một chu kỳ khác.",
+      "text" : "Chu kỳ nhấp nháy của LED là bao nhiêu?"
+    },
+    {
+      "kind" : "Environment",
+      "suggestion" : "avr-gcc (Makefile) hoặc Arduino CLI.",
+      "text" : "Dự án sử dụng toolchain hay môi trường biên dịch nào?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "Action",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "text" : "Biên dịch lại và tự sửa lỗi nếu có"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-02)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-02",
+      "kind" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "status" : "generated",
+      "text" : "Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0)."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+4 YÊU CẦU — 4 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0).
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.
+FR-CTL-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải điều khiển mức logic của chân PB5 trên ATmega328P luân phiên thay đổi giữa mức cao và mức thấp với chu kỳ 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa +/- 10ms).
+FR-CTL-02	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải được biên dịch thành công không có lỗi (0 errors) ra tệp thực thi (.hex/.elf) dành cho kiến trúc vi điều khiển AVR ATmega328P.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-CTL-01	—
+FR-CTL-01	—
+FR-CTL-02	—
+FR-CTL-02	—
+FR-PWR-01	—
+FR-PWR-01	—
+FR-PWR-02	—
+FR-PWR-02	—
+```
+
+![bước 3](buoc-03.png)
+
+## Bước 4
+
+**Quét 2 tab tác tử đã mở:** ReqArch, Graph
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  4 YÊU CẦU — 4 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0).
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.
+FR-CTL-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải điều khiển mức logic của chân PB5 trên ATmega328P luân phiên thay đổi giữa mức cao và mức thấp với chu kỳ 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa +/- 10ms).
+FR-CTL-02	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải được biên dịch thành công không có lỗi (0 errors) ra tệp thực thi (.hex/.elf) dành cho kiến trúc vi điều khiển AVR ATmega328P.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-CTL-01	—
+FR-CTL-01	—
+FR-CTL-02	—
+FR-CTL-02	—
+FR-PWR-01	—
+FR-PWR-01	—
+FR-PWR-02	—
+FR-PWR-02	—
+```
+
+![ReqArch](man-01-ReqArch.png)
+
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +10 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-02-Graph.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (14)  Làm rõ yêu cầu — HARDWARE  LED được kết nối với chân nào của vi điều khiển ATmega328P?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Chu kỳ 1 giây có tỷ lệ sáng/tối (duty cycle) là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Mạch LED ở chân PB5 được mắc theo kiểu tích cực mức cao (Active High) hay tích cực mức thấp (Active Low)?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — ENVIRONMENT  Dự án sử dụng toolchain hay môi trường biên dịch nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)
+   Chọn một: ATmega328P — anh vừa nói trong câu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FUNCTIONAL  Chu kỳ nhấp nháy của LED là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu … và 6 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (40)  req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 32 mục nữa — xem màn Nhật ký.  ⟩ 
+```
+
+**Tác tử trả lời** *(sau 4.7 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: đổi `void main` thành `void main(` để tạo một lỗi cú pháp. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "missing_info",
+      "suggestion" : "main.c, app.c",
+      "text" : "Tệp firmware cụ thể nào cần được sửa đổi?"
+    },
+    {
+      "kind" : "missing_context",
+      "suggestion" : "Kiểm tra hệ thống CI\/CD, kiểm tra công cụ phân tích lỗi",
+      "text" : "Mục đích của việc tạo lỗi cú pháp này là gì?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "text" : "Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-01",
+      "kind" : "CR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "status" : "generated",
+      "text" : "Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.  Biên dịch lại và tự sửa lỗi nếu có  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Biên dịch lại và tự sửa lỗi nếu có  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "Hardware",
+      "suggestion" : "Chân PB5 (LED built-in trên Arduino Uno) hoặc một chân GPIO cụ thể khác.",
+      "text" : "LED được kết nối với chân nào của vi điều khiển ATmega328P?"
+    },
+    {
+      "kind" : "Functional",
+      "suggestion" : "1Hz (500ms bật, 500ms tắt) hoặc một chu kỳ khác.",
+      "text" : "Chu kỳ nhấp nháy của LED là bao nhiêu?"
+    },
+    {
+      "kind" : "Environment",
+      "suggestion" : "avr-gcc (Makefile) hoặc Arduino CLI.",
+      "text" : "Dự án sử dụng toolchain hay môi trường biên dịch nào?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "Action",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "text" : "Biên dịch lại và tự sửa lỗi nếu có"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-02)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-02",
+      "kind" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "status" : "generated",
+      "text" : "Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0)."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `Graph`:**
+
+```
+ Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![bước 4](buoc-04.png)
+
+---
+
+Hết kịch bản — 4 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC017`.
+```
+
+## 9. stdout/stderr bộ lái
+
+```
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** mở lại dự án — `nhap-nhay-led-atmega328p`
+  [cỡ] buoc-01 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC017/buoc-01.png
+
+**Tác tử trả lời** *(sau 0.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-CTL-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp
+  [cỡ] buoc-02 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC017/buoc-02.png
+
+**Tác tử trả lời** *(sau 17.2 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: đổi `void main` thành `void main(` để tạo một lỗi cú pháp. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "missing_info",
+      "suggestion" : "main.c, app.c",
+      "text" : "Tệp firmware cụ thể nào cần được sửa đổi?"
+    },
+    {
+      "kind" : "missing_context",
+      "suggestion" : "Kiểm tra hệ thống CI\/CD, kiểm tra công cụ phân tích lỗi",
+      "text" : "Mục đích của việc tạo lỗi cú pháp này là gì?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "text" : "Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-01",
+      "kind" : "CR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "status" : "generated",
+      "text" : "Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật (còn 3 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+3 YÊU CẦU — 3 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.
+FR-CTL-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải điều khiển mức logic của chân PB5 trên ATmega328P luân phiên thay đổi giữa mức cao và mức thấp với chu kỳ 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa +/- 10ms).
+FR-CTL-02	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải được biên dịch thành công không có lỗi (0 errors) ra tệp thực thi (.hex/.elf) dành cho kiến trúc vi điều khiển AVR ATmega328P.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-CTL-01	—
+FR-CTL-01	—
+FR-CTL-02	—
+FR-CTL-02	—
+FR-PWR-01	—
+FR-PWR-01	—
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Tôi (người dùng):** Biên dịch lại và tự sửa lỗi nếu có
+  [cỡ] buoc-03 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC017/buoc-03.png
+
+**Tác tử trả lời** *(sau 20.5 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: đổi `void main` thành `void main(` để tạo một lỗi cú pháp. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "missing_info",
+      "suggestion" : "main.c, app.c",
+      "text" : "Tệp firmware cụ thể nào cần được sửa đổi?"
+    },
+    {
+      "kind" : "missing_context",
+      "suggestion" : "Kiểm tra hệ thống CI\/CD, kiểm tra công cụ phân tích lỗi",
+      "text" : "Mục đích của việc tạo lỗi cú pháp này là gì?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "text" : "Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-01",
+      "kind" : "CR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "status" : "generated",
+      "text" : "Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.  Biên dịch lại và tự sửa lỗi nếu có  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Biên dịch lại và tự sửa lỗi nếu có  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "Hardware",
+      "suggestion" : "Chân PB5 (LED built-in trên Arduino Uno) hoặc một chân GPIO cụ thể khác.",
+      "text" : "LED được kết nối với chân nào của vi điều khiển ATmega328P?"
+    },
+    {
+      "kind" : "Functional",
+      "suggestion" : "1Hz (500ms bật, 500ms tắt) hoặc một chu kỳ khác.",
+      "text" : "Chu kỳ nhấp nháy của LED là bao nhiêu?"
+    },
+    {
+      "kind" : "Environment",
+      "suggestion" : "avr-gcc (Makefile) hoặc Arduino CLI.",
+      "text" : "Dự án sử dụng toolchain hay môi trường biên dịch nào?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "Action",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "text" : "Biên dịch lại và tự sửa lỗi nếu có"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-02)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-02",
+      "kind" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "status" : "generated",
+      "text" : "Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0)."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `ReqArch`:**
+
+```
+4 YÊU CẦU — 4 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0).
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.
+FR-CTL-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải điều khiển mức logic của chân PB5 trên ATmega328P luân phiên thay đổi giữa mức cao và mức thấp với chu kỳ 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa +/- 10ms).
+FR-CTL-02	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải được biên dịch thành công không có lỗi (0 errors) ra tệp thực thi (.hex/.elf) dành cho kiến trúc vi điều khiển AVR ATmega328P.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-CTL-01	—
+FR-CTL-01	—
+FR-CTL-02	—
+FR-CTL-02	—
+FR-PWR-01	—
+FR-PWR-01	—
+FR-PWR-02	—
+FR-PWR-02	—
+```
+
+![bước 3](buoc-03.png)
+
+## Bước 4
+
+**Quét 2 tab tác tử đã mở:** ReqArch, Graph
+  [cỡ] man-01-ReqArch 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC017/man-01-ReqArch.png
+
+### Tab `ReqArch`
+
+```
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  4 YÊU CẦU — 4 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-PWR-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0).
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.
+FR-CTL-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware phải điều khiển mức logic của chân PB5 trên ATmega328P luân phiên thay đổi giữa mức cao và mức thấp với chu kỳ 1 giây (500ms mức cao, 500ms mức thấp, sai số tối đa +/- 10ms).
+FR-CTL-02	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Mã nguồn firmware phải được biên dịch thành công không có lỗi (0 errors) ra tệp thực thi (.hex/.elf) dành cho kiến trúc vi điều khiển AVR ATmega328P.
+  MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC015/du-an/nhap-nhay-led-atmega328p/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
+FR-CTL-01	—
+FR-CTL-01	—
+FR-CTL-02	—
+FR-CTL-02	—
+FR-PWR-01	—
+FR-PWR-01	—
+FR-PWR-02	—
+FR-PWR-02	—
+```
+
+![ReqArch](man-01-ReqArch.png)
+  [cỡ] man-02-Graph 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC017/man-02-Graph.png
+
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +10 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-02-Graph.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (14)  Làm rõ yêu cầu — HARDWARE  LED được kết nối với chân nào của vi điều khiển ATmega328P?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Chu kỳ 1 giây có tỷ lệ sáng/tối (duty cycle) là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Mạch LED ở chân PB5 được mắc theo kiểu tích cực mức cao (Active High) hay tích cực mức thấp (Active Low)?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — ENVIRONMENT  Dự án sử dụng toolchain hay môi trường biên dịch nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)
+   Chọn một: ATmega328P — anh vừa nói trong câu  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FUNCTIONAL  Chu kỳ nhấp nháy của LED là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu … và 6 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (40)  req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 32 mục nữa — xem màn Nhật ký.  ⟩ 
+```
+  [cỡ] buoc-04 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC017/buoc-04.png
+
+**Tác tử trả lời** *(sau 4.7 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-nhay-led-atmega328p` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature: đổi `void main` thành `void main(` để tạo một lỗi cú pháp. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "missing_info",
+      "suggestion" : "main.c, app.c",
+      "text" : "Tệp firmware cụ thể nào cần được sửa đổi?"
+    },
+    {
+      "kind" : "missing_context",
+      "suggestion" : "Kiểm tra hệ thống CI\/CD, kiểm tra công cụ phân tích lỗi",
+      "text" : "Mục đích của việc tạo lỗi cú pháp này là gì?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "text" : "Trong tệp firmware, đổi `void main` thành `void main(` để tạo một lỗi cú pháp"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-01",
+      "kind" : "CR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "user",
+      "status" : "generated",
+      "text" : "Hệ thống phải thay thế chính xác chuỗi ký tự 'void main' thành 'void main(' trong tệp mã nguồn firmware để cố ý tạo ra ít nhất 1 lỗi cú pháp (syntax error) khi thực hiện quá trình biên dịch."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.  Biên dịch lại và tự sửa lỗi nếu có  Đã nhận (ý hiểu: `code.feature`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Biên dịch lại và tự sửa lỗi nếu có  bước 4/14  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 3/14 bước, 1 bước cần anh trả lời  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là code.feature, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ chat.ground, req.elicit, req.classify, req.ground_hw.  1. `chat.ground`  2. `req.elicit`  3. `req.classify`  4. `req.ground_hw`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `chat.ground` — 3 trường grounded  Xem đầy đủ ▾ {
+  "grounded" : {
+    "candidates" : [
+    ],
+    "exists" : [
+    ],
+    "missing" : [
+    ]
+  }
+}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+  "gaps" : [
+    {
+      "kind" : "Hardware",
+      "suggestion" : "Chân PB5 (LED built-in trên Arduino Uno) hoặc một chân GPIO cụ thể khác.",
+      "text" : "LED được kết nối với chân nào của vi điều khiển ATmega328P?"
+    },
+    {
+      "kind" : "Functional",
+      "suggestion" : "1Hz (500ms bật, 500ms tắt) hoặc một chu kỳ khác.",
+      "text" : "Chu kỳ nhấp nháy của LED là bao nhiêu?"
+    },
+    {
+      "kind" : "Environment",
+      "suggestion" : "avr-gcc (Makefile) hoặc Arduino CLI.",
+      "text" : "Dự án sử dụng toolchain hay môi trường biên dịch nào?"
+    }
+  ],
+  "raw" : [
+    {
+      "kind_guess" : "Action",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "text" : "Biên dịch lại và tự sửa lỗi nếu có"
+    }
+  ]
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-02)  Xem đầy đủ ▾ {
+  "codes_assigned" : 1,
+  "reqset" : [
+    {
+      "id" : "FR-PWR-02",
+      "kind" : "FR",
+      "locator" : {
+        "index" : 0
+      },
+      "source" : "User prompt",
+      "status" : "generated",
+      "text" : "Hệ thống phải thực hiện biên dịch lại mã nguồn; nếu phát sinh lỗi (exit code khác 0), hệ thống phải tự động phân tích và sửa lỗi tối đa 3 lần cho đến khi biên dịch thành công (exit code bằng 0)."
+    }
+  ]
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-02 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
+```
+
+**Màn đang mở — `Graph`:**
+
+```
+ Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![bước 4](buoc-04.png)
+
+---
+
+Hết kịch bản — 4 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC017`.
+
+--- stderr ---
+
+```

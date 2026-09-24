@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Hiểu thành `big_command`, chạy `project.create` rồi `archive.list` hỏng E2000 trên một đường dẫn bịa từ chính câu người dùng. Không bao giờ nói “không tìm được datasheet của XQ-9988Z-TRB”.\n\nGhi chú: ĐIỂM CỘNG: không bịa một thông số nào cho con linh kiện không tồn tại.",
- "giay": 15.4,
+ "giay": 10.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 15.4,
+   "giay": 10.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

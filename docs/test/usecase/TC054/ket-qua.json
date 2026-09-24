@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không đo, không tối ưu. `archive.list` hỏng E2000 trên đường dẫn bịa từ câu người dùng.",
- "giay": 45.3,
+ "giay": 46.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -39,21 +39,17 @@
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC054/du-an/giam-dong-tieu-thu-che-do-cho",
  "cham": {
-  "thieu": [
-   "ngủ|sleep|power"
-  ],
+  "thieu": [],
   "thua": [],
-  "so_bo": "Nghi Không đạt"
+  "so_bo": "Cần người đọc"
  },
  "lap": [
   {
-   "giay": 45.3,
-   "so_bo": "Nghi Không đạt",
-   "thieu": [
-    "ngủ|sleep|power"
-   ],
+   "giay": 46.3,
+   "so_bo": "Cần người đọc",
+   "thieu": [],
    "thua": []
   }
  ],
- "qua_sang": 0
+ "qua_sang": 1
 }

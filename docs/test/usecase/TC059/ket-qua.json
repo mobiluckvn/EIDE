@@ -27,7 +27,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không mô phỏng được mất điện. Hỏi “Chạy kịch bản mô phỏng nào?”; nền tảng mô phỏng chưa dựng.",
- "giay": 9.8,
+ "giay": 8.8,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -43,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 9.8,
+   "giay": 8.8,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

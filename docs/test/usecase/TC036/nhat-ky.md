@@ -50,8 +50,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_3c480a84adda
-Mở lúc	24/09 00:23:48
+Phiên	s_cbda68a7456e
+Mở lúc	24/09 04:07:09
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -82,8 +82,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_3c480a84adda
-Mở lúc	24/09 00:23:48
+Phiên	s_cbda68a7456e
+Mở lúc	24/09 04:07:09
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -125,8 +125,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_3c480a84adda
-Mở lúc	24/09 00:23:48
+Phiên	s_cbda68a7456e
+Mở lúc	24/09 04:07:09
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

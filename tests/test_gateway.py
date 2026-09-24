@@ -376,6 +376,46 @@ def test_token_NGHI_phai_vao_chi_phi_vi_no_bi_tinh_tien():
     assert cfg["thinkingConfig"]["thinkingBudget"] == 6144
 
 
+def test_loi_goi_HONG_van_phai_de_lai_dau_ra_do_dang(tmp_path):
+    """Đúng những lời gọi cần soi nhất lại là những lời gọi không để lại gì. [DEV-217]
+
+    Lời gọi thành công ghi `resp.raw`; lời gọi hỏng trước đây ghi `raw=None`. Cả [DEV-216]
+    xoay quanh việc đọc cho được một đầu ra BỊ CẮT — và nó chỉ đọc được bằng một script rời
+    nằm ngoài sản phẩm, vì bản thân sản phẩm vứt nó đi.
+    """
+    import eide_core.gateway as gw
+    from eide_core.ledger import Ledger
+
+    def gia_post(url, body, headers):
+        return {"candidates": [{"finishReason": "MAX_TOKENS",
+                                "content": {"parts": [{"text": '{"title": "ADR dở dang'}]}}],
+                "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": 9000,
+                                  "thoughtsTokenCount": 100}}
+
+    that, os_cu = gw._post, os.environ.get("EIDE_LOG_LLM")
+    gw._post = gia_post
+    os.environ["EIDE_LOG_LLM"] = "1"
+    led = Ledger(tmp_path / "ledger.jsonl")
+    g = Gateway(ledger=led)
+    g.ports = {"gemini": gw.GeminiPort(api_key="x")}
+    try:
+        with pytest.raises(EideError):
+            g.run("architect", "câu hỏi", {"type": "object"})
+    finally:
+        gw._post = that
+        if os_cu is None:
+            del os.environ["EIDE_LOG_LLM"]
+        else:
+            os.environ["EIDE_LOG_LLM"] = os_cu
+
+    ds = [json.loads(x) for x in
+          (tmp_path / "llm-day-du.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
+    assert ds, "lời gọi hỏng không để lại bản ghi đầy đủ nào"
+    assert "ADR dở dang" in (ds[-1].get("raw") or ""), \
+        "đầu ra dở dang bị vứt — đúng thứ cần soi nhất"
+    assert ds[-1]["usage_khi_hong"]["candidatesTokenCount"] == 9000
+
+
 def test_CAT_khong_duoc_coi_la_refusal_de_khoi_lui_vo_ich():
     """`policy.fallback_on` có `refusal`. Gọi một lần bị cắt là refusal thì Gateway lặng lẽ thử
     ứng viên kế — mà ứng viên kế cũng chạm đúng cái trần ấy.

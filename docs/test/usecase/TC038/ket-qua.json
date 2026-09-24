@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "SAU [DEV-212]: `board.check_pins` trả **4 phát hiện** trên netlist mẫu — 2 net I2C thiếu trở kéo (`missing_pullup`, major), `VDDIO` của U2 nằm trên net `VBUS_5V` (`overvoltage`, **blocker**), và `NRST` chỉ có một nút (`floating_reset`, major). Mỗi phát hiện có mức nghiêm trọng, vị trí (net hoặc `U2.7`) và lời khuyên sửa.\n\nGhi chú: Ba trên bốn lớp lỗi cài sẵn. Lỗi L4 (chỉ một tụ lọc cho ba IC) chưa có luật — cần một phép đếm tụ theo IC, ghi vào backlog. Trước đó ca này báo `0 conflicts` cho chính netlist ấy.",
- "giay": 21.7,
+ "giay": 21.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -48,7 +48,7 @@
  },
  "lap": [
   {
-   "giay": 21.7,
+   "giay": 21.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

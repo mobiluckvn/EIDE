@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Có cập nhật đặc tả — thêm `UR-PWR-01` “nguồn pin độc lập 3,0–4,2 V” bên cạnh `FR-COM-01`. Nhưng không đánh số phiên bản v2, không đánh giá lại phương án nào bị ảnh hưởng, không nói phần nào phải làm lại.",
- "giay": 58.2,
+ "giay": 34.8,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 58.2,
+   "giay": 34.8,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "cập nhật|v2|phiên bản|đặc tả",

@@ -1,0 +1,3806 @@
+# Toàn cảnh — TC072
+Dự án: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC072/du-an/mat-mang-khi-tim-tai-lieu`
+
+## 1. Người gõ gì
+
+```
+# TC072 — Mất mạng khi đang tìm tài liệu
+@tao mất mạng khi tìm tài liệu
+Tìm trên mạng datasheet mới nhất của SEN42
+@quet-man
+
+```
+
+## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
+
+### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
+- dừng: `stop` · vào 2476 tok · ra 76 tok · 1691 ms · 0.000933 USD
+**Câu nhắc hệ thống**
+
+```
+# Vai trò: intent (hiểu lệnh)
+NHIỆM VỤ: Chuyển một câu lệnh của kỹ sư nhúng (tiếng Việt hoặc Anh) thành ý định có cấu trúc theo schema Intent. Bạn KHÔNG thực hiện lệnh, không trả lời câu hỏi kỹ thuật.
+KHÔNG ĐƯỢC: bịa tên dự án/chip/board không có trong câu lệnh hoặc trạng thái dự án; đoán tham số thiếu (để trống, tầng sau sẽ điền mặc định); chọn năng lực không có trong danh sách C0; trả confidence cao khi câu lệnh mơ hồ.
+PHẢI: chọn đúng một intent trong danh sách; điền slots chỉ từ những gì câu lệnh nói (mentions = mọi thực thể người nhắc: tên dự án, mã chip, tệp, board); đặt is_big=true khi lệnh gồm nhiều bước ("làm hết", "dựng tri thức, môi trường và mô phỏng"); confidence < 0,6 khi không chắc; giữ nguyên định danh kỹ thuật (STM32F411, PB6).
+ĐẦU RA: JSON đúng schema Intent (DPS-09 §4.1), không có văn bản khác.
+
+Dự án đang mở: mat-mang-khi-tim-tai-lieu.
+
+# C0 — danh sách ý định cho vai trò `intent` (sinh từ DPS-09 §4.1)
+
+- `project.create` — tạo dự án MỚI từ ý tưởng, tài liệu hoặc mã có sẵn
+- `project.open` — mở hoặc TIẾP TỤC một dự án đã có ("tiếp tục việc hôm qua")
+- `project.delete` — xóa hoặc ghi đè một dự án đã có
+- `knowledge.build` — TÌM/TẢI hoặc nạp tài liệu, datasheet, zip, ảnh vào kho tri thức
+- `env.setup` — cài, kiểm hoặc khóa toolchain và môi trường build
+- `sim.run` — chạy firmware trên mô phỏng
+- `code.feature` — viết hoặc sửa MÃ cho một tính năng, cấu hình ngoại vi
+- `target.flash` — nạp firmware lên board thật
+- `debug.ask` — hỏi về một LỖI ĐANG XẢY RA: log, HardFault, vì sao không chạy
+- `req.analyze` — phân tích, làm rõ hoặc truy vết YÊU CẦU — làm việc TRÊN CHÍNH tập yêu cầu: rút ra, gán mã, tìm chỗ mơ hồ/mâu thuẫn, viết tiêu chí nghiệm thu
+- `arch.design` — thiết kế kiến trúc: chia hệ thống thành MODULE/khối chức năng, chọn kiểu kiến trúc, ánh xạ phần cứng, kiểm xung đột chân, viết ADR
+- `diagram.draw` — vẽ một lược đồ
+- `doc.write` — viết MỘT tài liệu hoặc một mục tài liệu
+- `view.ask` — hỏi TRI THỨC ĐÃ CÓ: thanh ghi, thông số, "X là gì", "vì sao đã chọn Y" (ADR)
+- `discover.scan` — dò cổng, probe, chip đang cắm
+- `policy.stop` — dừng khẩn, dừng mọi việc đang chạy (kể cả "dừng tự chủ")
+- `policy.set` — đổi mức tự chủ, DUYỆT/từ chối mục chờ, HOÀN TÁC việc đã làm
+- `big_command` — lệnh gồm NHIỀU bước thuộc nhiều nhóm: "làm hết đi", "dựng tri thức rồi viết firmware", "bộ tài liệu đầy đủ". CŨNG dùng tạm cho lệnh MỘT bước thuộc nhóm chưa có ý định riêng (registry, bench, measure, passport, kg, tool, search…) — khi ấy `is_big` vẫn là false
+- `review.ask` — RÀ SOÁT một hiện vật có sẵn: netlist, schematic, mã nguồn, BOM — "kiểm giúp", "có lỗi gì không", "đối chiếu X với Y"
+- `search.ask` — TÌM tài liệu hoặc linh kiện: datasheet, errata, mạch tham khảo, linh kiện thay thế, tình trạng vòng đời
+- `compute.ask` — TÍNH một con số kỹ thuật: thời gian dùng pin, tản nhiệt, trở hạn dòng, timing — tính bằng code có kiểm chứng, không nhẩm
+- `tool.run` — CHẠY một lệnh hoặc kịch bản người dùng đưa
+- `unknown` — không hiểu, hoặc mơ hồ tới mức đoán sẽ sai
+
+Phân biệt:
+- `view.ask` hỏi tri thức TĨNH đã có trong hộ chiếu; `debug.ask` hỏi về một hiện tượng ĐANG hỏng.
+- `doc.write` là một tài liệu; cả BỘ tài liệu là `big_command`.
+- `arch.design` gồm kiểm xung đột chân và ngân sách tài nguyên, không phải `debug.ask`.
+- `req.analyze` làm việc TRÊN yêu cầu (rút ra, gán mã, tìm mâu thuẫn); `arch.design` làm việc TỪ yêu cầu ĐỂ RA module. Động từ quyết định, không phải danh từ: "chia hệ thống thành các khối", "thiết kế", "kiến trúc", "module" → `arch.design` — KỂ CẢ khi câu mở đầu bằng "từ các yêu cầu đã có". Một câu nhắc tới yêu cầu không có nghĩa là nó xin phân tích yêu cầu.
+- `policy.set` gồm cả duyệt hàng đợi và hoàn tác, không phải `knowledge.build`.
+- `big_command` KHÔNG kéo theo `is_big = true`: "đo dòng tiêu thụ khi ngủ" là một bước (measure.power) nhưng nhóm `measure` chưa có ý định riêng nên vẫn mang nhãn `big_command`.
+- HƯỚNG ĐÃ CHỐT (DEV-035, 08/09/2026): nhóm năng lực nào còn thiếu thì thêm Ý ĐỊNH RIÊNG cho nhóm ấy, KHÔNG mở rộng nghĩa của `big_command`. `big_command` mô tả HÌNH DẠNG của lệnh (nhiều bước, nhiều nhóm), nên nhét thêm nghĩa "nhóm chưa có ý định" vào là trộn hai chiều phân loại khác nhau vào một nhãn. Việc thêm hoãn tới CHAT-06 `chat.orchestrate` vì lúc ấy Orchestrator phải chọn năng lực cho từng ý định nên bảng ánh xạ thiếu sẽ tự lộ ra; làm sớm thì phải gán nhãn lại cả 50 câu của TC-59 mà chưa có gì bắt buộc.
+
+is_big:
+- Phép thử: lệnh gọi TOÀN BỘ một chuỗi mẫu §4.4, hay chỉ MỘT NÚT của chuỗi ấy?
+-   toàn bộ chuỗi → true · một nút → false.
+- Cùng một nhóm năng lực có thể rơi vào cả hai phía: "viết SRS" là một nút (`doc.write`, false),
+- "viết bộ tài liệu đầy đủ" là cả chuỗi P7 (true); "nạp lên board" là một nút (false),
+- "dò board rồi nạp" là cả chuỗi Z-10 (true).
+- Năm chuỗi mẫu: Z-01 dự án mới từ ý tưởng · Z-07 dự án mới từ tài liệu/zip · Z-05 thêm tính năng · P7 bộ tài liệu · Z-10 dò board rồi nạp.
+- `big_command` KHÔNG kéo theo true: nhãn ấy còn dùng tạm cho lệnh một bước thuộc nhóm chưa có ý định riêng.
+
+Năng lực liên quan:
+- diagram.timing — Giản đồ thời gian/tín hiệu (WaveDrom) từ timing của datasheet hoặc cap
+- extract.bom_enrich — Với mỗi MPN trong BOM: tìm hộ chiếu/datasheet (search.*) và gắn
+- discover.clock_measure — Đo tần số thực của chip/bus (qua probe timestamp, LA, hoặc firmware đo
+- discover.network — Dò thiết bị nhúng trên mạng LAN (mDNS, OTA endpoint, IP cố định) cho b
+- search.web — Tìm web nhiều nguồn (datasheet, SVD, repo, errata, forum); ưu tiên tên
+- tool.search — Tìm công cụ đã có (do tác tử tự viết trước đó, trong dự án/người dùng/
+- tool.test — Chạy test của công cụ trong sandbox (không mạng, không phần cứng); kiể
+- view.rag_index — Xây/cập nhật chỉ mục RAG (chunk, embedding, chỉ mục từ khóa + đồ thị) 
+- arch.map_hw — Gán module ↔ ngoại vi/chân/ngắt/DMA/timer; kiểm xung đột tài nguyên
+- arch.timing_budget — Ngân sách thời gian thực: chu kỳ, WCET ước lượng, ưu tiên ngắt/task
+- archive.query — Tìm bên trong kho nén theo tên/kiểu/nội dung (grep, chữ ký)
+- chat.clarify — Một câu hỏi gộp có phương án và mặc định; timeout
+- code.constant_guard — Hook: mọi hằng số phần cứng phải trỏ fact reviewed/verified
+- code.test_host — Kiểm thử trên máy chủ với mock ngoại vi (ctypes)
+- code.merge — Merge vào auto/ với commit truy vết; cửa sổ hoàn tác
+- diagram.gantt — Sơ đồ Gantt/mốc từ Plan; cập nhật theo tiến độ
+- diagram.lint — Kiểm cú pháp/tính nhất quán lược đồ (nút mồ côi, tên không khớp mã)
+- discover.probe — Dò debug probe (ST-Link, J-Link, CMSIS-DAP, PICkit, AVRISP, ESP USB-JT
+- discover.bus_scan — Quét bus I2C/SPI/1-Wire/CAN tìm thiết bị đang có; đối chiếu địa chỉ vớ
+- discover.firmware_probe — Nhận diện firmware đang chạy trên board (banner serial, bootloader, ph
+- doc.datasheet_summary — Tóm tắt datasheet/errata cho phần dự án dùng, có trích dẫn trang
+- doc.style_check — Kiểm tài liệu theo chuẩn: tiếng Việt ưu tiên, thuật ngữ có giải nghĩa,
+- doc.sync — Cập nhật tài liệu khi mã/kiến trúc/fact đổi; đánh dấu mục lỗi thời
+- extract.pdf_electrical — Thông số điện, timing, nhiệt → fact (tầng bạc, luôn cần duyệt)
+- kg.supersede — Fact mới thay fact cũ có lý do
+- memory.ledger — Ghi nhật ký bất biến: gate, tool, model call, quyết định tự động
+- passport.import — Ghi FactBatch qua cổng ghi duy nhất (merge tier, conflict, ledger)
+- passport.upgrade — Nâng ghim sang phiên bản mới; impact; đưa feature về failing
+- plan.estimate — Ước lượng token/chi phí/thời gian; so ngân sách
+- policy.undo_window — Theo dõi việc đã tự làm còn trong cửa sổ hoàn tác
+
+human: Tìm trên mạng datasheet mới nhất của SEN42
+```
+**Câu hỏi gửi lên**
+
+```
+Tìm trên mạng datasheet mới nhất của SEN42
+```
+**Đầu ra thô**
+
+```
+{
+  "intent": "search.ask",
+  "slots": {
+    "question": "datasheet mới nhất của SEN42"
+  },
+  "is_big": false,
+  "confidence": 0.95,
+  "lang": "vi",
+  "mentions": ["SEN42"]
+}
+```
+## 3. Ledger — 107 sự kiện
+
+| loại sự kiện | số lần |
+|---|---|
+| `cap.run.start` | 33 |
+| `gate.decision` | 33 |
+| `cap.run.finish` | 33 |
+| `session.open` | 1 |
+| `context.bundle` | 1 |
+| `model.call` | 1 |
+| `intent` | 1 |
+| `run.started` | 1 |
+| `run.step_started` | 1 |
+| `run.step_done` | 1 |
+| `run.done` | 1 |
+
+<details><summary>Toàn bộ sự kiện</summary>
+
+```json
+[
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "a7c91871147e756b",
+   "cap": "project.open",
+   "chain": {
+    "cap": "project.open",
+    "run_id": "0447ed6806fb"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "0447ed6806fb"
+  },
+  "hash": "f5e53d87f55b7ed17d63fca9dbf89e28d1bf64e5d07cbe1acbade853a4363b36",
+  "kind": "cap.run.start",
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "seq": 1,
+  "ts": "2026-09-24T04:20:45.738961+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.open",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.open",
+    "run_id": "0447ed6806fb"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "0447ed6806fb"
+  },
+  "hash": "165afecc512a60efc023af7b86e05a0fa9fb0c4d28604ed71520752422b0ccc9",
+  "kind": "gate.decision",
+  "prev_hash": "f5e53d87f55b7ed17d63fca9dbf89e28d1bf64e5d07cbe1acbade853a4363b36",
+  "seq": 2,
+  "ts": "2026-09-24T04:20:45.739287+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "chain": {
+    "cap": "project.open",
+    "run_id": "0447ed6806fb"
+   },
+   "project": "mat-mang-khi-tim-tai-lieu",
+   "session_id": "s_1252d6c2be9d"
+  },
+  "hash": "71a4b4b085b099523ad33c493e49a7578eafdeeafd9cb97b8747db93fc2dd561",
+  "kind": "session.open",
+  "prev_hash": "165afecc512a60efc023af7b86e05a0fa9fb0c4d28604ed71520752422b0ccc9",
+  "seq": 3,
+  "ts": "2026-09-24T04:20:45.745180+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.open",
+   "duration_ms": 22,
+   "result_hash": "11685f5a5683b176",
+   "run_id": "0447ed6806fb",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "8ec642b534fe45c212a485907cc633f9aab4173011af92e644724c7ecabc49a6",
+  "kind": "cap.run.finish",
+  "prev_hash": "71a4b4b085b099523ad33c493e49a7578eafdeeafd9cb97b8747db93fc2dd561",
+  "seq": 4,
+  "ts": "2026-09-24T04:20:45.746317+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "df0ab63298e4af92",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "6529f104a809"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "6529f104a809"
+  },
+  "hash": "da2033af1bab9d7dfa0cce1dc0e7da7505aa7b20ad3799e6506a643bca1c8bd0",
+  "kind": "cap.run.start",
+  "prev_hash": "8ec642b534fe45c212a485907cc633f9aab4173011af92e644724c7ecabc49a6",
+  "seq": 5,
+  "ts": "2026-09-24T04:20:45.752920+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "6529f104a809"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "6529f104a809"
+  },
+  "hash": "60fb964ca4f2ba8a6276f3b36599226a3d704926a6cc96ca8f6abfd69dba6765",
+  "kind": "gate.decision",
+  "prev_hash": "da2033af1bab9d7dfa0cce1dc0e7da7505aa7b20ad3799e6506a643bca1c8bd0",
+  "seq": 6,
+  "ts": "2026-09-24T04:20:45.753022+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "9dc52c4f80dd7357",
+   "run_id": "6529f104a809",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "34b909f7df353e3ae3d4b2ab866a8be780275b481f5c70de089fe41bceeaf47d",
+  "kind": "cap.run.finish",
+  "prev_hash": "60fb964ca4f2ba8a6276f3b36599226a3d704926a6cc96ca8f6abfd69dba6765",
+  "seq": 7,
+  "ts": "2026-09-24T04:20:45.754593+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "47f636af3253763d",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "4d0510807f7b"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "4d0510807f7b"
+  },
+  "hash": "fea90804465cb8f69b5fca720c7885366e89b3954446ae404e5cf9fd4ee6ea0b",
+  "kind": "cap.run.start",
+  "prev_hash": "34b909f7df353e3ae3d4b2ab866a8be780275b481f5c70de089fe41bceeaf47d",
+  "seq": 8,
+  "ts": "2026-09-24T04:20:45.756066+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "4d0510807f7b"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "4d0510807f7b"
+  },
+  "hash": "65e18674fcefcc49865461623b4427b03fc4112f13a94a27da581c8ea1524b53",
+  "kind": "gate.decision",
+  "prev_hash": "fea90804465cb8f69b5fca720c7885366e89b3954446ae404e5cf9fd4ee6ea0b",
+  "seq": 9,
+  "ts": "2026-09-24T04:20:45.756147+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "1a5dd849ae598359",
+   "run_id": "4d0510807f7b",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "6beaa63ec5b95048c13671ab358f67a063fed4b3a3a8bcd03279b6a8b59521d2",
+  "kind": "cap.run.finish",
+  "prev_hash": "65e18674fcefcc49865461623b4427b03fc4112f13a94a27da581c8ea1524b53",
+  "seq": 10,
+  "ts": "2026-09-24T04:20:45.757634+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f61f4d802f4b691b",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "cf4ca72909b2"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "cf4ca72909b2"
+  },
+  "hash": "e695cc46452e3d7d2395219e1bc8ee009edd407cc55bcf645b92e4e54c4b88fa",
+  "kind": "cap.run.start",
+  "prev_hash": "6beaa63ec5b95048c13671ab358f67a063fed4b3a3a8bcd03279b6a8b59521d2",
+  "seq": 11,
+  "ts": "2026-09-24T04:20:45.785485+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "cf4ca72909b2"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "cf4ca72909b2"
+  },
+  "hash": "fb9aa1c478e079bdd5962c51e69999092f0664cc0b47dcbc761a1dbc1bc20cce",
+  "kind": "gate.decision",
+  "prev_hash": "e695cc46452e3d7d2395219e1bc8ee009edd407cc55bcf645b92e4e54c4b88fa",
+  "seq": 12,
+  "ts": "2026-09-24T04:20:45.785607+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 1,
+   "result_hash": "d6209b305fabc66c",
+   "run_id": "cf4ca72909b2",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "21751e357d1b86f55e536242e51cf7273eb4bbf362fb65b227243e65268c1924",
+  "kind": "cap.run.finish",
+  "prev_hash": "fb9aa1c478e079bdd5962c51e69999092f0664cc0b47dcbc761a1dbc1bc20cce",
+  "seq": 13,
+  "ts": "2026-09-24T04:20:45.787352+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "32aa79bfd6db"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "32aa79bfd6db"
+  },
+  "hash": "04d70b1869a39f23867c4d2639f8c8368cf7ccf5adc13383f390f355691e6a94",
+  "kind": "cap.run.start",
+  "prev_hash": "21751e357d1b86f55e536242e51cf7273eb4bbf362fb65b227243e65268c1924",
+  "seq": 14,
+  "ts": "2026-09-24T04:20:46.027306+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "32aa79bfd6db"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "32aa79bfd6db"
+  },
+  "hash": "b9eda62e50a250ff9b053f5599a5841713fa53f372e5fa73b044055a7cde25f8",
+  "kind": "gate.decision",
+  "prev_hash": "04d70b1869a39f23867c4d2639f8c8368cf7ccf5adc13383f390f355691e6a94",
+  "seq": 15,
+  "ts": "2026-09-24T04:20:46.027456+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 3,
+   "result_hash": "2d4cda7da3c20316",
+   "run_id": "32aa79bfd6db",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "d1cb0c4e31e6f373058fd8efc1deff5cb6507354c9a3b76c58b14deb4ef9a4a6",
+  "kind": "cap.run.finish",
+  "prev_hash": "b9eda62e50a250ff9b053f5599a5841713fa53f372e5fa73b044055a7cde25f8",
+  "seq": 16,
+  "ts": "2026-09-24T04:20:46.030701+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "7fb5fd4e02eff168",
+   "cap": "chat.parse_intent",
+   "chain": {
+    "cap": "chat.parse_intent",
+    "run_id": "402d069cd354"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "402d069cd354"
+  },
+  "hash": "733138d48210c3955b0320fa8d1fb70f5d2c2287437e3fbdc7e36171e47772e1",
+  "kind": "cap.run.start",
+  "prev_hash": "d1cb0c4e31e6f373058fd8efc1deff5cb6507354c9a3b76c58b14deb4ef9a4a6",
+  "seq": 17,
+  "ts": "2026-09-24T04:20:46.051615+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "chat.parse_intent",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "chat.parse_intent",
+    "run_id": "402d069cd354"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "402d069cd354"
+  },
+  "hash": "b2e38f22fc5f894d3e860b60e6240c57d185b575bde98af344d83acaea45c82f",
+  "kind": "gate.decision",
+  "prev_hash": "733138d48210c3955b0320fa8d1fb70f5d2c2287437e3fbdc7e36171e47772e1",
+  "seq": 18,
+  "ts": "2026-09-24T04:20:46.051746+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "chain": {
+    "cap": "chat.parse_intent",
+    "run_id": "402d069cd354"
+   },
+   "compressions": [],
+   "hash": "a62e14cd7945d6e0",
+   "model_id": "",
+   "role": "intent",
+   "sources": [
+    "prompts/intent.md",
+    "dialog/intents.md",
+    "diagram.timing",
+    "extract.bom_enrich",
+    "discover.clock_measure",
+    "discover.network",
+    "search.web",
+    "tool.search",
+    "tool.test",
+    "view.rag_index",
+    "arch.map_hw",
+    "arch.timing_budget",
+    "archive.query",
+    "chat.clarify",
+    "code.constant_guard",
+    "code.test_host",
+    "code.merge",
+    "diagram.gantt",
+    "diagram.lint",
+    "discover.probe",
+    "discover.bus_scan",
+    "discover.firmware_probe",
+    "doc.datasheet_summary",
+    "doc.style_check",
+    "doc.sync",
+    "extract.pdf_electrical",
+    "kg.supersede",
+    "memory.ledger",
+    "passport.import",
+    "passport.upgrade",
+    "plan.estimate",
+    "policy.undo_window",
+    "/Users/congvt/Documents/EIDE/docs/test/usecase/TC072/du-an/mat-mang-khi-tim-tai-lieu",
+    "s_1252d6c2be9d"
+   ],
+   "tokens": {
+    "C0": 1900,
+    "C1": 235,
+    "C2": 12,
+    "C7": 14
+   }
+  },
+  "hash": "53c4e3a8ef13ac54052feca4a9b4ddec4b9f696aed9b04ebc29561ff2a76c639",
+  "kind": "context.bundle",
+  "prev_hash": "b2e38f22fc5f894d3e860b60e6240c57d185b575bde98af344d83acaea45c82f",
+  "seq": 19,
+  "ts": "2026-09-24T04:20:46.057457+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cache_read_tokens": 0,
+   "chain": {
+    "cap": "chat.parse_intent",
+    "run_id": "402d069cd354"
+   },
+   "cost_usd": 0.000933,
+   "latency_ms": 1691,
+   "model_id": "gemini-3.8-flash",
+   "prompt_hash": "51f720f3bfd322e3",
+   "request_hash": "3d43d1a04a584dcc",
+   "role": "intent",
+   "stop_reason": "stop",
+   "tokens_in": 2476,
+   "tokens_out": 76
+  },
+  "hash": "41434424b5659b8e910d4783454eeee65128e44e70f71606a7cdde4353c72dd7",
+  "kind": "model.call",
+  "prev_hash": "53c4e3a8ef13ac54052feca4a9b4ddec4b9f696aed9b04ebc29561ff2a76c639",
+  "seq": 20,
+  "ts": "2026-09-24T04:20:47.756956+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "chain": {
+    "cap": "chat.parse_intent",
+    "run_id": "402d069cd354"
+   },
+   "confidence": 0.95,
+   "intent": "search.ask",
+   "is_big": false,
+   "slots": {
+    "question": "datasheet mới nhất của SEN42"
+   },
+   "text": "Tìm trên mạng datasheet mới nhất của SEN42"
+  },
+  "hash": "0aeca6e03bc1b99b64fc0e55e5c0630d992c2d978aa2dae5ad10fd2ca0c8f633",
+  "kind": "intent",
+  "prev_hash": "41434424b5659b8e910d4783454eeee65128e44e70f71606a7cdde4353c72dd7",
+  "seq": 21,
+  "ts": "2026-09-24T04:20:47.758443+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "chat.parse_intent",
+   "duration_ms": 1708,
+   "result_hash": "f7b0a55a11df3b47",
+   "run_id": "402d069cd354",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "6b918493a96761d8edf307bd97dc1ea7b186972f20b80b063260b5d877384103",
+  "kind": "cap.run.finish",
+  "prev_hash": "0aeca6e03bc1b99b64fc0e55e5c0630d992c2d978aa2dae5ad10fd2ca0c8f633",
+  "seq": 22,
+  "ts": "2026-09-24T04:20:47.759684+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f7b0a55a11df3b47",
+   "cap": "chat.ground",
+   "chain": {
+    "cap": "chat.ground",
+    "run_id": "91708c356584"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "91708c356584"
+  },
+  "hash": "3cfebfd7fa02f566ba2625ce1cb6f36c2f386304748190926027fa2c4689e6f8",
+  "kind": "cap.run.start",
+  "prev_hash": "6b918493a96761d8edf307bd97dc1ea7b186972f20b80b063260b5d877384103",
+  "seq": 23,
+  "ts": "2026-09-24T04:20:47.761233+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "chat.ground",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "chat.ground",
+    "run_id": "91708c356584"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "91708c356584"
+  },
+  "hash": "c0dc53651b6f24182dd51168c69da0c19d5d0ac2c6dcef03f548fd9ca2f68878",
+  "kind": "gate.decision",
+  "prev_hash": "3cfebfd7fa02f566ba2625ce1cb6f36c2f386304748190926027fa2c4689e6f8",
+  "seq": 24,
+  "ts": "2026-09-24T04:20:47.761473+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "chat.ground",
+   "duration_ms": 4,
+   "result_hash": "afcd4488e9ec5ea2",
+   "run_id": "91708c356584",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "0216364d656293885f286eda10f3872e555659390108513f1f764c32d0320f24",
+  "kind": "cap.run.finish",
+  "prev_hash": "c0dc53651b6f24182dd51168c69da0c19d5d0ac2c6dcef03f548fd9ca2f68878",
+  "seq": 25,
+  "ts": "2026-09-24T04:20:47.765398+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "53b85ce17055d58d",
+   "cap": "chat.fill_defaults",
+   "chain": {
+    "cap": "chat.fill_defaults",
+    "run_id": "8912900e9b36"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "8912900e9b36"
+  },
+  "hash": "60641226ece044edb7559180b425bd10f8e1b252a7da5fc8b560259201fbc2b3",
+  "kind": "cap.run.start",
+  "prev_hash": "0216364d656293885f286eda10f3872e555659390108513f1f764c32d0320f24",
+  "seq": 26,
+  "ts": "2026-09-24T04:20:47.766665+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "chat.fill_defaults",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "chat.fill_defaults",
+    "run_id": "8912900e9b36"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "8912900e9b36"
+  },
+  "hash": "689e616f7e403676ad0dbb5046fb9a9a3b0c6609d04d06f46de6d450d268c8be",
+  "kind": "gate.decision",
+  "prev_hash": "60641226ece044edb7559180b425bd10f8e1b252a7da5fc8b560259201fbc2b3",
+  "seq": 27,
+  "ts": "2026-09-24T04:20:47.766828+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "chat.fill_defaults",
+   "duration_ms": 6,
+   "result_hash": "c5a23ebff4f09001",
+   "run_id": "8912900e9b36",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "6ea03747cd750bd00d2442fb54e91cc39dce43f4a93519b7afae69333ac83ccc",
+  "kind": "cap.run.finish",
+  "prev_hash": "689e616f7e403676ad0dbb5046fb9a9a3b0c6609d04d06f46de6d450d268c8be",
+  "seq": 28,
+  "ts": "2026-09-24T04:20:47.772757+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "061a9336030faa26",
+   "cap": "chat.orchestrate",
+   "chain": {
+    "cap": "chat.orchestrate",
+    "run_id": "b75d496767d9"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "b75d496767d9"
+  },
+  "hash": "388d7c6707ed45650072fe2b4b84fd6c4cc7294c15a7cefbf8dc6794d8cef09e",
+  "kind": "cap.run.start",
+  "prev_hash": "6ea03747cd750bd00d2442fb54e91cc39dce43f4a93519b7afae69333ac83ccc",
+  "seq": 29,
+  "ts": "2026-09-24T04:20:47.774680+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "chat.orchestrate",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "chat.orchestrate",
+    "run_id": "b75d496767d9"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "b75d496767d9"
+  },
+  "hash": "444716c52b10532f2b093ec9f210dca0101dbce302a3cdfbbcb1825d26117bb4",
+  "kind": "gate.decision",
+  "prev_hash": "388d7c6707ed45650072fe2b4b84fd6c4cc7294c15a7cefbf8dc6794d8cef09e",
+  "seq": 30,
+  "ts": "2026-09-24T04:20:47.775005+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "chain": {
+    "cap": "chat.orchestrate",
+    "run_id": "b75d496767d9"
+   },
+   "n": 1,
+   "run_id": "r_16e7e7b04c1b",
+   "steps": [
+    {
+     "cap": "search.web",
+     "id": "n1"
+    },
+    {
+     "cap": "search.fetch",
+     "id": "n2"
+    },
+    {
+     "cap": "chat.report_back",
+     "id": "n3"
+    }
+   ],
+   "text": "Tìm trên mạng datasheet mới nhất của SEN42"
+  },
+  "hash": "9bedb5f51e6439c08fce221481c1a87b4b6f7c865434552acb2fc6d9b866bb91",
+  "kind": "run.started",
+  "prev_hash": "444716c52b10532f2b093ec9f210dca0101dbce302a3cdfbbcb1825d26117bb4",
+  "seq": 31,
+  "ts": "2026-09-24T04:20:47.784420+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "search.web",
+   "chain": {
+    "cap": "chat.orchestrate",
+    "run_id": "b75d496767d9"
+   },
+   "i": 1,
+   "node_id": "n1",
+   "of": 3,
+   "run_id": "r_16e7e7b04c1b"
+  },
+  "hash": "6c243a0b63e32bf3da829b0491d9334cb854764bde72d783ebb33178ba757a0b",
+  "kind": "run.step_started",
+  "prev_hash": "9bedb5f51e6439c08fce221481c1a87b4b6f7c865434552acb2fc6d9b866bb91",
+  "seq": 32,
+  "ts": "2026-09-24T04:20:47.784909+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "b611eb20ff5efb0d",
+   "cap": "search.web",
+   "chain": {
+    "i": 1,
+    "node_id": "n1",
+    "of": 3,
+    "run_id": "r_16e7e7b04c1b"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "d3f7f3683e44"
+  },
+  "hash": "cbe3a9d4d924846887da7764bb320d9be83c675cad58d76619c95817062d6ce3",
+  "kind": "cap.run.start",
+  "prev_hash": "6c243a0b63e32bf3da829b0491d9334cb854764bde72d783ebb33178ba757a0b",
+  "seq": 33,
+  "ts": "2026-09-24T04:20:47.786231+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "search.web",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "i": 1,
+    "node_id": "n1",
+    "of": 3,
+    "run_id": "r_16e7e7b04c1b"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "d3f7f3683e44"
+  },
+  "hash": "9cc119e3c2f0808d6a2f351dca55913f9daeaa40a78e03a56570aa896cb18d0a",
+  "kind": "gate.decision",
+  "prev_hash": "cbe3a9d4d924846887da7764bb320d9be83c675cad58d76619c95817062d6ce3",
+  "seq": 34,
+  "ts": "2026-09-24T04:20:47.786356+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "search.web",
+   "chain": {
+    "i": 1,
+    "node_id": "n1",
+    "of": 3,
+    "run_id": "r_16e7e7b04c1b"
+   },
+   "duration_ms": 5,
+   "error": "E4001",
+   "run_id": "d3f7f3683e44",
+   "status": "failed"
+  },
+  "hash": "bc3b7b8344cdc281900bf9d7712ab02c395d3dbe8900a08838f0055c72b1afd9",
+  "kind": "cap.run.finish",
+  "prev_hash": "9cc119e3c2f0808d6a2f351dca55913f9daeaa40a78e03a56570aa896cb18d0a",
+  "seq": 35,
+  "ts": "2026-09-24T04:20:47.791489+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "search.web",
+   "error": {
+    "alternative": "search.vendor",
+    "eide_code": "E4001",
+    "message": "Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.",
+    "name": "TOOL_MISSING",
+    "providers": [
+     "searxng",
+     "brave",
+     "tavily",
+     "google"
+    ],
+    "tool": "search provider"
+   },
+   "i": 1,
+   "node_id": "n1",
+   "of": 3,
+   "run_id": "r_16e7e7b04c1b",
+   "status": "failed"
+  },
+  "hash": "2bca6c2a4f81e1db35e459a1f1ac363cf6b6745ac1836dce23c8d31295f6711e",
+  "kind": "run.step_done",
+  "prev_hash": "bc3b7b8344cdc281900bf9d7712ab02c395d3dbe8900a08838f0055c72b1afd9",
+  "seq": 36,
+  "ts": "2026-09-24T04:20:47.791595+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "done": 0,
+   "failed": 1,
+   "run_id": "r_16e7e7b04c1b",
+   "state": "failed",
+   "waiting": 1
+  },
+  "hash": "2245edaf9f8e0712036e6303a441d9cb797a2b8100018fda9d24dfefac7bbb40",
+  "kind": "run.done",
+  "prev_hash": "2bca6c2a4f81e1db35e459a1f1ac363cf6b6745ac1836dce23c8d31295f6711e",
+  "seq": 37,
+  "ts": "2026-09-24T04:20:47.792794+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "chat.orchestrate",
+   "duration_ms": 43,
+   "result_hash": "2a70b909f9d86a35",
+   "run_id": "b75d496767d9",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "b6e41c5d2eac116e6205a89d04a3047562892e1997603481096726fd11d840bb",
+  "kind": "cap.run.finish",
+  "prev_hash": "2245edaf9f8e0712036e6303a441d9cb797a2b8100018fda9d24dfefac7bbb40",
+  "seq": 38,
+  "ts": "2026-09-24T04:20:47.817824+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "503d2ad3a04056d7",
+   "cap": "chat.restate",
+   "chain": {
+    "cap": "chat.restate",
+    "run_id": "c3d1b6fd0e3b"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "c3d1b6fd0e3b"
+  },
+  "hash": "0552959ca4f1dffe9053309611c92b4d0d472e14fff1675c90e0883cbbdde487",
+  "kind": "cap.run.start",
+  "prev_hash": "b6e41c5d2eac116e6205a89d04a3047562892e1997603481096726fd11d840bb",
+  "seq": 39,
+  "ts": "2026-09-24T04:20:47.821420+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "chat.restate",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "chat.restate",
+    "run_id": "c3d1b6fd0e3b"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "c3d1b6fd0e3b"
+  },
+  "hash": "53bb68830f05ba988f075a6cc6c936b65abc90cfae067ef3ba91665577682606",
+  "kind": "gate.decision",
+  "prev_hash": "0552959ca4f1dffe9053309611c92b4d0d472e14fff1675c90e0883cbbdde487",
+  "seq": 40,
+  "ts": "2026-09-24T04:20:47.821567+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "chat.restate",
+   "duration_ms": 1,
+   "result_hash": "7892095e98bbc9ec",
+   "run_id": "c3d1b6fd0e3b",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "cc160aca58afc67c23a7c8ac2606887e7d7490ef0717ff54361f324fa9dce7d1",
+  "kind": "cap.run.finish",
+  "prev_hash": "53bb68830f05ba988f075a6cc6c936b65abc90cfae067ef3ba91665577682606",
+  "seq": 41,
+  "ts": "2026-09-24T04:20:47.822670+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "379a3e34793b"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "379a3e34793b"
+  },
+  "hash": "51edc8655f2dea1d1d8909cda230a59fbda48c08785a4664edd0b7e477c82668",
+  "kind": "cap.run.start",
+  "prev_hash": "cc160aca58afc67c23a7c8ac2606887e7d7490ef0717ff54361f324fa9dce7d1",
+  "seq": 42,
+  "ts": "2026-09-24T04:20:47.880685+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "379a3e34793b"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "379a3e34793b"
+  },
+  "hash": "33ee011ba7a5c24a1b1052d4cd23bd74280acddb48b4d8de11d4c2c33f82d0e3",
+  "kind": "gate.decision",
+  "prev_hash": "51edc8655f2dea1d1d8909cda230a59fbda48c08785a4664edd0b7e477c82668",
+  "seq": 43,
+  "ts": "2026-09-24T04:20:47.880882+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 2,
+   "result_hash": "e4bbfc6382983048",
+   "run_id": "379a3e34793b",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "89815404c8e89d8c914e98d3abe1d760eda535712c13de26b7a14a25862abacd",
+  "kind": "cap.run.finish",
+  "prev_hash": "33ee011ba7a5c24a1b1052d4cd23bd74280acddb48b4d8de11d4c2c33f82d0e3",
+  "seq": 44,
+  "ts": "2026-09-24T04:20:47.882837+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "f865f8d46a1e"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "f865f8d46a1e"
+  },
+  "hash": "6162a237bafa9cdb47607ebae580d4e8a2e1408394316a90ce5d842294ee6db2",
+  "kind": "cap.run.start",
+  "prev_hash": "89815404c8e89d8c914e98d3abe1d760eda535712c13de26b7a14a25862abacd",
+  "seq": 45,
+  "ts": "2026-09-24T04:20:48.205652+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "f865f8d46a1e"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "f865f8d46a1e"
+  },
+  "hash": "104d87e634e809f1f0d0d8617f29fef74861de2dfd4fb00c0553178a60899df9",
+  "kind": "gate.decision",
+  "prev_hash": "6162a237bafa9cdb47607ebae580d4e8a2e1408394316a90ce5d842294ee6db2",
+  "seq": 46,
+  "ts": "2026-09-24T04:20:48.205862+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 3,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "f865f8d46a1e",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "3604a0d6a31487d3a4f4e74e99062455328cb40693b205f33c2815923506b513",
+  "kind": "cap.run.finish",
+  "prev_hash": "104d87e634e809f1f0d0d8617f29fef74861de2dfd4fb00c0553178a60899df9",
+  "seq": 47,
+  "ts": "2026-09-24T04:20:48.209559+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "42104809d5f71a40",
+   "cap": "chat.report_back",
+   "chain": {
+    "cap": "chat.report_back",
+    "run_id": "9fb995732e49"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "9fb995732e49"
+  },
+  "hash": "30179a799a301807c493ef106abf16458257e5c51712f15c93fe11c2f38943e8",
+  "kind": "cap.run.start",
+  "prev_hash": "3604a0d6a31487d3a4f4e74e99062455328cb40693b205f33c2815923506b513",
+  "seq": 48,
+  "ts": "2026-09-24T04:20:48.211621+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "chat.report_back",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "chat.report_back",
+    "run_id": "9fb995732e49"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "9fb995732e49"
+  },
+  "hash": "30f7bc74d5a976f0c67f9fc755e063db74fcbbcf02a88708199ebaaf3f8b90c3",
+  "kind": "gate.decision",
+  "prev_hash": "30179a799a301807c493ef106abf16458257e5c51712f15c93fe11c2f38943e8",
+  "seq": 49,
+  "ts": "2026-09-24T04:20:48.211731+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "chat.report_back",
+   "duration_ms": 2,
+   "result_hash": "328d400d48589d0f",
+   "run_id": "9fb995732e49",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "ebe6bf04712e0dd00ec5f95d536c3afe1f07ef0dd89c89b2034bf1775c54e13e",
+  "kind": "cap.run.finish",
+  "prev_hash": "30f7bc74d5a976f0c67f9fc755e063db74fcbbcf02a88708199ebaaf3f8b90c3",
+  "seq": 50,
+  "ts": "2026-09-24T04:20:48.213836+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "61c2bf424cfe"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "61c2bf424cfe"
+  },
+  "hash": "f2043c4cbcc0d2c3b7183b23b6326a363795cbc84e618d181d6cfb82b6b3d94f",
+  "kind": "cap.run.start",
+  "prev_hash": "ebe6bf04712e0dd00ec5f95d536c3afe1f07ef0dd89c89b2034bf1775c54e13e",
+  "seq": 51,
+  "ts": "2026-09-24T04:20:48.218354+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "61c2bf424cfe"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "61c2bf424cfe"
+  },
+  "hash": "9d33302d39eb08f3eeaefbfbd8782604630a2b18a8dd56785ac11a52616e8edd",
+  "kind": "gate.decision",
+  "prev_hash": "f2043c4cbcc0d2c3b7183b23b6326a363795cbc84e618d181d6cfb82b6b3d94f",
+  "seq": 52,
+  "ts": "2026-09-24T04:20:48.218463+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 1,
+   "result_hash": "7b1df08d8ada7129",
+   "run_id": "61c2bf424cfe",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "97e7bec549a47d7798b27b6ad5154405c3380b9f0ddab1e337bfb72405a010aa",
+  "kind": "cap.run.finish",
+  "prev_hash": "9d33302d39eb08f3eeaefbfbd8782604630a2b18a8dd56785ac11a52616e8edd",
+  "seq": 53,
+  "ts": "2026-09-24T04:20:48.220520+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "df0ab63298e4af92",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "16d8d1599eb5"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "16d8d1599eb5"
+  },
+  "hash": "c9fca9b2dba9b50de03a82a5862558a4ab2537816ac81d038a79e4594a61730e",
+  "kind": "cap.run.start",
+  "prev_hash": "97e7bec549a47d7798b27b6ad5154405c3380b9f0ddab1e337bfb72405a010aa",
+  "seq": 54,
+  "ts": "2026-09-24T04:20:48.228590+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "16d8d1599eb5"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "16d8d1599eb5"
+  },
+  "hash": "52f1272b1bea77026c52fbba915b4b15f80bb1c98444dba55dd43e5ead84fa5c",
+  "kind": "gate.decision",
+  "prev_hash": "c9fca9b2dba9b50de03a82a5862558a4ab2537816ac81d038a79e4594a61730e",
+  "seq": 55,
+  "ts": "2026-09-24T04:20:48.228701+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "9dc52c4f80dd7357",
+   "run_id": "16d8d1599eb5",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "fa484ee72c367177acacc5eecceb01a343558836c985b7d994ea02b0abdbcf11",
+  "kind": "cap.run.finish",
+  "prev_hash": "52f1272b1bea77026c52fbba915b4b15f80bb1c98444dba55dd43e5ead84fa5c",
+  "seq": 56,
+  "ts": "2026-09-24T04:20:48.230422+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "df0ab63298e4af92",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "85cc213d83c1"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "85cc213d83c1"
+  },
+  "hash": "fb0f88295f8aeadf6721ef707628661421df5d7a35cb99673af88abb6a8a6fff",
+  "kind": "cap.run.start",
+  "prev_hash": "fa484ee72c367177acacc5eecceb01a343558836c985b7d994ea02b0abdbcf11",
+  "seq": 57,
+  "ts": "2026-09-24T04:20:48.231871+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "85cc213d83c1"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "85cc213d83c1"
+  },
+  "hash": "2abef75b99e716024b5cad800fb9e370017bb5596b99e4c1028d0ac1ec2b652c",
+  "kind": "gate.decision",
+  "prev_hash": "fb0f88295f8aeadf6721ef707628661421df5d7a35cb99673af88abb6a8a6fff",
+  "seq": 58,
+  "ts": "2026-09-24T04:20:48.231969+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 4,
+   "result_hash": "9dc52c4f80dd7357",
+   "run_id": "85cc213d83c1",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "2dba267be61ab814c8a6b68aff89f0259a14c0617d05371484dae6e5eca43ae7",
+  "kind": "cap.run.finish",
+  "prev_hash": "2abef75b99e716024b5cad800fb9e370017bb5596b99e4c1028d0ac1ec2b652c",
+  "seq": 59,
+  "ts": "2026-09-24T04:20:48.236495+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "47f636af3253763d",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "4f517d70fd94"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "4f517d70fd94"
+  },
+  "hash": "1d8761ac081b8860fe170f6480b0df939fa19a70899f2a87625743296047a247",
+  "kind": "cap.run.start",
+  "prev_hash": "2dba267be61ab814c8a6b68aff89f0259a14c0617d05371484dae6e5eca43ae7",
+  "seq": 60,
+  "ts": "2026-09-24T04:20:48.244725+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "4f517d70fd94"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "4f517d70fd94"
+  },
+  "hash": "d146780cbb0cb2134605c09bfb323c0a078b4303c10e7d98a8bac94e191de298",
+  "kind": "gate.decision",
+  "prev_hash": "1d8761ac081b8860fe170f6480b0df939fa19a70899f2a87625743296047a247",
+  "seq": 61,
+  "ts": "2026-09-24T04:20:48.244824+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "e4bbfc6382983048",
+   "run_id": "4f517d70fd94",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "0ead7f3412a9a620d488f2b542b3e27c1dbb26db72d63bb7ed24e7d3bf781a1b",
+  "kind": "cap.run.finish",
+  "prev_hash": "d146780cbb0cb2134605c09bfb323c0a078b4303c10e7d98a8bac94e191de298",
+  "seq": 62,
+  "ts": "2026-09-24T04:20:48.246408+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "47f636af3253763d",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "47c28c4bed39"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "47c28c4bed39"
+  },
+  "hash": "3c110c8e8fe01dfd017b255ad7a6695264805af2afe19153f604292e63c469cf",
+  "kind": "cap.run.start",
+  "prev_hash": "0ead7f3412a9a620d488f2b542b3e27c1dbb26db72d63bb7ed24e7d3bf781a1b",
+  "seq": 63,
+  "ts": "2026-09-24T04:20:48.247768+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "47c28c4bed39"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "47c28c4bed39"
+  },
+  "hash": "4031dc5a1cdc9b5b4e5815ea760ff137e35b545c2158f354401c9261ceb8a05a",
+  "kind": "gate.decision",
+  "prev_hash": "3c110c8e8fe01dfd017b255ad7a6695264805af2afe19153f604292e63c469cf",
+  "seq": 64,
+  "ts": "2026-09-24T04:20:48.247888+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "e4bbfc6382983048",
+   "run_id": "47c28c4bed39",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "8b0d2596ffd10de1795f303835627bd1ec25168e2c18f108166a511634c985a1",
+  "kind": "cap.run.finish",
+  "prev_hash": "4031dc5a1cdc9b5b4e5815ea760ff137e35b545c2158f354401c9261ceb8a05a",
+  "seq": 65,
+  "ts": "2026-09-24T04:20:48.249459+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f61f4d802f4b691b",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "065b2efd8885"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "065b2efd8885"
+  },
+  "hash": "c241fbc5850c34b714406e4b327213f4768aaeb58faddc8f82fea25ed2ed1545",
+  "kind": "cap.run.start",
+  "prev_hash": "8b0d2596ffd10de1795f303835627bd1ec25168e2c18f108166a511634c985a1",
+  "seq": 66,
+  "ts": "2026-09-24T04:20:48.279042+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "065b2efd8885"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "065b2efd8885"
+  },
+  "hash": "f61272c62e7663cc34b577838261ccebb248e874319add85386e4938a63ac985",
+  "kind": "gate.decision",
+  "prev_hash": "c241fbc5850c34b714406e4b327213f4768aaeb58faddc8f82fea25ed2ed1545",
+  "seq": 67,
+  "ts": "2026-09-24T04:20:48.279144+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "22a7102210cb9929",
+   "run_id": "065b2efd8885",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "7c38dc5d6bf00134a9ac92ff4ee296c9d6d89ed06080f37786a0ecf2bd1261a7",
+  "kind": "cap.run.finish",
+  "prev_hash": "f61272c62e7663cc34b577838261ccebb248e874319add85386e4938a63ac985",
+  "seq": 68,
+  "ts": "2026-09-24T04:20:48.281430+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f61f4d802f4b691b",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "8d28fd150966"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "8d28fd150966"
+  },
+  "hash": "065e3fe980e8d8b12ca96af4a5220cd75b8272450a09e9f877747c8f0eecdc2f",
+  "kind": "cap.run.start",
+  "prev_hash": "7c38dc5d6bf00134a9ac92ff4ee296c9d6d89ed06080f37786a0ecf2bd1261a7",
+  "seq": 69,
+  "ts": "2026-09-24T04:20:48.358757+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "8d28fd150966"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "8d28fd150966"
+  },
+  "hash": "b06d58266245e9c6c2ce8b0c95a6c1ae0167fc53b23cea009df091fb7629d22a",
+  "kind": "gate.decision",
+  "prev_hash": "065e3fe980e8d8b12ca96af4a5220cd75b8272450a09e9f877747c8f0eecdc2f",
+  "seq": 70,
+  "ts": "2026-09-24T04:20:48.358963+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "c619d508277db7d0",
+   "run_id": "8d28fd150966",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "59af3f5a0215b95f0fe94a444dd9750ed786a0d3a1e81299d92dcefc02667d6b",
+  "kind": "cap.run.finish",
+  "prev_hash": "b06d58266245e9c6c2ce8b0c95a6c1ae0167fc53b23cea009df091fb7629d22a",
+  "seq": 71,
+  "ts": "2026-09-24T04:20:48.361671+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "1dfe391620f4"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "1dfe391620f4"
+  },
+  "hash": "2f8ec7710e466a3f8a1b86e634a8abf93a73590c413410342d3ba56d48c29e7f",
+  "kind": "cap.run.start",
+  "prev_hash": "59af3f5a0215b95f0fe94a444dd9750ed786a0d3a1e81299d92dcefc02667d6b",
+  "seq": 72,
+  "ts": "2026-09-24T04:20:48.489855+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "1dfe391620f4"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "1dfe391620f4"
+  },
+  "hash": "f34dad6fdd13b001b9602091f313199ff33b19a86c06e7639276a6ae59e4f3ca",
+  "kind": "gate.decision",
+  "prev_hash": "2f8ec7710e466a3f8a1b86e634a8abf93a73590c413410342d3ba56d48c29e7f",
+  "seq": 73,
+  "ts": "2026-09-24T04:20:48.490075+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "1dfe391620f4",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "f85a2b07dec3e252b13a9cb9cee2d366a9c44fccb1c5e960ee89fd2fae17f114",
+  "kind": "cap.run.finish",
+  "prev_hash": "f34dad6fdd13b001b9602091f313199ff33b19a86c06e7639276a6ae59e4f3ca",
+  "seq": 74,
+  "ts": "2026-09-24T04:20:48.494026+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "23ce7e95089b"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "23ce7e95089b"
+  },
+  "hash": "19a306cc7a962eedbd90e54107a10d20808718e1d55ba224c3fadc78ed8ae24c",
+  "kind": "cap.run.start",
+  "prev_hash": "f85a2b07dec3e252b13a9cb9cee2d366a9c44fccb1c5e960ee89fd2fae17f114",
+  "seq": 75,
+  "ts": "2026-09-24T04:20:48.496841+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "23ce7e95089b"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "23ce7e95089b"
+  },
+  "hash": "bd437611c715eb3ba7466aa2b0bdb59ba3db3815136c92a22a445962cb760241",
+  "kind": "gate.decision",
+  "prev_hash": "19a306cc7a962eedbd90e54107a10d20808718e1d55ba224c3fadc78ed8ae24c",
+  "seq": 76,
+  "ts": "2026-09-24T04:20:48.496945+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 2,
+   "result_hash": "e4bbfc6382983048",
+   "run_id": "23ce7e95089b",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "2487de1614d34e9d1ccc87a8976abd5b775a8f98f0f39365b207bfec5212bc12",
+  "kind": "cap.run.finish",
+  "prev_hash": "bd437611c715eb3ba7466aa2b0bdb59ba3db3815136c92a22a445962cb760241",
+  "seq": 77,
+  "ts": "2026-09-24T04:20:48.498896+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "8ffaa2a755ad"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "8ffaa2a755ad"
+  },
+  "hash": "6d65db6784ac63d059e874d68d661d21065c1bdcd261141f5d6b981877318dd5",
+  "kind": "cap.run.start",
+  "prev_hash": "2487de1614d34e9d1ccc87a8976abd5b775a8f98f0f39365b207bfec5212bc12",
+  "seq": 78,
+  "ts": "2026-09-24T04:20:48.501175+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "8ffaa2a755ad"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "8ffaa2a755ad"
+  },
+  "hash": "9fb660e8f8ec2333aad371dc84426efe7b47c0ad52172a499fac854ac58015eb",
+  "kind": "gate.decision",
+  "prev_hash": "6d65db6784ac63d059e874d68d661d21065c1bdcd261141f5d6b981877318dd5",
+  "seq": 79,
+  "ts": "2026-09-24T04:20:48.501291+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 3,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "8ffaa2a755ad",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "245a94e519c7c4f1eba21b85208359a05feff038ad66742c19018b8f091fbde4",
+  "kind": "cap.run.finish",
+  "prev_hash": "9fb660e8f8ec2333aad371dc84426efe7b47c0ad52172a499fac854ac58015eb",
+  "seq": 80,
+  "ts": "2026-09-24T04:20:48.505104+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "bfc068fb02ac"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "bfc068fb02ac"
+  },
+  "hash": "df9adcb8dd7f6842c75b10b8b83d4f4148500e306a42d9126a890410791a3350",
+  "kind": "cap.run.start",
+  "prev_hash": "245a94e519c7c4f1eba21b85208359a05feff038ad66742c19018b8f091fbde4",
+  "seq": 81,
+  "ts": "2026-09-24T04:20:48.509938+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "bfc068fb02ac"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "bfc068fb02ac"
+  },
+  "hash": "87c65d5eb27b86a57cae116919ad5fdd3e2be5cc34890128c02919e8575805f2",
+  "kind": "gate.decision",
+  "prev_hash": "df9adcb8dd7f6842c75b10b8b83d4f4148500e306a42d9126a890410791a3350",
+  "seq": 82,
+  "ts": "2026-09-24T04:20:48.510065+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "25d8c835e2c04870",
+   "run_id": "bfc068fb02ac",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "c9cbfb28354dfd3eab8cf720d80a9b8630b0615fa2816304b1b7dbd433cfc479",
+  "kind": "cap.run.finish",
+  "prev_hash": "87c65d5eb27b86a57cae116919ad5fdd3e2be5cc34890128c02919e8575805f2",
+  "seq": 83,
+  "ts": "2026-09-24T04:20:48.512524+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "14a08420e38c"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "14a08420e38c"
+  },
+  "hash": "dcebfe6c5a04e5c4ee9172448b16fbaf68f5d6e5ba2f7043e2356f65a71f9814",
+  "kind": "cap.run.start",
+  "prev_hash": "c9cbfb28354dfd3eab8cf720d80a9b8630b0615fa2816304b1b7dbd433cfc479",
+  "seq": 84,
+  "ts": "2026-09-24T04:20:49.052012+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "14a08420e38c"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "14a08420e38c"
+  },
+  "hash": "a807f49e4702d14e78f47361dd3ddb57fa08370497f548c2ac8a1046c1b2e626",
+  "kind": "gate.decision",
+  "prev_hash": "dcebfe6c5a04e5c4ee9172448b16fbaf68f5d6e5ba2f7043e2356f65a71f9814",
+  "seq": 85,
+  "ts": "2026-09-24T04:20:49.052723+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 10,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "14a08420e38c",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "09c58f6bca35b28c9f250df2870d8736e0122e4caf450c3d28ca6ba98ddfcbb1",
+  "kind": "cap.run.finish",
+  "prev_hash": "a807f49e4702d14e78f47361dd3ddb57fa08370497f548c2ac8a1046c1b2e626",
+  "seq": 86,
+  "ts": "2026-09-24T04:20:49.061969+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "f59586cd6791"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "f59586cd6791"
+  },
+  "hash": "6ecec269f7ae9a900b558c6b552a636e00ff1abbe3c281f61806364087878cb7",
+  "kind": "cap.run.start",
+  "prev_hash": "09c58f6bca35b28c9f250df2870d8736e0122e4caf450c3d28ca6ba98ddfcbb1",
+  "seq": 87,
+  "ts": "2026-09-24T04:20:49.068770+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "f59586cd6791"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "f59586cd6791"
+  },
+  "hash": "c757564a498e50726ebc4d01dc99801780b8002eed0ddc7a9cbe9bfd36290ab2",
+  "kind": "gate.decision",
+  "prev_hash": "6ecec269f7ae9a900b558c6b552a636e00ff1abbe3c281f61806364087878cb7",
+  "seq": 88,
+  "ts": "2026-09-24T04:20:49.069055+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 3,
+   "result_hash": "e4bbfc6382983048",
+   "run_id": "f59586cd6791",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "15d289d0287002e54432f7bdc713945f2e7ef200f18d063f14f1c8d9d4f3069e",
+  "kind": "cap.run.finish",
+  "prev_hash": "c757564a498e50726ebc4d01dc99801780b8002eed0ddc7a9cbe9bfd36290ab2",
+  "seq": 89,
+  "ts": "2026-09-24T04:20:49.071863+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "5438ce0659ad"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "5438ce0659ad"
+  },
+  "hash": "286c968b028f561352e59490cc8f03db4578cc78b80effbd467ec2fb66d7137a",
+  "kind": "cap.run.start",
+  "prev_hash": "15d289d0287002e54432f7bdc713945f2e7ef200f18d063f14f1c8d9d4f3069e",
+  "seq": 90,
+  "ts": "2026-09-24T04:20:49.075399+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "5438ce0659ad"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "5438ce0659ad"
+  },
+  "hash": "44cf945d82583c324563af270088b24e8010148f8a5dc58ec1dc739beab9bf8c",
+  "kind": "gate.decision",
+  "prev_hash": "286c968b028f561352e59490cc8f03db4578cc78b80effbd467ec2fb66d7137a",
+  "seq": 91,
+  "ts": "2026-09-24T04:20:49.075560+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 6,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "5438ce0659ad",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "8fcb9c544e4e9c0bdfca3cbdeea057e50c76f91e97a6cecc15bbaa3618a27cef",
+  "kind": "cap.run.finish",
+  "prev_hash": "44cf945d82583c324563af270088b24e8010148f8a5dc58ec1dc739beab9bf8c",
+  "seq": 92,
+  "ts": "2026-09-24T04:20:49.081592+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "62f4d4c167d2"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "62f4d4c167d2"
+  },
+  "hash": "82438febe305990b5a40b96ba39d5b8bebc5e77e3b0a3a369a327d020117a730",
+  "kind": "cap.run.start",
+  "prev_hash": "8fcb9c544e4e9c0bdfca3cbdeea057e50c76f91e97a6cecc15bbaa3618a27cef",
+  "seq": 93,
+  "ts": "2026-09-24T04:20:49.085616+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "62f4d4c167d2"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "62f4d4c167d2"
+  },
+  "hash": "ebcee40dff6b3aa4ee00e757f462e4d5a68d22762032367f0c91d3293cd46f90",
+  "kind": "gate.decision",
+  "prev_hash": "82438febe305990b5a40b96ba39d5b8bebc5e77e3b0a3a369a327d020117a730",
+  "seq": 94,
+  "ts": "2026-09-24T04:20:49.085756+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 3,
+   "result_hash": "09282fa19d847374",
+   "run_id": "62f4d4c167d2",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "1414e370df4d9c436535e85a8771b39127e8596729a6c65a7d76b794d18a7bb9",
+  "kind": "cap.run.finish",
+  "prev_hash": "ebcee40dff6b3aa4ee00e757f462e4d5a68d22762032367f0c91d3293cd46f90",
+  "seq": 95,
+  "ts": "2026-09-24T04:20:49.089098+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "56802e0516cc"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "56802e0516cc"
+  },
+  "hash": "ed6268b3f5a26f697bb8845ce66b0d7e01d8756f7377d5a72e9374fef6d0f8f0",
+  "kind": "cap.run.start",
+  "prev_hash": "1414e370df4d9c436535e85a8771b39127e8596729a6c65a7d76b794d18a7bb9",
+  "seq": 96,
+  "ts": "2026-09-24T04:20:52.665584+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "56802e0516cc"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "56802e0516cc"
+  },
+  "hash": "5b9f485eb8cde3cf1ffb4c78e1ed863141ef3db2d8947e71f8e61050e205520a",
+  "kind": "gate.decision",
+  "prev_hash": "ed6268b3f5a26f697bb8845ce66b0d7e01d8756f7377d5a72e9374fef6d0f8f0",
+  "seq": 97,
+  "ts": "2026-09-24T04:20:52.665811+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "56802e0516cc",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "ced7095cbadd13fc8eb05194d379d98adc25f45d984b7a44148b978266677437",
+  "kind": "cap.run.finish",
+  "prev_hash": "5b9f485eb8cde3cf1ffb4c78e1ed863141ef3db2d8947e71f8e61050e205520a",
+  "seq": 98,
+  "ts": "2026-09-24T04:20:52.670257+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "3e7152eb2552"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "3e7152eb2552"
+  },
+  "hash": "dc53fe70964ceb912e29760ef01809a218c9d653b09601222264d085219f5584",
+  "kind": "cap.run.start",
+  "prev_hash": "ced7095cbadd13fc8eb05194d379d98adc25f45d984b7a44148b978266677437",
+  "seq": 99,
+  "ts": "2026-09-24T04:20:52.673996+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "3e7152eb2552"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "3e7152eb2552"
+  },
+  "hash": "35936620daaf815ce683476c75aa685bb4206968dbf70e929301bb6a1ba0803b",
+  "kind": "gate.decision",
+  "prev_hash": "dc53fe70964ceb912e29760ef01809a218c9d653b09601222264d085219f5584",
+  "seq": 100,
+  "ts": "2026-09-24T04:20:52.674092+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "e4bbfc6382983048",
+   "run_id": "3e7152eb2552",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "218be984eb6e0f4f54410ce4f77c480b1c0d70680acbdc175f23fddff7aa04a5",
+  "kind": "cap.run.finish",
+  "prev_hash": "35936620daaf815ce683476c75aa685bb4206968dbf70e929301bb6a1ba0803b",
+  "seq": 101,
+  "ts": "2026-09-24T04:20:52.675821+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "081d95c47474"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "081d95c47474"
+  },
+  "hash": "cb91789b7f8d3164257543032c08eeed602f2d9fb990e3dacbbe7cd911aaf6eb",
+  "kind": "cap.run.start",
+  "prev_hash": "218be984eb6e0f4f54410ce4f77c480b1c0d70680acbdc175f23fddff7aa04a5",
+  "seq": 102,
+  "ts": "2026-09-24T04:20:52.677986+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "081d95c47474"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "081d95c47474"
+  },
+  "hash": "c1b90e8483df637891b8c41bb27145ad93ab4f66ad5b0cc8641efe5354be4d9e",
+  "kind": "gate.decision",
+  "prev_hash": "cb91789b7f8d3164257543032c08eeed602f2d9fb990e3dacbbe7cd911aaf6eb",
+  "seq": 103,
+  "ts": "2026-09-24T04:20:52.678096+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "676e8ed466cbbdc6",
+   "run_id": "081d95c47474",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "b6a8edc7dc598025f4cf0a0312a036ad7f38422c258e1f52efe02bf32cede94d",
+  "kind": "cap.run.finish",
+  "prev_hash": "c1b90e8483df637891b8c41bb27145ad93ab4f66ad5b0cc8641efe5354be4d9e",
+  "seq": 104,
+  "ts": "2026-09-24T04:20:52.682079+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "35bb0cf5b22f"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "35bb0cf5b22f"
+  },
+  "hash": "19d976829ab24e98fa7f89f6ba7e569abed886459c2efc96fac4e80aade650de",
+  "kind": "cap.run.start",
+  "prev_hash": "b6a8edc7dc598025f4cf0a0312a036ad7f38422c258e1f52efe02bf32cede94d",
+  "seq": 105,
+  "ts": "2026-09-24T04:20:52.684902+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "35bb0cf5b22f"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "35bb0cf5b22f"
+  },
+  "hash": "6157c5ae7ca1e96d3fb90494dbb6bcc70f04e78772e789c2daf8f9a098192d58",
+  "kind": "gate.decision",
+  "prev_hash": "19d976829ab24e98fa7f89f6ba7e569abed886459c2efc96fac4e80aade650de",
+  "seq": 106,
+  "ts": "2026-09-24T04:20:52.684994+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "4716f46bf940efb7",
+   "run_id": "35bb0cf5b22f",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "d728d129b3f88688a373697b221cf6704b90a0b514cd38ed0c4faad845824b26",
+  "kind": "cap.run.finish",
+  "prev_hash": "6157c5ae7ca1e96d3fb90494dbb6bcc70f04e78772e789c2daf8f9a098192d58",
+  "seq": 107,
+  "ts": "2026-09-24T04:20:52.687515+00:00"
+ }
+]
+```
+</details>
+
+## 4. Hiện vật (store.sqlite)
+
+| bảng | số dòng |
+|---|---|
+| `acq_request` | 0 |
+| `adr` | 0 |
+| `capability` | 0 |
+| `capability_run` | 0 |
+| `clarification` | 1 |
+| `clarification_answer` | 0 |
+| `code_unit` | 0 |
+| `debug_session` | 0 |
+| `decision_log` | 33 |
+| `diagram` | 0 |
+| `discovery` | 0 |
+| `doc_artifact` | 0 |
+| `error_ledger` | 0 |
+| `fact` | 0 |
+| `feature` | 0 |
+| `hw_map` | 0 |
+| `intent` | 0 |
+| `measurement` | 0 |
+| `module` | 0 |
+| `passport` | 0 |
+| `passport_fact` | 0 |
+| `permission` | 0 |
+| `preference` | 0 |
+| `requirement` | 0 |
+| `run` | 1 |
+| `source` | 0 |
+| `tool_report` | 0 |
+
+<details><summary>Toàn bộ nội dung</summary>
+
+```json
+{
+ "acq_request": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "adr": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "capability": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "capability_run": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "clarification": {
+  "so_dong": 1,
+  "dong": [
+   {
+    "id": "CL-7d1ec38a0d",
+    "kind": "gap",
+    "text": "Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.",
+    "req_ids": "[]",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_16e7e7b0.",
+    "source_cap": "search.web",
+    "run_id": null,
+    "status": "open",
+    "answer": null,
+    "answered_by": null,
+    "created_at": "2026-09-24T04:20:47.791790+00:00",
+    "answered_at": null
+   }
+  ]
+ },
+ "clarification_answer": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "code_unit": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "debug_session": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "decision_log": {
+  "so_dong": 33,
+  "dong": [
+   {
+    "id": "0447ed6806fb",
+    "gate": "*",
+    "action_cap": "project.open",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:45.739881+00:00"
+   },
+   {
+    "id": "6529f104a809",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:45.753397+00:00"
+   },
+   {
+    "id": "4d0510807f7b",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:45.756529+00:00"
+   },
+   {
+    "id": "cf4ca72909b2",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:45.786027+00:00"
+   },
+   {
+    "id": "32aa79bfd6db",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:46.027943+00:00"
+   },
+   {
+    "id": "402d069cd354",
+    "gate": "*",
+    "action_cap": "chat.parse_intent",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:46.052360+00:00"
+   },
+   {
+    "id": "91708c356584",
+    "gate": "*",
+    "action_cap": "chat.ground",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:47.762679+00:00"
+   },
+   {
+    "id": "8912900e9b36",
+    "gate": "*",
+    "action_cap": "chat.fill_defaults",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:47.767569+00:00"
+   },
+   {
+    "id": "b75d496767d9",
+    "gate": "*",
+    "action_cap": "chat.orchestrate",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:47.776103+00:00"
+   },
+   {
+    "id": "d3f7f3683e44",
+    "gate": "*",
+    "action_cap": "search.web",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:47.786919+00:00"
+   },
+   {
+    "id": "c3d1b6fd0e3b",
+    "gate": "*",
+    "action_cap": "chat.restate",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:47.822067+00:00"
+   },
+   {
+    "id": "379a3e34793b",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:47.881477+00:00"
+   },
+   {
+    "id": "f865f8d46a1e",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.206347+00:00"
+   },
+   {
+    "id": "9fb995732e49",
+    "gate": "*",
+    "action_cap": "chat.report_back",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.212248+00:00"
+   },
+   {
+    "id": "61c2bf424cfe",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.218830+00:00"
+   },
+   {
+    "id": "16d8d1599eb5",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.229170+00:00"
+   },
+   {
+    "id": "85cc213d83c1",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.232347+00:00"
+   },
+   {
+    "id": "4f517d70fd94",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.245207+00:00"
+   },
+   {
+    "id": "47c28c4bed39",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.248260+00:00"
+   },
+   {
+    "id": "065b2efd8885",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.279518+00:00"
+   },
+   {
+    "id": "8d28fd150966",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.359610+00:00"
+   },
+   {
+    "id": "1dfe391620f4",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.490775+00:00"
+   },
+   {
+    "id": "23ce7e95089b",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.497454+00:00"
+   },
+   {
+    "id": "8ffaa2a755ad",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.501746+00:00"
+   },
+   {
+    "id": "bfc068fb02ac",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:48.510504+00:00"
+   },
+   {
+    "id": "14a08420e38c",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:49.054162+00:00"
+   },
+   {
+    "id": "f59586cd6791",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:49.069690+00:00"
+   },
+   {
+    "id": "5438ce0659ad",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:49.076173+00:00"
+   },
+   {
+    "id": "62f4d4c167d2",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:49.086359+00:00"
+   },
+   {
+    "id": "56802e0516cc",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:52.666518+00:00"
+   },
+   {
+    "id": "3e7152eb2552",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:52.674504+00:00"
+   },
+   {
+    "id": "081d95c47474",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:52.678562+00:00"
+   },
+   {
+    "id": "35bb0cf5b22f",
+    "gate": "*",
+    "action_cap": "view.timeline",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T04:20:52.685446+00:00"
+   }
+  ]
+ },
+ "diagram": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "discovery": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "doc_artifact": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "error_ledger": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "fact": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "feature": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "hw_map": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "intent": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "measurement": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "module": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "passport": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "passport_fact": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "permission": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "preference": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "requirement": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "run": {
+  "so_dong": 1,
+  "dong": [
+   {
+    "id": "r_16e7e7b04c1b",
+    "intent_id": null,
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_16e7e7b04c1b\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"question\": \"datasheet mới nhất của SEN42\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"SEN42\"], \"_text\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"text\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}",
+    "state": "failed",
+    "working": null,
+    "report": "{\"nguon_chuoi\": \"mẫu: Tìm tài liệu / linh kiện (DEV-208)\", \"state\": \"failed\", \"done\": [], \"waiting\": [{\"id\": \"n3\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n1\"}], \"skipped\": [{\"id\": \"n2\", \"cap\": \"search.fetch\", \"vi\": \"chờ nút n1\"}], \"failed\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"error\": {\"eide_code\": \"E4001\", \"name\": \"TOOL_MISSING\", \"tool\": \"search provider\", \"providers\": [\"searxng\", \"brave\", \"tavily\", \"google\"], \"alternative\": \"search.vendor\", \"message\": \"Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.\"}, \"bat_buoc\": true}]}",
+    "cost_usd": null,
+    "started_at": "2026-09-24T04:20:47.784193+00:00",
+    "finished_at": null
+   }
+  ]
+ },
+ "source": {
+  "so_dong": 0,
+  "dong": []
+ },
+ "tool_report": {
+  "so_dong": 0,
+  "dong": []
+ }
+}
+```
+</details>
+
+## 5. Trí nhớ phiên (session.sqlite)
+
+| bảng | số dòng |
+|---|---|
+| `session` | 1 |
+
+<details><summary>Toàn bộ nội dung</summary>
+
+```json
+{
+ "session": {
+  "so_dong": 1,
+  "dong": [
+   {
+    "id": "s_1252d6c2be9d",
+    "project": "mat-mang-khi-tim-tai-lieu",
+    "opened_at": "2026-09-24T04:20:45.744139+00:00",
+    "closed_at": null,
+    "autonomy_effective": "A2",
+    "stopped": 0,
+    "turns": "[{\"by\": \"human\", \"text\": \"Tìm trên mạng datasheet mới nhất của SEN42\", \"at\": \"2026-09-24T04:20:46.035149+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_16e7e7b0 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T04:20:47.823490+00:00\", \"run_id\": \"r_16e7e7b04c1b\"}]",
+    "undo_items": "[]",
+    "summary": null
+   }
+  ]
+ }
+}
+```
+</details>
+
+## 6. Cấu hình có hiệu lực
+
+**`.gitignore`**
+
+```
+store/
+session/
+index/
+
+```
+
+**`FEATURES.json`**
+
+```
+{
+  "features": []
+}
+```
+
+**`PROGRESS.md`**
+
+```
+# mất mạng khi tìm tài liệu
+
+- 2026-09-24 11:20 — tạo dự án từ lệnh: "mất mạng khi tìm tài liệu"
+
+```
+
+**`autonomy.yaml`**
+
+```
+autonomy: A2
+thresholds:
+  fact_silver_auto: 0.85
+  source_match_min: 0.7
+  download_max_mb: 50
+  plan_max_steps: 12
+  plan_max_cost_usd: 1.0
+  merge_size_growth_pct: 5
+  flash_per_hour: 20
+  bench_bc_min: 0.9
+  fail_retries: 2
+  budget_warn_pct: 20
+trusted_sources:
+- st.com
+- microchip.com
+- nordicsemi.com
+- espressif.com
+- bosch-sensortec.com
+- github.com/cmsis-svd
+- raw.githubusercontent.com
+trusted_packages:
+- gcc-arm-none-eabi
+- arm-none-eabi-gcc
+- arm-none-eabi-binutils
+- avr-gcc
+- avrdude
+- riscv-none-elf-gcc
+- riscv64-elf-gcc
+- riscv64-elf-binutils
+- esp-idf
+- cmake
+- ninja
+- probe-rs
+- openocd
+- esptool
+- pymcuprog
+- picotool
+- renode
+- simavr
+- qemu
+- cppcheck
+- clang-tidy
+- mermaid-cli
+- plantuml
+- graphviz
+- d2
+- wavedrom-cli
+- sigrok-cli
+- docling
+allowed_licenses:
+- MIT
+- BSD-2-Clause
+- BSD-3-Clause
+- Apache-2.0
+- CC-BY-4.0
+- vendor-doc
+boards: {}
+undo_window:
+  facts: 72h
+  merge: 24h
+  flash: session
+  files: 24h
+ask_timeout_s: 120
+defaults:
+  project_dir: ~/eide
+  model_profile: default
+  sim_first: true
+  diagram_lang: mermaid
+  doc_lang: vi
+  create_when_exists: ask
+escalation:
+  channels:
+  - queue
+  - chat
+  - notify
+
+```
+
+**`constraints.yaml`**
+
+```
+project:
+  id: mat-mang-khi-tim-tai-lieu
+  name: mất mạng khi tìm tài liệu
+  created: '2026-09-24T04:20:45.529143+00:00'
+  text: mất mạng khi tìm tài liệu
+target:
+  chip: null
+  board: null
+
+```
+
+**`models.yaml`**
+
+```
+# models.yaml — mô hình theo vai trò. Nguồn: EIDE-SDD-04 §6 (ví dụ `.hkw/models.yaml`),
+# EIDE-PRS-16 §2 (bảng vai trò × mô hình × công cụ). Xem DEVIATIONS DEV-015.
+#
+# Đây là bản MẶC ĐỊNH, dùng khi dự án chưa có `.eide/models.yaml`. Vai trò và danh sách ứng
+# viên chép đúng SDD-04 §6; hai phần `aliases` và `pricing` là bổ sung, vì SDD-04 dùng bí danh
+# ("gemini-flash", "claude-opus") chứ không phải mã model thật, và không nói giá ở đâu ra.
+
+version: 1.0
+
+# Bí danh → mã model thật của nhà cung cấp. Tách ra để đổi model không phải sửa từng vai trò,
+# và để bảng vai trò giữ nguyên chữ mà SDD-04 §6 viết.
+# Đối chiếu với API ngày 06/09/2026. CHÚ Ý thứ tự chữ: `gemini-3.8-flash`, không phải
+# `gemini-flash-3.8`.
+aliases:
+  gemini-flash:   {provider: gemini, model: gemini-3.8-flash}
+  gemini-pro:     {provider: gemini, model: gemini-3.1-pro-preview}
+  claude-haiku:   {provider: claude, model: claude-haiku-4-5-20251001}
+  claude-sonnet:  {provider: claude, model: claude-sonnet-5}
+  claude-opus:    {provider: claude, model: claude-opus-5}
+
+# Chép từ SDD-04 §6. `candidates` theo THỨ TỰ: ứng viên đầu được dùng, các ứng viên sau là
+# đường lui khi gặp `policy.fallback_on`.
+roles:
+  intent:        {candidates: [gemini-flash, claude-haiku], temperature: 0, output_schema: Intent}
+  librarian:     {candidates: [gemini-flash, claude-sonnet], temperature: 0}
+  cartographer:  {candidates: [claude-sonnet, gemini-pro], inputs: [image]}
+  planner:       {candidates: [claude-opus, gemini-pro], min_context: 200000}
+  coder:         {candidates: [gemini-flash, claude-sonnet], max_output: 16384}
+  reviewer:      {candidates: [claude-sonnet, gemini-pro], rule: different_vendor_from(coder)}
+  debugger:      {candidates: [claude-sonnet, gemini-pro]}
+  # [DEV-216] `max_output` cho architect: ADR là tài liệu DÀI theo bản chất (title,
+  # context, options[], choice, consequences). Không khai thì rơi về mặc định 4096 của
+  # Gateway, và `arch.adr` hỏng MỌI LẦN — đo 24/09/2026 trên TC002/TC008/TC048.
+  architect:     {candidates: [claude-opus, gemini-pro], max_output: 12288}
+  writer:        {candidates: [claude-sonnet, gemini-pro], max_output: 12288}
+
+policy:
+  daily_budget_usd: 5
+  offline_mode: false
+  fallback_on: [rate_limit, timeout, refusal]
+
+# USD cho mỗi 1 triệu token. SDD-04 không nói giá lấy ở đâu, nhưng không có bảng này thì
+# `daily_budget_usd` không cưỡng chế được và ledger `model.call.cost_usd` luôn bằng 0.
+# Giá thay đổi theo thời gian — đây là CẤU HÌNH để sửa được, không phải hằng số trong mã.
+pricing:
+  gemini-3.8-flash:            {input: 0.30, output: 2.50}
+  gemini-3.1-pro-preview:      {input: 2.00, output: 12.00}
+  claude-haiku-4-5-20251001:   {input: 1.00, output: 5.00}
+  claude-sonnet-5:             {input: 3.00, output: 15.00}
+  claude-opus-5:               {input: 15.00, output: 75.00}
+
+# Công cụ tìm kiếm cho SEARCH-04 `search.web`. Hợp đồng chỉ nói "API cấu hình" — cố ý không
+# nêu nhà cung cấp — nên đây là danh sách ỨNG VIÊN theo thứ tự, dùng cái đầu tiên có đủ cấu
+# hình. Đổi nhà cung cấp là sửa tệp này, không sửa mã.
+#
+# SearXNG đứng ĐẦU vì nó tự dựng được, không cần khóa và không tốn tiền: hoàn thiện mốc M1
+# không nên buộc ai phải mua gì. Ba mục sau đều có bậc miễn phí đủ cho một đề án.
+#
+# Khóa đọc từ biến môi trường, KHÔNG ghi trong tệp này — tệp này vào Git.
+search:
+  providers:
+    - {id: searxng, kind: searxng,    base_url_env: SEARXNG_URL}
+    - {id: brave,   kind: brave,      key_env: BRAVE_API_KEY}
+    - {id: tavily,  kind: tavily,     key_env: TAVILY_API_KEY}
+    - {id: google,  kind: google_cse, key_env: GOOGLE_API_KEY, cx_env: GOOGLE_CSE_ID}
+  max_results: 20        # SEARCH-04 bước 1: "tối đa 20 kết quả"
+  timeout_s: 20
+
+```
+
+**`policy.sig`**
+
+```
+{
+  "hash": "762688fdf5f5c99e2f696072cd41ae49f7e9cf519692df2e116aa4666f9f3f89",
+  "by": "Vũ Trí Công (niêm kế thừa từ bản cài)",
+  "at": "2026-09-14T03:42:44+00:00",
+  "keys": [
+    "trusted_sources",
+    "trusted_packages",
+    "allowed_licenses",
+    "boards"
+  ],
+  "alg": "sha256"
+}
+
+```
+
+**`roles.yaml`**
+
+```
+roles:
+  intent:
+    skills_max: 1
+    tools: []
+    budget:
+      input: 2200
+      output: null
+    prompt: prompts/intent.md
+  librarian:
+    skills_max: 3
+    tools: []
+    budget:
+      input: 4800
+      output: null
+    prompt: prompts/librarian.md
+  cartographer:
+    skills_max: 2
+    tools: []
+    budget:
+      input: 4200
+      output: null
+    prompt: prompts/cartographer.md
+  planner:
+    skills_max: 3
+    tools: []
+    budget:
+      input: 9000
+      output: null
+    prompt: prompts/planner.md
+  coder:
+    skills_max: 5
+    tools: []
+    budget:
+      input: 8000
+      output: 16384
+    prompt: prompts/coder.md
+  reviewer:
+    skills_max: 3
+    tools: []
+    budget:
+      input: 7800
+      output: null
+    prompt: prompts/reviewer.md
+  debugger:
+    skills_max: 5
+    tools: []
+    budget:
+      input: 7700
+      output: null
+    prompt: prompts/debugger.md
+  architect:
+    skills_max: 3
+    tools: []
+    budget:
+      input: 9300
+      output: 12288
+    prompt: prompts/architect.md
+  writer:
+    skills_max: 2
+    tools: []
+    budget:
+      input: 7700
+      output: 12288
+    prompt: prompts/writer.md
+
+```
+
+## 7. Tệp hiện vật
+
+- `FEATURES.json`
+- `PROGRESS.md`
+- `autonomy.yaml`
+- `constraints.yaml`
+- `models.yaml`
+- `roles.yaml`
+- `store/store.sqlite.seal.json`
+
+## 8. Nhật ký giao diện
+
+```
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** tạo dự án — “mất mạng khi tìm tài liệu”
+
+**Tác tử trả lời** *(sau 0.7 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+(màn trống)
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Tìm trên mạng datasheet mới nhất của SEN42
+
+**Tác tử trả lời** *(sau 6.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	THIẾU THÔNG TIN	Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.
+ PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_1252d6c2be9d
+Mở lúc	24/09 04:20:45
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	2
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0009 USD
+Hạn ngày	5.00 USD
+Số lời gọi	1
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 1 tab tác tử đã mở:** Main
+
+### Tab `Main`
+
+```
+Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	THIẾU THÔNG TIN	Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.
+ PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_1252d6c2be9d
+Mở lúc	24/09 04:20:45
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	2
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0009 USD
+Hạn ngày	5.00 USD
+Số lời gọi	1
+```
+
+![Main](man-01-Main.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
+```
+
+**Tác tử trả lời** *(sau 2.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	THIẾU THÔNG TIN	Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.
+ PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_1252d6c2be9d
+Mở lúc	24/09 04:20:45
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	2
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0009 USD
+Hạn ngày	5.00 USD
+Số lời gọi	1
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC072`.
+```
+
+## 9. stdout/stderr bộ lái
+
+```
+# Nhật ký phiên — kịch bản `kich-ban.kb`
+
+Chạy qua ĐÚNG đường giao diện: gõ vào ô lệnh → bấm Gửi → `chat.send`. Mỗi bước
+kèm một ảnh chụp cửa sổ thật.
+
+## Bước 1
+
+**Tôi (người dùng):** tạo dự án — “mất mạng khi tìm tài liệu”
+  [cỡ] buoc-01 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/buoc-01.png
+
+**Tác tử trả lời** *(sau 0.7 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+(màn trống)
+```
+
+![bước 1](buoc-01.png)
+
+## Bước 2
+
+**Tôi (người dùng):** Tìm trên mạng datasheet mới nhất của SEN42
+  [cỡ] buoc-02 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/buoc-02.png
+
+**Tác tử trả lời** *(sau 6.4 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	THIẾU THÔNG TIN	Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.
+ PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_1252d6c2be9d
+Mở lúc	24/09 04:20:45
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	2
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0009 USD
+Hạn ngày	5.00 USD
+Số lời gọi	1
+```
+
+![bước 2](buoc-02.png)
+
+## Bước 3
+
+**Quét 1 tab tác tử đã mở:** Main
+  [cỡ] man-01-Main 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/man-01-Main.png
+
+### Tab `Main`
+
+```
+Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	THIẾU THÔNG TIN	Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.
+ PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_1252d6c2be9d
+Mở lúc	24/09 04:20:45
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	2
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0009 USD
+Hạn ngày	5.00 USD
+Số lời gọi	1
+```
+
+![Main](man-01-Main.png)
+
+### Cột phải (cổng, hoàn tác, an toàn)
+
+```
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
+```
+  [cỡ] buoc-03 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/buoc-03.png
+
+**Tác tử trả lời** *(sau 2.3 s)*:
+
+```
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
+1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+```
+
+**Màn đang mở — `Main`:**
+
+```
+TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	THIẾU THÔNG TIN	Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.
+ PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
+Chip	<null>
+Board	<null>
+ISA	chưa biết — tác tử sẽ hỏi khi cần
+Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3)
+  TÁC TỬ VỪA LÀM XONG  LÚC	VIỆC
+—	`project.status`
+—	`view.artifacts`
+—	`project.status`
+  PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
+Phiên	s_1252d6c2be9d
+Mở lúc	24/09 04:20:45
+Tự chủ hiệu lực	A2
+Dừng khẩn	tắt
+Lượt trao đổi	2
+Mục hoàn tác	0
+Chưa có dữ liệu	permits, board (DEV-110)
+  NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
+Hôm nay	0.0009 USD
+Hạn ngày	5.00 USD
+Số lời gọi	1
+```
+
+![bước 3](buoc-03.png)
+
+---
+
+Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC072`.
+
+--- stderr ---
+
+```

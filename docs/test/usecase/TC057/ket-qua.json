@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không hỏi lại, không nêu giả định — lượt bị từ chối bằng E5002 “chuỗi rỗng”, cột phải trống.\n\nGhi chú: ĐIỂM CỘNG: không lặng lẽ tự chọn một giá trị dòng tải.",
- "giay": 27.3,
+ "giay": 25.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -33,8 +33,8 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-ToolForge.png",
-  "man-03-NhatKy.png",
-  "man-04-Graph.png"
+  "man-03-Graph.png",
+  "man-04-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC057/du-an/thieu-tham-so-dau-vao",
  "cham": {
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 27.3,
+   "giay": 25.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []
