@@ -38,6 +38,9 @@
         type: string
       created:
         type: boolean
+      reused:
+        type: boolean
+        description: 'true khi slug đã có: trả về chính dự án ấy thay vì tạo mới ([DEV-242])'
       existing:
         type: array
         items:
@@ -64,7 +67,7 @@
   milestone: M0
   impl: eide.project:create
   errors:
-  - E2001 ALREADY_EXISTS (trùng đúng tên)
+  - E2001 ALREADY_EXISTS (trùng đúng tên, CHỈ khi create_when_exists=error)
   - E1000 tên không hợp lệ
   - E8000 thư mục ngoài workspace cho phép
   example:

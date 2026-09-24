@@ -28,9 +28,32 @@ def test_create_structure_and_ledger(tmp_path, workspace):
     assert run.undo == "delete_created_files"
 
 
-def test_duplicate_is_E2001(tmp_path, workspace):
+def test_trung_ten_thi_DUNG_LAI_chu_khong_giet_chuoi(tmp_path, workspace):
+    """Gõ lần hai cùng tên → DÙNG LẠI dự án ấy, không E2001. [DEV-242]
+
+    Đo 24/09/2026, chạy thật daemon: câu *"tạo dự án bộ đếm xung cho ATmega328P"* gõ lần hai làm
+    nút 1 của chuỗi Z-01 hỏng E2001 và 13 nút còn lại không bao giờ chạy. Trong `~/eide` của chủ
+    sản phẩm có 52 dự án, nên đây là ca THƯỜNG, không phải ca hiếm.
+
+    AGD-32 Đ6: slug đã tồn tại nghĩa là đây không phải tình huống "tạo" — việc đúng là MỞ nó.
+    Chính hợp đồng cũ cũng đã ghi `options=["reuse", …]` với `reuse` đứng đầu, chỉ là danh sách
+    ấy nằm trong một ngoại lệ nên không ai đọc.
+    """
     r = _router(tmp_path)
     ctx = Context(project_dir=workspace)
+    dau = r.invoke("project.create", {"text": "dự án đèn LED nhấp nháy"}, ctx)
+    assert dau.status == "done" and dau.result["created"] is True
+    lai = r.invoke("project.create", {"text": "dự án đèn LED nhấp nháy"}, ctx)
+    assert lai.status == "done", "nút không được hỏng — cả chuỗi sau nó phụ thuộc chỗ này"
+    assert lai.result["created"] is False and lai.result["reused"] is True
+    assert lai.result["path"] == dau.result["path"], "phải trỏ về CHÍNH dự án đã có"
+    assert lai.result["next"] == ["req.elicit"]
+
+
+def test_trung_ten_van_E2001_khi_chinh_sach_la_error(tmp_path, workspace):
+    """`create_when_exists: error` thì giữ nguyên hành vi cũ — chính sách là của người."""
+    r = _router(tmp_path)
+    ctx = Context(project_dir=workspace, extra={"create_when_exists": "error"})
     assert r.invoke("project.create", {"text": "dự án đèn LED nhấp nháy"}, ctx).status == "done"
     run = r.invoke("project.create", {"text": "dự án đèn LED nhấp nháy"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E2001"

@@ -1408,11 +1408,94 @@ class Daemon:
         Giữ hai tên vì hai chỗ người dùng đứng khác nhau — ô trò chuyện và hàng đợi — nhưng chỉ
         một đường đi xuống, nếu không sẽ có hai sổ quyết định.
         """
+        ma = str(p["question_id"])
+        # ── CÂU HỎI CỦA MỘT CHUỖI (`CL-…`) — trả lời rồi CHẠY TIẾP. [DEV-243]
+        #
+        # Hai loại câu hỏi đi qua cùng một ô nhập nhưng có hai đường khác nhau:
+        #
+        #   * mục ASK ở cổng (`run_id` trong hàng đợi Router) → duyệt/từ chối, đường cũ;
+        #   * ô trống của một nút (`CL-<băm>` trong bảng `clarification`) → ghi câu trả lời,
+        #     trộn vào slot của lượt, rồi nối lại chuỗi từ chỗ nó dừng.
+        #
+        # Đo 24/09/2026 trên chuỗi Z-01: `arch.map_hw` dừng vì thiếu `passport`, giao diện hiện
+        # đúng câu hỏi, người dùng trả lời — và KHÔNG CÓ GÌ XẢY RA. Câu trả lời được
+        # `req.answer_clarification` ghi xuống store, chuỗi thì nằm đó mãi. Tác tử hỏi một câu mà
+        # nó không có đường nhận câu trả lời; đó là "app đứng im" ở dạng thuần nhất.
+        if ma.startswith("CL-"):
+            return self._tra_loi_chuoi(ma, str(p.get("option") or p.get("text") or ""))
         chon = str(p.get("option") or p.get("text") or "approve").lower()
         quyet = "approve" if chon in ("approve", "duyệt", "có", "yes", "ok") else "reject"
-        run = self.router.quyet_dinh(p["question_id"], quyet, by="human",
+        run = self.router.quyet_dinh(ma, quyet, by="human",
                                      note=str(p.get("text") or ""), ctx_goi_y=self.ctx)
         return asdict(run)
+
+    def _tra_loi_chuoi(self, clar_id: str, tra_loi: str) -> dict[str, Any]:
+        """Ghi câu trả lời cho một ô trống của chuỗi rồi chạy tiếp lượt ấy. [DEV-243]
+
+        Bốn bước, và thứ tự có nghĩa: GHI trước (câu trả lời của người là dữ kiện, phải sống sót
+        kể cả khi phần chạy tiếp hỏng), rồi mới trộn slot và nối chuỗi.
+        """
+        from eide.caps.chat import (
+            HANH_DONG_DE_NGHI,
+            danh_dau_bo_qua_theo_nguoi,
+            ghi_tra_loi_vao_intent,
+            tra_loi_cau_hoi_chuoi,
+        )
+        root = Path(self.ctx.project_dir).expanduser() if self.ctx.project_dir else None
+        if root is None:
+            return {"state": "failed",
+                    "loi": "Chưa có dự án đang mở nên không biết câu hỏi này thuộc lượt nào."}
+        if not tra_loi.strip():
+            return {"state": "failed", "loi": "Câu trả lời trống — hãy chọn một mục hoặc gõ câu "
+                                              "trả lời."}
+        try:
+            ngu_canh = tra_loi_cau_hoi_chuoi(root, clar_id, tra_loi)
+        except EideError as e:
+            return {"state": "failed", "loi": str(e), "ma_loi": e.code}
+
+        # ① ghi xuống store qua chính năng lực của hợp đồng — một sổ, không hai.
+        self.router.invoke("req.answer_clarification",
+                           {"clar_id": clar_id, "answer": tra_loi}, self.ctx)
+        khoa = ngu_canh.get("khoa") or []
+
+        # ② Câu trả lời là HÀNH ĐỘNG hay GIÁ TRỊ? [DEV-245]
+        #
+        # Ba lựa chọn của thẻ đề nghị hộ chiếu (AGD-32 §5 bước 1) là hành động, không phải giá
+        # trị của ô trống. Nhét chuỗi `"tri_thuc_chung"` vào slot `passport` sẽ đẩy một mã hộ
+        # chiếu không tồn tại xuống `req.ground_hw` — đúng lỗi "câu trả lời sai tệ hơn ô trống"
+        # ([DEV-183]) mà cả Đ3 dựng ra để tránh.
+        viec = HANH_DONG_DE_NGHI.get(tra_loi.strip())
+        if viec == "cho_nap_tep":
+            return {"state": "asked", "run_id": ngu_canh["run_id"], "clar_id": clar_id,
+                    "loi_nhan": "Kéo tệp datasheet (PDF/zip) vào cửa sổ — tôi nạp rồi chạy tiếp "
+                                "ngay. Lượt này vẫn đang chờ, không mất phần đã làm."}
+        if viec == "tim_tren_mang":
+            return {"state": "asked", "run_id": ngu_canh["run_id"], "clar_id": clar_id,
+                    "loi_nhan": "Chưa làm được: đường tìm datasheet trên mạng (`doc.search_web` "
+                                "→ duyệt nguồn → trích Fact → ghim hộ chiếu) thuộc Đợt 2 và chưa "
+                                "dựng. Hai đường dùng được bây giờ: nạp tệp, hoặc chạy tiếp bằng "
+                                "tri thức chung (kết quả mang nhãn CHƯA KIỂM CHỨNG)."}
+        if viec == "bo_qua_nut" and ngu_canh.get("node_id"):
+            danh_dau_bo_qua_theo_nguoi(root, ngu_canh["run_id"], str(ngu_canh["node_id"]))
+        else:
+            # Giá trị thật (ví dụ `isa: avr8`) → trộn vào slot với `origin: "user"`: thắng mô
+            # hình, nhường bộ trích xác định (AAD-33 §2.2).
+            ghi_tra_loi_vao_intent(root, ngu_canh["run_id"], {k: tra_loi for k in khoa})
+        # ③ + ④ nối lại chuỗi ở luồng nền, kết quả đi bằng sự kiện như một lượt gõ bình thường.
+        # `grounded` là tham số BẮT BUỘC của hợp đồng CHAT-06; lượt nối lại không cần neo
+        # lại (đồ thị đã ghi) nên truyền rỗng — nhưng phải truyền, không được bỏ.
+        tham = {"intent": ngu_canh.get("intent") or {}, "grounded": {},
+                "resume_of": ngu_canh["run_id"]}
+        if self.phat is not None:
+            import threading
+            threading.Thread(target=self._chay_chuoi_nen,
+                             args=(tham["intent"], tham), name=f"tiep:{clar_id}",
+                             daemon=True).start()
+            return {"state": "running", "run_id": ngu_canh["run_id"], "khoa": khoa,
+                    "clar_id": clar_id}
+        chuoi = self.router.invoke("chat.orchestrate", tham, self.ctx)
+        return {"state": (chuoi.result or {}).get("state") if chuoi.result else "failed",
+                "run_id": ngu_canh["run_id"], "khoa": khoa, "clar_id": clar_id}
 
     def chat_history(self, p: dict[str, Any]) -> dict[str, Any]:
         """`{limit?}` → `{turns[]}` từ `session.turns` (MEM-11 §2)."""

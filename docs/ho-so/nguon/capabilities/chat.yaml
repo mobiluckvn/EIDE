@@ -205,7 +205,8 @@
         description: dựng chuỗi và DỪNG ở trạng thái planned, không chạy nút nào
       resume_of:
         type: string
-        description: run_id của một lượt đang planned — chạy tiếp CHÍNH nó, giữ nguyên run_id và đồ thị đã ghi
+        description: run_id của một lượt đang `planned` (người vừa gật kế hoạch) HOẶC `asked` (người vừa trả lời một ô trống) — chạy tiếp CHÍNH nó, giữ nguyên run_id và đồ thị đã ghi; lượt `asked` bỏ qua
+          các nút đã xong, xem DEVIATIONS DEV-243
     required:
     - intent
     - grounded

@@ -546,18 +546,46 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # v1.3 — chạy tiếp một lượt đang `planned` (DEV-140). Dùng LẠI đồ thị đã ghi và giữ nguyên
     # `run_id`: người vừa đọc danh sách bước ấy rồi gật đầu, nên lập lại kế hoạch ở đây là chạy
     # một chuỗi khác chuỗi họ đồng ý.
+    # Phần ĐÃ CHẠY của một lượt được nối lại — rỗng với một lượt mới. [DEV-243]
+    xong_truoc: set[str] = set()
+    dau_ra_truoc: dict[str, Any] = {}
+    #: Nút mà NGƯỜI đã bảo "chạy tiếp, không cần dữ kiện ấy" (tầng Đồng của AGD-32 §5). [DEV-245]
+    bo_qua_nguoi: set[str] = set()
+
     tiep = str(params.get("resume_of") or "")
     if tiep:
         kh = doc_ke_hoach(root, tiep) if root is not None else None
-        if kh is None or kh["state"] != "planned":
-            raise EideError("E2000", f"`{tiep}` không phải một lượt đang `planned`"
+        # `asked` cũng chạy tiếp được, không chỉ `planned`. [DEV-243]
+        #
+        # Trước bản này chỉ `planned` (lượt chờ người GẬT kế hoạch) mới nối lại được. Một lượt
+        # `asked` — chuỗi đã chạy 7 nút rồi dừng vì một nút thiếu tham số — thì KHÔNG có đường
+        # nào đi tiếp: người dùng trả lời câu hỏi, câu trả lời được ghi xuống store, và chuỗi
+        # nằm đó mãi. Đo 24/09/2026 trên chuỗi Z-01: `arch.map_hw` chờ `passport`, người trả
+        # lời, và không gì xảy ra. Tác tử hỏi một câu nó không có cách nào nhận câu trả lời.
+        HOP_LE = ("planned", "asked")
+        if kh is None or kh["state"] not in HOP_LE:
+            raise EideError("E2000", f"`{tiep}` không phải một lượt đang `planned` hay `asked`"
                             + (f" (đang `{kh['state']}`)" if kh else ""),
-                            exists=[kh["state"]] if kh else [], candidates=["planned"],
+                            exists=[kh["state"]] if kh else [], candidates=list(HOP_LE),
                             missing=[tiep])
         run_id = tiep
         chuoi = chain_mod.Chain([chain_mod.Nut.tu_dict(n)
                                  for n in (kh["graph"].get("nodes") or [])])
-        nguon = "chạy tiếp kế hoạch đã duyệt"
+        nguon = ("chạy tiếp kế hoạch đã duyệt" if kh["state"] == "planned"
+                 else "chạy tiếp sau khi anh trả lời")
+        if kh["state"] == "asked":
+            xong_truoc, dau_ra_truoc = _da_chay_xong(root, tiep)
+            # Tham số của nút CHƯA chạy phải được dựng LẠI từ `intent` mới. [DEV-243]
+            #
+            # Đồ thị trong store được ghi lúc lập kế hoạch, khi ô trống còn trống — nên nút đang
+            # chờ vẫn thiếu đúng tham số ấy dù người đã trả lời. Trộn theo hướng: giá trị của MẪU
+            # thắng (nó mang phép nối `${nX.field}`, thứ `_args_cho` không biết), khoá mới được
+            # thêm vào.
+            for n in getattr(chuoi, "nodes", []) or []:
+                if n.id in xong_truoc:
+                    continue
+                n.args = {**_args_cho(n.cap, intent, grounded, run_id, ctx), **(n.args or {})}
+            bo_qua_nguoi = set(kh["graph"].get("bo_qua_theo_nguoi") or [])
         intent = kh["intent"] or intent
         ten_y_dinh = intent.get("intent", ten_y_dinh) if isinstance(intent, dict) else ten_y_dinh
     else:
@@ -565,6 +593,8 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         # Bước 1 — mẫu trước, planner sau.
         mau = chain_mod.chon_mau(ten_y_dinh)
         chuoi, nguon = _dung_chuoi(mau, intent, grounded, ctx, run_id)
+        # Bước 1b — TIỀN ĐỀ "có một dự án đang mở". [DEV-244]
+        chuoi = _chen_tien_de_du_an(chuoi, intent, grounded, ctx, run_id)
 
     # Bước 2 — kiểm deterministic. Ném E5002 (cấu trúc) hoặc E3003 (ngân sách).
     gate = ctx.extra.get("gate")
@@ -591,6 +621,31 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         chi_phi_uoc=_uoc_chi_phi(chuoi),
         ngan_sach=float(nguong.get("plan_max_cost_usd") or 0) or None)
     can_nguoi = {x["id"]: x["thieu"] for x in thieu_du_kien}
+
+    # Bước 2b — CHÈN NÚT TIỀN ĐỀ cho ô trống mà một năng lực khác sinh ra được. [DEV-246]
+    #
+    # Đây là ví dụ TC009 của AAD-33 §3.2.2, gặp lại nguyên vẹn khi chạy thật 24/09/2026: câu
+    # *"viết firmware đọc nhiệt độ qua I2C cho ATmega328P"* dựng chuỗi CH-FW, và `arch.map_hw`
+    # đứng chờ `module_ids` — một thứ KHÔNG nút nào trong chuỗi sinh ra. Người dùng được hỏi
+    # *"Việc này gồm những khối chức năng nào?"*, tức bị hỏi một câu mà tác tử tự trả lời được
+    # bằng `arch.decompose`.
+    # Lặp tối đa BA vòng, đúng độ sâu mà AAD-33 §3.2.2 cho phép: nút vừa chèn có thể tự thiếu
+    # một tiền đề nữa. Đo được ngay: `arch.map_hw` thiếu `module_ids` → chèn `arch.decompose`, và
+    # `arch.decompose` thiếu `style` → chèn `arch.style_select`. Một vòng thì dừng ở giữa đường và
+    # người dùng bị hỏi một câu tác tử tự trả lời được ở vòng sau.
+    if not params.get("resume_of"):
+        for _ in range(3):
+            if not can_nguoi:
+                break
+            chuoi, da_chen = _chen_tien_de(chuoi, can_nguoi, intent, grounded, ctx, run_id)
+            if not da_chen:
+                break
+            nguon += f"; chèn tiền đề {', '.join(da_chen)}"
+            thieu_du_kien = chain_mod.kiem(
+                chuoi, get_registry(), tran_nut=tran,
+                chi_phi_uoc=_uoc_chi_phi(chuoi),
+                ngan_sach=float(nguong.get("plan_max_cost_usd") or 0) or None)
+            can_nguoi = {x["id"]: x["thieu"] for x in thieu_du_kien}
 
     # Bước 3 — ghi kế hoạch xuống store TRƯỚC khi chạy: một chuỗi đang chạy dở mà máy tắt thì
     # phần đã làm vẫn phải đọc lại được, và `run.graph` là chỗ duy nhất giữ được điều đó.
@@ -629,9 +684,9 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # Đầu ra từng nút, để nút sau đọc bằng `${nX.field}`. Giữ trong bộ nhớ của lượt chạy này:
     # `run.graph` dưới store giữ KẾ HOẠCH, không giữ kết quả, và một kết quả có thể là cả một
     # CodePatch — thứ không nên đi vòng qua đĩa giữa hai nút liền nhau.
-    dau_ra: dict[str, Any] = {}
+    dau_ra: dict[str, Any] = dict(dau_ra_truoc)
     router = ctx.extra.get("router")
-    xong: set[str] = set()
+    xong: set[str] = set(xong_truoc)
     for nut in chain_mod.thu_tu_chay(chuoi):
         if nut.when and nut.when not in xong:
             # Nhánh cha đang chờ hoặc đã hỏng. `wait` dừng nhánh này; `parallel` để nhánh khác
@@ -660,6 +715,17 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             # nghi ngờ cả câu trả lời.
             #
             # `skip` nghĩa là "không có cũng chạy được" — mà thứ không cần thì không hỏi.
+            if nut.id in bo_qua_nguoi:
+                # NGƯỜI đã chọn "dùng tri thức chung – nhãn Đồng" cho ô trống này (AGD-32 §5
+                # bước 1, lựa chọn thứ ba). Không chạy nút cần Fact, nhưng CŨNG KHÔNG chặn cả
+                # chuỗi — đúng chữ của Đ3: *"các nút không cần Fact vẫn chạy; nút cần Fact đánh
+                # dấu chờ"*. [DEV-245]
+                bo_qua.append({"id": nut.id, "cap": nut.cap, "tang": "DONG",
+                               "vi": "anh chọn chạy tiếp bằng tri thức chung — nút này cần dữ "
+                                     "kiện có nguồn (" + ", ".join(can_nguoi[nut.id])
+                                     + ") nên nó KHÔNG chạy; kết quả của lượt mang nhãn CHƯA "
+                                       "KIỂM CHỨNG"})
+                continue
             if nut.on_ask == "skip":
                 bo_qua.append({"id": nut.id, "cap": nut.cap,
                                "vi": "tuỳ chọn, thiếu " + ", ".join(can_nguoi[nut.id])})
@@ -715,6 +781,30 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             ket_qua.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id,
                             "ra": tom_tat_ket_qua(run.result or {}),
                             "dau_ra": _cat_dau_ra(run.result or {})})
+            # ── MỘT NÚT VỪA MỞ HOẶC TẠO DỰ ÁN: cả chuỗi phải đi theo. [DEV-241]
+            #
+            # Đo 24/09/2026, chạy thật daemon với câu *"tạo dự án bộ đếm xung cho ATmega328P"*:
+            # `project.create` chạy XONG (nút 1/14, thư mục `bo-dem-xung/.eide/` có thật trên
+            # đĩa), rồi `req.elicit` ở nút 5 hỏng với E2000 **"Nhóm req.* cần một dự án đang
+            # mở"**. Tác tử vừa tạo dự án và ngay sau đó không thấy dự án nào.
+            #
+            # Nguyên nhân: cả vòng chạy dùng MỘT `ctx`, và `ctx.project_dir` vẫn trỏ vào
+            # workspace — thư mục cha, không có `.eide/`. Mọi năng lực kiểm "có dự án đang mở
+            # không" đều đọc đúng ô ấy, nên chuỗi Z-01 (14 nút, chuỗi xương sống của sản phẩm)
+            # không bao giờ đi được quá nút thứ năm.
+            #
+            # Hệ quả thứ hai, cùng gốc: `_ghi_run` ghi báo cáo lượt vào store của `root`. Với
+            # `root` = workspace (không có store) thì báo cáo không được ghi ở đâu cả, nên
+            # `event.chat.report` mà giao diện nhận về có `done: [], failed: []` — người dùng
+            # nhìn một chuỗi 14 bước chết và KHÔNG được cho biết gì.
+            #
+            # Sửa bằng cách đổi chính `ctx.project_dir`, không tạo một `Context` mới: daemon
+            # truyền `self.ctx` xuống theo tham chiếu, nên "dự án đang mở" của cả PHIÊN cũng
+            # đổi theo — đúng điều người dùng vừa yêu cầu khi họ nói "tạo dự án".
+            if (moi := _du_an_tu_ket_qua(nut.cap, run.result)) is not None and moi != root:
+                root = moi
+                ctx.project_dir = str(moi)
+                _ghi_run(root, run_id, chuoi, "running", intent)   # lượt có chỗ để ghi
         elif run.status == "pending":
             cho.append({"id": nut.id, "cap": nut.cap, "run_id": run.run_id, "on_ask": nut.on_ask})
             if nut.on_ask == "wait":
@@ -806,6 +896,30 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                                     "waiting": len(cho), "failed": len(hong)})
         _dang_ky_undo_run(root, run_id, led, ctx)
     return {"run_id": run_id, "state": trang_thai, "steps": buoc_ds}
+
+
+def _du_an_tu_ket_qua(cap: str, ket_qua: dict[str, Any] | None) -> Path | None:
+    """Thư mục dự án mà nút này vừa mở/tạo, hoặc `None`. [DEV-241]
+
+    Chỉ nhận nút thuộc namespace `project.*`: một đường dẫn trong kết quả của `archive.unpack`
+    hay `code.build` cũng là một thư mục, nhưng nó không phải một dự án — đổi `ctx.project_dir`
+    theo nó sẽ đưa cả chuỗi còn lại đi làm việc ở một chỗ khác chỗ người dùng đang làm.
+
+    Đòi `.eide/` CÓ THẬT trên đĩa, không tin lời kết quả: `project.create` trả `created: false`
+    kèm `path` khi tên bị trùng và nó dừng lại để hỏi — lúc ấy thư mục có thể chưa tồn tại, và
+    trỏ dự án vào một chỗ rỗng thì mọi nút sau hỏng theo một cách khó lần hơn hẳn.
+    """
+    if not cap.startswith("project.") or not isinstance(ket_qua, dict):
+        return None
+    ung_vien = [ket_qua.get("path"), (ket_qua.get("summary") or {}).get("path")
+                if isinstance(ket_qua.get("summary"), dict) else None]
+    for x in ung_vien:
+        if not x:
+            continue
+        p = Path(str(x)).expanduser()
+        if (p / EIDE_DIR).is_dir():
+            return p
+    return None
 
 
 def _dang_ky_undo_run(root: Path | None, run_id: str, led: Any, ctx: Context) -> None:
@@ -922,6 +1036,177 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
                                 when=n.get("when") if n.get("when") in con else None,
                                 on_ask=n.get("on_ask") or "wait"))
     return ra
+
+
+#: Nhóm năng lực KHÔNG chạy được khi chưa có dự án nào mở — đọc từ chính thông điệp E2000 của
+#: chúng ("Nhóm req.* cần một dự án đang mở"). Đây là tiền đề PHỔ BIẾN NHẤT của cả sản phẩm.
+NS_CAN_DU_AN = frozenset({"req", "arch", "diagram", "code", "plan", "sim", "board", "passport",
+                          "kg", "view", "doc", "extract", "ingest", "archive", "memory",
+                          "target", "debug", "measure", "bench", "discover", "report"})
+
+
+#: Ô trống → NĂNG LỰC SINH RA NÓ. Đây là `how_to_get` của AAD-33 §3.2.2, viết ở dạng bảng nhỏ
+#: trong khi chờ Đ5 khai `requires`/`produces` cho cả 246 năng lực trong `caps.json`. [DEV-246]
+#:
+#: Chỉ ghi những cặp mà HỢP ĐỒNG đã nói rõ ai sinh ra cái gì — không suy diễn:
+#:   · `module_ids`  ← `arch.decompose` khai `produces: module_graph` (CDS-12.1 ARCH-04; chính
+#:                     ví dụ TC009 của AAD-33 §3.2.2);
+#:   · `reqset_ids`  ← `req.classify` trả `reqset[]` có mã (CDS-12.1 REQ-02);
+#:   · `plan_id`     ← `plan.create` (CDS-12.1 PLAN-03).
+#:
+#: Một cặp sai ở đây tệ hơn không có cặp nào: nó thêm một nút chạy tốn token rồi ô trống vẫn
+#: trống, và người dùng nhận một chuỗi dài hơn mà không gần đích hơn.
+TIEN_DE_SINH_RA: dict[str, str] = {
+    "module_ids": "arch.decompose",
+    "reqset_ids": "req.classify",
+    "plan_id": "plan.create",
+    "style": "arch.style_select",
+}
+
+
+def _args_tu_mau_khac(cap: str, nut_ds: list[Any]) -> dict[str, Any]:
+    """Phép nối `${nX.field}` cho `cap`, MƯỢN từ một mẫu chuỗi khác đã khai nó. [DEV-246]
+
+    [DEV-121] đã chốt một ranh giới: ánh xạ kiểu `req.classify.reqset` → `arch.decompose
+    .reqset_ids` là tri thức **không có trong tài liệu nào**, nên mã không được tự nghĩ ra —
+    *"chỉ mẫu mới có quyền nói điều đó"*. Nhưng một nút do bộ chèn tiền đề dựng ra thì không có
+    mẫu nào nói hộ nó.
+
+    Chỗ ấy có câu trả lời mà không cần đoán: mẫu KHÁC trong `dialog/chains.json` đã khai đúng
+    phép nối cho cùng năng lực ấy (Z-01 khai `arch.decompose` với
+    `reqset_ids: "${n8.reqset[*].id}"`). Mượn nguyên nó, và ĐỔI TÊN NÚT được trỏ tới sang id
+    tương ứng trong chuỗi của mình — cùng năng lực thì cùng đầu ra.
+
+    Không có mẫu nào khai, hoặc chuỗi mình không có nút của năng lực được trỏ tới → bỏ khoá ấy,
+    để nó rơi về "thiếu tham số" và hỏi người. Một tham chiếu trỏ vào hư không còn tệ hơn.
+    """
+    ra: dict[str, Any] = {}
+    for m in chain_mod.mau():
+        ds = m.get("nodes") or []
+        theo_id = {n.get("id"): n.get("cap") for n in ds}
+        for n in ds:
+            if n.get("cap") != cap or not n.get("args"):
+                continue
+            for k, v in n["args"].items():
+                if not isinstance(v, str) or not (tc := chain_mod.tach_tham_chieu(v)):
+                    continue
+                cap_nguon = theo_id.get(tc[0])
+                cua_minh = next((x.id for x in nut_ds if x.cap == cap_nguon), None)
+                if cap_nguon and cua_minh:
+                    ra[k] = v.replace(tc[0] + ".", cua_minh + ".", 1)
+            if ra:
+                return ra
+    return ra
+
+
+def _chen_tien_de(chuoi: Any, can_nguoi: dict[str, list[str]], intent: dict[str, Any],
+                  grounded: dict[str, Any], ctx: Context,
+                  run_id: str) -> tuple[Any, list[str]]:
+    """Chèn nút sinh ra ô trống, NGAY TRƯỚC nút đang thiếu nó. Trả `(chuỗi mới, đã chèn gì)`.
+
+    Một vòng, không đệ quy: đủ cho mọi cặp trong `TIEN_DE_SINH_RA` (nút được chèn không tự thiếu
+    thêm thứ gì trong bảng), và một vòng thì luôn dừng. AAD-33 §3.2.2 cho phép đệ quy sâu 3 —
+    phần ấy đi cùng Đ5, khi bảng tiền đề nằm trong hợp đồng chứ không trong mã.
+
+    Không chèn khi chuỗi ĐÃ có năng lực ấy: nút kia có thể đang chờ vì một lý do khác, và chèn
+    bản thứ hai là chạy cùng một việc hai lần.
+    """
+    nut_ds = list(getattr(chuoi, "nodes", []) or [])
+    co_san = {n.cap for n in nut_ds}
+    reg = get_registry()
+    da_chen: list[str] = []
+
+    # ① NỐI LẠI trước khi chèn: một nút chèn ở vòng trước có thể vừa cấp đúng thứ nút này thiếu.
+    #
+    # Đo được: vòng 1 chèn `arch.decompose` (thiếu `module_ids`), và lúc ấy `arch.style_select`
+    # chưa có trong chuỗi nên phép nối `style: "${nX.style}"` mượn từ mẫu Z-01 bị bỏ — không có
+    # nút nào để trỏ tới. Vòng 2 chèn `arch.style_select`, và nếu không nối lại thì
+    # `arch.decompose` vẫn đứng chờ `style` mà nút ngay trước nó vừa làm ra.
+    for nut in nut_ds:
+        thieu = can_nguoi.get(nut.id) or []
+        if not thieu:
+            continue
+        muon = {k: v for k, v in _args_tu_mau_khac(nut.cap, nut_ds).items() if k in thieu}
+        if muon:
+            nut.args = {**muon, **(nut.args or {})}
+            da_chen.append(f"nối {nut.cap}.{'/'.join(muon)}")
+
+    for nut in list(nut_ds):
+        for o in can_nguoi.get(nut.id, []):
+            cap_sinh = TIEN_DE_SINH_RA.get(o)
+            if (not cap_sinh or cap_sinh in co_san or cap_sinh not in reg
+                    or not reg.get(cap_sinh).implemented):
+                continue
+            moi = chain_mod.Nut(id=f"t_{cap_sinh.split('.')[-1]}", cap=cap_sinh,
+                                args={**_args_cho(cap_sinh, intent, grounded, run_id, ctx),
+                                      **_args_tu_mau_khac(cap_sinh, nut_ds)},
+                                when=nut.when, on_ask="wait")
+            i = nut_ds.index(nut)
+            nut_ds.insert(i, moi)
+            nut.when = moi.id
+            co_san.add(cap_sinh)
+            da_chen.append(cap_sinh)
+    if any(x.startswith("nối ") is False for x in da_chen):
+        # NỐI ĐẦU RA cho chuỗi đã đổi hình. [DEV-246]
+        #
+        # Nút vừa chèn nhận tham số từ `_args_cho` (slots của ý định) — nó không biết rằng
+        # `reqset_ids` của nó nằm trong ĐẦU RA của `req.classify` đứng ngay trước. `_noi_dau_ra`
+        # là chỗ duy nhất biết điều đó, bằng cách khớp TÊN với `output_schema`. Không gọi lại thì
+        # nút mới chèn lại đứng chờ đúng thứ nút trước nó vừa làm ra — và người dùng bị hỏi một
+        # câu tác tử đã tự trả lời xong.
+        _noi_dau_ra(nut_ds, reg)
+    moi_chuoi = chain_mod.Chain(nut_ds) if len(nut_ds) != len(
+        getattr(chuoi, "nodes", []) or []) else chuoi
+    return moi_chuoi, da_chen
+
+
+def _chen_tien_de_du_an(chuoi: Any, intent: dict[str, Any], grounded: dict[str, Any],
+                        ctx: Context, run_id: str) -> Any:
+    """Chèn `project.create` vào ĐẦU chuỗi khi chuỗi cần một dự án mà chưa có dự án nào. [DEV-244]
+
+    ## Vì sao
+
+    Đo 24/09/2026, chạy thật daemon trong một thư mục trống với câu *"viết firmware đọc nhiệt độ
+    qua I2C cho ATmega328P"*: ý định `code.feature` đúng, chuỗi 14 nút dựng đúng, rồi nút thứ hai
+    `req.elicit` hỏng **E2000 "Nhóm req.* cần một dự án đang mở"** và cả chuỗi chết. Đó là câu
+    đầu tiên một người dùng mới gõ, và câu trả lời của sản phẩm là một mã lỗi về một thứ họ chưa
+    từng được bảo là phải làm trước.
+
+    Thông tin để sửa đã nằm sẵn: `chat.ground` trả `missing: ["project"]` cho đúng những ý định
+    ấy, và tới hôm nay **không ai đọc ô đó**.
+
+    ## Đây là hạt đầu tiên của bộ lập kế hoạch có tiền đề (Đ5, AAD-33 §3.2.2)
+
+    Thuật toán của §3.2.2 là: *"thiếu artefact có `how_to_get` → chèn nút đó trước"*. Ở đây
+    artefact là `project`, `how_to_get` là `project.create`, và phép chèn hoàn toàn xác định —
+    không mô hình, không đoán. Khi Đ5 làm bảng `requires`/`produces` cho cả 246 năng lực thì
+    nhánh này thành một dòng dữ liệu; tới lúc ấy nó biến mất khỏi mã, không phải bị thay.
+
+    KHÔNG chèn khi: chuỗi đã có nút `project.*` (mẫu Z-01 mở đầu bằng `project.create`), hoặc đã
+    có dự án đang mở, hoặc không nút nào trong chuỗi cần dự án (ví dụ chuỗi chỉ hỏi đáp).
+    """
+    nut_ds = list(getattr(chuoi, "nodes", []) or [])
+    if not nut_ds:
+        return chuoi
+    if any(n.cap.startswith("project.") for n in nut_ds):
+        return chuoi
+    goc = Path(ctx.project_dir).expanduser() if ctx.project_dir else None
+    if goc is not None and (goc / EIDE_DIR).is_dir():
+        return chuoi                                  # đã có dự án đang mở
+    can = [n for n in nut_ds if n.cap.split(".", 1)[0] in NS_CAN_DU_AN]
+    if not can:
+        return chuoi
+    reg = get_registry()
+    if "project.create" not in reg or not reg.get("project.create").implemented:
+        return chuoi
+    dau = chain_mod.Nut(id="n0", cap="project.create",
+                        args=_args_cho("project.create", intent, grounded, run_id, ctx),
+                        when=None, on_ask="wait")
+    # Nút gốc của chuỗi cũ treo vào `n0`: dự án phải có TRƯỚC, không song song.
+    for n in nut_ds:
+        if n.when is None:
+            n.when = "n0"
+    return chain_mod.Chain([dau, *nut_ds])
 
 
 def _thay_goc(args: dict[str, Any], goc: dict[str, str],
@@ -1641,6 +1926,121 @@ def _lap_lai_neu_nguoi_sua(run_id: str, led: Any, router: Any, ctx: Context) -> 
     led.append("report", {"cap": "plan.replan", "run_id": run_id,
                           "for_seq": int(cuoi.get("seq") or 0), "status": tt,
                           "path": d.get("path"), **({"error": loi} if loi else {})})
+
+
+def _da_chay_xong(root: Path | None, run_id: str) -> tuple[set[str], dict[str, Any]]:
+    """`(id nút đã xong, đầu ra của chúng)` đọc từ `run.report`. [DEV-243]
+
+    Dùng khi nối lại một lượt `asked`: bảy nút đã chạy xong rồi, và chạy lại chúng vừa tốn token
+    vừa sinh bản thứ hai của cùng một hiện vật (`req.elicit` nâng phiên bản đặc tả mỗi lần chạy).
+
+    **Nút có đầu ra bị CẮT thì KHÔNG được coi là xong.** `_cat_dau_ra` thay đầu ra quá lớn bằng
+    một dấu `_cat`, và một nút sau đọc `${nX.field}` từ cái dấu ấy sẽ nhận `None` rồi hỏng ở một
+    chỗ khác hẳn nguyên nhân. Thà chạy lại một nút còn hơn nối một tham chiếu vào chỗ rỗng.
+    """
+    if root is None:
+        return set(), {}
+    try:
+        bc = doc_bao_cao(root, run_id) or {}
+    except Exception:  # noqa: BLE001
+        return set(), {}
+    xong: set[str] = set()
+    ra: dict[str, Any] = {}
+    for n in (bc.get("done") or []):
+        if not isinstance(n, dict) or not n.get("id"):
+            continue
+        d = n.get("dau_ra")
+        if not isinstance(d, dict) or d.get("_cat"):
+            continue
+        xong.add(str(n["id"]))
+        ra[str(n["id"])] = d
+    return xong, ra
+
+
+def tra_loi_cau_hoi_chuoi(root: Path, clar_id: str, tra_loi: str) -> dict[str, Any]:
+    """Nhận câu trả lời cho một câu hỏi của chuỗi và trả về thứ cần để chạy tiếp. [DEV-243]
+
+    Trước bản này đường trả lời DỪNG ở đây: `req.answer_clarification` ghi câu trả lời xuống
+    store, và chuỗi đang chờ không biết gì cả. Đo 24/09/2026: chuỗi Z-01 dừng ở `arch.map_hw`
+    (thiếu `passport`), người dùng trả lời, và không có gì xảy ra — tác tử hỏi một câu mà nó
+    không có đường nhận câu trả lời.
+
+    Trả `{run_id, khoa[], intent}`: `khoa` là các ô trống mà câu hỏi ấy đang hỏi, đọc từ
+    `run.report.waiting[*].truong[*].khoa` — chính chỗ `_ghi_cau_hoi_chuoi` đã ghi chúng, nên
+    không cần thêm cột nào vào lược đồ.
+    """
+    db = store.store_path(root)
+    if not db.exists():
+        raise EideError("E2000", f"Dự án chưa có store để tra `{clar_id}`", missing=[clar_id])
+    with store.open_store(db) as c:
+        rows = c.execute("SELECT id, report, graph FROM run WHERE state='asked'"
+                         " ORDER BY started_at DESC LIMIT 20").fetchall()
+    for rid, bc_van, graph_van in rows:
+        bc = json.loads(bc_van) if bc_van else {}
+        for muc in (bc.get("waiting") or []):
+            if not isinstance(muc, dict) or muc.get("clar_id") != clar_id:
+                continue
+            khoa = [str(t.get("khoa")) for t in (muc.get("truong") or []) if t.get("khoa")]
+            graph = json.loads(graph_van) if graph_van else {}
+            return {"run_id": str(rid), "khoa": khoa or [str(x) for x in (muc.get("thieu") or [])],
+                    "intent": graph.get("intent") or {}, "cap": muc.get("cap"),
+                    "node_id": muc.get("id")}
+    raise EideError("E2000", f"Không thấy lượt nào đang chờ câu hỏi `{clar_id}`",
+                    exists=[str(r[0]) for r in rows], candidates=[], missing=[clar_id])
+
+
+#: Ba lựa chọn của thẻ đề nghị hộ chiếu (AGD-32 §5 bước 1) → việc phải làm. [DEV-245]
+#:
+#: Chúng là HÀNH ĐỘNG, không phải giá trị của ô trống. Nhét thẳng chuỗi `"tri_thuc_chung"` vào
+#: slot `passport` sẽ đẩy một mã hộ chiếu không tồn tại xuống `req.ground_hw` — đúng lỗi "câu trả
+#: lời sai tệ hơn ô trống" mà [DEV-183] đã ghi.
+HANH_DONG_DE_NGHI: dict[str, str] = {
+    "tri_thuc_chung": "bo_qua_nut",
+    "toi_nap_tep": "cho_nap_tep",
+    "tim_tren_mang": "tim_tren_mang",
+}
+
+
+def danh_dau_bo_qua_theo_nguoi(root: Path, run_id: str, node_id: str) -> None:
+    """Ghi vào `run.graph` rằng NGƯỜI cho phép bỏ qua nút này. [DEV-245]
+
+    Ghi xuống store chứ không giữ trong RAM: lượt nối lại có thể chạy ở một tiến trình khác, và
+    một quyết định của người phải sống lâu hơn một tiến trình.
+    """
+    db = store.store_path(root)
+    with store.open_store(db) as c:
+        row = c.execute("SELECT graph FROM run WHERE id=?", (run_id,)).fetchone()
+        if row is None:
+            return
+        graph = json.loads(row[0]) if row[0] else {}
+        ds = set(graph.get("bo_qua_theo_nguoi") or [])
+        ds.add(node_id)
+        graph["bo_qua_theo_nguoi"] = sorted(ds)
+        c.execute("UPDATE run SET graph=? WHERE id=?",
+                  (json.dumps(graph, ensure_ascii=False), run_id))
+        c.commit()
+
+
+def ghi_tra_loi_vao_intent(root: Path, run_id: str, tra_loi: dict[str, Any]) -> dict[str, Any]:
+    """Trộn câu trả lời của NGƯỜI vào `intent` đã lưu của lượt, rồi ghi lại. [DEV-243]
+
+    Đi qua `eide.nlu.merge.hop_nhat` với `tra_loi=` nên câu trả lời mang `origin: "user"` và
+    thắng thứ mô hình đoán, nhưng vẫn nhường bộ trích xác định (AAD-33 §2.2). Ghi lại vào
+    `run.graph` để nút chạy tiếp đọc được — không giữ trong RAM, vì lượt nối lại có thể nằm ở
+    một tiến trình khác.
+    """
+    from eide.nlu.merge import hop_nhat
+    db = store.store_path(root)
+    with store.open_store(db) as c:
+        row = c.execute("SELECT graph FROM run WHERE id=?", (run_id,)).fetchone()
+        if row is None:
+            raise EideError("E2000", f"Không có lượt `{run_id}`", missing=[run_id])
+        graph = json.loads(row[0]) if row[0] else {}
+        graph["intent"] = hop_nhat(graph.get("intent") or {}, None, tra_loi=tra_loi)
+        c.execute("UPDATE run SET graph=? WHERE id=?",
+                  (json.dumps(graph, ensure_ascii=False), run_id))
+        c.commit()
+    return graph["intent"]
 
 
 def doc_ke_hoach(root: Path, run_id: str) -> dict[str, Any] | None:

@@ -123,6 +123,22 @@ def _ke_thua_niem(defaults: dict[str, Any], autonomy: dict[str, Any], sig: Path)
                               ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _mac_dinh_khi_trung() -> str:
+    """`create_when_exists` từ `autonomy.defaults` — chính sách, không phải một hằng trong mã.
+
+    Giá trị này đã có trong `docs/spec/policy/defaults.yaml` từ v1.2 và `chat.fill_defaults` đã
+    điền nó vào slot; nhưng `create_when_exists` không nằm trong `input_schema` của PROJECT-01
+    nên `_args_cho` lọc nó ra, và tới 24/09/2026 nó chưa một lần nào tới được đây. Đọc thẳng
+    bản mặc định là đường ngắn nhất để một chính sách đã khai có tác dụng thật.
+    """
+    import yaml as _yaml
+    try:
+        d = _yaml.safe_load((spec_dir() / "policy" / "defaults.yaml").read_text(encoding="utf-8"))
+        return str((d.get("defaults") or {}).get("create_when_exists") or "ask")
+    except Exception:  # noqa: BLE001
+        return "ask"
+
+
 @capability("project.create", features=["name_conflict"])
 def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     """Spec: PROJECT-01 — CDS-12.3; POL-17 GEN-03 (ghi đè = R4); DDD-14 project; undo delete_created_files.
@@ -138,10 +154,35 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     workspace.mkdir(parents=True, exist_ok=True)
     existing = [p for p in workspace.iterdir() if (p / EIDE_DIR).is_dir()]
     same = [p for p in existing if p.name == slug]
+    policy = str(ctx.extra.get("create_when_exists") or _mac_dinh_khi_trung() or "ask")
     if same:
+        # ── TRÙNG ĐÚNG TÊN: DÙNG LẠI, không giết cả chuỗi. [DEV-242]
+        #
+        # Đo 24/09/2026, chạy thật daemon: câu *"tạo dự án bộ đếm xung cho ATmega328P"* gõ lần
+        # thứ hai (hoặc gõ lần đầu vào một workspace đã có dự án cùng tên) làm nút 1 của chuỗi
+        # Z-01 hỏng E2001, và 13 nút còn lại không bao giờ chạy. Trong `~/eide` của chủ sản phẩm
+        # có 52 dự án, nên đây không phải ca hiếm — nó là ca thường.
+        #
+        # Vì sao DÙNG LẠI mới đúng, chứ không phải hỏi hay báo lỗi:
+        #
+        # * AGD-32 Đ6 nói thẳng điều cần làm — *"`project.create` chỉ khi Inventory thấy CHƯA có
+        #   dự án đang mở; câu mô tả ý tưởng trong dự án đang mở đi vào UC01, không tạo dự án
+        #   LỒNG"*. Slug đã tồn tại nghĩa là đây không phải tình huống "tạo", nên việc đúng là
+        #   MỞ nó. Bộ lập kế hoạch có kiểm kê (Đ5) sẽ quyết điều đó một tầng trên; tới lúc ấy
+        #   nhánh này thành đường lui.
+        # * Chính hợp đồng đã ghi `options=["reuse", "clone", "new"]` với `reuse` đứng đầu —
+        #   nhưng không ai từng đọc danh sách ấy, vì nó nằm trong một ngoại lệ.
+        # * Không có gì bị mất: không ghi đè, không xoá; mọi việc sau đó vẫn qua cổng và vẫn
+        #   hoàn tác được theo từng nút.
+        #
+        # `reused: true` là để NÓI RA. Dùng lại im lặng thì người dùng tưởng mình có dự án mới,
+        # và đó là một sai lầm tệ hơn cả E2001.
+        if policy != "error":
+            return {"project_id": slug, "path": str(same[0]), "created": False,
+                    "reused": True, "existing": [{"id": same[0].name, "path": str(same[0])}],
+                    "next": ["req.elicit"]}
         raise EideError("E2001", f"Dự án '{slug}' đã tồn tại", options=["reuse", "clone", "new"], path=str(same[0]))
     near = [{"id": p.name, "path": str(p)} for p in existing if _similar(p.name, slug)]
-    policy = ctx.extra.get("create_when_exists", "ask")
     if near and policy == "ask":
         return {"project_id": slug, "path": str(workspace / slug), "created": False, "existing": near, "next": ["chat.clarify"]}
     root = workspace / slug
