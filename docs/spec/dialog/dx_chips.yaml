@@ -1,0 +1,50 @@
+# dx_chips.yaml — cách NGƯỜI gọi tên một con chip. Nguồn: EIDE-AAD-33 §2.2 (bảng DX, hàng
+# `chips[]`) và AGD-32 §5 bước 1 (`family_patterns`).
+#
+# Tệp này KHÔNG khai ISA. ISA là của `docs/spec/isa/*.yaml` (TGT-19 §2) và được tra qua
+# `eide_core.isa.isa_cua_chip` — một họ chip có mặt ở đây mà chưa có manifest thì DX trả
+# `isa: null`, và đó là câu trả lời ĐÚNG: `env.check` nói thẳng là kho thiếu manifest thay vì
+# đưa ba lựa chọn đều sai (TC018, STM32F103 là armv7-m).
+#
+# Thêm một họ hoặc một bí danh vào đây là thêm tri thức NGÔN NGỮ, không phải tri thức phần
+# cứng — nên nó không cần duyệt cổng, nhưng phải truy được về một câu trong tài liệu hoặc một
+# ca đo. Cột `nguon` ghi chỗ ấy.
+
+version: 1.0
+
+# Họ chip nhận ra được từ chính mã chip. Neo đầu chuỗi (`^`) như family_patterns của TGT-19:
+# `STM32F103` là một mã chip, còn `xem STM32F103` thì phần khớp vẫn phải bắt đầu ở `STM32`.
+family_patterns:
+  - {pattern: 'STM32[FGHLWU]\d{3}\w*', ho: STM32, nguon: "AAD-33 §2.2"}
+  - {pattern: 'ATmega\d+\w*', ho: ATmega, nguon: "AAD-33 §2.2"}
+  - {pattern: 'ATtiny\d+\w*', ho: ATtiny, nguon: "isa/avr8.yaml family_patterns"}
+  - {pattern: 'ESP32(?:-?[SCH]\d)?\w*', ho: ESP32, nguon: "AAD-33 §2.2"}
+  - {pattern: 'ESP8266\w*', ho: ESP8266, nguon: "AAD-33 §2.5.1 (nhóm mạch thật)"}
+  - {pattern: 'RP2040', ho: RP2040, nguon: "AAD-33 §2.2"}
+  - {pattern: 'nRF5\d\w*', ho: nRF5, nguon: "AAD-33 §2.2"}
+  - {pattern: 'PIC\d+F\w+', ho: PIC, nguon: "AAD-33 §2.2"}
+  - {pattern: 'GD32\w*', ho: GD32, nguon: "AAD-33 §2.2"}
+  - {pattern: 'CH32\w*', ho: CH32, nguon: "AAD-33 §2.2"}
+  - {pattern: 'SAMD\d+\w*', ho: SAMD, nguon: "isa/armv7e-m.yaml family_patterns"}
+  - {pattern: 'LPC\d+\w*', ho: LPC, nguon: "isa/armv7e-m.yaml family_patterns"}
+
+# Bí danh: tên bo mạch hoặc tên chợ → mã chip thật. `bien_the` là những cách gõ khác của cùng
+# một bí danh (so trên bản KHÔNG DẤU, chữ thường).
+#
+# Bí danh KHÔNG phải hộ chiếu: DX chỉ chuẩn hoá tên để hỏi đúng câu hỏi. Ghim `ns.part@semver`
+# vẫn chỉ xảy ra sau khi có tài liệu thật (AGD-32 §5 bước 6, lỗi "câu trả lời sai tệ hơn ô
+# trống" — DEV-183).
+aliases:
+  - {ten: "uno", chip: ATmega328P, bien_the: ["arduino uno", "uno r3", "arduino uno r3"],
+     nguon: "AAD-33 §2.2"}
+  - {ten: "blue pill", chip: STM32F103C8T6, bien_the: ["bluepill", "blue-pill"],
+     nguon: "AAD-33 §2.2"}
+
+# CỐ Ý CHỈ HAI BÍ DANH. AAD-33 §2.2 nêu đúng hai cái, và một bí danh tự nghĩ ra là một phép
+# đoán về phần cứng đứng lẫn vào một tệp dữ liệu — đúng loại sai mà nguyên tắc N1 chặn. "Black
+# Pill là STM32F411" hay "Nano là ATmega328P" đều đúng trong thực tế, nhưng chúng là tri thức
+# chung của mô hình (tầng ĐỒNG): muốn đưa vào đây thì thêm một dòng vào AAD-33 §2.2 trước.
+#
+# Bí danh một từ ngắn cũng bị loại vì lý do thứ hai: `nano` xuất hiện trong "nanosecond", trong
+# tên trình soạn thảo, trong "nano giây" — nhận nó thành mã chip là bịa một con chip từ một đơn
+# vị đo.

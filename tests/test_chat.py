@@ -102,14 +102,35 @@ def test_confidence_thap_thanh_unknown(tmp_path):
     assert out["intent"]["confidence"] == 0.4       # giữ nguyên số để còn truy được vì sao
 
 
-def test_dinh_kem_vao_slots_path(tmp_path):
-    """steps: "đính kèm → slots.path"."""
+def test_dinh_kem_khong_con_do_parse_intent_gan(tmp_path):
+    """`chat.parse_intent` KHÔNG còn gán đường dẫn đính kèm. [DEV-232]
+
+    Bước "đính kèm → slots.path" của CDS-12.6 CHAT-01 gán `dinh_kem[0]` vào một slot CHUỖI ĐƠN,
+    nên kéo hai datasheet vào cửa sổ chat thì tệp thứ hai mất ngay tại dòng ấy — trước khi có
+    năng lực nào chạy (TC011). Chủ của bước ấy nay là DX, và bài kiểm dưới canh cả hai nửa:
+    parse_intent không gán, DX giữ đủ hai tệp.
+    """
     r, ctx, _ = _rt(tmp_path, [{"intent": "knowledge.build", "slots": {}, "is_big": True,
                                 "confidence": 0.9}])
     out = r.invoke("chat.parse_intent",
                    {"text": "đây là bộ tài liệu board", "attachments": ["/tmp/board.zip"]},
                    ctx).result
-    assert out["intent"]["slots"]["path"] == "/tmp/board.zip"
+    assert "path" not in (out["intent"]["slots"] or {})
+
+
+def test_dinh_kem_di_qua_dx_giu_du_hai_tep(tmp_path):
+    """Hai tệp đính kèm → hai mục `slots.paths`, cả hai `origin=dx` (TC011)."""
+    from eide.nlu import extract
+    from eide.nlu.merge import chay_duoc, hop_nhat
+
+    a, b = tmp_path / "ds_v1.pdf", tmp_path / "ds_v2.pdf"
+    a.write_text("v1", encoding="utf-8")
+    b.write_text("v2", encoding="utf-8")
+    dx = extract("so hai bản này", root=tmp_path, attachments=[str(a), str(b)])
+    it = hop_nhat({"intent": "knowledge.build", "slots": {}, "confidence": 0.9}, dx)
+    assert it["slots"]["paths"] == [str(a), str(b)]
+    assert it["origins"]["paths"] == "dx"
+    assert chay_duoc(it, "paths") == [str(a), str(b)]
 
 
 def test_parse_intent_ghi_ledger(tmp_path):

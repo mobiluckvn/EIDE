@@ -81,14 +81,20 @@ def parse_intent(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     text = params["text"]
     dinh_kem = params.get("attachments") or []
     lenh = text if not dinh_kem else f"{text}\n(đính kèm: {', '.join(dinh_kem)})"
-    resp = _gateway(ctx).run("intent", lenh, _schema_intent(), system_extra=_ngu_canh(ctx, text))
+    from eide.nlu.merge import schema_cho_mo_hinh
+    resp = _gateway(ctx).run("intent", lenh, schema_cho_mo_hinh(_schema_intent()),
+                             system_extra=_ngu_canh(ctx, text))
     intent = dict(resp.data)
 
     if float(intent.get("confidence", 0)) < NGUONG_UNKNOWN:
         intent["intent"] = "unknown"
-    if dinh_kem:
-        intent.setdefault("slots", {})["path"] = dinh_kem[0]
-
+    # ĐÍNH KÈM không còn được gán ở đây. [DEV-232]
+    #
+    # Dòng cũ là `slots["path"] = dinh_kem[0]` — một chuỗi đơn, nên kéo hai datasheet vào cửa sổ
+    # chat thì tệp thứ hai mất ngay tại dòng ấy, trước khi bất kỳ năng lực nào chạy (TC011).
+    # Nay tệp đính kèm đi vào `paths[]` của DX (`eide.nlu.dx.extract(..., attachments=…)`) cùng
+    # với mọi đường dẫn khác, mang `origin="dx"`: một tệp người vừa đưa vào là dữ kiện chắc nhất
+    # trong cả lượt. Bước "đính kèm → slots.path" của CDS-12.6 CHAT-01 vì thế đổi chủ.
     led = ctx.extra.get("ledger")
     if led is not None:
         led.append("intent", {"text": text[:200], "intent": intent["intent"],
@@ -889,15 +895,20 @@ def _tu_nodes(mau: dict[str, Any], intent: dict[str, Any], grounded: dict[str, A
         # Giải bằng MẪU chứ không bằng một bảng ánh xạ tên trong mã, đúng ranh giới mà
         # `_noi_dau_ra` đã vạch: ánh xạ kiểu `chip → passport` là tri thức không có trong tài
         # liệu nào, còn "tham số này nhận câu gốc" là điều chỉ mẫu mới có quyền nói (DEV-121).
-        # ĐƯỜNG DẪN: tra bảng trước, slots sau. [DEV-208]
+        # ĐƯỜNG DẪN: đọc từ DX, không đọc từ mô hình. [DEV-208] → [DEV-231]
         #
         # `slots.path` do mô hình điền nên không tất định — đo 23/09/2026: TC042 nạp được tệp,
-        # TC043 (câu cùng hình dạng, cùng tệp, cùng lần chạy) thì không. Biểu thức chính quy
-        # đọc chính câu chữ thì cho cùng một kết quả mọi lần.
-        from eide_core.request_ops import duong_dan_trong_cau
+        # TC043 (câu cùng hình dạng, cùng tệp, cùng lần chạy) thì không. [DEV-208] chữa bằng một
+        # biểu thức chính quy chạy NGAY TẠI ĐÂY; v1.4 chuyển phép trích ấy lên trước
+        # `chat.parse_intent` (`eide.nlu.dx`, AAD-33 §2.2) và chỉ ĐỌC kết quả ở đây.
+        #
+        # Khác biệt không phải hình thức: `merge.duong_chay_duoc` trả về [] khi câu có nêu đường
+        # dẫn mà không tệp nào TỒN TẠI. Khoá `${_path}` vì thế bị bỏ (luật 3 của `_thay_goc`),
+        # nút rơi về "thiếu tham số" và HỎI NGƯỜI — thay vì chạy `archive.list` trên một đường
+        # dẫn không có thật rồi trả E2000 (TC016, TC023, TC072).
+        from eide.nlu import merge as nlu_merge
         van_goc = str((intent or {}).get("_text") or "")
-        dds = duong_dan_trong_cau(van_goc) or \
-            [x for x in [str(((intent or {}).get("slots") or {}).get("path") or "")] if x]
+        dds = nlu_merge.duong_chay_duoc(intent or {}, van_goc)
         goc = {"${_text}": van_goc, "${_path}": dds[0] if dds else ""}
         san_co = _args_cho(n["cap"], intent, grounded, run_id, ctx)
         args = _thay_goc(args, goc, san_co, dds)

@@ -1,0 +1,41 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/utterance.json",
+ "title": "Utterance",
+ "description": "Câu người gõ sau pha N0 (AAD-33 §2.1, §10). Sinh bởi eide.nlu.normalize — xác định, 0 token.",
+ "type": "object",
+ "required": ["raw", "normalized", "no_accent", "lang", "clauses"],
+ "additionalProperties": false,
+ "properties": {
+  "raw": {
+   "type": "string",
+   "description": "Nguyên văn người gõ. Mọi câu tác tử nói lại với người phải trích từ đây."
+  },
+  "normalized": {
+   "type": "string",
+   "description": "NFC + dấu thanh kiểu mới (hoà→hòa) + gộp khoảng trắng"
+  },
+  "no_accent": {
+   "type": "string",
+   "description": "Bản không dấu, chữ thường — chỉ để regex/từ điển khớp, KHÔNG để hiển thị"
+  },
+  "lang": {
+   "type": "string",
+   "enum": ["vi", "en", "mixed"],
+   "description": "Ngôn ngữ nhận được; không dịch (AAD-33 §2.1)"
+  },
+  "clauses": {
+   "type": "array",
+   "description": "Mệnh đề đánh số từ 1 — đầu vào của S1a tách kênh (§2.4)",
+   "items": {
+    "type": "object",
+    "required": ["id", "text"],
+    "additionalProperties": false,
+    "properties": {
+     "id": {"type": "integer", "minimum": 1},
+     "text": {"type": "string"}
+    }
+   }
+  }
+ }
+}

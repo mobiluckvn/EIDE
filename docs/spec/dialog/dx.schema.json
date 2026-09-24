@@ -1,0 +1,116 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://eide.code247.ai/schema/dx.json",
+ "title": "DXResult",
+ "description": "Kết quả bộ trích xác định DX (AAD-33 §2.2, §10; AGD-32 Đ1). Chạy TRƯỚC mọi lời gọi mô hình; mô hình không được ghi đè slot do DX điền. paths là MẢNG — đó là điểm khoá của Đ1.",
+ "type": "object",
+ "required": ["paths", "chips", "numbers", "urls", "ids", "back_refs", "quoted"],
+ "additionalProperties": false,
+ "properties": {
+  "paths": {
+   "type": "array",
+   "description": "Mọi đường dẫn người dùng nêu, theo thứ tự xuất hiện. Không tồn tại thì GIỮ LẠI với exists=false để S3 hỏi — không xoá, không đoán.",
+   "items": {
+    "type": "object",
+    "required": ["value", "origin", "exists"],
+    "additionalProperties": false,
+    "properties": {
+     "value": {"type": "string", "description": "Đúng chuỗi người gõ"},
+     "origin": {"const": "dx"},
+     "source": {
+      "type": "string",
+      "enum": ["dinh_kem", "tuyet_doi", "nhay", "tuong_doi", "ten_tep"],
+      "description": "Nhận ra từ đâu — quyết định S3 hỏi ở mức nào"
+     },
+     "exists": {"type": "boolean", "description": "os.path.exists trên các chỗ đã thử"},
+     "resolved": {"type": ["string", "null"], "description": "Đường dẫn thật nếu tìm được"},
+     "in_project": {"type": "boolean", "description": "Có nằm trong thư mục dự án không"}
+    }
+   }
+  },
+  "chips": {
+   "type": "array",
+   "description": "Mã chip chuẩn hoá. isa=null nghĩa là kho CHƯA có manifest cho họ chip ấy — phải nói thẳng, không đưa lựa chọn sai (TC018).",
+   "items": {
+    "type": "object",
+    "required": ["code", "origin", "isa", "in_registry"],
+    "additionalProperties": false,
+    "properties": {
+     "code": {"type": "string", "description": "Mã chip đã chuẩn hoá qua bí danh"},
+     "raw": {"type": "string", "description": "Chuỗi trong câu người gõ"},
+     "alias_of": {"type": ["string", "null"], "description": "Bí danh đã dùng (uno, blue pill)"},
+     "origin": {"const": "dx"},
+     "isa": {"type": ["string", "null"], "description": "Từ docs/spec/isa/*.yaml family_patterns"},
+     "in_registry": {"type": "boolean", "description": "Có trong registry chip không (Đợt 2)"}
+    }
+   }
+  },
+  "numbers": {
+   "type": "array",
+   "description": "Số kèm đơn vị, quy về SI cơ sở. Dải (3,0–4,2 V) là MỘT mục có min/max; số đơn có value.",
+   "items": {
+    "type": "object",
+    "required": ["raw", "unit", "si_unit", "origin"],
+    "additionalProperties": false,
+    "properties": {
+     "raw": {"type": "string", "description": "Chuỗi gốc — giữ để hỏi lại khi dấu thập phân mơ hồ"},
+     "unit": {"type": "string"},
+     "value": {"type": ["number", "null"]},
+     "min": {"type": ["number", "null"]},
+     "max": {"type": ["number", "null"]},
+     "si": {"type": ["number", "null"]},
+     "si_min": {"type": ["number", "null"]},
+     "si_max": {"type": ["number", "null"]},
+     "si_unit": {"type": "string", "description": "Đơn vị SI cơ sở (V, A, Ω, Hz, s, B, W, F, C, bps, °C, %)"},
+     "origin": {"const": "dx"}
+    }
+   }
+  },
+  "urls": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["value", "domain", "manufacturer", "origin"],
+    "additionalProperties": false,
+    "properties": {
+     "value": {"type": "string"},
+     "domain": {"type": "string"},
+     "manufacturer": {
+      "type": "boolean",
+      "description": "Tên miền có trong trusted_sources của POL-17 §2 — xếp hạng ưu tiên khi tìm datasheet"
+     },
+     "kind": {"type": "string", "enum": ["pdf", "web"]},
+     "origin": {"const": "dx"}
+    }
+   }
+  },
+  "ids": {
+   "type": "array",
+   "description": "Mã hiện vật nêu trong câu. dangling=null nghĩa là CHƯA tra store (DX không mở store); S2 điền.",
+   "items": {
+    "type": "object",
+    "required": ["value", "kind", "origin"],
+    "additionalProperties": false,
+    "properties": {
+     "value": {"type": "string"},
+     "kind": {
+      "type": "string",
+      "enum": ["req", "adr", "module", "usecase", "testcase", "run", "other"]
+     },
+     "dangling": {"type": ["boolean", "null"], "description": "true = không có trong store"},
+     "origin": {"const": "dx"}
+    }
+   }
+  },
+  "back_refs": {
+   "type": "array",
+   "description": "Câu trỏ ngược về lượt trước; giải bằng tra bảng run, không đoán ([DEV-196])",
+   "items": {"type": "string", "enum": ["lam_lai", "tiep_tuc"]}
+  },
+  "quoted": {
+   "type": "array",
+   "description": "Chuỗi trong nháy — là DỮ LIỆU (kênh DATA của §2.4), không bao giờ là ý định",
+   "items": {"type": "string"}
+  }
+ }
+}

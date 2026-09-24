@@ -149,81 +149,11 @@ ALIAS: dict[str, str] = {
 }
 
 
-#: Câu người gõ khi muốn CẮT việc đang chạy. So sau khi bỏ dấu câu và hạ chữ thường.
-#:
-#: Chỉ những câu ĐỨNG MỘT MÌNH — xem `la_cau_dung`. Danh sách cố ý ngắn: mỗi mục thêm vào là
-#: một câu có thể bị hiểu nhầm, và một lần dừng nhầm giữa lúc tác tử đang làm đúng cũng là một
-#: lần người dùng mất công.
-CAU_DUNG = frozenset({
-    "dung", "dung khan", "dung ngay", "dung lai", "dung het", "dung tat ca",
-    "dung di", "dung het di", "thoi", "thoi dung", "dung tay",
-    "stop", "stop ngay", "halt", "abort", "emergency stop",
-})
-
-
-# Câu TRỎ NGƯỢC về lượt trước — [DEV-196]. Hai nhóm, và chúng dẫn tới hai việc khác nhau:
-# LÀM LẠI chạy lại từ đầu câu cũ; TIẾP TỤC chỉ gỡ chỗ đang chờ rồi đi tiếp.
-CAU_LAM_LAI = frozenset({
-    "lam lai", "lam lai di", "chay lai", "chay lai di", "thu lai", "thu lai di",
-    "lam lai viec do", "lam lai viec vua roi", "chay lai viec do", "retry", "lam lai lan nua",
-})
-CAU_TIEP_TUC = frozenset({
-    "tiep tuc", "tiep tuc di", "tiep di", "lam tiep", "lam tiep di", "chay tiep",
-    "chay tiep di", "continue", "tiep", "di tiep",
-})
-
-
-def _chuan(van: str) -> str:
-    """Bỏ dấu, hạ chữ thường, gộp khoảng trắng — dùng chung cho mọi phép nhận câu ngắn."""
-    import unicodedata
-    t = van.strip().strip(".!?,;:").lower().replace("đ", "d")
-    t = unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode()
-    return " ".join(t.split())
-
-
-def la_cau_tro_nguoc(van: str) -> str | None:
-    """`"lam_lai"` / `"tiep_tuc"` / `None` — câu này có TRỎ NGƯỢC về lượt trước không.
-
-    ## Vì sao xác định, không nhờ mô hình
-
-    Chủ sản phẩm gặp đúng chuyện này 23/09/2026: một việc hỏng, bảo *"làm lại"*, và tác tử
-    **không biết làm lại việc gì**. Nguyên nhân gốc là ngữ cảnh (xem [DEV-196] về C6/C7), nhưng
-    kể cả khi mô hình có ngữ cảnh thì vẫn không nên để nó ĐOÁN tham chiếu: đoán sai ở đây nghĩa
-    là chạy lại một việc KHÁC việc người đang nói tới — và việc ấy có thể ghi tệp, có thể nạp
-    firmware. Sai im lặng, tốn tiền, khó lần.
-
-    Cùng khuôn `la_cau_dung` của [DEV-155] và cùng lý do: câu NGẮN, khớp TRỌN. "làm lại phần
-    giao tiếp I2C thôi" là một yêu cầu MỚI có chữ "làm lại" trong đó, không phải lệnh trỏ ngược
-    — để `in` bắt nó là biến một câu cụ thể thành một lệnh mơ hồ.
-    """
-    t = _chuan(van)
-    if len(t) > 24:
-        return None
-    if t in CAU_LAM_LAI:
-        return "lam_lai"
-    if t in CAU_TIEP_TUC:
-        return "tiep_tuc"
-    return None
-
-
-def la_cau_dung(van: str) -> bool:
-    """Câu này có phải một lệnh DỪNG đứng một mình không.
-
-    Bỏ dấu tiếng Việt trước khi so: người gõ vội hay gõ không dấu, và "dừng" với "dung" phải ra
-    cùng một kết quả — đúng lúc họ gõ vội nhất là lúc cần nó chạy nhất.
-
-    Đòi câu NGẮN và khớp TRỌN: "không dừng lại ở đó" hay "dừng khi nào xong thì báo tôi" là câu
-    nói về việc dừng, không phải lệnh dừng. So bằng `in` sẽ bắt cả hai, và một lệnh dừng nhầm
-    giữa chừng làm hỏng đúng thứ người ta đang chờ.
-    """
-    import unicodedata
-    t = van.strip().strip(".!?,;:").lower()
-    if len(t) > 24:
-        return False
-    t = t.replace("đ", "d")
-    t = unicodedata.normalize("NFD", t).encode("ascii", "ignore").decode()
-    t = " ".join(t.split())
-    return t in CAU_DUNG
+# STOP và BACKREF chuyển sang `eide.nlu.backref` ở [DEV-230]: AAD-33 §2.3 đặt hai nhóm luật ấy
+# ở lớp L2 (cổng hội thoại), không ở cầu giao diện — và DX (§2.2) cần BACKREF để điền
+# `back_refs[]`. Nhập lại ở đây để đường sống, `tests/test_daemon.py` và `tests/test_tro_nguoc.py`
+# không phải đổi đường nhập.
+from eide.nlu.backref import la_cau_dung, la_cau_tro_nguoc  # noqa: E402
 
 
 def cho_nguoi_gat(muc: str) -> bool:
@@ -1066,10 +996,41 @@ class Daemon:
         if (ops := thao_tac_trong_cau(p["text"], spec_dir() / "policy" / "rules.yaml")):
             return self._thao_tac_khong_dao_nguoc(ops, p["text"])
 
+        # ---- N0 + DX: chuẩn hoá rồi TRÍCH XÁC ĐỊNH, TRƯỚC lời gọi mô hình. [DEV-231]
+        #
+        # AAD-33 §2.2 đặt DX ở đây và không ở đâu khác, vì hai thứ khác nhau:
+        #
+        #   * `duong_dan_trong_cau` của [DEV-208] chạy MUỘN — lúc `chat.orchestrate` dựng tham số
+        #     cho từng nút. Tới lúc ấy mô hình đã điền `slots.path` rồi, và đường dẫn nó bịa ra đã
+        #     là một phần của ý định được ghi sổ. Đo 23/09/2026: 11 trên 51 ca không đạt chết vì
+        #     `archive.list` nhận một đường dẫn không tồn tại, rút từ chính câu người dùng.
+        #   * DX chạy TRƯỚC, nên `eide.nlu.merge` có thể thi hành bất biến của §2.2: slot do mô
+        #     hình điền KHÔNG BAO GIỜ được dùng làm đường dẫn tệp hay mã chip để chạy nút — chỉ
+        #     để điền sẵn câu hỏi.
+        #
+        # 0 token, không mạng: hỏng ở đây là hỏng của một biểu thức chính quy, không của một nhà
+        # cung cấp mô hình.
+        from eide.nlu import extract, normalize
+        from eide.nlu import merge as nlu_merge
+        cau = normalize(p["text"])
+        dx = extract(cau, root=self.ctx.project_dir, attachments=p.get("attachments") or [])
+
         y = self.router.invoke("chat.parse_intent", {"text": p["text"]}, self.ctx)
         if y.status != "done":
             return asdict(y)
         intent = (y.result or {}).get("intent") or {}
+
+        # HỢP NHẤT: DX > câu trả lời người ở S3 > mô hình > fill_defaults (§2.2).
+        intent = nlu_merge.hop_nhat(intent, dx)
+        if self.ledger is not None:
+            try:
+                self.ledger.append("intent", {"pha": "s1.merge", "lang": cau.lang,
+                                              "menh_de": len(cau.clauses),
+                                              **nlu_merge.de_ghi_so(intent),
+                                              "dx": dx.to_dict()})
+            except Exception:  # noqa: BLE001 — ghi sổ hỏng không được làm hỏng lượt gõ
+                pass
+
         neo = self.router.invoke("chat.ground", {"intent": intent}, self.ctx)
         grounded = (neo.result or {}).get("grounded", {}) if neo.status == "done" else {}
 
@@ -1092,6 +1053,11 @@ class Daemon:
                                   {"intent": intent, "grounded": grounded}, self.ctx)
         if dien.status == "done" and (dien.result or {}).get("intent"):
             intent = dien.result["intent"]
+            # Mặc định cũng là một NGUỒN, và nó là nguồn yếu nhất (§2.2). Đánh dấu để S3 biết ô
+            # nào đang chạy bằng giả định — và để S6 in ra được giả định ấy (N4).
+            o = intent.setdefault("origins", {})
+            for a in (dien.result or {}).get("applied") or []:
+                o.setdefault(str(a.get("slot")), "default")
         ra: dict[str, Any] = {"intent_id": (y.result or {}).get("intent_id") or intent.get("intent")}
         # v1.3 — §2D.6: mức A0/A1 thì DỪNG sau khi lập kế hoạch và chờ người gật đầu
         # (DEV-140). A2–A3 tự chạy nhưng vẫn in ý hiểu — đúng chữ của §2D.6.

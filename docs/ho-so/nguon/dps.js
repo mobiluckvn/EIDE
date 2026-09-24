@@ -71,13 +71,38 @@ const INTENT_SCHEMA = {
       // có cách nào NÓI điều đó — nên bộ 50 câu phải gán "Xóa dự án test-1" thành
       // `project.create`, tức dạy tầng hiểu lệnh đọc "xóa" thành "tạo". Thêm ý định thật.
       'project.delete'] },
+    // ── v2 (EIDE-AAD-33 §2.5.2, §10; AGD-32 Đ1). Ba thay đổi, mỗi cái vì một ca đo:
+    //
+    // ① `paths` là MẢNG và `path` (chuỗi đơn) biến mất. Câu *"tôi để hai bản datasheet ở A và
+    //    B, so hai bản"* (TC011) chỉ giữ được một vế với một chuỗi đơn, và phép so mất một vế
+    //    trước khi bắt đầu. Cùng lý do cho `chips`: *"so STM32F103 với ATmega328P"*.
+    // ② Slot đường dẫn và mã chip do BỘ TRÍCH XÁC ĐỊNH (DX, §2.2) điền, không do mô hình —
+    //    `origins` ghi nguồn từng slot, và một slot `origin: "model"` KHÔNG BAO GIỜ được dùng
+    //    làm đường dẫn tệp hay mã chip để chạy nút, chỉ được dùng để điền sẵn câu hỏi. Đo
+    //    23/09/2026: 11 ca chết vì `archive.list` nhận một đường dẫn mô hình bịa ra từ chính
+    //    câu người dùng.
+    // ③ `alt_intents` để dải tin cậy 0,60–0,85 (§2.5.3) hỏi được "ý anh là A hay B?" thay vì
+    //    đoán một trong hai; `why` để người đọc bắt được một câu bị hiểu sai.
     slots: { type: 'object', properties: {
-      project_name: { type: 'string' }, idea: { type: 'string' }, chip: { type: 'string' },
-      board: { type: 'string' }, path: { type: 'string' }, feature: { type: 'string' },
+      paths: { type: 'array', items: { type: 'string' } },
+      chips: { type: 'array', items: { type: 'string' } },
+      project_name: { type: 'string' }, idea: { type: 'string' },
+      board: { type: 'string' }, feature: { type: 'string' },
       doc_type: { type: 'string' }, diagram_kind: { type: 'string' },
       question: { type: 'string' }, level: { type: 'string' } } },
+    // Nguồn của từng slot. KHÔNG do mô hình điền — `eide.nlu.merge` ghi, Router ghi vào sổ cái.
+    // Bọc từng giá trị thành {value, origin} như ví dụ §2.5.2 thì 213 năng lực phải mở bọc
+    // trước khi dùng; một bảng cạnh bên giữ đúng bất biến mà không đổi kiểu tham số. DEV-231.
+    origins: { type: 'object', additionalProperties: {
+      type: 'string', enum: ['dx', 'user', 'model', 'default'] } },
     is_big: { type: 'boolean' },
     confidence: { type: 'number', minimum: 0, maximum: 1 },
+    alt_intents: { type: 'array', items: { type: 'object',
+      required: ['intent', 'confidence'],
+      properties: { intent: { type: 'string' },
+        confidence: { type: 'number', minimum: 0, maximum: 1 } } } },
+    coref: { type: 'object', additionalProperties: { type: 'string' } },
+    why: { type: 'string' },
     lang: { type: 'string', enum: ['vi', 'en'] },
     mentions: { type: 'array', items: { type: 'string' } },
   },
@@ -146,11 +171,16 @@ c.push(...CODE([
   '    "intent": {"type": "string", "enum": ["project.create", "project.open", "knowledge.build", "env.setup", "sim.run", "code.feature", "target.flash",',
   '                                          "debug.ask", "req.analyze", "arch.design", "diagram.draw", "doc.write", "view.ask", "discover.scan", "policy.stop", "policy.set", "big_command", "unknown",',
   '                                          "review.ask", "search.ask", "compute.ask", "tool.run", "project.delete"]},',
-  '    "slots": {"type": "object", "properties": {"project_name": {"type": "string"}, "idea": {"type": "string"}, "chip": {"type": "string"}, "board": {"type": "string"},',
-  '              "path": {"type": "string"}, "feature": {"type": "string"}, "doc_type": {"type": "string"}, "diagram_kind": {"type": "string"}, "question": {"type": "string"}, "level": {"type": "string"}}},',
+  '    "slots": {"type": "object", "properties": {"paths": {"type": "array", "items": {"type": "string"}},   /* v2: MẢNG — TC011 cần hai tệp */',
+  '              "chips": {"type": "array", "items": {"type": "string"}}, "project_name": {"type": "string"}, "idea": {"type": "string"}, "board": {"type": "string"},',
+  '              "feature": {"type": "string"}, "doc_type": {"type": "string"}, "diagram_kind": {"type": "string"}, "question": {"type": "string"}, "level": {"type": "string"}}},',
+  '    "origins": {"type": "object", "additionalProperties": {"type": "string", "enum": ["dx", "user", "model", "default"]}},   /* nguồn từng slot; origin=model không được làm đường dẫn/chip */',
   '    "is_big": {"type": "boolean"}, "confidence": {"type": "number", "minimum": 0, "maximum": 1}, "lang": {"type": "string", "enum": ["vi", "en"]},',
+  '    "alt_intents": [{"intent": "…", "confidence": 0.31}],   /* dải ngờ 0,60–0,85 hỏi A hay B, không đoán */  "why": "…",',
   '    "mentions": {"type": "array", "items": {"type": "string"}}   /* thực thể người nhắc: tên dự án, mã chip, tệp — để grounding */ } }',
 ]));
+c.push(SP());
+c.push(P('**Phiên bản 2 của lược đồ (v1.4).** `slots.paths` và `slots.chips` là MẢNG, và hai slot chuỗi đơn `path`/`chip` bị bỏ: đo ngày 23/09/2026, câu *"tôi để hai bản datasheet ở A và B, so hai bản"* mất một vế ngay tại lược đồ, trước khi bất kỳ năng lực nào chạy. Hai slot ấy cùng `numbers`, `urls`, `ids`, `quoted` do **bộ trích xác định DX** (EIDE-AAD-33 §2.2) điền bằng biểu thức chính quy TRƯỚC khi mô hình được gọi; bảng `origins` ghi nguồn của từng slot, và bất biến của nó là: **một slot có `origin: "model"` không bao giờ được dùng làm đường dẫn tệp hay mã chip để chạy một nút** — chỉ được dùng để điền sẵn câu hỏi làm rõ. Mười một trong năm mươi mốt ca không đạt của phép đo 23/09 chết vì đúng điều ngược lại: `archive.list` nhận một đường dẫn mô hình bịa ra từ chính câu người dùng, rồi báo E2000 "không có tệp".'));
 c.push(SP());
 c.push(P('Mô hình hiểu lệnh là mô hình rẻ, temperature 0 (vai trò `intent` trong models.yaml), được cung cấp: danh sách ý định, mô tả ngắn của ≤ 30 năng lực liên quan nhất (chọn theo từ khóa), trạng thái dự án tóm tắt, và 2 lượt gần nhất (KAD §6.6b). Confidence < 0,6 ⇒ coi là `unknown` và hỏi lại bằng một câu diễn giải ("Anh muốn tôi tạo dự án mới hay mở dự án robot-ctrl?").'));
 c.push(SP());
