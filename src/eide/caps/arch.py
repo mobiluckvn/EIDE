@@ -906,8 +906,22 @@ def adr(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     d = params["decision"]
     resp = _gateway(ctx).run(
         "architect",
+        # RÀNG BUỘC ĐỘ DÀI — [DEV-216].
+        #
+        # Câu nhắc cũ không nói gì về độ dài, mà mẫu ADR có `options[]`: mô hình viết một bài
+        # luận cho mỗi phương án. Đo 24/09/2026: `arch.adr` tràn trần 4096 token, nâng lên
+        # 12288 thì VẪN TRÀN. Nâng trần là đuổi theo một đầu ra không có giới hạn.
+        #
+        # Và một ADR dài hơn 12 nghìn token thì hỏng ở chỗ khác nữa: KHÔNG AI ĐỌC. ADR tồn tại
+        # để sáu tháng sau người ta biết đã cân nhắc gì rồi bỏ gì — một tài liệu dài hai chục
+        # trang không làm được việc ấy. Ràng buộc ở đây vì thế không phải mẹo lách trần, nó là
+        # yêu cầu thật của chính hiện vật.
         "Hoàn thiện Architecture Decision Record theo mẫu. BẮT BUỘC: ít nhất một phương án bị "
         "loại kèm lý do, và citations trỏ tới fact/source id có thật.\n"
+        "NGẮN GỌN — ADR để người đọc trong vài phút, không phải một bài luận:\n"
+        "· `context` tối đa 5 câu; `consequences` tối đa 5 câu.\n"
+        "· Tối đa 4 phương án; mỗi phương án 1–3 câu lý do, không phân tích dài dòng.\n"
+        "· Không lặp lại đề bài, không viết phần mở đầu.\n"
         + json.dumps(d, ensure_ascii=False),
         _SCHEMA_ADR, system_extra=_ngu_canh(ctx, f"ADR {d.get('title','')}"))
 

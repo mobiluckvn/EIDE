@@ -280,3 +280,133 @@ def test_khong_nha_cung_cap_nao_cau_hinh_thi_bao_ro(tmp_path, monkeypatch):
         gw.run("intent", "lệnh", S_INTENT)
     assert ei.value.code == "E5000"
     assert "chưa cấu hình" in str(ei.value) or "cần khóa" in str(ei.value)
+
+
+# ---------- [DEV-216] Đầu ra bị cắt phải NÓI LÀ BỊ CẮT
+
+def test_dau_ra_bi_cat_thi_noi_dung_ly_do_chu_khong_noi_sai_dinh_dang():
+    """Câu lỗi sai hướng đắt hơn câu lỗi cộc lốc. [DEV-216]
+
+    Cả hai cổng ĐỀU đọc `finishReason`/`stop_reason` — nhưng ở vị trí đối số đứng SAU
+    `_doc_json(text)`, mà Python tính đối số từ trái sang phải. Nên khi đầu ra bị cắt giữa
+    chừng, `_doc_json` ném trước và thông tin "bị cắt" đang nằm ngay đó bị vứt đi.
+
+    Người dùng nhận *"Đầu ra không phải JSON: {\\"title\\":\\"ADR: Chọn kiến trúc…"* — một câu
+    nói rằng mô hình trả sai định dạng, trong khi phần in ra BẮT ĐẦU BẰNG JSON HỢP LỆ. Nó đẩy
+    người đọc đi tìm lỗi định dạng ở một chỗ không có lỗi nào.
+    """
+    import pytest
+
+    from eide_core.gateway import GatewayError, _kiem_cat
+
+    with pytest.raises(GatewayError) as e:
+        _kiem_cat("MAX_TOKENS", "gemini-pro", 4096)
+    assert "BỊ CẮT" in str(e.value) and "4096" in str(e.value)
+    assert "max_output" in str(e.value), "không chỉ ra chỗ sửa"
+    assert e.value.kind == "truncated"
+
+    # Dừng bình thường thì không được kêu.
+    _kiem_cat("stop", "gemini-pro", 4096)
+    _kiem_cat("end_turn", "claude-sonnet", 8192)
+
+
+def test_cat_vi_PHAN_NGHI_phai_noi_khac_cat_vi_cau_tra_loi_dai():
+    """Hai nguyên nhân đòi hai cách chữa NGƯỢC NHAU, nên câu lỗi phải phân biệt được. [DEV-216]
+
+    Token "nghĩ" của mô hình suy luận cũng tính vào `maxOutputTokens`. Khi phần nghĩ ăn hết
+    ngân sách, lời khuyên "nới `max_output`" là SAI — nới trần thì phần nghĩ giãn theo và lần
+    sau vẫn cắt. Đo 24/09/2026: một câu hỏi tầm thường tiêu 1037 token nghĩ cho 186 token trả
+    lời. Câu lỗi khuyên sai hướng ở đây đắt gấp đôi: nó vừa không chữa được, vừa tốn một vòng
+    thử nữa mới biết là không chữa được.
+    """
+    from eide_core.gateway import GatewayError, _kiem_cat
+
+    with pytest.raises(GatewayError) as e:
+        _kiem_cat("MAX_TOKENS", "gemini-pro", 12288, 9000)
+    assert "NGHĨ" in str(e.value), "không chỉ ra thủ phạm là phần nghĩ"
+    assert "không cứu được" in str(e.value).lower() or "KHÔNG cứu" in str(e.value)
+
+    # Phần nghĩ nhỏ thì thủ phạm là câu trả lời — vẫn khuyên nới trần.
+    with pytest.raises(GatewayError) as e2:
+        _kiem_cat("MAX_TOKENS", "gemini-pro", 12288, 300)
+    assert "max_output" in str(e2.value) and "NGHĨ" not in str(e2.value)
+
+
+def test_tran_phan_nghi_luon_chua_mot_nua_ngan_sach_cho_cau_tra_loi():
+    """`thinkingBudget` không đặt thì mô hình nghĩ tuỳ ý và chạm trần trước khi kịp trả lời.
+
+    Chia đôi chứ không cắt sạch: bỏ hẳn phần nghĩ làm hỏng chất lượng của đúng những vai trò
+    cần nó nhất (`architect`, `planner`). Nửa còn lại là phần LUÔN dành cho JSON.
+    """
+    from eide_core.gateway import NGHI_TOI_THIEU, _han_nghi
+
+    assert _han_nghi(12288) == 6144
+    assert _han_nghi(12288) < 12288, "phần nghĩ được phép ăn cả ngân sách"
+    # Trần quá nhỏ thì sàn giữ cho mô hình suy luận vẫn nghĩ được.
+    assert _han_nghi(256) == NGHI_TOI_THIEU
+
+
+def test_token_NGHI_phai_vao_chi_phi_vi_no_bi_tinh_tien():
+    """Bỏ token nghĩ khỏi `tokens_out` thì `cost_usd` — và trần `daily_budget_usd` dựng trên
+    nó — hụt đúng phần đắt nhất. Đo 24/09/2026: 1037/1223 token đầu ra (85%) vô hình với ngân
+    sách, tức ngân sách ngày cho tiêu gấp gần bảy lần con số chủ sản phẩm đặt ra.
+    """
+    import eide_core.gateway as gw
+
+    goi: dict[str, object] = {}
+
+    def gia_post(url, body, headers):
+        goi["body"] = body
+        return {"candidates": [{"finishReason": "STOP",
+                                "content": {"parts": [{"text": '{"ok": true}'}]}}],
+                "usageMetadata": {"promptTokenCount": 26, "candidatesTokenCount": 186,
+                                  "thoughtsTokenCount": 1037}}
+
+    that = gw._post
+    gw._post = gia_post
+    try:
+        r = gw.GeminiPort(api_key="x").generate(
+            "gemini-pro", "hệ thống", "câu hỏi", {"type": "object"}, max_output=12288)
+    finally:
+        gw._post = that
+
+    assert r.tokens_out == 1223, f"token nghĩ bị bỏ khỏi chi phí (được {r.tokens_out})"
+    # Và trần phần nghĩ phải thật sự được gửi đi, không chỉ tính ra rồi bỏ đó.
+    cfg = goi["body"]["generationConfig"]           # type: ignore[index]
+    assert cfg["thinkingConfig"]["thinkingBudget"] == 6144
+
+
+def test_CAT_khong_duoc_coi_la_refusal_de_khoi_lui_vo_ich():
+    """`policy.fallback_on` có `refusal`. Gọi một lần bị cắt là refusal thì Gateway lặng lẽ thử
+    ứng viên kế — mà ứng viên kế cũng chạm đúng cái trần ấy.
+
+    Lui sang một mô hình khác không chữa được một cái trần đặt quá thấp; nó chỉ tốn thêm một
+    lời gọi và giấu mất nguyên nhân thật.
+    """
+    import yaml
+
+    from eide_core.gateway import GatewayError, _kiem_cat
+    from eide_core.paths import spec_dir
+
+    with pytest.raises(GatewayError) as e:
+        _kiem_cat("length", "m", 1024)
+    pol = (yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8"))
+           .get("policy") or {})
+    assert e.value.kind not in (pol.get("fallback_on") or []), \
+        "lỗi cắt rơi vào danh sách lui — Gateway sẽ thử lại vô ích"
+
+
+def test_vai_tro_SINH_VAN_BAN_DAI_deu_co_max_output_rieng():
+    """`architect` viết ADR — tài liệu dài theo bản chất. Không khai `max_output` thì nó rơi về
+    mặc định 4096 của Gateway và hỏng MỌI LẦN, không ngẫu nhiên.
+
+    Đo 24/09/2026: TC002, TC008, TC048 đều chết ở `arch.adr` E5000.
+    """
+    import yaml
+
+    from eide_core.paths import spec_dir
+
+    roles = yaml.safe_load((spec_dir() / "models.yaml").read_text(encoding="utf-8"))["roles"]
+    for ten in ("architect", "coder", "writer"):
+        assert roles[ten].get("max_output", 0) >= 8192, \
+            f"vai trò `{ten}` sinh văn bản dài mà dùng trần mặc định 4096"

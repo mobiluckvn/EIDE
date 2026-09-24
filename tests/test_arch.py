@@ -647,3 +647,22 @@ def test_chon_kieu_kien_truc_KHONG_doi_ho_chieu_chip(du_an, monkeypatch):
     # Phải NÓI RA rằng quy tắc RAM chưa áp dụng được — im lặng là giấu một phần cơ sở quyết định.
     assert any("RAM" in str(x) for x in (qd.get("reasons") or [])), \
         f"không nói rõ quy tắc RAM chưa áp dụng: {qd.get('reasons')}"
+
+
+def test_cau_nhac_ADR_co_rang_buoc_DO_DAI():
+    """Một câu nhắc không giới hạn độ dài sẽ tràn MỌI cái trần. [DEV-216]
+
+    Đo 24/09/2026: `arch.adr` tràn trần 4096 token; nâng lên 12288 thì VẪN TRÀN. Nâng trần là
+    đuổi theo một đầu ra không có giới hạn.
+
+    Và ràng buộc này không phải mẹo lách trần — nó là yêu cầu thật của chính hiện vật: ADR tồn
+    tại để sáu tháng sau người ta biết đã cân nhắc gì rồi bỏ gì, mà một tài liệu hai chục trang
+    thì không ai đọc.
+    """
+    import inspect
+
+    from eide.caps import arch
+
+    src = inspect.getsource(arch.adr)
+    assert "NGẮN GỌN" in src, "câu nhắc ADR không ràng buộc độ dài"
+    assert "tối đa" in src.lower(), "không nêu giới hạn cụ thể cho từng phần"

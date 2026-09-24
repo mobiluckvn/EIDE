@@ -28,7 +28,10 @@ roles:
   coder:         {candidates: [gemini-flash, claude-sonnet], max_output: 16384}
   reviewer:      {candidates: [claude-sonnet, gemini-pro], rule: different_vendor_from(coder)}
   debugger:      {candidates: [claude-sonnet, gemini-pro]}
-  architect:     {candidates: [claude-opus, gemini-pro]}
+  # [DEV-216] `max_output` cho architect: ADR là tài liệu DÀI theo bản chất (title,
+  # context, options[], choice, consequences). Không khai thì rơi về mặc định 4096 của
+  # Gateway, và `arch.adr` hỏng MỌI LẦN — đo 24/09/2026 trên TC002/TC008/TC048.
+  architect:     {candidates: [claude-opus, gemini-pro], max_output: 12288}
   writer:        {candidates: [claude-sonnet, gemini-pro], max_output: 12288}
 
 policy:

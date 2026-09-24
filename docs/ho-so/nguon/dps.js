@@ -340,10 +340,20 @@ const CHUOI_NUT = {
       { reqset_ids: '${n1.items[*].id}', style: '${n2.decision.style}' }],
     ['n4', 'arch.interface_spec', 'n3', 'parallel',
       { module_ids: '${n3.module_graph.modules[*].id}' }],
-    ['n5', 'arch.adr', 'n2', 'parallel', { decision: '${n2.decision}' }],
-    ['n6', 'arch.review', 'n3', 'parallel',
+    // [DEV-216] `arch.adr` và `arch.review` mang `skip`, và báo cáo treo vào NÚT LÕI.
+    //
+    // ARCH-08 đòi ADR phải trích dẫn fact/source CÓ THẬT — đúng, vì "chọn RTOS vì nhanh hơn"
+    // không kiểm được. Nhưng một dự án mới chưa nhập tài liệu nào thì KHÔNG CÓ fact để trích,
+    // nên `arch.adr` hỏng đúng luật của nó. Đo 24/09/2026 trên TC008: `E5002: ADR không có
+    // trích dẫn kiểm được`. Để `parallel` thì thất bại ấy vẫn tính vào `fail_retries` và giết
+    // cả chuỗi thiết kế — mất luôn `style_select` và `decompose` vốn đã chạy xong.
+    //
+    // ADR và review là hiện vật LÀM GIÀU; lõi của chuỗi là chọn kiểu → phân rã → đặc tả giao
+    // diện. Một hiện vật làm giàu hỏng thì ghi chú lại, không kéo ai theo.
+    ['n5', 'arch.adr', 'n2', 'skip', { decision: '${n2.decision}' }],
+    ['n6', 'arch.review', 'n3', 'skip',
       { module_ids: '${n3.module_graph.modules[*].id}' }],
-    ['n7', 'chat.report_back', 'n6'],
+    ['n7', 'chat.report_back', 'n3'],
   ],
   'Vẽ lược đồ (DEV-158)': [
     ['n1', 'view.artifacts', null, 'wait', { kind: 'module', limit: 200 }],

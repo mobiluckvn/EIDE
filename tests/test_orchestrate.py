@@ -572,3 +572,54 @@ def test_tham_so_KHONG_biet_tap_gia_tri_thi_khong_bia():
     rồi bước sau mới hỏng, và lúc ấy lỗi trỏ vào chỗ khác."""
     from eide.caps.chat import _lua_chon
     assert _lua_chon("mot_tham_so_la", None, {}) == []
+
+
+# ---------- [DEV-216] Nút tuỳ chọn hỏng KHÔNG làm hỏng cả lượt
+
+
+def test_chi_hong_o_nut_TUY_CHON_thi_luot_chay_van_la_XONG(du_an, monkeypatch):
+    """[DEV-209] miễn nút `skip` khỏi ngưỡng leo thang nhưng bỏ sót PHÁN QUYẾT của cả lượt.
+
+    Đo 24/09/2026 trên TC008: chuỗi `arch.design` chạy xong chọn kiểu, phân rã, đặc tả giao
+    diện và báo cáo — chỉ `arch.adr` hỏng, mà nút ấy mang `skip` chính vì nó là hiện vật làm
+    giàu. Lượt vẫn bị gọi `failed`, và giao diện in *"DỪNG vì có bước hỏng — KHÔNG chờ anh"*.
+    Người dùng đọc dòng ấy rồi bỏ đi, trong khi ba hiện vật họ cần đã nằm sẵn trong kho.
+
+    Không phải giấu lỗi: nút hỏng vẫn nguyên trong `report.failed`. Đổi là đổi phán quyết.
+    """
+    import eide_core.chain as _chain
+
+    mau_gia = [{"ten": "thử tuỳ chọn", "chuoi": "", "buoc": [],
+                "trigger_intents": ["kg.build"],
+                "nodes": [{"id": "n1", "cap": "kg.build", "args": {}, "when": None,
+                           "on_ask": "wait"},
+                          {"id": "n2", "cap": "diagram.architecture", "args": {}, "when": None,
+                           "on_ask": "skip"}]}]
+    monkeypatch.setattr(_chain, "mau", lambda: mau_gia)
+    r, ctx, _ = du_an
+    out = r.invoke("chat.orchestrate",
+                   {"intent": {"intent": "kg.build", "slots": {}}, "grounded": {}}, ctx).result
+    bc = doc_bao_cao(ctx.project_dir, out["run_id"])
+    assert bc["state"] == "done", f"nút tuỳ chọn hỏng vẫn kéo cả lượt xuống: {bc['state']}"
+    assert [n["cap"] for n in bc["done"]] == ["kg.build"]
+    # …và cái hỏng KHÔNG được biến mất khỏi báo cáo.
+    assert [n["cap"] for n in bc["failed"]] == ["diagram.architecture"], bc["failed"]
+    assert bc["failed"][0]["bat_buoc"] is False
+
+
+def test_hong_o_nut_BAT_BUOC_van_lam_hong_ca_luot(du_an, monkeypatch):
+    """Mặt kia của [DEV-216] — nới lỏng không được nuốt luôn thất bại thật."""
+    import eide_core.chain as _chain
+
+    mau_gia = [{"ten": "thử bắt buộc", "chuoi": "", "buoc": [],
+                "trigger_intents": ["kg.build"],
+                "nodes": [{"id": "n1", "cap": "kg.build", "args": {}, "when": None,
+                           "on_ask": "wait"},
+                          {"id": "n2", "cap": "diagram.architecture", "args": {}, "when": None,
+                           "on_ask": "parallel"}]}]
+    monkeypatch.setattr(_chain, "mau", lambda: mau_gia)
+    r, ctx, _ = du_an
+    out = r.invoke("chat.orchestrate",
+                   {"intent": {"intent": "kg.build", "slots": {}}, "grounded": {}}, ctx).result
+    bc = doc_bao_cao(ctx.project_dir, out["run_id"])
+    assert bc["state"] == "failed", bc["state"]

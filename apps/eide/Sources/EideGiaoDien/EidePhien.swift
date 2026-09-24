@@ -1415,7 +1415,13 @@ public final class EidePhien {
         }
         for n in (p["waiting"] as? [[String: Any]] ?? []) { _hienCauHoi(n) }
         if let st = p["state"] as? String, !st.isEmpty {
-            khung.dock.themLuot(.tacTu, "Lượt chạy \(Self.trangThaiChuoi(st)).")
+            // Một lượt XONG vẫn có thể có bước tuỳ chọn hỏng — [DEV-216] thôi kéo cả lượt
+            // xuống `failed` vì một hiện vật làm giàu. Nhưng "xong" trơn thì thành giấu lỗi:
+            // người dùng đọc "xong" rồi đi tìm cái ADR không bao giờ được viết. Nói kèm.
+            let hong = (p["failed"] as? [[String: Any]] ?? []).count
+            let duoi = hong > 0 && st == "done"
+                ? " — \(hong) bước tuỳ chọn hỏng, xem dòng ✖ ở trên" : ""
+            khung.dock.themLuot(.tacTu, "Lượt chạy \(Self.trangThaiChuoi(st))\(duoi).")
         }
         Task { [weak self] in
             await self?._lamMoi()

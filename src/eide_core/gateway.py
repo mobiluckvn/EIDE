@@ -106,6 +106,25 @@ class GatewayError(Exception):
         super().__init__(message)
 
 
+#: Phần nghĩ không bao giờ được lấn quá tỉ lệ này của ngân sách đầu ra.
+TI_LE_NGHI = 0.5
+#: Dưới ngưỡng này thì phần nghĩ quá ngắn để mô hình suy luận làm được việc.
+NGHI_TOI_THIEU = 512
+
+
+def _han_nghi(max_output: int) -> int:
+    """Trần token cho phần "nghĩ" của mô hình suy luận (Gemini 2.5+/3.x).
+
+    Gemini tính token nghĩ VÀO `maxOutputTokens`. Không đặt trần thì mô hình nghĩ
+    tuỳ ý rồi chạm trần TRƯỚC khi kịp viết xong câu trả lời — đo được 1037 token
+    nghĩ cho 186 token trả lời ở một câu hỏi tầm thường, tức phần nghĩ gấp 5,5
+    lần. Đó là lý do thật của lỗi "arch.adr bị cắt": không phải ADR dài, mà là
+    phần nghĩ ăn hết ngân sách. Nới trần không cứu được vì phần nghĩ giãn theo.
+    Chia đôi ngân sách để nửa còn lại LUÔN đủ chỗ cho JSON. [DEV-216]
+    """
+    return max(NGHI_TOI_THIEU, int(max_output * TI_LE_NGHI))
+
+
 class GeminiPort(ModelPort):
     provider = "gemini"
     BASE = "https://generativelanguage.googleapis.com/v1beta/models"
@@ -130,7 +149,8 @@ class GeminiPort(ModelPort):
             "contents": [{"role": "user", "parts": phan}],
             "generationConfig": {"temperature": temperature, "maxOutputTokens": max_output,
                                  "responseMimeType": "application/json",
-                                 "responseSchema": _gemini_schema(schema)},
+                                 "responseSchema": _gemini_schema(schema),
+                                 "thinkingConfig": {"thinkingBudget": _han_nghi(max_output)}},
         }
         t0 = time.perf_counter()
         d = _post(f"{self.BASE}/{model}:generateContent?key={self.api_key}", body, {})
@@ -140,10 +160,16 @@ class GeminiPort(ModelPort):
         cand = (d.get("candidates") or [{}])[0]
         text = "".join(p.get("text", "") for p in (cand.get("content") or {}).get("parts", []))
         u = d.get("usageMetadata") or {}
+        stop = str(cand.get("finishReason", "stop")).lower()
+        _kiem_cat(stop, model, max_output, u.get("thoughtsTokenCount", 0))   # [DEV-216]
+        # Token nghĩ CÓ bị tính tiền. Bỏ nó khỏi `tokens_out` thì `cost_usd` —
+        # và trần `daily_budget_usd` dựng trên nó — hụt đúng phần đắt nhất: ở phép
+        # đo trên, 1037/1223 token đầu ra (85%) vô hình với ngân sách. [DEV-216]
         return ModelResponse(data=_doc_json(text), model_id=model, raw=text,
                              tokens_in=u.get("promptTokenCount", 0),
-                             tokens_out=u.get("candidatesTokenCount", 0), latency_ms=ms,
-                             stop_reason=str(cand.get("finishReason", "stop")).lower())
+                             tokens_out=u.get("candidatesTokenCount", 0)
+                             + u.get("thoughtsTokenCount", 0), latency_ms=ms,
+                             stop_reason=stop)
 
 
 class ClaudePort(ModelPort):
@@ -176,6 +202,11 @@ class ClaudePort(ModelPort):
         t0 = time.perf_counter()
         d = _post(self.URL, body, {"x-api-key": self.api_key, "anthropic-version": "2023-06-01"})
         ms = int((time.perf_counter() - t0) * 1000)
+        stop = str(d.get("stop_reason", "stop"))
+        # [DEV-216] Kiểm CẮT trước. Claude trả `stop_reason: "max_tokens"` và một khối
+        # `tool_use` DANG DỞ — không có khối nào, hoặc có mà thiếu trường. Báo "không gọi tool
+        # bắt buộc" cho một mô hình đã gọi tool nhưng bị cắt giữa chừng là chỉ sai hướng.
+        _kiem_cat(stop, model, max_output)
         khoi = next((c for c in d.get("content", []) if c.get("type") == "tool_use"), None)
         if khoi is None:
             raise GatewayError("refusal", "Mô hình không gọi tool bắt buộc")
@@ -183,7 +214,7 @@ class ClaudePort(ModelPort):
         return ModelResponse(data=khoi.get("input") or {}, model_id=model,
                              raw=json.dumps(khoi.get("input"), ensure_ascii=False),
                              tokens_in=u.get("input_tokens", 0), tokens_out=u.get("output_tokens", 0),
-                             latency_ms=ms, stop_reason=str(d.get("stop_reason", "stop")))
+                             latency_ms=ms, stop_reason=stop)
 
 
 class EchoPort(ModelPort):
@@ -372,6 +403,54 @@ class Gateway:
 
 def _h(s: str) -> str:
     return hashlib.sha256(s.encode("utf-8")).hexdigest()[:16]
+
+
+#: Lý do dừng mà nhà cung cấp trả khi ĐẦU RA BỊ CẮT vì chạm trần token. Mỗi hãng một chữ.
+LY_DO_CAT = {"max_tokens", "length", "maxtokens", "max_output_tokens"}
+
+
+def _kiem_cat(stop: str, model: str, max_output: int, nghi: int = 0) -> None:
+    """Đầu ra bị cắt thì NÓI ĐÚNG LÀ BỊ CẮT, và nói đúng AI đã ăn hết chỗ. [DEV-216]
+
+    Cả hai cổng đều ĐỌC `finishReason`/`stop_reason` — nhưng chúng đọc nó ở vị trí đối số đứng
+    SAU `_doc_json(text)`, mà Python tính đối số từ trái sang phải. Nên khi đầu ra bị cắt giữa
+    chừng, `_doc_json` ném trước và thông tin "bị cắt" đang nằm ngay đó bị vứt đi.
+
+    Người dùng nhận: *"Đầu ra không phải JSON: {\"title\":\"ADR: Chọn kiến trúc…"* — một câu
+    lỗi nói rằng mô hình trả sai định dạng, trong khi phần in ra BẮT ĐẦU BẰNG JSON HỢP LỆ. Đo
+    24/09/2026 trên TC002/TC008/TC048: `arch.adr` hỏng như thế mọi lần, không ngẫu nhiên, vì
+    vai trò `architect` không khai `max_output` nên rơi về mặc định 4096 — mà ADR thì dài theo
+    bản chất (title, context, options, choice, consequences).
+
+    Câu lỗi sai hướng đắt hơn câu lỗi cộc lốc: nó đẩy người đọc đi tìm lỗi định dạng ở một chỗ
+    không có lỗi nào. Cùng bài học với [DEV-202] và [DEV-210].
+
+    Loại lỗi là `truncated`, KHÔNG phải `refusal`: `policy.fallback_on` có `refusal`, nên gọi
+    nó là refusal sẽ lặng lẽ thử ứng viên kế — mà ứng viên kế cũng chạm đúng trần ấy. Lui sang
+    một mô hình khác không chữa được một cái trần đặt quá thấp.
+
+    Nới trần lên 12288 vẫn cắt, và ràng buộc độ dài trong prompt cũng không cứu. Đo thẳng
+    `usageMetadata` mới ra thủ phạm thật: `thoughtsTokenCount` — phần NGHĨ của mô hình suy
+    luận cũng tính vào `maxOutputTokens`. Một câu hỏi tầm thường tiêu 1037 token nghĩ cho
+    186 token trả lời. Trần nào cũng không an toàn khi phần nghĩ giãn tự do, nên chỗ sửa
+    thật nằm ở `thinkingBudget` (xem `_han_nghi`), không phải ở `max_output`.
+
+    Hai nguyên nhân ấy đòi hai cách chữa ngược nhau — nới trần, hay siết phần nghĩ — nên câu
+    lỗi phải phân biệt được chúng, thay vì khuyên nới trần trong đúng trường hợp nới trần vô ích.
+    """
+    if stop.lower() not in LY_DO_CAT:
+        return
+    if nghi and nghi >= max_output * TI_LE_NGHI:
+        raise GatewayError(
+            "truncated",
+            f"Đầu ra của `{model}` BỊ CẮT: phần NGHĨ tiêu {nghi}/{max_output} token nên "
+            f"không còn chỗ viết câu trả lời. Nới `max_output` KHÔNG cứu được vì phần nghĩ "
+            f"giãn theo — hạ `thinkingBudget`, hoặc chọn mô hình không suy luận cho vai trò này.")
+    raise GatewayError(
+        "truncated",
+        f"Đầu ra của `{model}` BỊ CẮT vì chạm trần {max_output} token "
+        f"(lý do dừng: {stop}). Không phải mô hình trả sai định dạng — nới "
+        f"`max_output` của vai trò này trong `models.yaml`, hoặc hỏi ngắn lại.")
 
 
 def _doc_json(text: str) -> dict[str, Any]:

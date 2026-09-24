@@ -767,10 +767,22 @@ def orchestrate(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
     # dùng đứng trước một ngõ cụt hoàn chỉnh — sản phẩm đòi trả lời và không cho biết trả lời
     # cái gì; thứ thật sự xảy ra là `req.elicit` hỏng và không ai nói ra.
     hoi_nguoi = [x for x in cho if x.get("thieu")]
+    # CHỈ NÚT BẮT BUỘC HỎNG MỚI LÀM HỎNG LƯỢT CHẠY. [DEV-216]
+    #
+    # [DEV-209] đã miễn nút `skip` khỏi ngưỡng leo thang, nhưng bỏ sót chỗ này: một nút tuỳ
+    # chọn hỏng vẫn kéo cả lượt xuống `failed`, và giao diện in "DỪNG vì có bước hỏng — KHÔNG
+    # chờ anh". Đo 24/09/2026 trên TC008: chuỗi `arch.design` chạy XONG 6/7 bước — chọn kiểu,
+    # phân rã, đặc tả giao diện, báo cáo — chỉ `arch.adr` hỏng, mà nút ấy mang `skip` chính vì
+    # nó là hiện vật làm giàu. Người dùng nhận một dòng nói lượt chạy đã dừng, trong khi thứ
+    # họ cần đã nằm sẵn trong kho.
+    #
+    # Gọi nó là `done` KHÔNG phải giấu lỗi: nút hỏng vẫn nằm nguyên trong `report.failed` và
+    # vẫn in dòng ✖ riêng. Đổi là đổi PHÁN QUYẾT của cả lượt, không đổi thông tin.
+    hong_bat_buoc = [x for x in hong if x.get("bat_buoc", True)]
     trang_thai = ("cancelled" if bi_huy
-                  else "done" if not cho and not hong
+                  else "done" if not cho and not hong_bat_buoc
                   else "asked" if hoi_nguoi
-                  else "failed" if hong
+                  else "failed" if hong_bat_buoc
                   else "asked")
     # Hợp đồng trả ĐÚNG `{run_id}` — CHAT-06 là bất đồng bộ theo thiết kế: tiến độ đi qua sự kiện
     # `cap.run.start`/`cap.run.finish` của từng nút (đã có sẵn vì mỗi nút đi qua Router), còn
