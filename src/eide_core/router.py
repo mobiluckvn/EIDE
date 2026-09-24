@@ -174,6 +174,33 @@ class Router:
         except EideError as e:
             led_mod.dat_chuoi_dang_chay(None)
             ms = int((time.perf_counter() - t0) * 1000)
+            # ── E3000 KHÔNG PHẢI LỖI. [DEV-248]
+            #
+            # `api/errors.json` định nghĩa đúng chữ: *"E3000 POLICY_ASK — Cần người (không phải
+            # lỗi; status pending)"*. Router tôn trọng điều đó ở nhánh CỔNG (quyết định ASK trước
+            # khi chạy) nhưng KHÔNG ở nhánh này: một năng lực tự thấy cần người — `arch.map_hw`
+            # gặp xung đột chân, `kg.review_facts` gặp fact cần xác nhận — ném E3000 và bị ghi là
+            # `failed`.
+            #
+            # Hậu quả đo được 24/09/2026 khi chạy thật: `arch.map_hw` báo hỏng giữa một chuỗi
+            # đang chạy tốt, chuỗi tính nó vào ngưỡng leo thang, và người dùng thấy một dấu ✗ cho
+            # một CÂU HỎI. Ba năng lực khai `ask` trong hợp đồng (ARCH-03, KG-05, PLAN-03) đều đi
+            # qua đây, nên cùng một chỗ sai làm cả ba không hỏi được.
+            #
+            # Đưa vào hàng đợi giống nhánh cổng: `gate.decide` / `chat.answer` chạy tiếp được, và
+            # tham số được giữ để lời gọi tiếp tục đúng chỗ nó dừng.
+            if e.code == "E3000":
+                run = CapabilityRun(run_id, cap_id, "pending", None, dec, ms,
+                                    e.to_rpc()["data"] | {"message": str(e)},
+                                    undo=reg.spec.undo)
+                self.queue.append(run)
+                self._cho[run_id] = (cap_id, params, ctx, features)
+                self._luu_cho(run_id, cap_id, params, ctx, features, dec)
+                self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
+                                             **({"chain": dict(chuoi)} if chuoi else {}),
+                                             "status": "pending", "error": e.code,
+                                             "duration_ms": ms})
+                return run
             self._log("cap.run.finish", {"run_id": run_id, "cap": cap_id,
                                      **({"chain": dict(chuoi)} if chuoi else {}), "status": "failed", "error": e.code, "duration_ms": ms})
             return CapabilityRun(run_id, cap_id, "failed", None, dec, ms, e.to_rpc()["data"] | {"message": str(e)})

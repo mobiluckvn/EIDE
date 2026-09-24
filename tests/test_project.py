@@ -59,19 +59,22 @@ def test_trung_ten_van_E2001_khi_chinh_sach_la_error(tmp_path, workspace):
     assert run.status == "failed" and run.error["eide_code"] == "E2001"
 
 
-def test_similar_name_returns_existing(tmp_path, workspace):
-    """Gõ NHẦM thì trả `existing` để Orchestrator hỏi (CDS PROJECT-01 bước 2).
+def test_go_nham_van_bao_existing_nhung_KHONG_dung_chuoi(tmp_path, workspace):
+    """Gõ NHẦM vẫn được BÁO qua `existing` (CDS PROJECT-01 bước 2) — nhưng nút vẫn tạo. [DEV-247]
 
-    Bản trước bài kiểm này dùng cặp *"robot cân bằng hai bánh"* ↔ *"… v2"* — mà `-v2` là một
-    loạt có chủ ý, không phải gõ nhầm ([DEV-198]). Bài kiểm khi ấy đang bảo vệ đúng cái lỗi chủ
-    sản phẩm báo. Ý ĐỊNH của nó vẫn đúng và được giữ nguyên; chỉ đổi dữ liệu sang một lỗi gõ
-    thật, để nó kiểm thứ nó định kiểm.
+    Bản trước bài kiểm này đòi `created is False`, tức nút `project.create` thành một no-op. Đo
+    24/09/2026: đúng cái no-op ấy làm `req.elicit` ngay sau đó chết với "cần một dự án đang mở",
+    và cả chuỗi 14 nút mất vì một phép so tên.
+
+    Điều bài kiểm canh vẫn nguyên: phép nhận gõ nhầm phải NỔ và phải nói giống dự án nào. Thứ đổi
+    là hệ quả — báo mà không chặn.
     """
     r = _router(tmp_path)
     ctx = Context(project_dir=workspace)
     r.invoke("project.create", {"text": "robot cân bằng hai bánh"}, ctx)
     run = r.invoke("project.create", {"text": "robot cân bằng hai bnáh"}, ctx)
-    assert run.status == "done" and run.result["created"] is False and run.result["existing"]
+    assert run.status == "done" and run.result["existing"], "gõ nhầm phải được báo"
+    assert run.result["created"] is True, "báo thì báo, nhưng không được làm nút thành no-op"
 
 
 def test_hau_to_v2_la_mot_LOAT_nen_tao_that(tmp_path, workspace):
@@ -172,12 +175,19 @@ def test_GO_NHAM_that_thi_van_bat_duoc(a, b):
     assert _similar(a, b), f"{a} vs {b} lọt lưới gõ nhầm"
 
 
-def test_VAN_TAO_thi_tao_that_chu_khong_phai_mot_loi_tu_choi(workspace):
-    """PROJECT-01 bước 2: tên gần giống thì "trả `existing` để Orchestrator **HỎI**".
+def test_ten_gan_giong_VAN_TAO_va_hoi_sau(workspace):
+    """Tên gần giống thì TẠO rồi hỏi sau, không dừng cả chuỗi. [DEV-247]
 
-    Một câu hỏi phải có đường trả lời "CÓ". Không có `create_when_exists="new"` thì `ask` là
-    một lời từ chối đội lốt câu hỏi.
+    Nhánh cũ trả `created: False` — một nút `done` mà KHÔNG LÀM GÌ. Đo 24/09/2026 trên câu
+    *"làm bộ đo độ ẩm đất dùng ATmega328P"*: `project.create` báo xong, thư mục không tồn tại, và
+    `req.elicit` ngay sau đó chết với "cần một dự án đang mở" — cả chuỗi 14 nút mất vì một phép
+    so tên.
+
+    Lời cảnh báo KHÔNG bị bỏ: nó thành một điểm cần làm rõ trong chính dự án mới, nơi người dùng
+    sẽ đọc nó cùng những điểm khác. Tạo thêm một dự án thì hoàn tác được; làm chết một chuỗi 14
+    nút thì không.
     """
+    from eide_core import store
     from eide_core.ledger import Ledger
     from eide_core.policy import PolicyGate
     from eide_core.router import Context, Router
@@ -186,15 +196,16 @@ def test_VAN_TAO_thi_tao_that_chu_khong_phai_mot_loi_tu_choi(workspace):
     r.invoke("project.create", {"text": "may cnc lan"}, Context(project_dir=workspace))
 
     ctx = Context(project_dir=workspace)
-    cho = r.invoke("project.create", {"text": "may cnc lan usb"}, ctx)
-    assert cho.result["created"] is False, "không hỏi khi tên gần giống"
-    assert cho.result["existing"], "hỏi mà không nói giống cái nào"
+    moi_ra = r.invoke("project.create", {"text": "may cnc lan usb"}, ctx)
+    assert moi_ra.result["created"] is True, "tên gần giống không được làm nút thành no-op"
+    assert moi_ra.result["existing"], "tạo rồi vẫn phải nói giống dự án nào"
+    root = workspace / moi_ra.result["project_id"]
+    assert (root / ".eide").is_dir(), "thư mục dự án phải CÓ THẬT — nút sau đọc nó"
 
-    ctx2 = Context(project_dir=workspace)
-    ctx2.extra["create_when_exists"] = "new"
-    van = r.invoke("project.create", {"text": "may cnc lan usb"}, ctx2)
-    assert van.result["created"] is True, "trả lời CÓ mà vẫn không tạo"
-    assert (workspace / van.result["project_id"] / ".eide").is_dir()
+    # Lời cảnh báo đi về chỗ người tìm, không biến mất.
+    with store.open_store(store.store_path(root)) as c:
+        van = " ".join(str(x[0]) for x in c.execute("SELECT text FROM clarification"))
+    assert "gần giống" in van and "may-cnc-lan" in van
 
 
 def test_bo_so_cuoi_khong_duoc_NUOT_chu_cai_cua_mot_tu_that():

@@ -93,12 +93,12 @@ def test_sinh_ma_bi_chan_TRUOC_va_chay_duoc_SAU(du_an):
     r, ctx, root = du_an
 
     run = r.invoke("code.generate_module", {"step_ref": "F-01/s1"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
 
     r.quyet_dinh(KHOA, "approve", ctx_goi_y=ctx)
     run2 = r.invoke("code.generate_module", {"step_ref": "F-01/s1"}, ctx)
     # Qua được cổng G1 là đủ — bước sau có thể hỏng vì thiếu mô hình, nhưng KHÔNG được là E3000.
-    assert not (run2.status == "failed" and run2.error["eide_code"] == "E3000"), run2.error
+    assert not (run2.status == "pending" and run2.error["eide_code"] == "E3000"), run2.error
 
 
 # ---------- dấu vết

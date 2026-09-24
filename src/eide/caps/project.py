@@ -89,7 +89,25 @@ def _similar(a: str, b: str) -> bool:
         return False                       # cùng gốc, khác số ⇒ loạt có chủ ý
     if abs(len(a) - len(b)) <= 2 and _lev(a, b) <= 2:
         return True
-    return len(set(a.split("-")) & set(b.split("-")) - {"du", "an", "robot"}) >= 2
+    return len(_tu_khoa(a) & _tu_khoa(b)) >= 2
+
+
+#: Từ KHÔNG mang thông tin phân biệt dự án: từ nối, từ chung, và MÃ CHIP.
+#:
+#: Mã chip là chỗ đo được 24/09/2026: `lam-bo-do-do-am-dat-dung-atmega328p` và
+#: `bo-dem-xung-cho-atmega328p` chia nhau đúng hai từ — `bo` và `atmega328p` — nên `_similar`
+#: kết luận "gần giống" cho hai dự án chẳng liên quan gì. Hai dự án dùng CÙNG một con chip là
+#: chuyện thường nhất trên đời; lấy điều ấy làm bằng chứng gõ nhầm thì mọi dự án thứ hai trên
+#: cùng một chip đều bị hỏi. [DEV-247]
+TU_KHONG_PHAN_BIET = frozenset({"du", "an", "robot", "bo", "may", "mach", "thiet", "bi", "cho",
+                                "dung", "voi", "va", "tu", "lam", "he", "thong"})
+
+
+def _tu_khoa(ten: str) -> set[str]:
+    """Từ khoá THẬT của một tên dự án: bỏ từ chung và bỏ mã chip."""
+    from eide_core.isa import isa_cua_chip
+    return {t for t in ten.split("-")
+            if t and t not in TU_KHONG_PHAN_BIET and not isa_cua_chip(t)}
 
 
 def _lev(a: str, b: str) -> int:
@@ -183,8 +201,19 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
                     "next": ["req.elicit"]}
         raise EideError("E2001", f"Dự án '{slug}' đã tồn tại", options=["reuse", "clone", "new"], path=str(same[0]))
     near = [{"id": p.name, "path": str(p)} for p in existing if _similar(p.name, slug)]
-    if near and policy == "ask":
-        return {"project_id": slug, "path": str(workspace / slug), "created": False, "existing": near, "next": ["chat.clarify"]}
+    # ── TÊN GẦN GIỐNG: VẪN TẠO, và BÁO ra dự án gần giống. [DEV-247]
+    #
+    # Nhánh cũ trả `{created: false, next: ["chat.clarify"]}` — một nút `done` mà KHÔNG LÀM GÌ.
+    # Đo 24/09/2026 trên câu *"làm bộ đo độ ẩm đất dùng ATmega328P"*: `project.create` báo xong,
+    # thư mục không tồn tại, và `req.elicit` ngay sau đó chết với "cần một dự án đang mở". Cả
+    # chuỗi 14 nút mất vì một phép so tên.
+    #
+    # Hợp đồng nói *"trả existing để Orchestrator HỎI (Z-02)"* — nhưng Orchestrator không hỏi,
+    # nó đi tiếp. Giữa hai đường: (a) dựng phép hỏi ở Orchestrator, (b) tạo dự án rồi báo ra dự
+    # án gần giống — chọn (b) cho tới khi Đ6 nối S3 vào đường sống. Lý do: người dùng vừa nói rõ
+    # họ muốn dự án nào, một tên GẦN GIỐNG không phải một xung đột, và `existing` vẫn được trả về
+    # nguyên vẹn nên giao diện mời gộp được. Tạo thêm một dự án thì hoàn tác được; làm chết một
+    # chuỗi 14 nút thì không.
     root = workspace / slug
     eide = root / EIDE_DIR
     for d in SUBDIRS:
@@ -238,6 +267,23 @@ def create(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
         nxt.append("archive.explore")
     if not nxt:
         nxt.append("search.reference_projects")
+    # Dự án GẦN GIỐNG không bị bỏ quên: nó thành một điểm cần làm rõ trong chính dự án mới.
+    #
+    # Đây là nửa còn lại của [DEV-247]. Nhánh cũ DỪNG cả chuỗi để hỏi; nhánh mới tạo dự án rồi
+    # hỏi SAU — người dùng không mất 14 nút vì một phép so tên, mà cũng không mất lời cảnh báo.
+    if near:
+        try:
+            from eide.caps.req import ghi_clarification
+            ghi_clarification(root, [{
+                "kind": "gap",
+                "text": "Dự án mới `" + slug + "` có tên gần giống "
+                        + ", ".join("`" + x["id"] + "`" for x in near[:3])
+                        + ". Nếu đây là cùng một việc thì nên gộp, đừng để hai dự án song song.",
+                "suggestion": "Muốn dùng dự án cũ: mở nó rồi bảo tác tử làm tiếp ở đó. Muốn giữ "
+                              "hai dự án: bỏ qua điểm này.",
+            }], cap="project.create")
+        except Exception:  # noqa: BLE001 — không ghi được lời nhắc thì cũng không được làm hỏng
+            pass          #                 việc tạo dự án vừa xong
     return {"project_id": slug, "path": str(root), "created": True, "existing": near, "next": nxt}
 
 

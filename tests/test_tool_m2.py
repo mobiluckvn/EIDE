@@ -282,7 +282,7 @@ def test_chua_du_ba_lan_dung_bao_E3000(moi_truong):
     run = r.invoke("tool.promote", {"tool_id": "moi_toanh", "target_ns": "hkw"}, ctx)
     assert run.status == "pending"
     sau = r.quyet_dinh(run.run_id, "approve", ctx_goi_y=ctx)
-    assert sau.status == "failed" and sau.error["eide_code"] == "E3000"
+    assert sau.status == "pending" and sau.error["eide_code"] == "E3000"
 
 
 def test_chua_test_bao_E3000(moi_truong):
@@ -291,7 +291,7 @@ def test_chua_test_bao_E3000(moi_truong):
     run = r.invoke("tool.promote", {"tool_id": "chua_kiem", "target_ns": "hkw"}, ctx)
     assert run.status == "pending"
     sau = r.quyet_dinh(run.run_id, "approve", ctx_goi_y=ctx)
-    assert sau.status == "failed" and sau.error["eide_code"] == "E3000"
+    assert sau.status == "pending" and sau.error["eide_code"] == "E3000"
 
 
 def test_bench_mini_chay_acceptance_ba_lan(moi_truong):

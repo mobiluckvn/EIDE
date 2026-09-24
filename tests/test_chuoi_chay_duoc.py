@@ -227,3 +227,57 @@ def test_danh_dau_bo_qua_song_qua_tien_trinh(tmp_path):
     danh_dau_bo_qua_theo_nguoi(root, "r_5", "n1")
     kh = doc_ke_hoach(root, "r_5")
     assert kh["graph"]["bo_qua_theo_nguoi"] == ["n1"]
+
+
+# ──────────────────────────────── DEV-247: tên gần giống không được làm nút thành no-op
+
+def test_similar_bo_qua_ma_chip(tmp_path):
+    """Hai dự án dùng CÙNG một con chip là chuyện thường nhất trên đời. [DEV-247]
+
+    Đo 24/09/2026: `lam-bo-do-do-am-dat-dung-atmega328p` và `bo-dem-xung-cho-atmega328p` chia nhau
+    đúng hai từ — `bo` và `atmega328p` — nên `_similar` kết luận "gần giống" cho hai dự án chẳng
+    liên quan gì, và nhánh gần-giống làm chết cả chuỗi 14 nút.
+    """
+    from eide.caps.project import _similar
+    assert not _similar("lam-bo-do-do-am-dat-dung-atmega328p", "bo-dem-xung-cho-atmega328p")
+    assert not _similar("may-do-nhiet-do-stm32f103", "bo-dem-xung-stm32f103")
+    # Phép bắt gõ nhầm và phép bắt trùng từ khoá THẬT vẫn nguyên
+    assert _similar("robot-hai-bnah", "robot-hai-banh")
+    assert _similar("may-do-nhiet-do-i2c", "may-do-nhiet-do-spi")
+
+
+# ──────────────────────────────── DEV-248: E3000 là câu hỏi, không phải lỗi
+
+def test_E3000_tu_nang_luc_thanh_pending_va_vao_hang_doi(tmp_path):
+    """`api/errors.json`: *"E3000 POLICY_ASK — Cần người (không phải lỗi; status pending)"*.
+
+    Router tôn trọng điều đó ở nhánh CỔNG nhưng không ở nhánh năng lực tự ném. Hậu quả đo được
+    24/09/2026: `arch.map_hw` gặp xung đột chân, ném E3000, và chuỗi ghi một dấu ✗ cho một CÂU
+    HỎI — rồi tính nó vào ngưỡng leo thang. Ba năng lực khai `ask` trong hợp đồng (ARCH-03, KG-05,
+    PLAN-03) đều đi qua đúng chỗ ấy.
+    """
+    from eide_core.errors import EideError
+    from eide_core.ledger import Ledger
+    from eide_core.policy import PolicyGate
+    from eide_core.registry import get_registry
+    from eide_core.router import Router
+
+    def _hoi(params, ctx):
+        raise EideError("E3000", "cần người quyết", rule="TEST-01", gate="*")
+
+    # TRẢ LẠI thân hàm cũ trong `finally`: registry là đối tượng dùng chung cả phiên pytest, và
+    # một bài kiểm để lại thân hàm của mình trong đó sẽ làm bài kiểm KHÁC đỏ ở chỗ không liên
+    # quan — `test_specs_consistency` đọc docstring của mọi handler và không thấy trích dẫn spec
+    # trong hàm giả này. Tôi đạp phải đúng chỗ ấy khi viết bài kiểm này.
+    reg = get_registry()
+    muc = reg.get("chat.restate")
+    cu_handler = muc.handler                                    # type: ignore[attr-defined]
+    try:
+        muc.handler = _hoi                                      # type: ignore[attr-defined]
+        r = Router(gate=PolicyGate(), ledger=Ledger(tmp_path / "l.jsonl"))
+        run = r.invoke("chat.restate", {"intent": {}, "chain": []}, Context(project_dir=tmp_path))
+    finally:
+        muc.handler = cu_handler                                # type: ignore[attr-defined]
+    assert run.status == "pending", "E3000 không phải lỗi"
+    assert run.error["eide_code"] == "E3000"
+    assert any(x.run_id == run.run_id for x in r.queue), "phải vào hàng đợi để người quyết được"

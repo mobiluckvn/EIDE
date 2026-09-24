@@ -262,7 +262,9 @@ def test_tac_tu_khong_duoc_ha_uu_tien_M(du_an):
     ids = them_req(root, [{"id": "FR-CTL-01", "kind": "FR", "text": "Điều khiển PID 100 Hz",
                            "priority": "M"}])
     res = r.invoke("req.prioritize", {"reqset_ids": ids}, ctx)
-    assert res.status == "failed"
+    # E3000 là CÂU HỎI, không phải lỗi (`api/errors.json`: "không phải lỗi; status pending").
+    # Xem [DEV-248]: trước bản ấy Router ghi mọi E3000 do năng lực ném thành `failed`.
+    assert res.status == "pending"
     assert res.error["eide_code"] == "E3000"
     with store.open_store(store.store_path(root)) as c:
         (p,) = c.execute("SELECT priority FROM requirement WHERE id='FR-CTL-01'").fetchone()
@@ -328,7 +330,7 @@ def test_tac_dong_tu_3_module_thi_hoi_nguoi(du_an):
     them_req(root, [{"id": "FR-CTL-01", "kind": "FR", "text": "PID 100 Hz",
                      "trace": ["mod_a", "mod_b", "mod_c", "TC-1"]}])
     res = r.invoke("req.change_impact", {"delta": {"req_ids": ["FR-CTL-01"]}}, ctx)
-    assert res.status == "failed"
+    assert res.status == "pending"        # hỏi người, không phải lỗi — [DEV-248]
     assert res.error["eide_code"] == "E3000"
 
 

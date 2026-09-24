@@ -343,7 +343,7 @@ def test_tac_tu_khong_duoc_tu_accept(du_an):
     r, ctx, _ = du_an
     run = r.invoke("kg.review_facts", {"group": "normalized", "decision": "accept",
                                        "actor": "agent"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
 
 
 def test_review_theo_nhom_prefix_subject(du_an):

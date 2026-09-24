@@ -41,7 +41,7 @@ def test_set_autonomy_relax_needs_human(tmp_path, workspace):
     assert r.invoke("policy.set_autonomy", {"level": "A4", "by": "agent"}, Context(project_dir=workspace / "test")).status == "pending"
     pctx = Context(project_dir=workspace / "test", actor="human")
     run = r.invoke("policy.set_autonomy", {"level": "A4", "by": "agent"}, pctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
     assert r.invoke("policy.set_autonomy", {"level": "A4", "by": "human"}, pctx).result["effective"] == "A4"
     assert r.invoke("policy.set_autonomy", {"level": "A1", "by": "agent"}, pctx).result["effective"] == "A1"
 

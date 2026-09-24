@@ -274,7 +274,7 @@ def test_lap_lai_lan_ba_thi_hoi_nguoi(du_an):
                   ("r_2", "{}", "failed", json.dumps({"steps": [], "replan_count": 2})))
         c.commit()
     run = r.invoke("plan.replan", {"plan_id": "r_2", "reason": "conflict"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
 
 
 # ---------- PLAN-03 / cổng G1: `touches` (PRS-16 §4) và ba đặc trưng từng chết

@@ -171,7 +171,7 @@ def test_network_chan_quet_ngoai_mang_lab(rt):
     """
     r, ctx = rt
     run = r.invoke("discover.network", {"subnet": "10.0.0.0/8"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
 
 
 def test_network_khong_co_cong_cu_mdns_thi_noi_ra(rt, monkeypatch):

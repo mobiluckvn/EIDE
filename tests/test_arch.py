@@ -207,7 +207,7 @@ def test_hai_module_doi_cung_tai_nguyen_thi_ASK(du_an):
         {"id": "mod_a", "name": "cảm biến i2c", "responsibility": "đọc qua i2c"},
         {"id": "mod_b", "name": "eeprom i2c", "responsibility": "lưu qua i2c"}])
     run = r.invoke("arch.map_hw", {"module_ids": ids, "passport": "st.stm32f411ce@1.0.0"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
 
 
 def test_khong_xung_dot_thi_ghi_hw_map(du_an):
@@ -243,7 +243,7 @@ def test_vuot_85_phan_tram_flash_thi_ASK(du_an):
     them_fact(root, "chip:tiny/mem:FLASH", 8, "kb", fid="f_flash")
     ids = them_module(root, [{"id": f"mod_app_{i}", "name": f"app {i}"} for i in range(3)])
     run = r.invoke("arch.memory_budget", {"module_ids": ids, "passport": "tiny@1.0.0"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
 
 
 def test_vua_du_flash_nhung_qua_85_phan_tram_van_khong_dat(du_an):
@@ -258,7 +258,7 @@ def test_vua_du_flash_nhung_qua_85_phan_tram_van_khong_dat(du_an):
     them_fact(root, "chip:vua/mem:FLASH", 13, "kb", fid="f_flash")
     ids = them_module(root, [{"id": f"mod_app_{i}", "name": f"app {i}"} for i in range(3)])
     run = r.invoke("arch.memory_budget", {"module_ids": ids, "passport": "vua@1.0.0"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
     b = run.error["budget"]
     assert b["total"]["flash"] < b["limits"]["flash"], "phải là trường hợp CÒN chỗ trong Flash"
 
@@ -335,7 +335,7 @@ def test_vuot_can_thi_ASK_va_noi_ro_la_dieu_kien_du(du_an):
         {"id": "mod_a", "name": "a", "budget": {"period_ms": 10, "wcet_us": 6000}},
         {"id": "mod_b", "name": "b", "budget": {"period_ms": 20, "wcet_us": 8000}}])
     run = r.invoke("arch.timing_budget", {"module_ids": ["mod_a", "mod_b"]}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E3000"
+    assert run.status == "pending" and run.error["eide_code"] == "E3000"
     assert "CHƯA CHỨNG MINH" in run.error["budget"]["note"]
 
 
