@@ -14,7 +14,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2549 tok · ra 213 tok · 2107 ms · 0.001297 USD
+- dừng: `stop` · vào 2549 tok · ra 213 tok · 1700 ms · 0.001297 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -154,7 +154,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "870819de0f08"
+    "run_id": "0721081a6d11"
    },
    "decision": {
     "decision": "APPROVE",
@@ -162,13 +162,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "870819de0f08"
+   "run_id": "0721081a6d11"
   },
-  "hash": "8fa1c20e67c05955003bbb2cd91c9d686e13dfc551d65ea81c86f0eb604ae5f3",
+  "hash": "0fc184e6e22e2e78d34dbdd4242abeded83703857b01d98eb0eb2abc3c53e822",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:08:48.931057+00:00"
+  "ts": "2026-09-24T06:32:13.528207+00:00"
  },
  {
   "actor": "agent",
@@ -178,52 +178,52 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "870819de0f08"
+    "run_id": "0721081a6d11"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "870819de0f08"
+   "run_id": "0721081a6d11"
   },
-  "hash": "56e9143934173214c8839110e52b5bcb23f8bf7c26f1a3bb6102e45cffe0fc02",
+  "hash": "6870fde1c14a053b89b5b48abf3d1518d95c776a7c35b2df441f72502b459872",
   "kind": "gate.decision",
-  "prev_hash": "8fa1c20e67c05955003bbb2cd91c9d686e13dfc551d65ea81c86f0eb604ae5f3",
+  "prev_hash": "0fc184e6e22e2e78d34dbdd4242abeded83703857b01d98eb0eb2abc3c53e822",
   "seq": 2,
-  "ts": "2026-09-24T04:08:48.931410+00:00"
+  "ts": "2026-09-24T06:32:13.528629+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "870819de0f08"
+    "run_id": "0721081a6d11"
    },
    "project": "do-bao-dong-gia",
-   "session_id": "s_8c7620e16408"
+   "session_id": "s_99540eab89d0"
   },
-  "hash": "d3634dc5c0f278f6f8091853edcf39956ec0988ad46d9746a04d1b27a0ed80d4",
+  "hash": "5f395033fa916a402286c87abdcf50c2041fbc13ed8a6d7a29ef3e7f1b3deda3",
   "kind": "session.open",
-  "prev_hash": "56e9143934173214c8839110e52b5bcb23f8bf7c26f1a3bb6102e45cffe0fc02",
+  "prev_hash": "6870fde1c14a053b89b5b48abf3d1518d95c776a7c35b2df441f72502b459872",
   "seq": 3,
-  "ts": "2026-09-24T04:08:48.937577+00:00"
+  "ts": "2026-09-24T06:32:13.535246+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "95ae36dbcd87625f",
-   "run_id": "870819de0f08",
+   "duration_ms": 23,
+   "result_hash": "74fb0fd1161f6c05",
+   "run_id": "0721081a6d11",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2932173abc9bb72ec788fafe47c876cebbeb447c902e07d43a2724404fcf7c7a",
+  "hash": "1b8d1c3c6908a462d9a8c61d81524f0e61dafa782f4378d284ded4aa9a0f403e",
   "kind": "cap.run.finish",
-  "prev_hash": "d3634dc5c0f278f6f8091853edcf39956ec0988ad46d9746a04d1b27a0ed80d4",
+  "prev_hash": "5f395033fa916a402286c87abdcf50c2041fbc13ed8a6d7a29ef3e7f1b3deda3",
   "seq": 4,
-  "ts": "2026-09-24T04:08:48.938705+00:00"
+  "ts": "2026-09-24T06:32:13.536449+00:00"
  },
  {
   "actor": "agent",
@@ -233,7 +233,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e96d5510914c"
+    "run_id": "66250dabdbb9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -241,13 +241,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e96d5510914c"
+   "run_id": "66250dabdbb9"
   },
-  "hash": "2d3c9d26ef32ce5071f0456865bb7f88faddfc9ea13819db00aaa9b8fe3e1090",
+  "hash": "003517002ed1ad74ae7e23dfd6b00b0dde19e203e0858ea0b5abea5214b2346c",
   "kind": "cap.run.start",
-  "prev_hash": "2932173abc9bb72ec788fafe47c876cebbeb447c902e07d43a2724404fcf7c7a",
+  "prev_hash": "1b8d1c3c6908a462d9a8c61d81524f0e61dafa782f4378d284ded4aa9a0f403e",
   "seq": 5,
-  "ts": "2026-09-24T04:08:48.945476+00:00"
+  "ts": "2026-09-24T06:32:13.543812+00:00"
  },
  {
   "actor": "agent",
@@ -257,20 +257,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e96d5510914c"
+    "run_id": "66250dabdbb9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e96d5510914c"
+   "run_id": "66250dabdbb9"
   },
-  "hash": "d41328f1e8a882fdd5a43934f35e6fa3000e09abaaf09809fbbbeac94ada82ce",
+  "hash": "30b2094ec4eb3d7ddf707b3ed60202ea0e9c6534d37d525feb9b5893ac00a43a",
   "kind": "gate.decision",
-  "prev_hash": "2d3c9d26ef32ce5071f0456865bb7f88faddfc9ea13819db00aaa9b8fe3e1090",
+  "prev_hash": "003517002ed1ad74ae7e23dfd6b00b0dde19e203e0858ea0b5abea5214b2346c",
   "seq": 6,
-  "ts": "2026-09-24T04:08:48.945577+00:00"
+  "ts": "2026-09-24T06:32:13.543925+00:00"
  },
  {
   "actor": "agent",
@@ -278,15 +278,15 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "e96d5510914c",
+   "run_id": "66250dabdbb9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "221e374992b4eeee04becd60f467a32d9f728c8b7da60c798aaa7862474dbef8",
+  "hash": "328a1035a04112ace240e2dc804f579abc8aad76d93271a6f6ca8e228e701543",
   "kind": "cap.run.finish",
-  "prev_hash": "d41328f1e8a882fdd5a43934f35e6fa3000e09abaaf09809fbbbeac94ada82ce",
+  "prev_hash": "30b2094ec4eb3d7ddf707b3ed60202ea0e9c6534d37d525feb9b5893ac00a43a",
   "seq": 7,
-  "ts": "2026-09-24T04:08:48.947204+00:00"
+  "ts": "2026-09-24T06:32:13.545648+00:00"
  },
  {
   "actor": "agent",
@@ -296,7 +296,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "040a7dea880d"
+    "run_id": "e527ac221d02"
    },
    "decision": {
     "decision": "APPROVE",
@@ -304,13 +304,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "040a7dea880d"
+   "run_id": "e527ac221d02"
   },
-  "hash": "3b98a9485f3fff985bac42eb17a1c023f7d1eef5139344c2837e30766d9fa924",
+  "hash": "0e197b1b0b0ec08af573d925f99cd8bd73c6e5441691900ec73bd34452c7e361",
   "kind": "cap.run.start",
-  "prev_hash": "221e374992b4eeee04becd60f467a32d9f728c8b7da60c798aaa7862474dbef8",
+  "prev_hash": "328a1035a04112ace240e2dc804f579abc8aad76d93271a6f6ca8e228e701543",
   "seq": 8,
-  "ts": "2026-09-24T04:08:48.948656+00:00"
+  "ts": "2026-09-24T06:32:13.547100+00:00"
  },
  {
   "actor": "agent",
@@ -320,20 +320,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "040a7dea880d"
+    "run_id": "e527ac221d02"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "040a7dea880d"
+   "run_id": "e527ac221d02"
   },
-  "hash": "535ed6803ec3fb50e94c88ff333c2b83195c6f54e70a7b793a37e77d6c89cab5",
+  "hash": "85a07ac6558a96aac5522033a1d6e0d80552f0c5fe67f496d4c4ac5a35a0cd7b",
   "kind": "gate.decision",
-  "prev_hash": "3b98a9485f3fff985bac42eb17a1c023f7d1eef5139344c2837e30766d9fa924",
+  "prev_hash": "0e197b1b0b0ec08af573d925f99cd8bd73c6e5441691900ec73bd34452c7e361",
   "seq": 9,
-  "ts": "2026-09-24T04:08:48.948727+00:00"
+  "ts": "2026-09-24T06:32:13.547179+00:00"
  },
  {
   "actor": "agent",
@@ -341,15 +341,15 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "040a7dea880d",
+   "run_id": "e527ac221d02",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0d4e172de2162ccbd7577c825fba3280724086cd446fe3e5b2ad37345ca0fb4b",
+  "hash": "22689ab0584f37a505242a68c1f9d95b4a477a7445b1982eaa7ceccc9a9dba5c",
   "kind": "cap.run.finish",
-  "prev_hash": "535ed6803ec3fb50e94c88ff333c2b83195c6f54e70a7b793a37e77d6c89cab5",
+  "prev_hash": "85a07ac6558a96aac5522033a1d6e0d80552f0c5fe67f496d4c4ac5a35a0cd7b",
   "seq": 10,
-  "ts": "2026-09-24T04:08:48.950340+00:00"
+  "ts": "2026-09-24T06:32:13.548850+00:00"
  },
  {
   "actor": "agent",
@@ -359,7 +359,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "e53480036562"
+    "run_id": "7c04f5d3a91f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -367,13 +367,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e53480036562"
+   "run_id": "7c04f5d3a91f"
   },
-  "hash": "f27b923562c499325bed444874ce4c405025e864bff0bdd0128365f6eec53d66",
+  "hash": "a1a1ad0b0e1eaa4bb26f3460244b9a2a533f8594de8ba9eec4384dc05566cb56",
   "kind": "cap.run.start",
-  "prev_hash": "0d4e172de2162ccbd7577c825fba3280724086cd446fe3e5b2ad37345ca0fb4b",
+  "prev_hash": "22689ab0584f37a505242a68c1f9d95b4a477a7445b1982eaa7ceccc9a9dba5c",
   "seq": 11,
-  "ts": "2026-09-24T04:08:48.978439+00:00"
+  "ts": "2026-09-24T06:32:13.578847+00:00"
  },
  {
   "actor": "agent",
@@ -383,36 +383,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "e53480036562"
+    "run_id": "7c04f5d3a91f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e53480036562"
+   "run_id": "7c04f5d3a91f"
   },
-  "hash": "2c5f37db9da5ce1e6b48d5a0011648660de8b4c7f3cccee308612f1561613b3e",
+  "hash": "1a71789eadc895bf3ba5abc83076d195e4ca80a3fb95ed310e4af69caefd43a4",
   "kind": "gate.decision",
-  "prev_hash": "f27b923562c499325bed444874ce4c405025e864bff0bdd0128365f6eec53d66",
+  "prev_hash": "a1a1ad0b0e1eaa4bb26f3460244b9a2a533f8594de8ba9eec4384dc05566cb56",
   "seq": 12,
-  "ts": "2026-09-24T04:08:48.978703+00:00"
+  "ts": "2026-09-24T06:32:13.579019+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "4bd813de012d6552",
-   "run_id": "e53480036562",
+   "result_hash": "983eaa7c94ff09ac",
+   "run_id": "7c04f5d3a91f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "02825232bf27b3de281704fbf6cd4d460776ce67a74eacda81570abfd191959c",
+  "hash": "81080c7789ea652bcd053a9de1f222dee35120eecde4e3339b2dc6224d0f1206",
   "kind": "cap.run.finish",
-  "prev_hash": "2c5f37db9da5ce1e6b48d5a0011648660de8b4c7f3cccee308612f1561613b3e",
+  "prev_hash": "1a71789eadc895bf3ba5abc83076d195e4ca80a3fb95ed310e4af69caefd43a4",
   "seq": 13,
-  "ts": "2026-09-24T04:08:48.980556+00:00"
+  "ts": "2026-09-24T06:32:13.581036+00:00"
  },
  {
   "actor": "agent",
@@ -422,7 +422,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "c13e8d7017a1"
+    "run_id": "306cb7fd67c2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -430,13 +430,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c13e8d7017a1"
+   "run_id": "306cb7fd67c2"
   },
-  "hash": "df102afb6ab297c0c495c647cf6a6999cb65eaf75d6f9ee6ed652ae04a1fad46",
+  "hash": "14e4601ebe8cba90133f05f8c3a2b05ff9107e77a3c2c14b6662ae4093529902",
   "kind": "cap.run.start",
-  "prev_hash": "02825232bf27b3de281704fbf6cd4d460776ce67a74eacda81570abfd191959c",
+  "prev_hash": "81080c7789ea652bcd053a9de1f222dee35120eecde4e3339b2dc6224d0f1206",
   "seq": 14,
-  "ts": "2026-09-24T04:08:49.190599+00:00"
+  "ts": "2026-09-24T06:32:13.830470+00:00"
  },
  {
   "actor": "agent",
@@ -446,20 +446,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "c13e8d7017a1"
+    "run_id": "306cb7fd67c2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c13e8d7017a1"
+   "run_id": "306cb7fd67c2"
   },
-  "hash": "8a50eb9998f1f8ca2b9db4dc800f872e3920f28c796ba27dd7f7ba505ec04798",
+  "hash": "106a4c5f16ee7795604dd7bf12b87708fd5777707f2482934d4ea3e1fb5bb018",
   "kind": "gate.decision",
-  "prev_hash": "df102afb6ab297c0c495c647cf6a6999cb65eaf75d6f9ee6ed652ae04a1fad46",
+  "prev_hash": "14e4601ebe8cba90133f05f8c3a2b05ff9107e77a3c2c14b6662ae4093529902",
   "seq": 15,
-  "ts": "2026-09-24T04:08:49.190755+00:00"
+  "ts": "2026-09-24T06:32:13.830719+00:00"
  },
  {
   "actor": "agent",
@@ -467,15 +467,15 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "c13e8d7017a1",
+   "run_id": "306cb7fd67c2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e7725dfccbab466ffc7a0b0c03ba4f4b804e65b34abe2dfce4018cc01189cc6d",
+  "hash": "de4f7848859641ae6b87b65b29771e2fb7bdd8f8088d68733fa6914bb3247bf5",
   "kind": "cap.run.finish",
-  "prev_hash": "8a50eb9998f1f8ca2b9db4dc800f872e3920f28c796ba27dd7f7ba505ec04798",
+  "prev_hash": "106a4c5f16ee7795604dd7bf12b87708fd5777707f2482934d4ea3e1fb5bb018",
   "seq": 16,
-  "ts": "2026-09-24T04:08:49.194336+00:00"
+  "ts": "2026-09-24T06:32:13.834356+00:00"
  },
  {
   "actor": "agent",
@@ -485,7 +485,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "29e79966a7ed"
+    "run_id": "15305879fc80"
    },
    "decision": {
     "decision": "APPROVE",
@@ -493,13 +493,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "29e79966a7ed"
+   "run_id": "15305879fc80"
   },
-  "hash": "87923b4eda2b0a730940082164c63a3eeb9f9c66a4e5515ebf44a09441212806",
+  "hash": "35f1f7adb9fe87b1b7c3c08155fee68b18c8c49fa0fd8fd61e82d2f430adff01",
   "kind": "cap.run.start",
-  "prev_hash": "e7725dfccbab466ffc7a0b0c03ba4f4b804e65b34abe2dfce4018cc01189cc6d",
+  "prev_hash": "de4f7848859641ae6b87b65b29771e2fb7bdd8f8088d68733fa6914bb3247bf5",
   "seq": 17,
-  "ts": "2026-09-24T04:08:49.216565+00:00"
+  "ts": "2026-09-24T06:32:13.858791+00:00"
  },
  {
   "actor": "agent",
@@ -509,27 +509,27 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "29e79966a7ed"
+    "run_id": "15305879fc80"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "29e79966a7ed"
+   "run_id": "15305879fc80"
   },
-  "hash": "ba32bda7738015eb9991729d8ac2ab988a9245b7f7bca121c3b3ffea8778b5a4",
+  "hash": "dc8b89ab4e2b36cb1ae3777b8a51629da095c3d8429faa5588713c4600659894",
   "kind": "gate.decision",
-  "prev_hash": "87923b4eda2b0a730940082164c63a3eeb9f9c66a4e5515ebf44a09441212806",
+  "prev_hash": "35f1f7adb9fe87b1b7c3c08155fee68b18c8c49fa0fd8fd61e82d2f430adff01",
   "seq": 18,
-  "ts": "2026-09-24T04:08:49.216717+00:00"
+  "ts": "2026-09-24T06:32:13.858926+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "29e79966a7ed"
+    "run_id": "15305879fc80"
    },
    "compressions": [
     "cut:C7"
@@ -578,11 +578,11 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "C2": 9
    }
   },
-  "hash": "0dd4722690a9ea3de477fa7611590fe27e9105b354378634dd880f9f5ba6e091",
+  "hash": "3f1d42b26d42341d5f4f60573d2fbeffca0202c8a6e0ffcfa784f4588825b394",
   "kind": "context.bundle",
-  "prev_hash": "ba32bda7738015eb9991729d8ac2ab988a9245b7f7bca121c3b3ffea8778b5a4",
+  "prev_hash": "dc8b89ab4e2b36cb1ae3777b8a51629da095c3d8429faa5588713c4600659894",
   "seq": 19,
-  "ts": "2026-09-24T04:08:49.222923+00:00"
+  "ts": "2026-09-24T06:32:13.865410+00:00"
  },
  {
   "actor": "agent",
@@ -590,10 +590,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "29e79966a7ed"
+    "run_id": "15305879fc80"
    },
    "cost_usd": 0.001297,
-   "latency_ms": 2107,
+   "latency_ms": 1700,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "34ed6073e2ad3cad",
    "request_hash": "64b1cb6c074346bd",
@@ -602,18 +602,18 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "tokens_in": 2549,
    "tokens_out": 213
   },
-  "hash": "64d5167e01725654cab8484ba3d4e7a9abae6c1348c82a0f21e127ee4b5813ff",
+  "hash": "523aa37bdf65e78044181a07a856637331a526be3daeccbe5e4559c9b6a72c4c",
   "kind": "model.call",
-  "prev_hash": "0dd4722690a9ea3de477fa7611590fe27e9105b354378634dd880f9f5ba6e091",
+  "prev_hash": "3f1d42b26d42341d5f4f60573d2fbeffca0202c8a6e0ffcfa784f4588825b394",
   "seq": 20,
-  "ts": "2026-09-24T04:08:51.337644+00:00"
+  "ts": "2026-09-24T06:32:15.568723+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "29e79966a7ed"
+    "run_id": "15305879fc80"
    },
    "confidence": 0.95,
    "intent": "review.ask",
@@ -623,27 +623,27 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    },
    "text": "Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có b"
   },
-  "hash": "75c767f9d26829f012c992e3d8229320dda96be4ee37c9f98571a10f3d9174b3",
+  "hash": "d3ab32e124910a83cc56525ac256415d8cf82993940bf961eeac000679fceb95",
   "kind": "intent",
-  "prev_hash": "64d5167e01725654cab8484ba3d4e7a9abae6c1348c82a0f21e127ee4b5813ff",
+  "prev_hash": "523aa37bdf65e78044181a07a856637331a526be3daeccbe5e4559c9b6a72c4c",
   "seq": 21,
-  "ts": "2026-09-24T04:08:51.340054+00:00"
+  "ts": "2026-09-24T06:32:15.569562+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 2125,
+   "duration_ms": 1711,
    "result_hash": "46ff00bcbfc1fb11",
-   "run_id": "29e79966a7ed",
+   "run_id": "15305879fc80",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4242464e29aae2ea46fd41ec2bff5174af3c251da3fa58ae16d2a77b3f2f9724",
+  "hash": "d70678a6b6c1cf1d58a4fef6d1964a18c2982c4b4ebdeeba6b3a6055a8a451b2",
   "kind": "cap.run.finish",
-  "prev_hash": "75c767f9d26829f012c992e3d8229320dda96be4ee37c9f98571a10f3d9174b3",
+  "prev_hash": "d3ab32e124910a83cc56525ac256415d8cf82993940bf961eeac000679fceb95",
   "seq": 22,
-  "ts": "2026-09-24T04:08:51.341627+00:00"
+  "ts": "2026-09-24T06:32:15.570250+00:00"
  },
  {
   "actor": "agent",
@@ -653,7 +653,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "cb7da822930f"
+    "run_id": "c4cef6e38685"
    },
    "decision": {
     "decision": "APPROVE",
@@ -661,13 +661,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "cb7da822930f"
+   "run_id": "c4cef6e38685"
   },
-  "hash": "b71a4a349373c2553e6febd47a31d31517e836c4a654898471a40e54252be7b0",
+  "hash": "f5810c9c3de8cacb3cf6badef38301e6a7f7ef14e80abb560332d0ceb7a19a48",
   "kind": "cap.run.start",
-  "prev_hash": "4242464e29aae2ea46fd41ec2bff5174af3c251da3fa58ae16d2a77b3f2f9724",
+  "prev_hash": "d70678a6b6c1cf1d58a4fef6d1964a18c2982c4b4ebdeeba6b3a6055a8a451b2",
   "seq": 23,
-  "ts": "2026-09-24T04:08:51.343106+00:00"
+  "ts": "2026-09-24T06:32:15.570984+00:00"
  },
  {
   "actor": "agent",
@@ -677,36 +677,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "cb7da822930f"
+    "run_id": "c4cef6e38685"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "cb7da822930f"
+   "run_id": "c4cef6e38685"
   },
-  "hash": "cb44ceb96eabf4d122d62efe3ecbccdd881ac1f6e4ed5d3c0df4b80218cec623",
+  "hash": "dc8d784f353601a184e36c1eabd855c4df83baf26c2d44b18dbe5f6b17514a59",
   "kind": "gate.decision",
-  "prev_hash": "b71a4a349373c2553e6febd47a31d31517e836c4a654898471a40e54252be7b0",
+  "prev_hash": "f5810c9c3de8cacb3cf6badef38301e6a7f7ef14e80abb560332d0ceb7a19a48",
   "seq": 24,
-  "ts": "2026-09-24T04:08:51.343480+00:00"
+  "ts": "2026-09-24T06:32:15.571208+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.ground",
-   "duration_ms": 4,
+   "duration_ms": 2,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "cb7da822930f",
+   "run_id": "c4cef6e38685",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "080350d8ce1f6f03d4dd1adee5bd1f683206459940c0295e3b5980c2b7b257f7",
+  "hash": "b73fe888f3fdca4e30cdff94a7fcd9219cf8973e1081227d42e09a8ce3c47242",
   "kind": "cap.run.finish",
-  "prev_hash": "cb44ceb96eabf4d122d62efe3ecbccdd881ac1f6e4ed5d3c0df4b80218cec623",
+  "prev_hash": "dc8d784f353601a184e36c1eabd855c4df83baf26c2d44b18dbe5f6b17514a59",
   "seq": 25,
-  "ts": "2026-09-24T04:08:51.347203+00:00"
+  "ts": "2026-09-24T06:32:15.573407+00:00"
  },
  {
   "actor": "agent",
@@ -716,7 +716,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "3cd3a74d1f33"
+    "run_id": "c23de0173c33"
    },
    "decision": {
     "decision": "APPROVE",
@@ -724,13 +724,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3cd3a74d1f33"
+   "run_id": "c23de0173c33"
   },
-  "hash": "44700b3de28adc9f09c8701ec696440e8cee9fd698a77da6d031ec4ee276d6b9",
+  "hash": "63e72352e2d4defdf3b961fcf144aed0ed971c41d2e8eb1a5e183f68e0c68d41",
   "kind": "cap.run.start",
-  "prev_hash": "080350d8ce1f6f03d4dd1adee5bd1f683206459940c0295e3b5980c2b7b257f7",
+  "prev_hash": "b73fe888f3fdca4e30cdff94a7fcd9219cf8973e1081227d42e09a8ce3c47242",
   "seq": 26,
-  "ts": "2026-09-24T04:08:51.348665+00:00"
+  "ts": "2026-09-24T06:32:15.574191+00:00"
  },
  {
   "actor": "agent",
@@ -740,36 +740,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "3cd3a74d1f33"
+    "run_id": "c23de0173c33"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3cd3a74d1f33"
+   "run_id": "c23de0173c33"
   },
-  "hash": "105b37492b99cfbbf6d2dbf7bc347a2037e94e2720eecec64536e030b76af245",
+  "hash": "262f3c70547214672b4ecf79d894c10c8169bca9d2261c3c10bde17d2acd0dbb",
   "kind": "gate.decision",
-  "prev_hash": "44700b3de28adc9f09c8701ec696440e8cee9fd698a77da6d031ec4ee276d6b9",
+  "prev_hash": "63e72352e2d4defdf3b961fcf144aed0ed971c41d2e8eb1a5e183f68e0c68d41",
   "seq": 27,
-  "ts": "2026-09-24T04:08:51.348844+00:00"
+  "ts": "2026-09-24T06:32:15.574310+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
-   "duration_ms": 6,
+   "duration_ms": 4,
    "result_hash": "5e72ebf646cf7a54",
-   "run_id": "3cd3a74d1f33",
+   "run_id": "c23de0173c33",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "79862b872e3f69e6ee4b380b2f924fe2b1ee4a0b5c4d42d8c842498252d63d2a",
+  "hash": "9682a69a7524497aad61ee580ef414d92d9c96738696900996d053c426cbfa30",
   "kind": "cap.run.finish",
-  "prev_hash": "105b37492b99cfbbf6d2dbf7bc347a2037e94e2720eecec64536e030b76af245",
+  "prev_hash": "262f3c70547214672b4ecf79d894c10c8169bca9d2261c3c10bde17d2acd0dbb",
   "seq": 28,
-  "ts": "2026-09-24T04:08:51.355104+00:00"
+  "ts": "2026-09-24T06:32:15.578328+00:00"
  },
  {
   "actor": "agent",
@@ -779,7 +779,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "cd644ba97c7c"
+    "run_id": "dd46a31699a0"
    },
    "decision": {
     "decision": "APPROVE",
@@ -787,13 +787,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "cd644ba97c7c"
+   "run_id": "dd46a31699a0"
   },
-  "hash": "87832325f6ba7a535d601691dc1a37724cec63680e67b1b6b1ff562fb052e489",
+  "hash": "527dc508fe03c423f275e94f7a9f7bf22a7ee9b71c2ce9a9bf448e212ef4b151",
   "kind": "cap.run.start",
-  "prev_hash": "79862b872e3f69e6ee4b380b2f924fe2b1ee4a0b5c4d42d8c842498252d63d2a",
+  "prev_hash": "9682a69a7524497aad61ee580ef414d92d9c96738696900996d053c426cbfa30",
   "seq": 29,
-  "ts": "2026-09-24T04:08:51.357182+00:00"
+  "ts": "2026-09-24T06:32:15.579725+00:00"
  },
  {
   "actor": "agent",
@@ -803,30 +803,30 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "cd644ba97c7c"
+    "run_id": "dd46a31699a0"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "cd644ba97c7c"
+   "run_id": "dd46a31699a0"
   },
-  "hash": "a44c539d9e8c010872d21f07294cc410271a332049471fcdcf8a915def3af865",
+  "hash": "4b18181768dd880a327750abcb2958e5b371a9c744d9084437b78f863e12798b",
   "kind": "gate.decision",
-  "prev_hash": "87832325f6ba7a535d601691dc1a37724cec63680e67b1b6b1ff562fb052e489",
+  "prev_hash": "527dc508fe03c423f275e94f7a9f7bf22a7ee9b71c2ce9a9bf448e212ef4b151",
   "seq": 30,
-  "ts": "2026-09-24T04:08:51.357422+00:00"
+  "ts": "2026-09-24T06:32:15.579909+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "cd644ba97c7c"
+    "run_id": "dd46a31699a0"
    },
    "n": 1,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "steps": [
     {
      "cap": "ingest.index_text",
@@ -859,11 +859,11 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    ],
    "text": "Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Do"
   },
-  "hash": "ffba1e3fd06adf6788b9a0ab1c683f84f6e65f716988a00750b5d2352e962b9d",
+  "hash": "99a8434dfc1ad2ab3a18f73006f9a81573bd34d983a094f3daa3102a1eaab98d",
   "kind": "run.started",
-  "prev_hash": "a44c539d9e8c010872d21f07294cc410271a332049471fcdcf8a915def3af865",
+  "prev_hash": "4b18181768dd880a327750abcb2958e5b371a9c744d9084437b78f863e12798b",
   "seq": 31,
-  "ts": "2026-09-24T04:08:51.373050+00:00"
+  "ts": "2026-09-24T06:32:15.591224+00:00"
  },
  {
   "actor": "agent",
@@ -871,18 +871,18 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "ingest.index_text",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "cd644ba97c7c"
+    "run_id": "dd46a31699a0"
    },
    "i": 1,
    "node_id": "n1",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "c0a16c9016a9839af5a755e7d13e455eb6e29ba378e1d00a9b6dee78b9b54df5",
+  "hash": "72ed06af637e55f46973a7dbe99ff411345611de7d95182b36f9c98558add5ed",
   "kind": "run.step_started",
-  "prev_hash": "ffba1e3fd06adf6788b9a0ab1c683f84f6e65f716988a00750b5d2352e962b9d",
+  "prev_hash": "99a8434dfc1ad2ab3a18f73006f9a81573bd34d983a094f3daa3102a1eaab98d",
   "seq": 32,
-  "ts": "2026-09-24T04:08:51.373567+00:00"
+  "ts": "2026-09-24T06:32:15.591628+00:00"
  },
  {
   "actor": "agent",
@@ -894,7 +894,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -902,13 +902,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "057b9f2e5e34"
+   "run_id": "75351a386dba"
   },
-  "hash": "1a288f4fd3fee1c10736ee080c1d264dba2936cacfa6c205727f7e908e471bb8",
+  "hash": "8f12536f0ad415e6c4ab6550f0b5afe180015d01cc8a624bf45542c450dc7c95",
   "kind": "cap.run.start",
-  "prev_hash": "c0a16c9016a9839af5a755e7d13e455eb6e29ba378e1d00a9b6dee78b9b54df5",
+  "prev_hash": "72ed06af637e55f46973a7dbe99ff411345611de7d95182b36f9c98558add5ed",
   "seq": 33,
-  "ts": "2026-09-24T04:08:51.374505+00:00"
+  "ts": "2026-09-24T06:32:15.592367+00:00"
  },
  {
   "actor": "agent",
@@ -920,20 +920,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R1",
    "rule": "TIER-T1",
-   "run_id": "057b9f2e5e34"
+   "run_id": "75351a386dba"
   },
-  "hash": "dc98fc5f2652462af62e9489ac061ca02b623a2677fdbc70ffae7fc01e6af3c8",
+  "hash": "763a9da0ff689ae23691758d6847a29bad841a0333348097da0242614523d549",
   "kind": "gate.decision",
-  "prev_hash": "1a288f4fd3fee1c10736ee080c1d264dba2936cacfa6c205727f7e908e471bb8",
+  "prev_hash": "8f12536f0ad415e6c4ab6550f0b5afe180015d01cc8a624bf45542c450dc7c95",
   "seq": 34,
-  "ts": "2026-09-24T04:08:51.374614+00:00"
+  "ts": "2026-09-24T06:32:15.592439+00:00"
  },
  {
   "actor": "agent",
@@ -943,19 +943,19 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "duration_ms": 1,
    "result_hash": "13fcedb62a880650",
-   "run_id": "057b9f2e5e34",
+   "run_id": "75351a386dba",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b9b076519348cd090165361cab0a94d063456d660c11f7b448bd5f5b59bddb44",
+  "hash": "c13b8978d5d2c9c4cbd326ec100e64d52e733951639404ff40d61ce8b1819288",
   "kind": "cap.run.finish",
-  "prev_hash": "dc98fc5f2652462af62e9489ac061ca02b623a2677fdbc70ffae7fc01e6af3c8",
+  "prev_hash": "763a9da0ff689ae23691758d6847a29bad841a0333348097da0242614523d549",
   "seq": 35,
-  "ts": "2026-09-24T04:08:51.376271+00:00"
+  "ts": "2026-09-24T06:32:15.593890+00:00"
  },
  {
   "actor": "agent",
@@ -964,14 +964,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 1,
    "node_id": "n1",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "done"
   },
-  "hash": "3d00e7d56744890ea5fa344cb04a8b616009ea19b9d3545ba96e1265ab0d21bd",
+  "hash": "3cf29d59ec0fba74a4daa662e88e2839b9a42942d4f16a4e82fe3c468a6a159c",
   "kind": "run.step_done",
-  "prev_hash": "b9b076519348cd090165361cab0a94d063456d660c11f7b448bd5f5b59bddb44",
+  "prev_hash": "c13b8978d5d2c9c4cbd326ec100e64d52e733951639404ff40d61ce8b1819288",
   "seq": 36,
-  "ts": "2026-09-24T04:08:51.376367+00:00"
+  "ts": "2026-09-24T06:32:15.593960+00:00"
  },
  {
   "actor": "agent",
@@ -980,13 +980,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 2,
    "node_id": "n2",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "805620a2d4753f661ae3e2162a0744c693b5f6eb9c534f3e438d67111341571b",
+  "hash": "5eace5373ba1cb3cc91beaec5a2eaf227baa66e276bafc46f0e5289e94ba23ac",
   "kind": "run.step_started",
-  "prev_hash": "3d00e7d56744890ea5fa344cb04a8b616009ea19b9d3545ba96e1265ab0d21bd",
+  "prev_hash": "3cf29d59ec0fba74a4daa662e88e2839b9a42942d4f16a4e82fe3c468a6a159c",
   "seq": 37,
-  "ts": "2026-09-24T04:08:51.376759+00:00"
+  "ts": "2026-09-24T06:32:15.594265+00:00"
  },
  {
   "actor": "agent",
@@ -998,7 +998,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1006,13 +1006,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "5398fe242ef9"
+   "run_id": "96e91e997be7"
   },
-  "hash": "011b559088c723bc6d04945ffdc4e3b837e05411a2cfd6f4e7be1aaff527c939",
+  "hash": "a0608ea438f77d2b9a31e71e89997ee4556d567e4fae3705cb61d8cdbab81a03",
   "kind": "cap.run.start",
-  "prev_hash": "805620a2d4753f661ae3e2162a0744c693b5f6eb9c534f3e438d67111341571b",
+  "prev_hash": "5eace5373ba1cb3cc91beaec5a2eaf227baa66e276bafc46f0e5289e94ba23ac",
   "seq": 38,
-  "ts": "2026-09-24T04:08:51.377648+00:00"
+  "ts": "2026-09-24T06:32:15.594962+00:00"
  },
  {
   "actor": "agent",
@@ -1024,42 +1024,42 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R1",
    "rule": "TIER-T1",
-   "run_id": "5398fe242ef9"
+   "run_id": "96e91e997be7"
   },
-  "hash": "4b25ea22c9c9905831b829523857fe1130cff7aa31ff51a77b4625e594acb8c0",
+  "hash": "13db5fc2390486d26cb357f53d4bc2870ce2b0554d289e74f20fa6c4571c6b63",
   "kind": "gate.decision",
-  "prev_hash": "011b559088c723bc6d04945ffdc4e3b837e05411a2cfd6f4e7be1aaff527c939",
+  "prev_hash": "a0608ea438f77d2b9a31e71e89997ee4556d567e4fae3705cb61d8cdbab81a03",
   "seq": 39,
-  "ts": "2026-09-24T04:08:51.377799+00:00"
+  "ts": "2026-09-24T06:32:15.595060+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "batch_id": "b_3f233c6793d11a5e",
+   "batch_id": "b_bde2f82f996e9b97",
    "chain": {
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
-   "hash": "214b026fcf70ae28f342b2297fec4d5a13214fde4d1bac9acba95bfe53484b3c",
+   "hash": "bf1fa90a3fe57d77b27966a3c7226dbe3dbcc232cd9c8c85901bab84930d14ef",
    "n_conflicts": 0,
    "n_facts": 12,
    "reason": "extract.kicad_netlist mach-co-loi.net"
   },
-  "hash": "c8db906f2e90c4c4e20e1ec875efa1e05924b67cdb09975e940bf62cc736a82d",
+  "hash": "d8e2a200afb795feb68c3b9aed46a1b26a60ad0599e84f51d5a14befb86bb1f2",
   "kind": "store.write",
-  "prev_hash": "4b25ea22c9c9905831b829523857fe1130cff7aa31ff51a77b4625e594acb8c0",
+  "prev_hash": "13db5fc2390486d26cb357f53d4bc2870ce2b0554d289e74f20fa6c4571c6b63",
   "seq": 40,
-  "ts": "2026-09-24T04:08:51.384455+00:00"
+  "ts": "2026-09-24T06:32:15.600816+00:00"
  },
  {
   "actor": "agent",
@@ -1069,35 +1069,35 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
-   "duration_ms": 7,
+   "duration_ms": 6,
    "result_hash": "b8fc90a32bc1dba5",
-   "run_id": "5398fe242ef9",
+   "run_id": "96e91e997be7",
    "status": "done",
-   "undo_ref": "5398fe242ef9"
+   "undo_ref": "96e91e997be7"
   },
-  "hash": "3a15721f79199871d32cc9571a144eca4075c831baadeefb5a4ea1ade86b9912",
+  "hash": "ac66d283c3c00074524a234910fbd3a4971d3c55cf03b6a66961062e7f0592ae",
   "kind": "cap.run.finish",
-  "prev_hash": "c8db906f2e90c4c4e20e1ec875efa1e05924b67cdb09975e940bf62cc736a82d",
+  "prev_hash": "d8e2a200afb795feb68c3b9aed46a1b26a60ad0599e84f51d5a14befb86bb1f2",
   "seq": 41,
-  "ts": "2026-09-24T04:08:51.385402+00:00"
+  "ts": "2026-09-24T06:32:15.601651+00:00"
  },
  {
   "actor": "agent",
   "data": {
-   "at": "2026-09-24T04:08:51.385507+00:00",
+   "at": "2026-09-24T06:32:15.601753+00:00",
    "cap": "extract.kicad_netlist",
-   "deadline": "2026-09-27T04:08:51.385507+00:00",
+   "deadline": "2026-09-27T06:32:15.601753+00:00",
    "kind": "supersede_facts",
-   "undo_ref": "5398fe242ef9",
+   "undo_ref": "96e91e997be7",
    "window": "facts"
   },
-  "hash": "59652ee76f87f6e65e49606b6b06c74f46f90d332fc40948d12340819d340547",
+  "hash": "e13f3c80b1c89f1c5bf3ce41d2a169695cf3529b4b877b890a71b59fa7a25426",
   "kind": "undo.register",
-  "prev_hash": "3a15721f79199871d32cc9571a144eca4075c831baadeefb5a4ea1ade86b9912",
+  "prev_hash": "ac66d283c3c00074524a234910fbd3a4971d3c55cf03b6a66961062e7f0592ae",
   "seq": 42,
-  "ts": "2026-09-24T04:08:51.385597+00:00"
+  "ts": "2026-09-24T06:32:15.601841+00:00"
  },
  {
   "actor": "agent",
@@ -1106,14 +1106,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 2,
    "node_id": "n2",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "done"
   },
-  "hash": "18f3c670089e92199cb12b26406b554eb4cb816a04bcd6c9d2c05196573bddad",
+  "hash": "451e77317eff1d3535c88203116228043864c8b2b931a1760caf59fdfcd6f039",
   "kind": "run.step_done",
-  "prev_hash": "59652ee76f87f6e65e49606b6b06c74f46f90d332fc40948d12340819d340547",
+  "prev_hash": "e13f3c80b1c89f1c5bf3ce41d2a169695cf3529b4b877b890a71b59fa7a25426",
   "seq": 43,
-  "ts": "2026-09-24T04:08:51.387310+00:00"
+  "ts": "2026-09-24T06:32:15.603227+00:00"
  },
  {
   "actor": "agent",
@@ -1122,13 +1122,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 3,
    "node_id": "n5",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "6a1838cbcbe0ee5a5bd98a002be05e6ac71daf63ff58990a02c4bddbd60fc491",
+  "hash": "daca1a00d740ba462bb1088f228339a5e0e7e9ecad3947486e89d1afd23be8f5",
   "kind": "run.step_started",
-  "prev_hash": "18f3c670089e92199cb12b26406b554eb4cb816a04bcd6c9d2c05196573bddad",
+  "prev_hash": "451e77317eff1d3535c88203116228043864c8b2b931a1760caf59fdfcd6f039",
   "seq": 44,
-  "ts": "2026-09-24T04:08:51.387712+00:00"
+  "ts": "2026-09-24T06:32:15.603562+00:00"
  },
  {
   "actor": "agent",
@@ -1140,7 +1140,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1148,13 +1148,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b150fe122e11"
+   "run_id": "1b76733f3000"
   },
-  "hash": "c9a4dc58b09c0118a90d472023feb52d4cabf9f282a277e6047ae517e3248dd8",
+  "hash": "79ba77f2d021bea7bcc76336596a53b6ef2215db0f4835d55766a44aa96f8321",
   "kind": "cap.run.start",
-  "prev_hash": "6a1838cbcbe0ee5a5bd98a002be05e6ac71daf63ff58990a02c4bddbd60fc491",
+  "prev_hash": "daca1a00d740ba462bb1088f228339a5e0e7e9ecad3947486e89d1afd23be8f5",
   "seq": 45,
-  "ts": "2026-09-24T04:08:51.388381+00:00"
+  "ts": "2026-09-24T06:32:15.604104+00:00"
  },
  {
   "actor": "agent",
@@ -1166,20 +1166,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b150fe122e11"
+   "run_id": "1b76733f3000"
   },
-  "hash": "f7a7a165e6e539ae9eee643a796d45f4efefdc49f9b82d1668b71deb6d25772f",
+  "hash": "39de6b1b9ab24acd455365a993b9eba0594db9e8e3f2cba42da598a2523c8620",
   "kind": "gate.decision",
-  "prev_hash": "c9a4dc58b09c0118a90d472023feb52d4cabf9f282a277e6047ae517e3248dd8",
+  "prev_hash": "79ba77f2d021bea7bcc76336596a53b6ef2215db0f4835d55766a44aa96f8321",
   "seq": 46,
-  "ts": "2026-09-24T04:08:51.388479+00:00"
+  "ts": "2026-09-24T06:32:15.604206+00:00"
  },
  {
   "actor": "agent",
@@ -1189,18 +1189,18 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "duration_ms": 1,
    "error": "E2000",
-   "run_id": "b150fe122e11",
+   "run_id": "1b76733f3000",
    "status": "failed"
   },
-  "hash": "c31149610065b24f8e14b5f52b1d112686b18d834c3c97e17401f72e3f42b17d",
+  "hash": "67cf27e31b354c20931655d62b5d297f94f354afdb1218e022af820831ae7341",
   "kind": "cap.run.finish",
-  "prev_hash": "f7a7a165e6e539ae9eee643a796d45f4efefdc49f9b82d1668b71deb6d25772f",
+  "prev_hash": "39de6b1b9ab24acd455365a993b9eba0594db9e8e3f2cba42da598a2523c8620",
   "seq": 47,
-  "ts": "2026-09-24T04:08:51.389644+00:00"
+  "ts": "2026-09-24T06:32:15.605701+00:00"
  },
  {
   "actor": "agent",
@@ -1219,14 +1219,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 3,
    "node_id": "n5",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "failed"
   },
-  "hash": "5434ce5c2aba2087363b8aaffe150b224f923f35a7ddf1ae369a5a61650f8b0c",
+  "hash": "8860e62836f1c9bb0be0a3a8b7adac3af0638132f61d4ae88628101c314b75cf",
   "kind": "run.step_done",
-  "prev_hash": "c31149610065b24f8e14b5f52b1d112686b18d834c3c97e17401f72e3f42b17d",
+  "prev_hash": "67cf27e31b354c20931655d62b5d297f94f354afdb1218e022af820831ae7341",
   "seq": 48,
-  "ts": "2026-09-24T04:08:51.389757+00:00"
+  "ts": "2026-09-24T06:32:15.605902+00:00"
  },
  {
   "actor": "agent",
@@ -1235,13 +1235,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 4,
    "node_id": "n6",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "12ae0ee77008d3a337b71a7c0d12a0353ff0bfdc7f12d97046227cbb97263fb3",
+  "hash": "e99eb64ff2261c67c5550b189800959ba17626c24ef7ea927a050d47eb330a00",
   "kind": "run.step_started",
-  "prev_hash": "5434ce5c2aba2087363b8aaffe150b224f923f35a7ddf1ae369a5a61650f8b0c",
+  "prev_hash": "8860e62836f1c9bb0be0a3a8b7adac3af0638132f61d4ae88628101c314b75cf",
   "seq": 49,
-  "ts": "2026-09-24T04:08:51.390613+00:00"
+  "ts": "2026-09-24T06:32:15.606907+00:00"
  },
  {
   "actor": "agent",
@@ -1253,7 +1253,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1261,13 +1261,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8772279da919"
+   "run_id": "c316ffa19023"
   },
-  "hash": "27853491877e233f94376b8555c3eb5d9a0d5a680a9aad876991133a82707047",
+  "hash": "662594c30bd9c0b188217c622b193f5c1276a975665fe59540221d93676401da",
   "kind": "cap.run.start",
-  "prev_hash": "12ae0ee77008d3a337b71a7c0d12a0353ff0bfdc7f12d97046227cbb97263fb3",
+  "prev_hash": "e99eb64ff2261c67c5550b189800959ba17626c24ef7ea927a050d47eb330a00",
   "seq": 50,
-  "ts": "2026-09-24T04:08:51.391703+00:00"
+  "ts": "2026-09-24T06:32:15.607861+00:00"
  },
  {
   "actor": "agent",
@@ -1279,20 +1279,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8772279da919"
+   "run_id": "c316ffa19023"
   },
-  "hash": "ee9ddfd5f155c6f101b2b7ef32f9b18042449842fb8ec4df10df6b33c804e224",
+  "hash": "49e7a7065ae8cbfaf09dd2f5b95838922f8f0ba5f9b692edfad959cb84f50edc",
   "kind": "gate.decision",
-  "prev_hash": "27853491877e233f94376b8555c3eb5d9a0d5a680a9aad876991133a82707047",
+  "prev_hash": "662594c30bd9c0b188217c622b193f5c1276a975665fe59540221d93676401da",
   "seq": 51,
-  "ts": "2026-09-24T04:08:51.391785+00:00"
+  "ts": "2026-09-24T06:32:15.607934+00:00"
  },
  {
   "actor": "agent",
@@ -1302,18 +1302,18 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "duration_ms": 0,
    "error": "E5002",
-   "run_id": "8772279da919",
+   "run_id": "c316ffa19023",
    "status": "failed"
   },
-  "hash": "0f6eb71010f1ae75aace0dc7d07f5ca9a5271ffcda2e9473323b4b1f7d3a692a",
+  "hash": "d3b04d7de96e679176c19d0a015848398d9933ba387a442fab7d52fcd7f56580",
   "kind": "cap.run.finish",
-  "prev_hash": "ee9ddfd5f155c6f101b2b7ef32f9b18042449842fb8ec4df10df6b33c804e224",
+  "prev_hash": "49e7a7065ae8cbfaf09dd2f5b95838922f8f0ba5f9b692edfad959cb84f50edc",
   "seq": 52,
-  "ts": "2026-09-24T04:08:51.392444+00:00"
+  "ts": "2026-09-24T06:32:15.608508+00:00"
  },
  {
   "actor": "agent",
@@ -1328,14 +1328,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 4,
    "node_id": "n6",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "failed"
   },
-  "hash": "62b686668ed75c16cd964b5cd252ba1505272fe0dd4766d5751121da4e92c800",
+  "hash": "35e32012a93579a59cd2dbf58b79c3c948f725ad565e23c79863f1c4e88e583c",
   "kind": "run.step_done",
-  "prev_hash": "0f6eb71010f1ae75aace0dc7d07f5ca9a5271ffcda2e9473323b4b1f7d3a692a",
+  "prev_hash": "d3b04d7de96e679176c19d0a015848398d9933ba387a442fab7d52fcd7f56580",
   "seq": 53,
-  "ts": "2026-09-24T04:08:51.392528+00:00"
+  "ts": "2026-09-24T06:32:15.608584+00:00"
  },
  {
   "actor": "agent",
@@ -1344,13 +1344,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 5,
    "node_id": "n3",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "12ce2f4bfb0809f7cd3afdebc7652b1ccf5af9592148fdfcf0575f32fee5c548",
+  "hash": "8a57f6f1a3c22807d97b2ea7b2d7b3514431eeebe960d5f2d799f79a1107e36e",
   "kind": "run.step_started",
-  "prev_hash": "62b686668ed75c16cd964b5cd252ba1505272fe0dd4766d5751121da4e92c800",
+  "prev_hash": "35e32012a93579a59cd2dbf58b79c3c948f725ad565e23c79863f1c4e88e583c",
   "seq": 54,
-  "ts": "2026-09-24T04:08:51.392955+00:00"
+  "ts": "2026-09-24T06:32:15.608966+00:00"
  },
  {
   "actor": "agent",
@@ -1362,7 +1362,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 5,
     "node_id": "n3",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1370,13 +1370,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e15c84239ff1"
+   "run_id": "d258802dffdb"
   },
-  "hash": "91a2503ec434adab80d4bfd35b887a094f2d6747b4412e6a20032e0f4e6a05cd",
+  "hash": "ac1e4e7a3137ae3e3f29dc2d8129243967c71577bace90683a1a51beb202f3fd",
   "kind": "cap.run.start",
-  "prev_hash": "12ce2f4bfb0809f7cd3afdebc7652b1ccf5af9592148fdfcf0575f32fee5c548",
+  "prev_hash": "8a57f6f1a3c22807d97b2ea7b2d7b3514431eeebe960d5f2d799f79a1107e36e",
   "seq": 55,
-  "ts": "2026-09-24T04:08:51.393726+00:00"
+  "ts": "2026-09-24T06:32:15.609608+00:00"
  },
  {
   "actor": "agent",
@@ -1388,20 +1388,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 5,
     "node_id": "n3",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e15c84239ff1"
+   "run_id": "d258802dffdb"
   },
-  "hash": "0a3f86961ab9316921dbccaa9e0c637197063a876ca9d23ed26a90c0f2399d0c",
+  "hash": "6271aa7edfe748f5acd79547c0b509be92cc01392376002fb3fe1f7cb317a22f",
   "kind": "gate.decision",
-  "prev_hash": "91a2503ec434adab80d4bfd35b887a094f2d6747b4412e6a20032e0f4e6a05cd",
+  "prev_hash": "ac1e4e7a3137ae3e3f29dc2d8129243967c71577bace90683a1a51beb202f3fd",
   "seq": 56,
-  "ts": "2026-09-24T04:08:51.393831+00:00"
+  "ts": "2026-09-24T06:32:15.609701+00:00"
  },
  {
   "actor": "agent",
@@ -1411,19 +1411,19 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 5,
     "node_id": "n3",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "duration_ms": 2,
    "result_hash": "1d0055da0668f412",
-   "run_id": "e15c84239ff1",
+   "run_id": "d258802dffdb",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8680fb3f53cb1c530b2ec5be694db09ebc5bb5109886abb82042e4aeec797117",
+  "hash": "54d648da036104fca2ce5e2b8c9905fcfecabb5c5fe2f220e07a6d3690179e8a",
   "kind": "cap.run.finish",
-  "prev_hash": "0a3f86961ab9316921dbccaa9e0c637197063a876ca9d23ed26a90c0f2399d0c",
+  "prev_hash": "6271aa7edfe748f5acd79547c0b509be92cc01392376002fb3fe1f7cb317a22f",
   "seq": 57,
-  "ts": "2026-09-24T04:08:51.396136+00:00"
+  "ts": "2026-09-24T06:32:15.611692+00:00"
  },
  {
   "actor": "agent",
@@ -1432,14 +1432,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 5,
    "node_id": "n3",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "done"
   },
-  "hash": "2152d76c68f983d4262363cf82a46cfba1f0f655e444f868b60730f729d34195",
+  "hash": "7af0b463df1ca304eefe21b7f164ca4dfc5c72f510e1a77ccce88d2ea4d36d99",
   "kind": "run.step_done",
-  "prev_hash": "8680fb3f53cb1c530b2ec5be694db09ebc5bb5109886abb82042e4aeec797117",
+  "prev_hash": "54d648da036104fca2ce5e2b8c9905fcfecabb5c5fe2f220e07a6d3690179e8a",
   "seq": 58,
-  "ts": "2026-09-24T04:08:51.396225+00:00"
+  "ts": "2026-09-24T06:32:15.611783+00:00"
  },
  {
   "actor": "agent",
@@ -1448,25 +1448,25 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 6,
    "node_id": "n7",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "374dec8e4ce91f563dd4be2cebc465d6761fe0773601f445576f507ea80d1b91",
+  "hash": "832bc4b4c181d9fe7fd3188699f3f30d12ec6d70cb1e5e7bc9d76d5fb1840c80",
   "kind": "run.step_started",
-  "prev_hash": "2152d76c68f983d4262363cf82a46cfba1f0f655e444f868b60730f729d34195",
+  "prev_hash": "7af0b463df1ca304eefe21b7f164ca4dfc5c72f510e1a77ccce88d2ea4d36d99",
   "seq": 59,
-  "ts": "2026-09-24T04:08:51.396672+00:00"
+  "ts": "2026-09-24T06:32:15.612202+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "a70a14a0c1fd7d97",
+   "args_hash": "e21f43db4ef97781",
    "cap": "chat.report_back",
    "chain": {
     "i": 6,
     "node_id": "n7",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1474,13 +1474,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3488835a02d9"
+   "run_id": "702adfde8fbb"
   },
-  "hash": "3928c05318804cc92b2c05f9090310b64750a55a94c0bf28b027744dcb8ef4b8",
+  "hash": "cbcf66029f727591418e6fdedae5b5d0bdb381572b029dcfd530789495e535f3",
   "kind": "cap.run.start",
-  "prev_hash": "374dec8e4ce91f563dd4be2cebc465d6761fe0773601f445576f507ea80d1b91",
+  "prev_hash": "832bc4b4c181d9fe7fd3188699f3f30d12ec6d70cb1e5e7bc9d76d5fb1840c80",
   "seq": 60,
-  "ts": "2026-09-24T04:08:51.397276+00:00"
+  "ts": "2026-09-24T06:32:15.612764+00:00"
  },
  {
   "actor": "agent",
@@ -1492,20 +1492,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 6,
     "node_id": "n7",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3488835a02d9"
+   "run_id": "702adfde8fbb"
   },
-  "hash": "94fadf3c1f6f8e471fc04950569cce0416422202d2afc67b87758c579d1762f1",
+  "hash": "828258c24c278e8b70af1df3d0e0e163c34013398dad330d230c4529defc2490",
   "kind": "gate.decision",
-  "prev_hash": "3928c05318804cc92b2c05f9090310b64750a55a94c0bf28b027744dcb8ef4b8",
+  "prev_hash": "cbcf66029f727591418e6fdedae5b5d0bdb381572b029dcfd530789495e535f3",
   "seq": 61,
-  "ts": "2026-09-24T04:08:51.397360+00:00"
+  "ts": "2026-09-24T06:32:15.612903+00:00"
  },
  {
   "actor": "agent",
@@ -1515,19 +1515,19 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 6,
     "node_id": "n7",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "duration_ms": 2,
-   "result_hash": "f1c6ec20d7bbd805",
-   "run_id": "3488835a02d9",
+   "result_hash": "327161cce78514fe",
+   "run_id": "702adfde8fbb",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "52de977cb1d7b987fe3c9f6ac9d40ec49ac74f14f7d22c93046be394c282fbd3",
+  "hash": "94fbc46dcfc9e32929bf7fc1369fa8fddf543bd11ed06f4b23b4528f12671a41",
   "kind": "cap.run.finish",
-  "prev_hash": "94fadf3c1f6f8e471fc04950569cce0416422202d2afc67b87758c579d1762f1",
+  "prev_hash": "828258c24c278e8b70af1df3d0e0e163c34013398dad330d230c4529defc2490",
   "seq": 62,
-  "ts": "2026-09-24T04:08:51.399534+00:00"
+  "ts": "2026-09-24T06:32:15.615053+00:00"
  },
  {
   "actor": "agent",
@@ -1536,14 +1536,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 6,
    "node_id": "n7",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "done"
   },
-  "hash": "ab24b273cda1e8e91c6c66913f88059bb0c9d3eb3b57e46072e07dda264be4de",
+  "hash": "65f0b70165744fe3447965747f37615c2b5de3030c9f51e06bc5ae1182c224c0",
   "kind": "run.step_done",
-  "prev_hash": "52de977cb1d7b987fe3c9f6ac9d40ec49ac74f14f7d22c93046be394c282fbd3",
+  "prev_hash": "94fbc46dcfc9e32929bf7fc1369fa8fddf543bd11ed06f4b23b4528f12671a41",
   "seq": 63,
-  "ts": "2026-09-24T04:08:51.399624+00:00"
+  "ts": "2026-09-24T06:32:15.615147+00:00"
  },
  {
   "actor": "agent",
@@ -1552,13 +1552,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 7,
    "node_id": "n4",
    "of": 7,
-   "run_id": "r_0f339e78f6a8"
+   "run_id": "r_6323b754919d"
   },
-  "hash": "8a24c7194aaccbfa67c58dcd1cd7255d660da717e1d6bcf1f680a883427cf2e6",
+  "hash": "8ba41625917e6864468286058416df6149c7fbf27ac7794410b34c7a28d091da",
   "kind": "run.step_started",
-  "prev_hash": "ab24b273cda1e8e91c6c66913f88059bb0c9d3eb3b57e46072e07dda264be4de",
+  "prev_hash": "65f0b70165744fe3447965747f37615c2b5de3030c9f51e06bc5ae1182c224c0",
   "seq": 64,
-  "ts": "2026-09-24T04:08:51.400099+00:00"
+  "ts": "2026-09-24T06:32:15.615574+00:00"
  },
  {
   "actor": "agent",
@@ -1570,7 +1570,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 7,
     "node_id": "n4",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1578,13 +1578,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4a982f62be26"
+   "run_id": "550c2e96f771"
   },
-  "hash": "a6253042c8d0077aadf6d38599176af293b8dce17fd3698a50b4f6c54269c273",
+  "hash": "7fb369a235add21c0ccba3e379d5b1270a1c84809ef865cf82b11d97da663a90",
   "kind": "cap.run.start",
-  "prev_hash": "8a24c7194aaccbfa67c58dcd1cd7255d660da717e1d6bcf1f680a883427cf2e6",
+  "prev_hash": "8ba41625917e6864468286058416df6149c7fbf27ac7794410b34c7a28d091da",
   "seq": 65,
-  "ts": "2026-09-24T04:08:51.400685+00:00"
+  "ts": "2026-09-24T06:32:15.616084+00:00"
  },
  {
   "actor": "agent",
@@ -1596,20 +1596,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 7,
     "node_id": "n4",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4a982f62be26"
+   "run_id": "550c2e96f771"
   },
-  "hash": "6928e550138052084f9c34bcdb45757c35674e03b0cc9f6d38b2bd5197a03305",
+  "hash": "a6b168502ce04849d0dc042567ff39c7518d516388c8e622f7be3895f89fed68",
   "kind": "gate.decision",
-  "prev_hash": "a6253042c8d0077aadf6d38599176af293b8dce17fd3698a50b4f6c54269c273",
+  "prev_hash": "7fb369a235add21c0ccba3e379d5b1270a1c84809ef865cf82b11d97da663a90",
   "seq": 66,
-  "ts": "2026-09-24T04:08:51.400760+00:00"
+  "ts": "2026-09-24T06:32:15.616152+00:00"
  },
  {
   "actor": "agent",
@@ -1619,19 +1619,19 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "i": 7,
     "node_id": "n4",
     "of": 7,
-    "run_id": "r_0f339e78f6a8"
+    "run_id": "r_6323b754919d"
    },
    "duration_ms": 1,
    "result_hash": "0c3a0645c4e7b995",
-   "run_id": "4a982f62be26",
+   "run_id": "550c2e96f771",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "fce00fc9882672b0b5c746335f2f372f9bb1570a9e2296e67e2c15ccb1d01b72",
+  "hash": "9e706acc2c90418fafd8862e83f8c77821c5dda3323baa9c2714affc18f0786c",
   "kind": "cap.run.finish",
-  "prev_hash": "6928e550138052084f9c34bcdb45757c35674e03b0cc9f6d38b2bd5197a03305",
+  "prev_hash": "a6b168502ce04849d0dc042567ff39c7518d516388c8e622f7be3895f89fed68",
   "seq": 67,
-  "ts": "2026-09-24T04:08:51.402221+00:00"
+  "ts": "2026-09-24T06:32:15.617546+00:00"
  },
  {
   "actor": "agent",
@@ -1640,55 +1640,55 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "i": 7,
    "node_id": "n4",
    "of": 7,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "status": "done"
   },
-  "hash": "36acc092364f0a0c847a6de17bd29888cda7fa9c559a61dc03a4551addae158c",
+  "hash": "080c80bf11de322fd7b03f0db770335b3ba1f18db8fbd1ff7aff3d3e50cf3aeb",
   "kind": "run.step_done",
-  "prev_hash": "fce00fc9882672b0b5c746335f2f372f9bb1570a9e2296e67e2c15ccb1d01b72",
+  "prev_hash": "9e706acc2c90418fafd8862e83f8c77821c5dda3323baa9c2714affc18f0786c",
   "seq": 68,
-  "ts": "2026-09-24T04:08:51.402294+00:00"
+  "ts": "2026-09-24T06:32:15.617616+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 5,
    "failed": 2,
-   "run_id": "r_0f339e78f6a8",
+   "run_id": "r_6323b754919d",
    "state": "done",
    "waiting": 0
   },
-  "hash": "f4312bff25e3c9cdf2802fffc5414d7fb4695e236ad2425f84373cc823bf636d",
+  "hash": "a73da3d48984c4914049335d2f033024d986a9ac11e96190875b810321b5d021",
   "kind": "run.done",
-  "prev_hash": "36acc092364f0a0c847a6de17bd29888cda7fa9c559a61dc03a4551addae158c",
+  "prev_hash": "080c80bf11de322fd7b03f0db770335b3ba1f18db8fbd1ff7aff3d3e50cf3aeb",
   "seq": 69,
-  "ts": "2026-09-24T04:08:51.402841+00:00"
+  "ts": "2026-09-24T06:32:15.618207+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 67,
-   "result_hash": "b5256110f547f7ab",
-   "run_id": "cd644ba97c7c",
+   "duration_ms": 69,
+   "result_hash": "c1de572bf8958035",
+   "run_id": "dd46a31699a0",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c937f2ad7de0133db5caa450557f7d69968229b5ddb8ca1ee0280c79d5783f1b",
+  "hash": "73466e0dfc3ae7d399a24b671af0b74e201903b311ecc64d346e9fe2c1e27d08",
   "kind": "cap.run.finish",
-  "prev_hash": "f4312bff25e3c9cdf2802fffc5414d7fb4695e236ad2425f84373cc823bf636d",
+  "prev_hash": "a73da3d48984c4914049335d2f033024d986a9ac11e96190875b810321b5d021",
   "seq": 70,
-  "ts": "2026-09-24T04:08:51.424673+00:00"
+  "ts": "2026-09-24T06:32:15.649642+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "3287b2a4bce30aa6",
+   "args_hash": "4821c9e2a5173dbd",
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "da42a4dce56a"
+    "run_id": "a4df55d821cd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1696,13 +1696,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "da42a4dce56a"
+   "run_id": "a4df55d821cd"
   },
-  "hash": "8ce786e1094a0779487a9408d8b8b7e990b25bab843306a66cc4fcc4ad9a1da1",
+  "hash": "a8de27972b2ed3af7bfc1714da5f1e56822ea713b35fad9be6f8c3f494ca0217",
   "kind": "cap.run.start",
-  "prev_hash": "c937f2ad7de0133db5caa450557f7d69968229b5ddb8ca1ee0280c79d5783f1b",
+  "prev_hash": "73466e0dfc3ae7d399a24b671af0b74e201903b311ecc64d346e9fe2c1e27d08",
   "seq": 71,
-  "ts": "2026-09-24T04:08:51.427945+00:00"
+  "ts": "2026-09-24T06:32:15.653138+00:00"
  },
  {
   "actor": "agent",
@@ -1712,20 +1712,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "da42a4dce56a"
+    "run_id": "a4df55d821cd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "da42a4dce56a"
+   "run_id": "a4df55d821cd"
   },
-  "hash": "7770572baa91b73e6850bf3d2343bfe5dc19c36f402525617d56503ed7ae94ae",
+  "hash": "55d36325beaed75bef8aacc57ad132aa87cba9d8fd66d0ce06dbc6954ec4bdda",
   "kind": "gate.decision",
-  "prev_hash": "8ce786e1094a0779487a9408d8b8b7e990b25bab843306a66cc4fcc4ad9a1da1",
+  "prev_hash": "a8de27972b2ed3af7bfc1714da5f1e56822ea713b35fad9be6f8c3f494ca0217",
   "seq": 72,
-  "ts": "2026-09-24T04:08:51.428060+00:00"
+  "ts": "2026-09-24T06:32:15.653242+00:00"
  },
  {
   "actor": "agent",
@@ -1733,15 +1733,15 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "8136fcd64c79b1e6",
-   "run_id": "da42a4dce56a",
+   "run_id": "a4df55d821cd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "23ce30eaca1c9226cc7dd18655ad431e555e78a28dd6af3a5ca928d8efedbeff",
+  "hash": "e67a949a86d64f5c538a0badf30ab159930d8ffb79b1164d50b63355aea36c41",
   "kind": "cap.run.finish",
-  "prev_hash": "7770572baa91b73e6850bf3d2343bfe5dc19c36f402525617d56503ed7ae94ae",
+  "prev_hash": "55d36325beaed75bef8aacc57ad132aa87cba9d8fd66d0ce06dbc6954ec4bdda",
   "seq": 73,
-  "ts": "2026-09-24T04:08:51.429284+00:00"
+  "ts": "2026-09-24T06:32:15.654295+00:00"
  },
  {
   "actor": "agent",
@@ -1751,7 +1751,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4611c1f0f99b"
+    "run_id": "a3703ca634b9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1759,13 +1759,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4611c1f0f99b"
+   "run_id": "a3703ca634b9"
   },
-  "hash": "b2094039abd254dd8b9d29d3ed8b829e21fbfb6196d6dd50b0840604ae3f89f3",
+  "hash": "00a012d82f6b85c6d1e2231610805ec5e7be4b4a747370ae6f8fab0e10eb0ebe",
   "kind": "cap.run.start",
-  "prev_hash": "23ce30eaca1c9226cc7dd18655ad431e555e78a28dd6af3a5ca928d8efedbeff",
+  "prev_hash": "e67a949a86d64f5c538a0badf30ab159930d8ffb79b1164d50b63355aea36c41",
   "seq": 74,
-  "ts": "2026-09-24T04:08:51.464808+00:00"
+  "ts": "2026-09-24T06:32:15.683711+00:00"
  },
  {
   "actor": "agent",
@@ -1775,36 +1775,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4611c1f0f99b"
+    "run_id": "a3703ca634b9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4611c1f0f99b"
+   "run_id": "a3703ca634b9"
   },
-  "hash": "3a85d2e7cb69fd3a6e77dc4552ce5579d0c3353ab4bf67f060b92537cabf5eb9",
+  "hash": "61de1ab44a75fc2609dd085bf0833fafe1a94972bb1e89237df944034d579a8f",
   "kind": "gate.decision",
-  "prev_hash": "b2094039abd254dd8b9d29d3ed8b829e21fbfb6196d6dd50b0840604ae3f89f3",
+  "prev_hash": "00a012d82f6b85c6d1e2231610805ec5e7be4b4a747370ae6f8fab0e10eb0ebe",
   "seq": 75,
-  "ts": "2026-09-24T04:08:51.464977+00:00"
+  "ts": "2026-09-24T06:32:15.683955+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 2,
-   "result_hash": "56f5d42d5c07c09a",
-   "run_id": "4611c1f0f99b",
+   "result_hash": "afa5ea2529c51426",
+   "run_id": "a3703ca634b9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "36e8a187b3f3c361dacd2bfd3924ec1164e63bb0e73440f5aeda4ed6e849a2c7",
+  "hash": "8a491fb800f8faeeff04a4f3d20e4731f4c34e3876cfcb435fe73166d238cce6",
   "kind": "cap.run.finish",
-  "prev_hash": "3a85d2e7cb69fd3a6e77dc4552ce5579d0c3353ab4bf67f060b92537cabf5eb9",
+  "prev_hash": "61de1ab44a75fc2609dd085bf0833fafe1a94972bb1e89237df944034d579a8f",
   "seq": 76,
-  "ts": "2026-09-24T04:08:51.466975+00:00"
+  "ts": "2026-09-24T06:32:15.686415+00:00"
  },
  {
   "actor": "agent",
@@ -1814,7 +1814,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "5d9ca279601a"
+    "run_id": "42d356bd3b10"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1822,13 +1822,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5d9ca279601a"
+   "run_id": "42d356bd3b10"
   },
-  "hash": "2f209e4a8f0f2eba94da201bcf9f2b9c5198b5a3243974e797032d163960af58",
+  "hash": "238f67b6ccb2933d5df09a447a5124f16e90df0dfdaf78cd23cb12afaf50a8c7",
   "kind": "cap.run.start",
-  "prev_hash": "36e8a187b3f3c361dacd2bfd3924ec1164e63bb0e73440f5aeda4ed6e849a2c7",
+  "prev_hash": "8a491fb800f8faeeff04a4f3d20e4731f4c34e3876cfcb435fe73166d238cce6",
   "seq": 77,
-  "ts": "2026-09-24T04:08:53.240473+00:00"
+  "ts": "2026-09-24T06:32:17.520352+00:00"
  },
  {
   "actor": "agent",
@@ -1838,46 +1838,46 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "5d9ca279601a"
+    "run_id": "42d356bd3b10"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5d9ca279601a"
+   "run_id": "42d356bd3b10"
   },
-  "hash": "27f82552bc6d10749a659e7d8465ef9878c340685b992d11cb31baca5aac53c3",
+  "hash": "722638de8b53d8529ce906a44bb02dd592dd8fabd7bb1c69c32204854835f297",
   "kind": "gate.decision",
-  "prev_hash": "2f209e4a8f0f2eba94da201bcf9f2b9c5198b5a3243974e797032d163960af58",
+  "prev_hash": "238f67b6ccb2933d5df09a447a5124f16e90df0dfdaf78cd23cb12afaf50a8c7",
   "seq": 78,
-  "ts": "2026-09-24T04:08:53.240687+00:00"
+  "ts": "2026-09-24T06:32:17.520572+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 7,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "5d9ca279601a",
+   "duration_ms": 6,
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "42d356bd3b10",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b1d00142186c35484e4ef0b03c20d01b513d0e76fc5a9040d11c5b06680e9de6",
+  "hash": "7ab0bc7d675a0fd62942a2081affdb8a1a7cf76acf45bc649e277889d46430e9",
   "kind": "cap.run.finish",
-  "prev_hash": "27f82552bc6d10749a659e7d8465ef9878c340685b992d11cb31baca5aac53c3",
+  "prev_hash": "722638de8b53d8529ce906a44bb02dd592dd8fabd7bb1c69c32204854835f297",
   "seq": 79,
-  "ts": "2026-09-24T04:08:53.247422+00:00"
+  "ts": "2026-09-24T06:32:17.527286+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "a70a14a0c1fd7d97",
+   "args_hash": "e21f43db4ef97781",
    "cap": "chat.report_back",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "95553e269dde"
+    "run_id": "100cac01f9a8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1885,13 +1885,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "95553e269dde"
+   "run_id": "100cac01f9a8"
   },
-  "hash": "85f8192d50868ceabf191a2cf83ba13681fcba75029bacd23458adddd3fcb75c",
+  "hash": "48b9bdbebb8b4c08a9fce1f3b65cd84b800a322b72d1e2c8f9e2d2d95016cd32",
   "kind": "cap.run.start",
-  "prev_hash": "b1d00142186c35484e4ef0b03c20d01b513d0e76fc5a9040d11c5b06680e9de6",
+  "prev_hash": "7ab0bc7d675a0fd62942a2081affdb8a1a7cf76acf45bc649e277889d46430e9",
   "seq": 80,
-  "ts": "2026-09-24T04:08:53.249291+00:00"
+  "ts": "2026-09-24T06:32:17.529052+00:00"
  },
  {
   "actor": "agent",
@@ -1901,36 +1901,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "95553e269dde"
+    "run_id": "100cac01f9a8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "95553e269dde"
+   "run_id": "100cac01f9a8"
   },
-  "hash": "f971091359eae4a1421374fbb8c78d574aa78c4fdeb5c73b426b3b16f0602750",
+  "hash": "e6ad244e0229b6c699230fe5141ba234979518da7d2e7803087447311e3d2a7e",
   "kind": "gate.decision",
-  "prev_hash": "85f8192d50868ceabf191a2cf83ba13681fcba75029bacd23458adddd3fcb75c",
+  "prev_hash": "48b9bdbebb8b4c08a9fce1f3b65cd84b800a322b72d1e2c8f9e2d2d95016cd32",
   "seq": 81,
-  "ts": "2026-09-24T04:08:53.249417+00:00"
+  "ts": "2026-09-24T06:32:17.529169+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.report_back",
    "duration_ms": 2,
-   "result_hash": "13062b5a221e9dcf",
-   "run_id": "95553e269dde",
+   "result_hash": "ad54381f00ab9d17",
+   "run_id": "100cac01f9a8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2a96eb743fe2b48c2ebf2c18d0d86e2f9f9b429e42c8ffc64bf96379e93dc216",
+  "hash": "d6203005d67f00862377626b46e5e48fdf5ae84625bb2ae3348f5b2103208e44",
   "kind": "cap.run.finish",
-  "prev_hash": "f971091359eae4a1421374fbb8c78d574aa78c4fdeb5c73b426b3b16f0602750",
+  "prev_hash": "e6ad244e0229b6c699230fe5141ba234979518da7d2e7803087447311e3d2a7e",
   "seq": 82,
-  "ts": "2026-09-24T04:08:53.252148+00:00"
+  "ts": "2026-09-24T06:32:17.531881+00:00"
  },
  {
   "actor": "agent",
@@ -1940,7 +1940,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "3e907fa2f50a"
+    "run_id": "676fcffc4656"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1948,13 +1948,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3e907fa2f50a"
+   "run_id": "676fcffc4656"
   },
-  "hash": "375cd81b6891f8c8bf813a967eef452ab32b2f67bf81e4472caef95202a34bae",
+  "hash": "3464ed6e47cfe8d67a8233856ab63ceefabcb23a96c70b0f0b055136c7174e39",
   "kind": "cap.run.start",
-  "prev_hash": "2a96eb743fe2b48c2ebf2c18d0d86e2f9f9b429e42c8ffc64bf96379e93dc216",
+  "prev_hash": "d6203005d67f00862377626b46e5e48fdf5ae84625bb2ae3348f5b2103208e44",
   "seq": 83,
-  "ts": "2026-09-24T04:08:53.257346+00:00"
+  "ts": "2026-09-24T06:32:17.590007+00:00"
  },
  {
   "actor": "agent",
@@ -1964,36 +1964,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "3e907fa2f50a"
+    "run_id": "676fcffc4656"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3e907fa2f50a"
+   "run_id": "676fcffc4656"
   },
-  "hash": "19eb399a61d676e33737950413205c4c5bf11fb9975b2011df3e568f85a9fda0",
+  "hash": "5ebd96b7ae094f75583e466d52655ac607c6952e24fc9595940af7c3f8331aa6",
   "kind": "gate.decision",
-  "prev_hash": "375cd81b6891f8c8bf813a967eef452ab32b2f67bf81e4472caef95202a34bae",
+  "prev_hash": "3464ed6e47cfe8d67a8233856ab63ceefabcb23a96c70b0f0b055136c7174e39",
   "seq": 84,
-  "ts": "2026-09-24T04:08:53.257457+00:00"
+  "ts": "2026-09-24T06:32:17.590168+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "fde743babe02f9b1",
-   "run_id": "3e907fa2f50a",
+   "result_hash": "83fbe5af65a651cb",
+   "run_id": "676fcffc4656",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6f492651669c16bbff4ea5ff9fbeb94af3f59db10eb2493454e2f60c1a9de188",
+  "hash": "dcb336a0d14fe9332b09ccacdc82436002477bf68315881c99ea9202b933807e",
   "kind": "cap.run.finish",
-  "prev_hash": "19eb399a61d676e33737950413205c4c5bf11fb9975b2011df3e568f85a9fda0",
+  "prev_hash": "5ebd96b7ae094f75583e466d52655ac607c6952e24fc9595940af7c3f8331aa6",
   "seq": 85,
-  "ts": "2026-09-24T04:08:53.259696+00:00"
+  "ts": "2026-09-24T06:32:17.592621+00:00"
  },
  {
   "actor": "agent",
@@ -2003,7 +2003,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "62ef5a94f507"
+    "run_id": "3d180620c8f5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2011,13 +2011,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "62ef5a94f507"
+   "run_id": "3d180620c8f5"
   },
-  "hash": "177f0e00e62c592408509f54d66f0dfb3fa9e2aa1eb96485befb045fb620062c",
+  "hash": "8f2d6764209a39f3bd6e693be567bfc4de81544e7724122a4ffa73f3c41c6101",
   "kind": "cap.run.start",
-  "prev_hash": "6f492651669c16bbff4ea5ff9fbeb94af3f59db10eb2493454e2f60c1a9de188",
+  "prev_hash": "dcb336a0d14fe9332b09ccacdc82436002477bf68315881c99ea9202b933807e",
   "seq": 86,
-  "ts": "2026-09-24T04:08:53.268200+00:00"
+  "ts": "2026-09-24T06:32:17.600487+00:00"
  },
  {
   "actor": "agent",
@@ -2027,20 +2027,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "62ef5a94f507"
+    "run_id": "3d180620c8f5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "62ef5a94f507"
+   "run_id": "3d180620c8f5"
   },
-  "hash": "bb193c52ac06b74ff507cf25b5f271b546d65a6de4096df376207ced42881972",
+  "hash": "2e4044003436528092afe2f76763edd34f24e2451303705558a86ead239e863e",
   "kind": "gate.decision",
-  "prev_hash": "177f0e00e62c592408509f54d66f0dfb3fa9e2aa1eb96485befb045fb620062c",
+  "prev_hash": "8f2d6764209a39f3bd6e693be567bfc4de81544e7724122a4ffa73f3c41c6101",
   "seq": 87,
-  "ts": "2026-09-24T04:08:53.268309+00:00"
+  "ts": "2026-09-24T06:32:17.600616+00:00"
  },
  {
   "actor": "agent",
@@ -2048,15 +2048,15 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "62ef5a94f507",
+   "run_id": "3d180620c8f5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "80d2576d121755362b95289a3b2aefc6460cc29ad1a87d2f1b667e4a99f0b3db",
+  "hash": "8c5042d1085dae065b8283cc8a4a524ba019776b10e840f32b4b288634aae77f",
   "kind": "cap.run.finish",
-  "prev_hash": "bb193c52ac06b74ff507cf25b5f271b546d65a6de4096df376207ced42881972",
+  "prev_hash": "2e4044003436528092afe2f76763edd34f24e2451303705558a86ead239e863e",
   "seq": 88,
-  "ts": "2026-09-24T04:08:53.269878+00:00"
+  "ts": "2026-09-24T06:32:17.602390+00:00"
  },
  {
   "actor": "agent",
@@ -2066,7 +2066,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2bb44290d35e"
+    "run_id": "73064b3d7b23"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2074,13 +2074,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2bb44290d35e"
+   "run_id": "73064b3d7b23"
   },
-  "hash": "7b7830a6c4be4a324ad8fef8f963d522607340069c16faf680cbbdd4ed1b5629",
+  "hash": "b300cd0c3138402cdc25cef8b58e625d0bb2df55fa94978363f1999dceab6cc7",
   "kind": "cap.run.start",
-  "prev_hash": "80d2576d121755362b95289a3b2aefc6460cc29ad1a87d2f1b667e4a99f0b3db",
+  "prev_hash": "8c5042d1085dae065b8283cc8a4a524ba019776b10e840f32b4b288634aae77f",
   "seq": 89,
-  "ts": "2026-09-24T04:08:53.271363+00:00"
+  "ts": "2026-09-24T06:32:17.603911+00:00"
  },
  {
   "actor": "agent",
@@ -2090,20 +2090,20 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2bb44290d35e"
+    "run_id": "73064b3d7b23"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2bb44290d35e"
+   "run_id": "73064b3d7b23"
   },
-  "hash": "f8880162e9afc0e1dee7095746884a7c451d3bcf7b47b6c94b1eced5dda8db56",
+  "hash": "460759510574892b4894492306dff0d90deeb71cc2af24cccb11f9ddfd59dda1",
   "kind": "gate.decision",
-  "prev_hash": "7b7830a6c4be4a324ad8fef8f963d522607340069c16faf680cbbdd4ed1b5629",
+  "prev_hash": "b300cd0c3138402cdc25cef8b58e625d0bb2df55fa94978363f1999dceab6cc7",
   "seq": 90,
-  "ts": "2026-09-24T04:08:53.271471+00:00"
+  "ts": "2026-09-24T06:32:17.604013+00:00"
  },
  {
   "actor": "agent",
@@ -2111,15 +2111,15 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "2bb44290d35e",
+   "run_id": "73064b3d7b23",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "83e33a05c7b7a78e83a0f707f3fa225c98b5a4da336b424b6a5f3417fadfaa50",
+  "hash": "12951cc104aafa45950dec8448ea018b88fbd1be83a8f7de15efe90dd2c11c29",
   "kind": "cap.run.finish",
-  "prev_hash": "f8880162e9afc0e1dee7095746884a7c451d3bcf7b47b6c94b1eced5dda8db56",
+  "prev_hash": "460759510574892b4894492306dff0d90deeb71cc2af24cccb11f9ddfd59dda1",
   "seq": 91,
-  "ts": "2026-09-24T04:08:53.272946+00:00"
+  "ts": "2026-09-24T06:32:17.605606+00:00"
  },
  {
   "actor": "agent",
@@ -2129,7 +2129,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "602d67379ab6"
+    "run_id": "6a001a9c8b57"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2137,13 +2137,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "602d67379ab6"
+   "run_id": "6a001a9c8b57"
   },
-  "hash": "ad6080cb8c53d0b58d22263f66cd64ce89010f00c98baa10e49b2797b5208e01",
+  "hash": "3247e50ae7a887062c5649941b7f889c061b799877969245818a75361763eae5",
   "kind": "cap.run.start",
-  "prev_hash": "83e33a05c7b7a78e83a0f707f3fa225c98b5a4da336b424b6a5f3417fadfaa50",
+  "prev_hash": "12951cc104aafa45950dec8448ea018b88fbd1be83a8f7de15efe90dd2c11c29",
   "seq": 92,
-  "ts": "2026-09-24T04:08:53.281079+00:00"
+  "ts": "2026-09-24T06:32:17.613943+00:00"
  },
  {
   "actor": "agent",
@@ -2153,36 +2153,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "602d67379ab6"
+    "run_id": "6a001a9c8b57"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "602d67379ab6"
+   "run_id": "6a001a9c8b57"
   },
-  "hash": "1ed6c1bcceae2bf40b91b7d202c88e16be12a60174b3446bce41f5ea9583868e",
+  "hash": "4d98e63587abdd97bd2b96facdbc1c2a4c3a5abef7c308e0788e14a09d47738a",
   "kind": "gate.decision",
-  "prev_hash": "ad6080cb8c53d0b58d22263f66cd64ce89010f00c98baa10e49b2797b5208e01",
+  "prev_hash": "3247e50ae7a887062c5649941b7f889c061b799877969245818a75361763eae5",
   "seq": 93,
-  "ts": "2026-09-24T04:08:53.281177+00:00"
+  "ts": "2026-09-24T06:32:17.614068+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "56f5d42d5c07c09a",
-   "run_id": "602d67379ab6",
+   "duration_ms": 2,
+   "result_hash": "afa5ea2529c51426",
+   "run_id": "6a001a9c8b57",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ddd4acdbb90d1c0f851dde10228199a02c831333c2cad85fa3d74a05830c97dc",
+  "hash": "52765987fa109a5222f77cecb221d552ea9c6849e0d6f9dce8ba222a07b8fd92",
   "kind": "cap.run.finish",
-  "prev_hash": "1ed6c1bcceae2bf40b91b7d202c88e16be12a60174b3446bce41f5ea9583868e",
+  "prev_hash": "4d98e63587abdd97bd2b96facdbc1c2a4c3a5abef7c308e0788e14a09d47738a",
   "seq": 94,
-  "ts": "2026-09-24T04:08:53.282731+00:00"
+  "ts": "2026-09-24T06:32:17.615936+00:00"
  },
  {
   "actor": "agent",
@@ -2192,7 +2192,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "9a4e80f89334"
+    "run_id": "0fcc0932cd44"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2200,13 +2200,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9a4e80f89334"
+   "run_id": "0fcc0932cd44"
   },
-  "hash": "1e512e94fd19ac639c69333ef1e390fe51cb664f6f62f59e18c212a446f85f49",
+  "hash": "6d37ba122070c26cdc643b5701ba51d78fd64a0cbf5f6774fbc081199a944f35",
   "kind": "cap.run.start",
-  "prev_hash": "ddd4acdbb90d1c0f851dde10228199a02c831333c2cad85fa3d74a05830c97dc",
+  "prev_hash": "52765987fa109a5222f77cecb221d552ea9c6849e0d6f9dce8ba222a07b8fd92",
   "seq": 95,
-  "ts": "2026-09-24T04:08:53.284131+00:00"
+  "ts": "2026-09-24T06:32:17.617468+00:00"
  },
  {
   "actor": "agent",
@@ -2216,36 +2216,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "9a4e80f89334"
+    "run_id": "0fcc0932cd44"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9a4e80f89334"
+   "run_id": "0fcc0932cd44"
   },
-  "hash": "8a6078f8f6547f27c58cab6a6a9f8a8ab545672e4eeebf587dd26a8a9ddb2e97",
+  "hash": "54e8bf48bb5beb065bdd55ad3cd8a829d3c1ced61b1002f980949ebfb95a4622",
   "kind": "gate.decision",
-  "prev_hash": "1e512e94fd19ac639c69333ef1e390fe51cb664f6f62f59e18c212a446f85f49",
+  "prev_hash": "6d37ba122070c26cdc643b5701ba51d78fd64a0cbf5f6774fbc081199a944f35",
   "seq": 96,
-  "ts": "2026-09-24T04:08:53.284218+00:00"
+  "ts": "2026-09-24T06:32:17.617623+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "56f5d42d5c07c09a",
-   "run_id": "9a4e80f89334",
+   "result_hash": "afa5ea2529c51426",
+   "run_id": "0fcc0932cd44",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f1815595a81e61fd00ae0a8cacec223b7ca5390dba96344fc92ef1157532c4d0",
+  "hash": "5ede7549c9fcf172d7bd585302f7715a7d722e45f16e939f3209b52b6b016b44",
   "kind": "cap.run.finish",
-  "prev_hash": "8a6078f8f6547f27c58cab6a6a9f8a8ab545672e4eeebf587dd26a8a9ddb2e97",
+  "prev_hash": "54e8bf48bb5beb065bdd55ad3cd8a829d3c1ced61b1002f980949ebfb95a4622",
   "seq": 97,
-  "ts": "2026-09-24T04:08:53.285762+00:00"
+  "ts": "2026-09-24T06:32:17.619318+00:00"
  },
  {
   "actor": "agent",
@@ -2255,7 +2255,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "6a2dd5d3f1f9"
+    "run_id": "47ff7574accd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2263,13 +2263,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6a2dd5d3f1f9"
+   "run_id": "47ff7574accd"
   },
-  "hash": "e4215d5ecf06c252dd200b775d2bbdc0081ee0b3f21f31caeb4deb3bad5a8f50",
+  "hash": "cf733db0629dc00fa38c62d4361f9c0c01a05f18c8c3df04c552f031be6c08d3",
   "kind": "cap.run.start",
-  "prev_hash": "f1815595a81e61fd00ae0a8cacec223b7ca5390dba96344fc92ef1157532c4d0",
+  "prev_hash": "5ede7549c9fcf172d7bd585302f7715a7d722e45f16e939f3209b52b6b016b44",
   "seq": 98,
-  "ts": "2026-09-24T04:08:53.318288+00:00"
+  "ts": "2026-09-24T06:32:17.652659+00:00"
  },
  {
   "actor": "agent",
@@ -2279,36 +2279,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "6a2dd5d3f1f9"
+    "run_id": "47ff7574accd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6a2dd5d3f1f9"
+   "run_id": "47ff7574accd"
   },
-  "hash": "e3e25b04adc4dc8b50c418f7c30b9a8eb44676faababc8c50cd8c4c4596ac49e",
+  "hash": "820a34d1ac98945aea0eba2e6817c2325b0479ecf2cb5616bca7d47cffaff318",
   "kind": "gate.decision",
-  "prev_hash": "e4215d5ecf06c252dd200b775d2bbdc0081ee0b3f21f31caeb4deb3bad5a8f50",
+  "prev_hash": "cf733db0629dc00fa38c62d4361f9c0c01a05f18c8c3df04c552f031be6c08d3",
   "seq": 99,
-  "ts": "2026-09-24T04:08:53.318417+00:00"
+  "ts": "2026-09-24T06:32:17.652856+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "4ff649d95fdd247d",
-   "run_id": "6a2dd5d3f1f9",
+   "result_hash": "1f6bfad1f2c613b3",
+   "run_id": "47ff7574accd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "80ac9c62df4db72973c001e1d52cc86ff5806156ec83d19cd1b2524925bf52bb",
+  "hash": "09ffe804237ff144b432c0ee7607a9f18ea723e110198f6a6fce6521eb2d2ed2",
   "kind": "cap.run.finish",
-  "prev_hash": "e3e25b04adc4dc8b50c418f7c30b9a8eb44676faababc8c50cd8c4c4596ac49e",
+  "prev_hash": "820a34d1ac98945aea0eba2e6817c2325b0479ecf2cb5616bca7d47cffaff318",
   "seq": 100,
-  "ts": "2026-09-24T04:08:53.321142+00:00"
+  "ts": "2026-09-24T06:32:17.655877+00:00"
  },
  {
   "actor": "agent",
@@ -2318,7 +2318,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "912ebd3740e8"
+    "run_id": "fa3a16a5fdd8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2326,13 +2326,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "912ebd3740e8"
+   "run_id": "fa3a16a5fdd8"
   },
-  "hash": "8ceb067362521487e37ac1f148b122ec76805a89a743362cae2df08fb44fbe84",
+  "hash": "b4cb5b40adf8c7359ea618fe4fbf0d9b8adbb8506dece6983bd2d01be1929e25",
   "kind": "cap.run.start",
-  "prev_hash": "80ac9c62df4db72973c001e1d52cc86ff5806156ec83d19cd1b2524925bf52bb",
+  "prev_hash": "09ffe804237ff144b432c0ee7607a9f18ea723e110198f6a6fce6521eb2d2ed2",
   "seq": 101,
-  "ts": "2026-09-24T04:08:53.400989+00:00"
+  "ts": "2026-09-24T06:32:17.740921+00:00"
  },
  {
   "actor": "agent",
@@ -2342,36 +2342,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "912ebd3740e8"
+    "run_id": "fa3a16a5fdd8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "912ebd3740e8"
+   "run_id": "fa3a16a5fdd8"
   },
-  "hash": "c520f6be0628841e134eae541a0e3f4d264fb6b3e9ad4edf6ce025f13ee1bbbd",
+  "hash": "c13ddd6ead795a4312e2473184a8e1f325985799aa31146b7db3c9157f26641d",
   "kind": "gate.decision",
-  "prev_hash": "8ceb067362521487e37ac1f148b122ec76805a89a743362cae2df08fb44fbe84",
+  "prev_hash": "b4cb5b40adf8c7359ea618fe4fbf0d9b8adbb8506dece6983bd2d01be1929e25",
   "seq": 102,
-  "ts": "2026-09-24T04:08:53.401144+00:00"
+  "ts": "2026-09-24T06:32:17.741108+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "94eb0d5c7b88bf0d",
-   "run_id": "912ebd3740e8",
+   "result_hash": "f4349fd9063e2f4b",
+   "run_id": "fa3a16a5fdd8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "026e39a91de337f8dee760f5ea980824de497852793503e68e80aa42babd4ee7",
+  "hash": "680cde9922e45214b9a6b2104be753801a1b39960ce2dbf55506c7e70084f797",
   "kind": "cap.run.finish",
-  "prev_hash": "c520f6be0628841e134eae541a0e3f4d264fb6b3e9ad4edf6ce025f13ee1bbbd",
+  "prev_hash": "c13ddd6ead795a4312e2473184a8e1f325985799aa31146b7db3c9157f26641d",
   "seq": 103,
-  "ts": "2026-09-24T04:08:53.404097+00:00"
+  "ts": "2026-09-24T06:32:17.744040+00:00"
  },
  {
   "actor": "agent",
@@ -2381,7 +2381,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "ce49bc884af0"
+    "run_id": "cea4e99d4c72"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2389,13 +2389,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ce49bc884af0"
+   "run_id": "cea4e99d4c72"
   },
-  "hash": "e4c12099aa63ac37aa618dc02a660bfcc8c78e5ecf6faadf69e3621f537ee892",
+  "hash": "21619a42f348891933d136756eec122e4236ec17db0886952bbbf845b8121b47",
   "kind": "cap.run.start",
-  "prev_hash": "026e39a91de337f8dee760f5ea980824de497852793503e68e80aa42babd4ee7",
+  "prev_hash": "680cde9922e45214b9a6b2104be753801a1b39960ce2dbf55506c7e70084f797",
   "seq": 104,
-  "ts": "2026-09-24T04:08:53.509545+00:00"
+  "ts": "2026-09-24T06:32:17.895264+00:00"
  },
  {
   "actor": "agent",
@@ -2405,36 +2405,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "ce49bc884af0"
+    "run_id": "cea4e99d4c72"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ce49bc884af0"
+   "run_id": "cea4e99d4c72"
   },
-  "hash": "2a6f2084025bc48e4719842fa39109e8b5c11340d001ff4954f1b58e3ecd3c65",
+  "hash": "31091f702d9c9e9bbf75847a346f494b0f0e748fcc957655ba5ed08251fa0a65",
   "kind": "gate.decision",
-  "prev_hash": "e4c12099aa63ac37aa618dc02a660bfcc8c78e5ecf6faadf69e3621f537ee892",
+  "prev_hash": "21619a42f348891933d136756eec122e4236ec17db0886952bbbf845b8121b47",
   "seq": 105,
-  "ts": "2026-09-24T04:08:53.509773+00:00"
+  "ts": "2026-09-24T06:32:17.895493+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "ce49bc884af0",
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "cea4e99d4c72",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "75dd024ab11d1ac458761854641e026e635de1f64ef0432824f000b85023d7bc",
+  "hash": "d733793981a604c3f9d54aac48f73a535f9e60d18ff61d71239270f3adce9e1b",
   "kind": "cap.run.finish",
-  "prev_hash": "2a6f2084025bc48e4719842fa39109e8b5c11340d001ff4954f1b58e3ecd3c65",
+  "prev_hash": "31091f702d9c9e9bbf75847a346f494b0f0e748fcc957655ba5ed08251fa0a65",
   "seq": 106,
-  "ts": "2026-09-24T04:08:53.513999+00:00"
+  "ts": "2026-09-24T06:32:17.899498+00:00"
  },
  {
   "actor": "agent",
@@ -2444,7 +2444,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "74d0b531af68"
+    "run_id": "2dbe79dae3f3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2452,13 +2452,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "74d0b531af68"
+   "run_id": "2dbe79dae3f3"
   },
-  "hash": "592431aa735fc222035ab0a17cda39b2ea8cb7a620730b43244f892a10f356cf",
+  "hash": "9487f09292500d83a4777b0dcaf9e7f691ce1adc9147f46132e1885fde3b6e56",
   "kind": "cap.run.start",
-  "prev_hash": "75dd024ab11d1ac458761854641e026e635de1f64ef0432824f000b85023d7bc",
+  "prev_hash": "d733793981a604c3f9d54aac48f73a535f9e60d18ff61d71239270f3adce9e1b",
   "seq": 107,
-  "ts": "2026-09-24T04:08:53.556259+00:00"
+  "ts": "2026-09-24T06:32:17.902119+00:00"
  },
  {
   "actor": "agent",
@@ -2468,36 +2468,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "74d0b531af68"
+    "run_id": "2dbe79dae3f3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "74d0b531af68"
+   "run_id": "2dbe79dae3f3"
   },
-  "hash": "d2653350827272d191b09022f698e700aab6531269b6ff75a2c1cb811240a51d",
+  "hash": "182d1b9006f87280eaec81dc07139cdec83afa47c4e46b2a501a31db391f66c1",
   "kind": "gate.decision",
-  "prev_hash": "592431aa735fc222035ab0a17cda39b2ea8cb7a620730b43244f892a10f356cf",
+  "prev_hash": "9487f09292500d83a4777b0dcaf9e7f691ce1adc9147f46132e1885fde3b6e56",
   "seq": 108,
-  "ts": "2026-09-24T04:08:53.556432+00:00"
+  "ts": "2026-09-24T06:32:17.902214+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "56f5d42d5c07c09a",
-   "run_id": "74d0b531af68",
+   "result_hash": "afa5ea2529c51426",
+   "run_id": "2dbe79dae3f3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8cbc2a3f0e141a818e0dba263d0b487a1e875eb6e478b50918ba69edc4645f0c",
+  "hash": "94b20c3284107ea25698152fe07af5f63ed18b003958195ac08a5f5a48460afc",
   "kind": "cap.run.finish",
-  "prev_hash": "d2653350827272d191b09022f698e700aab6531269b6ff75a2c1cb811240a51d",
+  "prev_hash": "182d1b9006f87280eaec81dc07139cdec83afa47c4e46b2a501a31db391f66c1",
   "seq": 109,
-  "ts": "2026-09-24T04:08:53.558105+00:00"
+  "ts": "2026-09-24T06:32:17.903748+00:00"
  },
  {
   "actor": "agent",
@@ -2507,7 +2507,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "0424736ad267"
+    "run_id": "78ba72750424"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2515,13 +2515,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0424736ad267"
+   "run_id": "78ba72750424"
   },
-  "hash": "cbd4088a5c1e03a872f6dc7608ecbe30e2e584bf0447239db8429c6a86c0b325",
+  "hash": "7ff7e4e2bd16858b0e8a4bb6215d5754fbe7207d5415279a0d5376e88b210b98",
   "kind": "cap.run.start",
-  "prev_hash": "8cbc2a3f0e141a818e0dba263d0b487a1e875eb6e478b50918ba69edc4645f0c",
+  "prev_hash": "94b20c3284107ea25698152fe07af5f63ed18b003958195ac08a5f5a48460afc",
   "seq": 110,
-  "ts": "2026-09-24T04:08:53.560556+00:00"
+  "ts": "2026-09-24T06:32:17.905633+00:00"
  },
  {
   "actor": "agent",
@@ -2531,424 +2531,46 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "0424736ad267"
+    "run_id": "78ba72750424"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0424736ad267"
+   "run_id": "78ba72750424"
   },
-  "hash": "989032051bec2996ad34dfa5aa0dc3ce37b893204ac2ec152634e54802bf4249",
+  "hash": "936341698457ae43d9603b132bc36d477fd25f125204163a6018e0b5e300fa8c",
   "kind": "gate.decision",
-  "prev_hash": "cbd4088a5c1e03a872f6dc7608ecbe30e2e584bf0447239db8429c6a86c0b325",
+  "prev_hash": "7ff7e4e2bd16858b0e8a4bb6215d5754fbe7207d5415279a0d5376e88b210b98",
   "seq": 111,
-  "ts": "2026-09-24T04:08:53.560637+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 3,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "0424736ad267",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "e46c6e2f8bde5083cecdfd842d42d3d671902c5c4954736d88aff367a6c6cc22",
-  "kind": "cap.run.finish",
-  "prev_hash": "989032051bec2996ad34dfa5aa0dc3ce37b893204ac2ec152634e54802bf4249",
-  "seq": 112,
-  "ts": "2026-09-24T04:08:53.564414+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "750d82da0f86226a",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "7d572d74c2b2"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "7d572d74c2b2"
-  },
-  "hash": "6d261e136aca16c1815a0f1cadbbb9d44f306aac0fe29a7fe232ae1fb7a8c782",
-  "kind": "cap.run.start",
-  "prev_hash": "e46c6e2f8bde5083cecdfd842d42d3d671902c5c4954736d88aff367a6c6cc22",
-  "seq": 113,
-  "ts": "2026-09-24T04:08:53.566913+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "7d572d74c2b2"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "7d572d74c2b2"
-  },
-  "hash": "e6e9875a98b60460b659f9f45b5566f9522907dd266cb77c586dad0c23e02b27",
-  "kind": "gate.decision",
-  "prev_hash": "6d261e136aca16c1815a0f1cadbbb9d44f306aac0fe29a7fe232ae1fb7a8c782",
-  "seq": 114,
-  "ts": "2026-09-24T04:08:53.566997+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "41f7bc39756b00ce",
-   "run_id": "7d572d74c2b2",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "4262621a8a6654d268403414f05a7a03718977c7d673d1260756436c16c3d493",
-  "kind": "cap.run.finish",
-  "prev_hash": "e6e9875a98b60460b659f9f45b5566f9522907dd266cb77c586dad0c23e02b27",
-  "seq": 115,
-  "ts": "2026-09-24T04:08:53.569299+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "1c027fe85347"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "1c027fe85347"
-  },
-  "hash": "93f52c9c3cbcc1d24ea14b61b7ad6138a7b0425cc779bb0e580d3521a0f1d929",
-  "kind": "cap.run.start",
-  "prev_hash": "4262621a8a6654d268403414f05a7a03718977c7d673d1260756436c16c3d493",
-  "seq": 116,
-  "ts": "2026-09-24T04:08:54.065781+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "1c027fe85347"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "1c027fe85347"
-  },
-  "hash": "a252d30083475a03063e9019b24996ffada89d9f4b15b384910847ad235cd2a2",
-  "kind": "gate.decision",
-  "prev_hash": "93f52c9c3cbcc1d24ea14b61b7ad6138a7b0425cc779bb0e580d3521a0f1d929",
-  "seq": 117,
-  "ts": "2026-09-24T04:08:54.066172+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 7,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "1c027fe85347",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "a20f3c63a6c6c78768be775b3fed1246590f00acfeb01ec31dd066358faaab1a",
-  "kind": "cap.run.finish",
-  "prev_hash": "a252d30083475a03063e9019b24996ffada89d9f4b15b384910847ad235cd2a2",
-  "seq": 118,
-  "ts": "2026-09-24T04:08:54.072716+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "79068ed1195708d8",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "81e0f63cffd5"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "81e0f63cffd5"
-  },
-  "hash": "5861a3c5ae87e1d919faf21974c912c9e48e223175309bccf07874ef853c2e94",
-  "kind": "cap.run.start",
-  "prev_hash": "a20f3c63a6c6c78768be775b3fed1246590f00acfeb01ec31dd066358faaab1a",
-  "seq": 119,
-  "ts": "2026-09-24T04:08:54.078057+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "81e0f63cffd5"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "81e0f63cffd5"
-  },
-  "hash": "978286cd67e3233ad11cc982666bf05217c31870897b65614c22e73b978a3bba",
-  "kind": "gate.decision",
-  "prev_hash": "5861a3c5ae87e1d919faf21974c912c9e48e223175309bccf07874ef853c2e94",
-  "seq": 120,
-  "ts": "2026-09-24T04:08:54.078197+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "56f5d42d5c07c09a",
-   "run_id": "81e0f63cffd5",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "07834b7bd26d28394a4d184f7a398f44596fe83e3768c81259c778acd3a9e952",
-  "kind": "cap.run.finish",
-  "prev_hash": "978286cd67e3233ad11cc982666bf05217c31870897b65614c22e73b978a3bba",
-  "seq": 121,
-  "ts": "2026-09-24T04:08:54.080520+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "2abd0388258a"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "2abd0388258a"
-  },
-  "hash": "10327dd2012dafd98aece48b60369fdb1ebee25aa8e12b25e615851e7dd6ec72",
-  "kind": "cap.run.start",
-  "prev_hash": "07834b7bd26d28394a4d184f7a398f44596fe83e3768c81259c778acd3a9e952",
-  "seq": 122,
-  "ts": "2026-09-24T04:08:54.083157+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "2abd0388258a"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "2abd0388258a"
-  },
-  "hash": "ef3c3c522deaa7e13e4a5d45a2a7db947d866cb7d5d8ded3a74e5ee287d1dfea",
-  "kind": "gate.decision",
-  "prev_hash": "10327dd2012dafd98aece48b60369fdb1ebee25aa8e12b25e615851e7dd6ec72",
-  "seq": 123,
-  "ts": "2026-09-24T04:08:54.083278+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 5,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "2abd0388258a",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "3b6c2aa28114f5fe4f73d4d585f6c919dbc44ca8e2607a0f5cd3f62d1e1bba9e",
-  "kind": "cap.run.finish",
-  "prev_hash": "ef3c3c522deaa7e13e4a5d45a2a7db947d866cb7d5d8ded3a74e5ee287d1dfea",
-  "seq": 124,
-  "ts": "2026-09-24T04:08:54.088609+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "750d82da0f86226a",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "8b39765b6462"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "8b39765b6462"
-  },
-  "hash": "2b01c78cf6e40b8e37184e3a4bbede88bad33267203d022c1636c6fc65410b11",
-  "kind": "cap.run.start",
-  "prev_hash": "3b6c2aa28114f5fe4f73d4d585f6c919dbc44ca8e2607a0f5cd3f62d1e1bba9e",
-  "seq": 125,
-  "ts": "2026-09-24T04:08:54.091943+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "8b39765b6462"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "8b39765b6462"
-  },
-  "hash": "4bb5e54d0d835a272b0726263960076fb87d202be1158295bfdd204e94c519bd",
-  "kind": "gate.decision",
-  "prev_hash": "2b01c78cf6e40b8e37184e3a4bbede88bad33267203d022c1636c6fc65410b11",
-  "seq": 126,
-  "ts": "2026-09-24T04:08:54.092082+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
-   "duration_ms": 3,
-   "result_hash": "0a435ba185a0a929",
-   "run_id": "8b39765b6462",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "00937e78cfc7f6fcfe5b029a136dcb9973f565932dc81cefa251228d284524e3",
-  "kind": "cap.run.finish",
-  "prev_hash": "4bb5e54d0d835a272b0726263960076fb87d202be1158295bfdd204e94c519bd",
-  "seq": 127,
-  "ts": "2026-09-24T04:08:54.095159+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "bf10a9d8cf9c"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "bf10a9d8cf9c"
-  },
-  "hash": "c0c770791dee09639c6e1344845269887399b38d0438c1c0809493006335b5a8",
-  "kind": "cap.run.start",
-  "prev_hash": "00937e78cfc7f6fcfe5b029a136dcb9973f565932dc81cefa251228d284524e3",
-  "seq": 128,
-  "ts": "2026-09-24T04:08:57.720420+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "bf10a9d8cf9c"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "bf10a9d8cf9c"
-  },
-  "hash": "a14cd9e2fca16ed9410dec07a0f739d3656213a8e91fc63d41bf117d40b61c56",
-  "kind": "gate.decision",
-  "prev_hash": "c0c770791dee09639c6e1344845269887399b38d0438c1c0809493006335b5a8",
-  "seq": 129,
-  "ts": "2026-09-24T04:08:57.720649+00:00"
+  "ts": "2026-09-24T06:32:17.905725+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "bf10a9d8cf9c",
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "78ba72750424",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "fb9c941c87d5cffcdafd522980959b4a17b044350526531c2addeb4bf278edbd",
+  "hash": "586564a472ec573b99188ae74b6a3786722c0e41697ef495260ef8b44c50eeb2",
   "kind": "cap.run.finish",
-  "prev_hash": "a14cd9e2fca16ed9410dec07a0f739d3656213a8e91fc63d41bf117d40b61c56",
-  "seq": 130,
-  "ts": "2026-09-24T04:08:57.724767+00:00"
+  "prev_hash": "936341698457ae43d9603b132bc36d477fd25f125204163a6018e0b5e300fa8c",
+  "seq": 112,
+  "ts": "2026-09-24T06:32:17.909678+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "79068ed1195708d8",
-   "cap": "view.artifacts",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
    "chain": {
-    "cap": "view.artifacts",
-    "run_id": "8fe35d4931ff"
+    "cap": "view.timeline",
+    "run_id": "5c619361cfb8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2956,52 +2578,52 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8fe35d4931ff"
+   "run_id": "5c619361cfb8"
   },
-  "hash": "645075f9c405768d7a2e8d3eef3b79ec3b6f6bed58a8ecd698edd1c4922736ec",
+  "hash": "9d0e465dcb98f858d8f2b3e940ebc8bcfc9bf3233a3534dbfcfb5a11e6e30358",
   "kind": "cap.run.start",
-  "prev_hash": "fb9c941c87d5cffcdafd522980959b4a17b044350526531c2addeb4bf278edbd",
-  "seq": 131,
-  "ts": "2026-09-24T04:08:57.727452+00:00"
+  "prev_hash": "586564a472ec573b99188ae74b6a3786722c0e41697ef495260ef8b44c50eeb2",
+  "seq": 113,
+  "ts": "2026-09-24T06:32:17.912309+00:00"
  },
  {
   "actor": "agent",
   "data": {
-   "action_cap": "view.artifacts",
+   "action_cap": "view.timeline",
    "autonomy_level": "A2",
    "by": "agent",
    "chain": {
-    "cap": "view.artifacts",
-    "run_id": "8fe35d4931ff"
+    "cap": "view.timeline",
+    "run_id": "5c619361cfb8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8fe35d4931ff"
+   "run_id": "5c619361cfb8"
   },
-  "hash": "f44141a6b3688ba28d42b274eba5672ed38d3422ec6d46f714aa972771f11897",
+  "hash": "3f83f1f2160bffa8519cbce44045f976291bacfb32a2183574da900b39c5cdcb",
   "kind": "gate.decision",
-  "prev_hash": "645075f9c405768d7a2e8d3eef3b79ec3b6f6bed58a8ecd698edd1c4922736ec",
-  "seq": 132,
-  "ts": "2026-09-24T04:08:57.727561+00:00"
+  "prev_hash": "9d0e465dcb98f858d8f2b3e940ebc8bcfc9bf3233a3534dbfcfb5a11e6e30358",
+  "seq": 114,
+  "ts": "2026-09-24T06:32:17.912398+00:00"
  },
  {
   "actor": "agent",
   "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "56f5d42d5c07c09a",
-   "run_id": "8fe35d4931ff",
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "c50ea4ff15a3f366",
+   "run_id": "5c619361cfb8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b0860025b94c1b0a4bbb50970cf6f4149a495be7f09a357f53cc0b88d03858e6",
+  "hash": "75736cc46650a86db411d93d45b877a8624d7251b9377218240269eeffc18a01",
   "kind": "cap.run.finish",
-  "prev_hash": "f44141a6b3688ba28d42b274eba5672ed38d3422ec6d46f714aa972771f11897",
-  "seq": 133,
-  "ts": "2026-09-24T04:08:57.729206+00:00"
+  "prev_hash": "3f83f1f2160bffa8519cbce44045f976291bacfb32a2183574da900b39c5cdcb",
+  "seq": 115,
+  "ts": "2026-09-24T06:32:17.914732+00:00"
  },
  {
   "actor": "agent",
@@ -3011,7 +2633,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "b5f5bb51c224"
+    "run_id": "9b1755f1ada2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3019,13 +2641,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b5f5bb51c224"
+   "run_id": "9b1755f1ada2"
   },
-  "hash": "946bcd13bc69a8cdf9105023a7f03cde1470a7cd37308ae826c609dff8202375",
+  "hash": "20c1ac65768fbb6981ad25f0c64416efda7aa7bc4b97d2f89612b0c612972555",
   "kind": "cap.run.start",
-  "prev_hash": "b0860025b94c1b0a4bbb50970cf6f4149a495be7f09a357f53cc0b88d03858e6",
-  "seq": 134,
-  "ts": "2026-09-24T04:08:57.731610+00:00"
+  "prev_hash": "75736cc46650a86db411d93d45b877a8624d7251b9377218240269eeffc18a01",
+  "seq": 116,
+  "ts": "2026-09-24T06:32:18.372339+00:00"
  },
  {
   "actor": "agent",
@@ -3035,36 +2657,162 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "b5f5bb51c224"
+    "run_id": "9b1755f1ada2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b5f5bb51c224"
+   "run_id": "9b1755f1ada2"
   },
-  "hash": "b0dfa0d3614e10bbf8acc790d92a5e2216437ea29961500b3bed3dfc076dc3b4",
+  "hash": "cf8f8a92e37f4aca4d6bcc891fa0f832d87b6860ef26b6bf0ff11544c88740a2",
   "kind": "gate.decision",
-  "prev_hash": "946bcd13bc69a8cdf9105023a7f03cde1470a7cd37308ae826c609dff8202375",
-  "seq": 135,
-  "ts": "2026-09-24T04:08:57.731736+00:00"
+  "prev_hash": "20c1ac65768fbb6981ad25f0c64416efda7aa7bc4b97d2f89612b0c612972555",
+  "seq": 117,
+  "ts": "2026-09-24T06:32:18.373385+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 11,
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "9b1755f1ada2",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "1c8f1b6098d4d99502e7cfa8533871e6943c840925de2569cde2c7bdbf2cfc8d",
+  "kind": "cap.run.finish",
+  "prev_hash": "cf8f8a92e37f4aca4d6bcc891fa0f832d87b6860ef26b6bf0ff11544c88740a2",
+  "seq": 118,
+  "ts": "2026-09-24T06:32:18.383569+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "3d63be8b7e86"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "3d63be8b7e86"
+  },
+  "hash": "0adf7dc1a71fb93bd0a9d02370bffec45b9142b406e8e1eb96f8450cb2301c9c",
+  "kind": "cap.run.start",
+  "prev_hash": "1c8f1b6098d4d99502e7cfa8533871e6943c840925de2569cde2c7bdbf2cfc8d",
+  "seq": 119,
+  "ts": "2026-09-24T06:32:18.390447+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "3d63be8b7e86"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "3d63be8b7e86"
+  },
+  "hash": "79b0d25f437c9c539f7f67310ab185b70b4ee5a47e71a22cac4944ca6e5a1927",
+  "kind": "gate.decision",
+  "prev_hash": "0adf7dc1a71fb93bd0a9d02370bffec45b9142b406e8e1eb96f8450cb2301c9c",
+  "seq": 120,
+  "ts": "2026-09-24T06:32:18.390682+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 3,
+   "result_hash": "afa5ea2529c51426",
+   "run_id": "3d63be8b7e86",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "8d47b11fac409c1d0246c1911763806e4ccf984741859dc12f32ed3a5e0bee5b",
+  "kind": "cap.run.finish",
+  "prev_hash": "79b0d25f437c9c539f7f67310ab185b70b4ee5a47e71a22cac4944ca6e5a1927",
+  "seq": 121,
+  "ts": "2026-09-24T06:32:18.393522+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "3d3f5f0ff83a"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "3d3f5f0ff83a"
+  },
+  "hash": "26e0013ed5c2bad7e04fcba1813a53b50592a0fd2d5f02b39eb4f81695b6283b",
+  "kind": "cap.run.start",
+  "prev_hash": "8d47b11fac409c1d0246c1911763806e4ccf984741859dc12f32ed3a5e0bee5b",
+  "seq": 122,
+  "ts": "2026-09-24T06:32:18.397071+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "3d3f5f0ff83a"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "3d3f5f0ff83a"
+  },
+  "hash": "6361320e7d600b0843086b8c52be67c7d21349782168049d0bb66e519b4c96c8",
+  "kind": "gate.decision",
+  "prev_hash": "26e0013ed5c2bad7e04fcba1813a53b50592a0fd2d5f02b39eb4f81695b6283b",
+  "seq": 123,
+  "ts": "2026-09-24T06:32:18.397263+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 6,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "b5f5bb51c224",
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "3d3f5f0ff83a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c217fab7dc746d6c9407fddd5422c35572b1994c4f1656098bbcb9326cb8616f",
+  "hash": "34418b49e696c67d2cdb98bfeccff999689a330d893fc390ae8b65eddcf196ed",
   "kind": "cap.run.finish",
-  "prev_hash": "b0dfa0d3614e10bbf8acc790d92a5e2216437ea29961500b3bed3dfc076dc3b4",
-  "seq": 136,
-  "ts": "2026-09-24T04:08:57.738557+00:00"
+  "prev_hash": "6361320e7d600b0843086b8c52be67c7d21349782168049d0bb66e519b4c96c8",
+  "seq": 124,
+  "ts": "2026-09-24T06:32:18.403381+00:00"
  },
  {
   "actor": "agent",
@@ -3074,7 +2822,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "4fbc13d8175d"
+    "run_id": "63b5d0aa2965"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3082,13 +2830,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4fbc13d8175d"
+   "run_id": "63b5d0aa2965"
   },
-  "hash": "cb2fa21bfd32c5ce6e191e23ffa2727b046efe6b6cfab63ae4696b92ea12e9eb",
+  "hash": "f89abca5c43fc43f3784190d3ae20e7c9f090263422dbfb349d1bcfadd77fb76",
   "kind": "cap.run.start",
-  "prev_hash": "c217fab7dc746d6c9407fddd5422c35572b1994c4f1656098bbcb9326cb8616f",
-  "seq": 137,
-  "ts": "2026-09-24T04:08:57.741307+00:00"
+  "prev_hash": "34418b49e696c67d2cdb98bfeccff999689a330d893fc390ae8b65eddcf196ed",
+  "seq": 125,
+  "ts": "2026-09-24T06:32:18.407435+00:00"
  },
  {
   "actor": "agent",
@@ -3098,36 +2846,288 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "4fbc13d8175d"
+    "run_id": "63b5d0aa2965"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4fbc13d8175d"
+   "run_id": "63b5d0aa2965"
   },
-  "hash": "9e7dda4af1e0dd5964e163c02ada0071b7402b927693e56c0480299efc7a0ca3",
+  "hash": "f650af47c0bf0f5a944830e8f511977f6581453cc1e98ca7694736a0a713cf3a",
   "kind": "gate.decision",
-  "prev_hash": "cb2fa21bfd32c5ce6e191e23ffa2727b046efe6b6cfab63ae4696b92ea12e9eb",
+  "prev_hash": "f89abca5c43fc43f3784190d3ae20e7c9f090263422dbfb349d1bcfadd77fb76",
+  "seq": 126,
+  "ts": "2026-09-24T06:32:18.407588+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 3,
+   "result_hash": "b1028e1e8793a6a5",
+   "run_id": "63b5d0aa2965",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "0ec9d90a600c9b51d52e70305a0a86a818f85b858252047db980f66a59a7abc8",
+  "kind": "cap.run.finish",
+  "prev_hash": "f650af47c0bf0f5a944830e8f511977f6581453cc1e98ca7694736a0a713cf3a",
+  "seq": 127,
+  "ts": "2026-09-24T06:32:18.410888+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "d554b0d87a74"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "d554b0d87a74"
+  },
+  "hash": "3d005ad92b9162079bd83f49e58da0e35140935513e0467df7c0d08daa1f982a",
+  "kind": "cap.run.start",
+  "prev_hash": "0ec9d90a600c9b51d52e70305a0a86a818f85b858252047db980f66a59a7abc8",
+  "seq": 128,
+  "ts": "2026-09-24T06:32:21.923931+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "d554b0d87a74"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "d554b0d87a74"
+  },
+  "hash": "d7c8aa7ffc52f60e1688f328b9baf8f75e01c9b49a01783438152000cd3d2ca3",
+  "kind": "gate.decision",
+  "prev_hash": "3d005ad92b9162079bd83f49e58da0e35140935513e0467df7c0d08daa1f982a",
+  "seq": 129,
+  "ts": "2026-09-24T06:32:21.924175+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "d554b0d87a74",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "b75e9dab6d65c140f85f25f5b47c419ff152e6ffe53f7bddaa600f813678a4a8",
+  "kind": "cap.run.finish",
+  "prev_hash": "d7c8aa7ffc52f60e1688f328b9baf8f75e01c9b49a01783438152000cd3d2ca3",
+  "seq": 130,
+  "ts": "2026-09-24T06:32:21.928492+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "cf3de9e6d7da"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "cf3de9e6d7da"
+  },
+  "hash": "243181706bae96ef912bfc246784103b0db94c9c0e3f2b19b520ff08cedebdad",
+  "kind": "cap.run.start",
+  "prev_hash": "b75e9dab6d65c140f85f25f5b47c419ff152e6ffe53f7bddaa600f813678a4a8",
+  "seq": 131,
+  "ts": "2026-09-24T06:32:21.932607+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "cf3de9e6d7da"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "cf3de9e6d7da"
+  },
+  "hash": "acdd0bf77f8f86cc0870e6a85e9fcfcc0b95834578893e0df12415cf7c2cdb67",
+  "kind": "gate.decision",
+  "prev_hash": "243181706bae96ef912bfc246784103b0db94c9c0e3f2b19b520ff08cedebdad",
+  "seq": 132,
+  "ts": "2026-09-24T06:32:21.932720+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "afa5ea2529c51426",
+   "run_id": "cf3de9e6d7da",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "e0001d3b1a3ad2702ddcd46981e8a674d6d99508eb7ef4f4531bd1de886eaeb3",
+  "kind": "cap.run.finish",
+  "prev_hash": "acdd0bf77f8f86cc0870e6a85e9fcfcc0b95834578893e0df12415cf7c2cdb67",
+  "seq": 133,
+  "ts": "2026-09-24T06:32:21.934376+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "dd321034fdff"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "dd321034fdff"
+  },
+  "hash": "17d0e94d24ec5ab145b2a4199c2c21f37a7f536888d97db5fc2d1430da2aa4e9",
+  "kind": "cap.run.start",
+  "prev_hash": "e0001d3b1a3ad2702ddcd46981e8a674d6d99508eb7ef4f4531bd1de886eaeb3",
+  "seq": 134,
+  "ts": "2026-09-24T06:32:21.936287+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "dd321034fdff"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "dd321034fdff"
+  },
+  "hash": "d4e7d318ea1cefb7ae0f93f1a3a4b35e73bd0492e801f882948308507f9cdff5",
+  "kind": "gate.decision",
+  "prev_hash": "17d0e94d24ec5ab145b2a4199c2c21f37a7f536888d97db5fc2d1430da2aa4e9",
+  "seq": 135,
+  "ts": "2026-09-24T06:32:21.936377+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 6,
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "dd321034fdff",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "c64491a996b013f4b95236ad31868c29298444de44301dbbb9a59aafd469bacd",
+  "kind": "cap.run.finish",
+  "prev_hash": "d4e7d318ea1cefb7ae0f93f1a3a4b35e73bd0492e801f882948308507f9cdff5",
+  "seq": 136,
+  "ts": "2026-09-24T06:32:21.943010+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "1f3c433e0f5e"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "1f3c433e0f5e"
+  },
+  "hash": "e9d753ea972a43e93b53045914aca80d67885c72571fda7c470bcde1400beaee",
+  "kind": "cap.run.start",
+  "prev_hash": "c64491a996b013f4b95236ad31868c29298444de44301dbbb9a59aafd469bacd",
+  "seq": 137,
+  "ts": "2026-09-24T06:32:21.945877+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "1f3c433e0f5e"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "1f3c433e0f5e"
+  },
+  "hash": "68a7e0e12d1e970814c1aa8ae844afce2a258a72cd0f453882c2968d2c2566fa",
+  "kind": "gate.decision",
+  "prev_hash": "e9d753ea972a43e93b53045914aca80d67885c72571fda7c470bcde1400beaee",
   "seq": 138,
-  "ts": "2026-09-24T04:08:57.741400+00:00"
+  "ts": "2026-09-24T06:32:21.945964+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "005878fc53b99f73",
-   "run_id": "4fbc13d8175d",
+   "result_hash": "ddf7b01202bf5569",
+   "run_id": "1f3c433e0f5e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ecd93071d12e33cb29faeffbad04a21ca0c0ffb142e2294da9546757be374793",
+  "hash": "8487c962fe60314166461100fbc1caa7c065a475dfb26d23d64ac13205a9adb6",
   "kind": "cap.run.finish",
-  "prev_hash": "9e7dda4af1e0dd5964e163c02ada0071b7402b927693e56c0480299efc7a0ca3",
+  "prev_hash": "68a7e0e12d1e970814c1aa8ae844afce2a258a72cd0f453882c2968d2c2566fa",
   "seq": 139,
-  "ts": "2026-09-24T04:08:57.743860+00:00"
+  "ts": "2026-09-24T06:32:21.948484+00:00"
  },
  {
   "actor": "agent",
@@ -3137,7 +3137,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "archive.sources",
    "chain": {
     "cap": "archive.sources",
-    "run_id": "fd9e06432bfa"
+    "run_id": "3ba0ef520aaa"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3145,13 +3145,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fd9e06432bfa"
+   "run_id": "3ba0ef520aaa"
   },
-  "hash": "9eb2ec06cdc0bb560c5be7617c2df32dd6e725784c472f1f28a25539989de537",
+  "hash": "6e6485ec5cb3caf281f3aa4f95ae7b5a01332bba3301ec2cd0d075cf5d4e661e",
   "kind": "cap.run.start",
-  "prev_hash": "ecd93071d12e33cb29faeffbad04a21ca0c0ffb142e2294da9546757be374793",
+  "prev_hash": "8487c962fe60314166461100fbc1caa7c065a475dfb26d23d64ac13205a9adb6",
   "seq": 140,
-  "ts": "2026-09-24T04:09:00.041165+00:00"
+  "ts": "2026-09-24T06:32:24.237453+00:00"
  },
  {
   "actor": "agent",
@@ -3161,36 +3161,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "archive.sources",
-    "run_id": "fd9e06432bfa"
+    "run_id": "3ba0ef520aaa"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fd9e06432bfa"
+   "run_id": "3ba0ef520aaa"
   },
-  "hash": "9e76edab9979bd301fe273f579ef2cae3917f1a973435c82a01517dcc88abefd",
+  "hash": "39e766bb56414c1b9f93755124ee291902a3f11701771e0c4ee4642541b68fc1",
   "kind": "gate.decision",
-  "prev_hash": "9eb2ec06cdc0bb560c5be7617c2df32dd6e725784c472f1f28a25539989de537",
+  "prev_hash": "6e6485ec5cb3caf281f3aa4f95ae7b5a01332bba3301ec2cd0d075cf5d4e661e",
   "seq": 141,
-  "ts": "2026-09-24T04:09:00.041388+00:00"
+  "ts": "2026-09-24T06:32:24.237670+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "archive.sources",
-   "duration_ms": 1,
-   "result_hash": "18f469dbcd039b71",
-   "run_id": "fd9e06432bfa",
+   "duration_ms": 2,
+   "result_hash": "bc6b6425ac8f167d",
+   "run_id": "3ba0ef520aaa",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ceff62a0eeb8ace27584577d611958c4ee802ecef02af62e1e2e5da93792ba13",
+  "hash": "7c22f48f257fcd9d4badf83bac532bd2ade315ad63b71fd4c5b6f4af1f4f2d70",
   "kind": "cap.run.finish",
-  "prev_hash": "9e76edab9979bd301fe273f579ef2cae3917f1a973435c82a01517dcc88abefd",
+  "prev_hash": "39e766bb56414c1b9f93755124ee291902a3f11701771e0c4ee4642541b68fc1",
   "seq": 142,
-  "ts": "2026-09-24T04:09:00.042953+00:00"
+  "ts": "2026-09-24T06:32:24.239559+00:00"
  },
  {
   "actor": "agent",
@@ -3200,7 +3200,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "a6e17c17a536"
+    "run_id": "4759e94d40d9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3208,13 +3208,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "a6e17c17a536"
+   "run_id": "4759e94d40d9"
   },
-  "hash": "89830df433cddc7788edd2aa1c1b94ff0c4459cc1510585f0ef33457ec5f1387",
+  "hash": "33fddc86148c347ddaca0e8beeac5c784343734bd3a390bfb3ea6d0d07b2da32",
   "kind": "cap.run.start",
-  "prev_hash": "ceff62a0eeb8ace27584577d611958c4ee802ecef02af62e1e2e5da93792ba13",
+  "prev_hash": "7c22f48f257fcd9d4badf83bac532bd2ade315ad63b71fd4c5b6f4af1f4f2d70",
   "seq": 143,
-  "ts": "2026-09-24T04:09:00.045442+00:00"
+  "ts": "2026-09-24T06:32:24.241899+00:00"
  },
  {
   "actor": "agent",
@@ -3224,36 +3224,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "a6e17c17a536"
+    "run_id": "4759e94d40d9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "a6e17c17a536"
+   "run_id": "4759e94d40d9"
   },
-  "hash": "5323c668ebcc9cd46c92e6f92fb82d5e956ca9b929cf74104e96a6adef429b80",
+  "hash": "a4922fd53ac7cc70b9c0ba32d8ca64b0f7f1de894b0516bf34920455cf8d778f",
   "kind": "gate.decision",
-  "prev_hash": "89830df433cddc7788edd2aa1c1b94ff0c4459cc1510585f0ef33457ec5f1387",
+  "prev_hash": "33fddc86148c347ddaca0e8beeac5c784343734bd3a390bfb3ea6d0d07b2da32",
   "seq": 144,
-  "ts": "2026-09-24T04:09:00.045569+00:00"
+  "ts": "2026-09-24T06:32:24.241994+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "ef9df785cc6d0bc3",
-   "run_id": "a6e17c17a536",
+   "result_hash": "8dab8e7e416d3fd4",
+   "run_id": "4759e94d40d9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "7354c9b385284938814663a4c74a52bc50e5cdf766cafd7cae88210928855f75",
+  "hash": "cd76b6a463fb3b12eebfd67ab4079387a9dd0dcb19dd604b7e609616bb77f027",
   "kind": "cap.run.finish",
-  "prev_hash": "5323c668ebcc9cd46c92e6f92fb82d5e956ca9b929cf74104e96a6adef429b80",
+  "prev_hash": "a4922fd53ac7cc70b9c0ba32d8ca64b0f7f1de894b0516bf34920455cf8d778f",
   "seq": 145,
-  "ts": "2026-09-24T04:09:00.048689+00:00"
+  "ts": "2026-09-24T06:32:24.245349+00:00"
  },
  {
   "actor": "agent",
@@ -3263,7 +3263,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "view.kg_map",
    "chain": {
     "cap": "view.kg_map",
-    "run_id": "ec52639a0364"
+    "run_id": "ada41ad39f8b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3271,13 +3271,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ec52639a0364"
+   "run_id": "ada41ad39f8b"
   },
-  "hash": "b8460be1f8378e240ed4e4f4fbe68de2020bfed206b0b18dedbeae1e12ce4ca8",
+  "hash": "5bbbb1558e8c37a517558368531416f9002184f600c5f33719c1146d663c6f8c",
   "kind": "cap.run.start",
-  "prev_hash": "7354c9b385284938814663a4c74a52bc50e5cdf766cafd7cae88210928855f75",
+  "prev_hash": "cd76b6a463fb3b12eebfd67ab4079387a9dd0dcb19dd604b7e609616bb77f027",
   "seq": 146,
-  "ts": "2026-09-24T04:09:04.510924+00:00"
+  "ts": "2026-09-24T06:32:28.784177+00:00"
  },
  {
   "actor": "agent",
@@ -3287,36 +3287,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "view.kg_map",
-    "run_id": "ec52639a0364"
+    "run_id": "ada41ad39f8b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ec52639a0364"
+   "run_id": "ada41ad39f8b"
   },
-  "hash": "3bbaaceed1b3baf131aa1c681805f1de7c594786b1590345c0f3b6b0959befa4",
+  "hash": "62a94231129d8dbf8cbeea8905cd80245144b59f582e3a5bfb6e31d19ab3fe97",
   "kind": "gate.decision",
-  "prev_hash": "b8460be1f8378e240ed4e4f4fbe68de2020bfed206b0b18dedbeae1e12ce4ca8",
+  "prev_hash": "5bbbb1558e8c37a517558368531416f9002184f600c5f33719c1146d663c6f8c",
   "seq": 147,
-  "ts": "2026-09-24T04:09:04.511133+00:00"
+  "ts": "2026-09-24T06:32:28.784409+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.kg_map",
    "duration_ms": 3,
-   "result_hash": "b6945a3e0cfc9c39",
-   "run_id": "ec52639a0364",
+   "result_hash": "5609f83973bfffa7",
+   "run_id": "ada41ad39f8b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e2d998dbedc555c9adf480d78e1123dc24de50ea55129596a154c04853825934",
+  "hash": "523989d34f922de91feb6227a28ca6e590d051bae93778a17bd4aeef9190a985",
   "kind": "cap.run.finish",
-  "prev_hash": "3bbaaceed1b3baf131aa1c681805f1de7c594786b1590345c0f3b6b0959befa4",
+  "prev_hash": "62a94231129d8dbf8cbeea8905cd80245144b59f582e3a5bfb6e31d19ab3fe97",
   "seq": 148,
-  "ts": "2026-09-24T04:09:04.514145+00:00"
+  "ts": "2026-09-24T06:32:28.787442+00:00"
  },
  {
   "actor": "agent",
@@ -3326,7 +3326,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "017aed589541"
+    "run_id": "54695323d59e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3334,13 +3334,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "017aed589541"
+   "run_id": "54695323d59e"
   },
-  "hash": "d8c577df57289c5da57d9800b1f78f7bb441bad2066de7777ed50d25d66e43a3",
+  "hash": "1d2d79624afdd0d0ef116946cb97d2543cfb959cba7f3a650211acc3764e3948",
   "kind": "cap.run.start",
-  "prev_hash": "e2d998dbedc555c9adf480d78e1123dc24de50ea55129596a154c04853825934",
+  "prev_hash": "523989d34f922de91feb6227a28ca6e590d051bae93778a17bd4aeef9190a985",
   "seq": 149,
-  "ts": "2026-09-24T04:09:06.887823+00:00"
+  "ts": "2026-09-24T06:32:31.147144+00:00"
  },
  {
   "actor": "agent",
@@ -3350,36 +3350,36 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "017aed589541"
+    "run_id": "54695323d59e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "017aed589541"
+   "run_id": "54695323d59e"
   },
-  "hash": "e62f156523d9f9d3ab32fc277326db8b9b7aea92d4db6d58c486f00a44411493",
+  "hash": "a369fa8bf3fa398628eb525340ebb783ec1bb1abf6591d7962e0569d2acdaa01",
   "kind": "gate.decision",
-  "prev_hash": "d8c577df57289c5da57d9800b1f78f7bb441bad2066de7777ed50d25d66e43a3",
+  "prev_hash": "1d2d79624afdd0d0ef116946cb97d2543cfb959cba7f3a650211acc3764e3948",
   "seq": 150,
-  "ts": "2026-09-24T04:09:06.888039+00:00"
+  "ts": "2026-09-24T06:32:31.147372+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "5660233b8c3c2553",
-   "run_id": "017aed589541",
+   "result_hash": "6edb34c071e9725a",
+   "run_id": "54695323d59e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "947671f47c3e16695f81b64b43173e8931ceaa77162c9ff3ef102f683c298cd9",
+  "hash": "7c3620671146799d3367a7fa033ac4b143cc1da679f032beadaf527ddc9eda66",
   "kind": "cap.run.finish",
-  "prev_hash": "e62f156523d9f9d3ab32fc277326db8b9b7aea92d4db6d58c486f00a44411493",
+  "prev_hash": "a369fa8bf3fa398628eb525340ebb783ec1bb1abf6591d7962e0569d2acdaa01",
   "seq": 151,
-  "ts": "2026-09-24T04:09:06.892474+00:00"
+  "ts": "2026-09-24T06:32:31.151798+00:00"
  }
 ]
 ```
@@ -3445,13 +3445,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "kind": "gap",
     "text": "Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_0f339e78.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_6323b754.",
     "source_cap": "code.static",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T04:08:51.389893+00:00",
+    "created_at": "2026-09-24T06:32:15.606229+00:00",
     "answered_at": null
    }
   ]
@@ -3472,7 +3472,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
   "so_dong": 43,
   "dong": [
    {
-    "id": "870819de0f08",
+    "id": "0721081a6d11",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -3485,10 +3485,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:48.932001+00:00"
+    "at": "2026-09-24T06:32:13.529346+00:00"
    },
    {
-    "id": "e96d5510914c",
+    "id": "66250dabdbb9",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3501,10 +3501,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:48.945954+00:00"
+    "at": "2026-09-24T06:32:13.544333+00:00"
    },
    {
-    "id": "040a7dea880d",
+    "id": "e527ac221d02",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3517,10 +3517,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:48.949146+00:00"
+    "at": "2026-09-24T06:32:13.547558+00:00"
    },
    {
-    "id": "e53480036562",
+    "id": "7c04f5d3a91f",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3533,10 +3533,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:48.979162+00:00"
+    "at": "2026-09-24T06:32:13.579493+00:00"
    },
    {
-    "id": "c13e8d7017a1",
+    "id": "306cb7fd67c2",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3549,10 +3549,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:49.191178+00:00"
+    "at": "2026-09-24T06:32:13.831270+00:00"
    },
    {
-    "id": "29e79966a7ed",
+    "id": "15305879fc80",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -3565,10 +3565,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:49.217359+00:00"
+    "at": "2026-09-24T06:32:13.859559+00:00"
    },
    {
-    "id": "cb7da822930f",
+    "id": "c4cef6e38685",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -3581,10 +3581,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.344605+00:00"
+    "at": "2026-09-24T06:32:15.571925+00:00"
    },
    {
-    "id": "3cd3a74d1f33",
+    "id": "c23de0173c33",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -3597,10 +3597,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.349779+00:00"
+    "at": "2026-09-24T06:32:15.574818+00:00"
    },
    {
-    "id": "cd644ba97c7c",
+    "id": "dd46a31699a0",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -3613,10 +3613,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.358285+00:00"
+    "at": "2026-09-24T06:32:15.580861+00:00"
    },
    {
-    "id": "057b9f2e5e34",
+    "id": "75351a386dba",
     "gate": "*",
     "action_cap": "ingest.index_text",
     "risk": "R1",
@@ -3629,10 +3629,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.375125+00:00"
+    "at": "2026-09-24T06:32:15.592852+00:00"
    },
    {
-    "id": "5398fe242ef9",
+    "id": "96e91e997be7",
     "gate": "*",
     "action_cap": "extract.kicad_netlist",
     "risk": "R1",
@@ -3645,10 +3645,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.378328+00:00"
+    "at": "2026-09-24T06:32:15.595498+00:00"
    },
    {
-    "id": "b150fe122e11",
+    "id": "1b76733f3000",
     "gate": "*",
     "action_cap": "code.static",
     "risk": "R0",
@@ -3661,10 +3661,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.388933+00:00"
+    "at": "2026-09-24T06:32:15.604732+00:00"
    },
    {
-    "id": "8772279da919",
+    "id": "c316ffa19023",
     "gate": "*",
     "action_cap": "view.rag_ask",
     "risk": "R0",
@@ -3677,10 +3677,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.392248+00:00"
+    "at": "2026-09-24T06:32:15.608331+00:00"
    },
    {
-    "id": "e15c84239ff1",
+    "id": "d258802dffdb",
     "gate": "*",
     "action_cap": "board.check_pins",
     "risk": "R0",
@@ -3693,10 +3693,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.394267+00:00"
+    "at": "2026-09-24T06:32:15.610081+00:00"
    },
    {
-    "id": "3488835a02d9",
+    "id": "702adfde8fbb",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -3709,10 +3709,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.397786+00:00"
+    "at": "2026-09-24T06:32:15.613399+00:00"
    },
    {
-    "id": "4a982f62be26",
+    "id": "550c2e96f771",
     "gate": "*",
     "action_cap": "board.propose_fix",
     "risk": "R0",
@@ -3725,10 +3725,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.401162+00:00"
+    "at": "2026-09-24T06:32:15.616594+00:00"
    },
    {
-    "id": "da42a4dce56a",
+    "id": "a4df55d821cd",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -3741,10 +3741,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.428708+00:00"
+    "at": "2026-09-24T06:32:15.653728+00:00"
    },
    {
-    "id": "4611c1f0f99b",
+    "id": "a3703ca634b9",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3757,10 +3757,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:51.465503+00:00"
+    "at": "2026-09-24T06:32:15.684839+00:00"
    },
    {
-    "id": "5d9ca279601a",
+    "id": "42d356bd3b10",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3773,10 +3773,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.241314+00:00"
+    "at": "2026-09-24T06:32:17.521282+00:00"
    },
    {
-    "id": "95553e269dde",
+    "id": "100cac01f9a8",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -3789,10 +3789,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.249800+00:00"
+    "at": "2026-09-24T06:32:17.529506+00:00"
    },
    {
-    "id": "3e907fa2f50a",
+    "id": "676fcffc4656",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3805,10 +3805,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.257796+00:00"
+    "at": "2026-09-24T06:32:17.590600+00:00"
    },
    {
-    "id": "62ef5a94f507",
+    "id": "3d180620c8f5",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3821,10 +3821,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.268698+00:00"
+    "at": "2026-09-24T06:32:17.601083+00:00"
    },
    {
-    "id": "2bb44290d35e",
+    "id": "73064b3d7b23",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3837,10 +3837,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.271843+00:00"
+    "at": "2026-09-24T06:32:17.604420+00:00"
    },
    {
-    "id": "602d67379ab6",
+    "id": "6a001a9c8b57",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3853,10 +3853,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.281578+00:00"
+    "at": "2026-09-24T06:32:17.614602+00:00"
    },
    {
-    "id": "9a4e80f89334",
+    "id": "0fcc0932cd44",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3869,10 +3869,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.284594+00:00"
+    "at": "2026-09-24T06:32:17.618121+00:00"
    },
    {
-    "id": "6a2dd5d3f1f9",
+    "id": "47ff7574accd",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3885,10 +3885,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.318831+00:00"
+    "at": "2026-09-24T06:32:17.653348+00:00"
    },
    {
-    "id": "912ebd3740e8",
+    "id": "fa3a16a5fdd8",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3901,10 +3901,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.401757+00:00"
+    "at": "2026-09-24T06:32:17.741614+00:00"
    },
    {
-    "id": "ce49bc884af0",
+    "id": "cea4e99d4c72",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3917,10 +3917,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.510378+00:00"
+    "at": "2026-09-24T06:32:17.896009+00:00"
    },
    {
-    "id": "74d0b531af68",
+    "id": "2dbe79dae3f3",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3933,10 +3933,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.556857+00:00"
+    "at": "2026-09-24T06:32:17.902558+00:00"
    },
    {
-    "id": "0424736ad267",
+    "id": "78ba72750424",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3949,10 +3949,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.561042+00:00"
+    "at": "2026-09-24T06:32:17.906126+00:00"
    },
    {
-    "id": "7d572d74c2b2",
+    "id": "5c619361cfb8",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3965,10 +3965,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:53.567359+00:00"
+    "at": "2026-09-24T06:32:17.912776+00:00"
    },
    {
-    "id": "1c027fe85347",
+    "id": "9b1755f1ada2",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3981,10 +3981,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:54.067088+00:00"
+    "at": "2026-09-24T06:32:18.375069+00:00"
    },
    {
-    "id": "81e0f63cffd5",
+    "id": "3d63be8b7e86",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3997,10 +3997,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:54.078801+00:00"
+    "at": "2026-09-24T06:32:18.391455+00:00"
    },
    {
-    "id": "2abd0388258a",
+    "id": "3d3f5f0ff83a",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -4013,10 +4013,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:54.083788+00:00"
+    "at": "2026-09-24T06:32:18.397883+00:00"
    },
    {
-    "id": "8b39765b6462",
+    "id": "63b5d0aa2965",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -4029,10 +4029,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:54.092606+00:00"
+    "at": "2026-09-24T06:32:18.408139+00:00"
    },
    {
-    "id": "bf10a9d8cf9c",
+    "id": "d554b0d87a74",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -4045,10 +4045,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:57.721264+00:00"
+    "at": "2026-09-24T06:32:21.924856+00:00"
    },
    {
-    "id": "8fe35d4931ff",
+    "id": "cf3de9e6d7da",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -4061,10 +4061,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:57.727934+00:00"
+    "at": "2026-09-24T06:32:21.933139+00:00"
    },
    {
-    "id": "b5f5bb51c224",
+    "id": "dd321034fdff",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -4077,10 +4077,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:57.732214+00:00"
+    "at": "2026-09-24T06:32:21.936762+00:00"
    },
    {
-    "id": "4fbc13d8175d",
+    "id": "1f3c433e0f5e",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -4093,10 +4093,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:08:57.741760+00:00"
+    "at": "2026-09-24T06:32:21.946368+00:00"
    },
    {
-    "id": "fd9e06432bfa",
+    "id": "3ba0ef520aaa",
     "gate": "*",
     "action_cap": "archive.sources",
     "risk": "R0",
@@ -4109,10 +4109,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:00.041902+00:00"
+    "at": "2026-09-24T06:32:24.238355+00:00"
    },
    {
-    "id": "a6e17c17a536",
+    "id": "4759e94d40d9",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -4125,10 +4125,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:00.045981+00:00"
+    "at": "2026-09-24T06:32:24.242385+00:00"
    },
    {
-    "id": "ec52639a0364",
+    "id": "ada41ad39f8b",
     "gate": "*",
     "action_cap": "view.kg_map",
     "risk": "R0",
@@ -4141,10 +4141,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:04.511758+00:00"
+    "at": "2026-09-24T06:32:28.784942+00:00"
    },
    {
-    "id": "017aed589541",
+    "id": "54695323d59e",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -4157,7 +4157,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:06.888695+00:00"
+    "at": "2026-09-24T06:32:31.147998+00:00"
    }
   ]
  },
@@ -4181,7 +4181,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
   "so_dong": 12,
   "dong": [
    {
-    "id": "f_b89cf85da7abe9e6",
+    "id": "f_d301ebf6d4ed507a",
     "subject": "board:mach-co-loi/net:+3V3",
     "predicate": "net",
     "value": "{\"name\": \"+3V3\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"1\", \"pinfunction\": \"VDD\"}, {\"ref\": \"U2\", \"pin\": \"8\", \"pinfunction\": \"VDD\"}, {\"ref\": \"U3\", \"pin\": \"2\", \"pinfunction\": \"VOUT\"}, {\"ref\": \"R1\", \"pin\": \"1\", \"pinfunction\": \"\"}]}",
@@ -4197,10 +4197,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_7499519d22515e37",
+    "id": "f_2b0b0c69b089ad6f",
     "subject": "board:mach-co-loi/net:GND",
     "predicate": "net",
     "value": "{\"name\": \"GND\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"24\", \"pinfunction\": \"VSS\"}, {\"ref\": \"U2\", \"pin\": \"4\", \"pinfunction\": \"GND\"}, {\"ref\": \"U3\", \"pin\": \"1\", \"pinfunction\": \"GND\"}, {\"ref\": \"C1\", \"pin\": \"2\", \"pinfunction\": \"\"}]}",
@@ -4216,10 +4216,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_4c0d2ce70a6f2e77",
+    "id": "f_f2494ff908160254",
     "subject": "board:mach-co-loi/net:NRST",
     "predicate": "net",
     "value": "{\"name\": \"NRST\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"7\", \"pinfunction\": \"NRST\"}]}",
@@ -4235,10 +4235,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_934549e399178861",
+    "id": "f_e748ff621673d5a1",
     "subject": "board:mach-co-loi/net:SCL",
     "predicate": "net",
     "value": "{\"name\": \"SCL\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"19\", \"pinfunction\": \"PB6/I2C1_SCL\"}, {\"ref\": \"U2\", \"pin\": \"2\", \"pinfunction\": \"SCL\"}]}",
@@ -4254,10 +4254,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_65f36dd584b0f2e8",
+    "id": "f_9a58116c8812d840",
     "subject": "board:mach-co-loi/net:SDA",
     "predicate": "net",
     "value": "{\"name\": \"SDA\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"18\", \"pinfunction\": \"PB7/I2C1_SDA\"}, {\"ref\": \"U2\", \"pin\": \"1\", \"pinfunction\": \"SDA\"}]}",
@@ -4273,10 +4273,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_227b641171640c0c",
+    "id": "f_d9c767add542672c",
     "subject": "board:mach-co-loi/net:VBUS_5V",
     "predicate": "net",
     "value": "{\"name\": \"VBUS_5V\", \"nodes\": [{\"ref\": \"J1\", \"pin\": \"A4\", \"pinfunction\": \"VBUS\"}, {\"ref\": \"U3\", \"pin\": \"3\", \"pinfunction\": \"VIN\"}, {\"ref\": \"U2\", \"pin\": \"7\", \"pinfunction\": \"VDDIO\"}]}",
@@ -4292,10 +4292,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_d4d84c2787b5aa0b",
+    "id": "f_b38a40650ec0c2f8",
     "subject": "board:mach-co-loi/part:C1",
     "predicate": "package",
     "value": "{\"ref\": \"C1\", \"value\": \"100n\", \"footprint\": \"0402\"}",
@@ -4311,10 +4311,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_ca85d8e444b95e8b",
+    "id": "f_bb28c8b47ffc7d49",
     "subject": "board:mach-co-loi/part:J1",
     "predicate": "package",
     "value": "{\"ref\": \"J1\", \"value\": \"USB-C\", \"footprint\": \"USB-C-16P\"}",
@@ -4330,10 +4330,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_6c5822de971809f6",
+    "id": "f_53267df23316cfc9",
     "subject": "board:mach-co-loi/part:R1",
     "predicate": "package",
     "value": "{\"ref\": \"R1\", \"value\": \"4.7k\", \"footprint\": \"0402\"}",
@@ -4349,10 +4349,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_be948578de915a02",
+    "id": "f_2efad06a1f117b35",
     "subject": "board:mach-co-loi/part:U1",
     "predicate": "package",
     "value": "{\"ref\": \"U1\", \"value\": \"MCU-X\", \"footprint\": \"LQFP48\"}",
@@ -4368,10 +4368,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_3a6560c9ecd72d19",
+    "id": "f_7411d38b7e6f92f5",
     "subject": "board:mach-co-loi/part:U2",
     "predicate": "package",
     "value": "{\"ref\": \"U2\", \"value\": \"SEN42\", \"footprint\": \"DFN8\"}",
@@ -4387,10 +4387,10 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    },
    {
-    "id": "f_b22b5439662f9620",
+    "id": "f_5627e99627c5e979",
     "subject": "board:mach-co-loi/part:U3",
     "predicate": "package",
     "value": "{\"ref\": \"U3\", \"value\": \"AMS1117-3.3\", \"footprint\": \"SOT223\"}",
@@ -4406,7 +4406,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "5398fe242ef9"
+    "run_id": "96e91e997be7"
    }
   ]
  },
@@ -4437,7 +4437,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "id": "mach-co-loi@1.0.0",
     "kind": "board",
     "header": "{\"name\": \"mach-co-loi\", \"source\": \"mach-co-loi.net\", \"parts\": 6}",
-    "created_at": "2026-09-24T04:08:51.379695+00:00",
+    "created_at": "2026-09-24T06:32:15.596637+00:00",
     "badges": null,
     "pinned_by": null
    }
@@ -4448,51 +4448,51 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
   "dong": [
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_b89cf85da7abe9e6"
+    "fact_id": "f_d301ebf6d4ed507a"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_7499519d22515e37"
+    "fact_id": "f_2b0b0c69b089ad6f"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_4c0d2ce70a6f2e77"
+    "fact_id": "f_f2494ff908160254"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_934549e399178861"
+    "fact_id": "f_e748ff621673d5a1"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_65f36dd584b0f2e8"
+    "fact_id": "f_9a58116c8812d840"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_227b641171640c0c"
+    "fact_id": "f_d9c767add542672c"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_d4d84c2787b5aa0b"
+    "fact_id": "f_b38a40650ec0c2f8"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_ca85d8e444b95e8b"
+    "fact_id": "f_bb28c8b47ffc7d49"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_6c5822de971809f6"
+    "fact_id": "f_53267df23316cfc9"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_be948578de915a02"
+    "fact_id": "f_2efad06a1f117b35"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_3a6560c9ecd72d19"
+    "fact_id": "f_7411d38b7e6f92f5"
    },
    {
     "passport_id": "mach-co-loi@1.0.0",
-    "fact_id": "f_b22b5439662f9620"
+    "fact_id": "f_5627e99627c5e979"
    }
   ]
  },
@@ -4512,14 +4512,14 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_0f339e78f6a8",
+    "id": "r_6323b754919d",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"args\": {\"files\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net\", \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"]}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"args\": {\"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"args\": {\"board\": \"${n2.board_passport_id}\"}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"args\": {\"conflict\": \"${n3.conflicts[0]}\"}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n5\", \"cap\": \"code.static\", \"args\": {\"project\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC041/du-an/do-bao-dong-gia\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"args\": {\"question\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_0f339e78f6a8\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"review.ask\", \"slots\": {\"question\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net\", \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"], \"_text\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}, \"text\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"args\": {\"files\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net\", \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"]}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"args\": {\"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"args\": {\"board\": \"${n2.board_passport_id}\"}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"args\": {\"conflict\": \"${n3.conflicts[0]}\"}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n5\", \"cap\": \"code.static\", \"args\": {\"project\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC041/du-an/do-bao-dong-gia\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"args\": {\"question\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_6323b754919d\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"review.ask\", \"slots\": {\"question\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net\", \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"], \"_text\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}, \"text\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\"}",
     "state": "done",
     "working": null,
-    "report": "{\"nguon_chuoi\": \"mẫu: Rà soát hiện vật (DEV-208)\", \"state\": \"done\", \"done\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"run_id\": \"057b9f2e5e34\", \"ra\": {\"indexed\": 0}, \"dau_ra\": {\"indexed\": 0}}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"run_id\": \"5398fe242ef9\", \"ra\": {\"board_passport_id\": \"mach-co-loi@1.0.0\", \"nets\": 6, \"parts\": 6}, \"dau_ra\": {\"board_passport_id\": \"mach-co-loi@1.0.0\", \"nets\": 6, \"parts\": 6}}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"run_id\": \"e15c84239ff1\", \"ra\": {\"conflicts\": 4}, \"dau_ra\": {\"conflicts\": [{\"pin\": \"SCL\", \"kind\": \"missing_pullup\", \"severity\": \"major\", \"detail\": \"net I2C `SCL` không có điện trở kéo lên — bus sẽ im lặng, và triệu chứng giống hệt cảm biến hỏng\"}, {\"pin\": \"SDA\", \"kind\": \"missing_pullup\", \"severity\": \"major\", \"detail\": \"net I2C `SDA` không có điện trở kéo lên — bus sẽ im lặng, và triệu chứng giống hệt cảm biến hỏng\"}, {\"pin\": \"U2.7\", \"kind\": \"overvoltage\", \"severity\": \"blocker\", \"detail\": \"chân `VDDIO` của `U2` nằm trên net `VBUS_5V` — miền 5 V. Chân nguồn của IC thường có trần 3,6 V; cấp 5 V là hỏng ngay lần cắm đầu tiên. Kiểm datasheet, và nếu cần 5 V thì thêm bộ chuyển mức.\"}, {\"pin\": \"U1.7\", \"kind\": \"floating_reset\", \"severity\": \"major\", \"detail\": \"net reset `NRST` chỉ có một nút (`U1.7`) — không trở kéo lên, không tụ. Chân reset thả nổi là một ăng-ten: board tự khởi động lại khi có nhiễu, lúc có lúc không.\"}]}}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"run_id\": \"3488835a02d9\", \"ra\": {\"report\": \"6 trường\", \"text\": \"258 ký tự\"}, \"dau_ra\": {\"report\": {\"run_id\": \"r_0f339e78f6a8\", \"done\": [\"project.open\", \"view.artifacts\", \"view.artifacts\", \"view.timeline\", \"project.status\", \"chat.parse_intent\", \"chat.ground\", \"chat.fill_defaults\", \"ingest.index_text\", \"extract.kicad_netlist\", \"board.check_pins\"], \"waiting\": [], \"ra\": [], \"undo\": [\"5398fe242ef9\"], \"cost\": 0.001297}, \"text\": \"Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\\nHoàn tác được 1 mục đến 2026-09-27T04:08.\\nChi phí mô hình: 0.0013 USD.\"}}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"run_id\": \"4a982f62be26\", \"ra\": {\"options\": 3}, \"dau_ra\": {\"options\": [{\"change\": \"Thêm điện trở kéo lên 4700 Ω lên nguồn cho `SCL`\", \"cost\": \"low\", \"touches_code\": false, \"kind\": \"add_pullup\", \"note\": \"không chạm mã — đây là lý do nó đứng đầu danh sách\", \"ask\": false}, {\"change\": \"Bật điện trở kéo lên trong chip cho chân I2C\", \"cost\": \"low\", \"touches_code\": true, \"kind\": \"internal_pullup\", \"note\": \"kéo lên trong chip cỡ 20–50 kΩ, chỉ đủ cho 100 kHz và bus ngắn; dùng được để thử, không nên để trong bản chạy thật\", \"ask\": false}, {\"change\": \"Hạ tốc độ bus xuống 100 kHz\", \"cost\": \"medium\", \"touches_code\": true, \"kind\": \"lower_speed\", \"note\": \"không sửa được nguyên nhân: thiếu kéo lên thì bus vẫn không có mức cao\", \"ask\": false}]}}], \"waiting\": [], \"skipped\": [], \"failed\": [{\"id\": \"n5\", \"cap\": \"code.static\", \"error\": {\"eide_code\": \"E2000\", \"name\": \"GROUNDING_FAILED\", \"exists\": [], \"candidates\": [], \"missing\": [\"isa\"], \"message\": \"Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)\"}, \"bat_buoc\": false}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"error\": {\"eide_code\": \"E5002\", \"name\": \"OUTPUT_INVALID\", \"remedy\": \"ingest.index_text\", \"message\": \"Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.\"}, \"bat_buoc\": false}]}",
+    "report": "{\"nguon_chuoi\": \"mẫu: Rà soát hiện vật (DEV-208)\", \"state\": \"done\", \"done\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"run_id\": \"75351a386dba\", \"ra\": {\"indexed\": 0}, \"dau_ra\": {\"indexed\": 0}}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"run_id\": \"96e91e997be7\", \"ra\": {\"board_passport_id\": \"mach-co-loi@1.0.0\", \"nets\": 6, \"parts\": 6}, \"dau_ra\": {\"board_passport_id\": \"mach-co-loi@1.0.0\", \"nets\": 6, \"parts\": 6}}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"run_id\": \"d258802dffdb\", \"ra\": {\"conflicts\": 4}, \"dau_ra\": {\"conflicts\": [{\"pin\": \"SCL\", \"kind\": \"missing_pullup\", \"severity\": \"major\", \"detail\": \"net I2C `SCL` không có điện trở kéo lên — bus sẽ im lặng, và triệu chứng giống hệt cảm biến hỏng\"}, {\"pin\": \"SDA\", \"kind\": \"missing_pullup\", \"severity\": \"major\", \"detail\": \"net I2C `SDA` không có điện trở kéo lên — bus sẽ im lặng, và triệu chứng giống hệt cảm biến hỏng\"}, {\"pin\": \"U2.7\", \"kind\": \"overvoltage\", \"severity\": \"blocker\", \"detail\": \"chân `VDDIO` của `U2` nằm trên net `VBUS_5V` — miền 5 V. Chân nguồn của IC thường có trần 3,6 V; cấp 5 V là hỏng ngay lần cắm đầu tiên. Kiểm datasheet, và nếu cần 5 V thì thêm bộ chuyển mức.\"}, {\"pin\": \"U1.7\", \"kind\": \"floating_reset\", \"severity\": \"major\", \"detail\": \"net reset `NRST` chỉ có một nút (`U1.7`) — không trở kéo lên, không tụ. Chân reset thả nổi là một ăng-ten: board tự khởi động lại khi có nhiễu, lúc có lúc không.\"}]}}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"run_id\": \"702adfde8fbb\", \"ra\": {\"report\": \"6 trường\", \"text\": \"258 ký tự\"}, \"dau_ra\": {\"report\": {\"run_id\": \"r_6323b754919d\", \"done\": [\"project.open\", \"view.artifacts\", \"view.artifacts\", \"view.timeline\", \"project.status\", \"chat.parse_intent\", \"chat.ground\", \"chat.fill_defaults\", \"ingest.index_text\", \"extract.kicad_netlist\", \"board.check_pins\"], \"waiting\": [], \"ra\": [], \"undo\": [\"96e91e997be7\"], \"cost\": 0.001297}, \"text\": \"Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\\nHoàn tác được 1 mục đến 2026-09-27T06:32.\\nChi phí mô hình: 0.0013 USD.\"}}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"run_id\": \"550c2e96f771\", \"ra\": {\"options\": 3}, \"dau_ra\": {\"options\": [{\"change\": \"Thêm điện trở kéo lên 4700 Ω lên nguồn cho `SCL`\", \"cost\": \"low\", \"touches_code\": false, \"kind\": \"add_pullup\", \"note\": \"không chạm mã — đây là lý do nó đứng đầu danh sách\", \"ask\": false}, {\"change\": \"Bật điện trở kéo lên trong chip cho chân I2C\", \"cost\": \"low\", \"touches_code\": true, \"kind\": \"internal_pullup\", \"note\": \"kéo lên trong chip cỡ 20–50 kΩ, chỉ đủ cho 100 kHz và bus ngắn; dùng được để thử, không nên để trong bản chạy thật\", \"ask\": false}, {\"change\": \"Hạ tốc độ bus xuống 100 kHz\", \"cost\": \"medium\", \"touches_code\": true, \"kind\": \"lower_speed\", \"note\": \"không sửa được nguyên nhân: thiếu kéo lên thì bus vẫn không có mức cao\", \"ask\": false}]}}], \"waiting\": [], \"skipped\": [], \"failed\": [{\"id\": \"n5\", \"cap\": \"code.static\", \"error\": {\"eide_code\": \"E2000\", \"name\": \"GROUNDING_FAILED\", \"exists\": [], \"candidates\": [], \"missing\": [\"isa\"], \"message\": \"Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)\"}, \"bat_buoc\": false}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"error\": {\"eide_code\": \"E5002\", \"name\": \"OUTPUT_INVALID\", \"remedy\": \"ingest.index_text\", \"message\": \"Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.\"}, \"bat_buoc\": false}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T04:08:51.372825+00:00",
+    "started_at": "2026-09-24T06:32:15.591030+00:00",
     "finished_at": null
    }
   ]
@@ -4535,7 +4535,7 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
     "tier": "gold",
     "license": null,
     "domain": null,
-    "fetched_at": "2026-09-24T04:08:51.379098+00:00",
+    "fetched_at": "2026-09-24T06:32:15.596147+00:00",
     "confirmed_by": null,
     "size_bytes": 1515,
     "meta": null
@@ -4564,13 +4564,13 @@ Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/useca
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_8c7620e16408",
+    "id": "s_99540eab89d0",
     "project": "do-bao-dong-gia",
-    "opened_at": "2026-09-24T04:08:48.936275+00:00",
+    "opened_at": "2026-09-24T06:32:13.533823+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\", \"at\": \"2026-09-24T04:08:49.199321+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_0f339e78 → done; HỎNG: code.static (E2000), view.rag_ask (E5002)\", \"at\": \"2026-09-24T04:08:51.430004+00:00\", \"run_id\": \"r_0f339e78f6a8\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi\", \"at\": \"2026-09-24T06:32:13.841354+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_6323b754 → done; HỎNG: code.static (E2000), view.rag_ask (E5002)\", \"at\": \"2026-09-24T06:32:15.655033+00:00\", \"run_id\": \"r_6323b754919d\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -4604,7 +4604,7 @@ index/
 ```
 # đo báo động giả
 
-- 2026-09-24 11:08 — tạo dự án từ lệnh: "đo báo động giả"
+- 2026-09-24 13:32 — tạo dự án từ lệnh: "đo báo động giả"
 
 ```
 
@@ -4695,7 +4695,7 @@ escalation:
 project:
   id: do-bao-dong-gia
   name: đo báo động giả
-  created: '2026-09-24T04:08:48.715358+00:00'
+  created: '2026-09-24T06:32:13.306782+00:00'
   text: đo báo động giả
 target:
   chip: null
@@ -4886,7 +4886,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “đo báo động giả”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4907,7 +4907,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi
 
-**Tác tử trả lời** *(sau 8.3 s)*:
+**Tác tử trả lời** *(sau 7.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4964,14 +4964,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_0f339e78f6a8",
+    "run_id" : "r_6323b754919d",
     "undo" : [
-      "5398fe242ef9"
+      "96e91e997be7"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:08.\nChi phí mô hình: 0.0013 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:32.\nChi phí mô hình: 0.0013 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -5005,7 +5005,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-27T04:08.
+Hoàn tác được 1 mục đến 2026-09-27T06:32.
 Chi phí mô hình: 0.0013 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
@@ -5024,8 +5024,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8c7620e16408
-Mở lúc	24/09 04:08:48
+Phiên	s_99540eab89d0
+Mở lúc	24/09 06:32:13
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5058,8 +5058,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8c7620e16408
-Mở lúc	24/09 04:08:48
+Phiên	s_99540eab89d0
+Mở lúc	24/09 06:32:13
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5077,9 +5077,9 @@ Số lời gọi	1
 
 ```
 Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  1 NGUỒN ĐÃ NHẬP  NGUỒN	LOẠI	TẦNG	FACT	CHƯA DUYỆT	AI ĐƯA VÀO	GIẤY PHÉP	NHẬP LÚC
-mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 04:08:51
+mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 06:32:15
   LƯỢT NHẬP GẦN ĐÂY — theo sổ cái  LÚC	LÔ / LÝ DO	FACT MỚI	XUNG ĐỘT	AI
-24/09 04:08:51	extract.kicad_netlist mach-co-loi.…	12	0	máy
+24/09 06:32:15	extract.kicad_netlist mach-co-loi.…	12	0	máy
 ```
 
 ![Ingest](man-02-Ingest.png)
@@ -5114,7 +5114,7 @@ Hộ chiếu mạch  board.build_passport · board.check_pins · board.constrain
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 11.5 s)*:
+**Tác tử trả lời** *(sau 11.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5171,14 +5171,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_0f339e78f6a8",
+    "run_id" : "r_6323b754919d",
     "undo" : [
-      "5398fe242ef9"
+      "96e91e997be7"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:08.\nChi phí mô hình: 0.0013 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:32.\nChi phí mô hình: 0.0013 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -5212,7 +5212,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-27T04:08.
+Hoàn tác được 1 mục đến 2026-09-27T06:32.
 Chi phí mô hình: 0.0013 USD.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 
@@ -5243,7 +5243,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC041/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5266,7 +5266,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC041/buoc-02.png
 
-**Tác tử trả lời** *(sau 8.3 s)*:
+**Tác tử trả lời** *(sau 7.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5323,14 +5323,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_0f339e78f6a8",
+    "run_id" : "r_6323b754919d",
     "undo" : [
-      "5398fe242ef9"
+      "96e91e997be7"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:08.\nChi phí mô hình: 0.0013 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:32.\nChi phí mô hình: 0.0013 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -5364,7 +5364,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-27T04:08.
+Hoàn tác được 1 mục đến 2026-09-27T06:32.
 Chi phí mô hình: 0.0013 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
@@ -5383,8 +5383,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8c7620e16408
-Mở lúc	24/09 04:08:48
+Phiên	s_99540eab89d0
+Mở lúc	24/09 06:32:13
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5419,8 +5419,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8c7620e16408
-Mở lúc	24/09 04:08:48
+Phiên	s_99540eab89d0
+Mở lúc	24/09 06:32:13
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5440,9 +5440,9 @@ Số lời gọi	1
 
 ```
 Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  1 NGUỒN ĐÃ NHẬP  NGUỒN	LOẠI	TẦNG	FACT	CHƯA DUYỆT	AI ĐƯA VÀO	GIẤY PHÉP	NHẬP LÚC
-mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 04:08:51
+mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 06:32:15
   LƯỢT NHẬP GẦN ĐÂY — theo sổ cái  LÚC	LÔ / LÝ DO	FACT MỚI	XUNG ĐỘT	AI
-24/09 04:08:51	extract.kicad_netlist mach-co-loi.…	12	0	máy
+24/09 06:32:15	extract.kicad_netlist mach-co-loi.…	12	0	máy
 ```
 
 ![Ingest](man-02-Ingest.png)
@@ -5485,7 +5485,7 @@ Hộ chiếu mạch  board.build_passport · board.check_pins · board.constrain
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC041/buoc-03.png
 
-**Tác tử trả lời** *(sau 11.5 s)*:
+**Tác tử trả lời** *(sau 11.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5542,14 +5542,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_0f339e78f6a8",
+    "run_id" : "r_6323b754919d",
     "undo" : [
-      "5398fe242ef9"
+      "96e91e997be7"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:08.\nChi phí mô hình: 0.0013 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:32.\nChi phí mô hình: 0.0013 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -5583,7 +5583,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-27T04:08.
+Hoàn tác được 1 mục đến 2026-09-27T06:32.
 Chi phí mô hình: 0.0013 USD.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 

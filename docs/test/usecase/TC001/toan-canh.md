@@ -14,7 +14,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2507 tok · ra 95 tok · 10091 ms · 0.00099 USD
+- dừng: `stop` · vào 2507 tok · ra 87 tok · 4791 ms · 0.00097 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -120,7 +120,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
   "is_big": true,
   "confidence": 0.95,
   "lang": "vi",
-  "mentions": ["LAN", "USB", "TV"]
+  "mentions": []
 }
 ```
 ## 3. Ledger — 124 sự kiện
@@ -153,7 +153,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "bc03992b348a"
+    "run_id": "4804d05609d4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -161,13 +161,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "bc03992b348a"
+   "run_id": "4804d05609d4"
   },
-  "hash": "29f2e4830acb230d01c079fc781ef6960fc1cd22ae3d041dc4609e6b05f70654",
+  "hash": "7fdd010a71a78bb864843bb71fed2b35455689b2e3f12c8f813e0bc1b9a90a9f",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T03:51:33.251652+00:00"
+  "ts": "2026-09-24T06:12:01.644198+00:00"
  },
  {
   "actor": "agent",
@@ -177,52 +177,52 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "bc03992b348a"
+    "run_id": "4804d05609d4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "bc03992b348a"
+   "run_id": "4804d05609d4"
   },
-  "hash": "49e5ece18f474ddf3bb45f0f8acfca5284b8d4724959173b708898ef6c02a921",
+  "hash": "2620e4d0d96842194a511cec34e659320fd8adf8a9698668a051a00d758fb696",
   "kind": "gate.decision",
-  "prev_hash": "29f2e4830acb230d01c079fc781ef6960fc1cd22ae3d041dc4609e6b05f70654",
+  "prev_hash": "7fdd010a71a78bb864843bb71fed2b35455689b2e3f12c8f813e0bc1b9a90a9f",
   "seq": 2,
-  "ts": "2026-09-24T03:51:33.252081+00:00"
+  "ts": "2026-09-24T06:12:01.644544+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "bc03992b348a"
+    "run_id": "4804d05609d4"
    },
    "project": "bo-chuyen-lan-sang-usb-cho-tv",
-   "session_id": "s_6519c2a38dbe"
+   "session_id": "s_3a3cdd741922"
   },
-  "hash": "2a26de481178059f4b3b8786ee3ad27ae47b8f2cd4284744c487d7f154a15aeb",
+  "hash": "4334bb018be4674b7fbbb4f7e4169308c6cdf93917c6d0d833f8fdfa0d9a52a5",
   "kind": "session.open",
-  "prev_hash": "49e5ece18f474ddf3bb45f0f8acfca5284b8d4724959173b708898ef6c02a921",
+  "prev_hash": "2620e4d0d96842194a511cec34e659320fd8adf8a9698668a051a00d758fb696",
   "seq": 3,
-  "ts": "2026-09-24T03:51:33.258798+00:00"
+  "ts": "2026-09-24T06:12:01.650684+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 24,
-   "result_hash": "4c7b5f1791f9a756",
-   "run_id": "bc03992b348a",
+   "duration_ms": 22,
+   "result_hash": "f195e29e83b9c5e0",
+   "run_id": "4804d05609d4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "52a59b4eeb12d168d5d68b29971062562a373807f496690717202608e152d19d",
+  "hash": "068b3bdd7f7b713b6959d372a3cc814cf1f9ec882525d05151c6338b902d3a30",
   "kind": "cap.run.finish",
-  "prev_hash": "2a26de481178059f4b3b8786ee3ad27ae47b8f2cd4284744c487d7f154a15aeb",
+  "prev_hash": "4334bb018be4674b7fbbb4f7e4169308c6cdf93917c6d0d833f8fdfa0d9a52a5",
   "seq": 4,
-  "ts": "2026-09-24T03:51:33.260007+00:00"
+  "ts": "2026-09-24T06:12:01.651885+00:00"
  },
  {
   "actor": "agent",
@@ -232,7 +232,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "546cb0f9c64e"
+    "run_id": "68f2ee8f538d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -240,13 +240,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "546cb0f9c64e"
+   "run_id": "68f2ee8f538d"
   },
-  "hash": "8334df49d9393fed7ca44379cf33192d642011edeab06f1f77e0bbdfaab8794e",
+  "hash": "c041b2457a5bbb038862e26b24c1279cee30b560f9be9ee9203881f625067c46",
   "kind": "cap.run.start",
-  "prev_hash": "52a59b4eeb12d168d5d68b29971062562a373807f496690717202608e152d19d",
+  "prev_hash": "068b3bdd7f7b713b6959d372a3cc814cf1f9ec882525d05151c6338b902d3a30",
   "seq": 5,
-  "ts": "2026-09-24T03:51:33.267483+00:00"
+  "ts": "2026-09-24T06:12:01.658681+00:00"
  },
  {
   "actor": "agent",
@@ -256,36 +256,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "546cb0f9c64e"
+    "run_id": "68f2ee8f538d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "546cb0f9c64e"
+   "run_id": "68f2ee8f538d"
   },
-  "hash": "9cca0b270bfb6c498fda877c9b1f26c5ac7c9da14b22f723b9db7e6785783fc4",
+  "hash": "f9ba6f6b070774180575740086f07e4ac404f3c3f3488c4d5a662f2bc60b46d1",
   "kind": "gate.decision",
-  "prev_hash": "8334df49d9393fed7ca44379cf33192d642011edeab06f1f77e0bbdfaab8794e",
+  "prev_hash": "c041b2457a5bbb038862e26b24c1279cee30b560f9be9ee9203881f625067c46",
   "seq": 6,
-  "ts": "2026-09-24T03:51:33.267618+00:00"
+  "ts": "2026-09-24T06:12:01.658775+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 2,
+   "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "546cb0f9c64e",
+   "run_id": "68f2ee8f538d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d27437a3bad7361e07ccdd15c446c9672e4c45e717ece1904155fc85782f00ff",
+  "hash": "a5812c851f942b7f2b55ffc5912f3c0b3034dee7a31da1304f0ee9a1a92e74eb",
   "kind": "cap.run.finish",
-  "prev_hash": "9cca0b270bfb6c498fda877c9b1f26c5ac7c9da14b22f723b9db7e6785783fc4",
+  "prev_hash": "f9ba6f6b070774180575740086f07e4ac404f3c3f3488c4d5a662f2bc60b46d1",
   "seq": 7,
-  "ts": "2026-09-24T03:51:33.269489+00:00"
+  "ts": "2026-09-24T06:12:01.660458+00:00"
  },
  {
   "actor": "agent",
@@ -295,7 +295,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "30a9efc17a7d"
+    "run_id": "4a11a37010c2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -303,13 +303,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "30a9efc17a7d"
+   "run_id": "4a11a37010c2"
   },
-  "hash": "6782b8c260cfc749a78c269be3b76f3f3fed0e7556283d4ba3a053b14d60bffe",
+  "hash": "d3873e850329e9bd7a5b87dc7a4e7cc2e20cc4e88a6d375a177e00e76d2b9f81",
   "kind": "cap.run.start",
-  "prev_hash": "d27437a3bad7361e07ccdd15c446c9672e4c45e717ece1904155fc85782f00ff",
+  "prev_hash": "a5812c851f942b7f2b55ffc5912f3c0b3034dee7a31da1304f0ee9a1a92e74eb",
   "seq": 8,
-  "ts": "2026-09-24T03:51:33.270932+00:00"
+  "ts": "2026-09-24T06:12:01.661950+00:00"
  },
  {
   "actor": "agent",
@@ -319,20 +319,20 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "30a9efc17a7d"
+    "run_id": "4a11a37010c2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "30a9efc17a7d"
+   "run_id": "4a11a37010c2"
   },
-  "hash": "e70adc41052baffbc6d3e68ec1288414f75dd0eab78a2550aeebb99c654c868b",
+  "hash": "9099cdc77f7f7f1793f1b779f3ba14a5d0594f8cc3c5ffa405d50f795ec4bd3c",
   "kind": "gate.decision",
-  "prev_hash": "6782b8c260cfc749a78c269be3b76f3f3fed0e7556283d4ba3a053b14d60bffe",
+  "prev_hash": "d3873e850329e9bd7a5b87dc7a4e7cc2e20cc4e88a6d375a177e00e76d2b9f81",
   "seq": 9,
-  "ts": "2026-09-24T03:51:33.271008+00:00"
+  "ts": "2026-09-24T06:12:01.662031+00:00"
  },
  {
   "actor": "agent",
@@ -340,15 +340,15 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "30a9efc17a7d",
+   "run_id": "4a11a37010c2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8ba8637800130a95e0405730a293d48d6f336f8a4fac6ae6d0a0a8bbf0ac1f3e",
+  "hash": "723fc1e9b226d822b3b204c400fb3919a902c676d5d9e47a3f51deeb36aae971",
   "kind": "cap.run.finish",
-  "prev_hash": "e70adc41052baffbc6d3e68ec1288414f75dd0eab78a2550aeebb99c654c868b",
+  "prev_hash": "9099cdc77f7f7f1793f1b779f3ba14a5d0594f8cc3c5ffa405d50f795ec4bd3c",
   "seq": 10,
-  "ts": "2026-09-24T03:51:33.272784+00:00"
+  "ts": "2026-09-24T06:12:01.663649+00:00"
  },
  {
   "actor": "agent",
@@ -358,7 +358,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "b76328affb77"
+    "run_id": "b01278241338"
    },
    "decision": {
     "decision": "APPROVE",
@@ -366,13 +366,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b76328affb77"
+   "run_id": "b01278241338"
   },
-  "hash": "0e6ce50269347d67bb16077b9f3e7e4857f13380130024dc6ce8fdb29d2178bf",
+  "hash": "892a0e005526ae3e8d7e08602905711bf9c15b2bd5db9376badc7e1fb323e4bf",
   "kind": "cap.run.start",
-  "prev_hash": "8ba8637800130a95e0405730a293d48d6f336f8a4fac6ae6d0a0a8bbf0ac1f3e",
+  "prev_hash": "723fc1e9b226d822b3b204c400fb3919a902c676d5d9e47a3f51deeb36aae971",
   "seq": 11,
-  "ts": "2026-09-24T03:51:33.302700+00:00"
+  "ts": "2026-09-24T06:12:01.692271+00:00"
  },
  {
   "actor": "agent",
@@ -382,36 +382,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "b76328affb77"
+    "run_id": "b01278241338"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b76328affb77"
+   "run_id": "b01278241338"
   },
-  "hash": "6a27fff900a51d0d28812c5939aaa7a07c0df7884ee106703accffc7ae8f5a1f",
+  "hash": "93e8ddd7ade275a0e5e2670a554fa59f4f8225972a19804963b7c1776afe1160",
   "kind": "gate.decision",
-  "prev_hash": "0e6ce50269347d67bb16077b9f3e7e4857f13380130024dc6ce8fdb29d2178bf",
+  "prev_hash": "892a0e005526ae3e8d7e08602905711bf9c15b2bd5db9376badc7e1fb323e4bf",
   "seq": 12,
-  "ts": "2026-09-24T03:51:33.302897+00:00"
+  "ts": "2026-09-24T06:12:01.692402+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "ab99cec76e4161d1",
-   "run_id": "b76328affb77",
+   "duration_ms": 1,
+   "result_hash": "271f07889ec7614a",
+   "run_id": "b01278241338",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0b1d3df7a244a4cf4432c6abbfbf772597fdf5af20d5fb6ce70c9d2e8788ca38",
+  "hash": "6d5236cd718ff1ebbe250b6a696deba6ab1fa31ff8ff9d46fd48e630d076b6f6",
   "kind": "cap.run.finish",
-  "prev_hash": "6a27fff900a51d0d28812c5939aaa7a07c0df7884ee106703accffc7ae8f5a1f",
+  "prev_hash": "93e8ddd7ade275a0e5e2670a554fa59f4f8225972a19804963b7c1776afe1160",
   "seq": 13,
-  "ts": "2026-09-24T03:51:33.304987+00:00"
+  "ts": "2026-09-24T06:12:01.694192+00:00"
  },
  {
   "actor": "agent",
@@ -421,7 +421,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "700bccfa985a"
+    "run_id": "83e78b34864b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -429,13 +429,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "700bccfa985a"
+   "run_id": "83e78b34864b"
   },
-  "hash": "abe730fe66715822e08adf57f804c4db4a7bf0a60e3711e1ee6fb86f4bdf1de3",
+  "hash": "fd165ab3dfe9fadfe6f93ed845a7c3d47400ebae4b0815230210565be79e1ace",
   "kind": "cap.run.start",
-  "prev_hash": "0b1d3df7a244a4cf4432c6abbfbf772597fdf5af20d5fb6ce70c9d2e8788ca38",
+  "prev_hash": "6d5236cd718ff1ebbe250b6a696deba6ab1fa31ff8ff9d46fd48e630d076b6f6",
   "seq": 14,
-  "ts": "2026-09-24T03:51:33.560907+00:00"
+  "ts": "2026-09-24T06:12:01.943137+00:00"
  },
  {
   "actor": "agent",
@@ -445,20 +445,20 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "700bccfa985a"
+    "run_id": "83e78b34864b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "700bccfa985a"
+   "run_id": "83e78b34864b"
   },
-  "hash": "d870e1b617369d58c8fee00b138e2d6ae083554f2d3c3cec36e0c33abcb93808",
+  "hash": "5a6d30f7709d30584c07f0da4210bfb498015d238d6d7543f73f7d440e28e3a7",
   "kind": "gate.decision",
-  "prev_hash": "abe730fe66715822e08adf57f804c4db4a7bf0a60e3711e1ee6fb86f4bdf1de3",
+  "prev_hash": "fd165ab3dfe9fadfe6f93ed845a7c3d47400ebae4b0815230210565be79e1ace",
   "seq": 15,
-  "ts": "2026-09-24T03:51:33.561067+00:00"
+  "ts": "2026-09-24T06:12:01.943309+00:00"
  },
  {
   "actor": "agent",
@@ -466,15 +466,15 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "700bccfa985a",
+   "run_id": "83e78b34864b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e98f4ff0e2761ad4528fb9b5c93c68cb1d3b215564048fe64be465dbe479340f",
+  "hash": "7e44338d73af7cfe61bf6b610d4811f8d04fe42f3d5afe050e93de63329fd0fc",
   "kind": "cap.run.finish",
-  "prev_hash": "d870e1b617369d58c8fee00b138e2d6ae083554f2d3c3cec36e0c33abcb93808",
+  "prev_hash": "5a6d30f7709d30584c07f0da4210bfb498015d238d6d7543f73f7d440e28e3a7",
   "seq": 16,
-  "ts": "2026-09-24T03:51:33.564498+00:00"
+  "ts": "2026-09-24T06:12:01.946785+00:00"
  },
  {
   "actor": "agent",
@@ -484,7 +484,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "91dffa1e3160"
+    "run_id": "2e33c76ce183"
    },
    "decision": {
     "decision": "APPROVE",
@@ -492,13 +492,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "91dffa1e3160"
+   "run_id": "2e33c76ce183"
   },
-  "hash": "ed1f4f301245d220b19ef816f2a410186d7fe0500c73cdeca95e8e8ce6ca2042",
+  "hash": "907ee6d20c7448b2a3966167dead646753b1e5a1029818584cec4843c2cdc3b0",
   "kind": "cap.run.start",
-  "prev_hash": "e98f4ff0e2761ad4528fb9b5c93c68cb1d3b215564048fe64be465dbe479340f",
+  "prev_hash": "7e44338d73af7cfe61bf6b610d4811f8d04fe42f3d5afe050e93de63329fd0fc",
   "seq": 17,
-  "ts": "2026-09-24T03:51:33.588979+00:00"
+  "ts": "2026-09-24T06:12:01.971567+00:00"
  },
  {
   "actor": "agent",
@@ -508,27 +508,27 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "91dffa1e3160"
+    "run_id": "2e33c76ce183"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "91dffa1e3160"
+   "run_id": "2e33c76ce183"
   },
-  "hash": "c542fbc2ced118a7b361a40131105233fe53eae90e1191cb1abfc9412b548407",
+  "hash": "cac732beac0ab249f8e54441f2bce7296842796289de14d35a1bf4d1de604beb",
   "kind": "gate.decision",
-  "prev_hash": "ed1f4f301245d220b19ef816f2a410186d7fe0500c73cdeca95e8e8ce6ca2042",
+  "prev_hash": "907ee6d20c7448b2a3966167dead646753b1e5a1029818584cec4843c2cdc3b0",
   "seq": 18,
-  "ts": "2026-09-24T03:51:33.589182+00:00"
+  "ts": "2026-09-24T06:12:01.971798+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "91dffa1e3160"
+    "run_id": "2e33c76ce183"
    },
    "compressions": [],
    "hash": "2f7f2edb69a61a32",
@@ -568,7 +568,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "memory.summarize_session",
     "passport.import",
     "/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv",
-    "s_6519c2a38dbe"
+    "s_3a3cdd741922"
    ],
    "tokens": {
     "C0": 1912,
@@ -577,11 +577,11 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "C7": 25
    }
   },
-  "hash": "77d013ab43e3c645656f6f6125b6b8a847e774650c7abf0c8e50a33c304e67e1",
+  "hash": "894da00625e74ccc7b6032a397fb0accba30d6cf1a48a12eddf41b4d3782491a",
   "kind": "context.bundle",
-  "prev_hash": "c542fbc2ced118a7b361a40131105233fe53eae90e1191cb1abfc9412b548407",
+  "prev_hash": "cac732beac0ab249f8e54441f2bce7296842796289de14d35a1bf4d1de604beb",
   "seq": 19,
-  "ts": "2026-09-24T03:51:33.597082+00:00"
+  "ts": "2026-09-24T06:12:01.979120+00:00"
  },
  {
   "actor": "agent",
@@ -589,30 +589,30 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "91dffa1e3160"
+    "run_id": "2e33c76ce183"
    },
-   "cost_usd": 0.00099,
-   "latency_ms": 10091,
+   "cost_usd": 0.00097,
+   "latency_ms": 4791,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "f846e54ebbc67b5f",
    "request_hash": "1906a390c2ce12c9",
    "role": "intent",
    "stop_reason": "stop",
    "tokens_in": 2507,
-   "tokens_out": 95
+   "tokens_out": 87
   },
-  "hash": "4e99e8facea407bd4336eab34cc0126ff7af2c757581a874fd085b217529852f",
+  "hash": "a75aa87c942a3776db3f0cc5d0b66566d166e87586a7ae42bcb34daf96f0d2ab",
   "kind": "model.call",
-  "prev_hash": "77d013ab43e3c645656f6f6125b6b8a847e774650c7abf0c8e50a33c304e67e1",
+  "prev_hash": "894da00625e74ccc7b6032a397fb0accba30d6cf1a48a12eddf41b4d3782491a",
   "seq": 20,
-  "ts": "2026-09-24T03:51:43.692685+00:00"
+  "ts": "2026-09-24T06:12:06.778780+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "91dffa1e3160"
+    "run_id": "2e33c76ce183"
    },
    "confidence": 0.95,
    "intent": "project.create",
@@ -622,37 +622,37 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    },
    "text": "Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem"
   },
-  "hash": "afbb3c95675b295ce1d1cf35de76652cf71d9d9d480ae018e5dceec46e715f8f",
+  "hash": "547317b3585d56a726dcdd4c4125549a2c6669dd936e7e40d7ddb9ba42ca58b3",
   "kind": "intent",
-  "prev_hash": "4e99e8facea407bd4336eab34cc0126ff7af2c757581a874fd085b217529852f",
+  "prev_hash": "a75aa87c942a3776db3f0cc5d0b66566d166e87586a7ae42bcb34daf96f0d2ab",
   "seq": 21,
-  "ts": "2026-09-24T03:51:43.694011+00:00"
+  "ts": "2026-09-24T06:12:06.780033+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 10105,
-   "result_hash": "6ca8d3666af85298",
-   "run_id": "91dffa1e3160",
+   "duration_ms": 4809,
+   "result_hash": "aa38a24188e86d51",
+   "run_id": "2e33c76ce183",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b2b16a8eb563daf37c25dfaf584808e3eab9068c75d9bc20f60adcb90a579d61",
+  "hash": "97b98e6fa9c2cd0aa2e5cac9ac07185b26c27816fc5a5db09176b818cf3e3bb3",
   "kind": "cap.run.finish",
-  "prev_hash": "afbb3c95675b295ce1d1cf35de76652cf71d9d9d480ae018e5dceec46e715f8f",
+  "prev_hash": "547317b3585d56a726dcdd4c4125549a2c6669dd936e7e40d7ddb9ba42ca58b3",
   "seq": 22,
-  "ts": "2026-09-24T03:51:43.694841+00:00"
+  "ts": "2026-09-24T06:12:06.781191+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "6ca8d3666af85298",
+   "args_hash": "aa38a24188e86d51",
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "ffb2a16373dd"
+    "run_id": "39acc46b6ab3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -660,13 +660,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ffb2a16373dd"
+   "run_id": "39acc46b6ab3"
   },
-  "hash": "45d941338757e86a6757f71da13466b602ea48fa2d2985c109f61dd3c6f8d0b2",
+  "hash": "30fa426c6904c50a03bdac75ef911b9144663ff950c913c60fea554e985ae95b",
   "kind": "cap.run.start",
-  "prev_hash": "b2b16a8eb563daf37c25dfaf584808e3eab9068c75d9bc20f60adcb90a579d61",
+  "prev_hash": "97b98e6fa9c2cd0aa2e5cac9ac07185b26c27816fc5a5db09176b818cf3e3bb3",
   "seq": 23,
-  "ts": "2026-09-24T03:51:43.696004+00:00"
+  "ts": "2026-09-24T06:12:06.782455+00:00"
  },
  {
   "actor": "agent",
@@ -676,46 +676,46 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "ffb2a16373dd"
+    "run_id": "39acc46b6ab3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ffb2a16373dd"
+   "run_id": "39acc46b6ab3"
   },
-  "hash": "7d7faef79ab53c65c9255e1d2b1b7cc96febddeebe5d65066d6a867eca3cb77b",
+  "hash": "0d1f7fa3468ff9e3868c01737017e5003c06ffc3480f062c2a06f20571a34f6f",
   "kind": "gate.decision",
-  "prev_hash": "45d941338757e86a6757f71da13466b602ea48fa2d2985c109f61dd3c6f8d0b2",
+  "prev_hash": "30fa426c6904c50a03bdac75ef911b9144663ff950c913c60fea554e985ae95b",
   "seq": 24,
-  "ts": "2026-09-24T03:51:43.696555+00:00"
+  "ts": "2026-09-24T06:12:06.782723+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.ground",
    "duration_ms": 4,
-   "result_hash": "6788c758b4ce2919",
-   "run_id": "ffb2a16373dd",
+   "result_hash": "91ae80595a1f13ad",
+   "run_id": "39acc46b6ab3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f936d524b4bb9e1894077b3a918d26d12d776572a50a04f8269c00d615acc445",
+  "hash": "2c19d55fa20d0e24a132d91529020fb66dc935a2eadfdb06d0f26f9ce1712728",
   "kind": "cap.run.finish",
-  "prev_hash": "7d7faef79ab53c65c9255e1d2b1b7cc96febddeebe5d65066d6a867eca3cb77b",
+  "prev_hash": "0d1f7fa3468ff9e3868c01737017e5003c06ffc3480f062c2a06f20571a34f6f",
   "seq": 25,
-  "ts": "2026-09-24T03:51:43.700235+00:00"
+  "ts": "2026-09-24T06:12:06.786779+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "d4a7c1d90764f482",
+   "args_hash": "36cac40b70bb66ea",
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "d9cafe9df823"
+    "run_id": "4191bd1f090d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -723,13 +723,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d9cafe9df823"
+   "run_id": "4191bd1f090d"
   },
-  "hash": "31162c5aed9544c419098f078fbcfec6588f0d4e2b0e418589177dc3a7f4a80b",
+  "hash": "c293f408a285f38436ce1e7d23092eb1ddf15e377beeccc9701fa71328d44e23",
   "kind": "cap.run.start",
-  "prev_hash": "f936d524b4bb9e1894077b3a918d26d12d776572a50a04f8269c00d615acc445",
+  "prev_hash": "2c19d55fa20d0e24a132d91529020fb66dc935a2eadfdb06d0f26f9ce1712728",
   "seq": 26,
-  "ts": "2026-09-24T03:51:43.701353+00:00"
+  "ts": "2026-09-24T06:12:06.788010+00:00"
  },
  {
   "actor": "agent",
@@ -739,27 +739,27 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "d9cafe9df823"
+    "run_id": "4191bd1f090d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d9cafe9df823"
+   "run_id": "4191bd1f090d"
   },
-  "hash": "54eccf744b05eb8a6ab7ebbb08df682198224b05e57418a0e8059096d9cbc7de",
+  "hash": "e33bfa8d7e3c8ac63ae505ad5618865bfd211d8a6d39eb1a7f572c4ff7eb801c",
   "kind": "gate.decision",
-  "prev_hash": "31162c5aed9544c419098f078fbcfec6588f0d4e2b0e418589177dc3a7f4a80b",
+  "prev_hash": "c293f408a285f38436ce1e7d23092eb1ddf15e377beeccc9701fa71328d44e23",
   "seq": 27,
-  "ts": "2026-09-24T03:51:43.701544+00:00"
+  "ts": "2026-09-24T06:12:06.788183+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "d9cafe9df823"
+    "run_id": "4191bd1f090d"
    },
    "defaults_applied": [
     {
@@ -780,37 +780,37 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    ],
    "intent": "project.create"
   },
-  "hash": "c597747d966a953ffe72a6467f2a5f26056d7b6332cece81796a944b39e5a55b",
+  "hash": "3aca0e5234f65b6765d14d9dea43fe0bed0874b52c29e9d8325af852650e8a2e",
   "kind": "intent",
-  "prev_hash": "54eccf744b05eb8a6ab7ebbb08df682198224b05e57418a0e8059096d9cbc7de",
+  "prev_hash": "e33bfa8d7e3c8ac63ae505ad5618865bfd211d8a6d39eb1a7f572c4ff7eb801c",
   "seq": 28,
-  "ts": "2026-09-24T03:51:43.706310+00:00"
+  "ts": "2026-09-24T06:12:06.793320+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
    "duration_ms": 6,
-   "result_hash": "a85f5cfefba4586f",
-   "run_id": "d9cafe9df823",
+   "result_hash": "309e49034dc0b5d3",
+   "run_id": "4191bd1f090d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "db1104c04441e6ec6001c12be5fb52c4f1dbf97cf2b360847babc735d4fdcf2f",
+  "hash": "45c396a0bb7d7f515374dfa4df3c5da733f4b08b947b4d85ef64435e5b39d403",
   "kind": "cap.run.finish",
-  "prev_hash": "c597747d966a953ffe72a6467f2a5f26056d7b6332cece81796a944b39e5a55b",
+  "prev_hash": "3aca0e5234f65b6765d14d9dea43fe0bed0874b52c29e9d8325af852650e8a2e",
   "seq": 29,
-  "ts": "2026-09-24T03:51:43.707444+00:00"
+  "ts": "2026-09-24T06:12:06.794836+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "fe145a978cfd4387",
+   "args_hash": "43816eab149a6fe0",
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "8a0c7dbb8846"
+    "run_id": "0399d4533d49"
    },
    "decision": {
     "decision": "APPROVE",
@@ -818,13 +818,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8a0c7dbb8846"
+   "run_id": "0399d4533d49"
   },
-  "hash": "d51c1397900a1f9c090a1677e4bce5b247343cff19604de8bbbb00d28a274117",
+  "hash": "a81f538411f4a76feb66df79171c9de66aca4803eb1c1f1322145eb1d48b909e",
   "kind": "cap.run.start",
-  "prev_hash": "db1104c04441e6ec6001c12be5fb52c4f1dbf97cf2b360847babc735d4fdcf2f",
+  "prev_hash": "45c396a0bb7d7f515374dfa4df3c5da733f4b08b947b4d85ef64435e5b39d403",
   "seq": 30,
-  "ts": "2026-09-24T03:51:43.709259+00:00"
+  "ts": "2026-09-24T06:12:06.796733+00:00"
  },
  {
   "actor": "agent",
@@ -834,30 +834,30 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "8a0c7dbb8846"
+    "run_id": "0399d4533d49"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8a0c7dbb8846"
+   "run_id": "0399d4533d49"
   },
-  "hash": "ce3b0569ac696aa47be1e375b9212c2f1a522e7f2dee66b237c39586b3fd0e20",
+  "hash": "28162c77d927635408d03703fd196f39c70cb049ff00810d1be39afb67a9df3e",
   "kind": "gate.decision",
-  "prev_hash": "d51c1397900a1f9c090a1677e4bce5b247343cff19604de8bbbb00d28a274117",
+  "prev_hash": "a81f538411f4a76feb66df79171c9de66aca4803eb1c1f1322145eb1d48b909e",
   "seq": 31,
-  "ts": "2026-09-24T03:51:43.709563+00:00"
+  "ts": "2026-09-24T06:12:06.796960+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "8a0c7dbb8846"
+    "run_id": "0399d4533d49"
    },
    "n": 1,
-   "run_id": "r_aeb21dd2cf45",
+   "run_id": "r_4c0cc5735cc3",
    "steps": [
     {
      "cap": "project.create",
@@ -918,11 +918,11 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    ],
    "text": "Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem"
   },
-  "hash": "af3f98003243b529c48c96c2eedcc79ec0a683f9aa9b09dcd731b97d6b614adb",
+  "hash": "eccc4003f5789c1e0a2f7d87ba84c895a78d5ee0f93dbe0525c2ea89bcd711f5",
   "kind": "run.started",
-  "prev_hash": "ce3b0569ac696aa47be1e375b9212c2f1a522e7f2dee66b237c39586b3fd0e20",
+  "prev_hash": "28162c77d927635408d03703fd196f39c70cb049ff00810d1be39afb67a9df3e",
   "seq": 32,
-  "ts": "2026-09-24T03:51:43.734758+00:00"
+  "ts": "2026-09-24T06:12:06.824340+00:00"
  },
  {
   "actor": "agent",
@@ -930,18 +930,18 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.create",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "8a0c7dbb8846"
+    "run_id": "0399d4533d49"
    },
    "i": 1,
    "node_id": "n1",
    "of": 14,
-   "run_id": "r_aeb21dd2cf45"
+   "run_id": "r_4c0cc5735cc3"
   },
-  "hash": "008654b4449b5ea2dfb1627c4cacec98d68e52e0824f8b591b32e2303f1c2ef4",
+  "hash": "886205adbf0c8b91f841607c27b5f40a2bd54c3519ed1989319f35aa59d43fb3",
   "kind": "run.step_started",
-  "prev_hash": "af3f98003243b529c48c96c2eedcc79ec0a683f9aa9b09dcd731b97d6b614adb",
+  "prev_hash": "eccc4003f5789c1e0a2f7d87ba84c895a78d5ee0f93dbe0525c2ea89bcd711f5",
   "seq": 33,
-  "ts": "2026-09-24T03:51:43.735521+00:00"
+  "ts": "2026-09-24T06:12:06.824775+00:00"
  },
  {
   "actor": "agent",
@@ -953,7 +953,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "i": 1,
     "node_id": "n1",
     "of": 14,
-    "run_id": "r_aeb21dd2cf45"
+    "run_id": "r_4c0cc5735cc3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -961,13 +961,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "f47b3fe0e4a9"
+   "run_id": "76c8ff2bcdc4"
   },
-  "hash": "463bf140ed68cd6a49992cfa5b6d1d530fb3ab7e39586bb8ee709a73ce237b47",
+  "hash": "8ce929904fac90d30dc4b16e79e4c420b17847719b4b3fe9328c52fc43731114",
   "kind": "cap.run.start",
-  "prev_hash": "008654b4449b5ea2dfb1627c4cacec98d68e52e0824f8b591b32e2303f1c2ef4",
+  "prev_hash": "886205adbf0c8b91f841607c27b5f40a2bd54c3519ed1989319f35aa59d43fb3",
   "seq": 34,
-  "ts": "2026-09-24T03:51:43.737061+00:00"
+  "ts": "2026-09-24T06:12:06.826336+00:00"
  },
  {
   "actor": "agent",
@@ -979,20 +979,20 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "i": 1,
     "node_id": "n1",
     "of": 14,
-    "run_id": "r_aeb21dd2cf45"
+    "run_id": "r_4c0cc5735cc3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R2",
    "rule": "TIER-T1",
-   "run_id": "f47b3fe0e4a9"
+   "run_id": "76c8ff2bcdc4"
   },
-  "hash": "87b402017ac38e22b6652f5d5f818292e783c8cbe8e1206aa7c7f03fe8a074f2",
+  "hash": "89cf402a7ef8ba5d68af71ed47e4e9ad0395a5ba88fbf690485dee306970b26a",
   "kind": "gate.decision",
-  "prev_hash": "463bf140ed68cd6a49992cfa5b6d1d530fb3ab7e39586bb8ee709a73ce237b47",
+  "prev_hash": "8ce929904fac90d30dc4b16e79e4c420b17847719b4b3fe9328c52fc43731114",
   "seq": 35,
-  "ts": "2026-09-24T03:51:43.737220+00:00"
+  "ts": "2026-09-24T06:12:06.826452+00:00"
  },
  {
   "actor": "agent",
@@ -1002,35 +1002,35 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "i": 1,
     "node_id": "n1",
     "of": 14,
-    "run_id": "r_aeb21dd2cf45"
+    "run_id": "r_4c0cc5735cc3"
    },
-   "duration_ms": 33,
+   "duration_ms": 29,
    "result_hash": "81fefcaa81c52696",
-   "run_id": "f47b3fe0e4a9",
+   "run_id": "76c8ff2bcdc4",
    "status": "done",
-   "undo_ref": "f47b3fe0e4a9"
+   "undo_ref": "76c8ff2bcdc4"
   },
-  "hash": "18d5e195931b1b306fd9e233ef032ddf1788753ae5469a663f0100cf0baa3c7a",
+  "hash": "d9558ae2a78f9c80a39ce80753e62431f1e67d181601e1410c90e96c1fdfb0bb",
   "kind": "cap.run.finish",
-  "prev_hash": "87b402017ac38e22b6652f5d5f818292e783c8cbe8e1206aa7c7f03fe8a074f2",
+  "prev_hash": "89cf402a7ef8ba5d68af71ed47e4e9ad0395a5ba88fbf690485dee306970b26a",
   "seq": 36,
-  "ts": "2026-09-24T03:51:43.770888+00:00"
+  "ts": "2026-09-24T06:12:06.855473+00:00"
  },
  {
   "actor": "agent",
   "data": {
-   "at": "2026-09-24T03:51:43.771055+00:00",
+   "at": "2026-09-24T06:12:06.855618+00:00",
    "cap": "project.create",
-   "deadline": "2026-09-25T03:51:43.771055+00:00",
+   "deadline": "2026-09-25T06:12:06.855618+00:00",
    "kind": "delete_created_files",
-   "undo_ref": "f47b3fe0e4a9",
+   "undo_ref": "76c8ff2bcdc4",
    "window": "files"
   },
-  "hash": "0ef4e03b50da3d72c8488ed58a96d58def889396d76961b0cf7da012c51c0fb1",
+  "hash": "3998b605cd0f000feec967238e5c80fab70abcba4fb05bb1d0adc43bda3a4842",
   "kind": "undo.register",
-  "prev_hash": "18d5e195931b1b306fd9e233ef032ddf1788753ae5469a663f0100cf0baa3c7a",
+  "prev_hash": "d9558ae2a78f9c80a39ce80753e62431f1e67d181601e1410c90e96c1fdfb0bb",
   "seq": 37,
-  "ts": "2026-09-24T03:51:43.771200+00:00"
+  "ts": "2026-09-24T06:12:06.855741+00:00"
  },
  {
   "actor": "agent",
@@ -1039,14 +1039,14 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "i": 1,
    "node_id": "n1",
    "of": 14,
-   "run_id": "r_aeb21dd2cf45",
+   "run_id": "r_4c0cc5735cc3",
    "status": "done"
   },
-  "hash": "9404270ec2e8880157811ee0b998a56809ed989a806e29ea5cf25d48d9fc3e35",
+  "hash": "1b25e4f8fd6d67bf4f99e7da73ee717995ea4c5d960de15ec1313a95abbf55d4",
   "kind": "run.step_done",
-  "prev_hash": "0ef4e03b50da3d72c8488ed58a96d58def889396d76961b0cf7da012c51c0fb1",
+  "prev_hash": "3998b605cd0f000feec967238e5c80fab70abcba4fb05bb1d0adc43bda3a4842",
   "seq": 38,
-  "ts": "2026-09-24T03:51:43.771422+00:00"
+  "ts": "2026-09-24T06:12:06.855868+00:00"
  },
  {
   "actor": "agent",
@@ -1055,13 +1055,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "i": 2,
    "node_id": "n2",
    "of": 14,
-   "run_id": "r_aeb21dd2cf45"
+   "run_id": "r_4c0cc5735cc3"
   },
-  "hash": "ecf08cb1b70a011a59ce36e6811f1167433350bce720b2fbdee1c886ff0b8804",
+  "hash": "c7bc8be7f5d52338412ec885964286982f70c15d4d316dff984a5213869ac0af",
   "kind": "run.step_started",
-  "prev_hash": "9404270ec2e8880157811ee0b998a56809ed989a806e29ea5cf25d48d9fc3e35",
+  "prev_hash": "1b25e4f8fd6d67bf4f99e7da73ee717995ea4c5d960de15ec1313a95abbf55d4",
   "seq": 39,
-  "ts": "2026-09-24T03:51:43.772048+00:00"
+  "ts": "2026-09-24T06:12:06.856328+00:00"
  },
  {
   "actor": "agent",
@@ -1073,7 +1073,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "i": 2,
     "node_id": "n2",
     "of": 14,
-    "run_id": "r_aeb21dd2cf45"
+    "run_id": "r_4c0cc5735cc3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1081,13 +1081,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "43bec1b5190e"
+   "run_id": "c2ba9ff7ba8d"
   },
-  "hash": "ff2cb5d78cae1b3d6b4acf32f556ffdae9fe9b4a48e629d4b072c963b8508f58",
+  "hash": "cfc6ca0f73935da447cf1cdbdaec7e0318564e651a01ed5d1121f1e46e141157",
   "kind": "cap.run.start",
-  "prev_hash": "ecf08cb1b70a011a59ce36e6811f1167433350bce720b2fbdee1c886ff0b8804",
+  "prev_hash": "c7bc8be7f5d52338412ec885964286982f70c15d4d316dff984a5213869ac0af",
   "seq": 40,
-  "ts": "2026-09-24T03:51:43.772721+00:00"
+  "ts": "2026-09-24T06:12:06.856970+00:00"
  },
  {
   "actor": "agent",
@@ -1099,20 +1099,20 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "i": 2,
     "node_id": "n2",
     "of": 14,
-    "run_id": "r_aeb21dd2cf45"
+    "run_id": "r_4c0cc5735cc3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "43bec1b5190e"
+   "run_id": "c2ba9ff7ba8d"
   },
-  "hash": "526858524b069762d6bb0a3cc5c3b12a4666c8fd786930ed795bafe17ff51d37",
+  "hash": "ea2654a9bc03af5e0364cef96aa8510d017d7d7249a0a46552bef8a77977e593",
   "kind": "gate.decision",
-  "prev_hash": "ff2cb5d78cae1b3d6b4acf32f556ffdae9fe9b4a48e629d4b072c963b8508f58",
+  "prev_hash": "cfc6ca0f73935da447cf1cdbdaec7e0318564e651a01ed5d1121f1e46e141157",
   "seq": 41,
-  "ts": "2026-09-24T03:51:43.772838+00:00"
+  "ts": "2026-09-24T06:12:06.857069+00:00"
  },
  {
   "actor": "agent",
@@ -1122,19 +1122,19 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "i": 2,
     "node_id": "n2",
     "of": 14,
-    "run_id": "r_aeb21dd2cf45"
+    "run_id": "r_4c0cc5735cc3"
    },
    "duration_ms": 1,
    "result_hash": "c8efae7fd0b03aa4",
-   "run_id": "43bec1b5190e",
+   "run_id": "c2ba9ff7ba8d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1742be989a1041414a54cf73d5975fbe98fdcf3c3f3748f87c53bf55dbec7c03",
+  "hash": "ceb92908bee1d4b1c7823280490f9214f285f0bc47e99c2ca77b00bc29c9c18f",
   "kind": "cap.run.finish",
-  "prev_hash": "526858524b069762d6bb0a3cc5c3b12a4666c8fd786930ed795bafe17ff51d37",
+  "prev_hash": "ea2654a9bc03af5e0364cef96aa8510d017d7d7249a0a46552bef8a77977e593",
   "seq": 42,
-  "ts": "2026-09-24T03:51:43.774286+00:00"
+  "ts": "2026-09-24T06:12:06.858261+00:00"
  },
  {
   "actor": "agent",
@@ -1143,14 +1143,14 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "i": 2,
    "node_id": "n2",
    "of": 14,
-   "run_id": "r_aeb21dd2cf45",
+   "run_id": "r_4c0cc5735cc3",
    "status": "done"
   },
-  "hash": "33795b2d1bfc442d605548215c2b8165312a69635c434b45c7b7458be04e121f",
+  "hash": "790861ced09cd130e25ce68a4165d632af94e1e2ff94ddc3a2f70c679d9a4008",
   "kind": "run.step_done",
-  "prev_hash": "1742be989a1041414a54cf73d5975fbe98fdcf3c3f3748f87c53bf55dbec7c03",
+  "prev_hash": "ceb92908bee1d4b1c7823280490f9214f285f0bc47e99c2ca77b00bc29c9c18f",
   "seq": 43,
-  "ts": "2026-09-24T03:51:43.774386+00:00"
+  "ts": "2026-09-24T06:12:06.858342+00:00"
  },
  {
   "actor": "agent",
@@ -1161,117 +1161,54 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    ],
    "node_id": "n6",
    "reason": "thiếu tham số",
-   "run_id": "r_aeb21dd2cf45"
+   "run_id": "r_4c0cc5735cc3"
   },
-  "hash": "6f1020c58cca4a301c4cda20430c3bf58e89d5a551cf9e855a90f0658a666c5d",
+  "hash": "75f4c2f25a00b368377ee9439119cd0d3da7061c74a5f55dd3330c5cb4ae3e2c",
   "kind": "run.blocked",
-  "prev_hash": "33795b2d1bfc442d605548215c2b8165312a69635c434b45c7b7458be04e121f",
+  "prev_hash": "790861ced09cd130e25ce68a4165d632af94e1e2ff94ddc3a2f70c679d9a4008",
   "seq": 44,
-  "ts": "2026-09-24T03:51:43.774486+00:00"
+  "ts": "2026-09-24T06:12:06.858433+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 2,
    "failed": 0,
-   "run_id": "r_aeb21dd2cf45",
+   "run_id": "r_4c0cc5735cc3",
    "state": "asked",
    "waiting": 1
   },
-  "hash": "37a2f6fda2d7e68af5310ff06974d2357410cae88abcec74ce564422c66b584a",
+  "hash": "57c40abd0259fabbcb2944fb7c4125f4e67e5c532eb5bc9d1030fdfaaff6d177",
   "kind": "run.done",
-  "prev_hash": "6f1020c58cca4a301c4cda20430c3bf58e89d5a551cf9e855a90f0658a666c5d",
+  "prev_hash": "75f4c2f25a00b368377ee9439119cd0d3da7061c74a5f55dd3330c5cb4ae3e2c",
   "seq": 45,
-  "ts": "2026-09-24T03:51:43.802366+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "79068ed1195708d8",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "66ba40ee34a6"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "66ba40ee34a6"
-  },
-  "hash": "06d69b40de653cb2831f0479a3a64bcc895576bb812e3347a666ec929d13ac13",
-  "kind": "cap.run.start",
-  "prev_hash": "37a2f6fda2d7e68af5310ff06974d2357410cae88abcec74ce564422c66b584a",
-  "seq": 46,
-  "ts": "2026-09-24T03:51:43.806980+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "66ba40ee34a6"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "66ba40ee34a6"
-  },
-  "hash": "965542af9e2c4e5357389ce49b9a6c2f7f80ee944db99cc80bbc30b55f41a93d",
-  "kind": "gate.decision",
-  "prev_hash": "06d69b40de653cb2831f0479a3a64bcc895576bb812e3347a666ec929d13ac13",
-  "seq": 47,
-  "ts": "2026-09-24T03:51:43.807166+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "66ba40ee34a6",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "1ceb141f821342e37d0d07e948970c08cde7d8358445c7d087a583aa5332ef39",
-  "kind": "cap.run.finish",
-  "prev_hash": "965542af9e2c4e5357389ce49b9a6c2f7f80ee944db99cc80bbc30b55f41a93d",
-  "seq": 48,
-  "ts": "2026-09-24T03:51:43.809277+00:00"
+  "ts": "2026-09-24T06:12:06.888399+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 117,
-   "result_hash": "323ecc8dbbd0dbe9",
-   "run_id": "8a0c7dbb8846",
+   "duration_ms": 114,
+   "result_hash": "06292ba6d2fb1b67",
+   "run_id": "0399d4533d49",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4b6a9a7f1f373fe703058531701ae0b946942bf73a11ded779f7c1cba41ef700",
+  "hash": "6ea5e7b447654428232a3026b84fdd96b89441c64d10a254a756cd5d04ec3f9f",
   "kind": "cap.run.finish",
-  "prev_hash": "1ceb141f821342e37d0d07e948970c08cde7d8358445c7d087a583aa5332ef39",
-  "seq": 49,
-  "ts": "2026-09-24T03:51:43.826970+00:00"
+  "prev_hash": "57c40abd0259fabbcb2944fb7c4125f4e67e5c532eb5bc9d1030fdfaaff6d177",
+  "seq": 46,
+  "ts": "2026-09-24T06:12:06.910896+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "fe7bb6e29fcc143b",
+   "args_hash": "74a6e567530ab173",
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "b65123bdfc15"
+    "run_id": "42a712268f15"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1279,13 +1216,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b65123bdfc15"
+   "run_id": "42a712268f15"
   },
-  "hash": "e9ec670beeafe37ef89e43c2e63d0e02af2fc46b484022030bf45690fa4b521d",
+  "hash": "67a4291ae8fa91b89b950e92645dc67d1a0db6832201a290a044853f743b4a4c",
   "kind": "cap.run.start",
-  "prev_hash": "4b6a9a7f1f373fe703058531701ae0b946942bf73a11ded779f7c1cba41ef700",
-  "seq": 50,
-  "ts": "2026-09-24T03:51:43.830373+00:00"
+  "prev_hash": "6ea5e7b447654428232a3026b84fdd96b89441c64d10a254a756cd5d04ec3f9f",
+  "seq": 47,
+  "ts": "2026-09-24T06:12:06.914144+00:00"
  },
  {
   "actor": "agent",
@@ -1295,20 +1232,20 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "b65123bdfc15"
+    "run_id": "42a712268f15"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b65123bdfc15"
+   "run_id": "42a712268f15"
   },
-  "hash": "06331807bf41b8e7533ab95b8b5d3d6ccd78f1032d46b39cb9bb3a666f284bb1",
+  "hash": "affd60cef386eae98d20bc077b30b67ce21f8a8c4569c232620751f6fac73c98",
   "kind": "gate.decision",
-  "prev_hash": "e9ec670beeafe37ef89e43c2e63d0e02af2fc46b484022030bf45690fa4b521d",
-  "seq": 51,
-  "ts": "2026-09-24T03:51:43.830500+00:00"
+  "prev_hash": "67a4291ae8fa91b89b950e92645dc67d1a0db6832201a290a044853f743b4a4c",
+  "seq": 48,
+  "ts": "2026-09-24T06:12:06.914264+00:00"
  },
  {
   "actor": "agent",
@@ -1316,771 +1253,15 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "b310820c74a9f9d8",
-   "run_id": "b65123bdfc15",
+   "run_id": "42a712268f15",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "657ee231ffb73773c975706a5810861bc4388101668d8761aeb088323e3ad93f",
+  "hash": "6f86d86a6f15182a646792c5029f0293cfab2e955818334cb579d19b0dcaafcc",
   "kind": "cap.run.finish",
-  "prev_hash": "06331807bf41b8e7533ab95b8b5d3d6ccd78f1032d46b39cb9bb3a666f284bb1",
-  "seq": 52,
-  "ts": "2026-09-24T03:51:43.831549+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "2e17c745d9af"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "2e17c745d9af"
-  },
-  "hash": "49ace4f5ce2afd5c8c4654e5449d0946c97eb12cc7b03ec5f47e4a1f5cfd4fdd",
-  "kind": "cap.run.start",
-  "prev_hash": "657ee231ffb73773c975706a5810861bc4388101668d8761aeb088323e3ad93f",
-  "seq": 53,
-  "ts": "2026-09-24T03:51:44.314279+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "2e17c745d9af"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "2e17c745d9af"
-  },
-  "hash": "a2ba0255f3eb4f4ce9a37f126feae336fcba49ec16fc53b0159a6d14f0d0bb3d",
-  "kind": "gate.decision",
-  "prev_hash": "49ace4f5ce2afd5c8c4654e5449d0946c97eb12cc7b03ec5f47e4a1f5cfd4fdd",
-  "seq": 54,
-  "ts": "2026-09-24T03:51:44.314466+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "44a685a61c507536",
-   "run_id": "2e17c745d9af",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "79fef35125724f1eaeff92c9cd29972e65d2c3f8a8e9b34039ddd19531a69ebd",
-  "kind": "cap.run.finish",
-  "prev_hash": "a2ba0255f3eb4f4ce9a37f126feae336fcba49ec16fc53b0159a6d14f0d0bb3d",
-  "seq": 55,
-  "ts": "2026-09-24T03:51:44.318751+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "750d82da0f86226a",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "9514325a92f8"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "9514325a92f8"
-  },
-  "hash": "2e3696054dd8d36bac2185820e2fef9b5cfd639461bf8703ab8029f7015f6f26",
-  "kind": "cap.run.start",
-  "prev_hash": "79fef35125724f1eaeff92c9cd29972e65d2c3f8a8e9b34039ddd19531a69ebd",
-  "seq": 56,
-  "ts": "2026-09-24T03:51:44.487711+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "9514325a92f8"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "9514325a92f8"
-  },
-  "hash": "3641eb6fc3462808ba83f5929fd226627f2e81441eaa0c71e7eaeeafb0d3bc13",
-  "kind": "gate.decision",
-  "prev_hash": "2e3696054dd8d36bac2185820e2fef9b5cfd639461bf8703ab8029f7015f6f26",
-  "seq": 57,
-  "ts": "2026-09-24T03:51:44.487874+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "554937088f8e40ea",
-   "run_id": "9514325a92f8",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "03294568b164ba10a28c726611118ac383c2375d9ef77f79b69abb70248ad959",
-  "kind": "cap.run.finish",
-  "prev_hash": "3641eb6fc3462808ba83f5929fd226627f2e81441eaa0c71e7eaeeafb0d3bc13",
-  "seq": 58,
-  "ts": "2026-09-24T03:51:44.490383+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "df0ab63298e4af92",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "cb5ecfd4d25c"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "cb5ecfd4d25c"
-  },
-  "hash": "74d701a8c251934beb54c78eabf64460da34cf8d39eaaf9d503ecb8116be3174",
-  "kind": "cap.run.start",
-  "prev_hash": "03294568b164ba10a28c726611118ac383c2375d9ef77f79b69abb70248ad959",
-  "seq": 59,
-  "ts": "2026-09-24T03:51:44.496891+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "cb5ecfd4d25c"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "cb5ecfd4d25c"
-  },
-  "hash": "9033715d4851910700d4702a5bcaffd4652c399eb35f0254aecf0530df8f1cd2",
-  "kind": "gate.decision",
-  "prev_hash": "74d701a8c251934beb54c78eabf64460da34cf8d39eaaf9d503ecb8116be3174",
-  "seq": 60,
-  "ts": "2026-09-24T03:51:44.497003+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "9dc52c4f80dd7357",
-   "run_id": "cb5ecfd4d25c",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "57c256f41fefd276700e6c175f0d43cad721106b905862eb61f54d2464a00d28",
-  "kind": "cap.run.finish",
-  "prev_hash": "9033715d4851910700d4702a5bcaffd4652c399eb35f0254aecf0530df8f1cd2",
-  "seq": 61,
-  "ts": "2026-09-24T03:51:44.498875+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "df0ab63298e4af92",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "fbaee39f9a37"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "fbaee39f9a37"
-  },
-  "hash": "2c0768e860f2cf253db75d7181136950aa0a516c6c3d51c4ddf614e755009482",
-  "kind": "cap.run.start",
-  "prev_hash": "57c256f41fefd276700e6c175f0d43cad721106b905862eb61f54d2464a00d28",
-  "seq": 62,
-  "ts": "2026-09-24T03:51:44.500535+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "fbaee39f9a37"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "fbaee39f9a37"
-  },
-  "hash": "6fcc9fdd5113f1557995f0fda027e912ae56d37f0afeb5ee569c95eaf326ef24",
-  "kind": "gate.decision",
-  "prev_hash": "2c0768e860f2cf253db75d7181136950aa0a516c6c3d51c4ddf614e755009482",
-  "seq": 63,
-  "ts": "2026-09-24T03:51:44.500665+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "9dc52c4f80dd7357",
-   "run_id": "fbaee39f9a37",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "25bf860dee8441221e1bf9defd6e163f5e930ccf4ae4aa1b8f07452fc243a37d",
-  "kind": "cap.run.finish",
-  "prev_hash": "6fcc9fdd5113f1557995f0fda027e912ae56d37f0afeb5ee569c95eaf326ef24",
-  "seq": 64,
-  "ts": "2026-09-24T03:51:44.502532+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "df0ab63298e4af92",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "8ac50f45779b"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "8ac50f45779b"
-  },
-  "hash": "ab1b4ea82dce86c43ca5c99143796d2190ff1dfda7a2090ff7e27757238d5c4e",
-  "kind": "cap.run.start",
-  "prev_hash": "25bf860dee8441221e1bf9defd6e163f5e930ccf4ae4aa1b8f07452fc243a37d",
-  "seq": 65,
-  "ts": "2026-09-24T03:51:44.511082+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "8ac50f45779b"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "8ac50f45779b"
-  },
-  "hash": "b5e02e3a0f557ed5bc1d18eba29bf8968c1123a0093cd36a0016ab6942bf1a57",
-  "kind": "gate.decision",
-  "prev_hash": "ab1b4ea82dce86c43ca5c99143796d2190ff1dfda7a2090ff7e27757238d5c4e",
-  "seq": 66,
-  "ts": "2026-09-24T03:51:44.511240+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "9dc52c4f80dd7357",
-   "run_id": "8ac50f45779b",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "b422714799d60f0b5a9f01a28377fb8fda6be42e2e7108ed87ecb077dcfffcb0",
-  "kind": "cap.run.finish",
-  "prev_hash": "b5e02e3a0f557ed5bc1d18eba29bf8968c1123a0093cd36a0016ab6942bf1a57",
-  "seq": 67,
-  "ts": "2026-09-24T03:51:44.512963+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "47f636af3253763d",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "993e800f56d3"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "993e800f56d3"
-  },
-  "hash": "20173618cf59fc613f161d298bf8205e5252ea13d73f6e31203f5a974bd314df",
-  "kind": "cap.run.start",
-  "prev_hash": "b422714799d60f0b5a9f01a28377fb8fda6be42e2e7108ed87ecb077dcfffcb0",
-  "seq": 68,
-  "ts": "2026-09-24T03:51:44.514445+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "993e800f56d3"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "993e800f56d3"
-  },
-  "hash": "85235779047959922453aff63f18832cc6bc51249258505153d792308639a2fe",
-  "kind": "gate.decision",
-  "prev_hash": "20173618cf59fc613f161d298bf8205e5252ea13d73f6e31203f5a974bd314df",
-  "seq": 69,
-  "ts": "2026-09-24T03:51:44.514530+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "993e800f56d3",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "0bf69ee647aa7249102755299895c810478fb9321cb3e652e55fc7ac30f20900",
-  "kind": "cap.run.finish",
-  "prev_hash": "85235779047959922453aff63f18832cc6bc51249258505153d792308639a2fe",
-  "seq": 70,
-  "ts": "2026-09-24T03:51:44.516069+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "47f636af3253763d",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "827a8c2d11fc"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "827a8c2d11fc"
-  },
-  "hash": "4ca94b98b1f353ed3e8abee56355782a16b7e57c912265aa1ccaeb9a970f6d8c",
-  "kind": "cap.run.start",
-  "prev_hash": "0bf69ee647aa7249102755299895c810478fb9321cb3e652e55fc7ac30f20900",
-  "seq": 71,
-  "ts": "2026-09-24T03:51:44.517550+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "827a8c2d11fc"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "827a8c2d11fc"
-  },
-  "hash": "962367f570484ba5ba730954499e599271bda2ac7a69a67358ea47f32d1536f8",
-  "kind": "gate.decision",
-  "prev_hash": "4ca94b98b1f353ed3e8abee56355782a16b7e57c912265aa1ccaeb9a970f6d8c",
-  "seq": 72,
-  "ts": "2026-09-24T03:51:44.517678+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "827a8c2d11fc",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "051df48357df80d8d59e5647a1a4abaac337a110a47be4e251d5d6a0d22df8db",
-  "kind": "cap.run.finish",
-  "prev_hash": "962367f570484ba5ba730954499e599271bda2ac7a69a67358ea47f32d1536f8",
-  "seq": 73,
-  "ts": "2026-09-24T03:51:44.519612+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "47f636af3253763d",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "fffa7d516bd2"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "fffa7d516bd2"
-  },
-  "hash": "160031784ef5150020d1170c003592e7a53a5ea0a8d080fef9a2dd28113a6163",
-  "kind": "cap.run.start",
-  "prev_hash": "051df48357df80d8d59e5647a1a4abaac337a110a47be4e251d5d6a0d22df8db",
-  "seq": 74,
-  "ts": "2026-09-24T03:51:44.521057+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "fffa7d516bd2"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "fffa7d516bd2"
-  },
-  "hash": "18d22e1e37d10e46897c10ecbfce328a333717865c582cde9f45099af9880331",
-  "kind": "gate.decision",
-  "prev_hash": "160031784ef5150020d1170c003592e7a53a5ea0a8d080fef9a2dd28113a6163",
-  "seq": 75,
-  "ts": "2026-09-24T03:51:44.521139+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "fffa7d516bd2",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "4ceae38097f59b30b0b5246be3b6ccd132d6617bb5c9b9bf2301bc253d33ac26",
-  "kind": "cap.run.finish",
-  "prev_hash": "18d22e1e37d10e46897c10ecbfce328a333717865c582cde9f45099af9880331",
-  "seq": 76,
-  "ts": "2026-09-24T03:51:44.522729+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "f61f4d802f4b691b",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "d99be9fe5633"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "d99be9fe5633"
-  },
-  "hash": "487bb1a4cc7c88bafce50340e2c5da1b40f0aed42c77e6b0221483e4bd043fe2",
-  "kind": "cap.run.start",
-  "prev_hash": "4ceae38097f59b30b0b5246be3b6ccd132d6617bb5c9b9bf2301bc253d33ac26",
-  "seq": 77,
-  "ts": "2026-09-24T03:51:44.551430+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "d99be9fe5633"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "d99be9fe5633"
-  },
-  "hash": "f027c546622e1ba918c0885a81464f26f6fa2d689c287fbda233329730d73327",
-  "kind": "gate.decision",
-  "prev_hash": "487bb1a4cc7c88bafce50340e2c5da1b40f0aed42c77e6b0221483e4bd043fe2",
-  "seq": 78,
-  "ts": "2026-09-24T03:51:44.551633+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "c40d854c2c4548bf",
-   "run_id": "d99be9fe5633",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "f158a1d64654eab85340265834bf2f8853e9675182cd479f77b108de324c6045",
-  "kind": "cap.run.finish",
-  "prev_hash": "f027c546622e1ba918c0885a81464f26f6fa2d689c287fbda233329730d73327",
-  "seq": 79,
-  "ts": "2026-09-24T03:51:44.554342+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "f61f4d802f4b691b",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "d4ed318bc91e"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "d4ed318bc91e"
-  },
-  "hash": "ad40bbd04f27e9f6db595f67a8cf80483484b506f55593550f5dacc8aed6411f",
-  "kind": "cap.run.start",
-  "prev_hash": "f158a1d64654eab85340265834bf2f8853e9675182cd479f77b108de324c6045",
-  "seq": 80,
-  "ts": "2026-09-24T03:51:44.639758+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "d4ed318bc91e"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "d4ed318bc91e"
-  },
-  "hash": "4753dbda5554c4e4147fb5288c1730417ce11b480b48c0da6ddd5db7f597737c",
-  "kind": "gate.decision",
-  "prev_hash": "ad40bbd04f27e9f6db595f67a8cf80483484b506f55593550f5dacc8aed6411f",
-  "seq": 81,
-  "ts": "2026-09-24T03:51:44.639978+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "2316213c40646379",
-   "run_id": "d4ed318bc91e",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "1c6100ac0096df42bf291efd53fac166063a0b4841f326556f906ad939f5923b",
-  "kind": "cap.run.finish",
-  "prev_hash": "4753dbda5554c4e4147fb5288c1730417ce11b480b48c0da6ddd5db7f597737c",
-  "seq": 82,
-  "ts": "2026-09-24T03:51:44.642886+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "f61f4d802f4b691b",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "9ad4cf994477"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "9ad4cf994477"
-  },
-  "hash": "087c1a407b0cf0b2c267c76864b9fec81ee8c502c787c0176c5304220a7a8ac9",
-  "kind": "cap.run.start",
-  "prev_hash": "1c6100ac0096df42bf291efd53fac166063a0b4841f326556f906ad939f5923b",
-  "seq": 83,
-  "ts": "2026-09-24T03:51:44.670873+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "9ad4cf994477"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "9ad4cf994477"
-  },
-  "hash": "c5595dfd7b7c3fdca5c9abf206f7bdc7ba83dd63899cf6c9ac1b02c2324630ec",
-  "kind": "gate.decision",
-  "prev_hash": "087c1a407b0cf0b2c267c76864b9fec81ee8c502c787c0176c5304220a7a8ac9",
-  "seq": 84,
-  "ts": "2026-09-24T03:51:44.671040+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "ce2823f7665dfc2d",
-   "run_id": "9ad4cf994477",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "e848e9e25911a21523bc8ca6dfa6a9d8da10f391a47b96299e57bcb1a4de300a",
-  "kind": "cap.run.finish",
-  "prev_hash": "c5595dfd7b7c3fdca5c9abf206f7bdc7ba83dd63899cf6c9ac1b02c2324630ec",
-  "seq": 85,
-  "ts": "2026-09-24T03:51:44.673679+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "c6e4afd6d787"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "c6e4afd6d787"
-  },
-  "hash": "15c5bdcfc0df2f205455e017f4cf8a05adc4fbd19413101880f477dc9210e064",
-  "kind": "cap.run.start",
-  "prev_hash": "e848e9e25911a21523bc8ca6dfa6a9d8da10f391a47b96299e57bcb1a4de300a",
-  "seq": 86,
-  "ts": "2026-09-24T03:51:44.809233+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "c6e4afd6d787"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "c6e4afd6d787"
-  },
-  "hash": "4c08d6e10cfdd0ee1bcddf1dcdca54d228d2858990bd41f06ff4967a3dac6ba5",
-  "kind": "gate.decision",
-  "prev_hash": "15c5bdcfc0df2f205455e017f4cf8a05adc4fbd19413101880f477dc9210e064",
-  "seq": 87,
-  "ts": "2026-09-24T03:51:44.809454+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "44a685a61c507536",
-   "run_id": "c6e4afd6d787",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "6856b6c7643da137a4f3f7fcbda55297b72f3d75f9e17bf9f873da5ea53a7fc8",
-  "kind": "cap.run.finish",
-  "prev_hash": "4c08d6e10cfdd0ee1bcddf1dcdca54d228d2858990bd41f06ff4967a3dac6ba5",
-  "seq": 88,
-  "ts": "2026-09-24T03:51:44.813640+00:00"
+  "prev_hash": "affd60cef386eae98d20bc077b30b67ce21f8a8c4569c232620751f6fac73c98",
+  "seq": 49,
+  "ts": "2026-09-24T06:12:06.915295+00:00"
  },
  {
   "actor": "agent",
@@ -2090,7 +1271,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e7c2d2078e56"
+    "run_id": "68bbf5fd7a79"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2098,13 +1279,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e7c2d2078e56"
+   "run_id": "68bbf5fd7a79"
   },
-  "hash": "2fb8c5fdec5453fdbdf001c2c4080ab16f9dd5f5bff88307063066e05cce6691",
+  "hash": "c8ef82218974d4878d987b712628a70472c4049d354e202b0f40bb7dd053bda3",
   "kind": "cap.run.start",
-  "prev_hash": "6856b6c7643da137a4f3f7fcbda55297b72f3d75f9e17bf9f873da5ea53a7fc8",
-  "seq": 89,
-  "ts": "2026-09-24T03:51:44.816666+00:00"
+  "prev_hash": "6f86d86a6f15182a646792c5029f0293cfab2e955818334cb579d19b0dcaafcc",
+  "seq": 50,
+  "ts": "2026-09-24T06:12:06.927899+00:00"
  },
  {
   "actor": "agent",
@@ -2114,36 +1295,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e7c2d2078e56"
+    "run_id": "68bbf5fd7a79"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e7c2d2078e56"
+   "run_id": "68bbf5fd7a79"
   },
-  "hash": "4db419b60b3967fdba67b695222ec02ba62485017826bb68d5d8d251f961f266",
+  "hash": "e1f5e0aab95d5fd4c859c74ec8f4dd7baa57f3a0467f5eecc52968fe687c3b2f",
   "kind": "gate.decision",
-  "prev_hash": "2fb8c5fdec5453fdbdf001c2c4080ab16f9dd5f5bff88307063066e05cce6691",
-  "seq": 90,
-  "ts": "2026-09-24T03:51:44.816772+00:00"
+  "prev_hash": "c8ef82218974d4878d987b712628a70472c4049d354e202b0f40bb7dd053bda3",
+  "seq": 51,
+  "ts": "2026-09-24T06:12:06.928001+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "e7c2d2078e56",
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "68bbf5fd7a79",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ef7644023295b9b1ced6571f6de373e323584fa7f4734d9a4a16039b0632267f",
+  "hash": "40ca25fca5df3631febb47752f1ed0e226e1d19538ae2d72b910a50ae585e695",
   "kind": "cap.run.finish",
-  "prev_hash": "4db419b60b3967fdba67b695222ec02ba62485017826bb68d5d8d251f961f266",
-  "seq": 91,
-  "ts": "2026-09-24T03:51:44.818416+00:00"
+  "prev_hash": "e1f5e0aab95d5fd4c859c74ec8f4dd7baa57f3a0467f5eecc52968fe687c3b2f",
+  "seq": 52,
+  "ts": "2026-09-24T06:12:06.929711+00:00"
  },
  {
   "actor": "agent",
@@ -2153,7 +1334,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "debd55661bbf"
+    "run_id": "b8c4965d1bbb"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2161,13 +1342,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "debd55661bbf"
+   "run_id": "b8c4965d1bbb"
   },
-  "hash": "66b0cbe41c27db22b02370e374c1267807f665aa312e615ebc22facdd42835e5",
+  "hash": "f03769320f651f323bf9ef3c92463462d156061852a290d9725899313c4a6b60",
   "kind": "cap.run.start",
-  "prev_hash": "ef7644023295b9b1ced6571f6de373e323584fa7f4734d9a4a16039b0632267f",
-  "seq": 92,
-  "ts": "2026-09-24T03:51:44.820732+00:00"
+  "prev_hash": "40ca25fca5df3631febb47752f1ed0e226e1d19538ae2d72b910a50ae585e695",
+  "seq": 53,
+  "ts": "2026-09-24T06:12:07.460413+00:00"
  },
  {
   "actor": "agent",
@@ -2177,36 +1358,855 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "debd55661bbf"
+    "run_id": "b8c4965d1bbb"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "debd55661bbf"
+   "run_id": "b8c4965d1bbb"
   },
-  "hash": "c4cda53c98fc19cb359cbb0dccc057f71285a9a5cb65be9428c2b5f3482dd3b9",
+  "hash": "1bd139347fb18b3f944ab67c9f545e9019e6ec66cf91f73a2fac4557d5e4d9f0",
   "kind": "gate.decision",
-  "prev_hash": "66b0cbe41c27db22b02370e374c1267807f665aa312e615ebc22facdd42835e5",
+  "prev_hash": "f03769320f651f323bf9ef3c92463462d156061852a290d9725899313c4a6b60",
+  "seq": 54,
+  "ts": "2026-09-24T06:12:07.460600+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "b8c4965d1bbb",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "7357e6e5b56c4c730f8f441194afac511a42b22b512b49ef94280c7c8326e972",
+  "kind": "cap.run.finish",
+  "prev_hash": "1bd139347fb18b3f944ab67c9f545e9019e6ec66cf91f73a2fac4557d5e4d9f0",
+  "seq": 55,
+  "ts": "2026-09-24T06:12:07.464779+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "a79e2a41fc43"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "a79e2a41fc43"
+  },
+  "hash": "12b2f5422092f754012e14973d746d23a8f739f23d93e06982c04b0ca1a09034",
+  "kind": "cap.run.start",
+  "prev_hash": "7357e6e5b56c4c730f8f441194afac511a42b22b512b49ef94280c7c8326e972",
+  "seq": 56,
+  "ts": "2026-09-24T06:12:07.534292+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "a79e2a41fc43"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "a79e2a41fc43"
+  },
+  "hash": "ea82b2a9ed59ee0f068a7818c59208b420b06676021bf88b57abbff9cfb5eb39",
+  "kind": "gate.decision",
+  "prev_hash": "12b2f5422092f754012e14973d746d23a8f739f23d93e06982c04b0ca1a09034",
+  "seq": 57,
+  "ts": "2026-09-24T06:12:07.534457+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "5ec2f6ae6b7cc0f9",
+   "run_id": "a79e2a41fc43",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "24d7a02706a843a49a06b84cf950d836a505e07d48801d15b8485a6e1b322442",
+  "kind": "cap.run.finish",
+  "prev_hash": "ea82b2a9ed59ee0f068a7818c59208b420b06676021bf88b57abbff9cfb5eb39",
+  "seq": 58,
+  "ts": "2026-09-24T06:12:07.536829+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "df0ab63298e4af92",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "842c8aae411c"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "842c8aae411c"
+  },
+  "hash": "f133191f4dd5b31060791cbc824d1e02bc68f89427b8c6d383a2a01504331f4a",
+  "kind": "cap.run.start",
+  "prev_hash": "24d7a02706a843a49a06b84cf950d836a505e07d48801d15b8485a6e1b322442",
+  "seq": 59,
+  "ts": "2026-09-24T06:12:07.542024+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "842c8aae411c"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "842c8aae411c"
+  },
+  "hash": "9abbb90def9521c20286f772c794cec8ff428c5a70425409c9065882a498bd4e",
+  "kind": "gate.decision",
+  "prev_hash": "f133191f4dd5b31060791cbc824d1e02bc68f89427b8c6d383a2a01504331f4a",
+  "seq": 60,
+  "ts": "2026-09-24T06:12:07.542128+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "9dc52c4f80dd7357",
+   "run_id": "842c8aae411c",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "006bb9e20f87df184db0c95e320f8e72e8850927395f8c7092e28f300217ba7d",
+  "kind": "cap.run.finish",
+  "prev_hash": "9abbb90def9521c20286f772c794cec8ff428c5a70425409c9065882a498bd4e",
+  "seq": 61,
+  "ts": "2026-09-24T06:12:07.543754+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "df0ab63298e4af92",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "73713c0ccb4b"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "73713c0ccb4b"
+  },
+  "hash": "71f7717e5330fc7715ff453dbd51830feed59742a52e9b959d1793d78292ceaf",
+  "kind": "cap.run.start",
+  "prev_hash": "006bb9e20f87df184db0c95e320f8e72e8850927395f8c7092e28f300217ba7d",
+  "seq": 62,
+  "ts": "2026-09-24T06:12:07.545107+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "73713c0ccb4b"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "73713c0ccb4b"
+  },
+  "hash": "65f3a4eddc6efc94e5f2071870e773334d9e0f0c4012db9fab2faceb27061363",
+  "kind": "gate.decision",
+  "prev_hash": "71f7717e5330fc7715ff453dbd51830feed59742a52e9b959d1793d78292ceaf",
+  "seq": 63,
+  "ts": "2026-09-24T06:12:07.545187+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "9dc52c4f80dd7357",
+   "run_id": "73713c0ccb4b",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "62c595f876d6ce0ac08baeaac9faed25bf31917b9f491dc0d77866179f30296c",
+  "kind": "cap.run.finish",
+  "prev_hash": "65f3a4eddc6efc94e5f2071870e773334d9e0f0c4012db9fab2faceb27061363",
+  "seq": 64,
+  "ts": "2026-09-24T06:12:07.546883+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "df0ab63298e4af92",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "d37d6381911d"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "d37d6381911d"
+  },
+  "hash": "14d015ecacf36f700850cebf56aa42c13db9045eade5ffdff0057b043f6fd5c6",
+  "kind": "cap.run.start",
+  "prev_hash": "62c595f876d6ce0ac08baeaac9faed25bf31917b9f491dc0d77866179f30296c",
+  "seq": 65,
+  "ts": "2026-09-24T06:12:07.548282+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "d37d6381911d"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "d37d6381911d"
+  },
+  "hash": "4a2f8a7f4139c21bbad86bbb6f3209524a6cb07af405b997c426fcd6948ceb66",
+  "kind": "gate.decision",
+  "prev_hash": "14d015ecacf36f700850cebf56aa42c13db9045eade5ffdff0057b043f6fd5c6",
+  "seq": 66,
+  "ts": "2026-09-24T06:12:07.548357+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "9dc52c4f80dd7357",
+   "run_id": "d37d6381911d",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "c7d0f1a4aee886d3e964cf6d52ea0275d920449e15903e28efd90d85d97b56a4",
+  "kind": "cap.run.finish",
+  "prev_hash": "4a2f8a7f4139c21bbad86bbb6f3209524a6cb07af405b997c426fcd6948ceb66",
+  "seq": 67,
+  "ts": "2026-09-24T06:12:07.549901+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "47f636af3253763d",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "24dde1b41bbb"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "24dde1b41bbb"
+  },
+  "hash": "f2df2bfb93b87ca1c4e531e8310d7d76a1c355f9693258d086bbe9c739cb96b0",
+  "kind": "cap.run.start",
+  "prev_hash": "c7d0f1a4aee886d3e964cf6d52ea0275d920449e15903e28efd90d85d97b56a4",
+  "seq": 68,
+  "ts": "2026-09-24T06:12:07.557963+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "24dde1b41bbb"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "24dde1b41bbb"
+  },
+  "hash": "589e6c8dd43bac3f82d1cd1a26ceb2c036809bc200aca8c2d633d8dc32568b8e",
+  "kind": "gate.decision",
+  "prev_hash": "f2df2bfb93b87ca1c4e531e8310d7d76a1c355f9693258d086bbe9c739cb96b0",
+  "seq": 69,
+  "ts": "2026-09-24T06:12:07.558057+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "24dde1b41bbb",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "04db6c204659d29af934a08bca4155253fbac153e5d25f0619f6a2c36e0d77cf",
+  "kind": "cap.run.finish",
+  "prev_hash": "589e6c8dd43bac3f82d1cd1a26ceb2c036809bc200aca8c2d633d8dc32568b8e",
+  "seq": 70,
+  "ts": "2026-09-24T06:12:07.559661+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "47f636af3253763d",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "9e3d49b8dbde"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "9e3d49b8dbde"
+  },
+  "hash": "a5ccc8f6ec86e25296918f1f3b3e537d909f373c944c849e2347403836eb62c8",
+  "kind": "cap.run.start",
+  "prev_hash": "04db6c204659d29af934a08bca4155253fbac153e5d25f0619f6a2c36e0d77cf",
+  "seq": 71,
+  "ts": "2026-09-24T06:12:07.561047+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "9e3d49b8dbde"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "9e3d49b8dbde"
+  },
+  "hash": "8292fb3790f526e4d4ccb05a0328409b523320fd9261476aa202fdb2e432f63e",
+  "kind": "gate.decision",
+  "prev_hash": "a5ccc8f6ec86e25296918f1f3b3e537d909f373c944c849e2347403836eb62c8",
+  "seq": 72,
+  "ts": "2026-09-24T06:12:07.561144+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "9e3d49b8dbde",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "7e5cd15a76226df64236964e4f36a06fd1be187a88bee87cbd40dfd4ce2960de",
+  "kind": "cap.run.finish",
+  "prev_hash": "8292fb3790f526e4d4ccb05a0328409b523320fd9261476aa202fdb2e432f63e",
+  "seq": 73,
+  "ts": "2026-09-24T06:12:07.562736+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "47f636af3253763d",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "29c35e82026d"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "29c35e82026d"
+  },
+  "hash": "dadcb95e9a46d3fca2d38845e1fffe068fe44a6acef498b69f1d8f5dfc947268",
+  "kind": "cap.run.start",
+  "prev_hash": "7e5cd15a76226df64236964e4f36a06fd1be187a88bee87cbd40dfd4ce2960de",
+  "seq": 74,
+  "ts": "2026-09-24T06:12:07.564100+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "29c35e82026d"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "29c35e82026d"
+  },
+  "hash": "d435bbdba3c937c1e8730a596b1a8695faedc90037ed24cbe79095280146b9bf",
+  "kind": "gate.decision",
+  "prev_hash": "dadcb95e9a46d3fca2d38845e1fffe068fe44a6acef498b69f1d8f5dfc947268",
+  "seq": 75,
+  "ts": "2026-09-24T06:12:07.564170+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 1,
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "29c35e82026d",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "e678b5640e91995a1d89071b1d27c73f95b6d568849510f248e62755683ee2d3",
+  "kind": "cap.run.finish",
+  "prev_hash": "d435bbdba3c937c1e8730a596b1a8695faedc90037ed24cbe79095280146b9bf",
+  "seq": 76,
+  "ts": "2026-09-24T06:12:07.565728+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f61f4d802f4b691b",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "02a381dc046a"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "02a381dc046a"
+  },
+  "hash": "310838a8015a9fa9e8717c69f8e79fe0d26d08b87856d428dae7a95674d94e57",
+  "kind": "cap.run.start",
+  "prev_hash": "e678b5640e91995a1d89071b1d27c73f95b6d568849510f248e62755683ee2d3",
+  "seq": 77,
+  "ts": "2026-09-24T06:12:07.592350+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "02a381dc046a"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "02a381dc046a"
+  },
+  "hash": "37b4f355461610ada20f4bb81eab7698a805ab8fd797412bd79aa41e9ef5c03c",
+  "kind": "gate.decision",
+  "prev_hash": "310838a8015a9fa9e8717c69f8e79fe0d26d08b87856d428dae7a95674d94e57",
+  "seq": 78,
+  "ts": "2026-09-24T06:12:07.592454+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "72e2de1dbd084acd",
+   "run_id": "02a381dc046a",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "9ac246d701ef3848656f980377d18edfa0603b195933b8cc08cfb1c2b8441c18",
+  "kind": "cap.run.finish",
+  "prev_hash": "37b4f355461610ada20f4bb81eab7698a805ab8fd797412bd79aa41e9ef5c03c",
+  "seq": 79,
+  "ts": "2026-09-24T06:12:07.594878+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f61f4d802f4b691b",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "36644bf36191"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "36644bf36191"
+  },
+  "hash": "5a76a9ef5d5ed965f712a623806b1105d86fc12d34c4bb12c1fe25a32193c8d8",
+  "kind": "cap.run.start",
+  "prev_hash": "9ac246d701ef3848656f980377d18edfa0603b195933b8cc08cfb1c2b8441c18",
+  "seq": 80,
+  "ts": "2026-09-24T06:12:07.675958+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "36644bf36191"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "36644bf36191"
+  },
+  "hash": "50ba910dce30a82e185de962e09d066ee74571c6b85d8825396b16593556ff89",
+  "kind": "gate.decision",
+  "prev_hash": "5a76a9ef5d5ed965f712a623806b1105d86fc12d34c4bb12c1fe25a32193c8d8",
+  "seq": 81,
+  "ts": "2026-09-24T06:12:07.676116+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 6,
+   "result_hash": "014f7206a7a2b689",
+   "run_id": "36644bf36191",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "f05184590fe12316bf4218171c914030047d5bd5daebbc3a594c589f176a7283",
+  "kind": "cap.run.finish",
+  "prev_hash": "50ba910dce30a82e185de962e09d066ee74571c6b85d8825396b16593556ff89",
+  "seq": 82,
+  "ts": "2026-09-24T06:12:07.682322+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "f61f4d802f4b691b",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "198ad589ecd2"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "198ad589ecd2"
+  },
+  "hash": "ab3c465b0e5ba053ea30ab9cc60278e7e80edd0df03bd21390cd95717223a041",
+  "kind": "cap.run.start",
+  "prev_hash": "f05184590fe12316bf4218171c914030047d5bd5daebbc3a594c589f176a7283",
+  "seq": 83,
+  "ts": "2026-09-24T06:12:07.706039+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "198ad589ecd2"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "198ad589ecd2"
+  },
+  "hash": "f467c94c30554df1b4c10c810e2036347ed38b564b96357a7d2bc2dfe21b9a6e",
+  "kind": "gate.decision",
+  "prev_hash": "ab3c465b0e5ba053ea30ab9cc60278e7e80edd0df03bd21390cd95717223a041",
+  "seq": 84,
+  "ts": "2026-09-24T06:12:07.706160+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 2,
+   "result_hash": "2f691c6909dab4dd",
+   "run_id": "198ad589ecd2",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "625cbcfb802e214a80d72e62f19d729d8cd0578c77f6c884171a7b1fd4aa8884",
+  "kind": "cap.run.finish",
+  "prev_hash": "f467c94c30554df1b4c10c810e2036347ed38b564b96357a7d2bc2dfe21b9a6e",
+  "seq": 85,
+  "ts": "2026-09-24T06:12:07.708991+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "9adf501f3242"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "9adf501f3242"
+  },
+  "hash": "82acb5f2d53aa626b9dd597b1cd1b368452592ede9af3d49a1e1441726ca1c4a",
+  "kind": "cap.run.start",
+  "prev_hash": "625cbcfb802e214a80d72e62f19d729d8cd0578c77f6c884171a7b1fd4aa8884",
+  "seq": 86,
+  "ts": "2026-09-24T06:12:07.808192+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "9adf501f3242"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "9adf501f3242"
+  },
+  "hash": "d54c5238704c8c93c0c1091e7dfc2411db7d9712d953c997d052067f54d4ca1c",
+  "kind": "gate.decision",
+  "prev_hash": "82acb5f2d53aa626b9dd597b1cd1b368452592ede9af3d49a1e1441726ca1c4a",
+  "seq": 87,
+  "ts": "2026-09-24T06:12:07.808403+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "9adf501f3242",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "1561fa02eeefe62b1bb53ac7f28b84f443682e1e0c46d9ec82dbed564ce3ea56",
+  "kind": "cap.run.finish",
+  "prev_hash": "d54c5238704c8c93c0c1091e7dfc2411db7d9712d953c997d052067f54d4ca1c",
+  "seq": 88,
+  "ts": "2026-09-24T06:12:07.812563+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "e0c16fdc6652"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "e0c16fdc6652"
+  },
+  "hash": "3c2b901a869478172c3b19cf4429dab391d4560cc0683d1b687660c1064f45f7",
+  "kind": "cap.run.start",
+  "prev_hash": "1561fa02eeefe62b1bb53ac7f28b84f443682e1e0c46d9ec82dbed564ce3ea56",
+  "seq": 89,
+  "ts": "2026-09-24T06:12:07.847385+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "e0c16fdc6652"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "e0c16fdc6652"
+  },
+  "hash": "7e6517eef86aa3da0741a4110100cb96649ae1e03bbd801e73172db14df4b4ac",
+  "kind": "gate.decision",
+  "prev_hash": "3c2b901a869478172c3b19cf4429dab391d4560cc0683d1b687660c1064f45f7",
+  "seq": 90,
+  "ts": "2026-09-24T06:12:07.847500+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 2,
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "e0c16fdc6652",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "e7d84af013d340313f66147088664a16c91ed9b03a3b78f2524be3ecb6c76748",
+  "kind": "cap.run.finish",
+  "prev_hash": "7e6517eef86aa3da0741a4110100cb96649ae1e03bbd801e73172db14df4b4ac",
+  "seq": 91,
+  "ts": "2026-09-24T06:12:07.849444+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "e6a07cb7d854"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "e6a07cb7d854"
+  },
+  "hash": "dc1b3c938fa0d5ab1b535ed84f9e9b2c59729796da9c41303532c7b67952e658",
+  "kind": "cap.run.start",
+  "prev_hash": "e7d84af013d340313f66147088664a16c91ed9b03a3b78f2524be3ecb6c76748",
+  "seq": 92,
+  "ts": "2026-09-24T06:12:07.851628+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "e6a07cb7d854"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "e6a07cb7d854"
+  },
+  "hash": "a246f8d62e8f70fcef7613a0ea28d612336ae97ce3a932087e3c7f09e214cabf",
+  "kind": "gate.decision",
+  "prev_hash": "dc1b3c938fa0d5ab1b535ed84f9e9b2c59729796da9c41303532c7b67952e658",
   "seq": 93,
-  "ts": "2026-09-24T03:51:44.820833+00:00"
+  "ts": "2026-09-24T06:12:07.851730+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 3,
-   "result_hash": "44a685a61c507536",
-   "run_id": "debd55661bbf",
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "e6a07cb7d854",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0dbb18b311b9676c98ac36d57eae81902829529cdfb43647f1bc33efb10465f0",
+  "hash": "b763f844f2b4924be2e6e50533c705a38adb2c224fd2ed3d299ba8319f3263a4",
   "kind": "cap.run.finish",
-  "prev_hash": "c4cda53c98fc19cb359cbb0dccc057f71285a9a5cb65be9428c2b5f3482dd3b9",
+  "prev_hash": "a246f8d62e8f70fcef7613a0ea28d612336ae97ce3a932087e3c7f09e214cabf",
   "seq": 94,
-  "ts": "2026-09-24T03:51:44.824516+00:00"
+  "ts": "2026-09-24T06:12:07.855377+00:00"
  },
  {
   "actor": "agent",
@@ -2216,7 +2216,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7adb1c10428e"
+    "run_id": "2c90f8efef30"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2224,13 +2224,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7adb1c10428e"
+   "run_id": "2c90f8efef30"
   },
-  "hash": "530bc5d3591a3c084256d528d94f6bd799ffc41a0be7607bc3c80d70bc10ca38",
+  "hash": "5cd5d0cb8ae64e63fc0fe2799f15f2187f66a46b474b128957fee4c57820bd29",
   "kind": "cap.run.start",
-  "prev_hash": "0dbb18b311b9676c98ac36d57eae81902829529cdfb43647f1bc33efb10465f0",
+  "prev_hash": "b763f844f2b4924be2e6e50533c705a38adb2c224fd2ed3d299ba8319f3263a4",
   "seq": 95,
-  "ts": "2026-09-24T03:51:44.826990+00:00"
+  "ts": "2026-09-24T06:12:07.860330+00:00"
  },
  {
   "actor": "agent",
@@ -2240,36 +2240,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7adb1c10428e"
+    "run_id": "2c90f8efef30"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7adb1c10428e"
+   "run_id": "2c90f8efef30"
   },
-  "hash": "ff3dce4b3e823c3b389d1707149f823c3ae7244415c55f07a65e2907f84bd3c2",
+  "hash": "530b2a5adf8941ceece0fec0ad5b56db56ccb01befa8787120f0370412d2cf00",
   "kind": "gate.decision",
-  "prev_hash": "530bc5d3591a3c084256d528d94f6bd799ffc41a0be7607bc3c80d70bc10ca38",
+  "prev_hash": "5cd5d0cb8ae64e63fc0fe2799f15f2187f66a46b474b128957fee4c57820bd29",
   "seq": 96,
-  "ts": "2026-09-24T03:51:44.827116+00:00"
+  "ts": "2026-09-24T06:12:07.860459+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "1204e40e01a93dfe",
-   "run_id": "7adb1c10428e",
+   "result_hash": "8c6fa41f388f1669",
+   "run_id": "2c90f8efef30",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "80ed016257f9822c784c816d25283efc0e8f871f11847dc0b103d5e89769e49f",
+  "hash": "521425c6220eaf6477a5550eb910b94d43d0f12301ea165bd0b35b8fe569b162",
   "kind": "cap.run.finish",
-  "prev_hash": "ff3dce4b3e823c3b389d1707149f823c3ae7244415c55f07a65e2907f84bd3c2",
+  "prev_hash": "530b2a5adf8941ceece0fec0ad5b56db56ccb01befa8787120f0370412d2cf00",
   "seq": 97,
-  "ts": "2026-09-24T03:51:44.829425+00:00"
+  "ts": "2026-09-24T06:12:07.862722+00:00"
  },
  {
   "actor": "agent",
@@ -2279,7 +2279,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "47ca29eb5da3"
+    "run_id": "b02768ccc406"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2287,13 +2287,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "47ca29eb5da3"
+   "run_id": "b02768ccc406"
   },
-  "hash": "2a834ca1c2ff3a03260921fa4de3897a3e3a7750b8cd7f5a6352df19bbe34832",
+  "hash": "d3bbf470608850e663ebcf8845c24595bd25cbc665277c0a5a4be19d34d03d34",
   "kind": "cap.run.start",
-  "prev_hash": "80ed016257f9822c784c816d25283efc0e8f871f11847dc0b103d5e89769e49f",
+  "prev_hash": "521425c6220eaf6477a5550eb910b94d43d0f12301ea165bd0b35b8fe569b162",
   "seq": 98,
-  "ts": "2026-09-24T03:51:45.236530+00:00"
+  "ts": "2026-09-24T06:12:08.300143+00:00"
  },
  {
   "actor": "agent",
@@ -2303,36 +2303,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "47ca29eb5da3"
+    "run_id": "b02768ccc406"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "47ca29eb5da3"
+   "run_id": "b02768ccc406"
   },
-  "hash": "b347dbf48d47e989c950608b7da1692eb51f05215adc8ce68648e65b26b19b54",
+  "hash": "59089e2a080dc0223123c076a88febc9844d8696996870a18dd115b7f5c03235",
   "kind": "gate.decision",
-  "prev_hash": "2a834ca1c2ff3a03260921fa4de3897a3e3a7750b8cd7f5a6352df19bbe34832",
+  "prev_hash": "d3bbf470608850e663ebcf8845c24595bd25cbc665277c0a5a4be19d34d03d34",
   "seq": 99,
-  "ts": "2026-09-24T03:51:45.236865+00:00"
+  "ts": "2026-09-24T06:12:08.301139+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 5,
-   "result_hash": "44a685a61c507536",
-   "run_id": "47ca29eb5da3",
+   "duration_ms": 11,
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "b02768ccc406",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0f296a04a75142c9a5001ae15e3129ff6d3a9a6aac5c6993c3b7e81fce8f4c17",
+  "hash": "58f8096b8a40959040729a2bc26fdcc05cc29bd57adcd1da8ec9c73b4cd7d743",
   "kind": "cap.run.finish",
-  "prev_hash": "b347dbf48d47e989c950608b7da1692eb51f05215adc8ce68648e65b26b19b54",
+  "prev_hash": "59089e2a080dc0223123c076a88febc9844d8696996870a18dd115b7f5c03235",
   "seq": 100,
-  "ts": "2026-09-24T03:51:45.241738+00:00"
+  "ts": "2026-09-24T06:12:08.310992+00:00"
  },
  {
   "actor": "agent",
@@ -2342,7 +2342,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "6923a60ff9f4"
+    "run_id": "03ca2cc7a391"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2350,13 +2350,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6923a60ff9f4"
+   "run_id": "03ca2cc7a391"
   },
-  "hash": "4d5f2b7c15f35cc02c3c7491540055f82df331971442e5b6adb5b8e34a10024a",
+  "hash": "838dbec895d6d13acfa4371b61e965bda04897482d7c2b843ef571143cef43ef",
   "kind": "cap.run.start",
-  "prev_hash": "0f296a04a75142c9a5001ae15e3129ff6d3a9a6aac5c6993c3b7e81fce8f4c17",
+  "prev_hash": "58f8096b8a40959040729a2bc26fdcc05cc29bd57adcd1da8ec9c73b4cd7d743",
   "seq": 101,
-  "ts": "2026-09-24T03:51:45.245542+00:00"
+  "ts": "2026-09-24T06:12:08.316796+00:00"
  },
  {
   "actor": "agent",
@@ -2366,36 +2366,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "6923a60ff9f4"
+    "run_id": "03ca2cc7a391"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6923a60ff9f4"
+   "run_id": "03ca2cc7a391"
   },
-  "hash": "fb6e572d96cccc8d7c406c5a628a087859965bc0526428f016655f5730dea860",
+  "hash": "b3e03eeb542e2a9dd2f46b44daa384ac408ea3ed849ce35a6ff0d95982f1bf2b",
   "kind": "gate.decision",
-  "prev_hash": "4d5f2b7c15f35cc02c3c7491540055f82df331971442e5b6adb5b8e34a10024a",
+  "prev_hash": "838dbec895d6d13acfa4371b61e965bda04897482d7c2b843ef571143cef43ef",
   "seq": 102,
-  "ts": "2026-09-24T03:51:45.245671+00:00"
+  "ts": "2026-09-24T06:12:08.316939+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 2,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "6923a60ff9f4",
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "03ca2cc7a391",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6d9ea6bf47de0c31bc58ba84c7b96dc7d6d0d4212e2bb40cc8f62ee7b7ac2c29",
+  "hash": "b19101503835df444f14fb91ffb131f7568bfba38284f9861303b4dff9e321ba",
   "kind": "cap.run.finish",
-  "prev_hash": "fb6e572d96cccc8d7c406c5a628a087859965bc0526428f016655f5730dea860",
+  "prev_hash": "b3e03eeb542e2a9dd2f46b44daa384ac408ea3ed849ce35a6ff0d95982f1bf2b",
   "seq": 103,
-  "ts": "2026-09-24T03:51:45.247702+00:00"
+  "ts": "2026-09-24T06:12:08.319025+00:00"
  },
  {
   "actor": "agent",
@@ -2405,7 +2405,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "105a7209ef07"
+    "run_id": "ed8603ddc7ed"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2413,13 +2413,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "105a7209ef07"
+   "run_id": "ed8603ddc7ed"
   },
-  "hash": "bca59454a10309513c2faa7ebd72bea7611121e78bc984f1e1995712d505a86c",
+  "hash": "9afa9cdcb4a968c100aa24beb0797dca9913eda898ae35f2b5676aa56095c0b4",
   "kind": "cap.run.start",
-  "prev_hash": "6d9ea6bf47de0c31bc58ba84c7b96dc7d6d0d4212e2bb40cc8f62ee7b7ac2c29",
+  "prev_hash": "b19101503835df444f14fb91ffb131f7568bfba38284f9861303b4dff9e321ba",
   "seq": 104,
-  "ts": "2026-09-24T03:51:45.250153+00:00"
+  "ts": "2026-09-24T06:12:08.322013+00:00"
  },
  {
   "actor": "agent",
@@ -2429,36 +2429,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "105a7209ef07"
+    "run_id": "ed8603ddc7ed"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "105a7209ef07"
+   "run_id": "ed8603ddc7ed"
   },
-  "hash": "e73cfa96e27a520f5bb787ec7691030ae1d9971adf5071afd554b20090000f08",
+  "hash": "a04131177c34bb3e3ce1607f3bd4d2c537c884dbc190d6623a194d80757fc066",
   "kind": "gate.decision",
-  "prev_hash": "bca59454a10309513c2faa7ebd72bea7611121e78bc984f1e1995712d505a86c",
+  "prev_hash": "9afa9cdcb4a968c100aa24beb0797dca9913eda898ae35f2b5676aa56095c0b4",
   "seq": 105,
-  "ts": "2026-09-24T03:51:45.250243+00:00"
+  "ts": "2026-09-24T06:12:08.322157+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "44a685a61c507536",
-   "run_id": "105a7209ef07",
+   "duration_ms": 6,
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "ed8603ddc7ed",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "779335a31c8b7a7fa5459fbaf867856ffd0e0c3e3ad075b3f8de5d645f6d8b28",
+  "hash": "b7911d926cad4aff14036fe295cbad113bbd335d6f8dc589a7afa40dd5659e2d",
   "kind": "cap.run.finish",
-  "prev_hash": "e73cfa96e27a520f5bb787ec7691030ae1d9971adf5071afd554b20090000f08",
+  "prev_hash": "a04131177c34bb3e3ce1607f3bd4d2c537c884dbc190d6623a194d80757fc066",
   "seq": 106,
-  "ts": "2026-09-24T03:51:45.254744+00:00"
+  "ts": "2026-09-24T06:12:08.328769+00:00"
  },
  {
   "actor": "agent",
@@ -2468,7 +2468,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "e6cf3ba55c57"
+    "run_id": "259e14ca2196"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2476,13 +2476,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e6cf3ba55c57"
+   "run_id": "259e14ca2196"
   },
-  "hash": "c8229155cf1785a861191caa6413c46e9cc32cc248407da02f725b3a9ba3ad30",
+  "hash": "f704a0ac64a705d1c8fd1902f60b8644b8c8be56ba2fa0ec78275cc7efca4f95",
   "kind": "cap.run.start",
-  "prev_hash": "779335a31c8b7a7fa5459fbaf867856ffd0e0c3e3ad075b3f8de5d645f6d8b28",
+  "prev_hash": "b7911d926cad4aff14036fe295cbad113bbd335d6f8dc589a7afa40dd5659e2d",
   "seq": 107,
-  "ts": "2026-09-24T03:51:45.257666+00:00"
+  "ts": "2026-09-24T06:12:08.332738+00:00"
  },
  {
   "actor": "agent",
@@ -2492,36 +2492,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "e6cf3ba55c57"
+    "run_id": "259e14ca2196"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e6cf3ba55c57"
+   "run_id": "259e14ca2196"
   },
-  "hash": "5f50608a53b1ca38740f317e50fb3a37ad32c559e6a787c32d768a5cd45a387c",
+  "hash": "d459319ee5021e7fbe69a49397fb1d253243b9f90e69adad4bd220ff0caa2ace",
   "kind": "gate.decision",
-  "prev_hash": "c8229155cf1785a861191caa6413c46e9cc32cc248407da02f725b3a9ba3ad30",
+  "prev_hash": "f704a0ac64a705d1c8fd1902f60b8644b8c8be56ba2fa0ec78275cc7efca4f95",
   "seq": 108,
-  "ts": "2026-09-24T03:51:45.257772+00:00"
+  "ts": "2026-09-24T06:12:08.332865+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "3493697d3627c9fa",
-   "run_id": "e6cf3ba55c57",
+   "duration_ms": 3,
+   "result_hash": "3042ba977eb3d318",
+   "run_id": "259e14ca2196",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "9de2ed2de953c6f210c8cabf9e6bbe460d287c9f636154d97930e855df04c088",
+  "hash": "4fd7be6c56a0d138afe8ac558c9d572db590214e42a75f0746c8cb93171dfcbd",
   "kind": "cap.run.finish",
-  "prev_hash": "5f50608a53b1ca38740f317e50fb3a37ad32c559e6a787c32d768a5cd45a387c",
+  "prev_hash": "d459319ee5021e7fbe69a49397fb1d253243b9f90e69adad4bd220ff0caa2ace",
   "seq": 109,
-  "ts": "2026-09-24T03:51:45.260201+00:00"
+  "ts": "2026-09-24T06:12:08.336471+00:00"
  },
  {
   "actor": "agent",
@@ -2531,7 +2531,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "94c6fdf42697"
+    "run_id": "676fcac5c7ca"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2539,13 +2539,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "94c6fdf42697"
+   "run_id": "676fcac5c7ca"
   },
-  "hash": "7a6e3ccd00cfdcc21669433b5c6a5cda6a85542e6226c9401cc813178c4058b3",
+  "hash": "8a5e27b7d4a213cbedebaef9d410bc9eb890b7f7e44105f34420fce229f34ba6",
   "kind": "cap.run.start",
-  "prev_hash": "9de2ed2de953c6f210c8cabf9e6bbe460d287c9f636154d97930e855df04c088",
+  "prev_hash": "4fd7be6c56a0d138afe8ac558c9d572db590214e42a75f0746c8cb93171dfcbd",
   "seq": 110,
-  "ts": "2026-09-24T03:51:47.769595+00:00"
+  "ts": "2026-09-24T06:12:10.836121+00:00"
  },
  {
   "actor": "agent",
@@ -2555,36 +2555,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "94c6fdf42697"
+    "run_id": "676fcac5c7ca"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "94c6fdf42697"
+   "run_id": "676fcac5c7ca"
   },
-  "hash": "e9f3508b58e41c43c17335a8a8b0758da58b960dd85a21b393be6418067466d7",
+  "hash": "47acc9d7f7fecc067bb2e98bbc2f4a0d161e12c6a3b7d87a3f0d622f40f3a7c8",
   "kind": "gate.decision",
-  "prev_hash": "7a6e3ccd00cfdcc21669433b5c6a5cda6a85542e6226c9401cc813178c4058b3",
+  "prev_hash": "8a5e27b7d4a213cbedebaef9d410bc9eb890b7f7e44105f34420fce229f34ba6",
   "seq": 111,
-  "ts": "2026-09-24T03:51:47.769822+00:00"
+  "ts": "2026-09-24T06:12:10.836294+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "44a685a61c507536",
-   "run_id": "94c6fdf42697",
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "676fcac5c7ca",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "37288e8eeaf21bbdd5b4a16c59e0975276c670bff06e4c8ecfdd82645bd379e8",
+  "hash": "e09ef60c91ad38587e653a545b28307d54c9e7527bf8f0510267d4c64ba4fc41",
   "kind": "cap.run.finish",
-  "prev_hash": "e9f3508b58e41c43c17335a8a8b0758da58b960dd85a21b393be6418067466d7",
+  "prev_hash": "47acc9d7f7fecc067bb2e98bbc2f4a0d161e12c6a3b7d87a3f0d622f40f3a7c8",
   "seq": 112,
-  "ts": "2026-09-24T03:51:47.774369+00:00"
+  "ts": "2026-09-24T06:12:10.840302+00:00"
  },
  {
   "actor": "agent",
@@ -2594,7 +2594,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "bd6ed5f3a742"
+    "run_id": "f619106eb071"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2602,13 +2602,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "bd6ed5f3a742"
+   "run_id": "f619106eb071"
   },
-  "hash": "cb0fc349dc0f69160e17ef399202140ce7150cc805a499e370b407c2e64d3a65",
+  "hash": "9aa6228b22ee5f5f244dcd6af5f014d831d46a4fcd393f27c6ee03b5e6db970c",
   "kind": "cap.run.start",
-  "prev_hash": "37288e8eeaf21bbdd5b4a16c59e0975276c670bff06e4c8ecfdd82645bd379e8",
+  "prev_hash": "e09ef60c91ad38587e653a545b28307d54c9e7527bf8f0510267d4c64ba4fc41",
   "seq": 113,
-  "ts": "2026-09-24T03:51:47.815412+00:00"
+  "ts": "2026-09-24T06:12:10.843429+00:00"
  },
  {
   "actor": "agent",
@@ -2618,36 +2618,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "bd6ed5f3a742"
+    "run_id": "f619106eb071"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "bd6ed5f3a742"
+   "run_id": "f619106eb071"
   },
-  "hash": "efa9013af2e031f0b68663dae4dcea4db223331a1b266364a20c8da7ae5edb50",
+  "hash": "dc3898ae91890083b5cd4255892dc0954a291ab42b79153d7bfdbfa019f25f41",
   "kind": "gate.decision",
-  "prev_hash": "cb0fc349dc0f69160e17ef399202140ce7150cc805a499e370b407c2e64d3a65",
+  "prev_hash": "9aa6228b22ee5f5f244dcd6af5f014d831d46a4fcd393f27c6ee03b5e6db970c",
   "seq": 114,
-  "ts": "2026-09-24T03:51:47.815617+00:00"
+  "ts": "2026-09-24T06:12:10.843528+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "2eb353c324935a1d",
-   "run_id": "bd6ed5f3a742",
+   "result_hash": "032c3955dc6073bb",
+   "run_id": "f619106eb071",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d9bf1e227484654b3500e9d6c7b5452486bd43d479abc6fc10ef5c4bc60cbe32",
+  "hash": "a4e6344caf6d128fde2a82d00e5ed795a52695ce973ca2aa823a21d16bcc5c45",
   "kind": "cap.run.finish",
-  "prev_hash": "efa9013af2e031f0b68663dae4dcea4db223331a1b266364a20c8da7ae5edb50",
+  "prev_hash": "dc3898ae91890083b5cd4255892dc0954a291ab42b79153d7bfdbfa019f25f41",
   "seq": 115,
-  "ts": "2026-09-24T03:51:47.817231+00:00"
+  "ts": "2026-09-24T06:12:10.845188+00:00"
  },
  {
   "actor": "agent",
@@ -2657,7 +2657,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "cb4dd063d0bb"
+    "run_id": "b4747dfac9e3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2665,13 +2665,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "cb4dd063d0bb"
+   "run_id": "b4747dfac9e3"
   },
-  "hash": "f589c79224531b0dc9b5e24f948250d9a966cff19824d84fd66f7ab975c86659",
+  "hash": "a70ba21a9d2b37c0819ed1f5fdec1dd2883dfabca0ff7944d4e81a1ca9385f46",
   "kind": "cap.run.start",
-  "prev_hash": "d9bf1e227484654b3500e9d6c7b5452486bd43d479abc6fc10ef5c4bc60cbe32",
+  "prev_hash": "a4e6344caf6d128fde2a82d00e5ed795a52695ce973ca2aa823a21d16bcc5c45",
   "seq": 116,
-  "ts": "2026-09-24T03:51:47.819207+00:00"
+  "ts": "2026-09-24T06:12:10.847201+00:00"
  },
  {
   "actor": "agent",
@@ -2681,36 +2681,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "cb4dd063d0bb"
+    "run_id": "b4747dfac9e3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "cb4dd063d0bb"
+   "run_id": "b4747dfac9e3"
   },
-  "hash": "830e96142d20c0cd623353e594c17c25ed99adf56d8836dcddb47dc509680599",
+  "hash": "fa12a8ac146397deb2c5997b219fecda221302a7332aa82cbc508c076c7bc907",
   "kind": "gate.decision",
-  "prev_hash": "f589c79224531b0dc9b5e24f948250d9a966cff19824d84fd66f7ab975c86659",
+  "prev_hash": "a70ba21a9d2b37c0819ed1f5fdec1dd2883dfabca0ff7944d4e81a1ca9385f46",
   "seq": 117,
-  "ts": "2026-09-24T03:51:47.819294+00:00"
+  "ts": "2026-09-24T06:12:10.847300+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "44a685a61c507536",
-   "run_id": "cb4dd063d0bb",
+   "duration_ms": 7,
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "b4747dfac9e3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1fc45f144464013b36fb5022ff77817cfa4467e07b12497d2d441dc70548ac23",
+  "hash": "f4edf07de6a3ba2b35ac11b12d2eebd638dad2482767fa0ccdfd9d9f92545c8e",
   "kind": "cap.run.finish",
-  "prev_hash": "830e96142d20c0cd623353e594c17c25ed99adf56d8836dcddb47dc509680599",
+  "prev_hash": "fa12a8ac146397deb2c5997b219fecda221302a7332aa82cbc508c076c7bc907",
   "seq": 118,
-  "ts": "2026-09-24T03:51:47.823668+00:00"
+  "ts": "2026-09-24T06:12:10.854346+00:00"
  },
  {
   "actor": "agent",
@@ -2720,7 +2720,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "446af59f031b"
+    "run_id": "5ea410d76d8f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2728,13 +2728,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "446af59f031b"
+   "run_id": "5ea410d76d8f"
   },
-  "hash": "520760ff919c777d98cd2f9dca01f0d6e1b2d4aa1295c34018d279802e1c3b12",
+  "hash": "3eac58da4574e2dc9e4d6d610996e50dc425fc545c84424d5e4d80561361f17c",
   "kind": "cap.run.start",
-  "prev_hash": "1fc45f144464013b36fb5022ff77817cfa4467e07b12497d2d441dc70548ac23",
+  "prev_hash": "f4edf07de6a3ba2b35ac11b12d2eebd638dad2482767fa0ccdfd9d9f92545c8e",
   "seq": 119,
-  "ts": "2026-09-24T03:51:47.826599+00:00"
+  "ts": "2026-09-24T06:12:10.857124+00:00"
  },
  {
   "actor": "agent",
@@ -2744,36 +2744,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "446af59f031b"
+    "run_id": "5ea410d76d8f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "446af59f031b"
+   "run_id": "5ea410d76d8f"
   },
-  "hash": "48b3fb690e40ecb60966f28c3910ef5e8d9fb1ac74535fd3599e3ccc348e5301",
+  "hash": "27c54f42f880a3e99dda1d02ad60f31f4c41caa056bc771725e1a5b4d498503e",
   "kind": "gate.decision",
-  "prev_hash": "520760ff919c777d98cd2f9dca01f0d6e1b2d4aa1295c34018d279802e1c3b12",
+  "prev_hash": "3eac58da4574e2dc9e4d6d610996e50dc425fc545c84424d5e4d80561361f17c",
   "seq": 120,
-  "ts": "2026-09-24T03:51:47.826740+00:00"
+  "ts": "2026-09-24T06:12:10.857236+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "3121d87f122e7e74",
-   "run_id": "446af59f031b",
+   "result_hash": "a3d2f1660a19dbea",
+   "run_id": "5ea410d76d8f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6a6a902c05e7e1aa4c33b9d6236323e35d204ec1129c6640ab33b2e1d600eee1",
+  "hash": "dbc4b6487971cf718ba370bea3556d7a735986144f135ce83d6f7a2e35bb5a55",
   "kind": "cap.run.finish",
-  "prev_hash": "48b3fb690e40ecb60966f28c3910ef5e8d9fb1ac74535fd3599e3ccc348e5301",
+  "prev_hash": "27c54f42f880a3e99dda1d02ad60f31f4c41caa056bc771725e1a5b4d498503e",
   "seq": 121,
-  "ts": "2026-09-24T03:51:47.829252+00:00"
+  "ts": "2026-09-24T06:12:10.859771+00:00"
  },
  {
   "actor": "agent",
@@ -2783,7 +2783,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "561461ed2a60"
+    "run_id": "54f077738075"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2791,13 +2791,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "561461ed2a60"
+   "run_id": "54f077738075"
   },
-  "hash": "53dec8eb7c85ee74e677896dbe5c7f8ba22e22d28fa47a43f8b319b4cc4fad2a",
+  "hash": "f45be1b60dbcf5acb7e59c32ebcc75748722c814b4e59f95610dfaa3bea89c99",
   "kind": "cap.run.start",
-  "prev_hash": "6a6a902c05e7e1aa4c33b9d6236323e35d204ec1129c6640ab33b2e1d600eee1",
+  "prev_hash": "dbc4b6487971cf718ba370bea3556d7a735986144f135ce83d6f7a2e35bb5a55",
   "seq": 122,
-  "ts": "2026-09-24T03:51:50.046760+00:00"
+  "ts": "2026-09-24T06:12:13.161971+00:00"
  },
  {
   "actor": "agent",
@@ -2807,36 +2807,36 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "561461ed2a60"
+    "run_id": "54f077738075"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "561461ed2a60"
+   "run_id": "54f077738075"
   },
-  "hash": "baf931ef7804601e8ed633a777ab3f6cc23de725fe02e566bfbb5f4cbda0274a",
+  "hash": "700a1d5608f3244c1921867325c74855d405093df7434f1fb6a31786e7fd2b1a",
   "kind": "gate.decision",
-  "prev_hash": "53dec8eb7c85ee74e677896dbe5c7f8ba22e22d28fa47a43f8b319b4cc4fad2a",
+  "prev_hash": "f45be1b60dbcf5acb7e59c32ebcc75748722c814b4e59f95610dfaa3bea89c99",
   "seq": 123,
-  "ts": "2026-09-24T03:51:50.046996+00:00"
+  "ts": "2026-09-24T06:12:13.162195+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "44a685a61c507536",
-   "run_id": "561461ed2a60",
+   "result_hash": "c9031aff88b5173c",
+   "run_id": "54f077738075",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a947da46d04e099fba21daa4a0460d508b5e79bbd53820c1fd199c65b1c78fd4",
+  "hash": "bdb0fd432e2d059db3aaa86ab3b6c8f23c8b8ce6ce71b2e45386ac3b5402b25e",
   "kind": "cap.run.finish",
-  "prev_hash": "baf931ef7804601e8ed633a777ab3f6cc23de725fe02e566bfbb5f4cbda0274a",
+  "prev_hash": "700a1d5608f3244c1921867325c74855d405093df7434f1fb6a31786e7fd2b1a",
   "seq": 124,
-  "ts": "2026-09-24T03:51:50.051218+00:00"
+  "ts": "2026-09-24T06:12:13.166500+00:00"
  }
 ]
 ```
@@ -2902,13 +2902,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "kind": "gap",
     "text": "Bước `env.check` đang chờ anh cho biết:\n• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)\n   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V",
     "req_ids": "[]",
-    "suggestion": "Trả lời ở đây hoặc ngay trong vùng trao đổi, rồi bảo tác tử chạy tiếp lượt r_aeb21dd2",
+    "suggestion": "Trả lời ở đây hoặc ngay trong vùng trao đổi, rồi bảo tác tử chạy tiếp lượt r_4c0cc573",
     "source_cap": "env.check",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T03:51:43.784595+00:00",
+    "created_at": "2026-09-24T06:12:06.869934+00:00",
     "answered_at": null
    }
   ]
@@ -2929,7 +2929,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
   "so_dong": 37,
   "dong": [
    {
-    "id": "bc03992b348a",
+    "id": "4804d05609d4",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -2942,10 +2942,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:33.252765+00:00"
+    "at": "2026-09-24T06:12:01.645168+00:00"
    },
    {
-    "id": "546cb0f9c64e",
+    "id": "68f2ee8f538d",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2958,10 +2958,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:33.268118+00:00"
+    "at": "2026-09-24T06:12:01.659163+00:00"
    },
    {
-    "id": "30a9efc17a7d",
+    "id": "4a11a37010c2",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2974,10 +2974,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:33.271417+00:00"
+    "at": "2026-09-24T06:12:01.662470+00:00"
    },
    {
-    "id": "b76328affb77",
+    "id": "b01278241338",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2990,10 +2990,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:33.303379+00:00"
+    "at": "2026-09-24T06:12:01.692845+00:00"
    },
    {
-    "id": "700bccfa985a",
+    "id": "83e78b34864b",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3006,10 +3006,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:33.561569+00:00"
+    "at": "2026-09-24T06:12:01.943825+00:00"
    },
    {
-    "id": "91dffa1e3160",
+    "id": "2e33c76ce183",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -3022,10 +3022,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:33.590012+00:00"
+    "at": "2026-09-24T06:12:01.972549+00:00"
    },
    {
-    "id": "ffb2a16373dd",
+    "id": "39acc46b6ab3",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -3038,10 +3038,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:43.697816+00:00"
+    "at": "2026-09-24T06:12:06.783994+00:00"
    },
    {
-    "id": "d9cafe9df823",
+    "id": "4191bd1f090d",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -3054,10 +3054,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:43.702436+00:00"
+    "at": "2026-09-24T06:12:06.788971+00:00"
    },
    {
-    "id": "8a0c7dbb8846",
+    "id": "0399d4533d49",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -3070,10 +3070,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:43.710847+00:00"
+    "at": "2026-09-24T06:12:06.798362+00:00"
    },
    {
-    "id": "f47b3fe0e4a9",
+    "id": "76c8ff2bcdc4",
     "gate": "*",
     "action_cap": "project.create",
     "risk": "R2",
@@ -3086,10 +3086,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:43.737857+00:00"
+    "at": "2026-09-24T06:12:06.826906+00:00"
    },
    {
-    "id": "43bec1b5190e",
+    "id": "c2ba9ff7ba8d",
     "gate": "*",
     "action_cap": "search.reference_projects",
     "risk": "R0",
@@ -3102,26 +3102,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:43.773351+00:00"
+    "at": "2026-09-24T06:12:06.857489+00:00"
    },
    {
-    "id": "66ba40ee34a6",
-    "gate": "*",
-    "action_cap": "view.artifacts",
-    "risk": "R0",
-    "autonomy_level": "A2",
-    "decision": "APPROVE",
-    "by": "agent",
-    "rule": "R0",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "evidence": null,
-    "features": "{}",
-    "human_answer": null,
-    "undone_at": null,
-    "at": "2026-09-24T03:51:43.807785+00:00"
-   },
-   {
-    "id": "b65123bdfc15",
+    "id": "42a712268f15",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -3134,10 +3118,26 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:43.830973+00:00"
+    "at": "2026-09-24T06:12:06.914698+00:00"
    },
    {
-    "id": "2e17c745d9af",
+    "id": "68bbf5fd7a79",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T06:12:06.928421+00:00"
+   },
+   {
+    "id": "b8c4965d1bbb",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3150,10 +3150,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.315108+00:00"
+    "at": "2026-09-24T06:12:07.461236+00:00"
    },
    {
-    "id": "9514325a92f8",
+    "id": "a79e2a41fc43",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3166,10 +3166,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.488462+00:00"
+    "at": "2026-09-24T06:12:07.534898+00:00"
    },
    {
-    "id": "cb5ecfd4d25c",
+    "id": "842c8aae411c",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3182,10 +3182,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.497494+00:00"
+    "at": "2026-09-24T06:12:07.542532+00:00"
    },
    {
-    "id": "fbaee39f9a37",
+    "id": "73713c0ccb4b",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3198,10 +3198,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.501181+00:00"
+    "at": "2026-09-24T06:12:07.545647+00:00"
    },
    {
-    "id": "8ac50f45779b",
+    "id": "d37d6381911d",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3214,10 +3214,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.511696+00:00"
+    "at": "2026-09-24T06:12:07.548722+00:00"
    },
    {
-    "id": "993e800f56d3",
+    "id": "24dde1b41bbb",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3230,10 +3230,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.514930+00:00"
+    "at": "2026-09-24T06:12:07.558432+00:00"
    },
    {
-    "id": "827a8c2d11fc",
+    "id": "9e3d49b8dbde",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3246,10 +3246,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.518252+00:00"
+    "at": "2026-09-24T06:12:07.561514+00:00"
    },
    {
-    "id": "fffa7d516bd2",
+    "id": "29c35e82026d",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3262,10 +3262,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.521539+00:00"
+    "at": "2026-09-24T06:12:07.564530+00:00"
    },
    {
-    "id": "d99be9fe5633",
+    "id": "02a381dc046a",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3278,10 +3278,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.552117+00:00"
+    "at": "2026-09-24T06:12:07.592816+00:00"
    },
    {
-    "id": "d4ed318bc91e",
+    "id": "36644bf36191",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3294,10 +3294,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.640624+00:00"
+    "at": "2026-09-24T06:12:07.676749+00:00"
    },
    {
-    "id": "9ad4cf994477",
+    "id": "198ad589ecd2",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3310,10 +3310,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.671481+00:00"
+    "at": "2026-09-24T06:12:07.706553+00:00"
    },
    {
-    "id": "c6e4afd6d787",
+    "id": "9adf501f3242",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3326,10 +3326,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.810113+00:00"
+    "at": "2026-09-24T06:12:07.809039+00:00"
    },
    {
-    "id": "e7c2d2078e56",
+    "id": "e0c16fdc6652",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3342,10 +3342,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.817208+00:00"
+    "at": "2026-09-24T06:12:07.847908+00:00"
    },
    {
-    "id": "debd55661bbf",
+    "id": "e6a07cb7d854",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3358,10 +3358,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.821180+00:00"
+    "at": "2026-09-24T06:12:07.852124+00:00"
    },
    {
-    "id": "7adb1c10428e",
+    "id": "2c90f8efef30",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3374,10 +3374,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:44.827467+00:00"
+    "at": "2026-09-24T06:12:07.860869+00:00"
    },
    {
-    "id": "47ca29eb5da3",
+    "id": "b02768ccc406",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3390,10 +3390,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:45.237646+00:00"
+    "at": "2026-09-24T06:12:08.302799+00:00"
    },
    {
-    "id": "6923a60ff9f4",
+    "id": "03ca2cc7a391",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3406,10 +3406,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:45.246303+00:00"
+    "at": "2026-09-24T06:12:08.317527+00:00"
    },
    {
-    "id": "105a7209ef07",
+    "id": "ed8603ddc7ed",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3422,10 +3422,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:45.250705+00:00"
+    "at": "2026-09-24T06:12:08.322804+00:00"
    },
    {
-    "id": "e6cf3ba55c57",
+    "id": "259e14ca2196",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3438,10 +3438,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:45.258152+00:00"
+    "at": "2026-09-24T06:12:08.333421+00:00"
    },
    {
-    "id": "94c6fdf42697",
+    "id": "676fcac5c7ca",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3454,10 +3454,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:47.770511+00:00"
+    "at": "2026-09-24T06:12:10.836811+00:00"
    },
    {
-    "id": "bd6ed5f3a742",
+    "id": "f619106eb071",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3470,10 +3470,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:47.816049+00:00"
+    "at": "2026-09-24T06:12:10.843988+00:00"
    },
    {
-    "id": "cb4dd063d0bb",
+    "id": "b4747dfac9e3",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3486,10 +3486,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:47.819748+00:00"
+    "at": "2026-09-24T06:12:10.847720+00:00"
    },
    {
-    "id": "446af59f031b",
+    "id": "5ea410d76d8f",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3502,10 +3502,10 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:47.827141+00:00"
+    "at": "2026-09-24T06:12:10.857632+00:00"
    },
    {
-    "id": "561461ed2a60",
+    "id": "54f077738075",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3518,7 +3518,7 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:51:50.047703+00:00"
+    "at": "2026-09-24T06:12:13.162915+00:00"
    }
   ]
  },
@@ -3586,14 +3586,14 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_aeb21dd2cf45",
+    "id": "r_4c0cc5735cc3",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"project.create\", \"args\": {\"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.reference_projects\", \"args\": {\"idea\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}, {\"id\": \"n3\", \"cap\": \"registry.pull\", \"args\": {}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"req.elicit\", \"args\": {\"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}, {\"id\": \"n5\", \"cap\": \"board.build_passport\", \"args\": {}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"env.check\", \"args\": {}, \"when\": \"n1\", \"on_ask\": \"wait\"}, {\"id\": \"n7\", \"cap\": \"sim.build_platform\", \"args\": {}, \"when\": \"n5\", \"on_ask\": \"skip\"}, {\"id\": \"n8\", \"cap\": \"req.classify\", \"args\": {\"raw\": \"${n4.raw}\"}, \"when\": \"n4\", \"on_ask\": \"wait\"}, {\"id\": \"n9\", \"cap\": \"arch.style_select\", \"args\": {\"reqset_ids\": \"${n8.reqset[*].id}\"}, \"when\": \"n8\", \"on_ask\": \"wait\"}, {\"id\": \"n10\", \"cap\": \"arch.decompose\", \"args\": {\"reqset_ids\": \"${n8.reqset[*].id}\", \"style\": \"${n9.decision.style}\"}, \"when\": \"n9\", \"on_ask\": \"wait\"}, {\"id\": \"n11\", \"cap\": \"arch.map_hw\", \"args\": {\"module_ids\": \"${n10.module_graph.modules[*].id}\"}, \"when\": \"n10\", \"on_ask\": \"wait\"}, {\"id\": \"n12\", \"cap\": \"diagram.block\", \"args\": {}, \"when\": \"n10\", \"on_ask\": \"parallel\"}, {\"id\": \"n13\", \"cap\": \"plan.create\", \"args\": {}, \"when\": \"n11\", \"on_ask\": \"wait\"}, {\"id\": \"n14\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_aeb21dd2cf45\"}, \"when\": \"n13\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"project.create\", \"slots\": {\"idea\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\", \"project_name\": \"lam-bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-\", \"project_dir\": \"~/eide\", \"create_when_exists\": \"ask\"}, \"is_big\": true, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"LAN\", \"USB\", \"TV\"], \"_text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"project.create\", \"args\": {\"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.reference_projects\", \"args\": {\"idea\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}, {\"id\": \"n3\", \"cap\": \"registry.pull\", \"args\": {}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"req.elicit\", \"args\": {\"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}, {\"id\": \"n5\", \"cap\": \"board.build_passport\", \"args\": {}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"env.check\", \"args\": {}, \"when\": \"n1\", \"on_ask\": \"wait\"}, {\"id\": \"n7\", \"cap\": \"sim.build_platform\", \"args\": {}, \"when\": \"n5\", \"on_ask\": \"skip\"}, {\"id\": \"n8\", \"cap\": \"req.classify\", \"args\": {\"raw\": \"${n4.raw}\"}, \"when\": \"n4\", \"on_ask\": \"wait\"}, {\"id\": \"n9\", \"cap\": \"arch.style_select\", \"args\": {\"reqset_ids\": \"${n8.reqset[*].id}\"}, \"when\": \"n8\", \"on_ask\": \"wait\"}, {\"id\": \"n10\", \"cap\": \"arch.decompose\", \"args\": {\"reqset_ids\": \"${n8.reqset[*].id}\", \"style\": \"${n9.decision.style}\"}, \"when\": \"n9\", \"on_ask\": \"wait\"}, {\"id\": \"n11\", \"cap\": \"arch.map_hw\", \"args\": {\"module_ids\": \"${n10.module_graph.modules[*].id}\"}, \"when\": \"n10\", \"on_ask\": \"wait\"}, {\"id\": \"n12\", \"cap\": \"diagram.block\", \"args\": {}, \"when\": \"n10\", \"on_ask\": \"parallel\"}, {\"id\": \"n13\", \"cap\": \"plan.create\", \"args\": {}, \"when\": \"n11\", \"on_ask\": \"wait\"}, {\"id\": \"n14\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_4c0cc5735cc3\"}, \"when\": \"n13\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"project.create\", \"slots\": {\"idea\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\", \"project_name\": \"lam-bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-\", \"project_dir\": \"~/eide\", \"create_when_exists\": \"ask\"}, \"is_big\": true, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [], \"_text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}, \"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\"}",
     "state": "asked",
     "working": null,
-    "report": "{\"nguon_chuoi\": \"mẫu: Dự án mới từ ý tưởng (Z-01)\", \"state\": \"asked\", \"done\": [{\"id\": \"n1\", \"cap\": \"project.create\", \"run_id\": \"f47b3fe0e4a9\", \"ra\": {\"project_id\": \"bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-qua-\", \"path\": \"137 ký tự\", \"created\": true, \"existing\": 0}, \"dau_ra\": {\"project_id\": \"bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-qua-\", \"path\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-qua-\", \"created\": true, \"existing\": [], \"next\": [\"search.reference_projects\"]}}, {\"id\": \"n2\", \"cap\": \"search.reference_projects\", \"run_id\": \"43bec1b5190e\", \"ra\": {\"templates\": 0}, \"dau_ra\": {\"templates\": []}}], \"waiting\": [{\"id\": \"n6\", \"cap\": \"env.check\", \"on_ask\": \"wait\", \"thieu\": [\"isa\"], \"vi\": \"cần anh cho biết: isa\", \"clar_id\": \"CL-33cab62420\", \"hoi\": \"Bước `env.check` đang chờ anh cho biết:\\n• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)\\n   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V\", \"truong\": [{\"khoa\": \"isa\", \"hoi\": \"Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)\", \"lua_chon\": [{\"gia_tri\": \"armv7e-m\", \"giai_thich\": \"STM32F[2-4], STM32L4, nRF52, SAMD5\"}, {\"gia_tri\": \"avr8\", \"giai_thich\": \"ATmega, ATtiny, AVR(64|128)\"}, {\"gia_tri\": \"rv32imac\", \"giai_thich\": \"ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V\"}]}]}], \"skipped\": [], \"failed\": []}",
+    "report": "{\"nguon_chuoi\": \"mẫu: Dự án mới từ ý tưởng (Z-01)\", \"state\": \"asked\", \"done\": [{\"id\": \"n1\", \"cap\": \"project.create\", \"run_id\": \"76c8ff2bcdc4\", \"ra\": {\"project_id\": \"bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-qua-\", \"path\": \"137 ký tự\", \"created\": true, \"existing\": 0}, \"dau_ra\": {\"project_id\": \"bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-qua-\", \"path\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/bo-chuyen-lan-sang-usb-cam-vao-tv-copy-phim-qua-\", \"created\": true, \"existing\": [], \"next\": [\"search.reference_projects\"]}}, {\"id\": \"n2\", \"cap\": \"search.reference_projects\", \"run_id\": \"c2ba9ff7ba8d\", \"ra\": {\"templates\": 0}, \"dau_ra\": {\"templates\": []}}], \"waiting\": [{\"id\": \"n6\", \"cap\": \"env.check\", \"on_ask\": \"wait\", \"thieu\": [\"isa\"], \"vi\": \"cần anh cho biết: isa\", \"clar_id\": \"CL-33cab62420\", \"hoi\": \"Bước `env.check` đang chờ anh cho biết:\\n• Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)\\n   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V\", \"truong\": [{\"khoa\": \"isa\", \"hoi\": \"Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)\", \"lua_chon\": [{\"gia_tri\": \"armv7e-m\", \"giai_thich\": \"STM32F[2-4], STM32L4, nRF52, SAMD5\"}, {\"gia_tri\": \"avr8\", \"giai_thich\": \"ATmega, ATtiny, AVR(64|128)\"}, {\"gia_tri\": \"rv32imac\", \"giai_thich\": \"ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V\"}]}]}], \"skipped\": [], \"failed\": []}",
     "cost_usd": null,
-    "started_at": "2026-09-24T03:51:43.734391+00:00",
+    "started_at": "2026-09-24T06:12:06.824109+00:00",
     "finished_at": null
    }
   ]
@@ -3624,13 +3624,13 @@ Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đ
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_6519c2a38dbe",
+    "id": "s_3a3cdd741922",
     "project": "bo-chuyen-lan-sang-usb-cho-tv",
-    "opened_at": "2026-09-24T03:51:33.257529+00:00",
+    "opened_at": "2026-09-24T06:12:01.649480+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\", \"at\": \"2026-09-24T03:51:33.571551+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_aeb21dd2 → asked\", \"at\": \"2026-09-24T03:51:43.832507+00:00\", \"run_id\": \"r_aeb21dd2cf45\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem\", \"at\": \"2026-09-24T06:12:01.953718+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_4c0cc573 → asked\", \"at\": \"2026-09-24T06:12:06.916124+00:00\", \"run_id\": \"r_4c0cc5735cc3\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -3664,7 +3664,7 @@ index/
 ```
 # bộ chuyển LAN sang USB cho TV
 
-- 2026-09-24 10:51 — tạo dự án từ lệnh: "bộ chuyển LAN sang USB cho TV"
+- 2026-09-24 13:12 — tạo dự án từ lệnh: "bộ chuyển LAN sang USB cho TV"
 
 ```
 
@@ -3755,7 +3755,7 @@ escalation:
 project:
   id: bo-chuyen-lan-sang-usb-cho-tv
   name: bộ chuyển LAN sang USB cho TV
-  created: '2026-09-24T03:51:33.025740+00:00'
+  created: '2026-09-24T06:12:01.354208+00:00'
   text: bộ chuyển LAN sang USB cho TV
 target:
   chip: null
@@ -3946,7 +3946,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “bộ chuyển LAN sang USB cho TV”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3967,7 +3967,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Làm bộ chuyển LAN sang USB, cắm vào TV, copy phim qua mạng LAN vào đó để TV xem
 
-**Tác tử trả lời** *(sau 14.0 s)*:
+**Tác tử trả lời** *(sau 8.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3985,7 +3985,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 }  2. `search.reference_projects` — 0 templates  Xem đầy đủ ▾ {
   "templates" : [
   ]
-}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -4005,8 +4005,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_6519c2a38dbe
-Mở lúc	24/09 03:51:33
+Phiên	s_3a3cdd741922
+Mở lúc	24/09 06:12:01
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4041,8 +4041,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_6519c2a38dbe
-Mở lúc	24/09 03:51:33
+Phiên	s_3a3cdd741922
+Mở lúc	24/09 06:12:01
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4120,7 +4120,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC001/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4143,7 +4143,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC001/buoc-02.png
 
-**Tác tử trả lời** *(sau 14.0 s)*:
+**Tác tử trả lời** *(sau 8.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4161,7 +4161,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 }  2. `search.reference_projects` — 0 templates  Xem đầy đủ ▾ {
   "templates" : [
   ]
-}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
+}  TÁC TỬ HỎI  ·  env.check  Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ)  armv7e-m   — STM32F[2-4], STM32L4, nRF52, SAMD5 avr8   — ATmega, ATtiny, AVR(64|128) rv32imac   — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -4181,8 +4181,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_6519c2a38dbe
-Mở lúc	24/09 03:51:33
+Phiên	s_3a3cdd741922
+Mở lúc	24/09 06:12:01
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4219,8 +4219,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_6519c2a38dbe
-Mở lúc	24/09 03:51:33
+Phiên	s_3a3cdd741922
+Mở lúc	24/09 06:12:01
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2

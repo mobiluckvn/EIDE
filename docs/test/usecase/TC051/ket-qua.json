@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "SAU [DEV-215]: K9 trả lời, nhưng đưa “4 nguyên nhân phổ biến nhất” (sụt áp, HardFault…) thay vì nói rõ KHÔNG ĐỦ DỮ LIỆU. Đề bài đòi “nói rõ không đủ dữ liệu, hướng dẫn thu thập lại” và “không kết luận vội”.\n\nGhi chú: Ranh giới: bốn nguyên nhân ấy được nêu như GIẢ THUYẾT chứ không như kết luận, và có bám vào hiện tượng. Vẫn chấm Không đạt vì thiếu hẳn câu “chưa đủ dữ liệu” — chấm nới ở đây là bỏ mất đúng thứ bài kiểm canh.",
- "giay": 27.5,
+ "giay": 28.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -48,7 +48,7 @@
  },
  "lap": [
   {
-   "giay": 27.5,
+   "giay": 28.4,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "không đủ|thiếu dữ liệu|cần thêm|thu thập"

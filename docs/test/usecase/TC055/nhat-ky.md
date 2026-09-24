@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** mở lại dự án — `giam-dong-tieu-thu-che-do-cho`
 
-**Tác tử trả lời** *(sau 0.3 s)*:
+**Tác tử trả lời** *(sau 0.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giam-dong-tieu-thu-che-do-cho` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-SNS-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
@@ -19,7 +19,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui
 
-**Tác tử trả lời** *(sau 7.6 s)*:
+**Tác tử trả lời** *(sau 5.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giam-dong-tieu-thu-che-do-cho` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  Đã nhận (ý hiểu: `policy.set`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  bước 1/1  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/1 bước, 1 bước cần anh trả lời  → mở màn Chính sách tự chủ (tác tử đang chạy `policy.set_autonomy`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là policy.set, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ policy.set_autonomy.  1. `policy.set_autonomy`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  policy.set_autonomy  Đặt mức tự chủ nào? (A0 tác tử không tự làm gì · A4 tự làm nhiều nhất)  A0 A1 A2 A3 A4 Ai là người quyết định việc này? (ghi vào sổ cái để sau còn truy được)   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
@@ -162,13 +162,13 @@ TOOL-99	G-TOOL	ASK	True
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (6)  Làm rõ yêu cầu — HW/CLOCK  Cấu hình phần cứng hiện tại (điện áp nguồn và nguồn xung nhịp) là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — NFR/POWER  Mục tiêu dòng tiêu thụ ở chế độ chờ cần đạt được là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW/PERIPHERAL  Có ngoại vi nào bắt buộc phải duy trì hoạt động trong lúc chờ không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR/WAKEUP  Hệ thống cần được đánh thức (wake-up) từ chế độ chờ bằng sự kiện nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Hệ thống hoặc quy trình kiểm thử phải cung cấp báo cáo đo lường dòng điện tiêu thụ thực tế (đơn vị mA hoặc uA) trước và sau khi áp dụng giải pháp tối ưu hóa.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `policy.set_autonomy` đang chờ anh cho biết:
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (6)  Làm rõ yêu cầu — FUNCTIONALITY  Hệ thống cần được đánh thức (wake-up) từ chế độ chờ bằng sự kiện gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Quy trình kiểm thử phải cung cấp báo cáo so sánh số đo dòng điện tiêu thụ thực tế (đơn vị mA hoặc uA) trước và sau khi áp dụng giải pháp tối ưu hóa.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE_CONFIG  Nguồn cấp và xung nhịp (clock) hiện tại của vi điều khiển là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — POWER_BUDGET  Mục tiêu dòng tiêu thụ ở chế độ chờ cần giảm xuống tối đa là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FUNCTIONALITY  Có ngoại vi nào bắt buộc phải giữ hoạt động trong lúc chờ không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `policy.set_autonomy` đang chờ anh cho biết:
 • Đặt mức tự chủ nào? (A0 tác tử không tự làm gì · A4 tự làm nhiều nhất) (`level`)
    Chọn một: A0; A1; A2; A3; A4
 • Ai là người quyết định việc này? (ghi vào sổ cái để sau còn truy được) (`by`)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (6)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.3 s)*:
+**Tác tử trả lời** *(sau 2.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `giam-dong-tieu-thu-che-do-cho` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  Đã nhận (ý hiểu: `policy.set`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy lại test hồi quy sau khi tối ưu, nếu hỏng chức năng thì quay lui  bước 1/1  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/1 bước, 1 bước cần anh trả lời  → mở màn Chính sách tự chủ (tác tử đang chạy `policy.set_autonomy`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là policy.set, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ policy.set_autonomy.  1. `policy.set_autonomy`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  policy.set_autonomy  Đặt mức tự chủ nào? (A0 tác tử không tự làm gì · A4 tự làm nhiều nhất)  A0 A1 A2 A3 A4 Ai là người quyết định việc này? (ghi vào sổ cái để sau còn truy được)   …hoặc gõ câu trả lời cho các mục trên Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 

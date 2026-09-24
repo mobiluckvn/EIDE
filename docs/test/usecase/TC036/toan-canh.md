@@ -36,7 +36,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "e141e23a8072"
+    "run_id": "9b8a8c6100cd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -44,13 +44,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e141e23a8072"
+   "run_id": "9b8a8c6100cd"
   },
-  "hash": "4b6f7497fb873a9c002f9d7227653ffd6429309c1aef81b7bb142632677fd2fb",
+  "hash": "dec89d79e6acd23ac9461cef64ee84f50b4bf517d0c1db8d998ab6c0d31d51f9",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:07:09.967834+00:00"
+  "ts": "2026-09-24T06:30:33.975686+00:00"
  },
  {
   "actor": "agent",
@@ -60,52 +60,52 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "e141e23a8072"
+    "run_id": "9b8a8c6100cd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e141e23a8072"
+   "run_id": "9b8a8c6100cd"
   },
-  "hash": "5db9e20a44eb9bf6ea8008f7cfabf9d5839b355152bcda5717d27f6d4ba4a6ba",
+  "hash": "a1b947e7e4e542e89f05aabc102698766ee6a126c7d7ee88495926f24aa47934",
   "kind": "gate.decision",
-  "prev_hash": "4b6f7497fb873a9c002f9d7227653ffd6429309c1aef81b7bb142632677fd2fb",
+  "prev_hash": "dec89d79e6acd23ac9461cef64ee84f50b4bf517d0c1db8d998ab6c0d31d51f9",
   "seq": 2,
-  "ts": "2026-09-24T04:07:09.968220+00:00"
+  "ts": "2026-09-24T06:30:33.976052+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "e141e23a8072"
+    "run_id": "9b8a8c6100cd"
    },
    "project": "chip-nong-bat-thuong",
-   "session_id": "s_cbda68a7456e"
+   "session_id": "s_1488ad7ebded"
   },
-  "hash": "a2039348d7ddfd674610fafc50a0e8cd1f4b6019e40d51a7da42d06dd110fa8b",
+  "hash": "044e610cd1b8f04d1baf9f73da14b1042a21508e0fa898a2165c742769cb2694",
   "kind": "session.open",
-  "prev_hash": "5db9e20a44eb9bf6ea8008f7cfabf9d5839b355152bcda5717d27f6d4ba4a6ba",
+  "prev_hash": "a1b947e7e4e542e89f05aabc102698766ee6a126c7d7ee88495926f24aa47934",
   "seq": 3,
-  "ts": "2026-09-24T04:07:09.974196+00:00"
+  "ts": "2026-09-24T06:30:33.982188+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "72af56d4789b8ab0",
-   "run_id": "e141e23a8072",
+   "duration_ms": 23,
+   "result_hash": "8762c66603677bb1",
+   "run_id": "9b8a8c6100cd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "60ee997b2083ff5772c01754b62a9fc7afc980b02cbfb9345e047bb05a0f6704",
+  "hash": "6e96b1fe5bc92bff82fe7d15c8240bd5fe5bce02a0af328452aeff527d57a0ca",
   "kind": "cap.run.finish",
-  "prev_hash": "a2039348d7ddfd674610fafc50a0e8cd1f4b6019e40d51a7da42d06dd110fa8b",
+  "prev_hash": "044e610cd1b8f04d1baf9f73da14b1042a21508e0fa898a2165c742769cb2694",
   "seq": 4,
-  "ts": "2026-09-24T04:07:09.975301+00:00"
+  "ts": "2026-09-24T06:30:33.983321+00:00"
  },
  {
   "actor": "agent",
@@ -115,7 +115,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "b9d92bdf69d4"
+    "run_id": "978997754535"
    },
    "decision": {
     "decision": "APPROVE",
@@ -123,13 +123,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b9d92bdf69d4"
+   "run_id": "978997754535"
   },
-  "hash": "f45bd35cd767fc43d7b349ac4f76cb441d9d8646b81ac61c4a40edcc38c5c703",
+  "hash": "7a249d436b415ec69c1b7283870dd1fc53782724db0ceaf60bd122409ca3ca2f",
   "kind": "cap.run.start",
-  "prev_hash": "60ee997b2083ff5772c01754b62a9fc7afc980b02cbfb9345e047bb05a0f6704",
+  "prev_hash": "6e96b1fe5bc92bff82fe7d15c8240bd5fe5bce02a0af328452aeff527d57a0ca",
   "seq": 5,
-  "ts": "2026-09-24T04:07:09.981873+00:00"
+  "ts": "2026-09-24T06:30:33.989788+00:00"
  },
  {
   "actor": "agent",
@@ -139,20 +139,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "b9d92bdf69d4"
+    "run_id": "978997754535"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b9d92bdf69d4"
+   "run_id": "978997754535"
   },
-  "hash": "06aea8cbcc97f44118c3e91bba3ad9fc54d27805e0e8c4526944964d6db7b799",
+  "hash": "0deb85b68e9103d2edec8f4b1bcc5285a72d07200a044cb6a77446e7aab96637",
   "kind": "gate.decision",
-  "prev_hash": "f45bd35cd767fc43d7b349ac4f76cb441d9d8646b81ac61c4a40edcc38c5c703",
+  "prev_hash": "7a249d436b415ec69c1b7283870dd1fc53782724db0ceaf60bd122409ca3ca2f",
   "seq": 6,
-  "ts": "2026-09-24T04:07:09.981982+00:00"
+  "ts": "2026-09-24T06:30:33.989885+00:00"
  },
  {
   "actor": "agent",
@@ -160,15 +160,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "b9d92bdf69d4",
+   "run_id": "978997754535",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "9d3ab7831fb331892cd5c157414ce86a5d3cb3c4059ffdf90f2c0829c5c995cd",
+  "hash": "6f4d46fed0416ccf42f9263769a4f85f7a463cf554900aa037a841311f170e2b",
   "kind": "cap.run.finish",
-  "prev_hash": "06aea8cbcc97f44118c3e91bba3ad9fc54d27805e0e8c4526944964d6db7b799",
+  "prev_hash": "0deb85b68e9103d2edec8f4b1bcc5285a72d07200a044cb6a77446e7aab96637",
   "seq": 7,
-  "ts": "2026-09-24T04:07:09.983771+00:00"
+  "ts": "2026-09-24T06:30:33.991430+00:00"
  },
  {
   "actor": "agent",
@@ -178,7 +178,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c813b9bad0fa"
+    "run_id": "6caf73d7d839"
    },
    "decision": {
     "decision": "APPROVE",
@@ -186,13 +186,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c813b9bad0fa"
+   "run_id": "6caf73d7d839"
   },
-  "hash": "6a0e7526ca2abc73496d785082d1f654ce8847d68d31e89b396b529f7a605a03",
+  "hash": "034a46e468483b5579832807d5ad5649a7edbd3c9a743fb23929ce216b968c2c",
   "kind": "cap.run.start",
-  "prev_hash": "9d3ab7831fb331892cd5c157414ce86a5d3cb3c4059ffdf90f2c0829c5c995cd",
+  "prev_hash": "6f4d46fed0416ccf42f9263769a4f85f7a463cf554900aa037a841311f170e2b",
   "seq": 8,
-  "ts": "2026-09-24T04:07:09.985319+00:00"
+  "ts": "2026-09-24T06:30:33.992856+00:00"
  },
  {
   "actor": "agent",
@@ -202,20 +202,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c813b9bad0fa"
+    "run_id": "6caf73d7d839"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c813b9bad0fa"
+   "run_id": "6caf73d7d839"
   },
-  "hash": "757fea1fe1b2c0ceb26069c9edfa3e937a69bf5aaf710e7fff8f34ead1d67c6a",
+  "hash": "06ff72394672a14a3f0333d43e2717a24bf282a78d050bc4332c7413aa29c8c9",
   "kind": "gate.decision",
-  "prev_hash": "6a0e7526ca2abc73496d785082d1f654ce8847d68d31e89b396b529f7a605a03",
+  "prev_hash": "034a46e468483b5579832807d5ad5649a7edbd3c9a743fb23929ce216b968c2c",
   "seq": 9,
-  "ts": "2026-09-24T04:07:09.985411+00:00"
+  "ts": "2026-09-24T06:30:33.992925+00:00"
  },
  {
   "actor": "agent",
@@ -223,15 +223,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "c813b9bad0fa",
+   "run_id": "6caf73d7d839",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5873e04ac80ef8685db1a328f973684612ae70c452d8aec7ebf1e4e4fef37c42",
+  "hash": "9d010d51d216a0ab86292d8180960db10d4b8a6bbefb919e8c8ba5601c3b72e0",
   "kind": "cap.run.finish",
-  "prev_hash": "757fea1fe1b2c0ceb26069c9edfa3e937a69bf5aaf710e7fff8f34ead1d67c6a",
+  "prev_hash": "06ff72394672a14a3f0333d43e2717a24bf282a78d050bc4332c7413aa29c8c9",
   "seq": 10,
-  "ts": "2026-09-24T04:07:09.987028+00:00"
+  "ts": "2026-09-24T06:30:33.994447+00:00"
  },
  {
   "actor": "agent",
@@ -241,7 +241,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1048541390fb"
+    "run_id": "beb87233e98b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -249,13 +249,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1048541390fb"
+   "run_id": "beb87233e98b"
   },
-  "hash": "13f124f1fa652c7395845b3bfbb40c2b6f0339b256065bcaac49dd2709955179",
+  "hash": "98237fa3532ad4f44b7283513f6fda4d4f2f41c9f61f7ada58133c19e3282d04",
   "kind": "cap.run.start",
-  "prev_hash": "5873e04ac80ef8685db1a328f973684612ae70c452d8aec7ebf1e4e4fef37c42",
+  "prev_hash": "9d010d51d216a0ab86292d8180960db10d4b8a6bbefb919e8c8ba5601c3b72e0",
   "seq": 11,
-  "ts": "2026-09-24T04:07:10.015820+00:00"
+  "ts": "2026-09-24T06:30:34.022678+00:00"
  },
  {
   "actor": "agent",
@@ -265,36 +265,36 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1048541390fb"
+    "run_id": "beb87233e98b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1048541390fb"
+   "run_id": "beb87233e98b"
   },
-  "hash": "0df7f56d94cecd8e7fd1182c47559c2b34ac7ac0a176a5b5a63c0606d759069f",
+  "hash": "5cc7facfa38bd6371f32876819bf37a180ea59fab9eacc4cc305e134a91ba9d7",
   "kind": "gate.decision",
-  "prev_hash": "13f124f1fa652c7395845b3bfbb40c2b6f0339b256065bcaac49dd2709955179",
+  "prev_hash": "98237fa3532ad4f44b7283513f6fda4d4f2f41c9f61f7ada58133c19e3282d04",
   "seq": 12,
-  "ts": "2026-09-24T04:07:10.015982+00:00"
+  "ts": "2026-09-24T06:30:34.023238+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "f4d6334ee4a65a72",
-   "run_id": "1048541390fb",
+   "duration_ms": 3,
+   "result_hash": "a4b07f8508c2132d",
+   "run_id": "beb87233e98b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e2a1bedd4e5dec523a98a3b1817fec74fcbca14213b94306c482a94173a4ef40",
+  "hash": "812b0b51770df1f064b50b4224608239ddb2bdb5477dc6ff5c614d73bd68d0af",
   "kind": "cap.run.finish",
-  "prev_hash": "0df7f56d94cecd8e7fd1182c47559c2b34ac7ac0a176a5b5a63c0606d759069f",
+  "prev_hash": "5cc7facfa38bd6371f32876819bf37a180ea59fab9eacc4cc305e134a91ba9d7",
   "seq": 13,
-  "ts": "2026-09-24T04:07:10.017802+00:00"
+  "ts": "2026-09-24T06:30:34.026087+00:00"
  },
  {
   "actor": "agent",
@@ -304,7 +304,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "5bf00a9c796f"
+    "run_id": "09a63c58b296"
    },
    "decision": {
     "decision": "APPROVE",
@@ -312,13 +312,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5bf00a9c796f"
+   "run_id": "09a63c58b296"
   },
-  "hash": "b614d0b4f8b509e60e3b4efa75544c1596bbaa0816ee4b89fc2f2300ac641a32",
+  "hash": "c9d3e04ff25889506c0a8042af8fe01d7148223247a78a38150ec281b079f563",
   "kind": "cap.run.start",
-  "prev_hash": "e2a1bedd4e5dec523a98a3b1817fec74fcbca14213b94306c482a94173a4ef40",
+  "prev_hash": "812b0b51770df1f064b50b4224608239ddb2bdb5477dc6ff5c614d73bd68d0af",
   "seq": 14,
-  "ts": "2026-09-24T04:07:10.236173+00:00"
+  "ts": "2026-09-24T06:30:34.268635+00:00"
  },
  {
   "actor": "agent",
@@ -328,20 +328,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "5bf00a9c796f"
+    "run_id": "09a63c58b296"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5bf00a9c796f"
+   "run_id": "09a63c58b296"
   },
-  "hash": "b1362934e680d068c689752532dd60c34fe83987eab736a150a6b262a1a05480",
+  "hash": "26b679b44c21f52161b2dab4a46f7d2cfeae5987ca93a2d32fcf6b6b13dda6cd",
   "kind": "gate.decision",
-  "prev_hash": "b614d0b4f8b509e60e3b4efa75544c1596bbaa0816ee4b89fc2f2300ac641a32",
+  "prev_hash": "c9d3e04ff25889506c0a8042af8fe01d7148223247a78a38150ec281b079f563",
   "seq": 15,
-  "ts": "2026-09-24T04:07:10.236342+00:00"
+  "ts": "2026-09-24T06:30:34.268777+00:00"
  },
  {
   "actor": "agent",
@@ -349,15 +349,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "5bf00a9c796f",
+   "run_id": "09a63c58b296",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "40c489d377734093f74f2187434a9b9b1490a74041cd5a4c276a33fd2d949671",
+  "hash": "363cc5e238126ad07ee409828dcbdb448b597658ade8b5113e254f2f7c1e5730",
   "kind": "cap.run.finish",
-  "prev_hash": "b1362934e680d068c689752532dd60c34fe83987eab736a150a6b262a1a05480",
+  "prev_hash": "26b679b44c21f52161b2dab4a46f7d2cfeae5987ca93a2d32fcf6b6b13dda6cd",
   "seq": 16,
-  "ts": "2026-09-24T04:07:10.240042+00:00"
+  "ts": "2026-09-24T06:30:34.271980+00:00"
  },
  {
   "actor": "agent",
@@ -374,11 +374,11 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "rule_id": "P-SAFE-01",
    "text": "Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiếp?"
   },
-  "hash": "9ba94343f1a7b73f6973e534352ba197b9d0cf53f7c65941025e6bd82e5d0f67",
+  "hash": "5eb7c2abc277facd531a4e4b28afa2cabe46c5f9613f0d4774f4864932beff78",
   "kind": "gate.decision",
-  "prev_hash": "40c489d377734093f74f2187434a9b9b1490a74041cd5a4c276a33fd2d949671",
+  "prev_hash": "363cc5e238126ad07ee409828dcbdb448b597658ade8b5113e254f2f7c1e5730",
   "seq": 17,
-  "ts": "2026-09-24T04:07:10.245518+00:00"
+  "ts": "2026-09-24T06:30:34.278409+00:00"
  },
  {
   "actor": "agent",
@@ -388,7 +388,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d66d89904d8f"
+    "run_id": "cab8bd1c6d25"
    },
    "decision": {
     "decision": "APPROVE",
@@ -396,13 +396,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d66d89904d8f"
+   "run_id": "cab8bd1c6d25"
   },
-  "hash": "5d504246da99b510678dc631e0990cd00e7b838dc12164d07184c536869c1c51",
+  "hash": "386fa63c6d7a8de4b6fe037d531335f4acc8e0dd266a2711536a983dce1e2fb0",
   "kind": "cap.run.start",
-  "prev_hash": "9ba94343f1a7b73f6973e534352ba197b9d0cf53f7c65941025e6bd82e5d0f67",
+  "prev_hash": "5eb7c2abc277facd531a4e4b28afa2cabe46c5f9613f0d4774f4864932beff78",
   "seq": 18,
-  "ts": "2026-09-24T04:07:10.322697+00:00"
+  "ts": "2026-09-24T06:30:34.354070+00:00"
  },
  {
   "actor": "agent",
@@ -412,36 +412,36 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d66d89904d8f"
+    "run_id": "cab8bd1c6d25"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d66d89904d8f"
+   "run_id": "cab8bd1c6d25"
   },
-  "hash": "238d6ffb86d94853bff7199e197b586732c5e20e37a99ac61a9e1bf62d53a68b",
+  "hash": "f1a5c952b2e5bab9ea1fab86f3a1be2bb43cce681bb4adff88e525ed3aafc364",
   "kind": "gate.decision",
-  "prev_hash": "5d504246da99b510678dc631e0990cd00e7b838dc12164d07184c536869c1c51",
+  "prev_hash": "386fa63c6d7a8de4b6fe037d531335f4acc8e0dd266a2711536a983dce1e2fb0",
   "seq": 19,
-  "ts": "2026-09-24T04:07:10.322896+00:00"
+  "ts": "2026-09-24T06:30:34.354262+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 6,
+   "duration_ms": 5,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "d66d89904d8f",
+   "run_id": "cab8bd1c6d25",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5472f277b6248e3c52c3fc0bf85d4f551a2e5b6192283627c7a3d2dafbf19377",
+  "hash": "29da568260b27523d25802a8ee34b4afac290146fbb82f376464f0f11f97c704",
   "kind": "cap.run.finish",
-  "prev_hash": "238d6ffb86d94853bff7199e197b586732c5e20e37a99ac61a9e1bf62d53a68b",
+  "prev_hash": "f1a5c952b2e5bab9ea1fab86f3a1be2bb43cce681bb4adff88e525ed3aafc364",
   "seq": 20,
-  "ts": "2026-09-24T04:07:10.328804+00:00"
+  "ts": "2026-09-24T06:30:34.359562+00:00"
  },
  {
   "actor": "agent",
@@ -451,7 +451,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "97cfb26ad601"
+    "run_id": "2d8ead4f6c3f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -459,13 +459,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "97cfb26ad601"
+   "run_id": "2d8ead4f6c3f"
   },
-  "hash": "1ce393a962fdcf76a720f95e9fdc5499a6357e654258ab155f78d41f006eb0b1",
+  "hash": "f0f1ddb4789e966221c936c8ceb399fa8e70902d600465d37b84e4bcd11eecc5",
   "kind": "cap.run.start",
-  "prev_hash": "5472f277b6248e3c52c3fc0bf85d4f551a2e5b6192283627c7a3d2dafbf19377",
+  "prev_hash": "29da568260b27523d25802a8ee34b4afac290146fbb82f376464f0f11f97c704",
   "seq": 21,
-  "ts": "2026-09-24T04:07:10.331548+00:00"
+  "ts": "2026-09-24T06:30:34.361910+00:00"
  },
  {
   "actor": "agent",
@@ -475,20 +475,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "97cfb26ad601"
+    "run_id": "2d8ead4f6c3f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "97cfb26ad601"
+   "run_id": "2d8ead4f6c3f"
   },
-  "hash": "64a25bb238eac9a7f34b135c73bab64fcb6fb9ad32c3ac348aa2d2a4961b7eae",
+  "hash": "9a25e57f8af550fdd0b0385bc717b2209c371cf00454ac3c9d84c4e0eac271e9",
   "kind": "gate.decision",
-  "prev_hash": "1ce393a962fdcf76a720f95e9fdc5499a6357e654258ab155f78d41f006eb0b1",
+  "prev_hash": "f0f1ddb4789e966221c936c8ceb399fa8e70902d600465d37b84e4bcd11eecc5",
   "seq": 22,
-  "ts": "2026-09-24T04:07:10.331674+00:00"
+  "ts": "2026-09-24T06:30:34.362024+00:00"
  },
  {
   "actor": "agent",
@@ -496,15 +496,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "97cfb26ad601",
+   "run_id": "2d8ead4f6c3f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a20e86fac0150188beae96154e2a8dfb0daa0b590ecf1b103f9e485dba47e225",
+  "hash": "3d9c70d8d09d8261e24b1e344c57136f9aa003b4e2d0a14a157bb18ff0938f10",
   "kind": "cap.run.finish",
-  "prev_hash": "64a25bb238eac9a7f34b135c73bab64fcb6fb9ad32c3ac348aa2d2a4961b7eae",
+  "prev_hash": "9a25e57f8af550fdd0b0385bc717b2209c371cf00454ac3c9d84c4e0eac271e9",
   "seq": 23,
-  "ts": "2026-09-24T04:07:10.335169+00:00"
+  "ts": "2026-09-24T06:30:34.365260+00:00"
  },
  {
   "actor": "agent",
@@ -514,7 +514,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "da3859eaa00c"
+    "run_id": "85ab617d8a2a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -522,13 +522,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "da3859eaa00c"
+   "run_id": "85ab617d8a2a"
   },
-  "hash": "b3247ef74255d16579771a00aae8e37bdec4ffe57bfba0adc621495107c39d67",
+  "hash": "cbcac69df3fbf4b60d561dea10a2412abfee08976b0ee2a7bc2deec9f5e1f7b6",
   "kind": "cap.run.start",
-  "prev_hash": "a20e86fac0150188beae96154e2a8dfb0daa0b590ecf1b103f9e485dba47e225",
+  "prev_hash": "3d9c70d8d09d8261e24b1e344c57136f9aa003b4e2d0a14a157bb18ff0938f10",
   "seq": 24,
-  "ts": "2026-09-24T04:07:10.338528+00:00"
+  "ts": "2026-09-24T06:30:34.368527+00:00"
  },
  {
   "actor": "agent",
@@ -538,20 +538,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "da3859eaa00c"
+    "run_id": "85ab617d8a2a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "da3859eaa00c"
+   "run_id": "85ab617d8a2a"
   },
-  "hash": "9eda341e5440f05c1c0a6d64f7e13bf5b4268852fde56b7063534910459a4b0e",
+  "hash": "7be410ad14db4eaf18a60aceb57b745584dba0b0c3f657a8fe25277b8ba6fe18",
   "kind": "gate.decision",
-  "prev_hash": "b3247ef74255d16579771a00aae8e37bdec4ffe57bfba0adc621495107c39d67",
+  "prev_hash": "cbcac69df3fbf4b60d561dea10a2412abfee08976b0ee2a7bc2deec9f5e1f7b6",
   "seq": 25,
-  "ts": "2026-09-24T04:07:10.338677+00:00"
+  "ts": "2026-09-24T06:30:34.368617+00:00"
  },
  {
   "actor": "agent",
@@ -559,15 +559,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "duration_ms": 2,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "da3859eaa00c",
+   "run_id": "85ab617d8a2a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "49756a0e8ab938ae77bc4a92d5721720bd597b0f8486eef85086389ba6a1cf81",
+  "hash": "e73bde516fac5cc8d588ce30a40643d90cbd041447efe9e9a4a5f6118746fe7b",
   "kind": "cap.run.finish",
-  "prev_hash": "9eda341e5440f05c1c0a6d64f7e13bf5b4268852fde56b7063534910459a4b0e",
+  "prev_hash": "7be410ad14db4eaf18a60aceb57b745584dba0b0c3f657a8fe25277b8ba6fe18",
   "seq": 26,
-  "ts": "2026-09-24T04:07:10.340627+00:00"
+  "ts": "2026-09-24T06:30:34.370644+00:00"
  },
  {
   "actor": "agent",
@@ -577,7 +577,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "fb76142effb2"
+    "run_id": "f5edc9a1c3cd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -585,13 +585,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fb76142effb2"
+   "run_id": "f5edc9a1c3cd"
   },
-  "hash": "ce31a3e1a0d625d483a7caea45d85f539c9766898d81792b71d47c18c0aed86d",
+  "hash": "d9080b28c3ed8d649effa7340ca936f8b302e84254c0f208b884646c75b21197",
   "kind": "cap.run.start",
-  "prev_hash": "49756a0e8ab938ae77bc4a92d5721720bd597b0f8486eef85086389ba6a1cf81",
+  "prev_hash": "e73bde516fac5cc8d588ce30a40643d90cbd041447efe9e9a4a5f6118746fe7b",
   "seq": 27,
-  "ts": "2026-09-24T04:07:10.342171+00:00"
+  "ts": "2026-09-24T06:30:34.372053+00:00"
  },
  {
   "actor": "agent",
@@ -601,36 +601,36 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "fb76142effb2"
+    "run_id": "f5edc9a1c3cd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fb76142effb2"
+   "run_id": "f5edc9a1c3cd"
   },
-  "hash": "8bcfab7e1993747a877f0dc318834bd58d118539a790aad4516401c3f7ef2ea5",
+  "hash": "0ea820d1f5c608a5ecfd4270d7c412f2606404dc74bf59e0a8adee4b06c8a474",
   "kind": "gate.decision",
-  "prev_hash": "ce31a3e1a0d625d483a7caea45d85f539c9766898d81792b71d47c18c0aed86d",
+  "prev_hash": "d9080b28c3ed8d649effa7340ca936f8b302e84254c0f208b884646c75b21197",
   "seq": 28,
-  "ts": "2026-09-24T04:07:10.342318+00:00"
+  "ts": "2026-09-24T06:30:34.372134+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "b56f5c38cc368803",
-   "run_id": "fb76142effb2",
+   "duration_ms": 1,
+   "result_hash": "c5672235edac55aa",
+   "run_id": "f5edc9a1c3cd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f82499dffe21bf0461beae64b58c6ea724dc5cbaa6af6255a97674a8e1d8bfff",
+  "hash": "a3014a7c6fee12c62f7bd30cb3f8e9075e038092554b664ef6ba48f42843f858",
   "kind": "cap.run.finish",
-  "prev_hash": "8bcfab7e1993747a877f0dc318834bd58d118539a790aad4516401c3f7ef2ea5",
+  "prev_hash": "0ea820d1f5c608a5ecfd4270d7c412f2606404dc74bf59e0a8adee4b06c8a474",
   "seq": 29,
-  "ts": "2026-09-24T04:07:10.344551+00:00"
+  "ts": "2026-09-24T06:30:34.374055+00:00"
  },
  {
   "actor": "agent",
@@ -640,7 +640,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ca741dfac392"
+    "run_id": "bdbd9413f8c8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -648,13 +648,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ca741dfac392"
+   "run_id": "bdbd9413f8c8"
   },
-  "hash": "00842de5b40e8d5bb328f75ab2fa7d233e156352940cd3f5183487979de363b7",
+  "hash": "a48c7b5901c65855dffe341061d0c092836ab259b18cb2a4e72b4a9c6b6fa74d",
   "kind": "cap.run.start",
-  "prev_hash": "f82499dffe21bf0461beae64b58c6ea724dc5cbaa6af6255a97674a8e1d8bfff",
+  "prev_hash": "a3014a7c6fee12c62f7bd30cb3f8e9075e038092554b664ef6ba48f42843f858",
   "seq": 30,
-  "ts": "2026-09-24T04:07:10.346251+00:00"
+  "ts": "2026-09-24T06:30:34.375496+00:00"
  },
  {
   "actor": "agent",
@@ -664,20 +664,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ca741dfac392"
+    "run_id": "bdbd9413f8c8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ca741dfac392"
+   "run_id": "bdbd9413f8c8"
   },
-  "hash": "9729e69054625687295d58d3dd3fc277d51fc6ac9a00a59005cf0be4ba7448ed",
+  "hash": "7193005b23a44025252fb5d39def0cacef3fc61b8c36d1e5635594926a69da88",
   "kind": "gate.decision",
-  "prev_hash": "00842de5b40e8d5bb328f75ab2fa7d233e156352940cd3f5183487979de363b7",
+  "prev_hash": "a48c7b5901c65855dffe341061d0c092836ab259b18cb2a4e72b4a9c6b6fa74d",
   "seq": 31,
-  "ts": "2026-09-24T04:07:10.346380+00:00"
+  "ts": "2026-09-24T06:30:34.375578+00:00"
  },
  {
   "actor": "agent",
@@ -685,15 +685,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "ca741dfac392",
+   "run_id": "bdbd9413f8c8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "79ba113a2299cf1f95fed727133cd71aa254621b0b535c601b6117c5cf8994ed",
+  "hash": "cc85c5b1765e388c44b0a5d35ec89d52f1fa8b7e2929219ce7ca0d666db68ce9",
   "kind": "cap.run.finish",
-  "prev_hash": "9729e69054625687295d58d3dd3fc277d51fc6ac9a00a59005cf0be4ba7448ed",
+  "prev_hash": "7193005b23a44025252fb5d39def0cacef3fc61b8c36d1e5635594926a69da88",
   "seq": 32,
-  "ts": "2026-09-24T04:07:10.348200+00:00"
+  "ts": "2026-09-24T06:30:34.377127+00:00"
  },
  {
   "actor": "agent",
@@ -703,7 +703,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "afa2e162e8d3"
+    "run_id": "3158e23fb8fa"
    },
    "decision": {
     "decision": "APPROVE",
@@ -711,13 +711,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "afa2e162e8d3"
+   "run_id": "3158e23fb8fa"
   },
-  "hash": "5ecbe1938f6068dbdbb7de66ef8d823bf03759247e6eaca878efe725423ffd7f",
+  "hash": "9078b13c16e093833d3d53ef5294436d3d83dac75893e7a8ec0a98c143dbabf7",
   "kind": "cap.run.start",
-  "prev_hash": "79ba113a2299cf1f95fed727133cd71aa254621b0b535c601b6117c5cf8994ed",
+  "prev_hash": "cc85c5b1765e388c44b0a5d35ec89d52f1fa8b7e2929219ce7ca0d666db68ce9",
   "seq": 33,
-  "ts": "2026-09-24T04:07:10.378757+00:00"
+  "ts": "2026-09-24T06:30:34.408174+00:00"
  },
  {
   "actor": "agent",
@@ -727,36 +727,36 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "afa2e162e8d3"
+    "run_id": "3158e23fb8fa"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "afa2e162e8d3"
+   "run_id": "3158e23fb8fa"
   },
-  "hash": "e109a250cbce08d8587fdf9fbf01ff0d8dfcec5c798a38e91f0784458fda66dd",
+  "hash": "2e3bb20c742067f3fcd5aaf85e15e54308c4ae1e18c69389b9d0e61ed1b3edf1",
   "kind": "gate.decision",
-  "prev_hash": "5ecbe1938f6068dbdbb7de66ef8d823bf03759247e6eaca878efe725423ffd7f",
+  "prev_hash": "9078b13c16e093833d3d53ef5294436d3d83dac75893e7a8ec0a98c143dbabf7",
   "seq": 34,
-  "ts": "2026-09-24T04:07:10.378984+00:00"
+  "ts": "2026-09-24T06:30:34.408395+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "fd5f9ccff0d1ea93",
-   "run_id": "afa2e162e8d3",
+   "result_hash": "d14be614b30b7b36",
+   "run_id": "3158e23fb8fa",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b450386039cd4e4064b4120c8ad4bae7c9dd0eaaa854a666ecfd3f693439a219",
+  "hash": "66860747dcabfae774bc8e767994831aa5fb6e8d582ae0d44f289745f72cd030",
   "kind": "cap.run.finish",
-  "prev_hash": "e109a250cbce08d8587fdf9fbf01ff0d8dfcec5c798a38e91f0784458fda66dd",
+  "prev_hash": "2e3bb20c742067f3fcd5aaf85e15e54308c4ae1e18c69389b9d0e61ed1b3edf1",
   "seq": 35,
-  "ts": "2026-09-24T04:07:10.381675+00:00"
+  "ts": "2026-09-24T06:30:34.410488+00:00"
  },
  {
   "actor": "agent",
@@ -766,7 +766,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "2c71967c1605"
+    "run_id": "2eed217f1bce"
    },
    "decision": {
     "decision": "APPROVE",
@@ -774,13 +774,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2c71967c1605"
+   "run_id": "2eed217f1bce"
   },
-  "hash": "d946e61bc4cdc4573734e247e23072ae50f1722baf386dcde5fe6ce22b0fea80",
+  "hash": "5ade2313561dd865967d911b8d8e1839f3f4ea1f6d917598fa6a04dd82ec5b07",
   "kind": "cap.run.start",
-  "prev_hash": "b450386039cd4e4064b4120c8ad4bae7c9dd0eaaa854a666ecfd3f693439a219",
+  "prev_hash": "66860747dcabfae774bc8e767994831aa5fb6e8d582ae0d44f289745f72cd030",
   "seq": 36,
-  "ts": "2026-09-24T04:07:13.024693+00:00"
+  "ts": "2026-09-24T06:30:37.095451+00:00"
  },
  {
   "actor": "agent",
@@ -790,20 +790,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "2c71967c1605"
+    "run_id": "2eed217f1bce"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2c71967c1605"
+   "run_id": "2eed217f1bce"
   },
-  "hash": "21136425b64bc17ad1389d0696d72a28a610f95b0187f8c8114527ece3a5c088",
+  "hash": "12b1835669a3ef2d8d901c4bfad6d2dab69590a099f90470b3ea418283af8540",
   "kind": "gate.decision",
-  "prev_hash": "d946e61bc4cdc4573734e247e23072ae50f1722baf386dcde5fe6ce22b0fea80",
+  "prev_hash": "5ade2313561dd865967d911b8d8e1839f3f4ea1f6d917598fa6a04dd82ec5b07",
   "seq": 37,
-  "ts": "2026-09-24T04:07:13.024907+00:00"
+  "ts": "2026-09-24T06:30:37.095651+00:00"
  },
  {
   "actor": "agent",
@@ -811,15 +811,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "2c71967c1605",
+   "run_id": "2eed217f1bce",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1efed5b6ffcea99ae3204a87743ea64822925683c4c657cfd4ce160365c17079",
+  "hash": "13db88f75c22d0a13caa9cf1d0180a279485bfe95de2072a0e784da0b06b7856",
   "kind": "cap.run.finish",
-  "prev_hash": "21136425b64bc17ad1389d0696d72a28a610f95b0187f8c8114527ece3a5c088",
+  "prev_hash": "12b1835669a3ef2d8d901c4bfad6d2dab69590a099f90470b3ea418283af8540",
   "seq": 38,
-  "ts": "2026-09-24T04:07:13.028551+00:00"
+  "ts": "2026-09-24T06:30:37.099085+00:00"
  },
  {
   "actor": "agent",
@@ -829,7 +829,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "6415b5afec1e"
+    "run_id": "5d5e1d40b544"
    },
    "decision": {
     "decision": "APPROVE",
@@ -837,13 +837,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6415b5afec1e"
+   "run_id": "5d5e1d40b544"
   },
-  "hash": "a0402838775f3f00c450275d7b2ef4977b964ea23f8ba8e445e5d5125f898e8e",
+  "hash": "b30ef42a9c9c43957e2f8916006680456277d5942c76f562946162f72d0dc4c1",
   "kind": "cap.run.start",
-  "prev_hash": "1efed5b6ffcea99ae3204a87743ea64822925683c4c657cfd4ce160365c17079",
+  "prev_hash": "13db88f75c22d0a13caa9cf1d0180a279485bfe95de2072a0e784da0b06b7856",
   "seq": 39,
-  "ts": "2026-09-24T04:07:13.061965+00:00"
+  "ts": "2026-09-24T06:30:37.102458+00:00"
  },
  {
   "actor": "agent",
@@ -853,20 +853,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "6415b5afec1e"
+    "run_id": "5d5e1d40b544"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6415b5afec1e"
+   "run_id": "5d5e1d40b544"
   },
-  "hash": "09754b8e99fa46696431b12785d727560033a57d7a91b36678cef0b764ffde67",
+  "hash": "9b23294e364cd1ec6cef68ffca77107a84af07f6c60165da85b8862beb489230",
   "kind": "gate.decision",
-  "prev_hash": "a0402838775f3f00c450275d7b2ef4977b964ea23f8ba8e445e5d5125f898e8e",
+  "prev_hash": "b30ef42a9c9c43957e2f8916006680456277d5942c76f562946162f72d0dc4c1",
   "seq": 40,
-  "ts": "2026-09-24T04:07:13.062129+00:00"
+  "ts": "2026-09-24T06:30:37.102567+00:00"
  },
  {
   "actor": "agent",
@@ -874,15 +874,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "6415b5afec1e",
+   "run_id": "5d5e1d40b544",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6efa62463c9652faebfba37d0af6945f005404ef4ca6527cdd6f7f22be3c579d",
+  "hash": "2333e5d10d6834bcc69db6cb7072538d899b0ff8f213f8754263b03a2e7ebf68",
   "kind": "cap.run.finish",
-  "prev_hash": "09754b8e99fa46696431b12785d727560033a57d7a91b36678cef0b764ffde67",
+  "prev_hash": "9b23294e364cd1ec6cef68ffca77107a84af07f6c60165da85b8862beb489230",
   "seq": 41,
-  "ts": "2026-09-24T04:07:13.063821+00:00"
+  "ts": "2026-09-24T06:30:37.104083+00:00"
  },
  {
   "actor": "agent",
@@ -892,7 +892,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "08c4b3a2bff5"
+    "run_id": "cc6354dcf5c3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -900,13 +900,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "08c4b3a2bff5"
+   "run_id": "cc6354dcf5c3"
   },
-  "hash": "1704d334af3e643c7f4dd4031961f3ffd4742e03d9a35587a61eaab18c98f192",
+  "hash": "9a91dd361801940fe4a419b34cbae929561d947546991f6ffc971af18ba3a766",
   "kind": "cap.run.start",
-  "prev_hash": "6efa62463c9652faebfba37d0af6945f005404ef4ca6527cdd6f7f22be3c579d",
+  "prev_hash": "2333e5d10d6834bcc69db6cb7072538d899b0ff8f213f8754263b03a2e7ebf68",
   "seq": 42,
-  "ts": "2026-09-24T04:07:13.065197+00:00"
+  "ts": "2026-09-24T06:30:37.105442+00:00"
  },
  {
   "actor": "agent",
@@ -916,20 +916,20 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "08c4b3a2bff5"
+    "run_id": "cc6354dcf5c3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "08c4b3a2bff5"
+   "run_id": "cc6354dcf5c3"
   },
-  "hash": "2b96dde05ec011834dd88fb627e5113ced50e962bd9cc51511922ebbfd0ae316",
+  "hash": "0a78197638f12ddfa1f0a9b6e708bda6734653ad7348de92f9ea71a7c05b2030",
   "kind": "gate.decision",
-  "prev_hash": "1704d334af3e643c7f4dd4031961f3ffd4742e03d9a35587a61eaab18c98f192",
+  "prev_hash": "9a91dd361801940fe4a419b34cbae929561d947546991f6ffc971af18ba3a766",
   "seq": 43,
-  "ts": "2026-09-24T04:07:13.065291+00:00"
+  "ts": "2026-09-24T06:30:37.105523+00:00"
  },
  {
   "actor": "agent",
@@ -937,15 +937,15 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "08c4b3a2bff5",
+   "run_id": "cc6354dcf5c3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "66b5c7c8f87b781123ab4895f42ba2b7225a5c4c331725ac63665318f59e9860",
+  "hash": "a0d21d8c9fc1478f6aedf9a654340357c04baf44917587cc9b0c0802642e8934",
   "kind": "cap.run.finish",
-  "prev_hash": "2b96dde05ec011834dd88fb627e5113ced50e962bd9cc51511922ebbfd0ae316",
+  "prev_hash": "0a78197638f12ddfa1f0a9b6e708bda6734653ad7348de92f9ea71a7c05b2030",
   "seq": 44,
-  "ts": "2026-09-24T04:07:13.068550+00:00"
+  "ts": "2026-09-24T06:30:37.108682+00:00"
  },
  {
   "actor": "agent",
@@ -955,7 +955,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ce03de608ff4"
+    "run_id": "52ce31a0e9ec"
    },
    "decision": {
     "decision": "APPROVE",
@@ -963,13 +963,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ce03de608ff4"
+   "run_id": "52ce31a0e9ec"
   },
-  "hash": "bd77896743c31faf4dc4fc58ca9917c25232b03cce6db42bafeb73c21ffa6d98",
+  "hash": "fbf2da868b58963dd7b983875e84677581ed035424e96e57daaebcadf81c0d5f",
   "kind": "cap.run.start",
-  "prev_hash": "66b5c7c8f87b781123ab4895f42ba2b7225a5c4c331725ac63665318f59e9860",
+  "prev_hash": "a0d21d8c9fc1478f6aedf9a654340357c04baf44917587cc9b0c0802642e8934",
   "seq": 45,
-  "ts": "2026-09-24T04:07:13.071121+00:00"
+  "ts": "2026-09-24T06:30:37.111848+00:00"
  },
  {
   "actor": "agent",
@@ -979,36 +979,36 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ce03de608ff4"
+    "run_id": "52ce31a0e9ec"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ce03de608ff4"
+   "run_id": "52ce31a0e9ec"
   },
-  "hash": "3ca72d2a880505e36d8e4e7b5a7edf5aa2d8e64ace8114fc75f5e25e9bc9e097",
+  "hash": "4e497ba485f15a6f59c0aff2fe66ea14d2d563315e041a83834d377bc7a7795c",
   "kind": "gate.decision",
-  "prev_hash": "bd77896743c31faf4dc4fc58ca9917c25232b03cce6db42bafeb73c21ffa6d98",
+  "prev_hash": "fbf2da868b58963dd7b983875e84677581ed035424e96e57daaebcadf81c0d5f",
   "seq": 46,
-  "ts": "2026-09-24T04:07:13.071203+00:00"
+  "ts": "2026-09-24T06:30:37.111929+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 1,
-   "result_hash": "b2a61c4b8f342349",
-   "run_id": "ce03de608ff4",
+   "result_hash": "9a2f8bad98eec271",
+   "run_id": "52ce31a0e9ec",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d60d09c77ef7ef4223777bb82104d10a51c349ba90803bb533ce7c0accd45504",
+  "hash": "4281e587907b67af932f5a471081da2ce79d9845c2aefd5bffb8eb26c94fab7b",
   "kind": "cap.run.finish",
-  "prev_hash": "3ca72d2a880505e36d8e4e7b5a7edf5aa2d8e64ace8114fc75f5e25e9bc9e097",
+  "prev_hash": "4e497ba485f15a6f59c0aff2fe66ea14d2d563315e041a83834d377bc7a7795c",
   "seq": 47,
-  "ts": "2026-09-24T04:07:13.073197+00:00"
+  "ts": "2026-09-24T06:30:37.113925+00:00"
  }
 ]
 ```
@@ -1086,7 +1086,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
   "so_dong": 15,
   "dong": [
    {
-    "id": "e141e23a8072",
+    "id": "9b8a8c6100cd",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -1099,10 +1099,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:09.968851+00:00"
+    "at": "2026-09-24T06:30:33.976687+00:00"
    },
    {
-    "id": "b9d92bdf69d4",
+    "id": "978997754535",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1115,10 +1115,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:09.982428+00:00"
+    "at": "2026-09-24T06:30:33.990256+00:00"
    },
    {
-    "id": "c813b9bad0fa",
+    "id": "6caf73d7d839",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1131,10 +1131,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:09.985831+00:00"
+    "at": "2026-09-24T06:30:33.993296+00:00"
    },
    {
-    "id": "1048541390fb",
+    "id": "beb87233e98b",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1147,10 +1147,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.016446+00:00"
+    "at": "2026-09-24T06:30:34.024669+00:00"
    },
    {
-    "id": "5bf00a9c796f",
+    "id": "09a63c58b296",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1163,10 +1163,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.236881+00:00"
+    "at": "2026-09-24T06:30:34.269250+00:00"
    },
    {
-    "id": "d66d89904d8f",
+    "id": "cab8bd1c6d25",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1179,10 +1179,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.323404+00:00"
+    "at": "2026-09-24T06:30:34.354778+00:00"
    },
    {
-    "id": "97cfb26ad601",
+    "id": "2d8ead4f6c3f",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1195,10 +1195,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.332080+00:00"
+    "at": "2026-09-24T06:30:34.362398+00:00"
    },
    {
-    "id": "da3859eaa00c",
+    "id": "85ab617d8a2a",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1211,10 +1211,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.339195+00:00"
+    "at": "2026-09-24T06:30:34.369294+00:00"
    },
    {
-    "id": "fb76142effb2",
+    "id": "f5edc9a1c3cd",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1227,10 +1227,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.342812+00:00"
+    "at": "2026-09-24T06:30:34.372547+00:00"
    },
    {
-    "id": "ca741dfac392",
+    "id": "bdbd9413f8c8",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1243,10 +1243,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.346826+00:00"
+    "at": "2026-09-24T06:30:34.375925+00:00"
    },
    {
-    "id": "afa2e162e8d3",
+    "id": "3158e23fb8fa",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1259,10 +1259,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:10.379593+00:00"
+    "at": "2026-09-24T06:30:34.408880+00:00"
    },
    {
-    "id": "2c71967c1605",
+    "id": "2eed217f1bce",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1275,10 +1275,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:13.025416+00:00"
+    "at": "2026-09-24T06:30:37.096285+00:00"
    },
    {
-    "id": "6415b5afec1e",
+    "id": "5d5e1d40b544",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1291,10 +1291,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:13.062631+00:00"
+    "at": "2026-09-24T06:30:37.102959+00:00"
    },
    {
-    "id": "08c4b3a2bff5",
+    "id": "cc6354dcf5c3",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1307,10 +1307,10 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:13.065675+00:00"
+    "at": "2026-09-24T06:30:37.105881+00:00"
    },
    {
-    "id": "ce03de608ff4",
+    "id": "52ce31a0e9ec",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1323,7 +1323,7 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:13.071606+00:00"
+    "at": "2026-09-24T06:30:37.112349+00:00"
    }
   ]
  },
@@ -1417,13 +1417,13 @@ Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiế
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_cbda68a7456e",
+    "id": "s_1488ad7ebded",
     "project": "chip-nong-bat-thuong",
-    "opened_at": "2026-09-24T04:07:09.973129+00:00",
+    "opened_at": "2026-09-24T06:30:33.980932+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiếp?\", \"at\": \"2026-09-24T04:07:10.244956+00:00\", \"run_id\": null}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiếp?\", \"at\": \"2026-09-24T06:30:34.277912+00:00\", \"run_id\": null}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -1457,7 +1457,7 @@ index/
 ```
 # chip nóng bất thường
 
-- 2026-09-24 11:07 — tạo dự án từ lệnh: "chip nóng bất thường"
+- 2026-09-24 13:30 — tạo dự án từ lệnh: "chip nóng bất thường"
 
 ```
 
@@ -1548,7 +1548,7 @@ escalation:
 project:
   id: chip-nong-bat-thuong
   name: chip nóng bất thường
-  created: '2026-09-24T04:07:09.748852+00:00'
+  created: '2026-09-24T06:30:33.674917+00:00'
   text: chip nóng bất thường
 target:
   chip: null
@@ -1739,7 +1739,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “chip nóng bất thường”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1782,8 +1782,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cbda68a7456e
-Mở lúc	24/09 04:07:09
+Phiên	s_1488ad7ebded
+Mở lúc	24/09 06:30:33
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1814,8 +1814,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cbda68a7456e
-Mở lúc	24/09 04:07:09
+Phiên	s_1488ad7ebded
+Mở lúc	24/09 06:30:33
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1857,8 +1857,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cbda68a7456e
-Mở lúc	24/09 04:07:09
+Phiên	s_1488ad7ebded
+Mở lúc	24/09 06:30:33
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1891,7 +1891,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC036/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1936,8 +1936,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cbda68a7456e
-Mở lúc	24/09 04:07:09
+Phiên	s_1488ad7ebded
+Mở lúc	24/09 06:30:33
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1970,8 +1970,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cbda68a7456e
-Mở lúc	24/09 04:07:09
+Phiên	s_1488ad7ebded
+Mở lúc	24/09 06:30:33
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -2015,8 +2015,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_cbda68a7456e
-Mở lúc	24/09 04:07:09
+Phiên	s_1488ad7ebded
+Mở lúc	24/09 06:30:33
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

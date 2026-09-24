@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “script chạm ra ngoài sandbox”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `script-cham-ra-ngoai-sandbox` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,16 +28,16 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh
 
-**Tác tử trả lời** *(sau 6.7 s)*:
+**Tác tử trả lời** *(sau 6.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `script-cham-ra-ngoai-sandbox` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  Đã nhận (ý hiểu: `tool.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  bước 2/2  Mở chi tiết Dừng khẩn ✅ Xong 2/2 bước  → Môi trường mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là tool.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ env.sandbox, chat.report_back.  1. `env.sandbox`  2. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `env.sandbox` — 1 exit_code · 140 ký tự stderr_ref · 140 ký tự stdout_ref · 0 violations  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  Đã nhận (ý hiểu: `tool.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  bước 2/2  Mở chi tiết Dừng khẩn ✅ Xong 2/2 bước  → Môi trường mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là tool.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ env.sandbox, chat.report_back.  1. `env.sandbox`  2. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `env.sandbox` — 1 exit_code · 140 ký tự stderr_ref · 140 ký tự stdout_ref · 0 violations  Xem đầy đủ ▾ {
   "exit_code" : 1,
-  "stderr_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-4k_whkbl.stderr.txt",
-  "stdout_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-4k_whkbl.stdout.txt",
+  "stderr_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-sq_jrjfy.stderr.txt",
+  "stdout_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-sq_jrjfy.stdout.txt",
   "violations" : [
   ]
 }  2. `chat.report_back` — 6 trường report · 168 ký tự text  Xem đầy đủ ▾ {
@@ -56,7 +56,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_75bd395c80b1",
+    "run_id" : "r_811e51283739",
     "undo" : [
     ],
     "waiting" : [
@@ -82,8 +82,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8c3bf18d2b38
-Mở lúc	24/09 04:20:33
+Phiên	s_3f1e43721198
+Mở lúc	24/09 06:45:31
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -99,7 +99,7 @@ Số lời gọi	1
 
 ## Bước 3
 
-**Quét 2 tab tác tử đã mở:** Main, Env
+**Quét 3 tab tác tử đã mở:** Main, Env, Graph
 
 ### Tab `Main`
 
@@ -114,8 +114,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8c3bf18d2b38
-Mở lúc	24/09 04:20:33
+Phiên	s_3f1e43721198
+Mở lúc	24/09 06:45:31
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -137,22 +137,30 @@ Môi trường  env.check · env.detect · env.guide_install · +4 nữa  Vùng 
 
 ![Env](man-02-Env.png)
 
+### Tab `Graph`
+
+```
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +10 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+```
+
+![Graph](man-03-Graph.png)
+
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI  Trống — không việc nào chờ anh.  HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 4.5 s)*:
+**Tác tử trả lời** *(sau 6.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `script-cham-ra-ngoai-sandbox` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  Đã nhận (ý hiểu: `tool.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  bước 2/2  Mở chi tiết Dừng khẩn ✅ Xong 2/2 bước  → Môi trường mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là tool.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ env.sandbox, chat.report_back.  1. `env.sandbox`  2. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `env.sandbox` — 1 exit_code · 140 ký tự stderr_ref · 140 ký tự stdout_ref · 0 violations  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  Đã nhận (ý hiểu: `tool.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Chạy giúp tôi kịch bản /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/script/don-dep.sh  bước 2/2  Mở chi tiết Dừng khẩn ✅ Xong 2/2 bước  → Môi trường mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là tool.run, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ env.sandbox, chat.report_back.  1. `env.sandbox`  2. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `env.sandbox` — 1 exit_code · 140 ký tự stderr_ref · 140 ký tự stdout_ref · 0 violations  Xem đầy đủ ▾ {
   "exit_code" : 1,
-  "stderr_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-4k_whkbl.stderr.txt",
-  "stdout_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-4k_whkbl.stdout.txt",
+  "stderr_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-sq_jrjfy.stderr.txt",
+  "stdout_ref" : "\/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/TC070\/du-an\/script-cham-ra-ngoai-sandbox\/.eide\/cache\/sandbox\/eide-sandbox-sq_jrjfy.stdout.txt",
   "violations" : [
   ]
 }  2. `chat.report_back` — 6 trường report · 168 ký tự text  Xem đầy đủ ▾ {
@@ -171,7 +179,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_75bd395c80b1",
+    "run_id" : "r_811e51283739",
     "undo" : [
     ],
     "waiting" : [
@@ -184,10 +192,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 Chi phí mô hình: 0.0011 USD.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
-**Màn đang mở — `Env`:**
+**Màn đang mở — `Graph`:**
 
 ```
-Màn này đang rỗng — vì: dự án chưa ghim ISA — `env.check` kiểm chuỗi công cụ THEO ISA, không theo máy  Bước kế tiếp: ghim chip ở màn Hộ chiếu chip (S5) — `project.set_target` suy ISA từ `family_patterns` của manifest  
+ Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
 ```
 
 ![bước 3](buoc-03.png)

@@ -36,7 +36,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "62e6c51d1fae"
+    "run_id": "fc1eea0559a8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -44,13 +44,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "62e6c51d1fae"
+   "run_id": "fc1eea0559a8"
   },
-  "hash": "779204d052b5700d3a8ce7e6eddc75aff7b4da9a4638cdaa082d9a37c362f90d",
+  "hash": "13265988083508ff19e980effa5d8449e0b7909ce962cc4ffa2640f9217ccf39",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:07:03.564844+00:00"
+  "ts": "2026-09-24T06:30:27.489698+00:00"
  },
  {
   "actor": "agent",
@@ -60,52 +60,52 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "62e6c51d1fae"
+    "run_id": "fc1eea0559a8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "62e6c51d1fae"
+   "run_id": "fc1eea0559a8"
   },
-  "hash": "aedeef77fd3ad08c0185b5ef6873105f4b6a96667a72ded5d7a483aba5ef43a0",
+  "hash": "bbaf79ebbc7ad2bd83a76dbc25c31ab77b4863add6c20604abfb62f2dce142d9",
   "kind": "gate.decision",
-  "prev_hash": "779204d052b5700d3a8ce7e6eddc75aff7b4da9a4638cdaa082d9a37c362f90d",
+  "prev_hash": "13265988083508ff19e980effa5d8449e0b7909ce962cc4ffa2640f9217ccf39",
   "seq": 2,
-  "ts": "2026-09-24T04:07:03.565214+00:00"
+  "ts": "2026-09-24T06:30:27.490040+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "62e6c51d1fae"
+    "run_id": "fc1eea0559a8"
    },
    "project": "thao-tac-khong-dao-nguoc",
-   "session_id": "s_bbb939287510"
+   "session_id": "s_f1e93c1c51b7"
   },
-  "hash": "80ac76b063780d5da0af5d12739fe1beb8efeadc0c2f8a3fb25e9fd6cf019c1a",
+  "hash": "0e2b858a7a2d3791f8cac8821da9a81dc9842ceffba3e3d4f98c72ece019f851",
   "kind": "session.open",
-  "prev_hash": "aedeef77fd3ad08c0185b5ef6873105f4b6a96667a72ded5d7a483aba5ef43a0",
+  "prev_hash": "bbaf79ebbc7ad2bd83a76dbc25c31ab77b4863add6c20604abfb62f2dce142d9",
   "seq": 3,
-  "ts": "2026-09-24T04:07:03.571134+00:00"
+  "ts": "2026-09-24T06:30:27.496229+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
    "duration_ms": 22,
-   "result_hash": "87ca822bca8be4f7",
-   "run_id": "62e6c51d1fae",
+   "result_hash": "93da46fdf5972d7e",
+   "run_id": "fc1eea0559a8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d48f1c63b2d2a4132352d7578b23aa81774473e69c5775d19b3ae7031332dc97",
+  "hash": "44a700e0be7c5e19e9d582c153cb36622e06435f9f07ced3dec668224400b746",
   "kind": "cap.run.finish",
-  "prev_hash": "80ac76b063780d5da0af5d12739fe1beb8efeadc0c2f8a3fb25e9fd6cf019c1a",
+  "prev_hash": "0e2b858a7a2d3791f8cac8821da9a81dc9842ceffba3e3d4f98c72ece019f851",
   "seq": 4,
-  "ts": "2026-09-24T04:07:03.572256+00:00"
+  "ts": "2026-09-24T06:30:27.497384+00:00"
  },
  {
   "actor": "agent",
@@ -115,7 +115,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "166c0b16f8d2"
+    "run_id": "671c52623c92"
    },
    "decision": {
     "decision": "APPROVE",
@@ -123,13 +123,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "166c0b16f8d2"
+   "run_id": "671c52623c92"
   },
-  "hash": "5fdb757c7d340ddce987a0a4570925f13f4f754e9a5698f4840ff195fe55fcef",
+  "hash": "bcdb72b25b7e17bff6db8326cf6809bd3a3238663cddb80ac9e66f6051384dd4",
   "kind": "cap.run.start",
-  "prev_hash": "d48f1c63b2d2a4132352d7578b23aa81774473e69c5775d19b3ae7031332dc97",
+  "prev_hash": "44a700e0be7c5e19e9d582c153cb36622e06435f9f07ced3dec668224400b746",
   "seq": 5,
-  "ts": "2026-09-24T04:07:03.579134+00:00"
+  "ts": "2026-09-24T06:30:27.505913+00:00"
  },
  {
   "actor": "agent",
@@ -139,20 +139,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "166c0b16f8d2"
+    "run_id": "671c52623c92"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "166c0b16f8d2"
+   "run_id": "671c52623c92"
   },
-  "hash": "7a6623760881dc733d614f059ae404d366d61319be30f10460c1b9285f84f2e1",
+  "hash": "cf66054e5822099f443198ee3824557f2041364df45255e700d7ed451e15f96d",
   "kind": "gate.decision",
-  "prev_hash": "5fdb757c7d340ddce987a0a4570925f13f4f754e9a5698f4840ff195fe55fcef",
+  "prev_hash": "bcdb72b25b7e17bff6db8326cf6809bd3a3238663cddb80ac9e66f6051384dd4",
   "seq": 6,
-  "ts": "2026-09-24T04:07:03.579226+00:00"
+  "ts": "2026-09-24T06:30:27.506006+00:00"
  },
  {
   "actor": "agent",
@@ -160,15 +160,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "166c0b16f8d2",
+   "run_id": "671c52623c92",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "51d371e1ae1b3612ee8ede296e13acb21d56b7fd8ce06d7eb06f687bfaf1cf03",
+  "hash": "856ce624828fbd013af22db7921c10d6639dd2ad0efb69c185b7a19c441d5685",
   "kind": "cap.run.finish",
-  "prev_hash": "7a6623760881dc733d614f059ae404d366d61319be30f10460c1b9285f84f2e1",
+  "prev_hash": "cf66054e5822099f443198ee3824557f2041364df45255e700d7ed451e15f96d",
   "seq": 7,
-  "ts": "2026-09-24T04:07:03.580790+00:00"
+  "ts": "2026-09-24T06:30:27.507619+00:00"
  },
  {
   "actor": "agent",
@@ -178,7 +178,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "fd51727c258e"
+    "run_id": "85cf11f54dd9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -186,13 +186,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fd51727c258e"
+   "run_id": "85cf11f54dd9"
   },
-  "hash": "4fb3eb713487070a650d65933763d8f0ad3aec8449c2424c1e8088a9631c670e",
+  "hash": "995246ca93d86648459374c5398cc5116ba229b8bbb26802a5d7d9488c1222d9",
   "kind": "cap.run.start",
-  "prev_hash": "51d371e1ae1b3612ee8ede296e13acb21d56b7fd8ce06d7eb06f687bfaf1cf03",
+  "prev_hash": "856ce624828fbd013af22db7921c10d6639dd2ad0efb69c185b7a19c441d5685",
   "seq": 8,
-  "ts": "2026-09-24T04:07:03.582232+00:00"
+  "ts": "2026-09-24T06:30:27.509059+00:00"
  },
  {
   "actor": "agent",
@@ -202,20 +202,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "fd51727c258e"
+    "run_id": "85cf11f54dd9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fd51727c258e"
+   "run_id": "85cf11f54dd9"
   },
-  "hash": "b50c21922e7ba7ae130df46f1b9257da9a5186714137241a7b8633a1ba9065d0",
+  "hash": "5cac6919f0f10939aec76535c5dc3842774ba358fa5657114ce92be10a4a5d66",
   "kind": "gate.decision",
-  "prev_hash": "4fb3eb713487070a650d65933763d8f0ad3aec8449c2424c1e8088a9631c670e",
+  "prev_hash": "995246ca93d86648459374c5398cc5116ba229b8bbb26802a5d7d9488c1222d9",
   "seq": 9,
-  "ts": "2026-09-24T04:07:03.582309+00:00"
+  "ts": "2026-09-24T06:30:27.509135+00:00"
  },
  {
   "actor": "agent",
@@ -223,15 +223,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "fd51727c258e",
+   "run_id": "85cf11f54dd9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "bea407c2190d8c136a7f292afc20ad38e7f8c0f2892740f7dfb9331670aa256b",
+  "hash": "9e81a71871ae6e3ab78e25ed649b4f3fe5e922abfb5ea7dac1e0fec6d4172b64",
   "kind": "cap.run.finish",
-  "prev_hash": "b50c21922e7ba7ae130df46f1b9257da9a5186714137241a7b8633a1ba9065d0",
+  "prev_hash": "5cac6919f0f10939aec76535c5dc3842774ba358fa5657114ce92be10a4a5d66",
   "seq": 10,
-  "ts": "2026-09-24T04:07:03.583936+00:00"
+  "ts": "2026-09-24T06:30:27.510717+00:00"
  },
  {
   "actor": "agent",
@@ -241,7 +241,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "b6a58c1d09dd"
+    "run_id": "ced8fad49669"
    },
    "decision": {
     "decision": "APPROVE",
@@ -249,13 +249,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b6a58c1d09dd"
+   "run_id": "ced8fad49669"
   },
-  "hash": "a2402f0a949e78154516b8a0a6c8c88d0e182301d3858790db4b3c4ce311604f",
+  "hash": "8052411823437bb561f60b490fc8fd70f0710e25b8bc83c1b9616b968bf1d46f",
   "kind": "cap.run.start",
-  "prev_hash": "bea407c2190d8c136a7f292afc20ad38e7f8c0f2892740f7dfb9331670aa256b",
+  "prev_hash": "9e81a71871ae6e3ab78e25ed649b4f3fe5e922abfb5ea7dac1e0fec6d4172b64",
   "seq": 11,
-  "ts": "2026-09-24T04:07:03.611828+00:00"
+  "ts": "2026-09-24T06:30:27.540128+00:00"
  },
  {
   "actor": "agent",
@@ -265,36 +265,36 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "b6a58c1d09dd"
+    "run_id": "ced8fad49669"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b6a58c1d09dd"
+   "run_id": "ced8fad49669"
   },
-  "hash": "dfe21bac804f8b1b1d878566619241066f08199bb823d8231c2ed0ec5a415fb5",
+  "hash": "9c9b9a5f3b92b067c193485f93ae8534ffd877867e07527d77c54dc21ac111d6",
   "kind": "gate.decision",
-  "prev_hash": "a2402f0a949e78154516b8a0a6c8c88d0e182301d3858790db4b3c4ce311604f",
+  "prev_hash": "8052411823437bb561f60b490fc8fd70f0710e25b8bc83c1b9616b968bf1d46f",
   "seq": 12,
-  "ts": "2026-09-24T04:07:03.611956+00:00"
+  "ts": "2026-09-24T06:30:27.540286+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "a75205fb7d073a67",
-   "run_id": "b6a58c1d09dd",
+   "duration_ms": 2,
+   "result_hash": "b3514c06cd955639",
+   "run_id": "ced8fad49669",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "9f179dcf7f1276c30a7a2f17978efd34e0fd84d0efa006874ef75919839ad2a1",
+  "hash": "7312ac70c02477c88b2b4ec952ee7013b7c68cfe9963491531821583776a17eb",
   "kind": "cap.run.finish",
-  "prev_hash": "dfe21bac804f8b1b1d878566619241066f08199bb823d8231c2ed0ec5a415fb5",
+  "prev_hash": "9c9b9a5f3b92b067c193485f93ae8534ffd877867e07527d77c54dc21ac111d6",
   "seq": 13,
-  "ts": "2026-09-24T04:07:03.613741+00:00"
+  "ts": "2026-09-24T06:30:27.542323+00:00"
  },
  {
   "actor": "agent",
@@ -304,7 +304,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "5201d6c4be7c"
+    "run_id": "d44a344a1059"
    },
    "decision": {
     "decision": "APPROVE",
@@ -312,13 +312,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5201d6c4be7c"
+   "run_id": "d44a344a1059"
   },
-  "hash": "c1b6c29ee25b19fc4756e0ec8056e733bc6cc5bd65066716ff40deab8132d889",
+  "hash": "74fce3808bc32d110d5bd5f0ef3a9a5b221a8fa20c98096ca216d03481ad2412",
   "kind": "cap.run.start",
-  "prev_hash": "9f179dcf7f1276c30a7a2f17978efd34e0fd84d0efa006874ef75919839ad2a1",
+  "prev_hash": "7312ac70c02477c88b2b4ec952ee7013b7c68cfe9963491531821583776a17eb",
   "seq": 14,
-  "ts": "2026-09-24T04:07:03.856533+00:00"
+  "ts": "2026-09-24T06:30:27.802376+00:00"
  },
  {
   "actor": "agent",
@@ -328,20 +328,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "5201d6c4be7c"
+    "run_id": "d44a344a1059"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5201d6c4be7c"
+   "run_id": "d44a344a1059"
   },
-  "hash": "1f42d166f13b767097c7cbdcbf1e435a06d80bb825f3cf6665ded09bf58ca8ca",
+  "hash": "3b438197692f4726e330347a8d4e5ea01a93d5d0dd93325f1e055c499a343ed4",
   "kind": "gate.decision",
-  "prev_hash": "c1b6c29ee25b19fc4756e0ec8056e733bc6cc5bd65066716ff40deab8132d889",
+  "prev_hash": "74fce3808bc32d110d5bd5f0ef3a9a5b221a8fa20c98096ca216d03481ad2412",
   "seq": 15,
-  "ts": "2026-09-24T04:07:03.856719+00:00"
+  "ts": "2026-09-24T06:30:27.802560+00:00"
  },
  {
   "actor": "agent",
@@ -349,15 +349,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "5201d6c4be7c",
+   "run_id": "d44a344a1059",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3f6b6f622b5e408d3976edad7be752e9daea5384aa1434ae99c59dcc0f8fb3bf",
+  "hash": "64d6e2f506aea4ad33b877eef44a96e4df0e6b95eb76657b1a01b5525e08e560",
   "kind": "cap.run.finish",
-  "prev_hash": "1f42d166f13b767097c7cbdcbf1e435a06d80bb825f3cf6665ded09bf58ca8ca",
+  "prev_hash": "3b438197692f4726e330347a8d4e5ea01a93d5d0dd93325f1e055c499a343ed4",
   "seq": 16,
-  "ts": "2026-09-24T04:07:03.860099+00:00"
+  "ts": "2026-09-24T06:30:27.806168+00:00"
  },
  {
   "actor": "agent",
@@ -379,11 +379,11 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "text": "Ghi option bytes bật khoá đọc RDP mức 2 cho chip này",
    "tier": "T3"
   },
-  "hash": "a0cddc6cef61a9e63d69271d09ac9f1ff750484fa63b3d3b253c007222107f6d",
+  "hash": "be7f204712a5256e73f470d8073547c6072ec79549c629ca834a355979115f70",
   "kind": "gate.decision",
-  "prev_hash": "3f6b6f622b5e408d3976edad7be752e9daea5384aa1434ae99c59dcc0f8fb3bf",
+  "prev_hash": "64d6e2f506aea4ad33b877eef44a96e4df0e6b95eb76657b1a01b5525e08e560",
   "seq": 17,
-  "ts": "2026-09-24T04:07:03.882187+00:00"
+  "ts": "2026-09-24T06:30:27.830136+00:00"
  },
  {
   "actor": "agent",
@@ -393,7 +393,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2e7889213fe8"
+    "run_id": "545c9ddf0192"
    },
    "decision": {
     "decision": "APPROVE",
@@ -401,13 +401,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2e7889213fe8"
+   "run_id": "545c9ddf0192"
   },
-  "hash": "d7c2b84b9cb0f28ab20d6cd6c20ab117adee9c6751f79ccf3721b15e4f4d7eeb",
+  "hash": "a8d44cb73fd69927f1b7266d57a3078aaedc3a8e2457271aa11189f0102b16da",
   "kind": "cap.run.start",
-  "prev_hash": "a0cddc6cef61a9e63d69271d09ac9f1ff750484fa63b3d3b253c007222107f6d",
+  "prev_hash": "be7f204712a5256e73f470d8073547c6072ec79549c629ca834a355979115f70",
   "seq": 18,
-  "ts": "2026-09-24T04:07:03.885787+00:00"
+  "ts": "2026-09-24T06:30:27.833591+00:00"
  },
  {
   "actor": "agent",
@@ -417,20 +417,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2e7889213fe8"
+    "run_id": "545c9ddf0192"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2e7889213fe8"
+   "run_id": "545c9ddf0192"
   },
-  "hash": "7e8977a807a9bb0e6bc17f11b0c8be22bd032a638ef945b390bb6ba8382c35f4",
+  "hash": "9e88dbec20df4b1014e53c7c77d16b673a94e31f91cf09c61d436d82411a1182",
   "kind": "gate.decision",
-  "prev_hash": "d7c2b84b9cb0f28ab20d6cd6c20ab117adee9c6751f79ccf3721b15e4f4d7eeb",
+  "prev_hash": "a8d44cb73fd69927f1b7266d57a3078aaedc3a8e2457271aa11189f0102b16da",
   "seq": 19,
-  "ts": "2026-09-24T04:07:03.885906+00:00"
+  "ts": "2026-09-24T06:30:27.833694+00:00"
  },
  {
   "actor": "agent",
@@ -438,15 +438,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "2e7889213fe8",
+   "run_id": "545c9ddf0192",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "bc4ef87c61e64bc3ce02584f323003b1bd519ec04acdd9e10922f61e3511ebc3",
+  "hash": "8ad3769f64320f7cdf894ba7004f38700702792ae16d1e0b65d52337add85f1c",
   "kind": "cap.run.finish",
-  "prev_hash": "7e8977a807a9bb0e6bc17f11b0c8be22bd032a638ef945b390bb6ba8382c35f4",
+  "prev_hash": "9e88dbec20df4b1014e53c7c77d16b673a94e31f91cf09c61d436d82411a1182",
   "seq": 20,
-  "ts": "2026-09-24T04:07:03.887601+00:00"
+  "ts": "2026-09-24T06:30:27.835500+00:00"
  },
  {
   "actor": "agent",
@@ -456,7 +456,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "7a5532d3c0ce"
+    "run_id": "f6496844bf55"
    },
    "decision": {
     "decision": "APPROVE",
@@ -464,13 +464,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7a5532d3c0ce"
+   "run_id": "f6496844bf55"
   },
-  "hash": "8594a24723813a4f80bd8894273688e52016bb490fca609e5ba82a0ff381d1b7",
+  "hash": "9f44632b0e3898c24eed7e03350998380f93d8ce900bc9dd280c13914471af34",
   "kind": "cap.run.start",
-  "prev_hash": "bc4ef87c61e64bc3ce02584f323003b1bd519ec04acdd9e10922f61e3511ebc3",
+  "prev_hash": "8ad3769f64320f7cdf894ba7004f38700702792ae16d1e0b65d52337add85f1c",
   "seq": 21,
-  "ts": "2026-09-24T04:07:03.889486+00:00"
+  "ts": "2026-09-24T06:30:27.837901+00:00"
  },
  {
   "actor": "agent",
@@ -480,20 +480,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "7a5532d3c0ce"
+    "run_id": "f6496844bf55"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7a5532d3c0ce"
+   "run_id": "f6496844bf55"
   },
-  "hash": "8d402bbc93beb48cfe97a61a5e604481785e321c20c5d42f4f43e11cd4b168e8",
+  "hash": "e4e7943a7ad21a587e0d22d9f5ef937723dcdec6c81baa55331c919c190ebc2f",
   "kind": "gate.decision",
-  "prev_hash": "8594a24723813a4f80bd8894273688e52016bb490fca609e5ba82a0ff381d1b7",
+  "prev_hash": "9f44632b0e3898c24eed7e03350998380f93d8ce900bc9dd280c13914471af34",
   "seq": 22,
-  "ts": "2026-09-24T04:07:03.889575+00:00"
+  "ts": "2026-09-24T06:30:27.838023+00:00"
  },
  {
   "actor": "agent",
@@ -501,15 +501,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "7a5532d3c0ce",
+   "run_id": "f6496844bf55",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4381b52a8c1c9f68235abc019da96867eb23f1da14ba8bb53501188ae9cd99c6",
+  "hash": "818cb03ce14194ecf59664473dbaaf2efe9dde3581b202cedce130634f71e3d4",
   "kind": "cap.run.finish",
-  "prev_hash": "8d402bbc93beb48cfe97a61a5e604481785e321c20c5d42f4f43e11cd4b168e8",
+  "prev_hash": "e4e7943a7ad21a587e0d22d9f5ef937723dcdec6c81baa55331c919c190ebc2f",
   "seq": 23,
-  "ts": "2026-09-24T04:07:03.892789+00:00"
+  "ts": "2026-09-24T06:30:27.841377+00:00"
  },
  {
   "actor": "agent",
@@ -519,7 +519,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2e30e955a705"
+    "run_id": "b96491623d90"
    },
    "decision": {
     "decision": "APPROVE",
@@ -527,13 +527,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2e30e955a705"
+   "run_id": "b96491623d90"
   },
-  "hash": "bf9838d69afefc1aa8eb3427bc19e51fdd90c79b838ee697113583deff376639",
+  "hash": "956ea818fad3a68be3cfd862b6bfd41937d3d0fb26fe2ec517441c5389cbb54b",
   "kind": "cap.run.start",
-  "prev_hash": "4381b52a8c1c9f68235abc019da96867eb23f1da14ba8bb53501188ae9cd99c6",
+  "prev_hash": "818cb03ce14194ecf59664473dbaaf2efe9dde3581b202cedce130634f71e3d4",
   "seq": 24,
-  "ts": "2026-09-24T04:07:03.896034+00:00"
+  "ts": "2026-09-24T06:30:27.845586+00:00"
  },
  {
   "actor": "agent",
@@ -543,20 +543,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2e30e955a705"
+    "run_id": "b96491623d90"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2e30e955a705"
+   "run_id": "b96491623d90"
   },
-  "hash": "a451db7e219bf562487f751303920138b15cd1e38a5ae841064bf03285a2ba45",
+  "hash": "b0ccd196afb0c9828e5b167e36da39197c8e0dd50839e8cc95604999c8bab671",
   "kind": "gate.decision",
-  "prev_hash": "bf9838d69afefc1aa8eb3427bc19e51fdd90c79b838ee697113583deff376639",
+  "prev_hash": "956ea818fad3a68be3cfd862b6bfd41937d3d0fb26fe2ec517441c5389cbb54b",
   "seq": 25,
-  "ts": "2026-09-24T04:07:03.896138+00:00"
+  "ts": "2026-09-24T06:30:27.845674+00:00"
  },
  {
   "actor": "agent",
@@ -564,15 +564,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "2e30e955a705",
+   "run_id": "b96491623d90",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ddac1eabb826147a3a2476c8ba3996fe0a94c59207217e94d804161f0297043f",
+  "hash": "04c7a9d5af907b821ce17438396852ed8eb7e4d0975e267155419e68b3202140",
   "kind": "cap.run.finish",
-  "prev_hash": "a451db7e219bf562487f751303920138b15cd1e38a5ae841064bf03285a2ba45",
+  "prev_hash": "b0ccd196afb0c9828e5b167e36da39197c8e0dd50839e8cc95604999c8bab671",
   "seq": 26,
-  "ts": "2026-09-24T04:07:03.897796+00:00"
+  "ts": "2026-09-24T06:30:27.847310+00:00"
  },
  {
   "actor": "agent",
@@ -582,7 +582,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "aeb1282b29c9"
+    "run_id": "6f810a56767c"
    },
    "decision": {
     "decision": "APPROVE",
@@ -590,13 +590,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "aeb1282b29c9"
+   "run_id": "6f810a56767c"
   },
-  "hash": "fe418d71c5b53b14896753a53657612b4dd28cac39cae24a82d65a752f73f15c",
+  "hash": "bfd097936c945c94ca4de52e17a23ebd8ebafd15e2f8cee2a61dd9730e949e37",
   "kind": "cap.run.start",
-  "prev_hash": "ddac1eabb826147a3a2476c8ba3996fe0a94c59207217e94d804161f0297043f",
+  "prev_hash": "04c7a9d5af907b821ce17438396852ed8eb7e4d0975e267155419e68b3202140",
   "seq": 27,
-  "ts": "2026-09-24T04:07:03.899273+00:00"
+  "ts": "2026-09-24T06:30:27.848782+00:00"
  },
  {
   "actor": "agent",
@@ -606,36 +606,36 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "aeb1282b29c9"
+    "run_id": "6f810a56767c"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "aeb1282b29c9"
+   "run_id": "6f810a56767c"
   },
-  "hash": "fbea577cb5ed334b59fb410bf254dd0eb906c65ebc0d2aec303b451edf719154",
+  "hash": "6adaa262ffbdd25928a7837189f5d103b85deb986ed08815ef6d171d9489a3ba",
   "kind": "gate.decision",
-  "prev_hash": "fe418d71c5b53b14896753a53657612b4dd28cac39cae24a82d65a752f73f15c",
+  "prev_hash": "bfd097936c945c94ca4de52e17a23ebd8ebafd15e2f8cee2a61dd9730e949e37",
   "seq": 28,
-  "ts": "2026-09-24T04:07:03.899378+00:00"
+  "ts": "2026-09-24T06:30:27.848884+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "f8729591eadd22e1",
-   "run_id": "aeb1282b29c9",
+   "result_hash": "ed4b1abb7ff0808b",
+   "run_id": "6f810a56767c",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a54be2fa4d13f29048a63bab45038bf53df04fba391e09012ede152e787acdeb",
+  "hash": "628a0f77f05491679c4d699f2d328745fa6e71ec1f64eeaf440681e5c9994f1c",
   "kind": "cap.run.finish",
-  "prev_hash": "fbea577cb5ed334b59fb410bf254dd0eb906c65ebc0d2aec303b451edf719154",
+  "prev_hash": "6adaa262ffbdd25928a7837189f5d103b85deb986ed08815ef6d171d9489a3ba",
   "seq": 29,
-  "ts": "2026-09-24T04:07:03.901414+00:00"
+  "ts": "2026-09-24T06:30:27.851053+00:00"
  },
  {
   "actor": "agent",
@@ -645,7 +645,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "475d4bf80b7a"
+    "run_id": "59808023c551"
    },
    "decision": {
     "decision": "APPROVE",
@@ -653,13 +653,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "475d4bf80b7a"
+   "run_id": "59808023c551"
   },
-  "hash": "5ef50742d80476f5fe6142ed7a971d445ee2df1eeb41eaad727e076f353b3ff4",
+  "hash": "8b1838298f846092e4a159f6c5624f6a49e92896ef4c098df7f749941fb2a759",
   "kind": "cap.run.start",
-  "prev_hash": "a54be2fa4d13f29048a63bab45038bf53df04fba391e09012ede152e787acdeb",
+  "prev_hash": "628a0f77f05491679c4d699f2d328745fa6e71ec1f64eeaf440681e5c9994f1c",
   "seq": 30,
-  "ts": "2026-09-24T04:07:03.903030+00:00"
+  "ts": "2026-09-24T06:30:27.852714+00:00"
  },
  {
   "actor": "agent",
@@ -669,20 +669,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "475d4bf80b7a"
+    "run_id": "59808023c551"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "475d4bf80b7a"
+   "run_id": "59808023c551"
   },
-  "hash": "86d50491ad32f278397b1f1928e66266d429ff363cfbcb833fff444fbfcf2254",
+  "hash": "fa7f06d6df8e7063e3d59c75c1f7643c3c50d6f0d0f5e59e63a7a88619a6df79",
   "kind": "gate.decision",
-  "prev_hash": "5ef50742d80476f5fe6142ed7a971d445ee2df1eeb41eaad727e076f353b3ff4",
+  "prev_hash": "8b1838298f846092e4a159f6c5624f6a49e92896ef4c098df7f749941fb2a759",
   "seq": 31,
-  "ts": "2026-09-24T04:07:03.903136+00:00"
+  "ts": "2026-09-24T06:30:27.852826+00:00"
  },
  {
   "actor": "agent",
@@ -690,15 +690,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "475d4bf80b7a",
+   "run_id": "59808023c551",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "494e063ebcef67d659546ea55a777785560e2f60e95c4477c894c155e89ead03",
+  "hash": "bd2a743a17717994a7145b3d16f8aa1d3aff4916081dc8305bbb2d75d27cf747",
   "kind": "cap.run.finish",
-  "prev_hash": "86d50491ad32f278397b1f1928e66266d429ff363cfbcb833fff444fbfcf2254",
+  "prev_hash": "fa7f06d6df8e7063e3d59c75c1f7643c3c50d6f0d0f5e59e63a7a88619a6df79",
   "seq": 32,
-  "ts": "2026-09-24T04:07:03.904797+00:00"
+  "ts": "2026-09-24T06:30:27.854643+00:00"
  },
  {
   "actor": "agent",
@@ -708,7 +708,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "f971754b9649"
+    "run_id": "1a64149f3b78"
    },
    "decision": {
     "decision": "APPROVE",
@@ -716,13 +716,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f971754b9649"
+   "run_id": "1a64149f3b78"
   },
-  "hash": "06f4cfc93891b0375a7f3bc90576ce0c53158e3a4a54a369bf64661c672b1bfe",
+  "hash": "07da519d694a552ed5497bb786e0b55a58c82517b7babe35a7be8d93311e4a9b",
   "kind": "cap.run.start",
-  "prev_hash": "494e063ebcef67d659546ea55a777785560e2f60e95c4477c894c155e89ead03",
+  "prev_hash": "bd2a743a17717994a7145b3d16f8aa1d3aff4916081dc8305bbb2d75d27cf747",
   "seq": 33,
-  "ts": "2026-09-24T04:07:03.933561+00:00"
+  "ts": "2026-09-24T06:30:27.884689+00:00"
  },
  {
   "actor": "agent",
@@ -732,36 +732,36 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "f971754b9649"
+    "run_id": "1a64149f3b78"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f971754b9649"
+   "run_id": "1a64149f3b78"
   },
-  "hash": "d6aba821cee1a73dbfb6ed047e61542062482c52983388522af7ff1f9bcd7e72",
+  "hash": "c08d78d48b37982f284e5e2d6615e073e712e073a16bc4520bb2f08bb3b03e5a",
   "kind": "gate.decision",
-  "prev_hash": "06f4cfc93891b0375a7f3bc90576ce0c53158e3a4a54a369bf64661c672b1bfe",
+  "prev_hash": "07da519d694a552ed5497bb786e0b55a58c82517b7babe35a7be8d93311e4a9b",
   "seq": 34,
-  "ts": "2026-09-24T04:07:03.933779+00:00"
+  "ts": "2026-09-24T06:30:27.884906+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "b8782476d7499ef4",
-   "run_id": "f971754b9649",
+   "result_hash": "42a0d5089a703518",
+   "run_id": "1a64149f3b78",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "dcf1cfe9c91b1243871839b775a5b171ea7e87f9bf9d62b56ec1b69d5c0406f4",
+  "hash": "370de5acb861bcc30eb508f92f6c32690aca1b4eec25ca0bb92b392bb1a9bd37",
   "kind": "cap.run.finish",
-  "prev_hash": "d6aba821cee1a73dbfb6ed047e61542062482c52983388522af7ff1f9bcd7e72",
+  "prev_hash": "c08d78d48b37982f284e5e2d6615e073e712e073a16bc4520bb2f08bb3b03e5a",
   "seq": 35,
-  "ts": "2026-09-24T04:07:03.935966+00:00"
+  "ts": "2026-09-24T06:30:27.887134+00:00"
  },
  {
   "actor": "agent",
@@ -771,7 +771,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "449d9d0a5034"
+    "run_id": "82aff76518a6"
    },
    "decision": {
     "decision": "APPROVE",
@@ -779,13 +779,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "449d9d0a5034"
+   "run_id": "82aff76518a6"
   },
-  "hash": "9828326dee982440bc6cba003410b6805522cb47b92e9d60e2a22e11332ec48d",
+  "hash": "b122138c89c57fd335ae5618d91f6e96db6114ff34c3a2708b628268620c5029",
   "kind": "cap.run.start",
-  "prev_hash": "dcf1cfe9c91b1243871839b775a5b171ea7e87f9bf9d62b56ec1b69d5c0406f4",
+  "prev_hash": "370de5acb861bcc30eb508f92f6c32690aca1b4eec25ca0bb92b392bb1a9bd37",
   "seq": 36,
-  "ts": "2026-09-24T04:07:06.691121+00:00"
+  "ts": "2026-09-24T06:30:30.577824+00:00"
  },
  {
   "actor": "agent",
@@ -795,36 +795,36 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "449d9d0a5034"
+    "run_id": "82aff76518a6"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "449d9d0a5034"
+   "run_id": "82aff76518a6"
   },
-  "hash": "daf398c6b62f026be4c3b97a715d99764d5bb9f4aa9a3beba7ee5fd43dabf4f1",
+  "hash": "5dc55cd93de6182af2aacdfb9c6a29ad40a396aac749f95adc4141f52ddbd6f3",
   "kind": "gate.decision",
-  "prev_hash": "9828326dee982440bc6cba003410b6805522cb47b92e9d60e2a22e11332ec48d",
+  "prev_hash": "b122138c89c57fd335ae5618d91f6e96db6114ff34c3a2708b628268620c5029",
   "seq": 37,
-  "ts": "2026-09-24T04:07:06.691325+00:00"
+  "ts": "2026-09-24T06:30:30.577992+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
+   "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "449d9d0a5034",
+   "run_id": "82aff76518a6",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "758b990e8d703973c7bf67c822478db9b51cce046d9ca6e5d173578936b8e919",
+  "hash": "df077228640ac704ea1251ffd5bce9f52ea1d9db6527afee47acd07e96f4ba9e",
   "kind": "cap.run.finish",
-  "prev_hash": "daf398c6b62f026be4c3b97a715d99764d5bb9f4aa9a3beba7ee5fd43dabf4f1",
+  "prev_hash": "5dc55cd93de6182af2aacdfb9c6a29ad40a396aac749f95adc4141f52ddbd6f3",
   "seq": 38,
-  "ts": "2026-09-24T04:07:06.695381+00:00"
+  "ts": "2026-09-24T06:30:30.581529+00:00"
  },
  {
   "actor": "agent",
@@ -834,7 +834,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "1540766dccc2"
+    "run_id": "40fbb63deca3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -842,13 +842,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1540766dccc2"
+   "run_id": "40fbb63deca3"
   },
-  "hash": "8dd47ba414758f5e07d0f4f2813be7f62db93913b4201e899d79da828339cf9c",
+  "hash": "a3ff18077a52b96ec1dd86ecebb476c15ef96b36b0b1acdc41b3c3859be83cc5",
   "kind": "cap.run.start",
-  "prev_hash": "758b990e8d703973c7bf67c822478db9b51cce046d9ca6e5d173578936b8e919",
+  "prev_hash": "df077228640ac704ea1251ffd5bce9f52ea1d9db6527afee47acd07e96f4ba9e",
   "seq": 39,
-  "ts": "2026-09-24T04:07:06.698736+00:00"
+  "ts": "2026-09-24T06:30:30.584207+00:00"
  },
  {
   "actor": "agent",
@@ -858,20 +858,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "1540766dccc2"
+    "run_id": "40fbb63deca3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1540766dccc2"
+   "run_id": "40fbb63deca3"
   },
-  "hash": "ffe1dc9f6d9d821b8823037eb56f64bc1b3394809e391dbb647df4d2ffdcdb73",
+  "hash": "1c45ba9e5037e860b4e69f4bc0dadf9c9b298074b65d3b49170f618802adff1d",
   "kind": "gate.decision",
-  "prev_hash": "8dd47ba414758f5e07d0f4f2813be7f62db93913b4201e899d79da828339cf9c",
+  "prev_hash": "a3ff18077a52b96ec1dd86ecebb476c15ef96b36b0b1acdc41b3c3859be83cc5",
   "seq": 40,
-  "ts": "2026-09-24T04:07:06.698845+00:00"
+  "ts": "2026-09-24T06:30:30.584293+00:00"
  },
  {
   "actor": "agent",
@@ -879,15 +879,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "1540766dccc2",
+   "run_id": "40fbb63deca3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a853d7262d3dcd09f8dea27d2a50e381fe9735beb2b0384a00ac3645acab74f7",
+  "hash": "e76bc27975da1667254813d2606d6313b3c46b2b2fa010d23181aa9e612d3048",
   "kind": "cap.run.finish",
-  "prev_hash": "ffe1dc9f6d9d821b8823037eb56f64bc1b3394809e391dbb647df4d2ffdcdb73",
+  "prev_hash": "1c45ba9e5037e860b4e69f4bc0dadf9c9b298074b65d3b49170f618802adff1d",
   "seq": 41,
-  "ts": "2026-09-24T04:07:06.700384+00:00"
+  "ts": "2026-09-24T06:30:30.585829+00:00"
  },
  {
   "actor": "agent",
@@ -897,7 +897,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "6c4a793c371d"
+    "run_id": "7ec90d7644b5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -905,13 +905,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6c4a793c371d"
+   "run_id": "7ec90d7644b5"
   },
-  "hash": "8aa856d0eb6315c4de8cce0c1656bcad36804d996e6c9db142d6c196fcf063f5",
+  "hash": "b2164441ae43d872c9fb5ca6f8c46563bfcf30c3c416e3545df047b04a403c07",
   "kind": "cap.run.start",
-  "prev_hash": "a853d7262d3dcd09f8dea27d2a50e381fe9735beb2b0384a00ac3645acab74f7",
+  "prev_hash": "e76bc27975da1667254813d2606d6313b3c46b2b2fa010d23181aa9e612d3048",
   "seq": 42,
-  "ts": "2026-09-24T04:07:06.701662+00:00"
+  "ts": "2026-09-24T06:30:30.587241+00:00"
  },
  {
   "actor": "agent",
@@ -921,20 +921,20 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "6c4a793c371d"
+    "run_id": "7ec90d7644b5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6c4a793c371d"
+   "run_id": "7ec90d7644b5"
   },
-  "hash": "2b02432e905efb0da4e2a0aa22f79f3334d1cab2f36d1bdc5d7852086340c888",
+  "hash": "8f5b156cce4607d3061af4cfa5e60b0d95289960946b3a91923ecfa785ebbf92",
   "kind": "gate.decision",
-  "prev_hash": "8aa856d0eb6315c4de8cce0c1656bcad36804d996e6c9db142d6c196fcf063f5",
+  "prev_hash": "b2164441ae43d872c9fb5ca6f8c46563bfcf30c3c416e3545df047b04a403c07",
   "seq": 43,
-  "ts": "2026-09-24T04:07:06.701752+00:00"
+  "ts": "2026-09-24T06:30:30.587328+00:00"
  },
  {
   "actor": "agent",
@@ -942,15 +942,15 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "6c4a793c371d",
+   "run_id": "7ec90d7644b5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b862a86d02c3d1fc6a9ad017f2b09e90b9e5f85beac07f568ee77e638ab59725",
+  "hash": "4393aba535bebb248c73018534a8f8a9207c7833ab24e2f916b37ec2a8331016",
   "kind": "cap.run.finish",
-  "prev_hash": "2b02432e905efb0da4e2a0aa22f79f3334d1cab2f36d1bdc5d7852086340c888",
+  "prev_hash": "8f5b156cce4607d3061af4cfa5e60b0d95289960946b3a91923ecfa785ebbf92",
   "seq": 44,
-  "ts": "2026-09-24T04:07:06.705153+00:00"
+  "ts": "2026-09-24T06:30:30.590500+00:00"
  },
  {
   "actor": "agent",
@@ -960,7 +960,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1af7e4aab59c"
+    "run_id": "a7e00f36471a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -968,13 +968,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1af7e4aab59c"
+   "run_id": "a7e00f36471a"
   },
-  "hash": "9afd14a0b48e9f66fbddcb1188d553fad9de3d595674c57c6a1ea71f32047cb2",
+  "hash": "dd39a5bdf956e4898e7ebcd5bc921682b480683f4031b01134c853685724dc45",
   "kind": "cap.run.start",
-  "prev_hash": "b862a86d02c3d1fc6a9ad017f2b09e90b9e5f85beac07f568ee77e638ab59725",
+  "prev_hash": "4393aba535bebb248c73018534a8f8a9207c7833ab24e2f916b37ec2a8331016",
   "seq": 45,
-  "ts": "2026-09-24T04:07:06.708005+00:00"
+  "ts": "2026-09-24T06:30:30.594321+00:00"
  },
  {
   "actor": "agent",
@@ -984,36 +984,36 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1af7e4aab59c"
+    "run_id": "a7e00f36471a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1af7e4aab59c"
+   "run_id": "a7e00f36471a"
   },
-  "hash": "8a6efdbc67759b300bad129cc0a50cbeda5080d9f4ab6c054fdcacbbb210c98c",
+  "hash": "eca6450bd24545e839878b99ef34931c5faee45716d071bc68f96006d8b28dbe",
   "kind": "gate.decision",
-  "prev_hash": "9afd14a0b48e9f66fbddcb1188d553fad9de3d595674c57c6a1ea71f32047cb2",
+  "prev_hash": "dd39a5bdf956e4898e7ebcd5bc921682b480683f4031b01134c853685724dc45",
   "seq": 46,
-  "ts": "2026-09-24T04:07:06.708102+00:00"
+  "ts": "2026-09-24T06:30:30.594396+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "a7f22d43814b8b57",
-   "run_id": "1af7e4aab59c",
+   "duration_ms": 2,
+   "result_hash": "408e9be3ec992fd7",
+   "run_id": "a7e00f36471a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "754882a401e40ee123045ce47f64f8ece43004d2d263100f1ff93d1246f27c72",
+  "hash": "12761ec261d22c158f7efae62bad2b875308d4eb358d81fe00830dca2e193b90",
   "kind": "cap.run.finish",
-  "prev_hash": "8a6efdbc67759b300bad129cc0a50cbeda5080d9f4ab6c054fdcacbbb210c98c",
+  "prev_hash": "eca6450bd24545e839878b99ef34931c5faee45716d071bc68f96006d8b28dbe",
   "seq": 47,
-  "ts": "2026-09-24T04:07:06.710101+00:00"
+  "ts": "2026-09-24T06:30:30.596456+00:00"
  }
 ]
 ```
@@ -1091,7 +1091,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
   "so_dong": 15,
   "dong": [
    {
-    "id": "62e6c51d1fae",
+    "id": "fc1eea0559a8",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -1104,10 +1104,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.565828+00:00"
+    "at": "2026-09-24T06:30:27.490705+00:00"
    },
    {
-    "id": "166c0b16f8d2",
+    "id": "671c52623c92",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1120,10 +1120,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.579603+00:00"
+    "at": "2026-09-24T06:30:27.506403+00:00"
    },
    {
-    "id": "fd51727c258e",
+    "id": "85cf11f54dd9",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1136,10 +1136,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.582701+00:00"
+    "at": "2026-09-24T06:30:27.509527+00:00"
    },
    {
-    "id": "b6a58c1d09dd",
+    "id": "ced8fad49669",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1152,10 +1152,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.612402+00:00"
+    "at": "2026-09-24T06:30:27.540775+00:00"
    },
    {
-    "id": "5201d6c4be7c",
+    "id": "d44a344a1059",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1168,10 +1168,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.857192+00:00"
+    "at": "2026-09-24T06:30:27.803188+00:00"
    },
    {
-    "id": "2e7889213fe8",
+    "id": "545c9ddf0192",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1184,10 +1184,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.886293+00:00"
+    "at": "2026-09-24T06:30:27.834115+00:00"
    },
    {
-    "id": "7a5532d3c0ce",
+    "id": "f6496844bf55",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1200,10 +1200,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.889947+00:00"
+    "at": "2026-09-24T06:30:27.838496+00:00"
    },
    {
-    "id": "2e30e955a705",
+    "id": "b96491623d90",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1216,10 +1216,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.896567+00:00"
+    "at": "2026-09-24T06:30:27.846079+00:00"
    },
    {
-    "id": "aeb1282b29c9",
+    "id": "6f810a56767c",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1232,10 +1232,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.899808+00:00"
+    "at": "2026-09-24T06:30:27.849452+00:00"
    },
    {
-    "id": "475d4bf80b7a",
+    "id": "59808023c551",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1248,10 +1248,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.903504+00:00"
+    "at": "2026-09-24T06:30:27.853301+00:00"
    },
    {
-    "id": "f971754b9649",
+    "id": "1a64149f3b78",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1264,10 +1264,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:03.934234+00:00"
+    "at": "2026-09-24T06:30:27.885400+00:00"
    },
    {
-    "id": "449d9d0a5034",
+    "id": "82aff76518a6",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1280,10 +1280,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:06.692017+00:00"
+    "at": "2026-09-24T06:30:30.578559+00:00"
    },
    {
-    "id": "1540766dccc2",
+    "id": "40fbb63deca3",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1296,10 +1296,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:06.699222+00:00"
+    "at": "2026-09-24T06:30:30.584667+00:00"
    },
    {
-    "id": "6c4a793c371d",
+    "id": "7ec90d7644b5",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1312,10 +1312,10 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:06.702152+00:00"
+    "at": "2026-09-24T06:30:30.587711+00:00"
    },
    {
-    "id": "1af7e4aab59c",
+    "id": "a7e00f36471a",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1328,7 +1328,7 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:07:06.708492+00:00"
+    "at": "2026-09-24T06:30:30.594816+00:00"
    }
   ]
  },
@@ -1422,13 +1422,13 @@ Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_bbb939287510",
+    "id": "s_f1e93c1c51b7",
     "project": "thao-tac-khong-dao-nguoc",
-    "opened_at": "2026-09-24T04:07:03.570053+00:00",
+    "opened_at": "2026-09-24T06:30:27.495078+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Ghi option bytes bật khoá đọc RDP mức 2 cho chip này\", \"at\": \"2026-09-24T04:07:03.865065+00:00\", \"run_id\": null}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Ghi option bytes bật khoá đọc RDP mức 2 cho chip này\", \"at\": \"2026-09-24T06:30:27.812757+00:00\", \"run_id\": null}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -1462,7 +1462,7 @@ index/
 ```
 # thao tác không đảo ngược
 
-- 2026-09-24 11:07 — tạo dự án từ lệnh: "thao tác không đảo ngược"
+- 2026-09-24 13:30 — tạo dự án từ lệnh: "thao tác không đảo ngược"
 
 ```
 
@@ -1553,7 +1553,7 @@ escalation:
 project:
   id: thao-tac-khong-dao-nguoc
   name: thao tác không đảo ngược
-  created: '2026-09-24T04:07:03.349267+00:00'
+  created: '2026-09-24T06:30:27.164496+00:00'
   text: thao tác không đảo ngược
 target:
   chip: null
@@ -1744,7 +1744,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “thao tác không đảo ngược”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1765,7 +1765,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Ghi option bytes bật khoá đọc RDP mức 2 cho chip này
 
-**Tác tử trả lời** *(sau 2.7 s)*:
+**Tác tử trả lời** *(sau 2.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1787,8 +1787,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_bbb939287510
-Mở lúc	24/09 04:07:03
+Phiên	s_f1e93c1c51b7
+Mở lúc	24/09 06:30:27
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1819,8 +1819,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_bbb939287510
-Mở lúc	24/09 04:07:03
+Phiên	s_f1e93c1c51b7
+Mở lúc	24/09 06:30:27
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1862,8 +1862,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_bbb939287510
-Mở lúc	24/09 04:07:03
+Phiên	s_f1e93c1c51b7
+Mở lúc	24/09 06:30:27
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1896,7 +1896,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC035/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1919,7 +1919,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC035/buoc-02.png
 
-**Tác tử trả lời** *(sau 2.7 s)*:
+**Tác tử trả lời** *(sau 2.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `thao-tac-khong-dao-nguoc` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1941,8 +1941,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_bbb939287510
-Mở lúc	24/09 04:07:03
+Phiên	s_f1e93c1c51b7
+Mở lúc	24/09 06:30:27
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1975,8 +1975,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_bbb939287510
-Mở lúc	24/09 04:07:03
+Phiên	s_f1e93c1c51b7
+Mở lúc	24/09 06:30:27
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -2020,8 +2020,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_bbb939287510
-Mở lúc	24/09 04:07:03
+Phiên	s_f1e93c1c51b7
+Mở lúc	24/09 06:30:27
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

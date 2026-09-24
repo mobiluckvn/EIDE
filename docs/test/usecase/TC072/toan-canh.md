@@ -14,7 +14,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2476 tok · ra 76 tok · 1691 ms · 0.000933 USD
+- dừng: `stop` · vào 2476 tok · ra 88 tok · 1873 ms · 0.000963 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -115,7 +115,8 @@ Tìm trên mạng datasheet mới nhất của SEN42
 {
   "intent": "search.ask",
   "slots": {
-    "question": "datasheet mới nhất của SEN42"
+    "chip": "SEN42",
+    "question": "Tìm trên mạng datasheet mới nhất của SEN42"
   },
   "is_big": false,
   "confidence": 0.95,
@@ -151,7 +152,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "0447ed6806fb"
+    "run_id": "f441506680f5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -159,13 +160,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0447ed6806fb"
+   "run_id": "f441506680f5"
   },
-  "hash": "f5e53d87f55b7ed17d63fca9dbf89e28d1bf64e5d07cbe1acbade853a4363b36",
+  "hash": "12f45eb5c3d7c01de5f579de589a25e30b72d5a9986c19b952cfedd5d17679a3",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:20:45.738961+00:00"
+  "ts": "2026-09-24T06:45:46.587891+00:00"
  },
  {
   "actor": "agent",
@@ -175,52 +176,52 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "0447ed6806fb"
+    "run_id": "f441506680f5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0447ed6806fb"
+   "run_id": "f441506680f5"
   },
-  "hash": "165afecc512a60efc023af7b86e05a0fa9fb0c4d28604ed71520752422b0ccc9",
+  "hash": "e83bfa8c0d07b876f18041feb87b01f19c75236fd928fc99963d63ce994dae07",
   "kind": "gate.decision",
-  "prev_hash": "f5e53d87f55b7ed17d63fca9dbf89e28d1bf64e5d07cbe1acbade853a4363b36",
+  "prev_hash": "12f45eb5c3d7c01de5f579de589a25e30b72d5a9986c19b952cfedd5d17679a3",
   "seq": 2,
-  "ts": "2026-09-24T04:20:45.739287+00:00"
+  "ts": "2026-09-24T06:45:46.588240+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "0447ed6806fb"
+    "run_id": "f441506680f5"
    },
    "project": "mat-mang-khi-tim-tai-lieu",
-   "session_id": "s_1252d6c2be9d"
+   "session_id": "s_848d3bd6e299"
   },
-  "hash": "71a4b4b085b099523ad33c493e49a7578eafdeeafd9cb97b8747db93fc2dd561",
+  "hash": "4e5c1d59a369123ef4f578165774d2a10db59c858461968fe22c37f627c6ed44",
   "kind": "session.open",
-  "prev_hash": "165afecc512a60efc023af7b86e05a0fa9fb0c4d28604ed71520752422b0ccc9",
+  "prev_hash": "e83bfa8c0d07b876f18041feb87b01f19c75236fd928fc99963d63ce994dae07",
   "seq": 3,
-  "ts": "2026-09-24T04:20:45.745180+00:00"
+  "ts": "2026-09-24T06:45:46.597587+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "11685f5a5683b176",
-   "run_id": "0447ed6806fb",
+   "duration_ms": 26,
+   "result_hash": "a5bc564216962ef8",
+   "run_id": "f441506680f5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8ec642b534fe45c212a485907cc633f9aab4173011af92e644724c7ecabc49a6",
+  "hash": "030457d94b5bc9ad3d8c1785ba9c7f35a9376f762fddd8f327de3acddd4d3de1",
   "kind": "cap.run.finish",
-  "prev_hash": "71a4b4b085b099523ad33c493e49a7578eafdeeafd9cb97b8747db93fc2dd561",
+  "prev_hash": "4e5c1d59a369123ef4f578165774d2a10db59c858461968fe22c37f627c6ed44",
   "seq": 4,
-  "ts": "2026-09-24T04:20:45.746317+00:00"
+  "ts": "2026-09-24T06:45:46.598701+00:00"
  },
  {
   "actor": "agent",
@@ -230,7 +231,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "6529f104a809"
+    "run_id": "5891a1f987cd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -238,13 +239,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6529f104a809"
+   "run_id": "5891a1f987cd"
   },
-  "hash": "da2033af1bab9d7dfa0cce1dc0e7da7505aa7b20ad3799e6506a643bca1c8bd0",
+  "hash": "8af9f75b897b6f10172960bdc8584f8ecdf664136b16cf628806779975833283",
   "kind": "cap.run.start",
-  "prev_hash": "8ec642b534fe45c212a485907cc633f9aab4173011af92e644724c7ecabc49a6",
+  "prev_hash": "030457d94b5bc9ad3d8c1785ba9c7f35a9376f762fddd8f327de3acddd4d3de1",
   "seq": 5,
-  "ts": "2026-09-24T04:20:45.752920+00:00"
+  "ts": "2026-09-24T06:45:46.608905+00:00"
  },
  {
   "actor": "agent",
@@ -254,20 +255,20 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "6529f104a809"
+    "run_id": "5891a1f987cd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6529f104a809"
+   "run_id": "5891a1f987cd"
   },
-  "hash": "60fb964ca4f2ba8a6276f3b36599226a3d704926a6cc96ca8f6abfd69dba6765",
+  "hash": "edf88684b8e6e852010deed04115446da561e89a633bfb2a559e62063247d013",
   "kind": "gate.decision",
-  "prev_hash": "da2033af1bab9d7dfa0cce1dc0e7da7505aa7b20ad3799e6506a643bca1c8bd0",
+  "prev_hash": "8af9f75b897b6f10172960bdc8584f8ecdf664136b16cf628806779975833283",
   "seq": 6,
-  "ts": "2026-09-24T04:20:45.753022+00:00"
+  "ts": "2026-09-24T06:45:46.609011+00:00"
  },
  {
   "actor": "agent",
@@ -275,15 +276,15 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "6529f104a809",
+   "run_id": "5891a1f987cd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "34b909f7df353e3ae3d4b2ab866a8be780275b481f5c70de089fe41bceeaf47d",
+  "hash": "46a91774d02f5dcb63465bd7ed311ce0cd93226d1292ba98e16652561ead1159",
   "kind": "cap.run.finish",
-  "prev_hash": "60fb964ca4f2ba8a6276f3b36599226a3d704926a6cc96ca8f6abfd69dba6765",
+  "prev_hash": "edf88684b8e6e852010deed04115446da561e89a633bfb2a559e62063247d013",
   "seq": 7,
-  "ts": "2026-09-24T04:20:45.754593+00:00"
+  "ts": "2026-09-24T06:45:46.610638+00:00"
  },
  {
   "actor": "agent",
@@ -293,7 +294,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4d0510807f7b"
+    "run_id": "b31cf80a7bf9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -301,13 +302,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4d0510807f7b"
+   "run_id": "b31cf80a7bf9"
   },
-  "hash": "fea90804465cb8f69b5fca720c7885366e89b3954446ae404e5cf9fd4ee6ea0b",
+  "hash": "d16ff6fee9956e34e24ab319fc20e8676d0c1f0d69f39749576359cae2c4e126",
   "kind": "cap.run.start",
-  "prev_hash": "34b909f7df353e3ae3d4b2ab866a8be780275b481f5c70de089fe41bceeaf47d",
+  "prev_hash": "46a91774d02f5dcb63465bd7ed311ce0cd93226d1292ba98e16652561ead1159",
   "seq": 8,
-  "ts": "2026-09-24T04:20:45.756066+00:00"
+  "ts": "2026-09-24T06:45:46.612116+00:00"
  },
  {
   "actor": "agent",
@@ -317,20 +318,20 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4d0510807f7b"
+    "run_id": "b31cf80a7bf9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4d0510807f7b"
+   "run_id": "b31cf80a7bf9"
   },
-  "hash": "65e18674fcefcc49865461623b4427b03fc4112f13a94a27da581c8ea1524b53",
+  "hash": "f5b40d6e06c447d494e2ad3a2a036f7849de14212a6f438da661385606046a28",
   "kind": "gate.decision",
-  "prev_hash": "fea90804465cb8f69b5fca720c7885366e89b3954446ae404e5cf9fd4ee6ea0b",
+  "prev_hash": "d16ff6fee9956e34e24ab319fc20e8676d0c1f0d69f39749576359cae2c4e126",
   "seq": 9,
-  "ts": "2026-09-24T04:20:45.756147+00:00"
+  "ts": "2026-09-24T06:45:46.612206+00:00"
  },
  {
   "actor": "agent",
@@ -338,15 +339,15 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "4d0510807f7b",
+   "run_id": "b31cf80a7bf9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6beaa63ec5b95048c13671ab358f67a063fed4b3a3a8bcd03279b6a8b59521d2",
+  "hash": "86fb08a625a4755356c185eab056adbfd823a1884dbe232f1bfdec3b1eeb8412",
   "kind": "cap.run.finish",
-  "prev_hash": "65e18674fcefcc49865461623b4427b03fc4112f13a94a27da581c8ea1524b53",
+  "prev_hash": "f5b40d6e06c447d494e2ad3a2a036f7849de14212a6f438da661385606046a28",
   "seq": 10,
-  "ts": "2026-09-24T04:20:45.757634+00:00"
+  "ts": "2026-09-24T06:45:46.613779+00:00"
  },
  {
   "actor": "agent",
@@ -356,7 +357,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "cf4ca72909b2"
+    "run_id": "361da1490ec9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -364,13 +365,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "cf4ca72909b2"
+   "run_id": "361da1490ec9"
   },
-  "hash": "e695cc46452e3d7d2395219e1bc8ee009edd407cc55bcf645b92e4e54c4b88fa",
+  "hash": "e5ec54ceddd716aa84f76c485438855ac19dcea24c0bface43a0ec977d3d19d5",
   "kind": "cap.run.start",
-  "prev_hash": "6beaa63ec5b95048c13671ab358f67a063fed4b3a3a8bcd03279b6a8b59521d2",
+  "prev_hash": "86fb08a625a4755356c185eab056adbfd823a1884dbe232f1bfdec3b1eeb8412",
   "seq": 11,
-  "ts": "2026-09-24T04:20:45.785485+00:00"
+  "ts": "2026-09-24T06:45:46.642464+00:00"
  },
  {
   "actor": "agent",
@@ -380,36 +381,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "cf4ca72909b2"
+    "run_id": "361da1490ec9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "cf4ca72909b2"
+   "run_id": "361da1490ec9"
   },
-  "hash": "fb9aa1c478e079bdd5962c51e69999092f0664cc0b47dcbc761a1dbc1bc20cce",
+  "hash": "ec7f2e9ccb3745e4c34a38dbe2da8222f07392ae752b81a7793c882d6a866192",
   "kind": "gate.decision",
-  "prev_hash": "e695cc46452e3d7d2395219e1bc8ee009edd407cc55bcf645b92e4e54c4b88fa",
+  "prev_hash": "e5ec54ceddd716aa84f76c485438855ac19dcea24c0bface43a0ec977d3d19d5",
   "seq": 12,
-  "ts": "2026-09-24T04:20:45.785607+00:00"
+  "ts": "2026-09-24T06:45:46.642592+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "d6209b305fabc66c",
-   "run_id": "cf4ca72909b2",
+   "duration_ms": 5,
+   "result_hash": "d63db8b86c8a216c",
+   "run_id": "361da1490ec9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "21751e357d1b86f55e536242e51cf7273eb4bbf362fb65b227243e65268c1924",
+  "hash": "7801b6adc7aeb549001415a205cad3d63c01b0a400a4e1366623cd1064cb83bf",
   "kind": "cap.run.finish",
-  "prev_hash": "fb9aa1c478e079bdd5962c51e69999092f0664cc0b47dcbc761a1dbc1bc20cce",
+  "prev_hash": "ec7f2e9ccb3745e4c34a38dbe2da8222f07392ae752b81a7793c882d6a866192",
   "seq": 13,
-  "ts": "2026-09-24T04:20:45.787352+00:00"
+  "ts": "2026-09-24T06:45:46.647499+00:00"
  },
  {
   "actor": "agent",
@@ -419,7 +420,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "32aa79bfd6db"
+    "run_id": "250375ee2de2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -427,13 +428,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "32aa79bfd6db"
+   "run_id": "250375ee2de2"
   },
-  "hash": "04d70b1869a39f23867c4d2639f8c8368cf7ccf5adc13383f390f355691e6a94",
+  "hash": "ede6b9a1c988956cbe43ce631aba5a33b71be6fc866bb60836dec37074ae2bff",
   "kind": "cap.run.start",
-  "prev_hash": "21751e357d1b86f55e536242e51cf7273eb4bbf362fb65b227243e65268c1924",
+  "prev_hash": "7801b6adc7aeb549001415a205cad3d63c01b0a400a4e1366623cd1064cb83bf",
   "seq": 14,
-  "ts": "2026-09-24T04:20:46.027306+00:00"
+  "ts": "2026-09-24T06:45:46.894006+00:00"
  },
  {
   "actor": "agent",
@@ -443,20 +444,20 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "32aa79bfd6db"
+    "run_id": "250375ee2de2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "32aa79bfd6db"
+   "run_id": "250375ee2de2"
   },
-  "hash": "b9eda62e50a250ff9b053f5599a5841713fa53f372e5fa73b044055a7cde25f8",
+  "hash": "92127fc2fcd0b33786741a2eeedb3e959848cf4efa6b9d3466e53ffc0bb375ce",
   "kind": "gate.decision",
-  "prev_hash": "04d70b1869a39f23867c4d2639f8c8368cf7ccf5adc13383f390f355691e6a94",
+  "prev_hash": "ede6b9a1c988956cbe43ce631aba5a33b71be6fc866bb60836dec37074ae2bff",
   "seq": 15,
-  "ts": "2026-09-24T04:20:46.027456+00:00"
+  "ts": "2026-09-24T06:45:46.894157+00:00"
  },
  {
   "actor": "agent",
@@ -464,15 +465,15 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "32aa79bfd6db",
+   "run_id": "250375ee2de2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d1cb0c4e31e6f373058fd8efc1deff5cb6507354c9a3b76c58b14deb4ef9a4a6",
+  "hash": "b1b06b340ba434d15fb4bf5fe8e50e0972c2ca1f052218217c1149aa5e2d1d51",
   "kind": "cap.run.finish",
-  "prev_hash": "b9eda62e50a250ff9b053f5599a5841713fa53f372e5fa73b044055a7cde25f8",
+  "prev_hash": "92127fc2fcd0b33786741a2eeedb3e959848cf4efa6b9d3466e53ffc0bb375ce",
   "seq": 16,
-  "ts": "2026-09-24T04:20:46.030701+00:00"
+  "ts": "2026-09-24T06:45:46.897444+00:00"
  },
  {
   "actor": "agent",
@@ -482,7 +483,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "402d069cd354"
+    "run_id": "d87318f5f22f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -490,13 +491,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "402d069cd354"
+   "run_id": "d87318f5f22f"
   },
-  "hash": "733138d48210c3955b0320fa8d1fb70f5d2c2287437e3fbdc7e36171e47772e1",
+  "hash": "e8b2426257334f198b2f60de38882c399f67012c6366b4acdcd3c4b208d7f0ab",
   "kind": "cap.run.start",
-  "prev_hash": "d1cb0c4e31e6f373058fd8efc1deff5cb6507354c9a3b76c58b14deb4ef9a4a6",
+  "prev_hash": "b1b06b340ba434d15fb4bf5fe8e50e0972c2ca1f052218217c1149aa5e2d1d51",
   "seq": 17,
-  "ts": "2026-09-24T04:20:46.051615+00:00"
+  "ts": "2026-09-24T06:45:46.919704+00:00"
  },
  {
   "actor": "agent",
@@ -506,27 +507,27 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "402d069cd354"
+    "run_id": "d87318f5f22f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "402d069cd354"
+   "run_id": "d87318f5f22f"
   },
-  "hash": "b2e38f22fc5f894d3e860b60e6240c57d185b575bde98af344d83acaea45c82f",
+  "hash": "df31ff509a99d168edb157b494b1298f83da3c5f80cd3531cf91efed1d80686d",
   "kind": "gate.decision",
-  "prev_hash": "733138d48210c3955b0320fa8d1fb70f5d2c2287437e3fbdc7e36171e47772e1",
+  "prev_hash": "e8b2426257334f198b2f60de38882c399f67012c6366b4acdcd3c4b208d7f0ab",
   "seq": 18,
-  "ts": "2026-09-24T04:20:46.051746+00:00"
+  "ts": "2026-09-24T06:45:46.919825+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "402d069cd354"
+    "run_id": "d87318f5f22f"
    },
    "compressions": [],
    "hash": "a62e14cd7945d6e0",
@@ -566,7 +567,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "plan.estimate",
     "policy.undo_window",
     "/Users/congvt/Documents/EIDE/docs/test/usecase/TC072/du-an/mat-mang-khi-tim-tai-lieu",
-    "s_1252d6c2be9d"
+    "s_848d3bd6e299"
    ],
    "tokens": {
     "C0": 1900,
@@ -575,11 +576,11 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "C7": 14
    }
   },
-  "hash": "53c4e3a8ef13ac54052feca4a9b4ddec4b9f696aed9b04ebc29561ff2a76c639",
+  "hash": "50a35b2e07d3fcc704e82929ca2758ede17fefbc1833b44fd29d183a3d9aa074",
   "kind": "context.bundle",
-  "prev_hash": "b2e38f22fc5f894d3e860b60e6240c57d185b575bde98af344d83acaea45c82f",
+  "prev_hash": "df31ff509a99d168edb157b494b1298f83da3c5f80cd3531cf91efed1d80686d",
   "seq": 19,
-  "ts": "2026-09-24T04:20:46.057457+00:00"
+  "ts": "2026-09-24T06:45:46.926060+00:00"
  },
  {
   "actor": "agent",
@@ -587,70 +588,71 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "402d069cd354"
+    "run_id": "d87318f5f22f"
    },
-   "cost_usd": 0.000933,
-   "latency_ms": 1691,
+   "cost_usd": 0.000963,
+   "latency_ms": 1873,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "51f720f3bfd322e3",
    "request_hash": "3d43d1a04a584dcc",
    "role": "intent",
    "stop_reason": "stop",
    "tokens_in": 2476,
-   "tokens_out": 76
+   "tokens_out": 88
   },
-  "hash": "41434424b5659b8e910d4783454eeee65128e44e70f71606a7cdde4353c72dd7",
+  "hash": "9a7e174cfa30d4caf8ded68b2a9b5e24650eae729e4f7a7e55f7500c0d5d93c0",
   "kind": "model.call",
-  "prev_hash": "53c4e3a8ef13ac54052feca4a9b4ddec4b9f696aed9b04ebc29561ff2a76c639",
+  "prev_hash": "50a35b2e07d3fcc704e82929ca2758ede17fefbc1833b44fd29d183a3d9aa074",
   "seq": 20,
-  "ts": "2026-09-24T04:20:47.756956+00:00"
+  "ts": "2026-09-24T06:45:48.803136+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "402d069cd354"
+    "run_id": "d87318f5f22f"
    },
    "confidence": 0.95,
    "intent": "search.ask",
    "is_big": false,
    "slots": {
-    "question": "datasheet mới nhất của SEN42"
+    "chip": "SEN42",
+    "question": "Tìm trên mạng datasheet mới nhất của SEN42"
    },
    "text": "Tìm trên mạng datasheet mới nhất của SEN42"
   },
-  "hash": "0aeca6e03bc1b99b64fc0e55e5c0630d992c2d978aa2dae5ad10fd2ca0c8f633",
+  "hash": "52cb43a372bab2b12bb1ab60c2525e780af16d58c2596e00568dd5715030492a",
   "kind": "intent",
-  "prev_hash": "41434424b5659b8e910d4783454eeee65128e44e70f71606a7cdde4353c72dd7",
+  "prev_hash": "9a7e174cfa30d4caf8ded68b2a9b5e24650eae729e4f7a7e55f7500c0d5d93c0",
   "seq": 21,
-  "ts": "2026-09-24T04:20:47.758443+00:00"
+  "ts": "2026-09-24T06:45:48.804110+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 1708,
-   "result_hash": "f7b0a55a11df3b47",
-   "run_id": "402d069cd354",
+   "duration_ms": 1885,
+   "result_hash": "88ef5f12e87e156d",
+   "run_id": "d87318f5f22f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6b918493a96761d8edf307bd97dc1ea7b186972f20b80b063260b5d877384103",
+  "hash": "e2dfa353d5360a866a72920731c4803604afd1ecb0b8c27dd60f33a3a6f9c461",
   "kind": "cap.run.finish",
-  "prev_hash": "0aeca6e03bc1b99b64fc0e55e5c0630d992c2d978aa2dae5ad10fd2ca0c8f633",
+  "prev_hash": "52cb43a372bab2b12bb1ab60c2525e780af16d58c2596e00568dd5715030492a",
   "seq": 22,
-  "ts": "2026-09-24T04:20:47.759684+00:00"
+  "ts": "2026-09-24T06:45:48.804896+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "f7b0a55a11df3b47",
+   "args_hash": "88ef5f12e87e156d",
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "91708c356584"
+    "run_id": "337e6f17a7e8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -658,13 +660,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "91708c356584"
+   "run_id": "337e6f17a7e8"
   },
-  "hash": "3cfebfd7fa02f566ba2625ce1cb6f36c2f386304748190926027fa2c4689e6f8",
+  "hash": "c28bed714e3f970fb171ab2b44c58e6c41e275e6fb4e64c9832da79b3d8d0202",
   "kind": "cap.run.start",
-  "prev_hash": "6b918493a96761d8edf307bd97dc1ea7b186972f20b80b063260b5d877384103",
+  "prev_hash": "e2dfa353d5360a866a72920731c4803604afd1ecb0b8c27dd60f33a3a6f9c461",
   "seq": 23,
-  "ts": "2026-09-24T04:20:47.761233+00:00"
+  "ts": "2026-09-24T06:45:48.805802+00:00"
  },
  {
   "actor": "agent",
@@ -674,46 +676,46 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "91708c356584"
+    "run_id": "337e6f17a7e8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "91708c356584"
+   "run_id": "337e6f17a7e8"
   },
-  "hash": "c0dc53651b6f24182dd51168c69da0c19d5d0ac2c6dcef03f548fd9ca2f68878",
+  "hash": "89ba156e7d61da1b444158e421fe05814da09fd7171034546213d5f880bd35f8",
   "kind": "gate.decision",
-  "prev_hash": "3cfebfd7fa02f566ba2625ce1cb6f36c2f386304748190926027fa2c4689e6f8",
+  "prev_hash": "c28bed714e3f970fb171ab2b44c58e6c41e275e6fb4e64c9832da79b3d8d0202",
   "seq": 24,
-  "ts": "2026-09-24T04:20:47.761473+00:00"
+  "ts": "2026-09-24T06:45:48.806006+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.ground",
-   "duration_ms": 4,
+   "duration_ms": 3,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "91708c356584",
+   "run_id": "337e6f17a7e8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0216364d656293885f286eda10f3872e555659390108513f1f764c32d0320f24",
+  "hash": "07da2c4615f85e2b97875ca821eb1975d7c46b18f51b1e9aa07f3f369f039c83",
   "kind": "cap.run.finish",
-  "prev_hash": "c0dc53651b6f24182dd51168c69da0c19d5d0ac2c6dcef03f548fd9ca2f68878",
+  "prev_hash": "89ba156e7d61da1b444158e421fe05814da09fd7171034546213d5f880bd35f8",
   "seq": 25,
-  "ts": "2026-09-24T04:20:47.765398+00:00"
+  "ts": "2026-09-24T06:45:48.808760+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "53b85ce17055d58d",
+   "args_hash": "7f911b9e9be3021c",
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "8912900e9b36"
+    "run_id": "55f8d942a4ba"
    },
    "decision": {
     "decision": "APPROVE",
@@ -721,13 +723,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8912900e9b36"
+   "run_id": "55f8d942a4ba"
   },
-  "hash": "60641226ece044edb7559180b425bd10f8e1b252a7da5fc8b560259201fbc2b3",
+  "hash": "a6bba3f7ffacd258125f0c1192895abd5c9f52bea77fed4e7bcf6731373b9249",
   "kind": "cap.run.start",
-  "prev_hash": "0216364d656293885f286eda10f3872e555659390108513f1f764c32d0320f24",
+  "prev_hash": "07da2c4615f85e2b97875ca821eb1975d7c46b18f51b1e9aa07f3f369f039c83",
   "seq": 26,
-  "ts": "2026-09-24T04:20:47.766665+00:00"
+  "ts": "2026-09-24T06:45:48.809676+00:00"
  },
  {
   "actor": "agent",
@@ -737,46 +739,46 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "8912900e9b36"
+    "run_id": "55f8d942a4ba"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8912900e9b36"
+   "run_id": "55f8d942a4ba"
   },
-  "hash": "689e616f7e403676ad0dbb5046fb9a9a3b0c6609d04d06f46de6d450d268c8be",
+  "hash": "bf2d1cd68929b357688bb279570795c8f61f91e5d0a894fc4a060d98bf122078",
   "kind": "gate.decision",
-  "prev_hash": "60641226ece044edb7559180b425bd10f8e1b252a7da5fc8b560259201fbc2b3",
+  "prev_hash": "a6bba3f7ffacd258125f0c1192895abd5c9f52bea77fed4e7bcf6731373b9249",
   "seq": 27,
-  "ts": "2026-09-24T04:20:47.766828+00:00"
+  "ts": "2026-09-24T06:45:48.809798+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
-   "duration_ms": 6,
-   "result_hash": "c5a23ebff4f09001",
-   "run_id": "8912900e9b36",
+   "duration_ms": 4,
+   "result_hash": "0d2a39dd5a0d3a01",
+   "run_id": "55f8d942a4ba",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6ea03747cd750bd00d2442fb54e91cc39dce43f4a93519b7afae69333ac83ccc",
+  "hash": "d09f3b7b841bfedb0808b05bd5db789039fd0f7d29ea26eb8096797a59a6ea6c",
   "kind": "cap.run.finish",
-  "prev_hash": "689e616f7e403676ad0dbb5046fb9a9a3b0c6609d04d06f46de6d450d268c8be",
+  "prev_hash": "bf2d1cd68929b357688bb279570795c8f61f91e5d0a894fc4a060d98bf122078",
   "seq": 28,
-  "ts": "2026-09-24T04:20:47.772757+00:00"
+  "ts": "2026-09-24T06:45:48.814408+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "061a9336030faa26",
+   "args_hash": "3b3dd2de02f42d04",
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "b75d496767d9"
+    "run_id": "332ccc0ea9e9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -784,13 +786,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b75d496767d9"
+   "run_id": "332ccc0ea9e9"
   },
-  "hash": "388d7c6707ed45650072fe2b4b84fd6c4cc7294c15a7cefbf8dc6794d8cef09e",
+  "hash": "98023211bec27e5d96a9be9aac998576fee5855051406680fc15b52b55c70584",
   "kind": "cap.run.start",
-  "prev_hash": "6ea03747cd750bd00d2442fb54e91cc39dce43f4a93519b7afae69333ac83ccc",
+  "prev_hash": "d09f3b7b841bfedb0808b05bd5db789039fd0f7d29ea26eb8096797a59a6ea6c",
   "seq": 29,
-  "ts": "2026-09-24T04:20:47.774680+00:00"
+  "ts": "2026-09-24T06:45:48.815909+00:00"
  },
  {
   "actor": "agent",
@@ -800,30 +802,77 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "b75d496767d9"
+    "run_id": "332ccc0ea9e9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b75d496767d9"
+   "run_id": "332ccc0ea9e9"
   },
-  "hash": "444716c52b10532f2b093ec9f210dca0101dbce302a3cdfbbcb1825d26117bb4",
+  "hash": "198b978091ee4723ae5391c0c6acea54d273b17f862d43bc712d5bd7b2db8e97",
   "kind": "gate.decision",
-  "prev_hash": "388d7c6707ed45650072fe2b4b84fd6c4cc7294c15a7cefbf8dc6794d8cef09e",
+  "prev_hash": "98023211bec27e5d96a9be9aac998576fee5855051406680fc15b52b55c70584",
   "seq": 30,
-  "ts": "2026-09-24T04:20:47.775005+00:00"
+  "ts": "2026-09-24T06:45:48.816120+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "1337d93e2a57"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "1337d93e2a57"
+  },
+  "hash": "d965c7878395414384531a0e04e2f86ddceb557e097ee8b3b2a2f1eec2a4d32b",
+  "kind": "cap.run.start",
+  "prev_hash": "198b978091ee4723ae5391c0c6acea54d273b17f862d43bc712d5bd7b2db8e97",
+  "seq": 31,
+  "ts": "2026-09-24T06:45:48.926744+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "1337d93e2a57"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "1337d93e2a57"
+  },
+  "hash": "fe953bc4bf84f24742462d535843b0c56ee11ec033e4dfe28b9beb6a49331fec",
+  "kind": "gate.decision",
+  "prev_hash": "d965c7878395414384531a0e04e2f86ddceb557e097ee8b3b2a2f1eec2a4d32b",
+  "seq": 32,
+  "ts": "2026-09-24T06:45:48.930872+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "b75d496767d9"
+    "run_id": "332ccc0ea9e9"
    },
    "n": 1,
-   "run_id": "r_16e7e7b04c1b",
+   "run_id": "r_69da93409b95",
    "steps": [
     {
      "cap": "search.web",
@@ -840,11 +889,11 @@ Tìm trên mạng datasheet mới nhất của SEN42
    ],
    "text": "Tìm trên mạng datasheet mới nhất của SEN42"
   },
-  "hash": "9bedb5f51e6439c08fce221481c1a87b4b6f7c865434552acb2fc6d9b866bb91",
+  "hash": "6049ba4636bcb054f0fec86ca0aca978b0dfb58419fbbe1e5ee72d71f33ee226",
   "kind": "run.started",
-  "prev_hash": "444716c52b10532f2b093ec9f210dca0101dbce302a3cdfbbcb1825d26117bb4",
-  "seq": 31,
-  "ts": "2026-09-24T04:20:47.784420+00:00"
+  "prev_hash": "fe953bc4bf84f24742462d535843b0c56ee11ec033e4dfe28b9beb6a49331fec",
+  "seq": 33,
+  "ts": "2026-09-24T06:45:48.931625+00:00"
  },
  {
   "actor": "agent",
@@ -852,18 +901,18 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "search.web",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "b75d496767d9"
+    "run_id": "332ccc0ea9e9"
    },
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_16e7e7b04c1b"
+   "run_id": "r_69da93409b95"
   },
-  "hash": "6c243a0b63e32bf3da829b0491d9334cb854764bde72d783ebb33178ba757a0b",
+  "hash": "5a29e25d44bbc6f33aef0541a38e10874856f395e8a2df68a1db7f3fd431c89f",
   "kind": "run.step_started",
-  "prev_hash": "9bedb5f51e6439c08fce221481c1a87b4b6f7c865434552acb2fc6d9b866bb91",
-  "seq": 32,
-  "ts": "2026-09-24T04:20:47.784909+00:00"
+  "prev_hash": "6049ba4636bcb054f0fec86ca0aca978b0dfb58419fbbe1e5ee72d71f33ee226",
+  "seq": 34,
+  "ts": "2026-09-24T06:45:48.931940+00:00"
  },
  {
   "actor": "agent",
@@ -875,7 +924,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_16e7e7b04c1b"
+    "run_id": "r_69da93409b95"
    },
    "decision": {
     "decision": "APPROVE",
@@ -883,13 +932,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d3f7f3683e44"
+   "run_id": "4bceaa9e51e1"
   },
-  "hash": "cbe3a9d4d924846887da7764bb320d9be83c675cad58d76619c95817062d6ce3",
+  "hash": "cc97647345c3f6d64dc58db6a4940db022d436851f6cedc09ec0b7678c29afca",
   "kind": "cap.run.start",
-  "prev_hash": "6c243a0b63e32bf3da829b0491d9334cb854764bde72d783ebb33178ba757a0b",
-  "seq": 33,
-  "ts": "2026-09-24T04:20:47.786231+00:00"
+  "prev_hash": "5a29e25d44bbc6f33aef0541a38e10874856f395e8a2df68a1db7f3fd431c89f",
+  "seq": 35,
+  "ts": "2026-09-24T06:45:48.932872+00:00"
  },
  {
   "actor": "agent",
@@ -901,20 +950,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_16e7e7b04c1b"
+    "run_id": "r_69da93409b95"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d3f7f3683e44"
+   "run_id": "4bceaa9e51e1"
   },
-  "hash": "9cc119e3c2f0808d6a2f351dca55913f9daeaa40a78e03a56570aa896cb18d0a",
+  "hash": "36686dbc0cf55f4f4c13645105c9167e15af61165acd975acc463deb91fd950e",
   "kind": "gate.decision",
-  "prev_hash": "cbe3a9d4d924846887da7764bb320d9be83c675cad58d76619c95817062d6ce3",
-  "seq": 34,
-  "ts": "2026-09-24T04:20:47.786356+00:00"
+  "prev_hash": "cc97647345c3f6d64dc58db6a4940db022d436851f6cedc09ec0b7678c29afca",
+  "seq": 36,
+  "ts": "2026-09-24T06:45:48.932944+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 7,
+   "result_hash": "1a5dd849ae598359",
+   "run_id": "1337d93e2a57",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "4ae7593a7cc066c5025638fc64daf36e82ba20bb58054aee9424b6de4a21164c",
+  "kind": "cap.run.finish",
+  "prev_hash": "36686dbc0cf55f4f4c13645105c9167e15af61165acd975acc463deb91fd950e",
+  "seq": 37,
+  "ts": "2026-09-24T06:45:48.934374+00:00"
  },
  {
   "actor": "agent",
@@ -924,18 +989,18 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_16e7e7b04c1b"
+    "run_id": "r_69da93409b95"
    },
    "duration_ms": 5,
    "error": "E4001",
-   "run_id": "d3f7f3683e44",
+   "run_id": "4bceaa9e51e1",
    "status": "failed"
   },
-  "hash": "bc3b7b8344cdc281900bf9d7712ab02c395d3dbe8900a08838f0055c72b1afd9",
+  "hash": "086d6a9394d7b659ddd9f56b527bb5edd8ed17e73860d4f44139e9cb073e0c9c",
   "kind": "cap.run.finish",
-  "prev_hash": "9cc119e3c2f0808d6a2f351dca55913f9daeaa40a78e03a56570aa896cb18d0a",
-  "seq": 35,
-  "ts": "2026-09-24T04:20:47.791489+00:00"
+  "prev_hash": "4ae7593a7cc066c5025638fc64daf36e82ba20bb58054aee9424b6de4a21164c",
+  "seq": 38,
+  "ts": "2026-09-24T06:45:48.937955+00:00"
  },
  {
   "actor": "agent",
@@ -957,55 +1022,55 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_16e7e7b04c1b",
+   "run_id": "r_69da93409b95",
    "status": "failed"
   },
-  "hash": "2bca6c2a4f81e1db35e459a1f1ac363cf6b6745ac1836dce23c8d31295f6711e",
+  "hash": "c5c3fbd32728911398e22b2654ba74363349146d73f11f99171cc4fec0a75565",
   "kind": "run.step_done",
-  "prev_hash": "bc3b7b8344cdc281900bf9d7712ab02c395d3dbe8900a08838f0055c72b1afd9",
-  "seq": 36,
-  "ts": "2026-09-24T04:20:47.791595+00:00"
+  "prev_hash": "086d6a9394d7b659ddd9f56b527bb5edd8ed17e73860d4f44139e9cb073e0c9c",
+  "seq": 39,
+  "ts": "2026-09-24T06:45:48.938034+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 0,
    "failed": 1,
-   "run_id": "r_16e7e7b04c1b",
+   "run_id": "r_69da93409b95",
    "state": "failed",
    "waiting": 1
   },
-  "hash": "2245edaf9f8e0712036e6303a441d9cb797a2b8100018fda9d24dfefac7bbb40",
+  "hash": "656d14ce8f696c5da4c47439752c600daa66379a3b6be5d06ceaaa3397f38f6e",
   "kind": "run.done",
-  "prev_hash": "2bca6c2a4f81e1db35e459a1f1ac363cf6b6745ac1836dce23c8d31295f6711e",
-  "seq": 37,
-  "ts": "2026-09-24T04:20:47.792794+00:00"
+  "prev_hash": "c5c3fbd32728911398e22b2654ba74363349146d73f11f99171cc4fec0a75565",
+  "seq": 40,
+  "ts": "2026-09-24T06:45:48.938926+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 43,
-   "result_hash": "2a70b909f9d86a35",
-   "run_id": "b75d496767d9",
+   "duration_ms": 155,
+   "result_hash": "fea4f0fa6f3d1295",
+   "run_id": "332ccc0ea9e9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b6e41c5d2eac116e6205a89d04a3047562892e1997603481096726fd11d840bb",
+  "hash": "1bcdd7edf332aa4ef3e53fe8c70c6bf1c76101defa0c4a2f45fa51b2a9427a15",
   "kind": "cap.run.finish",
-  "prev_hash": "2245edaf9f8e0712036e6303a441d9cb797a2b8100018fda9d24dfefac7bbb40",
-  "seq": 38,
-  "ts": "2026-09-24T04:20:47.817824+00:00"
+  "prev_hash": "656d14ce8f696c5da4c47439752c600daa66379a3b6be5d06ceaaa3397f38f6e",
+  "seq": 41,
+  "ts": "2026-09-24T06:45:48.971538+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "503d2ad3a04056d7",
+   "args_hash": "3085dc98b8bdd3ec",
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "c3d1b6fd0e3b"
+    "run_id": "10ed47fd5bb7"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1013,13 +1078,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c3d1b6fd0e3b"
+   "run_id": "10ed47fd5bb7"
   },
-  "hash": "0552959ca4f1dffe9053309611c92b4d0d472e14fff1675c90e0883cbbdde487",
+  "hash": "22df9526285773fee7f01297e02f428a9d483eccc20d8f9ccb25f4b7de2cf405",
   "kind": "cap.run.start",
-  "prev_hash": "b6e41c5d2eac116e6205a89d04a3047562892e1997603481096726fd11d840bb",
-  "seq": 39,
-  "ts": "2026-09-24T04:20:47.821420+00:00"
+  "prev_hash": "1bcdd7edf332aa4ef3e53fe8c70c6bf1c76101defa0c4a2f45fa51b2a9427a15",
+  "seq": 42,
+  "ts": "2026-09-24T06:45:48.974785+00:00"
  },
  {
   "actor": "agent",
@@ -1029,99 +1094,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "c3d1b6fd0e3b"
+    "run_id": "10ed47fd5bb7"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c3d1b6fd0e3b"
+   "run_id": "10ed47fd5bb7"
   },
-  "hash": "53bb68830f05ba988f075a6cc6c936b65abc90cfae067ef3ba91665577682606",
+  "hash": "fed6d52e41934a210b9bafe7aff53eab6f8df64d0ac1fedc5326e140dd233a6a",
   "kind": "gate.decision",
-  "prev_hash": "0552959ca4f1dffe9053309611c92b4d0d472e14fff1675c90e0883cbbdde487",
-  "seq": 40,
-  "ts": "2026-09-24T04:20:47.821567+00:00"
+  "prev_hash": "22df9526285773fee7f01297e02f428a9d483eccc20d8f9ccb25f4b7de2cf405",
+  "seq": 43,
+  "ts": "2026-09-24T06:45:48.974894+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.restate",
    "duration_ms": 1,
-   "result_hash": "7892095e98bbc9ec",
-   "run_id": "c3d1b6fd0e3b",
+   "result_hash": "c71377cc00ce6f60",
+   "run_id": "10ed47fd5bb7",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "cc160aca58afc67c23a7c8ac2606887e7d7490ef0717ff54361f324fa9dce7d1",
+  "hash": "9abc1d5719bffe99e1a8bba8141d20797219248521526caf4b1615ce3e772385",
   "kind": "cap.run.finish",
-  "prev_hash": "53bb68830f05ba988f075a6cc6c936b65abc90cfae067ef3ba91665577682606",
-  "seq": 41,
-  "ts": "2026-09-24T04:20:47.822670+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "79068ed1195708d8",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "379a3e34793b"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "379a3e34793b"
-  },
-  "hash": "51edc8655f2dea1d1d8909cda230a59fbda48c08785a4664edd0b7e477c82668",
-  "kind": "cap.run.start",
-  "prev_hash": "cc160aca58afc67c23a7c8ac2606887e7d7490ef0717ff54361f324fa9dce7d1",
-  "seq": 42,
-  "ts": "2026-09-24T04:20:47.880685+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "379a3e34793b"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "379a3e34793b"
-  },
-  "hash": "33ee011ba7a5c24a1b1052d4cd23bd74280acddb48b4d8de11d4c2c33f82d0e3",
-  "kind": "gate.decision",
-  "prev_hash": "51edc8655f2dea1d1d8909cda230a59fbda48c08785a4664edd0b7e477c82668",
-  "seq": 43,
-  "ts": "2026-09-24T04:20:47.880882+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "e4bbfc6382983048",
-   "run_id": "379a3e34793b",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "89815404c8e89d8c914e98d3abe1d760eda535712c13de26b7a14a25862abacd",
-  "kind": "cap.run.finish",
-  "prev_hash": "33ee011ba7a5c24a1b1052d4cd23bd74280acddb48b4d8de11d4c2c33f82d0e3",
+  "prev_hash": "fed6d52e41934a210b9bafe7aff53eab6f8df64d0ac1fedc5326e140dd233a6a",
   "seq": 44,
-  "ts": "2026-09-24T04:20:47.882837+00:00"
+  "ts": "2026-09-24T06:45:48.975861+00:00"
  },
  {
   "actor": "agent",
@@ -1131,7 +1133,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "f865f8d46a1e"
+    "run_id": "56a77a4be880"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1139,13 +1141,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f865f8d46a1e"
+   "run_id": "56a77a4be880"
   },
-  "hash": "6162a237bafa9cdb47607ebae580d4e8a2e1408394316a90ce5d842294ee6db2",
+  "hash": "5a28aa32cdb3ef304ad2f5aba5d005af7c0dc5b516ba35531d10f961f58798e1",
   "kind": "cap.run.start",
-  "prev_hash": "89815404c8e89d8c914e98d3abe1d760eda535712c13de26b7a14a25862abacd",
+  "prev_hash": "9abc1d5719bffe99e1a8bba8141d20797219248521526caf4b1615ce3e772385",
   "seq": 45,
-  "ts": "2026-09-24T04:20:48.205652+00:00"
+  "ts": "2026-09-24T06:45:49.117905+00:00"
  },
  {
   "actor": "agent",
@@ -1155,46 +1157,46 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "f865f8d46a1e"
+    "run_id": "56a77a4be880"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f865f8d46a1e"
+   "run_id": "56a77a4be880"
   },
-  "hash": "104d87e634e809f1f0d0d8617f29fef74861de2dfd4fb00c0553178a60899df9",
+  "hash": "8e325308903e5a8fc776b04789e628a827b3aa19b9191b732c447d8b20d290e6",
   "kind": "gate.decision",
-  "prev_hash": "6162a237bafa9cdb47607ebae580d4e8a2e1408394316a90ce5d842294ee6db2",
+  "prev_hash": "5a28aa32cdb3ef304ad2f5aba5d005af7c0dc5b516ba35531d10f961f58798e1",
   "seq": 46,
-  "ts": "2026-09-24T04:20:48.205862+00:00"
+  "ts": "2026-09-24T06:45:49.118098+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 3,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "f865f8d46a1e",
+   "duration_ms": 4,
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "56a77a4be880",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3604a0d6a31487d3a4f4e74e99062455328cb40693b205f33c2815923506b513",
+  "hash": "1757fc0da524aafb9dc7eb7da2eb2aa9d4b9dd9ce1ca810c47f2c1bf90b492fe",
   "kind": "cap.run.finish",
-  "prev_hash": "104d87e634e809f1f0d0d8617f29fef74861de2dfd4fb00c0553178a60899df9",
+  "prev_hash": "8e325308903e5a8fc776b04789e628a827b3aa19b9191b732c447d8b20d290e6",
   "seq": 47,
-  "ts": "2026-09-24T04:20:48.209559+00:00"
+  "ts": "2026-09-24T06:45:49.122046+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "42104809d5f71a40",
+   "args_hash": "2105b4d41dd00bda",
    "cap": "chat.report_back",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "9fb995732e49"
+    "run_id": "5b144258a8b2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1202,13 +1204,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9fb995732e49"
+   "run_id": "5b144258a8b2"
   },
-  "hash": "30179a799a301807c493ef106abf16458257e5c51712f15c93fe11c2f38943e8",
+  "hash": "8c26ca486fa37fc9d92cce0005a19dcfbdd42397a985dc1619c52e60fcd09f5f",
   "kind": "cap.run.start",
-  "prev_hash": "3604a0d6a31487d3a4f4e74e99062455328cb40693b205f33c2815923506b513",
+  "prev_hash": "1757fc0da524aafb9dc7eb7da2eb2aa9d4b9dd9ce1ca810c47f2c1bf90b492fe",
   "seq": 48,
-  "ts": "2026-09-24T04:20:48.211621+00:00"
+  "ts": "2026-09-24T06:45:49.305169+00:00"
  },
  {
   "actor": "agent",
@@ -1218,36 +1220,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "9fb995732e49"
+    "run_id": "5b144258a8b2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9fb995732e49"
+   "run_id": "5b144258a8b2"
   },
-  "hash": "30f7bc74d5a976f0c67f9fc755e063db74fcbbcf02a88708199ebaaf3f8b90c3",
+  "hash": "0a40bb4cc17f07b25ff649db49d6f24b954a8f15baa97645a82944f9af637cb3",
   "kind": "gate.decision",
-  "prev_hash": "30179a799a301807c493ef106abf16458257e5c51712f15c93fe11c2f38943e8",
+  "prev_hash": "8c26ca486fa37fc9d92cce0005a19dcfbdd42397a985dc1619c52e60fcd09f5f",
   "seq": 49,
-  "ts": "2026-09-24T04:20:48.211731+00:00"
+  "ts": "2026-09-24T06:45:49.305364+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.report_back",
    "duration_ms": 2,
-   "result_hash": "328d400d48589d0f",
-   "run_id": "9fb995732e49",
+   "result_hash": "012fc1961bdf714a",
+   "run_id": "5b144258a8b2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ebe6bf04712e0dd00ec5f95d536c3afe1f07ef0dd89c89b2034bf1775c54e13e",
+  "hash": "16bc2bcaaba3fe78e20cabba7a6d6aed9dd7090cbbc7bb87de33b4d99d9d383b",
   "kind": "cap.run.finish",
-  "prev_hash": "30f7bc74d5a976f0c67f9fc755e063db74fcbbcf02a88708199ebaaf3f8b90c3",
+  "prev_hash": "0a40bb4cc17f07b25ff649db49d6f24b954a8f15baa97645a82944f9af637cb3",
   "seq": 50,
-  "ts": "2026-09-24T04:20:48.213836+00:00"
+  "ts": "2026-09-24T06:45:49.307399+00:00"
  },
  {
   "actor": "agent",
@@ -1257,7 +1259,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "61c2bf424cfe"
+    "run_id": "44d12aa70395"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1265,13 +1267,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "61c2bf424cfe"
+   "run_id": "44d12aa70395"
   },
-  "hash": "f2043c4cbcc0d2c3b7183b23b6326a363795cbc84e618d181d6cfb82b6b3d94f",
+  "hash": "7d9b7b949d8efa6af64db22bbcc01c15d75378a8fc5873efc40aa13b7cd0cdb4",
   "kind": "cap.run.start",
-  "prev_hash": "ebe6bf04712e0dd00ec5f95d536c3afe1f07ef0dd89c89b2034bf1775c54e13e",
+  "prev_hash": "16bc2bcaaba3fe78e20cabba7a6d6aed9dd7090cbbc7bb87de33b4d99d9d383b",
   "seq": 51,
-  "ts": "2026-09-24T04:20:48.218354+00:00"
+  "ts": "2026-09-24T06:45:49.354684+00:00"
  },
  {
   "actor": "agent",
@@ -1281,36 +1283,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "61c2bf424cfe"
+    "run_id": "44d12aa70395"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "61c2bf424cfe"
+   "run_id": "44d12aa70395"
   },
-  "hash": "9d33302d39eb08f3eeaefbfbd8782604630a2b18a8dd56785ac11a52616e8edd",
+  "hash": "dc4d0ddc49ca66cb6098a73373897e4363663685e6bdf0453fb35b63779f32e0",
   "kind": "gate.decision",
-  "prev_hash": "f2043c4cbcc0d2c3b7183b23b6326a363795cbc84e618d181d6cfb82b6b3d94f",
+  "prev_hash": "7d9b7b949d8efa6af64db22bbcc01c15d75378a8fc5873efc40aa13b7cd0cdb4",
   "seq": 52,
-  "ts": "2026-09-24T04:20:48.218463+00:00"
+  "ts": "2026-09-24T06:45:49.354861+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "7b1df08d8ada7129",
-   "run_id": "61c2bf424cfe",
+   "duration_ms": 2,
+   "result_hash": "90bcc3ec783d3074",
+   "run_id": "44d12aa70395",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "97e7bec549a47d7798b27b6ad5154405c3380b9f0ddab1e337bfb72405a010aa",
+  "hash": "c7d573035c2eccc2c7b3b5aa2b7109667c51cc7dee916bedd475d274070084d6",
   "kind": "cap.run.finish",
-  "prev_hash": "9d33302d39eb08f3eeaefbfbd8782604630a2b18a8dd56785ac11a52616e8edd",
+  "prev_hash": "dc4d0ddc49ca66cb6098a73373897e4363663685e6bdf0453fb35b63779f32e0",
   "seq": 53,
-  "ts": "2026-09-24T04:20:48.220520+00:00"
+  "ts": "2026-09-24T06:45:49.357200+00:00"
  },
  {
   "actor": "agent",
@@ -1320,7 +1322,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "16d8d1599eb5"
+    "run_id": "d62823b813ed"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1328,13 +1330,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "16d8d1599eb5"
+   "run_id": "d62823b813ed"
   },
-  "hash": "c9fca9b2dba9b50de03a82a5862558a4ab2537816ac81d038a79e4594a61730e",
+  "hash": "d6975cdc0a1966fd309f3e0cc6b5f29b8965d18cc755c24b590a13905f0d3c73",
   "kind": "cap.run.start",
-  "prev_hash": "97e7bec549a47d7798b27b6ad5154405c3380b9f0ddab1e337bfb72405a010aa",
+  "prev_hash": "c7d573035c2eccc2c7b3b5aa2b7109667c51cc7dee916bedd475d274070084d6",
   "seq": 54,
-  "ts": "2026-09-24T04:20:48.228590+00:00"
+  "ts": "2026-09-24T06:45:49.375449+00:00"
  },
  {
   "actor": "agent",
@@ -1344,36 +1346,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "16d8d1599eb5"
+    "run_id": "d62823b813ed"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "16d8d1599eb5"
+   "run_id": "d62823b813ed"
   },
-  "hash": "52f1272b1bea77026c52fbba915b4b15f80bb1c98444dba55dd43e5ead84fa5c",
+  "hash": "ec4c195beac5d1c7817526e414df92c04e21e3eadcaa404a807ae4176e0efb7c",
   "kind": "gate.decision",
-  "prev_hash": "c9fca9b2dba9b50de03a82a5862558a4ab2537816ac81d038a79e4594a61730e",
+  "prev_hash": "d6975cdc0a1966fd309f3e0cc6b5f29b8965d18cc755c24b590a13905f0d3c73",
   "seq": 55,
-  "ts": "2026-09-24T04:20:48.228701+00:00"
+  "ts": "2026-09-24T06:45:49.375564+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
+   "duration_ms": 2,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "16d8d1599eb5",
+   "run_id": "d62823b813ed",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "fa484ee72c367177acacc5eecceb01a343558836c985b7d994ea02b0abdbcf11",
+  "hash": "f3b67baf51a271af9d7d42b1a358dbcc7a5ad132119342c1272e33847eac4811",
   "kind": "cap.run.finish",
-  "prev_hash": "52f1272b1bea77026c52fbba915b4b15f80bb1c98444dba55dd43e5ead84fa5c",
+  "prev_hash": "ec4c195beac5d1c7817526e414df92c04e21e3eadcaa404a807ae4176e0efb7c",
   "seq": 56,
-  "ts": "2026-09-24T04:20:48.230422+00:00"
+  "ts": "2026-09-24T06:45:49.377467+00:00"
  },
  {
   "actor": "agent",
@@ -1383,7 +1385,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "85cc213d83c1"
+    "run_id": "a2f3182a0291"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1391,13 +1393,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "85cc213d83c1"
+   "run_id": "a2f3182a0291"
   },
-  "hash": "fb0f88295f8aeadf6721ef707628661421df5d7a35cb99673af88abb6a8a6fff",
+  "hash": "9e4b4b855357970dbf1c48e7196a924bf5c9799de511a02cf311c746cc6ab321",
   "kind": "cap.run.start",
-  "prev_hash": "fa484ee72c367177acacc5eecceb01a343558836c985b7d994ea02b0abdbcf11",
+  "prev_hash": "f3b67baf51a271af9d7d42b1a358dbcc7a5ad132119342c1272e33847eac4811",
   "seq": 57,
-  "ts": "2026-09-24T04:20:48.231871+00:00"
+  "ts": "2026-09-24T06:45:49.378931+00:00"
  },
  {
   "actor": "agent",
@@ -1407,36 +1409,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "85cc213d83c1"
+    "run_id": "a2f3182a0291"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "85cc213d83c1"
+   "run_id": "a2f3182a0291"
   },
-  "hash": "2abef75b99e716024b5cad800fb9e370017bb5596b99e4c1028d0ac1ec2b652c",
+  "hash": "fb062c4ffdeb9cd110f8c35b37248e21f4916b5e223f7669137829e8738dad67",
   "kind": "gate.decision",
-  "prev_hash": "fb0f88295f8aeadf6721ef707628661421df5d7a35cb99673af88abb6a8a6fff",
+  "prev_hash": "9e4b4b855357970dbf1c48e7196a924bf5c9799de511a02cf311c746cc6ab321",
   "seq": 58,
-  "ts": "2026-09-24T04:20:48.231969+00:00"
+  "ts": "2026-09-24T06:45:49.379035+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 4,
+   "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "85cc213d83c1",
+   "run_id": "a2f3182a0291",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2dba267be61ab814c8a6b68aff89f0259a14c0617d05371484dae6e5eca43ae7",
+  "hash": "b4d6caf0d538c47ba89d4ec8ba024a1de7c465f5a4d2dac0fbc69788cd11bf79",
   "kind": "cap.run.finish",
-  "prev_hash": "2abef75b99e716024b5cad800fb9e370017bb5596b99e4c1028d0ac1ec2b652c",
+  "prev_hash": "fb062c4ffdeb9cd110f8c35b37248e21f4916b5e223f7669137829e8738dad67",
   "seq": 59,
-  "ts": "2026-09-24T04:20:48.236495+00:00"
+  "ts": "2026-09-24T06:45:49.380605+00:00"
  },
  {
   "actor": "agent",
@@ -1446,7 +1448,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4f517d70fd94"
+    "run_id": "f28ed15f5268"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1454,13 +1456,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4f517d70fd94"
+   "run_id": "f28ed15f5268"
   },
-  "hash": "1d8761ac081b8860fe170f6480b0df939fa19a70899f2a87625743296047a247",
+  "hash": "2fedba0f992ba7921bb07e9b7a812d1c55d900d61f864fc9b69e2d5082326171",
   "kind": "cap.run.start",
-  "prev_hash": "2dba267be61ab814c8a6b68aff89f0259a14c0617d05371484dae6e5eca43ae7",
+  "prev_hash": "b4d6caf0d538c47ba89d4ec8ba024a1de7c465f5a4d2dac0fbc69788cd11bf79",
   "seq": 60,
-  "ts": "2026-09-24T04:20:48.244725+00:00"
+  "ts": "2026-09-24T06:45:49.381966+00:00"
  },
  {
   "actor": "agent",
@@ -1470,36 +1472,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4f517d70fd94"
+    "run_id": "f28ed15f5268"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4f517d70fd94"
+   "run_id": "f28ed15f5268"
   },
-  "hash": "d146780cbb0cb2134605c09bfb323c0a078b4303c10e7d98a8bac94e191de298",
+  "hash": "67d15ab6ff75399123c4db8adb9c7c2b7c576d2e12d4bfc3a70c29a215ce051e",
   "kind": "gate.decision",
-  "prev_hash": "1d8761ac081b8860fe170f6480b0df939fa19a70899f2a87625743296047a247",
+  "prev_hash": "2fedba0f992ba7921bb07e9b7a812d1c55d900d61f864fc9b69e2d5082326171",
   "seq": 61,
-  "ts": "2026-09-24T04:20:48.244824+00:00"
+  "ts": "2026-09-24T06:45:49.382055+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "e4bbfc6382983048",
-   "run_id": "4f517d70fd94",
+   "result_hash": "7f5488d3143418ac",
+   "run_id": "f28ed15f5268",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0ead7f3412a9a620d488f2b542b3e27c1dbb26db72d63bb7ed24e7d3bf781a1b",
+  "hash": "d1c0c828dce6461fb459913a4b7f9a7c664d14416d22b163378be102ef8f7d99",
   "kind": "cap.run.finish",
-  "prev_hash": "d146780cbb0cb2134605c09bfb323c0a078b4303c10e7d98a8bac94e191de298",
+  "prev_hash": "67d15ab6ff75399123c4db8adb9c7c2b7c576d2e12d4bfc3a70c29a215ce051e",
   "seq": 62,
-  "ts": "2026-09-24T04:20:48.246408+00:00"
+  "ts": "2026-09-24T06:45:49.383619+00:00"
  },
  {
   "actor": "agent",
@@ -1509,7 +1511,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "47c28c4bed39"
+    "run_id": "2ea83c4c3283"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1517,13 +1519,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "47c28c4bed39"
+   "run_id": "2ea83c4c3283"
   },
-  "hash": "3c110c8e8fe01dfd017b255ad7a6695264805af2afe19153f604292e63c469cf",
+  "hash": "8b7c2bf2f9d5ab6172e71a4c12383c916391a08b7c38d67b1e6c283498a53ee9",
   "kind": "cap.run.start",
-  "prev_hash": "0ead7f3412a9a620d488f2b542b3e27c1dbb26db72d63bb7ed24e7d3bf781a1b",
+  "prev_hash": "d1c0c828dce6461fb459913a4b7f9a7c664d14416d22b163378be102ef8f7d99",
   "seq": 63,
-  "ts": "2026-09-24T04:20:48.247768+00:00"
+  "ts": "2026-09-24T06:45:49.384966+00:00"
  },
  {
   "actor": "agent",
@@ -1533,36 +1535,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "47c28c4bed39"
+    "run_id": "2ea83c4c3283"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "47c28c4bed39"
+   "run_id": "2ea83c4c3283"
   },
-  "hash": "4031dc5a1cdc9b5b4e5815ea760ff137e35b545c2158f354401c9261ceb8a05a",
+  "hash": "d34ca3ab8da6180f2d2988dddb88ef56d135ea97621af38f1971488aa13eff00",
   "kind": "gate.decision",
-  "prev_hash": "3c110c8e8fe01dfd017b255ad7a6695264805af2afe19153f604292e63c469cf",
+  "prev_hash": "8b7c2bf2f9d5ab6172e71a4c12383c916391a08b7c38d67b1e6c283498a53ee9",
   "seq": 64,
-  "ts": "2026-09-24T04:20:48.247888+00:00"
+  "ts": "2026-09-24T06:45:49.385079+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "e4bbfc6382983048",
-   "run_id": "47c28c4bed39",
+   "result_hash": "7f5488d3143418ac",
+   "run_id": "2ea83c4c3283",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8b0d2596ffd10de1795f303835627bd1ec25168e2c18f108166a511634c985a1",
+  "hash": "ec1cd6ef625b0f94ffd6bd72dc6dcfd5ad72771b18006b18843bfa78e0af7267",
   "kind": "cap.run.finish",
-  "prev_hash": "4031dc5a1cdc9b5b4e5815ea760ff137e35b545c2158f354401c9261ceb8a05a",
+  "prev_hash": "d34ca3ab8da6180f2d2988dddb88ef56d135ea97621af38f1971488aa13eff00",
   "seq": 65,
-  "ts": "2026-09-24T04:20:48.249459+00:00"
+  "ts": "2026-09-24T06:45:49.386639+00:00"
  },
  {
   "actor": "agent",
@@ -1572,7 +1574,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "065b2efd8885"
+    "run_id": "f35d367acefd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1580,13 +1582,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "065b2efd8885"
+   "run_id": "f35d367acefd"
   },
-  "hash": "c241fbc5850c34b714406e4b327213f4768aaeb58faddc8f82fea25ed2ed1545",
+  "hash": "6fc689f82e1fe6b61082aaa1a0979c81bc3ebf42500c8043a2c73fcbe9d8adcd",
   "kind": "cap.run.start",
-  "prev_hash": "8b0d2596ffd10de1795f303835627bd1ec25168e2c18f108166a511634c985a1",
+  "prev_hash": "ec1cd6ef625b0f94ffd6bd72dc6dcfd5ad72771b18006b18843bfa78e0af7267",
   "seq": 66,
-  "ts": "2026-09-24T04:20:48.279042+00:00"
+  "ts": "2026-09-24T06:45:49.415374+00:00"
  },
  {
   "actor": "agent",
@@ -1596,36 +1598,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "065b2efd8885"
+    "run_id": "f35d367acefd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "065b2efd8885"
+   "run_id": "f35d367acefd"
   },
-  "hash": "f61272c62e7663cc34b577838261ccebb248e874319add85386e4938a63ac985",
+  "hash": "fd663ddfe7467b6c8676df64f23ec86937bb427db3fba315df5dbee18636598a",
   "kind": "gate.decision",
-  "prev_hash": "c241fbc5850c34b714406e4b327213f4768aaeb58faddc8f82fea25ed2ed1545",
+  "prev_hash": "6fc689f82e1fe6b61082aaa1a0979c81bc3ebf42500c8043a2c73fcbe9d8adcd",
   "seq": 67,
-  "ts": "2026-09-24T04:20:48.279144+00:00"
+  "ts": "2026-09-24T06:45:49.415491+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "22a7102210cb9929",
-   "run_id": "065b2efd8885",
+   "result_hash": "d46833646d0bf346",
+   "run_id": "f35d367acefd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "7c38dc5d6bf00134a9ac92ff4ee296c9d6d89ed06080f37786a0ecf2bd1261a7",
+  "hash": "b8a4539b71bda5cec1492bb7d995b6b4c5f99c9c6bc24b283b8f06c239e8d913",
   "kind": "cap.run.finish",
-  "prev_hash": "f61272c62e7663cc34b577838261ccebb248e874319add85386e4938a63ac985",
+  "prev_hash": "fd663ddfe7467b6c8676df64f23ec86937bb427db3fba315df5dbee18636598a",
   "seq": 68,
-  "ts": "2026-09-24T04:20:48.281430+00:00"
+  "ts": "2026-09-24T06:45:49.417844+00:00"
  },
  {
   "actor": "agent",
@@ -1635,7 +1637,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "8d28fd150966"
+    "run_id": "7fc7c5bcdf7a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1643,13 +1645,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8d28fd150966"
+   "run_id": "7fc7c5bcdf7a"
   },
-  "hash": "065e3fe980e8d8b12ca96af4a5220cd75b8272450a09e9f877747c8f0eecdc2f",
+  "hash": "f74c9fc28b49afce735e8a26b75638a7f2113cfe1b23eb3b7fa9187781dafaf6",
   "kind": "cap.run.start",
-  "prev_hash": "7c38dc5d6bf00134a9ac92ff4ee296c9d6d89ed06080f37786a0ecf2bd1261a7",
+  "prev_hash": "b8a4539b71bda5cec1492bb7d995b6b4c5f99c9c6bc24b283b8f06c239e8d913",
   "seq": 69,
-  "ts": "2026-09-24T04:20:48.358757+00:00"
+  "ts": "2026-09-24T06:45:49.500630+00:00"
  },
  {
   "actor": "agent",
@@ -1659,36 +1661,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "8d28fd150966"
+    "run_id": "7fc7c5bcdf7a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8d28fd150966"
+   "run_id": "7fc7c5bcdf7a"
   },
-  "hash": "b06d58266245e9c6c2ce8b0c95a6c1ae0167fc53b23cea009df091fb7629d22a",
+  "hash": "15f537aeab882ff104736f7e801a3e5dfe8416713387d684c3e2748d0be1a215",
   "kind": "gate.decision",
-  "prev_hash": "065e3fe980e8d8b12ca96af4a5220cd75b8272450a09e9f877747c8f0eecdc2f",
+  "prev_hash": "f74c9fc28b49afce735e8a26b75638a7f2113cfe1b23eb3b7fa9187781dafaf6",
   "seq": 70,
-  "ts": "2026-09-24T04:20:48.358963+00:00"
+  "ts": "2026-09-24T06:45:49.500826+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "c619d508277db7d0",
-   "run_id": "8d28fd150966",
+   "result_hash": "9615f9c95489a03f",
+   "run_id": "7fc7c5bcdf7a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "59af3f5a0215b95f0fe94a444dd9750ed786a0d3a1e81299d92dcefc02667d6b",
+  "hash": "608930dba3984220a1a694286bcec91ff9e5d1948d2af58dfb47bb9daa114fc2",
   "kind": "cap.run.finish",
-  "prev_hash": "b06d58266245e9c6c2ce8b0c95a6c1ae0167fc53b23cea009df091fb7629d22a",
+  "prev_hash": "15f537aeab882ff104736f7e801a3e5dfe8416713387d684c3e2748d0be1a215",
   "seq": 71,
-  "ts": "2026-09-24T04:20:48.361671+00:00"
+  "ts": "2026-09-24T06:45:49.503777+00:00"
  },
  {
   "actor": "agent",
@@ -1698,7 +1700,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "1dfe391620f4"
+    "run_id": "4f87338719fe"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1706,13 +1708,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1dfe391620f4"
+   "run_id": "4f87338719fe"
   },
-  "hash": "2f8ec7710e466a3f8a1b86e634a8abf93a73590c413410342d3ba56d48c29e7f",
+  "hash": "b82a06894bec3f5764f032f55f7d8ff4e1690282bbda5246f023ff9b9628a1de",
   "kind": "cap.run.start",
-  "prev_hash": "59af3f5a0215b95f0fe94a444dd9750ed786a0d3a1e81299d92dcefc02667d6b",
+  "prev_hash": "608930dba3984220a1a694286bcec91ff9e5d1948d2af58dfb47bb9daa114fc2",
   "seq": 72,
-  "ts": "2026-09-24T04:20:48.489855+00:00"
+  "ts": "2026-09-24T06:45:49.636482+00:00"
  },
  {
   "actor": "agent",
@@ -1722,36 +1724,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "1dfe391620f4"
+    "run_id": "4f87338719fe"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1dfe391620f4"
+   "run_id": "4f87338719fe"
   },
-  "hash": "f34dad6fdd13b001b9602091f313199ff33b19a86c06e7639276a6ae59e4f3ca",
+  "hash": "b57a60fe102e99db67d08f5e1e312b2a45d513f2682109a8881ca6ab7f9d3a41",
   "kind": "gate.decision",
-  "prev_hash": "2f8ec7710e466a3f8a1b86e634a8abf93a73590c413410342d3ba56d48c29e7f",
+  "prev_hash": "b82a06894bec3f5764f032f55f7d8ff4e1690282bbda5246f023ff9b9628a1de",
   "seq": 73,
-  "ts": "2026-09-24T04:20:48.490075+00:00"
+  "ts": "2026-09-24T06:45:49.636691+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "1dfe391620f4",
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "4f87338719fe",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f85a2b07dec3e252b13a9cb9cee2d366a9c44fccb1c5e960ee89fd2fae17f114",
+  "hash": "ea6a9f814a72f78f9d0f5151ea78fcda84f03d6a633902eb4f03594df26e8f5f",
   "kind": "cap.run.finish",
-  "prev_hash": "f34dad6fdd13b001b9602091f313199ff33b19a86c06e7639276a6ae59e4f3ca",
+  "prev_hash": "b57a60fe102e99db67d08f5e1e312b2a45d513f2682109a8881ca6ab7f9d3a41",
   "seq": 74,
-  "ts": "2026-09-24T04:20:48.494026+00:00"
+  "ts": "2026-09-24T06:45:49.640507+00:00"
  },
  {
   "actor": "agent",
@@ -1761,7 +1763,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "23ce7e95089b"
+    "run_id": "73e212235f74"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1769,13 +1771,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "23ce7e95089b"
+   "run_id": "73e212235f74"
   },
-  "hash": "19a306cc7a962eedbd90e54107a10d20808718e1d55ba224c3fadc78ed8ae24c",
+  "hash": "0e8a7e7af6878365b3d5c155b14eb882f970447813e04a17260a830e0bbcec26",
   "kind": "cap.run.start",
-  "prev_hash": "f85a2b07dec3e252b13a9cb9cee2d366a9c44fccb1c5e960ee89fd2fae17f114",
+  "prev_hash": "ea6a9f814a72f78f9d0f5151ea78fcda84f03d6a633902eb4f03594df26e8f5f",
   "seq": 75,
-  "ts": "2026-09-24T04:20:48.496841+00:00"
+  "ts": "2026-09-24T06:45:49.643244+00:00"
  },
  {
   "actor": "agent",
@@ -1785,36 +1787,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "23ce7e95089b"
+    "run_id": "73e212235f74"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "23ce7e95089b"
+   "run_id": "73e212235f74"
   },
-  "hash": "bd437611c715eb3ba7466aa2b0bdb59ba3db3815136c92a22a445962cb760241",
+  "hash": "a6908ff2ca49c53d23b75c288e9ffcdbed9c459926e26fba93d0924d25e89d17",
   "kind": "gate.decision",
-  "prev_hash": "19a306cc7a962eedbd90e54107a10d20808718e1d55ba224c3fadc78ed8ae24c",
+  "prev_hash": "0e8a7e7af6878365b3d5c155b14eb882f970447813e04a17260a830e0bbcec26",
   "seq": 76,
-  "ts": "2026-09-24T04:20:48.496945+00:00"
+  "ts": "2026-09-24T06:45:49.643357+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 2,
-   "result_hash": "e4bbfc6382983048",
-   "run_id": "23ce7e95089b",
+   "duration_ms": 1,
+   "result_hash": "7f5488d3143418ac",
+   "run_id": "73e212235f74",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2487de1614d34e9d1ccc87a8976abd5b775a8f98f0f39365b207bfec5212bc12",
+  "hash": "1be1a65f4864d9c045368841b324f892f2661466136ce495a22502da2fcf43bf",
   "kind": "cap.run.finish",
-  "prev_hash": "bd437611c715eb3ba7466aa2b0bdb59ba3db3815136c92a22a445962cb760241",
+  "prev_hash": "a6908ff2ca49c53d23b75c288e9ffcdbed9c459926e26fba93d0924d25e89d17",
   "seq": 77,
-  "ts": "2026-09-24T04:20:48.498896+00:00"
+  "ts": "2026-09-24T06:45:49.645167+00:00"
  },
  {
   "actor": "agent",
@@ -1824,7 +1826,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "8ffaa2a755ad"
+    "run_id": "901cec873691"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1832,13 +1834,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8ffaa2a755ad"
+   "run_id": "901cec873691"
   },
-  "hash": "6d65db6784ac63d059e874d68d661d21065c1bdcd261141f5d6b981877318dd5",
+  "hash": "be8db5cd017f8e562be4cd454ed4c04030ff097f5f9a3598132d1344bdc66840",
   "kind": "cap.run.start",
-  "prev_hash": "2487de1614d34e9d1ccc87a8976abd5b775a8f98f0f39365b207bfec5212bc12",
+  "prev_hash": "1be1a65f4864d9c045368841b324f892f2661466136ce495a22502da2fcf43bf",
   "seq": 78,
-  "ts": "2026-09-24T04:20:48.501175+00:00"
+  "ts": "2026-09-24T06:45:49.648033+00:00"
  },
  {
   "actor": "agent",
@@ -1848,36 +1850,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "8ffaa2a755ad"
+    "run_id": "901cec873691"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8ffaa2a755ad"
+   "run_id": "901cec873691"
   },
-  "hash": "9fb660e8f8ec2333aad371dc84426efe7b47c0ad52172a499fac854ac58015eb",
+  "hash": "f3eccf763cf3e9afc72f626389fc6c684cc784533bfd805f57ab3b616065cd89",
   "kind": "gate.decision",
-  "prev_hash": "6d65db6784ac63d059e874d68d661d21065c1bdcd261141f5d6b981877318dd5",
+  "prev_hash": "be8db5cd017f8e562be4cd454ed4c04030ff097f5f9a3598132d1344bdc66840",
   "seq": 79,
-  "ts": "2026-09-24T04:20:48.501291+00:00"
+  "ts": "2026-09-24T06:45:49.648155+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 3,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "8ffaa2a755ad",
+   "duration_ms": 4,
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "901cec873691",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "245a94e519c7c4f1eba21b85208359a05feff038ad66742c19018b8f091fbde4",
+  "hash": "0e61d5f9f79ba51799517d1ccdb79bb4b132933d4f3fadaa5852a0181d788000",
   "kind": "cap.run.finish",
-  "prev_hash": "9fb660e8f8ec2333aad371dc84426efe7b47c0ad52172a499fac854ac58015eb",
+  "prev_hash": "f3eccf763cf3e9afc72f626389fc6c684cc784533bfd805f57ab3b616065cd89",
   "seq": 80,
-  "ts": "2026-09-24T04:20:48.505104+00:00"
+  "ts": "2026-09-24T06:45:49.652021+00:00"
  },
  {
   "actor": "agent",
@@ -1887,7 +1889,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "bfc068fb02ac"
+    "run_id": "9ab8a7365379"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1895,13 +1897,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "bfc068fb02ac"
+   "run_id": "9ab8a7365379"
   },
-  "hash": "df9adcb8dd7f6842c75b10b8b83d4f4148500e306a42d9126a890410791a3350",
+  "hash": "cf9eb8a819bfdcac201fc58c4098a8bfc6671fff4a75847a8e47be6a5e0d296f",
   "kind": "cap.run.start",
-  "prev_hash": "245a94e519c7c4f1eba21b85208359a05feff038ad66742c19018b8f091fbde4",
+  "prev_hash": "0e61d5f9f79ba51799517d1ccdb79bb4b132933d4f3fadaa5852a0181d788000",
   "seq": 81,
-  "ts": "2026-09-24T04:20:48.509938+00:00"
+  "ts": "2026-09-24T06:45:49.656311+00:00"
  },
  {
   "actor": "agent",
@@ -1911,36 +1913,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "bfc068fb02ac"
+    "run_id": "9ab8a7365379"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "bfc068fb02ac"
+   "run_id": "9ab8a7365379"
   },
-  "hash": "87c65d5eb27b86a57cae116919ad5fdd3e2be5cc34890128c02919e8575805f2",
+  "hash": "a75207942f67bbd990352414e08e2170ac25fdab0fab224daa922ce9fbf8889f",
   "kind": "gate.decision",
-  "prev_hash": "df9adcb8dd7f6842c75b10b8b83d4f4148500e306a42d9126a890410791a3350",
+  "prev_hash": "cf9eb8a819bfdcac201fc58c4098a8bfc6671fff4a75847a8e47be6a5e0d296f",
   "seq": 82,
-  "ts": "2026-09-24T04:20:48.510065+00:00"
+  "ts": "2026-09-24T06:45:49.656457+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "25d8c835e2c04870",
-   "run_id": "bfc068fb02ac",
+   "result_hash": "216c10ed3e027a55",
+   "run_id": "9ab8a7365379",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c9cbfb28354dfd3eab8cf720d80a9b8630b0615fa2816304b1b7dbd433cfc479",
+  "hash": "ab5499954409f2753317cfaf659ddda55c5ea2f869c366a6fe22cf43fa51f898",
   "kind": "cap.run.finish",
-  "prev_hash": "87c65d5eb27b86a57cae116919ad5fdd3e2be5cc34890128c02919e8575805f2",
+  "prev_hash": "a75207942f67bbd990352414e08e2170ac25fdab0fab224daa922ce9fbf8889f",
   "seq": 83,
-  "ts": "2026-09-24T04:20:48.512524+00:00"
+  "ts": "2026-09-24T06:45:49.658840+00:00"
  },
  {
   "actor": "agent",
@@ -1950,7 +1952,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "14a08420e38c"
+    "run_id": "b41760f1a7d3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1958,13 +1960,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "14a08420e38c"
+   "run_id": "b41760f1a7d3"
   },
-  "hash": "dcebfe6c5a04e5c4ee9172448b16fbaf68f5d6e5ba2f7043e2356f65a71f9814",
+  "hash": "545cda79924f1d4a53bab195e8fcd176c744f5bca1e97bffd092639b736aaa95",
   "kind": "cap.run.start",
-  "prev_hash": "c9cbfb28354dfd3eab8cf720d80a9b8630b0615fa2816304b1b7dbd433cfc479",
+  "prev_hash": "ab5499954409f2753317cfaf659ddda55c5ea2f869c366a6fe22cf43fa51f898",
   "seq": 84,
-  "ts": "2026-09-24T04:20:49.052012+00:00"
+  "ts": "2026-09-24T06:45:50.123570+00:00"
  },
  {
   "actor": "agent",
@@ -1974,36 +1976,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "14a08420e38c"
+    "run_id": "b41760f1a7d3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "14a08420e38c"
+   "run_id": "b41760f1a7d3"
   },
-  "hash": "a807f49e4702d14e78f47361dd3ddb57fa08370497f548c2ac8a1046c1b2e626",
+  "hash": "3442f6268901be034406af8831a5f4a5a81e637b4b5d5b838016f6706f769376",
   "kind": "gate.decision",
-  "prev_hash": "dcebfe6c5a04e5c4ee9172448b16fbaf68f5d6e5ba2f7043e2356f65a71f9814",
+  "prev_hash": "545cda79924f1d4a53bab195e8fcd176c744f5bca1e97bffd092639b736aaa95",
   "seq": 85,
-  "ts": "2026-09-24T04:20:49.052723+00:00"
+  "ts": "2026-09-24T06:45:50.124261+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 10,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "14a08420e38c",
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "b41760f1a7d3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "09c58f6bca35b28c9f250df2870d8736e0122e4caf450c3d28ca6ba98ddfcbb1",
+  "hash": "468c70f721277bf928ca66daa7acfd5925ef85a014bcfbce7a41384795d4d19b",
   "kind": "cap.run.finish",
-  "prev_hash": "a807f49e4702d14e78f47361dd3ddb57fa08370497f548c2ac8a1046c1b2e626",
+  "prev_hash": "3442f6268901be034406af8831a5f4a5a81e637b4b5d5b838016f6706f769376",
   "seq": 86,
-  "ts": "2026-09-24T04:20:49.061969+00:00"
+  "ts": "2026-09-24T06:45:50.133535+00:00"
  },
  {
   "actor": "agent",
@@ -2013,7 +2015,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f59586cd6791"
+    "run_id": "8a2c02067ee7"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2021,13 +2023,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f59586cd6791"
+   "run_id": "8a2c02067ee7"
   },
-  "hash": "6ecec269f7ae9a900b558c6b552a636e00ff1abbe3c281f61806364087878cb7",
+  "hash": "7aff6ea2d9abf094e5128a068e097592dbe29b44a3cccc093f736bbf4781e554",
   "kind": "cap.run.start",
-  "prev_hash": "09c58f6bca35b28c9f250df2870d8736e0122e4caf450c3d28ca6ba98ddfcbb1",
+  "prev_hash": "468c70f721277bf928ca66daa7acfd5925ef85a014bcfbce7a41384795d4d19b",
   "seq": 87,
-  "ts": "2026-09-24T04:20:49.068770+00:00"
+  "ts": "2026-09-24T06:45:50.139199+00:00"
  },
  {
   "actor": "agent",
@@ -2037,36 +2039,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f59586cd6791"
+    "run_id": "8a2c02067ee7"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f59586cd6791"
+   "run_id": "8a2c02067ee7"
   },
-  "hash": "c757564a498e50726ebc4d01dc99801780b8002eed0ddc7a9cbe9bfd36290ab2",
+  "hash": "235b33e1f93a7e86564533d418c52b8187a8bfb461f630402aa988bf1c8048a3",
   "kind": "gate.decision",
-  "prev_hash": "6ecec269f7ae9a900b558c6b552a636e00ff1abbe3c281f61806364087878cb7",
+  "prev_hash": "7aff6ea2d9abf094e5128a068e097592dbe29b44a3cccc093f736bbf4781e554",
   "seq": 88,
-  "ts": "2026-09-24T04:20:49.069055+00:00"
+  "ts": "2026-09-24T06:45:50.139468+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 3,
-   "result_hash": "e4bbfc6382983048",
-   "run_id": "f59586cd6791",
+   "result_hash": "7f5488d3143418ac",
+   "run_id": "8a2c02067ee7",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "15d289d0287002e54432f7bdc713945f2e7ef200f18d063f14f1c8d9d4f3069e",
+  "hash": "6cb2a630af1cf82300a49417ca433949124989bff9715bd1c4b9cca409d39ac9",
   "kind": "cap.run.finish",
-  "prev_hash": "c757564a498e50726ebc4d01dc99801780b8002eed0ddc7a9cbe9bfd36290ab2",
+  "prev_hash": "235b33e1f93a7e86564533d418c52b8187a8bfb461f630402aa988bf1c8048a3",
   "seq": 89,
-  "ts": "2026-09-24T04:20:49.071863+00:00"
+  "ts": "2026-09-24T06:45:50.142458+00:00"
  },
  {
   "actor": "agent",
@@ -2076,7 +2078,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "5438ce0659ad"
+    "run_id": "4551c83e9c32"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2084,13 +2086,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5438ce0659ad"
+   "run_id": "4551c83e9c32"
   },
-  "hash": "286c968b028f561352e59490cc8f03db4578cc78b80effbd467ec2fb66d7137a",
+  "hash": "8f17a475b34ba52793eaff371147503c7b6c8cfe06794465efa368b9440589bf",
   "kind": "cap.run.start",
-  "prev_hash": "15d289d0287002e54432f7bdc713945f2e7ef200f18d063f14f1c8d9d4f3069e",
+  "prev_hash": "6cb2a630af1cf82300a49417ca433949124989bff9715bd1c4b9cca409d39ac9",
   "seq": 90,
-  "ts": "2026-09-24T04:20:49.075399+00:00"
+  "ts": "2026-09-24T06:45:50.147744+00:00"
  },
  {
   "actor": "agent",
@@ -2100,36 +2102,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "5438ce0659ad"
+    "run_id": "4551c83e9c32"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5438ce0659ad"
+   "run_id": "4551c83e9c32"
   },
-  "hash": "44cf945d82583c324563af270088b24e8010148f8a5dc58ec1dc739beab9bf8c",
+  "hash": "eb7fa83a422efbb52ba98724fed09dd748666e86ed70d9f72e9fd95eb91b966a",
   "kind": "gate.decision",
-  "prev_hash": "286c968b028f561352e59490cc8f03db4578cc78b80effbd467ec2fb66d7137a",
+  "prev_hash": "8f17a475b34ba52793eaff371147503c7b6c8cfe06794465efa368b9440589bf",
   "seq": 91,
-  "ts": "2026-09-24T04:20:49.075560+00:00"
+  "ts": "2026-09-24T06:45:50.147907+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 6,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "5438ce0659ad",
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "4551c83e9c32",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8fcb9c544e4e9c0bdfca3cbdeea057e50c76f91e97a6cecc15bbaa3618a27cef",
+  "hash": "864f3e53fb0201854d580376df38d50b80ef5038e8cb23c93f52a8cd480396e6",
   "kind": "cap.run.finish",
-  "prev_hash": "44cf945d82583c324563af270088b24e8010148f8a5dc58ec1dc739beab9bf8c",
+  "prev_hash": "eb7fa83a422efbb52ba98724fed09dd748666e86ed70d9f72e9fd95eb91b966a",
   "seq": 92,
-  "ts": "2026-09-24T04:20:49.081592+00:00"
+  "ts": "2026-09-24T06:45:50.153823+00:00"
  },
  {
   "actor": "agent",
@@ -2139,7 +2141,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "62f4d4c167d2"
+    "run_id": "8b19acaf3822"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2147,13 +2149,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "62f4d4c167d2"
+   "run_id": "8b19acaf3822"
   },
-  "hash": "82438febe305990b5a40b96ba39d5b8bebc5e77e3b0a3a369a327d020117a730",
+  "hash": "66531716c8327e6f13d11ffd2f70d64a800ece6b2fcc2fb15683e7582964875f",
   "kind": "cap.run.start",
-  "prev_hash": "8fcb9c544e4e9c0bdfca3cbdeea057e50c76f91e97a6cecc15bbaa3618a27cef",
+  "prev_hash": "864f3e53fb0201854d580376df38d50b80ef5038e8cb23c93f52a8cd480396e6",
   "seq": 93,
-  "ts": "2026-09-24T04:20:49.085616+00:00"
+  "ts": "2026-09-24T06:45:50.157838+00:00"
  },
  {
   "actor": "agent",
@@ -2163,36 +2165,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "62f4d4c167d2"
+    "run_id": "8b19acaf3822"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "62f4d4c167d2"
+   "run_id": "8b19acaf3822"
   },
-  "hash": "ebcee40dff6b3aa4ee00e757f462e4d5a68d22762032367f0c91d3293cd46f90",
+  "hash": "5d23fe6ad4d43f227b84599b58407acdeb400c71455e0f88d75945239cce774b",
   "kind": "gate.decision",
-  "prev_hash": "82438febe305990b5a40b96ba39d5b8bebc5e77e3b0a3a369a327d020117a730",
+  "prev_hash": "66531716c8327e6f13d11ffd2f70d64a800ece6b2fcc2fb15683e7582964875f",
   "seq": 94,
-  "ts": "2026-09-24T04:20:49.085756+00:00"
+  "ts": "2026-09-24T06:45:50.157946+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 3,
-   "result_hash": "09282fa19d847374",
-   "run_id": "62f4d4c167d2",
+   "result_hash": "018b08bebbc11d16",
+   "run_id": "8b19acaf3822",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1414e370df4d9c436535e85a8771b39127e8596729a6c65a7d76b794d18a7bb9",
+  "hash": "a884c66bec407191f69902ce491fd731704503a0028faf559de381622973fa8d",
   "kind": "cap.run.finish",
-  "prev_hash": "ebcee40dff6b3aa4ee00e757f462e4d5a68d22762032367f0c91d3293cd46f90",
+  "prev_hash": "5d23fe6ad4d43f227b84599b58407acdeb400c71455e0f88d75945239cce774b",
   "seq": 95,
-  "ts": "2026-09-24T04:20:49.089098+00:00"
+  "ts": "2026-09-24T06:45:50.161087+00:00"
  },
  {
   "actor": "agent",
@@ -2202,7 +2204,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "56802e0516cc"
+    "run_id": "a760ff4509d2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2210,13 +2212,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "56802e0516cc"
+   "run_id": "a760ff4509d2"
   },
-  "hash": "ed6268b3f5a26f697bb8845ce66b0d7e01d8756f7377d5a72e9374fef6d0f8f0",
+  "hash": "77cb7c8091c801312050f5f64356c4e461d62689e995413b74792991a8076689",
   "kind": "cap.run.start",
-  "prev_hash": "1414e370df4d9c436535e85a8771b39127e8596729a6c65a7d76b794d18a7bb9",
+  "prev_hash": "a884c66bec407191f69902ce491fd731704503a0028faf559de381622973fa8d",
   "seq": 96,
-  "ts": "2026-09-24T04:20:52.665584+00:00"
+  "ts": "2026-09-24T06:45:53.677968+00:00"
  },
  {
   "actor": "agent",
@@ -2226,36 +2228,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "56802e0516cc"
+    "run_id": "a760ff4509d2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "56802e0516cc"
+   "run_id": "a760ff4509d2"
   },
-  "hash": "5b9f485eb8cde3cf1ffb4c78e1ed863141ef3db2d8947e71f8e61050e205520a",
+  "hash": "3e8cd622116f51210891532e39945109e8120457f111b7b82cdfeaedab62b6bb",
   "kind": "gate.decision",
-  "prev_hash": "ed6268b3f5a26f697bb8845ce66b0d7e01d8756f7377d5a72e9374fef6d0f8f0",
+  "prev_hash": "77cb7c8091c801312050f5f64356c4e461d62689e995413b74792991a8076689",
   "seq": 97,
-  "ts": "2026-09-24T04:20:52.665811+00:00"
+  "ts": "2026-09-24T06:45:53.678173+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "56802e0516cc",
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "a760ff4509d2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ced7095cbadd13fc8eb05194d379d98adc25f45d984b7a44148b978266677437",
+  "hash": "e37ad62d40c5aa34ddb1d20caed9c976b3f58f03d7605cc3eb2b2c52c14707a8",
   "kind": "cap.run.finish",
-  "prev_hash": "5b9f485eb8cde3cf1ffb4c78e1ed863141ef3db2d8947e71f8e61050e205520a",
+  "prev_hash": "3e8cd622116f51210891532e39945109e8120457f111b7b82cdfeaedab62b6bb",
   "seq": 98,
-  "ts": "2026-09-24T04:20:52.670257+00:00"
+  "ts": "2026-09-24T06:45:53.682521+00:00"
  },
  {
   "actor": "agent",
@@ -2265,7 +2267,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "3e7152eb2552"
+    "run_id": "140a8431b042"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2273,13 +2275,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3e7152eb2552"
+   "run_id": "140a8431b042"
   },
-  "hash": "dc53fe70964ceb912e29760ef01809a218c9d653b09601222264d085219f5584",
+  "hash": "c04f73d7cc988ddefe8938c1eae7a2a501e553617696b2f6a6611ed6efce99db",
   "kind": "cap.run.start",
-  "prev_hash": "ced7095cbadd13fc8eb05194d379d98adc25f45d984b7a44148b978266677437",
+  "prev_hash": "e37ad62d40c5aa34ddb1d20caed9c976b3f58f03d7605cc3eb2b2c52c14707a8",
   "seq": 99,
-  "ts": "2026-09-24T04:20:52.673996+00:00"
+  "ts": "2026-09-24T06:45:53.685159+00:00"
  },
  {
   "actor": "agent",
@@ -2289,36 +2291,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "3e7152eb2552"
+    "run_id": "140a8431b042"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3e7152eb2552"
+   "run_id": "140a8431b042"
   },
-  "hash": "35936620daaf815ce683476c75aa685bb4206968dbf70e929301bb6a1ba0803b",
+  "hash": "979f2e09096a3d1f2425ee998a6e30bff26e8b692e2e01136700cc6f02a49a3a",
   "kind": "gate.decision",
-  "prev_hash": "dc53fe70964ceb912e29760ef01809a218c9d653b09601222264d085219f5584",
+  "prev_hash": "c04f73d7cc988ddefe8938c1eae7a2a501e553617696b2f6a6611ed6efce99db",
   "seq": 100,
-  "ts": "2026-09-24T04:20:52.674092+00:00"
+  "ts": "2026-09-24T06:45:53.685250+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "e4bbfc6382983048",
-   "run_id": "3e7152eb2552",
+   "result_hash": "7f5488d3143418ac",
+   "run_id": "140a8431b042",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "218be984eb6e0f4f54410ce4f77c480b1c0d70680acbdc175f23fddff7aa04a5",
+  "hash": "7f4d58904b9cfbda69a8b3dee583991b4a566cfddd1d0821ab421aba4195352b",
   "kind": "cap.run.finish",
-  "prev_hash": "35936620daaf815ce683476c75aa685bb4206968dbf70e929301bb6a1ba0803b",
+  "prev_hash": "979f2e09096a3d1f2425ee998a6e30bff26e8b692e2e01136700cc6f02a49a3a",
   "seq": 101,
-  "ts": "2026-09-24T04:20:52.675821+00:00"
+  "ts": "2026-09-24T06:45:53.686807+00:00"
  },
  {
   "actor": "agent",
@@ -2328,7 +2330,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "081d95c47474"
+    "run_id": "6326d3694514"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2336,13 +2338,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "081d95c47474"
+   "run_id": "6326d3694514"
   },
-  "hash": "cb91789b7f8d3164257543032c08eeed602f2d9fb990e3dacbbe7cd911aaf6eb",
+  "hash": "4b8d71b4d7d1c0b28841210d06f4c1e0c3ace5a0c8edc82ed470ab834075113e",
   "kind": "cap.run.start",
-  "prev_hash": "218be984eb6e0f4f54410ce4f77c480b1c0d70680acbdc175f23fddff7aa04a5",
+  "prev_hash": "7f4d58904b9cfbda69a8b3dee583991b4a566cfddd1d0821ab421aba4195352b",
   "seq": 102,
-  "ts": "2026-09-24T04:20:52.677986+00:00"
+  "ts": "2026-09-24T06:45:53.688890+00:00"
  },
  {
   "actor": "agent",
@@ -2352,36 +2354,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "081d95c47474"
+    "run_id": "6326d3694514"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "081d95c47474"
+   "run_id": "6326d3694514"
   },
-  "hash": "c1b90e8483df637891b8c41bb27145ad93ab4f66ad5b0cc8641efe5354be4d9e",
+  "hash": "8af0fcbc285c5c0f85df11572a2d0fb4aefd3efa71200592fcc7214594354661",
   "kind": "gate.decision",
-  "prev_hash": "cb91789b7f8d3164257543032c08eeed602f2d9fb990e3dacbbe7cd911aaf6eb",
+  "prev_hash": "4b8d71b4d7d1c0b28841210d06f4c1e0c3ace5a0c8edc82ed470ab834075113e",
   "seq": 103,
-  "ts": "2026-09-24T04:20:52.678096+00:00"
+  "ts": "2026-09-24T06:45:53.688993+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "676e8ed466cbbdc6",
-   "run_id": "081d95c47474",
+   "result_hash": "10d2159cbe9eee3c",
+   "run_id": "6326d3694514",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b6a8edc7dc598025f4cf0a0312a036ad7f38422c258e1f52efe02bf32cede94d",
+  "hash": "41742f5a888add150bb311d0077718196bbbebc2ae39e99b8b7f803f4b494307",
   "kind": "cap.run.finish",
-  "prev_hash": "c1b90e8483df637891b8c41bb27145ad93ab4f66ad5b0cc8641efe5354be4d9e",
+  "prev_hash": "8af0fcbc285c5c0f85df11572a2d0fb4aefd3efa71200592fcc7214594354661",
   "seq": 104,
-  "ts": "2026-09-24T04:20:52.682079+00:00"
+  "ts": "2026-09-24T06:45:53.693110+00:00"
  },
  {
   "actor": "agent",
@@ -2391,7 +2393,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "35bb0cf5b22f"
+    "run_id": "4e02419570da"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2399,13 +2401,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "35bb0cf5b22f"
+   "run_id": "4e02419570da"
   },
-  "hash": "19d976829ab24e98fa7f89f6ba7e569abed886459c2efc96fac4e80aade650de",
+  "hash": "e05e0e190855453323801ca8c25e9abde3a0d1e663499a6cdac6d2a6af08bd1e",
   "kind": "cap.run.start",
-  "prev_hash": "b6a8edc7dc598025f4cf0a0312a036ad7f38422c258e1f52efe02bf32cede94d",
+  "prev_hash": "41742f5a888add150bb311d0077718196bbbebc2ae39e99b8b7f803f4b494307",
   "seq": 105,
-  "ts": "2026-09-24T04:20:52.684902+00:00"
+  "ts": "2026-09-24T06:45:53.696524+00:00"
  },
  {
   "actor": "agent",
@@ -2415,36 +2417,36 @@ Tìm trên mạng datasheet mới nhất của SEN42
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "35bb0cf5b22f"
+    "run_id": "4e02419570da"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "35bb0cf5b22f"
+   "run_id": "4e02419570da"
   },
-  "hash": "6157c5ae7ca1e96d3fb90494dbb6bcc70f04e78772e789c2daf8f9a098192d58",
+  "hash": "af87bebc3ff9454f8f3338184c295c8f00bd9061b663af9f5ff38ef9a740cedc",
   "kind": "gate.decision",
-  "prev_hash": "19d976829ab24e98fa7f89f6ba7e569abed886459c2efc96fac4e80aade650de",
+  "prev_hash": "e05e0e190855453323801ca8c25e9abde3a0d1e663499a6cdac6d2a6af08bd1e",
   "seq": 106,
-  "ts": "2026-09-24T04:20:52.684994+00:00"
+  "ts": "2026-09-24T06:45:53.696623+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "4716f46bf940efb7",
-   "run_id": "35bb0cf5b22f",
+   "result_hash": "d67dc1c0167f67c2",
+   "run_id": "4e02419570da",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d728d129b3f88688a373697b221cf6704b90a0b514cd38ed0c4faad845824b26",
+  "hash": "9a7a0c9e1836f2e2473e0364d087ec35daa11142d61c0fb7ed9038c7860b725e",
   "kind": "cap.run.finish",
-  "prev_hash": "6157c5ae7ca1e96d3fb90494dbb6bcc70f04e78772e789c2daf8f9a098192d58",
+  "prev_hash": "af87bebc3ff9454f8f3338184c295c8f00bd9061b663af9f5ff38ef9a740cedc",
   "seq": 107,
-  "ts": "2026-09-24T04:20:52.687515+00:00"
+  "ts": "2026-09-24T06:45:53.699076+00:00"
  }
 ]
 ```
@@ -2510,13 +2512,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "kind": "gap",
     "text": "Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_16e7e7b0.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_69da9340.",
     "source_cap": "search.web",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T04:20:47.791790+00:00",
+    "created_at": "2026-09-24T06:45:48.938187+00:00",
     "answered_at": null
    }
   ]
@@ -2537,7 +2539,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
   "so_dong": 33,
   "dong": [
    {
-    "id": "0447ed6806fb",
+    "id": "f441506680f5",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -2550,10 +2552,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:45.739881+00:00"
+    "at": "2026-09-24T06:45:46.592139+00:00"
    },
    {
-    "id": "6529f104a809",
+    "id": "5891a1f987cd",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2566,10 +2568,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:45.753397+00:00"
+    "at": "2026-09-24T06:45:46.609415+00:00"
    },
    {
-    "id": "4d0510807f7b",
+    "id": "b31cf80a7bf9",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2582,10 +2584,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:45.756529+00:00"
+    "at": "2026-09-24T06:45:46.612613+00:00"
    },
    {
-    "id": "cf4ca72909b2",
+    "id": "361da1490ec9",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2598,10 +2600,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:45.786027+00:00"
+    "at": "2026-09-24T06:45:46.642992+00:00"
    },
    {
-    "id": "32aa79bfd6db",
+    "id": "250375ee2de2",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2614,10 +2616,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:46.027943+00:00"
+    "at": "2026-09-24T06:45:46.894611+00:00"
    },
    {
-    "id": "402d069cd354",
+    "id": "d87318f5f22f",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -2630,10 +2632,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:46.052360+00:00"
+    "at": "2026-09-24T06:45:46.920437+00:00"
    },
    {
-    "id": "91708c356584",
+    "id": "337e6f17a7e8",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -2646,10 +2648,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:47.762679+00:00"
+    "at": "2026-09-24T06:45:48.806928+00:00"
    },
    {
-    "id": "8912900e9b36",
+    "id": "55f8d942a4ba",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -2662,10 +2664,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:47.767569+00:00"
+    "at": "2026-09-24T06:45:48.810338+00:00"
    },
    {
-    "id": "b75d496767d9",
+    "id": "332ccc0ea9e9",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -2678,10 +2680,26 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:47.776103+00:00"
+    "at": "2026-09-24T06:45:48.817210+00:00"
    },
    {
-    "id": "d3f7f3683e44",
+    "id": "1337d93e2a57",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T06:45:48.931560+00:00"
+   },
+   {
+    "id": "4bceaa9e51e1",
     "gate": "*",
     "action_cap": "search.web",
     "risk": "R0",
@@ -2694,10 +2712,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:47.786919+00:00"
+    "at": "2026-09-24T06:45:48.934412+00:00"
    },
    {
-    "id": "c3d1b6fd0e3b",
+    "id": "10ed47fd5bb7",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -2710,26 +2728,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:47.822067+00:00"
+    "at": "2026-09-24T06:45:48.975294+00:00"
    },
    {
-    "id": "379a3e34793b",
-    "gate": "*",
-    "action_cap": "view.artifacts",
-    "risk": "R0",
-    "autonomy_level": "A2",
-    "decision": "APPROVE",
-    "by": "agent",
-    "rule": "R0",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "evidence": null,
-    "features": "{}",
-    "human_answer": null,
-    "undone_at": null,
-    "at": "2026-09-24T04:20:47.881477+00:00"
-   },
-   {
-    "id": "f865f8d46a1e",
+    "id": "56a77a4be880",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2742,10 +2744,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.206347+00:00"
+    "at": "2026-09-24T06:45:49.118783+00:00"
    },
    {
-    "id": "9fb995732e49",
+    "id": "5b144258a8b2",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -2758,10 +2760,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.212248+00:00"
+    "at": "2026-09-24T06:45:49.305806+00:00"
    },
    {
-    "id": "61c2bf424cfe",
+    "id": "44d12aa70395",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2774,10 +2776,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.218830+00:00"
+    "at": "2026-09-24T06:45:49.355352+00:00"
    },
    {
-    "id": "16d8d1599eb5",
+    "id": "d62823b813ed",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2790,10 +2792,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.229170+00:00"
+    "at": "2026-09-24T06:45:49.376109+00:00"
    },
    {
-    "id": "85cc213d83c1",
+    "id": "a2f3182a0291",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2806,10 +2808,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.232347+00:00"
+    "at": "2026-09-24T06:45:49.379421+00:00"
    },
    {
-    "id": "4f517d70fd94",
+    "id": "f28ed15f5268",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2822,10 +2824,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.245207+00:00"
+    "at": "2026-09-24T06:45:49.382429+00:00"
    },
    {
-    "id": "47c28c4bed39",
+    "id": "2ea83c4c3283",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2838,10 +2840,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.248260+00:00"
+    "at": "2026-09-24T06:45:49.385433+00:00"
    },
    {
-    "id": "065b2efd8885",
+    "id": "f35d367acefd",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2854,10 +2856,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.279518+00:00"
+    "at": "2026-09-24T06:45:49.415891+00:00"
    },
    {
-    "id": "8d28fd150966",
+    "id": "7fc7c5bcdf7a",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2870,10 +2872,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.359610+00:00"
+    "at": "2026-09-24T06:45:49.501304+00:00"
    },
    {
-    "id": "1dfe391620f4",
+    "id": "4f87338719fe",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2886,10 +2888,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.490775+00:00"
+    "at": "2026-09-24T06:45:49.637331+00:00"
    },
    {
-    "id": "23ce7e95089b",
+    "id": "73e212235f74",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2902,10 +2904,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.497454+00:00"
+    "at": "2026-09-24T06:45:49.643908+00:00"
    },
    {
-    "id": "8ffaa2a755ad",
+    "id": "901cec873691",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2918,10 +2920,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.501746+00:00"
+    "at": "2026-09-24T06:45:49.648649+00:00"
    },
    {
-    "id": "bfc068fb02ac",
+    "id": "9ab8a7365379",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2934,10 +2936,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:48.510504+00:00"
+    "at": "2026-09-24T06:45:49.656905+00:00"
    },
    {
-    "id": "14a08420e38c",
+    "id": "b41760f1a7d3",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2950,10 +2952,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:49.054162+00:00"
+    "at": "2026-09-24T06:45:50.125876+00:00"
    },
    {
-    "id": "f59586cd6791",
+    "id": "8a2c02067ee7",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2966,10 +2968,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:49.069690+00:00"
+    "at": "2026-09-24T06:45:50.140144+00:00"
    },
    {
-    "id": "5438ce0659ad",
+    "id": "4551c83e9c32",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2982,10 +2984,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:49.076173+00:00"
+    "at": "2026-09-24T06:45:50.148621+00:00"
    },
    {
-    "id": "62f4d4c167d2",
+    "id": "8b19acaf3822",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2998,10 +3000,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:49.086359+00:00"
+    "at": "2026-09-24T06:45:50.158475+00:00"
    },
    {
-    "id": "56802e0516cc",
+    "id": "a760ff4509d2",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3014,10 +3016,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:52.666518+00:00"
+    "at": "2026-09-24T06:45:53.678791+00:00"
    },
    {
-    "id": "3e7152eb2552",
+    "id": "140a8431b042",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3030,10 +3032,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:52.674504+00:00"
+    "at": "2026-09-24T06:45:53.685608+00:00"
    },
    {
-    "id": "081d95c47474",
+    "id": "6326d3694514",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3046,10 +3048,10 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:52.678562+00:00"
+    "at": "2026-09-24T06:45:53.689392+00:00"
    },
    {
-    "id": "35bb0cf5b22f",
+    "id": "4e02419570da",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3062,7 +3064,7 @@ Tìm trên mạng datasheet mới nhất của SEN42
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:52.685446+00:00"
+    "at": "2026-09-24T06:45:53.697033+00:00"
    }
   ]
  },
@@ -3130,14 +3132,14 @@ Tìm trên mạng datasheet mới nhất của SEN42
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_16e7e7b04c1b",
+    "id": "r_69da93409b95",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_16e7e7b04c1b\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"question\": \"datasheet mới nhất của SEN42\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"SEN42\"], \"_text\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"text\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_69da93409b95\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"chip\": \"SEN42\", \"question\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"SEN42\"], \"_text\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}, \"text\": \"Tìm trên mạng datasheet mới nhất của SEN42\"}",
     "state": "failed",
     "working": null,
     "report": "{\"nguon_chuoi\": \"mẫu: Tìm tài liệu / linh kiện (DEV-208)\", \"state\": \"failed\", \"done\": [], \"waiting\": [{\"id\": \"n3\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n1\"}], \"skipped\": [{\"id\": \"n2\", \"cap\": \"search.fetch\", \"vi\": \"chờ nút n1\"}], \"failed\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"error\": {\"eide_code\": \"E4001\", \"name\": \"TOOL_MISSING\", \"tool\": \"search provider\", \"providers\": [\"searxng\", \"brave\", \"tavily\", \"google\"], \"alternative\": \"search.vendor\", \"message\": \"Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.\"}, \"bat_buoc\": true}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T04:20:47.784193+00:00",
+    "started_at": "2026-09-24T06:45:48.931400+00:00",
     "finished_at": null
    }
   ]
@@ -3168,13 +3170,13 @@ Tìm trên mạng datasheet mới nhất của SEN42
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_1252d6c2be9d",
+    "id": "s_848d3bd6e299",
     "project": "mat-mang-khi-tim-tai-lieu",
-    "opened_at": "2026-09-24T04:20:45.744139+00:00",
+    "opened_at": "2026-09-24T06:45:46.596485+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Tìm trên mạng datasheet mới nhất của SEN42\", \"at\": \"2026-09-24T04:20:46.035149+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_16e7e7b0 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T04:20:47.823490+00:00\", \"run_id\": \"r_16e7e7b04c1b\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Tìm trên mạng datasheet mới nhất của SEN42\", \"at\": \"2026-09-24T06:45:46.903289+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_69da9340 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T06:45:48.976529+00:00\", \"run_id\": \"r_69da93409b95\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -3208,7 +3210,7 @@ index/
 ```
 # mất mạng khi tìm tài liệu
 
-- 2026-09-24 11:20 — tạo dự án từ lệnh: "mất mạng khi tìm tài liệu"
+- 2026-09-24 13:45 — tạo dự án từ lệnh: "mất mạng khi tìm tài liệu"
 
 ```
 
@@ -3299,7 +3301,7 @@ escalation:
 project:
   id: mat-mang-khi-tim-tai-lieu
   name: mất mạng khi tìm tài liệu
-  created: '2026-09-24T04:20:45.529143+00:00'
+  created: '2026-09-24T06:45:46.338487+00:00'
   text: mất mạng khi tìm tài liệu
 target:
   chip: null
@@ -3490,7 +3492,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “mất mạng khi tìm tài liệu”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3511,14 +3513,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Tìm trên mạng datasheet mới nhất của SEN42
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 6.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
-Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: Tìm trên mạng datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0010 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -3536,15 +3538,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_1252d6c2be9d
-Mở lúc	24/09 04:20:45
+Phiên	s_848d3bd6e299
+Mở lúc	24/09 06:45:46
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -3570,15 +3572,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_1252d6c2be9d
-Mở lúc	24/09 04:20:45
+Phiên	s_848d3bd6e299
+Mở lúc	24/09 06:45:46
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -3591,14 +3593,14 @@ Số lời gọi	1
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.3 s)*:
+**Tác tử trả lời** *(sau 2.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
-Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: Tìm trên mạng datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0010 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -3616,15 +3618,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_1252d6c2be9d
-Mở lúc	24/09 04:20:45
+Phiên	s_848d3bd6e299
+Mở lúc	24/09 06:45:46
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -3650,7 +3652,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3673,14 +3675,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 6.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
-Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: Tìm trên mạng datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0010 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -3698,15 +3700,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_1252d6c2be9d
-Mở lúc	24/09 04:20:45
+Phiên	s_848d3bd6e299
+Mở lúc	24/09 06:45:46
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -3734,15 +3736,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_1252d6c2be9d
-Mở lúc	24/09 04:20:45
+Phiên	s_848d3bd6e299
+Mở lúc	24/09 06:45:46
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```
@@ -3757,14 +3759,14 @@ Số lời gọi	1
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC072/buoc-03.png
 
-**Tác tử trả lời** *(sau 2.3 s)*:
+**Tác tử trả lời** *(sau 2.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mat-mang-khi-tim-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
-Chi phí mô hình: 0.0009 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Tìm trên mạng datasheet mới nhất của SEN42  Đã nhận (ý hiểu: `search.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Tìm trên mạng datasheet mới nhất của SEN42  bước 1/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 0/3 bước, 1 bước hỏng (xem Nhật ký)  Ý HIỂU  ·  chat.restate  Tôi hiểu là search.ask: Tìm trên mạng datasheet mới nhất của SEN42. Tôi sẽ search.web, search.fetch, chat.report_back.  1. `search.web`  2. `search.fetch`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `search.web` HỎNG — E4001: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 12 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, chat.orchestrate, chat.restate
+Chi phí mô hình: 0.0010 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
 **Màn đang mở — `Main`:**
@@ -3782,15 +3784,15 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_1252d6c2be9d
-Mở lúc	24/09 04:20:45
+Phiên	s_848d3bd6e299
+Mở lúc	24/09 06:45:46
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0009 USD
+Hôm nay	0.0010 USD
 Hạn ngày	5.00 USD
 Số lời gọi	1
 ```

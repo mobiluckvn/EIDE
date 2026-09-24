@@ -14,7 +14,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2508 tok · ra 117 tok · 1747 ms · 0.001045 USD
+- dừng: `stop` · vào 2508 tok · ra 102 tok · 1933 ms · 0.001007 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -115,7 +115,6 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
 {
   "intent": "search.ask",
   "slots": {
-    "chip": "AMS1117-3.3",
     "question": "Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế"
   },
   "is_big": false,
@@ -152,7 +151,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "1b9fd778c2ab"
+    "run_id": "d253dcea7aa6"
    },
    "decision": {
     "decision": "APPROVE",
@@ -160,13 +159,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1b9fd778c2ab"
+   "run_id": "d253dcea7aa6"
   },
-  "hash": "d50d6c72a43fca58e80203912b58f8620f43dd243bfedc8c7ddac5d7639bdb22",
+  "hash": "e716c906c4cd2bee5e8f346105c72d2c5c5b2dc239cc7a13da5b33f4dbdcf3ca",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T03:59:12.103717+00:00"
+  "ts": "2026-09-24T06:21:44.163231+00:00"
  },
  {
   "actor": "agent",
@@ -176,52 +175,52 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "1b9fd778c2ab"
+    "run_id": "d253dcea7aa6"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1b9fd778c2ab"
+   "run_id": "d253dcea7aa6"
   },
-  "hash": "d73be76450a1ad90fa3adf885699828324d8bbf880a292b9ee12db2248e9f841",
+  "hash": "d95654ac82fe68533667f828b7c2472b767b9527ba582460e2a3ac01c1b64683",
   "kind": "gate.decision",
-  "prev_hash": "d50d6c72a43fca58e80203912b58f8620f43dd243bfedc8c7ddac5d7639bdb22",
+  "prev_hash": "e716c906c4cd2bee5e8f346105c72d2c5c5b2dc239cc7a13da5b33f4dbdcf3ca",
   "seq": 2,
-  "ts": "2026-09-24T03:59:12.104285+00:00"
+  "ts": "2026-09-24T06:21:44.165418+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "1b9fd778c2ab"
+    "run_id": "d253dcea7aa6"
    },
    "project": "kiem-tra-vong-doi-linh-kien",
-   "session_id": "s_fe6a1a05f9be"
+   "session_id": "s_960790224135"
   },
-  "hash": "55a8cbde3cb35a3b01cd611b060d4c2331d4c968fc564d50d79cf2316ea1b032",
+  "hash": "0e61dbda1093620af441e0ed90fe157b9d8ed5bc09d14cac6a30c5e16266ab34",
   "kind": "session.open",
-  "prev_hash": "d73be76450a1ad90fa3adf885699828324d8bbf880a292b9ee12db2248e9f841",
+  "prev_hash": "d95654ac82fe68533667f828b7c2472b767b9527ba582460e2a3ac01c1b64683",
   "seq": 3,
-  "ts": "2026-09-24T03:59:12.110364+00:00"
+  "ts": "2026-09-24T06:21:44.172310+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "c4be1d6124de3522",
-   "run_id": "1b9fd778c2ab",
+   "duration_ms": 25,
+   "result_hash": "3367087d2b2f84c8",
+   "run_id": "d253dcea7aa6",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b014aee36fc11708ea2b8fd67b980a60228480a53c565352f32e5f72fe7a4fdf",
+  "hash": "59e89252325a4da9af7c9099c493d86d78e8e3f43b766c2676d202c09b574051",
   "kind": "cap.run.finish",
-  "prev_hash": "55a8cbde3cb35a3b01cd611b060d4c2331d4c968fc564d50d79cf2316ea1b032",
+  "prev_hash": "0e61dbda1093620af441e0ed90fe157b9d8ed5bc09d14cac6a30c5e16266ab34",
   "seq": 4,
-  "ts": "2026-09-24T03:59:12.111475+00:00"
+  "ts": "2026-09-24T06:21:44.173511+00:00"
  },
  {
   "actor": "agent",
@@ -231,7 +230,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7025b298892d"
+    "run_id": "556d6e46e548"
    },
    "decision": {
     "decision": "APPROVE",
@@ -239,13 +238,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7025b298892d"
+   "run_id": "556d6e46e548"
   },
-  "hash": "9076755db87f1edf3ef98caff8ed05bcf7630ee2c3eeaee6ce27d8be4f3a688b",
+  "hash": "8e676db0db32e9d472a4185886ea67891b1ca36fab04451b92397ad0609040ee",
   "kind": "cap.run.start",
-  "prev_hash": "b014aee36fc11708ea2b8fd67b980a60228480a53c565352f32e5f72fe7a4fdf",
+  "prev_hash": "59e89252325a4da9af7c9099c493d86d78e8e3f43b766c2676d202c09b574051",
   "seq": 5,
-  "ts": "2026-09-24T03:59:12.118002+00:00"
+  "ts": "2026-09-24T06:21:44.180905+00:00"
  },
  {
   "actor": "agent",
@@ -255,36 +254,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7025b298892d"
+    "run_id": "556d6e46e548"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7025b298892d"
+   "run_id": "556d6e46e548"
   },
-  "hash": "afc4c75c52ef5c6b92b5c94b7f5e35ba713cf2fdbf10ef0dbc31d3c284619585",
+  "hash": "72d8679939c18bc47f37a2ed86ea69058c6182c11f3bc789d976443cb445753e",
   "kind": "gate.decision",
-  "prev_hash": "9076755db87f1edf3ef98caff8ed05bcf7630ee2c3eeaee6ce27d8be4f3a688b",
+  "prev_hash": "8e676db0db32e9d472a4185886ea67891b1ca36fab04451b92397ad0609040ee",
   "seq": 6,
-  "ts": "2026-09-24T03:59:12.118099+00:00"
+  "ts": "2026-09-24T06:21:44.181004+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
+   "duration_ms": 2,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "7025b298892d",
+   "run_id": "556d6e46e548",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3f3f87350a5c3ba6233d635c197f2a996b6f2f0ef4be5871c8502df0cd22ca44",
+  "hash": "c5e8d7c7415105e79a23925d1d9fb0e37f335e0767b099fa619947c3375f6889",
   "kind": "cap.run.finish",
-  "prev_hash": "afc4c75c52ef5c6b92b5c94b7f5e35ba713cf2fdbf10ef0dbc31d3c284619585",
+  "prev_hash": "72d8679939c18bc47f37a2ed86ea69058c6182c11f3bc789d976443cb445753e",
   "seq": 7,
-  "ts": "2026-09-24T03:59:12.119715+00:00"
+  "ts": "2026-09-24T06:21:44.182901+00:00"
  },
  {
   "actor": "agent",
@@ -294,7 +293,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d944052335d8"
+    "run_id": "0ba1863c4c47"
    },
    "decision": {
     "decision": "APPROVE",
@@ -302,13 +301,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d944052335d8"
+   "run_id": "0ba1863c4c47"
   },
-  "hash": "2b04e41c19aa43fbc26f39832218c769162c423927be78d9f298a24cc61ccc5e",
+  "hash": "4fa5d3e72b423c207ed2da498d06edaf01b683ec13281960ada776a0cccbb92b",
   "kind": "cap.run.start",
-  "prev_hash": "3f3f87350a5c3ba6233d635c197f2a996b6f2f0ef4be5871c8502df0cd22ca44",
+  "prev_hash": "c5e8d7c7415105e79a23925d1d9fb0e37f335e0767b099fa619947c3375f6889",
   "seq": 8,
-  "ts": "2026-09-24T03:59:12.121186+00:00"
+  "ts": "2026-09-24T06:21:44.186448+00:00"
  },
  {
   "actor": "agent",
@@ -318,20 +317,20 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d944052335d8"
+    "run_id": "0ba1863c4c47"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d944052335d8"
+   "run_id": "0ba1863c4c47"
   },
-  "hash": "cf490844103ce7bf06b717dca0df6cb14cafa1271962ed2300d91d598cb71f44",
+  "hash": "fa2ae85edf8ff0344542370ea2697d082b602fc0b3fd8f68bb3b2e9f0b766744",
   "kind": "gate.decision",
-  "prev_hash": "2b04e41c19aa43fbc26f39832218c769162c423927be78d9f298a24cc61ccc5e",
+  "prev_hash": "4fa5d3e72b423c207ed2da498d06edaf01b683ec13281960ada776a0cccbb92b",
   "seq": 9,
-  "ts": "2026-09-24T03:59:12.121268+00:00"
+  "ts": "2026-09-24T06:21:44.186557+00:00"
  },
  {
   "actor": "agent",
@@ -339,15 +338,15 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "d944052335d8",
+   "run_id": "0ba1863c4c47",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6df89896216a8a45f3ed5e79d128cfc93c062f8230e25b9301c9a1484c177200",
+  "hash": "8ba471af2c9e23d4ceefb46ac9cf660017fce90762296f302056bfe48c20d829",
   "kind": "cap.run.finish",
-  "prev_hash": "cf490844103ce7bf06b717dca0df6cb14cafa1271962ed2300d91d598cb71f44",
+  "prev_hash": "fa2ae85edf8ff0344542370ea2697d082b602fc0b3fd8f68bb3b2e9f0b766744",
   "seq": 10,
-  "ts": "2026-09-24T03:59:12.122941+00:00"
+  "ts": "2026-09-24T06:21:44.188274+00:00"
  },
  {
   "actor": "agent",
@@ -357,7 +356,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "47b74ad782a5"
+    "run_id": "60c77ea9a4b4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -365,13 +364,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "47b74ad782a5"
+   "run_id": "60c77ea9a4b4"
   },
-  "hash": "f0d8cc0fca2129cdb261a9c879970db6f49b21b11c35c3cca2d5ce357e78b58d",
+  "hash": "d4ff7cd0f5a4ca7d8b7e0de13e2a0ec1dde5f7d86cd3900d7e5cdaeddef1ea8c",
   "kind": "cap.run.start",
-  "prev_hash": "6df89896216a8a45f3ed5e79d128cfc93c062f8230e25b9301c9a1484c177200",
+  "prev_hash": "8ba471af2c9e23d4ceefb46ac9cf660017fce90762296f302056bfe48c20d829",
   "seq": 11,
-  "ts": "2026-09-24T03:59:12.150942+00:00"
+  "ts": "2026-09-24T06:21:44.219299+00:00"
  },
  {
   "actor": "agent",
@@ -381,36 +380,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "47b74ad782a5"
+    "run_id": "60c77ea9a4b4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "47b74ad782a5"
+   "run_id": "60c77ea9a4b4"
   },
-  "hash": "0f24c4070099af2e3af151c0c8ec43ea915c7f62de2974240f571516879a34a6",
+  "hash": "3ea355a5026dbe6a8c0467cd52b5c738ddbae871ffc4476496335a4c533c0d3f",
   "kind": "gate.decision",
-  "prev_hash": "f0d8cc0fca2129cdb261a9c879970db6f49b21b11c35c3cca2d5ce357e78b58d",
+  "prev_hash": "d4ff7cd0f5a4ca7d8b7e0de13e2a0ec1dde5f7d86cd3900d7e5cdaeddef1ea8c",
   "seq": 12,
-  "ts": "2026-09-24T03:59:12.151058+00:00"
+  "ts": "2026-09-24T06:21:44.219474+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "0cd0f1618a9c8973",
-   "run_id": "47b74ad782a5",
+   "result_hash": "e34cf9e1b1605696",
+   "run_id": "60c77ea9a4b4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1eb2e1b8a496caa7d1cbf889db6f11fd9d4152c8758deec801dc7b1bcb1d1dc0",
+  "hash": "160ea334ad8ed86a3743660cb4573659ab4925edb88385bf52810ba3f65d9594",
   "kind": "cap.run.finish",
-  "prev_hash": "0f24c4070099af2e3af151c0c8ec43ea915c7f62de2974240f571516879a34a6",
+  "prev_hash": "3ea355a5026dbe6a8c0467cd52b5c738ddbae871ffc4476496335a4c533c0d3f",
   "seq": 13,
-  "ts": "2026-09-24T03:59:12.153131+00:00"
+  "ts": "2026-09-24T06:21:44.221318+00:00"
  },
  {
   "actor": "agent",
@@ -420,7 +419,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "d02cdfc078d6"
+    "run_id": "cc2e62c49d4e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -428,13 +427,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d02cdfc078d6"
+   "run_id": "cc2e62c49d4e"
   },
-  "hash": "b576ddf466017dd2b449ab7038fb4f1a77d4d30a8f63f8c1b6cc15bdd1fad490",
+  "hash": "bbd5e986f8c7cc04faa3536543025f041674db9849cc1fc79a522d465a0401d0",
   "kind": "cap.run.start",
-  "prev_hash": "1eb2e1b8a496caa7d1cbf889db6f11fd9d4152c8758deec801dc7b1bcb1d1dc0",
+  "prev_hash": "160ea334ad8ed86a3743660cb4573659ab4925edb88385bf52810ba3f65d9594",
   "seq": 14,
-  "ts": "2026-09-24T03:59:12.393282+00:00"
+  "ts": "2026-09-24T06:21:44.482789+00:00"
  },
  {
   "actor": "agent",
@@ -444,20 +443,20 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "d02cdfc078d6"
+    "run_id": "cc2e62c49d4e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d02cdfc078d6"
+   "run_id": "cc2e62c49d4e"
   },
-  "hash": "f1e7f737af3946dfb9c89d474ca907ae7e22996bb11be24d7c546bf3d0af9283",
+  "hash": "4ad593fcd084ae9032d1eedb4b4081a03e1df133465e491a484418c57af7d3a7",
   "kind": "gate.decision",
-  "prev_hash": "b576ddf466017dd2b449ab7038fb4f1a77d4d30a8f63f8c1b6cc15bdd1fad490",
+  "prev_hash": "bbd5e986f8c7cc04faa3536543025f041674db9849cc1fc79a522d465a0401d0",
   "seq": 15,
-  "ts": "2026-09-24T03:59:12.393449+00:00"
+  "ts": "2026-09-24T06:21:44.482944+00:00"
  },
  {
   "actor": "agent",
@@ -465,15 +464,15 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "d02cdfc078d6",
+   "run_id": "cc2e62c49d4e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f85fedac12043a7f75cf45bc2f0497b12acac3258a9b8984b71933ed290cb895",
+  "hash": "8c8133194cc5df2e53ab224f01e186541223cbb046a684f74a7c7020d6c2a0a1",
   "kind": "cap.run.finish",
-  "prev_hash": "f1e7f737af3946dfb9c89d474ca907ae7e22996bb11be24d7c546bf3d0af9283",
+  "prev_hash": "4ad593fcd084ae9032d1eedb4b4081a03e1df133465e491a484418c57af7d3a7",
   "seq": 16,
-  "ts": "2026-09-24T03:59:12.397008+00:00"
+  "ts": "2026-09-24T06:21:44.486205+00:00"
  },
  {
   "actor": "agent",
@@ -483,7 +482,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "d52ba0ff7413"
+    "run_id": "3bc44582706f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -491,13 +490,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d52ba0ff7413"
+   "run_id": "3bc44582706f"
   },
-  "hash": "4595357a827c6c907a906e4ab9a20bcc947d00a6c94445c8702efe788b81ac61",
+  "hash": "3197c2f1ae0a028353cdec44f9ffabf2909b9e80196392cb853e4ebf693da4cb",
   "kind": "cap.run.start",
-  "prev_hash": "f85fedac12043a7f75cf45bc2f0497b12acac3258a9b8984b71933ed290cb895",
+  "prev_hash": "8c8133194cc5df2e53ab224f01e186541223cbb046a684f74a7c7020d6c2a0a1",
   "seq": 17,
-  "ts": "2026-09-24T03:59:12.418594+00:00"
+  "ts": "2026-09-24T06:21:44.509277+00:00"
  },
  {
   "actor": "agent",
@@ -507,27 +506,27 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "d52ba0ff7413"
+    "run_id": "3bc44582706f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d52ba0ff7413"
+   "run_id": "3bc44582706f"
   },
-  "hash": "d72c4a63ff2b7e7ab2f42e9af0b550c76cd699bde995078d7f4066a6a0a2e9ea",
+  "hash": "ac6fd4756aa5ef5344b18649421524e07c204ba7564cf90b094e42c11aa249d8",
   "kind": "gate.decision",
-  "prev_hash": "4595357a827c6c907a906e4ab9a20bcc947d00a6c94445c8702efe788b81ac61",
+  "prev_hash": "3197c2f1ae0a028353cdec44f9ffabf2909b9e80196392cb853e4ebf693da4cb",
   "seq": 18,
-  "ts": "2026-09-24T03:59:12.418748+00:00"
+  "ts": "2026-09-24T06:21:44.509426+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "d52ba0ff7413"
+    "run_id": "3bc44582706f"
    },
    "compressions": [],
    "hash": "bab43b4b236106f8",
@@ -567,7 +566,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "search.missing",
     "sim.mock_peripheral",
     "/Users/congvt/Documents/EIDE/docs/test/usecase/TC012/du-an/kiem-tra-vong-doi-linh-kien",
-    "s_fe6a1a05f9be"
+    "s_960790224135"
    ],
    "tokens": {
     "C0": 1906,
@@ -576,11 +575,11 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "C7": 28
    }
   },
-  "hash": "add339a499aea4873e1c32475a62d036e5a6d6c7128c4b4b07c52a7fb5b5b8c8",
+  "hash": "0d84f7b33096be574df16d23c1ec9c7bf7e9299a0f5bae1a7f4dba72425647b1",
   "kind": "context.bundle",
-  "prev_hash": "d72c4a63ff2b7e7ab2f42e9af0b550c76cd699bde995078d7f4066a6a0a2e9ea",
+  "prev_hash": "ac6fd4756aa5ef5344b18649421524e07c204ba7564cf90b094e42c11aa249d8",
   "seq": 19,
-  "ts": "2026-09-24T03:59:12.424690+00:00"
+  "ts": "2026-09-24T06:21:44.515711+00:00"
  },
  {
   "actor": "agent",
@@ -588,71 +587,70 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "d52ba0ff7413"
+    "run_id": "3bc44582706f"
    },
-   "cost_usd": 0.001045,
-   "latency_ms": 1747,
+   "cost_usd": 0.001007,
+   "latency_ms": 1933,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "44a16e3ca30d9ac9",
    "request_hash": "6b170bcb7768ccf3",
    "role": "intent",
    "stop_reason": "stop",
    "tokens_in": 2508,
-   "tokens_out": 117
+   "tokens_out": 102
   },
-  "hash": "9a98ac7233f6e668088a166c20e4b63db246f59da871b412bc78085491a38857",
+  "hash": "3a4852c85a39f1a186d8daad44ef0c0876feb9227cbbed4c026ce94ad00500a8",
   "kind": "model.call",
-  "prev_hash": "add339a499aea4873e1c32475a62d036e5a6d6c7128c4b4b07c52a7fb5b5b8c8",
+  "prev_hash": "0d84f7b33096be574df16d23c1ec9c7bf7e9299a0f5bae1a7f4dba72425647b1",
   "seq": 20,
-  "ts": "2026-09-24T03:59:14.180020+00:00"
+  "ts": "2026-09-24T06:21:46.458137+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "d52ba0ff7413"
+    "run_id": "3bc44582706f"
    },
    "confidence": 0.95,
    "intent": "search.ask",
    "is_big": false,
    "slots": {
-    "chip": "AMS1117-3.3",
     "question": "Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế"
    },
    "text": "Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế"
   },
-  "hash": "0e80aa1eb4119cec5dd9c4b9501b72b817ba0292e34f10b3f2b6ca8f003e71c1",
+  "hash": "10ae8ff91f9cf66dcb4bbb2cbc62e5e2ccc015c1817e2fa7c424f56314f320f0",
   "kind": "intent",
-  "prev_hash": "9a98ac7233f6e668088a166c20e4b63db246f59da871b412bc78085491a38857",
+  "prev_hash": "3a4852c85a39f1a186d8daad44ef0c0876feb9227cbbed4c026ce94ad00500a8",
   "seq": 21,
-  "ts": "2026-09-24T03:59:14.182031+00:00"
+  "ts": "2026-09-24T06:21:46.459554+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 1764,
-   "result_hash": "f091c878e014e06e",
-   "run_id": "d52ba0ff7413",
+   "duration_ms": 1951,
+   "result_hash": "bc385e7972a24a17",
+   "run_id": "3bc44582706f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2414049fb3617e88f8286c4bc119113a45f05baa7004b1f2da4e316e05d6a34e",
+  "hash": "8f5595d4864f9f9c18f9860f02fd25c7d456ad6c9597f065a48974ec81556bba",
   "kind": "cap.run.finish",
-  "prev_hash": "0e80aa1eb4119cec5dd9c4b9501b72b817ba0292e34f10b3f2b6ca8f003e71c1",
+  "prev_hash": "10ae8ff91f9cf66dcb4bbb2cbc62e5e2ccc015c1817e2fa7c424f56314f320f0",
   "seq": 22,
-  "ts": "2026-09-24T03:59:14.183471+00:00"
+  "ts": "2026-09-24T06:21:46.460683+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "f091c878e014e06e",
+   "args_hash": "bc385e7972a24a17",
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "55893fed2033"
+    "run_id": "7c5cac0b2588"
    },
    "decision": {
     "decision": "APPROVE",
@@ -660,13 +658,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "55893fed2033"
+   "run_id": "7c5cac0b2588"
   },
-  "hash": "78fe7691c70983d61d84511d08ac2ed8ecdfb813216cfa9fafed78888387458a",
+  "hash": "9b190959635c1ddab9f53caebc7c3737d2c5e9f1329af05c970f68547247b0c2",
   "kind": "cap.run.start",
-  "prev_hash": "2414049fb3617e88f8286c4bc119113a45f05baa7004b1f2da4e316e05d6a34e",
+  "prev_hash": "8f5595d4864f9f9c18f9860f02fd25c7d456ad6c9597f065a48974ec81556bba",
   "seq": 23,
-  "ts": "2026-09-24T03:59:14.184967+00:00"
+  "ts": "2026-09-24T06:21:46.462026+00:00"
  },
  {
   "actor": "agent",
@@ -676,20 +674,20 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "55893fed2033"
+    "run_id": "7c5cac0b2588"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "55893fed2033"
+   "run_id": "7c5cac0b2588"
   },
-  "hash": "5707859e63c4a6b06e3a7d63bcd7689fdb81c23a63ce5ab07bdd247eae52f670",
+  "hash": "69fdd3158a34ff54683fd9bfb2aada8851b53ede558996b6ad5c7c46e55e5c78",
   "kind": "gate.decision",
-  "prev_hash": "78fe7691c70983d61d84511d08ac2ed8ecdfb813216cfa9fafed78888387458a",
+  "prev_hash": "9b190959635c1ddab9f53caebc7c3737d2c5e9f1329af05c970f68547247b0c2",
   "seq": 24,
-  "ts": "2026-09-24T03:59:14.185336+00:00"
+  "ts": "2026-09-24T06:21:46.462360+00:00"
  },
  {
   "actor": "agent",
@@ -697,25 +695,25 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "chat.ground",
    "duration_ms": 4,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "55893fed2033",
+   "run_id": "7c5cac0b2588",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "70a0f0ff1ee8cd791431d30d700714c7a04791c79b3c58e6977acc22731527cf",
+  "hash": "e3c05c3734f701a4bd9bba58dd51ec0508440071e3b8e1283971f17caf43cebd",
   "kind": "cap.run.finish",
-  "prev_hash": "5707859e63c4a6b06e3a7d63bcd7689fdb81c23a63ce5ab07bdd247eae52f670",
+  "prev_hash": "69fdd3158a34ff54683fd9bfb2aada8851b53ede558996b6ad5c7c46e55e5c78",
   "seq": 25,
-  "ts": "2026-09-24T03:59:14.189036+00:00"
+  "ts": "2026-09-24T06:21:46.466099+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "abae5c4e7dd7c18c",
+   "args_hash": "f735f9701d1847f9",
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "cca0754d5632"
+    "run_id": "555fdc6294f5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -723,13 +721,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "cca0754d5632"
+   "run_id": "555fdc6294f5"
   },
-  "hash": "d3ecb32e3d06e4ad3acc073bc4ab3dbce6ef0aef8261954c4652908bc9c60cec",
+  "hash": "7268d0597627f4b2c9bfb8d166dee11861d78b860d55f1050e193dd0e5a9988a",
   "kind": "cap.run.start",
-  "prev_hash": "70a0f0ff1ee8cd791431d30d700714c7a04791c79b3c58e6977acc22731527cf",
+  "prev_hash": "e3c05c3734f701a4bd9bba58dd51ec0508440071e3b8e1283971f17caf43cebd",
   "seq": 26,
-  "ts": "2026-09-24T03:59:14.190436+00:00"
+  "ts": "2026-09-24T06:21:46.467349+00:00"
  },
  {
   "actor": "agent",
@@ -739,46 +737,46 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "cca0754d5632"
+    "run_id": "555fdc6294f5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "cca0754d5632"
+   "run_id": "555fdc6294f5"
   },
-  "hash": "4ce3ba5c6fe82255a138b6fd4bc8cb6a205f672eee5746f13a72854ef2be0709",
+  "hash": "9b0ca8caee0dab3f8d3a371f66785cf00510a5d399cd24a1d4b61eb24940e1c6",
   "kind": "gate.decision",
-  "prev_hash": "d3ecb32e3d06e4ad3acc073bc4ab3dbce6ef0aef8261954c4652908bc9c60cec",
+  "prev_hash": "7268d0597627f4b2c9bfb8d166dee11861d78b860d55f1050e193dd0e5a9988a",
   "seq": 27,
-  "ts": "2026-09-24T03:59:14.190586+00:00"
+  "ts": "2026-09-24T06:21:46.467501+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
    "duration_ms": 6,
-   "result_hash": "8e8004285d06320e",
-   "run_id": "cca0754d5632",
+   "result_hash": "b1c5dbd88fe43aed",
+   "run_id": "555fdc6294f5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "757cd1ad8ca1fe4e20cf8f57fb6cd2f67de6915c620871ceb2a67d35731f0dc2",
+  "hash": "6e8d258ccc4d2fdce635b2521b7bfdfe112da43baaab0f3bb8c1643850d7166b",
   "kind": "cap.run.finish",
-  "prev_hash": "4ce3ba5c6fe82255a138b6fd4bc8cb6a205f672eee5746f13a72854ef2be0709",
+  "prev_hash": "9b0ca8caee0dab3f8d3a371f66785cf00510a5d399cd24a1d4b61eb24940e1c6",
   "seq": 28,
-  "ts": "2026-09-24T03:59:14.196478+00:00"
+  "ts": "2026-09-24T06:21:46.473687+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "e731338e494e2472",
+   "args_hash": "30707c99edbbd4e4",
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "0a873cff12fa"
+    "run_id": "024b5ede897a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -786,13 +784,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0a873cff12fa"
+   "run_id": "024b5ede897a"
   },
-  "hash": "4cb4c75139a5e4aa5702d072ae0e04bfeffffb02b81894f9aa6ba3c51fb22ed0",
+  "hash": "6f1369eac4f029d128b01d58bfb31ccfe2e17582334bf19bad470c62cf7d850c",
   "kind": "cap.run.start",
-  "prev_hash": "757cd1ad8ca1fe4e20cf8f57fb6cd2f67de6915c620871ceb2a67d35731f0dc2",
+  "prev_hash": "6e8d258ccc4d2fdce635b2521b7bfdfe112da43baaab0f3bb8c1643850d7166b",
   "seq": 29,
-  "ts": "2026-09-24T03:59:14.198421+00:00"
+  "ts": "2026-09-24T06:21:46.475637+00:00"
  },
  {
   "actor": "agent",
@@ -802,93 +800,30 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "0a873cff12fa"
+    "run_id": "024b5ede897a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0a873cff12fa"
+   "run_id": "024b5ede897a"
   },
-  "hash": "d27ab942c6e1d210c36b4cc78c29bbcae028bd4694c0294912d8fcbe7ee3ce05",
+  "hash": "ee34a5dfeccee5b1c20d354302eda913363f436c08295621555519d4f0d6b030",
   "kind": "gate.decision",
-  "prev_hash": "4cb4c75139a5e4aa5702d072ae0e04bfeffffb02b81894f9aa6ba3c51fb22ed0",
+  "prev_hash": "6f1369eac4f029d128b01d58bfb31ccfe2e17582334bf19bad470c62cf7d850c",
   "seq": 30,
-  "ts": "2026-09-24T03:59:14.198727+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "79068ed1195708d8",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "9570f0cb948b"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "9570f0cb948b"
-  },
-  "hash": "f21211d81c40bfd677ae6fd8b932dd6ea3cf232db4a8468862d1523a3db3921e",
-  "kind": "cap.run.start",
-  "prev_hash": "d27ab942c6e1d210c36b4cc78c29bbcae028bd4694c0294912d8fcbe7ee3ce05",
-  "seq": 31,
-  "ts": "2026-09-24T03:59:14.319105+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "9570f0cb948b"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "9570f0cb948b"
-  },
-  "hash": "2a9f40fe81f2e93bf0784c26959a9bc9dfed44207a65131c166cda4a5ac07c6f",
-  "kind": "gate.decision",
-  "prev_hash": "f21211d81c40bfd677ae6fd8b932dd6ea3cf232db4a8468862d1523a3db3921e",
-  "seq": 32,
-  "ts": "2026-09-24T03:59:14.321827+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 22,
-   "result_hash": "1a5dd849ae598359",
-   "run_id": "9570f0cb948b",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "5868272b4f4c62a43dcc3d619a1280e2f3d3e71ef60b34698218d35201159f4f",
-  "kind": "cap.run.finish",
-  "prev_hash": "2a9f40fe81f2e93bf0784c26959a9bc9dfed44207a65131c166cda4a5ac07c6f",
-  "seq": 33,
-  "ts": "2026-09-24T03:59:14.341517+00:00"
+  "ts": "2026-09-24T06:21:46.475841+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "0a873cff12fa"
+    "run_id": "024b5ede897a"
    },
    "n": 1,
-   "run_id": "r_f1cae3045ded",
+   "run_id": "r_f697144a877b",
    "steps": [
     {
      "cap": "search.web",
@@ -905,11 +840,11 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    ],
    "text": "Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế"
   },
-  "hash": "66375ec08f2373a0cba009b6cf00d81173a1e47909302a08bb7549d061d4b3b3",
+  "hash": "9debe0eb862e650670cbb43891c68cc54cf0cc12a3522fd4697e659ba69685b8",
   "kind": "run.started",
-  "prev_hash": "5868272b4f4c62a43dcc3d619a1280e2f3d3e71ef60b34698218d35201159f4f",
-  "seq": 34,
-  "ts": "2026-09-24T03:59:14.342314+00:00"
+  "prev_hash": "ee34a5dfeccee5b1c20d354302eda913363f436c08295621555519d4f0d6b030",
+  "seq": 31,
+  "ts": "2026-09-24T06:21:46.485269+00:00"
  },
  {
   "actor": "agent",
@@ -917,18 +852,18 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "search.web",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "0a873cff12fa"
+    "run_id": "024b5ede897a"
    },
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_f1cae3045ded"
+   "run_id": "r_f697144a877b"
   },
-  "hash": "af5f76af7912ab42cd331a5baf0221796c22638c7ad4d4c7889e0c23061faab8",
+  "hash": "5c59aa57eaefda2d95d4bb53edc71a2d4e88f1a0c3c8fd0eee57a8cf1e44a396",
   "kind": "run.step_started",
-  "prev_hash": "66375ec08f2373a0cba009b6cf00d81173a1e47909302a08bb7549d061d4b3b3",
-  "seq": 35,
-  "ts": "2026-09-24T03:59:14.342639+00:00"
+  "prev_hash": "9debe0eb862e650670cbb43891c68cc54cf0cc12a3522fd4697e659ba69685b8",
+  "seq": 32,
+  "ts": "2026-09-24T06:21:46.485784+00:00"
  },
  {
   "actor": "agent",
@@ -940,7 +875,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_f1cae3045ded"
+    "run_id": "r_f697144a877b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -948,13 +883,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3a7c80be52e6"
+   "run_id": "6839d51e99cd"
   },
-  "hash": "2596bbb1b2e358960a33a7851ea043c1bc7af6ee1163b8ab1e7309f8a96571ec",
+  "hash": "f44a5e5d351f6b712da5404aefefc7a60fdf77e8b78e118f2e3282fefd6552a3",
   "kind": "cap.run.start",
-  "prev_hash": "af5f76af7912ab42cd331a5baf0221796c22638c7ad4d4c7889e0c23061faab8",
-  "seq": 36,
-  "ts": "2026-09-24T03:59:14.343674+00:00"
+  "prev_hash": "5c59aa57eaefda2d95d4bb53edc71a2d4e88f1a0c3c8fd0eee57a8cf1e44a396",
+  "seq": 33,
+  "ts": "2026-09-24T06:21:46.487118+00:00"
  },
  {
   "actor": "agent",
@@ -966,20 +901,20 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_f1cae3045ded"
+    "run_id": "r_f697144a877b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3a7c80be52e6"
+   "run_id": "6839d51e99cd"
   },
-  "hash": "67dfa0f69759d3e56abd2594b7ff499be7d94c43088cb7d4d1e27676413f1eca",
+  "hash": "181f145ba98cd15b143c6e328b068a9c9082738efa98c59bff0c15529559d5ac",
   "kind": "gate.decision",
-  "prev_hash": "2596bbb1b2e358960a33a7851ea043c1bc7af6ee1163b8ab1e7309f8a96571ec",
-  "seq": 37,
-  "ts": "2026-09-24T03:59:14.343762+00:00"
+  "prev_hash": "f44a5e5d351f6b712da5404aefefc7a60fdf77e8b78e118f2e3282fefd6552a3",
+  "seq": 34,
+  "ts": "2026-09-24T06:21:46.487242+00:00"
  },
  {
   "actor": "agent",
@@ -989,18 +924,18 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_f1cae3045ded"
+    "run_id": "r_f697144a877b"
    },
-   "duration_ms": 3,
+   "duration_ms": 5,
    "error": "E4001",
-   "run_id": "3a7c80be52e6",
+   "run_id": "6839d51e99cd",
    "status": "failed"
   },
-  "hash": "0d1ee5e6c1e2ab0a2b225259cfb2cbfd5d8c69c33ea89591c23667ad67f3ffce",
+  "hash": "d2982a611259f707b5c7ca70ad1e4c2e0df5c583f669c31f3b40d8520239b381",
   "kind": "cap.run.finish",
-  "prev_hash": "67dfa0f69759d3e56abd2594b7ff499be7d94c43088cb7d4d1e27676413f1eca",
-  "seq": 38,
-  "ts": "2026-09-24T03:59:14.347434+00:00"
+  "prev_hash": "181f145ba98cd15b143c6e328b068a9c9082738efa98c59bff0c15529559d5ac",
+  "seq": 35,
+  "ts": "2026-09-24T06:21:46.492416+00:00"
  },
  {
   "actor": "agent",
@@ -1022,118 +957,55 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_f1cae3045ded",
+   "run_id": "r_f697144a877b",
    "status": "failed"
   },
-  "hash": "45d5c503a9536db2c5ac9fdb0cb706d4a31cd57909dd3d9de21608d6932dbd66",
+  "hash": "9d77b92d9e779ad834ff901d59911709103781222139d2b7450ccc8585c25539",
   "kind": "run.step_done",
-  "prev_hash": "0d1ee5e6c1e2ab0a2b225259cfb2cbfd5d8c69c33ea89591c23667ad67f3ffce",
-  "seq": 39,
-  "ts": "2026-09-24T03:59:14.347524+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "4e957cf5acf5"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "4e957cf5acf5"
-  },
-  "hash": "d935ece544993c079b21a9b1a9cf29c7bf2b454c1893d7d66f5eff9e48d18bf7",
-  "kind": "cap.run.start",
-  "prev_hash": "45d5c503a9536db2c5ac9fdb0cb706d4a31cd57909dd3d9de21608d6932dbd66",
-  "seq": 40,
-  "ts": "2026-09-24T03:59:14.348126+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "4e957cf5acf5"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "4e957cf5acf5"
-  },
-  "hash": "e3d852f9ecf5b41927edeeee84ca3e3fe642f06a327d380543cca647095045c4",
-  "kind": "gate.decision",
-  "prev_hash": "d935ece544993c079b21a9b1a9cf29c7bf2b454c1893d7d66f5eff9e48d18bf7",
-  "seq": 41,
-  "ts": "2026-09-24T03:59:14.348217+00:00"
+  "prev_hash": "d2982a611259f707b5c7ca70ad1e4c2e0df5c583f669c31f3b40d8520239b381",
+  "seq": 36,
+  "ts": "2026-09-24T06:21:46.492524+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 0,
    "failed": 1,
-   "run_id": "r_f1cae3045ded",
+   "run_id": "r_f697144a877b",
    "state": "failed",
    "waiting": 1
   },
-  "hash": "d97ebb7a0f4e55728ec5ed4717995b5f83463be17a898d7815eb996acf30bc7b",
+  "hash": "0443326715c521e0d0338fa4e2632a97ebb609c382acf350851ee0f8fc702264",
   "kind": "run.done",
-  "prev_hash": "e3d852f9ecf5b41927edeeee84ca3e3fe642f06a327d380543cca647095045c4",
-  "seq": 42,
-  "ts": "2026-09-24T03:59:14.351054+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "4e957cf5acf5",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "8d8a34992a5b85e93d716e77d06d6a9a337ab6d84edcd20c6270660b080c0f81",
-  "kind": "cap.run.finish",
-  "prev_hash": "d97ebb7a0f4e55728ec5ed4717995b5f83463be17a898d7815eb996acf30bc7b",
-  "seq": 43,
-  "ts": "2026-09-24T03:59:14.352104+00:00"
+  "prev_hash": "9d77b92d9e779ad834ff901d59911709103781222139d2b7450ccc8585c25539",
+  "seq": 37,
+  "ts": "2026-09-24T06:21:46.493670+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 174,
-   "result_hash": "36bad978839b6d82",
-   "run_id": "0a873cff12fa",
+   "duration_ms": 48,
+   "result_hash": "687c2585a78d52f8",
+   "run_id": "024b5ede897a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "59c4eede2c10bcc2a47856a1d9068823d6f6aa354bce5ba4f94d8e8fd16d1862",
+  "hash": "4133ea3bebc9c2c1ed6a2688d9bb608470f22f926212b99fa8ccc2c47cbb542c",
   "kind": "cap.run.finish",
-  "prev_hash": "8d8a34992a5b85e93d716e77d06d6a9a337ab6d84edcd20c6270660b080c0f81",
-  "seq": 44,
-  "ts": "2026-09-24T03:59:14.372929+00:00"
+  "prev_hash": "0443326715c521e0d0338fa4e2632a97ebb609c382acf350851ee0f8fc702264",
+  "seq": 38,
+  "ts": "2026-09-24T06:21:46.524423+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "6ccf64a81aa5e7bc",
+   "args_hash": "2e4f749318f96d27",
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "2b579686db0e"
+    "run_id": "cb55032c4c04"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1141,13 +1013,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2b579686db0e"
+   "run_id": "cb55032c4c04"
   },
-  "hash": "702e66e76676ccd8be164cf12bb1294e916b24acbee888eccb1b716dec8ad5c3",
+  "hash": "5e5bece47849cf6c16c4e79e43ff8ee70b8666d3b274e91cd79c694f941c2d92",
   "kind": "cap.run.start",
-  "prev_hash": "59c4eede2c10bcc2a47856a1d9068823d6f6aa354bce5ba4f94d8e8fd16d1862",
-  "seq": 45,
-  "ts": "2026-09-24T03:59:14.376008+00:00"
+  "prev_hash": "4133ea3bebc9c2c1ed6a2688d9bb608470f22f926212b99fa8ccc2c47cbb542c",
+  "seq": 39,
+  "ts": "2026-09-24T06:21:46.528092+00:00"
  },
  {
   "actor": "agent",
@@ -1157,20 +1029,20 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "2b579686db0e"
+    "run_id": "cb55032c4c04"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2b579686db0e"
+   "run_id": "cb55032c4c04"
   },
-  "hash": "ec765fc24b811cefebb4f3ed3cdd73ba68bedeec82fd33cc4d532bd0883bd8a9",
+  "hash": "96420a5bf90ff0cc7512cd6eeb89f8efa8f6745e5cdfd4e1abb7ee6007b6d4b1",
   "kind": "gate.decision",
-  "prev_hash": "702e66e76676ccd8be164cf12bb1294e916b24acbee888eccb1b716dec8ad5c3",
-  "seq": 46,
-  "ts": "2026-09-24T03:59:14.376118+00:00"
+  "prev_hash": "5e5bece47849cf6c16c4e79e43ff8ee70b8666d3b274e91cd79c694f941c2d92",
+  "seq": 40,
+  "ts": "2026-09-24T06:21:46.528193+00:00"
  },
  {
   "actor": "agent",
@@ -1178,25 +1050,25 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "3fe844ccef599fd5",
-   "run_id": "2b579686db0e",
+   "run_id": "cb55032c4c04",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1bd5b45c890283485a9dd7d62fd752a2dee98b02c34dbc741d8ebdc8018f16c6",
+  "hash": "0ae361a6ca06b049e1a1d209110edef35d3e0e46d03ce43c639aecede99c8281",
   "kind": "cap.run.finish",
-  "prev_hash": "ec765fc24b811cefebb4f3ed3cdd73ba68bedeec82fd33cc4d532bd0883bd8a9",
-  "seq": 47,
-  "ts": "2026-09-24T03:59:14.377108+00:00"
+  "prev_hash": "96420a5bf90ff0cc7512cd6eeb89f8efa8f6745e5cdfd4e1abb7ee6007b6d4b1",
+  "seq": 41,
+  "ts": "2026-09-24T06:21:46.529252+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "9307aeaeba83c127",
-   "cap": "chat.report_back",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
    "chain": {
-    "cap": "chat.report_back",
-    "run_id": "8aabbad541f1"
+    "cap": "view.artifacts",
+    "run_id": "f62ecfcdbaaf"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1204,13 +1076,139 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8aabbad541f1"
+   "run_id": "f62ecfcdbaaf"
   },
-  "hash": "023867e85708d08fefc7be156b3695bb96ec314024eddd4c02c86ae2976ddfe0",
+  "hash": "0c1916f51e5d97252ee6ed4d6f08dd18b6427493adc9e3371afc59f512643551",
   "kind": "cap.run.start",
-  "prev_hash": "1bd5b45c890283485a9dd7d62fd752a2dee98b02c34dbc741d8ebdc8018f16c6",
+  "prev_hash": "0ae361a6ca06b049e1a1d209110edef35d3e0e46d03ce43c639aecede99c8281",
+  "seq": 42,
+  "ts": "2026-09-24T06:21:46.579964+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "f62ecfcdbaaf"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "f62ecfcdbaaf"
+  },
+  "hash": "81fae6757cf42e6131ae5a448dcb565d2bc328553079f621771ee2c0af481cc6",
+  "kind": "gate.decision",
+  "prev_hash": "0c1916f51e5d97252ee6ed4d6f08dd18b6427493adc9e3371afc59f512643551",
+  "seq": 43,
+  "ts": "2026-09-24T06:21:46.580126+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 2,
+   "result_hash": "ed84f17cc41beec5",
+   "run_id": "f62ecfcdbaaf",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "1327ae6e1f7b2eb3fe9c9dd01bae210babf89f5e32a68c006ce4beca516f567a",
+  "kind": "cap.run.finish",
+  "prev_hash": "81fae6757cf42e6131ae5a448dcb565d2bc328553079f621771ee2c0af481cc6",
+  "seq": 44,
+  "ts": "2026-09-24T06:21:46.581951+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "904892a941a2"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "904892a941a2"
+  },
+  "hash": "ff8be3104971fe11bcdb711c4077386c5f0d101b045de215ddb0a8dbaf6940dc",
+  "kind": "cap.run.start",
+  "prev_hash": "1327ae6e1f7b2eb3fe9c9dd01bae210babf89f5e32a68c006ce4beca516f567a",
+  "seq": 45,
+  "ts": "2026-09-24T06:21:46.899984+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "904892a941a2"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "904892a941a2"
+  },
+  "hash": "e329e8d3eaf98b62059e28b2805c65b0b17c2253d989d547e8e528713b1c1160",
+  "kind": "gate.decision",
+  "prev_hash": "ff8be3104971fe11bcdb711c4077386c5f0d101b045de215ddb0a8dbaf6940dc",
+  "seq": 46,
+  "ts": "2026-09-24T06:21:46.900198+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "904892a941a2",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "cced0b18ed689f49783e0d29e418337239a2fc2ab8812c2e6b90651da4de31ac",
+  "kind": "cap.run.finish",
+  "prev_hash": "e329e8d3eaf98b62059e28b2805c65b0b17c2253d989d547e8e528713b1c1160",
+  "seq": 47,
+  "ts": "2026-09-24T06:21:46.904122+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "49529525c2f4541b",
+   "cap": "chat.report_back",
+   "chain": {
+    "cap": "chat.report_back",
+    "run_id": "a96441d2b0ec"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "a96441d2b0ec"
+  },
+  "hash": "c174a66e0e9de9d2df98cfa10e1e20f7550b0cebdff596e2cd587ba8c6592238",
+  "kind": "cap.run.start",
+  "prev_hash": "cced0b18ed689f49783e0d29e418337239a2fc2ab8812c2e6b90651da4de31ac",
   "seq": 48,
-  "ts": "2026-09-24T03:59:14.729813+00:00"
+  "ts": "2026-09-24T06:21:46.906088+00:00"
  },
  {
   "actor": "agent",
@@ -1220,36 +1218,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "8aabbad541f1"
+    "run_id": "a96441d2b0ec"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8aabbad541f1"
+   "run_id": "a96441d2b0ec"
   },
-  "hash": "30ef9a978ebf7528aedcb7b77823ca1631552407dc206ad8204ff41eff46dcef",
+  "hash": "cd0a2c1b3c69d3bcd11de1467e4686ffeaef1830b47cd8f1685c4441c47d456c",
   "kind": "gate.decision",
-  "prev_hash": "023867e85708d08fefc7be156b3695bb96ec314024eddd4c02c86ae2976ddfe0",
+  "prev_hash": "c174a66e0e9de9d2df98cfa10e1e20f7550b0cebdff596e2cd587ba8c6592238",
   "seq": 49,
-  "ts": "2026-09-24T03:59:14.729981+00:00"
+  "ts": "2026-09-24T06:21:46.906194+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.report_back",
    "duration_ms": 2,
-   "result_hash": "609e0d5b5f4bdc61",
-   "run_id": "8aabbad541f1",
+   "result_hash": "808f10f3f1807533",
+   "run_id": "a96441d2b0ec",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "286e236f45d2019055c19d7c4764e7e143d559da7c218866af07ea9d309bd471",
+  "hash": "1b7414ff44803b14fd48fde8f7e207e36ae2f91e753d9f38400ab91f366ccaf9",
   "kind": "cap.run.finish",
-  "prev_hash": "30ef9a978ebf7528aedcb7b77823ca1631552407dc206ad8204ff41eff46dcef",
+  "prev_hash": "cd0a2c1b3c69d3bcd11de1467e4686ffeaef1830b47cd8f1685c4441c47d456c",
   "seq": 50,
-  "ts": "2026-09-24T03:59:14.732101+00:00"
+  "ts": "2026-09-24T06:21:46.908048+00:00"
  },
  {
   "actor": "agent",
@@ -1259,7 +1257,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "491a589a3b4e"
+    "run_id": "1eeb3560a603"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1267,13 +1265,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "491a589a3b4e"
+   "run_id": "1eeb3560a603"
   },
-  "hash": "d916565de230150db59f1e303b09fe30788e95fe5874ac122ced8b1f6d17e7e6",
+  "hash": "a45423572d4ae499639ca79f4d2977d4be607e5109ac4bfcc17f81d94dcb34e7",
   "kind": "cap.run.start",
-  "prev_hash": "286e236f45d2019055c19d7c4764e7e143d559da7c218866af07ea9d309bd471",
+  "prev_hash": "1b7414ff44803b14fd48fde8f7e207e36ae2f91e753d9f38400ab91f366ccaf9",
   "seq": 51,
-  "ts": "2026-09-24T03:59:14.733863+00:00"
+  "ts": "2026-09-24T06:21:46.917102+00:00"
  },
  {
   "actor": "agent",
@@ -1283,36 +1281,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "491a589a3b4e"
+    "run_id": "1eeb3560a603"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "491a589a3b4e"
+   "run_id": "1eeb3560a603"
   },
-  "hash": "9121317690902941471f5e57e40b69a44631bc1ab5d450cdaa43f8f3ffdf06b3",
+  "hash": "c684f1da55fd40b735ce537dd1ca302b5c98e5aa8d7af5e4888b51082e702368",
   "kind": "gate.decision",
-  "prev_hash": "d916565de230150db59f1e303b09fe30788e95fe5874ac122ced8b1f6d17e7e6",
+  "prev_hash": "a45423572d4ae499639ca79f4d2977d4be607e5109ac4bfcc17f81d94dcb34e7",
   "seq": 52,
-  "ts": "2026-09-24T03:59:14.733990+00:00"
+  "ts": "2026-09-24T06:21:46.917217+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "9d70d9e669e5c811",
-   "run_id": "491a589a3b4e",
+   "result_hash": "0181fa0dbe8680d9",
+   "run_id": "1eeb3560a603",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "82c5085a499c996e2e28cc339d289cbb5d2bd061ab0b7e9e64497fd7ed8e39db",
+  "hash": "026168f27644ac3ec49e4ee6f871e3ed33bc4412e71d73a9a47100ce4434fc56",
   "kind": "cap.run.finish",
-  "prev_hash": "9121317690902941471f5e57e40b69a44631bc1ab5d450cdaa43f8f3ffdf06b3",
+  "prev_hash": "c684f1da55fd40b735ce537dd1ca302b5c98e5aa8d7af5e4888b51082e702368",
   "seq": 53,
-  "ts": "2026-09-24T03:59:14.736160+00:00"
+  "ts": "2026-09-24T06:21:46.919423+00:00"
  },
  {
   "actor": "agent",
@@ -1322,7 +1320,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d663b167b46f"
+    "run_id": "a6c843b1a564"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1330,13 +1328,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d663b167b46f"
+   "run_id": "a6c843b1a564"
   },
-  "hash": "301079473c8138afa3571acf1b2a53ad232df4005b24eaafa2dd50cfc3fab990",
+  "hash": "50a6a6702599d39c9785bc9d80fdd50f1a8b50847e5e756e24c6dcd008595ce6",
   "kind": "cap.run.start",
-  "prev_hash": "82c5085a499c996e2e28cc339d289cbb5d2bd061ab0b7e9e64497fd7ed8e39db",
+  "prev_hash": "026168f27644ac3ec49e4ee6f871e3ed33bc4412e71d73a9a47100ce4434fc56",
   "seq": 54,
-  "ts": "2026-09-24T03:59:14.752501+00:00"
+  "ts": "2026-09-24T06:21:46.924978+00:00"
  },
  {
   "actor": "agent",
@@ -1346,20 +1344,20 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d663b167b46f"
+    "run_id": "a6c843b1a564"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d663b167b46f"
+   "run_id": "a6c843b1a564"
   },
-  "hash": "e4500ad4f8bd022190438e0749c6df283a0777ffd5f540e04ea6356300b3ed11",
+  "hash": "d54a307973d56d76df08e26bb404e288c7bf1445554b76ed98e7349fa75253e2",
   "kind": "gate.decision",
-  "prev_hash": "301079473c8138afa3571acf1b2a53ad232df4005b24eaafa2dd50cfc3fab990",
+  "prev_hash": "50a6a6702599d39c9785bc9d80fdd50f1a8b50847e5e756e24c6dcd008595ce6",
   "seq": 55,
-  "ts": "2026-09-24T03:59:14.752644+00:00"
+  "ts": "2026-09-24T06:21:46.925120+00:00"
  },
  {
   "actor": "agent",
@@ -1367,15 +1365,15 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "d663b167b46f",
+   "run_id": "a6c843b1a564",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "9b6262dac9e5cb970c9607572e176b7dc0d8a1238d452b29c99a9b27b86f36ea",
+  "hash": "e83d821c8d4f19b7068e8484607e9f0b590922579dd8e42d1cedecf5ef63eb82",
   "kind": "cap.run.finish",
-  "prev_hash": "e4500ad4f8bd022190438e0749c6df283a0777ffd5f540e04ea6356300b3ed11",
+  "prev_hash": "d54a307973d56d76df08e26bb404e288c7bf1445554b76ed98e7349fa75253e2",
   "seq": 56,
-  "ts": "2026-09-24T03:59:14.754343+00:00"
+  "ts": "2026-09-24T06:21:46.926703+00:00"
  },
  {
   "actor": "agent",
@@ -1385,7 +1383,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "5f28322d6d96"
+    "run_id": "78e76ba949e2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1393,13 +1391,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5f28322d6d96"
+   "run_id": "78e76ba949e2"
   },
-  "hash": "80fbbb2e56dad90534f81d2832e7944cebfd7fec3592346fca5bb3a2a2a0905d",
+  "hash": "14088df1b4862c5813fb021af5a1a99e8611df19d69812da6792496a0e79fd15",
   "kind": "cap.run.start",
-  "prev_hash": "9b6262dac9e5cb970c9607572e176b7dc0d8a1238d452b29c99a9b27b86f36ea",
+  "prev_hash": "e83d821c8d4f19b7068e8484607e9f0b590922579dd8e42d1cedecf5ef63eb82",
   "seq": 57,
-  "ts": "2026-09-24T03:59:14.755733+00:00"
+  "ts": "2026-09-24T06:21:46.928105+00:00"
  },
  {
   "actor": "agent",
@@ -1409,36 +1407,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "5f28322d6d96"
+    "run_id": "78e76ba949e2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5f28322d6d96"
+   "run_id": "78e76ba949e2"
   },
-  "hash": "4d8e2eb3f7f7e004dda4bfab99c0e3ba8bd44a35eed488fd70962d7d5bf25f35",
+  "hash": "df6cc753d01cf7c4b4092d14f7999357044a4aa397a74152722b113abd95b05d",
   "kind": "gate.decision",
-  "prev_hash": "80fbbb2e56dad90534f81d2832e7944cebfd7fec3592346fca5bb3a2a2a0905d",
+  "prev_hash": "14088df1b4862c5813fb021af5a1a99e8611df19d69812da6792496a0e79fd15",
   "seq": 58,
-  "ts": "2026-09-24T03:59:14.755826+00:00"
+  "ts": "2026-09-24T06:21:46.928196+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
+   "duration_ms": 4,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "5f28322d6d96",
+   "run_id": "78e76ba949e2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "7505f832e35cecccc8d7d68905163b1590e97010e6d2edebffa34c1344c0241b",
+  "hash": "7bbbc97f6b6a98c75b48d286bfe380013c7a9b6f95ae0b2d851fa01ba2e11025",
   "kind": "cap.run.finish",
-  "prev_hash": "4d8e2eb3f7f7e004dda4bfab99c0e3ba8bd44a35eed488fd70962d7d5bf25f35",
+  "prev_hash": "df6cc753d01cf7c4b4092d14f7999357044a4aa397a74152722b113abd95b05d",
   "seq": 59,
-  "ts": "2026-09-24T03:59:14.757410+00:00"
+  "ts": "2026-09-24T06:21:46.932533+00:00"
  },
  {
   "actor": "agent",
@@ -1448,7 +1446,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d208ba6e3b8f"
+    "run_id": "092e0484bfb9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1456,13 +1454,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d208ba6e3b8f"
+   "run_id": "092e0484bfb9"
   },
-  "hash": "b36f7418a890f47163170756598af1b30ffaa202e82e3d11833ce0ff9e6ccec3",
+  "hash": "12fed8a708bbb0b5069d004499c3fd811c83c95b9e8f11e54b7ed4e9ac1eac48",
   "kind": "cap.run.start",
-  "prev_hash": "7505f832e35cecccc8d7d68905163b1590e97010e6d2edebffa34c1344c0241b",
+  "prev_hash": "7bbbc97f6b6a98c75b48d286bfe380013c7a9b6f95ae0b2d851fa01ba2e11025",
   "seq": 60,
-  "ts": "2026-09-24T03:59:14.758769+00:00"
+  "ts": "2026-09-24T06:21:46.940705+00:00"
  },
  {
   "actor": "agent",
@@ -1472,36 +1470,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d208ba6e3b8f"
+    "run_id": "092e0484bfb9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d208ba6e3b8f"
+   "run_id": "092e0484bfb9"
   },
-  "hash": "c20ed55ad14f7f0d7bc5885b4aad421dc7963c132a691721994225aa09aa88f5",
+  "hash": "071953274889ba26cccb6a3e7ef9807d6474bd9eb5938f99ed1592310d50b462",
   "kind": "gate.decision",
-  "prev_hash": "b36f7418a890f47163170756598af1b30ffaa202e82e3d11833ce0ff9e6ccec3",
+  "prev_hash": "12fed8a708bbb0b5069d004499c3fd811c83c95b9e8f11e54b7ed4e9ac1eac48",
   "seq": 61,
-  "ts": "2026-09-24T03:59:14.758854+00:00"
+  "ts": "2026-09-24T06:21:46.940802+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "c681c23846f0acae",
-   "run_id": "d208ba6e3b8f",
+   "result_hash": "ed84f17cc41beec5",
+   "run_id": "092e0484bfb9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8621811dedc5e549dc420505b4ef81f8b56048739142b97793c4c0c27d9df7d0",
+  "hash": "b979c4535390b0c60c1cdfa1b1b726b71b9538dc5488d2c7ed06a1c13c8d54ca",
   "kind": "cap.run.finish",
-  "prev_hash": "c20ed55ad14f7f0d7bc5885b4aad421dc7963c132a691721994225aa09aa88f5",
+  "prev_hash": "071953274889ba26cccb6a3e7ef9807d6474bd9eb5938f99ed1592310d50b462",
   "seq": 62,
-  "ts": "2026-09-24T03:59:14.760410+00:00"
+  "ts": "2026-09-24T06:21:46.942423+00:00"
  },
  {
   "actor": "agent",
@@ -1511,7 +1509,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f8f966f77255"
+    "run_id": "27883176c4d0"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1519,13 +1517,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f8f966f77255"
+   "run_id": "27883176c4d0"
   },
-  "hash": "442204010912335977a2212c0dd5b692dca8343d55406ef9094fce9f650b09bb",
+  "hash": "690a56fd8ddd719548873fabc6f83f197f0f7ab9f35376a6963526307fb34753",
   "kind": "cap.run.start",
-  "prev_hash": "8621811dedc5e549dc420505b4ef81f8b56048739142b97793c4c0c27d9df7d0",
+  "prev_hash": "b979c4535390b0c60c1cdfa1b1b726b71b9538dc5488d2c7ed06a1c13c8d54ca",
   "seq": 63,
-  "ts": "2026-09-24T03:59:14.761797+00:00"
+  "ts": "2026-09-24T06:21:46.943839+00:00"
  },
  {
   "actor": "agent",
@@ -1535,36 +1533,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f8f966f77255"
+    "run_id": "27883176c4d0"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f8f966f77255"
+   "run_id": "27883176c4d0"
   },
-  "hash": "2966ef196ec9de034a12a7e489df1e95edb526c1bdcb499f622d10adddea0a83",
+  "hash": "bc5a07e6f45f18e3ad5f60f4ef1810f7cb89691337d178b8a101afcdffd61b0f",
   "kind": "gate.decision",
-  "prev_hash": "442204010912335977a2212c0dd5b692dca8343d55406ef9094fce9f650b09bb",
+  "prev_hash": "690a56fd8ddd719548873fabc6f83f197f0f7ab9f35376a6963526307fb34753",
   "seq": 64,
-  "ts": "2026-09-24T03:59:14.761869+00:00"
+  "ts": "2026-09-24T06:21:46.943910+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "c681c23846f0acae",
-   "run_id": "f8f966f77255",
+   "result_hash": "ed84f17cc41beec5",
+   "run_id": "27883176c4d0",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2a36aee1674ddbdf653be4c0aeaaf5269bbb9241af3c25490907080e04d96b74",
+  "hash": "30ce2aece1a9a2f489be588d39164c37b7faa183261b4b85ffe0f628a9e4d69a",
   "kind": "cap.run.finish",
-  "prev_hash": "2966ef196ec9de034a12a7e489df1e95edb526c1bdcb499f622d10adddea0a83",
+  "prev_hash": "bc5a07e6f45f18e3ad5f60f4ef1810f7cb89691337d178b8a101afcdffd61b0f",
   "seq": 65,
-  "ts": "2026-09-24T03:59:14.763418+00:00"
+  "ts": "2026-09-24T06:21:46.945463+00:00"
  },
  {
   "actor": "agent",
@@ -1574,7 +1572,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "97770317e1a4"
+    "run_id": "57d624787ad0"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1582,13 +1580,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "97770317e1a4"
+   "run_id": "57d624787ad0"
   },
-  "hash": "6bf545683a3b515b0c685263dc763e23e7efa584eb95a690908ae1345f2d8db2",
+  "hash": "aebdfb66e60a19e9fddcf7d0ebec06e6b7074494afbdef19e2d49971e7b873af",
   "kind": "cap.run.start",
-  "prev_hash": "2a36aee1674ddbdf653be4c0aeaaf5269bbb9241af3c25490907080e04d96b74",
+  "prev_hash": "30ce2aece1a9a2f489be588d39164c37b7faa183261b4b85ffe0f628a9e4d69a",
   "seq": 66,
-  "ts": "2026-09-24T03:59:14.791602+00:00"
+  "ts": "2026-09-24T06:21:46.973220+00:00"
  },
  {
   "actor": "agent",
@@ -1598,36 +1596,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "97770317e1a4"
+    "run_id": "57d624787ad0"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "97770317e1a4"
+   "run_id": "57d624787ad0"
   },
-  "hash": "7f857955a6727bc3a44f3740fa4af0f09038772224a16c5d05e3ddb6a5e1dad5",
+  "hash": "36773cccfccce4276b34cbc3539441e76c4039f6563b0d283ecd991b54529249",
   "kind": "gate.decision",
-  "prev_hash": "6bf545683a3b515b0c685263dc763e23e7efa584eb95a690908ae1345f2d8db2",
+  "prev_hash": "aebdfb66e60a19e9fddcf7d0ebec06e6b7074494afbdef19e2d49971e7b873af",
   "seq": 67,
-  "ts": "2026-09-24T03:59:14.791727+00:00"
+  "ts": "2026-09-24T06:21:46.973327+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "3eca21d3ec2867e7",
-   "run_id": "97770317e1a4",
+   "result_hash": "e4a9ebc4df3f23fa",
+   "run_id": "57d624787ad0",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "789537af31050e7e465643793659bf1549c095b12c5d78ad78acf354016050a4",
+  "hash": "60344ef7dd4b86d84cb1c6795b8374952b8e20821762dff2a1a053d6647a872c",
   "kind": "cap.run.finish",
-  "prev_hash": "7f857955a6727bc3a44f3740fa4af0f09038772224a16c5d05e3ddb6a5e1dad5",
+  "prev_hash": "36773cccfccce4276b34cbc3539441e76c4039f6563b0d283ecd991b54529249",
   "seq": 68,
-  "ts": "2026-09-24T03:59:14.794245+00:00"
+  "ts": "2026-09-24T06:21:46.975869+00:00"
  },
  {
   "actor": "agent",
@@ -1637,7 +1635,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "f2f21a0db9d9"
+    "run_id": "466a959754dd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1645,13 +1643,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f2f21a0db9d9"
+   "run_id": "466a959754dd"
   },
-  "hash": "3dd8d80eb948254f7b28fa2e56c64150c680f935fe534c31eaf2314fbd7ebb47",
+  "hash": "1aaf7b4ad324c9bd3bc336eb1bf1f9aeeeff4621198ff8f71c48fb501689ba4a",
   "kind": "cap.run.start",
-  "prev_hash": "789537af31050e7e465643793659bf1549c095b12c5d78ad78acf354016050a4",
+  "prev_hash": "60344ef7dd4b86d84cb1c6795b8374952b8e20821762dff2a1a053d6647a872c",
   "seq": 69,
-  "ts": "2026-09-24T03:59:14.870020+00:00"
+  "ts": "2026-09-24T06:21:47.054058+00:00"
  },
  {
   "actor": "agent",
@@ -1661,36 +1659,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "f2f21a0db9d9"
+    "run_id": "466a959754dd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f2f21a0db9d9"
+   "run_id": "466a959754dd"
   },
-  "hash": "12b899648af558f88f650160aa3a1d26360639226754eeaf0ffaedc516ab140a",
+  "hash": "ff58b30322bb19be4b6fc9dc0c2d84782cfcfb5489206e9d1596deaf37739792",
   "kind": "gate.decision",
-  "prev_hash": "3dd8d80eb948254f7b28fa2e56c64150c680f935fe534c31eaf2314fbd7ebb47",
+  "prev_hash": "1aaf7b4ad324c9bd3bc336eb1bf1f9aeeeff4621198ff8f71c48fb501689ba4a",
   "seq": 70,
-  "ts": "2026-09-24T03:59:14.870183+00:00"
+  "ts": "2026-09-24T06:21:47.054237+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "12c5a34163eccea8",
-   "run_id": "f2f21a0db9d9",
+   "result_hash": "0f74cb4f0bef10ce",
+   "run_id": "466a959754dd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "573854386647efb75983f8988755edd1f1e90d1225ec0b214322184bfd7c2720",
+  "hash": "bed13d96fc3071ddd829aa25ddadf4aa758f6c99cb6be26834e24da919e2f3d8",
   "kind": "cap.run.finish",
-  "prev_hash": "12b899648af558f88f650160aa3a1d26360639226754eeaf0ffaedc516ab140a",
+  "prev_hash": "ff58b30322bb19be4b6fc9dc0c2d84782cfcfb5489206e9d1596deaf37739792",
   "seq": 71,
-  "ts": "2026-09-24T03:59:14.872887+00:00"
+  "ts": "2026-09-24T06:21:47.056920+00:00"
  },
  {
   "actor": "agent",
@@ -1700,7 +1698,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "9f9f2f12dc58"
+    "run_id": "8770000ba378"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1708,13 +1706,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9f9f2f12dc58"
+   "run_id": "8770000ba378"
   },
-  "hash": "6284cfb9e16350ee4ffac7e9e9e1b10f749383933d2550feb3df1eb4e5d0451b",
+  "hash": "ba6d565b47577fed84b6be236fa0b7343e01163282b384dcf66c54eaa36c4683",
   "kind": "cap.run.start",
-  "prev_hash": "573854386647efb75983f8988755edd1f1e90d1225ec0b214322184bfd7c2720",
+  "prev_hash": "bed13d96fc3071ddd829aa25ddadf4aa758f6c99cb6be26834e24da919e2f3d8",
   "seq": 72,
-  "ts": "2026-09-24T03:59:14.995926+00:00"
+  "ts": "2026-09-24T06:21:47.179681+00:00"
  },
  {
   "actor": "agent",
@@ -1724,36 +1722,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "9f9f2f12dc58"
+    "run_id": "8770000ba378"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9f9f2f12dc58"
+   "run_id": "8770000ba378"
   },
-  "hash": "780eaf9878600fc17f8ec0470c76a30198004e1148519154d77ebb74fe7fd72b",
+  "hash": "50d4c7844e3646aba249b666354e2e02580e5d05007cc6a233030a20b8e245c9",
   "kind": "gate.decision",
-  "prev_hash": "6284cfb9e16350ee4ffac7e9e9e1b10f749383933d2550feb3df1eb4e5d0451b",
+  "prev_hash": "ba6d565b47577fed84b6be236fa0b7343e01163282b384dcf66c54eaa36c4683",
   "seq": 73,
-  "ts": "2026-09-24T03:59:14.996109+00:00"
+  "ts": "2026-09-24T06:21:47.179855+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "9f9f2f12dc58",
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "8770000ba378",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ccfbae47795b547d1db03fa728d435a151df37236577f2026b603d0215e6eab8",
+  "hash": "a13085d027a02a902e53e67992edff8e853d954e08ce87e21471dd8eca6fd186",
   "kind": "cap.run.finish",
-  "prev_hash": "780eaf9878600fc17f8ec0470c76a30198004e1148519154d77ebb74fe7fd72b",
+  "prev_hash": "50d4c7844e3646aba249b666354e2e02580e5d05007cc6a233030a20b8e245c9",
   "seq": 74,
-  "ts": "2026-09-24T03:59:15.000432+00:00"
+  "ts": "2026-09-24T06:21:47.183768+00:00"
  },
  {
   "actor": "agent",
@@ -1763,7 +1761,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "47204932e808"
+    "run_id": "78dfca34ae98"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1771,13 +1769,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "47204932e808"
+   "run_id": "78dfca34ae98"
   },
-  "hash": "445db954b47f627d43ae2cc32bf86e230c43aaf2ba1c6031291f886692f36e87",
+  "hash": "8affb9c6c771b2f6f66c3dd3786d5245e85ca3cf712dc08bdebc59066537fc5e",
   "kind": "cap.run.start",
-  "prev_hash": "ccfbae47795b547d1db03fa728d435a151df37236577f2026b603d0215e6eab8",
+  "prev_hash": "a13085d027a02a902e53e67992edff8e853d954e08ce87e21471dd8eca6fd186",
   "seq": 75,
-  "ts": "2026-09-24T03:59:15.003215+00:00"
+  "ts": "2026-09-24T06:21:47.187212+00:00"
  },
  {
   "actor": "agent",
@@ -1787,36 +1785,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "47204932e808"
+    "run_id": "78dfca34ae98"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "47204932e808"
+   "run_id": "78dfca34ae98"
   },
-  "hash": "3c6379e1a0bc0ddfe000228f47f12e3e4da2bb998b4131c9c40c7d4ef7a51607",
+  "hash": "2e2c1830fbf5f058270ea02b9fa4422139e597bc60520d6f1c6db1708cb2be2b",
   "kind": "gate.decision",
-  "prev_hash": "445db954b47f627d43ae2cc32bf86e230c43aaf2ba1c6031291f886692f36e87",
+  "prev_hash": "8affb9c6c771b2f6f66c3dd3786d5245e85ca3cf712dc08bdebc59066537fc5e",
   "seq": 76,
-  "ts": "2026-09-24T03:59:15.003313+00:00"
+  "ts": "2026-09-24T06:21:47.187302+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "c681c23846f0acae",
-   "run_id": "47204932e808",
+   "result_hash": "ed84f17cc41beec5",
+   "run_id": "78dfca34ae98",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a3b682d15a7ae252728bc1607e820cf39e8299dc7237871a9a490b3deabb2150",
+  "hash": "22e81f579a4373d9a0f98f31b3115be1edfa9def8972e94a5efee9693a445fb3",
   "kind": "cap.run.finish",
-  "prev_hash": "3c6379e1a0bc0ddfe000228f47f12e3e4da2bb998b4131c9c40c7d4ef7a51607",
+  "prev_hash": "2e2c1830fbf5f058270ea02b9fa4422139e597bc60520d6f1c6db1708cb2be2b",
   "seq": 77,
-  "ts": "2026-09-24T03:59:15.004984+00:00"
+  "ts": "2026-09-24T06:21:47.188880+00:00"
  },
  {
   "actor": "agent",
@@ -1826,7 +1824,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "638514fc84ed"
+    "run_id": "b20bf2bad045"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1834,13 +1832,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "638514fc84ed"
+   "run_id": "b20bf2bad045"
   },
-  "hash": "4e41436a7f75bd651cf304e321ace10c63d5df3c2d27640949186db68bc0d720",
+  "hash": "f74ccb7586eefd951a4d040ac83c10431a4bb71d80b3259cbe4d7fd4b6460abf",
   "kind": "cap.run.start",
-  "prev_hash": "a3b682d15a7ae252728bc1607e820cf39e8299dc7237871a9a490b3deabb2150",
+  "prev_hash": "22e81f579a4373d9a0f98f31b3115be1edfa9def8972e94a5efee9693a445fb3",
   "seq": 78,
-  "ts": "2026-09-24T03:59:15.007574+00:00"
+  "ts": "2026-09-24T06:21:47.190899+00:00"
  },
  {
   "actor": "agent",
@@ -1850,36 +1848,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "638514fc84ed"
+    "run_id": "b20bf2bad045"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "638514fc84ed"
+   "run_id": "b20bf2bad045"
   },
-  "hash": "4087838907a666f7c86684f5c4041a6140a0e66fe1cc520034c10f74b7572de1",
+  "hash": "d4512ace08c2c8b317efdf6c2ef99f7e428cfccef04d66b52c06cddf94720bf4",
   "kind": "gate.decision",
-  "prev_hash": "4e41436a7f75bd651cf304e321ace10c63d5df3c2d27640949186db68bc0d720",
+  "prev_hash": "f74ccb7586eefd951a4d040ac83c10431a4bb71d80b3259cbe4d7fd4b6460abf",
   "seq": 79,
-  "ts": "2026-09-24T03:59:15.007679+00:00"
+  "ts": "2026-09-24T06:21:47.191031+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 3,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "638514fc84ed",
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "b20bf2bad045",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f1f586e502d304a1d25bcaea0dce019950df37bcacadcaf891d42b5c37317a67",
+  "hash": "833eae1ccdf8921c34dc0c4a139f7bef361fd1fc79365818aa6c24e4e483afea",
   "kind": "cap.run.finish",
-  "prev_hash": "4087838907a666f7c86684f5c4041a6140a0e66fe1cc520034c10f74b7572de1",
+  "prev_hash": "d4512ace08c2c8b317efdf6c2ef99f7e428cfccef04d66b52c06cddf94720bf4",
   "seq": 80,
-  "ts": "2026-09-24T03:59:15.011236+00:00"
+  "ts": "2026-09-24T06:21:47.194652+00:00"
  },
  {
   "actor": "agent",
@@ -1889,7 +1887,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "d412d29c918d"
+    "run_id": "da1d780a32b3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1897,13 +1895,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d412d29c918d"
+   "run_id": "da1d780a32b3"
   },
-  "hash": "50c030cc88519d951de0a3c9e2601bf42a4938178466c89807ac7837b59b4539",
+  "hash": "bf9e80beaf5eb79fb7ef6741c365821918807605b9b1c49aceb2b74edb30ca20",
   "kind": "cap.run.start",
-  "prev_hash": "f1f586e502d304a1d25bcaea0dce019950df37bcacadcaf891d42b5c37317a67",
+  "prev_hash": "833eae1ccdf8921c34dc0c4a139f7bef361fd1fc79365818aa6c24e4e483afea",
   "seq": 81,
-  "ts": "2026-09-24T03:59:15.015781+00:00"
+  "ts": "2026-09-24T06:21:47.197804+00:00"
  },
  {
   "actor": "agent",
@@ -1913,36 +1911,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "d412d29c918d"
+    "run_id": "da1d780a32b3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d412d29c918d"
+   "run_id": "da1d780a32b3"
   },
-  "hash": "764c8fb3832bb9ba639a64118312eff5e3f4da5270ebdf46cd30df49eaf89e2d",
+  "hash": "2d9021973b843d6e36e78c2505837bd9a5e356a8d8f5e8cda84e9a8e06f803a2",
   "kind": "gate.decision",
-  "prev_hash": "50c030cc88519d951de0a3c9e2601bf42a4938178466c89807ac7837b59b4539",
+  "prev_hash": "bf9e80beaf5eb79fb7ef6741c365821918807605b9b1c49aceb2b74edb30ca20",
   "seq": 82,
-  "ts": "2026-09-24T03:59:15.015881+00:00"
+  "ts": "2026-09-24T06:21:47.197905+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "77a3ddd22d0d794e",
-   "run_id": "d412d29c918d",
+   "result_hash": "8191e22493c98bde",
+   "run_id": "da1d780a32b3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f108374f43ecc8e5bee6d43450a416e163886d08cc44a30fbc744ce0b013e678",
+  "hash": "3d15e2e4bf880ce611ddeab8f6b0fb751756d9b1b1da4797f8e5e1a3f3a8c764",
   "kind": "cap.run.finish",
-  "prev_hash": "764c8fb3832bb9ba639a64118312eff5e3f4da5270ebdf46cd30df49eaf89e2d",
+  "prev_hash": "2d9021973b843d6e36e78c2505837bd9a5e356a8d8f5e8cda84e9a8e06f803a2",
   "seq": 83,
-  "ts": "2026-09-24T03:59:15.018050+00:00"
+  "ts": "2026-09-24T06:21:47.200119+00:00"
  },
  {
   "actor": "agent",
@@ -1952,7 +1950,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "18a0a3e8f887"
+    "run_id": "c106bef0f03a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1960,13 +1958,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "18a0a3e8f887"
+   "run_id": "c106bef0f03a"
   },
-  "hash": "be68697b0ca019adc35441d74e7e641630d2a0e266ff88efd243604ae5ac5dea",
+  "hash": "ff90e436572510777da26637d820baa341f0c9518e83fecaf873229499c42d2f",
   "kind": "cap.run.start",
-  "prev_hash": "f108374f43ecc8e5bee6d43450a416e163886d08cc44a30fbc744ce0b013e678",
+  "prev_hash": "3d15e2e4bf880ce611ddeab8f6b0fb751756d9b1b1da4797f8e5e1a3f3a8c764",
   "seq": 84,
-  "ts": "2026-09-24T03:59:15.475981+00:00"
+  "ts": "2026-09-24T06:21:47.725803+00:00"
  },
  {
   "actor": "agent",
@@ -1976,36 +1974,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "18a0a3e8f887"
+    "run_id": "c106bef0f03a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "18a0a3e8f887"
+   "run_id": "c106bef0f03a"
   },
-  "hash": "c5ff50e2e7fe0f6a6b6167b775352944a62d8a813acf5f6048a85431dc1500d7",
+  "hash": "562870da49f96285155083edda9119156f6f7c0e3b393e273a2234337de79adf",
   "kind": "gate.decision",
-  "prev_hash": "be68697b0ca019adc35441d74e7e641630d2a0e266ff88efd243604ae5ac5dea",
+  "prev_hash": "ff90e436572510777da26637d820baa341f0c9518e83fecaf873229499c42d2f",
   "seq": 85,
-  "ts": "2026-09-24T03:59:15.476491+00:00"
+  "ts": "2026-09-24T06:21:47.726328+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 9,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "18a0a3e8f887",
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "c106bef0f03a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "fe2fb2dbf4ea52185d9d0e7b8b32eee1b9e0b65859a62e615b7d6947676882fe",
+  "hash": "a3525f05dee46f09239fec14cd019d1895556f643ef843d79ead1a4e7c921673",
   "kind": "cap.run.finish",
-  "prev_hash": "c5ff50e2e7fe0f6a6b6167b775352944a62d8a813acf5f6048a85431dc1500d7",
+  "prev_hash": "562870da49f96285155083edda9119156f6f7c0e3b393e273a2234337de79adf",
   "seq": 86,
-  "ts": "2026-09-24T03:59:15.485538+00:00"
+  "ts": "2026-09-24T06:21:47.734954+00:00"
  },
  {
   "actor": "agent",
@@ -2015,7 +2013,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "b04691ec8d51"
+    "run_id": "d719c7dae72a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2023,13 +2021,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b04691ec8d51"
+   "run_id": "d719c7dae72a"
   },
-  "hash": "beb8f443dc4ce84ee8f7fc412910541dadbd0c5cebb12f03002821479a52d9a6",
+  "hash": "6d0748f56c615751ad88399ec4c2c76dbb3e8d70bdbed02873967dc4a39df536",
   "kind": "cap.run.start",
-  "prev_hash": "fe2fb2dbf4ea52185d9d0e7b8b32eee1b9e0b65859a62e615b7d6947676882fe",
+  "prev_hash": "a3525f05dee46f09239fec14cd019d1895556f643ef843d79ead1a4e7c921673",
   "seq": 87,
-  "ts": "2026-09-24T03:59:15.491398+00:00"
+  "ts": "2026-09-24T06:21:47.740794+00:00"
  },
  {
   "actor": "agent",
@@ -2039,36 +2037,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "b04691ec8d51"
+    "run_id": "d719c7dae72a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b04691ec8d51"
+   "run_id": "d719c7dae72a"
   },
-  "hash": "a2b1a5a137f5eb5d54ed2e0f57f9a6bba4f172e705bdb0fd05cea74bf7339dbc",
+  "hash": "d712955f8ba6905ba47914949852cab444ff087923194ec3fe4462fe0c91db0b",
   "kind": "gate.decision",
-  "prev_hash": "beb8f443dc4ce84ee8f7fc412910541dadbd0c5cebb12f03002821479a52d9a6",
+  "prev_hash": "6d0748f56c615751ad88399ec4c2c76dbb3e8d70bdbed02873967dc4a39df536",
   "seq": 88,
-  "ts": "2026-09-24T03:59:15.491611+00:00"
+  "ts": "2026-09-24T06:21:47.740980+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 3,
-   "result_hash": "c681c23846f0acae",
-   "run_id": "b04691ec8d51",
+   "result_hash": "ed84f17cc41beec5",
+   "run_id": "d719c7dae72a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d6e20f1c78bdc295f1ed6b4716ef68c42149c0e9a11b89a618ee6d54816ad05e",
+  "hash": "f74a6aa68b10322ea177bc2002676b3f780ee9af8e40017ec9fbe209e237329f",
   "kind": "cap.run.finish",
-  "prev_hash": "a2b1a5a137f5eb5d54ed2e0f57f9a6bba4f172e705bdb0fd05cea74bf7339dbc",
+  "prev_hash": "d712955f8ba6905ba47914949852cab444ff087923194ec3fe4462fe0c91db0b",
   "seq": 89,
-  "ts": "2026-09-24T03:59:15.494594+00:00"
+  "ts": "2026-09-24T06:21:47.743778+00:00"
  },
  {
   "actor": "agent",
@@ -2078,7 +2076,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "c7559b374a3b"
+    "run_id": "7d642d2da370"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2086,13 +2084,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c7559b374a3b"
+   "run_id": "7d642d2da370"
   },
-  "hash": "ef2d5ea690167436562e0dec7ff1a8e6c53d8505b3be186fc2e00a2ef865a12c",
+  "hash": "2ed857691c8a0dcbea034f72a017a105c8e44fb5bbd02e52ed8f7aefcc717113",
   "kind": "cap.run.start",
-  "prev_hash": "d6e20f1c78bdc295f1ed6b4716ef68c42149c0e9a11b89a618ee6d54816ad05e",
+  "prev_hash": "f74a6aa68b10322ea177bc2002676b3f780ee9af8e40017ec9fbe209e237329f",
   "seq": 90,
-  "ts": "2026-09-24T03:59:15.499271+00:00"
+  "ts": "2026-09-24T06:21:47.747090+00:00"
  },
  {
   "actor": "agent",
@@ -2102,36 +2100,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "c7559b374a3b"
+    "run_id": "7d642d2da370"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c7559b374a3b"
+   "run_id": "7d642d2da370"
   },
-  "hash": "d93810f8764c82689b00fa7e4f505bc223a4c9f67d5bc176d4bd742f5ec302f2",
+  "hash": "80cbec25f89b66834f24d27508d4b6f4401e44dbfe835371005937968da6fbb3",
   "kind": "gate.decision",
-  "prev_hash": "ef2d5ea690167436562e0dec7ff1a8e6c53d8505b3be186fc2e00a2ef865a12c",
+  "prev_hash": "2ed857691c8a0dcbea034f72a017a105c8e44fb5bbd02e52ed8f7aefcc717113",
   "seq": 91,
-  "ts": "2026-09-24T03:59:15.499433+00:00"
+  "ts": "2026-09-24T06:21:47.747216+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 6,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "c7559b374a3b",
+   "duration_ms": 5,
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "7d642d2da370",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "41a756f68b86f3d4a0e52c7ef6fb9a6bdb9343ec5abe2732a7d5ca767aba1d90",
+  "hash": "dca598273f49c3bb649c8ff8a9f994ed2d825deb831879e139ac9a0242db9467",
   "kind": "cap.run.finish",
-  "prev_hash": "d93810f8764c82689b00fa7e4f505bc223a4c9f67d5bc176d4bd742f5ec302f2",
+  "prev_hash": "80cbec25f89b66834f24d27508d4b6f4401e44dbfe835371005937968da6fbb3",
   "seq": 92,
-  "ts": "2026-09-24T03:59:15.505432+00:00"
+  "ts": "2026-09-24T06:21:47.753002+00:00"
  },
  {
   "actor": "agent",
@@ -2141,7 +2139,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ed97c013c774"
+    "run_id": "bb265adf1068"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2149,13 +2147,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ed97c013c774"
+   "run_id": "bb265adf1068"
   },
-  "hash": "6dd09ad8c649d0a285f1ce442b02321ba4d111cf64a1c207e9a1a9b59a2507ed",
+  "hash": "e714780e168e9578358d85a89d5bbc20a180c14eadf1672d9501ee1a3ff8cdf2",
   "kind": "cap.run.start",
-  "prev_hash": "41a756f68b86f3d4a0e52c7ef6fb9a6bdb9343ec5abe2732a7d5ca767aba1d90",
+  "prev_hash": "dca598273f49c3bb649c8ff8a9f994ed2d825deb831879e139ac9a0242db9467",
   "seq": 93,
-  "ts": "2026-09-24T03:59:15.509552+00:00"
+  "ts": "2026-09-24T06:21:47.756828+00:00"
  },
  {
   "actor": "agent",
@@ -2165,36 +2163,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ed97c013c774"
+    "run_id": "bb265adf1068"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ed97c013c774"
+   "run_id": "bb265adf1068"
   },
-  "hash": "df0dd82e77ca33d612988ae53aaf8ee75192087e978b6f046dd75b2022c8fe51",
+  "hash": "332bc411ce86d033c040d40797680e3e26932de96ce41fe8bad2f2a7d2e2640d",
   "kind": "gate.decision",
-  "prev_hash": "6dd09ad8c649d0a285f1ce442b02321ba4d111cf64a1c207e9a1a9b59a2507ed",
+  "prev_hash": "e714780e168e9578358d85a89d5bbc20a180c14eadf1672d9501ee1a3ff8cdf2",
   "seq": 94,
-  "ts": "2026-09-24T03:59:15.509707+00:00"
+  "ts": "2026-09-24T06:21:47.756938+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 3,
-   "result_hash": "62a9421263aa1972",
-   "run_id": "ed97c013c774",
+   "result_hash": "04fa719ab3f3aa43",
+   "run_id": "bb265adf1068",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "513bf01ac541553993bd3478c1437b29ed3e108102da39525a4c9dd9cc556a8e",
+  "hash": "2954c6a0c1f5c2d55b0fd06e6aad45cadc99a41c36e16c80cfd91019024f7df6",
   "kind": "cap.run.finish",
-  "prev_hash": "df0dd82e77ca33d612988ae53aaf8ee75192087e978b6f046dd75b2022c8fe51",
+  "prev_hash": "332bc411ce86d033c040d40797680e3e26932de96ce41fe8bad2f2a7d2e2640d",
   "seq": 95,
-  "ts": "2026-09-24T03:59:15.513004+00:00"
+  "ts": "2026-09-24T06:21:47.760122+00:00"
  },
  {
   "actor": "agent",
@@ -2204,7 +2202,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "bb158652e19f"
+    "run_id": "66de8550b6ac"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2212,13 +2210,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "bb158652e19f"
+   "run_id": "66de8550b6ac"
   },
-  "hash": "6def0d7bdd8e46d1162f814bb55fcd501bf13c54ecfe8d2a274cd0f7818d8a2f",
+  "hash": "c52e63555b0fc59e0cf4cb1edca7eec4af163691e361960d494073a9afafad4d",
   "kind": "cap.run.start",
-  "prev_hash": "513bf01ac541553993bd3478c1437b29ed3e108102da39525a4c9dd9cc556a8e",
+  "prev_hash": "2954c6a0c1f5c2d55b0fd06e6aad45cadc99a41c36e16c80cfd91019024f7df6",
   "seq": 96,
-  "ts": "2026-09-24T03:59:19.116350+00:00"
+  "ts": "2026-09-24T06:21:51.352256+00:00"
  },
  {
   "actor": "agent",
@@ -2228,36 +2226,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "bb158652e19f"
+    "run_id": "66de8550b6ac"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "bb158652e19f"
+   "run_id": "66de8550b6ac"
   },
-  "hash": "55f1bc5aa1eb6648e870d96a4e4c7b3bb8288de7377b42a25eb67ca71da89240",
+  "hash": "576218896311376b65fba93c1870581a57979b2f3b8d188b3b903372327336d6",
   "kind": "gate.decision",
-  "prev_hash": "6def0d7bdd8e46d1162f814bb55fcd501bf13c54ecfe8d2a274cd0f7818d8a2f",
+  "prev_hash": "c52e63555b0fc59e0cf4cb1edca7eec4af163691e361960d494073a9afafad4d",
   "seq": 97,
-  "ts": "2026-09-24T03:59:19.116541+00:00"
+  "ts": "2026-09-24T06:21:51.352444+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "bb158652e19f",
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "66de8550b6ac",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "947eb1c49fe21245ca3e0ca7db3c04b498434e65146feb03cfcd7510c203c7ca",
+  "hash": "6b03679f73abb341ce1ffe099199f8e9ac0daebb561ff8bbeb8ab215ffe76459",
   "kind": "cap.run.finish",
-  "prev_hash": "55f1bc5aa1eb6648e870d96a4e4c7b3bb8288de7377b42a25eb67ca71da89240",
+  "prev_hash": "576218896311376b65fba93c1870581a57979b2f3b8d188b3b903372327336d6",
   "seq": 98,
-  "ts": "2026-09-24T03:59:19.120821+00:00"
+  "ts": "2026-09-24T06:21:51.356467+00:00"
  },
  {
   "actor": "agent",
@@ -2267,7 +2265,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "9de5bc3a5d4d"
+    "run_id": "9153ae512f44"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2275,13 +2273,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9de5bc3a5d4d"
+   "run_id": "9153ae512f44"
   },
-  "hash": "eb60ef735d4908896a1cec8554817977797a7aa6977879b6b03d9f79a53f7902",
+  "hash": "560a133709ad3e810b24a7341d52bfbbddc868b55a8658d85d0e8b899438f9ff",
   "kind": "cap.run.start",
-  "prev_hash": "947eb1c49fe21245ca3e0ca7db3c04b498434e65146feb03cfcd7510c203c7ca",
+  "prev_hash": "6b03679f73abb341ce1ffe099199f8e9ac0daebb561ff8bbeb8ab215ffe76459",
   "seq": 99,
-  "ts": "2026-09-24T03:59:19.123549+00:00"
+  "ts": "2026-09-24T06:21:51.359456+00:00"
  },
  {
   "actor": "agent",
@@ -2291,36 +2289,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "9de5bc3a5d4d"
+    "run_id": "9153ae512f44"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9de5bc3a5d4d"
+   "run_id": "9153ae512f44"
   },
-  "hash": "4ddc975e9d1c65185c295ecd215f3fa4c2eb241ed66cf41a5779fc5517249b7d",
+  "hash": "fefab369392dbf19c2062aefdc383042e8505c1a1cdff2fbab88a43907f31fa7",
   "kind": "gate.decision",
-  "prev_hash": "eb60ef735d4908896a1cec8554817977797a7aa6977879b6b03d9f79a53f7902",
+  "prev_hash": "560a133709ad3e810b24a7341d52bfbbddc868b55a8658d85d0e8b899438f9ff",
   "seq": 100,
-  "ts": "2026-09-24T03:59:19.123635+00:00"
+  "ts": "2026-09-24T06:21:51.359538+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "c681c23846f0acae",
-   "run_id": "9de5bc3a5d4d",
+   "result_hash": "ed84f17cc41beec5",
+   "run_id": "9153ae512f44",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "7924c762599ae1e8011e23dd33dfeb8838ad080138339fdfc8630f3e9a517911",
+  "hash": "0d244ce58e412e96e15901384d779f5663f2bdfd5eb2a47218ae44a8137c23bd",
   "kind": "cap.run.finish",
-  "prev_hash": "4ddc975e9d1c65185c295ecd215f3fa4c2eb241ed66cf41a5779fc5517249b7d",
+  "prev_hash": "fefab369392dbf19c2062aefdc383042e8505c1a1cdff2fbab88a43907f31fa7",
   "seq": 101,
-  "ts": "2026-09-24T03:59:19.125291+00:00"
+  "ts": "2026-09-24T06:21:51.361197+00:00"
  },
  {
   "actor": "agent",
@@ -2330,7 +2328,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "0afa9f7bb71e"
+    "run_id": "854a2ec490d3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2338,13 +2336,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0afa9f7bb71e"
+   "run_id": "854a2ec490d3"
   },
-  "hash": "e2f16d07957e889fe4ce9274d2482ee011be5b4b1a8a09df8b6455960c68e871",
+  "hash": "5fa306261a8d49ffb940d604855af614bdd05bc532f93fdae66836a4dd45338a",
   "kind": "cap.run.start",
-  "prev_hash": "7924c762599ae1e8011e23dd33dfeb8838ad080138339fdfc8630f3e9a517911",
+  "prev_hash": "0d244ce58e412e96e15901384d779f5663f2bdfd5eb2a47218ae44a8137c23bd",
   "seq": 102,
-  "ts": "2026-09-24T03:59:19.127337+00:00"
+  "ts": "2026-09-24T06:21:51.363239+00:00"
  },
  {
   "actor": "agent",
@@ -2354,36 +2352,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "0afa9f7bb71e"
+    "run_id": "854a2ec490d3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0afa9f7bb71e"
+   "run_id": "854a2ec490d3"
   },
-  "hash": "83b7b23384610be98018aca3dddea21a260d7b015ae2cba3364495ccf216297b",
+  "hash": "7d2284dbb3a51ebb347f10d1b2bb4d0e5c20d68546ec84e37e30038bcdc5ef69",
   "kind": "gate.decision",
-  "prev_hash": "e2f16d07957e889fe4ce9274d2482ee011be5b4b1a8a09df8b6455960c68e871",
+  "prev_hash": "5fa306261a8d49ffb940d604855af614bdd05bc532f93fdae66836a4dd45338a",
   "seq": 103,
-  "ts": "2026-09-24T03:59:19.127447+00:00"
+  "ts": "2026-09-24T06:21:51.363354+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "39f320eb1c24c657",
-   "run_id": "0afa9f7bb71e",
+   "result_hash": "46341ff8893e6df6",
+   "run_id": "854a2ec490d3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "07686404dbaeac09b6df5e2c6f472de9cfd87db6ff69baba54cd6b2fa789c459",
+  "hash": "070a56bd1438b4dd26e13cd3e425691e797c6062072e3e4251152277fa4c485a",
   "kind": "cap.run.finish",
-  "prev_hash": "83b7b23384610be98018aca3dddea21a260d7b015ae2cba3364495ccf216297b",
+  "prev_hash": "7d2284dbb3a51ebb347f10d1b2bb4d0e5c20d68546ec84e37e30038bcdc5ef69",
   "seq": 104,
-  "ts": "2026-09-24T03:59:19.131506+00:00"
+  "ts": "2026-09-24T06:21:51.367244+00:00"
  },
  {
   "actor": "agent",
@@ -2393,7 +2391,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ad884e455da7"
+    "run_id": "d5fc86595757"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2401,13 +2399,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ad884e455da7"
+   "run_id": "d5fc86595757"
   },
-  "hash": "eaaa920a710a47dc16b605b54c0027a91726c6c45964c5f100d3e4a81865715c",
+  "hash": "2e51ef129cbdc2a4b08c77313e39100739dd684b24cf42e5b7069657134b2769",
   "kind": "cap.run.start",
-  "prev_hash": "07686404dbaeac09b6df5e2c6f472de9cfd87db6ff69baba54cd6b2fa789c459",
+  "prev_hash": "070a56bd1438b4dd26e13cd3e425691e797c6062072e3e4251152277fa4c485a",
   "seq": 105,
-  "ts": "2026-09-24T03:59:19.134183+00:00"
+  "ts": "2026-09-24T06:21:51.371996+00:00"
  },
  {
   "actor": "agent",
@@ -2417,36 +2415,36 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ad884e455da7"
+    "run_id": "d5fc86595757"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ad884e455da7"
+   "run_id": "d5fc86595757"
   },
-  "hash": "ad034fdd76c6fac731f3fd6d9a2625753ca1a79a5000330e89659f63485d15d6",
+  "hash": "2c8dd5b19fbc8587c99339296781dfebd0f744f30c564f07fffc7aa74f5e44c3",
   "kind": "gate.decision",
-  "prev_hash": "eaaa920a710a47dc16b605b54c0027a91726c6c45964c5f100d3e4a81865715c",
+  "prev_hash": "2e51ef129cbdc2a4b08c77313e39100739dd684b24cf42e5b7069657134b2769",
   "seq": 106,
-  "ts": "2026-09-24T03:59:19.134269+00:00"
+  "ts": "2026-09-24T06:21:51.372089+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "e9218651f3039813",
-   "run_id": "ad884e455da7",
+   "result_hash": "a2d0e75f1f9ac847",
+   "run_id": "d5fc86595757",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4af6db92311aaf8a6ac2150c41a00fb4e42d5ed033de377d6e87f4c50b6e06fa",
+  "hash": "746d954fc7e7eadcd3275711bbe848e75a0407cf7076624f66bd5285f321b84e",
   "kind": "cap.run.finish",
-  "prev_hash": "ad034fdd76c6fac731f3fd6d9a2625753ca1a79a5000330e89659f63485d15d6",
+  "prev_hash": "2c8dd5b19fbc8587c99339296781dfebd0f744f30c564f07fffc7aa74f5e44c3",
   "seq": 107,
-  "ts": "2026-09-24T03:59:19.136716+00:00"
+  "ts": "2026-09-24T06:21:51.374472+00:00"
  }
 ]
 ```
@@ -2512,13 +2510,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "kind": "gap",
     "text": "Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_f1cae304.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_f697144a.",
     "source_cap": "search.web",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T03:59:14.347711+00:00",
+    "created_at": "2026-09-24T06:21:46.492706+00:00",
     "answered_at": null
    }
   ]
@@ -2539,7 +2537,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
   "so_dong": 33,
   "dong": [
    {
-    "id": "1b9fd778c2ab",
+    "id": "d253dcea7aa6",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -2552,10 +2550,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:12.104978+00:00"
+    "at": "2026-09-24T06:21:44.166263+00:00"
    },
    {
-    "id": "7025b298892d",
+    "id": "556d6e46e548",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2568,10 +2566,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:12.118462+00:00"
+    "at": "2026-09-24T06:21:44.181387+00:00"
    },
    {
-    "id": "d944052335d8",
+    "id": "0ba1863c4c47",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2584,10 +2582,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:12.121692+00:00"
+    "at": "2026-09-24T06:21:44.186987+00:00"
    },
    {
-    "id": "47b74ad782a5",
+    "id": "60c77ea9a4b4",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2600,10 +2598,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:12.151528+00:00"
+    "at": "2026-09-24T06:21:44.219943+00:00"
    },
    {
-    "id": "d02cdfc078d6",
+    "id": "cc2e62c49d4e",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2616,10 +2614,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:12.393949+00:00"
+    "at": "2026-09-24T06:21:44.483436+00:00"
    },
    {
-    "id": "d52ba0ff7413",
+    "id": "3bc44582706f",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -2632,10 +2630,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:12.419393+00:00"
+    "at": "2026-09-24T06:21:44.510068+00:00"
    },
    {
-    "id": "55893fed2033",
+    "id": "7c5cac0b2588",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -2648,10 +2646,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.186538+00:00"
+    "at": "2026-09-24T06:21:46.463669+00:00"
    },
    {
-    "id": "cca0754d5632",
+    "id": "555fdc6294f5",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -2664,10 +2662,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.191290+00:00"
+    "at": "2026-09-24T06:21:46.468316+00:00"
    },
    {
-    "id": "0a873cff12fa",
+    "id": "024b5ede897a",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -2680,26 +2678,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.199779+00:00"
+    "at": "2026-09-24T06:21:46.477074+00:00"
    },
    {
-    "id": "9570f0cb948b",
-    "gate": "*",
-    "action_cap": "view.artifacts",
-    "risk": "R0",
-    "autonomy_level": "A2",
-    "decision": "APPROVE",
-    "by": "agent",
-    "rule": "R0",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "evidence": null,
-    "features": "{}",
-    "human_answer": null,
-    "undone_at": null,
-    "at": "2026-09-24T03:59:14.332561+00:00"
-   },
-   {
-    "id": "3a7c80be52e6",
+    "id": "6839d51e99cd",
     "gate": "*",
     "action_cap": "search.web",
     "risk": "R0",
@@ -2712,26 +2694,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.344219+00:00"
+    "at": "2026-09-24T06:21:46.487802+00:00"
    },
    {
-    "id": "4e957cf5acf5",
-    "gate": "*",
-    "action_cap": "project.status",
-    "risk": "R0",
-    "autonomy_level": "A2",
-    "decision": "APPROVE",
-    "by": "agent",
-    "rule": "R0",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "evidence": null,
-    "features": "{}",
-    "human_answer": null,
-    "undone_at": null,
-    "at": "2026-09-24T03:59:14.349064+00:00"
-   },
-   {
-    "id": "2b579686db0e",
+    "id": "cb55032c4c04",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -2744,10 +2710,42 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.376587+00:00"
+    "at": "2026-09-24T06:21:46.528675+00:00"
    },
    {
-    "id": "8aabbad541f1",
+    "id": "f62ecfcdbaaf",
+    "gate": "*",
+    "action_cap": "view.artifacts",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T06:21:46.580623+00:00"
+   },
+   {
+    "id": "904892a941a2",
+    "gate": "*",
+    "action_cap": "project.status",
+    "risk": "R0",
+    "autonomy_level": "A2",
+    "decision": "APPROVE",
+    "by": "agent",
+    "rule": "R0",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "evidence": null,
+    "features": "{}",
+    "human_answer": null,
+    "undone_at": null,
+    "at": "2026-09-24T06:21:46.900923+00:00"
+   },
+   {
+    "id": "a96441d2b0ec",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -2760,10 +2758,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.730465+00:00"
+    "at": "2026-09-24T06:21:46.906566+00:00"
    },
    {
-    "id": "491a589a3b4e",
+    "id": "1eeb3560a603",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2776,10 +2774,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.734385+00:00"
+    "at": "2026-09-24T06:21:46.917606+00:00"
    },
    {
-    "id": "d663b167b46f",
+    "id": "a6c843b1a564",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2792,10 +2790,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.753040+00:00"
+    "at": "2026-09-24T06:21:46.925551+00:00"
    },
    {
-    "id": "5f28322d6d96",
+    "id": "78e76ba949e2",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2808,10 +2806,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.756201+00:00"
+    "at": "2026-09-24T06:21:46.928561+00:00"
    },
    {
-    "id": "d208ba6e3b8f",
+    "id": "092e0484bfb9",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2824,10 +2822,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.759221+00:00"
+    "at": "2026-09-24T06:21:46.941169+00:00"
    },
    {
-    "id": "f8f966f77255",
+    "id": "27883176c4d0",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2840,10 +2838,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.762219+00:00"
+    "at": "2026-09-24T06:21:46.944277+00:00"
    },
    {
-    "id": "97770317e1a4",
+    "id": "57d624787ad0",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2856,10 +2854,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.792229+00:00"
+    "at": "2026-09-24T06:21:46.973712+00:00"
    },
    {
-    "id": "f2f21a0db9d9",
+    "id": "466a959754dd",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2872,10 +2870,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.870821+00:00"
+    "at": "2026-09-24T06:21:47.054883+00:00"
    },
    {
-    "id": "9f9f2f12dc58",
+    "id": "8770000ba378",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2888,10 +2886,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:14.996825+00:00"
+    "at": "2026-09-24T06:21:47.180558+00:00"
    },
    {
-    "id": "47204932e808",
+    "id": "78dfca34ae98",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2904,10 +2902,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.003676+00:00"
+    "at": "2026-09-24T06:21:47.187658+00:00"
    },
    {
-    "id": "638514fc84ed",
+    "id": "b20bf2bad045",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2920,10 +2918,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.008073+00:00"
+    "at": "2026-09-24T06:21:47.191429+00:00"
    },
    {
-    "id": "d412d29c918d",
+    "id": "da1d780a32b3",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2936,10 +2934,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.016253+00:00"
+    "at": "2026-09-24T06:21:47.198325+00:00"
    },
    {
-    "id": "18a0a3e8f887",
+    "id": "c106bef0f03a",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2952,10 +2950,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.477804+00:00"
+    "at": "2026-09-24T06:21:47.727719+00:00"
    },
    {
-    "id": "b04691ec8d51",
+    "id": "d719c7dae72a",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2968,10 +2966,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.492343+00:00"
+    "at": "2026-09-24T06:21:47.741632+00:00"
    },
    {
-    "id": "c7559b374a3b",
+    "id": "7d642d2da370",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2984,10 +2982,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.500143+00:00"
+    "at": "2026-09-24T06:21:47.747768+00:00"
    },
    {
-    "id": "ed97c013c774",
+    "id": "bb265adf1068",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3000,10 +2998,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:15.510355+00:00"
+    "at": "2026-09-24T06:21:47.757508+00:00"
    },
    {
-    "id": "bb158652e19f",
+    "id": "66de8550b6ac",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3016,10 +3014,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:19.117229+00:00"
+    "at": "2026-09-24T06:21:51.352973+00:00"
    },
    {
-    "id": "9de5bc3a5d4d",
+    "id": "9153ae512f44",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3032,10 +3030,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:19.124003+00:00"
+    "at": "2026-09-24T06:21:51.359897+00:00"
    },
    {
-    "id": "0afa9f7bb71e",
+    "id": "854a2ec490d3",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3048,10 +3046,10 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:19.127885+00:00"
+    "at": "2026-09-24T06:21:51.363834+00:00"
    },
    {
-    "id": "ad884e455da7",
+    "id": "d5fc86595757",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3064,7 +3062,7 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:59:19.134691+00:00"
+    "at": "2026-09-24T06:21:51.372514+00:00"
    }
   ]
  },
@@ -3132,14 +3130,14 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_f1cae3045ded",
+    "id": "r_f697144a877b",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_f1cae3045ded\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"chip\": \"AMS1117-3.3\", \"question\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"AMS1117-3.3\"], \"_text\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}, \"text\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_f697144a877b\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"question\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"AMS1117-3.3\"], \"_text\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}, \"text\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\"}",
     "state": "failed",
     "working": null,
     "report": "{\"nguon_chuoi\": \"mẫu: Tìm tài liệu / linh kiện (DEV-208)\", \"state\": \"failed\", \"done\": [], \"waiting\": [{\"id\": \"n3\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n1\"}], \"skipped\": [{\"id\": \"n2\", \"cap\": \"search.fetch\", \"vi\": \"chờ nút n1\"}], \"failed\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"error\": {\"eide_code\": \"E4001\", \"name\": \"TOOL_MISSING\", \"tool\": \"search provider\", \"providers\": [\"searxng\", \"brave\", \"tavily\", \"google\"], \"alternative\": \"search.vendor\", \"message\": \"Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.\"}, \"bat_buoc\": true}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T03:59:14.342165+00:00",
+    "started_at": "2026-09-24T06:21:46.485083+00:00",
     "finished_at": null
    }
   ]
@@ -3170,13 +3168,13 @@ Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_fe6a1a05f9be",
+    "id": "s_960790224135",
     "project": "kiem-tra-vong-doi-linh-kien",
-    "opened_at": "2026-09-24T03:59:12.109307+00:00",
+    "opened_at": "2026-09-24T06:21:44.171006+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\", \"at\": \"2026-09-24T03:59:12.401683+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_f1cae304 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T03:59:14.377763+00:00\", \"run_id\": \"r_f1cae3045ded\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế\", \"at\": \"2026-09-24T06:21:44.492668+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_f697144a → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T06:21:46.529943+00:00\", \"run_id\": \"r_f697144a877b\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -3210,7 +3208,7 @@ index/
 ```
 # kiểm tra vòng đời linh kiện
 
-- 2026-09-24 10:59 — tạo dự án từ lệnh: "kiểm tra vòng đời linh kiện"
+- 2026-09-24 13:21 — tạo dự án từ lệnh: "kiểm tra vòng đời linh kiện"
 
 ```
 
@@ -3301,7 +3299,7 @@ escalation:
 project:
   id: kiem-tra-vong-doi-linh-kien
   name: kiểm tra vòng đời linh kiện
-  created: '2026-09-24T03:59:11.893391+00:00'
+  created: '2026-09-24T06:21:43.878249+00:00'
   text: kiểm tra vòng đời linh kiện
 target:
   chip: null
@@ -3492,7 +3490,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “kiểm tra vòng đời linh kiện”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `kiem-tra-vong-doi-linh-kien` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3513,7 +3511,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Con AMS1117-3.3 trong thiết kế còn sản xuất không? Nếu ngừng sản xuất thì đề xuất thay thế
 
-**Tác tử trả lời** *(sau 6.5 s)*:
+**Tác tử trả lời** *(sau 6.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `kiem-tra-vong-doi-linh-kien` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3538,8 +3536,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_fe6a1a05f9be
-Mở lúc	24/09 03:59:12
+Phiên	s_960790224135
+Mở lúc	24/09 06:21:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3572,8 +3570,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_fe6a1a05f9be
-Mở lúc	24/09 03:59:12
+Phiên	s_960790224135
+Mở lúc	24/09 06:21:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3593,7 +3591,7 @@ Số lời gọi	1
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.2 s)*:
+**Tác tử trả lời** *(sau 2.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `kiem-tra-vong-doi-linh-kien` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3618,8 +3616,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_fe6a1a05f9be
-Mở lúc	24/09 03:59:12
+Phiên	s_960790224135
+Mở lúc	24/09 06:21:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3652,7 +3650,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC012/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `kiem-tra-vong-doi-linh-kien` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3675,7 +3673,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC012/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.5 s)*:
+**Tác tử trả lời** *(sau 6.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `kiem-tra-vong-doi-linh-kien` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3700,8 +3698,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_fe6a1a05f9be
-Mở lúc	24/09 03:59:12
+Phiên	s_960790224135
+Mở lúc	24/09 06:21:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3736,8 +3734,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_fe6a1a05f9be
-Mở lúc	24/09 03:59:12
+Phiên	s_960790224135
+Mở lúc	24/09 06:21:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3759,7 +3757,7 @@ Số lời gọi	1
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC012/buoc-03.png
 
-**Tác tử trả lời** *(sau 2.2 s)*:
+**Tác tử trả lời** *(sau 2.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `kiem-tra-vong-doi-linh-kien` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3784,8 +3782,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_fe6a1a05f9be
-Mở lúc	24/09 03:59:12
+Phiên	s_960790224135
+Mở lúc	24/09 06:21:44
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2

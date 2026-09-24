@@ -14,7 +14,7 @@ Dự án: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC025/du-an/dinh-dang-
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2533 tok · ra 135 tok · 1911 ms · 0.001097 USD
+- dừng: `stop` · vào 2533 tok · ra 136 tok · 1642 ms · 0.0011 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -119,7 +119,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "question": "mạch này dùng MCU gì"
   },
   "is_big": false,
-  "confidence": 0.9,
+  "confidence": 0.88,
   "lang": "vi",
   "mentions": [
     "/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc"
@@ -154,7 +154,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "2ee624fbb4d9"
+    "run_id": "824f587f0c7d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -162,13 +162,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2ee624fbb4d9"
+   "run_id": "824f587f0c7d"
   },
-  "hash": "5f98dcfc75deff08919524b9e33ace3b00135dbf5781886585bcd19661b4b2f4",
+  "hash": "dbb6d84461aec21c60cf67fa3079f7bfa9ec1d9a2f0e96303203e3dd1054b32c",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:04:39.685828+00:00"
+  "ts": "2026-09-24T06:28:08.029725+00:00"
  },
  {
   "actor": "agent",
@@ -178,52 +178,52 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "2ee624fbb4d9"
+    "run_id": "824f587f0c7d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2ee624fbb4d9"
+   "run_id": "824f587f0c7d"
   },
-  "hash": "f522524843139eb89d7f2ebffa8786ed2534594968d9719d55f8a67a8bf6d074",
+  "hash": "f8065f8ea40f6e626a05f020e06fb042c042c41aa2e41958f19c3ad2a1ebfd50",
   "kind": "gate.decision",
-  "prev_hash": "5f98dcfc75deff08919524b9e33ace3b00135dbf5781886585bcd19661b4b2f4",
+  "prev_hash": "dbb6d84461aec21c60cf67fa3079f7bfa9ec1d9a2f0e96303203e3dd1054b32c",
   "seq": 2,
-  "ts": "2026-09-24T04:04:39.686207+00:00"
+  "ts": "2026-09-24T06:28:08.030083+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "2ee624fbb4d9"
+    "run_id": "824f587f0c7d"
    },
    "project": "dinh-dang-thiet-ke-khong-ho-tro",
-   "session_id": "s_517c77e89a15"
+   "session_id": "s_13f470dd7e83"
   },
-  "hash": "238fea010bef159ee614c28453164006bcdd178b947199e78fb284a189f5ddea",
+  "hash": "9374c419e8297042f45736623709dcbc4fa638ba018c092933b815735b452450",
   "kind": "session.open",
-  "prev_hash": "f522524843139eb89d7f2ebffa8786ed2534594968d9719d55f8a67a8bf6d074",
+  "prev_hash": "f8065f8ea40f6e626a05f020e06fb042c042c41aa2e41958f19c3ad2a1ebfd50",
   "seq": 3,
-  "ts": "2026-09-24T04:04:39.693942+00:00"
+  "ts": "2026-09-24T06:28:08.036236+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 24,
-   "result_hash": "f74fdf45ad2bbce6",
-   "run_id": "2ee624fbb4d9",
+   "duration_ms": 25,
+   "result_hash": "616c19771b52a772",
+   "run_id": "824f587f0c7d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5ecf16eedf6a2e6e2f9e9646db552672269b91d8c5056f3392026ecd5a354285",
+  "hash": "c0d9fccea5c7cfc04e40c2b10e05ab249f4a20b452090e46a3b3207eb83b8dcf",
   "kind": "cap.run.finish",
-  "prev_hash": "238fea010bef159ee614c28453164006bcdd178b947199e78fb284a189f5ddea",
+  "prev_hash": "9374c419e8297042f45736623709dcbc4fa638ba018c092933b815735b452450",
   "seq": 4,
-  "ts": "2026-09-24T04:04:39.695182+00:00"
+  "ts": "2026-09-24T06:28:08.037383+00:00"
  },
  {
   "actor": "agent",
@@ -233,7 +233,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "1fb9d69c3703"
+    "run_id": "580c8668a746"
    },
    "decision": {
     "decision": "APPROVE",
@@ -241,13 +241,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1fb9d69c3703"
+   "run_id": "580c8668a746"
   },
-  "hash": "2ff741da8b9918ede408d0da867554720cdd319a700be662a2026c467e7be606",
+  "hash": "4b1945d96bff1e753754adfe0b1ea69d035e87691dabbbe050e2ce52f1b4247b",
   "kind": "cap.run.start",
-  "prev_hash": "5ecf16eedf6a2e6e2f9e9646db552672269b91d8c5056f3392026ecd5a354285",
+  "prev_hash": "c0d9fccea5c7cfc04e40c2b10e05ab249f4a20b452090e46a3b3207eb83b8dcf",
   "seq": 5,
-  "ts": "2026-09-24T04:04:39.702325+00:00"
+  "ts": "2026-09-24T06:28:08.044004+00:00"
  },
  {
   "actor": "agent",
@@ -257,20 +257,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "1fb9d69c3703"
+    "run_id": "580c8668a746"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1fb9d69c3703"
+   "run_id": "580c8668a746"
   },
-  "hash": "d242ec07cb86a97b1e789253eee3273d12b49c496c7c93429c3157ff7e553daa",
+  "hash": "605a79c66df3ab77720a7f4935021ea1c2d110eedb2461961cf6c9fcd51d8399",
   "kind": "gate.decision",
-  "prev_hash": "2ff741da8b9918ede408d0da867554720cdd319a700be662a2026c467e7be606",
+  "prev_hash": "4b1945d96bff1e753754adfe0b1ea69d035e87691dabbbe050e2ce52f1b4247b",
   "seq": 6,
-  "ts": "2026-09-24T04:04:39.702433+00:00"
+  "ts": "2026-09-24T06:28:08.044099+00:00"
  },
  {
   "actor": "agent",
@@ -278,15 +278,15 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "1fb9d69c3703",
+   "run_id": "580c8668a746",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "52fe8c98060e5dc9ec84b090372d0838f89b82b16fa1841195a1492ad6e57ea4",
+  "hash": "b2e785c1b33c1224b24e522e7d404e63d57b0d5b242a8349b325578fc9001b82",
   "kind": "cap.run.finish",
-  "prev_hash": "d242ec07cb86a97b1e789253eee3273d12b49c496c7c93429c3157ff7e553daa",
+  "prev_hash": "605a79c66df3ab77720a7f4935021ea1c2d110eedb2461961cf6c9fcd51d8399",
   "seq": 7,
-  "ts": "2026-09-24T04:04:39.704033+00:00"
+  "ts": "2026-09-24T06:28:08.045735+00:00"
  },
  {
   "actor": "agent",
@@ -296,7 +296,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e197bc4d6317"
+    "run_id": "9735df9165ed"
    },
    "decision": {
     "decision": "APPROVE",
@@ -304,13 +304,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e197bc4d6317"
+   "run_id": "9735df9165ed"
   },
-  "hash": "a86363e767f0c3035dc6280b2b7033c0fb9e92eb5b55b3162f9fb155b5f8a7f8",
+  "hash": "d615c1d447d508a201767e0c601a0f5d8842c0aa4d9422ac42e05718f5e0a9cb",
   "kind": "cap.run.start",
-  "prev_hash": "52fe8c98060e5dc9ec84b090372d0838f89b82b16fa1841195a1492ad6e57ea4",
+  "prev_hash": "b2e785c1b33c1224b24e522e7d404e63d57b0d5b242a8349b325578fc9001b82",
   "seq": 8,
-  "ts": "2026-09-24T04:04:39.705483+00:00"
+  "ts": "2026-09-24T06:28:08.047147+00:00"
  },
  {
   "actor": "agent",
@@ -320,20 +320,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e197bc4d6317"
+    "run_id": "9735df9165ed"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e197bc4d6317"
+   "run_id": "9735df9165ed"
   },
-  "hash": "0e1cb5ed6067c499d76d5dfa9e6a983dc552d71b0fb729d99610bd3bed501cf6",
+  "hash": "86f8251ecbbbdd62cc6df3fa48d297915939daf25f3f05e190e03fef9dda1e7c",
   "kind": "gate.decision",
-  "prev_hash": "a86363e767f0c3035dc6280b2b7033c0fb9e92eb5b55b3162f9fb155b5f8a7f8",
+  "prev_hash": "d615c1d447d508a201767e0c601a0f5d8842c0aa4d9422ac42e05718f5e0a9cb",
   "seq": 9,
-  "ts": "2026-09-24T04:04:39.705554+00:00"
+  "ts": "2026-09-24T06:28:08.047232+00:00"
  },
  {
   "actor": "agent",
@@ -341,15 +341,15 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "e197bc4d6317",
+   "run_id": "9735df9165ed",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f1954d75757185b8bf037d124ae4033be924c3179bfc0e1fd2d261ebfb1eb3db",
+  "hash": "68cb7438b2441bb0060579eb1dfae329cf3ac9d62282e78f5354b2462b649f5d",
   "kind": "cap.run.finish",
-  "prev_hash": "0e1cb5ed6067c499d76d5dfa9e6a983dc552d71b0fb729d99610bd3bed501cf6",
+  "prev_hash": "86f8251ecbbbdd62cc6df3fa48d297915939daf25f3f05e190e03fef9dda1e7c",
   "seq": 10,
-  "ts": "2026-09-24T04:04:39.707258+00:00"
+  "ts": "2026-09-24T06:28:08.048848+00:00"
  },
  {
   "actor": "agent",
@@ -359,7 +359,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "3ef0c6017e0f"
+    "run_id": "2a602d6f07e3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -367,13 +367,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3ef0c6017e0f"
+   "run_id": "2a602d6f07e3"
   },
-  "hash": "0cafe86c9a197523114d7f65ffb2452e2dedf58f427c0f0d1fd99018ca1a9a46",
+  "hash": "8a611dbaae20a5517ecd7d74bf5e2c6017cd8f18ebeb55db00ac782e2e31b76e",
   "kind": "cap.run.start",
-  "prev_hash": "f1954d75757185b8bf037d124ae4033be924c3179bfc0e1fd2d261ebfb1eb3db",
+  "prev_hash": "68cb7438b2441bb0060579eb1dfae329cf3ac9d62282e78f5354b2462b649f5d",
   "seq": 11,
-  "ts": "2026-09-24T04:04:39.735657+00:00"
+  "ts": "2026-09-24T06:28:08.077837+00:00"
  },
  {
   "actor": "agent",
@@ -383,36 +383,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "3ef0c6017e0f"
+    "run_id": "2a602d6f07e3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3ef0c6017e0f"
+   "run_id": "2a602d6f07e3"
   },
-  "hash": "2b4abae0def1e3a6652c292d61da0e0457fd2a08cbeaee31876d39b0101e7811",
+  "hash": "192a83afe550ea7c708f518e31afa126002c4efae7a242e92a55861d5c60f670",
   "kind": "gate.decision",
-  "prev_hash": "0cafe86c9a197523114d7f65ffb2452e2dedf58f427c0f0d1fd99018ca1a9a46",
+  "prev_hash": "8a611dbaae20a5517ecd7d74bf5e2c6017cd8f18ebeb55db00ac782e2e31b76e",
   "seq": 12,
-  "ts": "2026-09-24T04:04:39.735803+00:00"
+  "ts": "2026-09-24T06:28:08.077958+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "f8ebf5a21b6619d5",
-   "run_id": "3ef0c6017e0f",
+   "duration_ms": 2,
+   "result_hash": "e824a878d245304d",
+   "run_id": "2a602d6f07e3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4677ce3537863d13f8f4cab7d6b3d42feac0342c30d551f2477708c307771641",
+  "hash": "c687e637958f5ed8101c5fcfacfce0aed9d39e31813c008ffc0e3cc4f782a739",
   "kind": "cap.run.finish",
-  "prev_hash": "2b4abae0def1e3a6652c292d61da0e0457fd2a08cbeaee31876d39b0101e7811",
+  "prev_hash": "192a83afe550ea7c708f518e31afa126002c4efae7a242e92a55861d5c60f670",
   "seq": 13,
-  "ts": "2026-09-24T04:04:39.737592+00:00"
+  "ts": "2026-09-24T06:28:08.079843+00:00"
  },
  {
   "actor": "agent",
@@ -422,7 +422,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "81da0b8fee10"
+    "run_id": "be9a6c673f21"
    },
    "decision": {
     "decision": "APPROVE",
@@ -430,13 +430,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "81da0b8fee10"
+   "run_id": "be9a6c673f21"
   },
-  "hash": "afadadf3151edcad78796b01ef92b8eff8dcca4696692544e82673fa472f9d3f",
+  "hash": "ee2762533c5035f09c9546ff9dd5995f26fe448c5f25dd4ec9ab934e7d246633",
   "kind": "cap.run.start",
-  "prev_hash": "4677ce3537863d13f8f4cab7d6b3d42feac0342c30d551f2477708c307771641",
+  "prev_hash": "c687e637958f5ed8101c5fcfacfce0aed9d39e31813c008ffc0e3cc4f782a739",
   "seq": 14,
-  "ts": "2026-09-24T04:04:39.975063+00:00"
+  "ts": "2026-09-24T06:28:08.345641+00:00"
  },
  {
   "actor": "agent",
@@ -446,20 +446,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "81da0b8fee10"
+    "run_id": "be9a6c673f21"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "81da0b8fee10"
+   "run_id": "be9a6c673f21"
   },
-  "hash": "c2a5df496ff603d9ba0aeb4fc87ff8f3aae6a50a66edff6f63dedfb36d733696",
+  "hash": "2c16a029c9171188d6d154a71fed69b9f8ddbec28936a097107cbb56665ef4b3",
   "kind": "gate.decision",
-  "prev_hash": "afadadf3151edcad78796b01ef92b8eff8dcca4696692544e82673fa472f9d3f",
+  "prev_hash": "ee2762533c5035f09c9546ff9dd5995f26fe448c5f25dd4ec9ab934e7d246633",
   "seq": 15,
-  "ts": "2026-09-24T04:04:39.975245+00:00"
+  "ts": "2026-09-24T06:28:08.345818+00:00"
  },
  {
   "actor": "agent",
@@ -467,15 +467,15 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "81da0b8fee10",
+   "run_id": "be9a6c673f21",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b652f02912ed10704a90880c037616a7d0a588de5219b601427edafdc5350633",
+  "hash": "0313e1f66de93082f9c8dedd19605aec4583495d0f31bc5e1c55faafe429e876",
   "kind": "cap.run.finish",
-  "prev_hash": "c2a5df496ff603d9ba0aeb4fc87ff8f3aae6a50a66edff6f63dedfb36d733696",
+  "prev_hash": "2c16a029c9171188d6d154a71fed69b9f8ddbec28936a097107cbb56665ef4b3",
   "seq": 16,
-  "ts": "2026-09-24T04:04:39.978858+00:00"
+  "ts": "2026-09-24T06:28:08.349215+00:00"
  },
  {
   "actor": "agent",
@@ -485,7 +485,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "a5766e8f79d6"
+    "run_id": "0b8a36aaf702"
    },
    "decision": {
     "decision": "APPROVE",
@@ -493,13 +493,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "a5766e8f79d6"
+   "run_id": "0b8a36aaf702"
   },
-  "hash": "03bd52796798f123c4465c1497647f3b86229b8777a33cd03ddd1c94f17a1c95",
+  "hash": "5d3d25c4f6552e9a571a82349473dbb8b305cb3235af808f39c8bc9baccd0316",
   "kind": "cap.run.start",
-  "prev_hash": "b652f02912ed10704a90880c037616a7d0a588de5219b601427edafdc5350633",
+  "prev_hash": "0313e1f66de93082f9c8dedd19605aec4583495d0f31bc5e1c55faafe429e876",
   "seq": 17,
-  "ts": "2026-09-24T04:04:40.000822+00:00"
+  "ts": "2026-09-24T06:28:08.374183+00:00"
  },
  {
   "actor": "agent",
@@ -509,27 +509,27 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "a5766e8f79d6"
+    "run_id": "0b8a36aaf702"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "a5766e8f79d6"
+   "run_id": "0b8a36aaf702"
   },
-  "hash": "74c87c2f4409b6c01c9823cd35cfd4264e6a45dd74e3c8b2a7783c0955638eb4",
+  "hash": "5d74c945ac4540e26997247f5d49ab956d525b982dfe902a5076efd2247d0966",
   "kind": "gate.decision",
-  "prev_hash": "03bd52796798f123c4465c1497647f3b86229b8777a33cd03ddd1c94f17a1c95",
+  "prev_hash": "5d3d25c4f6552e9a571a82349473dbb8b305cb3235af808f39c8bc9baccd0316",
   "seq": 18,
-  "ts": "2026-09-24T04:04:40.000971+00:00"
+  "ts": "2026-09-24T06:28:08.374365+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "a5766e8f79d6"
+    "run_id": "0b8a36aaf702"
    },
    "compressions": [],
    "hash": "785aafea3600315c",
@@ -569,7 +569,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "discover.chip_id",
     "discover.bus_scan",
     "/Users/congvt/Documents/EIDE/docs/test/usecase/TC025/du-an/dinh-dang-thiet-ke-khong-ho-tro",
-    "s_517c77e89a15"
+    "s_13f470dd7e83"
    ],
    "tokens": {
     "C0": 1872,
@@ -578,11 +578,11 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "C7": 36
    }
   },
-  "hash": "b692177af78b2392e5f44afebcdea3f712427870418f61a290ed20a4b40e2bc6",
+  "hash": "41e4c15b786c8adfb5336c515caee92cdb68046391c443f812122a786efb90f4",
   "kind": "context.bundle",
-  "prev_hash": "74c87c2f4409b6c01c9823cd35cfd4264e6a45dd74e3c8b2a7783c0955638eb4",
+  "prev_hash": "5d74c945ac4540e26997247f5d49ab956d525b982dfe902a5076efd2247d0966",
   "seq": 19,
-  "ts": "2026-09-24T04:04:40.006757+00:00"
+  "ts": "2026-09-24T06:28:08.381600+00:00"
  },
  {
   "actor": "agent",
@@ -590,32 +590,32 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "a5766e8f79d6"
+    "run_id": "0b8a36aaf702"
    },
-   "cost_usd": 0.001097,
-   "latency_ms": 1911,
+   "cost_usd": 0.0011,
+   "latency_ms": 1642,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "9e6a38f3c7db82ad",
    "request_hash": "3ae50a8dda4fcff3",
    "role": "intent",
    "stop_reason": "stop",
    "tokens_in": 2533,
-   "tokens_out": 135
+   "tokens_out": 136
   },
-  "hash": "94041c55e65839320ef1c440b5b49bdb784f861da6b6dbfda39739eb1c6149b9",
+  "hash": "14409d1fa5580a258fa254591e68fecc6f22d52df41ad2a1c551001be0ff15e2",
   "kind": "model.call",
-  "prev_hash": "b692177af78b2392e5f44afebcdea3f712427870418f61a290ed20a4b40e2bc6",
+  "prev_hash": "41e4c15b786c8adfb5336c515caee92cdb68046391c443f812122a786efb90f4",
   "seq": 20,
-  "ts": "2026-09-24T04:04:41.922282+00:00"
+  "ts": "2026-09-24T06:28:10.032940+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "a5766e8f79d6"
+    "run_id": "0b8a36aaf702"
    },
-   "confidence": 0.9,
+   "confidence": 0.88,
    "intent": "review.ask",
    "is_big": false,
    "slots": {
@@ -624,37 +624,37 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    },
    "text": "Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì"
   },
-  "hash": "bbe37c4bc887df822adb4752dc6b5aaa3638e48c0c7425e11766b6a14f0404be",
+  "hash": "7ecfabeb0eb48bbdf7daa5eff20122ecc49e6e31e5816714090c1bcb7c3e498b",
   "kind": "intent",
-  "prev_hash": "94041c55e65839320ef1c440b5b49bdb784f861da6b6dbfda39739eb1c6149b9",
+  "prev_hash": "14409d1fa5580a258fa254591e68fecc6f22d52df41ad2a1c551001be0ff15e2",
   "seq": 21,
-  "ts": "2026-09-24T04:04:41.923031+00:00"
+  "ts": "2026-09-24T06:28:10.034386+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 1922,
-   "result_hash": "0fccd22fe307c9e0",
-   "run_id": "a5766e8f79d6",
+   "duration_ms": 1661,
+   "result_hash": "766ceb73b4e75e3a",
+   "run_id": "0b8a36aaf702",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "dfd146eea7ee0a012f52f75f0f0356407f304d6af47af2dc1ee45cbb927cc934",
+  "hash": "8b0010ed3c95ad893871a37310db822d4130257319c0c57801aafa18a909e7f5",
   "kind": "cap.run.finish",
-  "prev_hash": "bbe37c4bc887df822adb4752dc6b5aaa3638e48c0c7425e11766b6a14f0404be",
+  "prev_hash": "7ecfabeb0eb48bbdf7daa5eff20122ecc49e6e31e5816714090c1bcb7c3e498b",
   "seq": 22,
-  "ts": "2026-09-24T04:04:41.923731+00:00"
+  "ts": "2026-09-24T06:28:10.035709+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "0fccd22fe307c9e0",
+   "args_hash": "766ceb73b4e75e3a",
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "65a1373f4276"
+    "run_id": "c73af699bf53"
    },
    "decision": {
     "decision": "APPROVE",
@@ -662,13 +662,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "65a1373f4276"
+   "run_id": "c73af699bf53"
   },
-  "hash": "814d0ad55949b164bc74045722a71eb77986a54836101d08cff639a7b28a5542",
+  "hash": "e63dcd5bde3b6def8d4ae83b665bf0bc12fb0074bdf200e07d093e096f09ecf2",
   "kind": "cap.run.start",
-  "prev_hash": "dfd146eea7ee0a012f52f75f0f0356407f304d6af47af2dc1ee45cbb927cc934",
+  "prev_hash": "8b0010ed3c95ad893871a37310db822d4130257319c0c57801aafa18a909e7f5",
   "seq": 23,
-  "ts": "2026-09-24T04:04:41.924603+00:00"
+  "ts": "2026-09-24T06:28:10.037190+00:00"
  },
  {
   "actor": "agent",
@@ -678,46 +678,46 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "65a1373f4276"
+    "run_id": "c73af699bf53"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "65a1373f4276"
+   "run_id": "c73af699bf53"
   },
-  "hash": "347d16adef66d888b012265f7e7ead787018de0662fc2b870f0c6dd10613e735",
+  "hash": "d2a2e916167d76578f5a58b7b4c5578db8ef0bbfb2c27981eeffa2c9a99c23d3",
   "kind": "gate.decision",
-  "prev_hash": "814d0ad55949b164bc74045722a71eb77986a54836101d08cff639a7b28a5542",
+  "prev_hash": "e63dcd5bde3b6def8d4ae83b665bf0bc12fb0074bdf200e07d093e096f09ecf2",
   "seq": 24,
-  "ts": "2026-09-24T04:04:41.924796+00:00"
+  "ts": "2026-09-24T06:28:10.037486+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.ground",
-   "duration_ms": 2,
+   "duration_ms": 4,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "65a1373f4276",
+   "run_id": "c73af699bf53",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ff0df61601ac38451a333002848f7c157009f385d58a8c405829e922abf6eb3d",
+  "hash": "7ea12079d05480e462b33c46afa6a22f134594ea229a3ace71a4c736081d7698",
   "kind": "cap.run.finish",
-  "prev_hash": "347d16adef66d888b012265f7e7ead787018de0662fc2b870f0c6dd10613e735",
+  "prev_hash": "d2a2e916167d76578f5a58b7b4c5578db8ef0bbfb2c27981eeffa2c9a99c23d3",
   "seq": 25,
-  "ts": "2026-09-24T04:04:41.926933+00:00"
+  "ts": "2026-09-24T06:28:10.041291+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "a8247f6e4b01f9f6",
+   "args_hash": "0d7c6bcfc62552a2",
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "7f541d655bb4"
+    "run_id": "298b87a425b2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -725,13 +725,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7f541d655bb4"
+   "run_id": "298b87a425b2"
   },
-  "hash": "c7985a04bb0de7de2baf22554616cb383aa2b48011b712512c82d850251bcde6",
+  "hash": "3325ab5782a1333f3081e4973a8f5c6fcd9425cac1d8699c09b28c7f83d151f6",
   "kind": "cap.run.start",
-  "prev_hash": "ff0df61601ac38451a333002848f7c157009f385d58a8c405829e922abf6eb3d",
+  "prev_hash": "7ea12079d05480e462b33c46afa6a22f134594ea229a3ace71a4c736081d7698",
   "seq": 26,
-  "ts": "2026-09-24T04:04:41.927767+00:00"
+  "ts": "2026-09-24T06:28:10.042605+00:00"
  },
  {
   "actor": "agent",
@@ -741,46 +741,46 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "7f541d655bb4"
+    "run_id": "298b87a425b2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7f541d655bb4"
+   "run_id": "298b87a425b2"
   },
-  "hash": "4f3363be21a6b1dbf640dac4afdda27d113958f395ffcf72fdc0fb156cfbad0a",
+  "hash": "578e4207b8ae5df28fe94a584dd8937f59418ed1801b4a6070312243bbb4af5c",
   "kind": "gate.decision",
-  "prev_hash": "c7985a04bb0de7de2baf22554616cb383aa2b48011b712512c82d850251bcde6",
+  "prev_hash": "3325ab5782a1333f3081e4973a8f5c6fcd9425cac1d8699c09b28c7f83d151f6",
   "seq": 27,
-  "ts": "2026-09-24T04:04:41.927871+00:00"
+  "ts": "2026-09-24T06:28:10.042758+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
-   "duration_ms": 4,
-   "result_hash": "9dd9355e282cbb25",
-   "run_id": "7f541d655bb4",
+   "duration_ms": 6,
+   "result_hash": "7eed018ccd9c1bb2",
+   "run_id": "298b87a425b2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6a762d68ca8366ede249bebce8a03b6840198d529598bd985c139770d7e9e057",
+  "hash": "b16a03c370b7609371c7d70c7372eaebdb236854b9c050d028bb1a70bee44c9c",
   "kind": "cap.run.finish",
-  "prev_hash": "4f3363be21a6b1dbf640dac4afdda27d113958f395ffcf72fdc0fb156cfbad0a",
+  "prev_hash": "578e4207b8ae5df28fe94a584dd8937f59418ed1801b4a6070312243bbb4af5c",
   "seq": 28,
-  "ts": "2026-09-24T04:04:41.931755+00:00"
+  "ts": "2026-09-24T06:28:10.049015+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "d99e82540edeec9b",
+   "args_hash": "966c6ebf27c73149",
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "22d18dfdc133"
+    "run_id": "f7434f7d9bd2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -788,13 +788,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "22d18dfdc133"
+   "run_id": "f7434f7d9bd2"
   },
-  "hash": "2bef07d61267012900d4ea5b367d75e7d182bed36b2dcd571cf0a43e3c3b315a",
+  "hash": "c2110187ae310f0057c10ddfeb8ea4f43efa1a5b025061f2668dc1315ffac8fc",
   "kind": "cap.run.start",
-  "prev_hash": "6a762d68ca8366ede249bebce8a03b6840198d529598bd985c139770d7e9e057",
+  "prev_hash": "b16a03c370b7609371c7d70c7372eaebdb236854b9c050d028bb1a70bee44c9c",
   "seq": 29,
-  "ts": "2026-09-24T04:04:41.933090+00:00"
+  "ts": "2026-09-24T06:28:10.050930+00:00"
  },
  {
   "actor": "agent",
@@ -804,30 +804,30 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "22d18dfdc133"
+    "run_id": "f7434f7d9bd2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "22d18dfdc133"
+   "run_id": "f7434f7d9bd2"
   },
-  "hash": "8dd70ca092a4ff5c142e2983341e70d5f79cbe8224ae93705a394c89e6160380",
+  "hash": "b46792802e4b61109271ba6cce18728b4e61b50106bc8a85429c25ae51875543",
   "kind": "gate.decision",
-  "prev_hash": "2bef07d61267012900d4ea5b367d75e7d182bed36b2dcd571cf0a43e3c3b315a",
+  "prev_hash": "c2110187ae310f0057c10ddfeb8ea4f43efa1a5b025061f2668dc1315ffac8fc",
   "seq": 30,
-  "ts": "2026-09-24T04:04:41.933235+00:00"
+  "ts": "2026-09-24T06:28:10.051147+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "22d18dfdc133"
+    "run_id": "f7434f7d9bd2"
    },
    "n": 1,
-   "run_id": "r_7873efd66170",
+   "run_id": "r_812a59ee34bc",
    "steps": [
     {
      "cap": "ingest.index_text",
@@ -860,11 +860,11 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    ],
    "text": "Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì"
   },
-  "hash": "4a00dfa932cf4c14776f1c72444dabe936830d8fa36b549a29a6b0073c72ea0d",
+  "hash": "239a582eff371463c12e790bfc3d5d8bf32489c53d37b7f69cb2db668e33c158",
   "kind": "run.started",
-  "prev_hash": "8dd70ca092a4ff5c142e2983341e70d5f79cbe8224ae93705a394c89e6160380",
+  "prev_hash": "b46792802e4b61109271ba6cce18728b4e61b50106bc8a85429c25ae51875543",
   "seq": 31,
-  "ts": "2026-09-24T04:04:41.944904+00:00"
+  "ts": "2026-09-24T06:28:10.066389+00:00"
  },
  {
   "actor": "agent",
@@ -872,18 +872,18 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "ingest.index_text",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "22d18dfdc133"
+    "run_id": "f7434f7d9bd2"
    },
    "i": 1,
    "node_id": "n1",
    "of": 7,
-   "run_id": "r_7873efd66170"
+   "run_id": "r_812a59ee34bc"
   },
-  "hash": "6d973ab20fcf728280dab718bbc601d71798a4ce2a8aae0f954d6965ab153091",
+  "hash": "65e04ccc3c84d346a7864498b04f68981dcb89210a76d0125bf6819870ad4a74",
   "kind": "run.step_started",
-  "prev_hash": "4a00dfa932cf4c14776f1c72444dabe936830d8fa36b549a29a6b0073c72ea0d",
+  "prev_hash": "239a582eff371463c12e790bfc3d5d8bf32489c53d37b7f69cb2db668e33c158",
   "seq": 32,
-  "ts": "2026-09-24T04:04:41.945284+00:00"
+  "ts": "2026-09-24T06:28:10.066900+00:00"
  },
  {
   "actor": "agent",
@@ -895,7 +895,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": {
     "decision": "APPROVE",
@@ -903,13 +903,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "908bb2158740"
+   "run_id": "429f532ff49d"
   },
-  "hash": "381d47cb5eff9819890941371a3751ae45de3ca6db21591a18b5165ef901022c",
+  "hash": "7a4566ca1e15aaee573b7eeb17bfb2c0e961420a4f454cfa1c5a932c59037f54",
   "kind": "cap.run.start",
-  "prev_hash": "6d973ab20fcf728280dab718bbc601d71798a4ce2a8aae0f954d6965ab153091",
+  "prev_hash": "65e04ccc3c84d346a7864498b04f68981dcb89210a76d0125bf6819870ad4a74",
   "seq": 33,
-  "ts": "2026-09-24T04:04:41.946052+00:00"
+  "ts": "2026-09-24T06:28:10.067778+00:00"
  },
  {
   "actor": "agent",
@@ -921,20 +921,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R1",
    "rule": "TIER-T1",
-   "run_id": "908bb2158740"
+   "run_id": "429f532ff49d"
   },
-  "hash": "cd9f66a65aae299b11c9fc21a249f0eaed8996dfa3f7b5a39284b961bffd671f",
+  "hash": "59325c0243bfdcfe1604222b2a08c2a159f4712da8b13825fbd89fbe0d5d3025",
   "kind": "gate.decision",
-  "prev_hash": "381d47cb5eff9819890941371a3751ae45de3ca6db21591a18b5165ef901022c",
+  "prev_hash": "7a4566ca1e15aaee573b7eeb17bfb2c0e961420a4f454cfa1c5a932c59037f54",
   "seq": 34,
-  "ts": "2026-09-24T04:04:41.946135+00:00"
+  "ts": "2026-09-24T06:28:10.067895+00:00"
  },
  {
   "actor": "agent",
@@ -944,19 +944,19 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "duration_ms": 1,
    "result_hash": "13fcedb62a880650",
-   "run_id": "908bb2158740",
+   "run_id": "429f532ff49d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4f7d51c3aaec10e9d2937d446421cdc40f82aca0988d9476cd1471cde568e5c3",
+  "hash": "3ba2fa6c3d133a0d12dbae28c33a21924c961104e19564acd4ea871f8f9440e9",
   "kind": "cap.run.finish",
-  "prev_hash": "cd9f66a65aae299b11c9fc21a249f0eaed8996dfa3f7b5a39284b961bffd671f",
+  "prev_hash": "59325c0243bfdcfe1604222b2a08c2a159f4712da8b13825fbd89fbe0d5d3025",
   "seq": 35,
-  "ts": "2026-09-24T04:04:41.947461+00:00"
+  "ts": "2026-09-24T06:28:10.069357+00:00"
  },
  {
   "actor": "agent",
@@ -965,14 +965,14 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 1,
    "node_id": "n1",
    "of": 7,
-   "run_id": "r_7873efd66170",
+   "run_id": "r_812a59ee34bc",
    "status": "done"
   },
-  "hash": "76bac8aeece64844a7a804357b47635ed6e33349745299befebd6be44f93458b",
+  "hash": "16f0c44c54580d8c3711de924e16c148d9c110e70395c3e368e7d5b18cc05cce",
   "kind": "run.step_done",
-  "prev_hash": "4f7d51c3aaec10e9d2937d446421cdc40f82aca0988d9476cd1471cde568e5c3",
+  "prev_hash": "3ba2fa6c3d133a0d12dbae28c33a21924c961104e19564acd4ea871f8f9440e9",
   "seq": 36,
-  "ts": "2026-09-24T04:04:41.947538+00:00"
+  "ts": "2026-09-24T06:28:10.069452+00:00"
  },
  {
   "actor": "agent",
@@ -981,13 +981,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 2,
    "node_id": "n2",
    "of": 7,
-   "run_id": "r_7873efd66170"
+   "run_id": "r_812a59ee34bc"
   },
-  "hash": "219d1875da8dd4f5cf340c84d44236950d3e0cfc1f105d1942f6c603bbf6f8a5",
+  "hash": "92674c7f285bf443c4647a06cc628ee434649dbe1dd82d62216ce33fc671367f",
   "kind": "run.step_started",
-  "prev_hash": "76bac8aeece64844a7a804357b47635ed6e33349745299befebd6be44f93458b",
+  "prev_hash": "16f0c44c54580d8c3711de924e16c148d9c110e70395c3e368e7d5b18cc05cce",
   "seq": 37,
-  "ts": "2026-09-24T04:04:41.947833+00:00"
+  "ts": "2026-09-24T06:28:10.069834+00:00"
  },
  {
   "actor": "agent",
@@ -999,7 +999,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1007,13 +1007,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "ee8934e99eaa"
+   "run_id": "7550c936a556"
   },
-  "hash": "7d8c94692c8600c681e92368c93333ace81d863eeda5ba08c0e8cd3a0fe2c3a9",
+  "hash": "2e2bc21520fded97e7137f0e6d509208151e064617ba2e20724b3c36472a34cd",
   "kind": "cap.run.start",
-  "prev_hash": "219d1875da8dd4f5cf340c84d44236950d3e0cfc1f105d1942f6c603bbf6f8a5",
+  "prev_hash": "92674c7f285bf443c4647a06cc628ee434649dbe1dd82d62216ce33fc671367f",
   "seq": 38,
-  "ts": "2026-09-24T04:04:41.948525+00:00"
+  "ts": "2026-09-24T06:28:10.070735+00:00"
  },
  {
   "actor": "agent",
@@ -1025,20 +1025,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R1",
    "rule": "TIER-T1",
-   "run_id": "ee8934e99eaa"
+   "run_id": "7550c936a556"
   },
-  "hash": "a7e6785fea5a929b7234974a7b7940c015f53809f2ffbaff8c9197fdcd7ff404",
+  "hash": "7eb727c09a03938a5ba5ae9ef2553cfe3b458d746cdbc37bd8710dd8d6a9ac8e",
   "kind": "gate.decision",
-  "prev_hash": "7d8c94692c8600c681e92368c93333ace81d863eeda5ba08c0e8cd3a0fe2c3a9",
+  "prev_hash": "2e2bc21520fded97e7137f0e6d509208151e064617ba2e20724b3c36472a34cd",
   "seq": 39,
-  "ts": "2026-09-24T04:04:41.948593+00:00"
+  "ts": "2026-09-24T06:28:10.070846+00:00"
  },
  {
   "actor": "agent",
@@ -1048,18 +1048,18 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
-   "duration_ms": 0,
+   "duration_ms": 1,
    "error": "E6001",
-   "run_id": "ee8934e99eaa",
+   "run_id": "7550c936a556",
    "status": "failed"
   },
-  "hash": "96323daec0be2a81044708ba7e93ad91a5b30c77b86fa4da9452d53ec3d08fb8",
+  "hash": "30cf3186f86649c6e0f6a25abae813f81ec61fa3107c2393caa39ba6a6d476c0",
   "kind": "cap.run.finish",
-  "prev_hash": "a7e6785fea5a929b7234974a7b7940c015f53809f2ffbaff8c9197fdcd7ff404",
+  "prev_hash": "7eb727c09a03938a5ba5ae9ef2553cfe3b458d746cdbc37bd8710dd8d6a9ac8e",
   "seq": 40,
-  "ts": "2026-09-24T04:04:41.949328+00:00"
+  "ts": "2026-09-24T06:28:10.071913+00:00"
  },
  {
   "actor": "agent",
@@ -1074,14 +1074,14 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 2,
    "node_id": "n2",
    "of": 7,
-   "run_id": "r_7873efd66170",
+   "run_id": "r_812a59ee34bc",
    "status": "failed"
   },
-  "hash": "e2eba96a999914cf15cb298a82a8513b709b995f9cd861ef20e8fb362f10921b",
+  "hash": "3b7155de3dd535cc11c8ac1d3f61759eb5018e39510cde0511d705937bb822e0",
   "kind": "run.step_done",
-  "prev_hash": "96323daec0be2a81044708ba7e93ad91a5b30c77b86fa4da9452d53ec3d08fb8",
+  "prev_hash": "30cf3186f86649c6e0f6a25abae813f81ec61fa3107c2393caa39ba6a6d476c0",
   "seq": 41,
-  "ts": "2026-09-24T04:04:41.949400+00:00"
+  "ts": "2026-09-24T06:28:10.072000+00:00"
  },
  {
   "actor": "agent",
@@ -1090,13 +1090,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 3,
    "node_id": "n5",
    "of": 7,
-   "run_id": "r_7873efd66170"
+   "run_id": "r_812a59ee34bc"
   },
-  "hash": "e6e5c32706b4adf16a5369e930e534fe72f002d0ed4676acc3a22d7061a815e0",
+  "hash": "abe6d4d1339a4dace10c7d6b096b835f4b9f5ee03168069cde981fe5fb3a8a82",
   "kind": "run.step_started",
-  "prev_hash": "e2eba96a999914cf15cb298a82a8513b709b995f9cd861ef20e8fb362f10921b",
+  "prev_hash": "3b7155de3dd535cc11c8ac1d3f61759eb5018e39510cde0511d705937bb822e0",
   "seq": 42,
-  "ts": "2026-09-24T04:04:41.949749+00:00"
+  "ts": "2026-09-24T06:28:10.072416+00:00"
  },
  {
   "actor": "agent",
@@ -1108,7 +1108,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1116,13 +1116,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "182528270d0a"
+   "run_id": "5f49201f88e9"
   },
-  "hash": "256b1939f59349ad1f30e9cd05889f0ee0af4f138fcb80d779e417da21f422c6",
+  "hash": "ee30c96b1e220ac5c809ed3bff1d3a82e4de174aa9c8753effee8b5df0da2057",
   "kind": "cap.run.start",
-  "prev_hash": "e6e5c32706b4adf16a5369e930e534fe72f002d0ed4676acc3a22d7061a815e0",
+  "prev_hash": "abe6d4d1339a4dace10c7d6b096b835f4b9f5ee03168069cde981fe5fb3a8a82",
   "seq": 43,
-  "ts": "2026-09-24T04:04:41.950319+00:00"
+  "ts": "2026-09-24T06:28:10.073092+00:00"
  },
  {
   "actor": "agent",
@@ -1134,20 +1134,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "182528270d0a"
+   "run_id": "5f49201f88e9"
   },
-  "hash": "86e48429dcf184875c08843f81cdd550912f18607b72948da94af12267d442a5",
+  "hash": "3c17f7643fcdda1983fa780d5271f5ffa6dedf01efa00fec1a28cc2c575ff605",
   "kind": "gate.decision",
-  "prev_hash": "256b1939f59349ad1f30e9cd05889f0ee0af4f138fcb80d779e417da21f422c6",
+  "prev_hash": "ee30c96b1e220ac5c809ed3bff1d3a82e4de174aa9c8753effee8b5df0da2057",
   "seq": 44,
-  "ts": "2026-09-24T04:04:41.950405+00:00"
+  "ts": "2026-09-24T06:28:10.073182+00:00"
  },
  {
   "actor": "agent",
@@ -1157,18 +1157,18 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
-   "duration_ms": 0,
+   "duration_ms": 1,
    "error": "E2000",
-   "run_id": "182528270d0a",
+   "run_id": "5f49201f88e9",
    "status": "failed"
   },
-  "hash": "cef23eea86998f1ea6689485564a285f168f8addf961e0189cc8b34a52367478",
+  "hash": "92894d1044a8d432c14223a8c7fac4a7f3a38154d92357c30fb824bb366dd6e7",
   "kind": "cap.run.finish",
-  "prev_hash": "86e48429dcf184875c08843f81cdd550912f18607b72948da94af12267d442a5",
+  "prev_hash": "3c17f7643fcdda1983fa780d5271f5ffa6dedf01efa00fec1a28cc2c575ff605",
   "seq": 45,
-  "ts": "2026-09-24T04:04:41.951263+00:00"
+  "ts": "2026-09-24T06:28:10.074213+00:00"
  },
  {
   "actor": "agent",
@@ -1187,14 +1187,14 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 3,
    "node_id": "n5",
    "of": 7,
-   "run_id": "r_7873efd66170",
+   "run_id": "r_812a59ee34bc",
    "status": "failed"
   },
-  "hash": "1f7a672f60c29ffed82cafa9d0f88252797954da4d88233e97492e773611a01a",
+  "hash": "13d399174e9a6c658b23426a6c6cee3f8d968832b0a8d77fd92992e35182b01c",
   "kind": "run.step_done",
-  "prev_hash": "cef23eea86998f1ea6689485564a285f168f8addf961e0189cc8b34a52367478",
+  "prev_hash": "92894d1044a8d432c14223a8c7fac4a7f3a38154d92357c30fb824bb366dd6e7",
   "seq": 46,
-  "ts": "2026-09-24T04:04:41.951344+00:00"
+  "ts": "2026-09-24T06:28:10.074297+00:00"
  },
  {
   "actor": "agent",
@@ -1203,13 +1203,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 4,
    "node_id": "n6",
    "of": 7,
-   "run_id": "r_7873efd66170"
+   "run_id": "r_812a59ee34bc"
   },
-  "hash": "21d79e36df2462d3c3afe6dd1f91fceff7fee871bb3935a5c6db19ce4ae5dcc2",
+  "hash": "3b4c63b000cd8f36062c3a23bee034e076a524f62bb6216a13537fc3db15ce1d",
   "kind": "run.step_started",
-  "prev_hash": "1f7a672f60c29ffed82cafa9d0f88252797954da4d88233e97492e773611a01a",
+  "prev_hash": "13d399174e9a6c658b23426a6c6cee3f8d968832b0a8d77fd92992e35182b01c",
   "seq": 47,
-  "ts": "2026-09-24T04:04:41.952173+00:00"
+  "ts": "2026-09-24T06:28:10.075227+00:00"
  },
  {
   "actor": "agent",
@@ -1221,7 +1221,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1229,13 +1229,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2052b24eb685"
+   "run_id": "5b51322586c3"
   },
-  "hash": "86d64c806457ece0ad2da0841ebf11e90a8ac1203d449df03431eb27f443b1b5",
+  "hash": "db0bce40f34cb05f07bbd5d133333a83e9a57649e27950f923fdbd7c47e13cdd",
   "kind": "cap.run.start",
-  "prev_hash": "21d79e36df2462d3c3afe6dd1f91fceff7fee871bb3935a5c6db19ce4ae5dcc2",
+  "prev_hash": "3b4c63b000cd8f36062c3a23bee034e076a524f62bb6216a13537fc3db15ce1d",
   "seq": 48,
-  "ts": "2026-09-24T04:04:41.953131+00:00"
+  "ts": "2026-09-24T06:28:10.076323+00:00"
  },
  {
   "actor": "agent",
@@ -1247,20 +1247,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2052b24eb685"
+   "run_id": "5b51322586c3"
   },
-  "hash": "04f01891c88c7a5de70ee1418879fdec9ef4657c68383f5242842d734a5b92af",
+  "hash": "e1e5d8655628530d84cfbb4bb7d76a9b2adc33baea1a39e62f6e73c7e383917c",
   "kind": "gate.decision",
-  "prev_hash": "86d64c806457ece0ad2da0841ebf11e90a8ac1203d449df03431eb27f443b1b5",
+  "prev_hash": "db0bce40f34cb05f07bbd5d133333a83e9a57649e27950f923fdbd7c47e13cdd",
   "seq": 49,
-  "ts": "2026-09-24T04:04:41.953231+00:00"
+  "ts": "2026-09-24T06:28:10.076421+00:00"
  },
  {
   "actor": "agent",
@@ -1270,18 +1270,18 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_7873efd66170"
+    "run_id": "r_812a59ee34bc"
    },
    "duration_ms": 0,
    "error": "E5002",
-   "run_id": "2052b24eb685",
+   "run_id": "5b51322586c3",
    "status": "failed"
   },
-  "hash": "b2dfc33f3c976f07b7482e0936fef9910bfee6bad9db9f3a0e69ce673ebc0651",
+  "hash": "b00303b306153a915b9a2d6210000d2d1774c4490766bcec3398eeeec187bb36",
   "kind": "cap.run.finish",
-  "prev_hash": "04f01891c88c7a5de70ee1418879fdec9ef4657c68383f5242842d734a5b92af",
+  "prev_hash": "e1e5d8655628530d84cfbb4bb7d76a9b2adc33baea1a39e62f6e73c7e383917c",
   "seq": 50,
-  "ts": "2026-09-24T04:04:41.953808+00:00"
+  "ts": "2026-09-24T06:28:10.077074+00:00"
  },
  {
   "actor": "agent",
@@ -1296,55 +1296,55 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "i": 4,
    "node_id": "n6",
    "of": 7,
-   "run_id": "r_7873efd66170",
+   "run_id": "r_812a59ee34bc",
    "status": "failed"
   },
-  "hash": "7dd496b6de89570cd6aa2a27f5cbea7108c30bf1ac32557bea11627b2e5698af",
+  "hash": "b3c7729f45aa798f44db2067cb83364c4ac6e1576bc914f2eeb51dcf5e8d4223",
   "kind": "run.step_done",
-  "prev_hash": "b2dfc33f3c976f07b7482e0936fef9910bfee6bad9db9f3a0e69ce673ebc0651",
+  "prev_hash": "b00303b306153a915b9a2d6210000d2d1774c4490766bcec3398eeeec187bb36",
   "seq": 51,
-  "ts": "2026-09-24T04:04:41.953884+00:00"
+  "ts": "2026-09-24T06:28:10.077164+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 1,
    "failed": 3,
-   "run_id": "r_7873efd66170",
+   "run_id": "r_812a59ee34bc",
    "state": "asked",
    "waiting": 1
   },
-  "hash": "43dbf2ca682b49da3ea2db859a1633f3127dd603f90b51ca7eea853684cb5734",
+  "hash": "bc57c665d1f28a671de6e9ecad6a677472e91622f428b9cbb2e9a3a0962009c6",
   "kind": "run.done",
-  "prev_hash": "7dd496b6de89570cd6aa2a27f5cbea7108c30bf1ac32557bea11627b2e5698af",
+  "prev_hash": "b3c7729f45aa798f44db2067cb83364c4ac6e1576bc914f2eeb51dcf5e8d4223",
   "seq": 52,
-  "ts": "2026-09-24T04:04:41.954376+00:00"
+  "ts": "2026-09-24T06:28:10.077817+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 42,
-   "result_hash": "db693504b7406ab3",
-   "run_id": "22d18dfdc133",
+   "duration_ms": 56,
+   "result_hash": "1238c249b026ae7f",
+   "run_id": "f7434f7d9bd2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5592d2d75e372df560266f51d638f8ee334370cf217556ccedece8ef1bffa223",
+  "hash": "9f2f1482a80ae1c604a4d8fc6f1532331f7787834e3251973d474886e2088aff",
   "kind": "cap.run.finish",
-  "prev_hash": "43dbf2ca682b49da3ea2db859a1633f3127dd603f90b51ca7eea853684cb5734",
+  "prev_hash": "bc57c665d1f28a671de6e9ecad6a677472e91622f428b9cbb2e9a3a0962009c6",
   "seq": 53,
-  "ts": "2026-09-24T04:04:41.975533+00:00"
+  "ts": "2026-09-24T06:28:10.107327+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "b35358005101782d",
+   "args_hash": "3663e524aef0fa27",
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "06867f1b3896"
+    "run_id": "ab4e445ee70d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1352,13 +1352,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "06867f1b3896"
+   "run_id": "ab4e445ee70d"
   },
-  "hash": "c48bf56926d0788561f1f15e263946daf59a02c4d21d1fab613f9221dbdf43d7",
+  "hash": "fad4dba88fff34771fc87205ff59e80bfec68b3af1518e5565185e503a2d736b",
   "kind": "cap.run.start",
-  "prev_hash": "5592d2d75e372df560266f51d638f8ee334370cf217556ccedece8ef1bffa223",
+  "prev_hash": "9f2f1482a80ae1c604a4d8fc6f1532331f7787834e3251973d474886e2088aff",
   "seq": 54,
-  "ts": "2026-09-24T04:04:41.978555+00:00"
+  "ts": "2026-09-24T06:28:10.110746+00:00"
  },
  {
   "actor": "agent",
@@ -1368,20 +1368,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "06867f1b3896"
+    "run_id": "ab4e445ee70d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "06867f1b3896"
+   "run_id": "ab4e445ee70d"
   },
-  "hash": "b945f886f150f256d8743bbf71f8e213039447381512b6c9a2dce0216cccb516",
+  "hash": "64a3a73b1cc4905c10528a95ef4ec9508462ed0ca82f3c1fc9c248632d9c5efd",
   "kind": "gate.decision",
-  "prev_hash": "c48bf56926d0788561f1f15e263946daf59a02c4d21d1fab613f9221dbdf43d7",
+  "prev_hash": "fad4dba88fff34771fc87205ff59e80bfec68b3af1518e5565185e503a2d736b",
   "seq": 55,
-  "ts": "2026-09-24T04:04:41.978657+00:00"
+  "ts": "2026-09-24T06:28:10.110854+00:00"
  },
  {
   "actor": "agent",
@@ -1389,15 +1389,15 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "d7fe2fcd3ae0f5f7",
-   "run_id": "06867f1b3896",
+   "run_id": "ab4e445ee70d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3660821834299df356877a80bcb976003922d582ef1ae0ee7cb5386d4743af7e",
+  "hash": "07f6fe7834aab1e59bf0e2a1831dc682b47526f58fd0e952552e61a899186ed5",
   "kind": "cap.run.finish",
-  "prev_hash": "b945f886f150f256d8743bbf71f8e213039447381512b6c9a2dce0216cccb516",
+  "prev_hash": "64a3a73b1cc4905c10528a95ef4ec9508462ed0ca82f3c1fc9c248632d9c5efd",
   "seq": 56,
-  "ts": "2026-09-24T04:04:41.979708+00:00"
+  "ts": "2026-09-24T06:28:10.111977+00:00"
  },
  {
   "actor": "agent",
@@ -1407,7 +1407,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "b434da3d6a8f"
+    "run_id": "cabcad14d6e1"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1415,13 +1415,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b434da3d6a8f"
+   "run_id": "cabcad14d6e1"
   },
-  "hash": "4ce09c79f9995adb2dd649cc707bf95d274dd7bc24369ebcb2da6154d3456016",
+  "hash": "efcecf798d6966c381080b1f838081d6bc4b9a6077f73d9e72d0dbc7e79e30e1",
   "kind": "cap.run.start",
-  "prev_hash": "3660821834299df356877a80bcb976003922d582ef1ae0ee7cb5386d4743af7e",
+  "prev_hash": "07f6fe7834aab1e59bf0e2a1831dc682b47526f58fd0e952552e61a899186ed5",
   "seq": 57,
-  "ts": "2026-09-24T04:04:42.030206+00:00"
+  "ts": "2026-09-24T06:28:10.160156+00:00"
  },
  {
   "actor": "agent",
@@ -1431,36 +1431,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "b434da3d6a8f"
+    "run_id": "cabcad14d6e1"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b434da3d6a8f"
+   "run_id": "cabcad14d6e1"
   },
-  "hash": "a65b90f46e722fab29d5e00ed821bbec71b7fd6d1895fc97f2f23d6571a81388",
+  "hash": "a72d8da6e94e28868c1d03e272be929cf293cabaafe2e00502895340be87770b",
   "kind": "gate.decision",
-  "prev_hash": "4ce09c79f9995adb2dd649cc707bf95d274dd7bc24369ebcb2da6154d3456016",
+  "prev_hash": "efcecf798d6966c381080b1f838081d6bc4b9a6077f73d9e72d0dbc7e79e30e1",
   "seq": 58,
-  "ts": "2026-09-24T04:04:42.030398+00:00"
+  "ts": "2026-09-24T06:28:10.160380+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 2,
-   "result_hash": "2d1518e296c610d2",
-   "run_id": "b434da3d6a8f",
+   "result_hash": "c12c35500f577d7e",
+   "run_id": "cabcad14d6e1",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "384f948d7b5fa5b8ed511631a09bf0904f5716641d2c521df7dbe8d3491b0afa",
+  "hash": "da8bb370d0ba37448322ba5ebb76086036a2ede1309f1e3a5daee4d19d638753",
   "kind": "cap.run.finish",
-  "prev_hash": "a65b90f46e722fab29d5e00ed821bbec71b7fd6d1895fc97f2f23d6571a81388",
+  "prev_hash": "a72d8da6e94e28868c1d03e272be929cf293cabaafe2e00502895340be87770b",
   "seq": 59,
-  "ts": "2026-09-24T04:04:42.032180+00:00"
+  "ts": "2026-09-24T06:28:10.162250+00:00"
  },
  {
   "actor": "agent",
@@ -1470,7 +1470,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "10e223b2609c"
+    "run_id": "7466399293c3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1478,13 +1478,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "10e223b2609c"
+   "run_id": "7466399293c3"
   },
-  "hash": "e2b94c023d5d3b3b2111e3b245c4e27d096cbac397c45110f57daa3aba5aa5ba",
+  "hash": "5c0109e66e7b394b97d1b9f07a9537b1ac5090ea794a0d8a4fddc03bdd18c0f7",
   "kind": "cap.run.start",
-  "prev_hash": "384f948d7b5fa5b8ed511631a09bf0904f5716641d2c521df7dbe8d3491b0afa",
+  "prev_hash": "da8bb370d0ba37448322ba5ebb76086036a2ede1309f1e3a5daee4d19d638753",
   "seq": 60,
-  "ts": "2026-09-24T04:04:43.176225+00:00"
+  "ts": "2026-09-24T06:28:11.305685+00:00"
  },
  {
   "actor": "agent",
@@ -1494,36 +1494,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "10e223b2609c"
+    "run_id": "7466399293c3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "10e223b2609c"
+   "run_id": "7466399293c3"
   },
-  "hash": "165cc8813d24165e1ec4d2192b8da834269d0f804c97ba3b0af37fd68c45eb62",
+  "hash": "28307616d32a5f1c489e6216ffccb4cddb9e5df932f6d28eb7fe0bca71abaf9a",
   "kind": "gate.decision",
-  "prev_hash": "e2b94c023d5d3b3b2111e3b245c4e27d096cbac397c45110f57daa3aba5aa5ba",
+  "prev_hash": "5c0109e66e7b394b97d1b9f07a9537b1ac5090ea794a0d8a4fddc03bdd18c0f7",
   "seq": 61,
-  "ts": "2026-09-24T04:04:43.176468+00:00"
+  "ts": "2026-09-24T06:28:11.305899+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "10e223b2609c",
+   "result_hash": "81d6dfd998627293",
+   "run_id": "7466399293c3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4e9de6079f531fb501fa56b9416ff60d4540f04a507561b8b5e94e7772cfba41",
+  "hash": "2e5f1e04c617c244431d28eaed316984245db24d4d8afdcc22c11a20b3000da9",
   "kind": "cap.run.finish",
-  "prev_hash": "165cc8813d24165e1ec4d2192b8da834269d0f804c97ba3b0af37fd68c45eb62",
+  "prev_hash": "28307616d32a5f1c489e6216ffccb4cddb9e5df932f6d28eb7fe0bca71abaf9a",
   "seq": 62,
-  "ts": "2026-09-24T04:04:43.180656+00:00"
+  "ts": "2026-09-24T06:28:11.309879+00:00"
  },
  {
   "actor": "agent",
@@ -1533,7 +1533,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "374104a6833a"
+    "run_id": "85137da23f97"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1541,13 +1541,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "374104a6833a"
+   "run_id": "85137da23f97"
   },
-  "hash": "3d4efc4c0942264d39bbe33414d418629ff8ce8c2030d4ca66099bc5d4debd4f",
+  "hash": "c708f1c356ef6af3cb74c434221462a479e0c29918c81cf9692fced2f3ef7a5e",
   "kind": "cap.run.start",
-  "prev_hash": "4e9de6079f531fb501fa56b9416ff60d4540f04a507561b8b5e94e7772cfba41",
+  "prev_hash": "2e5f1e04c617c244431d28eaed316984245db24d4d8afdcc22c11a20b3000da9",
   "seq": 63,
-  "ts": "2026-09-24T04:04:43.187316+00:00"
+  "ts": "2026-09-24T06:28:11.325532+00:00"
  },
  {
   "actor": "agent",
@@ -1557,36 +1557,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "374104a6833a"
+    "run_id": "85137da23f97"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "374104a6833a"
+   "run_id": "85137da23f97"
   },
-  "hash": "72e3ab0aee4f89d9091c825f240519ad0132c94797c6c8822f89e9b90ca61c16",
+  "hash": "f8f1be6b7325f389f40d29220bb736d774451c8b43dc64410e62ab79ff4809a3",
   "kind": "gate.decision",
-  "prev_hash": "3d4efc4c0942264d39bbe33414d418629ff8ce8c2030d4ca66099bc5d4debd4f",
+  "prev_hash": "c708f1c356ef6af3cb74c434221462a479e0c29918c81cf9692fced2f3ef7a5e",
   "seq": 64,
-  "ts": "2026-09-24T04:04:43.187498+00:00"
+  "ts": "2026-09-24T06:28:11.325776+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 5,
-   "result_hash": "a4a4074a67239f9a",
-   "run_id": "374104a6833a",
+   "result_hash": "19a02668f15eb558",
+   "run_id": "85137da23f97",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5147ef72f779a1d2e9df615c2f120fd6b0b40ed2dedf5c7723be11b7303860ec",
+  "hash": "59be8717d9a7c3f82d1a5f6493c24e8e01ae38bf97329cf59852ba12a3664d68",
   "kind": "cap.run.finish",
-  "prev_hash": "72e3ab0aee4f89d9091c825f240519ad0132c94797c6c8822f89e9b90ca61c16",
+  "prev_hash": "f8f1be6b7325f389f40d29220bb736d774451c8b43dc64410e62ab79ff4809a3",
   "seq": 65,
-  "ts": "2026-09-24T04:04:43.192797+00:00"
+  "ts": "2026-09-24T06:28:11.331062+00:00"
  },
  {
   "actor": "agent",
@@ -1596,7 +1596,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "12ed957ac2fb"
+    "run_id": "d7573c40bb8a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1604,13 +1604,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "12ed957ac2fb"
+   "run_id": "d7573c40bb8a"
   },
-  "hash": "e7337351868de968ef960133c43765e3d02117ed4ad2e1077bf59be3125d9b37",
+  "hash": "77a299f99674b8ff07746bbfe389427bc8e8ce5b147849c4c9a388238ebfb4d3",
   "kind": "cap.run.start",
-  "prev_hash": "5147ef72f779a1d2e9df615c2f120fd6b0b40ed2dedf5c7723be11b7303860ec",
+  "prev_hash": "59be8717d9a7c3f82d1a5f6493c24e8e01ae38bf97329cf59852ba12a3664d68",
   "seq": 66,
-  "ts": "2026-09-24T04:04:43.198126+00:00"
+  "ts": "2026-09-24T06:28:11.336310+00:00"
  },
  {
   "actor": "agent",
@@ -1620,36 +1620,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "12ed957ac2fb"
+    "run_id": "d7573c40bb8a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "12ed957ac2fb"
+   "run_id": "d7573c40bb8a"
   },
-  "hash": "7724ee0d973c6580773f39e03f65f5f27219ec36ddea658f608486e084158b09",
+  "hash": "8326ba326edb1ddd3d6f959993a3afe752ae021a59d3f0c2cb78087cbf47e32e",
   "kind": "gate.decision",
-  "prev_hash": "e7337351868de968ef960133c43765e3d02117ed4ad2e1077bf59be3125d9b37",
+  "prev_hash": "77a299f99674b8ff07746bbfe389427bc8e8ce5b147849c4c9a388238ebfb4d3",
   "seq": 67,
-  "ts": "2026-09-24T04:04:43.198246+00:00"
+  "ts": "2026-09-24T06:28:11.336421+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
+   "duration_ms": 2,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "12ed957ac2fb",
+   "run_id": "d7573c40bb8a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "bca29bed907914d08ec18187013eef2569df0c5a3f132c447980d13f80197c90",
+  "hash": "168a14eb31e361c74a26aa4e9475be8e53db39f2fde516df1b00f29d7aedbbe8",
   "kind": "cap.run.finish",
-  "prev_hash": "7724ee0d973c6580773f39e03f65f5f27219ec36ddea658f608486e084158b09",
+  "prev_hash": "8326ba326edb1ddd3d6f959993a3afe752ae021a59d3f0c2cb78087cbf47e32e",
   "seq": 68,
-  "ts": "2026-09-24T04:04:43.199887+00:00"
+  "ts": "2026-09-24T06:28:11.338379+00:00"
  },
  {
   "actor": "agent",
@@ -1659,7 +1659,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "14ba53375177"
+    "run_id": "b50d96f55b01"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1667,13 +1667,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "14ba53375177"
+   "run_id": "b50d96f55b01"
   },
-  "hash": "ae3239dadf3caa52ee3a437e5194f4a7c5caa9c3158a5d3e68210db3d16b3089",
+  "hash": "9e0d4b6772b8919e6a569fab04f6f7ec842df1e50680c14b29810d9843052f4b",
   "kind": "cap.run.start",
-  "prev_hash": "bca29bed907914d08ec18187013eef2569df0c5a3f132c447980d13f80197c90",
+  "prev_hash": "168a14eb31e361c74a26aa4e9475be8e53db39f2fde516df1b00f29d7aedbbe8",
   "seq": 69,
-  "ts": "2026-09-24T04:04:43.201451+00:00"
+  "ts": "2026-09-24T06:28:11.339984+00:00"
  },
  {
   "actor": "agent",
@@ -1683,20 +1683,20 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "14ba53375177"
+    "run_id": "b50d96f55b01"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "14ba53375177"
+   "run_id": "b50d96f55b01"
   },
-  "hash": "04f50158c637a934416adea6b00fe7764f1eb4bad5604d62085f53045ea3bc76",
+  "hash": "b7a720cc60e318e3f18406541528ac271c9f431584a599aa1a2baaf48a9c9689",
   "kind": "gate.decision",
-  "prev_hash": "ae3239dadf3caa52ee3a437e5194f4a7c5caa9c3158a5d3e68210db3d16b3089",
+  "prev_hash": "9e0d4b6772b8919e6a569fab04f6f7ec842df1e50680c14b29810d9843052f4b",
   "seq": 70,
-  "ts": "2026-09-24T04:04:43.201573+00:00"
+  "ts": "2026-09-24T06:28:11.340096+00:00"
  },
  {
   "actor": "agent",
@@ -1704,15 +1704,15 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "14ba53375177",
+   "run_id": "b50d96f55b01",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b53412e101c55bc0153bec3113d0a503386ce377b3ccba05b14afe4f29a2f1b2",
+  "hash": "b4390b4ab869d38a5b15520392cfc8d262a3c77f26ecee0eaadc6205de0c183b",
   "kind": "cap.run.finish",
-  "prev_hash": "04f50158c637a934416adea6b00fe7764f1eb4bad5604d62085f53045ea3bc76",
+  "prev_hash": "b7a720cc60e318e3f18406541528ac271c9f431584a599aa1a2baaf48a9c9689",
   "seq": 71,
-  "ts": "2026-09-24T04:04:43.203254+00:00"
+  "ts": "2026-09-24T06:28:11.341786+00:00"
  },
  {
   "actor": "agent",
@@ -1722,7 +1722,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "0574e8df78e1"
+    "run_id": "42d53c4e9890"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1730,13 +1730,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0574e8df78e1"
+   "run_id": "42d53c4e9890"
   },
-  "hash": "b7353a58a902ab63bce03895b473ded11bf1ce723e0b2a12807e4a32e8a33b3d",
+  "hash": "6c68ab22e5ceae2e3a6359af2d7a6de394e80b68f0f71bfcdda7a0315e727da0",
   "kind": "cap.run.start",
-  "prev_hash": "b53412e101c55bc0153bec3113d0a503386ce377b3ccba05b14afe4f29a2f1b2",
+  "prev_hash": "b4390b4ab869d38a5b15520392cfc8d262a3c77f26ecee0eaadc6205de0c183b",
   "seq": 72,
-  "ts": "2026-09-24T04:04:43.211686+00:00"
+  "ts": "2026-09-24T06:28:11.350165+00:00"
  },
  {
   "actor": "agent",
@@ -1746,36 +1746,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "0574e8df78e1"
+    "run_id": "42d53c4e9890"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0574e8df78e1"
+   "run_id": "42d53c4e9890"
   },
-  "hash": "7b3335fcbd2df57622caba389eb952b10968d93c051bd76f9e724da83928dfd1",
+  "hash": "0b406ba2f5fda2732f38c62dd7df3d5303082578a10f0d21580994b0288becd6",
   "kind": "gate.decision",
-  "prev_hash": "b7353a58a902ab63bce03895b473ded11bf1ce723e0b2a12807e4a32e8a33b3d",
+  "prev_hash": "6c68ab22e5ceae2e3a6359af2d7a6de394e80b68f0f71bfcdda7a0315e727da0",
   "seq": 73,
-  "ts": "2026-09-24T04:04:43.211795+00:00"
+  "ts": "2026-09-24T06:28:11.350273+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "2d1518e296c610d2",
-   "run_id": "0574e8df78e1",
+   "result_hash": "c12c35500f577d7e",
+   "run_id": "42d53c4e9890",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d910e65c5122ef0a96bb70a2f95a6e5d71ca1599cb57ae451f4182f31f0624cb",
+  "hash": "3cdc8cbfc8905c1458816bfc2693dce6761ba733206fb922e93bf07bd67df149",
   "kind": "cap.run.finish",
-  "prev_hash": "7b3335fcbd2df57622caba389eb952b10968d93c051bd76f9e724da83928dfd1",
+  "prev_hash": "0b406ba2f5fda2732f38c62dd7df3d5303082578a10f0d21580994b0288becd6",
   "seq": 74,
-  "ts": "2026-09-24T04:04:43.213433+00:00"
+  "ts": "2026-09-24T06:28:11.351864+00:00"
  },
  {
   "actor": "agent",
@@ -1785,7 +1785,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "818d3ba668db"
+    "run_id": "4f0c52302716"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1793,13 +1793,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "818d3ba668db"
+   "run_id": "4f0c52302716"
   },
-  "hash": "0090a987e0ad0118146b723b83459ce4542c03024c3b47caf4be893125eebd9b",
+  "hash": "6cdf8a0b69bbb67ba4712d14d5b49a0618bf04c7f1a6406404ca0e64b3b21a04",
   "kind": "cap.run.start",
-  "prev_hash": "d910e65c5122ef0a96bb70a2f95a6e5d71ca1599cb57ae451f4182f31f0624cb",
+  "prev_hash": "3cdc8cbfc8905c1458816bfc2693dce6761ba733206fb922e93bf07bd67df149",
   "seq": 75,
-  "ts": "2026-09-24T04:04:43.214894+00:00"
+  "ts": "2026-09-24T06:28:11.353250+00:00"
  },
  {
   "actor": "agent",
@@ -1809,36 +1809,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "818d3ba668db"
+    "run_id": "4f0c52302716"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "818d3ba668db"
+   "run_id": "4f0c52302716"
   },
-  "hash": "9fc025773beea87a7ee35036fc414c7d4953941d898b42494ebd81fabe1c05e7",
+  "hash": "f83d98f5e0adfda02b2dadcb220ae2c5d5c039d949786880d53a8d5df5de416f",
   "kind": "gate.decision",
-  "prev_hash": "0090a987e0ad0118146b723b83459ce4542c03024c3b47caf4be893125eebd9b",
+  "prev_hash": "6cdf8a0b69bbb67ba4712d14d5b49a0618bf04c7f1a6406404ca0e64b3b21a04",
   "seq": 76,
-  "ts": "2026-09-24T04:04:43.214979+00:00"
+  "ts": "2026-09-24T06:28:11.353326+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "2d1518e296c610d2",
-   "run_id": "818d3ba668db",
+   "result_hash": "c12c35500f577d7e",
+   "run_id": "4f0c52302716",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "172026a115ef937439f7c33cc4c6cb89c1c13e4a8962f173d68bfdc4d36f0e94",
+  "hash": "1c19fc648a66be03cc7954e69b563e77d5e958acd675b4e3a92a92cb47a6943d",
   "kind": "cap.run.finish",
-  "prev_hash": "9fc025773beea87a7ee35036fc414c7d4953941d898b42494ebd81fabe1c05e7",
+  "prev_hash": "f83d98f5e0adfda02b2dadcb220ae2c5d5c039d949786880d53a8d5df5de416f",
   "seq": 77,
-  "ts": "2026-09-24T04:04:43.216615+00:00"
+  "ts": "2026-09-24T06:28:11.354947+00:00"
  },
  {
   "actor": "agent",
@@ -1848,7 +1848,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "d1b7ff0f3545"
+    "run_id": "6d127cf6fc20"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1856,13 +1856,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d1b7ff0f3545"
+   "run_id": "6d127cf6fc20"
   },
-  "hash": "ab89a81247fb8195b859b6d976c78839e6af2ff61ba9ceea49cfef65ca267949",
+  "hash": "609fc96112ce0e0573e88e228af6295d2840107d9dd957dbbceac53a1c82da52",
   "kind": "cap.run.start",
-  "prev_hash": "172026a115ef937439f7c33cc4c6cb89c1c13e4a8962f173d68bfdc4d36f0e94",
+  "prev_hash": "1c19fc648a66be03cc7954e69b563e77d5e958acd675b4e3a92a92cb47a6943d",
   "seq": 78,
-  "ts": "2026-09-24T04:04:43.245164+00:00"
+  "ts": "2026-09-24T06:28:11.386923+00:00"
  },
  {
   "actor": "agent",
@@ -1872,36 +1872,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "d1b7ff0f3545"
+    "run_id": "6d127cf6fc20"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d1b7ff0f3545"
+   "run_id": "6d127cf6fc20"
   },
-  "hash": "68fc27af38ac86d2cd9baf86e43daafd18edb09249b78bef9e4d04aafed451ad",
+  "hash": "b5db2f520c854bfc5fd95760d65aecfc430067466eda95ac3885311be1720160",
   "kind": "gate.decision",
-  "prev_hash": "ab89a81247fb8195b859b6d976c78839e6af2ff61ba9ceea49cfef65ca267949",
+  "prev_hash": "609fc96112ce0e0573e88e228af6295d2840107d9dd957dbbceac53a1c82da52",
   "seq": 79,
-  "ts": "2026-09-24T04:04:43.245282+00:00"
+  "ts": "2026-09-24T06:28:11.387121+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "1e0409a8cf5b87a7",
-   "run_id": "d1b7ff0f3545",
+   "result_hash": "23f41b9c7f9bd22e",
+   "run_id": "6d127cf6fc20",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "cdcf3834142a80367184e98e1681b90abe44ea4906e8a90c8d218b35363ff74b",
+  "hash": "197c5cf4009469ca33a1573249cebbade525cbbbc01580bc3e6620122367afe5",
   "kind": "cap.run.finish",
-  "prev_hash": "68fc27af38ac86d2cd9baf86e43daafd18edb09249b78bef9e4d04aafed451ad",
+  "prev_hash": "b5db2f520c854bfc5fd95760d65aecfc430067466eda95ac3885311be1720160",
   "seq": 80,
-  "ts": "2026-09-24T04:04:43.247806+00:00"
+  "ts": "2026-09-24T06:28:11.390027+00:00"
  },
  {
   "actor": "agent",
@@ -1911,7 +1911,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "9d3b5bba252a"
+    "run_id": "b043592e472b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1919,13 +1919,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9d3b5bba252a"
+   "run_id": "b043592e472b"
   },
-  "hash": "ac8f9731cad0ef13f3c2865e0db82b1e1bf431d9d2ff9639be3d497659131c1b",
+  "hash": "a6fdcff470ff5ad26ffbc6729a3b40578ca0f7913d3f039ee2bd7aa3ff57e1a1",
   "kind": "cap.run.start",
-  "prev_hash": "cdcf3834142a80367184e98e1681b90abe44ea4906e8a90c8d218b35363ff74b",
+  "prev_hash": "197c5cf4009469ca33a1573249cebbade525cbbbc01580bc3e6620122367afe5",
   "seq": 81,
-  "ts": "2026-09-24T04:04:43.327559+00:00"
+  "ts": "2026-09-24T06:28:11.479347+00:00"
  },
  {
   "actor": "agent",
@@ -1935,36 +1935,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "9d3b5bba252a"
+    "run_id": "b043592e472b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9d3b5bba252a"
+   "run_id": "b043592e472b"
   },
-  "hash": "f91dc829c2657be54159508f61d01c84bd306c2978f7e1081b88f02b2637100b",
+  "hash": "5918a1df67cde251e50a567d7a846c0887c62481a01a938b7ba65aaa0f8df83d",
   "kind": "gate.decision",
-  "prev_hash": "ac8f9731cad0ef13f3c2865e0db82b1e1bf431d9d2ff9639be3d497659131c1b",
+  "prev_hash": "a6fdcff470ff5ad26ffbc6729a3b40578ca0f7913d3f039ee2bd7aa3ff57e1a1",
   "seq": 82,
-  "ts": "2026-09-24T04:04:43.327738+00:00"
+  "ts": "2026-09-24T06:28:11.479563+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "27d7f461bfbd94cd",
-   "run_id": "9d3b5bba252a",
+   "result_hash": "799d06e49a0dd7f4",
+   "run_id": "b043592e472b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2b9a20e2b85374943cc5858ec785429910760ce24092091b33e4752c5b3b1e68",
+  "hash": "c314efe3a708b9c6e1aa070822a55f68f76703c99f078362a024f0c2f76290f6",
   "kind": "cap.run.finish",
-  "prev_hash": "f91dc829c2657be54159508f61d01c84bd306c2978f7e1081b88f02b2637100b",
+  "prev_hash": "5918a1df67cde251e50a567d7a846c0887c62481a01a938b7ba65aaa0f8df83d",
   "seq": 83,
-  "ts": "2026-09-24T04:04:43.330560+00:00"
+  "ts": "2026-09-24T06:28:11.482522+00:00"
  },
  {
   "actor": "agent",
@@ -1974,7 +1974,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "bea6bef16486"
+    "run_id": "b1dce04231d3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1982,13 +1982,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "bea6bef16486"
+   "run_id": "b1dce04231d3"
   },
-  "hash": "44db1307160b9e5bc92102ec3484f0dd8971b78abbefea1c68ddc83208dfb162",
+  "hash": "4b31eb6444c5ab1252bc1242311a5ee29fbe447884a831383477032cf2f6aade",
   "kind": "cap.run.start",
-  "prev_hash": "2b9a20e2b85374943cc5858ec785429910760ce24092091b33e4752c5b3b1e68",
+  "prev_hash": "c314efe3a708b9c6e1aa070822a55f68f76703c99f078362a024f0c2f76290f6",
   "seq": 84,
-  "ts": "2026-09-24T04:04:43.469620+00:00"
+  "ts": "2026-09-24T06:28:11.632484+00:00"
  },
  {
   "actor": "agent",
@@ -1998,36 +1998,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "bea6bef16486"
+    "run_id": "b1dce04231d3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "bea6bef16486"
+   "run_id": "b1dce04231d3"
   },
-  "hash": "12a355e9f762fd452d01db79838c0fb57ea222f4c43f50b3eba30033fbfed0a4",
+  "hash": "d413f972fea28bc1229bc5a3879c5a8b155055640566668706d89da8dd191823",
   "kind": "gate.decision",
-  "prev_hash": "44db1307160b9e5bc92102ec3484f0dd8971b78abbefea1c68ddc83208dfb162",
+  "prev_hash": "4b31eb6444c5ab1252bc1242311a5ee29fbe447884a831383477032cf2f6aade",
   "seq": 85,
-  "ts": "2026-09-24T04:04:43.469799+00:00"
+  "ts": "2026-09-24T06:28:11.633045+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "bea6bef16486",
+   "duration_ms": 10,
+   "result_hash": "81d6dfd998627293",
+   "run_id": "b1dce04231d3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f665649c78798b93314c908909d83c640c1c0952b05c4a701554088b175d7db3",
+  "hash": "ebe5d79ef3d2ee775ca7ceec4ae0c60456e32ff2aa424f79464b8618c5849a17",
   "kind": "cap.run.finish",
-  "prev_hash": "12a355e9f762fd452d01db79838c0fb57ea222f4c43f50b3eba30033fbfed0a4",
+  "prev_hash": "d413f972fea28bc1229bc5a3879c5a8b155055640566668706d89da8dd191823",
   "seq": 86,
-  "ts": "2026-09-24T04:04:43.473914+00:00"
+  "ts": "2026-09-24T06:28:11.642668+00:00"
  },
  {
   "actor": "agent",
@@ -2037,7 +2037,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "5973e86fddec"
+    "run_id": "9c078dccb0b8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2045,13 +2045,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5973e86fddec"
+   "run_id": "9c078dccb0b8"
   },
-  "hash": "5c6df5a6d2601b05383a3f24405848ad463de6843996d948c73107f3c75a9e56",
+  "hash": "5aa6b15b93084bc3b7c05010496f9d27a45bdc8c39dd2e5ae06a1f5ea4094862",
   "kind": "cap.run.start",
-  "prev_hash": "f665649c78798b93314c908909d83c640c1c0952b05c4a701554088b175d7db3",
+  "prev_hash": "ebe5d79ef3d2ee775ca7ceec4ae0c60456e32ff2aa424f79464b8618c5849a17",
   "seq": 87,
-  "ts": "2026-09-24T04:04:43.477078+00:00"
+  "ts": "2026-09-24T06:28:11.648954+00:00"
  },
  {
   "actor": "agent",
@@ -2061,36 +2061,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "5973e86fddec"
+    "run_id": "9c078dccb0b8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5973e86fddec"
+   "run_id": "9c078dccb0b8"
   },
-  "hash": "523f093ff9876039fc007e67cbaf50addbca610559b686334d5d0138d001df8f",
+  "hash": "5ae901b84844b9a44d2e06da484c610c07744dd1eeff77131ef93a5d4ddef023",
   "kind": "gate.decision",
-  "prev_hash": "5c6df5a6d2601b05383a3f24405848ad463de6843996d948c73107f3c75a9e56",
+  "prev_hash": "5aa6b15b93084bc3b7c05010496f9d27a45bdc8c39dd2e5ae06a1f5ea4094862",
   "seq": 88,
-  "ts": "2026-09-24T04:04:43.477229+00:00"
+  "ts": "2026-09-24T06:28:11.649223+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "2d1518e296c610d2",
-   "run_id": "5973e86fddec",
+   "duration_ms": 2,
+   "result_hash": "c12c35500f577d7e",
+   "run_id": "9c078dccb0b8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ee697b6f67e1c4a000f5193042f74fa10c0dbf1d690bbbdaf7690296a98c1694",
+  "hash": "b44062f68b7f797d77b3c520e9549e672ecd8ac7c8781bf039a3a7dd991a61cb",
   "kind": "cap.run.finish",
-  "prev_hash": "523f093ff9876039fc007e67cbaf50addbca610559b686334d5d0138d001df8f",
+  "prev_hash": "5ae901b84844b9a44d2e06da484c610c07744dd1eeff77131ef93a5d4ddef023",
   "seq": 89,
-  "ts": "2026-09-24T04:04:43.478819+00:00"
+  "ts": "2026-09-24T06:28:11.651794+00:00"
  },
  {
   "actor": "agent",
@@ -2100,7 +2100,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "f8a0ebffc47e"
+    "run_id": "0f8abcb9002b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2108,13 +2108,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f8a0ebffc47e"
+   "run_id": "0f8abcb9002b"
   },
-  "hash": "62d17ae3a84f4498170bb019670931b2882c8705a610488767d7542ed4a8e077",
+  "hash": "c3d0279ee3a090d1ba955b4821e1f6b5260fa23930f478a1ccd1d01a51f092f8",
   "kind": "cap.run.start",
-  "prev_hash": "ee697b6f67e1c4a000f5193042f74fa10c0dbf1d690bbbdaf7690296a98c1694",
+  "prev_hash": "b44062f68b7f797d77b3c520e9549e672ecd8ac7c8781bf039a3a7dd991a61cb",
   "seq": 90,
-  "ts": "2026-09-24T04:04:43.480726+00:00"
+  "ts": "2026-09-24T06:28:11.656327+00:00"
  },
  {
   "actor": "agent",
@@ -2124,36 +2124,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "f8a0ebffc47e"
+    "run_id": "0f8abcb9002b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f8a0ebffc47e"
+   "run_id": "0f8abcb9002b"
   },
-  "hash": "50a0b7572b42a8e12299e97be1e1f5603e595a1a27ffb9d934e87a112c873f43",
+  "hash": "268d78461807cfc6d5103c3dff7a831ad1b19014edb852c2f44cbddb94d5dd6e",
   "kind": "gate.decision",
-  "prev_hash": "62d17ae3a84f4498170bb019670931b2882c8705a610488767d7542ed4a8e077",
+  "prev_hash": "c3d0279ee3a090d1ba955b4821e1f6b5260fa23930f478a1ccd1d01a51f092f8",
   "seq": 91,
-  "ts": "2026-09-24T04:04:43.480814+00:00"
+  "ts": "2026-09-24T06:28:11.656616+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 3,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "f8a0ebffc47e",
+   "duration_ms": 4,
+   "result_hash": "81d6dfd998627293",
+   "run_id": "0f8abcb9002b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "7adbc09515ecaea4098009d538077c15568c7aa083a2ee2dd5d6b6b2b9b2065b",
+  "hash": "89ce35f614676dfa99679ca348a20a6f3ab91e9c7104fc53f4dda793149d4086",
   "kind": "cap.run.finish",
-  "prev_hash": "50a0b7572b42a8e12299e97be1e1f5603e595a1a27ffb9d934e87a112c873f43",
+  "prev_hash": "268d78461807cfc6d5103c3dff7a831ad1b19014edb852c2f44cbddb94d5dd6e",
   "seq": 92,
-  "ts": "2026-09-24T04:04:43.484598+00:00"
+  "ts": "2026-09-24T06:28:11.660779+00:00"
  },
  {
   "actor": "agent",
@@ -2163,7 +2163,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7f7d06cec3b9"
+    "run_id": "5495def2026d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2171,13 +2171,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7f7d06cec3b9"
+   "run_id": "5495def2026d"
   },
-  "hash": "d51e4f7117bf9cdb89f456610a8f1b490b4e445f913cbc6ac12b4ed99abe6a67",
+  "hash": "a949044abdc4a874967b2199ac48e47461436de5298e2b150a5ac22b713db540",
   "kind": "cap.run.start",
-  "prev_hash": "7adbc09515ecaea4098009d538077c15568c7aa083a2ee2dd5d6b6b2b9b2065b",
+  "prev_hash": "89ce35f614676dfa99679ca348a20a6f3ab91e9c7104fc53f4dda793149d4086",
   "seq": 93,
-  "ts": "2026-09-24T04:04:43.487305+00:00"
+  "ts": "2026-09-24T06:28:11.663651+00:00"
  },
  {
   "actor": "agent",
@@ -2187,36 +2187,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7f7d06cec3b9"
+    "run_id": "5495def2026d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7f7d06cec3b9"
+   "run_id": "5495def2026d"
   },
-  "hash": "145284c6cc35f5421e042e0c4952d8bf56a185fafce772f48317168af19a0323",
+  "hash": "d9bbb6deaec70ed1435324dfedba4d824eb899b98c119c8e11f274381eaf3e91",
   "kind": "gate.decision",
-  "prev_hash": "d51e4f7117bf9cdb89f456610a8f1b490b4e445f913cbc6ac12b4ed99abe6a67",
+  "prev_hash": "a949044abdc4a874967b2199ac48e47461436de5298e2b150a5ac22b713db540",
   "seq": 94,
-  "ts": "2026-09-24T04:04:43.487419+00:00"
+  "ts": "2026-09-24T06:28:11.663745+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "ae769895ce793008",
-   "run_id": "7f7d06cec3b9",
+   "result_hash": "07f11fe0500afb0a",
+   "run_id": "5495def2026d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a7ddcb14488aa7ba55f65489b2c981758bd41bd4c8ae683e10a548599109bfc6",
+  "hash": "7ff2e4741e7acd9855486a96e464519cbe5a88d2c63b007afd21267d3f1b5bb6",
   "kind": "cap.run.finish",
-  "prev_hash": "145284c6cc35f5421e042e0c4952d8bf56a185fafce772f48317168af19a0323",
+  "prev_hash": "d9bbb6deaec70ed1435324dfedba4d824eb899b98c119c8e11f274381eaf3e91",
   "seq": 95,
-  "ts": "2026-09-24T04:04:43.489773+00:00"
+  "ts": "2026-09-24T06:28:11.666251+00:00"
  },
  {
   "actor": "agent",
@@ -2226,7 +2226,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "a95263adeabc"
+    "run_id": "c115e4609303"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2234,13 +2234,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "a95263adeabc"
+   "run_id": "c115e4609303"
   },
-  "hash": "08aa38de5c23da129d34724d65ac164623ab5e2cd4d6902af89fada06df685cd",
+  "hash": "7d3d387824214955812e9b693ee090f67a19570e4e3c4ebca4b7f76cd44bd6bd",
   "kind": "cap.run.start",
-  "prev_hash": "a7ddcb14488aa7ba55f65489b2c981758bd41bd4c8ae683e10a548599109bfc6",
+  "prev_hash": "7ff2e4741e7acd9855486a96e464519cbe5a88d2c63b007afd21267d3f1b5bb6",
   "seq": 96,
-  "ts": "2026-09-24T04:04:44.017413+00:00"
+  "ts": "2026-09-24T06:28:12.147661+00:00"
  },
  {
   "actor": "agent",
@@ -2250,36 +2250,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "a95263adeabc"
+    "run_id": "c115e4609303"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "a95263adeabc"
+   "run_id": "c115e4609303"
   },
-  "hash": "e57e05ac65858dca89af590c0b1a005ec5f3def5c8643e92ab3f112965ecbceb",
+  "hash": "e6ed7f14b929a05540294d3ba3e5d2863b19281a4f16bc88ecb70b524d48d7ba",
   "kind": "gate.decision",
-  "prev_hash": "08aa38de5c23da129d34724d65ac164623ab5e2cd4d6902af89fada06df685cd",
+  "prev_hash": "7d3d387824214955812e9b693ee090f67a19570e4e3c4ebca4b7f76cd44bd6bd",
   "seq": 97,
-  "ts": "2026-09-24T04:04:44.018230+00:00"
+  "ts": "2026-09-24T06:28:12.148319+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 11,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "a95263adeabc",
+   "duration_ms": 10,
+   "result_hash": "81d6dfd998627293",
+   "run_id": "c115e4609303",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1747ec8112a55644f5f34eebab637e0e83592fbc035f324ce661217ddff69e86",
+  "hash": "116f3a0a8dd8e469548a72e8768a4e6b033dfd6a66389d54c664914b767d3329",
   "kind": "cap.run.finish",
-  "prev_hash": "e57e05ac65858dca89af590c0b1a005ec5f3def5c8643e92ab3f112965ecbceb",
+  "prev_hash": "e6ed7f14b929a05540294d3ba3e5d2863b19281a4f16bc88ecb70b524d48d7ba",
   "seq": 98,
-  "ts": "2026-09-24T04:04:44.028293+00:00"
+  "ts": "2026-09-24T06:28:12.158133+00:00"
  },
  {
   "actor": "agent",
@@ -2289,7 +2289,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d6a5f2ce5ebe"
+    "run_id": "2f9e7cff2f12"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2297,13 +2297,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d6a5f2ce5ebe"
+   "run_id": "2f9e7cff2f12"
   },
-  "hash": "76f1e9527b974476e95cfb9369cbe4d646faec0e9fefb74181b5928f3e9be1b4",
+  "hash": "447d9550fbfa57e9d3d953b799064677800a7d4db4819c8002bb4b8412891664",
   "kind": "cap.run.start",
-  "prev_hash": "1747ec8112a55644f5f34eebab637e0e83592fbc035f324ce661217ddff69e86",
+  "prev_hash": "116f3a0a8dd8e469548a72e8768a4e6b033dfd6a66389d54c664914b767d3329",
   "seq": 99,
-  "ts": "2026-09-24T04:04:44.034717+00:00"
+  "ts": "2026-09-24T06:28:12.166756+00:00"
  },
  {
   "actor": "agent",
@@ -2313,36 +2313,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d6a5f2ce5ebe"
+    "run_id": "2f9e7cff2f12"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d6a5f2ce5ebe"
+   "run_id": "2f9e7cff2f12"
   },
-  "hash": "b842aa79203e831ce6e31dea26dc0b40d9d561b60293be01c802961f5c4bcff8",
+  "hash": "34f0424d2865365fb2e8ac6043e4f40706a6bff6031df90ed33a7db6b706ddf1",
   "kind": "gate.decision",
-  "prev_hash": "76f1e9527b974476e95cfb9369cbe4d646faec0e9fefb74181b5928f3e9be1b4",
+  "prev_hash": "447d9550fbfa57e9d3d953b799064677800a7d4db4819c8002bb4b8412891664",
   "seq": 100,
-  "ts": "2026-09-24T04:04:44.034935+00:00"
+  "ts": "2026-09-24T06:28:12.166982+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 3,
-   "result_hash": "2d1518e296c610d2",
-   "run_id": "d6a5f2ce5ebe",
+   "result_hash": "c12c35500f577d7e",
+   "run_id": "2f9e7cff2f12",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6ec1cf855e18ff62809d156bc83eb20ab9c064358e83cb8d41ec4b03dd5b0818",
+  "hash": "b6ccd04412c6b19dc20ae1d1fc594813bb316bbc3cf87c8189bf67ebf2eb28c6",
   "kind": "cap.run.finish",
-  "prev_hash": "b842aa79203e831ce6e31dea26dc0b40d9d561b60293be01c802961f5c4bcff8",
+  "prev_hash": "34f0424d2865365fb2e8ac6043e4f40706a6bff6031df90ed33a7db6b706ddf1",
   "seq": 101,
-  "ts": "2026-09-24T04:04:44.037955+00:00"
+  "ts": "2026-09-24T06:28:12.169875+00:00"
  },
  {
   "actor": "agent",
@@ -2352,7 +2352,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "fb01eb5fb515"
+    "run_id": "4a9a5366e5a9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2360,13 +2360,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fb01eb5fb515"
+   "run_id": "4a9a5366e5a9"
   },
-  "hash": "2064f357d1cdc59cbc035ad0a8c4fe0bae32f16d3c6e06ebc322315357580455",
+  "hash": "50bb5658a3263b01c0b918ac0ff7f09a110dd154fac459053d7e2856873ea0c1",
   "kind": "cap.run.start",
-  "prev_hash": "6ec1cf855e18ff62809d156bc83eb20ab9c064358e83cb8d41ec4b03dd5b0818",
+  "prev_hash": "b6ccd04412c6b19dc20ae1d1fc594813bb316bbc3cf87c8189bf67ebf2eb28c6",
   "seq": 102,
-  "ts": "2026-09-24T04:04:44.041264+00:00"
+  "ts": "2026-09-24T06:28:12.173513+00:00"
  },
  {
   "actor": "agent",
@@ -2376,36 +2376,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "fb01eb5fb515"
+    "run_id": "4a9a5366e5a9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fb01eb5fb515"
+   "run_id": "4a9a5366e5a9"
   },
-  "hash": "3fc8628e1cfed45b622735a984128f3755de115face39a27e290eba5360cee1d",
+  "hash": "543b1dfb507d54f80f468a133b7338e8a5a8197d68cba4e54492ab6f41414007",
   "kind": "gate.decision",
-  "prev_hash": "2064f357d1cdc59cbc035ad0a8c4fe0bae32f16d3c6e06ebc322315357580455",
+  "prev_hash": "50bb5658a3263b01c0b918ac0ff7f09a110dd154fac459053d7e2856873ea0c1",
   "seq": 103,
-  "ts": "2026-09-24T04:04:44.041413+00:00"
+  "ts": "2026-09-24T06:28:12.173728+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 6,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "fb01eb5fb515",
+   "result_hash": "81d6dfd998627293",
+   "run_id": "4a9a5366e5a9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b453ed6760ad963b7e3329b6d2d5e2fdfff98a28142e3d67110cb9d023e0d624",
+  "hash": "0436a77f58da571ac96e2ee7e9414f7564770c9ebee5472ad181dae4b2e5ba4b",
   "kind": "cap.run.finish",
-  "prev_hash": "3fc8628e1cfed45b622735a984128f3755de115face39a27e290eba5360cee1d",
+  "prev_hash": "543b1dfb507d54f80f468a133b7338e8a5a8197d68cba4e54492ab6f41414007",
   "seq": 104,
-  "ts": "2026-09-24T04:04:44.047590+00:00"
+  "ts": "2026-09-24T06:28:12.180037+00:00"
  },
  {
   "actor": "agent",
@@ -2415,7 +2415,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7de3faa6bd36"
+    "run_id": "bf5a1e973413"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2423,13 +2423,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7de3faa6bd36"
+   "run_id": "bf5a1e973413"
   },
-  "hash": "c5585e0bd533797ffaf11ac1d528ebf25be89701b6efa9030cb818a6f5edeb70",
+  "hash": "cb10847ec90d1c69a2fe4cd8da246a962ea8cb178c5ca584616cd241a1af174a",
   "kind": "cap.run.start",
-  "prev_hash": "b453ed6760ad963b7e3329b6d2d5e2fdfff98a28142e3d67110cb9d023e0d624",
+  "prev_hash": "0436a77f58da571ac96e2ee7e9414f7564770c9ebee5472ad181dae4b2e5ba4b",
   "seq": 105,
-  "ts": "2026-09-24T04:04:44.051712+00:00"
+  "ts": "2026-09-24T06:28:12.183979+00:00"
  },
  {
   "actor": "agent",
@@ -2439,36 +2439,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7de3faa6bd36"
+    "run_id": "bf5a1e973413"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7de3faa6bd36"
+   "run_id": "bf5a1e973413"
   },
-  "hash": "fbf1cbf9f16514c8374465c3fcbbc3e69e5b495e8acb9ad137c82ada84e964aa",
+  "hash": "c968ca0d4fda2bd7713272cea585ad06fe4041bd97618ba636d1e9706d7ea689",
   "kind": "gate.decision",
-  "prev_hash": "c5585e0bd533797ffaf11ac1d528ebf25be89701b6efa9030cb818a6f5edeb70",
+  "prev_hash": "cb10847ec90d1c69a2fe4cd8da246a962ea8cb178c5ca584616cd241a1af174a",
   "seq": 106,
-  "ts": "2026-09-24T04:04:44.051862+00:00"
+  "ts": "2026-09-24T06:28:12.184093+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 3,
-   "result_hash": "3f20cf48dab4a06a",
-   "run_id": "7de3faa6bd36",
+   "result_hash": "f15d430824f4b23c",
+   "run_id": "bf5a1e973413",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0d99b6db8db8612aa73fd0e4890c0a648fbc49fa32e180ce55119d07822527da",
+  "hash": "aaaddb94f8755b314d0515ae7606fce3ef4a9432cb609855a309b13519238973",
   "kind": "cap.run.finish",
-  "prev_hash": "fbf1cbf9f16514c8374465c3fcbbc3e69e5b495e8acb9ad137c82ada84e964aa",
+  "prev_hash": "c968ca0d4fda2bd7713272cea585ad06fe4041bd97618ba636d1e9706d7ea689",
   "seq": 107,
-  "ts": "2026-09-24T04:04:44.055385+00:00"
+  "ts": "2026-09-24T06:28:12.187467+00:00"
  },
  {
   "actor": "agent",
@@ -2478,7 +2478,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "e14d0088aeba"
+    "run_id": "dd974a996956"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2486,13 +2486,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e14d0088aeba"
+   "run_id": "dd974a996956"
   },
-  "hash": "58e7cf236de93ffa653edd01525cda77559d2eb0d8d75568c04be0b93e2f4fb3",
+  "hash": "cc0b95792d6b8f0d7e5d451dc6be1d929c46d510a9943eda9f213a790ebf23ee",
   "kind": "cap.run.start",
-  "prev_hash": "0d99b6db8db8612aa73fd0e4890c0a648fbc49fa32e180ce55119d07822527da",
+  "prev_hash": "aaaddb94f8755b314d0515ae7606fce3ef4a9432cb609855a309b13519238973",
   "seq": 108,
-  "ts": "2026-09-24T04:04:46.583865+00:00"
+  "ts": "2026-09-24T06:28:14.633416+00:00"
  },
  {
   "actor": "agent",
@@ -2502,36 +2502,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "e14d0088aeba"
+    "run_id": "dd974a996956"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e14d0088aeba"
+   "run_id": "dd974a996956"
   },
-  "hash": "6884254a03558c3daf231d8d7ede1d27556d5e7770d7f726fd5b1efa1612b265",
+  "hash": "6b1e3dd74ad600114812696bc2cc942f0bb5c394269f2e914f184720e1f3fade",
   "kind": "gate.decision",
-  "prev_hash": "58e7cf236de93ffa653edd01525cda77559d2eb0d8d75568c04be0b93e2f4fb3",
+  "prev_hash": "cc0b95792d6b8f0d7e5d451dc6be1d929c46d510a9943eda9f213a790ebf23ee",
   "seq": 109,
-  "ts": "2026-09-24T04:04:46.584075+00:00"
+  "ts": "2026-09-24T06:28:14.633590+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "e14d0088aeba",
+   "result_hash": "81d6dfd998627293",
+   "run_id": "dd974a996956",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "58c24776abf45721f614e10a339e65172ea38d8e1b0af27bcf0983724ca4f194",
+  "hash": "9a841208fa8f7f72258ef499402247c4823500d706416ea615874bebf0793131",
   "kind": "cap.run.finish",
-  "prev_hash": "6884254a03558c3daf231d8d7ede1d27556d5e7770d7f726fd5b1efa1612b265",
+  "prev_hash": "6b1e3dd74ad600114812696bc2cc942f0bb5c394269f2e914f184720e1f3fade",
   "seq": 110,
-  "ts": "2026-09-24T04:04:46.588295+00:00"
+  "ts": "2026-09-24T06:28:14.638036+00:00"
  },
  {
   "actor": "agent",
@@ -2541,7 +2541,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e89f5d32fafd"
+    "run_id": "7840ddd66356"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2549,13 +2549,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e89f5d32fafd"
+   "run_id": "7840ddd66356"
   },
-  "hash": "1014c6933423492b11607d398465d83f2ae6ad2badd5a006885c9c46902c2e88",
+  "hash": "7fdf8719766793ca6d4bb3920d992cf22866dd71bb5f719902913ebf02d8ad98",
   "kind": "cap.run.start",
-  "prev_hash": "58c24776abf45721f614e10a339e65172ea38d8e1b0af27bcf0983724ca4f194",
+  "prev_hash": "9a841208fa8f7f72258ef499402247c4823500d706416ea615874bebf0793131",
   "seq": 111,
-  "ts": "2026-09-24T04:04:46.590819+00:00"
+  "ts": "2026-09-24T06:28:14.682062+00:00"
  },
  {
   "actor": "agent",
@@ -2565,36 +2565,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e89f5d32fafd"
+    "run_id": "7840ddd66356"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e89f5d32fafd"
+   "run_id": "7840ddd66356"
   },
-  "hash": "e2d4f5f45b7b42d5d5c8817193aa9ce653f067582c8210f902c2eb3e64eef888",
+  "hash": "f39375a6c1bbf8c27f1a76a8746ba1785f65aa3ce14341bb2dc49eadc5fd9929",
   "kind": "gate.decision",
-  "prev_hash": "1014c6933423492b11607d398465d83f2ae6ad2badd5a006885c9c46902c2e88",
+  "prev_hash": "7fdf8719766793ca6d4bb3920d992cf22866dd71bb5f719902913ebf02d8ad98",
   "seq": 112,
-  "ts": "2026-09-24T04:04:46.590945+00:00"
+  "ts": "2026-09-24T06:28:14.682296+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "2d1518e296c610d2",
-   "run_id": "e89f5d32fafd",
+   "duration_ms": 2,
+   "result_hash": "c12c35500f577d7e",
+   "run_id": "7840ddd66356",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "923569ed8ed80f4aa1e2a37eff5230bd12f24c1b1a24ef45a6b2a54fc55e296e",
+  "hash": "1b1c32a70570420f77df4062f31951ea504d00b98fc78419cee366ecc3d55430",
   "kind": "cap.run.finish",
-  "prev_hash": "e2d4f5f45b7b42d5d5c8817193aa9ce653f067582c8210f902c2eb3e64eef888",
+  "prev_hash": "f39375a6c1bbf8c27f1a76a8746ba1785f65aa3ce14341bb2dc49eadc5fd9929",
   "seq": 113,
-  "ts": "2026-09-24T04:04:46.592718+00:00"
+  "ts": "2026-09-24T06:28:14.684247+00:00"
  },
  {
   "actor": "agent",
@@ -2604,7 +2604,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "941703f65b44"
+    "run_id": "3d5787519986"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2612,13 +2612,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "941703f65b44"
+   "run_id": "3d5787519986"
   },
-  "hash": "400d38aba7a38c1e10d608e80c766c4ae6c1dbbc7fb6f506f20e502a7d575ee6",
+  "hash": "2704dc341f2c7591081e21c1c819fd6df8af44520183104ecd0c5a0929c2587a",
   "kind": "cap.run.start",
-  "prev_hash": "923569ed8ed80f4aa1e2a37eff5230bd12f24c1b1a24ef45a6b2a54fc55e296e",
+  "prev_hash": "1b1c32a70570420f77df4062f31951ea504d00b98fc78419cee366ecc3d55430",
   "seq": 114,
-  "ts": "2026-09-24T04:04:46.594637+00:00"
+  "ts": "2026-09-24T06:28:14.686469+00:00"
  },
  {
   "actor": "agent",
@@ -2628,36 +2628,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "941703f65b44"
+    "run_id": "3d5787519986"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "941703f65b44"
+   "run_id": "3d5787519986"
   },
-  "hash": "58871b9fd85ed969b034f9ec21663a24a66f3f0042b5e8df5722f495c0dcccdc",
+  "hash": "5fc0b0176dc6a2c229597d454f345121db0d29f509e8f63957d5b511f419e187",
   "kind": "gate.decision",
-  "prev_hash": "400d38aba7a38c1e10d608e80c766c4ae6c1dbbc7fb6f506f20e502a7d575ee6",
+  "prev_hash": "2704dc341f2c7591081e21c1c819fd6df8af44520183104ecd0c5a0929c2587a",
   "seq": 115,
-  "ts": "2026-09-24T04:04:46.594741+00:00"
+  "ts": "2026-09-24T06:28:14.686603+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "2b77088c77eabc01",
-   "run_id": "941703f65b44",
+   "result_hash": "81d6dfd998627293",
+   "run_id": "3d5787519986",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0fd5d810b6e221210ac93aa68d9d1fcf0bce04699c02284e2a9a5fc2a3367af4",
+  "hash": "19f435132d315ce747ebd92bef7195e76d2f8d313fce6c29c1dceef13e40ab3f",
   "kind": "cap.run.finish",
-  "prev_hash": "58871b9fd85ed969b034f9ec21663a24a66f3f0042b5e8df5722f495c0dcccdc",
+  "prev_hash": "5fc0b0176dc6a2c229597d454f345121db0d29f509e8f63957d5b511f419e187",
   "seq": 116,
-  "ts": "2026-09-24T04:04:46.598786+00:00"
+  "ts": "2026-09-24T06:28:14.691068+00:00"
  },
  {
   "actor": "agent",
@@ -2667,7 +2667,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "27d388419dd3"
+    "run_id": "162d3adfa9a8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2675,13 +2675,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "27d388419dd3"
+   "run_id": "162d3adfa9a8"
   },
-  "hash": "67d2ae55bdf5d19d58ccb3cec1d10706c1f2d11e7a473c816ad238179f0a99fb",
+  "hash": "b0b2aa5ef66e26f5b9a317456adacbb408da08d6cf65c1bbf4dd3deffa6414de",
   "kind": "cap.run.start",
-  "prev_hash": "0fd5d810b6e221210ac93aa68d9d1fcf0bce04699c02284e2a9a5fc2a3367af4",
+  "prev_hash": "19f435132d315ce747ebd92bef7195e76d2f8d313fce6c29c1dceef13e40ab3f",
   "seq": 117,
-  "ts": "2026-09-24T04:04:46.603611+00:00"
+  "ts": "2026-09-24T06:28:14.694108+00:00"
  },
  {
   "actor": "agent",
@@ -2691,36 +2691,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "27d388419dd3"
+    "run_id": "162d3adfa9a8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "27d388419dd3"
+   "run_id": "162d3adfa9a8"
   },
-  "hash": "56dcba5ad9dd517a04e41b665843481dd5f2ed27c5d926c22929a23ddfd8aa93",
+  "hash": "996cca73f85d84145fd9b90a3cdbdf5ae2edb0aad673e40c7ffddb350731a948",
   "kind": "gate.decision",
-  "prev_hash": "67d2ae55bdf5d19d58ccb3cec1d10706c1f2d11e7a473c816ad238179f0a99fb",
+  "prev_hash": "b0b2aa5ef66e26f5b9a317456adacbb408da08d6cf65c1bbf4dd3deffa6414de",
   "seq": 118,
-  "ts": "2026-09-24T04:04:46.603708+00:00"
+  "ts": "2026-09-24T06:28:14.694301+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "770348b86acb5232",
-   "run_id": "27d388419dd3",
+   "result_hash": "55602c3dd9e6a803",
+   "run_id": "162d3adfa9a8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ba50fdef690cfdcc9b3dc0cf9b73ee9321cb983858a1ad15d6a09e6758751264",
+  "hash": "419db872946241c10680276a64b07e5b94f4dd9c10340c550be8d71de2eb598d",
   "kind": "cap.run.finish",
-  "prev_hash": "56dcba5ad9dd517a04e41b665843481dd5f2ed27c5d926c22929a23ddfd8aa93",
+  "prev_hash": "996cca73f85d84145fd9b90a3cdbdf5ae2edb0aad673e40c7ffddb350731a948",
   "seq": 119,
-  "ts": "2026-09-24T04:04:46.606140+00:00"
+  "ts": "2026-09-24T06:28:14.697067+00:00"
  },
  {
   "actor": "agent",
@@ -2730,7 +2730,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "archive.sources",
    "chain": {
     "cap": "archive.sources",
-    "run_id": "f1d2bb7caf5f"
+    "run_id": "6f456592f3d4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2738,13 +2738,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f1d2bb7caf5f"
+   "run_id": "6f456592f3d4"
   },
-  "hash": "bfe20b1e977cc44c0f0c2504ab70712465d4cf9182617e491660892a18ec00a1",
+  "hash": "d23a3424607c5e115afbb20e979c936f0d06b11842af81ad8ed869405050ead8",
   "kind": "cap.run.start",
-  "prev_hash": "ba50fdef690cfdcc9b3dc0cf9b73ee9321cb983858a1ad15d6a09e6758751264",
+  "prev_hash": "419db872946241c10680276a64b07e5b94f4dd9c10340c550be8d71de2eb598d",
   "seq": 120,
-  "ts": "2026-09-24T04:04:48.875888+00:00"
+  "ts": "2026-09-24T06:28:16.864891+00:00"
  },
  {
   "actor": "agent",
@@ -2754,36 +2754,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "archive.sources",
-    "run_id": "f1d2bb7caf5f"
+    "run_id": "6f456592f3d4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f1d2bb7caf5f"
+   "run_id": "6f456592f3d4"
   },
-  "hash": "fe60f09ee4e766b19ebbc56917a9b1f3479cb5b9ec1ecf4cd5c859545f99d613",
+  "hash": "f49aa671a717c33ac4f6b5ff421feea6397a5460fa817cb43f1a9dbd11b7c64d",
   "kind": "gate.decision",
-  "prev_hash": "bfe20b1e977cc44c0f0c2504ab70712465d4cf9182617e491660892a18ec00a1",
+  "prev_hash": "d23a3424607c5e115afbb20e979c936f0d06b11842af81ad8ed869405050ead8",
   "seq": 121,
-  "ts": "2026-09-24T04:04:48.876131+00:00"
+  "ts": "2026-09-24T06:28:16.865091+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "archive.sources",
-   "duration_ms": 2,
+   "duration_ms": 1,
    "result_hash": "73608e3346e33176",
-   "run_id": "f1d2bb7caf5f",
+   "run_id": "6f456592f3d4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5c7713ae9de9a17a3f016665f81a2ad3fa580f0f888d0540395d8131d90e9d0b",
+  "hash": "cf6263717ef43199533b506fe33642dd56ee07a06edbc2ccd0d68bac14327cd2",
   "kind": "cap.run.finish",
-  "prev_hash": "fe60f09ee4e766b19ebbc56917a9b1f3479cb5b9ec1ecf4cd5c859545f99d613",
+  "prev_hash": "f49aa671a717c33ac4f6b5ff421feea6397a5460fa817cb43f1a9dbd11b7c64d",
   "seq": 122,
-  "ts": "2026-09-24T04:04:48.878035+00:00"
+  "ts": "2026-09-24T06:28:16.866778+00:00"
  },
  {
   "actor": "agent",
@@ -2793,7 +2793,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "cap": "view.kg_map",
    "chain": {
     "cap": "view.kg_map",
-    "run_id": "c5498deabfaa"
+    "run_id": "fa793ba607dc"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2801,13 +2801,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c5498deabfaa"
+   "run_id": "fa793ba607dc"
   },
-  "hash": "e55fc2e2fa6ed084d3da05de03dd186b28bae94e9a8d4e89f73eb3e4ff71ecaa",
+  "hash": "353f74368b23dd2a3301630b3541e3fd8501f0606ffae01cd6fa970f260346b8",
   "kind": "cap.run.start",
-  "prev_hash": "5c7713ae9de9a17a3f016665f81a2ad3fa580f0f888d0540395d8131d90e9d0b",
+  "prev_hash": "cf6263717ef43199533b506fe33642dd56ee07a06edbc2ccd0d68bac14327cd2",
   "seq": 123,
-  "ts": "2026-09-24T04:04:53.540453+00:00"
+  "ts": "2026-09-24T06:28:21.498127+00:00"
  },
  {
   "actor": "agent",
@@ -2817,36 +2817,36 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
    "by": "agent",
    "chain": {
     "cap": "view.kg_map",
-    "run_id": "c5498deabfaa"
+    "run_id": "fa793ba607dc"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c5498deabfaa"
+   "run_id": "fa793ba607dc"
   },
-  "hash": "aa851488d6887426b54c4af4b91a19bf3883f1793bae4e46751744131a43cfb1",
+  "hash": "8620e606458ff7b0001c72f430b289991038bc40b20d0ffcd2cc81416a480d5d",
   "kind": "gate.decision",
-  "prev_hash": "e55fc2e2fa6ed084d3da05de03dd186b28bae94e9a8d4e89f73eb3e4ff71ecaa",
+  "prev_hash": "353f74368b23dd2a3301630b3541e3fd8501f0606ffae01cd6fa970f260346b8",
   "seq": 124,
-  "ts": "2026-09-24T04:04:53.540685+00:00"
+  "ts": "2026-09-24T06:28:21.498359+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.kg_map",
-   "duration_ms": 2,
+   "duration_ms": 3,
    "result_hash": "68a2dd9236038b87",
-   "run_id": "c5498deabfaa",
+   "run_id": "fa793ba607dc",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a540ce99ea9f138f9c7d0f782d241a3bb87c75097f84b3ac10a63e1fe38e5278",
+  "hash": "60903da6afff5a46b12d0c9b6214b1939ffc6c1ed78e30f2b57738be0a63125c",
   "kind": "cap.run.finish",
-  "prev_hash": "aa851488d6887426b54c4af4b91a19bf3883f1793bae4e46751744131a43cfb1",
+  "prev_hash": "8620e606458ff7b0001c72f430b289991038bc40b20d0ffcd2cc81416a480d5d",
   "seq": 125,
-  "ts": "2026-09-24T04:04:53.543201+00:00"
+  "ts": "2026-09-24T06:28:21.501699+00:00"
  }
 ]
 ```
@@ -2912,13 +2912,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "kind": "gap",
     "text": "Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_7873efd6.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_812a59ee.",
     "source_cap": "code.static",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T04:04:41.951497+00:00",
+    "created_at": "2026-09-24T06:28:10.074460+00:00",
     "answered_at": null
    }
   ]
@@ -2939,7 +2939,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
   "so_dong": 37,
   "dong": [
    {
-    "id": "2ee624fbb4d9",
+    "id": "824f587f0c7d",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -2952,10 +2952,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:39.686826+00:00"
+    "at": "2026-09-24T06:28:08.030735+00:00"
    },
    {
-    "id": "1fb9d69c3703",
+    "id": "580c8668a746",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2968,10 +2968,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:39.702841+00:00"
+    "at": "2026-09-24T06:28:08.044475+00:00"
    },
    {
-    "id": "e197bc4d6317",
+    "id": "9735df9165ed",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2984,10 +2984,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:39.705945+00:00"
+    "at": "2026-09-24T06:28:08.047640+00:00"
    },
    {
-    "id": "3ef0c6017e0f",
+    "id": "2a602d6f07e3",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3000,10 +3000,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:39.736224+00:00"
+    "at": "2026-09-24T06:28:08.078415+00:00"
    },
    {
-    "id": "81da0b8fee10",
+    "id": "be9a6c673f21",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3016,10 +3016,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:39.975735+00:00"
+    "at": "2026-09-24T06:28:08.346355+00:00"
    },
    {
-    "id": "a5766e8f79d6",
+    "id": "0b8a36aaf702",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -3032,10 +3032,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:40.001565+00:00"
+    "at": "2026-09-24T06:28:08.375111+00:00"
    },
    {
-    "id": "65a1373f4276",
+    "id": "c73af699bf53",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -3048,10 +3048,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.925483+00:00"
+    "at": "2026-09-24T06:28:10.038658+00:00"
    },
    {
-    "id": "7f541d655bb4",
+    "id": "298b87a425b2",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -3064,10 +3064,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.928378+00:00"
+    "at": "2026-09-24T06:28:10.043550+00:00"
    },
    {
-    "id": "22d18dfdc133",
+    "id": "f7434f7d9bd2",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -3080,10 +3080,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.934100+00:00"
+    "at": "2026-09-24T06:28:10.052207+00:00"
    },
    {
-    "id": "908bb2158740",
+    "id": "429f532ff49d",
     "gate": "*",
     "action_cap": "ingest.index_text",
     "risk": "R1",
@@ -3096,10 +3096,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.946538+00:00"
+    "at": "2026-09-24T06:28:10.068406+00:00"
    },
    {
-    "id": "ee8934e99eaa",
+    "id": "7550c936a556",
     "gate": "*",
     "action_cap": "extract.kicad_netlist",
     "risk": "R1",
@@ -3112,10 +3112,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.949062+00:00"
+    "at": "2026-09-24T06:28:10.071429+00:00"
    },
    {
-    "id": "182528270d0a",
+    "id": "5f49201f88e9",
     "gate": "*",
     "action_cap": "code.static",
     "risk": "R0",
@@ -3128,10 +3128,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.950815+00:00"
+    "at": "2026-09-24T06:28:10.073667+00:00"
    },
    {
-    "id": "2052b24eb685",
+    "id": "5b51322586c3",
     "gate": "*",
     "action_cap": "view.rag_ask",
     "risk": "R0",
@@ -3144,10 +3144,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.953632+00:00"
+    "at": "2026-09-24T06:28:10.076868+00:00"
    },
    {
-    "id": "06867f1b3896",
+    "id": "ab4e445ee70d",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -3160,10 +3160,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:41.979147+00:00"
+    "at": "2026-09-24T06:28:10.111369+00:00"
    },
    {
-    "id": "b434da3d6a8f",
+    "id": "cabcad14d6e1",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3176,10 +3176,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:42.030871+00:00"
+    "at": "2026-09-24T06:28:10.160919+00:00"
    },
    {
-    "id": "10e223b2609c",
+    "id": "7466399293c3",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3192,10 +3192,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.177090+00:00"
+    "at": "2026-09-24T06:28:11.306381+00:00"
    },
    {
-    "id": "374104a6833a",
+    "id": "85137da23f97",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3208,10 +3208,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.187951+00:00"
+    "at": "2026-09-24T06:28:11.326285+00:00"
    },
    {
-    "id": "12ed957ac2fb",
+    "id": "d7573c40bb8a",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3224,10 +3224,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.198620+00:00"
+    "at": "2026-09-24T06:28:11.336876+00:00"
    },
    {
-    "id": "14ba53375177",
+    "id": "b50d96f55b01",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3240,10 +3240,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.201997+00:00"
+    "at": "2026-09-24T06:28:11.340492+00:00"
    },
    {
-    "id": "0574e8df78e1",
+    "id": "42d53c4e9890",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3256,10 +3256,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.212214+00:00"
+    "at": "2026-09-24T06:28:11.350650+00:00"
    },
    {
-    "id": "818d3ba668db",
+    "id": "4f0c52302716",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3272,10 +3272,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.215358+00:00"
+    "at": "2026-09-24T06:28:11.353713+00:00"
    },
    {
-    "id": "d1b7ff0f3545",
+    "id": "6d127cf6fc20",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3288,10 +3288,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.245709+00:00"
+    "at": "2026-09-24T06:28:11.387631+00:00"
    },
    {
-    "id": "9d3b5bba252a",
+    "id": "b043592e472b",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3304,10 +3304,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.328349+00:00"
+    "at": "2026-09-24T06:28:11.480241+00:00"
    },
    {
-    "id": "bea6bef16486",
+    "id": "b1dce04231d3",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3320,10 +3320,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.470445+00:00"
+    "at": "2026-09-24T06:28:11.633994+00:00"
    },
    {
-    "id": "5973e86fddec",
+    "id": "9c078dccb0b8",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3336,10 +3336,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.477595+00:00"
+    "at": "2026-09-24T06:28:11.649824+00:00"
    },
    {
-    "id": "f8a0ebffc47e",
+    "id": "0f8abcb9002b",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3352,10 +3352,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.481230+00:00"
+    "at": "2026-09-24T06:28:11.657312+00:00"
    },
    {
-    "id": "7f7d06cec3b9",
+    "id": "5495def2026d",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3368,10 +3368,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:43.487863+00:00"
+    "at": "2026-09-24T06:28:11.664144+00:00"
    },
    {
-    "id": "a95263adeabc",
+    "id": "c115e4609303",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3384,10 +3384,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:44.019737+00:00"
+    "at": "2026-09-24T06:28:12.149783+00:00"
    },
    {
-    "id": "d6a5f2ce5ebe",
+    "id": "2f9e7cff2f12",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3400,10 +3400,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:44.035711+00:00"
+    "at": "2026-09-24T06:28:12.167659+00:00"
    },
    {
-    "id": "fb01eb5fb515",
+    "id": "4a9a5366e5a9",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3416,10 +3416,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:44.042100+00:00"
+    "at": "2026-09-24T06:28:12.174453+00:00"
    },
    {
-    "id": "7de3faa6bd36",
+    "id": "bf5a1e973413",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3432,10 +3432,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:44.052436+00:00"
+    "at": "2026-09-24T06:28:12.184646+00:00"
    },
    {
-    "id": "e14d0088aeba",
+    "id": "dd974a996956",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3448,10 +3448,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:46.584751+00:00"
+    "at": "2026-09-24T06:28:14.634139+00:00"
    },
    {
-    "id": "e89f5d32fafd",
+    "id": "7840ddd66356",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3464,10 +3464,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:46.591411+00:00"
+    "at": "2026-09-24T06:28:14.682785+00:00"
    },
    {
-    "id": "941703f65b44",
+    "id": "3d5787519986",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3480,10 +3480,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:46.595130+00:00"
+    "at": "2026-09-24T06:28:14.687119+00:00"
    },
    {
-    "id": "27d388419dd3",
+    "id": "162d3adfa9a8",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3496,10 +3496,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:46.604094+00:00"
+    "at": "2026-09-24T06:28:14.694797+00:00"
    },
    {
-    "id": "f1d2bb7caf5f",
+    "id": "6f456592f3d4",
     "gate": "*",
     "action_cap": "archive.sources",
     "risk": "R0",
@@ -3512,10 +3512,10 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:48.876861+00:00"
+    "at": "2026-09-24T06:28:16.865704+00:00"
    },
    {
-    "id": "c5498deabfaa",
+    "id": "fa793ba607dc",
     "gate": "*",
     "action_cap": "view.kg_map",
     "risk": "R0",
@@ -3528,7 +3528,7 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:04:53.541318+00:00"
+    "at": "2026-09-24T06:28:21.499053+00:00"
    }
   ]
  },
@@ -3596,14 +3596,14 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_7873efd66170",
+    "id": "r_812a59ee34bc",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"args\": {\"files\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\"]}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"args\": {\"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"args\": {\"board\": \"${n2.board_passport_id}\"}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"args\": {\"conflict\": \"${n3.conflicts[0]}\"}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n5\", \"cap\": \"code.static\", \"args\": {\"project\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC025/du-an/dinh-dang-thiet-ke-khong-ho-tro\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"args\": {\"question\": \"mạch này dùng MCU gì\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_7873efd66170\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"review.ask\", \"slots\": {\"path\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\", \"question\": \"mạch này dùng MCU gì\"}, \"is_big\": false, \"confidence\": 0.9, \"lang\": \"vi\", \"mentions\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\"], \"_text\": \"Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì\"}, \"text\": \"Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"args\": {\"files\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\"]}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"args\": {\"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"args\": {\"board\": \"${n2.board_passport_id}\"}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"args\": {\"conflict\": \"${n3.conflicts[0]}\"}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n5\", \"cap\": \"code.static\", \"args\": {\"project\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC025/du-an/dinh-dang-thiet-ke-khong-ho-tro\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"args\": {\"question\": \"mạch này dùng MCU gì\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_812a59ee34bc\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"review.ask\", \"slots\": {\"path\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\", \"question\": \"mạch này dùng MCU gì\"}, \"is_big\": false, \"confidence\": 0.88, \"lang\": \"vi\", \"mentions\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\"], \"_text\": \"Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì\"}, \"text\": \"Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì\"}",
     "state": "asked",
     "working": null,
-    "report": "{\"nguon_chuoi\": \"mẫu: Rà soát hiện vật (DEV-208)\", \"state\": \"asked\", \"done\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"run_id\": \"908bb2158740\", \"ra\": {\"indexed\": 0}, \"dau_ra\": {\"indexed\": 0}}], \"waiting\": [{\"id\": \"n7\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n2\"}], \"skipped\": [{\"id\": \"n3\", \"cap\": \"board.check_pins\", \"vi\": \"chờ nút n2\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"vi\": \"chờ nút n3\"}], \"failed\": [{\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"error\": {\"eide_code\": \"E6001\", \"name\": \"SCHEMA_VIOLATION\", \"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\", \"message\": \"`mach.PcbDoc` không phải netlist (['.net', '.xml']) hay sơ đồ KiCad (['.kicad_sch', '.sch'])\"}, \"bat_buoc\": false}, {\"id\": \"n5\", \"cap\": \"code.static\", \"error\": {\"eide_code\": \"E2000\", \"name\": \"GROUNDING_FAILED\", \"exists\": [], \"candidates\": [], \"missing\": [\"isa\"], \"message\": \"Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)\"}, \"bat_buoc\": false}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"error\": {\"eide_code\": \"E5002\", \"name\": \"OUTPUT_INVALID\", \"remedy\": \"ingest.index_text\", \"message\": \"Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.\"}, \"bat_buoc\": false}]}",
+    "report": "{\"nguon_chuoi\": \"mẫu: Rà soát hiện vật (DEV-208)\", \"state\": \"asked\", \"done\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"run_id\": \"429f532ff49d\", \"ra\": {\"indexed\": 0}, \"dau_ra\": {\"indexed\": 0}}], \"waiting\": [{\"id\": \"n7\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n2\"}], \"skipped\": [{\"id\": \"n3\", \"cap\": \"board.check_pins\", \"vi\": \"chờ nút n2\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"vi\": \"chờ nút n3\"}], \"failed\": [{\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"error\": {\"eide_code\": \"E6001\", \"name\": \"SCHEMA_VIOLATION\", \"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc\", \"message\": \"`mach.PcbDoc` không phải netlist (['.net', '.xml']) hay sơ đồ KiCad (['.kicad_sch', '.sch'])\"}, \"bat_buoc\": false}, {\"id\": \"n5\", \"cap\": \"code.static\", \"error\": {\"eide_code\": \"E2000\", \"name\": \"GROUNDING_FAILED\", \"exists\": [], \"candidates\": [], \"missing\": [\"isa\"], \"message\": \"Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)\"}, \"bat_buoc\": false}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"error\": {\"eide_code\": \"E5002\", \"name\": \"OUTPUT_INVALID\", \"remedy\": \"ingest.index_text\", \"message\": \"Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.\"}, \"bat_buoc\": false}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T04:04:41.944757+00:00",
+    "started_at": "2026-09-24T06:28:10.066202+00:00",
     "finished_at": null
    }
   ]
@@ -3634,13 +3634,13 @@ human: Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_517c77e89a15",
+    "id": "s_13f470dd7e83",
     "project": "dinh-dang-thiet-ke-khong-ho-tro",
-    "opened_at": "2026-09-24T04:04:39.692700+00:00",
+    "opened_at": "2026-09-24T06:28:08.035089+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì\", \"at\": \"2026-09-24T04:04:39.984119+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_7873efd6 → asked; HỎNG: extract.kicad_netlist (E6001), code.static (E2000), view.rag_ask (E5002)\", \"at\": \"2026-09-24T04:04:41.980364+00:00\", \"run_id\": \"r_7873efd66170\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì\", \"at\": \"2026-09-24T06:28:08.356386+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_812a59ee → asked; HỎNG: extract.kicad_netlist (E6001), code.static (E2000), view.rag_ask (E5002)\", \"at\": \"2026-09-24T06:28:10.112727+00:00\", \"run_id\": \"r_812a59ee34bc\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -3674,7 +3674,7 @@ index/
 ```
 # định dạng thiết kế không hỗ trợ
 
-- 2026-09-24 11:04 — tạo dự án từ lệnh: "định dạng thiết kế không hỗ trợ"
+- 2026-09-24 13:28 — tạo dự án từ lệnh: "định dạng thiết kế không hỗ trợ"
 
 ```
 
@@ -3765,7 +3765,7 @@ escalation:
 project:
   id: dinh-dang-thiet-ke-khong-ho-tro
   name: định dạng thiết kế không hỗ trợ
-  created: '2026-09-24T04:04:39.476287+00:00'
+  created: '2026-09-24T06:28:07.737092+00:00'
   text: định dạng thiết kế không hỗ trợ
 target:
   chip: null
@@ -3956,7 +3956,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “định dạng thiết kế không hỗ trợ”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dinh-dang-thiet-ke-khong-ho-tro` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3977,7 +3977,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Đọc tệp thiết kế /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach.PcbDoc và cho tôi biết mạch này dùng MCU gì
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 6.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dinh-dang-thiet-ke-khong-ho-tro` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4003,8 +4003,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_517c77e89a15
-Mở lúc	24/09 04:04:39
+Phiên	s_13f470dd7e83
+Mở lúc	24/09 06:28:08
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4037,8 +4037,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_517c77e89a15
-Mở lúc	24/09 04:04:39
+Phiên	s_13f470dd7e83
+Mở lúc	24/09 06:28:08
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4082,7 +4082,7 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 9.3 s)*:
+**Tác tử trả lời** *(sau 9.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dinh-dang-thiet-ke-khong-ho-tro` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4120,7 +4120,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC025/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dinh-dang-thiet-ke-khong-ho-tro` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4143,7 +4143,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC025/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 6.1 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dinh-dang-thiet-ke-khong-ho-tro` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4169,8 +4169,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_517c77e89a15
-Mở lúc	24/09 04:04:39
+Phiên	s_13f470dd7e83
+Mở lúc	24/09 06:28:08
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4205,8 +4205,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_517c77e89a15
-Mở lúc	24/09 04:04:39
+Phiên	s_13f470dd7e83
+Mở lúc	24/09 06:28:08
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -4258,7 +4258,7 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC025/buoc-03.png
 
-**Tác tử trả lời** *(sau 9.3 s)*:
+**Tác tử trả lời** *(sau 9.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dinh-dang-thiet-ke-khong-ho-tro` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:

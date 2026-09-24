@@ -28,20 +28,22 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "SAU [DEV-203]: câu hỏi mang sẵn “STM32F103 — anh vừa nói trong câu”. Vẫn chưa phát hiện thiếu toolchain ARM vì chuỗi dừng trước `env.check`. KHÔNG báo biên dịch thành công giả.\n\nGhi chú: Phát hiện kèm theo: `STM32F103` là Cortex-M3 (`armv7-m`), mà kho chỉ có ba manifest ISA — `armv7e-m` (M4/M7 có FPU+DSP), `avr8`, `rv32imac`. Đây là KHOẢNG TRỐNG của sản phẩm. Nay khi chip đã nêu mà không manifest nào khớp, câu hỏi nói thẳng điều đó thay vì đưa ba lựa chọn đều sai — chọn `armv7e-m` cho M3 sẽ sinh mã mang lệnh chip không chạy được.",
- "giay": 35.1,
+ "giay": 36.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-ReqArch.png",
-  "man-03-Graph.png",
+  "man-02-Graph.png",
+  "man-03-ReqArch.png",
   "man-04-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC018/du-an/firmware-stm32-can-toolchain-arm",
  "cham": {
-  "thieu": [],
+  "thieu": [
+   "không tìm thấy|thiếu|chưa cài|không có toolchain|cài đặt"
+  ],
   "thua": [
    "biên dịch thành công|build thành công|0 lỗi 0 cảnh báo"
   ],
@@ -49,9 +51,11 @@
  },
  "lap": [
   {
-   "giay": 35.1,
+   "giay": 36.7,
    "so_bo": "Nghi Không đạt",
-   "thieu": [],
+   "thieu": [
+    "không tìm thấy|thiếu|chưa cài|không có toolchain|cài đặt"
+   ],
    "thua": [
     "biên dịch thành công|build thành công|0 lỗi 0 cảnh báo"
    ]

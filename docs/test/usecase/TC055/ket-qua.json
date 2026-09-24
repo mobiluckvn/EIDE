@@ -24,7 +24,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không chạy test hồi quy nào.",
- "giay": 11.3,
+ "giay": 9.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -40,7 +40,7 @@
  },
  "lap": [
   {
-   "giay": 11.3,
+   "giay": 9.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

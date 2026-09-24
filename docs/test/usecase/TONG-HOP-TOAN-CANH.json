@@ -15,7 +15,7 @@
   "so_cat": 0,
   "vai_tro_cat": [],
   "tokens_in": 2507,
-  "tokens_out": 95,
+  "tokens_out": 87,
   "cost_usd": 0.001,
   "su_kien": 124,
   "gate_ask": 0
@@ -37,6 +37,93 @@
   "gate_ask": 0
  },
  {
+  "tc": "TC003",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC004",
+  "state": "running",
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 3470,
+  "tokens_out": 1096,
+  "cost_usd": 0.0153,
+  "su_kien": 206,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC005",
+  "state": "done",
+  "xong": [
+   "req.elicit",
+   "req.classify",
+   "req.detect_conflict",
+   "req.prioritize",
+   "req.acceptance",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 5,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 6887,
+  "tokens_out": 4909,
+  "cost_usd": 0.0675,
+  "su_kien": 1374,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC006",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC007",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 47,
+  "gate_ask": 0
+ },
+ {
   "tc": "TC008",
   "state": "done",
   "xong": [
@@ -53,12 +140,1367 @@
   "hong_bat_buoc": [],
   "hoi": [],
   "so_loi_goi": 6,
+  "so_cat": 1,
+  "vai_tro_cat": [
+   "architect"
+  ],
+  "tokens_in": 8655,
+  "tokens_out": 7531,
+  "cost_usd": 0.1024,
+  "su_kien": 4269,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC009",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
   "so_cat": 0,
   "vai_tro_cat": [],
-  "tokens_in": 8585,
-  "tokens_out": 6967,
-  "cost_usd": 0.0955,
-  "su_kien": 360,
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC010",
+  "state": "failed",
+  "xong": [],
+  "hong": [
+   "search.web:E4001"
+  ],
+  "hong_bat_buoc": [
+   "search.web:E4001"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2491,
+  "tokens_out": 106,
+  "cost_usd": 0.001,
+  "su_kien": 107,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC011",
+  "state": "asked",
+  "xong": [
+   "ingest.index_text",
+   "view.rag_ask"
+  ],
+  "hong": [
+   "code.static:E2000",
+   "extract.kicad_netlist:E6001"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2563,
+  "tokens_out": 163,
+  "cost_usd": 0.0012,
+  "su_kien": 125,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC012",
+  "state": "failed",
+  "xong": [],
+  "hong": [
+   "search.web:E4001"
+  ],
+  "hong_bat_buoc": [
+   "search.web:E4001"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2508,
+  "tokens_out": 102,
+  "cost_usd": 0.001,
+  "su_kien": 107,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC013",
+  "state": "failed",
+  "xong": [
+   "view.artifacts"
+  ],
+  "hong": [
+   "diagram.architecture:E2000"
+  ],
+  "hong_bat_buoc": [
+   "diagram.architecture:E2000"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2501,
+  "tokens_out": 110,
+  "cost_usd": 0.001,
+  "su_kien": 119,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC014",
+  "state": "done",
+  "xong": [
+   "ingest.index_text",
+   "view.rag_index",
+   "view.k9_ask",
+   "view.rag_ask",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2922,
+  "tokens_out": 1645,
+  "cost_usd": 0.0198,
+  "su_kien": 246,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC015",
+  "state": "asked",
+  "xong": [
+   "chat.ground",
+   "req.elicit",
+   "req.classify"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "req.ground_hw→passport"
+  ],
+  "so_loi_goi": 4,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 5739,
+  "tokens_out": 3538,
+  "cost_usd": 0.0487,
+  "su_kien": 879,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC016",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC017",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC018",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 3,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 4642,
+  "tokens_out": 1985,
+  "cost_usd": 0.0279,
+  "su_kien": 323,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC019",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC020",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 4,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 5704,
+  "tokens_out": 2814,
+  "cost_usd": 0.04,
+  "su_kien": 750,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC021",
+  "state": "asked",
+  "xong": [
+   "chat.ground",
+   "req.elicit",
+   "req.classify"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "req.ground_hw→passport"
+  ],
+  "so_loi_goi": 3,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 4629,
+  "tokens_out": 2804,
+  "cost_usd": 0.0376,
+  "su_kien": 536,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC022",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC023",
+  "state": "failed",
+  "xong": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "chat.report_back"
+  ],
+  "hong": [
+   "board.propose_fix:E5002",
+   "code.static:E2000",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [
+   "board.propose_fix:E5002"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2536,
+  "tokens_out": 131,
+  "cost_usd": 0.0011,
+  "su_kien": 146,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC024",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC025",
+  "state": "asked",
+  "xong": [
+   "ingest.index_text"
+  ],
+  "hong": [
+   "code.static:E2000",
+   "extract.kicad_netlist:E6001",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2533,
+  "tokens_out": 136,
+  "cost_usd": 0.0011,
+  "su_kien": 125,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC026",
+  "state": "asked",
+  "xong": [
+   "ingest.index_text"
+  ],
+  "hong": [
+   "code.static:E2000",
+   "extract.kicad_netlist:E6001",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2550,
+  "tokens_out": 138,
+  "cost_usd": 0.0011,
+  "su_kien": 125,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC027",
+  "state": "failed",
+  "xong": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "chat.report_back"
+  ],
+  "hong": [
+   "board.propose_fix:E5002",
+   "code.static:E2000",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [
+   "board.propose_fix:E5002"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2580,
+  "tokens_out": 205,
+  "cost_usd": 0.0013,
+  "su_kien": 146,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC028",
+  "state": "asked",
+  "xong": [
+   "chat.ground",
+   "req.elicit",
+   "req.classify"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "req.ground_hw→passport"
+  ],
+  "so_loi_goi": 3,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 4841,
+  "tokens_out": 2343,
+  "cost_usd": 0.0327,
+  "su_kien": 341,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC029",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC030",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC031",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2911,
+  "tokens_out": 1701,
+  "cost_usd": 0.0211,
+  "su_kien": 262,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC032",
+  "state": "asked",
+  "xong": [
+   "discover.ports"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "discover.auto_setup→discovery_id"
+  ],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2463,
+  "tokens_out": 58,
+  "cost_usd": 0.0009,
+  "su_kien": 136,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC033",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC034",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC035",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 47,
+  "gate_ask": 1
+ },
+ {
+  "tc": "TC036",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 47,
+  "gate_ask": 1
+ },
+ {
+  "tc": "TC037",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2927,
+  "tokens_out": 1661,
+  "cost_usd": 0.0206,
+  "su_kien": 250,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC038",
+  "state": "done",
+  "xong": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "chat.report_back",
+   "board.propose_fix"
+  ],
+  "hong": [
+   "code.static:E2000",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2545,
+  "tokens_out": 129,
+  "cost_usd": 0.0011,
+  "su_kien": 151,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC039",
+  "state": "asked",
+  "xong": [
+   "ingest.index_text"
+  ],
+  "hong": [
+   "code.static:E2000",
+   "extract.kicad_netlist:E6001",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2549,
+  "tokens_out": 148,
+  "cost_usd": 0.0011,
+  "su_kien": 125,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC040",
+  "state": "failed",
+  "xong": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "chat.report_back"
+  ],
+  "hong": [
+   "board.propose_fix:E5002",
+   "code.static:E2000",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [
+   "board.propose_fix:E5002"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2534,
+  "tokens_out": 144,
+  "cost_usd": 0.0011,
+  "su_kien": 146,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC041",
+  "state": "done",
+  "xong": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "chat.report_back",
+   "board.propose_fix"
+  ],
+  "hong": [
+   "code.static:E2000",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2549,
+  "tokens_out": 213,
+  "cost_usd": 0.0013,
+  "su_kien": 151,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC042",
+  "state": "done",
+  "xong": [
+   "ingest.index_text",
+   "view.rag_index",
+   "view.k9_ask",
+   "view.rag_ask",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 3078,
+  "tokens_out": 692,
+  "cost_usd": 0.0085,
+  "su_kien": 186,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC043",
+  "state": "done",
+  "xong": [
+   "ingest.index_text",
+   "view.rag_index",
+   "view.k9_ask",
+   "view.rag_ask",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 3069,
+  "tokens_out": 662,
+  "cost_usd": 0.0081,
+  "su_kien": 174,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC044",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC045",
+  "state": "failed",
+  "xong": [],
+  "hong": [
+   "search.web:E4001"
+  ],
+  "hong_bat_buoc": [
+   "search.web:E4001"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2495,
+  "tokens_out": 126,
+  "cost_usd": 0.0011,
+  "su_kien": 107,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC046",
+  "state": "failed",
+  "xong": [],
+  "hong": [
+   "search.web:E4001"
+  ],
+  "hong_bat_buoc": [
+   "search.web:E4001"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2501,
+  "tokens_out": 100,
+  "cost_usd": 0.001,
+  "su_kien": 107,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC047",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 3,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 4770,
+  "tokens_out": 1736,
+  "cost_usd": 0.025,
+  "su_kien": 314,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC048",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "arch.style_select",
+   "arch.decompose",
+   "arch.interface_spec",
+   "arch.review",
+   "chat.report_back"
+  ],
+  "hong": [
+   "arch.adr:E5000"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 6,
+  "so_cat": 1,
+  "vai_tro_cat": [
+   "architect"
+  ],
+  "tokens_in": 8013,
+  "tokens_out": 4206,
+  "cost_usd": 0.0612,
+  "su_kien": 3645,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC049",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2949,
+  "tokens_out": 1643,
+  "cost_usd": 0.0198,
+  "su_kien": 250,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC050",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2938,
+  "tokens_out": 896,
+  "cost_usd": 0.0109,
+  "su_kien": 190,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC051",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2941,
+  "tokens_out": 1538,
+  "cost_usd": 0.0189,
+  "su_kien": 238,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC052",
+  "state": "asked",
+  "xong": [
+   "chat.ground",
+   "req.elicit",
+   "req.classify"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "req.ground_hw→passport"
+  ],
+  "so_loi_goi": 4,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 5989,
+  "tokens_out": 3190,
+  "cost_usd": 0.0446,
+  "su_kien": 699,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC053",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC054",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 4,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 5830,
+  "tokens_out": 3036,
+  "cost_usd": 0.0429,
+  "su_kien": 684,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC055",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC056",
+  "state": "failed",
+  "xong": [
+   "tool.write"
+  ],
+  "hong": [
+   "tool.run:?"
+  ],
+  "hong_bat_buoc": [
+   "tool.run:?"
+  ],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 3002,
+  "tokens_out": 1680,
+  "cost_usd": 0.0051,
+  "su_kien": 208,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC057",
+  "state": "failed",
+  "xong": [
+   "tool.write"
+  ],
+  "hong": [
+   "tool.run:?"
+  ],
+  "hong_bat_buoc": [
+   "tool.run:?"
+  ],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2939,
+  "tokens_out": 2358,
+  "cost_usd": 0.0068,
+  "su_kien": 196,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC058",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 4,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 5817,
+  "tokens_out": 4271,
+  "cost_usd": 0.0578,
+  "su_kien": 1077,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC059",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC060",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC061",
+  "state": "done",
+  "xong": [
+   "view.artifacts",
+   "req.elicit",
+   "req.classify",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 3,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 4679,
+  "tokens_out": 2445,
+  "cost_usd": 0.0338,
+  "su_kien": 467,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC062",
+  "state": "failed",
+  "xong": [
+   "ingest.index_text",
+   "extract.kicad_netlist",
+   "board.check_pins",
+   "chat.report_back"
+  ],
+  "hong": [
+   "board.propose_fix:E5002",
+   "code.static:E2000",
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [
+   "board.propose_fix:E5002"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2582,
+  "tokens_out": 137,
+  "cost_usd": 0.0011,
+  "su_kien": 146,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC063",
+  "state": "done",
+  "xong": [
+   "req.elicit",
+   "req.classify",
+   "req.detect_conflict",
+   "req.prioritize",
+   "req.acceptance",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 4,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 5777,
+  "tokens_out": 2279,
+  "cost_usd": 0.0341,
+  "su_kien": 517,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC064",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC065",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC066",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC067",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC068",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 47,
+  "gate_ask": 1
+ },
+ {
+  "tc": "TC069",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 47,
+  "gate_ask": 1
+ },
+ {
+  "tc": "TC070",
+  "state": "done",
+  "xong": [
+   "env.sandbox",
+   "chat.report_back"
+  ],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2501,
+  "tokens_out": 127,
+  "cost_usd": 0.0011,
+  "su_kien": 119,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC071",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC072",
+  "state": "failed",
+  "xong": [],
+  "hong": [
+   "search.web:E4001"
+  ],
+  "hong_bat_buoc": [
+   "search.web:E4001"
+  ],
+  "hoi": [],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2476,
+  "tokens_out": 88,
+  "cost_usd": 0.001,
+  "su_kien": 107,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC073",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2539,
+  "tokens_out": 751,
+  "cost_usd": 0.0097,
+  "su_kien": 202,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC074",
+  "state": null,
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 0,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "cost_usd": 0,
+  "su_kien": 0,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC075",
+  "state": "done",
+  "xong": [
+   "view.rag_index",
+   "view.k9_ask",
+   "chat.report_back"
+  ],
+  "hong": [
+   "view.rag_ask:E5002"
+  ],
+  "hong_bat_buoc": [],
+  "hoi": [],
+  "so_loi_goi": 2,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2869,
+  "tokens_out": 1390,
+  "cost_usd": 0.0172,
+  "su_kien": 250,
+  "gate_ask": 0
+ },
+ {
+  "tc": "TC076",
+  "state": "asked",
+  "xong": [],
+  "hong": [],
+  "hong_bat_buoc": [],
+  "hoi": [
+   "sim.build_platform→chip"
+  ],
+  "so_loi_goi": 1,
+  "so_cat": 0,
+  "vai_tro_cat": [],
+  "tokens_in": 2461,
+  "tokens_out": 54,
+  "cost_usd": 0.0009,
+  "su_kien": 113,
   "gate_ask": 0
  }
 ]

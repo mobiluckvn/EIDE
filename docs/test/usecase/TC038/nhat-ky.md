@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “rà soát schematic có lỗi cài sẵn”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 1.0 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ra-soat-schematic-co-loi-cai-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,7 +28,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Rà soát netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net. Liệt kê từng lỗi kèm mức nghiêm trọng, vị trí (ký hiệu linh kiện hoặc tên net) và cách sửa
 
-**Tác tử trả lời** *(sau 8.3 s)*:
+**Tác tử trả lời** *(sau 8.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ra-soat-schematic-co-loi-cai-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -85,14 +85,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_3faeb82fbfb5",
+    "run_id" : "r_2fe8bae5ce9d",
     "undo" : [
-      "7723c60b4738"
+      "8dde7775a50a"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:07.\nChi phí mô hình: 0.0011 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:31.\nChi phí mô hình: 0.0011 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -126,7 +126,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-27T04:07.
+Hoàn tác được 1 mục đến 2026-09-27T06:31.
 Chi phí mô hình: 0.0011 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
@@ -145,8 +145,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_9bcb1418e608
-Mở lúc	24/09 04:07:45
+Phiên	s_36b54eb4dcb6
+Mở lúc	24/09 06:31:09
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -179,8 +179,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_9bcb1418e608
-Mở lúc	24/09 04:07:45
+Phiên	s_36b54eb4dcb6
+Mở lúc	24/09 06:31:09
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -198,9 +198,9 @@ Số lời gọi	1
 
 ```
 Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  1 NGUỒN ĐÃ NHẬP  NGUỒN	LOẠI	TẦNG	FACT	CHƯA DUYỆT	AI ĐƯA VÀO	GIẤY PHÉP	NHẬP LÚC
-mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 04:07:47
+mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 06:31:12
   LƯỢT NHẬP GẦN ĐÂY — theo sổ cái  LÚC	LÔ / LÝ DO	FACT MỚI	XUNG ĐỘT	AI
-24/09 04:07:47	extract.kicad_netlist mach-co-loi.…	12	0	máy
+24/09 06:31:12	extract.kicad_netlist mach-co-loi.…	12	0	máy
 ```
 
 ![Ingest](man-02-Ingest.png)
@@ -235,7 +235,7 @@ Hộ chiếu mạch  board.build_passport · board.check_pins · board.constrain
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 11.5 s)*:
+**Tác tử trả lời** *(sau 11.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ra-soat-schematic-co-loi-cai-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -292,14 +292,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_3faeb82fbfb5",
+    "run_id" : "r_2fe8bae5ce9d",
     "undo" : [
-      "7723c60b4738"
+      "8dde7775a50a"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:07.\nChi phí mô hình: 0.0011 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:31.\nChi phí mô hình: 0.0011 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -333,7 +333,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-27T04:07.
+Hoàn tác được 1 mục đến 2026-09-27T06:31.
 Chi phí mô hình: 0.0011 USD.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 

@@ -36,7 +36,7 @@ Xoá toàn bộ flash của chip
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "04aa993a122e"
+    "run_id": "bcd6a5d8a58a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -44,13 +44,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "04aa993a122e"
+   "run_id": "bcd6a5d8a58a"
   },
-  "hash": "9d918ec7849e43cdb4645d4fb96edde13c2499dacb7330b168093a2c347c72ac",
+  "hash": "0f77d89b466d7a4184c77e37a44e021ff5957e4f841f74d813b35b9ed55d6600",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:20:20.189645+00:00"
+  "ts": "2026-09-24T06:45:18.078689+00:00"
  },
  {
   "actor": "agent",
@@ -60,52 +60,52 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "04aa993a122e"
+    "run_id": "bcd6a5d8a58a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "04aa993a122e"
+   "run_id": "bcd6a5d8a58a"
   },
-  "hash": "36a0dcdce42d584d0dcf15445a47480f41e6b01d066b440cc5445d30325272c7",
+  "hash": "42371c2ba20d8ec6a658aa83c1fe3a85cc41cef9441eb866333c49de4b9c3a99",
   "kind": "gate.decision",
-  "prev_hash": "9d918ec7849e43cdb4645d4fb96edde13c2499dacb7330b168093a2c347c72ac",
+  "prev_hash": "0f77d89b466d7a4184c77e37a44e021ff5957e4f841f74d813b35b9ed55d6600",
   "seq": 2,
-  "ts": "2026-09-24T04:20:20.189976+00:00"
+  "ts": "2026-09-24T06:45:18.079066+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "04aa993a122e"
+    "run_id": "bcd6a5d8a58a"
    },
    "project": "xoa-toan-bo-flash",
-   "session_id": "s_ce8488ab52c9"
+   "session_id": "s_3af450dcf2ad"
   },
-  "hash": "a821df32531b93ae44105495f923365700c32c3dae3a1d68f3b06fe44661579a",
+  "hash": "74d34a55b6373c45e52b93078e1d061693b60c8b08cd2a43456d298a0796b734",
   "kind": "session.open",
-  "prev_hash": "36a0dcdce42d584d0dcf15445a47480f41e6b01d066b440cc5445d30325272c7",
+  "prev_hash": "42371c2ba20d8ec6a658aa83c1fe3a85cc41cef9441eb866333c49de4b9c3a99",
   "seq": 3,
-  "ts": "2026-09-24T04:20:20.195870+00:00"
+  "ts": "2026-09-24T06:45:18.085834+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "f3d155895fc7558f",
-   "run_id": "04aa993a122e",
+   "duration_ms": 23,
+   "result_hash": "6322b8ecf958c27d",
+   "run_id": "bcd6a5d8a58a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "802e1ae1b27c8cc9515c0d793fc662d30ebe14a358e2ab74b961a5b61b32ddda",
+  "hash": "00e419abd8bca2fa7234429ac115c661ccb6b735aea9413b39381e02aa79d835",
   "kind": "cap.run.finish",
-  "prev_hash": "a821df32531b93ae44105495f923365700c32c3dae3a1d68f3b06fe44661579a",
+  "prev_hash": "74d34a55b6373c45e52b93078e1d061693b60c8b08cd2a43456d298a0796b734",
   "seq": 4,
-  "ts": "2026-09-24T04:20:20.197005+00:00"
+  "ts": "2026-09-24T06:45:18.087039+00:00"
  },
  {
   "actor": "agent",
@@ -115,7 +115,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f99f1f0473c2"
+    "run_id": "e1804e03c0f5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -123,13 +123,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f99f1f0473c2"
+   "run_id": "e1804e03c0f5"
   },
-  "hash": "f4303def25762429577f70d1f6a32f9c1be9bd2af536dab9ceb935f7ffacb22a",
+  "hash": "cd5af8a166299908f0f9393ff89acddb7786b2cb80b9d2d4e24eb41648c4488a",
   "kind": "cap.run.start",
-  "prev_hash": "802e1ae1b27c8cc9515c0d793fc662d30ebe14a358e2ab74b961a5b61b32ddda",
+  "prev_hash": "00e419abd8bca2fa7234429ac115c661ccb6b735aea9413b39381e02aa79d835",
   "seq": 5,
-  "ts": "2026-09-24T04:20:20.203908+00:00"
+  "ts": "2026-09-24T06:45:18.093873+00:00"
  },
  {
   "actor": "agent",
@@ -139,20 +139,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f99f1f0473c2"
+    "run_id": "e1804e03c0f5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f99f1f0473c2"
+   "run_id": "e1804e03c0f5"
   },
-  "hash": "af0e641063f0404934401fa1974f4dce3566ce71f724f999476b1e9b53ce021c",
+  "hash": "debee6c89a4560b89790e7680f156d134a58dc7ffa666459b291b421dd3c0fde",
   "kind": "gate.decision",
-  "prev_hash": "f4303def25762429577f70d1f6a32f9c1be9bd2af536dab9ceb935f7ffacb22a",
+  "prev_hash": "cd5af8a166299908f0f9393ff89acddb7786b2cb80b9d2d4e24eb41648c4488a",
   "seq": 6,
-  "ts": "2026-09-24T04:20:20.203997+00:00"
+  "ts": "2026-09-24T06:45:18.093991+00:00"
  },
  {
   "actor": "agent",
@@ -160,15 +160,15 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "f99f1f0473c2",
+   "run_id": "e1804e03c0f5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "afd8371e6959db26c51ccfd70c40ce70ceb3b24879895f8a2cab4007e2962594",
+  "hash": "a52eee1cd1fed93df123069f1abfa01ea6105d20917708e6221d02eedace470d",
   "kind": "cap.run.finish",
-  "prev_hash": "af0e641063f0404934401fa1974f4dce3566ce71f724f999476b1e9b53ce021c",
+  "prev_hash": "debee6c89a4560b89790e7680f156d134a58dc7ffa666459b291b421dd3c0fde",
   "seq": 7,
-  "ts": "2026-09-24T04:20:20.205692+00:00"
+  "ts": "2026-09-24T06:45:18.095664+00:00"
  },
  {
   "actor": "agent",
@@ -178,7 +178,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c550a82786df"
+    "run_id": "902fa4b55345"
    },
    "decision": {
     "decision": "APPROVE",
@@ -186,13 +186,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c550a82786df"
+   "run_id": "902fa4b55345"
   },
-  "hash": "d2e493a75ea15d0bdc358187e0fbf525dc09f9365ad218aa207de6c5fd74e184",
+  "hash": "f146580bc8bc4bdfdbe03475ad5e200cf439edb312c07898ca0c3393838cc29f",
   "kind": "cap.run.start",
-  "prev_hash": "afd8371e6959db26c51ccfd70c40ce70ceb3b24879895f8a2cab4007e2962594",
+  "prev_hash": "a52eee1cd1fed93df123069f1abfa01ea6105d20917708e6221d02eedace470d",
   "seq": 8,
-  "ts": "2026-09-24T04:20:20.207108+00:00"
+  "ts": "2026-09-24T06:45:18.097098+00:00"
  },
  {
   "actor": "agent",
@@ -202,20 +202,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c550a82786df"
+    "run_id": "902fa4b55345"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c550a82786df"
+   "run_id": "902fa4b55345"
   },
-  "hash": "979ffaa444fbd139360167df3cdbf4642267313eeead9c2b77e5521edccaf73c",
+  "hash": "8352b115a5b1142e20fc0233111a854338bf779f64412e8da28e2b111fea3391",
   "kind": "gate.decision",
-  "prev_hash": "d2e493a75ea15d0bdc358187e0fbf525dc09f9365ad218aa207de6c5fd74e184",
+  "prev_hash": "f146580bc8bc4bdfdbe03475ad5e200cf439edb312c07898ca0c3393838cc29f",
   "seq": 9,
-  "ts": "2026-09-24T04:20:20.207184+00:00"
+  "ts": "2026-09-24T06:45:18.097175+00:00"
  },
  {
   "actor": "agent",
@@ -223,15 +223,15 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "c550a82786df",
+   "run_id": "902fa4b55345",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "35fad4efe4e205c267fc940eb409384facc1f7e59400932c1c15e73dabe01e2b",
+  "hash": "7cf9d4e0211b1ea990285addb8f633e1631698e4a1ef8a07f05e0c84bfda2f00",
   "kind": "cap.run.finish",
-  "prev_hash": "979ffaa444fbd139360167df3cdbf4642267313eeead9c2b77e5521edccaf73c",
+  "prev_hash": "8352b115a5b1142e20fc0233111a854338bf779f64412e8da28e2b111fea3391",
   "seq": 10,
-  "ts": "2026-09-24T04:20:20.208773+00:00"
+  "ts": "2026-09-24T06:45:18.098803+00:00"
  },
  {
   "actor": "agent",
@@ -241,7 +241,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "a50b1212ffa9"
+    "run_id": "a252e29a407e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -249,13 +249,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "a50b1212ffa9"
+   "run_id": "a252e29a407e"
   },
-  "hash": "fb76862b227feee539cc9654b5a6b550e002871c029739dce3e5f1b61ce41039",
+  "hash": "be1ae2b813fa3153264faee34b0ae7d82b6126f7f1fe1e094da77218bdfc1e89",
   "kind": "cap.run.start",
-  "prev_hash": "35fad4efe4e205c267fc940eb409384facc1f7e59400932c1c15e73dabe01e2b",
+  "prev_hash": "7cf9d4e0211b1ea990285addb8f633e1631698e4a1ef8a07f05e0c84bfda2f00",
   "seq": 11,
-  "ts": "2026-09-24T04:20:20.236511+00:00"
+  "ts": "2026-09-24T06:45:18.127277+00:00"
  },
  {
   "actor": "agent",
@@ -265,36 +265,36 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "a50b1212ffa9"
+    "run_id": "a252e29a407e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "a50b1212ffa9"
+   "run_id": "a252e29a407e"
   },
-  "hash": "e24b234f688874ebba26050838447b07972ff1f4be27dbdf8c3c5b378e50acea",
+  "hash": "37a434b0fdec6aa89789e36c6eb7ed1d65998c21d7bc70e8a590039364e1666e",
   "kind": "gate.decision",
-  "prev_hash": "fb76862b227feee539cc9654b5a6b550e002871c029739dce3e5f1b61ce41039",
+  "prev_hash": "be1ae2b813fa3153264faee34b0ae7d82b6126f7f1fe1e094da77218bdfc1e89",
   "seq": 12,
-  "ts": "2026-09-24T04:20:20.236624+00:00"
+  "ts": "2026-09-24T06:45:18.127389+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 1,
-   "result_hash": "60902d420ac3322e",
-   "run_id": "a50b1212ffa9",
+   "result_hash": "a44a18ea2977fd99",
+   "run_id": "a252e29a407e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8cf09efa3a366d70835239c3417d60742811b9304be12535981ad6d88bbcb713",
+  "hash": "a38fcec2d119a71904c1bb640a8e871f5c7c51d9ee1ee3bc640cb6ec38ba5d7a",
   "kind": "cap.run.finish",
-  "prev_hash": "e24b234f688874ebba26050838447b07972ff1f4be27dbdf8c3c5b378e50acea",
+  "prev_hash": "37a434b0fdec6aa89789e36c6eb7ed1d65998c21d7bc70e8a590039364e1666e",
   "seq": 13,
-  "ts": "2026-09-24T04:20:20.238413+00:00"
+  "ts": "2026-09-24T06:45:18.129240+00:00"
  },
  {
   "actor": "agent",
@@ -304,7 +304,7 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "a063728dc323"
+    "run_id": "7162bf1b6f1b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -312,13 +312,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "a063728dc323"
+   "run_id": "7162bf1b6f1b"
   },
-  "hash": "eb92f2fded740fed2206a8f0ca891ad5f994d40ca79991df375d02eb0b3a0fdd",
+  "hash": "b978f6a917747481712ea3c06d81ae310aa2491c67ae1cee0f962b3ead81ea9c",
   "kind": "cap.run.start",
-  "prev_hash": "8cf09efa3a366d70835239c3417d60742811b9304be12535981ad6d88bbcb713",
+  "prev_hash": "a38fcec2d119a71904c1bb640a8e871f5c7c51d9ee1ee3bc640cb6ec38ba5d7a",
   "seq": 14,
-  "ts": "2026-09-24T04:20:20.474347+00:00"
+  "ts": "2026-09-24T06:45:18.379808+00:00"
  },
  {
   "actor": "agent",
@@ -328,20 +328,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "a063728dc323"
+    "run_id": "7162bf1b6f1b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "a063728dc323"
+   "run_id": "7162bf1b6f1b"
   },
-  "hash": "1265baced5d3d2065ab11d63b5c4ad9d0411fa1786107cf950c8ddc31eec086d",
+  "hash": "6d554f33c12e598e0080561858e370449be8416cef98d37400435ff566964cce",
   "kind": "gate.decision",
-  "prev_hash": "eb92f2fded740fed2206a8f0ca891ad5f994d40ca79991df375d02eb0b3a0fdd",
+  "prev_hash": "b978f6a917747481712ea3c06d81ae310aa2491c67ae1cee0f962b3ead81ea9c",
   "seq": 15,
-  "ts": "2026-09-24T04:20:20.474550+00:00"
+  "ts": "2026-09-24T06:45:18.380003+00:00"
  },
  {
   "actor": "agent",
@@ -349,15 +349,15 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "a063728dc323",
+   "run_id": "7162bf1b6f1b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "95cff96e3c0a5b768e62095b97e97c902a1cc18ed7831426a723ac1d2de271ef",
+  "hash": "f6d62664dbe533426d64999123dbdb80f162000fd2da784065003a37c9602535",
   "kind": "cap.run.finish",
-  "prev_hash": "1265baced5d3d2065ab11d63b5c4ad9d0411fa1786107cf950c8ddc31eec086d",
+  "prev_hash": "6d554f33c12e598e0080561858e370449be8416cef98d37400435ff566964cce",
   "seq": 16,
-  "ts": "2026-09-24T04:20:20.478113+00:00"
+  "ts": "2026-09-24T06:45:18.383569+00:00"
  },
  {
   "actor": "agent",
@@ -378,11 +378,11 @@ Xoá toàn bộ flash của chip
    "text": "Xoá toàn bộ flash của chip",
    "tier": "T3"
   },
-  "hash": "20cf57fa2dd2d2c443e6943aff50dca5c74486cc59ac3b2c94cbeb59be866222",
+  "hash": "263200d6ba1e989b9d129c8cdbaffecc3025925046b2e4eacab540cd3bb7ed5b",
   "kind": "gate.decision",
-  "prev_hash": "95cff96e3c0a5b768e62095b97e97c902a1cc18ed7831426a723ac1d2de271ef",
+  "prev_hash": "f6d62664dbe533426d64999123dbdb80f162000fd2da784065003a37c9602535",
   "seq": 17,
-  "ts": "2026-09-24T04:20:20.499588+00:00"
+  "ts": "2026-09-24T06:45:18.408750+00:00"
  },
  {
   "actor": "agent",
@@ -392,7 +392,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c3377432aa0a"
+    "run_id": "8545676fee95"
    },
    "decision": {
     "decision": "APPROVE",
@@ -400,13 +400,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c3377432aa0a"
+   "run_id": "8545676fee95"
   },
-  "hash": "b168015ffe2bb7c8fece88f9a4cd80553c87684044ce96ec69df5abe8b3c33cb",
+  "hash": "ff87a21dc8127417f5c3702e4524d30716138839d77fa0102052ed7d303f5ed7",
   "kind": "cap.run.start",
-  "prev_hash": "20cf57fa2dd2d2c443e6943aff50dca5c74486cc59ac3b2c94cbeb59be866222",
+  "prev_hash": "263200d6ba1e989b9d129c8cdbaffecc3025925046b2e4eacab540cd3bb7ed5b",
   "seq": 18,
-  "ts": "2026-09-24T04:20:20.503088+00:00"
+  "ts": "2026-09-24T06:45:18.412139+00:00"
  },
  {
   "actor": "agent",
@@ -416,20 +416,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c3377432aa0a"
+    "run_id": "8545676fee95"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c3377432aa0a"
+   "run_id": "8545676fee95"
   },
-  "hash": "6fd015d32b4308c651a32d82b135b6ef78099ccb2d44736a174fad1eb2e0dd44",
+  "hash": "3e95b03ca49e4a3cdf4d4e5243c0144df877ba71c91b32eff0fef16fff3619fc",
   "kind": "gate.decision",
-  "prev_hash": "b168015ffe2bb7c8fece88f9a4cd80553c87684044ce96ec69df5abe8b3c33cb",
+  "prev_hash": "ff87a21dc8127417f5c3702e4524d30716138839d77fa0102052ed7d303f5ed7",
   "seq": 19,
-  "ts": "2026-09-24T04:20:20.503181+00:00"
+  "ts": "2026-09-24T06:45:18.412236+00:00"
  },
  {
   "actor": "agent",
@@ -437,15 +437,15 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "c3377432aa0a",
+   "run_id": "8545676fee95",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8f2c1c36d7d91fffae30f70f6473c2aed6869d6322214e091561b016280dd244",
+  "hash": "d1fde06ee975006c1e7cc6a9f9691ff25b6dac0f753da7804997458d16c09278",
   "kind": "cap.run.finish",
-  "prev_hash": "6fd015d32b4308c651a32d82b135b6ef78099ccb2d44736a174fad1eb2e0dd44",
+  "prev_hash": "3e95b03ca49e4a3cdf4d4e5243c0144df877ba71c91b32eff0fef16fff3619fc",
   "seq": 20,
-  "ts": "2026-09-24T04:20:20.504946+00:00"
+  "ts": "2026-09-24T06:45:18.413931+00:00"
  },
  {
   "actor": "agent",
@@ -455,7 +455,7 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "9e24f49f4348"
+    "run_id": "df5b2e0ab59e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -463,13 +463,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9e24f49f4348"
+   "run_id": "df5b2e0ab59e"
   },
-  "hash": "6c37967aadd38fc623cda751f790230a785f3052532cdf30f0dff3e4dbdc1a0e",
+  "hash": "5e9b2768e86d7a7c397a4055a4735d39c9abbbdb571997c5b9c527bb146c0822",
   "kind": "cap.run.start",
-  "prev_hash": "8f2c1c36d7d91fffae30f70f6473c2aed6869d6322214e091561b016280dd244",
+  "prev_hash": "d1fde06ee975006c1e7cc6a9f9691ff25b6dac0f753da7804997458d16c09278",
   "seq": 21,
-  "ts": "2026-09-24T04:20:20.506980+00:00"
+  "ts": "2026-09-24T06:45:18.415804+00:00"
  },
  {
   "actor": "agent",
@@ -479,20 +479,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "9e24f49f4348"
+    "run_id": "df5b2e0ab59e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9e24f49f4348"
+   "run_id": "df5b2e0ab59e"
   },
-  "hash": "15b420f5a78372c515822ccfe66b1c915581bfeb042bffe47ad05294bc37a47e",
+  "hash": "a24d66081fe3b029310c85098e70bacd8763b6a4e4d94d88face0680fcc379a6",
   "kind": "gate.decision",
-  "prev_hash": "6c37967aadd38fc623cda751f790230a785f3052532cdf30f0dff3e4dbdc1a0e",
+  "prev_hash": "5e9b2768e86d7a7c397a4055a4735d39c9abbbdb571997c5b9c527bb146c0822",
   "seq": 22,
-  "ts": "2026-09-24T04:20:20.507113+00:00"
+  "ts": "2026-09-24T06:45:18.415897+00:00"
  },
  {
   "actor": "agent",
@@ -500,15 +500,15 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "9e24f49f4348",
+   "run_id": "df5b2e0ab59e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "36fb0002a89c7c16ef6b6c5ae6f165dc67784319c70f609eee8642046b432e06",
+  "hash": "563b3f6059e7ebf811383a597d7a823a1cacc619d8ba93cebc820fdb5bfb0df1",
   "kind": "cap.run.finish",
-  "prev_hash": "15b420f5a78372c515822ccfe66b1c915581bfeb042bffe47ad05294bc37a47e",
+  "prev_hash": "a24d66081fe3b029310c85098e70bacd8763b6a4e4d94d88face0680fcc379a6",
   "seq": 23,
-  "ts": "2026-09-24T04:20:20.510541+00:00"
+  "ts": "2026-09-24T06:45:18.419046+00:00"
  },
  {
   "actor": "agent",
@@ -518,7 +518,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "9b2d7a4bd806"
+    "run_id": "1ce1ee947a71"
    },
    "decision": {
     "decision": "APPROVE",
@@ -526,13 +526,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9b2d7a4bd806"
+   "run_id": "1ce1ee947a71"
   },
-  "hash": "eebc3d5300ca9e4936aff9d46b367319e06b692db37abb636c4d9f337adc4e1b",
+  "hash": "54bada76e237cb54263ea6c79a4c42cafbbb7871783f01bec6053b4a6e758ade",
   "kind": "cap.run.start",
-  "prev_hash": "36fb0002a89c7c16ef6b6c5ae6f165dc67784319c70f609eee8642046b432e06",
+  "prev_hash": "563b3f6059e7ebf811383a597d7a823a1cacc619d8ba93cebc820fdb5bfb0df1",
   "seq": 24,
-  "ts": "2026-09-24T04:20:20.513715+00:00"
+  "ts": "2026-09-24T06:45:18.422101+00:00"
  },
  {
   "actor": "agent",
@@ -542,20 +542,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "9b2d7a4bd806"
+    "run_id": "1ce1ee947a71"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9b2d7a4bd806"
+   "run_id": "1ce1ee947a71"
   },
-  "hash": "8ba52d135b26049eb36e6dac53edbbc68dae0f0d59d594f6a03a8ccefad1b929",
+  "hash": "aa897a6380e2e7d9fb245e9267940aa79e5838142ed1f178d5559b01f718f367",
   "kind": "gate.decision",
-  "prev_hash": "eebc3d5300ca9e4936aff9d46b367319e06b692db37abb636c4d9f337adc4e1b",
+  "prev_hash": "54bada76e237cb54263ea6c79a4c42cafbbb7871783f01bec6053b4a6e758ade",
   "seq": 25,
-  "ts": "2026-09-24T04:20:20.513822+00:00"
+  "ts": "2026-09-24T06:45:18.422186+00:00"
  },
  {
   "actor": "agent",
@@ -563,15 +563,15 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "9b2d7a4bd806",
+   "run_id": "1ce1ee947a71",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3bc9a00b0e1489828ecc488e90f01ac6b2481cc4ff4dffc9f2ae21bd2f54f13c",
+  "hash": "67026a037b45c7b3b1147a818ca6a94ba7616d39d3c8b6bd46d0d357818e8d69",
   "kind": "cap.run.finish",
-  "prev_hash": "8ba52d135b26049eb36e6dac53edbbc68dae0f0d59d594f6a03a8ccefad1b929",
+  "prev_hash": "aa897a6380e2e7d9fb245e9267940aa79e5838142ed1f178d5559b01f718f367",
   "seq": 26,
-  "ts": "2026-09-24T04:20:20.515456+00:00"
+  "ts": "2026-09-24T06:45:18.423766+00:00"
  },
  {
   "actor": "agent",
@@ -581,7 +581,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "5f7f639d9e5e"
+    "run_id": "09c1a48f7920"
    },
    "decision": {
     "decision": "APPROVE",
@@ -589,13 +589,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "5f7f639d9e5e"
+   "run_id": "09c1a48f7920"
   },
-  "hash": "39ec5b77878709fd7abab4c9b71e8c21d49591be78f2d97c25698a10de4f294d",
+  "hash": "51d08757dc3fa7c0e8d1e2a5668ea4d51a560a2622d3b2f3839007c75d99d773",
   "kind": "cap.run.start",
-  "prev_hash": "3bc9a00b0e1489828ecc488e90f01ac6b2481cc4ff4dffc9f2ae21bd2f54f13c",
+  "prev_hash": "67026a037b45c7b3b1147a818ca6a94ba7616d39d3c8b6bd46d0d357818e8d69",
   "seq": 27,
-  "ts": "2026-09-24T04:20:20.516768+00:00"
+  "ts": "2026-09-24T06:45:18.425126+00:00"
  },
  {
   "actor": "agent",
@@ -605,36 +605,36 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "5f7f639d9e5e"
+    "run_id": "09c1a48f7920"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "5f7f639d9e5e"
+   "run_id": "09c1a48f7920"
   },
-  "hash": "8bdd0eda319efa5b01f2deae004a480651611964f7b9c64a470abc093bb6474a",
+  "hash": "a051d972ea03c3ba49acfc71443170c65b47735e7fa9f7b1e3ce1e3d70e3ad50",
   "kind": "gate.decision",
-  "prev_hash": "39ec5b77878709fd7abab4c9b71e8c21d49591be78f2d97c25698a10de4f294d",
+  "prev_hash": "51d08757dc3fa7c0e8d1e2a5668ea4d51a560a2622d3b2f3839007c75d99d773",
   "seq": 28,
-  "ts": "2026-09-24T04:20:20.516850+00:00"
+  "ts": "2026-09-24T06:45:18.425216+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 1,
-   "result_hash": "36baa899e1f0f9cb",
-   "run_id": "5f7f639d9e5e",
+   "result_hash": "561f2008feddf321",
+   "run_id": "09c1a48f7920",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5c7707eab76cc4c7cb7f1a6fe92892ccf11c67d647b28fd511dd5681d8abdffa",
+  "hash": "c1c4a07762c2e01135e58e9f7ca2a99f8983f86975a9a2561c6567e4b3d6d919",
   "kind": "cap.run.finish",
-  "prev_hash": "8bdd0eda319efa5b01f2deae004a480651611964f7b9c64a470abc093bb6474a",
+  "prev_hash": "a051d972ea03c3ba49acfc71443170c65b47735e7fa9f7b1e3ce1e3d70e3ad50",
   "seq": 29,
-  "ts": "2026-09-24T04:20:20.518791+00:00"
+  "ts": "2026-09-24T06:45:18.427068+00:00"
  },
  {
   "actor": "agent",
@@ -644,7 +644,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e1d299e1729c"
+    "run_id": "040ef33c3902"
    },
    "decision": {
     "decision": "APPROVE",
@@ -652,13 +652,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e1d299e1729c"
+   "run_id": "040ef33c3902"
   },
-  "hash": "363de9f4ee0a451858393c9bb4c7e4433ab71bcfa5a776720ab286a924e565ae",
+  "hash": "6cfa9f2013592a39c57a78c9497b64ae5e5cae9b8a96c081069ca6f21d38dc8c",
   "kind": "cap.run.start",
-  "prev_hash": "5c7707eab76cc4c7cb7f1a6fe92892ccf11c67d647b28fd511dd5681d8abdffa",
+  "prev_hash": "c1c4a07762c2e01135e58e9f7ca2a99f8983f86975a9a2561c6567e4b3d6d919",
   "seq": 30,
-  "ts": "2026-09-24T04:20:20.520449+00:00"
+  "ts": "2026-09-24T06:45:18.428878+00:00"
  },
  {
   "actor": "agent",
@@ -668,36 +668,36 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e1d299e1729c"
+    "run_id": "040ef33c3902"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e1d299e1729c"
+   "run_id": "040ef33c3902"
   },
-  "hash": "e4742b42833425ea73205316d999708d5ecb6e868becf31b1c9b68a463d00a3f",
+  "hash": "97f3010d12a5ef03c9e5a9589fbd5a817e8a9e8ddd920e3e0b5b32fc446fef04",
   "kind": "gate.decision",
-  "prev_hash": "363de9f4ee0a451858393c9bb4c7e4433ab71bcfa5a776720ab286a924e565ae",
+  "prev_hash": "6cfa9f2013592a39c57a78c9497b64ae5e5cae9b8a96c081069ca6f21d38dc8c",
   "seq": 31,
-  "ts": "2026-09-24T04:20:20.520564+00:00"
+  "ts": "2026-09-24T06:45:18.429134+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
+   "duration_ms": 2,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "e1d299e1729c",
+   "run_id": "040ef33c3902",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "437629ec3116a8655422afac72cb8bd3de8a606d974744a7c0b24c2e3b45c419",
+  "hash": "ed716e45aae9be5cce31c3972bed69014b0edc7701d29dc81eb2666063bf3b6f",
   "kind": "cap.run.finish",
-  "prev_hash": "e4742b42833425ea73205316d999708d5ecb6e868becf31b1c9b68a463d00a3f",
+  "prev_hash": "97f3010d12a5ef03c9e5a9589fbd5a817e8a9e8ddd920e3e0b5b32fc446fef04",
   "seq": 32,
-  "ts": "2026-09-24T04:20:20.522292+00:00"
+  "ts": "2026-09-24T06:45:18.431228+00:00"
  },
  {
   "actor": "agent",
@@ -707,7 +707,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "023d004ab06a"
+    "run_id": "344b6216e229"
    },
    "decision": {
     "decision": "APPROVE",
@@ -715,13 +715,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "023d004ab06a"
+   "run_id": "344b6216e229"
   },
-  "hash": "9979aa30df17586c9c57483f742a04c3b0c8a5e38c975ac1e3b15255f350fd11",
+  "hash": "4815f8546c38e6e1d2f028c1ba2f6791e70b8b9d942210745a7e7db008fce05e",
   "kind": "cap.run.start",
-  "prev_hash": "437629ec3116a8655422afac72cb8bd3de8a606d974744a7c0b24c2e3b45c419",
+  "prev_hash": "ed716e45aae9be5cce31c3972bed69014b0edc7701d29dc81eb2666063bf3b6f",
   "seq": 33,
-  "ts": "2026-09-24T04:20:20.549612+00:00"
+  "ts": "2026-09-24T06:45:18.458805+00:00"
  },
  {
   "actor": "agent",
@@ -731,36 +731,36 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "023d004ab06a"
+    "run_id": "344b6216e229"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "023d004ab06a"
+   "run_id": "344b6216e229"
   },
-  "hash": "e889174db7a859afbe8e460c890f554db75030d6d17569798ae5d311812ce544",
+  "hash": "15bad6853d0ad23405821d0e374317425caa34ccae5d3dc41a47d5ba27335441",
   "kind": "gate.decision",
-  "prev_hash": "9979aa30df17586c9c57483f742a04c3b0c8a5e38c975ac1e3b15255f350fd11",
+  "prev_hash": "4815f8546c38e6e1d2f028c1ba2f6791e70b8b9d942210745a7e7db008fce05e",
   "seq": 34,
-  "ts": "2026-09-24T04:20:20.549766+00:00"
+  "ts": "2026-09-24T06:45:18.459210+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "ba96725375af6308",
-   "run_id": "023d004ab06a",
+   "result_hash": "aecee6e08c3408f6",
+   "run_id": "344b6216e229",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "4fecd27ce4fff7e629878ab79e7ad86c02bf59a0d580a15fcd01182d0d5211e4",
+  "hash": "2faba3b263e18feff6495e88db746e7cf58cfcfc6c00115bbf75c3b8e590e198",
   "kind": "cap.run.finish",
-  "prev_hash": "e889174db7a859afbe8e460c890f554db75030d6d17569798ae5d311812ce544",
+  "prev_hash": "15bad6853d0ad23405821d0e374317425caa34ccae5d3dc41a47d5ba27335441",
   "seq": 35,
-  "ts": "2026-09-24T04:20:20.551849+00:00"
+  "ts": "2026-09-24T06:45:18.461228+00:00"
  },
  {
   "actor": "agent",
@@ -770,7 +770,7 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "d5443f985ea7"
+    "run_id": "f382d7571d7c"
    },
    "decision": {
     "decision": "APPROVE",
@@ -778,13 +778,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d5443f985ea7"
+   "run_id": "f382d7571d7c"
   },
-  "hash": "5e46d63abafbab5040d51747cfe7c6dff837e120be97e91c66f12187da23158a",
+  "hash": "2a49fd76235c45896f8650505144c1909a94756d2290f23cb13d4de64e61421a",
   "kind": "cap.run.start",
-  "prev_hash": "4fecd27ce4fff7e629878ab79e7ad86c02bf59a0d580a15fcd01182d0d5211e4",
+  "prev_hash": "2faba3b263e18feff6495e88db746e7cf58cfcfc6c00115bbf75c3b8e590e198",
   "seq": 36,
-  "ts": "2026-09-24T04:20:23.295772+00:00"
+  "ts": "2026-09-24T06:45:21.214062+00:00"
  },
  {
   "actor": "agent",
@@ -794,36 +794,36 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "d5443f985ea7"
+    "run_id": "f382d7571d7c"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d5443f985ea7"
+   "run_id": "f382d7571d7c"
   },
-  "hash": "fab0121e74b18128ffb5ccbd6100d5556eb1cb0d1abb29e46c9d603447caec77",
+  "hash": "4494b5b611938b5dfb1aee91473b26d3860be323c1114e54f8388ce6b1fc6794",
   "kind": "gate.decision",
-  "prev_hash": "5e46d63abafbab5040d51747cfe7c6dff837e120be97e91c66f12187da23158a",
+  "prev_hash": "2a49fd76235c45896f8650505144c1909a94756d2290f23cb13d4de64e61421a",
   "seq": 37,
-  "ts": "2026-09-24T04:20:23.295973+00:00"
+  "ts": "2026-09-24T06:45:21.214252+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
+   "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "d5443f985ea7",
+   "run_id": "f382d7571d7c",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f5d3c0fb01eee75aa9e45d068d096bdc3c6b098dbc0fe0b659f4cdd00fc7af4e",
+  "hash": "94e9608aa47fe155deadc4418c79a4dcea25b01db071864254765d8dfd9ac6b7",
   "kind": "cap.run.finish",
-  "prev_hash": "fab0121e74b18128ffb5ccbd6100d5556eb1cb0d1abb29e46c9d603447caec77",
+  "prev_hash": "4494b5b611938b5dfb1aee91473b26d3860be323c1114e54f8388ce6b1fc6794",
   "seq": 38,
-  "ts": "2026-09-24T04:20:23.299950+00:00"
+  "ts": "2026-09-24T06:45:21.217981+00:00"
  },
  {
   "actor": "agent",
@@ -833,7 +833,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7298267de84a"
+    "run_id": "56da4875322a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -841,13 +841,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7298267de84a"
+   "run_id": "56da4875322a"
   },
-  "hash": "62df97ed3b8af37f1857e8c357dd818dc8d5f6798f7f1cf8c4696ddbd2c2aeb9",
+  "hash": "765d48bbf6c7024377903cf9b925e96e8ddf699db03c10e6dec8bcf0ac957e8e",
   "kind": "cap.run.start",
-  "prev_hash": "f5d3c0fb01eee75aa9e45d068d096bdc3c6b098dbc0fe0b659f4cdd00fc7af4e",
+  "prev_hash": "94e9608aa47fe155deadc4418c79a4dcea25b01db071864254765d8dfd9ac6b7",
   "seq": 39,
-  "ts": "2026-09-24T04:20:23.303695+00:00"
+  "ts": "2026-09-24T06:45:21.221050+00:00"
  },
  {
   "actor": "agent",
@@ -857,20 +857,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7298267de84a"
+    "run_id": "56da4875322a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7298267de84a"
+   "run_id": "56da4875322a"
   },
-  "hash": "2c345dd198fcac2792bfb09cb184c64dcf05ae7ce181c275de4171e5eea3f7d0",
+  "hash": "a0e4e87fe34c745f847bb5b3ca453b8e09f2993f4f43fd52747c90ca392a8a33",
   "kind": "gate.decision",
-  "prev_hash": "62df97ed3b8af37f1857e8c357dd818dc8d5f6798f7f1cf8c4696ddbd2c2aeb9",
+  "prev_hash": "765d48bbf6c7024377903cf9b925e96e8ddf699db03c10e6dec8bcf0ac957e8e",
   "seq": 40,
-  "ts": "2026-09-24T04:20:23.303808+00:00"
+  "ts": "2026-09-24T06:45:21.221138+00:00"
  },
  {
   "actor": "agent",
@@ -878,15 +878,15 @@ Xoá toàn bộ flash của chip
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "7298267de84a",
+   "run_id": "56da4875322a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a728362495ee0506a6adfd5cf4b8271c11864e5b8480a60efbfeba4a1430dbde",
+  "hash": "dffe88b29e9ddb3b45b70b2fb7080047059e803a2b5a9f51c588fb7ad281c744",
   "kind": "cap.run.finish",
-  "prev_hash": "2c345dd198fcac2792bfb09cb184c64dcf05ae7ce181c275de4171e5eea3f7d0",
+  "prev_hash": "a0e4e87fe34c745f847bb5b3ca453b8e09f2993f4f43fd52747c90ca392a8a33",
   "seq": 41,
-  "ts": "2026-09-24T04:20:23.305358+00:00"
+  "ts": "2026-09-24T06:45:21.222661+00:00"
  },
  {
   "actor": "agent",
@@ -896,7 +896,7 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "52f473251d9f"
+    "run_id": "de8a06aca715"
    },
    "decision": {
     "decision": "APPROVE",
@@ -904,13 +904,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "52f473251d9f"
+   "run_id": "de8a06aca715"
   },
-  "hash": "39e406a3b5bb6ae2b8c73e8f0eda13731251a14f41362fff1b23081c05ba6b8f",
+  "hash": "22bd9916790a907c09b82118362cc164c4313475fc1856461d9217ef194853c6",
   "kind": "cap.run.start",
-  "prev_hash": "a728362495ee0506a6adfd5cf4b8271c11864e5b8480a60efbfeba4a1430dbde",
+  "prev_hash": "dffe88b29e9ddb3b45b70b2fb7080047059e803a2b5a9f51c588fb7ad281c744",
   "seq": 42,
-  "ts": "2026-09-24T04:20:23.306761+00:00"
+  "ts": "2026-09-24T06:45:21.223947+00:00"
  },
  {
   "actor": "agent",
@@ -920,20 +920,20 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "52f473251d9f"
+    "run_id": "de8a06aca715"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "52f473251d9f"
+   "run_id": "de8a06aca715"
   },
-  "hash": "8784050a3ee32cd486b2b92edeccb6bdd4277a48dc8c307731e29bd494210b40",
+  "hash": "4cf466f82425265f5d277b88fc72da7cea56fa7dadef7270cd1ea4436b1d8397",
   "kind": "gate.decision",
-  "prev_hash": "39e406a3b5bb6ae2b8c73e8f0eda13731251a14f41362fff1b23081c05ba6b8f",
+  "prev_hash": "22bd9916790a907c09b82118362cc164c4313475fc1856461d9217ef194853c6",
   "seq": 43,
-  "ts": "2026-09-24T04:20:23.306868+00:00"
+  "ts": "2026-09-24T06:45:21.224033+00:00"
  },
  {
   "actor": "agent",
@@ -941,15 +941,15 @@ Xoá toàn bộ flash của chip
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "52f473251d9f",
+   "run_id": "de8a06aca715",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "95a200cca70f2efd2345cd0c4d7edd3877d1321e1cec08b6b3640882e7f3115c",
+  "hash": "a328d906221dd8cff02905829e315522df4441fb44d44460dbd0e559770ed63b",
   "kind": "cap.run.finish",
-  "prev_hash": "8784050a3ee32cd486b2b92edeccb6bdd4277a48dc8c307731e29bd494210b40",
+  "prev_hash": "4cf466f82425265f5d277b88fc72da7cea56fa7dadef7270cd1ea4436b1d8397",
   "seq": 44,
-  "ts": "2026-09-24T04:20:23.310293+00:00"
+  "ts": "2026-09-24T06:45:21.227230+00:00"
  },
  {
   "actor": "agent",
@@ -959,7 +959,7 @@ Xoá toàn bộ flash của chip
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "eb40ea250f04"
+    "run_id": "9f523ea4f567"
    },
    "decision": {
     "decision": "APPROVE",
@@ -967,13 +967,13 @@ Xoá toàn bộ flash của chip
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "eb40ea250f04"
+   "run_id": "9f523ea4f567"
   },
-  "hash": "c09498a4282258ec48902d7a7beccf76f7dd27c848517cfa768c8a9966e4e895",
+  "hash": "1bbe6e848b00679fc6eaafdc944b1445d97755b8d47d62e36a4bf2ba023a2ad6",
   "kind": "cap.run.start",
-  "prev_hash": "95a200cca70f2efd2345cd0c4d7edd3877d1321e1cec08b6b3640882e7f3115c",
+  "prev_hash": "a328d906221dd8cff02905829e315522df4441fb44d44460dbd0e559770ed63b",
   "seq": 45,
-  "ts": "2026-09-24T04:20:23.313136+00:00"
+  "ts": "2026-09-24T06:45:21.229871+00:00"
  },
  {
   "actor": "agent",
@@ -983,36 +983,36 @@ Xoá toàn bộ flash của chip
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "eb40ea250f04"
+    "run_id": "9f523ea4f567"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "eb40ea250f04"
+   "run_id": "9f523ea4f567"
   },
-  "hash": "79bb66250217cad3bb14bb557c484d4bf9c7d18228175342c06d962f639ed702",
+  "hash": "4a8e165cc70b71e98fda8fe6fac1e97ec94c4d82a6d9ce99088d5a3ded0c4817",
   "kind": "gate.decision",
-  "prev_hash": "c09498a4282258ec48902d7a7beccf76f7dd27c848517cfa768c8a9966e4e895",
+  "prev_hash": "1bbe6e848b00679fc6eaafdc944b1445d97755b8d47d62e36a4bf2ba023a2ad6",
   "seq": 46,
-  "ts": "2026-09-24T04:20:23.313259+00:00"
+  "ts": "2026-09-24T06:45:21.229954+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "aafa53d47fc5e93b",
-   "run_id": "eb40ea250f04",
+   "duration_ms": 3,
+   "result_hash": "f73ec577dbbe4961",
+   "run_id": "9f523ea4f567",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f39c569fadafef74bbd977b2bd58a273e4aba40803bf4652f43ba5ab498d80a1",
+  "hash": "314f7033d909834a83dc8504354dcaef9467a28441f00be8a4bc084b540f2a49",
   "kind": "cap.run.finish",
-  "prev_hash": "79bb66250217cad3bb14bb557c484d4bf9c7d18228175342c06d962f639ed702",
+  "prev_hash": "4a8e165cc70b71e98fda8fe6fac1e97ec94c4d82a6d9ce99088d5a3ded0c4817",
   "seq": 47,
-  "ts": "2026-09-24T04:20:23.315318+00:00"
+  "ts": "2026-09-24T06:45:21.233426+00:00"
  }
 ]
 ```
@@ -1090,7 +1090,7 @@ Xoá toàn bộ flash của chip
   "so_dong": 15,
   "dong": [
    {
-    "id": "04aa993a122e",
+    "id": "bcd6a5d8a58a",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -1103,10 +1103,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.190609+00:00"
+    "at": "2026-09-24T06:45:18.079931+00:00"
    },
    {
-    "id": "f99f1f0473c2",
+    "id": "e1804e03c0f5",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1119,10 +1119,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.204361+00:00"
+    "at": "2026-09-24T06:45:18.094386+00:00"
    },
    {
-    "id": "c550a82786df",
+    "id": "902fa4b55345",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1135,10 +1135,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.207565+00:00"
+    "at": "2026-09-24T06:45:18.097562+00:00"
    },
    {
-    "id": "a50b1212ffa9",
+    "id": "a252e29a407e",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1151,10 +1151,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.237023+00:00"
+    "at": "2026-09-24T06:45:18.127799+00:00"
    },
    {
-    "id": "a063728dc323",
+    "id": "7162bf1b6f1b",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1167,10 +1167,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.475033+00:00"
+    "at": "2026-09-24T06:45:18.380633+00:00"
    },
    {
-    "id": "c3377432aa0a",
+    "id": "8545676fee95",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1183,10 +1183,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.503594+00:00"
+    "at": "2026-09-24T06:45:18.412689+00:00"
    },
    {
-    "id": "9e24f49f4348",
+    "id": "df5b2e0ab59e",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1199,10 +1199,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.507532+00:00"
+    "at": "2026-09-24T06:45:18.416313+00:00"
    },
    {
-    "id": "9b2d7a4bd806",
+    "id": "1ce1ee947a71",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1215,10 +1215,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.514221+00:00"
+    "at": "2026-09-24T06:45:18.422598+00:00"
    },
    {
-    "id": "5f7f639d9e5e",
+    "id": "09c1a48f7920",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1231,10 +1231,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.517214+00:00"
+    "at": "2026-09-24T06:45:18.425579+00:00"
    },
    {
-    "id": "e1d299e1729c",
+    "id": "040ef33c3902",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1247,10 +1247,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.521012+00:00"
+    "at": "2026-09-24T06:45:18.429873+00:00"
    },
    {
-    "id": "023d004ab06a",
+    "id": "344b6216e229",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1263,10 +1263,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:20.550175+00:00"
+    "at": "2026-09-24T06:45:18.459629+00:00"
    },
    {
-    "id": "d5443f985ea7",
+    "id": "f382d7571d7c",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1279,10 +1279,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:23.296638+00:00"
+    "at": "2026-09-24T06:45:21.214956+00:00"
    },
    {
-    "id": "7298267de84a",
+    "id": "56da4875322a",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -1295,10 +1295,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:23.304175+00:00"
+    "at": "2026-09-24T06:45:21.221510+00:00"
    },
    {
-    "id": "52f473251d9f",
+    "id": "de8a06aca715",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -1311,10 +1311,10 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:23.307276+00:00"
+    "at": "2026-09-24T06:45:21.224433+00:00"
    },
    {
-    "id": "eb40ea250f04",
+    "id": "9f523ea4f567",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -1327,7 +1327,7 @@ Xoá toàn bộ flash của chip
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:20:23.313686+00:00"
+    "at": "2026-09-24T06:45:21.230425+00:00"
    }
   ]
  },
@@ -1421,13 +1421,13 @@ Xoá toàn bộ flash của chip
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_ce8488ab52c9",
+    "id": "s_3af450dcf2ad",
     "project": "xoa-toan-bo-flash",
-    "opened_at": "2026-09-24T04:20:20.194831+00:00",
+    "opened_at": "2026-09-24T06:45:18.084545+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Xoá toàn bộ flash của chip\", \"at\": \"2026-09-24T04:20:20.482683+00:00\", \"run_id\": null}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Xoá toàn bộ flash của chip\", \"at\": \"2026-09-24T06:45:18.392372+00:00\", \"run_id\": null}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -1461,7 +1461,7 @@ index/
 ```
 # xoá toàn bộ flash
 
-- 2026-09-24 11:20 — tạo dự án từ lệnh: "xoá toàn bộ flash"
+- 2026-09-24 13:45 — tạo dự án từ lệnh: "xoá toàn bộ flash"
 
 ```
 
@@ -1552,7 +1552,7 @@ escalation:
 project:
   id: xoa-toan-bo-flash
   name: xoá toàn bộ flash
-  created: '2026-09-24T04:20:19.909581+00:00'
+  created: '2026-09-24T06:45:17.782474+00:00'
   text: xoá toàn bộ flash
 target:
   chip: null
@@ -1743,7 +1743,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “xoá toàn bộ flash”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `xoa-toan-bo-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1764,7 +1764,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Xoá toàn bộ flash của chip
 
-**Tác tử trả lời** *(sau 2.6 s)*:
+**Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `xoa-toan-bo-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1786,8 +1786,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ce8488ab52c9
-Mở lúc	24/09 04:20:20
+Phiên	s_3af450dcf2ad
+Mở lúc	24/09 06:45:18
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1818,8 +1818,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ce8488ab52c9
-Mở lúc	24/09 04:20:20
+Phiên	s_3af450dcf2ad
+Mở lúc	24/09 06:45:18
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1861,8 +1861,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ce8488ab52c9
-Mở lúc	24/09 04:20:20
+Phiên	s_3af450dcf2ad
+Mở lúc	24/09 06:45:18
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1895,7 +1895,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC068/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `xoa-toan-bo-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1918,7 +1918,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC068/buoc-02.png
 
-**Tác tử trả lời** *(sau 2.6 s)*:
+**Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `xoa-toan-bo-flash` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -1940,8 +1940,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ce8488ab52c9
-Mở lúc	24/09 04:20:20
+Phiên	s_3af450dcf2ad
+Mở lúc	24/09 06:45:18
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -1974,8 +1974,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ce8488ab52c9
-Mở lúc	24/09 04:20:20
+Phiên	s_3af450dcf2ad
+Mở lúc	24/09 06:45:18
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -2019,8 +2019,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_ce8488ab52c9
-Mở lúc	24/09 04:20:20
+Phiên	s_3af450dcf2ad
+Mở lúc	24/09 06:45:18
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

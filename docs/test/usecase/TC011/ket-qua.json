@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "SAU [DEV-205]: KHÔNG còn treo im lặng — 902 giây → 15,9 giây, và kết thúc bằng một câu hỏi rõ ràng (`ingest.index_text` cần `files`). Vẫn chưa so được hai bản datasheet.\n\nGhi chú: Nguyên nhân còn lại: câu có HAI đường dẫn, mà `slots.path` của `intent.schema.json` là một chuỗi đơn — chỉ giữ được một. Đây là giới hạn của lược đồ ý định, không phải của định tuyến.",
- "giay": 16.8,
+ "giay": 16.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 16.8,
+   "giay": 16.9,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "0x44|0x45"

@@ -14,7 +14,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2582 tok · ra 143 tok · 1728 ms · 0.001132 USD
+- dừng: `stop` · vào 2582 tok · ra 137 tok · 1985 ms · 0.001117 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -121,9 +121,8 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
   "confidence": 0.95,
   "lang": "vi",
   "mentions": [
-    "/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net",
     "BOM",
-    "netlist"
+    "/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net"
   ]
 }
 ```
@@ -157,7 +156,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "48a6c7c716bd"
+    "run_id": "34f1e77286a5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -165,13 +164,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "48a6c7c716bd"
+   "run_id": "34f1e77286a5"
   },
-  "hash": "6af92560025bf28e1005f8fef89bd07532f96f8864c35e4677ca84b7920ee75e",
+  "hash": "2102f2caed96b80fa64dd05c2d76a2f545c43def5c4f9bfdbc9ed25dab30c370",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:18:37.707394+00:00"
+  "ts": "2026-09-24T06:43:41.241645+00:00"
  },
  {
   "actor": "agent",
@@ -181,52 +180,52 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "48a6c7c716bd"
+    "run_id": "34f1e77286a5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "48a6c7c716bd"
+   "run_id": "34f1e77286a5"
   },
-  "hash": "53127602a968c7b5f68c15f7a0401f4d0eefb29fe3a168781fa80bc287ce4b7e",
+  "hash": "699bcaae90c920290f76ef96cc3a8618a8cc6f9c550a020192a224bf5388cc63",
   "kind": "gate.decision",
-  "prev_hash": "6af92560025bf28e1005f8fef89bd07532f96f8864c35e4677ca84b7920ee75e",
+  "prev_hash": "2102f2caed96b80fa64dd05c2d76a2f545c43def5c4f9bfdbc9ed25dab30c370",
   "seq": 2,
-  "ts": "2026-09-24T04:18:37.707732+00:00"
+  "ts": "2026-09-24T06:43:41.242017+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "48a6c7c716bd"
+    "run_id": "34f1e77286a5"
    },
    "project": "bom-khong-khop-schematic",
-   "session_id": "s_8e76346c86fb"
+   "session_id": "s_03f0c8c0a3da"
   },
-  "hash": "bd63a2731b2888764688de4f7c11a93ac0955269b599487894210c421ba5524f",
+  "hash": "927b9a03cfd7326bb6e4c70804071b754c3b339ca34ad28ec594dfc10c4730d1",
   "kind": "session.open",
-  "prev_hash": "53127602a968c7b5f68c15f7a0401f4d0eefb29fe3a168781fa80bc287ce4b7e",
+  "prev_hash": "699bcaae90c920290f76ef96cc3a8618a8cc6f9c550a020192a224bf5388cc63",
   "seq": 3,
-  "ts": "2026-09-24T04:18:37.713617+00:00"
+  "ts": "2026-09-24T06:43:41.251269+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "afcdd3ba86b69947",
-   "run_id": "48a6c7c716bd",
+   "duration_ms": 26,
+   "result_hash": "e408b04aef8d6411",
+   "run_id": "34f1e77286a5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "188afad20c19275e1440c9817225b5feec8068fb6e9f4f49ccbbe988f3dda3cd",
+  "hash": "6584845d3f0aabbd0fb6bfcbefaa72b9614d3378053f23a7cb0a26a1652394f2",
   "kind": "cap.run.finish",
-  "prev_hash": "bd63a2731b2888764688de4f7c11a93ac0955269b599487894210c421ba5524f",
+  "prev_hash": "927b9a03cfd7326bb6e4c70804071b754c3b339ca34ad28ec594dfc10c4730d1",
   "seq": 4,
-  "ts": "2026-09-24T04:18:37.714795+00:00"
+  "ts": "2026-09-24T06:43:41.252558+00:00"
  },
  {
   "actor": "agent",
@@ -236,7 +235,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2b79cbccad17"
+    "run_id": "e9b935551c2e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -244,13 +243,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2b79cbccad17"
+   "run_id": "e9b935551c2e"
   },
-  "hash": "fb978ed05873983cdfd9ff5d46d564cc1eb44768bad7a60eefd761e06630209b",
+  "hash": "ee444aae56b7b8fafbb073e0be0ce32347b5b23047aaac4dbd6cdf61d82d5538",
   "kind": "cap.run.start",
-  "prev_hash": "188afad20c19275e1440c9817225b5feec8068fb6e9f4f49ccbbe988f3dda3cd",
+  "prev_hash": "6584845d3f0aabbd0fb6bfcbefaa72b9614d3378053f23a7cb0a26a1652394f2",
   "seq": 5,
-  "ts": "2026-09-24T04:18:37.721187+00:00"
+  "ts": "2026-09-24T06:43:41.259242+00:00"
  },
  {
   "actor": "agent",
@@ -260,20 +259,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2b79cbccad17"
+    "run_id": "e9b935551c2e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2b79cbccad17"
+   "run_id": "e9b935551c2e"
   },
-  "hash": "b9b24acca48887201ede9df4048e5debdfc5cfadc9278e1c06fe4ea21231aa4d",
+  "hash": "7a58d601a4750430aae2e83e1785c1536570cab5096dfb1afcbe6ded2fd10c66",
   "kind": "gate.decision",
-  "prev_hash": "fb978ed05873983cdfd9ff5d46d564cc1eb44768bad7a60eefd761e06630209b",
+  "prev_hash": "ee444aae56b7b8fafbb073e0be0ce32347b5b23047aaac4dbd6cdf61d82d5538",
   "seq": 6,
-  "ts": "2026-09-24T04:18:37.721285+00:00"
+  "ts": "2026-09-24T06:43:41.259331+00:00"
  },
  {
   "actor": "agent",
@@ -281,15 +280,15 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "2b79cbccad17",
+   "run_id": "e9b935551c2e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ecdd863651c191a0a713e41a539f0c5963c0da9b246d0f7ed3220bc41b3ff57f",
+  "hash": "19e8e7b321246d718a8851537c288f1afb53056e44b2bbb796efc9072082475c",
   "kind": "cap.run.finish",
-  "prev_hash": "b9b24acca48887201ede9df4048e5debdfc5cfadc9278e1c06fe4ea21231aa4d",
+  "prev_hash": "7a58d601a4750430aae2e83e1785c1536570cab5096dfb1afcbe6ded2fd10c66",
   "seq": 7,
-  "ts": "2026-09-24T04:18:37.722895+00:00"
+  "ts": "2026-09-24T06:43:41.261020+00:00"
  },
  {
   "actor": "agent",
@@ -299,7 +298,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "799f29b6b451"
+    "run_id": "04e2e74992f0"
    },
    "decision": {
     "decision": "APPROVE",
@@ -307,13 +306,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "799f29b6b451"
+   "run_id": "04e2e74992f0"
   },
-  "hash": "df2176f0098d57563c89b9ab96051b0ca324203effce4c5a63daf3080a87cc2e",
+  "hash": "cc082154cade22f1f899d751be3be2697b513c622cdd72432c1f97f8e53d4820",
   "kind": "cap.run.start",
-  "prev_hash": "ecdd863651c191a0a713e41a539f0c5963c0da9b246d0f7ed3220bc41b3ff57f",
+  "prev_hash": "19e8e7b321246d718a8851537c288f1afb53056e44b2bbb796efc9072082475c",
   "seq": 8,
-  "ts": "2026-09-24T04:18:37.724328+00:00"
+  "ts": "2026-09-24T06:43:41.264691+00:00"
  },
  {
   "actor": "agent",
@@ -323,36 +322,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "799f29b6b451"
+    "run_id": "04e2e74992f0"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "799f29b6b451"
+   "run_id": "04e2e74992f0"
   },
-  "hash": "392fe9ceede983c1647d2388d351c4e043e5efcf5e737c26228c82862bd35a71",
+  "hash": "50c9e3736e980cb6a104e1a68fb0f7d1fcbb1016cde3eda3fe131725d2d48e70",
   "kind": "gate.decision",
-  "prev_hash": "df2176f0098d57563c89b9ab96051b0ca324203effce4c5a63daf3080a87cc2e",
+  "prev_hash": "cc082154cade22f1f899d751be3be2697b513c622cdd72432c1f97f8e53d4820",
   "seq": 9,
-  "ts": "2026-09-24T04:18:37.724408+00:00"
+  "ts": "2026-09-24T06:43:41.264831+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
+   "duration_ms": 2,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "799f29b6b451",
+   "run_id": "04e2e74992f0",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "49a373b08f172d86a88fb1e40d6131eacab8ebada5338942e3b5a07da67365c2",
+  "hash": "6a8ef542ab527580b9434f3605824930f577683b2e7f81efc9f69c6d4dab212d",
   "kind": "cap.run.finish",
-  "prev_hash": "392fe9ceede983c1647d2388d351c4e043e5efcf5e737c26228c82862bd35a71",
+  "prev_hash": "50c9e3736e980cb6a104e1a68fb0f7d1fcbb1016cde3eda3fe131725d2d48e70",
   "seq": 10,
-  "ts": "2026-09-24T04:18:37.725983+00:00"
+  "ts": "2026-09-24T06:43:41.266662+00:00"
  },
  {
   "actor": "agent",
@@ -362,7 +361,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1af6c2147d19"
+    "run_id": "03dc4c596b4d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -370,13 +369,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1af6c2147d19"
+   "run_id": "03dc4c596b4d"
   },
-  "hash": "7cdc7add39412be2f2012219c0228f6ead262f6695e2e9704915d4eb1754c531",
+  "hash": "1517f703ee6b5a556940c1edefad40de864dc9315bbb1aea0dbb202fc73805ee",
   "kind": "cap.run.start",
-  "prev_hash": "49a373b08f172d86a88fb1e40d6131eacab8ebada5338942e3b5a07da67365c2",
+  "prev_hash": "6a8ef542ab527580b9434f3605824930f577683b2e7f81efc9f69c6d4dab212d",
   "seq": 11,
-  "ts": "2026-09-24T04:18:37.753599+00:00"
+  "ts": "2026-09-24T06:43:41.295434+00:00"
  },
  {
   "actor": "agent",
@@ -386,36 +385,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1af6c2147d19"
+    "run_id": "03dc4c596b4d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1af6c2147d19"
+   "run_id": "03dc4c596b4d"
   },
-  "hash": "e233f5ce495bf5aee0d6b2da67abb4fb67a8f9435752b0089c73bb181390ccb4",
+  "hash": "aad3141bf2d838a89f1930e7837f5fe08322c380d291743a170063e4c84e17a9",
   "kind": "gate.decision",
-  "prev_hash": "7cdc7add39412be2f2012219c0228f6ead262f6695e2e9704915d4eb1754c531",
+  "prev_hash": "1517f703ee6b5a556940c1edefad40de864dc9315bbb1aea0dbb202fc73805ee",
   "seq": 12,
-  "ts": "2026-09-24T04:18:37.753708+00:00"
+  "ts": "2026-09-24T06:43:41.295568+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 1,
-   "result_hash": "41f2dacf195c01c4",
-   "run_id": "1af6c2147d19",
+   "result_hash": "0721c7fcf77188eb",
+   "run_id": "03dc4c596b4d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "715ad6af54397f84e90741ab84ace7941fc27d8fe61b80c89913ecbed0e7ba3f",
+  "hash": "ace7259dcd86c77689b9a9b7c76be4b5cbe5cc1ab4dd17ec127392c3c7e7dedc",
   "kind": "cap.run.finish",
-  "prev_hash": "e233f5ce495bf5aee0d6b2da67abb4fb67a8f9435752b0089c73bb181390ccb4",
+  "prev_hash": "aad3141bf2d838a89f1930e7837f5fe08322c380d291743a170063e4c84e17a9",
   "seq": 13,
-  "ts": "2026-09-24T04:18:37.755424+00:00"
+  "ts": "2026-09-24T06:43:41.297415+00:00"
  },
  {
   "actor": "agent",
@@ -425,7 +424,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "4b565b5b2b63"
+    "run_id": "e316cd069a51"
    },
    "decision": {
     "decision": "APPROVE",
@@ -433,13 +432,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4b565b5b2b63"
+   "run_id": "e316cd069a51"
   },
-  "hash": "fb19319566c788aead38530dc35f083eccbe6ca7b6858b7e5ed7a97ca6564c50",
+  "hash": "d519fe5d277be84b3bf03b8204b56d23b99874ba6ab936486e54b669076e4524",
   "kind": "cap.run.start",
-  "prev_hash": "715ad6af54397f84e90741ab84ace7941fc27d8fe61b80c89913ecbed0e7ba3f",
+  "prev_hash": "ace7259dcd86c77689b9a9b7c76be4b5cbe5cc1ab4dd17ec127392c3c7e7dedc",
   "seq": 14,
-  "ts": "2026-09-24T04:18:37.970456+00:00"
+  "ts": "2026-09-24T06:43:41.557006+00:00"
  },
  {
   "actor": "agent",
@@ -449,20 +448,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "4b565b5b2b63"
+    "run_id": "e316cd069a51"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4b565b5b2b63"
+   "run_id": "e316cd069a51"
   },
-  "hash": "151d8fde56831da90d3b420e891616374d087d5d8a477216a5d727b2aac55095",
+  "hash": "53ecb22c959e9091d44084bffb9965f175d9520d15ce7395610014f2e8631425",
   "kind": "gate.decision",
-  "prev_hash": "fb19319566c788aead38530dc35f083eccbe6ca7b6858b7e5ed7a97ca6564c50",
+  "prev_hash": "d519fe5d277be84b3bf03b8204b56d23b99874ba6ab936486e54b669076e4524",
   "seq": 15,
-  "ts": "2026-09-24T04:18:37.970622+00:00"
+  "ts": "2026-09-24T06:43:41.557182+00:00"
  },
  {
   "actor": "agent",
@@ -470,15 +469,15 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "4b565b5b2b63",
+   "run_id": "e316cd069a51",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2269e07db9c333ac7a8255f73f3c72d0ae29f9a80f36d1a3cc1873f3af6a61af",
+  "hash": "1c0a2316d381c70eb06025bedc130bde81f47698042ae8c243e588484f4b0b0b",
   "kind": "cap.run.finish",
-  "prev_hash": "151d8fde56831da90d3b420e891616374d087d5d8a477216a5d727b2aac55095",
+  "prev_hash": "53ecb22c959e9091d44084bffb9965f175d9520d15ce7395610014f2e8631425",
   "seq": 16,
-  "ts": "2026-09-24T04:18:37.974158+00:00"
+  "ts": "2026-09-24T06:43:41.560719+00:00"
  },
  {
   "actor": "agent",
@@ -488,7 +487,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "fb80a7be17e6"
+    "run_id": "4e41bbd127f6"
    },
    "decision": {
     "decision": "APPROVE",
@@ -496,13 +495,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fb80a7be17e6"
+   "run_id": "4e41bbd127f6"
   },
-  "hash": "76faa061011c7a7f8cc8a29f3279fe14aeab7ed34abd635e41b617867e53d040",
+  "hash": "83661de34f1ccbab056f02c3565224ca6bfd2677d7101eb2ba72ee804063b09f",
   "kind": "cap.run.start",
-  "prev_hash": "2269e07db9c333ac7a8255f73f3c72d0ae29f9a80f36d1a3cc1873f3af6a61af",
+  "prev_hash": "1c0a2316d381c70eb06025bedc130bde81f47698042ae8c243e588484f4b0b0b",
   "seq": 17,
-  "ts": "2026-09-24T04:18:37.996784+00:00"
+  "ts": "2026-09-24T06:43:41.584571+00:00"
  },
  {
   "actor": "agent",
@@ -512,27 +511,27 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "fb80a7be17e6"
+    "run_id": "4e41bbd127f6"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fb80a7be17e6"
+   "run_id": "4e41bbd127f6"
   },
-  "hash": "3b40b5b36ead2576ba54b4361d7480a9aec9d3cb6e1a56719466b4dbe7b45710",
+  "hash": "a3aa0698934dc513c9209803e4bed8e0b89848b79f392b5cf518679519e1a3ee",
   "kind": "gate.decision",
-  "prev_hash": "76faa061011c7a7f8cc8a29f3279fe14aeab7ed34abd635e41b617867e53d040",
+  "prev_hash": "83661de34f1ccbab056f02c3565224ca6bfd2677d7101eb2ba72ee804063b09f",
   "seq": 18,
-  "ts": "2026-09-24T04:18:37.996961+00:00"
+  "ts": "2026-09-24T06:43:41.584719+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "fb80a7be17e6"
+    "run_id": "4e41bbd127f6"
    },
    "compressions": [],
    "hash": "9855eccadc355401",
@@ -572,7 +571,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "registry.pack",
     "req.detect_conflict",
     "/Users/congvt/Documents/EIDE/docs/test/usecase/TC062/du-an/bom-khong-khop-schematic",
-    "s_8e76346c86fb"
+    "s_03f0c8c0a3da"
    ],
    "tokens": {
     "C0": 1898,
@@ -581,11 +580,11 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "C7": 50
    }
   },
-  "hash": "137e36378510cc997157307d6333c4f1e86df93b341d06c4b46ab6c36af88099",
+  "hash": "50890e57433deaa94edadaa93fa7d16bc0dfb050db6e8e947e1c5a32d60e9eac",
   "kind": "context.bundle",
-  "prev_hash": "3b40b5b36ead2576ba54b4361d7480a9aec9d3cb6e1a56719466b4dbe7b45710",
+  "prev_hash": "a3aa0698934dc513c9209803e4bed8e0b89848b79f392b5cf518679519e1a3ee",
   "seq": 19,
-  "ts": "2026-09-24T04:18:38.003375+00:00"
+  "ts": "2026-09-24T06:43:41.591761+00:00"
  },
  {
   "actor": "agent",
@@ -593,30 +592,30 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "fb80a7be17e6"
+    "run_id": "4e41bbd127f6"
    },
-   "cost_usd": 0.001132,
-   "latency_ms": 1728,
+   "cost_usd": 0.001117,
+   "latency_ms": 1985,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "5f993d733350ab95",
    "request_hash": "38c9fb68115672d8",
    "role": "intent",
    "stop_reason": "stop",
    "tokens_in": 2582,
-   "tokens_out": 143
+   "tokens_out": 137
   },
-  "hash": "a84a0d18b981ce6d17151f6855679f866c0cb75ac8907710081474494f1be178",
+  "hash": "31776c0fbe2aa17b1a6c95386eb3bc7c36a8fc1a445852954e93787fd258438b",
   "kind": "model.call",
-  "prev_hash": "137e36378510cc997157307d6333c4f1e86df93b341d06c4b46ab6c36af88099",
+  "prev_hash": "50890e57433deaa94edadaa93fa7d16bc0dfb050db6e8e947e1c5a32d60e9eac",
   "seq": 20,
-  "ts": "2026-09-24T04:18:39.741181+00:00"
+  "ts": "2026-09-24T06:43:43.580800+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "fb80a7be17e6"
+    "run_id": "4e41bbd127f6"
    },
    "confidence": 0.95,
    "intent": "review.ask",
@@ -626,37 +625,37 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    },
    "text": "BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất"
   },
-  "hash": "21f2d415fff7d885d4dddf109e9a1b99cb23dcdd4f371ee01e91f7ac59d88cf8",
+  "hash": "a00f306afb62701859be742c4764704f12e4bf2955806dba26d923a427193589",
   "kind": "intent",
-  "prev_hash": "a84a0d18b981ce6d17151f6855679f866c0cb75ac8907710081474494f1be178",
+  "prev_hash": "31776c0fbe2aa17b1a6c95386eb3bc7c36a8fc1a445852954e93787fd258438b",
   "seq": 21,
-  "ts": "2026-09-24T04:18:39.742618+00:00"
+  "ts": "2026-09-24T06:43:43.581999+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 1747,
-   "result_hash": "f9ede0dc88c993b5",
-   "run_id": "fb80a7be17e6",
+   "duration_ms": 1998,
+   "result_hash": "b302f21a84e751ff",
+   "run_id": "4e41bbd127f6",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a297d8b5109c73ca56ba31f51af69d75c809cfd3d6682312984a5a88c9c4a7f9",
+  "hash": "786c2afcc198590c260e744198f4b0daf63e5d82bbc2d606ea9c9f2647116e19",
   "kind": "cap.run.finish",
-  "prev_hash": "21f2d415fff7d885d4dddf109e9a1b99cb23dcdd4f371ee01e91f7ac59d88cf8",
+  "prev_hash": "a00f306afb62701859be742c4764704f12e4bf2955806dba26d923a427193589",
   "seq": 22,
-  "ts": "2026-09-24T04:18:39.743944+00:00"
+  "ts": "2026-09-24T06:43:43.582812+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "f9ede0dc88c993b5",
+   "args_hash": "b302f21a84e751ff",
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "66afbd0b0cd7"
+    "run_id": "81a1dae532e5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -664,13 +663,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "66afbd0b0cd7"
+   "run_id": "81a1dae532e5"
   },
-  "hash": "c2179ba54f0f1d4d72b74fc02801a4411713c6661e39d907b52bb7fec4b842d0",
+  "hash": "07bad5722f19be39059ad4162656d86f0ee13a8ab3c3952905de96fc05410c0a",
   "kind": "cap.run.start",
-  "prev_hash": "a297d8b5109c73ca56ba31f51af69d75c809cfd3d6682312984a5a88c9c4a7f9",
+  "prev_hash": "786c2afcc198590c260e744198f4b0daf63e5d82bbc2d606ea9c9f2647116e19",
   "seq": 23,
-  "ts": "2026-09-24T04:18:39.745306+00:00"
+  "ts": "2026-09-24T06:43:43.584096+00:00"
  },
  {
   "actor": "agent",
@@ -680,46 +679,46 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "66afbd0b0cd7"
+    "run_id": "81a1dae532e5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "66afbd0b0cd7"
+   "run_id": "81a1dae532e5"
   },
-  "hash": "0b413b33ae305cd28d307be8a3b1cafc43649a90a5a733b0ee59d32deb3e92f7",
+  "hash": "699a7a9313391b648520e41dbbc9e6881df18b6a071a2849e39bbf5bef741ab8",
   "kind": "gate.decision",
-  "prev_hash": "c2179ba54f0f1d4d72b74fc02801a4411713c6661e39d907b52bb7fec4b842d0",
+  "prev_hash": "07bad5722f19be39059ad4162656d86f0ee13a8ab3c3952905de96fc05410c0a",
   "seq": 24,
-  "ts": "2026-09-24T04:18:39.745550+00:00"
+  "ts": "2026-09-24T06:43:43.584486+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.ground",
-   "duration_ms": 2,
+   "duration_ms": 3,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "66afbd0b0cd7",
+   "run_id": "81a1dae532e5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "38e40dcd923b498ce7e3fe03e3f296f6dd64cc07f1575ea671ef85d1dcf96c92",
+  "hash": "81642ea5f7def429d7618aba50e99fad02f8e59c411cc2c5b062da9b97fc835a",
   "kind": "cap.run.finish",
-  "prev_hash": "0b413b33ae305cd28d307be8a3b1cafc43649a90a5a733b0ee59d32deb3e92f7",
+  "prev_hash": "699a7a9313391b648520e41dbbc9e6881df18b6a071a2849e39bbf5bef741ab8",
   "seq": 25,
-  "ts": "2026-09-24T04:18:39.748007+00:00"
+  "ts": "2026-09-24T06:43:43.587520+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "96228e2dd97e6742",
+   "args_hash": "2ded9b505ce11aa0",
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "f18ba6dd3280"
+    "run_id": "eddacfe006c2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -727,13 +726,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f18ba6dd3280"
+   "run_id": "eddacfe006c2"
   },
-  "hash": "89112d1cff1c19fa953cc5444ca4effdba7b70df053a5f7288197974ec2eb17b",
+  "hash": "57c19553d08322401c4b2d5dd988a862194023ba422b1a5480b564167cacd91b",
   "kind": "cap.run.start",
-  "prev_hash": "38e40dcd923b498ce7e3fe03e3f296f6dd64cc07f1575ea671ef85d1dcf96c92",
+  "prev_hash": "81642ea5f7def429d7618aba50e99fad02f8e59c411cc2c5b062da9b97fc835a",
   "seq": 26,
-  "ts": "2026-09-24T04:18:39.748714+00:00"
+  "ts": "2026-09-24T06:43:43.588507+00:00"
  },
  {
   "actor": "agent",
@@ -743,46 +742,46 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "f18ba6dd3280"
+    "run_id": "eddacfe006c2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f18ba6dd3280"
+   "run_id": "eddacfe006c2"
   },
-  "hash": "44d3bfb23f7b8d75ef070a34ffce18791cde903e0b13a6d65a7944cf2ff50539",
+  "hash": "b7742ee6f4d5f286981ebc0bea93d17d4c4cd2508fe7f6b6ee0d33605cebed02",
   "kind": "gate.decision",
-  "prev_hash": "89112d1cff1c19fa953cc5444ca4effdba7b70df053a5f7288197974ec2eb17b",
+  "prev_hash": "57c19553d08322401c4b2d5dd988a862194023ba422b1a5480b564167cacd91b",
   "seq": 27,
-  "ts": "2026-09-24T04:18:39.748811+00:00"
+  "ts": "2026-09-24T06:43:43.588645+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
    "duration_ms": 4,
-   "result_hash": "80a78560a62d4c42",
-   "run_id": "f18ba6dd3280",
+   "result_hash": "6411c42272e75446",
+   "run_id": "eddacfe006c2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c35d148ea2f59f1f6dd61c2020e1a561ab74e8f80494c79e32de769edc102c34",
+  "hash": "9d64e50b729b31aba55c2980ec0c2f6d26861ace4ee8ad30a90d6b2492cd0227",
   "kind": "cap.run.finish",
-  "prev_hash": "44d3bfb23f7b8d75ef070a34ffce18791cde903e0b13a6d65a7944cf2ff50539",
+  "prev_hash": "b7742ee6f4d5f286981ebc0bea93d17d4c4cd2508fe7f6b6ee0d33605cebed02",
   "seq": 28,
-  "ts": "2026-09-24T04:18:39.752703+00:00"
+  "ts": "2026-09-24T06:43:43.593402+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "75f6a76fe5f21730",
+   "args_hash": "8c0e7dcb466894d3",
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "2d696e81784c"
+    "run_id": "f483b001dc15"
    },
    "decision": {
     "decision": "APPROVE",
@@ -790,13 +789,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2d696e81784c"
+   "run_id": "f483b001dc15"
   },
-  "hash": "73bda99df8571df98f5118945ccf6da31d93cb4e98e091725896d07d3d926f71",
+  "hash": "cc5d42e5634874f65166b33b59eaaa70cbc7b3a292601a9e3cd0d8743d22b16f",
   "kind": "cap.run.start",
-  "prev_hash": "c35d148ea2f59f1f6dd61c2020e1a561ab74e8f80494c79e32de769edc102c34",
+  "prev_hash": "9d64e50b729b31aba55c2980ec0c2f6d26861ace4ee8ad30a90d6b2492cd0227",
   "seq": 29,
-  "ts": "2026-09-24T04:18:39.754015+00:00"
+  "ts": "2026-09-24T06:43:43.594826+00:00"
  },
  {
   "actor": "agent",
@@ -806,30 +805,30 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "2d696e81784c"
+    "run_id": "f483b001dc15"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2d696e81784c"
+   "run_id": "f483b001dc15"
   },
-  "hash": "48d04dec53e15695f2621ba9a5e47703748aa3d52ac56d0b0e57b83943e3f819",
+  "hash": "3962d2f64133987578af03dc6bd135fc64dd01228e6aa29bc1c0975ec2f7be34",
   "kind": "gate.decision",
-  "prev_hash": "73bda99df8571df98f5118945ccf6da31d93cb4e98e091725896d07d3d926f71",
+  "prev_hash": "cc5d42e5634874f65166b33b59eaaa70cbc7b3a292601a9e3cd0d8743d22b16f",
   "seq": 30,
-  "ts": "2026-09-24T04:18:39.754155+00:00"
+  "ts": "2026-09-24T06:43:43.594988+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "2d696e81784c"
+    "run_id": "f483b001dc15"
    },
    "n": 1,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "steps": [
     {
      "cap": "ingest.index_text",
@@ -862,11 +861,11 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    ],
    "text": "BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11."
   },
-  "hash": "6fbeb71b408705873a7ba79b290a293de033a5bd1063d119588c52fa3666d834",
+  "hash": "15133c19f2ba9870079f9d45dc05d105edb07ad17928bf200a2b579340671222",
   "kind": "run.started",
-  "prev_hash": "48d04dec53e15695f2621ba9a5e47703748aa3d52ac56d0b0e57b83943e3f819",
+  "prev_hash": "3962d2f64133987578af03dc6bd135fc64dd01228e6aa29bc1c0975ec2f7be34",
   "seq": 31,
-  "ts": "2026-09-24T04:18:39.774150+00:00"
+  "ts": "2026-09-24T06:43:43.606393+00:00"
  },
  {
   "actor": "agent",
@@ -874,18 +873,18 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "ingest.index_text",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "2d696e81784c"
+    "run_id": "f483b001dc15"
    },
    "i": 1,
    "node_id": "n1",
    "of": 7,
-   "run_id": "r_abb59e6fdc27"
+   "run_id": "r_60ff9e123b5a"
   },
-  "hash": "ef4300e4c7bf3ef38856df43c17edadd18ac2be71b7b77fa17d1ca3e30248037",
+  "hash": "cda40ef1d198ea975def8904384b03aea9a090a7b9fac570752a73ef2a765fd8",
   "kind": "run.step_started",
-  "prev_hash": "6fbeb71b408705873a7ba79b290a293de033a5bd1063d119588c52fa3666d834",
+  "prev_hash": "15133c19f2ba9870079f9d45dc05d105edb07ad17928bf200a2b579340671222",
   "seq": 32,
-  "ts": "2026-09-24T04:18:39.774718+00:00"
+  "ts": "2026-09-24T06:43:43.606840+00:00"
  },
  {
   "actor": "agent",
@@ -897,7 +896,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -905,13 +904,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "fb02e45aa617"
+   "run_id": "fe500f84b870"
   },
-  "hash": "425dbbf67bd92dbe18737f526fd3d008a438ba40e96b29d6ddaf58cda1799087",
+  "hash": "27c89eefdd3e91843d92e9287bff5745d92082c1bf9bdf1bdc564a88e42ba7e2",
   "kind": "cap.run.start",
-  "prev_hash": "ef4300e4c7bf3ef38856df43c17edadd18ac2be71b7b77fa17d1ca3e30248037",
+  "prev_hash": "cda40ef1d198ea975def8904384b03aea9a090a7b9fac570752a73ef2a765fd8",
   "seq": 33,
-  "ts": "2026-09-24T04:18:39.775706+00:00"
+  "ts": "2026-09-24T06:43:43.607544+00:00"
  },
  {
   "actor": "agent",
@@ -923,20 +922,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R1",
    "rule": "TIER-T1",
-   "run_id": "fb02e45aa617"
+   "run_id": "fe500f84b870"
   },
-  "hash": "89f920b5281d153ab223a1037f3835112b2823690b720de083a8bf1efee4c566",
+  "hash": "f65764ad936e91209304ede773d6c59733a203220d2e1a54ec4cbd00f561a25e",
   "kind": "gate.decision",
-  "prev_hash": "425dbbf67bd92dbe18737f526fd3d008a438ba40e96b29d6ddaf58cda1799087",
+  "prev_hash": "27c89eefdd3e91843d92e9287bff5745d92082c1bf9bdf1bdc564a88e42ba7e2",
   "seq": 34,
-  "ts": "2026-09-24T04:18:39.775817+00:00"
+  "ts": "2026-09-24T06:43:43.607634+00:00"
  },
  {
   "actor": "agent",
@@ -946,19 +945,19 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 1,
     "node_id": "n1",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "duration_ms": 1,
    "result_hash": "13fcedb62a880650",
-   "run_id": "fb02e45aa617",
+   "run_id": "fe500f84b870",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "84b801c877c11b53a12d772afd8d855b74ec18d8155f0d3da560a891caa39b1c",
+  "hash": "3d8a99ab39779e802be8478b328841ff5cf5463f531051b446752ad980e1e6b3",
   "kind": "cap.run.finish",
-  "prev_hash": "89f920b5281d153ab223a1037f3835112b2823690b720de083a8bf1efee4c566",
+  "prev_hash": "f65764ad936e91209304ede773d6c59733a203220d2e1a54ec4cbd00f561a25e",
   "seq": 35,
-  "ts": "2026-09-24T04:18:39.777551+00:00"
+  "ts": "2026-09-24T06:43:43.609007+00:00"
  },
  {
   "actor": "agent",
@@ -967,14 +966,14 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 1,
    "node_id": "n1",
    "of": 7,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "status": "done"
   },
-  "hash": "8a898f177629d9db4c9fb1651338e0a2926cfa7265753f6f0ea9324510371f5c",
+  "hash": "23d49ea984df8ebbc46775cc690a84208e2dda00751874fbee628dc1f10afc59",
   "kind": "run.step_done",
-  "prev_hash": "84b801c877c11b53a12d772afd8d855b74ec18d8155f0d3da560a891caa39b1c",
+  "prev_hash": "3d8a99ab39779e802be8478b328841ff5cf5463f531051b446752ad980e1e6b3",
   "seq": 36,
-  "ts": "2026-09-24T04:18:39.777664+00:00"
+  "ts": "2026-09-24T06:43:43.609086+00:00"
  },
  {
   "actor": "agent",
@@ -983,13 +982,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 2,
    "node_id": "n2",
    "of": 7,
-   "run_id": "r_abb59e6fdc27"
+   "run_id": "r_60ff9e123b5a"
   },
-  "hash": "1f4e4c143b6ef29d60e88493325b65a92aacab3eef1ecb26285be8cdeb7e07b2",
+  "hash": "36015c96d75e1a1e4654ea7225146514c87589e8a2a28af55442cdf2d7fd29fd",
   "kind": "run.step_started",
-  "prev_hash": "8a898f177629d9db4c9fb1651338e0a2926cfa7265753f6f0ea9324510371f5c",
+  "prev_hash": "23d49ea984df8ebbc46775cc690a84208e2dda00751874fbee628dc1f10afc59",
   "seq": 37,
-  "ts": "2026-09-24T04:18:39.778054+00:00"
+  "ts": "2026-09-24T06:43:43.609397+00:00"
  },
  {
   "actor": "agent",
@@ -1001,7 +1000,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1009,13 +1008,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
     "rule": "TIER-T1"
    },
-   "run_id": "8ac617776db1"
+   "run_id": "281f368e015b"
   },
-  "hash": "f8fe679749986b0675bf730abe4d2fba850d25ff007322d706d2c6e5f22ca97c",
+  "hash": "4578fea641ef63b084d3448aa371d55d6afbf34849c2278c8fcb2c1a955d95b2",
   "kind": "cap.run.start",
-  "prev_hash": "1f4e4c143b6ef29d60e88493325b65a92aacab3eef1ecb26285be8cdeb7e07b2",
+  "prev_hash": "36015c96d75e1a1e4654ea7225146514c87589e8a2a28af55442cdf2d7fd29fd",
   "seq": 38,
-  "ts": "2026-09-24T04:18:39.778937+00:00"
+  "ts": "2026-09-24T06:43:43.610101+00:00"
  },
  {
   "actor": "agent",
@@ -1027,42 +1026,42 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Năng lực mức T1: tự làm trong mức tự chủ hiện tại",
    "risk": "R1",
    "rule": "TIER-T1",
-   "run_id": "8ac617776db1"
+   "run_id": "281f368e015b"
   },
-  "hash": "382a29564ad5e82bfaadd302396cf51e529a63c99d7a5c41811b65088e1b27cf",
+  "hash": "e2699908d1584191e37779a473a7964116ad852fa388e059b2e547a8897aec18",
   "kind": "gate.decision",
-  "prev_hash": "f8fe679749986b0675bf730abe4d2fba850d25ff007322d706d2c6e5f22ca97c",
+  "prev_hash": "4578fea641ef63b084d3448aa371d55d6afbf34849c2278c8fcb2c1a955d95b2",
   "seq": 39,
-  "ts": "2026-09-24T04:18:39.779046+00:00"
+  "ts": "2026-09-24T06:43:43.610193+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "batch_id": "b_27781c3a1d1557fa",
+   "batch_id": "b_ebceb7b5cff71c71",
    "chain": {
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
-   "hash": "076057ae6523094957b6020d740436fbc429166f75c22e08191fa734ffe23d03",
+   "hash": "7b0f10b5cb8a8782eb864dfccadc4f5d1a77a56c0930d1ab5c6a82296d79fe79",
    "n_conflicts": 0,
    "n_facts": 17,
    "reason": "extract.kicad_netlist mach-khong-loi.net"
   },
-  "hash": "0667b4c785dc2d04a1ddcfac3e8ee2bb0efa010a6ad18458838781315940ea34",
+  "hash": "dbdae2838e8927437eeae528a5dc16c42689eb535e9b038f38eadda24e41da31",
   "kind": "store.write",
-  "prev_hash": "382a29564ad5e82bfaadd302396cf51e529a63c99d7a5c41811b65088e1b27cf",
+  "prev_hash": "e2699908d1584191e37779a473a7964116ad852fa388e059b2e547a8897aec18",
   "seq": 40,
-  "ts": "2026-09-24T04:18:39.787520+00:00"
+  "ts": "2026-09-24T06:43:43.617019+00:00"
  },
  {
   "actor": "agent",
@@ -1072,35 +1071,35 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 2,
     "node_id": "n2",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
-   "duration_ms": 9,
+   "duration_ms": 7,
    "result_hash": "125557656e369fdb",
-   "run_id": "8ac617776db1",
+   "run_id": "281f368e015b",
    "status": "done",
-   "undo_ref": "8ac617776db1"
+   "undo_ref": "281f368e015b"
   },
-  "hash": "b024afe2b2e92795391f69f7f280733a6e2702ca6476fc858b2753ee6d3ad44b",
+  "hash": "fcddf5d7a25549941f1322e9f55f2a5de13ea66912702b549998821d17cb0f87",
   "kind": "cap.run.finish",
-  "prev_hash": "0667b4c785dc2d04a1ddcfac3e8ee2bb0efa010a6ad18458838781315940ea34",
+  "prev_hash": "dbdae2838e8927437eeae528a5dc16c42689eb535e9b038f38eadda24e41da31",
   "seq": 41,
-  "ts": "2026-09-24T04:18:39.788558+00:00"
+  "ts": "2026-09-24T06:43:43.617787+00:00"
  },
  {
   "actor": "agent",
   "data": {
-   "at": "2026-09-24T04:18:39.788668+00:00",
+   "at": "2026-09-24T06:43:43.617914+00:00",
    "cap": "extract.kicad_netlist",
-   "deadline": "2026-09-27T04:18:39.788668+00:00",
+   "deadline": "2026-09-27T06:43:43.617914+00:00",
    "kind": "supersede_facts",
-   "undo_ref": "8ac617776db1",
+   "undo_ref": "281f368e015b",
    "window": "facts"
   },
-  "hash": "a2fde5c1a4f88bb261a28ff641fb0746698d7979c6193955b7352ca9052eb1f8",
+  "hash": "34d3b95c2288972f3a11f9c84ea0b42b75b59dbffac690c22c56d62510fd2e88",
   "kind": "undo.register",
-  "prev_hash": "b024afe2b2e92795391f69f7f280733a6e2702ca6476fc858b2753ee6d3ad44b",
+  "prev_hash": "fcddf5d7a25549941f1322e9f55f2a5de13ea66912702b549998821d17cb0f87",
   "seq": 42,
-  "ts": "2026-09-24T04:18:39.788767+00:00"
+  "ts": "2026-09-24T06:43:43.618010+00:00"
  },
  {
   "actor": "agent",
@@ -1109,14 +1108,14 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 2,
    "node_id": "n2",
    "of": 7,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "status": "done"
   },
-  "hash": "26368c9514d971ceaf8285d3284d829312312f731f84afb1865a403ffca14afd",
+  "hash": "9370ee88ee75c91f9a44294fce7c6a7d22c7924ed07021a21b3cca50049c1d32",
   "kind": "run.step_done",
-  "prev_hash": "a2fde5c1a4f88bb261a28ff641fb0746698d7979c6193955b7352ca9052eb1f8",
+  "prev_hash": "34d3b95c2288972f3a11f9c84ea0b42b75b59dbffac690c22c56d62510fd2e88",
   "seq": 43,
-  "ts": "2026-09-24T04:18:39.790410+00:00"
+  "ts": "2026-09-24T06:43:43.619654+00:00"
  },
  {
   "actor": "agent",
@@ -1125,13 +1124,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 3,
    "node_id": "n5",
    "of": 7,
-   "run_id": "r_abb59e6fdc27"
+   "run_id": "r_60ff9e123b5a"
   },
-  "hash": "808b3e5f43bf585e1c07780be90f023d94f608a2eaf90e751801eec189ed044e",
+  "hash": "b55f0e7fb5db7cdb326b4df68c6199561862c73f915dffd6da164d52ba03f162",
   "kind": "run.step_started",
-  "prev_hash": "26368c9514d971ceaf8285d3284d829312312f731f84afb1865a403ffca14afd",
+  "prev_hash": "9370ee88ee75c91f9a44294fce7c6a7d22c7924ed07021a21b3cca50049c1d32",
   "seq": 44,
-  "ts": "2026-09-24T04:18:39.790804+00:00"
+  "ts": "2026-09-24T06:43:43.620020+00:00"
  },
  {
   "actor": "agent",
@@ -1143,7 +1142,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1151,13 +1150,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "75c0590eaa88"
+   "run_id": "5769fc30b0bd"
   },
-  "hash": "c0f7b70713e9ffc02162ddba0dfe46ab7bf5cab58f1695f3cc4bc8cdaa1f3488",
+  "hash": "d619d2feff2597bdfbb5cb5222246eb66dad41824060db8ab5b0be3cef9d8d1c",
   "kind": "cap.run.start",
-  "prev_hash": "808b3e5f43bf585e1c07780be90f023d94f608a2eaf90e751801eec189ed044e",
+  "prev_hash": "b55f0e7fb5db7cdb326b4df68c6199561862c73f915dffd6da164d52ba03f162",
   "seq": 45,
-  "ts": "2026-09-24T04:18:39.791465+00:00"
+  "ts": "2026-09-24T06:43:43.620562+00:00"
  },
  {
   "actor": "agent",
@@ -1169,20 +1168,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "75c0590eaa88"
+   "run_id": "5769fc30b0bd"
   },
-  "hash": "eadaa6d83cabcdcc5b5914696c4f79b752e17bd6a7336ab060bd6bbd3fb39571",
+  "hash": "08fd310d96f50d8a31f0ccd880b76f11d1ad590b80b306f857f3244f9d3911c6",
   "kind": "gate.decision",
-  "prev_hash": "c0f7b70713e9ffc02162ddba0dfe46ab7bf5cab58f1695f3cc4bc8cdaa1f3488",
+  "prev_hash": "d619d2feff2597bdfbb5cb5222246eb66dad41824060db8ab5b0be3cef9d8d1c",
   "seq": 46,
-  "ts": "2026-09-24T04:18:39.791544+00:00"
+  "ts": "2026-09-24T06:43:43.620643+00:00"
  },
  {
   "actor": "agent",
@@ -1192,18 +1191,18 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 3,
     "node_id": "n5",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "duration_ms": 1,
    "error": "E2000",
-   "run_id": "75c0590eaa88",
+   "run_id": "5769fc30b0bd",
    "status": "failed"
   },
-  "hash": "3b599cb51b013b5b83d556f06b863b1d98e0cd910dd547ec8cd0baa9faf70d15",
+  "hash": "6dc95d05f1a1fc6ed7d0924aaf0f0209dd49581aa8aa3778e17df11355e19865",
   "kind": "cap.run.finish",
-  "prev_hash": "eadaa6d83cabcdcc5b5914696c4f79b752e17bd6a7336ab060bd6bbd3fb39571",
+  "prev_hash": "08fd310d96f50d8a31f0ccd880b76f11d1ad590b80b306f857f3244f9d3911c6",
   "seq": 47,
-  "ts": "2026-09-24T04:18:39.792661+00:00"
+  "ts": "2026-09-24T06:43:43.621940+00:00"
  },
  {
   "actor": "agent",
@@ -1222,14 +1221,14 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 3,
    "node_id": "n5",
    "of": 7,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "status": "failed"
   },
-  "hash": "298c55a5b839b7c9c4e2cbbc31bda0aced381666781439499806ec92f5865ea1",
+  "hash": "57c47dd83cfe3e82304dfe4bc3a8de2849ac728399cdce1aa035286c959d2a5e",
   "kind": "run.step_done",
-  "prev_hash": "3b599cb51b013b5b83d556f06b863b1d98e0cd910dd547ec8cd0baa9faf70d15",
+  "prev_hash": "6dc95d05f1a1fc6ed7d0924aaf0f0209dd49581aa8aa3778e17df11355e19865",
   "seq": 48,
-  "ts": "2026-09-24T04:18:39.792763+00:00"
+  "ts": "2026-09-24T06:43:43.622076+00:00"
  },
  {
   "actor": "agent",
@@ -1238,13 +1237,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 4,
    "node_id": "n6",
    "of": 7,
-   "run_id": "r_abb59e6fdc27"
+   "run_id": "r_60ff9e123b5a"
   },
-  "hash": "3aaf57d48ba911ba669f7df20026070aefe4a297d7a7ddc7449dd78d84af8634",
+  "hash": "a62fc441b6828a162f2f06a33948c3bf4cd70478c006e5ea2ee82a45d871a577",
   "kind": "run.step_started",
-  "prev_hash": "298c55a5b839b7c9c4e2cbbc31bda0aced381666781439499806ec92f5865ea1",
+  "prev_hash": "57c47dd83cfe3e82304dfe4bc3a8de2849ac728399cdce1aa035286c959d2a5e",
   "seq": 49,
-  "ts": "2026-09-24T04:18:39.793643+00:00"
+  "ts": "2026-09-24T06:43:43.622968+00:00"
  },
  {
   "actor": "agent",
@@ -1256,7 +1255,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1264,13 +1263,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "9be404fbbf68"
+   "run_id": "c063e5884691"
   },
-  "hash": "9b36b0ce734d1a3236221770c4ee96ac52ab80313550e675896bb91bcfa8cad3",
+  "hash": "b06a45a546069c08eafd5d2ffed376e0a0680c713d51b25b74b313dfbf05960a",
   "kind": "cap.run.start",
-  "prev_hash": "3aaf57d48ba911ba669f7df20026070aefe4a297d7a7ddc7449dd78d84af8634",
+  "prev_hash": "a62fc441b6828a162f2f06a33948c3bf4cd70478c006e5ea2ee82a45d871a577",
   "seq": 50,
-  "ts": "2026-09-24T04:18:39.794749+00:00"
+  "ts": "2026-09-24T06:43:43.623972+00:00"
  },
  {
   "actor": "agent",
@@ -1282,20 +1281,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "9be404fbbf68"
+   "run_id": "c063e5884691"
   },
-  "hash": "784e004fa02b8c0707d2b6abc0fb3e63980eea2474a8f1025db5cdaf4d60c4d2",
+  "hash": "2a0f9543ead9e38dc3d3ffeb87ff997d697f2e0b8eb3b16cbbf3eb83a8420024",
   "kind": "gate.decision",
-  "prev_hash": "9b36b0ce734d1a3236221770c4ee96ac52ab80313550e675896bb91bcfa8cad3",
+  "prev_hash": "b06a45a546069c08eafd5d2ffed376e0a0680c713d51b25b74b313dfbf05960a",
   "seq": 51,
-  "ts": "2026-09-24T04:18:39.794853+00:00"
+  "ts": "2026-09-24T06:43:43.624149+00:00"
  },
  {
   "actor": "agent",
@@ -1305,18 +1304,18 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 4,
     "node_id": "n6",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "duration_ms": 1,
    "error": "E5002",
-   "run_id": "9be404fbbf68",
+   "run_id": "c063e5884691",
    "status": "failed"
   },
-  "hash": "468f30169f1bd1b2d3bb89b9fbadc1de2ca693f1d7e01d8db7dc4983ded50e5a",
+  "hash": "beb511736297300f3a7d8f7f33a2a33cdeb47472e99719b513847969b2efd57a",
   "kind": "cap.run.finish",
-  "prev_hash": "784e004fa02b8c0707d2b6abc0fb3e63980eea2474a8f1025db5cdaf4d60c4d2",
+  "prev_hash": "2a0f9543ead9e38dc3d3ffeb87ff997d697f2e0b8eb3b16cbbf3eb83a8420024",
   "seq": 52,
-  "ts": "2026-09-24T04:18:39.795714+00:00"
+  "ts": "2026-09-24T06:43:43.624951+00:00"
  },
  {
   "actor": "agent",
@@ -1331,14 +1330,14 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 4,
    "node_id": "n6",
    "of": 7,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "status": "failed"
   },
-  "hash": "50349f0a4b99cada370edea7c302ffb4ad35421b11bca1eb2b9ca6ed5daf47bd",
+  "hash": "1a8ff3b0f2f2142bbde6b70a12ed08fe7d24d53f7cead744b9112e46aa8891c1",
   "kind": "run.step_done",
-  "prev_hash": "468f30169f1bd1b2d3bb89b9fbadc1de2ca693f1d7e01d8db7dc4983ded50e5a",
+  "prev_hash": "beb511736297300f3a7d8f7f33a2a33cdeb47472e99719b513847969b2efd57a",
   "seq": 53,
-  "ts": "2026-09-24T04:18:39.795825+00:00"
+  "ts": "2026-09-24T06:43:43.625058+00:00"
  },
  {
   "actor": "agent",
@@ -1347,13 +1346,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 5,
    "node_id": "n3",
    "of": 7,
-   "run_id": "r_abb59e6fdc27"
+   "run_id": "r_60ff9e123b5a"
   },
-  "hash": "558419f1b2b420d34701e1a724bd3f3719e4b774e8ccab8463cb3747bd2bffbf",
+  "hash": "6fd88c3a92f64ee253050d68019ffc3c5fccfb59edd15b960a21b25b37966e07",
   "kind": "run.step_started",
-  "prev_hash": "50349f0a4b99cada370edea7c302ffb4ad35421b11bca1eb2b9ca6ed5daf47bd",
+  "prev_hash": "1a8ff3b0f2f2142bbde6b70a12ed08fe7d24d53f7cead744b9112e46aa8891c1",
   "seq": 54,
-  "ts": "2026-09-24T04:18:39.796331+00:00"
+  "ts": "2026-09-24T06:43:43.625542+00:00"
  },
  {
   "actor": "agent",
@@ -1365,7 +1364,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 5,
     "node_id": "n3",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1373,13 +1372,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "da89f45c8ea6"
+   "run_id": "69473e55f68c"
   },
-  "hash": "2a2efd31cffe769ad69f6c36e31a79463a3dbbb89b3f77d5d271f32ecc22ffe0",
+  "hash": "7692af0abf630c66210bfa0077e56ec87bff8a1dbc700fa0490fa12e26349ada",
   "kind": "cap.run.start",
-  "prev_hash": "558419f1b2b420d34701e1a724bd3f3719e4b774e8ccab8463cb3747bd2bffbf",
+  "prev_hash": "6fd88c3a92f64ee253050d68019ffc3c5fccfb59edd15b960a21b25b37966e07",
   "seq": 55,
-  "ts": "2026-09-24T04:18:39.797242+00:00"
+  "ts": "2026-09-24T06:43:43.626262+00:00"
  },
  {
   "actor": "agent",
@@ -1391,20 +1390,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 5,
     "node_id": "n3",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "da89f45c8ea6"
+   "run_id": "69473e55f68c"
   },
-  "hash": "43f9146b4635c64c81f2724b354e45f6838a2b02b39a5d512427a262b97b7031",
+  "hash": "190dcb9b9f00224334946f5ef3f68d53a1ac66bf5c3304afb5719f544ea5db73",
   "kind": "gate.decision",
-  "prev_hash": "2a2efd31cffe769ad69f6c36e31a79463a3dbbb89b3f77d5d271f32ecc22ffe0",
+  "prev_hash": "7692af0abf630c66210bfa0077e56ec87bff8a1dbc700fa0490fa12e26349ada",
   "seq": 56,
-  "ts": "2026-09-24T04:18:39.797399+00:00"
+  "ts": "2026-09-24T06:43:43.626372+00:00"
  },
  {
   "actor": "agent",
@@ -1414,19 +1413,19 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 5,
     "node_id": "n3",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "duration_ms": 2,
    "result_hash": "7cf5307768c544c4",
-   "run_id": "da89f45c8ea6",
+   "run_id": "69473e55f68c",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5f2b85c7ac944db61fb68e3060f88164265b7921b62df94d8f9a0c3d8d31e275",
+  "hash": "5880c37d0f9febe563b24f3764155e1ac455464711d3afda1d23f567219059ae",
   "kind": "cap.run.finish",
-  "prev_hash": "43f9146b4635c64c81f2724b354e45f6838a2b02b39a5d512427a262b97b7031",
+  "prev_hash": "190dcb9b9f00224334946f5ef3f68d53a1ac66bf5c3304afb5719f544ea5db73",
   "seq": 57,
-  "ts": "2026-09-24T04:18:39.800137+00:00"
+  "ts": "2026-09-24T06:43:43.628397+00:00"
  },
  {
   "actor": "agent",
@@ -1435,14 +1434,14 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 5,
    "node_id": "n3",
    "of": 7,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "status": "done"
   },
-  "hash": "d6e3f609aba847b7d94d44186c3d46786e5d98fc5f062dec0b043f9436ca9722",
+  "hash": "bb0694193ece303da304b2bee34f29785948c64f960795539015ec5e0cf6415e",
   "kind": "run.step_done",
-  "prev_hash": "5f2b85c7ac944db61fb68e3060f88164265b7921b62df94d8f9a0c3d8d31e275",
+  "prev_hash": "5880c37d0f9febe563b24f3764155e1ac455464711d3afda1d23f567219059ae",
   "seq": 58,
-  "ts": "2026-09-24T04:18:39.800270+00:00"
+  "ts": "2026-09-24T06:43:43.628473+00:00"
  },
  {
   "actor": "agent",
@@ -1451,25 +1450,25 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 6,
    "node_id": "n7",
    "of": 7,
-   "run_id": "r_abb59e6fdc27"
+   "run_id": "r_60ff9e123b5a"
   },
-  "hash": "e76f2e3859d5ea8806ab58a0a9789ca5cb25b101273bb5619e311adb66331065",
+  "hash": "4005ed280dd088f1cce8c892446edc32cb27e9e863896194cccb78ff62abd141",
   "kind": "run.step_started",
-  "prev_hash": "d6e3f609aba847b7d94d44186c3d46786e5d98fc5f062dec0b043f9436ca9722",
+  "prev_hash": "bb0694193ece303da304b2bee34f29785948c64f960795539015ec5e0cf6415e",
   "seq": 59,
-  "ts": "2026-09-24T04:18:39.800763+00:00"
+  "ts": "2026-09-24T06:43:43.628854+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "e2d2a8911ea5af58",
+   "args_hash": "0b541ee94e18a2b3",
    "cap": "chat.report_back",
    "chain": {
     "i": 6,
     "node_id": "n7",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1477,13 +1476,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6ef336d537d2"
+   "run_id": "f54a96bc2193"
   },
-  "hash": "b3e24927da2cc42fe90243853ec0bd28fc653aa746e7b8f76e8d9c0c20cbe08b",
+  "hash": "d37b3f57053694827d88cc4aaa89d9380e0bed11fc2d5d795862e644f0804c4c",
   "kind": "cap.run.start",
-  "prev_hash": "e76f2e3859d5ea8806ab58a0a9789ca5cb25b101273bb5619e311adb66331065",
+  "prev_hash": "4005ed280dd088f1cce8c892446edc32cb27e9e863896194cccb78ff62abd141",
   "seq": 60,
-  "ts": "2026-09-24T04:18:39.801412+00:00"
+  "ts": "2026-09-24T06:43:43.629379+00:00"
  },
  {
   "actor": "agent",
@@ -1495,20 +1494,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 6,
     "node_id": "n7",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6ef336d537d2"
+   "run_id": "f54a96bc2193"
   },
-  "hash": "9451db2513f616dd178ca272dccd8161070ccd81201a98dd3bf0a36ea2421bab",
+  "hash": "fee9fe2e2c48ff167068fb3aff2abae64b81cf0f7ab471b63abf53d6c1c1855f",
   "kind": "gate.decision",
-  "prev_hash": "b3e24927da2cc42fe90243853ec0bd28fc653aa746e7b8f76e8d9c0c20cbe08b",
+  "prev_hash": "d37b3f57053694827d88cc4aaa89d9380e0bed11fc2d5d795862e644f0804c4c",
   "seq": 61,
-  "ts": "2026-09-24T04:18:39.801506+00:00"
+  "ts": "2026-09-24T06:43:43.629450+00:00"
  },
  {
   "actor": "agent",
@@ -1518,19 +1517,19 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "i": 6,
     "node_id": "n7",
     "of": 7,
-    "run_id": "r_abb59e6fdc27"
+    "run_id": "r_60ff9e123b5a"
    },
    "duration_ms": 2,
-   "result_hash": "c06bb1ba4f33f7d3",
-   "run_id": "6ef336d537d2",
+   "result_hash": "483f808d28c5c80a",
+   "run_id": "f54a96bc2193",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b8fec7f8067462623ace953ed530a34464ee7bf3df0ad7e0bedc7c50ea3b52ef",
+  "hash": "953a63f216211ac4c173d5acfc16868af308bbe21bf798357845db83b1cd657f",
   "kind": "cap.run.finish",
-  "prev_hash": "9451db2513f616dd178ca272dccd8161070ccd81201a98dd3bf0a36ea2421bab",
+  "prev_hash": "fee9fe2e2c48ff167068fb3aff2abae64b81cf0f7ab471b63abf53d6c1c1855f",
   "seq": 62,
-  "ts": "2026-09-24T04:18:39.803866+00:00"
+  "ts": "2026-09-24T06:43:43.631396+00:00"
  },
  {
   "actor": "agent",
@@ -1539,55 +1538,55 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "i": 6,
    "node_id": "n7",
    "of": 7,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "status": "done"
   },
-  "hash": "535e763f4b6b17cf31a2d7feaf11b04f8005dcc5b02df3651b0f99890fb6160c",
+  "hash": "dcdad0bd62333c0377bf110ae56720f89462e1c016ef13ce48b4f6633fef0f11",
   "kind": "run.step_done",
-  "prev_hash": "b8fec7f8067462623ace953ed530a34464ee7bf3df0ad7e0bedc7c50ea3b52ef",
+  "prev_hash": "953a63f216211ac4c173d5acfc16868af308bbe21bf798357845db83b1cd657f",
   "seq": 63,
-  "ts": "2026-09-24T04:18:39.803981+00:00"
+  "ts": "2026-09-24T06:43:43.631480+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 4,
    "failed": 3,
-   "run_id": "r_abb59e6fdc27",
+   "run_id": "r_60ff9e123b5a",
    "state": "failed",
    "waiting": 0
   },
-  "hash": "c8200556cecec55ccb67d29576f7f3f939280e6f690c77e2f9441c6a52bbe1ff",
+  "hash": "84c9ff210bafeb9e2fee0a69b5c94c2d50ab0703f00c083651087f75396b6f53",
   "kind": "run.done",
-  "prev_hash": "535e763f4b6b17cf31a2d7feaf11b04f8005dcc5b02df3651b0f99890fb6160c",
+  "prev_hash": "dcdad0bd62333c0377bf110ae56720f89462e1c016ef13ce48b4f6633fef0f11",
   "seq": 64,
-  "ts": "2026-09-24T04:18:39.804720+00:00"
+  "ts": "2026-09-24T06:43:43.632408+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 72,
-   "result_hash": "5fde8d3d38ddbda6",
-   "run_id": "2d696e81784c",
+   "duration_ms": 75,
+   "result_hash": "144eb3aa67dfdefd",
+   "run_id": "f483b001dc15",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "85dda4964c9fc6f279c6c26ed0dd9093ba277a853f83e8a14c313dfb90b5a628",
+  "hash": "adb63441ca11b6c695c9e5d4a82cd2069795ee1e62b82ec6a714ccc70323f854",
   "kind": "cap.run.finish",
-  "prev_hash": "c8200556cecec55ccb67d29576f7f3f939280e6f690c77e2f9441c6a52bbe1ff",
+  "prev_hash": "84c9ff210bafeb9e2fee0a69b5c94c2d50ab0703f00c083651087f75396b6f53",
   "seq": 65,
-  "ts": "2026-09-24T04:18:39.826561+00:00"
+  "ts": "2026-09-24T06:43:43.669994+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "ee37b7e06b583bd2",
+   "args_hash": "e7343ceb87d4316b",
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "20ecb25314ff"
+    "run_id": "6da6b3d4bd62"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1595,13 +1594,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "20ecb25314ff"
+   "run_id": "6da6b3d4bd62"
   },
-  "hash": "5577d4c4d057cb03858214d4cf7f672c34aa40c3921cab6be69b44cabe2d482f",
+  "hash": "304baa02df3e2fe3e193157b477f8368415f84da6f005acc6e508c52379403c2",
   "kind": "cap.run.start",
-  "prev_hash": "85dda4964c9fc6f279c6c26ed0dd9093ba277a853f83e8a14c313dfb90b5a628",
+  "prev_hash": "adb63441ca11b6c695c9e5d4a82cd2069795ee1e62b82ec6a714ccc70323f854",
   "seq": 66,
-  "ts": "2026-09-24T04:18:39.829996+00:00"
+  "ts": "2026-09-24T06:43:43.673705+00:00"
  },
  {
   "actor": "agent",
@@ -1611,20 +1610,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "20ecb25314ff"
+    "run_id": "6da6b3d4bd62"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "20ecb25314ff"
+   "run_id": "6da6b3d4bd62"
   },
-  "hash": "18335f20698e9048cb704b1d23cbf2e820a107be3f1c7404832b4089f5fe2bab",
+  "hash": "8dc0f5f0c4b71a827cf16a2f3b5c3d52e8c8b6ff407a4a30c18aa0ee308bd73b",
   "kind": "gate.decision",
-  "prev_hash": "5577d4c4d057cb03858214d4cf7f672c34aa40c3921cab6be69b44cabe2d482f",
+  "prev_hash": "304baa02df3e2fe3e193157b477f8368415f84da6f005acc6e508c52379403c2",
   "seq": 67,
-  "ts": "2026-09-24T04:18:39.830100+00:00"
+  "ts": "2026-09-24T06:43:43.673823+00:00"
  },
  {
   "actor": "agent",
@@ -1632,15 +1631,15 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "05c92a3b88f4e357",
-   "run_id": "20ecb25314ff",
+   "run_id": "6da6b3d4bd62",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8e0a0ea4f3157e92c12ef6545572bf02a7d66e308447e24b95703af06ac54632",
+  "hash": "a7c4e87c99d79e46024a0e0bca0338155dfeacd744790f269a1cf86da8a03a65",
   "kind": "cap.run.finish",
-  "prev_hash": "18335f20698e9048cb704b1d23cbf2e820a107be3f1c7404832b4089f5fe2bab",
+  "prev_hash": "8dc0f5f0c4b71a827cf16a2f3b5c3d52e8c8b6ff407a4a30c18aa0ee308bd73b",
   "seq": 68,
-  "ts": "2026-09-24T04:18:39.831107+00:00"
+  "ts": "2026-09-24T06:43:43.674746+00:00"
  },
  {
   "actor": "agent",
@@ -1650,7 +1649,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d41184a46ce3"
+    "run_id": "592fddd56810"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1658,13 +1657,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d41184a46ce3"
+   "run_id": "592fddd56810"
   },
-  "hash": "204420bf4c0a99c2d8f7c372f36e8d85b5fdb86b5a62b59bc8e6cde07caa6f1c",
+  "hash": "91cd13a375333aedbf309b9536c52858bdd8478824417e781b528d1e39ed35ca",
   "kind": "cap.run.start",
-  "prev_hash": "8e0a0ea4f3157e92c12ef6545572bf02a7d66e308447e24b95703af06ac54632",
+  "prev_hash": "a7c4e87c99d79e46024a0e0bca0338155dfeacd744790f269a1cf86da8a03a65",
   "seq": 69,
-  "ts": "2026-09-24T04:18:39.862726+00:00"
+  "ts": "2026-09-24T06:43:43.700197+00:00"
  },
  {
   "actor": "agent",
@@ -1674,36 +1673,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d41184a46ce3"
+    "run_id": "592fddd56810"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d41184a46ce3"
+   "run_id": "592fddd56810"
   },
-  "hash": "c58b75de49748f519e01925a8e7e0cf90adc4554476753629d025e706d4ea555",
+  "hash": "b88800f603b55064fbee6fbb06f5ba448fc8206bf08e7600ed8c2c2c9ac18ed0",
   "kind": "gate.decision",
-  "prev_hash": "204420bf4c0a99c2d8f7c372f36e8d85b5fdb86b5a62b59bc8e6cde07caa6f1c",
+  "prev_hash": "91cd13a375333aedbf309b9536c52858bdd8478824417e781b528d1e39ed35ca",
   "seq": 70,
-  "ts": "2026-09-24T04:18:39.862866+00:00"
+  "ts": "2026-09-24T06:43:43.700357+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "24762336f8e26418",
-   "run_id": "d41184a46ce3",
+   "result_hash": "8f88650163b866f6",
+   "run_id": "592fddd56810",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "453010771e54fb0b781827d890ed78d0dc57aa35a784a46781233262d0549dbb",
+  "hash": "4d3fcbb6673f38e4fca90d4d9be2159c40f34de2986c94162ea4fa576855e035",
   "kind": "cap.run.finish",
-  "prev_hash": "c58b75de49748f519e01925a8e7e0cf90adc4554476753629d025e706d4ea555",
+  "prev_hash": "b88800f603b55064fbee6fbb06f5ba448fc8206bf08e7600ed8c2c2c9ac18ed0",
   "seq": 71,
-  "ts": "2026-09-24T04:18:39.864565+00:00"
+  "ts": "2026-09-24T06:43:43.702097+00:00"
  },
  {
   "actor": "agent",
@@ -1713,7 +1712,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "12fc41ac45cf"
+    "run_id": "159605b1ccff"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1721,13 +1720,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "12fc41ac45cf"
+   "run_id": "159605b1ccff"
   },
-  "hash": "8acefa17601866775f4b276fb13588e1d1de052c0ab5d3a63445b07022a0b021",
+  "hash": "1649d4649d901ef572f75afb44fc3d7e3c5ebe92fb9eaa474095f25317067007",
   "kind": "cap.run.start",
-  "prev_hash": "453010771e54fb0b781827d890ed78d0dc57aa35a784a46781233262d0549dbb",
+  "prev_hash": "4d3fcbb6673f38e4fca90d4d9be2159c40f34de2986c94162ea4fa576855e035",
   "seq": 72,
-  "ts": "2026-09-24T04:18:41.410880+00:00"
+  "ts": "2026-09-24T06:43:45.270624+00:00"
  },
  {
   "actor": "agent",
@@ -1737,46 +1736,46 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "12fc41ac45cf"
+    "run_id": "159605b1ccff"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "12fc41ac45cf"
+   "run_id": "159605b1ccff"
   },
-  "hash": "80307251f4507d2f8af11b800d5085f08c18c45bb12fae84816704fd2a106f89",
+  "hash": "f352565750de1c210d36d8bede6a374c9036fa7e57631ab66c05cc061bc02858",
   "kind": "gate.decision",
-  "prev_hash": "8acefa17601866775f4b276fb13588e1d1de052c0ab5d3a63445b07022a0b021",
+  "prev_hash": "1649d4649d901ef572f75afb44fc3d7e3c5ebe92fb9eaa474095f25317067007",
   "seq": 73,
-  "ts": "2026-09-24T04:18:41.411147+00:00"
+  "ts": "2026-09-24T06:43:45.271609+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 6,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "12fc41ac45cf",
+   "duration_ms": 7,
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "159605b1ccff",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1e17f94a0c8febd79b82402568fe72130bcb3ffb9a963a82cd12bb837ea3eb3c",
+  "hash": "dffe230541fc9bbc570708f695e2360765ccd5a45d684cbbe4c66303ce1872fe",
   "kind": "cap.run.finish",
-  "prev_hash": "80307251f4507d2f8af11b800d5085f08c18c45bb12fae84816704fd2a106f89",
+  "prev_hash": "f352565750de1c210d36d8bede6a374c9036fa7e57631ab66c05cc061bc02858",
   "seq": 74,
-  "ts": "2026-09-24T04:18:41.417537+00:00"
+  "ts": "2026-09-24T06:43:45.277927+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "e2d2a8911ea5af58",
+   "args_hash": "0b541ee94e18a2b3",
    "cap": "chat.report_back",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "17ba7fbc2442"
+    "run_id": "51d08cd4cbe3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1784,13 +1783,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "17ba7fbc2442"
+   "run_id": "51d08cd4cbe3"
   },
-  "hash": "ee237813f546f6dbeddb82b3a329160477600b5709b1f6886be2cb598ade3250",
+  "hash": "57d033a3f865b3c89363f865c18cc1b798cb4e627d0efd086e55426abece863a",
   "kind": "cap.run.start",
-  "prev_hash": "1e17f94a0c8febd79b82402568fe72130bcb3ffb9a963a82cd12bb837ea3eb3c",
+  "prev_hash": "dffe230541fc9bbc570708f695e2360765ccd5a45d684cbbe4c66303ce1872fe",
   "seq": 75,
-  "ts": "2026-09-24T04:18:41.419423+00:00"
+  "ts": "2026-09-24T06:43:45.279777+00:00"
  },
  {
   "actor": "agent",
@@ -1800,36 +1799,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "17ba7fbc2442"
+    "run_id": "51d08cd4cbe3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "17ba7fbc2442"
+   "run_id": "51d08cd4cbe3"
   },
-  "hash": "4129b592cda3423179b7622d649c06123fb727bd0402121485bf078ca970b1a6",
+  "hash": "b84a08a0bfe197b286aabce26d27c7a59f5d4191e25a544847d8b45b9aa428c2",
   "kind": "gate.decision",
-  "prev_hash": "ee237813f546f6dbeddb82b3a329160477600b5709b1f6886be2cb598ade3250",
+  "prev_hash": "57d033a3f865b3c89363f865c18cc1b798cb4e627d0efd086e55426abece863a",
   "seq": 76,
-  "ts": "2026-09-24T04:18:41.419511+00:00"
+  "ts": "2026-09-24T06:43:45.279866+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.report_back",
    "duration_ms": 2,
-   "result_hash": "76fc4d181a85b0cd",
-   "run_id": "17ba7fbc2442",
+   "result_hash": "6468dbdadfc09dbb",
+   "run_id": "51d08cd4cbe3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6ae1d0568c5df29760b3a272c249ace8a0473a4e54bacc314c10518ed4e43119",
+  "hash": "f5a92366010bd28f30daa05305dee4e18b9f6d17e0ef18004f2c81fca190d3c3",
   "kind": "cap.run.finish",
-  "prev_hash": "4129b592cda3423179b7622d649c06123fb727bd0402121485bf078ca970b1a6",
+  "prev_hash": "b84a08a0bfe197b286aabce26d27c7a59f5d4191e25a544847d8b45b9aa428c2",
   "seq": 77,
-  "ts": "2026-09-24T04:18:41.422128+00:00"
+  "ts": "2026-09-24T06:43:45.282405+00:00"
  },
  {
   "actor": "agent",
@@ -1839,7 +1838,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "797be83fcd4e"
+    "run_id": "3c947d592f58"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1847,13 +1846,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "797be83fcd4e"
+   "run_id": "3c947d592f58"
   },
-  "hash": "2b0ea9db7080810e0c9ba1393304d1f7ad6b7b23aac56c05acc88c6d838a8da4",
+  "hash": "e2d27e7ba8021071ac9856d08ac96c194868cffe4a4b05ba6179482b8fd6bb40",
   "kind": "cap.run.start",
-  "prev_hash": "6ae1d0568c5df29760b3a272c249ace8a0473a4e54bacc314c10518ed4e43119",
+  "prev_hash": "f5a92366010bd28f30daa05305dee4e18b9f6d17e0ef18004f2c81fca190d3c3",
   "seq": 78,
-  "ts": "2026-09-24T04:18:41.475752+00:00"
+  "ts": "2026-09-24T06:43:45.354060+00:00"
  },
  {
   "actor": "agent",
@@ -1863,36 +1862,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "797be83fcd4e"
+    "run_id": "3c947d592f58"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "797be83fcd4e"
+   "run_id": "3c947d592f58"
   },
-  "hash": "55063cf2df900f47ca4a3fc92383c3712c3b6271b6158a6dcf80b7569ae9d9fc",
+  "hash": "199b2b2cf558f6f957c926829a7b3b19cffb06b0ecccb01e470ff413458036c7",
   "kind": "gate.decision",
-  "prev_hash": "2b0ea9db7080810e0c9ba1393304d1f7ad6b7b23aac56c05acc88c6d838a8da4",
+  "prev_hash": "e2d27e7ba8021071ac9856d08ac96c194868cffe4a4b05ba6179482b8fd6bb40",
   "seq": 79,
-  "ts": "2026-09-24T04:18:41.475921+00:00"
+  "ts": "2026-09-24T06:43:45.354243+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "dcd685952d041f51",
-   "run_id": "797be83fcd4e",
+   "result_hash": "d39c8de911d08a46",
+   "run_id": "3c947d592f58",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b01adf1f59a826815fdc1d050fd2b61e2a166baebd0f525ae40d173019de1945",
+  "hash": "c11c95076920afa9be110741b22787b42d61b6f97cccd689d6a56561d174c23e",
   "kind": "cap.run.finish",
-  "prev_hash": "55063cf2df900f47ca4a3fc92383c3712c3b6271b6158a6dcf80b7569ae9d9fc",
+  "prev_hash": "199b2b2cf558f6f957c926829a7b3b19cffb06b0ecccb01e470ff413458036c7",
   "seq": 80,
-  "ts": "2026-09-24T04:18:41.478321+00:00"
+  "ts": "2026-09-24T06:43:45.356733+00:00"
  },
  {
   "actor": "agent",
@@ -1902,7 +1901,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "287fd8259a41"
+    "run_id": "43a808a6588d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1910,13 +1909,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "287fd8259a41"
+   "run_id": "43a808a6588d"
   },
-  "hash": "fcbc2f693d6625ce5513e76cdd0abb1a565937f09fff9c7de19d069a44416bac",
+  "hash": "850ef697498cd3b6efcd28e561abe7539dd5267a7224d825d3b87a294469df07",
   "kind": "cap.run.start",
-  "prev_hash": "b01adf1f59a826815fdc1d050fd2b61e2a166baebd0f525ae40d173019de1945",
+  "prev_hash": "c11c95076920afa9be110741b22787b42d61b6f97cccd689d6a56561d174c23e",
   "seq": 81,
-  "ts": "2026-09-24T04:18:41.485213+00:00"
+  "ts": "2026-09-24T06:43:45.363018+00:00"
  },
  {
   "actor": "agent",
@@ -1926,20 +1925,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "287fd8259a41"
+    "run_id": "43a808a6588d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "287fd8259a41"
+   "run_id": "43a808a6588d"
   },
-  "hash": "d63b917470666c410aa781af7109f42809476a56fc5d839b0942a0afd49f429b",
+  "hash": "e82526ebf7cc91ed70dd354d192cfff7b4daa61e7a9206a97fedbd70ed327495",
   "kind": "gate.decision",
-  "prev_hash": "fcbc2f693d6625ce5513e76cdd0abb1a565937f09fff9c7de19d069a44416bac",
+  "prev_hash": "850ef697498cd3b6efcd28e561abe7539dd5267a7224d825d3b87a294469df07",
   "seq": 82,
-  "ts": "2026-09-24T04:18:41.485343+00:00"
+  "ts": "2026-09-24T06:43:45.363149+00:00"
  },
  {
   "actor": "agent",
@@ -1947,15 +1946,15 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "287fd8259a41",
+   "run_id": "43a808a6588d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0916841c60bd5d32dd1e28c7bb695872265567e5b15527c35d72ad2e6cd5a7f2",
+  "hash": "df95f3797149873f11d1b16c8627f8ca74a3bf3401f2c8f55c0c2380ede2f59c",
   "kind": "cap.run.finish",
-  "prev_hash": "d63b917470666c410aa781af7109f42809476a56fc5d839b0942a0afd49f429b",
+  "prev_hash": "e82526ebf7cc91ed70dd354d192cfff7b4daa61e7a9206a97fedbd70ed327495",
   "seq": 83,
-  "ts": "2026-09-24T04:18:41.486867+00:00"
+  "ts": "2026-09-24T06:43:45.364840+00:00"
  },
  {
   "actor": "agent",
@@ -1965,7 +1964,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7be414e1c63c"
+    "run_id": "b88877a3365b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1973,13 +1972,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7be414e1c63c"
+   "run_id": "b88877a3365b"
   },
-  "hash": "de7ffb6838099b8268f260d6d4b08764286adbfe085445eddc7463db6141451d",
+  "hash": "ef8dc92c03af22d74476521e3937424beeeda3de83173bc38b34faf2461522e0",
   "kind": "cap.run.start",
-  "prev_hash": "0916841c60bd5d32dd1e28c7bb695872265567e5b15527c35d72ad2e6cd5a7f2",
+  "prev_hash": "df95f3797149873f11d1b16c8627f8ca74a3bf3401f2c8f55c0c2380ede2f59c",
   "seq": 84,
-  "ts": "2026-09-24T04:18:41.488354+00:00"
+  "ts": "2026-09-24T06:43:45.366326+00:00"
  },
  {
   "actor": "agent",
@@ -1989,20 +1988,20 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7be414e1c63c"
+    "run_id": "b88877a3365b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7be414e1c63c"
+   "run_id": "b88877a3365b"
   },
-  "hash": "6f204cfe74b7860dd12a8ce7dadebb7422ba8db7d0fc6253dd98d20508fa83e9",
+  "hash": "f9867918f7953015d8b6e4af3f070e19e241279818fd67b07b6304283a49b997",
   "kind": "gate.decision",
-  "prev_hash": "de7ffb6838099b8268f260d6d4b08764286adbfe085445eddc7463db6141451d",
+  "prev_hash": "ef8dc92c03af22d74476521e3937424beeeda3de83173bc38b34faf2461522e0",
   "seq": 85,
-  "ts": "2026-09-24T04:18:41.488463+00:00"
+  "ts": "2026-09-24T06:43:45.366439+00:00"
  },
  {
   "actor": "agent",
@@ -2010,15 +2009,15 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "7be414e1c63c",
+   "run_id": "b88877a3365b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6ce229b5b0fa3288a13aea6f93aef52a7d08241e035c92700af0ec94110c5b87",
+  "hash": "5abeee0ec438bd37645187a0a6550077773061eb367f859f5c8709062a73465a",
   "kind": "cap.run.finish",
-  "prev_hash": "6f204cfe74b7860dd12a8ce7dadebb7422ba8db7d0fc6253dd98d20508fa83e9",
+  "prev_hash": "f9867918f7953015d8b6e4af3f070e19e241279818fd67b07b6304283a49b997",
   "seq": 86,
-  "ts": "2026-09-24T04:18:41.489976+00:00"
+  "ts": "2026-09-24T06:43:45.368190+00:00"
  },
  {
   "actor": "agent",
@@ -2028,7 +2027,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "0d491a06379a"
+    "run_id": "44e30b576798"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2036,13 +2035,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0d491a06379a"
+   "run_id": "44e30b576798"
   },
-  "hash": "2299c9ca321ae2ee526a6a7612366b592afef85b8d255202c2004b691e6dd36b",
+  "hash": "4a7e23a93e4adb1faba42a17aa22eb782025553cf7de5f923d1e24a28f27eff8",
   "kind": "cap.run.start",
-  "prev_hash": "6ce229b5b0fa3288a13aea6f93aef52a7d08241e035c92700af0ec94110c5b87",
+  "prev_hash": "5abeee0ec438bd37645187a0a6550077773061eb367f859f5c8709062a73465a",
   "seq": 87,
-  "ts": "2026-09-24T04:18:41.498014+00:00"
+  "ts": "2026-09-24T06:43:45.377112+00:00"
  },
  {
   "actor": "agent",
@@ -2052,36 +2051,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "0d491a06379a"
+    "run_id": "44e30b576798"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0d491a06379a"
+   "run_id": "44e30b576798"
   },
-  "hash": "86c4bf014d6a3b24c1f7cdbade162d6327182a04639527d5eae3f7fdf64f8374",
+  "hash": "1d18778215480af326f383aa0925678f3ca7eae6f225ef38f8817ee1bbebdca3",
   "kind": "gate.decision",
-  "prev_hash": "2299c9ca321ae2ee526a6a7612366b592afef85b8d255202c2004b691e6dd36b",
+  "prev_hash": "4a7e23a93e4adb1faba42a17aa22eb782025553cf7de5f923d1e24a28f27eff8",
   "seq": 88,
-  "ts": "2026-09-24T04:18:41.498097+00:00"
+  "ts": "2026-09-24T06:43:45.377246+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "24762336f8e26418",
-   "run_id": "0d491a06379a",
+   "duration_ms": 2,
+   "result_hash": "8f88650163b866f6",
+   "run_id": "44e30b576798",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "303caa0e52703845b3f0b41649452f3889815acbf419ee493f0e1eaba937b2d7",
+  "hash": "c303fb42e92af1b1fad47a961f4033c75e29b4fa9ae01168ce6bdee874107b0c",
   "kind": "cap.run.finish",
-  "prev_hash": "86c4bf014d6a3b24c1f7cdbade162d6327182a04639527d5eae3f7fdf64f8374",
+  "prev_hash": "1d18778215480af326f383aa0925678f3ca7eae6f225ef38f8817ee1bbebdca3",
   "seq": 89,
-  "ts": "2026-09-24T04:18:41.499656+00:00"
+  "ts": "2026-09-24T06:43:45.379243+00:00"
  },
  {
   "actor": "agent",
@@ -2091,7 +2090,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ec3c3ec7796e"
+    "run_id": "51ad248a5c49"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2099,13 +2098,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ec3c3ec7796e"
+   "run_id": "51ad248a5c49"
   },
-  "hash": "38d045866f82cbc39e4e293af99d85f10bae2078e09da17c801e6afd6bfc100f",
+  "hash": "497f9a3f4eee46ca34b1f40c23b8de658bdf9eb3c7fcb8c16c207def5ffc324b",
   "kind": "cap.run.start",
-  "prev_hash": "303caa0e52703845b3f0b41649452f3889815acbf419ee493f0e1eaba937b2d7",
+  "prev_hash": "c303fb42e92af1b1fad47a961f4033c75e29b4fa9ae01168ce6bdee874107b0c",
   "seq": 90,
-  "ts": "2026-09-24T04:18:41.501035+00:00"
+  "ts": "2026-09-24T06:43:45.380801+00:00"
  },
  {
   "actor": "agent",
@@ -2115,36 +2114,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ec3c3ec7796e"
+    "run_id": "51ad248a5c49"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ec3c3ec7796e"
+   "run_id": "51ad248a5c49"
   },
-  "hash": "ab9213e34e5c7a64b496ef923eb0fa7988cd538f115b7b5623c6e494ec526bf6",
+  "hash": "6de8e0269aa3ef5bf82c425b41c3fe8d31cdab22dc192ebc2da968004eeadad3",
   "kind": "gate.decision",
-  "prev_hash": "38d045866f82cbc39e4e293af99d85f10bae2078e09da17c801e6afd6bfc100f",
+  "prev_hash": "497f9a3f4eee46ca34b1f40c23b8de658bdf9eb3c7fcb8c16c207def5ffc324b",
   "seq": 91,
-  "ts": "2026-09-24T04:18:41.501117+00:00"
+  "ts": "2026-09-24T06:43:45.380905+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "24762336f8e26418",
-   "run_id": "ec3c3ec7796e",
+   "result_hash": "8f88650163b866f6",
+   "run_id": "51ad248a5c49",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "eac56856e7e7a5e2f664085eb02b37e8bb56bfe35d8e42673e71c03d5bd2dcf1",
+  "hash": "dabf02ce2ddd16f058a09fbbf1166cf35dca3927e7646a3b854920e6df8960c7",
   "kind": "cap.run.finish",
-  "prev_hash": "ab9213e34e5c7a64b496ef923eb0fa7988cd538f115b7b5623c6e494ec526bf6",
+  "prev_hash": "6de8e0269aa3ef5bf82c425b41c3fe8d31cdab22dc192ebc2da968004eeadad3",
   "seq": 92,
-  "ts": "2026-09-24T04:18:41.502822+00:00"
+  "ts": "2026-09-24T06:43:45.382535+00:00"
  },
  {
   "actor": "agent",
@@ -2154,7 +2153,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "8aa14dee1f7e"
+    "run_id": "585e38e889a8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2162,13 +2161,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8aa14dee1f7e"
+   "run_id": "585e38e889a8"
   },
-  "hash": "ba6d129d36fe91add4abfae88f13b6a4aacd90158713bccdd5f960b104debeb4",
+  "hash": "bee51fa80957fe9bd6c64a83962630cd3db60bc0af01917793fd10861ccc4fbc",
   "kind": "cap.run.start",
-  "prev_hash": "eac56856e7e7a5e2f664085eb02b37e8bb56bfe35d8e42673e71c03d5bd2dcf1",
+  "prev_hash": "dabf02ce2ddd16f058a09fbbf1166cf35dca3927e7646a3b854920e6df8960c7",
   "seq": 93,
-  "ts": "2026-09-24T04:18:41.535436+00:00"
+  "ts": "2026-09-24T06:43:45.414224+00:00"
  },
  {
   "actor": "agent",
@@ -2178,36 +2177,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "8aa14dee1f7e"
+    "run_id": "585e38e889a8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8aa14dee1f7e"
+   "run_id": "585e38e889a8"
   },
-  "hash": "77e368aad939b1c4864223606523b758b0cde197b6926c145f4672fbdd9a2af1",
+  "hash": "e08f76657058e3865d129673ccb356a5e4f96956c4e55364e9f936ff0b4fcfb2",
   "kind": "gate.decision",
-  "prev_hash": "ba6d129d36fe91add4abfae88f13b6a4aacd90158713bccdd5f960b104debeb4",
+  "prev_hash": "bee51fa80957fe9bd6c64a83962630cd3db60bc0af01917793fd10861ccc4fbc",
   "seq": 94,
-  "ts": "2026-09-24T04:18:41.535554+00:00"
+  "ts": "2026-09-24T06:43:45.414374+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "32f33ab2cceb35ed",
-   "run_id": "8aa14dee1f7e",
+   "result_hash": "8ad6d0b1b6241f55",
+   "run_id": "585e38e889a8",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0fc1b1db38b6ad35d2b0a59c5343dcd9599f562ead9efb95616209e3f935f4e3",
+  "hash": "22382a1c85953141baea3892179484d7da660f077d0a7d4c5c2bb0f3ee45a728",
   "kind": "cap.run.finish",
-  "prev_hash": "77e368aad939b1c4864223606523b758b0cde197b6926c145f4672fbdd9a2af1",
+  "prev_hash": "e08f76657058e3865d129673ccb356a5e4f96956c4e55364e9f936ff0b4fcfb2",
   "seq": 95,
-  "ts": "2026-09-24T04:18:41.538173+00:00"
+  "ts": "2026-09-24T06:43:45.417055+00:00"
  },
  {
   "actor": "agent",
@@ -2217,7 +2216,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "f151aedde1cc"
+    "run_id": "4815001e0743"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2225,13 +2224,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f151aedde1cc"
+   "run_id": "4815001e0743"
   },
-  "hash": "012cff688a65a3d3b197512441d02768c6d91d43fae4062f025bd5838fa3cb07",
+  "hash": "5f6f3f34ed5ea2c414cf2997f2dc80b9a1886e4a1e7a6f16549abcec391586d6",
   "kind": "cap.run.start",
-  "prev_hash": "0fc1b1db38b6ad35d2b0a59c5343dcd9599f562ead9efb95616209e3f935f4e3",
+  "prev_hash": "22382a1c85953141baea3892179484d7da660f077d0a7d4c5c2bb0f3ee45a728",
   "seq": 96,
-  "ts": "2026-09-24T04:18:41.618470+00:00"
+  "ts": "2026-09-24T06:43:45.504270+00:00"
  },
  {
   "actor": "agent",
@@ -2241,36 +2240,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "f151aedde1cc"
+    "run_id": "4815001e0743"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f151aedde1cc"
+   "run_id": "4815001e0743"
   },
-  "hash": "e64cab4dfbfc3846955676f8b3c41f063c32449ef94de94bc6d55cc69136f2ac",
+  "hash": "96028db6a386252f15d4fe8fb0f8fab0363661d7ce40a2bb1c1a9a9f06efcc8d",
   "kind": "gate.decision",
-  "prev_hash": "012cff688a65a3d3b197512441d02768c6d91d43fae4062f025bd5838fa3cb07",
+  "prev_hash": "5f6f3f34ed5ea2c414cf2997f2dc80b9a1886e4a1e7a6f16549abcec391586d6",
   "seq": 97,
-  "ts": "2026-09-24T04:18:41.618679+00:00"
+  "ts": "2026-09-24T06:43:45.504525+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "6fc960e3ef8e52a2",
-   "run_id": "f151aedde1cc",
+   "result_hash": "8758eced9345645b",
+   "run_id": "4815001e0743",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a0d31cb4ed33e8bf7e260969778501a556bc342e319a677124af5bf62d0edeb7",
+  "hash": "7e90edc82c14facf52dbd3f04f65c2d5d2802adb129277e6f0a25dea611eb4d9",
   "kind": "cap.run.finish",
-  "prev_hash": "e64cab4dfbfc3846955676f8b3c41f063c32449ef94de94bc6d55cc69136f2ac",
+  "prev_hash": "96028db6a386252f15d4fe8fb0f8fab0363661d7ce40a2bb1c1a9a9f06efcc8d",
   "seq": 98,
-  "ts": "2026-09-24T04:18:41.621668+00:00"
+  "ts": "2026-09-24T06:43:45.507417+00:00"
  },
  {
   "actor": "agent",
@@ -2280,7 +2279,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "43ad600ca9fa"
+    "run_id": "1c9cd1f85531"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2288,13 +2287,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "43ad600ca9fa"
+   "run_id": "1c9cd1f85531"
   },
-  "hash": "e01e08e61927923c10ad3e5b125be5320b9cadf7b960ab83e20f2db4fc751676",
+  "hash": "84db2e4dfd457d0d3b6e880c667e28cf6979c1b837c34b9106db221506f3e09a",
   "kind": "cap.run.start",
-  "prev_hash": "a0d31cb4ed33e8bf7e260969778501a556bc342e319a677124af5bf62d0edeb7",
+  "prev_hash": "7e90edc82c14facf52dbd3f04f65c2d5d2802adb129277e6f0a25dea611eb4d9",
   "seq": 99,
-  "ts": "2026-09-24T04:18:41.727307+00:00"
+  "ts": "2026-09-24T06:43:45.658397+00:00"
  },
  {
   "actor": "agent",
@@ -2304,36 +2303,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "43ad600ca9fa"
+    "run_id": "1c9cd1f85531"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "43ad600ca9fa"
+   "run_id": "1c9cd1f85531"
   },
-  "hash": "af102afcded7ec36fa2ea92e03956fa9892ff0c5398030119b7b4ee5c05af66d",
+  "hash": "3c5d1aead94e1269f0bc34794fd81b454b7e89901989860c38c75fa4a1fb7085",
   "kind": "gate.decision",
-  "prev_hash": "e01e08e61927923c10ad3e5b125be5320b9cadf7b960ab83e20f2db4fc751676",
+  "prev_hash": "84db2e4dfd457d0d3b6e880c667e28cf6979c1b837c34b9106db221506f3e09a",
   "seq": 100,
-  "ts": "2026-09-24T04:18:41.727491+00:00"
+  "ts": "2026-09-24T06:43:45.658564+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "43ad600ca9fa",
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "1c9cd1f85531",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "aff1796e91a6ad029a07f893771925d485bab0f2863d65ed7c1c57f94471ccc4",
+  "hash": "117dd8741b32e823d47cb96cf3ada6b1eca833390fa51ec5fae285d50da01e09",
   "kind": "cap.run.finish",
-  "prev_hash": "af102afcded7ec36fa2ea92e03956fa9892ff0c5398030119b7b4ee5c05af66d",
+  "prev_hash": "3c5d1aead94e1269f0bc34794fd81b454b7e89901989860c38c75fa4a1fb7085",
   "seq": 101,
-  "ts": "2026-09-24T04:18:41.731763+00:00"
+  "ts": "2026-09-24T06:43:45.662512+00:00"
  },
  {
   "actor": "agent",
@@ -2343,7 +2342,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7bd23cbdca92"
+    "run_id": "8151ea7813e7"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2351,13 +2350,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7bd23cbdca92"
+   "run_id": "8151ea7813e7"
   },
-  "hash": "77b72dd4fbdca4ba39f40dff65104477931ee9e86cb51ef4985651dbee1dfb34",
+  "hash": "50bbc70a97c431be3f5269150712aaf5dc6656d4b0b461b1bfa7045c023389f5",
   "kind": "cap.run.start",
-  "prev_hash": "aff1796e91a6ad029a07f893771925d485bab0f2863d65ed7c1c57f94471ccc4",
+  "prev_hash": "117dd8741b32e823d47cb96cf3ada6b1eca833390fa51ec5fae285d50da01e09",
   "seq": 102,
-  "ts": "2026-09-24T04:18:41.774208+00:00"
+  "ts": "2026-09-24T06:43:45.665184+00:00"
  },
  {
   "actor": "agent",
@@ -2367,36 +2366,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "7bd23cbdca92"
+    "run_id": "8151ea7813e7"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7bd23cbdca92"
+   "run_id": "8151ea7813e7"
   },
-  "hash": "eb24b5a9661918c6d62711aa2843da637d239fcc28354e094225d4edb173bcbc",
+  "hash": "21f1418205b29028d478d0e8a0f1c1295a8e1c029ab8737632b5978b2d3bc7d6",
   "kind": "gate.decision",
-  "prev_hash": "77b72dd4fbdca4ba39f40dff65104477931ee9e86cb51ef4985651dbee1dfb34",
+  "prev_hash": "50bbc70a97c431be3f5269150712aaf5dc6656d4b0b461b1bfa7045c023389f5",
   "seq": 103,
-  "ts": "2026-09-24T04:18:41.774372+00:00"
+  "ts": "2026-09-24T06:43:45.665273+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "24762336f8e26418",
-   "run_id": "7bd23cbdca92",
+   "result_hash": "8f88650163b866f6",
+   "run_id": "8151ea7813e7",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2565100c41e27fa36e215f0a061296db649b02aaa352a6f0a8bce4d5c6d51fa6",
+  "hash": "eb157aff0fbec0e3a6387a0fa2e7c7bf5a3211e6170c4903afb830be23dc6ac8",
   "kind": "cap.run.finish",
-  "prev_hash": "eb24b5a9661918c6d62711aa2843da637d239fcc28354e094225d4edb173bcbc",
+  "prev_hash": "21f1418205b29028d478d0e8a0f1c1295a8e1c029ab8737632b5978b2d3bc7d6",
   "seq": 104,
-  "ts": "2026-09-24T04:18:41.776092+00:00"
+  "ts": "2026-09-24T06:43:45.666778+00:00"
  },
  {
   "actor": "agent",
@@ -2406,7 +2405,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "3f64ea1b2f36"
+    "run_id": "bb4d96c4ead4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2414,13 +2413,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3f64ea1b2f36"
+   "run_id": "bb4d96c4ead4"
   },
-  "hash": "67526f27a9b9c74cb4d23c62267bad39bf9f67c24d58ea962c53f2448f0e1737",
+  "hash": "44ca03ecd9cf332e97dfbea2453911e8209366bb598f064720fadfb1a0e95622",
   "kind": "cap.run.start",
-  "prev_hash": "2565100c41e27fa36e215f0a061296db649b02aaa352a6f0a8bce4d5c6d51fa6",
+  "prev_hash": "eb157aff0fbec0e3a6387a0fa2e7c7bf5a3211e6170c4903afb830be23dc6ac8",
   "seq": 105,
-  "ts": "2026-09-24T04:18:41.778147+00:00"
+  "ts": "2026-09-24T06:43:45.669953+00:00"
  },
  {
   "actor": "agent",
@@ -2430,36 +2429,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "3f64ea1b2f36"
+    "run_id": "bb4d96c4ead4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3f64ea1b2f36"
+   "run_id": "bb4d96c4ead4"
   },
-  "hash": "da4938307b2838f8616a51dfc14affd8570099275c1f2b2432f3c319821e52f0",
+  "hash": "288888bc31aa7737621e1605b89aecccee85e575df525bb0f6f1786032ead882",
   "kind": "gate.decision",
-  "prev_hash": "67526f27a9b9c74cb4d23c62267bad39bf9f67c24d58ea962c53f2448f0e1737",
+  "prev_hash": "44ca03ecd9cf332e97dfbea2453911e8209366bb598f064720fadfb1a0e95622",
   "seq": 106,
-  "ts": "2026-09-24T04:18:41.778237+00:00"
+  "ts": "2026-09-24T06:43:45.670040+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 3,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "3f64ea1b2f36",
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "bb4d96c4ead4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "9177fe2de179c50f4ab765b43cc9e3e9fcb05ad2bba40f8ee3b137daf228e3f2",
+  "hash": "563d614f73e7f5e44d11095294ebdfccfa11dea5da941a9a791b3cbb63e70711",
   "kind": "cap.run.finish",
-  "prev_hash": "da4938307b2838f8616a51dfc14affd8570099275c1f2b2432f3c319821e52f0",
+  "prev_hash": "288888bc31aa7737621e1605b89aecccee85e575df525bb0f6f1786032ead882",
   "seq": 107,
-  "ts": "2026-09-24T04:18:41.781831+00:00"
+  "ts": "2026-09-24T06:43:45.673660+00:00"
  },
  {
   "actor": "agent",
@@ -2469,7 +2468,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "79cad8805112"
+    "run_id": "7239cdf99708"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2477,13 +2476,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "79cad8805112"
+   "run_id": "7239cdf99708"
   },
-  "hash": "6f934eacf1da10e0d432525da3bc988ff242bf4e5b201469ec4977402b1f094c",
+  "hash": "1171e030f55b5edfb6c883fe9fd9086371acb09c9d93359b5482c0e99e812f8f",
   "kind": "cap.run.start",
-  "prev_hash": "9177fe2de179c50f4ab765b43cc9e3e9fcb05ad2bba40f8ee3b137daf228e3f2",
+  "prev_hash": "563d614f73e7f5e44d11095294ebdfccfa11dea5da941a9a791b3cbb63e70711",
   "seq": 108,
-  "ts": "2026-09-24T04:18:41.784392+00:00"
+  "ts": "2026-09-24T06:43:45.676128+00:00"
  },
  {
   "actor": "agent",
@@ -2493,36 +2492,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "79cad8805112"
+    "run_id": "7239cdf99708"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "79cad8805112"
+   "run_id": "7239cdf99708"
   },
-  "hash": "a9d134e9d8d1ed08fd55731d11e77c879dc601db6dc353808edac64aa3219f8a",
+  "hash": "c8902f223c50b000e64ddbb5732c0df3c1fc01d04dd418555db32694389086f9",
   "kind": "gate.decision",
-  "prev_hash": "6f934eacf1da10e0d432525da3bc988ff242bf4e5b201469ec4977402b1f094c",
+  "prev_hash": "1171e030f55b5edfb6c883fe9fd9086371acb09c9d93359b5482c0e99e812f8f",
   "seq": 109,
-  "ts": "2026-09-24T04:18:41.784488+00:00"
+  "ts": "2026-09-24T06:43:45.676228+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "0dd4e9100d108816",
-   "run_id": "79cad8805112",
+   "result_hash": "e11a034ae3a35cec",
+   "run_id": "7239cdf99708",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "7dc024297e4551f58b2c7eba98a5dadbaeb03eece01879a21c01082e301ccc8c",
+  "hash": "d8030010f929a01c04aa84eeb53e6959309724d55e6e6554351df8e459585bbc",
   "kind": "cap.run.finish",
-  "prev_hash": "a9d134e9d8d1ed08fd55731d11e77c879dc601db6dc353808edac64aa3219f8a",
+  "prev_hash": "c8902f223c50b000e64ddbb5732c0df3c1fc01d04dd418555db32694389086f9",
   "seq": 110,
-  "ts": "2026-09-24T04:18:41.786883+00:00"
+  "ts": "2026-09-24T06:43:45.678576+00:00"
  },
  {
   "actor": "agent",
@@ -2532,7 +2531,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "0cbd2814a438"
+    "run_id": "723035465322"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2540,13 +2539,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0cbd2814a438"
+   "run_id": "723035465322"
   },
-  "hash": "5c98ac2f8e7197f8d3d08b65ea22b8086de1398bfe064f9b6f3e44eec60241d8",
+  "hash": "68185aea2dad8697928a3f8728194f80f7214dac37596ef543ddc083493890ab",
   "kind": "cap.run.start",
-  "prev_hash": "7dc024297e4551f58b2c7eba98a5dadbaeb03eece01879a21c01082e301ccc8c",
+  "prev_hash": "d8030010f929a01c04aa84eeb53e6959309724d55e6e6554351df8e459585bbc",
   "seq": 111,
-  "ts": "2026-09-24T04:18:42.264202+00:00"
+  "ts": "2026-09-24T06:43:46.087971+00:00"
  },
  {
   "actor": "agent",
@@ -2556,36 +2555,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "0cbd2814a438"
+    "run_id": "723035465322"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0cbd2814a438"
+   "run_id": "723035465322"
   },
-  "hash": "c23993371a77c763ff4d490c467d22f94477abe07f5eea380a40227cf2e53789",
+  "hash": "4581ab5bbcbf4e58e77e3be3706e744dc20769ab3f849a769fa09eb9ff227af9",
   "kind": "gate.decision",
-  "prev_hash": "5c98ac2f8e7197f8d3d08b65ea22b8086de1398bfe064f9b6f3e44eec60241d8",
+  "prev_hash": "68185aea2dad8697928a3f8728194f80f7214dac37596ef543ddc083493890ab",
   "seq": 112,
-  "ts": "2026-09-24T04:18:42.264478+00:00"
+  "ts": "2026-09-24T06:43:46.088274+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 5,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "0cbd2814a438",
+   "duration_ms": 8,
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "723035465322",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "185a76065fd643bce30684ff6f9eb2f97f63e19b2a606357180d7a06daeb7073",
+  "hash": "b88aa3f313b60a953bd2e1cba7fbe5bab1b3ace7ba37259906dfca466a06b79e",
   "kind": "cap.run.finish",
-  "prev_hash": "c23993371a77c763ff4d490c467d22f94477abe07f5eea380a40227cf2e53789",
+  "prev_hash": "4581ab5bbcbf4e58e77e3be3706e744dc20769ab3f849a769fa09eb9ff227af9",
   "seq": 113,
-  "ts": "2026-09-24T04:18:42.269601+00:00"
+  "ts": "2026-09-24T06:43:46.095958+00:00"
  },
  {
   "actor": "agent",
@@ -2595,7 +2594,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ff52b481b960"
+    "run_id": "20a741e0126e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2603,13 +2602,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ff52b481b960"
+   "run_id": "20a741e0126e"
   },
-  "hash": "9cf109717fee00a3fddb50aa42b2bc2c2c88919d1d88e50f44cf594b29244ac8",
+  "hash": "549cb9e306b02f6c4a28804ddad13819e371d5641f307451118ed3d344182161",
   "kind": "cap.run.start",
-  "prev_hash": "185a76065fd643bce30684ff6f9eb2f97f63e19b2a606357180d7a06daeb7073",
+  "prev_hash": "b88aa3f313b60a953bd2e1cba7fbe5bab1b3ace7ba37259906dfca466a06b79e",
   "seq": 114,
-  "ts": "2026-09-24T04:18:42.272700+00:00"
+  "ts": "2026-09-24T06:43:46.100398+00:00"
  },
  {
   "actor": "agent",
@@ -2619,162 +2618,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ff52b481b960"
+    "run_id": "20a741e0126e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ff52b481b960"
+   "run_id": "20a741e0126e"
   },
-  "hash": "0e1cea6059879b3c9a5df47d7a602b90addffd5d18a3959a0b47fe1ddfa9d885",
+  "hash": "070c65c098e5f0746c8b891b8f0c020f17709730cdcad9280e8ad9b2c62c0ed8",
   "kind": "gate.decision",
-  "prev_hash": "9cf109717fee00a3fddb50aa42b2bc2c2c88919d1d88e50f44cf594b29244ac8",
+  "prev_hash": "549cb9e306b02f6c4a28804ddad13819e371d5641f307451118ed3d344182161",
   "seq": 115,
-  "ts": "2026-09-24T04:18:42.272802+00:00"
+  "ts": "2026-09-24T06:43:46.100605+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "24762336f8e26418",
-   "run_id": "ff52b481b960",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "1ac4d2dd12bb66d027c06e131b4d9553ce264d2c495df4f2a2055cc407e3ef4e",
-  "kind": "cap.run.finish",
-  "prev_hash": "0e1cea6059879b3c9a5df47d7a602b90addffd5d18a3959a0b47fe1ddfa9d885",
-  "seq": 116,
-  "ts": "2026-09-24T04:18:42.274491+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "a3fd07f96462"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "a3fd07f96462"
-  },
-  "hash": "94bec98859c65a2c4bab4b8e6542fee83e8883e537210498b7496b1f4615e844",
-  "kind": "cap.run.start",
-  "prev_hash": "1ac4d2dd12bb66d027c06e131b4d9553ce264d2c495df4f2a2055cc407e3ef4e",
-  "seq": 117,
-  "ts": "2026-09-24T04:18:42.278463+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "a3fd07f96462"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "a3fd07f96462"
-  },
-  "hash": "4e71ee7f124d0f940ae078702224f5c72be2a5ddb460097113334adcac083549",
-  "kind": "gate.decision",
-  "prev_hash": "94bec98859c65a2c4bab4b8e6542fee83e8883e537210498b7496b1f4615e844",
-  "seq": 118,
-  "ts": "2026-09-24T04:18:42.278576+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "a3fd07f96462",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "e25ee285eb7849b197f0cdb82d26356603a9b4d7a1fb23df80e76f4fe348da0b",
-  "kind": "cap.run.finish",
-  "prev_hash": "4e71ee7f124d0f940ae078702224f5c72be2a5ddb460097113334adcac083549",
-  "seq": 119,
-  "ts": "2026-09-24T04:18:42.282789+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "750d82da0f86226a",
-   "cap": "view.timeline",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "d6083e9da896"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "d6083e9da896"
-  },
-  "hash": "d3c0494458752fb761172f3c580ce163bb89ab4571bf67545177d5ec668bee58",
-  "kind": "cap.run.start",
-  "prev_hash": "e25ee285eb7849b197f0cdb82d26356603a9b4d7a1fb23df80e76f4fe348da0b",
-  "seq": 120,
-  "ts": "2026-09-24T04:18:42.288331+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.timeline",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.timeline",
-    "run_id": "d6083e9da896"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "d6083e9da896"
-  },
-  "hash": "7ed257cd1ffbff9ae3bceaba190d124d4533c3fcfa823c884796dac4116b165f",
-  "kind": "gate.decision",
-  "prev_hash": "d3c0494458752fb761172f3c580ce163bb89ab4571bf67545177d5ec668bee58",
-  "seq": 121,
-  "ts": "2026-09-24T04:18:42.288497+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "5b4fc8656492c41a",
-   "run_id": "d6083e9da896",
+   "result_hash": "8f88650163b866f6",
+   "run_id": "20a741e0126e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f6c1a7089109f3888394db1a3259d1444f1748ea6d99e161cb8f8f64f972b9c8",
+  "hash": "0ee6d3ad0850b591dd263ec712bc058b4451c2f1b88b744173ef5aa114d3cff5",
   "kind": "cap.run.finish",
-  "prev_hash": "7ed257cd1ffbff9ae3bceaba190d124d4533c3fcfa823c884796dac4116b165f",
-  "seq": 122,
-  "ts": "2026-09-24T04:18:42.291025+00:00"
+  "prev_hash": "070c65c098e5f0746c8b891b8f0c020f17709730cdcad9280e8ad9b2c62c0ed8",
+  "seq": 116,
+  "ts": "2026-09-24T06:43:46.103180+00:00"
  },
  {
   "actor": "agent",
@@ -2784,7 +2657,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "f9abae3f5c8d"
+    "run_id": "241231c31b1f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2792,13 +2665,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f9abae3f5c8d"
+   "run_id": "241231c31b1f"
   },
-  "hash": "d7c6a76f0c581e7dc0af721f8ea2f03a3892beb4a9d3d5ee56d9c547b9e35309",
+  "hash": "983c0bfd675680009d8432e8053ab59d2885e76ff9d727dcda68ecb45b0a34cb",
   "kind": "cap.run.start",
-  "prev_hash": "f6c1a7089109f3888394db1a3259d1444f1748ea6d99e161cb8f8f64f972b9c8",
-  "seq": 123,
-  "ts": "2026-09-24T04:18:45.852671+00:00"
+  "prev_hash": "0ee6d3ad0850b591dd263ec712bc058b4451c2f1b88b744173ef5aa114d3cff5",
+  "seq": 117,
+  "ts": "2026-09-24T06:43:46.106177+00:00"
  },
  {
   "actor": "agent",
@@ -2808,162 +2681,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "f9abae3f5c8d"
+    "run_id": "241231c31b1f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f9abae3f5c8d"
+   "run_id": "241231c31b1f"
   },
-  "hash": "4e5a6fa084eef65b1a4e43c770afb8ad7ea54a42ebb9d162614186ab67698829",
+  "hash": "2fbe51a526848ce01d640a101d92930700bc05e881cf498f0d9d5acd61590849",
   "kind": "gate.decision",
-  "prev_hash": "d7c6a76f0c581e7dc0af721f8ea2f03a3892beb4a9d3d5ee56d9c547b9e35309",
-  "seq": 124,
-  "ts": "2026-09-24T04:18:45.852886+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "f9abae3f5c8d",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "6db42d2210b670f552ca7367130afadb01ed5d85d3eade03fe2f1f8ccc2ba80a",
-  "kind": "cap.run.finish",
-  "prev_hash": "4e5a6fa084eef65b1a4e43c770afb8ad7ea54a42ebb9d162614186ab67698829",
-  "seq": 125,
-  "ts": "2026-09-24T04:18:45.857221+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "79068ed1195708d8",
-   "cap": "view.artifacts",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "6ccc38810e98"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "6ccc38810e98"
-  },
-  "hash": "888af6227ee2b4f78914585993f99afe74f63b9b4406badcbb8b1754f5fbe81a",
-  "kind": "cap.run.start",
-  "prev_hash": "6db42d2210b670f552ca7367130afadb01ed5d85d3eade03fe2f1f8ccc2ba80a",
-  "seq": 126,
-  "ts": "2026-09-24T04:18:45.860705+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "view.artifacts",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "view.artifacts",
-    "run_id": "6ccc38810e98"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "6ccc38810e98"
-  },
-  "hash": "826bf6c09ac165fa962580a524a0dfecaf079b7914527c45587a9e6dbc6e20ac",
-  "kind": "gate.decision",
-  "prev_hash": "888af6227ee2b4f78914585993f99afe74f63b9b4406badcbb8b1754f5fbe81a",
-  "seq": 127,
-  "ts": "2026-09-24T04:18:45.860803+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "cap": "view.artifacts",
-   "duration_ms": 1,
-   "result_hash": "24762336f8e26418",
-   "run_id": "6ccc38810e98",
-   "status": "done",
-   "undo_ref": null
-  },
-  "hash": "37817e1bb98548914d583bda4c879471da7ff65ead11dd23d1a8b515a4163b66",
-  "kind": "cap.run.finish",
-  "prev_hash": "826bf6c09ac165fa962580a524a0dfecaf079b7914527c45587a9e6dbc6e20ac",
-  "seq": 128,
-  "ts": "2026-09-24T04:18:45.862362+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "actor": "agent",
-   "args_hash": "44136fa355b3678a",
-   "cap": "project.status",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "28ee89f7e564"
-   },
-   "decision": {
-    "decision": "APPROVE",
-    "gate": "*",
-    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-    "rule": "R0"
-   },
-   "run_id": "28ee89f7e564"
-  },
-  "hash": "f61f9499d8734c7175d7085a00ec55ea0cd895cd7f09bad456160a13713c851d",
-  "kind": "cap.run.start",
-  "prev_hash": "37817e1bb98548914d583bda4c879471da7ff65ead11dd23d1a8b515a4163b66",
-  "seq": 129,
-  "ts": "2026-09-24T04:18:45.864226+00:00"
- },
- {
-  "actor": "agent",
-  "data": {
-   "action_cap": "project.status",
-   "autonomy_level": "A2",
-   "by": "agent",
-   "chain": {
-    "cap": "project.status",
-    "run_id": "28ee89f7e564"
-   },
-   "decision": "APPROVE",
-   "gate": "*",
-   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
-   "risk": "R0",
-   "rule": "R0",
-   "run_id": "28ee89f7e564"
-  },
-  "hash": "5e764dfd1cf861eaf63612bd0ada633bb8e5488c80bb8711ffc723d700600085",
-  "kind": "gate.decision",
-  "prev_hash": "f61f9499d8734c7175d7085a00ec55ea0cd895cd7f09bad456160a13713c851d",
-  "seq": 130,
-  "ts": "2026-09-24T04:18:45.864301+00:00"
+  "prev_hash": "983c0bfd675680009d8432e8053ab59d2885e76ff9d727dcda68ecb45b0a34cb",
+  "seq": 118,
+  "ts": "2026-09-24T06:43:46.106396+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 6,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "28ee89f7e564",
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "241231c31b1f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "14c6a17dd0b0f71d6a3eb316e21696b62fae2e24ba2c5f341378f660d86615c2",
+  "hash": "931f915fd6af0174880b1517b9258cf22296e42dfded4941759e562e8f747af2",
   "kind": "cap.run.finish",
-  "prev_hash": "5e764dfd1cf861eaf63612bd0ada633bb8e5488c80bb8711ffc723d700600085",
-  "seq": 131,
-  "ts": "2026-09-24T04:18:45.870942+00:00"
+  "prev_hash": "2fbe51a526848ce01d640a101d92930700bc05e881cf498f0d9d5acd61590849",
+  "seq": 119,
+  "ts": "2026-09-24T06:43:46.112111+00:00"
  },
  {
   "actor": "agent",
@@ -2973,7 +2720,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7d2d6b6f8906"
+    "run_id": "f2913e7e6de8"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2981,13 +2728,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7d2d6b6f8906"
+   "run_id": "f2913e7e6de8"
   },
-  "hash": "ec087cea5afbed25e039a98cdc351113a3ef2b489692e3b9dfa8e1fe9597f3c6",
+  "hash": "f25c7399eb288aa81389f005d7c774a0d1ccdabf2f0bd31b160174d16ba0d726",
   "kind": "cap.run.start",
-  "prev_hash": "14c6a17dd0b0f71d6a3eb316e21696b62fae2e24ba2c5f341378f660d86615c2",
-  "seq": 132,
-  "ts": "2026-09-24T04:18:45.873602+00:00"
+  "prev_hash": "931f915fd6af0174880b1517b9258cf22296e42dfded4941759e562e8f747af2",
+  "seq": 120,
+  "ts": "2026-09-24T06:43:46.115935+00:00"
  },
  {
   "actor": "agent",
@@ -2997,36 +2744,288 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "7d2d6b6f8906"
+    "run_id": "f2913e7e6de8"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7d2d6b6f8906"
+   "run_id": "f2913e7e6de8"
   },
-  "hash": "cc41306f0b7fe773c40e3c51b8b171e643a0507bdb9114c47db08c75a75dcc81",
+  "hash": "1db1e83c2507fe30c085aeed0954711514f8f2488569c24c71c2aa11e722b73c",
   "kind": "gate.decision",
-  "prev_hash": "ec087cea5afbed25e039a98cdc351113a3ef2b489692e3b9dfa8e1fe9597f3c6",
+  "prev_hash": "f25c7399eb288aa81389f005d7c774a0d1ccdabf2f0bd31b160174d16ba0d726",
+  "seq": 121,
+  "ts": "2026-09-24T06:43:46.116135+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.timeline",
+   "duration_ms": 3,
+   "result_hash": "a3cb8369d9494a32",
+   "run_id": "f2913e7e6de8",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "c189fedce10edcb1bcd37fe8f2ded2aaf1413c684e86f591a92b356ef65865e1",
+  "kind": "cap.run.finish",
+  "prev_hash": "1db1e83c2507fe30c085aeed0954711514f8f2488569c24c71c2aa11e722b73c",
+  "seq": 122,
+  "ts": "2026-09-24T06:43:46.119326+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "86c1b20827b4"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "86c1b20827b4"
+  },
+  "hash": "772956885de2d3c17f88347340bbca691a55e8a2f8da63df47737a216576d231",
+  "kind": "cap.run.start",
+  "prev_hash": "c189fedce10edcb1bcd37fe8f2ded2aaf1413c684e86f591a92b356ef65865e1",
+  "seq": 123,
+  "ts": "2026-09-24T06:43:49.660223+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "86c1b20827b4"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "86c1b20827b4"
+  },
+  "hash": "470c7f801c7bf0b5ae8d7c976b6f5905d44d5e7352d463ecdf215bc9f5b36534",
+  "kind": "gate.decision",
+  "prev_hash": "772956885de2d3c17f88347340bbca691a55e8a2f8da63df47737a216576d231",
+  "seq": 124,
+  "ts": "2026-09-24T06:43:49.660414+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 4,
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "86c1b20827b4",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "61ec703f8426ae47ad2bae6435b143f8ea9327328003f2696c3e5bc72669f448",
+  "kind": "cap.run.finish",
+  "prev_hash": "470c7f801c7bf0b5ae8d7c976b6f5905d44d5e7352d463ecdf215bc9f5b36534",
+  "seq": 125,
+  "ts": "2026-09-24T06:43:49.664479+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "79068ed1195708d8",
+   "cap": "view.artifacts",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "c66a6a074ac4"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "c66a6a074ac4"
+  },
+  "hash": "f15173070d21ab596f40e8e2467a0e83b5d62178aecd7f901276cdc5c6e1101a",
+  "kind": "cap.run.start",
+  "prev_hash": "61ec703f8426ae47ad2bae6435b143f8ea9327328003f2696c3e5bc72669f448",
+  "seq": 126,
+  "ts": "2026-09-24T06:43:49.667286+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.artifacts",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.artifacts",
+    "run_id": "c66a6a074ac4"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "c66a6a074ac4"
+  },
+  "hash": "cf3b631d8578e08a3f913f66eec14cbcfc145994bfce6fd397b036140e0a2bc6",
+  "kind": "gate.decision",
+  "prev_hash": "f15173070d21ab596f40e8e2467a0e83b5d62178aecd7f901276cdc5c6e1101a",
+  "seq": 127,
+  "ts": "2026-09-24T06:43:49.667389+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "view.artifacts",
+   "duration_ms": 2,
+   "result_hash": "8f88650163b866f6",
+   "run_id": "c66a6a074ac4",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "3b339e6407070174959e50215cd90183615eb450c9395fbd718e07cdcb797b17",
+  "kind": "cap.run.finish",
+  "prev_hash": "cf3b631d8578e08a3f913f66eec14cbcfc145994bfce6fd397b036140e0a2bc6",
+  "seq": 128,
+  "ts": "2026-09-24T06:43:49.669385+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "44136fa355b3678a",
+   "cap": "project.status",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "ebbf68a4d183"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "ebbf68a4d183"
+  },
+  "hash": "fef4dad86c1963f51ff503e63203f7a9eed2d654c02b67b2939d05f649a4bf9b",
+  "kind": "cap.run.start",
+  "prev_hash": "3b339e6407070174959e50215cd90183615eb450c9395fbd718e07cdcb797b17",
+  "seq": 129,
+  "ts": "2026-09-24T06:43:49.671574+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "project.status",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "project.status",
+    "run_id": "ebbf68a4d183"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "ebbf68a4d183"
+  },
+  "hash": "61b499c778699d7aa2bf2f6eb998477b448cf28f61eb6ed7e7944d301f8eaabb",
+  "kind": "gate.decision",
+  "prev_hash": "fef4dad86c1963f51ff503e63203f7a9eed2d654c02b67b2939d05f649a4bf9b",
+  "seq": 130,
+  "ts": "2026-09-24T06:43:49.671707+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "cap": "project.status",
+   "duration_ms": 6,
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "ebbf68a4d183",
+   "status": "done",
+   "undo_ref": null
+  },
+  "hash": "cf7d1717395529a29701c3ae9af9d17b41b249fc521843af580fdcf0d323d95c",
+  "kind": "cap.run.finish",
+  "prev_hash": "61b499c778699d7aa2bf2f6eb998477b448cf28f61eb6ed7e7944d301f8eaabb",
+  "seq": 131,
+  "ts": "2026-09-24T06:43:49.678196+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "actor": "agent",
+   "args_hash": "750d82da0f86226a",
+   "cap": "view.timeline",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "9af7337ccd9d"
+   },
+   "decision": {
+    "decision": "APPROVE",
+    "gate": "*",
+    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+    "rule": "R0"
+   },
+   "run_id": "9af7337ccd9d"
+  },
+  "hash": "e4ec2ddc882f47fb6c0e0883aa93f27d83439518b974d3276b6a5fc7324e31c6",
+  "kind": "cap.run.start",
+  "prev_hash": "cf7d1717395529a29701c3ae9af9d17b41b249fc521843af580fdcf0d323d95c",
+  "seq": 132,
+  "ts": "2026-09-24T06:43:49.680914+00:00"
+ },
+ {
+  "actor": "agent",
+  "data": {
+   "action_cap": "view.timeline",
+   "autonomy_level": "A2",
+   "by": "agent",
+   "chain": {
+    "cap": "view.timeline",
+    "run_id": "9af7337ccd9d"
+   },
+   "decision": "APPROVE",
+   "gate": "*",
+   "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
+   "risk": "R0",
+   "rule": "R0",
+   "run_id": "9af7337ccd9d"
+  },
+  "hash": "ef6e314aec4fc57c64373bd511694de9f43a4bb63dfaaf0a1494dd76fc51595b",
+  "kind": "gate.decision",
+  "prev_hash": "e4ec2ddc882f47fb6c0e0883aa93f27d83439518b974d3276b6a5fc7324e31c6",
   "seq": 133,
-  "ts": "2026-09-24T04:18:45.873693+00:00"
+  "ts": "2026-09-24T06:43:49.680992+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "97b86c4a4b853bb8",
-   "run_id": "7d2d6b6f8906",
+   "result_hash": "1ae9a3593d557439",
+   "run_id": "9af7337ccd9d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d15a33f0cfbbb8e00314e0e00cec33b0627328993e2660becb74fd6d590fa8b9",
+  "hash": "49508476bffca0607a54172f8834762bb4e4311b885891eafcb684b8dd55762c",
   "kind": "cap.run.finish",
-  "prev_hash": "cc41306f0b7fe773c40e3c51b8b171e643a0507bdb9114c47db08c75a75dcc81",
+  "prev_hash": "ef6e314aec4fc57c64373bd511694de9f43a4bb63dfaaf0a1494dd76fc51595b",
   "seq": 134,
-  "ts": "2026-09-24T04:18:45.876080+00:00"
+  "ts": "2026-09-24T06:43:49.683387+00:00"
  },
  {
   "actor": "agent",
@@ -3036,7 +3035,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "archive.sources",
    "chain": {
     "cap": "archive.sources",
-    "run_id": "65ef6c394d3c"
+    "run_id": "26b768dfd6ad"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3044,13 +3043,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "65ef6c394d3c"
+   "run_id": "26b768dfd6ad"
   },
-  "hash": "591b651784f3390858061d03a464a9da23047efddd024f670804aa6c8faf61dc",
+  "hash": "62980d395df6dabb809a9055b464bb17c0bf377322eacad2e76ca69d54db34c0",
   "kind": "cap.run.start",
-  "prev_hash": "d15a33f0cfbbb8e00314e0e00cec33b0627328993e2660becb74fd6d590fa8b9",
+  "prev_hash": "49508476bffca0607a54172f8834762bb4e4311b885891eafcb684b8dd55762c",
   "seq": 135,
-  "ts": "2026-09-24T04:18:48.171534+00:00"
+  "ts": "2026-09-24T06:43:51.978792+00:00"
  },
  {
   "actor": "agent",
@@ -3060,36 +3059,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "archive.sources",
-    "run_id": "65ef6c394d3c"
+    "run_id": "26b768dfd6ad"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "65ef6c394d3c"
+   "run_id": "26b768dfd6ad"
   },
-  "hash": "5ab0a9c1186a56349caf8d3e0befdffc5007715cda12b7e10a7e17e38600510d",
+  "hash": "daddcb9bf3d4a5d45375b6c47647a6c51430d6c70d2137f6b6c870b079d04a09",
   "kind": "gate.decision",
-  "prev_hash": "591b651784f3390858061d03a464a9da23047efddd024f670804aa6c8faf61dc",
+  "prev_hash": "62980d395df6dabb809a9055b464bb17c0bf377322eacad2e76ca69d54db34c0",
   "seq": 136,
-  "ts": "2026-09-24T04:18:48.171774+00:00"
+  "ts": "2026-09-24T06:43:51.978982+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "archive.sources",
-   "duration_ms": 1,
-   "result_hash": "b433b3407dc5ece0",
-   "run_id": "65ef6c394d3c",
+   "duration_ms": 2,
+   "result_hash": "accdb0e5eba09bdf",
+   "run_id": "26b768dfd6ad",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a0210ad002d065c337dc611d28b2306d3738f81899ae3f5d5b93159ade0f3d5a",
+  "hash": "3255d9be84c5918c2cfbf3d9f349bcd60ac2cbe2d7cc89cd8c3af9c9ab31ca3b",
   "kind": "cap.run.finish",
-  "prev_hash": "5ab0a9c1186a56349caf8d3e0befdffc5007715cda12b7e10a7e17e38600510d",
+  "prev_hash": "daddcb9bf3d4a5d45375b6c47647a6c51430d6c70d2137f6b6c870b079d04a09",
   "seq": 137,
-  "ts": "2026-09-24T04:18:48.173423+00:00"
+  "ts": "2026-09-24T06:43:51.980999+00:00"
  },
  {
   "actor": "agent",
@@ -3099,7 +3098,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1a22b1428e4c"
+    "run_id": "7daec212b883"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3107,13 +3106,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1a22b1428e4c"
+   "run_id": "7daec212b883"
   },
-  "hash": "81325c6c5ee2cd3c7ec74c56da8687f85080cca42ad152b896850aa791b495d6",
+  "hash": "aaf2e78d82a4fdd58b7399f65b743f0e8622f906e846543c115485b6d2177107",
   "kind": "cap.run.start",
-  "prev_hash": "a0210ad002d065c337dc611d28b2306d3738f81899ae3f5d5b93159ade0f3d5a",
+  "prev_hash": "3255d9be84c5918c2cfbf3d9f349bcd60ac2cbe2d7cc89cd8c3af9c9ab31ca3b",
   "seq": 138,
-  "ts": "2026-09-24T04:18:48.175669+00:00"
+  "ts": "2026-09-24T06:43:51.983461+00:00"
  },
  {
   "actor": "agent",
@@ -3123,36 +3122,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "1a22b1428e4c"
+    "run_id": "7daec212b883"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1a22b1428e4c"
+   "run_id": "7daec212b883"
   },
-  "hash": "10fdb07ffb2aaf8f303616011d6e71dc38114fef81f61b03e828687fadeb2c08",
+  "hash": "df9fba0a0eafa3a423c4b959ae252de28c8ef36eb9afac29d2986858f1e3c1e9",
   "kind": "gate.decision",
-  "prev_hash": "81325c6c5ee2cd3c7ec74c56da8687f85080cca42ad152b896850aa791b495d6",
+  "prev_hash": "aaf2e78d82a4fdd58b7399f65b743f0e8622f906e846543c115485b6d2177107",
   "seq": 139,
-  "ts": "2026-09-24T04:18:48.175766+00:00"
+  "ts": "2026-09-24T06:43:51.983565+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "e6542b05a268c245",
-   "run_id": "1a22b1428e4c",
+   "duration_ms": 3,
+   "result_hash": "d5109f4653b6e19c",
+   "run_id": "7daec212b883",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e3138caf89a1baf5382dd4ebc2b1db214c1fcb5062fef4c09d3902fcd9c7a665",
+  "hash": "ab2eb4d995050d0c581f81d9525b36edd48e43e4e31718cf091be40a4f5ad9ef",
   "kind": "cap.run.finish",
-  "prev_hash": "10fdb07ffb2aaf8f303616011d6e71dc38114fef81f61b03e828687fadeb2c08",
+  "prev_hash": "df9fba0a0eafa3a423c4b959ae252de28c8ef36eb9afac29d2986858f1e3c1e9",
   "seq": 140,
-  "ts": "2026-09-24T04:18:48.178976+00:00"
+  "ts": "2026-09-24T06:43:51.986887+00:00"
  },
  {
   "actor": "agent",
@@ -3162,7 +3161,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "view.kg_map",
    "chain": {
     "cap": "view.kg_map",
-    "run_id": "72c31a366b5c"
+    "run_id": "18fb1ac9b730"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3170,13 +3169,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "72c31a366b5c"
+   "run_id": "18fb1ac9b730"
   },
-  "hash": "7b609d890669dcb5f5ee96c968a0ffc8a5557c5b913376627c94504d9c2cefa0",
+  "hash": "563ea711902575d70a1219fb7ece6dd19ce6b8e019a7a3ffb7c7fe67d0e99a9e",
   "kind": "cap.run.start",
-  "prev_hash": "e3138caf89a1baf5382dd4ebc2b1db214c1fcb5062fef4c09d3902fcd9c7a665",
+  "prev_hash": "ab2eb4d995050d0c581f81d9525b36edd48e43e4e31718cf091be40a4f5ad9ef",
   "seq": 141,
-  "ts": "2026-09-24T04:18:52.696543+00:00"
+  "ts": "2026-09-24T06:43:56.581696+00:00"
  },
  {
   "actor": "agent",
@@ -3186,36 +3185,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "view.kg_map",
-    "run_id": "72c31a366b5c"
+    "run_id": "18fb1ac9b730"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "72c31a366b5c"
+   "run_id": "18fb1ac9b730"
   },
-  "hash": "adc6c765a9a1a4821b98d4fb7b39c00f6b1ab01c7ebcdd287898431fd8929a4d",
+  "hash": "de3f86ea06401e111d5f66da4e10a023982fb7cd3198d97d5e93c76b58894cc7",
   "kind": "gate.decision",
-  "prev_hash": "7b609d890669dcb5f5ee96c968a0ffc8a5557c5b913376627c94504d9c2cefa0",
+  "prev_hash": "563ea711902575d70a1219fb7ece6dd19ce6b8e019a7a3ffb7c7fe67d0e99a9e",
   "seq": 142,
-  "ts": "2026-09-24T04:18:52.696798+00:00"
+  "ts": "2026-09-24T06:43:56.581903+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.kg_map",
    "duration_ms": 3,
-   "result_hash": "55162c091e8879e8",
-   "run_id": "72c31a366b5c",
+   "result_hash": "d8e4774aba50d54f",
+   "run_id": "18fb1ac9b730",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "aa4d24fd99c0a33db01e66038ff246fd749d487cab1515d0927386adce3ad043",
+  "hash": "cbf41aaf2ef3a6a62a3045db26fb669e1d9bb413f3834f76b63aa79ba793a26e",
   "kind": "cap.run.finish",
-  "prev_hash": "adc6c765a9a1a4821b98d4fb7b39c00f6b1ab01c7ebcdd287898431fd8929a4d",
+  "prev_hash": "de3f86ea06401e111d5f66da4e10a023982fb7cd3198d97d5e93c76b58894cc7",
   "seq": 143,
-  "ts": "2026-09-24T04:18:52.699838+00:00"
+  "ts": "2026-09-24T06:43:56.585598+00:00"
  },
  {
   "actor": "agent",
@@ -3225,7 +3224,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "7e376cdb88d4"
+    "run_id": "698e1dc54b02"
    },
    "decision": {
     "decision": "APPROVE",
@@ -3233,13 +3232,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7e376cdb88d4"
+   "run_id": "698e1dc54b02"
   },
-  "hash": "ac6c3f48c824d845f5726999f8962c09daefee11ec252f46586d10682646c1ca",
+  "hash": "47111acfba2f38a68d43a0e50a6eb3fe5e173f5c4d65ff08142638eef2e132d7",
   "kind": "cap.run.start",
-  "prev_hash": "aa4d24fd99c0a33db01e66038ff246fd749d487cab1515d0927386adce3ad043",
+  "prev_hash": "cbf41aaf2ef3a6a62a3045db26fb669e1d9bb413f3834f76b63aa79ba793a26e",
   "seq": 144,
-  "ts": "2026-09-24T04:18:55.062630+00:00"
+  "ts": "2026-09-24T06:43:58.948976+00:00"
  },
  {
   "actor": "agent",
@@ -3249,36 +3248,36 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "7e376cdb88d4"
+    "run_id": "698e1dc54b02"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7e376cdb88d4"
+   "run_id": "698e1dc54b02"
   },
-  "hash": "b4f33bf4c0665b059f315eab42ee0158e536c739d745eade99789989e8352d16",
+  "hash": "9b31645f5f00a1257f53fd6350aeb3eff160a71b44c96f777a18901fb13186c7",
   "kind": "gate.decision",
-  "prev_hash": "ac6c3f48c824d845f5726999f8962c09daefee11ec252f46586d10682646c1ca",
+  "prev_hash": "47111acfba2f38a68d43a0e50a6eb3fe5e173f5c4d65ff08142638eef2e132d7",
   "seq": 145,
-  "ts": "2026-09-24T04:18:55.062864+00:00"
+  "ts": "2026-09-24T06:43:58.949183+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "888fb06d01bf7f0f",
-   "run_id": "7e376cdb88d4",
+   "result_hash": "59d5d4c481605ade",
+   "run_id": "698e1dc54b02",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e5fabb3464f4286f25e77a02e848489c34ae3c3da1f1f727d93f81628d22ecd3",
+  "hash": "6e9146690d136e9d461b69ef7a0b54493f267913c6008a08aea196b7fa29a1ca",
   "kind": "cap.run.finish",
-  "prev_hash": "b4f33bf4c0665b059f315eab42ee0158e536c739d745eade99789989e8352d16",
+  "prev_hash": "9b31645f5f00a1257f53fd6350aeb3eff160a71b44c96f777a18901fb13186c7",
   "seq": 146,
-  "ts": "2026-09-24T04:18:55.067442+00:00"
+  "ts": "2026-09-24T06:43:58.953587+00:00"
  }
 ]
 ```
@@ -3344,13 +3343,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "kind": "gap",
     "text": "Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_abb59e6f.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_60ff9e12.",
     "source_cap": "code.static",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T04:18:39.792900+00:00",
+    "created_at": "2026-09-24T06:43:43.622184+00:00",
     "answered_at": null
    }
   ]
@@ -3371,7 +3370,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
   "so_dong": 42,
   "dong": [
    {
-    "id": "48a6c7c716bd",
+    "id": "34f1e77286a5",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -3384,10 +3383,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:37.708345+00:00"
+    "at": "2026-09-24T06:43:41.242701+00:00"
    },
    {
-    "id": "2b79cbccad17",
+    "id": "e9b935551c2e",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3400,10 +3399,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:37.721664+00:00"
+    "at": "2026-09-24T06:43:41.259748+00:00"
    },
    {
-    "id": "799f29b6b451",
+    "id": "04e2e74992f0",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3416,10 +3415,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:37.724791+00:00"
+    "at": "2026-09-24T06:43:41.265317+00:00"
    },
    {
-    "id": "1af6c2147d19",
+    "id": "03dc4c596b4d",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3432,10 +3431,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:37.754089+00:00"
+    "at": "2026-09-24T06:43:41.295976+00:00"
    },
    {
-    "id": "4b565b5b2b63",
+    "id": "e316cd069a51",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3448,10 +3447,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:37.971163+00:00"
+    "at": "2026-09-24T06:43:41.557909+00:00"
    },
    {
-    "id": "fb80a7be17e6",
+    "id": "4e41bbd127f6",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -3464,10 +3463,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:37.997621+00:00"
+    "at": "2026-09-24T06:43:41.585375+00:00"
    },
    {
-    "id": "66afbd0b0cd7",
+    "id": "81a1dae532e5",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -3480,10 +3479,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.746468+00:00"
+    "at": "2026-09-24T06:43:43.585551+00:00"
    },
    {
-    "id": "f18ba6dd3280",
+    "id": "eddacfe006c2",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -3496,10 +3495,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.749318+00:00"
+    "at": "2026-09-24T06:43:43.589287+00:00"
    },
    {
-    "id": "2d696e81784c",
+    "id": "f483b001dc15",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -3512,10 +3511,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.755272+00:00"
+    "at": "2026-09-24T06:43:43.595845+00:00"
    },
    {
-    "id": "fb02e45aa617",
+    "id": "fe500f84b870",
     "gate": "*",
     "action_cap": "ingest.index_text",
     "risk": "R1",
@@ -3528,10 +3527,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.776404+00:00"
+    "at": "2026-09-24T06:43:43.608057+00:00"
    },
    {
-    "id": "8ac617776db1",
+    "id": "281f368e015b",
     "gate": "*",
     "action_cap": "extract.kicad_netlist",
     "risk": "R1",
@@ -3544,10 +3543,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.779593+00:00"
+    "at": "2026-09-24T06:43:43.610605+00:00"
    },
    {
-    "id": "75c0590eaa88",
+    "id": "5769fc30b0bd",
     "gate": "*",
     "action_cap": "code.static",
     "risk": "R0",
@@ -3560,10 +3559,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.791985+00:00"
+    "at": "2026-09-24T06:43:43.621048+00:00"
    },
    {
-    "id": "9be404fbbf68",
+    "id": "c063e5884691",
     "gate": "*",
     "action_cap": "view.rag_ask",
     "risk": "R0",
@@ -3576,10 +3575,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.795470+00:00"
+    "at": "2026-09-24T06:43:43.624645+00:00"
    },
    {
-    "id": "da89f45c8ea6",
+    "id": "69473e55f68c",
     "gate": "*",
     "action_cap": "board.check_pins",
     "risk": "R0",
@@ -3592,10 +3591,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.798027+00:00"
+    "at": "2026-09-24T06:43:43.626748+00:00"
    },
    {
-    "id": "6ef336d537d2",
+    "id": "f54a96bc2193",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -3608,10 +3607,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.802003+00:00"
+    "at": "2026-09-24T06:43:43.629826+00:00"
    },
    {
-    "id": "20ecb25314ff",
+    "id": "6da6b3d4bd62",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -3624,10 +3623,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.830531+00:00"
+    "at": "2026-09-24T06:43:43.674226+00:00"
    },
    {
-    "id": "d41184a46ce3",
+    "id": "592fddd56810",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3640,10 +3639,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:39.863297+00:00"
+    "at": "2026-09-24T06:43:43.700808+00:00"
    },
    {
-    "id": "12fc41ac45cf",
+    "id": "159605b1ccff",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3656,10 +3655,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.411801+00:00"
+    "at": "2026-09-24T06:43:45.272195+00:00"
    },
    {
-    "id": "17ba7fbc2442",
+    "id": "51d08cd4cbe3",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -3672,10 +3671,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.419869+00:00"
+    "at": "2026-09-24T06:43:45.280209+00:00"
    },
    {
-    "id": "797be83fcd4e",
+    "id": "3c947d592f58",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3688,10 +3687,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.476472+00:00"
+    "at": "2026-09-24T06:43:45.354675+00:00"
    },
    {
-    "id": "287fd8259a41",
+    "id": "43a808a6588d",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3704,10 +3703,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.485705+00:00"
+    "at": "2026-09-24T06:43:45.363606+00:00"
    },
    {
-    "id": "7be414e1c63c",
+    "id": "b88877a3365b",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3720,10 +3719,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.488832+00:00"
+    "at": "2026-09-24T06:43:45.366842+00:00"
    },
    {
-    "id": "0d491a06379a",
+    "id": "44e30b576798",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3736,10 +3735,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.498510+00:00"
+    "at": "2026-09-24T06:43:45.377707+00:00"
    },
    {
-    "id": "ec3c3ec7796e",
+    "id": "51ad248a5c49",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3752,10 +3751,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.501519+00:00"
+    "at": "2026-09-24T06:43:45.381293+00:00"
    },
    {
-    "id": "8aa14dee1f7e",
+    "id": "585e38e889a8",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3768,10 +3767,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.535960+00:00"
+    "at": "2026-09-24T06:43:45.414777+00:00"
    },
    {
-    "id": "f151aedde1cc",
+    "id": "4815001e0743",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3784,10 +3783,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.619315+00:00"
+    "at": "2026-09-24T06:43:45.505036+00:00"
    },
    {
-    "id": "43ad600ca9fa",
+    "id": "1c9cd1f85531",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3800,10 +3799,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.728123+00:00"
+    "at": "2026-09-24T06:43:45.659063+00:00"
    },
    {
-    "id": "7bd23cbdca92",
+    "id": "8151ea7813e7",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3816,10 +3815,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.774893+00:00"
+    "at": "2026-09-24T06:43:45.665649+00:00"
    },
    {
-    "id": "3f64ea1b2f36",
+    "id": "bb4d96c4ead4",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3832,10 +3831,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.778590+00:00"
+    "at": "2026-09-24T06:43:45.670437+00:00"
    },
    {
-    "id": "79cad8805112",
+    "id": "7239cdf99708",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3848,10 +3847,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:41.784850+00:00"
+    "at": "2026-09-24T06:43:45.676576+00:00"
    },
    {
-    "id": "0cbd2814a438",
+    "id": "723035465322",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3864,10 +3863,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:42.265116+00:00"
+    "at": "2026-09-24T06:43:46.089484+00:00"
    },
    {
-    "id": "ff52b481b960",
+    "id": "20a741e0126e",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3880,10 +3879,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:42.273195+00:00"
+    "at": "2026-09-24T06:43:46.101251+00:00"
    },
    {
-    "id": "a3fd07f96462",
+    "id": "241231c31b1f",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3896,10 +3895,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:42.279054+00:00"
+    "at": "2026-09-24T06:43:46.107013+00:00"
    },
    {
-    "id": "d6083e9da896",
+    "id": "f2913e7e6de8",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3912,10 +3911,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:42.288916+00:00"
+    "at": "2026-09-24T06:43:46.116634+00:00"
    },
    {
-    "id": "f9abae3f5c8d",
+    "id": "86c1b20827b4",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3928,10 +3927,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:45.853621+00:00"
+    "at": "2026-09-24T06:43:49.661042+00:00"
    },
    {
-    "id": "6ccc38810e98",
+    "id": "c66a6a074ac4",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3944,10 +3943,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:45.861203+00:00"
+    "at": "2026-09-24T06:43:49.667916+00:00"
    },
    {
-    "id": "28ee89f7e564",
+    "id": "ebbf68a4d183",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3960,10 +3959,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:45.864656+00:00"
+    "at": "2026-09-24T06:43:49.672143+00:00"
    },
    {
-    "id": "7d2d6b6f8906",
+    "id": "9af7337ccd9d",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3976,10 +3975,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:45.874048+00:00"
+    "at": "2026-09-24T06:43:49.681340+00:00"
    },
    {
-    "id": "65ef6c394d3c",
+    "id": "26b768dfd6ad",
     "gate": "*",
     "action_cap": "archive.sources",
     "risk": "R0",
@@ -3992,10 +3991,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:48.172460+00:00"
+    "at": "2026-09-24T06:43:51.979567+00:00"
    },
    {
-    "id": "1a22b1428e4c",
+    "id": "7daec212b883",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -4008,10 +4007,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:48.176215+00:00"
+    "at": "2026-09-24T06:43:51.983967+00:00"
    },
    {
-    "id": "72c31a366b5c",
+    "id": "18fb1ac9b730",
     "gate": "*",
     "action_cap": "view.kg_map",
     "risk": "R0",
@@ -4024,10 +4023,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:52.697465+00:00"
+    "at": "2026-09-24T06:43:56.582454+00:00"
    },
    {
-    "id": "7e376cdb88d4",
+    "id": "698e1dc54b02",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -4040,7 +4039,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:18:55.063543+00:00"
+    "at": "2026-09-24T06:43:58.949718+00:00"
    }
   ]
  },
@@ -4064,7 +4063,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
   "so_dong": 17,
   "dong": [
    {
-    "id": "f_a1fecf750483d336",
+    "id": "f_aa3b77ffebfefdbc",
     "subject": "board:mach-khong-loi/net:+3V3",
     "predicate": "net",
     "value": "{\"name\": \"+3V3\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"1\", \"pinfunction\": \"VDD\"}, {\"ref\": \"U2\", \"pin\": \"8\", \"pinfunction\": \"VDD\"}, {\"ref\": \"U2\", \"pin\": \"7\", \"pinfunction\": \"VDDIO\"}, {\"ref\": \"U3\", \"pin\": \"2\", \"pinfunction\": \"VOUT\"}, {\"ref\": \"R1\", \"pin\": \"1\", \"pinfunction\": \"\"}, {\"ref\": \"R2\", \"pin\": \"1\", \"pinfunction\": \"\"}, {\"ref\": \"R3\", \"pin\": \"1\", \"pinfunction\": \"\"}, {\"ref\": \"C1\", \"pin\": \"1\", \"pinfunction\": \"\"}, {\"ref\": \"C2\", \"pin\": \"1\", \"pinfunction\": \"\"}, {\"ref\": \"C3\", \"pin\": \"1\", \"pinfunction\": \"\"}]}",
@@ -4080,10 +4079,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_b3d027efe362fb57",
+    "id": "f_99e3a4ee6739286d",
     "subject": "board:mach-khong-loi/net:GND",
     "predicate": "net",
     "value": "{\"name\": \"GND\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"24\", \"pinfunction\": \"VSS\"}, {\"ref\": \"U2\", \"pin\": \"4\", \"pinfunction\": \"GND\"}, {\"ref\": \"U3\", \"pin\": \"1\", \"pinfunction\": \"GND\"}, {\"ref\": \"C1\", \"pin\": \"2\", \"pinfunction\": \"\"}, {\"ref\": \"C2\", \"pin\": \"2\", \"pinfunction\": \"\"}, {\"ref\": \"C3\", \"pin\": \"2\", \"pinfunction\": \"\"}, {\"ref\": \"C4\", \"pin\": \"2\", \"pinfunction\": \"\"}]}",
@@ -4099,10 +4098,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_48d47724ce90a7d0",
+    "id": "f_83c57bce80b8d79f",
     "subject": "board:mach-khong-loi/net:NRST",
     "predicate": "net",
     "value": "{\"name\": \"NRST\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"7\", \"pinfunction\": \"NRST\"}, {\"ref\": \"R3\", \"pin\": \"2\", \"pinfunction\": \"\"}, {\"ref\": \"C4\", \"pin\": \"1\", \"pinfunction\": \"\"}]}",
@@ -4118,10 +4117,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_1c2832f7a8c1d31e",
+    "id": "f_d5dbad43da236757",
     "subject": "board:mach-khong-loi/net:SCL",
     "predicate": "net",
     "value": "{\"name\": \"SCL\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"19\", \"pinfunction\": \"PB6/I2C1_SCL\"}, {\"ref\": \"U2\", \"pin\": \"2\", \"pinfunction\": \"SCL\"}, {\"ref\": \"R2\", \"pin\": \"2\", \"pinfunction\": \"\"}]}",
@@ -4137,10 +4136,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_0cb11d737a8a13a4",
+    "id": "f_b976a4f02754fe4f",
     "subject": "board:mach-khong-loi/net:SDA",
     "predicate": "net",
     "value": "{\"name\": \"SDA\", \"nodes\": [{\"ref\": \"U1\", \"pin\": \"18\", \"pinfunction\": \"PB7/I2C1_SDA\"}, {\"ref\": \"U2\", \"pin\": \"1\", \"pinfunction\": \"SDA\"}, {\"ref\": \"R1\", \"pin\": \"2\", \"pinfunction\": \"\"}]}",
@@ -4156,10 +4155,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_e8474df52f486a2d",
+    "id": "f_9e6e6f57c671a5b6",
     "subject": "board:mach-khong-loi/net:VBUS_5V",
     "predicate": "net",
     "value": "{\"name\": \"VBUS_5V\", \"nodes\": [{\"ref\": \"J1\", \"pin\": \"A4\", \"pinfunction\": \"VBUS\"}, {\"ref\": \"U3\", \"pin\": \"3\", \"pinfunction\": \"VIN\"}]}",
@@ -4175,10 +4174,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_af73a494d7ab5ac0",
+    "id": "f_b600fadbe574e189",
     "subject": "board:mach-khong-loi/part:C1",
     "predicate": "package",
     "value": "{\"ref\": \"C1\", \"value\": \"100n\", \"footprint\": \"0402\"}",
@@ -4194,10 +4193,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_0c1f2264815bdf2a",
+    "id": "f_fe4b98854b1118de",
     "subject": "board:mach-khong-loi/part:C2",
     "predicate": "package",
     "value": "{\"ref\": \"C2\", \"value\": \"100n\", \"footprint\": \"0402\"}",
@@ -4213,10 +4212,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_abb3833e48682a1e",
+    "id": "f_30dbfb35efab2809",
     "subject": "board:mach-khong-loi/part:C3",
     "predicate": "package",
     "value": "{\"ref\": \"C3\", \"value\": \"100n\", \"footprint\": \"0402\"}",
@@ -4232,10 +4231,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_f8489399e88d9ec3",
+    "id": "f_85b7243e692a273e",
     "subject": "board:mach-khong-loi/part:C4",
     "predicate": "package",
     "value": "{\"ref\": \"C4\", \"value\": \"100n\", \"footprint\": \"0402\"}",
@@ -4251,10 +4250,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_dedb3507db2f9e6c",
+    "id": "f_e11a095057a96cb8",
     "subject": "board:mach-khong-loi/part:J1",
     "predicate": "package",
     "value": "{\"ref\": \"J1\", \"value\": \"USB-C\", \"footprint\": \"USB-C-16P\"}",
@@ -4270,10 +4269,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_8ca68585a583638d",
+    "id": "f_b92d0096a27a52a2",
     "subject": "board:mach-khong-loi/part:R1",
     "predicate": "package",
     "value": "{\"ref\": \"R1\", \"value\": \"4.7k\", \"footprint\": \"0402\"}",
@@ -4289,10 +4288,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_bbc4c0cf4c347247",
+    "id": "f_e443c1cf79d779bd",
     "subject": "board:mach-khong-loi/part:R2",
     "predicate": "package",
     "value": "{\"ref\": \"R2\", \"value\": \"4.7k\", \"footprint\": \"0402\"}",
@@ -4308,10 +4307,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_0f34ca602a2d709e",
+    "id": "f_b371ea282eea4986",
     "subject": "board:mach-khong-loi/part:R3",
     "predicate": "package",
     "value": "{\"ref\": \"R3\", \"value\": \"10k\", \"footprint\": \"0402\"}",
@@ -4327,10 +4326,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_ddeb2cc3272109e2",
+    "id": "f_66a91b78bfa0e2a0",
     "subject": "board:mach-khong-loi/part:U1",
     "predicate": "package",
     "value": "{\"ref\": \"U1\", \"value\": \"MCU-X\", \"footprint\": \"LQFP48\"}",
@@ -4346,10 +4345,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_17f4eb084d9d424d",
+    "id": "f_087ca7d84f6384cf",
     "subject": "board:mach-khong-loi/part:U2",
     "predicate": "package",
     "value": "{\"ref\": \"U2\", \"value\": \"SEN42\", \"footprint\": \"DFN8\"}",
@@ -4365,10 +4364,10 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    },
    {
-    "id": "f_84a14e928e027447",
+    "id": "f_fc67a3e2cb188e8a",
     "subject": "board:mach-khong-loi/part:U3",
     "predicate": "package",
     "value": "{\"ref\": \"U3\", \"value\": \"AMS1117-3.3\", \"footprint\": \"SOT223\"}",
@@ -4384,7 +4383,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "supersedes": null,
     "layer": "C",
     "conflicts_with": null,
-    "run_id": "8ac617776db1"
+    "run_id": "281f368e015b"
    }
   ]
  },
@@ -4415,7 +4414,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "id": "mach-khong-loi@1.0.0",
     "kind": "board",
     "header": "{\"name\": \"mach-khong-loi\", \"source\": \"mach-khong-loi.net\", \"parts\": 11}",
-    "created_at": "2026-09-24T04:18:39.781121+00:00",
+    "created_at": "2026-09-24T06:43:43.611816+00:00",
     "badges": null,
     "pinned_by": null
    }
@@ -4426,71 +4425,71 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
   "dong": [
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_a1fecf750483d336"
+    "fact_id": "f_aa3b77ffebfefdbc"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_b3d027efe362fb57"
+    "fact_id": "f_99e3a4ee6739286d"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_48d47724ce90a7d0"
+    "fact_id": "f_83c57bce80b8d79f"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_1c2832f7a8c1d31e"
+    "fact_id": "f_d5dbad43da236757"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_0cb11d737a8a13a4"
+    "fact_id": "f_b976a4f02754fe4f"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_e8474df52f486a2d"
+    "fact_id": "f_9e6e6f57c671a5b6"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_af73a494d7ab5ac0"
+    "fact_id": "f_b600fadbe574e189"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_0c1f2264815bdf2a"
+    "fact_id": "f_fe4b98854b1118de"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_abb3833e48682a1e"
+    "fact_id": "f_30dbfb35efab2809"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_f8489399e88d9ec3"
+    "fact_id": "f_85b7243e692a273e"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_dedb3507db2f9e6c"
+    "fact_id": "f_e11a095057a96cb8"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_8ca68585a583638d"
+    "fact_id": "f_b92d0096a27a52a2"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_bbc4c0cf4c347247"
+    "fact_id": "f_e443c1cf79d779bd"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_0f34ca602a2d709e"
+    "fact_id": "f_b371ea282eea4986"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_ddeb2cc3272109e2"
+    "fact_id": "f_66a91b78bfa0e2a0"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_17f4eb084d9d424d"
+    "fact_id": "f_087ca7d84f6384cf"
    },
    {
     "passport_id": "mach-khong-loi@1.0.0",
-    "fact_id": "f_84a14e928e027447"
+    "fact_id": "f_fc67a3e2cb188e8a"
    }
   ]
  },
@@ -4510,14 +4509,14 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_abb59e6fdc27",
+    "id": "r_60ff9e123b5a",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"args\": {\"files\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"]}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"args\": {\"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"args\": {\"board\": \"${n2.board_passport_id}\"}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"args\": {\"conflict\": \"${n3.conflicts[0]}\"}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n5\", \"cap\": \"code.static\", \"args\": {\"project\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC062/du-an/bom-khong-khop-schematic\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"args\": {\"question\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_abb59e6fdc27\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"review.ask\", \"slots\": {\"path\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\", \"BOM\", \"netlist\"], \"_text\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\"}, \"text\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"args\": {\"files\": [\"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"]}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"args\": {\"file\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"args\": {\"board\": \"${n2.board_passport_id}\"}, \"when\": \"n2\", \"on_ask\": \"skip\"}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"args\": {\"conflict\": \"${n3.conflicts[0]}\"}, \"when\": \"n3\", \"on_ask\": \"skip\"}, {\"id\": \"n5\", \"cap\": \"code.static\", \"args\": {\"project\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/TC062/du-an/bom-khong-khop-schematic\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"args\": {\"question\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\"}, \"when\": null, \"on_ask\": \"skip\"}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_60ff9e123b5a\"}, \"when\": \"n2\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"review.ask\", \"slots\": {\"path\": \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"BOM\", \"/Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net\"], \"_text\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\"}, \"text\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\"}",
     "state": "failed",
     "working": null,
-    "report": "{\"nguon_chuoi\": \"mẫu: Rà soát hiện vật (DEV-208)\", \"state\": \"failed\", \"done\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"run_id\": \"fb02e45aa617\", \"ra\": {\"indexed\": 0}, \"dau_ra\": {\"indexed\": 0}}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"run_id\": \"8ac617776db1\", \"ra\": {\"board_passport_id\": \"mach-khong-loi@1.0.0\", \"nets\": 6, \"parts\": 11}, \"dau_ra\": {\"board_passport_id\": \"mach-khong-loi@1.0.0\", \"nets\": 6, \"parts\": 11}}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"run_id\": \"da89f45c8ea6\", \"ra\": {\"conflicts\": 0}, \"dau_ra\": {\"conflicts\": []}}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"run_id\": \"6ef336d537d2\", \"ra\": {\"report\": \"6 trường\", \"text\": \"258 ký tự\"}, \"dau_ra\": {\"report\": {\"run_id\": \"r_abb59e6fdc27\", \"done\": [\"project.open\", \"view.artifacts\", \"view.artifacts\", \"view.timeline\", \"project.status\", \"chat.parse_intent\", \"chat.ground\", \"chat.fill_defaults\", \"ingest.index_text\", \"extract.kicad_netlist\", \"board.check_pins\"], \"waiting\": [], \"ra\": [], \"undo\": [\"8ac617776db1\"], \"cost\": 0.001132}, \"text\": \"Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\\nHoàn tác được 1 mục đến 2026-09-27T04:18.\\nChi phí mô hình: 0.0011 USD.\"}}], \"waiting\": [], \"skipped\": [], \"failed\": [{\"id\": \"n5\", \"cap\": \"code.static\", \"error\": {\"eide_code\": \"E2000\", \"name\": \"GROUNDING_FAILED\", \"exists\": [], \"candidates\": [], \"missing\": [\"isa\"], \"message\": \"Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)\"}, \"bat_buoc\": false}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"error\": {\"eide_code\": \"E5002\", \"name\": \"OUTPUT_INVALID\", \"remedy\": \"ingest.index_text\", \"message\": \"Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.\"}, \"bat_buoc\": false}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"error\": {\"eide_code\": \"E5002\", \"message\": \"tham chiếu `${n3.conflicts[0]}` không đọc được: '`conflicts[0]`: không có phần tử [0]'\"}}]}",
+    "report": "{\"nguon_chuoi\": \"mẫu: Rà soát hiện vật (DEV-208)\", \"state\": \"failed\", \"done\": [{\"id\": \"n1\", \"cap\": \"ingest.index_text\", \"run_id\": \"fe500f84b870\", \"ra\": {\"indexed\": 0}, \"dau_ra\": {\"indexed\": 0}}, {\"id\": \"n2\", \"cap\": \"extract.kicad_netlist\", \"run_id\": \"281f368e015b\", \"ra\": {\"board_passport_id\": \"mach-khong-loi@1.0.0\", \"nets\": 6, \"parts\": 11}, \"dau_ra\": {\"board_passport_id\": \"mach-khong-loi@1.0.0\", \"nets\": 6, \"parts\": 11}}, {\"id\": \"n3\", \"cap\": \"board.check_pins\", \"run_id\": \"69473e55f68c\", \"ra\": {\"conflicts\": 0}, \"dau_ra\": {\"conflicts\": []}}, {\"id\": \"n7\", \"cap\": \"chat.report_back\", \"run_id\": \"f54a96bc2193\", \"ra\": {\"report\": \"6 trường\", \"text\": \"258 ký tự\"}, \"dau_ra\": {\"report\": {\"run_id\": \"r_60ff9e123b5a\", \"done\": [\"project.open\", \"view.artifacts\", \"view.artifacts\", \"view.timeline\", \"project.status\", \"chat.parse_intent\", \"chat.ground\", \"chat.fill_defaults\", \"ingest.index_text\", \"extract.kicad_netlist\", \"board.check_pins\"], \"waiting\": [], \"ra\": [], \"undo\": [\"281f368e015b\"], \"cost\": 0.001117}, \"text\": \"Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\\nHoàn tác được 1 mục đến 2026-09-27T06:43.\\nChi phí mô hình: 0.0011 USD.\"}}], \"waiting\": [], \"skipped\": [], \"failed\": [{\"id\": \"n5\", \"cap\": \"code.static\", \"error\": {\"eide_code\": \"E2000\", \"name\": \"GROUNDING_FAILED\", \"exists\": [], \"candidates\": [], \"missing\": [\"isa\"], \"message\": \"Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)\"}, \"bat_buoc\": false}, {\"id\": \"n6\", \"cap\": \"view.rag_ask\", \"error\": {\"eide_code\": \"E5002\", \"name\": \"OUTPUT_INVALID\", \"remedy\": \"ingest.index_text\", \"message\": \"Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.\"}, \"bat_buoc\": false}, {\"id\": \"n4\", \"cap\": \"board.propose_fix\", \"error\": {\"eide_code\": \"E5002\", \"message\": \"tham chiếu `${n3.conflicts[0]}` không đọc được: '`conflicts[0]`: không có phần tử [0]'\"}}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T04:18:39.773862+00:00",
+    "started_at": "2026-09-24T06:43:43.605910+00:00",
     "finished_at": null
    }
   ]
@@ -4533,7 +4532,7 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
     "tier": "gold",
     "license": null,
     "domain": null,
-    "fetched_at": "2026-09-24T04:18:39.780472+00:00",
+    "fetched_at": "2026-09-24T06:43:43.611299+00:00",
     "confirmed_by": null,
     "size_bytes": 2181,
     "meta": null
@@ -4562,13 +4561,13 @@ BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_8e76346c86fb",
+    "id": "s_03f0c8c0a3da",
     "project": "bom-khong-khop-schematic",
-    "opened_at": "2026-09-24T04:18:37.712575+00:00",
+    "opened_at": "2026-09-24T06:43:41.249710+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\", \"at\": \"2026-09-24T04:18:37.978970+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_abb59e6f → failed; HỎNG: code.static (E2000), view.rag_ask (E5002), board.propose_fix (E5002)\", \"at\": \"2026-09-24T04:18:39.831999+00:00\", \"run_id\": \"r_abb59e6fdc27\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất\", \"at\": \"2026-09-24T06:43:41.567367+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_60ff9e12 → failed; HỎNG: code.static (E2000), view.rag_ask (E5002), board.propose_fix (E5002)\", \"at\": \"2026-09-24T06:43:43.675466+00:00\", \"run_id\": \"r_60ff9e123b5a\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -4602,7 +4601,7 @@ index/
 ```
 # BOM không khớp schematic
 
-- 2026-09-24 11:18 — tạo dự án từ lệnh: "BOM không khớp schematic"
+- 2026-09-24 13:43 — tạo dự án từ lệnh: "BOM không khớp schematic"
 
 ```
 
@@ -4693,7 +4692,7 @@ escalation:
 project:
   id: bom-khong-khop-schematic
   name: BOM không khớp schematic
-  created: '2026-09-24T04:18:37.425774+00:00'
+  created: '2026-09-24T06:43:40.935228+00:00'
   text: BOM không khớp schematic
 target:
   chip: null
@@ -4884,7 +4883,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “BOM không khớp schematic”
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bom-khong-khop-schematic` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4905,7 +4904,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** BOM của tôi có 5 linh kiện, còn netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net có 11. Kiểm tra khớp nhau trước khi xuất hồ sơ sản xuất
 
-**Tác tử trả lời** *(sau 7.7 s)*:
+**Tác tử trả lời** *(sau 7.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bom-khong-khop-schematic` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -4922,7 +4921,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ]
 }  4. `chat.report_back` — 6 trường report · 258 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.001132,
+    "cost" : 0.0011169999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -4938,20 +4937,20 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_abb59e6fdc27",
+    "run_id" : "r_60ff9e123b5a",
     "undo" : [
-      "8ac617776db1"
+      "281f368e015b"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:18.\nChi phí mô hình: 0.0011 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:43.\nChi phí mô hình: 0.0011 USD."
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 16 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins, chat.report_back, chat.orchestrate, chat.restate
 → `ingest.index_text` làm ra: 0 indexed — xem ở màn Nhập tài liệu.
 → `extract.kicad_netlist` làm ra: mach-khong-loi@1.0.0 board_passport_id; 6 nets; 11 parts — xem ở màn Nhập tài liệu.
 → `board.check_pins` làm ra: 0 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
-Hoàn tác được 1 mục đến 2026-09-27T04:18.
+Hoàn tác được 1 mục đến 2026-09-27T06:43.
 Chi phí mô hình: 0.0011 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
@@ -4970,8 +4969,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8e76346c86fb
-Mở lúc	24/09 04:18:37
+Phiên	s_03f0c8c0a3da
+Mở lúc	24/09 06:43:41
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5004,8 +5003,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8e76346c86fb
-Mở lúc	24/09 04:18:37
+Phiên	s_03f0c8c0a3da
+Mở lúc	24/09 06:43:41
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5023,9 +5022,9 @@ Số lời gọi	1
 
 ```
 Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  1 NGUỒN ĐÃ NHẬP  NGUỒN	LOẠI	TẦNG	FACT	CHƯA DUYỆT	AI ĐƯA VÀO	GIẤY PHÉP	NHẬP LÚC
-mach-khong-loi.net	netlist	vàng	17	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 04:18:39
+mach-khong-loi.net	netlist	vàng	17	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 06:43:43
   LƯỢT NHẬP GẦN ĐÂY — theo sổ cái  LÚC	LÔ / LÝ DO	FACT MỚI	XUNG ĐỘT	AI
-24/09 04:18:39	extract.kicad_netlist mach-khong-…	17	0	máy
+24/09 06:43:43	extract.kicad_netlist mach-khong-…	17	0	máy
 ```
 
 ![Ingest](man-02-Ingest.png)
@@ -5060,7 +5059,7 @@ Hộ chiếu mạch  board.build_passport · board.check_pins · board.constrain
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 11.5 s)*:
+**Tác tử trả lời** *(sau 11.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bom-khong-khop-schematic` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5077,7 +5076,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ]
 }  4. `chat.report_back` — 6 trường report · 258 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.001132,
+    "cost" : 0.0011169999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -5093,20 +5092,20 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_abb59e6fdc27",
+    "run_id" : "r_60ff9e123b5a",
     "undo" : [
-      "8ac617776db1"
+      "281f368e015b"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:18.\nChi phí mô hình: 0.0011 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:43.\nChi phí mô hình: 0.0011 USD."
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 16 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins, chat.report_back, chat.orchestrate, chat.restate
 → `ingest.index_text` làm ra: 0 indexed — xem ở màn Nhập tài liệu.
 → `extract.kicad_netlist` làm ra: mach-khong-loi@1.0.0 board_passport_id; 6 nets; 11 parts — xem ở màn Nhập tài liệu.
 → `board.check_pins` làm ra: 0 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
-Hoàn tác được 1 mục đến 2026-09-27T04:18.
+Hoàn tác được 1 mục đến 2026-09-27T06:43.
 Chi phí mô hình: 0.0011 USD.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 
@@ -5137,7 +5136,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC062/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bom-khong-khop-schematic` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5160,7 +5159,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC062/buoc-02.png
 
-**Tác tử trả lời** *(sau 7.7 s)*:
+**Tác tử trả lời** *(sau 7.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bom-khong-khop-schematic` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5177,7 +5176,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ]
 }  4. `chat.report_back` — 6 trường report · 258 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.001132,
+    "cost" : 0.0011169999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -5193,20 +5192,20 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_abb59e6fdc27",
+    "run_id" : "r_60ff9e123b5a",
     "undo" : [
-      "8ac617776db1"
+      "281f368e015b"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:18.\nChi phí mô hình: 0.0011 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:43.\nChi phí mô hình: 0.0011 USD."
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 16 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins, chat.report_back, chat.orchestrate, chat.restate
 → `ingest.index_text` làm ra: 0 indexed — xem ở màn Nhập tài liệu.
 → `extract.kicad_netlist` làm ra: mach-khong-loi@1.0.0 board_passport_id; 6 nets; 11 parts — xem ở màn Nhập tài liệu.
 → `board.check_pins` làm ra: 0 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
-Hoàn tác được 1 mục đến 2026-09-27T04:18.
+Hoàn tác được 1 mục đến 2026-09-27T06:43.
 Chi phí mô hình: 0.0011 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
@@ -5225,8 +5224,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8e76346c86fb
-Mở lúc	24/09 04:18:37
+Phiên	s_03f0c8c0a3da
+Mở lúc	24/09 06:43:41
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5261,8 +5260,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_8e76346c86fb
-Mở lúc	24/09 04:18:37
+Phiên	s_03f0c8c0a3da
+Mở lúc	24/09 06:43:41
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -5282,9 +5281,9 @@ Số lời gọi	1
 
 ```
 Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  1 NGUỒN ĐÃ NHẬP  NGUỒN	LOẠI	TẦNG	FACT	CHƯA DUYỆT	AI ĐƯA VÀO	GIẤY PHÉP	NHẬP LÚC
-mach-khong-loi.net	netlist	vàng	17	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 04:18:39
+mach-khong-loi.net	netlist	vàng	17	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 06:43:43
   LƯỢT NHẬP GẦN ĐÂY — theo sổ cái  LÚC	LÔ / LÝ DO	FACT MỚI	XUNG ĐỘT	AI
-24/09 04:18:39	extract.kicad_netlist mach-khong-…	17	0	máy
+24/09 06:43:43	extract.kicad_netlist mach-khong-…	17	0	máy
 ```
 
 ![Ingest](man-02-Ingest.png)
@@ -5327,7 +5326,7 @@ Hộ chiếu mạch  board.build_passport · board.check_pins · board.constrain
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC062/buoc-03.png
 
-**Tác tử trả lời** *(sau 11.5 s)*:
+**Tác tử trả lời** *(sau 11.6 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bom-khong-khop-schematic` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -5344,7 +5343,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ]
 }  4. `chat.report_back` — 6 trường report · 258 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.001132,
+    "cost" : 0.0011169999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -5360,20 +5359,20 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_abb59e6fdc27",
+    "run_id" : "r_60ff9e123b5a",
     "undo" : [
-      "8ac617776db1"
+      "281f368e015b"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T04:18.\nChi phí mô hình: 0.0011 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T06:43.\nChi phí mô hình: 0.0011 USD."
 }  Lượt chạy DỪNG vì có bước hỏng — KHÔNG chờ anh, xem dòng ✖ ở trên.  Đã làm 16 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins, chat.report_back, chat.orchestrate, chat.restate
 → `ingest.index_text` làm ra: 0 indexed — xem ở màn Nhập tài liệu.
 → `extract.kicad_netlist` làm ra: mach-khong-loi@1.0.0 board_passport_id; 6 nets; 11 parts — xem ở màn Nhập tài liệu.
 → `board.check_pins` làm ra: 0 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
-Hoàn tác được 1 mục đến 2026-09-27T04:18.
+Hoàn tác được 1 mục đến 2026-09-27T06:43.
 Chi phí mô hình: 0.0011 USD.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 

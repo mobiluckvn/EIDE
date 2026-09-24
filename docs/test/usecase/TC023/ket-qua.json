@@ -27,7 +27,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không tóm tắt được thiết kế. `archive.list` hỏng E1000: “Không nhận ra định dạng nén của mach-khong-loi.net” — netlist bị đối xử như tệp nén.",
- "giay": 21.2,
+ "giay": 20.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -50,7 +50,7 @@
  },
  "lap": [
   {
-   "giay": 21.2,
+   "giay": 20.7,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "mcu-x|u1",

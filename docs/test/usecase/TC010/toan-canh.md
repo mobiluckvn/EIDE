@@ -14,7 +14,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2491 tok · ra 100 tok · 1736 ms · 0.000997 USD
+- dừng: `stop` · vào 2491 tok · ra 106 tok · 2410 ms · 0.001012 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -121,7 +121,9 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
   "is_big": false,
   "confidence": 0.85,
   "lang": "vi",
-  "mentions": ["XQ-9988Z-TRB"]
+  "mentions": [
+    "XQ-9988Z-TRB"
+  ]
 }
 ```
 ## 3. Ledger — 107 sự kiện
@@ -152,7 +154,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "7f523ebe7353"
+    "run_id": "ff183c5a16e6"
    },
    "decision": {
     "decision": "APPROVE",
@@ -160,13 +162,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "7f523ebe7353"
+   "run_id": "ff183c5a16e6"
   },
-  "hash": "4c7d62aae5253410da2b3ff1a70240aa9a57e49abf50aa70bece7ccb40a5e96a",
+  "hash": "74f0a0d2ff0ccb34f518064f1283516d3c263cea60b5010b51ab3d90f77a5754",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T03:58:44.815604+00:00"
+  "ts": "2026-09-24T06:21:16.886791+00:00"
  },
  {
   "actor": "agent",
@@ -176,52 +178,52 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "7f523ebe7353"
+    "run_id": "ff183c5a16e6"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "7f523ebe7353"
+   "run_id": "ff183c5a16e6"
   },
-  "hash": "b2c5a012e372417c146f4ba616e834713b60746552140b8dd5324f0f10836ad1",
+  "hash": "aecbebac609cfad4f2a30b017be894883faae51d90c224abebe55730cc15a27d",
   "kind": "gate.decision",
-  "prev_hash": "4c7d62aae5253410da2b3ff1a70240aa9a57e49abf50aa70bece7ccb40a5e96a",
+  "prev_hash": "74f0a0d2ff0ccb34f518064f1283516d3c263cea60b5010b51ab3d90f77a5754",
   "seq": 2,
-  "ts": "2026-09-24T03:58:44.815938+00:00"
+  "ts": "2026-09-24T06:21:16.887130+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "7f523ebe7353"
+    "run_id": "ff183c5a16e6"
    },
    "project": "dung-linh-kien-hiem-tai-lieu",
-   "session_id": "s_449e9d33d07c"
+   "session_id": "s_bc57bb2ca28a"
   },
-  "hash": "b5ba4e878af8ae802dc2af80b9ef1a95177bbcdb8bf66d97c118260889bc17c6",
+  "hash": "25ea36c0ce0886616bccccf23ba3f4b2f3f25bbf7efa064fb2951e9f2360d217",
   "kind": "session.open",
-  "prev_hash": "b2c5a012e372417c146f4ba616e834713b60746552140b8dd5324f0f10836ad1",
+  "prev_hash": "aecbebac609cfad4f2a30b017be894883faae51d90c224abebe55730cc15a27d",
   "seq": 3,
-  "ts": "2026-09-24T03:58:44.821988+00:00"
+  "ts": "2026-09-24T06:21:16.893387+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "8983f14ac445ac4c",
-   "run_id": "7f523ebe7353",
+   "duration_ms": 23,
+   "result_hash": "2e1920ecc4da30f6",
+   "run_id": "ff183c5a16e6",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c240d75878875beb64110517eadbfdd2a1ed77afecffee48a0e6fc995e12113d",
+  "hash": "0b645a101beb74e1fc5675090056e3d12541c3ca7cebfecf7e3312ca0a68154b",
   "kind": "cap.run.finish",
-  "prev_hash": "b5ba4e878af8ae802dc2af80b9ef1a95177bbcdb8bf66d97c118260889bc17c6",
+  "prev_hash": "25ea36c0ce0886616bccccf23ba3f4b2f3f25bbf7efa064fb2951e9f2360d217",
   "seq": 4,
-  "ts": "2026-09-24T03:58:44.823093+00:00"
+  "ts": "2026-09-24T06:21:16.894488+00:00"
  },
  {
   "actor": "agent",
@@ -231,7 +233,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ecb40381e989"
+    "run_id": "970c4310e00c"
    },
    "decision": {
     "decision": "APPROVE",
@@ -239,13 +241,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ecb40381e989"
+   "run_id": "970c4310e00c"
   },
-  "hash": "7da00a1beae536a075133212ddaf1a5900f6c063ebb0ca547710fec21adb7e37",
+  "hash": "245fbb89358012f6d2ea3a4d030dd9cfa3e9501bfb2c72abd82f6d77871427cb",
   "kind": "cap.run.start",
-  "prev_hash": "c240d75878875beb64110517eadbfdd2a1ed77afecffee48a0e6fc995e12113d",
+  "prev_hash": "0b645a101beb74e1fc5675090056e3d12541c3ca7cebfecf7e3312ca0a68154b",
   "seq": 5,
-  "ts": "2026-09-24T03:58:44.829835+00:00"
+  "ts": "2026-09-24T06:21:16.901414+00:00"
  },
  {
   "actor": "agent",
@@ -255,20 +257,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "ecb40381e989"
+    "run_id": "970c4310e00c"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ecb40381e989"
+   "run_id": "970c4310e00c"
   },
-  "hash": "c96d1c574c4f82a41cea271971887c1845b1405c9bc7a389fa60b2f4861591a9",
+  "hash": "8adedded888f7253dca39d64094c742ff3a69e33579e1df79569e636d89aa0a2",
   "kind": "gate.decision",
-  "prev_hash": "7da00a1beae536a075133212ddaf1a5900f6c063ebb0ca547710fec21adb7e37",
+  "prev_hash": "245fbb89358012f6d2ea3a4d030dd9cfa3e9501bfb2c72abd82f6d77871427cb",
   "seq": 6,
-  "ts": "2026-09-24T03:58:44.829924+00:00"
+  "ts": "2026-09-24T06:21:16.901505+00:00"
  },
  {
   "actor": "agent",
@@ -276,15 +278,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "ecb40381e989",
+   "run_id": "970c4310e00c",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1084b5aded2245e8c0a4db62f4eb3d1bc3475a18a2a0618029cfe4535651375a",
+  "hash": "c83e1a291573e0abcce7ee762bafc72496541131857df3a31d5f9d21564316af",
   "kind": "cap.run.finish",
-  "prev_hash": "c96d1c574c4f82a41cea271971887c1845b1405c9bc7a389fa60b2f4861591a9",
+  "prev_hash": "8adedded888f7253dca39d64094c742ff3a69e33579e1df79569e636d89aa0a2",
   "seq": 7,
-  "ts": "2026-09-24T03:58:44.831520+00:00"
+  "ts": "2026-09-24T06:21:16.903138+00:00"
  },
  {
   "actor": "agent",
@@ -294,7 +296,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "94d69a75f705"
+    "run_id": "988549662bc1"
    },
    "decision": {
     "decision": "APPROVE",
@@ -302,13 +304,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "94d69a75f705"
+   "run_id": "988549662bc1"
   },
-  "hash": "5d75b304c3748fcef4692d43bce499a40c41fc4aff6f13c4e168544d506abb3f",
+  "hash": "15f570dd3d7ae65f270d1a45c1f3c9df0d4afa6e9d0e95c10553759176605e6d",
   "kind": "cap.run.start",
-  "prev_hash": "1084b5aded2245e8c0a4db62f4eb3d1bc3475a18a2a0618029cfe4535651375a",
+  "prev_hash": "c83e1a291573e0abcce7ee762bafc72496541131857df3a31d5f9d21564316af",
   "seq": 8,
-  "ts": "2026-09-24T03:58:44.832877+00:00"
+  "ts": "2026-09-24T06:21:16.904550+00:00"
  },
  {
   "actor": "agent",
@@ -318,20 +320,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "94d69a75f705"
+    "run_id": "988549662bc1"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "94d69a75f705"
+   "run_id": "988549662bc1"
   },
-  "hash": "ce62bf1b6f5572ca89297b90a53123d0f6c1d6674a1b2c79f1c03a6294808ec3",
+  "hash": "68081e7a31a14b08de7e59368b7532ca5a0726d05a8f88676b1109695e1bc609",
   "kind": "gate.decision",
-  "prev_hash": "5d75b304c3748fcef4692d43bce499a40c41fc4aff6f13c4e168544d506abb3f",
+  "prev_hash": "15f570dd3d7ae65f270d1a45c1f3c9df0d4afa6e9d0e95c10553759176605e6d",
   "seq": 9,
-  "ts": "2026-09-24T03:58:44.832945+00:00"
+  "ts": "2026-09-24T06:21:16.904625+00:00"
  },
  {
   "actor": "agent",
@@ -339,15 +341,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "94d69a75f705",
+   "run_id": "988549662bc1",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "90d994bc093745e06df9a0190f06ba02ca315810242ac5b2e5db8e3b90ad01be",
+  "hash": "eda9f6ee78fa78bda491a9429b0e47fa0fd93b37cd9253c9770bb1e7ec9f325b",
   "kind": "cap.run.finish",
-  "prev_hash": "ce62bf1b6f5572ca89297b90a53123d0f6c1d6674a1b2c79f1c03a6294808ec3",
+  "prev_hash": "68081e7a31a14b08de7e59368b7532ca5a0726d05a8f88676b1109695e1bc609",
   "seq": 10,
-  "ts": "2026-09-24T03:58:44.834626+00:00"
+  "ts": "2026-09-24T06:21:16.906335+00:00"
  },
  {
   "actor": "agent",
@@ -357,7 +359,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "38d8497d6f6a"
+    "run_id": "d9d20ded3018"
    },
    "decision": {
     "decision": "APPROVE",
@@ -365,13 +367,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "38d8497d6f6a"
+   "run_id": "d9d20ded3018"
   },
-  "hash": "f530d3dc3114764b77faef18321203edcfe1ca3eb1bc7ec629ecea6996458cc5",
+  "hash": "ce463b6ae07b0876f2bafc84db1f0b83fff6ba9d668f5c64451563d0446214fd",
   "kind": "cap.run.start",
-  "prev_hash": "90d994bc093745e06df9a0190f06ba02ca315810242ac5b2e5db8e3b90ad01be",
+  "prev_hash": "eda9f6ee78fa78bda491a9429b0e47fa0fd93b37cd9253c9770bb1e7ec9f325b",
   "seq": 11,
-  "ts": "2026-09-24T03:58:44.863074+00:00"
+  "ts": "2026-09-24T06:21:16.934497+00:00"
  },
  {
   "actor": "agent",
@@ -381,36 +383,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "38d8497d6f6a"
+    "run_id": "d9d20ded3018"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "38d8497d6f6a"
+   "run_id": "d9d20ded3018"
   },
-  "hash": "cfca532c3d306e78dac934110fd49e318188ddb0520b5d1fdc295beb64860bdc",
+  "hash": "47619ae49604e3ec857a789799abebbabb3ab361f89e507136e5593a387c5642",
   "kind": "gate.decision",
-  "prev_hash": "f530d3dc3114764b77faef18321203edcfe1ca3eb1bc7ec629ecea6996458cc5",
+  "prev_hash": "ce463b6ae07b0876f2bafc84db1f0b83fff6ba9d668f5c64451563d0446214fd",
   "seq": 12,
-  "ts": "2026-09-24T03:58:44.863230+00:00"
+  "ts": "2026-09-24T06:21:16.934609+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 2,
-   "result_hash": "37dc052b252bc655",
-   "run_id": "38d8497d6f6a",
+   "duration_ms": 1,
+   "result_hash": "3d3c2cee47d209c3",
+   "run_id": "d9d20ded3018",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "075a12b05ee840a06f063458e99c43561db4dedf199c58293c5288bb3ae5c385",
+  "hash": "060d9e2d1da01715adb8d14829b7d3602588e4fd29ec31895d1ea8d4a17a1258",
   "kind": "cap.run.finish",
-  "prev_hash": "cfca532c3d306e78dac934110fd49e318188ddb0520b5d1fdc295beb64860bdc",
+  "prev_hash": "47619ae49604e3ec857a789799abebbabb3ab361f89e507136e5593a387c5642",
   "seq": 13,
-  "ts": "2026-09-24T03:58:44.865252+00:00"
+  "ts": "2026-09-24T06:21:16.936431+00:00"
  },
  {
   "actor": "agent",
@@ -420,7 +422,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "1e8361e8e331"
+    "run_id": "62e1591ec9fa"
    },
    "decision": {
     "decision": "APPROVE",
@@ -428,13 +430,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "1e8361e8e331"
+   "run_id": "62e1591ec9fa"
   },
-  "hash": "db8de24dec95b711f93c7a53e01dcd746958625a78a43978bc1740961ef60aa1",
+  "hash": "49aafd2628ad34eab0822d8e261275ddb2622e40ea790da83a3a8bfa7a7481d0",
   "kind": "cap.run.start",
-  "prev_hash": "075a12b05ee840a06f063458e99c43561db4dedf199c58293c5288bb3ae5c385",
+  "prev_hash": "060d9e2d1da01715adb8d14829b7d3602588e4fd29ec31895d1ea8d4a17a1258",
   "seq": 14,
-  "ts": "2026-09-24T03:58:45.088647+00:00"
+  "ts": "2026-09-24T06:21:17.163748+00:00"
  },
  {
   "actor": "agent",
@@ -444,20 +446,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "1e8361e8e331"
+    "run_id": "62e1591ec9fa"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "1e8361e8e331"
+   "run_id": "62e1591ec9fa"
   },
-  "hash": "731f31b440afe6e8143bec0415fdabaeb292c8be53045b295e00358b960856e3",
+  "hash": "0ca64c45404c08680adf0cf061754a0b4486ca1d9e31b443556e3a4cfbf95102",
   "kind": "gate.decision",
-  "prev_hash": "db8de24dec95b711f93c7a53e01dcd746958625a78a43978bc1740961ef60aa1",
+  "prev_hash": "49aafd2628ad34eab0822d8e261275ddb2622e40ea790da83a3a8bfa7a7481d0",
   "seq": 15,
-  "ts": "2026-09-24T03:58:45.088834+00:00"
+  "ts": "2026-09-24T06:21:17.163906+00:00"
  },
  {
   "actor": "agent",
@@ -465,15 +467,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "1e8361e8e331",
+   "run_id": "62e1591ec9fa",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c45f86ff0149c7c3a815ddd34c91e945528fc42acc04d7cccb8849878a3208a3",
+  "hash": "5b664851924db932b5e19edc26e8cc8dc63893f3110c83a986a16c39b778bf3c",
   "kind": "cap.run.finish",
-  "prev_hash": "731f31b440afe6e8143bec0415fdabaeb292c8be53045b295e00358b960856e3",
+  "prev_hash": "0ca64c45404c08680adf0cf061754a0b4486ca1d9e31b443556e3a4cfbf95102",
   "seq": 16,
-  "ts": "2026-09-24T03:58:45.092206+00:00"
+  "ts": "2026-09-24T06:21:17.167162+00:00"
  },
  {
   "actor": "agent",
@@ -483,7 +485,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "0f648e5ea973"
+    "run_id": "39e61e28007d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -491,13 +493,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0f648e5ea973"
+   "run_id": "39e61e28007d"
   },
-  "hash": "000f4b0e012454df6bfa1404474d0153ea201d43f7d1bac741b95d647d5616e6",
+  "hash": "980e75ff21e6edc46eab5f1cc14210e9f168b1979eb126cbde65ecd727dcb782",
   "kind": "cap.run.start",
-  "prev_hash": "c45f86ff0149c7c3a815ddd34c91e945528fc42acc04d7cccb8849878a3208a3",
+  "prev_hash": "5b664851924db932b5e19edc26e8cc8dc63893f3110c83a986a16c39b778bf3c",
   "seq": 17,
-  "ts": "2026-09-24T03:58:45.114478+00:00"
+  "ts": "2026-09-24T06:21:17.193047+00:00"
  },
  {
   "actor": "agent",
@@ -507,27 +509,27 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "0f648e5ea973"
+    "run_id": "39e61e28007d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0f648e5ea973"
+   "run_id": "39e61e28007d"
   },
-  "hash": "0a68e4f5e03f64a9813254c466d653d2ce3c454c68c5f86bc89748cc389c1353",
+  "hash": "b912ac232e58e110b8ead486922d448a6a78335cde712bc701b9bf747f8f51c9",
   "kind": "gate.decision",
-  "prev_hash": "000f4b0e012454df6bfa1404474d0153ea201d43f7d1bac741b95d647d5616e6",
+  "prev_hash": "980e75ff21e6edc46eab5f1cc14210e9f168b1979eb126cbde65ecd727dcb782",
   "seq": 18,
-  "ts": "2026-09-24T03:58:45.114638+00:00"
+  "ts": "2026-09-24T06:21:17.198092+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "0f648e5ea973"
+    "run_id": "39e61e28007d"
    },
    "compressions": [],
    "hash": "3bb83981133391fb",
@@ -567,7 +569,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "tool.promote",
     "tool.deprecate",
     "/Users/congvt/Documents/EIDE/docs/test/usecase/TC010/du-an/dung-linh-kien-hiem-tai-lieu",
-    "s_449e9d33d07c"
+    "s_bc57bb2ca28a"
    ],
    "tokens": {
     "C0": 1895,
@@ -576,11 +578,11 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "C7": 24
    }
   },
-  "hash": "312242d9cb337d5fa460a9ec864b9161405e384ac754b4343d3449581977c3a9",
+  "hash": "9c985b0676e1111ffb27a6b0ad241123814516066b69baaa76208b2a45772a31",
   "kind": "context.bundle",
-  "prev_hash": "0a68e4f5e03f64a9813254c466d653d2ce3c454c68c5f86bc89748cc389c1353",
+  "prev_hash": "b912ac232e58e110b8ead486922d448a6a78335cde712bc701b9bf747f8f51c9",
   "seq": 19,
-  "ts": "2026-09-24T03:58:45.121009+00:00"
+  "ts": "2026-09-24T06:21:17.207818+00:00"
  },
  {
   "actor": "agent",
@@ -588,30 +590,30 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "0f648e5ea973"
+    "run_id": "39e61e28007d"
    },
-   "cost_usd": 0.000997,
-   "latency_ms": 1736,
+   "cost_usd": 0.001012,
+   "latency_ms": 2410,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "424b257deb1dd34b",
    "request_hash": "f524d03b2dc84a60",
    "role": "intent",
    "stop_reason": "stop",
    "tokens_in": 2491,
-   "tokens_out": 100
+   "tokens_out": 106
   },
-  "hash": "e93536dbecf9a6a0b36dc88a13d16420c2e12c160fc5630e53f25f4e74dcf37a",
+  "hash": "3a6cdf1fbf0efcd508193ccc565ab84e33764e06b9c742ab0bfe4c1220005da3",
   "kind": "model.call",
-  "prev_hash": "312242d9cb337d5fa460a9ec864b9161405e384ac754b4343d3449581977c3a9",
+  "prev_hash": "9c985b0676e1111ffb27a6b0ad241123814516066b69baaa76208b2a45772a31",
   "seq": 20,
-  "ts": "2026-09-24T03:58:46.866128+00:00"
+  "ts": "2026-09-24T06:21:19.627016+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "0f648e5ea973"
+    "run_id": "39e61e28007d"
    },
    "confidence": 0.85,
    "intent": "search.ask",
@@ -622,27 +624,27 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    },
    "text": "Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi"
   },
-  "hash": "8a185b5e894570671b0fdc769d05a8b3057957ba85ce2fc5d1dbe92d96ccd53b",
+  "hash": "e9fdb80904f16424449e3f72d741597b16622a8386e8b4b0d08a538ad939430a",
   "kind": "intent",
-  "prev_hash": "e93536dbecf9a6a0b36dc88a13d16420c2e12c160fc5630e53f25f4e74dcf37a",
+  "prev_hash": "3a6cdf1fbf0efcd508193ccc565ab84e33764e06b9c742ab0bfe4c1220005da3",
   "seq": 21,
-  "ts": "2026-09-24T03:58:46.867482+00:00"
+  "ts": "2026-09-24T06:21:19.628765+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 1754,
+   "duration_ms": 2437,
    "result_hash": "ab1fb8bbad93ab89",
-   "run_id": "0f648e5ea973",
+   "run_id": "39e61e28007d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "aa4dff91737a6f56f71db266a22024d40a1c80541087a4a08474fe9b70db40bf",
+  "hash": "43e388744846130c99b73c7a4aad4a749edaf9c84b7af6b5bd0e19ecc2f2d0b5",
   "kind": "cap.run.finish",
-  "prev_hash": "8a185b5e894570671b0fdc769d05a8b3057957ba85ce2fc5d1dbe92d96ccd53b",
+  "prev_hash": "e9fdb80904f16424449e3f72d741597b16622a8386e8b4b0d08a538ad939430a",
   "seq": 22,
-  "ts": "2026-09-24T03:58:46.868647+00:00"
+  "ts": "2026-09-24T06:21:19.630002+00:00"
  },
  {
   "actor": "agent",
@@ -652,7 +654,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "f69b95e981da"
+    "run_id": "5dc7b0c39270"
    },
    "decision": {
     "decision": "APPROVE",
@@ -660,13 +662,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f69b95e981da"
+   "run_id": "5dc7b0c39270"
   },
-  "hash": "148704426f867756a707237455f883d1089fbcd12488566c1e751efa23a0aae1",
+  "hash": "ea0df950503397b8da03fe32ea82650df2239ee9daa525d22f0dbf8ae75ed633",
   "kind": "cap.run.start",
-  "prev_hash": "aa4dff91737a6f56f71db266a22024d40a1c80541087a4a08474fe9b70db40bf",
+  "prev_hash": "43e388744846130c99b73c7a4aad4a749edaf9c84b7af6b5bd0e19ecc2f2d0b5",
   "seq": 23,
-  "ts": "2026-09-24T03:58:46.869975+00:00"
+  "ts": "2026-09-24T06:21:19.631328+00:00"
  },
  {
   "actor": "agent",
@@ -676,20 +678,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "f69b95e981da"
+    "run_id": "5dc7b0c39270"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f69b95e981da"
+   "run_id": "5dc7b0c39270"
   },
-  "hash": "efb0608b9beeafd7b070ddf06f74c8b161cdc9b1769256e7c7c610f5c95511da",
+  "hash": "37dfa1dd24f668015ea258a751e5d5fe6ccdb18d3d8fcfdd0b7d25e2f5e8d071",
   "kind": "gate.decision",
-  "prev_hash": "148704426f867756a707237455f883d1089fbcd12488566c1e751efa23a0aae1",
+  "prev_hash": "ea0df950503397b8da03fe32ea82650df2239ee9daa525d22f0dbf8ae75ed633",
   "seq": 24,
-  "ts": "2026-09-24T03:58:46.870209+00:00"
+  "ts": "2026-09-24T06:21:19.631638+00:00"
  },
  {
   "actor": "agent",
@@ -697,15 +699,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.ground",
    "duration_ms": 4,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "f69b95e981da",
+   "run_id": "5dc7b0c39270",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "57c93b60bd5df4b45f3ca126a56cc13ef63ceffa421567a7560d02cd21ac1400",
+  "hash": "a3259ec965a698968d8bccdd40e00a7633eca44be283d963993686d207e1bc38",
   "kind": "cap.run.finish",
-  "prev_hash": "efb0608b9beeafd7b070ddf06f74c8b161cdc9b1769256e7c7c610f5c95511da",
+  "prev_hash": "37dfa1dd24f668015ea258a751e5d5fe6ccdb18d3d8fcfdd0b7d25e2f5e8d071",
   "seq": 25,
-  "ts": "2026-09-24T03:58:46.874122+00:00"
+  "ts": "2026-09-24T06:21:19.635508+00:00"
  },
  {
   "actor": "agent",
@@ -715,7 +717,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "e85fdaeca79d"
+    "run_id": "54eba6de7bc9"
    },
    "decision": {
     "decision": "APPROVE",
@@ -723,13 +725,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e85fdaeca79d"
+   "run_id": "54eba6de7bc9"
   },
-  "hash": "961c525bf2f0e8aeb40fda2ed8962aebfd678a30dee5fb47e3a14d7620a9415d",
+  "hash": "43336ca5da11e1208ad4ae1c8110c1cfc2748be4f344aaad74557b0f74ff17f9",
   "kind": "cap.run.start",
-  "prev_hash": "57c93b60bd5df4b45f3ca126a56cc13ef63ceffa421567a7560d02cd21ac1400",
+  "prev_hash": "a3259ec965a698968d8bccdd40e00a7633eca44be283d963993686d207e1bc38",
   "seq": 26,
-  "ts": "2026-09-24T03:58:46.875443+00:00"
+  "ts": "2026-09-24T06:21:19.636967+00:00"
  },
  {
   "actor": "agent",
@@ -739,20 +741,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "e85fdaeca79d"
+    "run_id": "54eba6de7bc9"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e85fdaeca79d"
+   "run_id": "54eba6de7bc9"
   },
-  "hash": "a775ef2ec4cb7042ec59a7aeb6d3cf328816b993a70652d48934a7d40217cf70",
+  "hash": "4b8ee92c84d67f50a994cc9e6056fa71c54c661ac4e9918649eb30bc2b908ff5",
   "kind": "gate.decision",
-  "prev_hash": "961c525bf2f0e8aeb40fda2ed8962aebfd678a30dee5fb47e3a14d7620a9415d",
+  "prev_hash": "43336ca5da11e1208ad4ae1c8110c1cfc2748be4f344aaad74557b0f74ff17f9",
   "seq": 27,
-  "ts": "2026-09-24T03:58:46.875600+00:00"
+  "ts": "2026-09-24T06:21:19.637138+00:00"
  },
  {
   "actor": "agent",
@@ -760,15 +762,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.fill_defaults",
    "duration_ms": 6,
    "result_hash": "dfb213cb1dc5da4b",
-   "run_id": "e85fdaeca79d",
+   "run_id": "54eba6de7bc9",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8f5c13c28d888ecbeccd6a611fbfa6a2f49bc9d2e86b699b6747626a4aea9aa1",
+  "hash": "09c6e253abfe13b4dcb96b528586eb1b3ca5e51a30c491ab6a1dda9d7ccc46b9",
   "kind": "cap.run.finish",
-  "prev_hash": "a775ef2ec4cb7042ec59a7aeb6d3cf328816b993a70652d48934a7d40217cf70",
+  "prev_hash": "4b8ee92c84d67f50a994cc9e6056fa71c54c661ac4e9918649eb30bc2b908ff5",
   "seq": 28,
-  "ts": "2026-09-24T03:58:46.881564+00:00"
+  "ts": "2026-09-24T06:21:19.643551+00:00"
  },
  {
   "actor": "agent",
@@ -778,7 +780,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "ec89613ea6d7"
+    "run_id": "ce4e83270f13"
    },
    "decision": {
     "decision": "APPROVE",
@@ -786,13 +788,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ec89613ea6d7"
+   "run_id": "ce4e83270f13"
   },
-  "hash": "14496c9a899babb133c509ecaf4bf3fc408396dfaf31eba43e5ac96be28922d3",
+  "hash": "7b4122c06954df004a6a1f64c4af30dd64ce01a0f1d6d1ead5db447c725256e7",
   "kind": "cap.run.start",
-  "prev_hash": "8f5c13c28d888ecbeccd6a611fbfa6a2f49bc9d2e86b699b6747626a4aea9aa1",
+  "prev_hash": "09c6e253abfe13b4dcb96b528586eb1b3ca5e51a30c491ab6a1dda9d7ccc46b9",
   "seq": 29,
-  "ts": "2026-09-24T03:58:46.883425+00:00"
+  "ts": "2026-09-24T06:21:19.645390+00:00"
  },
  {
   "actor": "agent",
@@ -802,20 +804,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "ec89613ea6d7"
+    "run_id": "ce4e83270f13"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ec89613ea6d7"
+   "run_id": "ce4e83270f13"
   },
-  "hash": "2d108a7ad86e82e7f8b645455f8e95940f38ecf3e1ba2c3790b16c8c27d5729d",
+  "hash": "82ac0fc3162b4c0ca5ce23793c9f8886f30d1a9dd8d6f03b2fc70901f31697a5",
   "kind": "gate.decision",
-  "prev_hash": "14496c9a899babb133c509ecaf4bf3fc408396dfaf31eba43e5ac96be28922d3",
+  "prev_hash": "7b4122c06954df004a6a1f64c4af30dd64ce01a0f1d6d1ead5db447c725256e7",
   "seq": 30,
-  "ts": "2026-09-24T03:58:46.883743+00:00"
+  "ts": "2026-09-24T06:21:19.645590+00:00"
  },
  {
   "actor": "agent",
@@ -825,7 +827,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e3e34f1df68b"
+    "run_id": "8dab526b3b50"
    },
    "decision": {
     "decision": "APPROVE",
@@ -833,13 +835,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e3e34f1df68b"
+   "run_id": "8dab526b3b50"
   },
-  "hash": "16cb6a6282eea3dac9e874f645adcb27be2afebabeb7ab129a82bd2b79471c16",
+  "hash": "eac2e552fae7473af0640e9b3015f0f6230b112087b5d176f126f31b257cf1e1",
   "kind": "cap.run.start",
-  "prev_hash": "2d108a7ad86e82e7f8b645455f8e95940f38ecf3e1ba2c3790b16c8c27d5729d",
+  "prev_hash": "82ac0fc3162b4c0ca5ce23793c9f8886f30d1a9dd8d6f03b2fc70901f31697a5",
   "seq": 31,
-  "ts": "2026-09-24T03:58:46.996795+00:00"
+  "ts": "2026-09-24T06:21:19.764602+00:00"
  },
  {
   "actor": "agent",
@@ -849,30 +851,30 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e3e34f1df68b"
+    "run_id": "8dab526b3b50"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e3e34f1df68b"
+   "run_id": "8dab526b3b50"
   },
-  "hash": "7102d475cdaa9da367616e415323ddf69dbfeaf5873b6e104f76e3284122be9c",
+  "hash": "a33cb587ec796184993023e0371749369066330bcfc1ca3b0afc5d8cbe717bdf",
   "kind": "gate.decision",
-  "prev_hash": "16cb6a6282eea3dac9e874f645adcb27be2afebabeb7ab129a82bd2b79471c16",
+  "prev_hash": "eac2e552fae7473af0640e9b3015f0f6230b112087b5d176f126f31b257cf1e1",
   "seq": 32,
-  "ts": "2026-09-24T03:58:47.003095+00:00"
+  "ts": "2026-09-24T06:21:19.764841+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "ec89613ea6d7"
+    "run_id": "ce4e83270f13"
    },
    "n": 1,
-   "run_id": "r_c72f8c366f72",
+   "run_id": "r_634f87d96c85",
    "steps": [
     {
      "cap": "search.web",
@@ -889,11 +891,11 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    ],
    "text": "Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi"
   },
-  "hash": "2d75e86a7537125de5530fd5f17e40a0834fd6eb651219b1869269dae928db93",
+  "hash": "6e3441a4109b971d15b8a9cb516b91b5d6e060475280db64396c7715b3fdbb58",
   "kind": "run.started",
-  "prev_hash": "7102d475cdaa9da367616e415323ddf69dbfeaf5873b6e104f76e3284122be9c",
+  "prev_hash": "a33cb587ec796184993023e0371749369066330bcfc1ca3b0afc5d8cbe717bdf",
   "seq": 33,
-  "ts": "2026-09-24T03:58:47.003894+00:00"
+  "ts": "2026-09-24T06:21:19.765618+00:00"
  },
  {
   "actor": "agent",
@@ -901,18 +903,18 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "search.web",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "ec89613ea6d7"
+    "run_id": "ce4e83270f13"
    },
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_c72f8c366f72"
+   "run_id": "r_634f87d96c85"
   },
-  "hash": "6e73622968591ed2257e830bf35214bc2ab2400964f958177c061ef38b297969",
+  "hash": "763268acc58c93acf77ccd3d2419d2b92f20983dd1596c7dc64839115e36aef8",
   "kind": "run.step_started",
-  "prev_hash": "2d75e86a7537125de5530fd5f17e40a0834fd6eb651219b1869269dae928db93",
+  "prev_hash": "6e3441a4109b971d15b8a9cb516b91b5d6e060475280db64396c7715b3fdbb58",
   "seq": 34,
-  "ts": "2026-09-24T03:58:47.004205+00:00"
+  "ts": "2026-09-24T06:21:19.765933+00:00"
  },
  {
   "actor": "agent",
@@ -924,7 +926,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_c72f8c366f72"
+    "run_id": "r_634f87d96c85"
    },
    "decision": {
     "decision": "APPROVE",
@@ -932,13 +934,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fa0ccdce161a"
+   "run_id": "790beb3f2130"
   },
-  "hash": "08704a14a10d3ad2810807c505434433415e3b2c51846c25b210d6ebd332684e",
+  "hash": "0aaab4610526be42cf1b4ad305273078449265477d0a9ad4b44b1aa6c9279c58",
   "kind": "cap.run.start",
-  "prev_hash": "6e73622968591ed2257e830bf35214bc2ab2400964f958177c061ef38b297969",
+  "prev_hash": "763268acc58c93acf77ccd3d2419d2b92f20983dd1596c7dc64839115e36aef8",
   "seq": 35,
-  "ts": "2026-09-24T03:58:47.005148+00:00"
+  "ts": "2026-09-24T06:21:19.766852+00:00"
  },
  {
   "actor": "agent",
@@ -950,36 +952,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_c72f8c366f72"
+    "run_id": "r_634f87d96c85"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fa0ccdce161a"
+   "run_id": "790beb3f2130"
   },
-  "hash": "f9bfdf396e1c4804e59b82466e178616094082dd45625fa0bead324f96951d41",
+  "hash": "c921928af5cc2bfc34967ecd000bc9db21a7c07ca90907e4c62bf48baa0ce32d",
   "kind": "gate.decision",
-  "prev_hash": "08704a14a10d3ad2810807c505434433415e3b2c51846c25b210d6ebd332684e",
+  "prev_hash": "0aaab4610526be42cf1b4ad305273078449265477d0a9ad4b44b1aa6c9279c58",
   "seq": 36,
-  "ts": "2026-09-24T03:58:47.005247+00:00"
+  "ts": "2026-09-24T06:21:19.766936+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 13,
+   "duration_ms": 3,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "e3e34f1df68b",
+   "run_id": "8dab526b3b50",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c1cb63a5a7ec85e72d186edc395278f369d56b78d15a808d83463e1c8c92827a",
+  "hash": "3a8bedc2253b3f50411c1024c035312186f667886e1df88c1195636991eadb6e",
   "kind": "cap.run.finish",
-  "prev_hash": "f9bfdf396e1c4804e59b82466e178616094082dd45625fa0bead324f96951d41",
+  "prev_hash": "c921928af5cc2bfc34967ecd000bc9db21a7c07ca90907e4c62bf48baa0ce32d",
   "seq": 37,
-  "ts": "2026-09-24T03:58:47.009814+00:00"
+  "ts": "2026-09-24T06:21:19.768493+00:00"
  },
  {
   "actor": "agent",
@@ -989,18 +991,18 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_c72f8c366f72"
+    "run_id": "r_634f87d96c85"
    },
    "duration_ms": 4,
    "error": "E4001",
-   "run_id": "fa0ccdce161a",
+   "run_id": "790beb3f2130",
    "status": "failed"
   },
-  "hash": "dbb93d753f65293f9c730f02de23d561f4265c003262f655525f40da8d0c384a",
+  "hash": "d93fdd3d5f00a89a5e86c7e4e33fdcc3db83577b1c401e1e298143024f39e6c6",
   "kind": "cap.run.finish",
-  "prev_hash": "c1cb63a5a7ec85e72d186edc395278f369d56b78d15a808d83463e1c8c92827a",
+  "prev_hash": "3a8bedc2253b3f50411c1024c035312186f667886e1df88c1195636991eadb6e",
   "seq": 38,
-  "ts": "2026-09-24T03:58:47.010013+00:00"
+  "ts": "2026-09-24T06:21:19.771741+00:00"
  },
  {
   "actor": "agent",
@@ -1022,45 +1024,45 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_c72f8c366f72",
+   "run_id": "r_634f87d96c85",
    "status": "failed"
   },
-  "hash": "ee263d7d0de2cb7d076812b099c0e537788dc73ad7819edd8d8b26e6ffd9e056",
+  "hash": "643795520d84339d3b63e12ef0a4de6ea22ae7f915f224dc788d2e8a28813b7e",
   "kind": "run.step_done",
-  "prev_hash": "dbb93d753f65293f9c730f02de23d561f4265c003262f655525f40da8d0c384a",
+  "prev_hash": "d93fdd3d5f00a89a5e86c7e4e33fdcc3db83577b1c401e1e298143024f39e6c6",
   "seq": 39,
-  "ts": "2026-09-24T03:58:47.010157+00:00"
+  "ts": "2026-09-24T06:21:19.771868+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 0,
    "failed": 1,
-   "run_id": "r_c72f8c366f72",
+   "run_id": "r_634f87d96c85",
    "state": "failed",
    "waiting": 1
   },
-  "hash": "3508cd9e8397b87ac7fd1515fb168e496dfdb38be3cf58241d5234a572d910ef",
+  "hash": "c6e22cfd3e7852b1f3d1cf808e7bc51af8a51bcc410bdc40d121bb32b8d47898",
   "kind": "run.done",
-  "prev_hash": "ee263d7d0de2cb7d076812b099c0e537788dc73ad7819edd8d8b26e6ffd9e056",
+  "prev_hash": "643795520d84339d3b63e12ef0a4de6ea22ae7f915f224dc788d2e8a28813b7e",
   "seq": 40,
-  "ts": "2026-09-24T03:58:47.011729+00:00"
+  "ts": "2026-09-24T06:21:19.773689+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 149,
-   "result_hash": "964ea6251e4c47a0",
-   "run_id": "ec89613ea6d7",
+   "duration_ms": 160,
+   "result_hash": "207be9307a0e41f5",
+   "run_id": "ce4e83270f13",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b6b2ff6de436957c675acd29df9220e2016343ba79b6cb2af840b0aaec8769b4",
+  "hash": "7c246a7165dbbdc60fb4d80176d641b6aea967b9ad96b6f9ec54271ca1646160",
   "kind": "cap.run.finish",
-  "prev_hash": "3508cd9e8397b87ac7fd1515fb168e496dfdb38be3cf58241d5234a572d910ef",
+  "prev_hash": "c6e22cfd3e7852b1f3d1cf808e7bc51af8a51bcc410bdc40d121bb32b8d47898",
   "seq": 41,
-  "ts": "2026-09-24T03:58:47.033000+00:00"
+  "ts": "2026-09-24T06:21:19.805640+00:00"
  },
  {
   "actor": "agent",
@@ -1070,7 +1072,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "85e1a12464da"
+    "run_id": "2ab639f6e98d"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1078,13 +1080,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "85e1a12464da"
+   "run_id": "2ab639f6e98d"
   },
-  "hash": "d19e930463b8b55ced9cc99ad95c4f32718c240d4f6b585d0eebbeca31be75fc",
+  "hash": "75dfc70bda7733caff0259d46fe3d87314d3fc578b6a3a7b03db49ccc23870a6",
   "kind": "cap.run.start",
-  "prev_hash": "b6b2ff6de436957c675acd29df9220e2016343ba79b6cb2af840b0aaec8769b4",
+  "prev_hash": "7c246a7165dbbdc60fb4d80176d641b6aea967b9ad96b6f9ec54271ca1646160",
   "seq": 42,
-  "ts": "2026-09-24T03:58:47.036108+00:00"
+  "ts": "2026-09-24T06:21:19.808937+00:00"
  },
  {
   "actor": "agent",
@@ -1094,20 +1096,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "85e1a12464da"
+    "run_id": "2ab639f6e98d"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "85e1a12464da"
+   "run_id": "2ab639f6e98d"
   },
-  "hash": "67830568395402d141accfd3279db6d68ea088371b90fc3530c1c1a1406b3de9",
+  "hash": "7894c9111bad462a86c83ce175826fc904094a7b08e2ca587fafdea1d48b1c1c",
   "kind": "gate.decision",
-  "prev_hash": "d19e930463b8b55ced9cc99ad95c4f32718c240d4f6b585d0eebbeca31be75fc",
+  "prev_hash": "75dfc70bda7733caff0259d46fe3d87314d3fc578b6a3a7b03db49ccc23870a6",
   "seq": 43,
-  "ts": "2026-09-24T03:58:47.036203+00:00"
+  "ts": "2026-09-24T06:21:19.809037+00:00"
  },
  {
   "actor": "agent",
@@ -1115,15 +1117,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "b0b1613f51e0190d",
-   "run_id": "85e1a12464da",
+   "run_id": "2ab639f6e98d",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "900d61372ee552a37d5f2b8432ec0c9064737e662985596be079c8c5c4610e4f",
+  "hash": "f7d04774be7fc74ec67797096d9f32ae8ff5bddf022c8de17f70d3ee30527a18",
   "kind": "cap.run.finish",
-  "prev_hash": "67830568395402d141accfd3279db6d68ea088371b90fc3530c1c1a1406b3de9",
+  "prev_hash": "7894c9111bad462a86c83ce175826fc904094a7b08e2ca587fafdea1d48b1c1c",
   "seq": 44,
-  "ts": "2026-09-24T03:58:47.037168+00:00"
+  "ts": "2026-09-24T06:21:19.810036+00:00"
  },
  {
   "actor": "agent",
@@ -1133,7 +1135,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "6e6c84e965b8"
+    "run_id": "e8c0ad6ba37a"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1141,13 +1143,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6e6c84e965b8"
+   "run_id": "e8c0ad6ba37a"
   },
-  "hash": "54035a6750c3b32b50da830da5ee2fae41a7e05524002c85db25fc9347b155e7",
+  "hash": "b403edf8bdf8726c770d7b2deb7ff22ef97341139f42900d6d36ef30dd6791a7",
   "kind": "cap.run.start",
-  "prev_hash": "900d61372ee552a37d5f2b8432ec0c9064737e662985596be079c8c5c4610e4f",
+  "prev_hash": "f7d04774be7fc74ec67797096d9f32ae8ff5bddf022c8de17f70d3ee30527a18",
   "seq": 45,
-  "ts": "2026-09-24T03:58:47.255666+00:00"
+  "ts": "2026-09-24T06:21:20.040608+00:00"
  },
  {
   "actor": "agent",
@@ -1157,46 +1159,46 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "6e6c84e965b8"
+    "run_id": "e8c0ad6ba37a"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6e6c84e965b8"
+   "run_id": "e8c0ad6ba37a"
   },
-  "hash": "431833b7c3633f08fa3727dc017488a92f3b7f372e05739e2908c47e7513d2de",
+  "hash": "ec1dc358c03964cf351f05b3362c4a54f2c5d2ee7046e8665540c042472cd545",
   "kind": "gate.decision",
-  "prev_hash": "54035a6750c3b32b50da830da5ee2fae41a7e05524002c85db25fc9347b155e7",
+  "prev_hash": "b403edf8bdf8726c770d7b2deb7ff22ef97341139f42900d6d36ef30dd6791a7",
   "seq": 46,
-  "ts": "2026-09-24T03:58:47.255874+00:00"
+  "ts": "2026-09-24T06:21:20.040798+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "6e6c84e965b8",
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "e8c0ad6ba37a",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "9cd86e5bbf3a855dadf2cfe4ff8b19a7093653a730c4dd15b0e89c2f579052cc",
+  "hash": "91e511053e8ecac16339fcd0973420cb96efffca4be4118767f92eb267facc25",
   "kind": "cap.run.finish",
-  "prev_hash": "431833b7c3633f08fa3727dc017488a92f3b7f372e05739e2908c47e7513d2de",
+  "prev_hash": "ec1dc358c03964cf351f05b3362c4a54f2c5d2ee7046e8665540c042472cd545",
   "seq": 47,
-  "ts": "2026-09-24T03:58:47.259913+00:00"
+  "ts": "2026-09-24T06:21:20.044863+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "728720b283bacab5",
+   "args_hash": "7dcc7fcc7fab6f8a",
    "cap": "chat.report_back",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "089138fd90de"
+    "run_id": "770d9cf496ac"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1204,13 +1206,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "089138fd90de"
+   "run_id": "770d9cf496ac"
   },
-  "hash": "35bb09190d0603639e387fe20cf9fcdaeacb35a88017ba3647b8eabde8cb487a",
+  "hash": "3097878f61543f50833b46dbb2c5347aa6f4362d014c0e20b731548111cc0519",
   "kind": "cap.run.start",
-  "prev_hash": "9cd86e5bbf3a855dadf2cfe4ff8b19a7093653a730c4dd15b0e89c2f579052cc",
+  "prev_hash": "91e511053e8ecac16339fcd0973420cb96efffca4be4118767f92eb267facc25",
   "seq": 48,
-  "ts": "2026-09-24T03:58:47.362712+00:00"
+  "ts": "2026-09-24T06:21:20.157168+00:00"
  },
  {
   "actor": "agent",
@@ -1220,36 +1222,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "089138fd90de"
+    "run_id": "770d9cf496ac"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "089138fd90de"
+   "run_id": "770d9cf496ac"
   },
-  "hash": "2b992ce5cfac89b8990696e30f7d441acda9a25abb370a3eeaae6aea564829e4",
+  "hash": "414c3fc9640492851242914b0a147f6816860b91cf59a014d9d82a040312f0ef",
   "kind": "gate.decision",
-  "prev_hash": "35bb09190d0603639e387fe20cf9fcdaeacb35a88017ba3647b8eabde8cb487a",
+  "prev_hash": "3097878f61543f50833b46dbb2c5347aa6f4362d014c0e20b731548111cc0519",
   "seq": 49,
-  "ts": "2026-09-24T03:58:47.362901+00:00"
+  "ts": "2026-09-24T06:21:20.157340+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.report_back",
    "duration_ms": 2,
-   "result_hash": "0eb41643b1684664",
-   "run_id": "089138fd90de",
+   "result_hash": "0686f8fd363fdfc5",
+   "run_id": "770d9cf496ac",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ed7856fa967aac86bc260b71edb52d053216b4e70101357964a198fce6ab7466",
+  "hash": "7497f2ab118b883e21b1e3b383250e2e037544b8be92278f1b57fd69195d38ac",
   "kind": "cap.run.finish",
-  "prev_hash": "2b992ce5cfac89b8990696e30f7d441acda9a25abb370a3eeaae6aea564829e4",
+  "prev_hash": "414c3fc9640492851242914b0a147f6816860b91cf59a014d9d82a040312f0ef",
   "seq": 50,
-  "ts": "2026-09-24T03:58:47.364952+00:00"
+  "ts": "2026-09-24T06:21:20.159736+00:00"
  },
  {
   "actor": "agent",
@@ -1259,7 +1261,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "dc76ef7745a1"
+    "run_id": "86643f76fa79"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1267,13 +1269,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "dc76ef7745a1"
+   "run_id": "86643f76fa79"
   },
-  "hash": "233311f8b84ca974b7ad23e81e731ae107c0e1c881b65bdb7320853587ecf26c",
+  "hash": "bf407633c1e1ae388ef0093dad6b334cd4a097dcc61ee4381cc8fcd45e841181",
   "kind": "cap.run.start",
-  "prev_hash": "ed7856fa967aac86bc260b71edb52d053216b4e70101357964a198fce6ab7466",
+  "prev_hash": "7497f2ab118b883e21b1e3b383250e2e037544b8be92278f1b57fd69195d38ac",
   "seq": 51,
-  "ts": "2026-09-24T03:58:47.419838+00:00"
+  "ts": "2026-09-24T06:21:20.214241+00:00"
  },
  {
   "actor": "agent",
@@ -1283,36 +1285,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "dc76ef7745a1"
+    "run_id": "86643f76fa79"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "dc76ef7745a1"
+   "run_id": "86643f76fa79"
   },
-  "hash": "3a1996a04f140ec9773e7fcc35e9bcae83aa9509f6f30e2689b9001144278c74",
+  "hash": "cbef8829d8182267b7bfbd6c80249f0d4b90d0ec3cd6a2f7293905570132500e",
   "kind": "gate.decision",
-  "prev_hash": "233311f8b84ca974b7ad23e81e731ae107c0e1c881b65bdb7320853587ecf26c",
+  "prev_hash": "bf407633c1e1ae388ef0093dad6b334cd4a097dcc61ee4381cc8fcd45e841181",
   "seq": 52,
-  "ts": "2026-09-24T03:58:47.420032+00:00"
+  "ts": "2026-09-24T06:21:20.214421+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "97193847e204e5f0",
-   "run_id": "dc76ef7745a1",
+   "result_hash": "eaf8065a23c69524",
+   "run_id": "86643f76fa79",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "78c5e88ef6f1db691afef601442bec5d48d1f7f986314baa59985be80a272a7c",
+  "hash": "0c4e4b3d2fdd82bcdd49a8411b1607e01c7af16688650be144a5419e11bc32cf",
   "kind": "cap.run.finish",
-  "prev_hash": "3a1996a04f140ec9773e7fcc35e9bcae83aa9509f6f30e2689b9001144278c74",
+  "prev_hash": "cbef8829d8182267b7bfbd6c80249f0d4b90d0ec3cd6a2f7293905570132500e",
   "seq": 53,
-  "ts": "2026-09-24T03:58:47.422616+00:00"
+  "ts": "2026-09-24T06:21:20.216813+00:00"
  },
  {
   "actor": "agent",
@@ -1322,7 +1324,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4210c5aa169a"
+    "run_id": "08d40a35e10c"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1330,13 +1332,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4210c5aa169a"
+   "run_id": "08d40a35e10c"
   },
-  "hash": "aec99d76f23e1f3f7672c3d70e5b756112e59d74a713e2a36880d3f5d718e740",
+  "hash": "76bf835e9f88569b30e46b9f6d8fbcd7a3f5e5dbe380a8d148062541bf099246",
   "kind": "cap.run.start",
-  "prev_hash": "78c5e88ef6f1db691afef601442bec5d48d1f7f986314baa59985be80a272a7c",
+  "prev_hash": "0c4e4b3d2fdd82bcdd49a8411b1607e01c7af16688650be144a5419e11bc32cf",
   "seq": 54,
-  "ts": "2026-09-24T03:58:47.428156+00:00"
+  "ts": "2026-09-24T06:21:20.223790+00:00"
  },
  {
   "actor": "agent",
@@ -1346,20 +1348,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4210c5aa169a"
+    "run_id": "08d40a35e10c"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4210c5aa169a"
+   "run_id": "08d40a35e10c"
   },
-  "hash": "778c1e7208e1c84b4fabd540cd5be852675146cd7adfd59d373a92e4e4a2d60f",
+  "hash": "b7708df2ef6d10e79eaa08723b4938e8f00beccc5c96dd2b38187717a21cf7a2",
   "kind": "gate.decision",
-  "prev_hash": "aec99d76f23e1f3f7672c3d70e5b756112e59d74a713e2a36880d3f5d718e740",
+  "prev_hash": "76bf835e9f88569b30e46b9f6d8fbcd7a3f5e5dbe380a8d148062541bf099246",
   "seq": 55,
-  "ts": "2026-09-24T03:58:47.428293+00:00"
+  "ts": "2026-09-24T06:21:20.223938+00:00"
  },
  {
   "actor": "agent",
@@ -1367,15 +1369,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "duration_ms": 5,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "4210c5aa169a",
+   "run_id": "08d40a35e10c",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "edb804a3dad90fdcfb1e774897fb4de76b9365327f42155a3db74f02df512851",
+  "hash": "7d0c114cd96e653bbb2b8a1c0db725fd7e4c8b9ebe27b71cbe3476e091b9f4d5",
   "kind": "cap.run.finish",
-  "prev_hash": "778c1e7208e1c84b4fabd540cd5be852675146cd7adfd59d373a92e4e4a2d60f",
+  "prev_hash": "b7708df2ef6d10e79eaa08723b4938e8f00beccc5c96dd2b38187717a21cf7a2",
   "seq": 56,
-  "ts": "2026-09-24T03:58:47.433232+00:00"
+  "ts": "2026-09-24T06:21:20.229335+00:00"
  },
  {
   "actor": "agent",
@@ -1385,7 +1387,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "0df32e06e2de"
+    "run_id": "ce3848d77f67"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1393,13 +1395,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0df32e06e2de"
+   "run_id": "ce3848d77f67"
   },
-  "hash": "f05e9741796b83add08e7f27a01d7f5e12a3a973ea7db5cf5c9076d3c9cc76d2",
+  "hash": "19122910b8eda6f6cc93af15a0a8b8f843e0119632b1ecf1a510ec6b747032f7",
   "kind": "cap.run.start",
-  "prev_hash": "edb804a3dad90fdcfb1e774897fb4de76b9365327f42155a3db74f02df512851",
+  "prev_hash": "7d0c114cd96e653bbb2b8a1c0db725fd7e4c8b9ebe27b71cbe3476e091b9f4d5",
   "seq": 57,
-  "ts": "2026-09-24T03:58:47.441516+00:00"
+  "ts": "2026-09-24T06:21:20.237659+00:00"
  },
  {
   "actor": "agent",
@@ -1409,20 +1411,20 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "0df32e06e2de"
+    "run_id": "ce3848d77f67"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0df32e06e2de"
+   "run_id": "ce3848d77f67"
   },
-  "hash": "11e6533e7b8d9f6601e338a8598c53051efceb390cbbc226c52f2a0725c4aa8c",
+  "hash": "fe2830805cf77d7e4a817b65a0ecfb11047b6bf7e6de50a1f5e33ef0801c5616",
   "kind": "gate.decision",
-  "prev_hash": "f05e9741796b83add08e7f27a01d7f5e12a3a973ea7db5cf5c9076d3c9cc76d2",
+  "prev_hash": "19122910b8eda6f6cc93af15a0a8b8f843e0119632b1ecf1a510ec6b747032f7",
   "seq": 58,
-  "ts": "2026-09-24T03:58:47.441623+00:00"
+  "ts": "2026-09-24T06:21:20.237755+00:00"
  },
  {
   "actor": "agent",
@@ -1430,15 +1432,15 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "0df32e06e2de",
+   "run_id": "ce3848d77f67",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5dfd97f6af5d4bd9f68e3447deb0ba2c6e1816381503e48e97d30bc45f410a2f",
+  "hash": "82ed1f5caa83484b33709c92146d360edddb3c091be9d76af8c729ec5c82337b",
   "kind": "cap.run.finish",
-  "prev_hash": "11e6533e7b8d9f6601e338a8598c53051efceb390cbbc226c52f2a0725c4aa8c",
+  "prev_hash": "fe2830805cf77d7e4a817b65a0ecfb11047b6bf7e6de50a1f5e33ef0801c5616",
   "seq": 59,
-  "ts": "2026-09-24T03:58:47.443304+00:00"
+  "ts": "2026-09-24T06:21:20.239400+00:00"
  },
  {
   "actor": "agent",
@@ -1448,7 +1450,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4f5a337bcae6"
+    "run_id": "30de5f8a02ec"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1456,13 +1458,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4f5a337bcae6"
+   "run_id": "30de5f8a02ec"
   },
-  "hash": "f0d65594ebd683a2c8674911ed9dab9f827a2d7788f98cab2355123cbe194c21",
+  "hash": "f5c319f1ff096006242665e4d4dd60990d006f8efafd1c102462e266e09e02f3",
   "kind": "cap.run.start",
-  "prev_hash": "5dfd97f6af5d4bd9f68e3447deb0ba2c6e1816381503e48e97d30bc45f410a2f",
+  "prev_hash": "82ed1f5caa83484b33709c92146d360edddb3c091be9d76af8c729ec5c82337b",
   "seq": 60,
-  "ts": "2026-09-24T03:58:47.444665+00:00"
+  "ts": "2026-09-24T06:21:20.240926+00:00"
  },
  {
   "actor": "agent",
@@ -1472,36 +1474,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4f5a337bcae6"
+    "run_id": "30de5f8a02ec"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4f5a337bcae6"
+   "run_id": "30de5f8a02ec"
   },
-  "hash": "bec1e4612d04498176223d5b24569d5d310aed9efcf892c85fc1b34b62ca92d1",
+  "hash": "7fefc099de569fa3a6226cd7646351bd2c69284cb7c61ea5ab0ba18cb63a2579",
   "kind": "gate.decision",
-  "prev_hash": "f0d65594ebd683a2c8674911ed9dab9f827a2d7788f98cab2355123cbe194c21",
+  "prev_hash": "f5c319f1ff096006242665e4d4dd60990d006f8efafd1c102462e266e09e02f3",
   "seq": 61,
-  "ts": "2026-09-24T03:58:47.444747+00:00"
+  "ts": "2026-09-24T06:21:20.241016+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "7b7a170c8f7803c5",
-   "run_id": "4f5a337bcae6",
+   "result_hash": "5ee031524284b02a",
+   "run_id": "30de5f8a02ec",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2cec8889a071c483cbf5f48d6df618dc399e0ef31ba139266ff1ef0f1ac74477",
+  "hash": "14553fd943a4c18d7e9cd81deaf6dcdc14bc928d470aec26f330a7fa08b6c71f",
   "kind": "cap.run.finish",
-  "prev_hash": "bec1e4612d04498176223d5b24569d5d310aed9efcf892c85fc1b34b62ca92d1",
+  "prev_hash": "7fefc099de569fa3a6226cd7646351bd2c69284cb7c61ea5ab0ba18cb63a2579",
   "seq": 62,
-  "ts": "2026-09-24T03:58:47.446566+00:00"
+  "ts": "2026-09-24T06:21:20.242545+00:00"
  },
  {
   "actor": "agent",
@@ -1511,7 +1513,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "efdbb649e250"
+    "run_id": "6157b350e5af"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1519,13 +1521,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "efdbb649e250"
+   "run_id": "6157b350e5af"
   },
-  "hash": "b92001138e33a5f30cb2774091b228e5bebed37b2a8298a346aced76a8b5e135",
+  "hash": "8bbfbec19355797cc95b8e902614dfc1b72c24c3d7bed10dc25aa60803f47363",
   "kind": "cap.run.start",
-  "prev_hash": "2cec8889a071c483cbf5f48d6df618dc399e0ef31ba139266ff1ef0f1ac74477",
+  "prev_hash": "14553fd943a4c18d7e9cd81deaf6dcdc14bc928d470aec26f330a7fa08b6c71f",
   "seq": 63,
-  "ts": "2026-09-24T03:58:47.448047+00:00"
+  "ts": "2026-09-24T06:21:20.243897+00:00"
  },
  {
   "actor": "agent",
@@ -1535,36 +1537,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "efdbb649e250"
+    "run_id": "6157b350e5af"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "efdbb649e250"
+   "run_id": "6157b350e5af"
   },
-  "hash": "f79fb492a85691d6d729a813c8e94435be1ff7a2138e774d77d53d391324df25",
+  "hash": "013a1b2f74af8e3a5f9babd1e971c993684669027b3e358f111b24e8e24291ec",
   "kind": "gate.decision",
-  "prev_hash": "b92001138e33a5f30cb2774091b228e5bebed37b2a8298a346aced76a8b5e135",
+  "prev_hash": "8bbfbec19355797cc95b8e902614dfc1b72c24c3d7bed10dc25aa60803f47363",
   "seq": 64,
-  "ts": "2026-09-24T03:58:47.448131+00:00"
+  "ts": "2026-09-24T06:21:20.243968+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "7b7a170c8f7803c5",
-   "run_id": "efdbb649e250",
+   "result_hash": "5ee031524284b02a",
+   "run_id": "6157b350e5af",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "44108b5bba4b293b29a783ba3b104e476311e90d68d4a9180a49398744a26708",
+  "hash": "9cd23d169fc3295c0029f85c8749ecc1867c7094be2dc95dd447284043ab7b71",
   "kind": "cap.run.finish",
-  "prev_hash": "f79fb492a85691d6d729a813c8e94435be1ff7a2138e774d77d53d391324df25",
+  "prev_hash": "013a1b2f74af8e3a5f9babd1e971c993684669027b3e358f111b24e8e24291ec",
   "seq": 65,
-  "ts": "2026-09-24T03:58:47.449817+00:00"
+  "ts": "2026-09-24T06:21:20.245502+00:00"
  },
  {
   "actor": "agent",
@@ -1574,7 +1576,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ed0b9c7f13a4"
+    "run_id": "5f1771cbe6a5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1582,13 +1584,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ed0b9c7f13a4"
+   "run_id": "5f1771cbe6a5"
   },
-  "hash": "a7dcf5924b7e776cd0239c200c7c7b5abfe93cff08f35f281fe7ae6f10f1e91f",
+  "hash": "1387c161088ab6a4e38db3b4175bc1b9bb0921661b0583aebc6391b90ec14e1e",
   "kind": "cap.run.start",
-  "prev_hash": "44108b5bba4b293b29a783ba3b104e476311e90d68d4a9180a49398744a26708",
+  "prev_hash": "9cd23d169fc3295c0029f85c8749ecc1867c7094be2dc95dd447284043ab7b71",
   "seq": 66,
-  "ts": "2026-09-24T03:58:47.477572+00:00"
+  "ts": "2026-09-24T06:21:20.273549+00:00"
  },
  {
   "actor": "agent",
@@ -1598,36 +1600,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "ed0b9c7f13a4"
+    "run_id": "5f1771cbe6a5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ed0b9c7f13a4"
+   "run_id": "5f1771cbe6a5"
   },
-  "hash": "9eebaa9dded03fedc708fcb8d0523f5c70275ac0e9e2e825143e65e6b20b75d0",
+  "hash": "72222f8bb6991b829c2b7f77c10f11593e27614ab86f716c8fe7ca1b73b7d7b7",
   "kind": "gate.decision",
-  "prev_hash": "a7dcf5924b7e776cd0239c200c7c7b5abfe93cff08f35f281fe7ae6f10f1e91f",
+  "prev_hash": "1387c161088ab6a4e38db3b4175bc1b9bb0921661b0583aebc6391b90ec14e1e",
   "seq": 67,
-  "ts": "2026-09-24T03:58:47.477668+00:00"
+  "ts": "2026-09-24T06:21:20.273675+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "3217489c56625a5d",
-   "run_id": "ed0b9c7f13a4",
+   "result_hash": "8965fd7336a9f838",
+   "run_id": "5f1771cbe6a5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "1ca07ce2fd4050a8bb07b980ffca5a7c4297c589bdcc8876a58dd1c66d0d8948",
+  "hash": "37e60bc62cf2148cf12dbe4d19d12e452fcc65868d2e0b42d5f4a90282a7d535",
   "kind": "cap.run.finish",
-  "prev_hash": "9eebaa9dded03fedc708fcb8d0523f5c70275ac0e9e2e825143e65e6b20b75d0",
+  "prev_hash": "72222f8bb6991b829c2b7f77c10f11593e27614ab86f716c8fe7ca1b73b7d7b7",
   "seq": 68,
-  "ts": "2026-09-24T03:58:47.480033+00:00"
+  "ts": "2026-09-24T06:21:20.276030+00:00"
  },
  {
   "actor": "agent",
@@ -1637,7 +1639,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "40a87e30c9e1"
+    "run_id": "db07a32fc7e5"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1645,13 +1647,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "40a87e30c9e1"
+   "run_id": "db07a32fc7e5"
   },
-  "hash": "ef5cf503e6ff6715390822d659a475be5c7ef1722bf6871aaffadc2208f8f2bc",
+  "hash": "e381c2b49499316e5ef077cf547e0403ef867181071598aed200339650daa1a9",
   "kind": "cap.run.start",
-  "prev_hash": "1ca07ce2fd4050a8bb07b980ffca5a7c4297c589bdcc8876a58dd1c66d0d8948",
+  "prev_hash": "37e60bc62cf2148cf12dbe4d19d12e452fcc65868d2e0b42d5f4a90282a7d535",
   "seq": 69,
-  "ts": "2026-09-24T03:58:47.561889+00:00"
+  "ts": "2026-09-24T06:21:20.352944+00:00"
  },
  {
   "actor": "agent",
@@ -1661,36 +1663,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "40a87e30c9e1"
+    "run_id": "db07a32fc7e5"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "40a87e30c9e1"
+   "run_id": "db07a32fc7e5"
   },
-  "hash": "05fbb0d238b08c34382d462cab730cb6e79b4caf85e4077ee9a2e1e9469891d0",
+  "hash": "4bf9e785ba54ca4dd2a140c154847bb5480dbdc7af75a7c441dc3a9bc0fb4344",
   "kind": "gate.decision",
-  "prev_hash": "ef5cf503e6ff6715390822d659a475be5c7ef1722bf6871aaffadc2208f8f2bc",
+  "prev_hash": "e381c2b49499316e5ef077cf547e0403ef867181071598aed200339650daa1a9",
   "seq": 70,
-  "ts": "2026-09-24T03:58:47.562062+00:00"
+  "ts": "2026-09-24T06:21:20.353134+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "77e43fe53e63c208",
-   "run_id": "40a87e30c9e1",
+   "result_hash": "c283923a7392321a",
+   "run_id": "db07a32fc7e5",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5fadab94f3e64c4fab8cd6253fdaedc90d0f91815799e184c00140aa71d562e3",
+  "hash": "dff9fd7adcd16c25773f57921fecf703d27d75ad96218d09eb46ff00671e43f6",
   "kind": "cap.run.finish",
-  "prev_hash": "05fbb0d238b08c34382d462cab730cb6e79b4caf85e4077ee9a2e1e9469891d0",
+  "prev_hash": "4bf9e785ba54ca4dd2a140c154847bb5480dbdc7af75a7c441dc3a9bc0fb4344",
   "seq": 71,
-  "ts": "2026-09-24T03:58:47.564868+00:00"
+  "ts": "2026-09-24T06:21:20.355756+00:00"
  },
  {
   "actor": "agent",
@@ -1700,7 +1702,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "b47b5b8a9afa"
+    "run_id": "aacea65196a2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1708,13 +1710,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b47b5b8a9afa"
+   "run_id": "aacea65196a2"
   },
-  "hash": "7dd5711074ec9c2a106c6b697ff150b629c395f7fdda1701bed50c80185c8f1f",
+  "hash": "e94485b4cb643700ae4a51f21590597e3019ee7589f5d982f31e6759bf8e9b61",
   "kind": "cap.run.start",
-  "prev_hash": "5fadab94f3e64c4fab8cd6253fdaedc90d0f91815799e184c00140aa71d562e3",
+  "prev_hash": "dff9fd7adcd16c25773f57921fecf703d27d75ad96218d09eb46ff00671e43f6",
   "seq": 72,
-  "ts": "2026-09-24T03:58:47.690269+00:00"
+  "ts": "2026-09-24T06:21:20.479726+00:00"
  },
  {
   "actor": "agent",
@@ -1724,36 +1726,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "b47b5b8a9afa"
+    "run_id": "aacea65196a2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b47b5b8a9afa"
+   "run_id": "aacea65196a2"
   },
-  "hash": "7b07ced1e0f7f52f2e2d8c51d44cb07375b2daa1d1e69746ccc4cdbac8a2c1ec",
+  "hash": "30e98afc68a7be772f77846b3c732cb63e8f6061cfaab4ccb93b3ae57ccd3dcf",
   "kind": "gate.decision",
-  "prev_hash": "7dd5711074ec9c2a106c6b697ff150b629c395f7fdda1701bed50c80185c8f1f",
+  "prev_hash": "e94485b4cb643700ae4a51f21590597e3019ee7589f5d982f31e6759bf8e9b61",
   "seq": 73,
-  "ts": "2026-09-24T03:58:47.690493+00:00"
+  "ts": "2026-09-24T06:21:20.479929+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "b47b5b8a9afa",
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "aacea65196a2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "980cea2c95be1a761fd57052118e06165baaf7bea614acf6a4eb86e7fabdc007",
+  "hash": "3eb0915a7e419baab6be0a06ee823b9def69d9475bcbf6dd4e96d4e043d6f18d",
   "kind": "cap.run.finish",
-  "prev_hash": "7b07ced1e0f7f52f2e2d8c51d44cb07375b2daa1d1e69746ccc4cdbac8a2c1ec",
+  "prev_hash": "30e98afc68a7be772f77846b3c732cb63e8f6061cfaab4ccb93b3ae57ccd3dcf",
   "seq": 74,
-  "ts": "2026-09-24T03:58:47.694467+00:00"
+  "ts": "2026-09-24T06:21:20.483769+00:00"
  },
  {
   "actor": "agent",
@@ -1763,7 +1765,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e16298202f5a"
+    "run_id": "a29492221397"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1771,13 +1773,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e16298202f5a"
+   "run_id": "a29492221397"
   },
-  "hash": "6117731f9a1b0eaada3ffb1e93198792d25369ed13314b0addda54345abefa07",
+  "hash": "44e2bb2c154ff452ee9135e7bff665945b2b89b279bccaf27d79d4e8ffa993b3",
   "kind": "cap.run.start",
-  "prev_hash": "980cea2c95be1a761fd57052118e06165baaf7bea614acf6a4eb86e7fabdc007",
+  "prev_hash": "3eb0915a7e419baab6be0a06ee823b9def69d9475bcbf6dd4e96d4e043d6f18d",
   "seq": 75,
-  "ts": "2026-09-24T03:58:47.697086+00:00"
+  "ts": "2026-09-24T06:21:20.486248+00:00"
  },
  {
   "actor": "agent",
@@ -1787,36 +1789,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e16298202f5a"
+    "run_id": "a29492221397"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e16298202f5a"
+   "run_id": "a29492221397"
   },
-  "hash": "b297761172209c4f7ee89660eb77dc9eb28e026a78e0ed679fbcd91c4ca1e9b6",
+  "hash": "e6c4116c3db6e5e5054b5a878378936eea0988267d7b051de0de9a8a1c8ebc5d",
   "kind": "gate.decision",
-  "prev_hash": "6117731f9a1b0eaada3ffb1e93198792d25369ed13314b0addda54345abefa07",
+  "prev_hash": "44e2bb2c154ff452ee9135e7bff665945b2b89b279bccaf27d79d4e8ffa993b3",
   "seq": 76,
-  "ts": "2026-09-24T03:58:47.697174+00:00"
+  "ts": "2026-09-24T06:21:20.486331+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "7b7a170c8f7803c5",
-   "run_id": "e16298202f5a",
+   "result_hash": "5ee031524284b02a",
+   "run_id": "a29492221397",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "78601b02d57a58f96b9501391d25cafbaf2fcb354029cf04c36173e8dfa3dfd9",
+  "hash": "f97df5fbcdec00a5891dee20d38b8a314219bc204099f1f328ff0453beb0200e",
   "kind": "cap.run.finish",
-  "prev_hash": "b297761172209c4f7ee89660eb77dc9eb28e026a78e0ed679fbcd91c4ca1e9b6",
+  "prev_hash": "e6c4116c3db6e5e5054b5a878378936eea0988267d7b051de0de9a8a1c8ebc5d",
   "seq": 77,
-  "ts": "2026-09-24T03:58:47.698902+00:00"
+  "ts": "2026-09-24T06:21:20.488037+00:00"
  },
  {
   "actor": "agent",
@@ -1826,7 +1828,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "ec60aacdf713"
+    "run_id": "d360cbd34b31"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1834,13 +1836,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ec60aacdf713"
+   "run_id": "d360cbd34b31"
   },
-  "hash": "176d073e74eb483f31c7fc8d2fdc353623a97aa22df658512fc4dedbf67e9633",
+  "hash": "503cbed5333a51c5a0e3a70f772cfa0caae32c9fc4657f581d2bc7dfac25b7be",
   "kind": "cap.run.start",
-  "prev_hash": "78601b02d57a58f96b9501391d25cafbaf2fcb354029cf04c36173e8dfa3dfd9",
+  "prev_hash": "f97df5fbcdec00a5891dee20d38b8a314219bc204099f1f328ff0453beb0200e",
   "seq": 78,
-  "ts": "2026-09-24T03:58:47.701423+00:00"
+  "ts": "2026-09-24T06:21:20.490609+00:00"
  },
  {
   "actor": "agent",
@@ -1850,36 +1852,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "ec60aacdf713"
+    "run_id": "d360cbd34b31"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ec60aacdf713"
+   "run_id": "d360cbd34b31"
   },
-  "hash": "fa186a46e159fba1117eab0824fb8a1b92b38c17817dcb359408ea4bfc498c22",
+  "hash": "8915d800f0f17b2d4a6716e5c08062cba3f29d3f1c26126fac48e640c520f469",
   "kind": "gate.decision",
-  "prev_hash": "176d073e74eb483f31c7fc8d2fdc353623a97aa22df658512fc4dedbf67e9633",
+  "prev_hash": "503cbed5333a51c5a0e3a70f772cfa0caae32c9fc4657f581d2bc7dfac25b7be",
   "seq": 79,
-  "ts": "2026-09-24T03:58:47.701528+00:00"
+  "ts": "2026-09-24T06:21:20.490727+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 3,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "ec60aacdf713",
+   "duration_ms": 4,
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "d360cbd34b31",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "feb0b1ca74c6bac0583974cdac8f68945bc4cae8db078c22e80381fcc39ca4a6",
+  "hash": "3fa16bbe1e0b015d7ce31e6699538755c9bc8ae1dd51968e80bc1bc8ab457f9b",
   "kind": "cap.run.finish",
-  "prev_hash": "fa186a46e159fba1117eab0824fb8a1b92b38c17817dcb359408ea4bfc498c22",
+  "prev_hash": "8915d800f0f17b2d4a6716e5c08062cba3f29d3f1c26126fac48e640c520f469",
   "seq": 80,
-  "ts": "2026-09-24T03:58:47.705286+00:00"
+  "ts": "2026-09-24T06:21:20.494751+00:00"
  },
  {
   "actor": "agent",
@@ -1889,7 +1891,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "fa04d31a912b"
+    "run_id": "f2ff9191369b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1897,13 +1899,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fa04d31a912b"
+   "run_id": "f2ff9191369b"
   },
-  "hash": "e4b1e8baff2b03e2a39a2078da17a399283bf9b3f17b020909a2af5389b53112",
+  "hash": "e16a0149fca5d99194c1a426106dcb50c98fc37fb2ee6ceae9b68bf8afd60251",
   "kind": "cap.run.start",
-  "prev_hash": "feb0b1ca74c6bac0583974cdac8f68945bc4cae8db078c22e80381fcc39ca4a6",
+  "prev_hash": "3fa16bbe1e0b015d7ce31e6699538755c9bc8ae1dd51968e80bc1bc8ab457f9b",
   "seq": 81,
-  "ts": "2026-09-24T03:58:47.708019+00:00"
+  "ts": "2026-09-24T06:21:20.497665+00:00"
  },
  {
   "actor": "agent",
@@ -1913,36 +1915,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "fa04d31a912b"
+    "run_id": "f2ff9191369b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fa04d31a912b"
+   "run_id": "f2ff9191369b"
   },
-  "hash": "d717f5f99a872b190baf1846a4cc1690aefc1ab316f3a009973c3f6105233553",
+  "hash": "d9c7af3f459b6edd27e5644c82d89de5dffe50a32fa5ed99359ac9cb05c1bb15",
   "kind": "gate.decision",
-  "prev_hash": "e4b1e8baff2b03e2a39a2078da17a399283bf9b3f17b020909a2af5389b53112",
+  "prev_hash": "e16a0149fca5d99194c1a426106dcb50c98fc37fb2ee6ceae9b68bf8afd60251",
   "seq": 82,
-  "ts": "2026-09-24T03:58:47.708126+00:00"
+  "ts": "2026-09-24T06:21:20.497789+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "aa4c81ef566565fa",
-   "run_id": "fa04d31a912b",
+   "result_hash": "7b971d6e92a5d271",
+   "run_id": "f2ff9191369b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d2d98b0c70b23152dbf3f17bffbbdbec319d772c03fe534e69e2b0d50f9eb6ec",
+  "hash": "67360e73aea0d649fcd2f310baf89eeaa1f1728fb9cabf7f14ca402eebd22d87",
   "kind": "cap.run.finish",
-  "prev_hash": "d717f5f99a872b190baf1846a4cc1690aefc1ab316f3a009973c3f6105233553",
+  "prev_hash": "d9c7af3f459b6edd27e5644c82d89de5dffe50a32fa5ed99359ac9cb05c1bb15",
   "seq": 83,
-  "ts": "2026-09-24T03:58:47.710532+00:00"
+  "ts": "2026-09-24T06:21:20.500322+00:00"
  },
  {
   "actor": "agent",
@@ -1952,7 +1954,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "920ca21a704e"
+    "run_id": "69c8242f4645"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1960,13 +1962,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "920ca21a704e"
+   "run_id": "69c8242f4645"
   },
-  "hash": "f7becb5a307250ec9a536acd1bc3698d50ab689301517b5077423ccde7757ba5",
+  "hash": "5d294f72876bfa15108a4de96c148f87436cdb5df68ac9e27495fa1d90a373d4",
   "kind": "cap.run.start",
-  "prev_hash": "d2d98b0c70b23152dbf3f17bffbbdbec319d772c03fe534e69e2b0d50f9eb6ec",
+  "prev_hash": "67360e73aea0d649fcd2f310baf89eeaa1f1728fb9cabf7f14ca402eebd22d87",
   "seq": 84,
-  "ts": "2026-09-24T03:58:48.184893+00:00"
+  "ts": "2026-09-24T06:21:20.993251+00:00"
  },
  {
   "actor": "agent",
@@ -1976,36 +1978,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "920ca21a704e"
+    "run_id": "69c8242f4645"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "920ca21a704e"
+   "run_id": "69c8242f4645"
   },
-  "hash": "13b45e3207d87fe71647e2d09e7370e33a9eb632cd58b0da74fc368cf8566449",
+  "hash": "785b24f9bb4d651a66f3f5694a975e12b45cc68b708bf3016649be56e4c57461",
   "kind": "gate.decision",
-  "prev_hash": "f7becb5a307250ec9a536acd1bc3698d50ab689301517b5077423ccde7757ba5",
+  "prev_hash": "5d294f72876bfa15108a4de96c148f87436cdb5df68ac9e27495fa1d90a373d4",
   "seq": 85,
-  "ts": "2026-09-24T03:58:48.185335+00:00"
+  "ts": "2026-09-24T06:21:20.993560+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 9,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "920ca21a704e",
+   "duration_ms": 6,
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "69c8242f4645",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c163e4203a5b3f444d1398391c5b0cff7f06dd400220cee311531c3e3ee4ba1d",
+  "hash": "2d3fe643db5df3e64dc5dfce169579e07657c65e356205b2902672e48ed64c8a",
   "kind": "cap.run.finish",
-  "prev_hash": "13b45e3207d87fe71647e2d09e7370e33a9eb632cd58b0da74fc368cf8566449",
+  "prev_hash": "785b24f9bb4d651a66f3f5694a975e12b45cc68b708bf3016649be56e4c57461",
   "seq": 86,
-  "ts": "2026-09-24T03:58:48.193857+00:00"
+  "ts": "2026-09-24T06:21:21.000066+00:00"
  },
  {
   "actor": "agent",
@@ -2015,7 +2017,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e55b3b67daf0"
+    "run_id": "7186e2917786"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2023,13 +2025,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e55b3b67daf0"
+   "run_id": "7186e2917786"
   },
-  "hash": "a2a537f22e3ee421723c2f0933214ca75872dfbebf2a6b2670d33ca7f37971fc",
+  "hash": "eb607c59d147326e79c79bea1fec3b3a45cb09115cdb10ff309358fc047df57b",
   "kind": "cap.run.start",
-  "prev_hash": "c163e4203a5b3f444d1398391c5b0cff7f06dd400220cee311531c3e3ee4ba1d",
+  "prev_hash": "2d3fe643db5df3e64dc5dfce169579e07657c65e356205b2902672e48ed64c8a",
   "seq": 87,
-  "ts": "2026-09-24T03:58:48.198382+00:00"
+  "ts": "2026-09-24T06:21:21.003999+00:00"
  },
  {
   "actor": "agent",
@@ -2039,36 +2041,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "e55b3b67daf0"
+    "run_id": "7186e2917786"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e55b3b67daf0"
+   "run_id": "7186e2917786"
   },
-  "hash": "91e27f1382bc26bed1dfe018076d7d576e5dfa2c2c60d320fc0d80d622e002f3",
+  "hash": "6c3b60206b0a964d44cf7cd9f19fde87067b2fbd281dd08d3c9b6281bfd7d07c",
   "kind": "gate.decision",
-  "prev_hash": "a2a537f22e3ee421723c2f0933214ca75872dfbebf2a6b2670d33ca7f37971fc",
+  "prev_hash": "eb607c59d147326e79c79bea1fec3b3a45cb09115cdb10ff309358fc047df57b",
   "seq": 88,
-  "ts": "2026-09-24T03:58:48.198601+00:00"
+  "ts": "2026-09-24T06:21:21.004180+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 3,
-   "result_hash": "7b7a170c8f7803c5",
-   "run_id": "e55b3b67daf0",
+   "duration_ms": 2,
+   "result_hash": "5ee031524284b02a",
+   "run_id": "7186e2917786",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e437db65b0bc306b578c70f6837b8ce4c1ddd67d12d6bb3d863d51fcd7efc536",
+  "hash": "e961d6fb004dccb96d682a60cd35d4b14e293673e5721688d0893321742c6f1b",
   "kind": "cap.run.finish",
-  "prev_hash": "91e27f1382bc26bed1dfe018076d7d576e5dfa2c2c60d320fc0d80d622e002f3",
+  "prev_hash": "6c3b60206b0a964d44cf7cd9f19fde87067b2fbd281dd08d3c9b6281bfd7d07c",
   "seq": 89,
-  "ts": "2026-09-24T03:58:48.201589+00:00"
+  "ts": "2026-09-24T06:21:21.006669+00:00"
  },
  {
   "actor": "agent",
@@ -2078,7 +2080,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "039d3828ec2a"
+    "run_id": "a53b2a3ca072"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2086,13 +2088,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "039d3828ec2a"
+   "run_id": "a53b2a3ca072"
   },
-  "hash": "f09cb16ba91bc021e68f7cd69c76b7a2d9af2ae91c396167ced4cc1bba2a7f93",
+  "hash": "db48a43a6f172f4923acd772faeb3e96cb85144a60aa65ca1ac3233956714989",
   "kind": "cap.run.start",
-  "prev_hash": "e437db65b0bc306b578c70f6837b8ce4c1ddd67d12d6bb3d863d51fcd7efc536",
+  "prev_hash": "e961d6fb004dccb96d682a60cd35d4b14e293673e5721688d0893321742c6f1b",
   "seq": 90,
-  "ts": "2026-09-24T03:58:48.206615+00:00"
+  "ts": "2026-09-24T06:21:21.009816+00:00"
  },
  {
   "actor": "agent",
@@ -2102,36 +2104,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "039d3828ec2a"
+    "run_id": "a53b2a3ca072"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "039d3828ec2a"
+   "run_id": "a53b2a3ca072"
   },
-  "hash": "abcc70545acc766b39a866570b82da94748a8e2f17a039f8ade05419c2707aeb",
+  "hash": "d852cd74995212a9bc8736ad21c8732efc778d2344b1feedd36ae1ac078bf11e",
   "kind": "gate.decision",
-  "prev_hash": "f09cb16ba91bc021e68f7cd69c76b7a2d9af2ae91c396167ced4cc1bba2a7f93",
+  "prev_hash": "db48a43a6f172f4923acd772faeb3e96cb85144a60aa65ca1ac3233956714989",
   "seq": 91,
-  "ts": "2026-09-24T03:58:48.206753+00:00"
+  "ts": "2026-09-24T06:21:21.009943+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 5,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "039d3828ec2a",
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "a53b2a3ca072",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "c07b1cd5d6d22cabba2198449842946a2da711a11b358cf839ede248d70581cb",
+  "hash": "50c536841f41a039b6eeff1a59770ba554b032851bf216fd827bd5185b5b5d4c",
   "kind": "cap.run.finish",
-  "prev_hash": "abcc70545acc766b39a866570b82da94748a8e2f17a039f8ade05419c2707aeb",
+  "prev_hash": "d852cd74995212a9bc8736ad21c8732efc778d2344b1feedd36ae1ac078bf11e",
   "seq": 92,
-  "ts": "2026-09-24T03:58:48.212522+00:00"
+  "ts": "2026-09-24T06:21:21.015049+00:00"
  },
  {
   "actor": "agent",
@@ -2141,7 +2143,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "d39137a172f3"
+    "run_id": "b4a175712ad0"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2149,13 +2151,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d39137a172f3"
+   "run_id": "b4a175712ad0"
   },
-  "hash": "104fe56ffa524ab8f48498bbae8af30b31b459b835027512b538331d085bafd8",
+  "hash": "8344165964f655952c94bfb21560f193b85172f19294e2984eb94b23ee3afb66",
   "kind": "cap.run.start",
-  "prev_hash": "c07b1cd5d6d22cabba2198449842946a2da711a11b358cf839ede248d70581cb",
+  "prev_hash": "50c536841f41a039b6eeff1a59770ba554b032851bf216fd827bd5185b5b5d4c",
   "seq": 93,
-  "ts": "2026-09-24T03:58:48.217056+00:00"
+  "ts": "2026-09-24T06:21:21.019743+00:00"
  },
  {
   "actor": "agent",
@@ -2165,36 +2167,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "d39137a172f3"
+    "run_id": "b4a175712ad0"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d39137a172f3"
+   "run_id": "b4a175712ad0"
   },
-  "hash": "bf4e8e61ad21cb0a7c537276d72685cd26bbe4e0a14d82a388f465d521dc9ab3",
+  "hash": "3924c60b6321ce1c4b88414754eabb7bf471471401ee51a750361806e0bce3da",
   "kind": "gate.decision",
-  "prev_hash": "104fe56ffa524ab8f48498bbae8af30b31b459b835027512b538331d085bafd8",
+  "prev_hash": "8344165964f655952c94bfb21560f193b85172f19294e2984eb94b23ee3afb66",
   "seq": 94,
-  "ts": "2026-09-24T03:58:48.217194+00:00"
+  "ts": "2026-09-24T06:21:21.019858+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 3,
-   "result_hash": "d2b3a1f082578288",
-   "run_id": "d39137a172f3",
+   "result_hash": "5fe2cb8c2f9cbe14",
+   "run_id": "b4a175712ad0",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2faafe2f0c65291fceafdc84b51f8f2ee557560cfeae6cbf248476da4101839f",
+  "hash": "594ef8b6dbb71e8ea19735671afb8b9885e07b98220a11823cc891aed4f398ea",
   "kind": "cap.run.finish",
-  "prev_hash": "bf4e8e61ad21cb0a7c537276d72685cd26bbe4e0a14d82a388f465d521dc9ab3",
+  "prev_hash": "3924c60b6321ce1c4b88414754eabb7bf471471401ee51a750361806e0bce3da",
   "seq": 95,
-  "ts": "2026-09-24T03:58:48.220446+00:00"
+  "ts": "2026-09-24T06:21:21.022916+00:00"
  },
  {
   "actor": "agent",
@@ -2204,7 +2206,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "de4d702544c0"
+    "run_id": "cabf3a3d4727"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2212,13 +2214,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "de4d702544c0"
+   "run_id": "cabf3a3d4727"
   },
-  "hash": "9d6cefb489e580cd270f08a8037059b50843c4ea2cad26bf21ea7762b0ac2892",
+  "hash": "8870dd98faf82b4fe2dbc72011544571d351f9fe13387e8ef7c76f8d7ae098c5",
   "kind": "cap.run.start",
-  "prev_hash": "2faafe2f0c65291fceafdc84b51f8f2ee557560cfeae6cbf248476da4101839f",
+  "prev_hash": "594ef8b6dbb71e8ea19735671afb8b9885e07b98220a11823cc891aed4f398ea",
   "seq": 96,
-  "ts": "2026-09-24T03:58:51.821665+00:00"
+  "ts": "2026-09-24T06:21:23.596223+00:00"
  },
  {
   "actor": "agent",
@@ -2228,36 +2230,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "de4d702544c0"
+    "run_id": "cabf3a3d4727"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "de4d702544c0"
+   "run_id": "cabf3a3d4727"
   },
-  "hash": "da1f413f8f7969bb4a120a57886cfab2842735d3655e7a4909da43ffbd4193dd",
+  "hash": "6885f81515ea54adefc4378b2fc9d855d0ee50cb5d1f33d3411c27bfff28676a",
   "kind": "gate.decision",
-  "prev_hash": "9d6cefb489e580cd270f08a8037059b50843c4ea2cad26bf21ea7762b0ac2892",
+  "prev_hash": "8870dd98faf82b4fe2dbc72011544571d351f9fe13387e8ef7c76f8d7ae098c5",
   "seq": 97,
-  "ts": "2026-09-24T03:58:51.821848+00:00"
+  "ts": "2026-09-24T06:21:23.596457+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
    "duration_ms": 4,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "de4d702544c0",
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "cabf3a3d4727",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "5fdf4c859204fc3397f0c193be474ae445143c90047c865f69bce72ad4549675",
+  "hash": "4f6dcbb93a2235d63b32658655a056138ce4821bd28aa496fbf96bd82fd954d1",
   "kind": "cap.run.finish",
-  "prev_hash": "da1f413f8f7969bb4a120a57886cfab2842735d3655e7a4909da43ffbd4193dd",
+  "prev_hash": "6885f81515ea54adefc4378b2fc9d855d0ee50cb5d1f33d3411c27bfff28676a",
   "seq": 98,
-  "ts": "2026-09-24T03:58:51.825977+00:00"
+  "ts": "2026-09-24T06:21:23.600623+00:00"
  },
  {
   "actor": "agent",
@@ -2267,7 +2269,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "3a80bc12f6f3"
+    "run_id": "2b339f24bda2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2275,13 +2277,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3a80bc12f6f3"
+   "run_id": "2b339f24bda2"
   },
-  "hash": "5b07bb635e17453b2a85ca8a2f0da73921aebd82de9c647520d3ddd1a00f9168",
+  "hash": "87496fbc251dc6579d83c02a4c91723837e85efe48dec461cf6890be12d1f4d6",
   "kind": "cap.run.start",
-  "prev_hash": "5fdf4c859204fc3397f0c193be474ae445143c90047c865f69bce72ad4549675",
+  "prev_hash": "4f6dcbb93a2235d63b32658655a056138ce4821bd28aa496fbf96bd82fd954d1",
   "seq": 99,
-  "ts": "2026-09-24T03:58:51.829481+00:00"
+  "ts": "2026-09-24T06:21:23.603514+00:00"
  },
  {
   "actor": "agent",
@@ -2291,36 +2293,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "3a80bc12f6f3"
+    "run_id": "2b339f24bda2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3a80bc12f6f3"
+   "run_id": "2b339f24bda2"
   },
-  "hash": "6e6c4362d5a0b2e093b38710ffcd4dc54e198b39e005b10fa50f6c2715a2f35c",
+  "hash": "9ae1b87d84d03e6dc0e248f22bc4f18ac398a2fdd8b25336830076a10dadf706",
   "kind": "gate.decision",
-  "prev_hash": "5b07bb635e17453b2a85ca8a2f0da73921aebd82de9c647520d3ddd1a00f9168",
+  "prev_hash": "87496fbc251dc6579d83c02a4c91723837e85efe48dec461cf6890be12d1f4d6",
   "seq": 100,
-  "ts": "2026-09-24T03:58:51.829576+00:00"
+  "ts": "2026-09-24T06:21:23.603613+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "7b7a170c8f7803c5",
-   "run_id": "3a80bc12f6f3",
+   "result_hash": "5ee031524284b02a",
+   "run_id": "2b339f24bda2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a4642edfe0395fac7663b75accc0453d9e377e30216b3f89aff6a90419da9fe3",
+  "hash": "acddd09225709a3754c76b41023759f0d539a51a61ab20914abcaced07f3b78d",
   "kind": "cap.run.finish",
-  "prev_hash": "6e6c4362d5a0b2e093b38710ffcd4dc54e198b39e005b10fa50f6c2715a2f35c",
+  "prev_hash": "9ae1b87d84d03e6dc0e248f22bc4f18ac398a2fdd8b25336830076a10dadf706",
   "seq": 101,
-  "ts": "2026-09-24T03:58:51.831279+00:00"
+  "ts": "2026-09-24T06:21:23.605187+00:00"
  },
  {
   "actor": "agent",
@@ -2330,7 +2332,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "53341b61c456"
+    "run_id": "e3e2e1cc8f30"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2338,13 +2340,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "53341b61c456"
+   "run_id": "e3e2e1cc8f30"
   },
-  "hash": "3cf6ece76fe8877ef2d2d555c37b8c7dfc4e54709d2309c20cf369e59db2535e",
+  "hash": "739bf9e5243c21e28ce8b1cca17e717775f326c9533a7f1492f167d3403be6a8",
   "kind": "cap.run.start",
-  "prev_hash": "a4642edfe0395fac7663b75accc0453d9e377e30216b3f89aff6a90419da9fe3",
+  "prev_hash": "acddd09225709a3754c76b41023759f0d539a51a61ab20914abcaced07f3b78d",
   "seq": 102,
-  "ts": "2026-09-24T03:58:51.833266+00:00"
+  "ts": "2026-09-24T06:21:23.608250+00:00"
  },
  {
   "actor": "agent",
@@ -2354,36 +2356,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "53341b61c456"
+    "run_id": "e3e2e1cc8f30"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "53341b61c456"
+   "run_id": "e3e2e1cc8f30"
   },
-  "hash": "b6c2d7b681a0ef649c00a476756a940f2d67a255361b142911162a8da1a035ab",
+  "hash": "1f07666e836b3f85d536eb37b076245530cd2d67b02a855a3364f76984cd2c7d",
   "kind": "gate.decision",
-  "prev_hash": "3cf6ece76fe8877ef2d2d555c37b8c7dfc4e54709d2309c20cf369e59db2535e",
+  "prev_hash": "739bf9e5243c21e28ce8b1cca17e717775f326c9533a7f1492f167d3403be6a8",
   "seq": 103,
-  "ts": "2026-09-24T03:58:51.833347+00:00"
+  "ts": "2026-09-24T06:21:23.608348+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
-   "result_hash": "e4af446f18977b2c",
-   "run_id": "53341b61c456",
+   "duration_ms": 3,
+   "result_hash": "fcf5368dbb7aa0b4",
+   "run_id": "e3e2e1cc8f30",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0ea550961fe8f813e35d0bb9f72aed1da53ab2b04caf14bd3cd4939213c314d8",
+  "hash": "78dcaa9918bd1d8bc281d59645b5d952485c228b8a0327742fd068072adf1eb7",
   "kind": "cap.run.finish",
-  "prev_hash": "b6c2d7b681a0ef649c00a476756a940f2d67a255361b142911162a8da1a035ab",
+  "prev_hash": "1f07666e836b3f85d536eb37b076245530cd2d67b02a855a3364f76984cd2c7d",
   "seq": 104,
-  "ts": "2026-09-24T03:58:51.837382+00:00"
+  "ts": "2026-09-24T06:21:23.612118+00:00"
  },
  {
   "actor": "agent",
@@ -2393,7 +2395,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "bab7b64a4ece"
+    "run_id": "b43ff61ac75e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2401,13 +2403,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "bab7b64a4ece"
+   "run_id": "b43ff61ac75e"
   },
-  "hash": "a5374cdee7b8a3a1f65bdc874d273210a823c14da11220e02edce48b38978b0a",
+  "hash": "be5b08224804dcd667449982f72d4147460eaf5f87e1c8b05643ef614345b053",
   "kind": "cap.run.start",
-  "prev_hash": "0ea550961fe8f813e35d0bb9f72aed1da53ab2b04caf14bd3cd4939213c314d8",
+  "prev_hash": "78dcaa9918bd1d8bc281d59645b5d952485c228b8a0327742fd068072adf1eb7",
   "seq": 105,
-  "ts": "2026-09-24T03:58:51.840610+00:00"
+  "ts": "2026-09-24T06:21:23.614675+00:00"
  },
  {
   "actor": "agent",
@@ -2417,36 +2419,36 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "bab7b64a4ece"
+    "run_id": "b43ff61ac75e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "bab7b64a4ece"
+   "run_id": "b43ff61ac75e"
   },
-  "hash": "56e3b6b8263c1f5a348418fce3b49da16cebca671062b9a5e594c6e936a15d53",
+  "hash": "2376a6261e80ec415dd102fed1f14dbc255ddfd0142a6686437ec54fd46ccd99",
   "kind": "gate.decision",
-  "prev_hash": "a5374cdee7b8a3a1f65bdc874d273210a823c14da11220e02edce48b38978b0a",
+  "prev_hash": "be5b08224804dcd667449982f72d4147460eaf5f87e1c8b05643ef614345b053",
   "seq": 106,
-  "ts": "2026-09-24T03:58:51.840699+00:00"
+  "ts": "2026-09-24T06:21:23.614769+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "9ae8eb64d8f856e9",
-   "run_id": "bab7b64a4ece",
+   "result_hash": "47f58a071677d023",
+   "run_id": "b43ff61ac75e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "68e8b0dcf28f2a67fc14a6a2df174673ee28ae78e39f3ab51108558d8c52d91d",
+  "hash": "c0a32973a98f3adc280665401de8f249e88b23b8489bad317b3d5eb80a452283",
   "kind": "cap.run.finish",
-  "prev_hash": "56e3b6b8263c1f5a348418fce3b49da16cebca671062b9a5e594c6e936a15d53",
+  "prev_hash": "2376a6261e80ec415dd102fed1f14dbc255ddfd0142a6686437ec54fd46ccd99",
   "seq": 107,
-  "ts": "2026-09-24T03:58:51.843084+00:00"
+  "ts": "2026-09-24T06:21:23.617147+00:00"
  }
 ]
 ```
@@ -2512,13 +2514,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "kind": "gap",
     "text": "Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_c72f8c36.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_634f87d9.",
     "source_cap": "search.web",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T03:58:47.010327+00:00",
+    "created_at": "2026-09-24T06:21:19.772163+00:00",
     "answered_at": null
    }
   ]
@@ -2539,7 +2541,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
   "so_dong": 33,
   "dong": [
    {
-    "id": "7f523ebe7353",
+    "id": "ff183c5a16e6",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -2552,10 +2554,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:44.816572+00:00"
+    "at": "2026-09-24T06:21:16.887821+00:00"
    },
    {
-    "id": "ecb40381e989",
+    "id": "970c4310e00c",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2568,10 +2570,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:44.830307+00:00"
+    "at": "2026-09-24T06:21:16.901908+00:00"
    },
    {
-    "id": "94d69a75f705",
+    "id": "988549662bc1",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2584,10 +2586,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:44.833363+00:00"
+    "at": "2026-09-24T06:21:16.905102+00:00"
    },
    {
-    "id": "38d8497d6f6a",
+    "id": "d9d20ded3018",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2600,10 +2602,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:44.863706+00:00"
+    "at": "2026-09-24T06:21:16.935049+00:00"
    },
    {
-    "id": "1e8361e8e331",
+    "id": "62e1591ec9fa",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2616,10 +2618,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:45.089286+00:00"
+    "at": "2026-09-24T06:21:17.164397+00:00"
    },
    {
-    "id": "0f648e5ea973",
+    "id": "39e61e28007d",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -2632,10 +2634,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:45.115332+00:00"
+    "at": "2026-09-24T06:21:17.201242+00:00"
    },
    {
-    "id": "f69b95e981da",
+    "id": "5dc7b0c39270",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -2648,10 +2650,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:46.871397+00:00"
+    "at": "2026-09-24T06:21:19.632874+00:00"
    },
    {
-    "id": "e85fdaeca79d",
+    "id": "54eba6de7bc9",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -2664,10 +2666,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:46.876342+00:00"
+    "at": "2026-09-24T06:21:19.637912+00:00"
    },
    {
-    "id": "ec89613ea6d7",
+    "id": "ce4e83270f13",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -2680,10 +2682,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:46.884606+00:00"
+    "at": "2026-09-24T06:21:19.646816+00:00"
    },
    {
-    "id": "e3e34f1df68b",
+    "id": "8dab526b3b50",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2696,10 +2698,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.003815+00:00"
+    "at": "2026-09-24T06:21:19.765548+00:00"
    },
    {
-    "id": "fa0ccdce161a",
+    "id": "790beb3f2130",
     "gate": "*",
     "action_cap": "search.web",
     "risk": "R0",
@@ -2712,10 +2714,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.005819+00:00"
+    "at": "2026-09-24T06:21:19.767494+00:00"
    },
    {
-    "id": "85e1a12464da",
+    "id": "2ab639f6e98d",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -2728,10 +2730,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.036635+00:00"
+    "at": "2026-09-24T06:21:19.809458+00:00"
    },
    {
-    "id": "6e6c84e965b8",
+    "id": "e8c0ad6ba37a",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2744,10 +2746,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.256576+00:00"
+    "at": "2026-09-24T06:21:20.041494+00:00"
    },
    {
-    "id": "089138fd90de",
+    "id": "770d9cf496ac",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -2760,10 +2762,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.363386+00:00"
+    "at": "2026-09-24T06:21:20.158082+00:00"
    },
    {
-    "id": "dc76ef7745a1",
+    "id": "86643f76fa79",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2776,10 +2778,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.420684+00:00"
+    "at": "2026-09-24T06:21:20.215029+00:00"
    },
    {
-    "id": "4210c5aa169a",
+    "id": "08d40a35e10c",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2792,10 +2794,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.428684+00:00"
+    "at": "2026-09-24T06:21:20.224312+00:00"
    },
    {
-    "id": "0df32e06e2de",
+    "id": "ce3848d77f67",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2808,10 +2810,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.442028+00:00"
+    "at": "2026-09-24T06:21:20.238151+00:00"
    },
    {
-    "id": "4f5a337bcae6",
+    "id": "30de5f8a02ec",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2824,10 +2826,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.445103+00:00"
+    "at": "2026-09-24T06:21:20.241373+00:00"
    },
    {
-    "id": "efdbb649e250",
+    "id": "6157b350e5af",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2840,10 +2842,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.448520+00:00"
+    "at": "2026-09-24T06:21:20.244296+00:00"
    },
    {
-    "id": "ed0b9c7f13a4",
+    "id": "5f1771cbe6a5",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2856,10 +2858,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.478046+00:00"
+    "at": "2026-09-24T06:21:20.274071+00:00"
    },
    {
-    "id": "40a87e30c9e1",
+    "id": "db07a32fc7e5",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2872,10 +2874,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.562719+00:00"
+    "at": "2026-09-24T06:21:20.353650+00:00"
    },
    {
-    "id": "b47b5b8a9afa",
+    "id": "aacea65196a2",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2888,10 +2890,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.691131+00:00"
+    "at": "2026-09-24T06:21:20.480554+00:00"
    },
    {
-    "id": "e16298202f5a",
+    "id": "a29492221397",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2904,10 +2906,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.697576+00:00"
+    "at": "2026-09-24T06:21:20.486755+00:00"
    },
    {
-    "id": "ec60aacdf713",
+    "id": "d360cbd34b31",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2920,10 +2922,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.701921+00:00"
+    "at": "2026-09-24T06:21:20.491097+00:00"
    },
    {
-    "id": "fa04d31a912b",
+    "id": "f2ff9191369b",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2936,10 +2938,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:47.708564+00:00"
+    "at": "2026-09-24T06:21:20.498189+00:00"
    },
    {
-    "id": "920ca21a704e",
+    "id": "69c8242f4645",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2952,10 +2954,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:48.186648+00:00"
+    "at": "2026-09-24T06:21:20.994329+00:00"
    },
    {
-    "id": "e55b3b67daf0",
+    "id": "7186e2917786",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2968,10 +2970,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:48.199339+00:00"
+    "at": "2026-09-24T06:21:21.004694+00:00"
    },
    {
-    "id": "039d3828ec2a",
+    "id": "a53b2a3ca072",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2984,10 +2986,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:48.207380+00:00"
+    "at": "2026-09-24T06:21:21.010496+00:00"
    },
    {
-    "id": "d39137a172f3",
+    "id": "b4a175712ad0",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3000,10 +3002,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:48.217777+00:00"
+    "at": "2026-09-24T06:21:21.020430+00:00"
    },
    {
-    "id": "de4d702544c0",
+    "id": "cabf3a3d4727",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3016,10 +3018,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:51.822396+00:00"
+    "at": "2026-09-24T06:21:23.597114+00:00"
    },
    {
-    "id": "3a80bc12f6f3",
+    "id": "2b339f24bda2",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3032,10 +3034,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:51.829946+00:00"
+    "at": "2026-09-24T06:21:23.603990+00:00"
    },
    {
-    "id": "53341b61c456",
+    "id": "e3e2e1cc8f30",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3048,10 +3050,10 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:51.833796+00:00"
+    "at": "2026-09-24T06:21:23.608749+00:00"
    },
    {
-    "id": "bab7b64a4ece",
+    "id": "b43ff61ac75e",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3064,7 +3066,7 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T03:58:51.841093+00:00"
+    "at": "2026-09-24T06:21:23.615134+00:00"
    }
   ]
  },
@@ -3132,14 +3134,14 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_c72f8c366f72",
+    "id": "r_634f87d96c85",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_c72f8c366f72\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"chip\": \"XQ-9988Z-TRB\", \"question\": \"tra datasheet của nó cho tôi\"}, \"is_big\": false, \"confidence\": 0.85, \"lang\": \"vi\", \"mentions\": [\"XQ-9988Z-TRB\"], \"_text\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\"}, \"text\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_634f87d96c85\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"chip\": \"XQ-9988Z-TRB\", \"question\": \"tra datasheet của nó cho tôi\"}, \"is_big\": false, \"confidence\": 0.85, \"lang\": \"vi\", \"mentions\": [\"XQ-9988Z-TRB\"], \"_text\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\"}, \"text\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\"}",
     "state": "failed",
     "working": null,
     "report": "{\"nguon_chuoi\": \"mẫu: Tìm tài liệu / linh kiện (DEV-208)\", \"state\": \"failed\", \"done\": [], \"waiting\": [{\"id\": \"n3\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n1\"}], \"skipped\": [{\"id\": \"n2\", \"cap\": \"search.fetch\", \"vi\": \"chờ nút n1\"}], \"failed\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"error\": {\"eide_code\": \"E4001\", \"name\": \"TOOL_MISSING\", \"tool\": \"search provider\", \"providers\": [\"searxng\", \"brave\", \"tavily\", \"google\"], \"alternative\": \"search.vendor\", \"message\": \"Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.\"}, \"bat_buoc\": true}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T03:58:47.003698+00:00",
+    "started_at": "2026-09-24T06:21:19.765454+00:00",
     "finished_at": null
    }
   ]
@@ -3170,13 +3172,13 @@ Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet củ
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_449e9d33d07c",
+    "id": "s_bc57bb2ca28a",
     "project": "dung-linh-kien-hiem-tai-lieu",
-    "opened_at": "2026-09-24T03:58:44.820888+00:00",
+    "opened_at": "2026-09-24T06:21:16.892105+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\", \"at\": \"2026-09-24T03:58:45.097288+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_c72f8c36 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T03:58:47.037844+00:00\", \"run_id\": \"r_c72f8c366f72\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi\", \"at\": \"2026-09-24T06:21:17.174193+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_634f87d9 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T06:21:19.810730+00:00\", \"run_id\": \"r_634f87d96c85\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -3210,7 +3212,7 @@ index/
 ```
 # dùng linh kiện hiếm tài liệu
 
-- 2026-09-24 10:58 — tạo dự án từ lệnh: "dùng linh kiện hiếm tài liệu"
+- 2026-09-24 13:21 — tạo dự án từ lệnh: "dùng linh kiện hiếm tài liệu"
 
 ```
 
@@ -3301,7 +3303,7 @@ escalation:
 project:
   id: dung-linh-kien-hiem-tai-lieu
   name: dùng linh kiện hiếm tài liệu
-  created: '2026-09-24T03:58:44.530703+00:00'
+  created: '2026-09-24T06:21:16.602427+00:00'
   text: dùng linh kiện hiếm tài liệu
 target:
   chip: null
@@ -3492,7 +3494,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “dùng linh kiện hiếm tài liệu”
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dung-linh-kien-hiem-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3513,7 +3515,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Thiết kế dùng con XQ-9988Z-TRB làm bộ chuyển mức, tra datasheet của nó cho tôi
 
-**Tác tử trả lời** *(sau 6.5 s)*:
+**Tác tử trả lời** *(sau 6.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dung-linh-kien-hiem-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3538,8 +3540,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_449e9d33d07c
-Mở lúc	24/09 03:58:44
+Phiên	s_bc57bb2ca28a
+Mở lúc	24/09 06:21:16
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3572,8 +3574,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_449e9d33d07c
-Mở lúc	24/09 03:58:44
+Phiên	s_bc57bb2ca28a
+Mở lúc	24/09 06:21:16
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3618,8 +3620,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_449e9d33d07c
-Mở lúc	24/09 03:58:44
+Phiên	s_bc57bb2ca28a
+Mở lúc	24/09 06:21:16
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3652,7 +3654,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC010/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.8 s)*:
+**Tác tử trả lời** *(sau 0.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dung-linh-kien-hiem-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3675,7 +3677,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC010/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.5 s)*:
+**Tác tử trả lời** *(sau 6.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `dung-linh-kien-hiem-tai-lieu` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3700,8 +3702,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_449e9d33d07c
-Mở lúc	24/09 03:58:44
+Phiên	s_bc57bb2ca28a
+Mở lúc	24/09 06:21:16
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3736,8 +3738,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_449e9d33d07c
-Mở lúc	24/09 03:58:44
+Phiên	s_bc57bb2ca28a
+Mở lúc	24/09 06:21:16
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3784,8 +3786,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_449e9d33d07c
-Mở lúc	24/09 03:58:44
+Phiên	s_bc57bb2ca28a
+Mở lúc	24/09 06:21:16
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2

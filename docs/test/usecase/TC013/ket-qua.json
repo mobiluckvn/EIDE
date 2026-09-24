@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Hiểu thành `diagram.draw`, hỏng E2000 vì chưa có module. Không một chữ nào về việc 5 V không tương thích 3,3 V, không đề xuất mạch chuyển mức.",
- "giay": 14.9,
+ "giay": 15.2,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 14.9,
+   "giay": 15.2,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

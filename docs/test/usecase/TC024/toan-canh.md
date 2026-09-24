@@ -69,7 +69,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** mở lại dự án — `nhap-thiet-ke-kicad-co-san`
 
-**Tác tử trả lời** *(sau 0.3 s)*:
+**Tác tử trả lời** *(sau 0.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
@@ -93,22 +93,17 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
-      "kind" : "hardware",
-      "suggestion" : "STM32 với HAL, ESP32 với ESP-IDF, hoặc Arduino?",
-      "text" : "Mã nguồn này đang được thiết kế để chạy trên vi điều khiển nào và sử dụng thư viện\/framework gì?"
+      "kind" : "chức năng",
+      "suggestion" : "Đếm xung encoder, đếm xung PWM, v.v.",
+      "text" : "Chức năng mong muốn của file dem_xung.c là gì để có cơ sở xác định lỗi logic?"
     },
     {
-      "kind" : "bug_description",
-      "suggestion" : "Lỗi biên dịch (cần log lỗi), lỗi logic (đếm sai số xung), hay lỗi cấu hình ngoại vi?",
-      "text" : "Lỗi cụ thể đang gặp phải trong file dem_xung.c là gì?"
-    },
-    {
-      "kind" : "constraint",
-      "suggestion" : "Tuân thủ MISRA C, hoặc cần tối ưu thời gian thực thi (WCET) trong ngắt.",
-      "text" : "Có yêu cầu về tiêu chuẩn lập trình (coding standard) hay giới hạn tài nguyên nào khi thực hiện sửa lỗi không?"
+      "kind" : "ràng buộc",
+      "suggestion" : "MISRA C, GNU, hoặc không yêu cầu",
+      "text" : "Có tiêu chuẩn coding convention nào cần tuân thủ khi sửa lỗi không?"
     }
   ],
   "raw" : [
@@ -117,35 +112,35 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "text" : "Đọc \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do"
     }
   ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
   "codes_assigned" : 1,
   "reqset" : [
     {
-      "id" : "FR-SNS-01",
+      "id" : "FR-PWR-01",
       "kind" : "CR",
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải đọc tệp \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do."
+      "text" : "Hệ thống phải đọc tệp mã nguồn tại đường dẫn \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
 1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do.
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp mã nguồn tại đường dẫn /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+FR-PWR-01	—
+FR-PWR-01	—
 ```
 
 ![bước 2](buoc-02.png)
@@ -158,10 +153,10 @@ FR-SNS-01	—
 
 ```
 Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do.
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp mã nguồn tại đường dẫn /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+FR-PWR-01	—
+FR-PWR-01	—
 ```
 
 ![ReqArch](man-01-ReqArch.png)
@@ -177,8 +172,8 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (5)  Làm rõ yêu cầu — HARDWARE  Mã nguồn này đang được thiết kế để chạy trên vi điều khiển nào và sử dụng thư viện/framework gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
-• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CONSTRAINT  Có yêu cầu về tiêu chuẩn lập trình (coding standard) hay giới hạn tài nguyên nào khi thực hiện sửa lỗi không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — BUG_DESCRIPTION  Lỗi cụ thể đang gặp phải trong file dem_xung.c là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (2)  req.classify  còn 23 giờ  Hoàn tác extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (4)  Làm rõ yêu cầu — RÀNG BUỘC  Có tiêu chuẩn coding convention nào cần tuân thủ khi sửa lỗi không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHỨC NĂNG  Chức năng mong muốn của file dem_xung.c là gì để có cơ sở xác định lỗi logic?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (2)  req.classify  còn 23 giờ  Hoàn tác extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
 
 **Tác tử trả lời** *(sau 4.6 s)*:
@@ -193,22 +188,17 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
-      "kind" : "hardware",
-      "suggestion" : "STM32 với HAL, ESP32 với ESP-IDF, hoặc Arduino?",
-      "text" : "Mã nguồn này đang được thiết kế để chạy trên vi điều khiển nào và sử dụng thư viện\/framework gì?"
+      "kind" : "chức năng",
+      "suggestion" : "Đếm xung encoder, đếm xung PWM, v.v.",
+      "text" : "Chức năng mong muốn của file dem_xung.c là gì để có cơ sở xác định lỗi logic?"
     },
     {
-      "kind" : "bug_description",
-      "suggestion" : "Lỗi biên dịch (cần log lỗi), lỗi logic (đếm sai số xung), hay lỗi cấu hình ngoại vi?",
-      "text" : "Lỗi cụ thể đang gặp phải trong file dem_xung.c là gì?"
-    },
-    {
-      "kind" : "constraint",
-      "suggestion" : "Tuân thủ MISRA C, hoặc cần tối ưu thời gian thực thi (WCET) trong ngắt.",
-      "text" : "Có yêu cầu về tiêu chuẩn lập trình (coding standard) hay giới hạn tài nguyên nào khi thực hiện sửa lỗi không?"
+      "kind" : "ràng buộc",
+      "suggestion" : "MISRA C, GNU, hoặc không yêu cầu",
+      "text" : "Có tiêu chuẩn coding convention nào cần tuân thủ khi sửa lỗi không?"
     }
   ],
   "raw" : [
@@ -217,25 +207,25 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "text" : "Đọc \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do"
     }
   ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
   "codes_assigned" : 1,
   "reqset" : [
     {
-      "id" : "FR-SNS-01",
+      "id" : "FR-PWR-01",
       "kind" : "CR",
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải đọc tệp \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do."
+      "text" : "Hệ thống phải đọc tệp mã nguồn tại đường dẫn \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `Graph`:**
@@ -265,7 +255,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC024/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.3 s)*:
+**Tác tử trả lời** *(sau 0.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `nhap-thiet-ke-kicad-co-san` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
@@ -291,22 +281,17 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
-      "kind" : "hardware",
-      "suggestion" : "STM32 với HAL, ESP32 với ESP-IDF, hoặc Arduino?",
-      "text" : "Mã nguồn này đang được thiết kế để chạy trên vi điều khiển nào và sử dụng thư viện\/framework gì?"
+      "kind" : "chức năng",
+      "suggestion" : "Đếm xung encoder, đếm xung PWM, v.v.",
+      "text" : "Chức năng mong muốn của file dem_xung.c là gì để có cơ sở xác định lỗi logic?"
     },
     {
-      "kind" : "bug_description",
-      "suggestion" : "Lỗi biên dịch (cần log lỗi), lỗi logic (đếm sai số xung), hay lỗi cấu hình ngoại vi?",
-      "text" : "Lỗi cụ thể đang gặp phải trong file dem_xung.c là gì?"
-    },
-    {
-      "kind" : "constraint",
-      "suggestion" : "Tuân thủ MISRA C, hoặc cần tối ưu thời gian thực thi (WCET) trong ngắt.",
-      "text" : "Có yêu cầu về tiêu chuẩn lập trình (coding standard) hay giới hạn tài nguyên nào khi thực hiện sửa lỗi không?"
+      "kind" : "ràng buộc",
+      "suggestion" : "MISRA C, GNU, hoặc không yêu cầu",
+      "text" : "Có tiêu chuẩn coding convention nào cần tuân thủ khi sửa lỗi không?"
     }
   ],
   "raw" : [
@@ -315,35 +300,35 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "text" : "Đọc \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do"
     }
   ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
   "codes_assigned" : 1,
   "reqset" : [
     {
-      "id" : "FR-SNS-01",
+      "id" : "FR-PWR-01",
       "kind" : "CR",
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải đọc tệp \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do."
+      "text" : "Hệ thống phải đọc tệp mã nguồn tại đường dẫn \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
 1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do.
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp mã nguồn tại đường dẫn /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+FR-PWR-01	—
+FR-PWR-01	—
 ```
 
 ![bước 2](buoc-02.png)
@@ -358,10 +343,10 @@ FR-SNS-01	—
 
 ```
 Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SNS-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do.
+FR-PWR-01	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải đọc tệp mã nguồn tại đường dẫn /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC023/du-an/nhap-thiet-ke-kicad-co-san/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
-FR-SNS-01	—
-FR-SNS-01	—
+FR-PWR-01	—
+FR-PWR-01	—
 ```
 
 ![ReqArch](man-01-ReqArch.png)
@@ -379,8 +364,8 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (5)  Làm rõ yêu cầu — HARDWARE  Mã nguồn này đang được thiết kế để chạy trên vi điều khiển nào và sử dụng thư viện/framework gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
-• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CONSTRAINT  Có yêu cầu về tiêu chuẩn lập trình (coding standard) hay giới hạn tài nguyên nào khi thực hiện sửa lỗi không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — BUG_DESCRIPTION  Lỗi cụ thể đang gặp phải trong file dem_xung.c là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (2)  req.classify  còn 23 giờ  Hoàn tác extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (4)  Làm rõ yêu cầu — RÀNG BUỘC  Có tiêu chuẩn coding convention nào cần tuân thủ khi sửa lỗi không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHỨC NĂNG  Chức năng mong muốn của file dem_xung.c là gì để có cơ sở xác định lỗi logic?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `req.ground_hw` đang chờ anh cho biết:
+• Chưa ghim hộ chiếu chip — chip nào? (`passport`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (2)  req.classify  còn 23 giờ  Hoàn tác extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC024/buoc-03.png
@@ -397,22 +382,17 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     "missing" : [
     ]
   }
-}  2. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 2 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
-      "kind" : "hardware",
-      "suggestion" : "STM32 với HAL, ESP32 với ESP-IDF, hoặc Arduino?",
-      "text" : "Mã nguồn này đang được thiết kế để chạy trên vi điều khiển nào và sử dụng thư viện\/framework gì?"
+      "kind" : "chức năng",
+      "suggestion" : "Đếm xung encoder, đếm xung PWM, v.v.",
+      "text" : "Chức năng mong muốn của file dem_xung.c là gì để có cơ sở xác định lỗi logic?"
     },
     {
-      "kind" : "bug_description",
-      "suggestion" : "Lỗi biên dịch (cần log lỗi), lỗi logic (đếm sai số xung), hay lỗi cấu hình ngoại vi?",
-      "text" : "Lỗi cụ thể đang gặp phải trong file dem_xung.c là gì?"
-    },
-    {
-      "kind" : "constraint",
-      "suggestion" : "Tuân thủ MISRA C, hoặc cần tối ưu thời gian thực thi (WCET) trong ngắt.",
-      "text" : "Có yêu cầu về tiêu chuẩn lập trình (coding standard) hay giới hạn tài nguyên nào khi thực hiện sửa lỗi không?"
+      "kind" : "ràng buộc",
+      "suggestion" : "MISRA C, GNU, hoặc không yêu cầu",
+      "text" : "Có tiêu chuẩn coding convention nào cần tuân thủ khi sửa lỗi không?"
     }
   ],
   "raw" : [
@@ -421,25 +401,25 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "text" : "Đọc \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, sửa lỗi trong đó theo từng thay đổi nhỏ, mỗi thay đổi kèm diff và lý do"
     }
   ]
-}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-SNS-01)  Xem đầy đủ ▾ {
+}  3. `req.classify` — 1 codes_assigned · 1 reqset (FR-PWR-01)  Xem đầy đủ ▾ {
   "codes_assigned" : 1,
   "reqset" : [
     {
-      "id" : "FR-SNS-01",
+      "id" : "FR-PWR-01",
       "kind" : "CR",
       "locator" : {
         "index" : 0
       },
-      "source" : "user_prompt",
+      "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải đọc tệp \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c, phát hiện và sửa 100% các lỗi, xuất ra danh sách các thay đổi độc lập, mỗi thay đổi phải bao gồm 1 đoạn mã diff hợp lệ và 1 câu giải thích lý do."
+      "text" : "Hệ thống phải đọc tệp mã nguồn tại đường dẫn \/Users\/congvt\/Documents\/EIDE\/docs\/test\/usecase\/du-lieu\/code\/dem_xung.c và thực hiện sửa lỗi. Mỗi thay đổi phải được trình bày dưới dạng một bản vá (diff) độc lập, kèm theo ít nhất 1 câu giải thích lý do cho từng thay đổi."
     }
   ]
-}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-SNS-01 với phần cứng thật Gửi 
+}  TÁC TỬ HỎI  ·  req.ground_hw  Chưa ghim hộ chiếu chip — chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `Graph`:**

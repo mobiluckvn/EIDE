@@ -27,7 +27,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không tính được. Không công thức, không đơn vị, không giả định.",
- "giay": 24.2,
+ "giay": 25.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -46,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 24.2,
+   "giay": 25.9,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

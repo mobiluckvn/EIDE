@@ -9,7 +9,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC013/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.7 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `noi-cam-bien-5v-vao-mcu-3v3` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -32,13 +32,13 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC013/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.7 s)*:
+**Tác tử trả lời** *(sau 6.9 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `noi-cam-bien-5v-vao-mcu-3v3` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  bước 2/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 1/3 bước, 1 bước hỏng (xem Nhật ký)  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Lược đồ mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `diagram.architecture` HỎNG — E2000: Chưa có module nào — chạy `arch.decompose` trước; sơ đồ kiến trúc phải vẽ từ ModuleGraph có thật, không đoán  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · module kind · 0 total  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  bước 2/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 1/3 bước, 1 bước hỏng (xem Nhật ký)  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Lược đồ mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw: Nối cảm biến 5V vào MCU 3.3V qua I2C. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `diagram.architecture` HỎNG — E2000: Chưa có module nào — chạy `arch.decompose` trước; sơ đồ kiến trúc phải vẽ từ ModuleGraph có thật, không đoán  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · module kind · 0 total  Xem đầy đủ ▾ {
   "items" : [
   ],
   "kind" : "module",
@@ -63,8 +63,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_40cd6105892b
-Mở lúc	24/09 03:59:22
+Phiên	s_96ccc6445a8c
+Mở lúc	24/09 06:21:54
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -99,8 +99,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_40cd6105892b
-Mở lúc	24/09 03:59:22
+Phiên	s_96ccc6445a8c
+Mở lúc	24/09 06:21:54
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -142,13 +142,13 @@ Lược đồ  diagram.architecture · diagram.block · diagram.flow · +10 nữ
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC013/buoc-03.png
 
-**Tác tử trả lời** *(sau 6.7 s)*:
+**Tác tử trả lời** *(sau 6.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `noi-cam-bien-5v-vao-mcu-3v3` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  bước 2/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 1/3 bước, 1 bước hỏng (xem Nhật ký)  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Lược đồ mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `diagram.architecture` HỎNG — E2000: Chưa có module nào — chạy `arch.decompose` trước; sơ đồ kiến trúc phải vẽ từ ModuleGraph có thật, không đoán  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · module kind · 0 total  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  Đã nhận (ý hiểu: `diagram.draw`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Nối một cảm biến chạy 5V vào MCU chạy 3,3V qua I2C, vẽ giúp tôi sơ đồ nối dây  bước 2/3  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 1/3 bước, 1 bước hỏng (xem Nhật ký)  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Lược đồ mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là diagram.draw: Nối cảm biến 5V vào MCU 3.3V qua I2C. Tôi sẽ view.artifacts, diagram.architecture, chat.report_back.  1. `view.artifacts`  2. `diagram.architecture`  3. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `diagram.architecture` HỎNG — E2000: Chưa có module nào — chạy `arch.decompose` trước; sơ đồ kiến trúc phải vẽ từ ModuleGraph có thật, không đoán  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · module kind · 0 total  Xem đầy đủ ▾ {
   "items" : [
   ],
   "kind" : "module",

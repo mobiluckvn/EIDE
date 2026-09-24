@@ -14,7 +14,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
 ## 2. Gọi mô hình — 1 lời gọi đầy đủ, 1 bản ghi trong ledger
 
 ### Lời gọi 1 — vai trò `intent` · `gemini-3.8-flash`
-- dừng: `stop` · vào 2495 tok · ra 126 tok · 1577 ms · 0.001063 USD
+- dừng: `stop` · vào 2495 tok · ra 126 tok · 1857 ms · 0.001063 USD
 **Câu nhắc hệ thống**
 
 ```
@@ -150,7 +150,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.open",
    "chain": {
     "cap": "project.open",
-    "run_id": "423d5255e93a"
+    "run_id": "eac920b978bd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -158,13 +158,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "423d5255e93a"
+   "run_id": "eac920b978bd"
   },
-  "hash": "4399a4b7c78fa46dcd8c8cd0469c443091b8ca5daa317f063937e8749cc1159a",
+  "hash": "1643ff22b4a6339d1a6f406ab1125670c91119ec2bfa046098f4216397997a4f",
   "kind": "cap.run.start",
   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
   "seq": 1,
-  "ts": "2026-09-24T04:09:57.791640+00:00"
+  "ts": "2026-09-24T06:33:32.074883+00:00"
  },
  {
   "actor": "agent",
@@ -174,52 +174,52 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.open",
-    "run_id": "423d5255e93a"
+    "run_id": "eac920b978bd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "423d5255e93a"
+   "run_id": "eac920b978bd"
   },
-  "hash": "b526e88c2d2f22e5b9728f9eaab34dd566bb97581c0dfb49b13fc6b0c278a0e5",
+  "hash": "07ccfff63e7caa7330f86fcf0da0001643d98524ca47fd6b39ef14b8da8bb308",
   "kind": "gate.decision",
-  "prev_hash": "4399a4b7c78fa46dcd8c8cd0469c443091b8ca5daa317f063937e8749cc1159a",
+  "prev_hash": "1643ff22b4a6339d1a6f406ab1125670c91119ec2bfa046098f4216397997a4f",
   "seq": 2,
-  "ts": "2026-09-24T04:09:57.791973+00:00"
+  "ts": "2026-09-24T06:33:32.075212+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "project.open",
-    "run_id": "423d5255e93a"
+    "run_id": "eac920b978bd"
    },
    "project": "tim-linh-kien-thay-the",
-   "session_id": "s_89829d716a5c"
+   "session_id": "s_b0bfae9c074b"
   },
-  "hash": "aa98bfd3ded669c3f5c64e3cf17a77c51962481193d8f8b43bc325c6728558d3",
+  "hash": "c2e30c47b3801f8960bc57f40cb30a1375c26414ae823300edf20f5669de8d52",
   "kind": "session.open",
-  "prev_hash": "b526e88c2d2f22e5b9728f9eaab34dd566bb97581c0dfb49b13fc6b0c278a0e5",
+  "prev_hash": "07ccfff63e7caa7330f86fcf0da0001643d98524ca47fd6b39ef14b8da8bb308",
   "seq": 3,
-  "ts": "2026-09-24T04:09:57.797757+00:00"
+  "ts": "2026-09-24T06:33:32.081580+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.open",
-   "duration_ms": 22,
-   "result_hash": "16d20270b5f2de9d",
-   "run_id": "423d5255e93a",
+   "duration_ms": 23,
+   "result_hash": "8cc1d1a69467d6ae",
+   "run_id": "eac920b978bd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "aa47e614107cd52dc90454bd3df5eef3ba36aac428b952a9d18e56165f9e7725",
+  "hash": "af9b10f1a94c8ae6cf3af20632546232b2c61ec7cc7136ad87ce757ea0eea15f",
   "kind": "cap.run.finish",
-  "prev_hash": "aa98bfd3ded669c3f5c64e3cf17a77c51962481193d8f8b43bc325c6728558d3",
+  "prev_hash": "c2e30c47b3801f8960bc57f40cb30a1375c26414ae823300edf20f5669de8d52",
   "seq": 4,
-  "ts": "2026-09-24T04:09:57.798837+00:00"
+  "ts": "2026-09-24T06:33:32.082785+00:00"
  },
  {
   "actor": "agent",
@@ -229,7 +229,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "411578879809"
+    "run_id": "13013450929f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -237,13 +237,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "411578879809"
+   "run_id": "13013450929f"
   },
-  "hash": "1793cd823bb077944d74deb6115e4ad9f6cc73d7e246a410861460d001cf117c",
+  "hash": "61ffa562141178c3c93b924e5431170ab4910e7483c13f0345c02e2b87088fa5",
   "kind": "cap.run.start",
-  "prev_hash": "aa47e614107cd52dc90454bd3df5eef3ba36aac428b952a9d18e56165f9e7725",
+  "prev_hash": "af9b10f1a94c8ae6cf3af20632546232b2c61ec7cc7136ad87ce757ea0eea15f",
   "seq": 5,
-  "ts": "2026-09-24T04:09:57.805385+00:00"
+  "ts": "2026-09-24T06:33:32.089481+00:00"
  },
  {
   "actor": "agent",
@@ -253,20 +253,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "411578879809"
+    "run_id": "13013450929f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "411578879809"
+   "run_id": "13013450929f"
   },
-  "hash": "be528f55dc1dcc958df27d13e7ebc6ce87116b75d9f0b9be42c27b20e92635ae",
+  "hash": "4fd67f5df82f3a2c0f4a97a7763eb1c491d05961ef9596e1bfbc872624ecb484",
   "kind": "gate.decision",
-  "prev_hash": "1793cd823bb077944d74deb6115e4ad9f6cc73d7e246a410861460d001cf117c",
+  "prev_hash": "61ffa562141178c3c93b924e5431170ab4910e7483c13f0345c02e2b87088fa5",
   "seq": 6,
-  "ts": "2026-09-24T04:09:57.805475+00:00"
+  "ts": "2026-09-24T06:33:32.089578+00:00"
  },
  {
   "actor": "agent",
@@ -274,15 +274,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "411578879809",
+   "run_id": "13013450929f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "e7973ae34f2a8624fe9b7fce3fd0a898cc9b051bb604190eb456f63cf59218b7",
+  "hash": "dfc5c0fb25baffd8c3e706dc64f4da5b0affb2e70a6e2072087e301a1a9330b0",
   "kind": "cap.run.finish",
-  "prev_hash": "be528f55dc1dcc958df27d13e7ebc6ce87116b75d9f0b9be42c27b20e92635ae",
+  "prev_hash": "4fd67f5df82f3a2c0f4a97a7763eb1c491d05961ef9596e1bfbc872624ecb484",
   "seq": 7,
-  "ts": "2026-09-24T04:09:57.807078+00:00"
+  "ts": "2026-09-24T06:33:32.091197+00:00"
  },
  {
   "actor": "agent",
@@ -292,7 +292,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d8872d2f3835"
+    "run_id": "e3c38e426a87"
    },
    "decision": {
     "decision": "APPROVE",
@@ -300,13 +300,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d8872d2f3835"
+   "run_id": "e3c38e426a87"
   },
-  "hash": "ac97b883630c9b90e348f4006f88df41fced158417b3a0914adb37d63e4b954e",
+  "hash": "8073a72c3b3fecbdbd676ed22097d8b82f7867984ad3e69cf1f1c4aa47e5eef2",
   "kind": "cap.run.start",
-  "prev_hash": "e7973ae34f2a8624fe9b7fce3fd0a898cc9b051bb604190eb456f63cf59218b7",
+  "prev_hash": "dfc5c0fb25baffd8c3e706dc64f4da5b0affb2e70a6e2072087e301a1a9330b0",
   "seq": 8,
-  "ts": "2026-09-24T04:09:57.808509+00:00"
+  "ts": "2026-09-24T06:33:32.092663+00:00"
  },
  {
   "actor": "agent",
@@ -316,20 +316,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d8872d2f3835"
+    "run_id": "e3c38e426a87"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d8872d2f3835"
+   "run_id": "e3c38e426a87"
   },
-  "hash": "4ab6ace3593a9460ae7d6a18bc03d8076589e3381b4434bb54fd8b5d5a6d1a3c",
+  "hash": "ece330c79b02f88dee52ce570629e94deb8da798cdcc384a35af80c9a192300a",
   "kind": "gate.decision",
-  "prev_hash": "ac97b883630c9b90e348f4006f88df41fced158417b3a0914adb37d63e4b954e",
+  "prev_hash": "8073a72c3b3fecbdbd676ed22097d8b82f7867984ad3e69cf1f1c4aa47e5eef2",
   "seq": 9,
-  "ts": "2026-09-24T04:09:57.808588+00:00"
+  "ts": "2026-09-24T06:33:32.092748+00:00"
  },
  {
   "actor": "agent",
@@ -337,15 +337,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "d8872d2f3835",
+   "run_id": "e3c38e426a87",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "b7b1af76625b29a73aa28088fe0d7d84a56ce17c195c4a06f9aa2bd380ac82e0",
+  "hash": "21622ebd9074cd558527bcfbfe61a8aabd8606f8a8fd3c777e21c12ddc39fa0d",
   "kind": "cap.run.finish",
-  "prev_hash": "4ab6ace3593a9460ae7d6a18bc03d8076589e3381b4434bb54fd8b5d5a6d1a3c",
+  "prev_hash": "ece330c79b02f88dee52ce570629e94deb8da798cdcc384a35af80c9a192300a",
   "seq": 10,
-  "ts": "2026-09-24T04:09:57.810132+00:00"
+  "ts": "2026-09-24T06:33:32.094389+00:00"
  },
  {
   "actor": "agent",
@@ -355,7 +355,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "8a76de6d5157"
+    "run_id": "6a2b6b1e27c3"
    },
    "decision": {
     "decision": "APPROVE",
@@ -363,13 +363,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "8a76de6d5157"
+   "run_id": "6a2b6b1e27c3"
   },
-  "hash": "ae14255f910e6c63d215ca9d9b75fd6815c0793b9da0413d9084c216f0d9e3b0",
+  "hash": "12ba93af5052576cc579d0095ac650605c0e2cf04ea1c54336285fe9c3785191",
   "kind": "cap.run.start",
-  "prev_hash": "b7b1af76625b29a73aa28088fe0d7d84a56ce17c195c4a06f9aa2bd380ac82e0",
+  "prev_hash": "21622ebd9074cd558527bcfbfe61a8aabd8606f8a8fd3c777e21c12ddc39fa0d",
   "seq": 11,
-  "ts": "2026-09-24T04:09:57.837910+00:00"
+  "ts": "2026-09-24T06:33:32.124886+00:00"
  },
  {
   "actor": "agent",
@@ -379,36 +379,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "8a76de6d5157"
+    "run_id": "6a2b6b1e27c3"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "8a76de6d5157"
+   "run_id": "6a2b6b1e27c3"
   },
-  "hash": "749b7553080b1662ea741dec1df532384d68df43e2606975ff0c793d775c629f",
+  "hash": "bd5f884fe2cf436c2d5bb2eb54958acd8040d8d3f1744a52a9664e205dddaa4b",
   "kind": "gate.decision",
-  "prev_hash": "ae14255f910e6c63d215ca9d9b75fd6815c0793b9da0413d9084c216f0d9e3b0",
+  "prev_hash": "12ba93af5052576cc579d0095ac650605c0e2cf04ea1c54336285fe9c3785191",
   "seq": 12,
-  "ts": "2026-09-24T04:09:57.838009+00:00"
+  "ts": "2026-09-24T06:33:32.125087+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 1,
-   "result_hash": "c61db6eb1a64f3a6",
-   "run_id": "8a76de6d5157",
+   "duration_ms": 2,
+   "result_hash": "6083ed845c992c02",
+   "run_id": "6a2b6b1e27c3",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "90b3731f875dbfdd6e53593058bdc4548eef66df5a6289aad3ad237e93d05087",
+  "hash": "e0fde548b2dffca04534f6b0b3e051a18055b13075e77970c36c95d4d47aa0ba",
   "kind": "cap.run.finish",
-  "prev_hash": "749b7553080b1662ea741dec1df532384d68df43e2606975ff0c793d775c629f",
+  "prev_hash": "bd5f884fe2cf436c2d5bb2eb54958acd8040d8d3f1744a52a9664e205dddaa4b",
   "seq": 13,
-  "ts": "2026-09-24T04:09:57.839868+00:00"
+  "ts": "2026-09-24T06:33:32.127044+00:00"
  },
  {
   "actor": "agent",
@@ -418,7 +418,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "52a469f0125e"
+    "run_id": "466f76af8a15"
    },
    "decision": {
     "decision": "APPROVE",
@@ -426,13 +426,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "52a469f0125e"
+   "run_id": "466f76af8a15"
   },
-  "hash": "5f0e38d9d549173472d0ab15b1a00f338c1accc50b7336ff54f47b2324b76bb5",
+  "hash": "67a18adf4e6b8f6be087c487cf03d5a0637d985a19b785e0546606b1c38a7e21",
   "kind": "cap.run.start",
-  "prev_hash": "90b3731f875dbfdd6e53593058bdc4548eef66df5a6289aad3ad237e93d05087",
+  "prev_hash": "e0fde548b2dffca04534f6b0b3e051a18055b13075e77970c36c95d4d47aa0ba",
   "seq": 14,
-  "ts": "2026-09-24T04:09:58.056349+00:00"
+  "ts": "2026-09-24T06:33:32.384183+00:00"
  },
  {
   "actor": "agent",
@@ -442,20 +442,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "52a469f0125e"
+    "run_id": "466f76af8a15"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "52a469f0125e"
+   "run_id": "466f76af8a15"
   },
-  "hash": "76b5b2d368904cf8b983e69a0f437f5a730a1af8f3b267343f1c8befe72916ad",
+  "hash": "b4e93670c2b08fb043567fc10f0bec8199e827bbaf40a6cec16a3ccd2f75a1c2",
   "kind": "gate.decision",
-  "prev_hash": "5f0e38d9d549173472d0ab15b1a00f338c1accc50b7336ff54f47b2324b76bb5",
+  "prev_hash": "67a18adf4e6b8f6be087c487cf03d5a0637d985a19b785e0546606b1c38a7e21",
   "seq": 15,
-  "ts": "2026-09-24T04:09:58.056521+00:00"
+  "ts": "2026-09-24T06:33:32.384354+00:00"
  },
  {
   "actor": "agent",
@@ -463,15 +463,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "duration_ms": 3,
    "result_hash": "2d4cda7da3c20316",
-   "run_id": "52a469f0125e",
+   "run_id": "466f76af8a15",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "15de74920b6ebbadf0048b3f271ef104221e26cbe913cc84525d1354837b7868",
+  "hash": "c2deeadaf28c5104f117be8bc279886531f8a2be070afb470eb3c16bc83f94ea",
   "kind": "cap.run.finish",
-  "prev_hash": "76b5b2d368904cf8b983e69a0f437f5a730a1af8f3b267343f1c8befe72916ad",
+  "prev_hash": "b4e93670c2b08fb043567fc10f0bec8199e827bbaf40a6cec16a3ccd2f75a1c2",
   "seq": 16,
-  "ts": "2026-09-24T04:09:58.060040+00:00"
+  "ts": "2026-09-24T06:33:32.387806+00:00"
  },
  {
   "actor": "agent",
@@ -481,7 +481,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "chat.parse_intent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "872121a12fe9"
+    "run_id": "2d9b574bca18"
    },
    "decision": {
     "decision": "APPROVE",
@@ -489,13 +489,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "872121a12fe9"
+   "run_id": "2d9b574bca18"
   },
-  "hash": "ae9daaea2097890090c09384384b35edcaed5f763ab963bb6fcdb60d55f433a8",
+  "hash": "caee0ed8ecf1337607478fadbe278b78fcf4bbe8b399129f71ef4bb5fa0879cc",
   "kind": "cap.run.start",
-  "prev_hash": "15de74920b6ebbadf0048b3f271ef104221e26cbe913cc84525d1354837b7868",
+  "prev_hash": "c2deeadaf28c5104f117be8bc279886531f8a2be070afb470eb3c16bc83f94ea",
   "seq": 17,
-  "ts": "2026-09-24T04:09:58.089006+00:00"
+  "ts": "2026-09-24T06:33:32.412552+00:00"
  },
  {
   "actor": "agent",
@@ -505,27 +505,27 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "872121a12fe9"
+    "run_id": "2d9b574bca18"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "872121a12fe9"
+   "run_id": "2d9b574bca18"
   },
-  "hash": "7e4b374cc1368481d133f18352e05016c33cb045a3fb9987ad2d74472b5f5a61",
+  "hash": "90b069acf4a87ab1d99aaf54c305120fc76b137c83748b012128f214d337d42d",
   "kind": "gate.decision",
-  "prev_hash": "ae9daaea2097890090c09384384b35edcaed5f763ab963bb6fcdb60d55f433a8",
+  "prev_hash": "caee0ed8ecf1337607478fadbe278b78fcf4bbe8b399129f71ef4bb5fa0879cc",
   "seq": 18,
-  "ts": "2026-09-24T04:09:58.089312+00:00"
+  "ts": "2026-09-24T06:33:32.413417+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "872121a12fe9"
+    "run_id": "2d9b574bca18"
    },
    "compressions": [
     "cut:C7"
@@ -574,11 +574,11 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "C2": 11
    }
   },
-  "hash": "8f92c5ea5b16f34deef0b87010f1cd1f61ad18170902b4b049a22d15d7c3011d",
+  "hash": "9230ffce6d091752d7896f18121eab1c7ed96d1f90f83338c49d2c0be94e78d6",
   "kind": "context.bundle",
-  "prev_hash": "7e4b374cc1368481d133f18352e05016c33cb045a3fb9987ad2d74472b5f5a61",
+  "prev_hash": "90b069acf4a87ab1d99aaf54c305120fc76b137c83748b012128f214d337d42d",
   "seq": 19,
-  "ts": "2026-09-24T04:09:58.097905+00:00"
+  "ts": "2026-09-24T06:33:32.421021+00:00"
  },
  {
   "actor": "agent",
@@ -586,10 +586,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cache_read_tokens": 0,
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "872121a12fe9"
+    "run_id": "2d9b574bca18"
    },
    "cost_usd": 0.001063,
-   "latency_ms": 1577,
+   "latency_ms": 1857,
    "model_id": "gemini-3.8-flash",
    "prompt_hash": "fee7a7be3dd2f7b1",
    "request_hash": "d943478183b2246f",
@@ -598,18 +598,18 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "tokens_in": 2495,
    "tokens_out": 126
   },
-  "hash": "675fad725a7437fdca896a1e02ea41e1a23f3ba5657324c7be3e9e01c83a711b",
+  "hash": "3fa0b9ee4b854d46852f2c6e6cdee807caefb25402c4ce43867d4ad436ece0ae",
   "kind": "model.call",
-  "prev_hash": "8f92c5ea5b16f34deef0b87010f1cd1f61ad18170902b4b049a22d15d7c3011d",
+  "prev_hash": "9230ffce6d091752d7896f18121eab1c7ed96d1f90f83338c49d2c0be94e78d6",
   "seq": 20,
-  "ts": "2026-09-24T04:09:59.682544+00:00"
+  "ts": "2026-09-24T06:33:34.282262+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.parse_intent",
-    "run_id": "872121a12fe9"
+    "run_id": "2d9b574bca18"
    },
    "confidence": 0.95,
    "intent": "search.ask",
@@ -620,27 +620,27 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    },
    "text": "Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất"
   },
-  "hash": "fee0b9059fa844bcffaade3aa0b63700fd6fa4bcb3bfcea3f6051c8318420151",
+  "hash": "825bd162feb86d77e423184e14cc9e1383bb0517d30b4f4f2ab86555222e94af",
   "kind": "intent",
-  "prev_hash": "675fad725a7437fdca896a1e02ea41e1a23f3ba5657324c7be3e9e01c83a711b",
+  "prev_hash": "3fa0b9ee4b854d46852f2c6e6cdee807caefb25402c4ce43867d4ad436ece0ae",
   "seq": 21,
-  "ts": "2026-09-24T04:09:59.684573+00:00"
+  "ts": "2026-09-24T06:33:34.283471+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.parse_intent",
-   "duration_ms": 1597,
+   "duration_ms": 1872,
    "result_hash": "241339004e30c8b6",
-   "run_id": "872121a12fe9",
+   "run_id": "2d9b574bca18",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "ce4274ee14d010aa32a35c1bfc37dc7e9586cb89e1ba420419bc7b0a8818f5c3",
+  "hash": "d2f21bc4c46db4e6cbe33334144db81d7690ff0c26af6bc3768fa3e0282976b4",
   "kind": "cap.run.finish",
-  "prev_hash": "fee0b9059fa844bcffaade3aa0b63700fd6fa4bcb3bfcea3f6051c8318420151",
+  "prev_hash": "825bd162feb86d77e423184e14cc9e1383bb0517d30b4f4f2ab86555222e94af",
   "seq": 22,
-  "ts": "2026-09-24T04:09:59.686163+00:00"
+  "ts": "2026-09-24T06:33:34.284374+00:00"
  },
  {
   "actor": "agent",
@@ -650,7 +650,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "chat.ground",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "548d54f15592"
+    "run_id": "245caaaa01bd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -658,13 +658,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "548d54f15592"
+   "run_id": "245caaaa01bd"
   },
-  "hash": "bb289c54ad041f8356a74698cd2cd3676fb187418d5d60da2c6c4f9d06d69bca",
+  "hash": "b46068b315648f3fd5c8750718aac0dc1ee132b330add2d794af00b2b42eb8c0",
   "kind": "cap.run.start",
-  "prev_hash": "ce4274ee14d010aa32a35c1bfc37dc7e9586cb89e1ba420419bc7b0a8818f5c3",
+  "prev_hash": "d2f21bc4c46db4e6cbe33334144db81d7690ff0c26af6bc3768fa3e0282976b4",
   "seq": 23,
-  "ts": "2026-09-24T04:09:59.687692+00:00"
+  "ts": "2026-09-24T06:33:34.285509+00:00"
  },
  {
   "actor": "agent",
@@ -674,36 +674,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "chat.ground",
-    "run_id": "548d54f15592"
+    "run_id": "245caaaa01bd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "548d54f15592"
+   "run_id": "245caaaa01bd"
   },
-  "hash": "1c0747caebfa5f7e47234c8d7363c984f6a0a7e329db88c14801d10f5a1b4a7c",
+  "hash": "15eb8a8030b0f9ff95757b3e767450e40ae1357455ce7de3defa1dad60f1aa85",
   "kind": "gate.decision",
-  "prev_hash": "bb289c54ad041f8356a74698cd2cd3676fb187418d5d60da2c6c4f9d06d69bca",
+  "prev_hash": "b46068b315648f3fd5c8750718aac0dc1ee132b330add2d794af00b2b42eb8c0",
   "seq": 24,
-  "ts": "2026-09-24T04:09:59.688002+00:00"
+  "ts": "2026-09-24T06:33:34.285770+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.ground",
-   "duration_ms": 4,
+   "duration_ms": 3,
    "result_hash": "afcd4488e9ec5ea2",
-   "run_id": "548d54f15592",
+   "run_id": "245caaaa01bd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3fe38a248f8432807765b9287241f3ff6a1a6dffb0dcd8202c1bd3e6c10c081a",
+  "hash": "3fc24b46eee956cb010f08305c6e3027ba812ba16c59550e7337f0b6f7966f53",
   "kind": "cap.run.finish",
-  "prev_hash": "1c0747caebfa5f7e47234c8d7363c984f6a0a7e329db88c14801d10f5a1b4a7c",
+  "prev_hash": "15eb8a8030b0f9ff95757b3e767450e40ae1357455ce7de3defa1dad60f1aa85",
   "seq": 25,
-  "ts": "2026-09-24T04:09:59.691815+00:00"
+  "ts": "2026-09-24T06:33:34.288950+00:00"
  },
  {
   "actor": "agent",
@@ -713,7 +713,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "chat.fill_defaults",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "ad04c5e38172"
+    "run_id": "daa7537f3c03"
    },
    "decision": {
     "decision": "APPROVE",
@@ -721,13 +721,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "ad04c5e38172"
+   "run_id": "daa7537f3c03"
   },
-  "hash": "de69e0734630ae7208c9240fad94c77a54e94cbc360a633552867f2bea4702f6",
+  "hash": "43053b5591664e7ed7c67decee514c2572b6a9aff18ac6bb2bfbaa99eac5ab60",
   "kind": "cap.run.start",
-  "prev_hash": "3fe38a248f8432807765b9287241f3ff6a1a6dffb0dcd8202c1bd3e6c10c081a",
+  "prev_hash": "3fc24b46eee956cb010f08305c6e3027ba812ba16c59550e7337f0b6f7966f53",
   "seq": 26,
-  "ts": "2026-09-24T04:09:59.693317+00:00"
+  "ts": "2026-09-24T06:33:34.290118+00:00"
  },
  {
   "actor": "agent",
@@ -737,36 +737,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "chat.fill_defaults",
-    "run_id": "ad04c5e38172"
+    "run_id": "daa7537f3c03"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "ad04c5e38172"
+   "run_id": "daa7537f3c03"
   },
-  "hash": "f7ab6d02346f11f944849e251a7debe14e3275d5231ed2380077f8bbd33ce6ec",
+  "hash": "857f5da9a7ff7ae1c5c219931539e6fcfb91a6573d573935efd550bbee9e4350",
   "kind": "gate.decision",
-  "prev_hash": "de69e0734630ae7208c9240fad94c77a54e94cbc360a633552867f2bea4702f6",
+  "prev_hash": "43053b5591664e7ed7c67decee514c2572b6a9aff18ac6bb2bfbaa99eac5ab60",
   "seq": 27,
-  "ts": "2026-09-24T04:09:59.693558+00:00"
+  "ts": "2026-09-24T06:33:34.290360+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.fill_defaults",
-   "duration_ms": 7,
+   "duration_ms": 5,
    "result_hash": "3bffa3d4e49fc5f7",
-   "run_id": "ad04c5e38172",
+   "run_id": "daa7537f3c03",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d44430a9392ac78a3364730d543fe62cf7dfe4a14629f2dd3c01b02dbe70a4e6",
+  "hash": "909fe9fd0ad67e10acc31038df85b4e6fe25d14f491e6ef00f3f784851c0b748",
   "kind": "cap.run.finish",
-  "prev_hash": "f7ab6d02346f11f944849e251a7debe14e3275d5231ed2380077f8bbd33ce6ec",
+  "prev_hash": "857f5da9a7ff7ae1c5c219931539e6fcfb91a6573d573935efd550bbee9e4350",
   "seq": 28,
-  "ts": "2026-09-24T04:09:59.700769+00:00"
+  "ts": "2026-09-24T06:33:34.295595+00:00"
  },
  {
   "actor": "agent",
@@ -776,7 +776,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "chat.orchestrate",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "6299832c0b85"
+    "run_id": "b1fcc5d87d5c"
    },
    "decision": {
     "decision": "APPROVE",
@@ -784,13 +784,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "6299832c0b85"
+   "run_id": "b1fcc5d87d5c"
   },
-  "hash": "07d32e92c9e2b349a3f8562c6cf8a28686f2b3e960c7fcc8f0c4c76d3e7edb4a",
+  "hash": "8baca5757a8716f058e2779f82e2c7a0e87322364028f13c28d1223822b6ee44",
   "kind": "cap.run.start",
-  "prev_hash": "d44430a9392ac78a3364730d543fe62cf7dfe4a14629f2dd3c01b02dbe70a4e6",
+  "prev_hash": "909fe9fd0ad67e10acc31038df85b4e6fe25d14f491e6ef00f3f784851c0b748",
   "seq": 29,
-  "ts": "2026-09-24T04:09:59.702900+00:00"
+  "ts": "2026-09-24T06:33:34.297285+00:00"
  },
  {
   "actor": "agent",
@@ -800,20 +800,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "6299832c0b85"
+    "run_id": "b1fcc5d87d5c"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "6299832c0b85"
+   "run_id": "b1fcc5d87d5c"
   },
-  "hash": "2bb0ff5120b7a034dbde3cde72e7e3042288f63a7a222609bb4559be45287478",
+  "hash": "ac220388bd3af1b42a1a2f6bef8159d31d4e707df0397188ad9439620ba10ddd",
   "kind": "gate.decision",
-  "prev_hash": "07d32e92c9e2b349a3f8562c6cf8a28686f2b3e960c7fcc8f0c4c76d3e7edb4a",
+  "prev_hash": "8baca5757a8716f058e2779f82e2c7a0e87322364028f13c28d1223822b6ee44",
   "seq": 30,
-  "ts": "2026-09-24T04:09:59.703167+00:00"
+  "ts": "2026-09-24T06:33:34.297496+00:00"
  },
  {
   "actor": "agent",
@@ -823,7 +823,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "00558b1c6f9f"
+    "run_id": "49139abc333f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -831,13 +831,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "00558b1c6f9f"
+   "run_id": "49139abc333f"
   },
-  "hash": "6298e5367072e0170da146722d7d66d0824eefc12697be619791fd8886ee88a2",
+  "hash": "04e2bd8a6e40663458a94298149c75bbcd0193a96fbef53addf8adf8b757a832",
   "kind": "cap.run.start",
-  "prev_hash": "2bb0ff5120b7a034dbde3cde72e7e3042288f63a7a222609bb4559be45287478",
+  "prev_hash": "ac220388bd3af1b42a1a2f6bef8159d31d4e707df0397188ad9439620ba10ddd",
   "seq": 31,
-  "ts": "2026-09-24T04:09:59.820918+00:00"
+  "ts": "2026-09-24T06:33:34.414172+00:00"
  },
  {
   "actor": "agent",
@@ -847,30 +847,30 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "00558b1c6f9f"
+    "run_id": "49139abc333f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "00558b1c6f9f"
+   "run_id": "49139abc333f"
   },
-  "hash": "8479b80af86afbca88087b33863757e8df9565051cfdaae3f05228752382f0c1",
+  "hash": "c64aa6041cc6bf0af4f10290c377c0bf0c218f659667c90fb085ff8bfe8d32c7",
   "kind": "gate.decision",
-  "prev_hash": "6298e5367072e0170da146722d7d66d0824eefc12697be619791fd8886ee88a2",
+  "prev_hash": "04e2bd8a6e40663458a94298149c75bbcd0193a96fbef53addf8adf8b757a832",
   "seq": 32,
-  "ts": "2026-09-24T04:09:59.825036+00:00"
+  "ts": "2026-09-24T06:33:34.414473+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "6299832c0b85"
+    "run_id": "b1fcc5d87d5c"
    },
    "n": 1,
-   "run_id": "r_a0cbdea4d6e3",
+   "run_id": "r_bab1ccb3f051",
    "steps": [
     {
      "cap": "search.web",
@@ -887,11 +887,11 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    ],
    "text": "Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất"
   },
-  "hash": "8e24c14ecf5891be57e172a0c81beed9f38953a918d7fa16f367140fc596b481",
+  "hash": "5d49ce0a767d6f354d78731b0449c95f16b7864b79a6d81c1122e000432d5759",
   "kind": "run.started",
-  "prev_hash": "8479b80af86afbca88087b33863757e8df9565051cfdaae3f05228752382f0c1",
+  "prev_hash": "c64aa6041cc6bf0af4f10290c377c0bf0c218f659667c90fb085ff8bfe8d32c7",
   "seq": 33,
-  "ts": "2026-09-24T04:09:59.825824+00:00"
+  "ts": "2026-09-24T06:33:34.415044+00:00"
  },
  {
   "actor": "agent",
@@ -899,18 +899,18 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "search.web",
    "chain": {
     "cap": "chat.orchestrate",
-    "run_id": "6299832c0b85"
+    "run_id": "b1fcc5d87d5c"
    },
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_a0cbdea4d6e3"
+   "run_id": "r_bab1ccb3f051"
   },
-  "hash": "5513ed15fe934aab24f12fdf23bdbf6f7be133e74a046193109a590e127dd753",
+  "hash": "112a8841b02c2a81a35b9269cda65f262fc76bf295a81c702a11ca4540689859",
   "kind": "run.step_started",
-  "prev_hash": "8e24c14ecf5891be57e172a0c81beed9f38953a918d7fa16f367140fc596b481",
+  "prev_hash": "5d49ce0a767d6f354d78731b0449c95f16b7864b79a6d81c1122e000432d5759",
   "seq": 34,
-  "ts": "2026-09-24T04:09:59.826212+00:00"
+  "ts": "2026-09-24T06:33:34.415408+00:00"
  },
  {
   "actor": "agent",
@@ -922,7 +922,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_a0cbdea4d6e3"
+    "run_id": "r_bab1ccb3f051"
    },
    "decision": {
     "decision": "APPROVE",
@@ -930,13 +930,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "16f713882759"
+   "run_id": "5bda91e652c7"
   },
-  "hash": "e645e3a664468ea741ab7e007441486d00420ad80f8642a9dea90cfce00a4779",
+  "hash": "3914f5cb88413409d32a216346c16f7097e8488df94236e38a7abc3011bd51c1",
   "kind": "cap.run.start",
-  "prev_hash": "5513ed15fe934aab24f12fdf23bdbf6f7be133e74a046193109a590e127dd753",
+  "prev_hash": "112a8841b02c2a81a35b9269cda65f262fc76bf295a81c702a11ca4540689859",
   "seq": 35,
-  "ts": "2026-09-24T04:09:59.827198+00:00"
+  "ts": "2026-09-24T06:33:34.416407+00:00"
  },
  {
   "actor": "agent",
@@ -948,36 +948,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_a0cbdea4d6e3"
+    "run_id": "r_bab1ccb3f051"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "16f713882759"
+   "run_id": "5bda91e652c7"
   },
-  "hash": "4ca070683e7d24878f20e42c2ab4efd14f3a6db29bc64da41f58f06d6ddce628",
+  "hash": "7c0c92d2bceadabff0f403dfa7f2a240ce889d64327b64179f46a684aa3ad3cb",
   "kind": "gate.decision",
-  "prev_hash": "e645e3a664468ea741ab7e007441486d00420ad80f8642a9dea90cfce00a4779",
+  "prev_hash": "3914f5cb88413409d32a216346c16f7097e8488df94236e38a7abc3011bd51c1",
   "seq": 36,
-  "ts": "2026-09-24T04:09:59.827345+00:00"
+  "ts": "2026-09-24T06:33:34.416532+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 8,
+   "duration_ms": 3,
    "result_hash": "1a5dd849ae598359",
-   "run_id": "00558b1c6f9f",
+   "run_id": "49139abc333f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6ca911a5fb6172169a9da614c0364f5b0357ab48906bedeeb436e0f1959be9b9",
+  "hash": "42c805780335094b6ac36386d8a2c6f51ab2a28d8f0877321f21a573cb3732a0",
   "kind": "cap.run.finish",
-  "prev_hash": "4ca070683e7d24878f20e42c2ab4efd14f3a6db29bc64da41f58f06d6ddce628",
+  "prev_hash": "7c0c92d2bceadabff0f403dfa7f2a240ce889d64327b64179f46a684aa3ad3cb",
   "seq": 37,
-  "ts": "2026-09-24T04:09:59.828994+00:00"
+  "ts": "2026-09-24T06:33:34.417563+00:00"
  },
  {
   "actor": "agent",
@@ -987,18 +987,18 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "i": 1,
     "node_id": "n1",
     "of": 3,
-    "run_id": "r_a0cbdea4d6e3"
+    "run_id": "r_bab1ccb3f051"
    },
-   "duration_ms": 5,
+   "duration_ms": 4,
    "error": "E4001",
-   "run_id": "16f713882759",
+   "run_id": "5bda91e652c7",
    "status": "failed"
   },
-  "hash": "cbb4cde4a94069db8a75159bd16fe70ef7ddb1f13060c01b4e90fbf1efc97888",
+  "hash": "52e070ba6f07cc3ad254abe6a2726f0b2070501b3185ba6081ad7d2328de210b",
   "kind": "cap.run.finish",
-  "prev_hash": "6ca911a5fb6172169a9da614c0364f5b0357ab48906bedeeb436e0f1959be9b9",
+  "prev_hash": "42c805780335094b6ac36386d8a2c6f51ab2a28d8f0877321f21a573cb3732a0",
   "seq": 38,
-  "ts": "2026-09-24T04:09:59.832632+00:00"
+  "ts": "2026-09-24T06:33:34.421277+00:00"
  },
  {
   "actor": "agent",
@@ -1020,45 +1020,45 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "i": 1,
    "node_id": "n1",
    "of": 3,
-   "run_id": "r_a0cbdea4d6e3",
+   "run_id": "r_bab1ccb3f051",
    "status": "failed"
   },
-  "hash": "0dbaac057ed44fda8319490c5bf891f865a351d7e544d22502da7f2e44dde859",
+  "hash": "4984507c6b9adfb9af443d7505673a220b8f598c140a50581b2c3093e1d6cf3f",
   "kind": "run.step_done",
-  "prev_hash": "cbb4cde4a94069db8a75159bd16fe70ef7ddb1f13060c01b4e90fbf1efc97888",
+  "prev_hash": "52e070ba6f07cc3ad254abe6a2726f0b2070501b3185ba6081ad7d2328de210b",
   "seq": 39,
-  "ts": "2026-09-24T04:09:59.832736+00:00"
+  "ts": "2026-09-24T06:33:34.421365+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "done": 0,
    "failed": 1,
-   "run_id": "r_a0cbdea4d6e3",
+   "run_id": "r_bab1ccb3f051",
    "state": "failed",
    "waiting": 1
   },
-  "hash": "df031ebac4ea2f611d39f0f227658dd605aef634e19359eb829712fab56d1f52",
+  "hash": "ca4526b35a28705f2122235732716088a688acd33d1db90cd173fbc037f06ee8",
   "kind": "run.done",
-  "prev_hash": "0dbaac057ed44fda8319490c5bf891f865a351d7e544d22502da7f2e44dde859",
+  "prev_hash": "4984507c6b9adfb9af443d7505673a220b8f598c140a50581b2c3093e1d6cf3f",
   "seq": 40,
-  "ts": "2026-09-24T04:09:59.833680+00:00"
+  "ts": "2026-09-24T06:33:34.422268+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.orchestrate",
-   "duration_ms": 151,
-   "result_hash": "6e4cedc8afbeadd7",
-   "run_id": "6299832c0b85",
+   "duration_ms": 156,
+   "result_hash": "4c605fc5459ed848",
+   "run_id": "b1fcc5d87d5c",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d1f974d04f061e6ddfdac30ca97668132fe91c99aebcc04536665ad239688b8a",
+  "hash": "7f6ce39f7167bb8d9049b02467d25b1c9287864ad88fee73be8cbe2ba0d45909",
   "kind": "cap.run.finish",
-  "prev_hash": "df031ebac4ea2f611d39f0f227658dd605aef634e19359eb829712fab56d1f52",
+  "prev_hash": "ca4526b35a28705f2122235732716088a688acd33d1db90cd173fbc037f06ee8",
   "seq": 41,
-  "ts": "2026-09-24T04:09:59.854048+00:00"
+  "ts": "2026-09-24T06:33:34.453544+00:00"
  },
  {
   "actor": "agent",
@@ -1068,7 +1068,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "chat.restate",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "01204a62c81f"
+    "run_id": "ae4b7e34d738"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1076,13 +1076,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "01204a62c81f"
+   "run_id": "ae4b7e34d738"
   },
-  "hash": "5dfdd653230b0a74667e8ed23e664b993264b2734222b5948099653c934ba8c8",
+  "hash": "e708d1efdd059663ebe6b11c5df2f99d7869b66cc5be84e5cff1f4229e0d7801",
   "kind": "cap.run.start",
-  "prev_hash": "d1f974d04f061e6ddfdac30ca97668132fe91c99aebcc04536665ad239688b8a",
+  "prev_hash": "7f6ce39f7167bb8d9049b02467d25b1c9287864ad88fee73be8cbe2ba0d45909",
   "seq": 42,
-  "ts": "2026-09-24T04:09:59.857134+00:00"
+  "ts": "2026-09-24T06:33:34.456702+00:00"
  },
  {
   "actor": "agent",
@@ -1092,20 +1092,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "chat.restate",
-    "run_id": "01204a62c81f"
+    "run_id": "ae4b7e34d738"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "01204a62c81f"
+   "run_id": "ae4b7e34d738"
   },
-  "hash": "fcf8b15edfaca47e079c7f26ae7259b079df5d589cbdc448380d53537d96b232",
+  "hash": "173cafc5b646160b4763a888a5996a27246d861a76b3a880ff17c1dd7a01dbc3",
   "kind": "gate.decision",
-  "prev_hash": "5dfdd653230b0a74667e8ed23e664b993264b2734222b5948099653c934ba8c8",
+  "prev_hash": "e708d1efdd059663ebe6b11c5df2f99d7869b66cc5be84e5cff1f4229e0d7801",
   "seq": 43,
-  "ts": "2026-09-24T04:09:59.857233+00:00"
+  "ts": "2026-09-24T06:33:34.456802+00:00"
  },
  {
   "actor": "agent",
@@ -1113,15 +1113,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "chat.restate",
    "duration_ms": 1,
    "result_hash": "28c6ad3bce2aa1a5",
-   "run_id": "01204a62c81f",
+   "run_id": "ae4b7e34d738",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "dcb71800f29fd1f1e933bb9812dfa986f8ff5f29838b4d6c6c0ffc14b14de648",
+  "hash": "d801c9014a85d6f154464a2f68f413de765f5075fa5e9aca6d5fdea949118b63",
   "kind": "cap.run.finish",
-  "prev_hash": "fcf8b15edfaca47e079c7f26ae7259b079df5d589cbdc448380d53537d96b232",
+  "prev_hash": "173cafc5b646160b4763a888a5996a27246d861a76b3a880ff17c1dd7a01dbc3",
   "seq": 44,
-  "ts": "2026-09-24T04:09:59.858312+00:00"
+  "ts": "2026-09-24T06:33:34.457773+00:00"
  },
  {
   "actor": "agent",
@@ -1131,7 +1131,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "423560a40717"
+    "run_id": "4ed6336fa5c4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1139,13 +1139,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "423560a40717"
+   "run_id": "4ed6336fa5c4"
   },
-  "hash": "06d0269189e64fb57fc77a0d8508b7e8e2b579f061c059c54db3d8711bc8b30c",
+  "hash": "f38603014a1c0ee37a61954e563835dc15443bbdcec661e4db44024c97438e50",
   "kind": "cap.run.start",
-  "prev_hash": "dcb71800f29fd1f1e933bb9812dfa986f8ff5f29838b4d6c6c0ffc14b14de648",
+  "prev_hash": "d801c9014a85d6f154464a2f68f413de765f5075fa5e9aca6d5fdea949118b63",
   "seq": 45,
-  "ts": "2026-09-24T04:10:00.006829+00:00"
+  "ts": "2026-09-24T06:33:34.607523+00:00"
  },
  {
   "actor": "agent",
@@ -1155,20 +1155,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "423560a40717"
+    "run_id": "4ed6336fa5c4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "423560a40717"
+   "run_id": "4ed6336fa5c4"
   },
-  "hash": "fd82577db60ca0cd41d7010307c5939bb58a71a1f84d523bc0ee367db08e5504",
+  "hash": "f84f53a3b1652690812d3dc416fc2609af23cedb57b7cb5e69e7e2c1f21ed736",
   "kind": "gate.decision",
-  "prev_hash": "06d0269189e64fb57fc77a0d8508b7e8e2b579f061c059c54db3d8711bc8b30c",
+  "prev_hash": "f38603014a1c0ee37a61954e563835dc15443bbdcec661e4db44024c97438e50",
   "seq": 46,
-  "ts": "2026-09-24T04:10:00.007034+00:00"
+  "ts": "2026-09-24T06:33:34.607712+00:00"
  },
  {
   "actor": "agent",
@@ -1176,25 +1176,25 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "duration_ms": 4,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "423560a40717",
+   "run_id": "4ed6336fa5c4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "457dcf9d8faf2268a8b788e833720e7c88bcd1d781dfd0d2381501947974d3a4",
+  "hash": "6cb82972b146446172c5292069ef5bd2c976401699c0d89f0e88a35ceaad891d",
   "kind": "cap.run.finish",
-  "prev_hash": "fd82577db60ca0cd41d7010307c5939bb58a71a1f84d523bc0ee367db08e5504",
+  "prev_hash": "f84f53a3b1652690812d3dc416fc2609af23cedb57b7cb5e69e7e2c1f21ed736",
   "seq": 47,
-  "ts": "2026-09-24T04:10:00.011009+00:00"
+  "ts": "2026-09-24T06:33:34.611686+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "actor": "agent",
-   "args_hash": "7f09a2802d7fb9c6",
+   "args_hash": "ddd245606d5e1dc0",
    "cap": "chat.report_back",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "c62a86a62d7e"
+    "run_id": "b075ef15b4eb"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1202,13 +1202,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c62a86a62d7e"
+   "run_id": "b075ef15b4eb"
   },
-  "hash": "ff394b5179ca42d89f9a56a5203826cea060eba610fff8316f073b17bc059cc8",
+  "hash": "536f1f5dcd343f8c73fc8a52506d8d373b89c5ee0262ab4d466058186e70813a",
   "kind": "cap.run.start",
-  "prev_hash": "457dcf9d8faf2268a8b788e833720e7c88bcd1d781dfd0d2381501947974d3a4",
+  "prev_hash": "6cb82972b146446172c5292069ef5bd2c976401699c0d89f0e88a35ceaad891d",
   "seq": 48,
-  "ts": "2026-09-24T04:10:00.137968+00:00"
+  "ts": "2026-09-24T06:33:34.789908+00:00"
  },
  {
   "actor": "agent",
@@ -1218,36 +1218,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "chat.report_back",
-    "run_id": "c62a86a62d7e"
+    "run_id": "b075ef15b4eb"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c62a86a62d7e"
+   "run_id": "b075ef15b4eb"
   },
-  "hash": "6115810e297fa07e985b28c314ef43b6cb1ed0ea1f0fdc73e36ae91c23594fc2",
+  "hash": "2ffea25f8f733d4ad0492a187cd05c40fb7907976ca70d9b9eaca24b6af751cd",
   "kind": "gate.decision",
-  "prev_hash": "ff394b5179ca42d89f9a56a5203826cea060eba610fff8316f073b17bc059cc8",
+  "prev_hash": "536f1f5dcd343f8c73fc8a52506d8d373b89c5ee0262ab4d466058186e70813a",
   "seq": 49,
-  "ts": "2026-09-24T04:10:00.138125+00:00"
+  "ts": "2026-09-24T06:33:34.790082+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "chat.report_back",
    "duration_ms": 2,
-   "result_hash": "0622100c95f2fe01",
-   "run_id": "c62a86a62d7e",
+   "result_hash": "503b456022589cae",
+   "run_id": "b075ef15b4eb",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "936507d713aa36a342db41ba8c31e219ccd8be258cd387bcb8f65f3c63474da8",
+  "hash": "7f738705a69ee9fdb2daa712c84052047341a7f84c7a1a71f45e3b07cd11a608",
   "kind": "cap.run.finish",
-  "prev_hash": "6115810e297fa07e985b28c314ef43b6cb1ed0ea1f0fdc73e36ae91c23594fc2",
+  "prev_hash": "2ffea25f8f733d4ad0492a187cd05c40fb7907976ca70d9b9eaca24b6af751cd",
   "seq": 50,
-  "ts": "2026-09-24T04:10:00.140265+00:00"
+  "ts": "2026-09-24T06:33:34.792341+00:00"
  },
  {
   "actor": "agent",
@@ -1257,7 +1257,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "676074a52045"
+    "run_id": "4494c33a3db2"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1265,13 +1265,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "676074a52045"
+   "run_id": "4494c33a3db2"
   },
-  "hash": "9916331ff3fc86cabceaf0af149d6abbc925674aaccad42d281ec5a195c6f4f7",
+  "hash": "7477c95ca809da83061d4aaddcf4dd2982380d84df3190fc9d6d57e131b991c0",
   "kind": "cap.run.start",
-  "prev_hash": "936507d713aa36a342db41ba8c31e219ccd8be258cd387bcb8f65f3c63474da8",
+  "prev_hash": "7f738705a69ee9fdb2daa712c84052047341a7f84c7a1a71f45e3b07cd11a608",
   "seq": 51,
-  "ts": "2026-09-24T04:10:00.187872+00:00"
+  "ts": "2026-09-24T06:33:34.843918+00:00"
  },
  {
   "actor": "agent",
@@ -1281,36 +1281,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "676074a52045"
+    "run_id": "4494c33a3db2"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "676074a52045"
+   "run_id": "4494c33a3db2"
   },
-  "hash": "58b3e6c664b0529e8c93a2e82e35c6f792856f342a5512da535c332b94400bf9",
+  "hash": "98a4ab58d06a12c8cb082cf47e9a488bb80565b37690c793adaba4db26d37aa8",
   "kind": "gate.decision",
-  "prev_hash": "9916331ff3fc86cabceaf0af149d6abbc925674aaccad42d281ec5a195c6f4f7",
+  "prev_hash": "7477c95ca809da83061d4aaddcf4dd2982380d84df3190fc9d6d57e131b991c0",
   "seq": 52,
-  "ts": "2026-09-24T04:10:00.188060+00:00"
+  "ts": "2026-09-24T06:33:34.844121+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "dd2fe9904d4e0ca2",
-   "run_id": "676074a52045",
+   "result_hash": "b8499147e8fc14a7",
+   "run_id": "4494c33a3db2",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "6a22e81610bd23cec803a6e8af879a2bba45eee8b84a854245181f5ac8e02151",
+  "hash": "174de2a85209ed1096715ea73fc7b898863ed5048b10162bd22ef18f31b66185",
   "kind": "cap.run.finish",
-  "prev_hash": "58b3e6c664b0529e8c93a2e82e35c6f792856f342a5512da535c332b94400bf9",
+  "prev_hash": "98a4ab58d06a12c8cb082cf47e9a488bb80565b37690c793adaba4db26d37aa8",
   "seq": 53,
-  "ts": "2026-09-24T04:10:00.190480+00:00"
+  "ts": "2026-09-24T06:33:34.846561+00:00"
  },
  {
   "actor": "agent",
@@ -1320,7 +1320,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2d2c4874b531"
+    "run_id": "68da94e40423"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1328,13 +1328,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "2d2c4874b531"
+   "run_id": "68da94e40423"
   },
-  "hash": "8225f317174c275c7a215d3086cf0a2c54b232b04ed0f5a3e31952f8c478cf51",
+  "hash": "5e53f632e2a83050e4b17378c602003e9ec9c5ed2df98720970acbff9e669ed1",
   "kind": "cap.run.start",
-  "prev_hash": "6a22e81610bd23cec803a6e8af879a2bba45eee8b84a854245181f5ac8e02151",
+  "prev_hash": "174de2a85209ed1096715ea73fc7b898863ed5048b10162bd22ef18f31b66185",
   "seq": 54,
-  "ts": "2026-09-24T04:10:00.212468+00:00"
+  "ts": "2026-09-24T06:33:34.866519+00:00"
  },
  {
   "actor": "agent",
@@ -1344,36 +1344,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "2d2c4874b531"
+    "run_id": "68da94e40423"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "2d2c4874b531"
+   "run_id": "68da94e40423"
   },
-  "hash": "2d15d50e055ab419c8b06e0296a3e4fc7c43b9c385f79083857cfc4d241fbb7d",
+  "hash": "46091d95fdd6fb22b94ac9879d460e151ce5e95992aee98c8342d0d566d815d2",
   "kind": "gate.decision",
-  "prev_hash": "8225f317174c275c7a215d3086cf0a2c54b232b04ed0f5a3e31952f8c478cf51",
+  "prev_hash": "5e53f632e2a83050e4b17378c602003e9ec9c5ed2df98720970acbff9e669ed1",
   "seq": 55,
-  "ts": "2026-09-24T04:10:00.212609+00:00"
+  "ts": "2026-09-24T06:33:34.866655+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
-   "duration_ms": 2,
+   "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "2d2c4874b531",
+   "run_id": "68da94e40423",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "19dd2f3a758cbe7501a691f6581622d13d9113271b27f880f36911bc024b2030",
+  "hash": "7f13fa673769aadfc37ecbf571a36579b1c09b8055c3858ea42c2006313cf45b",
   "kind": "cap.run.finish",
-  "prev_hash": "2d15d50e055ab419c8b06e0296a3e4fc7c43b9c385f79083857cfc4d241fbb7d",
+  "prev_hash": "46091d95fdd6fb22b94ac9879d460e151ce5e95992aee98c8342d0d566d815d2",
   "seq": 56,
-  "ts": "2026-09-24T04:10:00.214476+00:00"
+  "ts": "2026-09-24T06:33:34.868460+00:00"
  },
  {
   "actor": "agent",
@@ -1383,7 +1383,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f1b565a3c832"
+    "run_id": "57c280690bd4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1391,13 +1391,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f1b565a3c832"
+   "run_id": "57c280690bd4"
   },
-  "hash": "dd03bca510ceb322410f38d659393fd1fb97d4e19e771979d9c7fbd88e9e8d9f",
+  "hash": "759179a82a1da721634d12bbd12b987abe99ccb54344f6d949d324f9e0a73db2",
   "kind": "cap.run.start",
-  "prev_hash": "19dd2f3a758cbe7501a691f6581622d13d9113271b27f880f36911bc024b2030",
+  "prev_hash": "7f13fa673769aadfc37ecbf571a36579b1c09b8055c3858ea42c2006313cf45b",
   "seq": 57,
-  "ts": "2026-09-24T04:10:00.215932+00:00"
+  "ts": "2026-09-24T06:33:34.869810+00:00"
  },
  {
   "actor": "agent",
@@ -1407,20 +1407,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "f1b565a3c832"
+    "run_id": "57c280690bd4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f1b565a3c832"
+   "run_id": "57c280690bd4"
   },
-  "hash": "4b2d0c840ff1fb2631afe7d324bb7134b80b0a81ea23e5d4a7451e4f4f795557",
+  "hash": "06d1d41575f947655d7fad728c3b5bba7f4f58c62453f49c75e394eec50546da",
   "kind": "gate.decision",
-  "prev_hash": "dd03bca510ceb322410f38d659393fd1fb97d4e19e771979d9c7fbd88e9e8d9f",
+  "prev_hash": "759179a82a1da721634d12bbd12b987abe99ccb54344f6d949d324f9e0a73db2",
   "seq": 58,
-  "ts": "2026-09-24T04:10:00.216014+00:00"
+  "ts": "2026-09-24T06:33:34.869887+00:00"
  },
  {
   "actor": "agent",
@@ -1428,15 +1428,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "duration_ms": 1,
    "result_hash": "9dc52c4f80dd7357",
-   "run_id": "f1b565a3c832",
+   "run_id": "57c280690bd4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "997ae6e0e343a74bff282da12d7ae68273611e30a57d5081c6e696de9f57f1bb",
+  "hash": "e204d9026ec547a82b563c354431c6b15c1f953456a44381872a128778718115",
   "kind": "cap.run.finish",
-  "prev_hash": "4b2d0c840ff1fb2631afe7d324bb7134b80b0a81ea23e5d4a7451e4f4f795557",
+  "prev_hash": "06d1d41575f947655d7fad728c3b5bba7f4f58c62453f49c75e394eec50546da",
   "seq": 59,
-  "ts": "2026-09-24T04:10:00.217668+00:00"
+  "ts": "2026-09-24T06:33:34.871517+00:00"
  },
  {
   "actor": "agent",
@@ -1446,7 +1446,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c3505a5d8657"
+    "run_id": "12de31745d7f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1454,13 +1454,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c3505a5d8657"
+   "run_id": "12de31745d7f"
   },
-  "hash": "b2f48ad0eddafdf7ac62b0c582ad6c4c48d26fab3f5f01fa6f59f74eeffa867e",
+  "hash": "17030c0418fbe04fdf118ec4501a59fe13588af493e4a4c036ad43b6a335b1d0",
   "kind": "cap.run.start",
-  "prev_hash": "997ae6e0e343a74bff282da12d7ae68273611e30a57d5081c6e696de9f57f1bb",
+  "prev_hash": "e204d9026ec547a82b563c354431c6b15c1f953456a44381872a128778718115",
   "seq": 60,
-  "ts": "2026-09-24T04:10:00.219091+00:00"
+  "ts": "2026-09-24T06:33:34.873228+00:00"
  },
  {
   "actor": "agent",
@@ -1470,36 +1470,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c3505a5d8657"
+    "run_id": "12de31745d7f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c3505a5d8657"
+   "run_id": "12de31745d7f"
   },
-  "hash": "0e2d0a775d90c230d8c8bba24a72c8da4ffb73a4f90e1198927e87398d479851",
+  "hash": "faf4cc877abda49b7097460d98f25df956eb1f8a5a511738f37c3ee0485fe9d9",
   "kind": "gate.decision",
-  "prev_hash": "b2f48ad0eddafdf7ac62b0c582ad6c4c48d26fab3f5f01fa6f59f74eeffa867e",
+  "prev_hash": "17030c0418fbe04fdf118ec4501a59fe13588af493e4a4c036ad43b6a335b1d0",
   "seq": 61,
-  "ts": "2026-09-24T04:10:00.219183+00:00"
+  "ts": "2026-09-24T06:33:34.873324+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "f633f3304894e897",
-   "run_id": "c3505a5d8657",
+   "result_hash": "c6dedd696ee30c52",
+   "run_id": "12de31745d7f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "70d0b168b6c765ba09d3f8cbb09a794e3b459b073ff33160c39809f37ca5b85d",
+  "hash": "541be0d1079532a1e6f8e4ef443b751d7e70c52339eab3f1451699e207c7deb1",
   "kind": "cap.run.finish",
-  "prev_hash": "0e2d0a775d90c230d8c8bba24a72c8da4ffb73a4f90e1198927e87398d479851",
+  "prev_hash": "faf4cc877abda49b7097460d98f25df956eb1f8a5a511738f37c3ee0485fe9d9",
   "seq": 62,
-  "ts": "2026-09-24T04:10:00.220820+00:00"
+  "ts": "2026-09-24T06:33:34.874983+00:00"
  },
  {
   "actor": "agent",
@@ -1509,7 +1509,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "3b9b9456d9ed"
+    "run_id": "62aab749a525"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1517,13 +1517,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3b9b9456d9ed"
+   "run_id": "62aab749a525"
   },
-  "hash": "3492860749d076ea019fb45cc834c07b3efcaefa654aa7c5299aac83a3ab8460",
+  "hash": "fc2091b5ab832463deb341ccd50f3fa3146b4ac7e9b793ae2c8cbd495709af78",
   "kind": "cap.run.start",
-  "prev_hash": "70d0b168b6c765ba09d3f8cbb09a794e3b459b073ff33160c39809f37ca5b85d",
+  "prev_hash": "541be0d1079532a1e6f8e4ef443b751d7e70c52339eab3f1451699e207c7deb1",
   "seq": 63,
-  "ts": "2026-09-24T04:10:00.222299+00:00"
+  "ts": "2026-09-24T06:33:34.876458+00:00"
  },
  {
   "actor": "agent",
@@ -1533,36 +1533,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "3b9b9456d9ed"
+    "run_id": "62aab749a525"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3b9b9456d9ed"
+   "run_id": "62aab749a525"
   },
-  "hash": "a2878a7d40ec947dec16d5735dd5fa9de07d8aac792bec2fd14c6f69d4a750a5",
+  "hash": "a5992b575e958462bbb115b61f26074cedabd41dd5916528d425f48ec215df65",
   "kind": "gate.decision",
-  "prev_hash": "3492860749d076ea019fb45cc834c07b3efcaefa654aa7c5299aac83a3ab8460",
+  "prev_hash": "fc2091b5ab832463deb341ccd50f3fa3146b4ac7e9b793ae2c8cbd495709af78",
   "seq": 64,
-  "ts": "2026-09-24T04:10:00.222393+00:00"
+  "ts": "2026-09-24T06:33:34.876529+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "f633f3304894e897",
-   "run_id": "3b9b9456d9ed",
+   "result_hash": "c6dedd696ee30c52",
+   "run_id": "62aab749a525",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "f40ba1c44db3d6e2857218e1d2475ab1526e8bf5398435de87f56f7b1bd111fd",
+  "hash": "254e3524a69695dfc0fbb39743b76db146fcd97e06a5ed5c2c570f2094d75754",
   "kind": "cap.run.finish",
-  "prev_hash": "a2878a7d40ec947dec16d5735dd5fa9de07d8aac792bec2fd14c6f69d4a750a5",
+  "prev_hash": "a5992b575e958462bbb115b61f26074cedabd41dd5916528d425f48ec215df65",
   "seq": 65,
-  "ts": "2026-09-24T04:10:00.224095+00:00"
+  "ts": "2026-09-24T06:33:34.878123+00:00"
  },
  {
   "actor": "agent",
@@ -1572,7 +1572,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "82f95f54a60c"
+    "run_id": "84c8b222e5c4"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1580,13 +1580,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "82f95f54a60c"
+   "run_id": "84c8b222e5c4"
   },
-  "hash": "f586dbed8349b037158a18919f282aaf319f9dd81c37ed2dc378d560fa5551ce",
+  "hash": "04b7469e479ff770ba817ffab245b30db1dc61f4866e9d1a15eda63cee2f55df",
   "kind": "cap.run.start",
-  "prev_hash": "f40ba1c44db3d6e2857218e1d2475ab1526e8bf5398435de87f56f7b1bd111fd",
+  "prev_hash": "254e3524a69695dfc0fbb39743b76db146fcd97e06a5ed5c2c570f2094d75754",
   "seq": 66,
-  "ts": "2026-09-24T04:10:00.252321+00:00"
+  "ts": "2026-09-24T06:33:34.906281+00:00"
  },
  {
   "actor": "agent",
@@ -1596,36 +1596,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "82f95f54a60c"
+    "run_id": "84c8b222e5c4"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "82f95f54a60c"
+   "run_id": "84c8b222e5c4"
   },
-  "hash": "974bfde2484790d4989efcfdb78e2d7be3897be4dabf3ff65c3a7882b309e3ab",
+  "hash": "7d519c1a0eb68ac8a49bd5116c54fb27dc1c8cf00e20971365c4d8a26bf4bd28",
   "kind": "gate.decision",
-  "prev_hash": "f586dbed8349b037158a18919f282aaf319f9dd81c37ed2dc378d560fa5551ce",
+  "prev_hash": "04b7469e479ff770ba817ffab245b30db1dc61f4866e9d1a15eda63cee2f55df",
   "seq": 67,
-  "ts": "2026-09-24T04:10:00.252433+00:00"
+  "ts": "2026-09-24T06:33:34.906422+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "706d095f10075b0c",
-   "run_id": "82f95f54a60c",
+   "result_hash": "e2ca5106c643115e",
+   "run_id": "84c8b222e5c4",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "d60c8ef8ea02594616b25ce2f06206517ffe04be7833595c6245f03bef2f0119",
+  "hash": "4689c98c14bcc72f0a1126bb3573ab70d81e3c5b7000c6874bf57df4a872ae61",
   "kind": "cap.run.finish",
-  "prev_hash": "974bfde2484790d4989efcfdb78e2d7be3897be4dabf3ff65c3a7882b309e3ab",
+  "prev_hash": "7d519c1a0eb68ac8a49bd5116c54fb27dc1c8cf00e20971365c4d8a26bf4bd28",
   "seq": 68,
-  "ts": "2026-09-24T04:10:00.254940+00:00"
+  "ts": "2026-09-24T06:33:34.908844+00:00"
  },
  {
   "actor": "agent",
@@ -1635,7 +1635,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "0b0cd2fedcd7"
+    "run_id": "7b0e285d5afa"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1643,13 +1643,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0b0cd2fedcd7"
+   "run_id": "7b0e285d5afa"
   },
-  "hash": "ee990a2fe277dfa9531075e2ac7cb076241d4c5f1e9a3a7796583a39bb9e66fc",
+  "hash": "6c80df78040d19cb03b5c7687f48982c661c8b95f22458769b14c9c93750c9e0",
   "kind": "cap.run.start",
-  "prev_hash": "d60c8ef8ea02594616b25ce2f06206517ffe04be7833595c6245f03bef2f0119",
+  "prev_hash": "4689c98c14bcc72f0a1126bb3573ab70d81e3c5b7000c6874bf57df4a872ae61",
   "seq": 69,
-  "ts": "2026-09-24T04:10:00.337127+00:00"
+  "ts": "2026-09-24T06:33:34.985177+00:00"
  },
  {
   "actor": "agent",
@@ -1659,36 +1659,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "0b0cd2fedcd7"
+    "run_id": "7b0e285d5afa"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0b0cd2fedcd7"
+   "run_id": "7b0e285d5afa"
   },
-  "hash": "c23dc79bd971599cd551bcd6744612da609cb32e6f1992041decfb0981016192",
+  "hash": "1af3770d0657751f47452ab19d5ec9f6238960a63e64c6e7316fe5e867095129",
   "kind": "gate.decision",
-  "prev_hash": "ee990a2fe277dfa9531075e2ac7cb076241d4c5f1e9a3a7796583a39bb9e66fc",
+  "prev_hash": "6c80df78040d19cb03b5c7687f48982c661c8b95f22458769b14c9c93750c9e0",
   "seq": 70,
-  "ts": "2026-09-24T04:10:00.337316+00:00"
+  "ts": "2026-09-24T06:33:34.985400+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
-   "duration_ms": 3,
-   "result_hash": "afc846fc6aaa1156",
-   "run_id": "0b0cd2fedcd7",
+   "duration_ms": 2,
+   "result_hash": "f69dab686687c0a1",
+   "run_id": "7b0e285d5afa",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2f54f82b1c64a33c653191187cc9345c59b6866ba101f568504672dbd4bdee60",
+  "hash": "80a7c107f4cd514cb62ad8119afc5fff983460d6b4d86f0f186628e9b7c4d2cb",
   "kind": "cap.run.finish",
-  "prev_hash": "c23dc79bd971599cd551bcd6744612da609cb32e6f1992041decfb0981016192",
+  "prev_hash": "1af3770d0657751f47452ab19d5ec9f6238960a63e64c6e7316fe5e867095129",
   "seq": 71,
-  "ts": "2026-09-24T04:10:00.340344+00:00"
+  "ts": "2026-09-24T06:33:34.988144+00:00"
  },
  {
   "actor": "agent",
@@ -1698,7 +1698,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "4a2a20c6755a"
+    "run_id": "fb67bde72ffd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1706,13 +1706,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4a2a20c6755a"
+   "run_id": "fb67bde72ffd"
   },
-  "hash": "70b0a9ff040fe64119ca14b94d2dd4f36756df81b02d22f71222f26e4c021280",
+  "hash": "ad0d30efa7a2a5defa5934378949edd5eea61fb8e448d46a3c79049919eb9ed7",
   "kind": "cap.run.start",
-  "prev_hash": "2f54f82b1c64a33c653191187cc9345c59b6866ba101f568504672dbd4bdee60",
+  "prev_hash": "80a7c107f4cd514cb62ad8119afc5fff983460d6b4d86f0f186628e9b7c4d2cb",
   "seq": 72,
-  "ts": "2026-09-24T04:10:00.463599+00:00"
+  "ts": "2026-09-24T06:33:35.110783+00:00"
  },
  {
   "actor": "agent",
@@ -1722,20 +1722,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "4a2a20c6755a"
+    "run_id": "fb67bde72ffd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4a2a20c6755a"
+   "run_id": "fb67bde72ffd"
   },
-  "hash": "fe9ce57512efca58d13660bfd32a05bdb7f5550f57e97387d57a2bfc68ac17ec",
+  "hash": "cd107db420ba1e86f5b23217896ad001e2c1d347188db9b4ccc50753f9369772",
   "kind": "gate.decision",
-  "prev_hash": "70b0a9ff040fe64119ca14b94d2dd4f36756df81b02d22f71222f26e4c021280",
+  "prev_hash": "ad0d30efa7a2a5defa5934378949edd5eea61fb8e448d46a3c79049919eb9ed7",
   "seq": 73,
-  "ts": "2026-09-24T04:10:00.463770+00:00"
+  "ts": "2026-09-24T06:33:35.110960+00:00"
  },
  {
   "actor": "agent",
@@ -1743,15 +1743,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "duration_ms": 4,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "4a2a20c6755a",
+   "run_id": "fb67bde72ffd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "0d5925ec6b2f8c22c54c8f7922a3495b1cbc6065d6cacaf3460fb82a9c0e306c",
+  "hash": "65476a57ecc43fe00bc1b1176029dc5dda64f13de2b975ca8173cb01a5d95ad0",
   "kind": "cap.run.finish",
-  "prev_hash": "fe9ce57512efca58d13660bfd32a05bdb7f5550f57e97387d57a2bfc68ac17ec",
+  "prev_hash": "cd107db420ba1e86f5b23217896ad001e2c1d347188db9b4ccc50753f9369772",
   "seq": 74,
-  "ts": "2026-09-24T04:10:00.467733+00:00"
+  "ts": "2026-09-24T06:33:35.114770+00:00"
  },
  {
   "actor": "agent",
@@ -1761,7 +1761,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c2e077f782ee"
+    "run_id": "b20626c4ea9f"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1769,13 +1769,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "c2e077f782ee"
+   "run_id": "b20626c4ea9f"
   },
-  "hash": "b53751540a54c01c62d22afb822ffa7408ca706c140208975a1b565c447bcec9",
+  "hash": "e0da32439130665a55b5d6fa69d276234026ca78d6adc67c3abb9566cb5cf8c9",
   "kind": "cap.run.start",
-  "prev_hash": "0d5925ec6b2f8c22c54c8f7922a3495b1cbc6065d6cacaf3460fb82a9c0e306c",
+  "prev_hash": "65476a57ecc43fe00bc1b1176029dc5dda64f13de2b975ca8173cb01a5d95ad0",
   "seq": 75,
-  "ts": "2026-09-24T04:10:00.470302+00:00"
+  "ts": "2026-09-24T06:33:35.117425+00:00"
  },
  {
   "actor": "agent",
@@ -1785,36 +1785,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "c2e077f782ee"
+    "run_id": "b20626c4ea9f"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "c2e077f782ee"
+   "run_id": "b20626c4ea9f"
   },
-  "hash": "0311ea738ee248c06cb9fefcc5dc1b4b58d6e289bc75231035c534b3b35cdc67",
+  "hash": "d6d24014d02fcaadba817a7c2782087a72b74d00803770ae8c71c248e70fe006",
   "kind": "gate.decision",
-  "prev_hash": "b53751540a54c01c62d22afb822ffa7408ca706c140208975a1b565c447bcec9",
+  "prev_hash": "e0da32439130665a55b5d6fa69d276234026ca78d6adc67c3abb9566cb5cf8c9",
   "seq": 76,
-  "ts": "2026-09-24T04:10:00.470380+00:00"
+  "ts": "2026-09-24T06:33:35.117511+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "f633f3304894e897",
-   "run_id": "c2e077f782ee",
+   "result_hash": "c6dedd696ee30c52",
+   "run_id": "b20626c4ea9f",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2a0479880e0d688cc81ab456f5167535f2a25789e384fd24b99fd8bfa95b0a4a",
+  "hash": "33d57b0e24ae1e2fb076becc73100c2268200f2733906ffa4ded7415f40e3724",
   "kind": "cap.run.finish",
-  "prev_hash": "0311ea738ee248c06cb9fefcc5dc1b4b58d6e289bc75231035c534b3b35cdc67",
+  "prev_hash": "d6d24014d02fcaadba817a7c2782087a72b74d00803770ae8c71c248e70fe006",
   "seq": 77,
-  "ts": "2026-09-24T04:10:00.472145+00:00"
+  "ts": "2026-09-24T06:33:35.119048+00:00"
  },
  {
   "actor": "agent",
@@ -1824,7 +1824,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "f1546c227b2f"
+    "run_id": "b3a81c4abb22"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1832,13 +1832,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "f1546c227b2f"
+   "run_id": "b3a81c4abb22"
   },
-  "hash": "559a5d65fffbc9161b89dfea1e7c5711e5cf01ff8be0ff7a320f293dfaa01998",
+  "hash": "2238dd06479df773a0af0f01806a262c5541246980cfac8d30f592d0b7ad4178",
   "kind": "cap.run.start",
-  "prev_hash": "2a0479880e0d688cc81ab456f5167535f2a25789e384fd24b99fd8bfa95b0a4a",
+  "prev_hash": "33d57b0e24ae1e2fb076becc73100c2268200f2733906ffa4ded7415f40e3724",
   "seq": 78,
-  "ts": "2026-09-24T04:10:00.474736+00:00"
+  "ts": "2026-09-24T06:33:35.121626+00:00"
  },
  {
   "actor": "agent",
@@ -1848,36 +1848,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "f1546c227b2f"
+    "run_id": "b3a81c4abb22"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "f1546c227b2f"
+   "run_id": "b3a81c4abb22"
   },
-  "hash": "032a57c2e808ad90acd11efb82a921dfff93ff7bafc43abaeb6bf560533e8396",
+  "hash": "02bdfbe01685239a6129b2787b50e4e9c68d0a6814188ed62e4923ce759f48c2",
   "kind": "gate.decision",
-  "prev_hash": "559a5d65fffbc9161b89dfea1e7c5711e5cf01ff8be0ff7a320f293dfaa01998",
+  "prev_hash": "2238dd06479df773a0af0f01806a262c5541246980cfac8d30f592d0b7ad4178",
   "seq": 79,
-  "ts": "2026-09-24T04:10:00.474859+00:00"
+  "ts": "2026-09-24T06:33:35.121752+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
+   "duration_ms": 3,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "f1546c227b2f",
+   "run_id": "b3a81c4abb22",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3e663f092e160d5787975a56e2df56d6c22985f2ce621a8d00ffd86d7569e657",
+  "hash": "04360b1fe608960c4ca8a43e5ca022f4a90850d79a7222d3a503bfd9899c042c",
   "kind": "cap.run.finish",
-  "prev_hash": "032a57c2e808ad90acd11efb82a921dfff93ff7bafc43abaeb6bf560533e8396",
+  "prev_hash": "02bdfbe01685239a6129b2787b50e4e9c68d0a6814188ed62e4923ce759f48c2",
   "seq": 80,
-  "ts": "2026-09-24T04:10:00.478715+00:00"
+  "ts": "2026-09-24T06:33:35.125506+00:00"
  },
  {
   "actor": "agent",
@@ -1887,7 +1887,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "e279695f822c"
+    "run_id": "1baba5ea43dd"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1895,13 +1895,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "e279695f822c"
+   "run_id": "1baba5ea43dd"
   },
-  "hash": "d8dd4928060d94ab018a1ab3f3883da1c1e50aeff8534097e7a60968498f0184",
+  "hash": "9458921329132b7bb6de9045595f3614a6d4d0c5e3135df9f14c6e0a78f8ca89",
   "kind": "cap.run.start",
-  "prev_hash": "3e663f092e160d5787975a56e2df56d6c22985f2ce621a8d00ffd86d7569e657",
+  "prev_hash": "04360b1fe608960c4ca8a43e5ca022f4a90850d79a7222d3a503bfd9899c042c",
   "seq": 81,
-  "ts": "2026-09-24T04:10:00.481430+00:00"
+  "ts": "2026-09-24T06:33:35.128165+00:00"
  },
  {
   "actor": "agent",
@@ -1911,36 +1911,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "e279695f822c"
+    "run_id": "1baba5ea43dd"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "e279695f822c"
+   "run_id": "1baba5ea43dd"
   },
-  "hash": "b1ceace3cb3a6391a72b946a07f372cf0ba553e8760b081becef0bdecd914431",
+  "hash": "3392a7d121f1152769606e2a00f62ea99f63cc6d6e621d8bd8a96a8662e1d130",
   "kind": "gate.decision",
-  "prev_hash": "d8dd4928060d94ab018a1ab3f3883da1c1e50aeff8534097e7a60968498f0184",
+  "prev_hash": "9458921329132b7bb6de9045595f3614a6d4d0c5e3135df9f14c6e0a78f8ca89",
   "seq": 82,
-  "ts": "2026-09-24T04:10:00.481521+00:00"
+  "ts": "2026-09-24T06:33:35.128251+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "100a687ccc80ffe1",
-   "run_id": "e279695f822c",
+   "result_hash": "6396cedd74357cc5",
+   "run_id": "1baba5ea43dd",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2ca90f6ba2bfc1602ba87131c8b7f1d19f984ea0655775c1357761ef22d4cbde",
+  "hash": "70ac40927fe32f0cef9b53b42c8f45cf0b93e9e3635de04a24779b382b90428c",
   "kind": "cap.run.finish",
-  "prev_hash": "b1ceace3cb3a6391a72b946a07f372cf0ba553e8760b081becef0bdecd914431",
+  "prev_hash": "3392a7d121f1152769606e2a00f62ea99f63cc6d6e621d8bd8a96a8662e1d130",
   "seq": 83,
-  "ts": "2026-09-24T04:10:00.483881+00:00"
+  "ts": "2026-09-24T06:33:35.130511+00:00"
  },
  {
   "actor": "agent",
@@ -1950,7 +1950,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "33d4c47369d0"
+    "run_id": "38b2fea937eb"
    },
    "decision": {
     "decision": "APPROVE",
@@ -1958,13 +1958,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "33d4c47369d0"
+   "run_id": "38b2fea937eb"
   },
-  "hash": "525e614f5532675d9315c5a69dcdcde7fc0cc3315e97b7f58166e530530bd88c",
+  "hash": "355132fbac1516b1aa8a95d481e992d2c8dd592757177707a530ae68379c1d82",
   "kind": "cap.run.start",
-  "prev_hash": "2ca90f6ba2bfc1602ba87131c8b7f1d19f984ea0655775c1357761ef22d4cbde",
+  "prev_hash": "70ac40927fe32f0cef9b53b42c8f45cf0b93e9e3635de04a24779b382b90428c",
   "seq": 84,
-  "ts": "2026-09-24T04:10:00.979171+00:00"
+  "ts": "2026-09-24T06:33:35.631531+00:00"
  },
  {
   "actor": "agent",
@@ -1974,36 +1974,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "33d4c47369d0"
+    "run_id": "38b2fea937eb"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "33d4c47369d0"
+   "run_id": "38b2fea937eb"
   },
-  "hash": "73a50ec049aec49a54ba97cc062ab56812645edf095d073c518512fa3e891a53",
+  "hash": "4eec689403a579d1b4574bf5fd2733089c66ff2e2c627c570be2a4dc53ff08c3",
   "kind": "gate.decision",
-  "prev_hash": "525e614f5532675d9315c5a69dcdcde7fc0cc3315e97b7f58166e530530bd88c",
+  "prev_hash": "355132fbac1516b1aa8a95d481e992d2c8dd592757177707a530ae68379c1d82",
   "seq": 85,
-  "ts": "2026-09-24T04:10:00.979823+00:00"
+  "ts": "2026-09-24T06:33:35.631982+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 10,
+   "duration_ms": 9,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "33d4c47369d0",
+   "run_id": "38b2fea937eb",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8e1e06d402f4081620f013098ae2c36fd4aa3a2aba703118ed6a26717355e99b",
+  "hash": "b92896e1561d2a3b92df1cfef00caa754f461f4480f92a7af932a203ef64b73f",
   "kind": "cap.run.finish",
-  "prev_hash": "73a50ec049aec49a54ba97cc062ab56812645edf095d073c518512fa3e891a53",
+  "prev_hash": "4eec689403a579d1b4574bf5fd2733089c66ff2e2c627c570be2a4dc53ff08c3",
   "seq": 86,
-  "ts": "2026-09-24T04:10:00.989349+00:00"
+  "ts": "2026-09-24T06:33:35.641222+00:00"
  },
  {
   "actor": "agent",
@@ -2013,7 +2013,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4c67267bc59c"
+    "run_id": "67787092afce"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2021,13 +2021,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "4c67267bc59c"
+   "run_id": "67787092afce"
   },
-  "hash": "5ebd558fdd775e44cbe45ce601092edc88b41a7d16b157c47a82166ee324fa84",
+  "hash": "98dff0c001348f64f9d0323678fb8f9b247c42bc1a9c50996a4b8e09d9e2e34f",
   "kind": "cap.run.start",
-  "prev_hash": "8e1e06d402f4081620f013098ae2c36fd4aa3a2aba703118ed6a26717355e99b",
+  "prev_hash": "b92896e1561d2a3b92df1cfef00caa754f461f4480f92a7af932a203ef64b73f",
   "seq": 87,
-  "ts": "2026-09-24T04:10:00.996205+00:00"
+  "ts": "2026-09-24T06:33:35.647078+00:00"
  },
  {
   "actor": "agent",
@@ -2037,36 +2037,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "4c67267bc59c"
+    "run_id": "67787092afce"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "4c67267bc59c"
+   "run_id": "67787092afce"
   },
-  "hash": "027087a2c2e81f207ed3cf0e836ea02afd9e6426a9c98b92c601b0bbb509c0b7",
+  "hash": "a2fe1a9473571d13d65f6a36ce8e05e02d69cd0b8ba59040a6533401473d8226",
   "kind": "gate.decision",
-  "prev_hash": "5ebd558fdd775e44cbe45ce601092edc88b41a7d16b157c47a82166ee324fa84",
+  "prev_hash": "98dff0c001348f64f9d0323678fb8f9b247c42bc1a9c50996a4b8e09d9e2e34f",
   "seq": 88,
-  "ts": "2026-09-24T04:10:00.996429+00:00"
+  "ts": "2026-09-24T06:33:35.647286+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 3,
-   "result_hash": "f633f3304894e897",
-   "run_id": "4c67267bc59c",
+   "result_hash": "c6dedd696ee30c52",
+   "run_id": "67787092afce",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8c7596d9c0863aabf6374581889e709f357e80081ea0e5de7288795c80e27401",
+  "hash": "b71f1917fb13e56bfc78a260318a17dfaa20535bd038834d237d6ea38a030f78",
   "kind": "cap.run.finish",
-  "prev_hash": "027087a2c2e81f207ed3cf0e836ea02afd9e6426a9c98b92c601b0bbb509c0b7",
+  "prev_hash": "a2fe1a9473571d13d65f6a36ce8e05e02d69cd0b8ba59040a6533401473d8226",
   "seq": 89,
-  "ts": "2026-09-24T04:10:00.999429+00:00"
+  "ts": "2026-09-24T06:33:35.650168+00:00"
  },
  {
   "actor": "agent",
@@ -2076,7 +2076,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "3a2cd4e6daf7"
+    "run_id": "95bcece58b85"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2084,13 +2084,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "3a2cd4e6daf7"
+   "run_id": "95bcece58b85"
   },
-  "hash": "82a130c83405e0a5d3807a23bfabf05f581004024c1396a2f7079c456bdef289",
+  "hash": "ee5f5903b64f76daf6cb4628d3811b9904ef774abd5112aa94bad3c7d589e901",
   "kind": "cap.run.start",
-  "prev_hash": "8c7596d9c0863aabf6374581889e709f357e80081ea0e5de7288795c80e27401",
+  "prev_hash": "b71f1917fb13e56bfc78a260318a17dfaa20535bd038834d237d6ea38a030f78",
   "seq": 90,
-  "ts": "2026-09-24T04:10:01.003098+00:00"
+  "ts": "2026-09-24T06:33:35.653557+00:00"
  },
  {
   "actor": "agent",
@@ -2100,20 +2100,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "3a2cd4e6daf7"
+    "run_id": "95bcece58b85"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "3a2cd4e6daf7"
+   "run_id": "95bcece58b85"
   },
-  "hash": "696411c2fae34d2f82299f30eda50ffd980fd752359636c7f1b914e89ce4cc25",
+  "hash": "7eb7f750411eb5cdf8417f1faf6be74c740e7d7654728f610daf6330a674966f",
   "kind": "gate.decision",
-  "prev_hash": "82a130c83405e0a5d3807a23bfabf05f581004024c1396a2f7079c456bdef289",
+  "prev_hash": "ee5f5903b64f76daf6cb4628d3811b9904ef774abd5112aa94bad3c7d589e901",
   "seq": 91,
-  "ts": "2026-09-24T04:10:01.003238+00:00"
+  "ts": "2026-09-24T06:33:35.653692+00:00"
  },
  {
   "actor": "agent",
@@ -2121,15 +2121,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "duration_ms": 6,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "3a2cd4e6daf7",
+   "run_id": "95bcece58b85",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "2d26d3cec44a7e7d12ce459b43fa0a8779999157c6cdc0579ea16f6adbb84385",
+  "hash": "fdcd8198e7c46979c01e13c31b9c2ed7ba8d0eb817e4a404d0bc26e2f4f7114e",
   "kind": "cap.run.finish",
-  "prev_hash": "696411c2fae34d2f82299f30eda50ffd980fd752359636c7f1b914e89ce4cc25",
+  "prev_hash": "7eb7f750411eb5cdf8417f1faf6be74c740e7d7654728f610daf6330a674966f",
   "seq": 92,
-  "ts": "2026-09-24T04:10:01.009185+00:00"
+  "ts": "2026-09-24T06:33:35.659710+00:00"
  },
  {
   "actor": "agent",
@@ -2139,7 +2139,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "03907c8118c0"
+    "run_id": "8ef4dc1a5aaf"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2147,13 +2147,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "03907c8118c0"
+   "run_id": "8ef4dc1a5aaf"
   },
-  "hash": "308f9c7e764503cce64b232c9dce0b3531103cfb625a1fd8c642a515ed4e1eef",
+  "hash": "8287376af25331b4a397688ef35aee4e7b037567b59f4e526a85c80adad65c17",
   "kind": "cap.run.start",
-  "prev_hash": "2d26d3cec44a7e7d12ce459b43fa0a8779999157c6cdc0579ea16f6adbb84385",
+  "prev_hash": "fdcd8198e7c46979c01e13c31b9c2ed7ba8d0eb817e4a404d0bc26e2f4f7114e",
   "seq": 93,
-  "ts": "2026-09-24T04:10:01.013302+00:00"
+  "ts": "2026-09-24T06:33:35.663652+00:00"
  },
  {
   "actor": "agent",
@@ -2163,36 +2163,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "03907c8118c0"
+    "run_id": "8ef4dc1a5aaf"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "03907c8118c0"
+   "run_id": "8ef4dc1a5aaf"
   },
-  "hash": "6621386280107debc9a88d278fcb140764be23b2b6691b0989c9780a687941b1",
+  "hash": "e921129ebd51e41da36850fc5415a0ca20416b8ddcd03ce444bb016a2e33c2af",
   "kind": "gate.decision",
-  "prev_hash": "308f9c7e764503cce64b232c9dce0b3531103cfb625a1fd8c642a515ed4e1eef",
+  "prev_hash": "8287376af25331b4a397688ef35aee4e7b037567b59f4e526a85c80adad65c17",
   "seq": 94,
-  "ts": "2026-09-24T04:10:01.013430+00:00"
+  "ts": "2026-09-24T06:33:35.663779+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 3,
-   "result_hash": "c683056641d49849",
-   "run_id": "03907c8118c0",
+   "result_hash": "bc12dd5c45d938ed",
+   "run_id": "8ef4dc1a5aaf",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "a248a5c825ad6923f68cde712a129fe2538d86436522f949619ba1fd09f828bc",
+  "hash": "8578bb2706ccbc0ff8b1fae83e1eaa70529a4fceb970c6cede626a11fdc93a45",
   "kind": "cap.run.finish",
-  "prev_hash": "6621386280107debc9a88d278fcb140764be23b2b6691b0989c9780a687941b1",
+  "prev_hash": "e921129ebd51e41da36850fc5415a0ca20416b8ddcd03ce444bb016a2e33c2af",
   "seq": 95,
-  "ts": "2026-09-24T04:10:01.017032+00:00"
+  "ts": "2026-09-24T06:33:35.667240+00:00"
  },
  {
   "actor": "agent",
@@ -2202,7 +2202,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "fbb072f2248f"
+    "run_id": "a55fa512a798"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2210,13 +2210,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "fbb072f2248f"
+   "run_id": "a55fa512a798"
   },
-  "hash": "98192306e5343f43df18636d8b87a1efadda71bb512827292b02c855509dee65",
+  "hash": "4565eb625c7294b0362a24fd570df0d7d22566009445f77e2f0f3bca61ff0c7e",
   "kind": "cap.run.start",
-  "prev_hash": "a248a5c825ad6923f68cde712a129fe2538d86436522f949619ba1fd09f828bc",
+  "prev_hash": "8578bb2706ccbc0ff8b1fae83e1eaa70529a4fceb970c6cede626a11fdc93a45",
   "seq": 96,
-  "ts": "2026-09-24T04:10:04.630093+00:00"
+  "ts": "2026-09-24T06:33:38.817153+00:00"
  },
  {
   "actor": "agent",
@@ -2226,20 +2226,20 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "fbb072f2248f"
+    "run_id": "a55fa512a798"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "fbb072f2248f"
+   "run_id": "a55fa512a798"
   },
-  "hash": "66ffe2e191a67f9b3ed341a9c82aa16d879e95e28a10e9c6a6fa9133c700d991",
+  "hash": "77b156057b7dbaa1b6adb63bb6b20a3f9a1b865bcdb2d18669ad1d1936c7efd0",
   "kind": "gate.decision",
-  "prev_hash": "98192306e5343f43df18636d8b87a1efadda71bb512827292b02c855509dee65",
+  "prev_hash": "4565eb625c7294b0362a24fd570df0d7d22566009445f77e2f0f3bca61ff0c7e",
   "seq": 97,
-  "ts": "2026-09-24T04:10:04.630284+00:00"
+  "ts": "2026-09-24T06:33:38.817359+00:00"
  },
  {
   "actor": "agent",
@@ -2247,15 +2247,15 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "duration_ms": 4,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "fbb072f2248f",
+   "run_id": "a55fa512a798",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "8e0dcbea03e2f468f5336f4320d0c53ed74240dbbc275d541690a35fc52223a7",
+  "hash": "898779f9aaff37e988ab5b2223e163d8403372d058b89b8bec08c58ae578ad26",
   "kind": "cap.run.finish",
-  "prev_hash": "66ffe2e191a67f9b3ed341a9c82aa16d879e95e28a10e9c6a6fa9133c700d991",
+  "prev_hash": "77b156057b7dbaa1b6adb63bb6b20a3f9a1b865bcdb2d18669ad1d1936c7efd0",
   "seq": 98,
-  "ts": "2026-09-24T04:10:04.634418+00:00"
+  "ts": "2026-09-24T06:33:38.821825+00:00"
  },
  {
   "actor": "agent",
@@ -2265,7 +2265,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.artifacts",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d7eb75c67703"
+    "run_id": "8e12247b43be"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2273,13 +2273,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "d7eb75c67703"
+   "run_id": "8e12247b43be"
   },
-  "hash": "4f38b1858a23a4382f41f890f5d7b5711fa9ec47a6cd945629fbabd0c7b7dec6",
+  "hash": "4e879c8eb7994bffb023f59e378822171647e03c15c3c66c83299d7ee4729dfc",
   "kind": "cap.run.start",
-  "prev_hash": "8e0dcbea03e2f468f5336f4320d0c53ed74240dbbc275d541690a35fc52223a7",
+  "prev_hash": "898779f9aaff37e988ab5b2223e163d8403372d058b89b8bec08c58ae578ad26",
   "seq": 99,
-  "ts": "2026-09-24T04:10:04.637229+00:00"
+  "ts": "2026-09-24T06:33:38.824523+00:00"
  },
  {
   "actor": "agent",
@@ -2289,36 +2289,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.artifacts",
-    "run_id": "d7eb75c67703"
+    "run_id": "8e12247b43be"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "d7eb75c67703"
+   "run_id": "8e12247b43be"
   },
-  "hash": "5c28f8838420911d8ae2d4300b046158fc411d69f75c9f8bb9f983b63633eafe",
+  "hash": "3f7367e0d90be49fb1ddb441559b135eaed132c037dcc9a1698a9053c39f9abb",
   "kind": "gate.decision",
-  "prev_hash": "4f38b1858a23a4382f41f890f5d7b5711fa9ec47a6cd945629fbabd0c7b7dec6",
+  "prev_hash": "4e879c8eb7994bffb023f59e378822171647e03c15c3c66c83299d7ee4729dfc",
   "seq": 100,
-  "ts": "2026-09-24T04:10:04.637331+00:00"
+  "ts": "2026-09-24T06:33:38.824609+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.artifacts",
    "duration_ms": 1,
-   "result_hash": "f633f3304894e897",
-   "run_id": "d7eb75c67703",
+   "result_hash": "c6dedd696ee30c52",
+   "run_id": "8e12247b43be",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "07f86386cb548fb594f720ca4ffd07e5d1b9d62bc0ec8dc76820ef22a4e39671",
+  "hash": "2a9f9b8cd727747bdfbd76d46b89a7cfdac607473c64e8d48e6c8883090e41fa",
   "kind": "cap.run.finish",
-  "prev_hash": "5c28f8838420911d8ae2d4300b046158fc411d69f75c9f8bb9f983b63633eafe",
+  "prev_hash": "3f7367e0d90be49fb1ddb441559b135eaed132c037dcc9a1698a9053c39f9abb",
   "seq": 101,
-  "ts": "2026-09-24T04:10:04.639039+00:00"
+  "ts": "2026-09-24T06:33:38.826380+00:00"
  },
  {
   "actor": "agent",
@@ -2328,7 +2328,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "project.status",
    "chain": {
     "cap": "project.status",
-    "run_id": "0433172bfda9"
+    "run_id": "03b08848495e"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2336,13 +2336,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "0433172bfda9"
+   "run_id": "03b08848495e"
   },
-  "hash": "cf6282eb118eb93168d31be1885d0b0417c0e17a1746431ba483e21e504825ee",
+  "hash": "1b6f7c1be222a440b5075b6816df1e916aa4dcab064914b964716fb34cda4a0f",
   "kind": "cap.run.start",
-  "prev_hash": "07f86386cb548fb594f720ca4ffd07e5d1b9d62bc0ec8dc76820ef22a4e39671",
+  "prev_hash": "2a9f9b8cd727747bdfbd76d46b89a7cfdac607473c64e8d48e6c8883090e41fa",
   "seq": 102,
-  "ts": "2026-09-24T04:10:04.641103+00:00"
+  "ts": "2026-09-24T06:33:38.828399+00:00"
  },
  {
   "actor": "agent",
@@ -2352,36 +2352,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "project.status",
-    "run_id": "0433172bfda9"
+    "run_id": "03b08848495e"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "0433172bfda9"
+   "run_id": "03b08848495e"
   },
-  "hash": "007bd1c1f07c7a858a52f8e791486152c3f4b9eaa57051d31be31dc77b91d862",
+  "hash": "37d9b2d491e08c14ec0d62e69d7b3b81372f4efd785fa99e46c5eebd9be5cdb8",
   "kind": "gate.decision",
-  "prev_hash": "cf6282eb118eb93168d31be1885d0b0417c0e17a1746431ba483e21e504825ee",
+  "prev_hash": "1b6f7c1be222a440b5075b6816df1e916aa4dcab064914b964716fb34cda4a0f",
   "seq": 103,
-  "ts": "2026-09-24T04:10:04.641204+00:00"
+  "ts": "2026-09-24T06:33:38.828510+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "project.status",
-   "duration_ms": 4,
+   "duration_ms": 3,
    "result_hash": "9bbddcacdecb98dc",
-   "run_id": "0433172bfda9",
+   "run_id": "03b08848495e",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "fc3b029b9a0b4d2022ecdf12f528fab80d7ac7dba28d8f6ae69153f3d16be58e",
+  "hash": "9f964230d8c5b716acc3837d669bdadfa5c9e09398f1f314a08f6caf8d91d62a",
   "kind": "cap.run.finish",
-  "prev_hash": "007bd1c1f07c7a858a52f8e791486152c3f4b9eaa57051d31be31dc77b91d862",
+  "prev_hash": "37d9b2d491e08c14ec0d62e69d7b3b81372f4efd785fa99e46c5eebd9be5cdb8",
   "seq": 104,
-  "ts": "2026-09-24T04:10:04.645142+00:00"
+  "ts": "2026-09-24T06:33:38.832293+00:00"
  },
  {
   "actor": "agent",
@@ -2391,7 +2391,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "cap": "view.timeline",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "b55f3b1fe085"
+    "run_id": "e87f29d9ac3b"
    },
    "decision": {
     "decision": "APPROVE",
@@ -2399,13 +2399,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
     "rule": "R0"
    },
-   "run_id": "b55f3b1fe085"
+   "run_id": "e87f29d9ac3b"
   },
-  "hash": "aa3e2097510423e38dca8d9378914a21aa80baf2b3090a3b3a54117ce80ca497",
+  "hash": "62e06f133e79185e319a4feb1ae03a8fcd82d769b8c17ae2a662850bc0a846e9",
   "kind": "cap.run.start",
-  "prev_hash": "fc3b029b9a0b4d2022ecdf12f528fab80d7ac7dba28d8f6ae69153f3d16be58e",
+  "prev_hash": "9f964230d8c5b716acc3837d669bdadfa5c9e09398f1f314a08f6caf8d91d62a",
   "seq": 105,
-  "ts": "2026-09-24T04:10:04.648147+00:00"
+  "ts": "2026-09-24T06:33:38.836777+00:00"
  },
  {
   "actor": "agent",
@@ -2415,36 +2415,36 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
    "by": "agent",
    "chain": {
     "cap": "view.timeline",
-    "run_id": "b55f3b1fe085"
+    "run_id": "e87f29d9ac3b"
    },
    "decision": "APPROVE",
    "gate": "*",
    "reason": "Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2)",
    "risk": "R0",
    "rule": "R0",
-   "run_id": "b55f3b1fe085"
+   "run_id": "e87f29d9ac3b"
   },
-  "hash": "c20bd3d3caf328e9eb259066a0d768cb389fa35c963c5d2cf47605dee1a83777",
+  "hash": "7c31b71bed22e4e15be5b0f451eeb14e7027613575dadba13f3ed086e057fdce",
   "kind": "gate.decision",
-  "prev_hash": "aa3e2097510423e38dca8d9378914a21aa80baf2b3090a3b3a54117ce80ca497",
+  "prev_hash": "62e06f133e79185e319a4feb1ae03a8fcd82d769b8c17ae2a662850bc0a846e9",
   "seq": 106,
-  "ts": "2026-09-24T04:10:04.648294+00:00"
+  "ts": "2026-09-24T06:33:38.836882+00:00"
  },
  {
   "actor": "agent",
   "data": {
    "cap": "view.timeline",
    "duration_ms": 2,
-   "result_hash": "56c3c083455872f9",
-   "run_id": "b55f3b1fe085",
+   "result_hash": "e64c344e8d6a06a4",
+   "run_id": "e87f29d9ac3b",
    "status": "done",
    "undo_ref": null
   },
-  "hash": "3f2a8a080be769ee5d9d94abe73472ea98e22fed725594e29b24403aa9880511",
+  "hash": "64285188948a66120663de812cc3bf7f18075d8442bed246fb32f70583464e6d",
   "kind": "cap.run.finish",
-  "prev_hash": "c20bd3d3caf328e9eb259066a0d768cb389fa35c963c5d2cf47605dee1a83777",
+  "prev_hash": "7c31b71bed22e4e15be5b0f451eeb14e7027613575dadba13f3ed086e057fdce",
   "seq": 107,
-  "ts": "2026-09-24T04:10:04.650940+00:00"
+  "ts": "2026-09-24T06:33:38.839269+00:00"
  }
 ]
 ```
@@ -2510,13 +2510,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "kind": "gap",
     "text": "Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.",
     "req_ids": "[]",
-    "suggestion": "Rồi bảo tác tử chạy lại lượt r_a0cbdea4.",
+    "suggestion": "Rồi bảo tác tử chạy lại lượt r_bab1ccb3.",
     "source_cap": "search.web",
     "run_id": null,
     "status": "open",
     "answer": null,
     "answered_by": null,
-    "created_at": "2026-09-24T04:09:59.832887+00:00",
+    "created_at": "2026-09-24T06:33:34.421506+00:00",
     "answered_at": null
    }
   ]
@@ -2537,7 +2537,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
   "so_dong": 33,
   "dong": [
    {
-    "id": "423d5255e93a",
+    "id": "eac920b978bd",
     "gate": "*",
     "action_cap": "project.open",
     "risk": "R0",
@@ -2550,10 +2550,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:57.792539+00:00"
+    "at": "2026-09-24T06:33:32.075832+00:00"
    },
    {
-    "id": "411578879809",
+    "id": "13013450929f",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2566,10 +2566,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:57.805854+00:00"
+    "at": "2026-09-24T06:33:32.089963+00:00"
    },
    {
-    "id": "d8872d2f3835",
+    "id": "e3c38e426a87",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2582,10 +2582,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:57.808966+00:00"
+    "at": "2026-09-24T06:33:32.093144+00:00"
    },
    {
-    "id": "8a76de6d5157",
+    "id": "6a2b6b1e27c3",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2598,10 +2598,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:57.838467+00:00"
+    "at": "2026-09-24T06:33:32.125575+00:00"
    },
    {
-    "id": "52a469f0125e",
+    "id": "466f76af8a15",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2614,10 +2614,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:58.056970+00:00"
+    "at": "2026-09-24T06:33:32.384857+00:00"
    },
    {
-    "id": "872121a12fe9",
+    "id": "2d9b574bca18",
     "gate": "*",
     "action_cap": "chat.parse_intent",
     "risk": "R0",
@@ -2630,10 +2630,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:58.090411+00:00"
+    "at": "2026-09-24T06:33:32.414159+00:00"
    },
    {
-    "id": "548d54f15592",
+    "id": "245caaaa01bd",
     "gate": "*",
     "action_cap": "chat.ground",
     "risk": "R0",
@@ -2646,10 +2646,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:59.689083+00:00"
+    "at": "2026-09-24T06:33:34.286803+00:00"
    },
    {
-    "id": "ad04c5e38172",
+    "id": "daa7537f3c03",
     "gate": "*",
     "action_cap": "chat.fill_defaults",
     "risk": "R0",
@@ -2662,10 +2662,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:59.694504+00:00"
+    "at": "2026-09-24T06:33:34.291118+00:00"
    },
    {
-    "id": "6299832c0b85",
+    "id": "b1fcc5d87d5c",
     "gate": "*",
     "action_cap": "chat.orchestrate",
     "risk": "R0",
@@ -2678,10 +2678,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:59.704681+00:00"
+    "at": "2026-09-24T06:33:34.298889+00:00"
    },
    {
-    "id": "00558b1c6f9f",
+    "id": "49139abc333f",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2694,10 +2694,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:59.825773+00:00"
+    "at": "2026-09-24T06:33:34.415129+00:00"
    },
    {
-    "id": "16f713882759",
+    "id": "5bda91e652c7",
     "gate": "*",
     "action_cap": "search.web",
     "risk": "R0",
@@ -2710,10 +2710,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:59.829037+00:00"
+    "at": "2026-09-24T06:33:34.417800+00:00"
    },
    {
-    "id": "01204a62c81f",
+    "id": "ae4b7e34d738",
     "gate": "*",
     "action_cap": "chat.restate",
     "risk": "R0",
@@ -2726,10 +2726,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:09:59.857672+00:00"
+    "at": "2026-09-24T06:33:34.457224+00:00"
    },
    {
-    "id": "423560a40717",
+    "id": "4ed6336fa5c4",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2742,10 +2742,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.007696+00:00"
+    "at": "2026-09-24T06:33:34.608428+00:00"
    },
    {
-    "id": "c62a86a62d7e",
+    "id": "b075ef15b4eb",
     "gate": "*",
     "action_cap": "chat.report_back",
     "risk": "R0",
@@ -2758,10 +2758,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.138762+00:00"
+    "at": "2026-09-24T06:33:34.790767+00:00"
    },
    {
-    "id": "676074a52045",
+    "id": "4494c33a3db2",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2774,10 +2774,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.188627+00:00"
+    "at": "2026-09-24T06:33:34.844685+00:00"
    },
    {
-    "id": "2d2c4874b531",
+    "id": "68da94e40423",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2790,10 +2790,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.213052+00:00"
+    "at": "2026-09-24T06:33:34.867135+00:00"
    },
    {
-    "id": "f1b565a3c832",
+    "id": "57c280690bd4",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2806,10 +2806,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.216412+00:00"
+    "at": "2026-09-24T06:33:34.870259+00:00"
    },
    {
-    "id": "c3505a5d8657",
+    "id": "12de31745d7f",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2822,10 +2822,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.219559+00:00"
+    "at": "2026-09-24T06:33:34.873698+00:00"
    },
    {
-    "id": "3b9b9456d9ed",
+    "id": "62aab749a525",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2838,10 +2838,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.222790+00:00"
+    "at": "2026-09-24T06:33:34.876888+00:00"
    },
    {
-    "id": "82f95f54a60c",
+    "id": "84c8b222e5c4",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2854,10 +2854,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.252856+00:00"
+    "at": "2026-09-24T06:33:34.906838+00:00"
    },
    {
-    "id": "0b0cd2fedcd7",
+    "id": "7b0e285d5afa",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2870,10 +2870,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.338055+00:00"
+    "at": "2026-09-24T06:33:34.986058+00:00"
    },
    {
-    "id": "4a2a20c6755a",
+    "id": "fb67bde72ffd",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2886,10 +2886,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.464425+00:00"
+    "at": "2026-09-24T06:33:35.111501+00:00"
    },
    {
-    "id": "c2e077f782ee",
+    "id": "b20626c4ea9f",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2902,10 +2902,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.470816+00:00"
+    "at": "2026-09-24T06:33:35.117855+00:00"
    },
    {
-    "id": "f1546c227b2f",
+    "id": "b3a81c4abb22",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2918,10 +2918,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.475215+00:00"
+    "at": "2026-09-24T06:33:35.122122+00:00"
    },
    {
-    "id": "e279695f822c",
+    "id": "1baba5ea43dd",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2934,10 +2934,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.481933+00:00"
+    "at": "2026-09-24T06:33:35.128656+00:00"
    },
    {
-    "id": "33d4c47369d0",
+    "id": "38b2fea937eb",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2950,10 +2950,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.981318+00:00"
+    "at": "2026-09-24T06:33:35.633436+00:00"
    },
    {
-    "id": "4c67267bc59c",
+    "id": "67787092afce",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -2966,10 +2966,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:00.997211+00:00"
+    "at": "2026-09-24T06:33:35.648012+00:00"
    },
    {
-    "id": "3a2cd4e6daf7",
+    "id": "95bcece58b85",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -2982,10 +2982,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:01.003844+00:00"
+    "at": "2026-09-24T06:33:35.654293+00:00"
    },
    {
-    "id": "03907c8118c0",
+    "id": "8ef4dc1a5aaf",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -2998,10 +2998,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:01.014112+00:00"
+    "at": "2026-09-24T06:33:35.664443+00:00"
    },
    {
-    "id": "fbb072f2248f",
+    "id": "a55fa512a798",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3014,10 +3014,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:04.630952+00:00"
+    "at": "2026-09-24T06:33:38.818076+00:00"
    },
    {
-    "id": "d7eb75c67703",
+    "id": "8e12247b43be",
     "gate": "*",
     "action_cap": "view.artifacts",
     "risk": "R0",
@@ -3030,10 +3030,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:04.637727+00:00"
+    "at": "2026-09-24T06:33:38.825063+00:00"
    },
    {
-    "id": "0433172bfda9",
+    "id": "03b08848495e",
     "gate": "*",
     "action_cap": "project.status",
     "risk": "R0",
@@ -3046,10 +3046,10 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:04.641610+00:00"
+    "at": "2026-09-24T06:33:38.828906+00:00"
    },
    {
-    "id": "b55f3b1fe085",
+    "id": "e87f29d9ac3b",
     "gate": "*",
     "action_cap": "view.timeline",
     "risk": "R0",
@@ -3062,7 +3062,7 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
     "features": "{}",
     "human_answer": null,
     "undone_at": null,
-    "at": "2026-09-24T04:10:04.648761+00:00"
+    "at": "2026-09-24T06:33:38.837319+00:00"
    }
   ]
  },
@@ -3130,14 +3130,14 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
   "so_dong": 1,
   "dong": [
    {
-    "id": "r_a0cbdea4d6e3",
+    "id": "r_bab1ccb3f051",
     "intent_id": null,
-    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_a0cbdea4d6e3\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"chip\": \"AMS1117-3.3\", \"question\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"AMS1117-3.3\"], \"_text\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}, \"text\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}",
+    "graph": "{\"nodes\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"args\": {\"query\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}, \"when\": null, \"on_ask\": \"wait\"}, {\"id\": \"n2\", \"cap\": \"search.fetch\", \"args\": {\"candidate\": \"${n1.candidates[0]}\"}, \"when\": \"n1\", \"on_ask\": \"skip\"}, {\"id\": \"n3\", \"cap\": \"chat.report_back\", \"args\": {\"run_id\": \"r_bab1ccb3f051\"}, \"when\": \"n1\", \"on_ask\": \"wait\"}], \"intent\": {\"intent\": \"search.ask\", \"slots\": {\"chip\": \"AMS1117-3.3\", \"question\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}, \"is_big\": false, \"confidence\": 0.95, \"lang\": \"vi\", \"mentions\": [\"AMS1117-3.3\"], \"_text\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}, \"text\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\"}",
     "state": "failed",
     "working": null,
     "report": "{\"nguon_chuoi\": \"mẫu: Tìm tài liệu / linh kiện (DEV-208)\", \"state\": \"failed\", \"done\": [], \"waiting\": [{\"id\": \"n3\", \"cap\": \"chat.report_back\", \"vi\": \"chờ nút n1\"}], \"skipped\": [{\"id\": \"n2\", \"cap\": \"search.fetch\", \"vi\": \"chờ nút n1\"}], \"failed\": [{\"id\": \"n1\", \"cap\": \"search.web\", \"error\": {\"eide_code\": \"E4001\", \"name\": \"TOOL_MISSING\", \"tool\": \"search provider\", \"providers\": [\"searxng\", \"brave\", \"tavily\", \"google\"], \"alternative\": \"search.vendor\", \"message\": \"Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.\"}, \"bat_buoc\": true}]}",
     "cost_usd": null,
-    "started_at": "2026-09-24T04:09:59.825582+00:00",
+    "started_at": "2026-09-24T06:33:34.414833+00:00",
     "finished_at": null
    }
   ]
@@ -3168,13 +3168,13 @@ Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích 
   "so_dong": 1,
   "dong": [
    {
-    "id": "s_89829d716a5c",
+    "id": "s_b0bfae9c074b",
     "project": "tim-linh-kien-thay-the",
-    "opened_at": "2026-09-24T04:09:57.796790+00:00",
+    "opened_at": "2026-09-24T06:33:32.080218+00:00",
     "closed_at": null,
     "autonomy_effective": "A2",
     "stopped": 0,
-    "turns": "[{\"by\": \"human\", \"text\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\", \"at\": \"2026-09-24T04:09:58.069842+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_a0cbdea4 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T04:09:59.859009+00:00\", \"run_id\": \"r_a0cbdea4d6e3\"}]",
+    "turns": "[{\"by\": \"human\", \"text\": \"Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất\", \"at\": \"2026-09-24T06:33:32.394571+00:00\", \"run_id\": null}, {\"by\": \"agent\", \"text\": \"lượt r_bab1ccb3 → failed; HỎNG: search.web (E4001)\", \"at\": \"2026-09-24T06:33:34.458421+00:00\", \"run_id\": \"r_bab1ccb3f051\"}]",
     "undo_items": "[]",
     "summary": null
    }
@@ -3208,7 +3208,7 @@ index/
 ```
 # tìm linh kiện thay thế
 
-- 2026-09-24 11:09 — tạo dự án từ lệnh: "tìm linh kiện thay thế"
+- 2026-09-24 13:33 — tạo dự án từ lệnh: "tìm linh kiện thay thế"
 
 ```
 
@@ -3299,7 +3299,7 @@ escalation:
 project:
   id: tim-linh-kien-thay-the
   name: tìm linh kiện thay thế
-  created: '2026-09-24T04:09:57.510645+00:00'
+  created: '2026-09-24T06:33:31.850255+00:00'
   text: tìm linh kiện thay thế
 target:
   chip: null
@@ -3511,7 +3511,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Tìm linh kiện thay thế pin-to-pin cho AMS1117-3.3, nêu rõ tương thích chân, khác biệt thông số và tình trạng sản xuất
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 6.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tim-linh-kien-thay-the` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3536,8 +3536,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_89829d716a5c
-Mở lúc	24/09 04:09:57
+Phiên	s_b0bfae9c074b
+Mở lúc	24/09 06:33:32
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3570,8 +3570,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_89829d716a5c
-Mở lúc	24/09 04:09:57
+Phiên	s_b0bfae9c074b
+Mở lúc	24/09 06:33:32
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3591,7 +3591,7 @@ Số lời gọi	1
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `search.web` dừng: Chưa cấu hình công cụ tìm kiếm nào cho `search.web`. Các lựa chọn trong `models.yaml → search.providers` — searxng: đặt SEARXNG_URL; brave: đặt BRAVE_API_KEY; tavily: đặt TAVILY_API_KEY; google: đặt GOOGLE_API_KEY và GOOGLE_CSE_ID. Rẻ nhất: dựng một SearXNG cục bộ rồi đặt SEARXNG_URL, không cần khóa và không tốn tiền. Trong lúc chờ, `search.vendor` tra thẳng trang hãng theo TGT-19 §8 và đã phủ phần lớn nhu cầu.  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 2.2 s)*:
+**Tác tử trả lời** *(sau 2.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tim-linh-kien-thay-the` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3616,8 +3616,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_89829d716a5c
-Mở lúc	24/09 04:09:57
+Phiên	s_b0bfae9c074b
+Mở lúc	24/09 06:33:32
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3673,7 +3673,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC045/buoc-02.png
 
-**Tác tử trả lời** *(sau 6.4 s)*:
+**Tác tử trả lời** *(sau 6.2 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tim-linh-kien-thay-the` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3698,8 +3698,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_89829d716a5c
-Mở lúc	24/09 04:09:57
+Phiên	s_b0bfae9c074b
+Mở lúc	24/09 06:33:32
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3734,8 +3734,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_89829d716a5c
-Mở lúc	24/09 04:09:57
+Phiên	s_b0bfae9c074b
+Mở lúc	24/09 06:33:32
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -3757,7 +3757,7 @@ Số lời gọi	1
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC045/buoc-03.png
 
-**Tác tử trả lời** *(sau 2.2 s)*:
+**Tác tử trả lời** *(sau 2.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `tim-linh-kien-thay-the` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -3782,8 +3782,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_89829d716a5c
-Mở lúc	24/09 04:09:57
+Phiên	s_b0bfae9c074b
+Mở lúc	24/09 06:33:32
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2

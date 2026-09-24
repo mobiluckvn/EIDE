@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Có báo lỗi nhưng sai lý do (“không nhận ra định dạng nén”) thay vì “tệp cụt/hỏng”. \n\nGhi chú: ĐIỂM CỘNG: không suy đoán phần thiếu.",
- "giay": 24.4,
+ "giay": 17.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -36,8 +36,8 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-Ingest.png",
-  "man-03-Graph.png",
-  "man-04-NhatKy.png"
+  "man-03-Code.png",
+  "man-04-Graph.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC026/du-an/tep-thiet-ke-hong",
  "cham": {
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 24.4,
+   "giay": 17.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

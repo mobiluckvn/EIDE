@@ -29,7 +29,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "SAU [DEV-215]: `view.k9_ask` trả lời bằng một QUY TRÌNH ĐO cụ thể — “Bước 1: Chạy chương trình I2C Scanner. Nếu phần mềm quét thấy địa chỉ I2C, phần cứng bình thường…” — đúng thứ đề bài chờ: phép đo để KẾT LUẬN lỗi phần cứng hay phần mềm.\n\nGhi chú: Câu trả lời mang nhãn tầng đồng (K9) và không sửa một dòng mã nào — đúng vế thứ hai của đề bài: “không sửa code vô ích”.",
- "giay": 29.7,
+ "giay": 29.6,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 29.7,
+   "giay": 29.6,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

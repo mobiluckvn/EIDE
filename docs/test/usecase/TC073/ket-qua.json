@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Hiểu “tóm tắt lại dự án này” thành một việc KIẾN TRÚC về hệ thống LLM: hỏi “Tài liệu kiến trúc hiện tại của hệ thống dịch vụ LLM” và `arch.decompose`.",
- "giay": 21.8,
+ "giay": 22.2,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -43,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 21.8,
+   "giay": 22.2,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

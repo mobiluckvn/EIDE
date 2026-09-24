@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không nói phạm vi đã đọc, không khoanh vùng tệp. Biến đề bài thành yêu cầu “Hệ thống phải xử lý dự án 1200 tệp, 40 MB”.",
- "giay": 36.7,
+ "giay": 39.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 36.7,
+   "giay": 39.5,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

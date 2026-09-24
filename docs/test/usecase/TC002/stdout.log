@@ -23,10 +23,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/buoc-02.png
 
-**Tác tử trả lời** *(sau 79.1 s)*:
+**Tác tử trả lời** *(sau 143.8 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 7/7  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 6/7 bước, 1 bước hỏng (xem Nhật ký)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.adr`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.interface_spec`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.review`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select, arch.decompose, arch.interface_spec và 3 bước nữa.  1. `view.artifacts`  2. `arch.style_select`  3. `arch.decompose`  4. `arch.interface_spec`  5. `arch.adr`  6. `arch.review`  7. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `arch.adr` HỎNG — E5002: ADR không có trích dẫn kiểm được (đã nêu ['project.id: bo-chuyen-lan-sang-usb-cho-tv', 'signal: ram_bytes=null', 'signal: so_deadline_duoi_10ms=0']) — 'vì nhanh hơn' không kiểm được, 'vì fact f_abc ghi 1,2 µs' thì có  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 7/7  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 6/7 bước, 1 bước hỏng (xem Nhật ký)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.adr`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.interface_spec`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.review`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design: bo-chuyen-lan-sang-usb-cho-tv. Tôi sẽ view.artifacts, arch.style_select, arch.decompose, arch.interface_spec và 3 bước nữa.  1. `view.artifacts`  2. `arch.style_select`  3. `arch.decompose`  4. `arch.interface_spec`  5. `arch.adr`  6. `arch.review`  7. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `arch.adr` HỎNG — E5000: Gọi mô hình cho vai trò architect không thành: Đầu ra của `gemini-3.1-pro-preview` BỊ CẮT vì chạm trần 12288 token (lý do dừng: max_tokens). Không phải mô hình trả sai định dạng — nới `max_output` của vai trò này trong `models.yaml`, hoặc hỏi ngắn lại.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
   "items" : [
   ],
   "kind" : "requirement",
@@ -34,17 +34,17 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 }  2. `arch.style_select` — 5 trường decision  Xem đầy đủ ▾ {
   "decision" : {
     "alternatives" : [
-      "RTOS (Real-Time Operating System): Bị loại do chưa xác định được dung lượng RAM có đủ đáp ứng overhead của hệ điều hành hay không, đồng thời không có tác vụ đòi hỏi tính thời gian thực khắt khe.",
-      "Event-driven (Kiến trúc hướng sự kiện): Bị loại do hệ thống không có nhiều nguồn sự kiện bất đồng bộ phức tạp cần hàng đợi sự kiện, việc triển khai sẽ gây lãng phí tài nguyên thiết kế."
+      "RTOS (He dieu hanh thoi gian thuc): Bi loai do khong co yeu cau da nhiem uu tien va chua xac dinh duoc dung luong RAM (RTOS thuong yeu cau cap phat bo nho lon cho cac task stack).",
+      "Event-driven (Kien truc huong su kien): Bi loai do he thong khong co nhieu ngat hoac giao tiep ngoai vi phuc tap can xu ly bat dong bo, viec ap dung se lam tang do phuc tap khong can thiet."
     ],
     "facts" : [
     ],
     "reasons" : [
       "chưa có fact memory_size cho chip này — quy tắc RAM không áp dụng (nạp hộ chiếu rồi chạy lại để chắc chắn)",
       "không có tín hiệu đòi lập lịch ưu tiên",
-      "Hệ thống hiện tại chưa có thông tin về dung lượng RAM (fact memory_size bị thiếu), do đó việc sử dụng super_loop là lựa chọn an toàn nhất để tối thiểu hóa chi phí bộ nhớ.",
-      "Không có yêu cầu về lập lịch ưu tiên hoặc các tác vụ có deadline ngặt nghèo dưới 10ms, vòng lặp chính kết hợp ngắt cơ bản là đủ để xử lý luồng công việc.",
-      "Số lượng giao tiếp chặn và chu kỳ khác nhau bằng 0, không đòi hỏi cơ chế quản lý luồng phức tạp."
+      "He thong khong co yeu cau ve lap lich uu tien hoac cac tac vu co thoi han ngat ngheo duoi 10ms.",
+      "Chua co thong tin chinh xac ve dung luong RAM cua vi dieu khien, do do viec su dung vong lap chinh (super loop) giup toi thieu hoa chi phi bo nho va tranh rui ro tran ngan xep.",
+      "So luong giao tiep chan bang 0 va khong co chu ky thuc thi phuc tap, phu hop voi luong dieu khien tuan tu don gian."
     ],
     "signals" : {
       "facts" : [
@@ -60,40 +60,40 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   "module_graph" : {
     "edges" : [
       {
-        "from" : "mod_drv_usb_device",
+        "from" : "mod_drv_usb",
         "to" : "mod_hal_usb"
       },
       {
-        "from" : "mod_drv_eth_phy",
+        "from" : "mod_drv_phy",
         "to" : "mod_hal_eth"
       },
       {
-        "from" : "mod_drv_eth_phy",
-        "to" : "mod_hal_timer"
+        "from" : "mod_srv_usbnet",
+        "to" : "mod_drv_usb"
       },
       {
-        "from" : "mod_srv_usb_net",
-        "to" : "mod_drv_usb_device"
+        "from" : "mod_srv_ethmac",
+        "to" : "mod_drv_phy"
       },
       {
-        "from" : "mod_srv_eth_mac",
-        "to" : "mod_drv_eth_phy"
+        "from" : "mod_ctrl_brg",
+        "to" : "mod_srv_usbnet"
       },
       {
-        "from" : "mod_ctrl_bridge",
-        "to" : "mod_srv_usb_net"
+        "from" : "mod_ctrl_brg",
+        "to" : "mod_srv_ethmac"
       },
       {
-        "from" : "mod_ctrl_bridge",
-        "to" : "mod_srv_eth_mac"
-      },
-      {
-        "from" : "mod_app_main",
-        "to" : "mod_ctrl_bridge"
+        "from" : "mod_ctrl_brg",
+        "to" : "mod_hal_tmr"
       },
       {
         "from" : "mod_app_main",
-        "to" : "mod_hal_timer"
+        "to" : "mod_ctrl_brg"
+      },
+      {
+        "from" : "mod_app_main",
+        "to" : "mod_hal_tmr"
       }
     ],
     "modules" : [
@@ -101,13 +101,13 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         "arch_style" : "super_loop",
         "depends" : [
         ],
-        "id" : "mod_hal_timer",
+        "id" : "mod_hal_tmr",
         "layer" : "hal",
-        "name" : "HAL Timer",
+        "name" : "hal_timer",
         "req_ids" : [
           "REQ_SYS_01"
         ],
-        "responsibility" : "Cung cấp giao diện đếm thời gian và ngắt timer cơ bản cho hệ thống.",
+        "responsibility" : "Cung cấp giao diện truy xuất bộ định thời phần cứng cho các timeout và tick hệ thống.",
         "status" : "proposed"
       },
       {
@@ -116,11 +116,11 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         ],
         "id" : "mod_hal_usb",
         "layer" : "hal",
-        "name" : "HAL USB",
+        "name" : "hal_usb",
         "req_ids" : [
           "REQ_USB_01"
         ],
-        "responsibility" : "Trừu tượng hóa các thanh ghi điều khiển ngoại vi USB của vi điều khiển.",
+        "responsibility" : "Trừu tượng hóa các thanh ghi và ngắt của ngoại vi USB.",
         "status" : "proposed"
       },
       {
@@ -129,11 +129,11 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         ],
         "id" : "mod_hal_eth",
         "layer" : "hal",
-        "name" : "HAL Ethernet",
+        "name" : "hal_eth",
         "req_ids" : [
           "REQ_ETH_01"
         ],
-        "responsibility" : "Trừu tượng hóa các thanh ghi điều khiển ngoại vi Ethernet MAC.",
+        "responsibility" : "Trừu tượng hóa các thanh ghi của bộ điều khiển Ethernet MAC.",
         "status" : "proposed"
       },
       {
@@ -141,87 +141,86 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         "depends" : [
           "mod_hal_usb"
         ],
-        "id" : "mod_drv_usb_device",
+        "id" : "mod_drv_usb",
         "layer" : "driver",
-        "name" : "Driver USB Device",
+        "name" : "drv_usb_device",
         "req_ids" : [
           "REQ_USB_02"
         ],
-        "responsibility" : "Quản lý các endpoint và xử lý ngắt mức thấp của thiết bị USB.",
+        "responsibility" : "Điều khiển thiết bị USB ở mức cơ bản bao gồm quản lý endpoint và truyền nhận dữ liệu thô.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_hal_eth",
-          "mod_hal_timer"
+          "mod_hal_eth"
         ],
-        "id" : "mod_drv_eth_phy",
+        "id" : "mod_drv_phy",
         "layer" : "driver",
-        "name" : "Driver Ethernet PHY",
+        "name" : "drv_eth_phy",
         "req_ids" : [
           "REQ_ETH_02"
         ],
-        "responsibility" : "Giao tiếp và cấu hình chip vật lý Ethernet PHY qua bus MDIO.",
+        "responsibility" : "Giao tiếp và cấu hình chip vật lý Ethernet PHY để nhận biết trạng thái cáp mạng.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_drv_usb_device"
+          "mod_drv_usb"
         ],
-        "id" : "mod_srv_usb_net",
+        "id" : "mod_srv_usbnet",
         "layer" : "service",
-        "name" : "Service USB Network",
+        "name" : "srv_usb_net",
         "req_ids" : [
-          "REQ_NET_01"
+          "REQ_USB_03"
         ],
-        "responsibility" : "Triển khai giao thức mạng qua USB như CDC-ECM hoặc RNDIS để TV nhận diện.",
+        "responsibility" : "Triển khai giao thức mạng qua USB như CDC-ECM hoặc RNDIS để TV nhận diện là card mạng.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_drv_eth_phy"
+          "mod_drv_phy"
         ],
-        "id" : "mod_srv_eth_mac",
+        "id" : "mod_srv_ethmac",
         "layer" : "service",
-        "name" : "Service Ethernet MAC",
+        "name" : "srv_eth_mac",
         "req_ids" : [
-          "REQ_NET_02"
+          "REQ_ETH_03"
         ],
-        "responsibility" : "Xử lý truyền nhận và kiểm tra tính toàn vẹn của các khung truyền Ethernet.",
+        "responsibility" : "Quản lý việc đóng gói và giải nén các khung truyền Ethernet frames.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_srv_usb_net",
-          "mod_srv_eth_mac"
+          "mod_srv_usbnet",
+          "mod_srv_ethmac",
+          "mod_hal_tmr"
         ],
-        "id" : "mod_ctrl_bridge",
+        "id" : "mod_ctrl_brg",
         "layer" : "control",
-        "name" : "Control Bridge",
+        "name" : "ctrl_bridge",
         "req_ids" : [
-          "REQ_BRG_01",
-          "REQ_BRG_02"
+          "REQ_BRG_01"
         ],
-        "responsibility" : "Điều phối luồng dữ liệu hai chiều và đồng bộ trạng thái kết nối giữa USB và Ethernet.",
+        "responsibility" : "Điều phối luồng dữ liệu hai chiều giữa giao diện mạng USB và Ethernet MAC.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_ctrl_bridge",
-          "mod_hal_timer"
+          "mod_ctrl_brg",
+          "mod_hal_tmr"
         ],
         "id" : "mod_app_main",
         "layer" : "app",
-        "name" : "App Main",
+        "name" : "app_main",
         "req_ids" : [
-          "REQ_APP_01"
+          "REQ_SYS_02"
         ],
-        "responsibility" : "Khởi tạo hệ thống và duy trì vòng lặp vô tận để xử lý các sự kiện mạng.",
+        "responsibility" : "Khởi tạo hệ thống và thực thi vòng lặp vô tận super-loop để gọi các hàm xử lý của các module.",
         "status" : "proposed"
       }
     ]
@@ -240,124 +239,114 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       ],
       "messages" : [
       ],
-      "module" : "mod_app_main"
+      "module" : "app_main"
     },
     {
       "functions" : [
         {
           "errors" : [
+            "ERR_OK",
             "ERR_INIT_FAILED"
           ],
           "isr_safe" : false,
-          "sig" : "int bridge_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t ctrl_bridge_init(void)",
+          "timing" : "blocking, < 10ms"
         },
         {
           "errors" : [
+          ],
+          "isr_safe" : false,
+          "sig" : "void ctrl_bridge_process(void)",
+          "timing" : "non-blocking, < 1ms"
+        }
+      ],
+      "messages" : [
+      ],
+      "module" : "ctrl_bridge"
+    },
+    {
+      "functions" : [
+        {
+          "errors" : [
+            "ERR_OK",
             "ERR_TIMEOUT",
+            "ERR_NOT_FOUND"
+          ],
+          "isr_safe" : false,
+          "sig" : "int8_t drv_eth_phy_init(void)",
+          "timing" : "blocking, < 50ms"
+        },
+        {
+          "errors" : [
+            "ERR_OK",
             "ERR_BUSY"
           ],
           "isr_safe" : false,
-          "sig" : "int bridge_process(void)",
-          "timing" : "non-blocking"
+          "sig" : "int8_t drv_eth_phy_get_link_status(bool *link_up)",
+          "timing" : "non-blocking, < 100us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_ctrl_bridge"
+      "module" : "drv_eth_phy"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_PHY_NOT_FOUND"
+            "ERR_OK",
+            "ERR_HW_FAULT"
           ],
           "isr_safe" : false,
-          "sig" : "int phy_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t drv_usb_device_init(void)",
+          "timing" : "blocking, < 10ms"
         },
         {
           "errors" : [
-            "ERR_MDIO_TIMEOUT"
           ],
           "isr_safe" : false,
-          "sig" : "int phy_read_reg(uint8_t reg, uint16_t *val)",
-          "timing" : "blocking"
-        },
-        {
-          "errors" : [
-            "ERR_MDIO_TIMEOUT"
-          ],
-          "isr_safe" : false,
-          "sig" : "int phy_write_reg(uint8_t reg, uint16_t val)",
-          "timing" : "blocking"
+          "sig" : "void drv_usb_device_poll(void)",
+          "timing" : "non-blocking, < 500us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_drv_eth_phy"
+      "module" : "drv_usb_device"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_USB_INIT"
+            "ERR_OK",
+            "ERR_HW_FAULT"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_dev_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t hal_eth_init(void)",
+          "timing" : "blocking, < 5ms"
         },
         {
           "errors" : [
-            "ERR_USB_EP_STALL"
+            "ERR_OK",
+            "ERR_TX_FULL",
+            "ERR_INVALID_ARG"
           ],
-          "isr_safe" : true,
-          "sig" : "int usb_dev_ep_read(uint8_t ep, uint8_t *buf, uint16_t len)",
-          "timing" : "non-blocking"
+          "isr_safe" : false,
+          "sig" : "int8_t hal_eth_tx(const uint8_t *data, uint16_t len)",
+          "timing" : "non-blocking, < 100us"
         },
         {
           "errors" : [
-            "ERR_USB_EP_STALL"
+            "ERR_RX_EMPTY",
+            "ERR_OVERFLOW"
           ],
-          "isr_safe" : true,
-          "sig" : "int usb_dev_ep_write(uint8_t ep, const uint8_t *buf, uint16_t len)",
-          "timing" : "non-blocking"
+          "isr_safe" : false,
+          "sig" : "int16_t hal_eth_rx(uint8_t *data, uint16_t max_len)",
+          "timing" : "non-blocking, < 100us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_drv_usb_device"
-    },
-    {
-      "functions" : [
-        {
-          "errors" : [
-            "ERR_HAL_INIT"
-          ],
-          "isr_safe" : false,
-          "sig" : "int hal_eth_init(void)",
-          "timing" : "blocking"
-        },
-        {
-          "errors" : [
-            "ERR_TX_BUSY"
-          ],
-          "isr_safe" : true,
-          "sig" : "int hal_eth_tx(const uint8_t *data, uint16_t len)",
-          "timing" : "non-blocking"
-        },
-        {
-          "errors" : [
-            "ERR_RX_EMPTY"
-          ],
-          "isr_safe" : true,
-          "sig" : "int hal_eth_rx(uint8_t *data, uint16_t *len)",
-          "timing" : "non-blocking"
-        }
-      ],
-      "messages" : [
-      ],
-      "module" : "mod_hal_eth"
+      "module" : "hal_eth"
     },
     {
       "functions" : [
@@ -366,141 +355,143 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
           ],
           "isr_safe" : false,
           "sig" : "void hal_timer_init(void)",
-          "timing" : "blocking"
+          "timing" : "blocking, < 1ms"
         },
         {
           "errors" : [
           ],
           "isr_safe" : true,
           "sig" : "uint32_t hal_timer_get_ms(void)",
-          "timing" : "fast"
+          "timing" : "O(1)"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_hal_timer"
+      "module" : "hal_timer"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_HAL_INIT"
+            "ERR_OK",
+            "ERR_HW_FAULT"
           ],
           "isr_safe" : false,
-          "sig" : "int hal_usb_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t hal_usb_init(void)",
+          "timing" : "blocking, < 5ms"
         },
         {
           "errors" : [
           ],
           "isr_safe" : false,
           "sig" : "void hal_usb_enable_interrupts(void)",
-          "timing" : "fast"
+          "timing" : "O(1)"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_hal_usb"
+      "module" : "hal_usb"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_MAC_INIT"
+            "ERR_OK",
+            "ERR_INIT_FAILED"
           ],
           "isr_safe" : false,
-          "sig" : "int eth_mac_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_eth_mac_init(void)",
+          "timing" : "blocking, < 5ms"
         },
         {
           "errors" : [
-            "ERR_MAC_TX_FAIL"
+            "ERR_OK",
+            "ERR_TX_FULL",
+            "ERR_INVALID_ARG"
           ],
           "isr_safe" : false,
-          "sig" : "int eth_mac_send_frame(const uint8_t *frame, uint16_t len)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_eth_mac_send_frame(const uint8_t *frame, uint16_t len)",
+          "timing" : "non-blocking, < 200us"
         },
         {
           "errors" : [
-            "ERR_MAC_RX_EMPTY"
+            "ERR_RX_EMPTY",
+            "ERR_OVERFLOW"
           ],
           "isr_safe" : false,
-          "sig" : "int eth_mac_recv_frame(uint8_t *frame, uint16_t *len)",
-          "timing" : "non-blocking"
+          "sig" : "int16_t srv_eth_mac_receive_frame(uint8_t *frame, uint16_t max_len)",
+          "timing" : "non-blocking, < 200us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_srv_eth_mac"
+      "module" : "srv_eth_mac"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_NET_INIT"
+            "ERR_OK",
+            "ERR_INIT_FAILED"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_net_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_usb_net_init(void)",
+          "timing" : "blocking, < 10ms"
         },
         {
           "errors" : [
-            "ERR_NET_TX_FAIL"
+            "ERR_OK",
+            "ERR_TX_FULL",
+            "ERR_INVALID_ARG"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_net_send_packet(const uint8_t *pkt, uint16_t len)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_usb_net_tx(const uint8_t *packet, uint16_t len)",
+          "timing" : "non-blocking, < 200us"
         },
         {
           "errors" : [
-            "ERR_NET_RX_EMPTY"
+            "ERR_RX_EMPTY",
+            "ERR_OVERFLOW"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_net_recv_packet(uint8_t *pkt, uint16_t *len)",
-          "timing" : "non-blocking"
+          "sig" : "int16_t srv_usb_net_rx(uint8_t *packet, uint16_t max_len)",
+          "timing" : "non-blocking, < 200us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_srv_usb_net"
+      "module" : "srv_usb_net"
     }
   ]
-}  5. `arch.review` — 9 findings  Xem đầy đủ ▾ {
+}  5. `arch.review` — 10 findings  Xem đầy đủ ▾ {
   "findings" : [
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int usb_dev_ep_read(uint8_t ep, uint8_t *buf, uint16_t len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_drv_usb_device",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_srv_usbnet cùng lớp service",
+      "module" : "mod_ctrl_brg",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
     },
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int usb_dev_ep_write(uint8_t ep, const uint8_t *buf, uint16_t len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_drv_usb_device",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_srv_ethmac cùng lớp service",
+      "module" : "mod_ctrl_brg",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
     },
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int hal_eth_tx(const uint8_t *data, uint16_t len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_hal_eth",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_drv_phy cùng lớp service",
+      "module" : "mod_srv_ethmac",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
     },
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int hal_eth_rx(uint8_t *data, uint16_t *len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_hal_eth",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_drv_usb cùng lớp service",
+      "module" : "mod_srv_usbnet",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
-    },
-    {
-      "message" : "Module dùng ngoại vi nhưng không phụ thuộc lớp hal\/clock: dùng ['timer'] nhưng không phụ thuộc module lớp hal",
-      "module" : "mod_hal_timer",
-      "nguon" : "quy tắc",
-      "rule" : "thu_tu_clock",
-      "severity" : "medium"
     },
     {
       "message" : "Không module nào phụ trách watchdog: không module nào nhắc tới watchdog",
@@ -510,30 +501,44 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "severity" : "medium"
     },
     {
-      "message" : "Vi phạm phân lớp: mod_app_main (lớp app) phụ thuộc trực tiếp vào mod_hal_timer (lớp hal), bỏ qua các lớp trung gian.",
+      "message" : "Vi phạm phân lớp (skip-level dependency): Lớp app phụ thuộc trực tiếp vào lớp hal (mod_hal_tmr) thay vì thông qua lớp service hoặc OS wrapper.",
       "module" : "mod_app_main",
       "nguon" : "mô hình",
-      "rule" : "layering_violation",
+      "rule" : "layering",
       "severity" : "medium"
     },
     {
-      "message" : "Thiếu phụ thuộc: mod_srv_eth_mac chịu trách nhiệm xử lý khung truyền MAC nhưng không phụ thuộc vào mod_hal_eth để gọi các hàm truyền\/nhận phần cứng (hal_eth_tx, hal_eth_rx).",
-      "module" : "mod_srv_eth_mac",
+      "message" : "Vi phạm phân lớp (skip-level dependency): Lớp control phụ thuộc trực tiếp vào lớp hal (mod_hal_tmr).",
+      "module" : "mod_ctrl_brg",
       "nguon" : "mô hình",
-      "rule" : "missing_dependency",
+      "rule" : "layering",
+      "severity" : "medium"
+    },
+    {
+      "message" : "Thiếu cơ chế quản lý bộ đệm (Buffer Management): Việc chuyển tiếp dữ liệu giữa USB và Ethernet yêu cầu hàng đợi (queue\/ring buffer) để tránh mất gói tin khi tốc độ hai bên lệch nhau, nhưng không có module nào chịu trách nhiệm cấp phát và quản lý bộ nhớ này.",
+      "module" : "mod_ctrl_brg",
+      "nguon" : "mô hình",
+      "rule" : "resource_management",
       "severity" : "high"
     },
     {
-      "message" : "Thiếu hàm xử lý ngắt (ISR): Module có hàm hal_usb_enable_interrupts để bật ngắt nhưng không định nghĩa hàm xử lý ngắt (IRQ handler) nào trong giao diện.",
-      "module" : "mod_hal_usb",
+      "message" : "Thiếu tích hợp DMA: Truyền nhận dữ liệu mạng tốc độ cao trong kiến trúc super-loop mà không có DMA sẽ dẫn đến thắt cổ chai CPU và rớt gói tin (packet loss).",
+      "module" : "mod_hal_eth",
       "nguon" : "mô hình",
-      "rule" : "missing_isr",
+      "rule" : "performance",
       "severity" : "high"
+    },
+    {
+      "message" : "Thiếu cơ chế báo cáo sự kiện bất đồng bộ: Khi trạng thái cáp mạng thay đổi (cắm\/rút), kiến trúc super-loop hiện tại không rõ cách thức ngắt hoặc cờ trạng thái được truyền lên mod_srv_usbnet để báo cho TV biết trạng thái link.",
+      "module" : "mod_drv_phy",
+      "nguon" : "mô hình",
+      "rule" : "event_handling",
+      "severity" : "medium"
     }
   ]
 }  6. `chat.report_back` — 6 trường report · 355 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.121974,
+    "cost" : 0.097572999999999993,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -545,9 +550,9 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "chat.fill_defaults",
       "project.create",
       "search.reference_projects",
-      "view.artifacts",
       "chat.orchestrate",
       "chat.restate",
+      "view.artifacts",
       "project.status",
       "view.timeline",
       "view.artifacts",
@@ -603,26 +608,26 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_43155d6149ca",
+    "run_id" : "r_3c1b4114d76f",
     "undo" : [
-      "f47b3fe0e4a9",
-      "462e30ebbb69",
-      "537dd723cea2",
-      "abcf7eedc350"
+      "76c8ff2bcdc4",
+      "6e45b3e050ef",
+      "b5ced79dee1d",
+      "ffb708a219a4"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 65 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review\nHoàn tác được 4 mục đến 2026-09-25T03:51.\nChi phí mô hình: 0.1220 USD."
+  "text" : "Đã làm 65 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review\nHoàn tác được 4 mục đến 2026-09-25T06:12.\nChi phí mô hình: 0.0976 USD."
 }  Lượt chạy xong — 1 bước tuỳ chọn hỏng, xem dòng ✖ ở trên.  Đã làm 69 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review, chat.report_back
 → `view.artifacts` làm ra: 0 id + các trường chính của loại ấy; 0 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
 → `arch.style_select` làm ra: 5 trường style — xem ở màn Yêu cầu & kiến trúc.
 → `arch.decompose` làm ra: 2 trường modules[] — xem ở màn Yêu cầu & kiến trúc.
 → `arch.interface_spec` làm ra: 9 module — xem ở màn Yêu cầu & kiến trúc.
-→ `arch.review` làm ra: 9 severity — xem ở màn Yêu cầu & kiến trúc.
+→ `arch.review` làm ra: 10 severity — xem ở màn Yêu cầu & kiến trúc.
 → `chat.report_back` làm ra: 6 trường report; 355 ký tự text — xem ở màn mặc định.
-Hoàn tác được 4 mục đến 2026-09-25T03:51.
-Chi phí mô hình: 0.1220 USD.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+Hoàn tác được 4 mục đến 2026-09-25T06:12.
+Chi phí mô hình: 0.0976 USD.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
@@ -667,10 +672,10 @@ Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 n�
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC002/buoc-03.png
 
-**Tác tử trả lời** *(sau 4.6 s)*:
+**Tác tử trả lời** *(sau 4.5 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 7/7  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 6/7 bước, 1 bước hỏng (xem Nhật ký)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.adr`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.interface_spec`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.review`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, arch.style_select, arch.decompose, arch.interface_spec và 3 bước nữa.  1. `view.artifacts`  2. `arch.style_select`  3. `arch.decompose`  4. `arch.interface_spec`  5. `arch.adr`  6. `arch.review`  7. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `arch.adr` HỎNG — E5002: ADR không có trích dẫn kiểm được (đã nêu ['project.id: bo-chuyen-lan-sang-usb-cho-tv', 'signal: ram_bytes=null', 'signal: so_deadline_duoi_10ms=0']) — 'vì nhanh hơn' không kiểm được, 'vì fact f_abc ghi 1,2 µs' thì có  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn tham khảo  Đã nhận (ý hiểu: `arch.design`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Đề xuất 2 đến 4 phương án kiến trúc cho việc này, mỗi phương án nêu chi phí ước tính, độ khó, rủi ro kỹ thuật và nguồn t  bước 7/7  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 6/7 bước, 1 bước hỏng (xem Nhật ký)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.style_select`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.decompose`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.adr`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.interface_spec`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `arch.review`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là arch.design: bo-chuyen-lan-sang-usb-cho-tv. Tôi sẽ view.artifacts, arch.style_select, arch.decompose, arch.interface_spec và 3 bước nữa.  1. `view.artifacts`  2. `arch.style_select`  3. `arch.decompose`  4. `arch.interface_spec`  5. `arch.adr`  6. `arch.review`  7. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `arch.adr` HỎNG — E5000: Gọi mô hình cho vai trò architect không thành: Đầu ra của `gemini-3.1-pro-preview` BỊ CẮT vì chạm trần 12288 token (lý do dừng: max_tokens). Không phải mô hình trả sai định dạng — nới `max_output` của vai trò này trong `models.yaml`, hoặc hỏi ngắn lại.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 0 items · requirement kind · 0 total  Xem đầy đủ ▾ {
   "items" : [
   ],
   "kind" : "requirement",
@@ -678,17 +683,17 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 }  2. `arch.style_select` — 5 trường decision  Xem đầy đủ ▾ {
   "decision" : {
     "alternatives" : [
-      "RTOS (Real-Time Operating System): Bị loại do chưa xác định được dung lượng RAM có đủ đáp ứng overhead của hệ điều hành hay không, đồng thời không có tác vụ đòi hỏi tính thời gian thực khắt khe.",
-      "Event-driven (Kiến trúc hướng sự kiện): Bị loại do hệ thống không có nhiều nguồn sự kiện bất đồng bộ phức tạp cần hàng đợi sự kiện, việc triển khai sẽ gây lãng phí tài nguyên thiết kế."
+      "RTOS (He dieu hanh thoi gian thuc): Bi loai do khong co yeu cau da nhiem uu tien va chua xac dinh duoc dung luong RAM (RTOS thuong yeu cau cap phat bo nho lon cho cac task stack).",
+      "Event-driven (Kien truc huong su kien): Bi loai do he thong khong co nhieu ngat hoac giao tiep ngoai vi phuc tap can xu ly bat dong bo, viec ap dung se lam tang do phuc tap khong can thiet."
     ],
     "facts" : [
     ],
     "reasons" : [
       "chưa có fact memory_size cho chip này — quy tắc RAM không áp dụng (nạp hộ chiếu rồi chạy lại để chắc chắn)",
       "không có tín hiệu đòi lập lịch ưu tiên",
-      "Hệ thống hiện tại chưa có thông tin về dung lượng RAM (fact memory_size bị thiếu), do đó việc sử dụng super_loop là lựa chọn an toàn nhất để tối thiểu hóa chi phí bộ nhớ.",
-      "Không có yêu cầu về lập lịch ưu tiên hoặc các tác vụ có deadline ngặt nghèo dưới 10ms, vòng lặp chính kết hợp ngắt cơ bản là đủ để xử lý luồng công việc.",
-      "Số lượng giao tiếp chặn và chu kỳ khác nhau bằng 0, không đòi hỏi cơ chế quản lý luồng phức tạp."
+      "He thong khong co yeu cau ve lap lich uu tien hoac cac tac vu co thoi han ngat ngheo duoi 10ms.",
+      "Chua co thong tin chinh xac ve dung luong RAM cua vi dieu khien, do do viec su dung vong lap chinh (super loop) giup toi thieu hoa chi phi bo nho va tranh rui ro tran ngan xep.",
+      "So luong giao tiep chan bang 0 va khong co chu ky thuc thi phuc tap, phu hop voi luong dieu khien tuan tu don gian."
     ],
     "signals" : {
       "facts" : [
@@ -704,40 +709,40 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   "module_graph" : {
     "edges" : [
       {
-        "from" : "mod_drv_usb_device",
+        "from" : "mod_drv_usb",
         "to" : "mod_hal_usb"
       },
       {
-        "from" : "mod_drv_eth_phy",
+        "from" : "mod_drv_phy",
         "to" : "mod_hal_eth"
       },
       {
-        "from" : "mod_drv_eth_phy",
-        "to" : "mod_hal_timer"
+        "from" : "mod_srv_usbnet",
+        "to" : "mod_drv_usb"
       },
       {
-        "from" : "mod_srv_usb_net",
-        "to" : "mod_drv_usb_device"
+        "from" : "mod_srv_ethmac",
+        "to" : "mod_drv_phy"
       },
       {
-        "from" : "mod_srv_eth_mac",
-        "to" : "mod_drv_eth_phy"
+        "from" : "mod_ctrl_brg",
+        "to" : "mod_srv_usbnet"
       },
       {
-        "from" : "mod_ctrl_bridge",
-        "to" : "mod_srv_usb_net"
+        "from" : "mod_ctrl_brg",
+        "to" : "mod_srv_ethmac"
       },
       {
-        "from" : "mod_ctrl_bridge",
-        "to" : "mod_srv_eth_mac"
-      },
-      {
-        "from" : "mod_app_main",
-        "to" : "mod_ctrl_bridge"
+        "from" : "mod_ctrl_brg",
+        "to" : "mod_hal_tmr"
       },
       {
         "from" : "mod_app_main",
-        "to" : "mod_hal_timer"
+        "to" : "mod_ctrl_brg"
+      },
+      {
+        "from" : "mod_app_main",
+        "to" : "mod_hal_tmr"
       }
     ],
     "modules" : [
@@ -745,13 +750,13 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         "arch_style" : "super_loop",
         "depends" : [
         ],
-        "id" : "mod_hal_timer",
+        "id" : "mod_hal_tmr",
         "layer" : "hal",
-        "name" : "HAL Timer",
+        "name" : "hal_timer",
         "req_ids" : [
           "REQ_SYS_01"
         ],
-        "responsibility" : "Cung cấp giao diện đếm thời gian và ngắt timer cơ bản cho hệ thống.",
+        "responsibility" : "Cung cấp giao diện truy xuất bộ định thời phần cứng cho các timeout và tick hệ thống.",
         "status" : "proposed"
       },
       {
@@ -760,11 +765,11 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         ],
         "id" : "mod_hal_usb",
         "layer" : "hal",
-        "name" : "HAL USB",
+        "name" : "hal_usb",
         "req_ids" : [
           "REQ_USB_01"
         ],
-        "responsibility" : "Trừu tượng hóa các thanh ghi điều khiển ngoại vi USB của vi điều khiển.",
+        "responsibility" : "Trừu tượng hóa các thanh ghi và ngắt của ngoại vi USB.",
         "status" : "proposed"
       },
       {
@@ -773,11 +778,11 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         ],
         "id" : "mod_hal_eth",
         "layer" : "hal",
-        "name" : "HAL Ethernet",
+        "name" : "hal_eth",
         "req_ids" : [
           "REQ_ETH_01"
         ],
-        "responsibility" : "Trừu tượng hóa các thanh ghi điều khiển ngoại vi Ethernet MAC.",
+        "responsibility" : "Trừu tượng hóa các thanh ghi của bộ điều khiển Ethernet MAC.",
         "status" : "proposed"
       },
       {
@@ -785,87 +790,86 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
         "depends" : [
           "mod_hal_usb"
         ],
-        "id" : "mod_drv_usb_device",
+        "id" : "mod_drv_usb",
         "layer" : "driver",
-        "name" : "Driver USB Device",
+        "name" : "drv_usb_device",
         "req_ids" : [
           "REQ_USB_02"
         ],
-        "responsibility" : "Quản lý các endpoint và xử lý ngắt mức thấp của thiết bị USB.",
+        "responsibility" : "Điều khiển thiết bị USB ở mức cơ bản bao gồm quản lý endpoint và truyền nhận dữ liệu thô.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_hal_eth",
-          "mod_hal_timer"
+          "mod_hal_eth"
         ],
-        "id" : "mod_drv_eth_phy",
+        "id" : "mod_drv_phy",
         "layer" : "driver",
-        "name" : "Driver Ethernet PHY",
+        "name" : "drv_eth_phy",
         "req_ids" : [
           "REQ_ETH_02"
         ],
-        "responsibility" : "Giao tiếp và cấu hình chip vật lý Ethernet PHY qua bus MDIO.",
+        "responsibility" : "Giao tiếp và cấu hình chip vật lý Ethernet PHY để nhận biết trạng thái cáp mạng.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_drv_usb_device"
+          "mod_drv_usb"
         ],
-        "id" : "mod_srv_usb_net",
+        "id" : "mod_srv_usbnet",
         "layer" : "service",
-        "name" : "Service USB Network",
+        "name" : "srv_usb_net",
         "req_ids" : [
-          "REQ_NET_01"
+          "REQ_USB_03"
         ],
-        "responsibility" : "Triển khai giao thức mạng qua USB như CDC-ECM hoặc RNDIS để TV nhận diện.",
+        "responsibility" : "Triển khai giao thức mạng qua USB như CDC-ECM hoặc RNDIS để TV nhận diện là card mạng.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_drv_eth_phy"
+          "mod_drv_phy"
         ],
-        "id" : "mod_srv_eth_mac",
+        "id" : "mod_srv_ethmac",
         "layer" : "service",
-        "name" : "Service Ethernet MAC",
+        "name" : "srv_eth_mac",
         "req_ids" : [
-          "REQ_NET_02"
+          "REQ_ETH_03"
         ],
-        "responsibility" : "Xử lý truyền nhận và kiểm tra tính toàn vẹn của các khung truyền Ethernet.",
+        "responsibility" : "Quản lý việc đóng gói và giải nén các khung truyền Ethernet frames.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_srv_usb_net",
-          "mod_srv_eth_mac"
+          "mod_srv_usbnet",
+          "mod_srv_ethmac",
+          "mod_hal_tmr"
         ],
-        "id" : "mod_ctrl_bridge",
+        "id" : "mod_ctrl_brg",
         "layer" : "control",
-        "name" : "Control Bridge",
+        "name" : "ctrl_bridge",
         "req_ids" : [
-          "REQ_BRG_01",
-          "REQ_BRG_02"
+          "REQ_BRG_01"
         ],
-        "responsibility" : "Điều phối luồng dữ liệu hai chiều và đồng bộ trạng thái kết nối giữa USB và Ethernet.",
+        "responsibility" : "Điều phối luồng dữ liệu hai chiều giữa giao diện mạng USB và Ethernet MAC.",
         "status" : "proposed"
       },
       {
         "arch_style" : "super_loop",
         "depends" : [
-          "mod_ctrl_bridge",
-          "mod_hal_timer"
+          "mod_ctrl_brg",
+          "mod_hal_tmr"
         ],
         "id" : "mod_app_main",
         "layer" : "app",
-        "name" : "App Main",
+        "name" : "app_main",
         "req_ids" : [
-          "REQ_APP_01"
+          "REQ_SYS_02"
         ],
-        "responsibility" : "Khởi tạo hệ thống và duy trì vòng lặp vô tận để xử lý các sự kiện mạng.",
+        "responsibility" : "Khởi tạo hệ thống và thực thi vòng lặp vô tận super-loop để gọi các hàm xử lý của các module.",
         "status" : "proposed"
       }
     ]
@@ -884,124 +888,114 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       ],
       "messages" : [
       ],
-      "module" : "mod_app_main"
+      "module" : "app_main"
     },
     {
       "functions" : [
         {
           "errors" : [
+            "ERR_OK",
             "ERR_INIT_FAILED"
           ],
           "isr_safe" : false,
-          "sig" : "int bridge_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t ctrl_bridge_init(void)",
+          "timing" : "blocking, < 10ms"
         },
         {
           "errors" : [
+          ],
+          "isr_safe" : false,
+          "sig" : "void ctrl_bridge_process(void)",
+          "timing" : "non-blocking, < 1ms"
+        }
+      ],
+      "messages" : [
+      ],
+      "module" : "ctrl_bridge"
+    },
+    {
+      "functions" : [
+        {
+          "errors" : [
+            "ERR_OK",
             "ERR_TIMEOUT",
+            "ERR_NOT_FOUND"
+          ],
+          "isr_safe" : false,
+          "sig" : "int8_t drv_eth_phy_init(void)",
+          "timing" : "blocking, < 50ms"
+        },
+        {
+          "errors" : [
+            "ERR_OK",
             "ERR_BUSY"
           ],
           "isr_safe" : false,
-          "sig" : "int bridge_process(void)",
-          "timing" : "non-blocking"
+          "sig" : "int8_t drv_eth_phy_get_link_status(bool *link_up)",
+          "timing" : "non-blocking, < 100us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_ctrl_bridge"
+      "module" : "drv_eth_phy"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_PHY_NOT_FOUND"
+            "ERR_OK",
+            "ERR_HW_FAULT"
           ],
           "isr_safe" : false,
-          "sig" : "int phy_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t drv_usb_device_init(void)",
+          "timing" : "blocking, < 10ms"
         },
         {
           "errors" : [
-            "ERR_MDIO_TIMEOUT"
           ],
           "isr_safe" : false,
-          "sig" : "int phy_read_reg(uint8_t reg, uint16_t *val)",
-          "timing" : "blocking"
-        },
-        {
-          "errors" : [
-            "ERR_MDIO_TIMEOUT"
-          ],
-          "isr_safe" : false,
-          "sig" : "int phy_write_reg(uint8_t reg, uint16_t val)",
-          "timing" : "blocking"
+          "sig" : "void drv_usb_device_poll(void)",
+          "timing" : "non-blocking, < 500us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_drv_eth_phy"
+      "module" : "drv_usb_device"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_USB_INIT"
+            "ERR_OK",
+            "ERR_HW_FAULT"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_dev_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t hal_eth_init(void)",
+          "timing" : "blocking, < 5ms"
         },
         {
           "errors" : [
-            "ERR_USB_EP_STALL"
+            "ERR_OK",
+            "ERR_TX_FULL",
+            "ERR_INVALID_ARG"
           ],
-          "isr_safe" : true,
-          "sig" : "int usb_dev_ep_read(uint8_t ep, uint8_t *buf, uint16_t len)",
-          "timing" : "non-blocking"
+          "isr_safe" : false,
+          "sig" : "int8_t hal_eth_tx(const uint8_t *data, uint16_t len)",
+          "timing" : "non-blocking, < 100us"
         },
         {
           "errors" : [
-            "ERR_USB_EP_STALL"
+            "ERR_RX_EMPTY",
+            "ERR_OVERFLOW"
           ],
-          "isr_safe" : true,
-          "sig" : "int usb_dev_ep_write(uint8_t ep, const uint8_t *buf, uint16_t len)",
-          "timing" : "non-blocking"
+          "isr_safe" : false,
+          "sig" : "int16_t hal_eth_rx(uint8_t *data, uint16_t max_len)",
+          "timing" : "non-blocking, < 100us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_drv_usb_device"
-    },
-    {
-      "functions" : [
-        {
-          "errors" : [
-            "ERR_HAL_INIT"
-          ],
-          "isr_safe" : false,
-          "sig" : "int hal_eth_init(void)",
-          "timing" : "blocking"
-        },
-        {
-          "errors" : [
-            "ERR_TX_BUSY"
-          ],
-          "isr_safe" : true,
-          "sig" : "int hal_eth_tx(const uint8_t *data, uint16_t len)",
-          "timing" : "non-blocking"
-        },
-        {
-          "errors" : [
-            "ERR_RX_EMPTY"
-          ],
-          "isr_safe" : true,
-          "sig" : "int hal_eth_rx(uint8_t *data, uint16_t *len)",
-          "timing" : "non-blocking"
-        }
-      ],
-      "messages" : [
-      ],
-      "module" : "mod_hal_eth"
+      "module" : "hal_eth"
     },
     {
       "functions" : [
@@ -1010,141 +1004,143 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
           ],
           "isr_safe" : false,
           "sig" : "void hal_timer_init(void)",
-          "timing" : "blocking"
+          "timing" : "blocking, < 1ms"
         },
         {
           "errors" : [
           ],
           "isr_safe" : true,
           "sig" : "uint32_t hal_timer_get_ms(void)",
-          "timing" : "fast"
+          "timing" : "O(1)"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_hal_timer"
+      "module" : "hal_timer"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_HAL_INIT"
+            "ERR_OK",
+            "ERR_HW_FAULT"
           ],
           "isr_safe" : false,
-          "sig" : "int hal_usb_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t hal_usb_init(void)",
+          "timing" : "blocking, < 5ms"
         },
         {
           "errors" : [
           ],
           "isr_safe" : false,
           "sig" : "void hal_usb_enable_interrupts(void)",
-          "timing" : "fast"
+          "timing" : "O(1)"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_hal_usb"
+      "module" : "hal_usb"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_MAC_INIT"
+            "ERR_OK",
+            "ERR_INIT_FAILED"
           ],
           "isr_safe" : false,
-          "sig" : "int eth_mac_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_eth_mac_init(void)",
+          "timing" : "blocking, < 5ms"
         },
         {
           "errors" : [
-            "ERR_MAC_TX_FAIL"
+            "ERR_OK",
+            "ERR_TX_FULL",
+            "ERR_INVALID_ARG"
           ],
           "isr_safe" : false,
-          "sig" : "int eth_mac_send_frame(const uint8_t *frame, uint16_t len)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_eth_mac_send_frame(const uint8_t *frame, uint16_t len)",
+          "timing" : "non-blocking, < 200us"
         },
         {
           "errors" : [
-            "ERR_MAC_RX_EMPTY"
+            "ERR_RX_EMPTY",
+            "ERR_OVERFLOW"
           ],
           "isr_safe" : false,
-          "sig" : "int eth_mac_recv_frame(uint8_t *frame, uint16_t *len)",
-          "timing" : "non-blocking"
+          "sig" : "int16_t srv_eth_mac_receive_frame(uint8_t *frame, uint16_t max_len)",
+          "timing" : "non-blocking, < 200us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_srv_eth_mac"
+      "module" : "srv_eth_mac"
     },
     {
       "functions" : [
         {
           "errors" : [
-            "ERR_NET_INIT"
+            "ERR_OK",
+            "ERR_INIT_FAILED"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_net_init(void)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_usb_net_init(void)",
+          "timing" : "blocking, < 10ms"
         },
         {
           "errors" : [
-            "ERR_NET_TX_FAIL"
+            "ERR_OK",
+            "ERR_TX_FULL",
+            "ERR_INVALID_ARG"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_net_send_packet(const uint8_t *pkt, uint16_t len)",
-          "timing" : "blocking"
+          "sig" : "int8_t srv_usb_net_tx(const uint8_t *packet, uint16_t len)",
+          "timing" : "non-blocking, < 200us"
         },
         {
           "errors" : [
-            "ERR_NET_RX_EMPTY"
+            "ERR_RX_EMPTY",
+            "ERR_OVERFLOW"
           ],
           "isr_safe" : false,
-          "sig" : "int usb_net_recv_packet(uint8_t *pkt, uint16_t *len)",
-          "timing" : "non-blocking"
+          "sig" : "int16_t srv_usb_net_rx(uint8_t *packet, uint16_t max_len)",
+          "timing" : "non-blocking, < 200us"
         }
       ],
       "messages" : [
       ],
-      "module" : "mod_srv_usb_net"
+      "module" : "srv_usb_net"
     }
   ]
-}  5. `arch.review` — 9 findings  Xem đầy đủ ▾ {
+}  5. `arch.review` — 10 findings  Xem đầy đủ ▾ {
   "findings" : [
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int usb_dev_ep_read(uint8_t ep, uint8_t *buf, uint16_t len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_drv_usb_device",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_srv_usbnet cùng lớp service",
+      "module" : "mod_ctrl_brg",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
     },
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int usb_dev_ep_write(uint8_t ep, const uint8_t *buf, uint16_t len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_drv_usb_device",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_srv_ethmac cùng lớp service",
+      "module" : "mod_ctrl_brg",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
     },
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int hal_eth_tx(const uint8_t *data, uint16_t len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_hal_eth",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_drv_phy cùng lớp service",
+      "module" : "mod_srv_ethmac",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
     },
     {
-      "message" : "Hàm gọi từ ISR có vòng lặp hoặc chờ: int hal_eth_rx(uint8_t *data, uint16_t *len) khai isr_safe nhưng có dấu hiệu chờ\/lặp",
-      "module" : "mod_hal_eth",
+      "message" : "Phụ thuộc chéo giữa hai module cùng lớp: phụ thuộc mod_drv_usb cùng lớp service",
+      "module" : "mod_srv_usbnet",
       "nguon" : "quy tắc",
-      "rule" : "isr_dai",
+      "rule" : "coupling",
       "severity" : "high"
-    },
-    {
-      "message" : "Module dùng ngoại vi nhưng không phụ thuộc lớp hal\/clock: dùng ['timer'] nhưng không phụ thuộc module lớp hal",
-      "module" : "mod_hal_timer",
-      "nguon" : "quy tắc",
-      "rule" : "thu_tu_clock",
-      "severity" : "medium"
     },
     {
       "message" : "Không module nào phụ trách watchdog: không module nào nhắc tới watchdog",
@@ -1154,30 +1150,44 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "severity" : "medium"
     },
     {
-      "message" : "Vi phạm phân lớp: mod_app_main (lớp app) phụ thuộc trực tiếp vào mod_hal_timer (lớp hal), bỏ qua các lớp trung gian.",
+      "message" : "Vi phạm phân lớp (skip-level dependency): Lớp app phụ thuộc trực tiếp vào lớp hal (mod_hal_tmr) thay vì thông qua lớp service hoặc OS wrapper.",
       "module" : "mod_app_main",
       "nguon" : "mô hình",
-      "rule" : "layering_violation",
+      "rule" : "layering",
       "severity" : "medium"
     },
     {
-      "message" : "Thiếu phụ thuộc: mod_srv_eth_mac chịu trách nhiệm xử lý khung truyền MAC nhưng không phụ thuộc vào mod_hal_eth để gọi các hàm truyền\/nhận phần cứng (hal_eth_tx, hal_eth_rx).",
-      "module" : "mod_srv_eth_mac",
+      "message" : "Vi phạm phân lớp (skip-level dependency): Lớp control phụ thuộc trực tiếp vào lớp hal (mod_hal_tmr).",
+      "module" : "mod_ctrl_brg",
       "nguon" : "mô hình",
-      "rule" : "missing_dependency",
+      "rule" : "layering",
+      "severity" : "medium"
+    },
+    {
+      "message" : "Thiếu cơ chế quản lý bộ đệm (Buffer Management): Việc chuyển tiếp dữ liệu giữa USB và Ethernet yêu cầu hàng đợi (queue\/ring buffer) để tránh mất gói tin khi tốc độ hai bên lệch nhau, nhưng không có module nào chịu trách nhiệm cấp phát và quản lý bộ nhớ này.",
+      "module" : "mod_ctrl_brg",
+      "nguon" : "mô hình",
+      "rule" : "resource_management",
       "severity" : "high"
     },
     {
-      "message" : "Thiếu hàm xử lý ngắt (ISR): Module có hàm hal_usb_enable_interrupts để bật ngắt nhưng không định nghĩa hàm xử lý ngắt (IRQ handler) nào trong giao diện.",
-      "module" : "mod_hal_usb",
+      "message" : "Thiếu tích hợp DMA: Truyền nhận dữ liệu mạng tốc độ cao trong kiến trúc super-loop mà không có DMA sẽ dẫn đến thắt cổ chai CPU và rớt gói tin (packet loss).",
+      "module" : "mod_hal_eth",
       "nguon" : "mô hình",
-      "rule" : "missing_isr",
+      "rule" : "performance",
       "severity" : "high"
+    },
+    {
+      "message" : "Thiếu cơ chế báo cáo sự kiện bất đồng bộ: Khi trạng thái cáp mạng thay đổi (cắm\/rút), kiến trúc super-loop hiện tại không rõ cách thức ngắt hoặc cờ trạng thái được truyền lên mod_srv_usbnet để báo cho TV biết trạng thái link.",
+      "module" : "mod_drv_phy",
+      "nguon" : "mô hình",
+      "rule" : "event_handling",
+      "severity" : "medium"
     }
   ]
 }  6. `chat.report_back` — 6 trường report · 355 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.121974,
+    "cost" : 0.097572999999999993,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -1189,9 +1199,9 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "chat.fill_defaults",
       "project.create",
       "search.reference_projects",
-      "view.artifacts",
       "chat.orchestrate",
       "chat.restate",
+      "view.artifacts",
       "project.status",
       "view.timeline",
       "view.artifacts",
@@ -1247,26 +1257,26 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_43155d6149ca",
+    "run_id" : "r_3c1b4114d76f",
     "undo" : [
-      "f47b3fe0e4a9",
-      "462e30ebbb69",
-      "537dd723cea2",
-      "abcf7eedc350"
+      "76c8ff2bcdc4",
+      "6e45b3e050ef",
+      "b5ced79dee1d",
+      "ffb708a219a4"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 65 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review\nHoàn tác được 4 mục đến 2026-09-25T03:51.\nChi phí mô hình: 0.1220 USD."
+  "text" : "Đã làm 65 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review\nHoàn tác được 4 mục đến 2026-09-25T06:12.\nChi phí mô hình: 0.0976 USD."
 }  Lượt chạy xong — 1 bước tuỳ chọn hỏng, xem dòng ✖ ở trên.  Đã làm 69 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review, chat.report_back
 → `view.artifacts` làm ra: 0 id + các trường chính của loại ấy; 0 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
 → `arch.style_select` làm ra: 5 trường style — xem ở màn Yêu cầu & kiến trúc.
 → `arch.decompose` làm ra: 2 trường modules[] — xem ở màn Yêu cầu & kiến trúc.
 → `arch.interface_spec` làm ra: 9 module — xem ở màn Yêu cầu & kiến trúc.
-→ `arch.review` làm ra: 9 severity — xem ở màn Yêu cầu & kiến trúc.
+→ `arch.review` làm ra: 10 severity — xem ở màn Yêu cầu & kiến trúc.
 → `chat.report_back` làm ra: 6 trường report; 355 ký tự text — xem ở màn mặc định.
-Hoàn tác được 4 mục đến 2026-09-25T03:51.
-Chi phí mô hình: 0.1220 USD.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
+Hoàn tác được 4 mục đến 2026-09-25T06:12.
+Chi phí mô hình: 0.0976 USD.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**

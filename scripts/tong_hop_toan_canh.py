@@ -53,7 +53,11 @@ def chu_ky(tc: str, d: dict[str, Any]) -> dict[str, Any]:
                 hoi.append(f"{x.get('cap')}→{t}")
         xong += [x.get("cap") for x in r.get("done") or []]
 
-    cat = [x for x in llm if str(x.get("stop_reason", "")).lower() in
+    # Lời gọi HỎNG ghi `stop_reason: "error"` — nhận ra nó bằng `error_kind`, không bằng
+    # `stop_reason`. Bản đầu đếm theo `stop_reason` và ra 0 lần bị cắt trên một đợt CÓ hai
+    # lần bị cắt: một con số 0 nói dối còn tệ hơn không có con số nào. [DEV-217]
+    cat = [x for x in llm if x.get("error_kind") == "truncated"
+           or str(x.get("stop_reason", "")).lower() in
            ("max_tokens", "length", "maxtokens", "max_output_tokens")]
     return {
         "tc": tc,
