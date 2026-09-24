@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** mở lại dự án — `bo-chuyen-lan-sang-usb-cho-tv`
 
-**Tác tử trả lời** *(sau 0.4 s)*:
+**Tác tử trả lời** *(sau 0.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Ví dụ: đọc datasheet trong docs/ rồi cho tôi biết chip này có mấy timer Gửi 
@@ -19,35 +19,35 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc
 
-**Tác tử trả lời** *(sau 44.4 s)*:
+**Tác tử trả lời** *(sau 51.3 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.acceptance`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 5 gaps · 1 raw  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze: TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 5 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
-      "kind" : "storage",
-      "suggestion" : "Thẻ nhớ MicroSD, bộ nhớ trong eMMC, hoặc hỗ trợ cắm ổ cứng SSD\/SATA.",
-      "text" : "Thiết bị sẽ lưu trữ phim trên phương tiện nào và dung lượng dự kiến là bao nhiêu?"
-    },
-    {
       "kind" : "protocol",
-      "suggestion" : "SMB (chia sẻ ổ đĩa mạng như Windows), FTP, hoặc tải lên qua giao diện Web.",
-      "text" : "Việc copy phim qua mạng LAN sẽ sử dụng giao thức nào để người dùng dễ thao tác nhất?"
+      "suggestion" : "SMB (Windows Share), FTP, hoặc WebDAV.",
+      "text" : "Giao thức copy file qua LAN là gì?"
     },
     {
-      "kind" : "concurrency",
-      "suggestion" : "Chỉ cấp quyền Đọc (Read-only) cho TV và quyền Ghi cho LAN, hoặc thiết bị tự động ngắt kết nối USB với TV trong tích tắc để cập nhật file mới rồi kết nối lại.",
-      "text" : "Chuẩn USB Mass Storage thông thường không cho phép hai hệ thống (TV và chip mạng) cùng can thiệp vào hệ thống file (FAT32\/exFAT) cùng lúc vì sẽ gây hỏng dữ liệu. Bạn muốn xử lý xung đột này như thế nào?"
+      "kind" : "hardware",
+      "suggestion" : "Thẻ nhớ SD, chip nhớ eMMC, hoặc ổ cứng cắm ngoài.",
+      "text" : "Thiết bị lưu trữ vật lý trên bo mạch là gì?"
     },
     {
-      "kind" : "network",
-      "suggestion" : "Cổng mạng LAN RJ45 tốc độ 1Gbps, hoặc kết nối Wi-Fi 5\/6.",
-      "text" : "Kết nối LAN là loại có dây hay không dây, và tốc độ yêu cầu là bao nhiêu để đảm bảo copy phim dung lượng lớn (4K\/8K) nhanh chóng?"
+      "kind" : "architecture",
+      "suggestion" : "Sử dụng giao thức MTP thay vì USB Mass Storage, hoặc giả lập Virtual FAT file system, hoặc chia 2 phân vùng luân phiên.",
+      "text" : "Làm sao để giải quyết xung đột khi TV (USB Host) và LAN cùng truy cập một hệ thống tập tin (USB Mass Storage thường yêu cầu quyền độc chiếm)?"
+    },
+    {
+      "kind" : "performance",
+      "suggestion" : "10\/100 Mbps hoặc 1 Gbps (Gigabit Ethernet).",
+      "text" : "Tốc độ mạng LAN yêu cầu là bao nhiêu để copy phim mượt mà?"
     },
     {
       "kind" : "power",
-      "suggestion" : "Lấy nguồn trực tiếp từ cổng USB của TV (giới hạn dòng điện 500mA - 1A), hoặc sử dụng một adapter nguồn ngoài (5V\/12V) để đảm bảo hiệu năng.",
-      "text" : "Thiết bị sẽ được cấp nguồn điện từ đâu?"
+      "suggestion" : "Lấy trực tiếp từ cổng USB của TV (giới hạn 500mA - 1A) hoặc dùng nguồn ngoài (Adapter 5V\/2A).",
+      "text" : "Nguồn cấp điện cho bo mạch lấy từ đâu?"
     }
   ],
   "raw" : [
@@ -59,8 +59,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "text" : "TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc"
     }
   ]
-}  2. `req.classify` — 1 codes_assigned · 1 reqset (FR-COM-01)  Xem đầy đủ ▾ {
-  "codes_assigned" : 1,
+}  2. `req.classify` — 2 codes_assigned · 2 reqset (FR-COM-01, FR-SNS-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 2,
   "reqset" : [
     {
       "id" : "FR-COM-01",
@@ -69,13 +69,21 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       },
       "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời vào bộ nhớ lưu trữ: duy trì kết nối USB Mass Storage với TV (tốc độ đọc tối thiểu 5 MB\/s) trong khi đang nhận và ghi tệp tin qua giao diện LAN (tốc độ ghi tối thiểu 2 MB\/s) mà không gây lỗi ngắt kết nối USB (timeout > 500ms)."
+      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời: cho phép giao diện USB Mass Storage phản hồi lệnh đọc từ TV và giao diện LAN ghi tệp tin mới vào bộ nhớ lưu trữ cùng lúc mà không gây lỗi hệ thống tệp."
+    },
+    {
+      "id" : "FR-SNS-01",
+      "kind" : "RT",
+      "locator" : null,
+      "source" : "lệnh",
+      "status" : "generated",
+      "text" : "Khi có luồng ghi dữ liệu từ LAN, hệ thống phải ưu tiên băng thông cho giao diện USB để duy trì tốc độ đọc tối thiểu 5 MB\/s và độ trễ phản hồi lệnh SCSI Read không vượt quá 50 ms nhằm đảm bảo TV phát video không bị gián đoạn."
     }
   ]
 }  3. `req.detect_conflict` — 0 issues  Xem đầy đủ ▾ {
   "issues" : [
   ]
-}  4. `req.prioritize` — 1 reqset (FR-COM-01)  Xem đầy đủ ▾ {
+}  4. `req.prioritize` — 2 reqset (FR-COM-01, FR-SNS-01)  Xem đầy đủ ▾ {
   "reqset" : [
     {
       "acceptance" : [
@@ -86,24 +94,44 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "priority" : "S",
       "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời vào bộ nhớ lưu trữ: duy trì kết nối USB Mass Storage với TV (tốc độ đọc tối thiểu 5 MB\/s) trong khi đang nhận và ghi tệp tin qua giao diện LAN (tốc độ ghi tối thiểu 2 MB\/s) mà không gây lỗi ngắt kết nối USB (timeout > 500ms).",
+      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời: cho phép giao diện USB Mass Storage phản hồi lệnh đọc từ TV và giao diện LAN ghi tệp tin mới vào bộ nhớ lưu trữ cùng lúc mà không gây lỗi hệ thống tệp.",
+      "trace" : [
+      ]
+    },
+    {
+      "acceptance" : [
+      ],
+      "feasibility" : null,
+      "id" : "FR-SNS-01",
+      "kind" : "RT",
+      "priority" : "S",
+      "source" : "lệnh",
+      "status" : "generated",
+      "text" : "Khi có luồng ghi dữ liệu từ LAN, hệ thống phải ưu tiên băng thông cho giao diện USB để duy trì tốc độ đọc tối thiểu 5 MB\/s và độ trễ phản hồi lệnh SCSI Read không vượt quá 50 ms nhằm đảm bảo TV phát video không bị gián đoạn.",
       "trace" : [
       ]
     }
   ]
-}  5. `req.acceptance` — 1 acceptance  Xem đầy đủ ▾ {
+}  5. `req.acceptance` — 2 acceptance  Xem đầy đủ ▾ {
   "acceptance" : [
     {
-      "given" : "Hệ thống đang kết nối với TV qua cổng USB ở chế độ Mass Storage và kết nối với mạng LAN, bộ nhớ lưu trữ có sẵn tệp tin.",
+      "given" : "Hệ thống được kết nối đồng thời với TV qua USB và máy tính qua LAN, TV đang đọc một tệp từ bộ nhớ.",
       "observable" : "measurement",
       "req_id" : "FR-COM-01",
-      "then" : "Tốc độ đọc USB đạt tối thiểu 5 MB\/s, tốc độ ghi LAN đạt tối thiểu 2 MB\/s, và không xảy ra lỗi ngắt kết nối USB (không có timeout lớn hơn 500ms).",
-      "when" : "TV đang đọc tệp tin qua USB và đồng thời có luồng dữ liệu ghi tệp tin mới vào bộ nhớ qua giao diện LAN."
+      "then" : "Quá trình ghi hoàn tất mà không làm gián đoạn quá trình đọc của TV, và kiểm tra tính toàn vẹn của hệ thống tệp không phát hiện lỗi.",
+      "when" : "Máy tính thực hiện ghi một tệp mới vào bộ nhớ qua LAN."
+    },
+    {
+      "given" : "Hệ thống đang nhận và ghi dữ liệu từ LAN ở tốc độ tối đa.",
+      "observable" : "measurement",
+      "req_id" : "FR-SNS-01",
+      "then" : "Tốc độ đọc qua USB đo được không dưới 5 MB\/s và thời gian phản hồi cho mỗi lệnh SCSI Read không vượt quá 50 ms.",
+      "when" : "Host USB (TV) yêu cầu đọc dữ liệu liên tục qua giao thức SCSI."
     }
   ]
-}  6. `chat.report_back` — 6 trường report · 472 ký tự text  Xem đầy đủ ▾ {
+}  6. `chat.report_back` — 6 trường report · 455 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.087287000000000003,
+    "cost" : 0.036437999999999998,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -165,12 +193,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "view.kg_map",
-      "arch.interface_spec",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "arch.review",
-      "chat.report_back",
+      "policy.escalate",
       "chat.orchestrate",
       "chat.restate",
       "view.artifacts",
@@ -287,58 +310,64 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "req.detect_conflict",
       "req.trace_matrix",
       "view.artifacts",
-      "req.acceptance"
+      "view.artifacts",
+      "view.kg_map",
+      "req.detect_conflict",
+      "req.acceptance",
+      "req.trace_matrix"
     ],
     "ra" : [
     ],
-    "run_id" : "r_c9f2fe13cbe9",
+    "run_id" : "r_a7379d5bd3cf",
     "undo" : [
-      "06fd0d0ea271",
-      "fc3042b21f85",
-      "2013ab011360",
-      "907486c33d1f",
-      "ae8d81a4a706",
-      "0b3cb861a075",
-      "2edf766dd611",
-      "dd522a1d1cf7",
-      "a9c6e7dbd78f",
-      "562993bbde42",
-      "7635c83ddd24",
-      "0d4d1f918f67",
-      "5e69070fcb39",
-      "b7c15e09b33b",
-      "0791ae480f15",
-      "1b3e7d23696c",
-      "2f7f9797a594",
-      "8ed1f9ac67db",
-      "9a148b7bc5be",
-      "1232e6e9fc64",
-      "35be1749b18e",
-      "de4411ae3bf7",
-      "e69c9a553c07"
+      "452b0b84e053",
+      "2e7a711c4a30",
+      "8d2c9eda50bc",
+      "0cef1d3bba82",
+      "b4333ce01589",
+      "37e2115dff18",
+      "3ce3bda63246",
+      "83ad64c2f9f9",
+      "36fbfac86d83",
+      "c4a0ff127b8e",
+      "4cee350a6b80",
+      "44661eb0dcab",
+      "e3a11abfc5d8",
+      "72474104f617",
+      "37c2f2ed9566",
+      "30935563b45e",
+      "0efa68d6dc3a",
+      "9c6013e63727",
+      "b7075eab6bb0",
+      "36bc05b086e3",
+      "e8d7cd2c29f3",
+      "2d583999cfb5",
+      "35b0bb4d9d77"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 183 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance\nHoàn tác được 23 mục đến 2026-09-24T23:25.\nChi phí mô hình: 0.0873 USD."
-}  Lượt chạy xong.  Đã làm 190 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance
+  "text" : "Đã làm 182 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, policy.escalate, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance\nHoàn tác được 23 mục đến 2026-09-25T00:04.\nChi phí mô hình: 0.0364 USD."
+}  Lượt chạy xong.  Đã làm 187 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, policy.escalate, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance
 → `req.elicit` làm ra: 1 text; 5 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 1 Requirement (FR-COM-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
+→ `req.classify` làm ra: 2 Requirement (FR-COM-01, FR-SNS-01…); 2 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
 → `req.detect_conflict` làm ra: 0 kind conflict|ambiguous|unmeasurable — xem ở màn Yêu cầu & kiến trúc.
-→ `req.prioritize` làm ra: 1 reqset (FR-COM-01…) — xem ở màn Yêu cầu & kiến trúc.
-→ `req.acceptance` làm ra: 1 req_id — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 472 ký tự text — xem ở màn mặc định.
-Hoàn tác được 23 mục đến 2026-09-24T23:25.
-Chi phí mô hình: 0.0873 USD.   Thử: đối chiếu FR-COM-01 với phần cứng thật Gửi 
+→ `req.prioritize` làm ra: 2 reqset (FR-COM-01, FR-SNS-01…) — xem ở màn Yêu cầu & kiến trúc.
+→ `req.acceptance` làm ra: 2 req_id — xem ở màn Yêu cầu & kiến trúc.
+→ `chat.report_back` làm ra: 6 trường report; 455 ký tự text — xem ở màn mặc định.
+Hoàn tác được 23 mục đến 2026-09-25T00:04.
+Chi phí mô hình: 0.0364 USD.   Thử: đối chiếu FR-COM-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
-1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải hỗ trợ truy cập đồng thời vào bộ nhớ lưu trữ: duy trì kết nối USB Mass Storage với TV (tốc độ đọc tối thiểu 5 MB/s) trong khi đang nhận và ghi tệp tin qua giao diện LAN (tốc độ ghi tối thiểu 2 MB/s) mà không gây lỗi ngắt kết nối USB (timeout > 500ms).
+2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải hỗ trợ truy cập đồng thời: cho phép giao diện USB Mass Storage phản hồi lệnh đọc từ TV và giao diện LAN ghi tệp tin mới vào bộ nhớ lưu trữ cùng lúc mà không gây lỗi hệ thống tệp.
+FR-SNS-01	RT	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi có luồng ghi dữ liệu từ LAN, hệ thống phải ưu tiên băng thông cho giao diện USB để duy trì tốc độ đọc tối thiểu 5 MB/s và độ trễ phản hồi lệnh SCSI Read không vượt quá 50 ms nhằm đảm bảo TV phát video không bị gián đoạn.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-COM-01	—
+FR-SNS-01	—
 ```
 
 ![bước 2](buoc-02.png)
@@ -350,10 +379,12 @@ FR-COM-01	—
 ### Tab `ReqArch`
 
 ```
-Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải hỗ trợ truy cập đồng thời vào bộ nhớ lưu trữ: duy trì kết nối USB Mass Storage với TV (tốc độ đọc tối thiểu 5 MB/s) trong khi đang nhận và ghi tệp tin qua giao diện LAN (tốc độ ghi tối thiểu 2 MB/s) mà không gây lỗi ngắt kết nối USB (timeout > 500ms).
+Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  2 YÊU CẦU — 2 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
+FR-COM-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải hỗ trợ truy cập đồng thời: cho phép giao diện USB Mass Storage phản hồi lệnh đọc từ TV và giao diện LAN ghi tệp tin mới vào bộ nhớ lưu trữ cùng lúc mà không gây lỗi hệ thống tệp.
+FR-SNS-01	RT	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi có luồng ghi dữ liệu từ LAN, hệ thống phải ưu tiên băng thông cho giao diện USB để duy trì tốc độ đọc tối thiểu 5 MB/s và độ trễ phản hồi lệnh SCSI Read không vượt quá 50 ms nhằm đảm bảo TV phát video không bị gián đoạn.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC001/du-an/bo-chuyen-lan-sang-usb-cho-tv/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-COM-01	—
+FR-SNS-01	—
 ```
 
 ![ReqArch](man-01-ReqArch.png)
@@ -361,7 +392,7 @@ FR-COM-01	—
 ### Tab `Graph`
 
 ```
-Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +10 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  Màn này đang rỗng — vì: đồ thị tri thức chưa có nút nào — store chưa có fact  Bước kế tiếp: nhập datasheet/SVD ở màn Nhập tài liệu (S4); đồ thị dựng từ chính fact và nguồn của chúng  
 ```
 
 ![Graph](man-02-Graph.png)
@@ -369,40 +400,40 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (6)  Làm rõ yêu cầu — STORAGE  Thiết bị sẽ lưu trữ phim trên phương tiện nào và dung lượng dự kiến là bao nhiêu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (6)  Làm rõ yêu cầu — PERFORMANCE  Tốc độ mạng LAN yêu cầu là bao nhiêu để copy phim mượt mà?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `env.check` đang chờ anh cho biết:
 • Chip của thiết bị thuộc kiến trúc tập lệnh nào? (cần để chọn chuỗi công cụ) (`isa`)
-   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — POWER  Thiết bị sẽ được cấp nguồn điện từ đâu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — NETWORK  Kết nối LAN là loại có dây hay không dây, và tốc độ yêu cầu là bao nhiêu để đảm bảo copy phim dung lượng lớn (4K/8K) nhanh chóng?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CONCURRENCY  Chuẩn USB Mass Storage thông thường không cho phép hai hệ thống (TV và chip mạng) cùng can thiệp vào hệ thống file (FAT32/exFAT) cùng lúc vì sẽ gây hỏng dữ liệu. Bạn muốn xử lý xung đột này như thế nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — PROTOCOL  Việc copy phim qua mạng LAN sẽ sử dụng giao thức nào để người dùng dễ thao tác nhất?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (24)  req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 16 mục nữa — xem màn Nhật ký.  ⟩ 
+   Chọn một: armv7e-m — STM32F[2-4], STM32L4, nRF52, SAMD5; avr8 — ATmega, ATtiny, AVR(64|128); rv32imac — ESP32-?C[0-9], ESP32-?H[0-9], GD32V, CH32V  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Thiết bị lưu trữ vật lý trên bo mạch là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — PROTOCOL  Giao thức copy file qua LAN là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — POWER  Nguồn cấp điện cho bo mạch lấy từ đâu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — ARCHITECTURE  Làm sao để giải quyết xung đột khi TV (USB Host) và LAN cùng truy cập một hệ thống tập tin (USB Mass Storage thường yêu cầu quyền độc chiếm)?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (24)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 16 mục nữa — xem màn Nhật ký.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 4.5 s)*:
+**Tác tử trả lời** *(sau 4.6 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.acceptance`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 5 gaps · 1 raw  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `bo-chuyen-lan-sang-usb-cho-tv` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze: TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 5 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
-      "kind" : "storage",
-      "suggestion" : "Thẻ nhớ MicroSD, bộ nhớ trong eMMC, hoặc hỗ trợ cắm ổ cứng SSD\/SATA.",
-      "text" : "Thiết bị sẽ lưu trữ phim trên phương tiện nào và dung lượng dự kiến là bao nhiêu?"
-    },
-    {
       "kind" : "protocol",
-      "suggestion" : "SMB (chia sẻ ổ đĩa mạng như Windows), FTP, hoặc tải lên qua giao diện Web.",
-      "text" : "Việc copy phim qua mạng LAN sẽ sử dụng giao thức nào để người dùng dễ thao tác nhất?"
+      "suggestion" : "SMB (Windows Share), FTP, hoặc WebDAV.",
+      "text" : "Giao thức copy file qua LAN là gì?"
     },
     {
-      "kind" : "concurrency",
-      "suggestion" : "Chỉ cấp quyền Đọc (Read-only) cho TV và quyền Ghi cho LAN, hoặc thiết bị tự động ngắt kết nối USB với TV trong tích tắc để cập nhật file mới rồi kết nối lại.",
-      "text" : "Chuẩn USB Mass Storage thông thường không cho phép hai hệ thống (TV và chip mạng) cùng can thiệp vào hệ thống file (FAT32\/exFAT) cùng lúc vì sẽ gây hỏng dữ liệu. Bạn muốn xử lý xung đột này như thế nào?"
+      "kind" : "hardware",
+      "suggestion" : "Thẻ nhớ SD, chip nhớ eMMC, hoặc ổ cứng cắm ngoài.",
+      "text" : "Thiết bị lưu trữ vật lý trên bo mạch là gì?"
     },
     {
-      "kind" : "network",
-      "suggestion" : "Cổng mạng LAN RJ45 tốc độ 1Gbps, hoặc kết nối Wi-Fi 5\/6.",
-      "text" : "Kết nối LAN là loại có dây hay không dây, và tốc độ yêu cầu là bao nhiêu để đảm bảo copy phim dung lượng lớn (4K\/8K) nhanh chóng?"
+      "kind" : "architecture",
+      "suggestion" : "Sử dụng giao thức MTP thay vì USB Mass Storage, hoặc giả lập Virtual FAT file system, hoặc chia 2 phân vùng luân phiên.",
+      "text" : "Làm sao để giải quyết xung đột khi TV (USB Host) và LAN cùng truy cập một hệ thống tập tin (USB Mass Storage thường yêu cầu quyền độc chiếm)?"
+    },
+    {
+      "kind" : "performance",
+      "suggestion" : "10\/100 Mbps hoặc 1 Gbps (Gigabit Ethernet).",
+      "text" : "Tốc độ mạng LAN yêu cầu là bao nhiêu để copy phim mượt mà?"
     },
     {
       "kind" : "power",
-      "suggestion" : "Lấy nguồn trực tiếp từ cổng USB của TV (giới hạn dòng điện 500mA - 1A), hoặc sử dụng một adapter nguồn ngoài (5V\/12V) để đảm bảo hiệu năng.",
-      "text" : "Thiết bị sẽ được cấp nguồn điện từ đâu?"
+      "suggestion" : "Lấy trực tiếp từ cổng USB của TV (giới hạn 500mA - 1A) hoặc dùng nguồn ngoài (Adapter 5V\/2A).",
+      "text" : "Nguồn cấp điện cho bo mạch lấy từ đâu?"
     }
   ],
   "raw" : [
@@ -414,8 +445,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "text" : "TV đang đọc USB, mình vẫn copy phim mới vào qua LAN cùng lúc"
     }
   ]
-}  2. `req.classify` — 1 codes_assigned · 1 reqset (FR-COM-01)  Xem đầy đủ ▾ {
-  "codes_assigned" : 1,
+}  2. `req.classify` — 2 codes_assigned · 2 reqset (FR-COM-01, FR-SNS-01)  Xem đầy đủ ▾ {
+  "codes_assigned" : 2,
   "reqset" : [
     {
       "id" : "FR-COM-01",
@@ -424,13 +455,21 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       },
       "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời vào bộ nhớ lưu trữ: duy trì kết nối USB Mass Storage với TV (tốc độ đọc tối thiểu 5 MB\/s) trong khi đang nhận và ghi tệp tin qua giao diện LAN (tốc độ ghi tối thiểu 2 MB\/s) mà không gây lỗi ngắt kết nối USB (timeout > 500ms)."
+      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời: cho phép giao diện USB Mass Storage phản hồi lệnh đọc từ TV và giao diện LAN ghi tệp tin mới vào bộ nhớ lưu trữ cùng lúc mà không gây lỗi hệ thống tệp."
+    },
+    {
+      "id" : "FR-SNS-01",
+      "kind" : "RT",
+      "locator" : null,
+      "source" : "lệnh",
+      "status" : "generated",
+      "text" : "Khi có luồng ghi dữ liệu từ LAN, hệ thống phải ưu tiên băng thông cho giao diện USB để duy trì tốc độ đọc tối thiểu 5 MB\/s và độ trễ phản hồi lệnh SCSI Read không vượt quá 50 ms nhằm đảm bảo TV phát video không bị gián đoạn."
     }
   ]
 }  3. `req.detect_conflict` — 0 issues  Xem đầy đủ ▾ {
   "issues" : [
   ]
-}  4. `req.prioritize` — 1 reqset (FR-COM-01)  Xem đầy đủ ▾ {
+}  4. `req.prioritize` — 2 reqset (FR-COM-01, FR-SNS-01)  Xem đầy đủ ▾ {
   "reqset" : [
     {
       "acceptance" : [
@@ -441,24 +480,44 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "priority" : "S",
       "source" : "user_input",
       "status" : "generated",
-      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời vào bộ nhớ lưu trữ: duy trì kết nối USB Mass Storage với TV (tốc độ đọc tối thiểu 5 MB\/s) trong khi đang nhận và ghi tệp tin qua giao diện LAN (tốc độ ghi tối thiểu 2 MB\/s) mà không gây lỗi ngắt kết nối USB (timeout > 500ms).",
+      "text" : "Hệ thống phải hỗ trợ truy cập đồng thời: cho phép giao diện USB Mass Storage phản hồi lệnh đọc từ TV và giao diện LAN ghi tệp tin mới vào bộ nhớ lưu trữ cùng lúc mà không gây lỗi hệ thống tệp.",
+      "trace" : [
+      ]
+    },
+    {
+      "acceptance" : [
+      ],
+      "feasibility" : null,
+      "id" : "FR-SNS-01",
+      "kind" : "RT",
+      "priority" : "S",
+      "source" : "lệnh",
+      "status" : "generated",
+      "text" : "Khi có luồng ghi dữ liệu từ LAN, hệ thống phải ưu tiên băng thông cho giao diện USB để duy trì tốc độ đọc tối thiểu 5 MB\/s và độ trễ phản hồi lệnh SCSI Read không vượt quá 50 ms nhằm đảm bảo TV phát video không bị gián đoạn.",
       "trace" : [
       ]
     }
   ]
-}  5. `req.acceptance` — 1 acceptance  Xem đầy đủ ▾ {
+}  5. `req.acceptance` — 2 acceptance  Xem đầy đủ ▾ {
   "acceptance" : [
     {
-      "given" : "Hệ thống đang kết nối với TV qua cổng USB ở chế độ Mass Storage và kết nối với mạng LAN, bộ nhớ lưu trữ có sẵn tệp tin.",
+      "given" : "Hệ thống được kết nối đồng thời với TV qua USB và máy tính qua LAN, TV đang đọc một tệp từ bộ nhớ.",
       "observable" : "measurement",
       "req_id" : "FR-COM-01",
-      "then" : "Tốc độ đọc USB đạt tối thiểu 5 MB\/s, tốc độ ghi LAN đạt tối thiểu 2 MB\/s, và không xảy ra lỗi ngắt kết nối USB (không có timeout lớn hơn 500ms).",
-      "when" : "TV đang đọc tệp tin qua USB và đồng thời có luồng dữ liệu ghi tệp tin mới vào bộ nhớ qua giao diện LAN."
+      "then" : "Quá trình ghi hoàn tất mà không làm gián đoạn quá trình đọc của TV, và kiểm tra tính toàn vẹn của hệ thống tệp không phát hiện lỗi.",
+      "when" : "Máy tính thực hiện ghi một tệp mới vào bộ nhớ qua LAN."
+    },
+    {
+      "given" : "Hệ thống đang nhận và ghi dữ liệu từ LAN ở tốc độ tối đa.",
+      "observable" : "measurement",
+      "req_id" : "FR-SNS-01",
+      "then" : "Tốc độ đọc qua USB đo được không dưới 5 MB\/s và thời gian phản hồi cho mỗi lệnh SCSI Read không vượt quá 50 ms.",
+      "when" : "Host USB (TV) yêu cầu đọc dữ liệu liên tục qua giao thức SCSI."
     }
   ]
-}  6. `chat.report_back` — 6 trường report · 472 ký tự text  Xem đầy đủ ▾ {
+}  6. `chat.report_back` — 6 trường report · 455 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.087287000000000003,
+    "cost" : 0.036437999999999998,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -520,12 +579,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "view.kg_map",
-      "arch.interface_spec",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "arch.review",
-      "chat.report_back",
+      "policy.escalate",
       "chat.orchestrate",
       "chat.restate",
       "view.artifacts",
@@ -642,49 +696,53 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "req.detect_conflict",
       "req.trace_matrix",
       "view.artifacts",
-      "req.acceptance"
+      "view.artifacts",
+      "view.kg_map",
+      "req.detect_conflict",
+      "req.acceptance",
+      "req.trace_matrix"
     ],
     "ra" : [
     ],
-    "run_id" : "r_c9f2fe13cbe9",
+    "run_id" : "r_a7379d5bd3cf",
     "undo" : [
-      "06fd0d0ea271",
-      "fc3042b21f85",
-      "2013ab011360",
-      "907486c33d1f",
-      "ae8d81a4a706",
-      "0b3cb861a075",
-      "2edf766dd611",
-      "dd522a1d1cf7",
-      "a9c6e7dbd78f",
-      "562993bbde42",
-      "7635c83ddd24",
-      "0d4d1f918f67",
-      "5e69070fcb39",
-      "b7c15e09b33b",
-      "0791ae480f15",
-      "1b3e7d23696c",
-      "2f7f9797a594",
-      "8ed1f9ac67db",
-      "9a148b7bc5be",
-      "1232e6e9fc64",
-      "35be1749b18e",
-      "de4411ae3bf7",
-      "e69c9a553c07"
+      "452b0b84e053",
+      "2e7a711c4a30",
+      "8d2c9eda50bc",
+      "0cef1d3bba82",
+      "b4333ce01589",
+      "37e2115dff18",
+      "3ce3bda63246",
+      "83ad64c2f9f9",
+      "36fbfac86d83",
+      "c4a0ff127b8e",
+      "4cee350a6b80",
+      "44661eb0dcab",
+      "e3a11abfc5d8",
+      "72474104f617",
+      "37c2f2ed9566",
+      "30935563b45e",
+      "0efa68d6dc3a",
+      "9c6013e63727",
+      "b7075eab6bb0",
+      "36bc05b086e3",
+      "e8d7cd2c29f3",
+      "2d583999cfb5",
+      "35b0bb4d9d77"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 183 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance\nHoàn tác được 23 mục đến 2026-09-24T23:25.\nChi phí mô hình: 0.0873 USD."
-}  Lượt chạy xong.  Đã làm 190 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, arch.interface_spec, arch.review, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance
+  "text" : "Đã làm 182 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, policy.escalate, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance\nHoàn tác được 23 mục đến 2026-09-25T00:04.\nChi phí mô hình: 0.0364 USD."
+}  Lượt chạy xong.  Đã làm 187 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, project.create, search.reference_projects, chat.orchestrate, chat.restate, view.kg_map, arch.style_select, arch.decompose, policy.escalate, chat.report_back, req.elicit, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance
 → `req.elicit` làm ra: 1 text; 5 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 1 Requirement (FR-COM-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
+→ `req.classify` làm ra: 2 Requirement (FR-COM-01, FR-SNS-01…); 2 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
 → `req.detect_conflict` làm ra: 0 kind conflict|ambiguous|unmeasurable — xem ở màn Yêu cầu & kiến trúc.
-→ `req.prioritize` làm ra: 1 reqset (FR-COM-01…) — xem ở màn Yêu cầu & kiến trúc.
-→ `req.acceptance` làm ra: 1 req_id — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 472 ký tự text — xem ở màn mặc định.
-Hoàn tác được 23 mục đến 2026-09-24T23:25.
-Chi phí mô hình: 0.0873 USD.   Thử: đối chiếu FR-COM-01 với phần cứng thật Gửi 
+→ `req.prioritize` làm ra: 2 reqset (FR-COM-01, FR-SNS-01…) — xem ở màn Yêu cầu & kiến trúc.
+→ `req.acceptance` làm ra: 2 req_id — xem ở màn Yêu cầu & kiến trúc.
+→ `chat.report_back` làm ra: 6 trường report; 455 ký tự text — xem ở màn mặc định.
+Hoàn tác được 23 mục đến 2026-09-25T00:04.
+Chi phí mô hình: 0.0364 USD.   Thử: đối chiếu FR-COM-01 với phần cứng thật (còn 2 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `Graph`:**

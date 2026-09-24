@@ -9,12 +9,12 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC036/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.9 s)*:
+**Tác tử trả lời** *(sau 0.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -37,7 +37,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiếp?  NGẮT NGUỒN NGAY — rút cáp cấp điện và cáp nạp trước khi làm bất cứ việc gì khác. Chip nóng ran hoặc có khói nghĩa là đang có dòng chạy sai; cấp điện thêm một phút nữa có thể hỏng vĩnh viễn hoặc gây cháy. Sau khi ngắt: để nguội, kiểm cực nguồn có cắm ngược không, đo thông mạch giữa VDD và GND để tìm đoản mạch. (Chính sách P-SAFE-01.) Xong bước an toàn rồi anh kể tiếp hiện tượng, tôi giúp khoanh nguyên nhân.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -54,8 +54,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_f07ee87ec60c
-Mở lúc	23/09 23:44:07
+Phiên	s_3c480a84adda
+Mở lúc	24/09 00:23:48
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -88,8 +88,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_f07ee87ec60c
-Mở lúc	23/09 23:44:07
+Phiên	s_3c480a84adda
+Mở lúc	24/09 00:23:48
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -116,7 +116,7 @@ Số lời gọi	0
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `chip-nong-bat-thuong` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Mạch tôi vừa cắm nguồn thì chip nóng ran, khói nhẹ. Làm gì tiếp?  NGẮT NGUỒN NGAY — rút cáp cấp điện và cáp nạp trước khi làm bất cứ việc gì khác. Chip nóng ran hoặc có khói nghĩa là đang có dòng chạy sai; cấp điện thêm một phút nữa có thể hỏng vĩnh viễn hoặc gây cháy. Sau khi ngắt: để nguội, kiểm cực nguồn có cắm ngược không, đo thông mạch giữa VDD và GND để tìm đoản mạch. (Chính sách P-SAFE-01.) Xong bước an toàn rồi anh kể tiếp hiện tượng, tôi giúp khoanh nguyên nhân.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -133,8 +133,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_f07ee87ec60c
-Mở lúc	23/09 23:44:07
+Phiên	s_3c480a84adda
+Mở lúc	24/09 00:23:48
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

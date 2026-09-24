@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Đạt",
  "nhan_xet": "Sinh được ma trận truy vết: màn Yêu cầu & kiến trúc hiện bảng “MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test” kèm cột “ĐỨT Ở ĐÂU”, và ghi đường dẫn tệp `trace_matrix.md`. Chạy trọn 6/6 bước.\n\nGhi chú: Dự án mới nên mới có 1 yêu cầu; mọi mắt xích đều “—”, tức đánh dấu đúng là chưa có test.",
- "giay": 56.7,
+ "giay": 45.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 56.7,
+   "giay": 45.5,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

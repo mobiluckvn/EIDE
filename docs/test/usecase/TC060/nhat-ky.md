@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** mở lại dự án — `ota-phan-vung-a-b`
 
-**Tác tử trả lời** *(sau 0.4 s)*:
+**Tác tử trả lời** *(sau 0.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
@@ -19,10 +19,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log
 
-**Tác tử trả lời** *(sau 46.8 s)*:
+**Tác tử trả lời** *(sau 49.4 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 4 items (FR-GEN-01, FR-SNS-01, UR-PWR-01, UR-SAF-01) · requirement kind · 4 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 4 items (FR-GEN-01, FR-GEN-04, UR-GEN-02, UR-GEN-03) · requirement kind · 4 total  Xem đầy đủ ▾ {
   "items" : [
     {
       "feasibility" : null,
@@ -30,98 +30,103 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "kind" : "FR",
       "priority" : null,
       "status" : "generated",
-      "text" : "Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Hệ thống phải thực hiện cập nhật firmware qua cơ chế OTA sử dụng 2 phân vùng A và B độc lập trên bộ nhớ Flash, đảm bảo thiết bị vẫn duy trì hoạt động trong suốt quá trình tải dữ liệu.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     },
     {
       "feasibility" : null,
-      "id" : "FR-SNS-01",
-      "kind" : "FR",
+      "id" : "FR-GEN-04",
+      "kind" : "CR",
       "priority" : null,
       "status" : "generated",
-      "text" : "Hệ thống phải phân bổ bộ nhớ Flash thành hai phân vùng A và B có kích thước bằng nhau để lưu trữ firmware độc lập, đảm bảo quá trình ghi bản cập nhật mới không làm gián đoạn firmware đang thực thi ở phân vùng còn lại.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Dự án phải cung cấp 1 kịch bản mô phỏng toàn vẹn quá trình cập nhật OTA thành công, bao gồm các bước: tải, xác thực, ghi Flash, đổi phân vùng boot và khởi động lại thành công dưới 30 giây.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     },
     {
       "feasibility" : null,
-      "id" : "UR-PWR-01",
+      "id" : "UR-GEN-02",
       "kind" : "SAFETY",
       "priority" : null,
       "status" : "generated",
-      "text" : "Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Firmware tải xuống phải được xác thực bằng chữ ký số (ví dụ: SHA-256 và RSA\/ECDSA) trước khi ghi đè; hệ thống phải từ chối 100% các bản cập nhật có chữ ký không hợp lệ hoặc bị hỏng.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     },
     {
       "feasibility" : null,
-      "id" : "UR-SAF-01",
+      "id" : "UR-GEN-03",
       "kind" : "SAFETY",
       "priority" : null,
       "status" : "generated",
-      "text" : "Bootloader phải tự động quay lui (rollback) về phân vùng firmware cũ nếu firmware mới không gửi tín hiệu xác nhận trạng thái hoạt động ổn định (ví dụ: clear watchdog) trong vòng 5000ms kể từ khi khởi động.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Hệ thống phải tự động quay lui (rollback) về phân vùng firmware cũ trong vòng tối đa 5 giây nếu firmware mới khởi động thất bại hoặc không xác nhận trạng thái hoạt động hợp lệ.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     }
   ],
   "kind" : "requirement",
   "total" : 4
-}  2. `req.elicit` — 3 gaps · 2 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 4 gaps · 2 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "security",
-      "suggestion" : "ECDSA (secp256r1), Ed25519, hoặc RSA-2048",
-      "text" : "Thuật toán chữ ký số được sử dụng để xác thực firmware là gì?"
+      "suggestion" : "ECDSA-secp256r1, RSA-2048, hoặc HMAC-SHA256",
+      "text" : "Thuật toán chữ ký số nào được sử dụng để xác thực gói firmware?"
     },
     {
-      "kind" : "interface",
-      "suggestion" : "In ra cổng UART (debug) hoặc lưu vào vùng nhớ Flash\/EEPROM\/RTC backup register",
-      "text" : "Bootloader sẽ ghi log lỗi vào đâu?"
+      "kind" : "logging",
+      "suggestion" : "In ra cổng UART để debug, hoặc lưu vào một vùng Flash\/EEPROM\/RTC backup register dành riêng cho log",
+      "text" : "Bootloader sẽ ghi log vào đâu khi từ chối firmware?"
     },
     {
       "kind" : "functional",
-      "suggestion" : "Khởi động lại vào phân vùng A\/B đang hoạt động (fallback) hoặc dừng hệ thống (halt)",
-      "text" : "Sau khi từ chối firmware sai chữ ký, bootloader sẽ làm gì tiếp theo?"
+      "suggestion" : "Tự động fallback về phân vùng A\/B đang hoạt động tốt, hoặc dừng hệ thống (halt) và nháy LED báo lỗi",
+      "text" : "Hành vi của hệ thống sau khi bootloader từ chối firmware là gì?"
+    },
+    {
+      "kind" : "protocol",
+      "suggestion" : "Chữ ký nằm ở header của file bin, hoặc nằm ở cuối file (footer)",
+      "text" : "Cấu trúc gói firmware chứa chữ ký như thế nào?"
     }
   ],
   "raw" : [
     {
-      "kind_guess" : "precondition",
+      "kind_guess" : "trigger",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "text" : "Gửi một gói firmware bị sửa đổi, sai chữ ký."
     },
     {
-      "kind_guess" : "FR",
+      "kind_guess" : "security",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "text" : "Bootloader phải từ chối và ghi log"
     }
   ]
-}  3. `req.classify` — 2 codes_assigned · 2 reqset (UR-GEN-02, FR-SAF-02)  Xem đầy đủ ▾ {
+}  3. `req.classify` — 2 codes_assigned · 2 reqset (UR-GEN-05, FR-SAF-01)  Xem đầy đủ ▾ {
   "codes_assigned" : 2,
   "reqset" : [
     {
-      "id" : "UR-GEN-02",
+      "id" : "UR-GEN-05",
       "kind" : "SAFETY",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A\/B đang hoạt động trong vòng 50ms."
+      "text" : "Hệ thống phải phát hiện được gói firmware bị sửa đổi hoặc có chữ ký số không hợp lệ thông qua thuật toán kiểm tra tính toàn vẹn (ví dụ: SHA256, CRC32) trước khi tiến hành cập nhật."
     },
     {
-      "id" : "FR-SAF-02",
+      "id" : "FR-SAF-01",
       "kind" : "FR",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms."
+      "text" : "Khi phát hiện chữ ký sai, Bootloader phải ngay lập tức từ chối cập nhật, không ghi đè lên phân vùng đang hoạt động và ghi một bản ghi lỗi (log) vào bộ nhớ không bay hơi trong vòng 100ms."
     }
   ]
 }  4. `chat.report_back` — 6 trường report · 328 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.036008999999999999,
+    "cost" : 0.035418999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -179,8 +184,12 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "project.status",
       "view.timeline",
-      "project.status",
       "req.elicit",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
       "view.artifacts",
       "project.status",
       "view.timeline",
@@ -375,45 +384,45 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.timeline",
       "view.kg_map",
       "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
       "req.classify",
       "chat.report_back",
+      "view.kg_map",
       "chat.orchestrate",
       "chat.restate",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
       "project.status",
       "project.status",
       "view.timeline",
@@ -429,7 +438,50 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.kg_map",
       "project.status",
       "view.timeline",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
       "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.timeline",
+      "view.artifacts",
+      "view.kg_map",
       "chat.report_back",
       "project.status",
       "view.timeline",
@@ -437,6 +489,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.timeline",
       "view.artifacts",
+      "project.status",
+      "view.timeline",
       "view.artifacts",
       "project.status",
       "view.timeline",
@@ -444,9 +498,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "project.status",
+      "view.timeline",
       "view.artifacts",
       "project.status",
-      "view.timeline",
+      "view.artifacts",
       "project.status",
       "view.timeline",
       "view.artifacts",
@@ -458,36 +513,31 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.timeline",
       "project.status",
       "view.timeline",
-      "view.artifacts",
       "project.status",
       "view.timeline",
       "project.status",
+      "view.timeline",
+      "project.status",
       "req.trace_matrix",
       "view.artifacts",
       "view.artifacts",
-      "view.timeline",
       "view.artifacts",
       "view.timeline",
       "view.timeline",
       "view.timeline",
+      "view.timeline",
+      "view.artifacts",
       "view.artifacts",
       "view.artifacts",
       "view.timeline",
       "view.timeline",
-      "req.detect_conflict",
       "view.timeline",
       "view.timeline",
       "view.timeline",
       "view.timeline",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "req.detect_conflict",
-      "req.trace_matrix",
+      "view.timeline",
+      "view.timeline",
+      "view.kg_map",
       "project.status",
       "view.artifacts",
       "project.status",
@@ -606,21 +656,6 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "view.kg_map",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
       "req.elicit",
       "req.detect_conflict",
       "req.trace_matrix",
@@ -757,102 +792,96 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "view.kg_map",
-      "req.classify",
-      "req.detect_conflict"
+      "req.detect_conflict",
+      "req.classify"
     ],
     "ra" : [
     ],
-    "run_id" : "r_f0295305c603",
+    "run_id" : "r_3413545f0d14",
     "undo" : [
-      "e3c6b8564d79",
-      "4ed470204afd",
-      "62b76956cc64",
-      "156db2c68e19",
-      "c399c180ed52",
-      "ef1398a60383",
-      "a90bace1d0f1",
-      "791b0d19ff54",
-      "17939e6ac16e",
-      "e4580dab95c4",
-      "b37c4e6165c4",
-      "5c6ac7fd0065",
-      "af7274f9c7b3",
-      "5e5db9aaf33c",
-      "7196d6670591",
-      "39bd4eeea3c8",
-      "d3793b5a148d",
-      "082342c273c1",
-      "c75c9bf27ea0",
-      "e13be5d8882c",
-      "e818c3c4c056",
-      "190e167a49e6",
-      "79fad43419ee",
-      "b5f4fd2fdc8a",
-      "3b6872663e9d",
-      "8488ad106fca",
-      "8c4c68638f6e",
-      "28f30a3ae97f",
-      "22d1cbed06cd",
-      "a96cf324668f",
-      "ed2994b60872",
-      "9db7d4fc05eb",
-      "56922be9aeb3",
-      "1f33474208d7",
-      "e17180d3caa6",
-      "1902a2fc805f",
-      "9b083ad8386e",
-      "d3e1dc19331f",
-      "dd2cbe555559",
-      "3759518199d5",
-      "cfa0d2cd45f7",
-      "051e13660e8c",
-      "4d6e9d0e67d3",
-      "d520e1a55807",
-      "e01b29aad8d3",
-      "94b2b4b44298",
-      "79e6411f840d",
-      "4c33d325eb4b",
-      "06dfb94acb94",
-      "0224701fcd8e",
-      "f561d6876a55",
-      "abdea7d147dc"
+      "0f2c760e6bcc",
+      "bd495fdc32f9",
+      "60c76109b537",
+      "f11f13a9059b",
+      "9a74e5cd2cee",
+      "81026c477467",
+      "3369c1fdb834",
+      "de59e0a8de36",
+      "9bcd2172bfb5",
+      "5e21d2c80eab",
+      "cf3457cfa571",
+      "9f7a0d727ee1",
+      "737bebf84188",
+      "39f279d26877",
+      "525dec141a76",
+      "e8675b024fac",
+      "bb51206b5976",
+      "2f3ee7fe077a",
+      "32a17ee97cc1",
+      "ebe086975822",
+      "ec48ae98f518",
+      "76f093af36b4",
+      "3d9cae166394",
+      "9e9c3f0a82d9",
+      "f0f8bb25e1f0",
+      "67fd3bcbdb6c",
+      "185488c19e7a",
+      "185c97df6ac1",
+      "6ecc85c95c3f",
+      "8bc6fe0d4541",
+      "7653d6b13b3b",
+      "e8651250fa4b",
+      "83e7831be324",
+      "438f893eb006",
+      "e9d42aa0c068",
+      "a27faf0fad27",
+      "a55c340648a8",
+      "686eace0b4c4",
+      "63fad90a8309",
+      "535edc40daab",
+      "a7b75d1b15ef",
+      "5e938f577719",
+      "7fc57c88727e",
+      "50ff825e6e46",
+      "79c0484d0e80",
+      "ffe609668ded"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 636 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix\nHoàn tác được 52 mục đến 2026-09-24T23:55.\nChi phí mô hình: 0.0360 USD."
-}  Lượt chạy xong.  Đã làm 641 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix
-→ `view.artifacts` làm ra: 4 id + các trường chính của loại ấy (FR-GEN-01, FR-SNS-01, UR-PWR-01, UR-SAF-01…); 4 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `req.elicit` làm ra: 2 text; 3 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 2 Requirement (UR-GEN-02, FR-SAF-02…); 2 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
+  "text" : "Đã làm 666 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix\nHoàn tác được 46 mục đến 2026-09-25T00:35.\nChi phí mô hình: 0.0354 USD."
+}  Lượt chạy xong.  Đã làm 671 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix
+→ `view.artifacts` làm ra: 4 id + các trường chính của loại ấy (FR-GEN-01, FR-GEN-04, UR-GEN-02, UR-GEN-03…); 4 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `req.elicit` làm ra: 2 text; 4 gaps — xem ở màn Yêu cầu & kiến trúc.
+→ `req.classify` làm ra: 2 Requirement (UR-GEN-05, FR-SAF-01…); 2 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
 → `chat.report_back` làm ra: 6 trường report; 328 ký tự text — xem ở màn mặc định.
-Hoàn tác được 53 mục đến 2026-09-24T23:55.
-Chi phí mô hình: 0.0360 USD.   Thử: đối chiếu FR-SAF-02 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
+Hoàn tác được 47 mục đến 2026-09-25T00:35.
+Chi phí mô hình: 0.0354 USD.   Thử: đối chiếu FR-SAF-01 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
 6 YÊU CẦU — 6 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SAF-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms.
-UR-GEN-02	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A/B đang hoạt động trong vòng 50ms.
-FR-GEN-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải phân bổ bộ nhớ Flash thành hai phân vùng A và B có kích thước bằng nhau để lưu trữ firmware độc lập, đảm bảo quá trình ghi bản cập nhật mới không làm gián đoạn firmware đang thực thi ở phân vùng còn lại.
-UR-PWR-01	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.
-UR-SAF-01	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Bootloader phải tự động quay lui (rollback) về phân vùng firmware cũ nếu firmware mới không gửi tín hiệu xác nhận trạng thái hoạt động ổn định (ví dụ: clear watchdog) trong vòng 5000ms kể từ khi khởi động.
+FR-SAF-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi phát hiện chữ ký sai, Bootloader phải ngay lập tức từ chối cập nhật, không ghi đè lên phân vùng đang hoạt động và ghi một bản ghi lỗi (log) vào bộ nhớ không bay hơi trong vòng 100ms.
+UR-GEN-05	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải phát hiện được gói firmware bị sửa đổi hoặc có chữ ký số không hợp lệ thông qua thuật toán kiểm tra tính toàn vẹn (ví dụ: SHA256, CRC32) trước khi tiến hành cập nhật.
+FR-GEN-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện cập nhật firmware qua cơ chế OTA sử dụng 2 phân vùng A và B độc lập trên bộ nhớ Flash, đảm bảo thiết bị vẫn duy trì hoạt động trong suốt quá trình tải dữ liệu.
+FR-GEN-04	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Dự án phải cung cấp 1 kịch bản mô phỏng toàn vẹn quá trình cập nhật OTA thành công, bao gồm các bước: tải, xác thực, ghi Flash, đổi phân vùng boot và khởi động lại thành công dưới 30 giây.
+UR-GEN-02	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware tải xuống phải được xác thực bằng chữ ký số (ví dụ: SHA-256 và RSA/ECDSA) trước khi ghi đè; hệ thống phải từ chối 100% các bản cập nhật có chữ ký không hợp lệ hoặc bị hỏng.
+UR-GEN-03	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tự động quay lui (rollback) về phân vùng firmware cũ trong vòng tối đa 5 giây nếu firmware mới khởi động thất bại hoặc không xác nhận trạng thái hoạt động hợp lệ.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC058/du-an/ota-phan-vung-a-b/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-GEN-01	—
 FR-GEN-01	—
-FR-SAF-02	—
-FR-SAF-02	—
-FR-SNS-01	—
-FR-SNS-01	—
+FR-GEN-04	—
+FR-GEN-04	—
+FR-SAF-01	—
+FR-SAF-01	—
 UR-GEN-02	—
 UR-GEN-02	—
-UR-PWR-01	—
-UR-PWR-01	—
-UR-SAF-01	—
-UR-SAF-01	—
+UR-GEN-03	—
+UR-GEN-03	—
+UR-GEN-05	—
+UR-GEN-05	—
 ```
 
 ![bước 2](buoc-02.png)
@@ -873,25 +902,25 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 
 ```
 Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  6 YÊU CẦU — 6 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SAF-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms.
-UR-GEN-02	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A/B đang hoạt động trong vòng 50ms.
-FR-GEN-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải phân bổ bộ nhớ Flash thành hai phân vùng A và B có kích thước bằng nhau để lưu trữ firmware độc lập, đảm bảo quá trình ghi bản cập nhật mới không làm gián đoạn firmware đang thực thi ở phân vùng còn lại.
-UR-PWR-01	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.
-UR-SAF-01	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Bootloader phải tự động quay lui (rollback) về phân vùng firmware cũ nếu firmware mới không gửi tín hiệu xác nhận trạng thái hoạt động ổn định (ví dụ: clear watchdog) trong vòng 5000ms kể từ khi khởi động.
+FR-SAF-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi phát hiện chữ ký sai, Bootloader phải ngay lập tức từ chối cập nhật, không ghi đè lên phân vùng đang hoạt động và ghi một bản ghi lỗi (log) vào bộ nhớ không bay hơi trong vòng 100ms.
+UR-GEN-05	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải phát hiện được gói firmware bị sửa đổi hoặc có chữ ký số không hợp lệ thông qua thuật toán kiểm tra tính toàn vẹn (ví dụ: SHA256, CRC32) trước khi tiến hành cập nhật.
+FR-GEN-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện cập nhật firmware qua cơ chế OTA sử dụng 2 phân vùng A và B độc lập trên bộ nhớ Flash, đảm bảo thiết bị vẫn duy trì hoạt động trong suốt quá trình tải dữ liệu.
+FR-GEN-04	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Dự án phải cung cấp 1 kịch bản mô phỏng toàn vẹn quá trình cập nhật OTA thành công, bao gồm các bước: tải, xác thực, ghi Flash, đổi phân vùng boot và khởi động lại thành công dưới 30 giây.
+UR-GEN-02	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware tải xuống phải được xác thực bằng chữ ký số (ví dụ: SHA-256 và RSA/ECDSA) trước khi ghi đè; hệ thống phải từ chối 100% các bản cập nhật có chữ ký không hợp lệ hoặc bị hỏng.
+UR-GEN-03	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tự động quay lui (rollback) về phân vùng firmware cũ trong vòng tối đa 5 giây nếu firmware mới khởi động thất bại hoặc không xác nhận trạng thái hoạt động hợp lệ.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC058/du-an/ota-phan-vung-a-b/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-GEN-01	—
 FR-GEN-01	—
-FR-SAF-02	—
-FR-SAF-02	—
-FR-SNS-01	—
-FR-SNS-01	—
+FR-GEN-04	—
+FR-GEN-04	—
+FR-SAF-01	—
+FR-SAF-01	—
 UR-GEN-02	—
 UR-GEN-02	—
-UR-PWR-01	—
-UR-PWR-01	—
-UR-SAF-01	—
-UR-SAF-01	—
+UR-GEN-03	—
+UR-GEN-03	—
+UR-GEN-05	—
+UR-GEN-05	—
 ```
 
 ![ReqArch](man-02-ReqArch.png)
@@ -899,13 +928,14 @@ UR-SAF-01	—
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (17)  Làm rõ yêu cầu — MÂU THUẪN  thời gian: 'Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A/B đang hoạt động trong vòng 50ms.' ≠ 'Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.'  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SOFTWARE ARCHITECTURE  Dự án sẽ sử dụng bootloader mã nguồn mở có sẵn hay cần phát triển một bootloader tùy chỉnh (custom bootloader)?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — MÂU THUẪN  thời gian: 'Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms.' ≠ 'Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A/B đang hoạt động trong vòng 50ms.'  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SECURITY  Thuật toán ký số nào được yêu cầu để xác thực tính toàn vẹn và nguồn gốc của firmware?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SECURITY  Thuật toán chữ ký số được sử dụng để xác thực firmware là gì?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — MÂU THUẪN  thời gian: 'Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms.' ≠ 'Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.'  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Hệ thống sử dụng vi điều khiển (MCU) nào và dung lượng Flash là bao nhiêu để đảm bảo đủ không gian chia phân vùng A/B?  Trả lời ở tab Làm rõ yêu cầu … và 9 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (53)  req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 45 mục nữa — xem màn Nhật ký.  ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (11)  Làm rõ yêu cầu — HW  Hệ thống có sử dụng bộ nhớ Flash ngoài (External SPI Flash) để lưu bản cập nhật tạm thời không, hay tải trực tiếp vào phân vùng không hoạt động (inactive slot) của Flash nội?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Bootloader sử dụng là loại nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SAFETY  Thuật toán ký số nào được yêu cầu cho việc xác thực firmware?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — PROTOCOL  Cấu trúc gói firmware chứa chữ ký như thế nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Giao thức và đường truyền nào được sử dụng để tải bản cập nhật OTA?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW  Vi điều khiển (MCU) mục tiêu là loại nào, dung lượng Flash và RAM bao nhiêu để tính toán kích thước phân vùng A/B?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — LOGGING  Bootloader sẽ ghi log vào đâu khi từ chối firmware?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
+• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu … và 3 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (47)  req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác … và 39 mục nữa — xem màn Nhật ký.  ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 4.6 s)*:
+**Tác tử trả lời** *(sau 4.5 s)*:
 
 ```
-VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 4 items (FR-GEN-01, FR-SNS-01, UR-PWR-01, UR-SAF-01) · requirement kind · 4 total  Xem đầy đủ ▾ {
+VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  Đã nhận (ý hiểu: `big_command`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Gửi một gói firmware bị sửa đổi, sai chữ ký. Bootloader phải từ chối và ghi log  bước 5/6  Mở chi tiết Dừng khẩn ✅ Xong 4/6 bước  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.elicit`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là big_command, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ view.artifacts, ingest.classify, ingest.index_text, req.elicit và 2 bước nữa.  1. `view.artifacts`  2. `ingest.classify`  3. `ingest.index_text`  4. `req.elicit`  5. `req.classify`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `view.artifacts` — 4 items (FR-GEN-01, FR-GEN-04, UR-GEN-02, UR-GEN-03) · requirement kind · 4 total  Xem đầy đủ ▾ {
   "items" : [
     {
       "feasibility" : null,
@@ -913,98 +943,103 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "kind" : "FR",
       "priority" : null,
       "status" : "generated",
-      "text" : "Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Hệ thống phải thực hiện cập nhật firmware qua cơ chế OTA sử dụng 2 phân vùng A và B độc lập trên bộ nhớ Flash, đảm bảo thiết bị vẫn duy trì hoạt động trong suốt quá trình tải dữ liệu.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     },
     {
       "feasibility" : null,
-      "id" : "FR-SNS-01",
-      "kind" : "FR",
+      "id" : "FR-GEN-04",
+      "kind" : "CR",
       "priority" : null,
       "status" : "generated",
-      "text" : "Hệ thống phải phân bổ bộ nhớ Flash thành hai phân vùng A và B có kích thước bằng nhau để lưu trữ firmware độc lập, đảm bảo quá trình ghi bản cập nhật mới không làm gián đoạn firmware đang thực thi ở phân vùng còn lại.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Dự án phải cung cấp 1 kịch bản mô phỏng toàn vẹn quá trình cập nhật OTA thành công, bao gồm các bước: tải, xác thực, ghi Flash, đổi phân vùng boot và khởi động lại thành công dưới 30 giây.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     },
     {
       "feasibility" : null,
-      "id" : "UR-PWR-01",
+      "id" : "UR-GEN-02",
       "kind" : "SAFETY",
       "priority" : null,
       "status" : "generated",
-      "text" : "Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Firmware tải xuống phải được xác thực bằng chữ ký số (ví dụ: SHA-256 và RSA\/ECDSA) trước khi ghi đè; hệ thống phải từ chối 100% các bản cập nhật có chữ ký không hợp lệ hoặc bị hỏng.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     },
     {
       "feasibility" : null,
-      "id" : "UR-SAF-01",
+      "id" : "UR-GEN-03",
       "kind" : "SAFETY",
       "priority" : null,
       "status" : "generated",
-      "text" : "Bootloader phải tự động quay lui (rollback) về phân vùng firmware cũ nếu firmware mới không gửi tín hiệu xác nhận trạng thái hoạt động ổn định (ví dụ: clear watchdog) trong vòng 5000ms kể từ khi khởi động.",
-      "updated_at" : "2026-09-23T23:55:42.540527+00:00"
+      "text" : "Hệ thống phải tự động quay lui (rollback) về phân vùng firmware cũ trong vòng tối đa 5 giây nếu firmware mới khởi động thất bại hoặc không xác nhận trạng thái hoạt động hợp lệ.",
+      "updated_at" : "2026-09-24T00:35:32.491039+00:00"
     }
   ],
   "kind" : "requirement",
   "total" : 4
-}  2. `req.elicit` — 3 gaps · 2 raw  Xem đầy đủ ▾ {
+}  2. `req.elicit` — 4 gaps · 2 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "security",
-      "suggestion" : "ECDSA (secp256r1), Ed25519, hoặc RSA-2048",
-      "text" : "Thuật toán chữ ký số được sử dụng để xác thực firmware là gì?"
+      "suggestion" : "ECDSA-secp256r1, RSA-2048, hoặc HMAC-SHA256",
+      "text" : "Thuật toán chữ ký số nào được sử dụng để xác thực gói firmware?"
     },
     {
-      "kind" : "interface",
-      "suggestion" : "In ra cổng UART (debug) hoặc lưu vào vùng nhớ Flash\/EEPROM\/RTC backup register",
-      "text" : "Bootloader sẽ ghi log lỗi vào đâu?"
+      "kind" : "logging",
+      "suggestion" : "In ra cổng UART để debug, hoặc lưu vào một vùng Flash\/EEPROM\/RTC backup register dành riêng cho log",
+      "text" : "Bootloader sẽ ghi log vào đâu khi từ chối firmware?"
     },
     {
       "kind" : "functional",
-      "suggestion" : "Khởi động lại vào phân vùng A\/B đang hoạt động (fallback) hoặc dừng hệ thống (halt)",
-      "text" : "Sau khi từ chối firmware sai chữ ký, bootloader sẽ làm gì tiếp theo?"
+      "suggestion" : "Tự động fallback về phân vùng A\/B đang hoạt động tốt, hoặc dừng hệ thống (halt) và nháy LED báo lỗi",
+      "text" : "Hành vi của hệ thống sau khi bootloader từ chối firmware là gì?"
+    },
+    {
+      "kind" : "protocol",
+      "suggestion" : "Chữ ký nằm ở header của file bin, hoặc nằm ở cuối file (footer)",
+      "text" : "Cấu trúc gói firmware chứa chữ ký như thế nào?"
     }
   ],
   "raw" : [
     {
-      "kind_guess" : "precondition",
+      "kind_guess" : "trigger",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "text" : "Gửi một gói firmware bị sửa đổi, sai chữ ký."
     },
     {
-      "kind_guess" : "FR",
+      "kind_guess" : "security",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "text" : "Bootloader phải từ chối và ghi log"
     }
   ]
-}  3. `req.classify` — 2 codes_assigned · 2 reqset (UR-GEN-02, FR-SAF-02)  Xem đầy đủ ▾ {
+}  3. `req.classify` — 2 codes_assigned · 2 reqset (UR-GEN-05, FR-SAF-01)  Xem đầy đủ ▾ {
   "codes_assigned" : 2,
   "reqset" : [
     {
-      "id" : "UR-GEN-02",
+      "id" : "UR-GEN-05",
       "kind" : "SAFETY",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A\/B đang hoạt động trong vòng 50ms."
+      "text" : "Hệ thống phải phát hiện được gói firmware bị sửa đổi hoặc có chữ ký số không hợp lệ thông qua thuật toán kiểm tra tính toàn vẹn (ví dụ: SHA256, CRC32) trước khi tiến hành cập nhật."
     },
     {
-      "id" : "FR-SAF-02",
+      "id" : "FR-SAF-01",
       "kind" : "FR",
       "locator" : {
       },
-      "source" : "user_input",
+      "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms."
+      "text" : "Khi phát hiện chữ ký sai, Bootloader phải ngay lập tức từ chối cập nhật, không ghi đè lên phân vùng đang hoạt động và ghi một bản ghi lỗi (log) vào bộ nhớ không bay hơi trong vòng 100ms."
     }
   ]
 }  4. `chat.report_back` — 6 trường report · 328 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.036008999999999999,
+    "cost" : 0.035418999999999999,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -1062,8 +1097,12 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "project.status",
       "view.timeline",
-      "project.status",
       "req.elicit",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
       "view.artifacts",
       "project.status",
       "view.timeline",
@@ -1258,45 +1297,45 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.timeline",
       "view.kg_map",
       "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
       "req.classify",
       "chat.report_back",
+      "view.kg_map",
       "chat.orchestrate",
       "chat.restate",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
       "project.status",
       "project.status",
       "view.timeline",
@@ -1312,7 +1351,50 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.kg_map",
       "project.status",
       "view.timeline",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
       "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.timeline",
+      "view.artifacts",
+      "view.kg_map",
       "chat.report_back",
       "project.status",
       "view.timeline",
@@ -1320,6 +1402,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.timeline",
       "view.artifacts",
+      "project.status",
+      "view.timeline",
       "view.artifacts",
       "project.status",
       "view.timeline",
@@ -1327,9 +1411,10 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "project.status",
+      "view.timeline",
       "view.artifacts",
       "project.status",
-      "view.timeline",
+      "view.artifacts",
       "project.status",
       "view.timeline",
       "view.artifacts",
@@ -1341,36 +1426,31 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.timeline",
       "project.status",
       "view.timeline",
-      "view.artifacts",
       "project.status",
       "view.timeline",
       "project.status",
+      "view.timeline",
+      "project.status",
       "req.trace_matrix",
       "view.artifacts",
       "view.artifacts",
-      "view.timeline",
       "view.artifacts",
       "view.timeline",
       "view.timeline",
       "view.timeline",
+      "view.timeline",
+      "view.artifacts",
       "view.artifacts",
       "view.artifacts",
       "view.timeline",
       "view.timeline",
-      "req.detect_conflict",
       "view.timeline",
       "view.timeline",
       "view.timeline",
       "view.timeline",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "req.detect_conflict",
-      "req.trace_matrix",
+      "view.timeline",
+      "view.timeline",
+      "view.kg_map",
       "project.status",
       "view.artifacts",
       "project.status",
@@ -1489,21 +1569,6 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "view.kg_map",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
-      "req.detect_conflict",
-      "req.trace_matrix",
-      "view.artifacts",
-      "view.artifacts",
-      "view.kg_map",
       "req.elicit",
       "req.detect_conflict",
       "req.trace_matrix",
@@ -1640,102 +1705,96 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.artifacts",
       "view.kg_map",
-      "req.classify",
-      "req.detect_conflict"
+      "req.detect_conflict",
+      "req.classify"
     ],
     "ra" : [
     ],
-    "run_id" : "r_f0295305c603",
+    "run_id" : "r_3413545f0d14",
     "undo" : [
-      "e3c6b8564d79",
-      "4ed470204afd",
-      "62b76956cc64",
-      "156db2c68e19",
-      "c399c180ed52",
-      "ef1398a60383",
-      "a90bace1d0f1",
-      "791b0d19ff54",
-      "17939e6ac16e",
-      "e4580dab95c4",
-      "b37c4e6165c4",
-      "5c6ac7fd0065",
-      "af7274f9c7b3",
-      "5e5db9aaf33c",
-      "7196d6670591",
-      "39bd4eeea3c8",
-      "d3793b5a148d",
-      "082342c273c1",
-      "c75c9bf27ea0",
-      "e13be5d8882c",
-      "e818c3c4c056",
-      "190e167a49e6",
-      "79fad43419ee",
-      "b5f4fd2fdc8a",
-      "3b6872663e9d",
-      "8488ad106fca",
-      "8c4c68638f6e",
-      "28f30a3ae97f",
-      "22d1cbed06cd",
-      "a96cf324668f",
-      "ed2994b60872",
-      "9db7d4fc05eb",
-      "56922be9aeb3",
-      "1f33474208d7",
-      "e17180d3caa6",
-      "1902a2fc805f",
-      "9b083ad8386e",
-      "d3e1dc19331f",
-      "dd2cbe555559",
-      "3759518199d5",
-      "cfa0d2cd45f7",
-      "051e13660e8c",
-      "4d6e9d0e67d3",
-      "d520e1a55807",
-      "e01b29aad8d3",
-      "94b2b4b44298",
-      "79e6411f840d",
-      "4c33d325eb4b",
-      "06dfb94acb94",
-      "0224701fcd8e",
-      "f561d6876a55",
-      "abdea7d147dc"
+      "0f2c760e6bcc",
+      "bd495fdc32f9",
+      "60c76109b537",
+      "f11f13a9059b",
+      "9a74e5cd2cee",
+      "81026c477467",
+      "3369c1fdb834",
+      "de59e0a8de36",
+      "9bcd2172bfb5",
+      "5e21d2c80eab",
+      "cf3457cfa571",
+      "9f7a0d727ee1",
+      "737bebf84188",
+      "39f279d26877",
+      "525dec141a76",
+      "e8675b024fac",
+      "bb51206b5976",
+      "2f3ee7fe077a",
+      "32a17ee97cc1",
+      "ebe086975822",
+      "ec48ae98f518",
+      "76f093af36b4",
+      "3d9cae166394",
+      "9e9c3f0a82d9",
+      "f0f8bb25e1f0",
+      "67fd3bcbdb6c",
+      "185488c19e7a",
+      "185c97df6ac1",
+      "6ecc85c95c3f",
+      "8bc6fe0d4541",
+      "7653d6b13b3b",
+      "e8651250fa4b",
+      "83e7831be324",
+      "438f893eb006",
+      "e9d42aa0c068",
+      "a27faf0fad27",
+      "a55c340648a8",
+      "686eace0b4c4",
+      "63fad90a8309",
+      "535edc40daab",
+      "a7b75d1b15ef",
+      "5e938f577719",
+      "7fc57c88727e",
+      "50ff825e6e46",
+      "79c0484d0e80",
+      "ffe609668ded"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 636 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix\nHoàn tác được 52 mục đến 2026-09-24T23:55.\nChi phí mô hình: 0.0360 USD."
-}  Lượt chạy xong.  Đã làm 641 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix
-→ `view.artifacts` làm ra: 4 id + các trường chính của loại ấy (FR-GEN-01, FR-SNS-01, UR-PWR-01, UR-SAF-01…); 4 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
-→ `req.elicit` làm ra: 2 text; 3 gaps — xem ở màn Yêu cầu & kiến trúc.
-→ `req.classify` làm ra: 2 Requirement (UR-GEN-02, FR-SAF-02…); 2 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
+  "text" : "Đã làm 666 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix\nHoàn tác được 46 mục đến 2026-09-25T00:35.\nChi phí mô hình: 0.0354 USD."
+}  Lượt chạy xong.  Đã làm 671 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, chat.report_back, chat.orchestrate, chat.restate, req.detect_conflict, req.trace_matrix
+→ `view.artifacts` làm ra: 4 id + các trường chính của loại ấy (FR-GEN-01, FR-GEN-04, UR-GEN-02, UR-GEN-03…); 4 số trước khi cắt; requirement kind — xem ở màn Bản đồ tri thức & hỏi đáp.
+→ `req.elicit` làm ra: 2 text; 4 gaps — xem ở màn Yêu cầu & kiến trúc.
+→ `req.classify` làm ra: 2 Requirement (UR-GEN-05, FR-SAF-01…); 2 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
 → `chat.report_back` làm ra: 6 trường report; 328 ký tự text — xem ở màn mặc định.
-Hoàn tác được 53 mục đến 2026-09-24T23:55.
-Chi phí mô hình: 0.0360 USD.   Thử: đối chiếu FR-SAF-02 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
+Hoàn tác được 47 mục đến 2026-09-25T00:35.
+Chi phí mô hình: 0.0354 USD.   Thử: đối chiếu FR-SAF-01 với phần cứng thật (còn 6 yêu cầu chưa đối chiếu) Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
 6 YÊU CẦU — 6 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-SAF-02	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Bootloader phải ghi log chi tiết sự kiện từ chối (bao gồm mã lỗi và nguyên nhân sai chữ ký) vào bộ nhớ không bay hơi, đảm bảo quá trình ghi log hoàn tất dưới 100ms.
-UR-GEN-02	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi nhận được gói firmware bị sửa đổi có chữ ký số hoặc mã CRC32 không hợp lệ, Bootloader phải từ chối quá trình cập nhật và tuyệt đối không được ghi đè lên phân vùng A/B đang hoạt động trong vòng 50ms.
-FR-GEN-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.
-FR-SNS-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải phân bổ bộ nhớ Flash thành hai phân vùng A và B có kích thước bằng nhau để lưu trữ firmware độc lập, đảm bảo quá trình ghi bản cập nhật mới không làm gián đoạn firmware đang thực thi ở phân vùng còn lại.
-UR-PWR-01	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware tải qua OTA phải được xác thực tính toàn vẹn và nguồn gốc bằng chữ ký số (ví dụ: SHA256-RSA2048 hoặc ECDSA) với thời gian tính toán và xác thực không vượt quá 500ms trước khi cho phép ghi đè cờ khởi động.
-UR-SAF-01	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Bootloader phải tự động quay lui (rollback) về phân vùng firmware cũ nếu firmware mới không gửi tín hiệu xác nhận trạng thái hoạt động ổn định (ví dụ: clear watchdog) trong vòng 5000ms kể từ khi khởi động.
+FR-SAF-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Khi phát hiện chữ ký sai, Bootloader phải ngay lập tức từ chối cập nhật, không ghi đè lên phân vùng đang hoạt động và ghi một bản ghi lỗi (log) vào bộ nhớ không bay hơi trong vòng 100ms.
+UR-GEN-05	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải phát hiện được gói firmware bị sửa đổi hoặc có chữ ký số không hợp lệ thông qua thuật toán kiểm tra tính toàn vẹn (ví dụ: SHA256, CRC32) trước khi tiến hành cập nhật.
+FR-GEN-01	FR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải thực hiện cập nhật firmware qua cơ chế OTA sử dụng 2 phân vùng A và B độc lập trên bộ nhớ Flash, đảm bảo thiết bị vẫn duy trì hoạt động trong suốt quá trình tải dữ liệu.
+FR-GEN-04	CR	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Dự án phải cung cấp 1 kịch bản mô phỏng toàn vẹn quá trình cập nhật OTA thành công, bao gồm các bước: tải, xác thực, ghi Flash, đổi phân vùng boot và khởi động lại thành công dưới 30 giây.
+UR-GEN-02	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Firmware tải xuống phải được xác thực bằng chữ ký số (ví dụ: SHA-256 và RSA/ECDSA) trước khi ghi đè; hệ thống phải từ chối 100% các bản cập nhật có chữ ký không hợp lệ hoặc bị hỏng.
+UR-GEN-03	SAFETY	—	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải tự động quay lui (rollback) về phân vùng firmware cũ trong vòng tối đa 5 giây nếu firmware mới khởi động thất bại hoặc không xác nhận trạng thái hoạt động hợp lệ.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC058/du-an/ota-phan-vung-a-b/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-GEN-01	—
 FR-GEN-01	—
-FR-SAF-02	—
-FR-SAF-02	—
-FR-SNS-01	—
-FR-SNS-01	—
+FR-GEN-04	—
+FR-GEN-04	—
+FR-SAF-01	—
+FR-SAF-01	—
 UR-GEN-02	—
 UR-GEN-02	—
-UR-PWR-01	—
-UR-PWR-01	—
-UR-SAF-01	—
-UR-SAF-01	—
+UR-GEN-03	—
+UR-GEN-03	—
+UR-GEN-05	—
+UR-GEN-05	—
 ```
 
 ![bước 3](buoc-03.png)

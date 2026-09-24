@@ -7,7 +7,7 @@ kèm một ảnh chụp cửa sổ thật.
 
 **Tôi (người dùng):** tạo dự án — “ma trận truy vết”
 
-**Tác tử trả lời** *(sau 0.9 s)*:
+**Tác tử trả lời** *(sau 0.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
@@ -28,18 +28,28 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test
 
-**Tác tử trả lời** *(sau 45.7 s)*:
+**Tác tử trả lời** *(sau 34.5 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.acceptance`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 1 gaps · 1 raw  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.acceptance`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "chức năng cụ thể",
-      "suggestion" : "Cung cấp tài liệu đặc tả, mã nguồn và danh sách test case hiện có để hệ thống có thể trích xuất và lập ma trận.",
-      "text" : "Danh sách các yêu cầu (UR\/FR\/NFR), tài liệu thiết kế, mã nguồn và các kịch bản kiểm thử (test case) của dự án này hiện đang ở đâu?"
+      "suggestion" : "Cung cấp đường dẫn tới thư mục chứa tài liệu, mã nguồn hoặc hệ thống quản lý (ví dụ: Jira, GitHub, file Markdown\/JSON cục bộ).",
+      "text" : "Dự án này cụ thể là dự án nào, và các tài liệu hiện tại (yêu cầu, thiết kế, mã nguồn, kịch bản kiểm thử) đang được lưu trữ ở đâu?"
+    },
+    {
+      "kind" : "tiêu chí nghiệm thu",
+      "suggestion" : "Bảng Markdown, file CSV, hoặc file Excel.",
+      "text" : "Định dạng đầu ra mong muốn của ma trận truy vết là gì?"
+    },
+    {
+      "kind" : "giao tiếp\/giao thức",
+      "suggestion" : "Sử dụng tiền tố như REQ-01, MOD-01, TEST-01 hoặc tự động sinh ID mới nếu chưa có.",
+      "text" : "Có quy tắc đánh mã (ID) cụ thể nào cho các yêu cầu, module thiết kế, hàm mã nguồn và test case đang được sử dụng không?"
     }
   ],
   "raw" : [
@@ -61,7 +71,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       },
       "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Hệ thống phải sinh ra một ma trận truy vết (traceability matrix) liên kết 100% các yêu cầu với tài liệu thiết kế, tệp mã nguồn và kịch bản kiểm thử (test case) tương ứng. Các yêu cầu không có kịch bản kiểm thử liên kết phải được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'."
+      "text" : "Hệ thống phải xuất ma trận truy vết dưới dạng bảng (CSV hoặc HTML) thể hiện liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, trong đó 100% yêu cầu có số lượng ca kiểm thử liên kết bằng 0 phải được gắn cờ 'MISSING_TEST'."
     }
   ]
 }  3. `req.detect_conflict` — 0 issues  Xem đầy đủ ▾ {
@@ -78,31 +88,24 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "priority" : "S",
       "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Hệ thống phải sinh ra một ma trận truy vết (traceability matrix) liên kết 100% các yêu cầu với tài liệu thiết kế, tệp mã nguồn và kịch bản kiểm thử (test case) tương ứng. Các yêu cầu không có kịch bản kiểm thử liên kết phải được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'.",
+      "text" : "Hệ thống phải xuất ma trận truy vết dưới dạng bảng (CSV hoặc HTML) thể hiện liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, trong đó 100% yêu cầu có số lượng ca kiểm thử liên kết bằng 0 phải được gắn cờ 'MISSING_TEST'.",
       "trace" : [
       ]
     }
   ]
-}  5. `req.acceptance` — 2 acceptance  Xem đầy đủ ▾ {
+}  5. `req.acceptance` — 1 acceptance  Xem đầy đủ ▾ {
   "acceptance" : [
     {
-      "given" : "Hệ thống có tập hợp các yêu cầu, tài liệu thiết kế, mã nguồn và kịch bản kiểm thử đầy đủ cho tất cả yêu cầu.",
+      "given" : "Hệ thống có dữ liệu dự án bao gồm các yêu cầu, trong đó có ít nhất một yêu cầu không có ca kiểm thử nào được liên kết và một yêu cầu có ca kiểm thử được liên kết.",
       "observable" : "serial_pattern",
       "req_id" : "FR-PWR-01",
-      "then" : "Ma trận truy vết được tạo ra chứa 100% các yêu cầu được liên kết với thiết kế, mã nguồn, kịch bản kiểm thử và không có cờ MISSING_TEST.",
-      "when" : "Lệnh sinh ma trận truy vết được thực thi."
-    },
-    {
-      "given" : "Hệ thống có tập hợp các yêu cầu, tài liệu thiết kế, mã nguồn nhưng có ít nhất một yêu cầu không có kịch bản kiểm thử tương ứng.",
-      "observable" : "serial_pattern",
-      "req_id" : "FR-PWR-01",
-      "then" : "Ma trận truy vết được tạo ra, trong đó yêu cầu thiếu kịch bản kiểm thử được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'.",
-      "when" : "Lệnh sinh ma trận truy vết được thực thi."
+      "then" : "Tệp kết quả được tạo ra dưới dạng bảng hiển thị đầy đủ liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, đồng thời dòng tương ứng với yêu cầu không có ca kiểm thử bắt buộc phải chứa cờ 'MISSING_TEST'.",
+      "when" : "Lệnh xuất ma trận truy vết ra định dạng CSV hoặc HTML được thực thi."
     }
   ]
-}  6. `chat.report_back` — 6 trường report · 309 ký tự text  Xem đầy đủ ▾ {
+}  6. `chat.report_back` — 6 trường report · 291 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.016635,
+    "cost" : 0.014511,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -140,8 +143,12 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.timeline",
       "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
       "req.elicit",
-      "view.artifacts",
       "project.status",
       "view.timeline",
       "project.status",
@@ -163,50 +170,50 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.artifacts",
       "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
       "req.classify",
       "req.detect_conflict",
       "req.prioritize",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
       "project.status",
       "project.status",
       "view.timeline",
@@ -221,7 +228,6 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.timeline",
       "view.kg_map",
       "project.status",
-      "view.artifacts",
       "project.status",
       "view.timeline",
       "view.artifacts",
@@ -231,107 +237,42 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.kg_map",
       "view.timeline",
-      "view.artifacts",
       "view.kg_map",
       "view.timeline",
       "view.kg_map",
       "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "req.detect_conflict",
-      "project.status",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "req.trace_matrix",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.artifacts",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "view.artifacts",
-      "view.artifacts",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
       "view.timeline",
       "view.kg_map",
       "req.acceptance"
     ],
     "ra" : [
     ],
-    "run_id" : "r_2b89d67c38de",
+    "run_id" : "r_28efe8549c94",
     "undo" : [
-      "55319e7fe4ff",
-      "3ed40feb1850",
-      "c45ddd0fc9fc",
-      "8a6989bc7906"
+      "d292eef6cde5",
+      "a5927b32a562",
+      "2e38ce651371"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 198 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance\nHoàn tác được 4 mục đến 2026-09-24T23:58.\nChi phí mô hình: 0.0166 USD."
-}  Lượt chạy xong.  Đã làm 243 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance, chat.report_back, chat.orchestrate, chat.restate
-→ `req.elicit` làm ra: 1 text; 1 gaps — xem ở màn Yêu cầu & kiến trúc.
+  "text" : "Đã làm 137 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, req.classify, req.detect_conflict, req.prioritize, view.kg_map, req.acceptance\nHoàn tác được 3 mục đến 2026-09-25T00:38.\nChi phí mô hình: 0.0145 USD."
+}  Lượt chạy xong.  Đã làm 162 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, req.classify, req.detect_conflict, req.prioritize, view.kg_map, req.acceptance, chat.report_back, chat.orchestrate, chat.restate
+→ `req.elicit` làm ra: 1 text; 3 gaps — xem ở màn Yêu cầu & kiến trúc.
 → `req.classify` làm ra: 1 Requirement (FR-PWR-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
 → `req.detect_conflict` làm ra: 0 kind conflict|ambiguous|unmeasurable — xem ở màn Yêu cầu & kiến trúc.
 → `req.prioritize` làm ra: 1 reqset (FR-PWR-01…) — xem ở màn Yêu cầu & kiến trúc.
-→ `req.acceptance` làm ra: 2 req_id — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 309 ký tự text — xem ở màn mặc định.
-Hoàn tác được 5 mục đến 2026-09-24T23:58.
-Chi phí mô hình: 0.0166 USD.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+→ `req.acceptance` làm ra: 1 req_id — xem ở màn Yêu cầu & kiến trúc.
+→ `chat.report_back` làm ra: 6 trường report; 291 ký tự text — xem ở màn mặc định.
+Hoàn tác được 3 mục đến 2026-09-25T00:38.
+Chi phí mô hình: 0.0145 USD.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `ReqArch`:**
 
 ```
 1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải sinh ra một ma trận truy vết (traceability matrix) liên kết 100% các yêu cầu với tài liệu thiết kế, tệp mã nguồn và kịch bản kiểm thử (test case) tương ứng. Các yêu cầu không có kịch bản kiểm thử liên kết phải được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'.
+FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải xuất ma trận truy vết dưới dạng bảng (CSV hoặc HTML) thể hiện liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, trong đó 100% yêu cầu có số lượng ca kiểm thử liên kết bằng 0 phải được gắn cờ 'MISSING_TEST'.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-PWR-01	—
 ```
@@ -345,8 +286,10 @@ FR-PWR-01	—
 ### Tab `Main`
 
 ```
-Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 1 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
-Cần làm rõ	CHỨC NĂNG CỤ THỂ	Danh sách các yêu cầu (UR/FR/NFR), tài liệu thiết kế, mã nguồn và các kịch bản kiểm thử (test case) của dự án này hiện đang ở đâu?
+Tổng quan  project.status · target.detect  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  TÍNH NĂNG  Chưa có tính năng nào trong hồ sơ — `plan.define_feature` ghi tính năng xuống store; 0 passing trên 0 tổng.  ĐANG CHỜ TÔI — 3 mục  LOẠI	CHỖ XỬ LÝ	VÌ SAO
+Cần làm rõ	GIAO TIẾP/GIAO THỨC	Có quy tắc đánh mã (ID) cụ thể nào cho các yêu cầu, module thiết kế, hàm mã nguồn và test case đang được sử dụng không?
+Cần làm rõ	CHỨC NĂNG CỤ THỂ	Dự án này cụ thể là dự án nào, và các tài liệu hiện tại (yêu cầu, thiết kế, mã nguồn, kịch bản kiểm thử) đang được lưu trữ ở đâu?
+Cần làm rõ	TIÊU CHÍ NGHIỆM THU	Định dạng đầu ra mong muốn của ma trận truy vết là gì?
  PHẦN CỨNG ĐÃ GHIM  MỤC	GIÁ TRỊ
 Chip	<null>
 Board	<null>
@@ -357,17 +300,17 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_461c11c043b4
-Mở lúc	23/09 23:58:05
+Phiên	s_85c365461979
+Mở lúc	24/09 00:38:06
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
 Mục hoàn tác	0
 Chưa có dữ liệu	permits, board (DEV-110)
   NGÂN SÁCH MÔ HÌNH  MỤC	GIÁ TRỊ
-Hôm nay	0.0166 USD
+Hôm nay	0.0145 USD
 Hạn ngày	5.00 USD
-Số lời gọi	6
+Số lời gọi	4
 ```
 
 ![Main](man-01-Main.png)
@@ -376,7 +319,7 @@ Số lời gọi	6
 
 ```
 Yêu cầu & kiến trúc  arch.adr · arch.compare · arch.decompose · +17 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  1 YÊU CẦU — 1 CHƯA đối chiếu phần cứng · 0 yêu cầu KHÔNG ĐO ĐƯỢC  MÃ	LOẠI	ƯU TIÊN	TRẠNG THÁI	KHẢ THI	ĐO ĐƯỢC	NỘI DUNG
-FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải sinh ra một ma trận truy vết (traceability matrix) liên kết 100% các yêu cầu với tài liệu thiết kế, tệp mã nguồn và kịch bản kiểm thử (test case) tương ứng. Các yêu cầu không có kịch bản kiểm thử liên kết phải được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'.
+FR-PWR-01	FR	S	generated	chưa đối chiếu	✓ có ngưỡng đo	Hệ thống phải xuất ma trận truy vết dưới dạng bảng (CSV hoặc HTML) thể hiện liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, trong đó 100% yêu cầu có số lượng ca kiểm thử liên kết bằng 0 phải được gắn cờ 'MISSING_TEST'.
   MA TRẬN TRUY VẾT — yêu cầu ↔ module ↔ mã ↔ test  Ma trận đầy đủ: `/Users/congvt/Documents/EIDE/docs/test/usecase/TC063/du-an/ma-tran-truy-vet/.eide/docs/trace_matrix.md`  YÊU CẦU	ĐỨT Ở ĐÂU
 FR-PWR-01	—
 ```
@@ -394,127 +337,127 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ### Tab `NhatKy`
 
 ```
-Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 1253 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
-23/09 23:58:58	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:58	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:58	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:56	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
-23/09 23:58:56	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
-23/09 23:58:56	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:56	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:54	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:49	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:48	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:48	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 855 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
+24/09 00:38:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:46	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
+24/09 00:38:46	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
+24/09 00:38:46	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:46	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:44	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:38	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:37	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:37	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
 ```
 
 ![NhatKy](man-04-NhatKy.png)
@@ -522,21 +465,31 @@ Nhật ký  view.timeline  Vùng làm việc trống — chọn màn ở cột t
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — CHỨC NĂNG CỤ THỂ  Danh sách các yêu cầu (UR/FR/NFR), tài liệu thiết kế, mã nguồn và các kịch bản kiểm thử (test case) của dự án này hiện đang ở đâu?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (6)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.acceptance  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.prioritize  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (3)  Làm rõ yêu cầu — GIAO TIẾP/GIAO THỨC  Có quy tắc đánh mã (ID) cụ thể nào cho các yêu cầu, module thiết kế, hàm mã nguồn và test case đang được sử dụng không?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CHỨC NĂNG CỤ THỂ  Dự án này cụ thể là dự án nào, và các tài liệu hiện tại (yêu cầu, thiết kế, mã nguồn, kịch bản kiểm thử) đang được lưu trữ ở đâu?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — TIÊU CHÍ NGHIỆM THU  Định dạng đầu ra mong muốn của ma trận truy vết là gì?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (3)  req.acceptance  còn 23 giờ  Hoàn tác req.prioritize  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 9.2 s)*:
+**Tác tử trả lời** *(sau 9.4 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ma-tran-truy-vet` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
 2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
-3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.classify`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.detect_conflict`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.trace_matrix`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.acceptance`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 1 gaps · 1 raw  Xem đầy đủ ▾ {
+3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  Đã nhận (ý hiểu: `req.analyze`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Sinh ma trận truy vết yêu cầu → thiết kế → mã → test cho dự án này, đánh dấu yêu cầu nào chưa có test  bước 6/6  Mở chi tiết Dừng khẩn ✅ Xong 6/6 bước  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Yêu cầu & kiến trúc mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Nhật ký mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.artifacts`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Tổng quan (tác tử đang chạy `project.status`)  → mở màn Nhật ký (tác tử đang chạy `view.timeline`)  → mở màn Bản đồ tri thức & hỏi đáp (tác tử đang chạy `view.kg_map`)  → mở màn Yêu cầu & kiến trúc (tác tử đang chạy `req.acceptance`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là req.analyze, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ req.elicit, req.classify, req.detect_conflict, req.prioritize và 2 bước nữa.  1. `req.elicit`  2. `req.classify`  3. `req.detect_conflict`  4. `req.prioritize`  5. `req.acceptance`  6. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  KẾT QUẢ TỪNG BƯỚC  1. `req.elicit` — 3 gaps · 1 raw  Xem đầy đủ ▾ {
   "gaps" : [
     {
       "kind" : "chức năng cụ thể",
-      "suggestion" : "Cung cấp tài liệu đặc tả, mã nguồn và danh sách test case hiện có để hệ thống có thể trích xuất và lập ma trận.",
-      "text" : "Danh sách các yêu cầu (UR\/FR\/NFR), tài liệu thiết kế, mã nguồn và các kịch bản kiểm thử (test case) của dự án này hiện đang ở đâu?"
+      "suggestion" : "Cung cấp đường dẫn tới thư mục chứa tài liệu, mã nguồn hoặc hệ thống quản lý (ví dụ: Jira, GitHub, file Markdown\/JSON cục bộ).",
+      "text" : "Dự án này cụ thể là dự án nào, và các tài liệu hiện tại (yêu cầu, thiết kế, mã nguồn, kịch bản kiểm thử) đang được lưu trữ ở đâu?"
+    },
+    {
+      "kind" : "tiêu chí nghiệm thu",
+      "suggestion" : "Bảng Markdown, file CSV, hoặc file Excel.",
+      "text" : "Định dạng đầu ra mong muốn của ma trận truy vết là gì?"
+    },
+    {
+      "kind" : "giao tiếp\/giao thức",
+      "suggestion" : "Sử dụng tiền tố như REQ-01, MOD-01, TEST-01 hoặc tự động sinh ID mới nếu chưa có.",
+      "text" : "Có quy tắc đánh mã (ID) cụ thể nào cho các yêu cầu, module thiết kế, hàm mã nguồn và test case đang được sử dụng không?"
     }
   ],
   "raw" : [
@@ -558,7 +511,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       },
       "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Hệ thống phải sinh ra một ma trận truy vết (traceability matrix) liên kết 100% các yêu cầu với tài liệu thiết kế, tệp mã nguồn và kịch bản kiểm thử (test case) tương ứng. Các yêu cầu không có kịch bản kiểm thử liên kết phải được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'."
+      "text" : "Hệ thống phải xuất ma trận truy vết dưới dạng bảng (CSV hoặc HTML) thể hiện liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, trong đó 100% yêu cầu có số lượng ca kiểm thử liên kết bằng 0 phải được gắn cờ 'MISSING_TEST'."
     }
   ]
 }  3. `req.detect_conflict` — 0 issues  Xem đầy đủ ▾ {
@@ -575,31 +528,24 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "priority" : "S",
       "source" : "user_prompt",
       "status" : "generated",
-      "text" : "Hệ thống phải sinh ra một ma trận truy vết (traceability matrix) liên kết 100% các yêu cầu với tài liệu thiết kế, tệp mã nguồn và kịch bản kiểm thử (test case) tương ứng. Các yêu cầu không có kịch bản kiểm thử liên kết phải được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'.",
+      "text" : "Hệ thống phải xuất ma trận truy vết dưới dạng bảng (CSV hoặc HTML) thể hiện liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, trong đó 100% yêu cầu có số lượng ca kiểm thử liên kết bằng 0 phải được gắn cờ 'MISSING_TEST'.",
       "trace" : [
       ]
     }
   ]
-}  5. `req.acceptance` — 2 acceptance  Xem đầy đủ ▾ {
+}  5. `req.acceptance` — 1 acceptance  Xem đầy đủ ▾ {
   "acceptance" : [
     {
-      "given" : "Hệ thống có tập hợp các yêu cầu, tài liệu thiết kế, mã nguồn và kịch bản kiểm thử đầy đủ cho tất cả yêu cầu.",
+      "given" : "Hệ thống có dữ liệu dự án bao gồm các yêu cầu, trong đó có ít nhất một yêu cầu không có ca kiểm thử nào được liên kết và một yêu cầu có ca kiểm thử được liên kết.",
       "observable" : "serial_pattern",
       "req_id" : "FR-PWR-01",
-      "then" : "Ma trận truy vết được tạo ra chứa 100% các yêu cầu được liên kết với thiết kế, mã nguồn, kịch bản kiểm thử và không có cờ MISSING_TEST.",
-      "when" : "Lệnh sinh ma trận truy vết được thực thi."
-    },
-    {
-      "given" : "Hệ thống có tập hợp các yêu cầu, tài liệu thiết kế, mã nguồn nhưng có ít nhất một yêu cầu không có kịch bản kiểm thử tương ứng.",
-      "observable" : "serial_pattern",
-      "req_id" : "FR-PWR-01",
-      "then" : "Ma trận truy vết được tạo ra, trong đó yêu cầu thiếu kịch bản kiểm thử được đánh dấu rõ ràng bằng cờ 'MISSING_TEST'.",
-      "when" : "Lệnh sinh ma trận truy vết được thực thi."
+      "then" : "Tệp kết quả được tạo ra dưới dạng bảng hiển thị đầy đủ liên kết từ Yêu cầu đến Thiết kế, Mã nguồn và Ca kiểm thử, đồng thời dòng tương ứng với yêu cầu không có ca kiểm thử bắt buộc phải chứa cờ 'MISSING_TEST'.",
+      "when" : "Lệnh xuất ma trận truy vết ra định dạng CSV hoặc HTML được thực thi."
     }
   ]
-}  6. `chat.report_back` — 6 trường report · 309 ký tự text  Xem đầy đủ ▾ {
+}  6. `chat.report_back` — 6 trường report · 291 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.016635,
+    "cost" : 0.014511,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -637,8 +583,12 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.timeline",
       "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
       "req.elicit",
-      "view.artifacts",
       "project.status",
       "view.timeline",
       "project.status",
@@ -660,50 +610,50 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "project.status",
       "view.artifacts",
       "project.status",
-      "view.timeline",
-      "project.status",
-      "view.artifacts",
-      "project.status",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
       "req.classify",
       "req.detect_conflict",
       "req.prioritize",
+      "view.timeline",
+      "project.status",
+      "view.artifacts",
+      "project.status",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.artifacts",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.kg_map",
+      "project.status",
+      "view.timeline",
+      "view.artifacts",
+      "view.timeline",
+      "view.kg_map",
+      "view.timeline",
+      "view.kg_map",
       "project.status",
       "project.status",
       "view.timeline",
@@ -718,7 +668,6 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.timeline",
       "view.kg_map",
       "project.status",
-      "view.artifacts",
       "project.status",
       "view.timeline",
       "view.artifacts",
@@ -728,226 +677,161 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
       "view.artifacts",
       "view.kg_map",
       "view.timeline",
-      "view.artifacts",
       "view.kg_map",
       "view.timeline",
       "view.kg_map",
       "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "req.detect_conflict",
-      "project.status",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "req.trace_matrix",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "view.artifacts",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.kg_map",
-      "project.status",
-      "view.timeline",
-      "view.kg_map",
-      "view.artifacts",
-      "view.artifacts",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
-      "project.status",
-      "project.status",
-      "view.timeline",
-      "view.artifacts",
-      "view.timeline",
-      "view.kg_map",
       "view.timeline",
       "view.kg_map",
       "req.acceptance"
     ],
     "ra" : [
     ],
-    "run_id" : "r_2b89d67c38de",
+    "run_id" : "r_28efe8549c94",
     "undo" : [
-      "55319e7fe4ff",
-      "3ed40feb1850",
-      "c45ddd0fc9fc",
-      "8a6989bc7906"
+      "d292eef6cde5",
+      "a5927b32a562",
+      "2e38ce651371"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 198 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance\nHoàn tác được 4 mục đến 2026-09-24T23:58.\nChi phí mô hình: 0.0166 USD."
-}  Lượt chạy xong.  Đã làm 243 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, view.kg_map, req.classify, req.detect_conflict, req.prioritize, req.trace_matrix, req.acceptance, chat.report_back, chat.orchestrate, chat.restate
-→ `req.elicit` làm ra: 1 text; 1 gaps — xem ở màn Yêu cầu & kiến trúc.
+  "text" : "Đã làm 137 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, req.classify, req.detect_conflict, req.prioritize, view.kg_map, req.acceptance\nHoàn tác được 3 mục đến 2026-09-25T00:38.\nChi phí mô hình: 0.0145 USD."
+}  Lượt chạy xong.  Đã làm 162 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, req.elicit, req.classify, req.detect_conflict, req.prioritize, view.kg_map, req.acceptance, chat.report_back, chat.orchestrate, chat.restate
+→ `req.elicit` làm ra: 1 text; 3 gaps — xem ở màn Yêu cầu & kiến trúc.
 → `req.classify` làm ra: 1 Requirement (FR-PWR-01…); 1 codes_assigned — xem ở màn Yêu cầu & kiến trúc.
 → `req.detect_conflict` làm ra: 0 kind conflict|ambiguous|unmeasurable — xem ở màn Yêu cầu & kiến trúc.
 → `req.prioritize` làm ra: 1 reqset (FR-PWR-01…) — xem ở màn Yêu cầu & kiến trúc.
-→ `req.acceptance` làm ra: 2 req_id — xem ở màn Yêu cầu & kiến trúc.
-→ `chat.report_back` làm ra: 6 trường report; 309 ký tự text — xem ở màn mặc định.
-Hoàn tác được 5 mục đến 2026-09-24T23:58.
-Chi phí mô hình: 0.0166 USD.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
+→ `req.acceptance` làm ra: 1 req_id — xem ở màn Yêu cầu & kiến trúc.
+→ `chat.report_back` làm ra: 6 trường report; 291 ký tự text — xem ở màn mặc định.
+Hoàn tác được 3 mục đến 2026-09-25T00:38.
+Chi phí mô hình: 0.0145 USD.   Thử: đối chiếu FR-PWR-01 với phần cứng thật Gửi 
 ```
 
 **Màn đang mở — `NhatKy`:**
 
 ```
-Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 1253 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
-23/09 23:58:58	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:58	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:58	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:56	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
-23/09 23:58:56	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
-23/09 23:58:56	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:56	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:54	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:54	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:54	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:54	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:54	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:51	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
-23/09 23:58:51	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
-23/09 23:58:51	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:51	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:49	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:49	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:49	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:49	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:49	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:48	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
-23/09 23:58:48	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
-23/09 23:58:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
-23/09 23:58:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
-23/09 23:58:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
-23/09 23:58:48	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+Lọc:  Tất cả Chỉ việc của tôi Chỉ việc tác tử tự làm Chỉ lỗi Chỉ cổng 855 BẢN GHI — hiện 120 mới nhất  LÚC	AI	LOẠI	NĂNG LỰC	KẾT QUẢ	CHI PHÍ	CHI TIẾT
+24/09 00:38:48	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:48	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:48	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:46	máy	cap.run.finish	view.kg_map	done	—	cap=view.kg_map · status=done · (+4 trường)
+24/09 00:38:46	máy	gate.approve	view.kg_map	—	—	cap=view.kg_map · gate=* · (+2 trường)
+24/09 00:38:46	máy	gate.decision	view.kg_map	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:46	máy	cap.run.start	view.kg_map	—	—	cap=view.kg_map · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:44	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:44	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:44	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:44	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:44	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:41	máy	cap.run.finish	project.status	done	—	cap=project.status · status=done · (+4 trường)
+24/09 00:38:41	máy	gate.approve	project.status	—	—	cap=project.status · gate=* · (+2 trường)
+24/09 00:38:41	máy	gate.decision	project.status	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:41	máy	cap.run.start	project.status	—	—	cap=project.status · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:38	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:38	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:38	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:38	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:38	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:37	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	undo.register	req.trace_matrix	—	—	cap=req.trace_matrix · (+5 trường)
+24/09 00:38:37	máy	cap.run.finish	req.trace_matrix	done	—	cap=req.trace_matrix · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.trace_matrix	—	—	cap=req.trace_matrix · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.trace_matrix	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.trace_matrix	—	—	cap=req.trace_matrix · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	req.detect_conflict	done	—	cap=req.detect_conflict · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	req.detect_conflict	—	—	cap=req.detect_conflict · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	req.detect_conflict	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	req.detect_conflict	—	—	cap=req.detect_conflict · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.artifacts	—	—	cap=view.artifacts · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.artifacts	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.artifacts	—	—	cap=view.artifacts · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.timeline	done	—	cap=view.timeline · status=done · (+4 trường)
+24/09 00:38:37	máy	gate.approve	view.timeline	—	—	cap=view.timeline · gate=* · (+2 trường)
+24/09 00:38:37	máy	gate.decision	view.timeline	APPROVE	—	decision=APPROVE · gate=* · reason=Lớp R0 chỉ đọc — tự làm (APD-08 §4.1 tầng 2) · (+7 trường)
+24/09 00:38:37	máy	cap.run.start	view.timeline	—	—	cap=view.timeline · decision={decision=APPROVE rule=R0} · (+4 trường)
+24/09 00:38:37	máy	cap.run.finish	view.artifacts	done	—	cap=view.artifacts · status=done · (+4 trường)
 ```
 
 ![bước 3](buoc-03.png)

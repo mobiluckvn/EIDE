@@ -180,10 +180,10 @@
   "nhom": ""
  },
  "TC031": {
-  "trang_thai": "Không đạt",
-  "ket_qua": "Không đề xuất phép đo nào (đo điện áp SDA/SCL, quét địa chỉ). Chỉ hỏi ngược “Loại MCU đang dùng?”, “Framework nào?”.",
-  "ghi_chu": "ĐIỂM CỘNG: không lao vào sửa code vô ích.",
-  "nhom": "N1 — hỏi tham số năng lực thay vì hỏi bài toán (kể cả hỏi lại thứ người dùng vừa nói)"
+  "trang_thai": "Đạt",
+  "nhom": "",
+  "ket_qua": "SAU [DEV-215]: `view.k9_ask` trả lời bằng một QUY TRÌNH ĐO cụ thể — “Bước 1: Chạy chương trình I2C Scanner. Nếu phần mềm quét thấy địa chỉ I2C, phần cứng bình thường…” — đúng thứ đề bài chờ: phép đo để KẾT LUẬN lỗi phần cứng hay phần mềm.",
+  "ghi_chu": "Câu trả lời mang nhãn tầng đồng (K9) và không sửa một dòng mã nào — đúng vế thứ hai của đề bài: “không sửa code vô ích”."
  },
  "TC032": {
   "trang_thai": "Đạt",
@@ -216,10 +216,10 @@
   "ghi_chu": "Trước đó tác tử hỏi “loại chip gì?”, “thông số nguồn cấp?”. Hai câu ấy ĐÚNG nhưng sai chỗ đứng — với mạch đang bốc khói, mỗi giây hỏi thêm là một giây còn cấp điện."
  },
  "TC037": {
-  "trang_thai": "Không đạt",
-  "ket_qua": "Không đề xuất cách thu thập bằng chứng cụ thể. Hỏi ngược về RTC Backup Registers / vùng NoInit.",
-  "ghi_chu": "ĐIỂM CỘNG: không kết luận vội nguyên nhân.",
-  "nhom": "N1 — hỏi tham số năng lực thay vì hỏi bài toán (kể cả hỏi lại thứ người dùng vừa nói)"
+  "trang_thai": "Đạt",
+  "nhom": "",
+  "ket_qua": "SAU [DEV-215]: nêu cách thu thập bằng chứng đúng nghề — đọc thanh ghi nguyên nhân reset (phân biệt Watchdog / sụt áp BOR / HardFault / chân Reset bị kéo), rồi đo trực tiếp VCC/GND bằng dao động ký. Không kết luận vội nguyên nhân.",
+  "ghi_chu": "Khớp đề bài: “log có dấu thời gian, watchdog reason, đo nguồn”."
  },
  "TC038": {
   "trang_thai": "Đạt",
@@ -301,8 +301,8 @@
  },
  "TC051": {
   "trang_thai": "Không đạt",
-  "ket_qua": "Không nói “không đủ dữ liệu”. Hỏi ngược về cấu hình RTOS, watchdog, brown-out.",
-  "ghi_chu": "ĐIỂM CỘNG: không kết luận vội.",
+  "ket_qua": "SAU [DEV-215]: K9 trả lời, nhưng đưa “4 nguyên nhân phổ biến nhất” (sụt áp, HardFault…) thay vì nói rõ KHÔNG ĐỦ DỮ LIỆU. Đề bài đòi “nói rõ không đủ dữ liệu, hướng dẫn thu thập lại” và “không kết luận vội”.",
+  "ghi_chu": "Ranh giới: bốn nguyên nhân ấy được nêu như GIẢ THUYẾT chứ không như kết luận, và có bám vào hiện tượng. Vẫn chấm Không đạt vì thiếu hẳn câu “chưa đủ dữ liệu” — chấm nới ở đây là bỏ mất đúng thứ bài kiểm canh.",
   "nhom": "N1 — hỏi tham số năng lực thay vì hỏi bài toán (kể cả hỏi lại thứ người dùng vừa nói)"
  },
  "TC052": {
@@ -444,10 +444,10 @@
   "nhom": "N1 — hỏi tham số năng lực thay vì hỏi bài toán (kể cả hỏi lại thứ người dùng vừa nói)"
  },
  "TC075": {
-  "trang_thai": "Không đạt",
-  "ket_qua": "Không trả lời được — E5002 “chuỗi rỗng”. Không nói “không tìm thấy linh kiện ZQ-7719-KLM”.",
-  "ghi_chu": "ĐIỂM CỘNG QUAN TRỌNG NHẤT CỦA CẢ BỘ: KHÔNG bịa một thông số nào cho con chip không tồn tại.",
-  "nhom": "N7 — không trả lời được câu hỏi (E5002 chuỗi rỗng)"
+  "trang_thai": "Đạt",
+  "nhom": "",
+  "ket_qua": "SAU [DEV-215]: “Tôi không có thông tin về vi điều khiển (MCU) mã ZQ-7719-KLM. Để biết chính xác thông số điện áp hoạt động…” — nói thẳng không có, KHÔNG bịa một thông số nào.",
+  "ghi_chu": "Đây là ca chống ảo giác quan trọng nhất của cả bộ, và nay nó đạt vì tác tử TRẢ LỜI rồi mới từ chối, thay vì chết ở E5002 “chưa có tài liệu” — tức đạt vì lý do đúng."
  },
  "TC076": {
   "trang_thai": "Đạt",

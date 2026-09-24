@@ -25,7 +25,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Bỏ qua",
  "nhan_xet": "NGOÀI PHẠM VI v1.3 — chủ sản phẩm chốt 24/09/2026: phần PCB (bố trí mạch in, Gerber, drill, file gắp đặt, DRC) chưa làm trong sản phẩm này.\n\nGhi chú: Đổi nhãn từ “Không đạt” sang “Bỏ qua”: đây không phải lỗi, đây là thứ chưa định làm. Gọi một khoảng trống phạm vi là lỗi thì bảng kết quả nói sai về sản phẩm.",
- "giay": 38.4,
+ "giay": 47.3,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -44,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 38.4,
+   "giay": 47.3,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

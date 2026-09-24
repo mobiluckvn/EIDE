@@ -12,7 +12,7 @@ kèm một ảnh chụp cửa sổ thật.
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -28,12 +28,12 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 
 **Tôi (người dùng):** Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi
 
-**Tác tử trả lời** *(sau 10.0 s)*:
+**Tác tử trả lời** *(sau 9.8 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi  Đã nhận (ý hiểu: `review.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Do  bước 6/7  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 5/7 bước, 2 bước hỏng (xem Nhật ký)  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Trình soạn thảo mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Hộ chiếu mạch mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là review.ask, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ ingest.index_text, extract.kicad_netlist, board.check_pins, board.propose_fix và 3 bước nữa.  1. `ingest.index_text`  2. `extract.kicad_netlist`  3. `board.check_pins`  4. `board.propose_fix`  5. `code.static`  6. `view.rag_ask`  7. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `code.static` HỎNG — E2000: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `ingest.index_text` — 0 indexed  Xem đầy đủ ▾ {
   "indexed" : 0
 }  2. `extract.kicad_netlist` — mach-co-loi@1.0.0 board_passport_id · 6 nets · 6 parts  Xem đầy đủ ▾ {
@@ -69,7 +69,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ]
 }  4. `chat.report_back` — 6 trường report · 258 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.00117,
+    "cost" : 0.0011720000000000001,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -85,14 +85,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_cea3bdc3233f",
+    "run_id" : "r_6763c86e71f2",
     "undo" : [
-      "2e5ce27d7efc"
+      "e9f5a5e44db6"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-26T23:45.\nChi phí mô hình: 0.0012 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T00:25.\nChi phí mô hình: 0.0012 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -126,7 +126,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-26T23:45.
+Hoàn tác được 1 mục đến 2026-09-27T00:25.
 Chi phí mô hình: 0.0012 USD.   Thử: robot hai bánh tự cân bằng trên ATmega328P Gửi 
 ```
 
@@ -145,8 +145,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e0715a9cbe82
-Mở lúc	23/09 23:45:33
+Phiên	s_0dab30fe078c
+Mở lúc	24/09 00:25:35
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -179,8 +179,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_e0715a9cbe82
-Mở lúc	23/09 23:45:33
+Phiên	s_0dab30fe078c
+Mở lúc	24/09 00:25:35
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	2
@@ -198,9 +198,9 @@ Số lời gọi	1
 
 ```
 Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  Kéo PDF · SVD · ATDF · netlist · BOM vào đây  1 NGUỒN ĐÃ NHẬP  NGUỒN	LOẠI	TẦNG	FACT	CHƯA DUYỆT	AI ĐƯA VÀO	GIẤY PHÉP	NHẬP LÚC
-mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	23/09 23:45:38
+mach-co-loi.net	netlist	vàng	12	— dùng được	tác tử TỰ TẢI	CHƯA RÕ	24/09 00:25:39
   LƯỢT NHẬP GẦN ĐÂY — theo sổ cái  LÚC	LÔ / LÝ DO	FACT MỚI	XUNG ĐỘT	AI
-23/09 23:45:38	extract.kicad_netlist mach-co-loi.…	12	0	máy
+24/09 00:25:39	extract.kicad_netlist mach-co-loi.…	12	0	máy
 ```
 
 ![Ingest](man-02-Ingest.png)
@@ -216,7 +216,7 @@ Trình soạn thảo  code.annotate · code.build · code.constant_guard · +13 
 ### Tab `Graph`
 
 ```
-Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +9 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  26 NÚT · 36 CẠNH  Bấm một nút để xem định danh đầy đủ.  tầng: bronze · gold · silver   |   trạng thái: conflict · rejected · superseded   |   cạnh: CITES xanh · USES lục · CONFLICTS_WITH đỏ đậm · SUPERSEDES nét đứt   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  
+Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · view.coverage_map · +10 nữa  Vùng làm việc trống — chọn màn ở cột trái, hoặc ra lệnh để tác tử tự mở đúng màn.  26 NÚT · 36 CẠNH  Bấm một nút để xem định danh đầy đủ.  tầng: bronze · gold · silver   |   trạng thái: conflict · rejected · superseded   |   cạnh: CITES xanh · USES lục · CONFLICTS_WITH đỏ đậm · SUPERSEDES nét đứt   Hỏi một câu về tri thức đã nhập — ví dụ: điện áp cấp của DHT22? Hỏi Hỏi xong, bản đồ LÂN CẬN của thứ được hỏi hiện ngay dưới câu trả lời — hai bước quanh nó, tô theo tầng (vàng/bạc/đồng) và trạng thái duyệt.  
 ```
 
 ![Graph](man-04-Graph.png)
@@ -235,12 +235,12 @@ Hộ chiếu mạch  board.build_passport · board.check_pins · board.constrain
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (1)  extract.kicad_netlist  còn 71 giờ  Hoàn tác ⟩ 
 ```
 
-**Tác tử trả lời** *(sau 11.6 s)*:
+**Tác tử trả lời** *(sau 11.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `do-bao-dong-gia` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-khong-loi.net và nói rõ mỗi bản có bao nhiêu lỗi  Đã nhận (ý hiểu: `review.ask`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Rà soát lần lượt hai netlist /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/mach-co-loi.net rồi /Users/congvt/Do  bước 6/7  Mở chi tiết Dừng khẩn ⚠ Dừng — xong 5/7 bước, 2 bước hỏng (xem Nhật ký)  → Nhập tài liệu mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Trình soạn thảo mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Bản đồ tri thức & hỏi đáp mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  → Hộ chiếu mạch mở ở NỀN — anh vừa tự chọn màn khác chưa quá 20 giây (§2C.3). Tab đã thêm, cột trái đang nháy.  Ý HIỂU  ·  chat.restate  Tôi hiểu là review.ask, nhưng KHÔNG rút được đối tượng cụ thể nào từ câu của anh — hãy đọc kỹ các bước dưới trước khi để tôi chạy. Tôi sẽ ingest.index_text, extract.kicad_netlist, board.check_pins, board.propose_fix và 3 bước nữa.  1. `ingest.index_text`  2. `extract.kicad_netlist`  3. `board.check_pins`  4. `board.propose_fix`  5. `code.static`  6. `view.rag_ask`  7. `chat.report_back`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  ✖ Bước `code.static` HỎNG — E2000: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  ✖ Bước `view.rag_ask` HỎNG — E5002: Dự án chưa có tài liệu nào để tra cứu, nên chưa có nguồn nào để trả lời. Nhập datasheet/PDF ở màn Nhập tài liệu (S3), hoặc cho tôi đường dẫn tệp.  KẾT QUẢ TỪNG BƯỚC  1. `ingest.index_text` — 0 indexed  Xem đầy đủ ▾ {
   "indexed" : 0
 }  2. `extract.kicad_netlist` — mach-co-loi@1.0.0 board_passport_id · 6 nets · 6 parts  Xem đầy đủ ▾ {
@@ -276,7 +276,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   ]
 }  4. `chat.report_back` — 6 trường report · 258 ký tự text  Xem đầy đủ ▾ {
   "report" : {
-    "cost" : 0.00117,
+    "cost" : 0.0011720000000000001,
     "done" : [
       "project.open",
       "view.artifacts",
@@ -292,14 +292,14 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
     ],
     "ra" : [
     ],
-    "run_id" : "r_cea3bdc3233f",
+    "run_id" : "r_6763c86e71f2",
     "undo" : [
-      "2e5ce27d7efc"
+      "e9f5a5e44db6"
     ],
     "waiting" : [
     ]
   },
-  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-26T23:45.\nChi phí mô hình: 0.0012 USD."
+  "text" : "Đã làm 11 việc: project.open, view.artifacts, view.timeline, project.status, chat.parse_intent, chat.ground, chat.fill_defaults, ingest.index_text, extract.kicad_netlist, board.check_pins\nHoàn tác được 1 mục đến 2026-09-27T00:25.\nChi phí mô hình: 0.0012 USD."
 }  5. `board.propose_fix` — 3 options  Xem đầy đủ ▾ {
   "options" : [
     {
@@ -333,7 +333,7 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 → `board.check_pins` làm ra: 4 pin — xem ở màn Hộ chiếu mạch.
 → `chat.report_back` làm ra: 6 trường report; 258 ký tự text — xem ở màn mặc định.
 → `board.propose_fix` làm ra: 3 change — xem ở màn Hộ chiếu mạch.
-Hoàn tác được 1 mục đến 2026-09-26T23:45.
+Hoàn tác được 1 mục đến 2026-09-27T00:25.
 Chi phí mô hình: 0.0012 USD.   Thử: đọc cảm biến BME280 qua I2C, in nhiệt độ qua UART Gửi 
 ```
 

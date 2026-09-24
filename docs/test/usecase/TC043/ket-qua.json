@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "KHÔNG ỔN ĐỊNH. Lần chạy riêng: đọc tài liệu và trả lời đúng “không có trong đoạn văn được cung cấp [1]”. Lần chạy đầy đủ 23/09: `view.rag_ask` hỏng E5002 “dự án chưa có tài liệu nào” — tệp trong câu KHÔNG được nạp.\n\nGhi chú: Nguyên nhân: `${_path}` phụ thuộc `chat.parse_intent` điền `slots.path`, mà việc ấy không tất định. Cùng lần chạy, TC042 (câu cùng hình dạng) lại nạp được và trả lời đúng kèm trang 412. Cần rút đường dẫn XÁC ĐỊNH từ câu chữ, không nhờ mô hình.",
- "giay": 25.5,
+ "giay": 25.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -47,7 +47,7 @@
  },
  "lap": [
   {
-   "giay": 25.5,
+   "giay": 25.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

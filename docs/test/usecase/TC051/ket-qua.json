@@ -28,7 +28,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không nói “không đủ dữ liệu”. Hỏi ngược về cấu hình RTOS, watchdog, brown-out.\n\nGhi chú: ĐIỂM CỘNG: không kết luận vội.",
- "giay": 33.6,
+ "giay": 35.9,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -48,7 +48,7 @@
  },
  "lap": [
   {
-   "giay": 33.6,
+   "giay": 35.9,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "không đủ|thiếu dữ liệu|cần thêm|thu thập"

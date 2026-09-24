@@ -9,7 +9,7 @@ kèm một ảnh chụp cửa sổ thật.
   [cỡ] buoc-01 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC059/buoc-01.png
 
-**Tác tử trả lời** *(sau 0.4 s)*:
+**Tác tử trả lời** *(sau 0.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
@@ -54,13 +54,13 @@ Mô phỏng  sim.build_platform · sim.mock_peripheral · sim.model_plant · +3 
 ### Cột phải (cổng, hoàn tác, an toàn)
 
 ```
-ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (9)  Làm rõ yêu cầu — SOFTWARE ARCHITECTURE  Dự án sẽ sử dụng bootloader mã nguồn mở có sẵn hay cần phát triển một bootloader tùy chỉnh (custom bootloader)?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SECURITY  Thuật toán ký số nào được yêu cầu để xác thực tính toàn vẹn và nguồn gốc của firmware?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Môi trường mô phỏng phải thực thi và xuất log chi tiết một kịch bản cập nhật OTA thành công, bao gồm đầy đủ các bước: tải dữ liệu, xác thực chữ ký số hợp lệ, chuyển đổi cờ boot sang phân vùng mới và khởi động lại thành công.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HARDWARE  Hệ thống sử dụng vi điều khiển (MCU) nào và dung lượng Flash là bao nhiêu để đảm bảo đủ không gian chia phân vùng A/B?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — CÒN MƠ HỒ  Bootloader phải tự động quay lui (rollback) về phân vùng firmware cũ nếu firmware mới không gửi tín hiệu xác nhận trạng thái hoạt động ổn định (ví dụ: clear watchdog) trong vòng 5000ms kể từ khi khởi động.  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
-• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — LOGIC  Tiêu chí nào để xác nhận firmware mới hoạt động ổn định nhằm chốt bản cập nhật (commit) và không kích hoạt cơ chế quay lui (rollback)?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — COMMUNICATION  Giao thức và đường truyền nào được sử dụng để tải bản cập nhật (firmware image) về thiết bị?  Trả lời ở tab Làm rõ yêu cầu … và 1 mục nữa — xem màn Nhật ký.  HOÀN TÁC ĐƯỢC (6)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
+ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (7)  Làm rõ yêu cầu — HW  Hệ thống có sử dụng bộ nhớ Flash ngoài (External SPI Flash) để lưu bản cập nhật tạm thời không, hay tải trực tiếp vào phân vùng không hoạt động (inactive slot) của Flash nội?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Bootloader sử dụng là loại nào?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — SAFETY  Thuật toán ký số nào được yêu cầu cho việc xác thực firmware?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Giao thức và đường truyền nào được sử dụng để tải bản cập nhật OTA?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — HW  Vi điều khiển (MCU) mục tiêu là loại nào, dung lượng Flash và RAM bao nhiêu để tính toán kích thước phân vùng A/B?  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `sim.build_platform` đang chờ anh cho biết:
+• Dùng con chip nào? (`chip`)  Trả lời ở tab Làm rõ yêu cầu Làm rõ yêu cầu — FR  Cơ chế quay lui (rollback) được kích hoạt dựa trên điều kiện nào?  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC (3)  req.trace_matrix  còn 23 giờ  Hoàn tác req.trace_matrix  còn 23 giờ  Hoàn tác req.classify  còn 23 giờ  Hoàn tác ⟩ 
 ```
   [cỡ] buoc-03 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC059/buoc-03.png
 
-**Tác tử trả lời** *(sau 2.2 s)*:
+**Tác tử trả lời** *(sau 2.3 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `ota-phan-vung-a-b` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Mô phỏng mất điện đúng lúc đang ghi phân vùng B. Thiết bị phải khởi động lại bằng bản cũ  Đã nhận (ý hiểu: `sim.run`) — đang làm. Tiến độ hiện ở thẻ Run, kết quả hiện ngay dưới đây khi xong.  Mô phỏng mất điện đúng lúc đang ghi phân vùng B. Thiết bị phải khởi động lại bằng bản cũ  bước 1/4  Mở chi tiết Dừng khẩn ⏸ DỪNG, đang chờ anh — xong 0/4 bước, 1 bước cần anh trả lời  → mở màn Mô phỏng (tác tử đang chạy `sim.build_platform`)  Ý HIỂU  ·  chat.restate  Tôi hiểu là sim.run: mất điện đúng lúc đang ghi phân vùng B. Tôi sẽ sim.build_platform.  1. `sim.build_platform`  Mức A2 — tác tử tự chạy, vẫn in ý hiểu (§2D.6). Sai thì bấm Dừng khẩn.  TÁC TỬ HỎI  ·  sim.build_platform  Dùng con chip nào?   …hoặc gõ câu trả lời khác Trả lời Lượt chạy DỪNG, đang chờ anh trả lời.   Thử: đối chiếu FR-GEN-01 với phần cứng thật (còn 4 yêu cầu chưa đối chiếu) Gửi 
