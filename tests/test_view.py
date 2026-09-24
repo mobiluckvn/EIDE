@@ -716,3 +716,70 @@ def test_cau_CO_TRA_LOI_ma_thieu_trich_dan_thi_VAN_bi_bac(du_an, monkeypatch):
     monkeypatch.setattr(v, "_gateway", lambda _c: _GW())
     run = r.invoke("view.rag_ask", {"question": "VDD điện áp"}, ctx)
     assert run.status == "failed" and run.error["eide_code"] == "E5002"
+
+
+# ---------- [DEV-215] VIEW-15 k9_ask: đường trả lời khi kho chưa có nguồn
+
+def _k9_gia_lap(monkeypatch, cau: str):
+    from eide.caps import view as v
+
+    class _R:
+        def __init__(self, d):
+            self.data = d
+
+    class _GW:
+        def run(self, *a, **k):
+            return _R({"answer": cau})
+
+    monkeypatch.setattr(v, "_gateway", lambda _c: _GW())
+
+
+def test_chua_co_nguon_thi_TRA_LOI_kem_nhan_tang_dong(du_an, monkeypatch):
+    """18/57 ca trượt chết ở *"dự án chưa có tài liệu nào để tra cứu"* — [DEV-215].
+
+    Phần lớn câu bị chặn KHÔNG CẦN tài liệu nào: "pin 2000 mAh, tiêu thụ 8 mA, dùng được bao
+    lâu" là một phép chia. KAD-07 N5 đã mở sẵn đường: K9 ở tầng đồng, chỉ để ĐỀ XUẤT.
+    """
+    r, ctx, _ = du_an
+    _k9_gia_lap(monkeypatch, "2000 mAh / 8 mA = 250 giờ, chưa trừ tự xả.")
+    run = r.invoke("view.k9_ask", {"question": "Pin 2000 mAh, tiêu thụ 8 mA, dùng bao lâu?"}, ctx)
+    assert run.status == "done", run.error
+    assert run.result["declined"] is False
+    assert run.result["tier"] == "bronze", "câu trả lời K9 phải mang tầng đồng"
+    assert "CHƯA đối chiếu" in run.result["caveat"], "không nói rõ đây là kiến thức chung"
+    assert run.result["answer"]
+
+
+def test_DU_AN_DA_CO_NGUON_thi_K9_phai_TU_IM(du_an, monkeypatch):
+    """**Luật cốt lõi, không phải tối ưu.** [DEV-215]
+
+    Không có nó, K9 nói xen vào ngay sau một câu *"thông tin này không có trong tài liệu"*
+    (TC043) — và người dùng nhận đúng thứ ảo giác mà câu kia vừa tránh được. Một nhãn "tầng
+    đồng" không cứu được: hai câu mâu thuẫn đứng cạnh nhau thì người đọc tin câu nào trả lời họ.
+
+    Luật nằm TRONG năng lực, không dựa vào thứ tự nút trong chuỗi — một năng lực tự bảo vệ
+    được thì đặt ở đâu cũng đúng.
+    """
+    from eide.caps import view as v
+
+    r, ctx, _ = du_an
+    d = Path(ctx.project_dir) / "docs"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "ds.md").write_text("VDD 3,3 V", encoding="utf-8")
+    r.invoke("ingest.index_text", {"files": [str(d / "ds.md")]}, ctx)
+    monkeypatch.setattr(v, "_truy_hoi", lambda *a, **k: [
+        {"text": "VDD 3,3 V", "source_id": "src_x", "score": 0.9, "locator": {}}])
+    _k9_gia_lap(monkeypatch, "KHÔNG ĐƯỢC NÓI CÂU NÀY")
+    run = r.invoke("view.k9_ask", {"question": "điện áp cấp?"}, ctx)
+    assert run.status == "done"
+    assert run.result["declined"] is True, "K9 nói xen vào khi dự án đã có nguồn"
+    assert run.result["answer"] == "", "K9 phải im hẳn, không chỉ gắn nhãn"
+    assert "view.rag_ask" in run.result["caveat"], "không chỉ sang đường có trích dẫn"
+
+
+def test_K9_khong_duoc_gia_vo_co_trich_dan(du_an, monkeypatch):
+    """K9 không có nguồn nào để trỏ tới; một `[1]` ở đây là trích dẫn giả."""
+    r, ctx, _ = du_an
+    _k9_gia_lap(monkeypatch, "Thường là 250 giờ.")
+    run = r.invoke("view.k9_ask", {"question": "bao lâu?"}, ctx)
+    assert "citations" not in (run.result or {}), "K9 không được trả trường trích dẫn"

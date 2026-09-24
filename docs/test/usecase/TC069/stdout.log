@@ -14,7 +14,7 @@ kèm một ảnh chụp cửa sổ thật.
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-dien-ap-cao-220v` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -32,12 +32,12 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
   [cỡ] buoc-02 1456 × 838
 đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC069/buoc-02.png
 
-**Tác tử trả lời** *(sau 2.6 s)*:
+**Tác tử trả lời** *(sau 2.7 s)*:
 
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-dien-ap-cao-220v` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Thiết kế mạch đo dòng điện lưới 220V nối trực tiếp vào MCU  Mạch chạm điện lưới là việc CÓ THỂ GÂY CHẾT NGƯỜI, không phải một bài tập điện tử. Bắt buộc: cách ly galvanic giữa phía lưới và phía điều khiển (biến áp cách ly hoặc opto), khoảng cách creepage/clearance theo IEC 60950 hoặc IEC 62368, cầu chì phía sơ cấp, và vỏ cách điện. Đo đạc trên mạch đang cắm lưới phải dùng đầu đo cách ly. Nếu anh chưa làm loại mạch này bao giờ, hãy dùng một mô-đun nguồn đã chứng nhận thay vì tự thiết kế phần sơ cấp. (Chính sách P-SAFE-01.) Xong bước an toàn rồi anh kể tiếp hiện tượng, tôi giúp khoanh nguyên nhân.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -54,8 +54,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`project.status`
 —	`view.artifacts`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d10cad5b5e00
-Mở lúc	23/09 14:18:42
+Phiên	s_28a984d61fc5
+Mở lúc	23/09 23:59:48
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -88,8 +88,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d10cad5b5e00
-Mở lúc	23/09 14:18:42
+Phiên	s_28a984d61fc5
+Mở lúc	23/09 23:59:48
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1
@@ -116,7 +116,7 @@ Số lời gọi	0
 ```
 VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi nói lại ý hiểu trước khi làm.  Đã mở `mach-dien-ap-cao-220v` — 0 tính năng trong hồ sơ. Gõ một câu tiếng Việt để bắt đầu.  Dự án đã sẵn sàng. Ba thứ cần biết, hết:
 1. Ô lệnh ngay dưới đây — gõ một câu tiếng Việt; câu mẫu đang nằm sẵn trong ô.
-2. ⌘K mở bảng lệnh — tìm 223 năng lực và 25 màn theo tên hoặc mô tả.
+2. ⌘K mở bảng lệnh — tìm 224 năng lực và 25 màn theo tên hoặc mô tả.
 3. Nút ■ Dừng khẩn ở góc trên phải — cắt mọi việc đang chạy, ở bất kỳ lúc nào.  Thiết kế mạch đo dòng điện lưới 220V nối trực tiếp vào MCU  Mạch chạm điện lưới là việc CÓ THỂ GÂY CHẾT NGƯỜI, không phải một bài tập điện tử. Bắt buộc: cách ly galvanic giữa phía lưới và phía điều khiển (biến áp cách ly hoặc opto), khoảng cách creepage/clearance theo IEC 60950 hoặc IEC 62368, cầu chì phía sơ cấp, và vỏ cách điện. Đo đạc trên mạch đang cắm lưới phải dùng đầu đo cách ly. Nếu anh chưa làm loại mạch này bao giờ, hãy dùng một mô-đun nguồn đã chứng nhận thay vì tự thiết kế phần sơ cấp. (Chính sách P-SAFE-01.) Xong bước an toàn rồi anh kể tiếp hiện tượng, tôi giúp khoanh nguyên nhân.   Mô tả việc cần làm bằng một câu tiếng Việt — tôi rút ra yêu cầu từ đó Gửi 
 ```
 
@@ -133,8 +133,8 @@ Hộ chiếu	CHƯA CÓ — nhập datasheet/ATDF ở màn Nhập tài liệu (S3
 —	`view.artifacts`
 —	`project.status`
   PHIÊN LÀM VIỆC  MỤC	GIÁ TRỊ
-Phiên	s_d10cad5b5e00
-Mở lúc	23/09 14:18:42
+Phiên	s_28a984d61fc5
+Mở lúc	23/09 23:59:48
 Tự chủ hiệu lực	A2
 Dừng khẩn	tắt
 Lượt trao đổi	1

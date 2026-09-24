@@ -1316,3 +1316,70 @@ def artifacts(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
             raise EideError("E1000", "limit phải là số nguyên dương")
         ds = ds[:n]
     return {"items": ds, "total": tong, "kind": loai}
+
+
+# ---------------------------------------------------------------- VIEW-15 k9_ask
+
+
+#: Câu cảnh báo đi kèm MỌI câu trả lời K9. Không phải lời rào đón — nó là phần bắt buộc của
+#: hợp đồng, vì thứ phân biệt một câu trả lời hữu ích với một câu bịa là người đọc BIẾT nó
+#: đến từ đâu.
+CANH_BAO_K9 = ("Trả lời từ kiến thức chung (tri thức K9, tầng đồng) — CHƯA đối chiếu tài liệu "
+               "của dự án này. Đừng dùng con số ở đây làm hằng số trong mã; nhập datasheet rồi "
+               "hỏi lại để có câu trả lời có nguồn.")
+
+
+@capability("view.k9_ask")
+def k9_ask(params: dict[str, Any], ctx: Context) -> dict[str, Any]:
+    """Spec: VIEW-15 — CDS-12.4; KAD-07 N5 và loại tri thức K9. [DEV-215]
+
+    **Vì sao năng lực này tồn tại.** Đo 23/09/2026 trên bộ 76 usecase: 18 trên 57 ca trượt
+    chết ở cùng một dòng — `view.rag_ask` E5002 *"dự án chưa có tài liệu nào để tra cứu"*. Đọc
+    lại những câu bị chặn thì phần lớn KHÔNG CẦN tài liệu nào: *"pin 2000 mAh, tiêu thụ 8 mA,
+    dùng được bao lâu"* là một phép chia; *"cảm biến I2C không phản hồi, làm sao biết lỗi phần
+    cứng hay phần mềm"* là kiến thức nghề. EIDE hiểu "có nguồn" = "rút được từ tài liệu đã
+    nhập", và hiện thực thành ĐÚNG MỘT đường: truy hồi.
+
+    KAD-07 N5 đã mở sẵn đường thứ hai — *"Điều mô hình nhớ là loại tri thức riêng (K9) ở tầng
+    đồng, CHỈ DÙNG ĐỂ ĐỀ XUẤT, không bao giờ vào mã"*. Năng lực này là đường ấy.
+
+    **Vì sao TÁCH khỏi `view.rag_ask` thay vì thêm một nhánh.** Cái kia đòi 100% trích dẫn, và
+    chính ràng buộc ấy là lý do sản phẩm không bịa trong cả 76 ca. Nhét một nhánh không nguồn
+    vào trong nó là phá đúng thứ đáng giữ nhất.
+
+    **Luật TỰ IM là phần cốt lõi, không phải phần tối ưu.** Nếu dự án đã có nguồn khớp câu hỏi
+    thì năng lực này phải từ chối. Không có luật ấy, K9 sẽ nói xen vào ngay sau một câu
+    *"thông tin này không có trong tài liệu"* (TC043) — và người dùng nhận đúng thứ ảo giác mà
+    câu kia vừa tránh được. Một nhãn "tầng đồng" không cứu được tình huống ấy: hai câu mâu
+    thuẫn đứng cạnh nhau thì người đọc tin câu nào trả lời họ.
+    """
+    from eide_core.rag import RagIndex
+
+    q = str(params["question"]).strip()
+    if not q:
+        raise EideError("E1000", "`question` rỗng — không có gì để hỏi")
+
+    # TỰ IM khi dự án đã có nguồn khớp. Tra chính chỉ mục, không tin vào thứ tự nút trong
+    # chuỗi: một năng lực tự bảo vệ được thì đặt ở đâu cũng đúng.
+    idx = RagIndex(_root(ctx))
+    if idx.path.exists():
+        doan = [d for d in _truy_hoi(ctx, idx, q, K_MAC_DINH, None)
+                if d["score"] >= NGUONG_DIEM]
+        if doan:
+            return {"answer": "", "tier": "bronze", "declined": True,
+                    "caveat": "Dự án ĐÃ có nguồn khớp câu hỏi này — dùng `view.rag_ask` để có "
+                              "câu trả lời kèm trích dẫn, đừng lấy kiến thức chung thay thế."}
+
+    them = str(params.get("context") or "").strip()
+    resp = _gateway(ctx).run(
+        "writer",
+        "Trả lời câu hỏi kỹ thuật nhúng dưới đây bằng kiến thức chung, NGẮN GỌN và cụ thể.\n"
+        "Có phép tính thì trình bày công thức, thay số, và nêu rõ giả định cùng đơn vị.\n"
+        "KHÔNG bịa số liệu của một linh kiện cụ thể: không chắc thì nói thẳng là cần datasheet.\n"
+        "KHÔNG viết chỉ số trích dẫn dạng [n] — ở đây không có nguồn nào để trỏ tới.\n\n"
+        + (f"Ngữ cảnh người dùng đưa:\n{them[:4000]}\n\n" if them else "")
+        + f"Câu hỏi: {q}",
+        {"type": "object", "required": ["answer"],
+         "properties": {"answer": {"type": "string"}}})
+    return {"answer": (resp.data.get("answer") or "").strip(),
+            "tier": "bronze", "declined": False, "caveat": CANH_BAO_K9}

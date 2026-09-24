@@ -70,6 +70,17 @@ d("view.conflict_board", {"project": "str"}, {"rows": "arr<obj>! # conflict_id, 
 d("view.coverage_map", {"passport": "str!"}, {"heatmap": "obj! # periph → {registers_total, with_facts, reviewed, requested}"}, ["Cấu trúc hộ chiếu (ngoại vi/thanh ghi/chân) vs fact hiện có vs AcquisitionRequest"], [], "none", '{"passport":"st.stm32f411ce@1.2"}', "TC-78 số khớp store")
 d("view.impact_map", {"delta": "obj!"}, {"graph": "obj!"}, ["req.change_impact/kg.impact → đồ thị con tô màu stale"], [], "none", '{"delta":{"fact_id":"f_9e0f"}}', "Khớp kg.impact")
 d("view.rag_ask", {"question": "str!", "scope": "arr<str> # source ids | kinds", "k": "int"}, {"answer": "str!", "citations": "arr<obj>! # source_id, locator, snippet", "trace_id": "str!", "not_found": "bool!"}, ["RagIndex.retrieve lai (từ khóa FTS5 + vector + lan tỏa KG 2 bước), k=8; writer trả lời chỉ từ chunk; mọi câu có [n]; không có chunk đủ điểm (< 0,35) → not_found và chat.decline"], ["E5002"], "none", '{"question":"BME280 địa chỉ I2C mặc định?"}', "TC-79 ≥ 90%, 100% citations")
+# [DEV-215] VIEW-15 — đường trả lời cho câu hỏi mà kho dự án chưa có nguồn.
+#
+# KAD-07 N5 đã định sẵn chỗ này: "Điều mô hình nhớ là loại tri thức riêng (K9) ở tầng đồng,
+# CHỈ DÙNG ĐỂ ĐỀ XUẤT, không bao giờ vào mã". Tức nguyên tắc cho phép từ đầu; thiếu là đường
+# hiện thực. Tách khỏi `view.rag_ask` chứ không gộp: cái kia đòi 100% trích dẫn và chính ràng
+# buộc ấy là lý do sản phẩm không bao giờ bịa — nhét một nhánh không nguồn vào đó là phá nó.
+#
+# `tu_choi` là trường QUAN TRỌNG NHẤT: năng lực này phải TỰ IM khi dự án đã có nguồn khớp câu
+# hỏi. Không có nó thì K9 nói xen vào sau một câu "thứ này không có trong tài liệu" và người
+# dùng nhận đúng thứ ảo giác mà câu kia vừa tránh được.
+d("view.k9_ask", {"question": "str!", "context": "str # ngữ cảnh thêm, ví dụ đoạn log người dán"}, {"answer": "str!", "tier": "str! # luôn là `bronze` — K9 tầng đồng", "caveat": "str! # câu cảnh báo hiện cho người đọc", "declined": "bool! # true = dự án ĐÃ có nguồn, hãy dùng view.rag_ask"}, ["Tra chỉ mục RAG trước: có đoạn nào trên ngưỡng thì TỪ CHỐI trả lời (declined=true) và chỉ sang `view.rag_ask`", "Chưa có nguồn thì hỏi mô hình, gắn nhãn tầng đồng và câu cảnh báo 'chưa đối chiếu tài liệu của anh'", "KHÔNG ghi fact, KHÔNG trả trích dẫn giả — KAD-07 N5"], ["E5000"], "none", '{"question":"Pin 2000 mAh, tiêu thụ 8 mA, dùng được bao lâu?"}', "TC-K9 câu hỏi không có nguồn → trả lời có nhãn đồng; dự án có nguồn → declined")
 d("view.rag_trace", {"trace_id": "str!"}, {"chunks": "arr<obj>!", "scores": "obj!", "graph_path": "arr<str>!"}, ["Trả chunk, điểm từng thành phần (bm25, vector, graph), đường lan tỏa"], ["E2000"], "none", '{"trace_id":"tr_a1"}', "Hiển thị đủ 3 điểm")
 d("view.rag_index", {"sources": "arr<str>", "rebuild": "bool"}, {"chunks": "int!", "status": "obj!"}, ["Chunk ≤ 800 token theo bố cục (Docling block/OCR/mã theo hàm); embedding qua Gateway (embedding model trong models.yaml, batch 64); FTS5; gắn IRI xuất hiện; incremental theo source.sha256"], ["E5000"], "delete_created_files", '{"rebuild":false}', "TC-DD-05 tái dựng")
 d("view.rag_compare", {"question": "str!"}, {"comparison": "arr<obj>! # tier/source → answer, citations; differences[]"}, ["Chạy rag_ask theo từng nhóm nguồn (datasheet, errata, cộng đồng); writer nêu khác biệt có trích dẫn"], [], "none", '{"question":"I2C fast mode tối đa?"}', "Chỉ ra errata khác datasheet")

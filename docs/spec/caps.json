@@ -3240,6 +3240,21 @@
   "m0": "chưa"
  },
  {
+  "code": "VIEW-15",
+  "ns": "view",
+  "name": "view.k9_ask",
+  "desc": "Trả lời từ tri thức mô hình (K9, tầng đồng) khi kho dự án CHƯA có nguồn; luôn gắn nhãn chưa đối chiếu, không bao giờ lưu thành fact",
+  "inp": "question, context",
+  "out": "answer + tier + caveat + declined",
+  "risk": "R0",
+  "tier": "T1",
+  "ground": "K9 tầng đồng — KHÔNG phải nguồn sự thật",
+  "ask": "—",
+  "ref": "KAD-07 N5, K9",
+  "ms": "M1",
+  "m0": "chưa"
+ },
+ {
   "code": "VIEW-08",
   "ns": "view",
   "name": "view.rag_trace",

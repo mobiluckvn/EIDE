@@ -12277,6 +12277,75 @@
   "volume": 2
  },
  {
+  "code": "VIEW-15",
+  "id": "view.k9_ask",
+  "ns": "view",
+  "name": "view.k9_ask",
+  "desc": "Trả lời từ tri thức mô hình (K9, tầng đồng) khi kho dự án CHƯA có nguồn; luôn gắn nhãn chưa đối chiếu, không bao giờ lưu thành fact",
+  "risk": "R0",
+  "tier": "T1",
+  "grounding": "K9 tầng đồng — KHÔNG phải nguồn sự thật",
+  "ask_when": "—",
+  "ref": "KAD-07 N5, K9",
+  "milestone": "M1",
+  "m0": "chưa",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "question": {
+     "type": "string"
+    },
+    "context": {
+     "type": "string",
+     "description": "ngữ cảnh thêm, ví dụ đoạn log người dán"
+    }
+   },
+   "required": [
+    "question"
+   ],
+   "additionalProperties": false
+  },
+  "output_schema": {
+   "type": "object",
+   "properties": {
+    "answer": {
+     "type": "string"
+    },
+    "tier": {
+     "type": "string",
+     "description": "luôn là `bronze` — K9 tầng đồng"
+    },
+    "caveat": {
+     "type": "string",
+     "description": "câu cảnh báo hiện cho người đọc"
+    },
+    "declined": {
+     "type": "boolean",
+     "description": "true = dự án ĐÃ có nguồn, hãy dùng view.rag_ask"
+    }
+   },
+   "required": [
+    "answer",
+    "tier",
+    "caveat",
+    "declined"
+   ],
+   "additionalProperties": false
+  },
+  "steps": [
+   "Tra chỉ mục RAG trước: có đoạn nào trên ngưỡng thì TỪ CHỐI trả lời (declined=true) và chỉ sang `view.rag_ask`",
+   "Chưa có nguồn thì hỏi mô hình, gắn nhãn tầng đồng và câu cảnh báo 'chưa đối chiếu tài liệu của anh'",
+   "KHÔNG ghi fact, KHÔNG trả trích dẫn giả — KAD-07 N5"
+  ],
+  "errors": [
+   "E5000"
+  ],
+  "undo": "none",
+  "example": "{\"question\":\"Pin 2000 mAh, tiêu thụ 8 mA, dùng được bao lâu?\"}",
+  "tc": "TC-K9 câu hỏi không có nguồn → trả lời có nhãn đồng; dự án có nguồn → declined",
+  "volume": 2
+ },
+ {
   "code": "VIEW-08",
   "id": "view.rag_trace",
   "ns": "view",

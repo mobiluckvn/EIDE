@@ -24,13 +24,13 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không phát hiện tài liệu lỗi thời. Hỏi tham số `reqset_ids`, `style`.",
- "giay": 15.1,
+ "giay": 16.7,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
-  "man-01-Ingest.png",
+  "man-01-Code.png",
   "man-02-Graph.png"
  ],
  "du_an": null,
@@ -43,7 +43,7 @@
  },
  "lap": [
   {
-   "giay": 15.1,
+   "giay": 16.7,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "không còn đúng|lỗi thời|cập nhật|đánh dấu|cũ"

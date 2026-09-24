@@ -23,9 +23,9 @@
   ]
  },
  "ngay": "23/09/2026",
- "trang_thai": "Không đạt",
- "nhan_xet": "Không xuất được hồ sơ sản xuất.\n\nGhi chú: EIDE KHÔNG có năng lực layout PCB/Gerber/DRC nào trong 245 năng lực — đây là khoảng trống của sản phẩm, không phải lỗi lượt chạy.",
- "giay": 61.1,
+ "trang_thai": "Bỏ qua",
+ "nhan_xet": "NGOÀI PHẠM VI v1.3 — chủ sản phẩm chốt 24/09/2026: phần PCB (bố trí mạch in, Gerber, drill, file gắp đặt, DRC) chưa làm trong sản phẩm này.\n\nGhi chú: Đổi nhãn từ “Không đạt” sang “Bỏ qua”: đây không phải lỗi, đây là thứ chưa định làm. Gọi một khoảng trống phạm vi là lỗi thì bảng kết quả nói sai về sản phẩm.",
+ "giay": 38.4,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -33,9 +33,8 @@
   "buoc-03.png",
   "man-01-Main.png",
   "man-02-Graph.png",
-  "man-03-Ingest.png",
-  "man-04-ReqArch.png",
-  "man-05-NhatKy.png"
+  "man-03-ReqArch.png",
+  "man-04-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC061/du-an/xuat-ho-so-san-xuat",
  "cham": {
@@ -45,7 +44,7 @@
  },
  "lap": [
   {
-   "giay": 61.1,
+   "giay": 38.4,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

@@ -6,6 +6,8 @@ kèm một ảnh chụp cửa sổ thật.
 ## Bước 1
 
 **Tôi (người dùng):** tạo dự án — “rà soát code tìm race condition”
+  [cỡ] buoc-01 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/buoc-01.png
 
 **Tác tử trả lời** *(sau 0.8 s)*:
 
@@ -27,6 +29,8 @@ VÙNG TRAO ĐỔI  ▁ ▂ ▃ Sẵn sàng. Gõ một câu tiếng Việt; tôi 
 ## Bước 2
 
 **Tôi (người dùng):** Rà soát /Users/congvt/Documents/EIDE/docs/test/usecase/du-lieu/code/dem_xung.c, tìm lỗi tranh chấp giữa ngắt và vòng lặp chính
+  [cỡ] buoc-02 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/buoc-02.png
 
 **Tác tử trả lời** *(sau 12.4 s)*:
 
@@ -74,6 +78,8 @@ Số lời gọi	1
 ## Bước 3
 
 **Quét 4 tab tác tử đã mở:** Main, Ingest, Code, Graph
+  [cỡ] man-01-Main 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/man-01-Main.png
 
 ### Tab `Main`
 
@@ -104,6 +110,8 @@ Số lời gọi	1
 ```
 
 ![Main](man-01-Main.png)
+  [cỡ] man-02-Ingest 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/man-02-Ingest.png
 
 ### Tab `Ingest`
 
@@ -112,6 +120,8 @@ Nhập tài liệu  archive.extract_one · archive.list · archive.query · +27 
 ```
 
 ![Ingest](man-02-Ingest.png)
+  [cỡ] man-03-Code 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/man-03-Code.png
 
 ### Tab `Code`
 
@@ -120,6 +130,8 @@ Trình soạn thảo  code.annotate · code.build · code.constant_guard · +13 
 ```
 
 ![Code](man-03-Code.png)
+  [cỡ] man-04-Graph 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/man-04-Graph.png
 
 ### Tab `Graph`
 
@@ -134,6 +146,8 @@ Bản đồ tri thức & hỏi đáp  view.artifacts · view.conflict_board · v
 ```
 ĐANG CHẠY  Không có lượt chạy nào.  CHỜ TÔI (1)  Làm rõ yêu cầu — THIẾU THÔNG TIN  Bước `code.static` dừng: Dự án chưa ghim ISA — chạy `project.set_target` trước (mọi lệnh dựng đến từ manifest của một ISA)  Trả lời ở tab Làm rõ yêu cầu HOÀN TÁC ĐƯỢC  Chưa có mục nào trong cửa sổ hoàn tác.  ⟩ 
 ```
+  [cỡ] buoc-03 1456 × 838
+đã chụp /Users/congvt/Documents/EIDE/docs/test/usecase/TC039/buoc-03.png
 
 **Tác tử trả lời** *(sau 9.1 s)*:
 
@@ -159,3 +173,5 @@ Chi phí mô hình: 0.0011 USD.   Thử: đọc cảm biến BME280 qua I2C, in 
 ---
 
 Hết kịch bản — 3 bước. Ảnh và nhật ký trong `/Users/congvt/Documents/EIDE/docs/test/usecase/TC039`.
+
+--- stderr ---

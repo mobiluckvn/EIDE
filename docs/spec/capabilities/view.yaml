@@ -258,6 +258,54 @@
   - E5002
   example:
     question: BME280 địa chỉ I2C mặc định?
+- code: VIEW-15
+  id: view.k9_ask
+  name: Trả lời từ tri thức mô hình (K9, tầng đồng) khi kho dự án CHƯA có nguồn; luôn gắ
+  desc: Trả lời từ tri thức mô hình (K9, tầng đồng) khi kho dự án CHƯA có nguồn; luôn gắn nhãn chưa đối chiếu, không bao giờ lưu thành fact
+  input:
+    type: object
+    properties:
+      question:
+        type: string
+      context:
+        type: string
+        description: ngữ cảnh thêm, ví dụ đoạn log người dán
+    required:
+    - question
+    additionalProperties: false
+  output:
+    type: object
+    properties:
+      answer:
+        type: string
+      tier:
+        type: string
+        description: luôn là `bronze` — K9 tầng đồng
+      caveat:
+        type: string
+        description: câu cảnh báo hiện cho người đọc
+      declined:
+        type: boolean
+        description: true = dự án ĐÃ có nguồn, hãy dùng view.rag_ask
+    required:
+    - answer
+    - tier
+    - caveat
+    - declined
+    additionalProperties: false
+  risk: R0
+  tier: T1
+  grounding:
+  - K9 tầng đồng — KHÔNG phải nguồn sự thật
+  ask_when: []
+  undo:
+    kind: none
+  milestone: M1
+  impl: eide.view:k9_ask
+  errors:
+  - E5000
+  example:
+    question: Pin 2000 mAh, tiêu thụ 8 mA, dùng được bao lâu?
 - code: VIEW-08
   id: view.rag_trace
   name: 'Hiển thị lý do trả lời: đoạn văn bản được truy hồi, điểm số, đường lan tỏa trên '

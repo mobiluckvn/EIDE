@@ -26,14 +26,15 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không giải mã được capture. Hỏi ngược “Cấu trúc các cột của file i2c-capture.csv là gì?”. Đáp án cài sẵn: NACK tại 0x44.\n\nGhi chú: Câu hỏi ngược là hợp lý về nội dung — nhưng tệp CSV có dòng tiêu đề, đọc một dòng là biết.",
- "giay": 14.9,
+ "giay": 32.2,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-Graph.png"
+  "man-02-Graph.png",
+  "man-03-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC049/du-an/giai-ma-capture-i2c",
  "cham": {
@@ -45,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 14.9,
+   "giay": 32.2,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "0x44"

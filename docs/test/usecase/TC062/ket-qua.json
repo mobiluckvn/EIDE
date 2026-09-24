@@ -25,17 +25,17 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không đối chiếu được BOM với netlist (E1000 “không nhận ra định dạng nén”).",
- "giay": 49.4,
+ "giay": 21.5,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-Graph.png",
-  "man-03-Ingest.png",
-  "man-04-ReqArch.png",
-  "man-05-NhatKy.png"
+  "man-02-Ingest.png",
+  "man-03-Code.png",
+  "man-04-Graph.png",
+  "man-05-Board.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC062/du-an/bom-khong-khop-schematic",
  "cham": {
@@ -45,7 +45,7 @@
  },
  "lap": [
   {
-   "giay": 49.4,
+   "giay": 21.5,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []

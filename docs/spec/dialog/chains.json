@@ -849,11 +849,12 @@
  },
  {
   "ten": "Trả lời câu hỏi (DEV-201)",
-  "chuoi": "ingest.index_text → view.rag_index → view.rag_ask → chat.report_back",
+  "chuoi": "ingest.index_text → view.rag_index → view.rag_ask → view.k9_ask → chat.report_back",
   "buoc": [
    "ingest.index_text",
    "view.rag_index",
    "view.rag_ask",
+   "view.k9_ask",
    "chat.report_back"
   ],
   "nodes": [
@@ -879,7 +880,16 @@
     "id": "n3",
     "cap": "view.rag_ask",
     "when": "n2",
-    "on_ask": "wait",
+    "on_ask": "skip",
+    "args": {
+     "question": "${_text}"
+    }
+   },
+   {
+    "id": "n3b",
+    "cap": "view.k9_ask",
+    "when": null,
+    "on_ask": "skip",
     "args": {
      "question": "${_text}"
     }
@@ -887,7 +897,7 @@
    {
     "id": "n4",
     "cap": "chat.report_back",
-    "when": "n3",
+    "when": "n2",
     "on_ask": "wait",
     "args": {}
    }
@@ -898,10 +908,11 @@
  },
  {
   "ten": "Chẩn đoán (DEV-201)",
-  "chuoi": "view.rag_index → view.rag_ask → debug.hypothesize → debug.experiment → debug.propose_fix → chat.report_back",
+  "chuoi": "view.rag_index → view.rag_ask → view.k9_ask → debug.hypothesize → debug.experiment → debug.propose_fix → chat.report_back",
   "buoc": [
    "view.rag_index",
    "view.rag_ask",
+   "view.k9_ask",
    "debug.hypothesize",
    "debug.experiment",
    "debug.propose_fix",
@@ -919,7 +930,16 @@
     "id": "n2",
     "cap": "view.rag_ask",
     "when": "n1",
-    "on_ask": "wait",
+    "on_ask": "skip",
+    "args": {
+     "question": "${_text}"
+    }
+   },
+   {
+    "id": "n2b",
+    "cap": "view.k9_ask",
+    "when": null,
+    "on_ask": "skip",
     "args": {
      "question": "${_text}"
     }
@@ -948,7 +968,7 @@
    {
     "id": "n6",
     "cap": "chat.report_back",
-    "when": "n2",
+    "when": "n1",
     "on_ask": "wait",
     "args": {}
    }

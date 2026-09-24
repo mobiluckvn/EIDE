@@ -28,14 +28,15 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không nói “không đủ dữ liệu”. Hỏi ngược về cấu hình RTOS, watchdog, brown-out.\n\nGhi chú: ĐIỂM CỘNG: không kết luận vội.",
- "giay": 13.7,
+ "giay": 33.6,
  "rc": 0,
  "anh": [
   "buoc-01.png",
   "buoc-02.png",
   "buoc-03.png",
   "man-01-Main.png",
-  "man-02-Graph.png"
+  "man-02-Graph.png",
+  "man-03-NhatKy.png"
  ],
  "du_an": "/Users/congvt/Documents/EIDE/docs/test/usecase/TC051/du-an/log-bi-cat",
  "cham": {
@@ -47,7 +48,7 @@
  },
  "lap": [
   {
-   "giay": 13.7,
+   "giay": 33.6,
    "so_bo": "Nghi Không đạt",
    "thieu": [
     "không đủ|thiếu dữ liệu|cần thêm|thu thập"

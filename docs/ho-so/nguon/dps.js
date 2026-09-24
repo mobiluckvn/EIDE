@@ -236,12 +236,12 @@ const CHUOI_MAU = [
   // Câu HỎI. `${_text}` = chính câu người dùng gõ — mẫu là chỗ DUY NHẤT được quyền nói tham
   // số nào nhận nó (xem `_noi_dau_ra` trong chat.py và DEV-121); viết bảng ánh xạ tên vào mã
   // là tự nghĩ ra hành vi.
-  ['Trả lời câu hỏi (DEV-201)', 'ingest.index_text → view.rag_index → view.rag_ask → chat.report_back', ['view.ask']],
+  ['Trả lời câu hỏi (DEV-201)', 'ingest.index_text → view.rag_index → view.rag_ask → view.k9_ask → chat.report_back', ['view.ask']],
   // CHẨN ĐOÁN. Cũng bắt đầu bằng trả lời, vì một câu "cảm biến I2C không phản hồi, làm sao
   // biết lỗi phần cứng hay phần mềm" là một CÂU HỎI trước khi là một phiên gỡ lỗi. Ba nút
   // `debug.*` mang `on_ask: skip`: khi dự án đã có bằng chứng (log, capture) thì chúng chạy
   // và làm giàu câu trả lời; chưa có thì bỏ qua, KHÔNG chặn cả chuỗi để đi hỏi `evidence_ids`.
-  ['Chẩn đoán (DEV-201)', 'view.rag_index → view.rag_ask → debug.hypothesize → debug.experiment → debug.propose_fix → chat.report_back', ['debug.ask']],
+  ['Chẩn đoán (DEV-201)', 'view.rag_index → view.rag_ask → view.k9_ask → debug.hypothesize → debug.experiment → debug.propose_fix → chat.report_back', ['debug.ask']],
   // MÔ PHỎNG. `sim.build_platform` trước: nền tảng chưa dựng thì `sim.run` không có gì để
   // chạy, và đó đúng là trạng thái mà màn Mô phỏng báo ở bốn ca kiểm thử.
   ['Chạy mô phỏng (DEV-201)', 'sim.build_platform → sim.scenario → sim.run → chat.report_back', ['sim.run']],
@@ -376,19 +376,27 @@ const CHUOI_NUT = {
   'Trả lời câu hỏi (DEV-201)': [
     ['n1', 'ingest.index_text', null, 'skip', { files: ['${_path}'] }],
     ['n2', 'view.rag_index', null, 'skip'],
-    ['n3', 'view.rag_ask', 'n2', 'wait', { question: '${_text}' }],
-    ['n4', 'chat.report_back', 'n3'],
+    // [DEV-215] `view.rag_ask` đổi từ `wait` sang `skip`, và `view.k9_ask` đứng cạnh nó.
+    //
+    // Kho có nguồn → `rag_ask` trả lời kèm trích dẫn và `k9_ask` TỰ IM (declined). Kho chưa
+    // có nguồn → `rag_ask` hỏng (không chặn ai, vì `skip`) và `k9_ask` trả lời có nhãn tầng
+    // đồng. Luật tự im nằm TRONG năng lực chứ không dựa vào thứ tự nút: một năng lực tự bảo
+    // vệ được thì đặt ở đâu cũng đúng.
+    ['n3', 'view.rag_ask', 'n2', 'skip', { question: '${_text}' }],
+    ['n3b', 'view.k9_ask', null, 'skip', { question: '${_text}' }],
+    ['n4', 'chat.report_back', 'n2'],
   ],
   // Ba nút `debug.*` mang `skip`: có bằng chứng thì làm giàu câu trả lời, chưa có thì bỏ
   // qua. Để `wait` thì một câu hỏi chẩn đoán bình thường sẽ dừng lại đòi `evidence_ids` —
   // đúng lỗi "hỏi tham số năng lực thay vì trả lời bài toán" mà bộ kiểm thử đo được.
   'Chẩn đoán (DEV-201)': [
     ['n1', 'view.rag_index', null, 'skip'],
-    ['n2', 'view.rag_ask', 'n1', 'wait', { question: '${_text}' }],
+    ['n2', 'view.rag_ask', 'n1', 'skip', { question: '${_text}' }],
+    ['n2b', 'view.k9_ask', null, 'skip', { question: '${_text}' }],
     ['n3', 'debug.hypothesize', 'n2', 'skip'],
     ['n4', 'debug.experiment', 'n3', 'skip'],
     ['n5', 'debug.propose_fix', 'n3', 'skip'],
-    ['n6', 'chat.report_back', 'n2'],
+    ['n6', 'chat.report_back', 'n1'],
   ],
   'Chạy mô phỏng (DEV-201)': [
     ['n1', 'sim.build_platform', null, 'wait'],

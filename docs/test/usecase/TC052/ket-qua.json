@@ -26,7 +26,7 @@
  "ngay": "23/09/2026",
  "trang_thai": "Không đạt",
  "nhan_xet": "Không sinh test, không chạy, không báo độ phủ. `archive.list` hỏng E1000 trên `dem_xung.c`.",
- "giay": 67.1,
+ "giay": 58.1,
  "rc": 0,
  "anh": [
   "buoc-01.png",
@@ -46,7 +46,7 @@
  },
  "lap": [
   {
-   "giay": 67.1,
+   "giay": 58.1,
    "so_bo": "Cần người đọc",
    "thieu": [],
    "thua": []
