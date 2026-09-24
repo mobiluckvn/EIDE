@@ -167,6 +167,21 @@ const ERR = [
  ['E4002', 'TARGET_NOT_FOUND', 'Không có board/probe phù hợp', 'Gợi ý discover.scan'],
  ['E4003', 'CHIP_ID_MISMATCH', 'ID chip không khớp hộ chiếu', 'Leo thang'],
  ['E4004', 'TIMEOUT', 'Quá thời gian job/serial/probe', ''],
+ // [DEV-239] Lỗi MẠNG có mã riêng, không dùng chung với TIMEOUT.
+ //
+ // Đo 23/09/2026 trên TC072 ("tìm datasheet trên mạng"): người dùng nhận một lỗi về TỆP cho
+ // một việc tìm mạng. Phần bịa đường dẫn đã sửa ở Đ1/Đ2; phần còn lại là chính mã lỗi — mất
+ // mạng, DNS không phân giải và máy chủ từ chối đều đang ra E4004 TIMEOUT, tức một câu "quá
+ // thời gian" cho một việc chưa bao giờ đi được ra khỏi máy. Người đọc đi tăng timeout, trong
+ // khi việc cần làm là cắm lại mạng hoặc dựng SearXNG.
+ //
+ // `resumable` là phần thứ hai: AAD-33 §11.4 đòi lưu trạng thái lượt và chạy tiếp được sau
+ // khi có mạng — một lỗi mạng KHÔNG làm mất công việc đã làm.
+ //
+ // CHÚ Ý số hiệu: AAD-33 §3.3 xếp "E3xxx công cụ/môi trường", nhưng tài liệu này đã dùng
+ // E3xxx cho CHÍNH SÁCH (ASK/REJECT/STOPPED/BUDGET) từ v1.2 và E4xxx cho thế giới ngoài. Giữ
+ // nếp của API-15 và ghi mâu thuẫn ấy vào DEVIATIONS thay vì đổi bốn lớp mã lỗi đang chạy.
+ ['E4005', 'NETWORK_FAILED', 'Không ra được mạng (DNS, từ chối kết nối, mất mạng) — khác TIMEOUT', 'resumable: lưu trạng thái, chạy tiếp khi có mạng'],
  ['E5000', 'MODEL_ERROR', 'Lỗi gọi mô hình (rate limit, refusal, schema)', 'Router fallback trước khi ném'],
  ['E5001', 'CONTEXT_OVERFLOW', 'Không nén được về ngân sách (CXD-10 §7)', 'Báo cáo lớp'],
  ['E5002', 'OUTPUT_INVALID', 'Đầu ra mô hình sai schema sau 1 lần sửa', ''],

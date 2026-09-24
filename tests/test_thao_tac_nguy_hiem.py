@@ -418,13 +418,22 @@ def test_trang_thai_du_an_la_nguon_tra_loi_chu_khong_phai_cau_hoi(tmp_path):
 
 
 def test_chip_khong_co_manifest_ISA_thi_NOI_RA_chu_khong_dua_thuc_don_sai():
-    """`STM32F103` là Cortex-M3 (`armv7-m`); kho chỉ có `armv7e-m` (M4/M7 có FPU+DSP).
+    """Chip không có manifest thì trả `None` — KHÔNG đoán một ISA gần giống.
 
-    Đưa ba lựa chọn hiện có ra là mời người dùng chọn một ISA sai, rồi mã sinh ra mang lệnh
-    chip không chạy được. Đây là khoảng trống của sản phẩm, không phải một câu hỏi.
+    Ca gốc là `STM32F103` (Cortex-M3, `armv7-m`) trong khi kho chỉ có `armv7e-m` (M4/M7 có
+    FPU+DSP). **Đ3 đã lấp đúng khoảng trống ấy**: thêm `docs/spec/isa/armv7-m.yaml` và thu hẹp
+    `armv7e-m` từ `^STM32F[2-4]` xuống `^STM32F[34]`, vì STM32F2 cũng là Cortex-M3 — một chip
+    KHÔNG có FPU đang bị gán vào ISA của chip CÓ FPU, và luật `no_float_isr_without_fpu` mất
+    hiệu lực đúng chỗ nó cần nhất.
+
+    Điều bài kiểm canh không đổi: có manifest thì trả đúng, không có thì trả `None` và sản phẩm
+    NÓI RA khoảng trống thay vì đưa một thực đơn toàn lựa chọn sai. Chip dùng để canh nhánh
+    `None` nay là PIC16F18855 (kho chưa có manifest `pic16`).
     """
     from eide.caps.project import _isa_tu_chip
-    assert _isa_tu_chip("STM32F103") is None
+    assert _isa_tu_chip("PIC16F18855") is None
+    assert _isa_tu_chip("STM32F103") == "armv7-m"        # Đ3 thêm manifest
+    assert _isa_tu_chip("STM32F205RB") == "armv7-m"      # M3, trước Đ3 bị armv7e-m nhận sai
     assert _isa_tu_chip("STM32F411CE") == "armv7e-m"
 
 

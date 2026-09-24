@@ -6,7 +6,7 @@ const { metaNew, refParas } = require('./eide_common');
 {
 const m = metaNew('EIDE-TGT-19', 'ISA, toolchain, adapter, discovery', 'ISA PROFILE, TOOLCHAIN, ADAPTER TARGET VÀ DISCOVERY (TGT)',
   'Đặc tả từng tập lệnh được hỗ trợ: schema ISA profile, manifest toolchain theo hệ điều hành, lệnh build/flash/serial/probe/sim, bảng VID/PID probe, cách đọc ID chip theo họ, thuật toán dò tốc độ kết nối, schema target.yaml, nguồn tài liệu hãng',
-  [['Tài liệu trước', 'EIDE-SDD-04 §4.5, §4.8, §6; EIDE-CDS-12 tập 3–4 (env.*, target.*, discover.*); EIDE-SEC-25'], ['Tệp kèm', 'isa/armv7e-m.yaml, isa/avr8.yaml, isa/rv32imac.yaml, isa/xtensa-esp32.yaml, isa/pic16.yaml (mẫu)'], ['Dùng khi', 'Hiện thực core.targets, eide.discover, eide-packs/isa; thêm ISA mới (NFR-08)']],
+  [['Tài liệu trước', 'EIDE-SDD-04 §4.5, §4.8, §6; EIDE-CDS-12 tập 3–4 (env.*, target.*, discover.*); EIDE-SEC-25'], ['Tệp kèm', 'isa/armv7-m.yaml, isa/armv7e-m.yaml, isa/avr8.yaml, isa/rv32imac.yaml, isa/xtensa-esp32.yaml, isa/pic16.yaml (mẫu)'], ['Dùng khi', 'Hiện thực core.targets, eide.discover, eide-packs/isa; thêm ISA mới (NFR-08)']],
   'Phát hành lần đầu — bổ sung lĩnh vực L20/L21/L23',
   [['1.1', '07/09/2026', 'Vũ Trí Công',
     '§2 bảng ISA: rv32imac và xtensa-esp32 chuyển M2 → M5 kèm lý do — cả hai cần chuỗi công cụ và trình mô phỏng chưa cài được, nên "kiểm" ở M2 mà không có board lẫn toolchain chỉ là nạp YAML. Ghi gói ba việc của M5: schema manifest ISA, TC-48 ("ISA là dữ liệu, không phải mã"), manifest xtensa-esp32 và pic16. Nêu rõ avr8 ở mốc M0 đã có manifest từ Sprint 1 nhưng chưa test nào chạm tới. §8: bảng nguồn hãng sinh ra `sources/vendors.yaml` kèm giấy phép từng mục, để `search.vendor` đọc từ spec thay vì chép tay (DEV-055).'],
@@ -21,7 +21,7 @@ c.push(H1('1. Schema ISA profile'));
 c.push(...CODE([
   '# isa/<id>.yaml — JSON Schema data/json/yaml_isa.json',
   'id: armv7e-m                       # armv6-m | armv7-m | armv7e-m | armv8-m | avr8 | rv32imac | rv32imc | xtensa-esp32 | pic16 | pic18 | custom-<name>',
-  'family_patterns: ["^STM32F[2-4]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]     # regex mã chip → ISA (project.set_target)',
+  'family_patterns: ["^STM32F[34]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]     # regex mã chip → ISA (project.set_target)',
   'abi: {endian: little, word: 32, fpu: optional, align: 8}',
   'interrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}',
   'toolchain:',
@@ -43,6 +43,7 @@ c.push(SP());
 c.push(H1('2. Bảng ISA khởi đầu'));
 c.push(T([1300, 1700, 1500, 1500, 1500, 1800], ['ISA', 'Chip mẫu', 'Toolchain', 'Flash', 'Probe / ID', 'Sim'], [
   ['armv7e-m (M0)', 'STM32F411, nRF52840, LPC55', 'arm-none-eabi-gcc 13.2, cmake/ninja', 'probe-rs / OpenOCD', 'ST-Link, J-Link, CMSIS-DAP / IDCODE + DBGMCU', 'Renode (.repl), fallback QEMU'],
+  ['armv7-m', 'STM32F103 (Blue Pill), STM32F205, LPC1768', 'arm-none-eabi-gcc 13.2, cmake/ninja', 'probe-rs / OpenOCD', 'ST-Link, J-Link, CMSIS-DAP / IDCODE + DBGMCU', 'QEMU (netduino2, stm32vldiscovery), Renode'],
   ['armv6-m', 'RP2040, STM32F0, SAMD21', 'như trên', 'probe-rs / picotool (RP2040 UF2)', 'CMSIS-DAP, picoprobe / IDCODE', 'Renode'],
   ['avr8 (M0)', 'ATmega328P, ATtiny1616', 'avr-gcc ≥7.3 (ATmega) / ≥8 cho ATtiny UPDI, avrdude 7', 'avrdude (arduino, usbasp, jtag2updi, pymcuprog UPDI)', 'AVRISP mkII, Arduino bootloader / signature bytes', 'simavr [52], fallback QEMU (qemu-system-avr)'],
   ['rv32imac', 'GD32VF103, ESP32-C3 (rv32imc), CH32V', 'riscv64-elf-gcc 13+ (multilib) hoặc riscv-none-elf-gcc', 'OpenOCD / esptool (ESP)', 'FTDI JTAG, ESP USB-JTAG / DTM IDCODE, esptool chip_id', 'QEMU riscv32 (-M virt) [53]'],
@@ -233,7 +234,35 @@ vendors:
       - {kind: svd, tier: silver, license: Apache-2.0, template: "https://raw.githubusercontent.com/cmsis-svd/cmsis-svd-data/main/data/{vendor}/{part_upper}-Community.svd", note: "SVD community: bạc, không phải vàng"}
 `);
 fs.mkdirSync('isa', { recursive: true });
-fs.writeFileSync('isa/armv7e-m.yaml', `id: armv7e-m\nfamily_patterns: ["^STM32F[2-4]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]\nabi: {endian: little, word: 32, fpu: optional, align: 8}\ninterrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}\ntoolchain:\n  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version", package: {macos: arm-none-eabi-gcc, linux: gcc-arm-none-eabi}}\n  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}, {name: arm-none-eabi-objcopy, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}]\n  install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}\n  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}\n  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}\nflash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}\ndebug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}\nid_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}\nsim: {engine: renode, platform_template: renode/cortex-m.repl.j2, fallback: qemu}\nskills: [skills/armv7e-m/interrupts.md, skills/armv7e-m/clock.md, skills/armv7e-m/i2c.md]\n`);
+// [DEV-237] Manifest armv7-m — Cortex-M3. Thiếu nó là nguyên nhân TC018.
+//
+// Đo 23/09/2026: người dùng nêu STM32F103 (Blue Pill), `env.check` trả E2000 "ISA 'armv7-m'
+// chưa có manifest". Câu ấy ĐÚNG và đó mới là chỗ đáng chú ý — mã nói thật, kho thiếu dữ liệu.
+// Trước bản này `armv7e-m` khai `^STM32F[2-4]`, tức nó nhận cả STM32F2 vốn là Cortex-M3: một
+// con chip KHÔNG có FPU được gán vào ISA của chip CÓ FPU, và `no_float_isr_without_fpu` mất
+// hiệu lực đúng chỗ nó cần nhất. Nay `armv7e-m` chỉ nhận F3/F4 (M4), F1/F2 về đây.
+//
+// `sim` khác `armv7e-m` ở một điểm có thật: QEMU CÓ máy ảo cho Cortex-M3 (`netduino2` =
+// STM32F205, `stm32vldiscovery` = STM32F100), trong khi DEV-086 đo được QEMU không mang máy ảo
+// nào cho họ F4. Nên ở đây `qemu` là đường lui thật, không phải một dòng cấu hình cho đủ.
+fs.writeFileSync('isa/armv7-m.yaml', `id: armv7-m
+family_patterns: ["^STM32F1", "^STM32F2", "^LPC17", "^LPC18", "^GD32F1"]
+abi: {endian: little, word: 32, fpu: none, align: 8}
+interrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}
+toolchain:
+  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version", package: {macos: arm-none-eabi-gcc, linux: gcc-arm-none-eabi}}
+  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}, {name: arm-none-eabi-objcopy, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}]
+  install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}
+  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}
+  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}
+flash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}
+debug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}
+id_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}
+serial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}
+sim: {engine: qemu, cmd: "qemu-system-arm -M netduino2 -nographic -kernel {artifact}", machines: {STM32F2: netduino2, STM32F1: stm32vldiscovery}, platform_template: renode/cortex-m.repl.j2, fallback: renode}
+skills: [skills/armv7-m/interrupts.md, skills/armv7-m/clock.md, skills/armv7-m/i2c.md]
+`);
+fs.writeFileSync('isa/armv7e-m.yaml', `id: armv7e-m\nfamily_patterns: ["^STM32F[34]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]\nabi: {endian: little, word: 32, fpu: optional, align: 8}\ninterrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}\ntoolchain:\n  compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version", package: {macos: arm-none-eabi-gcc, linux: gcc-arm-none-eabi}}\n  tools: [{name: cmake, min: "3.22"}, {name: ninja}, {name: arm-none-eabi-size, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}, {name: arm-none-eabi-objcopy, package: {macos: arm-none-eabi-binutils, linux: binutils-arm-none-eabi}}]\n  install: {macos: ["brew install --cask gcc-arm-embedded", "brew install cmake ninja"], linux: ["apt install gcc-arm-none-eabi cmake ninja-build"], windows: ["winget install Arm.GnuArmEmbeddedToolchain", "winget install Kitware.CMake"]}\n  build: {cmd: "cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm.cmake && cmake --build build", artifact: "build/*.elf", map: "build/*.map"}\n  static: {cmd: "cppcheck --enable=warning,performance --inline-suppr src", rules: [no_delay_in_isr, no_malloc, no_float_isr_without_fpu]}\nflash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}\ndebug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}\nid_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}\nsim: {engine: renode, platform_template: renode/cortex-m.repl.j2, fallback: qemu}\nskills: [skills/armv7e-m/interrupts.md, skills/armv7e-m/clock.md, skills/armv7e-m/i2c.md]\n`);
 fs.writeFileSync('isa/avr8.yaml', `id: avr8\nfamily_patterns: ["^ATmega", "^ATtiny", "^AVR(64|128)"]\nabi: {endian: little, word: 8, fpu: none, align: 1}\ninterrupts: {model: vector_table, priority_bits: 0}\ntoolchain:\n  compiler: {name: avr-gcc, min: "7.3", check: "avr-gcc --version"}\n  tools: [{name: avrdude, min: "7.0"}, {name: avr-size, package: {macos: avr-gcc, linux: binutils-avr}}]\n  # [DEV-172] Ba chỗ hỏng trong dòng cũ "brew install avr-gcc avrdude": tap osx-cross/avr\n  # nay chỉ còn formula ĐÁNH SỐ (avr-gcc@8…@15) nên lệnh ấy trả "No available formula";\n  # Homebrew từ chối nạp formula của tap bên thứ ba cho tới khi "brew trust"; và\n  # avr-gcc@14 là KEG-ONLY nên cài xong "which avr-gcc" vẫn không thấy — chỗ ấy\n  # eide_core.tools.which() lo, bằng cách tìm thêm trong /opt/homebrew/opt/*/bin.\n  install: {macos: ["brew tap osx-cross/avr && brew trust osx-cross/avr && brew install avr-gcc@14 avrdude"], linux: ["apt install gcc-avr avr-libc avrdude"], windows: ["winget install AVRDudes.AVRDUDE"]}\n  build: {cmd: "make -C . MCU={mcu} F_CPU={f_cpu}", artifact: "build/*.elf"}\nflash: {adapters: [avrdude, pymcuprog], default: avrdude, cmd: {avrdude: "avrdude -c {programmer} -p {part} -P {port} -U flash:w:{hex}:i"}, verify: true}\ndebug: {adapter: none, probes: [avrisp2, arduino]}\nid_read: {method: signature, cmd: "avrdude -c {programmer} -p {part} -P {port} -v", regex: "signature = (0x[0-9a-f]+ 0x[0-9a-f]+ 0x[0-9a-f]+)", table: id_tables/avr.yaml}\nserial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200]}\nsim: {engine: simavr, fallback: qemu}\nskills: [skills/avr8/timers.md, skills/avr8/twi.md]\n`);
 
 // rv32imac — mốc M5 mở phần đầu (14/09/2026). Manifest này KHÁC hai cái trên ở một điểm đáng

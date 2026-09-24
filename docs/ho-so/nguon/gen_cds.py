@@ -51,5 +51,11 @@ for c in caps:
 for ns, recs in by_ns.items():
     y = [dict(code=r["code"], id=r["id"], name=r["desc"][:80], desc=r["desc"], input=r["input_schema"], output=r["output_schema"], risk=r["risk"], tier=r["tier"], grounding=[r["grounding"]] if r["grounding"] not in ("—", "") else [], ask_when=[r["ask_when"]] if r["ask_when"] not in ("—", "") else [], undo={"kind": r["undo"]}, milestone=r["milestone"], impl=f"eide.{ns}:{r['id'].split('.')[1]}", errors=r["errors"], example=json.loads(r["example"]) if r["example"].startswith("{") else r["example"]) for r in recs]
     yaml.safe_dump(y, open(f"capabilities/{ns}.yaml", "w"), allow_unicode=True, sort_keys=False, width=200)
-json.dump(out, open("cds.json", "w"), ensure_ascii=False)
+# `indent=1` như `gen_caps_json.py` và các lược đồ của `gen_ddd.py`. [DEV-238]
+#
+# Trước bản này bộ sinh ghi JSON MỘT DÒNG, còn bản trong kho (`docs/spec/cds.json`) là bản
+# đã xuống dòng — nên chạy đúng lệnh mà quy trình dặn (`scripts/sinh_tai_lieu.sh`) lại tạo ra
+# một diff 14 nghìn dòng trên một tệp không đổi nội dung. Một bẫy như thế làm người ta thôi
+# chạy lệnh sinh, và từ đó tài liệu với spec trôi khỏi nhau — đúng thứ cả quy trình này chống.
+json.dump(out, open("cds.json", "w"), ensure_ascii=False, indent=1)
 print(len(out), "caps with detail;", "missing:", missing)

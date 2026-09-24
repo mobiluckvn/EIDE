@@ -165,6 +165,8 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
     case chipIdMismatch = 4003
     /// TIMEOUT — Quá thời gian job/serial/probe
     case timeout = 4004
+    /// NETWORK_FAILED — Không ra được mạng (DNS, từ chối kết nối, mất mạng) — khác TIMEOUT
+    case networkFailed = 4005
     /// MODEL_ERROR — Lỗi gọi mô hình (rate limit, refusal, schema)
     case modelError = 5000
     /// CONTEXT_OVERFLOW — Không nén được về ngân sách (CXD-10 §7)
@@ -218,6 +220,7 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
         case .targetNotFound: return "Gợi ý discover.scan"
         case .chipIdMismatch: return "Leo thang"
         case .timeout: return ""
+        case .networkFailed: return "resumable: lưu trạng thái, chạy tiếp khi có mạng"
         case .modelError: return "Router fallback trước khi ném"
         case .contextOverflow: return "Báo cáo lớp"
         case .outputInvalid: return ""
@@ -239,4 +242,4 @@ public enum EideErrorCode: Int, Error, CaseIterable, Sendable {
 
 /// Số phương thức và mã lỗi lúc sinh — test hợp đồng đối chiếu với spec (API-15 §8).
 public let eideSoPhuongThuc = 65
-public let eideSoMaLoi = 31
+public let eideSoMaLoi = 32

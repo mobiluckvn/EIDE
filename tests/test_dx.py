@@ -139,9 +139,16 @@ def test_bi_danh_thanh_ma_chip():
 
 
 def test_isa_tu_manifest_va_null_khi_thieu():
-    """`isa=null` là câu trả lời ĐÚNG khi kho chưa có manifest — TC018 (STM32F103 là armv7-m)."""
+    """`isa=null` là câu trả lời ĐÚNG khi kho chưa có manifest cho họ chip ấy.
+
+    Ca gốc của bài kiểm này là STM32F103 (TC018): lúc viết Đ1, kho chưa có `armv7-m` nên DX trả
+    `None` — và nói thẳng là đúng hơn đoán một ISA gần giống. Đ3 đã THÊM manifest ấy, nên chip
+    dùng để canh nhánh `None` đổi sang một họ kho thật sự chưa có (PIC). Hai vế của bài kiểm giữ
+    nguyên ý: có manifest thì trả đúng, không có thì trả `None`, không bao giờ đoán.
+    """
     assert extract("dùng ATmega328P").chips[0]["isa"] == "avr8"
-    assert extract("dùng STM32F103").chips[0]["isa"] is None
+    assert extract("dùng STM32F103").chips[0]["isa"] == "armv7-m"        # Đ3 thêm manifest
+    assert extract("dùng PIC16F18855").chips[0]["isa"] is None
 
 
 def test_khong_bia_chip_tu_url_hay_duong_dan():

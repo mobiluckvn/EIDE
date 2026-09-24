@@ -1,6 +1,6 @@
-id: armv7e-m
-family_patterns: ["^STM32F[34]", "^STM32L4", "^nRF52", "^SAMD5", "^LPC55"]
-abi: {endian: little, word: 32, fpu: optional, align: 8}
+id: armv7-m
+family_patterns: ["^STM32F1", "^STM32F2", "^LPC17", "^LPC18", "^GD32F1"]
+abi: {endian: little, word: 32, fpu: none, align: 8}
 interrupts: {model: nvic, vector_table: "0x00000000", priority_bits: 4}
 toolchain:
   compiler: {name: arm-none-eabi-gcc, min: "13.2", check: "arm-none-eabi-gcc --version", package: {macos: arm-none-eabi-gcc, linux: gcc-arm-none-eabi}}
@@ -12,5 +12,5 @@ flash: {adapters: [probe-rs, openocd], default: probe-rs, verify: true}
 debug: {adapter: embedded-debugger-mcp, probes: [stlink, jlink, cmsis-dap], speed_khz: {min: 100, max: 8000, default: 4000}}
 id_read: {method: idcode, cmd: "probe-rs info --probe {probe}", secondary: {reg: "0xE0042000", name: DBGMCU_IDCODE, mask: "0xFFF"}, table: id_tables/stm32.yaml}
 serial: {default_baud: 115200, auto_baud_list: [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]}
-sim: {engine: renode, platform_template: renode/cortex-m.repl.j2, fallback: qemu}
-skills: [skills/armv7e-m/interrupts.md, skills/armv7e-m/clock.md, skills/armv7e-m/i2c.md]
+sim: {engine: qemu, cmd: "qemu-system-arm -M netduino2 -nographic -kernel {artifact}", machines: {STM32F2: netduino2, STM32F1: stm32vldiscovery}, platform_template: renode/cortex-m.repl.j2, fallback: renode}
+skills: [skills/armv7-m/interrupts.md, skills/armv7-m/clock.md, skills/armv7-m/i2c.md]

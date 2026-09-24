@@ -96,6 +96,12 @@
   "handling": ""
  },
  {
+  "code": "E4005",
+  "name": "NETWORK_FAILED",
+  "meaning": "Không ra được mạng (DNS, từ chối kết nối, mất mạng) — khác TIMEOUT",
+  "handling": "resumable: lưu trạng thái, chạy tiếp khi có mạng"
+ },
+ {
   "code": "E5000",
   "name": "MODEL_ERROR",
   "meaning": "Lỗi gọi mô hình (rate limit, refusal, schema)",

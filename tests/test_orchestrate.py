@@ -562,8 +562,11 @@ def test_cau_hoi_tra_ve_CAU_TRUC_cho_vung_trao_doi():
     assert t["khoa"] == "isa"
     # Câu hỏi bằng TIẾNG NGƯỜI, không phải tên trường trần.
     assert "kiến trúc" in t["hoi"].lower() and t["hoi"] != "isa"
-    # Lựa chọn suy từ KHO: ba manifest trong docs/spec/isa/.
-    assert {x["gia_tri"] for x in t["lua_chon"]} == {"armv7e-m", "avr8", "rv32imac"}
+    # Lựa chọn suy từ KHO: các manifest trong docs/spec/isa/. ĐỌC danh sách thay vì gõ tay —
+    # bản đầu viết cứng ba tên, và Đ3 thêm `armv7-m` làm bài kiểm này đỏ ở một chỗ không liên
+    # quan tới điều nó canh (câu hỏi bằng tiếng người, lựa chọn suy từ kho).
+    from eide_core.isa import isa_da_co
+    assert {x["gia_tri"] for x in t["lua_chon"]} == set(isa_da_co())
     assert any("STM32" in x["giai_thich"] for x in t["lua_chon"])
 
 

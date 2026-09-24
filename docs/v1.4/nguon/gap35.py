@@ -33,7 +33,7 @@ DO = "F8CBAD"          # KHÔNG
 CAM = "FFE699"         # MỘT PHẦN / KHÁC
 LUC = "C6EFCE"         # CÓ
 
-MAU_TRANG_THAI = {"KHÔNG": DO, "MỘT PHẦN": CAM, "KHÁC": CAM, "CÓ": LUC, "XONG Đ1": "A9D08E", "XONG Đ2": "A9D08E"}
+MAU_TRANG_THAI = {"KHÔNG": DO, "MỘT PHẦN": CAM, "KHÁC": CAM, "CÓ": LUC, "XONG Đ1": "A9D08E", "XONG Đ2": "A9D08E", "XONG Đ3": "A9D08E"}
 VIEN = Border(*(Side(style="thin", color="BFBFBF"),) * 4)
 
 
@@ -108,8 +108,8 @@ def sheet_huong_dan(wb) -> None:
         ("KHÔNG", "Không có dòng mã nào làm việc này."),
         ("KHÁC", "Mã làm việc ấy nhưng theo cách khác thiết kế (tên khác, chỗ khác, cơ chế "
                  "khác) — phải chốt: sửa mã hay cập nhật tài liệu (ghi DEVIATIONS)."),
-        ("XONG Đ1 / XONG Đ2", "Đã hiện thực ngày 24/09/2026; cột cuối ghi tệp và BÀI KIỂM canh "
-                    "nó. `make check-py` xanh: ruff, 2011 test, check-spec, check-gen."),
+        ("XONG Đ1 / Đ2 / Đ3", "Đã hiện thực ngày 24/09/2026; cột cuối ghi tệp và BÀI KIỂM canh "
+                    "nó. `make check-py` xanh: ruff, 2038 test, check-spec, check-gen."),
         ("", ""),
         ("KẾT LUẬN NGẮN", ""),
         ("Vấn đề kiến trúc lớn nhất",
@@ -1072,6 +1072,18 @@ XONG: dict[str, tuple[str, str]] = {
               "chưa đặt ([DEV-235]: một chữ \"G-WL\" trong hợp đồng làm chính ingest.classify bị "
               "cổng R4 chặn). Canh bởi ::test_script_bi_quet_tinh_va_phai_hoi, "
               "::test_canh_bao_trich_dung_dong_lenh, ::test_script_lanh_khong_bat_canh_bao"),
+    "G-153": ("XONG Đ3", "docs/spec/isa/armv7-m.yaml (mới, sinh từ tgt_sim.js) + thu hẹp armv7e-m "
+              "từ ^STM32F[2-4] xuống ^STM32F[34] — STM32F2 cũng là Cortex-M3 KHÔNG có FPU, để "
+              "armv7e-m nhận nó là làm luật no_float_isr_without_fpu mất hiệu lực ([DEV-237]). "
+              "STM32F103/F205/LPC17 → armv7-m. Canh bởi tests/test_de_nghi_ho_chieu.py::"
+              "test_chip_ve_dung_isa, ::test_armv7e_m_khong_con_nhan_STM32F2, "
+              "::test_manifest_armv7_m_khai_du_phan_toolchain_va_khong_co_fpu"),
+    "G-160": ("XONG Đ3", "src/eide/caps/search.py::_loi_mang — tách E4005 NETWORK_FAILED "
+              "(resumable) / E4004 TIMEOUT / E4000 TOOL_FAILED, trước đó gộp hết vào TIMEOUT. "
+              "E4005 thêm vào errors.json TỪ NGUỒN (api.js) + sinh lại binding Swift. Câu lỗi nói "
+              "thẳng \"lỗi MẠNG, không phải lỗi tệp\" (TC072). CHƯA làm: dựng SearXNG thật và "
+              "doc.approve/G-DATA — chờ Đợt 2 (nền Fact). Canh bởi ::test_phan_loai_loi_mang, "
+              "::test_loi_mang_noi_ro_KHONG_phai_loi_tep, ::test_E4005_co_trong_dac_ta"),
     "G-041": ("XONG Đ1", "docs/ho-so/nguon/dps.js::INTENT_SCHEMA → sinh lại "
               "docs/spec/dialog/intent.schema.json (node scripts/gen_spec_tu_nguon.js); "
               "`make check-gen` xanh. Canh bởi ::test_luoc_do_intent_v2_khong_con_slot_chuoi_don, "
@@ -1274,7 +1286,7 @@ CAPS = [
      "kế hoạch LƯỢT", "Đ5", "TC009, TC013, TC064",
      "Chú ý trùng tên: namespace plan.* đang là plan.create/decompose/order (kế hoạch tính năng)"),
     ("env.check", "Đổi", "Đối chiếu ISA của chip với manifest; không khớp → nói thẳng thay vì "
-     "đưa 3 lựa chọn đều sai", "MỘT PHẦN",
+     "đưa 3 lựa chọn đều sai", "XONG Đ3",
      "src/eide/caps/env.py:67 đã nói thẳng (E2000) khi thiếu manifest — thứ thiếu là DỮ LIỆU "
      "manifest armv7-m", "Đ3", "TC018",
      "DEV-203 đã sửa việc hỏi ISA khi câu đã nêu chip"),
@@ -1582,6 +1594,7 @@ def sheet_thong_ke(wb) -> None:
         ("CÓ (đúng thiết kế)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"CÓ\")"),
         ("XONG Đ1 (đã sửa 24/09/2026)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"XONG Đ1\")"),
         ("XONG Đ2 (đã sửa 24/09/2026)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"XONG Đ2\")"),
+        ("XONG Đ3 (đã sửa 24/09/2026)", f"=COUNTIF('Ra soat (GAP)'!E2:E{n},\"XONG Đ3\")"),
         ("", None),
         ("THEO ĐỢT", None),
         ("Đợt 1", f"=COUNTIF('Ra soat (GAP)'!J2:J{n},\"Đợt 1\")"),
@@ -1611,11 +1624,12 @@ def sheet_thong_ke(wb) -> None:
         ("Năng lực đã hiện thực (@capability)", 213),
         ("Năng lực chưa hiện thực", 33),
         ("Mẫu chuỗi trong docs/spec/dialog/chains.json", 22),
-        ("Manifest ISA trong docs/spec/isa/", 3),
+        ("Manifest ISA trong docs/spec/isa/", 4),
         ("Phương thức JSON-RPC trong openrpc.json", 65),
         ("Loại sự kiện sổ cái", 24),
-        ("Tệp test trong tests/", 83),
-        ("Mục DEVIATIONS đã dùng", "DEV-001 … DEV-236 (220–229 mâu thuẫn tài liệu, 230–233 Đ1, 234–236 Đ2)"),
+        ("Mã lỗi trong errors.json", 32),
+        ("Tệp test trong tests/", 84),
+        ("Mục DEVIATIONS đã dùng", "DEV-001 … DEV-240 (220–229 mâu thuẫn tài liệu, 230–233 Đ1, 234–236 Đ2, 237–240 Đ3)"),
     ]
     for a, b in hang:
         ws.append([a, b])

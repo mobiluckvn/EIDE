@@ -1054,7 +1054,7 @@
   "Nhóm": "H. Thực thi (L6)",
   "Tài liệu §": "AAD-33 §8.2, AGD-32 Đ3",
   "Yêu cầu thiết kế (1 câu)": "Manifest ISA đủ họ: armv6-m, armv7-m, armv7e-m, armv8-m, avr8, rv32imac, xtensa-lx6/lx7",
-  "Trạng thái": "KHÔNG",
+  "Trạng thái": "XONG Đ3",
   "Bằng chứng trong mã (tệp:dòng)": "docs/spec/isa/ chỉ có armv7e-m.yaml, avr8.yaml, rv32imac.yaml (+ probes.yaml). STM32F103 là armv7-m → env.check trả E2000 \"chưa có manifest\"",
   "Ca đo liên quan": "TC018, TC015",
   "Hành động đề xuất": "Thêm docs/spec/isa/armv7-m.yaml (tối thiểu), rồi armv6-m/armv8-m/xtensa-lx6/lx7; env.check:67 đã nói thẳng nên chỉ cần dữ liệu",
@@ -1062,7 +1062,7 @@
   "Đợt": "Đợt 1",
   "Công": "S",
   "Ghi chú / DEV đề nghị": "Việc rẻ nhất trong Đợt 1 — mở khoá TC018 mà không sửa mã.",
-  "Đã làm 24/09/2026": ""
+  "Đã làm 24/09/2026": "docs/spec/isa/armv7-m.yaml (mới, sinh từ tgt_sim.js) + thu hẹp armv7e-m từ ^STM32F[2-4] xuống ^STM32F[34] — STM32F2 cũng là Cortex-M3 KHÔNG có FPU, để armv7e-m nhận nó là làm luật no_float_isr_without_fpu mất hiệu lực ([DEV-237]). STM32F103/F205/LPC17 → armv7-m. Canh bởi tests/test_de_nghi_ho_chieu.py::test_chip_ve_dung_isa, ::test_armv7e_m_khong_con_nhan_STM32F2, ::test_manifest_armv7_m_khai_du_phan_toolchain_va_khong_co_fpu"
  },
  {
   "ID": "G-154",
@@ -1159,7 +1159,7 @@
   "Nhóm": "H. Thực thi (L6)",
   "Tài liệu §": "AAD-33 §8.6, brief §5",
   "Yêu cầu thiết kế (1 câu)": "search.web qua SearXNG cục bộ, truy vấn dựng bằng mã từ chips[], xếp hạng ưu tiên tên miền nhà sản xuất, tải chỉ sau G-DATA; mất mạng → E3xxx lỗi MẠNG (không phải lỗi tệp), lưu trạng thái, tiếp tục được",
-  "Trạng thái": "MỘT PHẦN",
+  "Trạng thái": "XONG Đ3",
   "Bằng chứng trong mã (tệp:dòng)": "src/eide/caps/search.py:589 SearXNG là nguồn mặc định + :649 hướng dẫn; Makefile:156 `make searxng` đã có (Docker). Chưa dựng thật; truy vấn không dựng từ chips[]; TC072 vẫn báo lỗi TỆP cho một việc TÌM MẠNG",
   "Ca đo liên quan": "TC072, TC010, TC046",
   "Hành động đề xuất": "Dựng SearXNG; phân loại lỗi mạng thành E3xxx + incident{resumable:true}; xếp hạng theo trusted_sources",
@@ -1167,7 +1167,7 @@
   "Đợt": "Đợt 1",
   "Công": "M",
   "Ghi chú / DEV đề nghị": "",
-  "Đã làm 24/09/2026": ""
+  "Đã làm 24/09/2026": "src/eide/caps/search.py::_loi_mang — tách E4005 NETWORK_FAILED (resumable) / E4004 TIMEOUT / E4000 TOOL_FAILED, trước đó gộp hết vào TIMEOUT. E4005 thêm vào errors.json TỪ NGUỒN (api.js) + sinh lại binding Swift. Câu lỗi nói thẳng \"lỗi MẠNG, không phải lỗi tệp\" (TC072). CHƯA làm: dựng SearXNG thật và doc.approve/G-DATA — chờ Đợt 2 (nền Fact). Canh bởi ::test_phan_loai_loi_mang, ::test_loi_mang_noi_ro_KHONG_phai_loi_tep, ::test_E4005_co_trong_dac_ta"
  },
  {
   "ID": "G-170",

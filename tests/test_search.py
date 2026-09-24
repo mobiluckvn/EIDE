@@ -669,12 +669,19 @@ def test_chua_cau_hinh_thi_E4001_kem_tung_lua_chon(du_an, monkeypatch):
     assert "search.vendor" in t, "phải nêu đường đi được ngay khi chưa cấu hình gì"
 
 
-def test_may_chu_khong_tra_loi_thi_E4004(du_an, may_chu_json, monkeypatch):
+def test_may_chu_tra_404_thi_E4000_khong_phai_TIMEOUT(du_an, may_chu_json, monkeypatch):
+    """Một mã HTTP là một CÂU TRẢ LỜI, không phải một lần quá hạn. [Đ3, DEV-239]
+
+    Trước Đ3 mọi lỗi của lời gọi tìm kiếm đều ra E4004 TIMEOUT — kể cả 404, kể cả DNS không
+    phân giải. Người đọc câu "quá thời gian" đi tăng timeout, trong khi việc cần làm là sửa địa
+    chỉ dịch vụ (404) hoặc cắm lại mạng (E4005).
+    """
     base, _ = may_chu_json
     _cau_hinh(monkeypatch, base)          # không nạp /search ⇒ 404
     r, ctx, _ = du_an
     run = r.invoke("search.web", {"query": "x"}, ctx)
-    assert run.status == "failed" and run.error["eide_code"] == "E4004"
+    assert run.status == "failed" and run.error["eide_code"] == "E4000"
+    assert "404" in str(run.error)
 
 
 def test_doc_duoc_dinh_dang_cua_tung_nha_cung_cap():

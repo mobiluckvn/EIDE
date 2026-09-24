@@ -1346,6 +1346,23 @@ HOI_BANG_TIENG_NGUOI = {
 }
 
 
+def _chip_da_neu(intent: dict[str, Any] | None) -> list[str]:
+    """Mã chip người dùng NÊU TRONG CÂU, theo thứ tự xuất hiện. [Đ1 + Đ3]
+
+    Đọc `slots.chips` (mảng, do DX điền — AAD-33 §2.2) và chỉ nhận khi nguồn đáng tin: một mã
+    chip do MÔ HÌNH đoán không được dùng để dựng thẻ đề nghị, vì thẻ ấy sẽ mời người dùng đi tìm
+    datasheet cho một con chip họ không hề nhắc tới. `chip` số ít là đường lui cho bên gọi cũ
+    (CLI, test) chưa đi qua phép hợp nhất slot.
+    """
+    from eide.nlu.merge import chay_duoc
+    if (ds := chay_duoc(intent or {}, "chips")):
+        return ds
+    if (intent or {}).get("origins"):
+        return []
+    mot = str(((intent or {}).get("slots") or {}).get("chip") or "").strip()
+    return [mot] if mot else []
+
+
 def _lua_chon(khoa: str, root: Path | None, tt: dict[str, Any]) -> list[dict[str, str]]:
     """Tập giá trị hợp lệ của một tham số — suy từ KHO và STORE, không bịa.
 
@@ -1403,11 +1420,15 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
     """
     if root is None or not thieu:
         return {}
+    from eide.caps.passport import de_nghi
     from eide.caps.req import ghi_clarification
     reg = get_registry()
     tt = {}
     if nut.cap in reg:
         tt = (reg.get(nut.cap).spec.input_schema or {}).get("properties") or {}
+    # Dựng thẻ đề nghị MỘT LẦN cho cả lượt hỏi: `_lc` cần nó để ra ba lựa chọn, `_ta` cần nó để
+    # đổi chính CÂU HỎI. Gọi hai lần là hai lần đọc store cho cùng một câu trả lời.
+    de_nghi_the = de_nghi(_chip_da_neu(intent), root)
 
     def _lc(k: str) -> list[dict[str, str]]:
         """Lựa chọn cho một ô trống — kể cả thứ NGƯỜI VỪA NÓI. [DEV-203]
@@ -1423,9 +1444,22 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
         vì gõ lại thứ vừa nói.
         """
         ds = _lua_chon(k, root, tt)
-        chip = str(((intent or {}).get("slots") or {}).get("chip") or "").strip()
-        if chip and k in ("passport", "chip") and not any(x["gia_tri"] == chip for x in ds):
-            ds = [{"gia_tri": chip, "giai_thich": "anh vừa nói trong câu"}, *ds]
+        chips = _chip_da_neu(intent)
+        # ── Đ3: ô `passport` KHÔNG hỏi "chip nào?" nữa — nó đề nghị BA CÁCH LẤY TÀI LIỆU.
+        #
+        # Đo 23/09/2026: sáu ca dừng ở *"Chưa ghim hộ chiếu chip — chip nào?"* với danh sách
+        # trống, và ba trong sáu ca người dùng ĐÃ NÊU chip ngay trong câu. [DEV-203] chữa nửa
+        # đầu bằng cách đưa tên chip ra làm một lựa chọn — nhưng chọn nó thì ghim một tên trần
+        # vào `ns.part@semver`, tra ra rỗng trong im lặng ([DEV-183]). Thẻ đề nghị chữa nửa sau:
+        # ba lựa chọn đều là một CÁCH LẤY DỮ LIỆU THẬT, và việc ghim chỉ xảy ra sau khi có tài
+        # liệu (AGD-32 §5 bước 6).
+        if k == "passport" and de_nghi_the:
+            return [{"gia_tri": x["gia_tri"], "giai_thich": f"{x['nhan']} — {x['giai_thich']}"}
+                    for x in de_nghi_the["lua_chon"]]
+        if chips and k == "chip":
+            co = {x["gia_tri"] for x in ds}
+            ds = [{"gia_tri": c, "giai_thich": "anh vừa nói trong câu"}
+                  for c in chips if c not in co] + ds
         return ds
 
     def _ta(k: str) -> str:
@@ -1437,18 +1471,31 @@ def _ghi_cau_hoi_chuoi(root: Path | None, run_id: str, nut: Any,
         # trả lời bằng một câu hỏi ngược. Bảng `HOI_BANG_TIENG_NGUOI` lấp đúng chỗ ấy cho các
         # tham số hay hỏi; tên trần vẫn giữ làm đường lui, vì bịa một lời giải thích còn tệ hơn.
         hoi = HOI_BANG_TIENG_NGUOI.get(k) or t.get("description")
+        # ── Đ3: câu hỏi cho ô `passport` đổi từ CHẶN sang ĐỀ NGHỊ.
+        #
+        # "Chưa ghim hộ chiếu chip — chip nào?" là một câu hỏi người dùng KHÔNG TRẢ LỜI ĐƯỢC theo
+        # cách nó mong: họ vừa nói tên chip, và thứ còn thiếu không phải cái tên mà là TÀI LIỆU.
+        # Câu mới nói đúng thứ thiếu và đưa ba cách lấy nó.
+        if k == "passport" and de_nghi_the:
+            hoi = (f"Chưa có datasheet cho `{de_nghi_the['chip']}` — dự án cần tài liệu thật "
+                   f"trước khi dùng con số nào của nó. Anh muốn")
         cau = f"{hoi} (`{k}`)" if hoi else f"`{k}`"
+        if k == "passport" and de_nghi_the and de_nghi_the.get("canh_bao_isa"):
+            cau += f"\n   {de_nghi_the['canh_bao_isa']}"
         # [DEV-203] Chip đã nêu mà không manifest ISA nào khớp thì đó là một KHOẢNG TRỐNG của
         # sản phẩm, không phải một câu hỏi. Đo: `STM32F103` là Cortex-M3 (`armv7-m`), trong khi
         # kho chỉ có `armv7e-m` (M4/M7 có FPU+DSP), `avr8`, `rv32imac`. Đưa ba lựa chọn ấy ra
         # là mời người dùng chọn một ISA sai, rồi mã sinh ra mang lệnh chip không chạy được.
         if k == "isa":
-            chip = str(((intent or {}).get("slots") or {}).get("chip") or "").strip()
-            if chip:
-                from eide.caps.project import _isa_tu_chip
-                if not _isa_tu_chip(chip):
+            for chip in _chip_da_neu(intent):
+                from eide_core.isa import isa_cua_chip, isa_da_co
+                if not isa_cua_chip(chip):
+                    # Danh sách ISA ĐỌC TỪ MANIFEST, không gõ tay. Câu cũ kể tên ba ISA cố
+                    # định; Đ3 thêm `armv7-m` và câu ấy lập tức thành một lời nói dối tự sinh
+                    # ra — nó vẫn bảo kho không có armv7-m trong khi kho vừa có.
                     cau += (f"\n   Lưu ý: `{chip}` không khớp manifest ISA nào EIDE đang có "
-                            f"(armv7e-m, avr8, rv32imac) — chip này chưa được hỗ trợ.")
+                            f"({', '.join(isa_da_co())}) — chip này chưa được hỗ trợ.")
+                    break
         lc = _lc(k)
         if lc:
             cau += "\n   Chọn một: " + "; ".join(

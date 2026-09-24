@@ -690,10 +690,48 @@ def _goi(p: dict[str, Any], q: str, n: int, timeout: float) -> list[dict[str, An
         with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310
             d = _json.loads(r.read().decode("utf-8", errors="ignore"))
     except (urllib.error.URLError, OSError, TimeoutError, ValueError) as e:
-        raise EideError("E4004", f"Công cụ tìm kiếm `{p['id']}` không trả lời: {e}",
-                        provider=p["id"]) from e
+        raise _loi_mang(p, e) from e
     return _doc_ket_qua(ky, d)
 
+
+def _loi_mang(p: dict[str, Any], e: BaseException) -> EideError:
+    """Phân biệt MẤT MẠNG với QUÁ THỜI GIAN. [Đ3, DEV-239, TC072]
+
+    Một câu "quá thời gian" cho một lời gọi chưa bao giờ ra khỏi máy là một câu lỗi chỉ sai
+    hướng: người đọc đi tăng timeout, trong khi việc cần làm là cắm lại mạng hoặc dựng SearXNG.
+    Cùng bài học với [DEV-210] (netlist bị báo "không nhận ra định dạng nén").
+
+    Ba nhóm, ba câu khác nhau:
+
+    * **E4005 NETWORK_FAILED** — DNS không phân giải, máy chủ từ chối, không có đường ra. Kèm
+      `resumable=True`: lượt được lưu trạng thái và chạy tiếp được khi có mạng (AAD-33 §11.4),
+      không mất phần việc đã làm.
+    * **E4004 TIMEOUT** — có kết nối nhưng không kịp trả lời. Đây mới là chỗ tăng timeout giúp.
+    * **E4000 TOOL_FAILED** — trả lời nhưng không phải JSON đọc được: dịch vụ hỏng hoặc địa chỉ
+      trỏ vào một thứ không phải API tìm kiếm (hay gặp khi `SEARXNG_URL` trỏ sai cổng).
+    """
+    import urllib.error
+
+    ten = p.get("id") or "?"
+    if isinstance(e, TimeoutError):
+        return EideError("E4004", f"Công cụ tìm kiếm `{ten}` không trả lời kịp: {e}",
+                         provider=ten)
+    if isinstance(e, ValueError):            # JSONDecodeError là con của ValueError
+        return EideError("E4000", f"Công cụ tìm kiếm `{ten}` trả về nội dung không đọc được "
+                         f"(không phải JSON): {e}. Kiểm địa chỉ dịch vụ có đúng là API tìm kiếm.",
+                         provider=ten)
+    goc = getattr(e, "reason", e)
+    if isinstance(goc, TimeoutError):
+        return EideError("E4004", f"Công cụ tìm kiếm `{ten}` không trả lời kịp: {goc}",
+                         provider=ten)
+    if isinstance(e, urllib.error.HTTPError):
+        return EideError("E4000", f"Công cụ tìm kiếm `{ten}` trả mã HTTP {e.code}: {e.reason}",
+                         provider=ten, http=e.code)
+    return EideError("E4005", f"Không ra được mạng để tìm tài liệu ({ten}): {goc}. Đây là lỗi "
+                     f"MẠNG, không phải lỗi tệp — việc đã làm trong lượt này vẫn giữ, bảo tác tử "
+                     f"\"tiếp tục\" khi có mạng lại. Muốn chạy không cần Internet thì dựng "
+                     f"SearXNG cục bộ (`make searxng`) rồi đặt SEARXNG_URL.",
+                     provider=ten, resumable=True)
 
 def _doc_ket_qua(ky: str, d: dict[str, Any]) -> list[dict[str, Any]]:
     """Chuẩn hóa về `{url, title, snippet}`. Mỗi dịch vụ đặt tên trường một kiểu."""

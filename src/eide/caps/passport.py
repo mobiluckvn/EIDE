@@ -648,3 +648,94 @@ def _so_dia_chi(x: Any) -> int | None:
         return int(s, 0)
     except ValueError:
         return None
+
+
+# ─────────────────────────────────────────── Đ3 — THẺ ĐỀ NGHỊ thay câu chặn "chip nào?"
+#
+# Spec: AAD-33 §4 (`passport.propose`), AGD-32 §5 (luồng bảy bước) và Đ3; TC002, 008, 015, 027,
+# 046, 048.
+#
+# ## Vì sao đây là một hàm thường, chưa phải một `@capability`
+#
+# AAD-33 §4 khai `passport.propose` là một năng lực mới. Đưa nó vào registry đòi sửa ba tệp của
+# bộ hồ sơ cùng lúc (`excel/caps.py` → `caps.json`, `cds_data_*.py` → `cds.json`,
+# `capabilities/passport.yaml`) và cấp cho nó một mã năng lực mới. Đ5 sẽ mở đúng ba tệp ấy để
+# thêm `requires`/`produces` cho toàn bộ 246 năng lực — gộp vào một lần sửa thì ít rủi ro hơn hai
+# lần, và cùng lý lẽ đã ghi ở [DEV-231] cho DX. Hành vi có ngay từ Đ3; hợp đồng theo ở Đ5.
+#
+# ## Vì sao KHÔNG ghim tên chip trần
+#
+# Hộ chiếu là `ns.part@semver` gắn với tài liệu thật. Ghép một tên chip trần vào đó sẽ tra ra
+# RỖNG trong im lặng — lỗi "câu trả lời sai tệ hơn ô trống" ([DEV-183]). Nên thẻ này KHÔNG đề
+# nghị "ghim ATmega328P"; nó đề nghị ba CÁCH LẤY TÀI LIỆU, và việc ghim chỉ xảy ra sau bước 6 của
+# AGD-32 §5.
+
+#: Ba lựa chọn cố định của thẻ đề nghị (AGD-32 §5 bước 1). Thứ tự có nghĩa: hai cách lấy dữ liệu
+#: thật đứng trước, "tri thức chung" đứng cuối vì nó là tầng ĐỒNG — dùng được để gợi ý, không
+#: được làm một vế của phép so sánh và không được vào mã sinh (N2).
+LUA_CHON_DE_NGHI: tuple[tuple[str, str, str], ...] = (
+    ("tim_tren_mang", "Tìm trên mạng",
+     "tác tử tìm datasheet/reference manual, ưu tiên tên miền nhà sản xuất; anh duyệt nguồn "
+     "trước khi tải"),
+    ("toi_nap_tep", "Tôi nạp tệp",
+     "anh kéo PDF/zip vào — nguồn do anh đưa vào là tầng cao nhất"),
+    ("tri_thuc_chung", "Dùng tri thức chung – nhãn Đồng",
+     "chạy tiếp bằng hiểu biết chung của mô hình; mọi con số mang nhãn CHƯA KIỂM CHỨNG, không "
+     "dùng để so sánh hay sinh mã"),
+)
+
+
+def co_ho_chieu(root: Path | None, chip: str) -> str | None:
+    """Mã hộ chiếu đã ghim cho `chip`, hoặc `None`. Khớp theo phần tên, không cần đúng semver.
+
+    Chấp cả hai dạng mà bộ hồ sơ dùng cho cùng một con chip (`ATmega328P` và
+    `mchp.atmega328p@1.0.0`) — cùng lý do với `eide_core.isa.isa_cua_chip`.
+    """
+    if root is None or not chip:
+        return None
+    db = store.store_path(root)
+    if not db.exists():
+        return None
+    ten = chip.split("@", 1)[0].rsplit(".", 1)[-1].lower()
+    try:
+        with store.open_store(db) as c:
+            for (pid,) in c.execute("SELECT id FROM passport WHERE kind='chip'"):
+                if ten and ten in str(pid).split("@", 1)[0].lower():
+                    return str(pid)
+    except Exception:  # noqa: BLE001 — store cũ chưa có bảng thì coi như chưa ghim
+        return None
+    return None
+
+
+def de_nghi(chips: list[str], root: Path | None = None) -> dict[str, Any] | None:
+    """Thẻ đề nghị cho chip ĐẦU TIÊN chưa có hộ chiếu; `None` nếu không có gì để đề nghị.
+
+    Trả `None` — chứ không trả một thẻ rỗng — khi câu người dùng không nêu chip nào: lúc ấy hỏi
+    "chip nào?" là câu hỏi ĐÚNG, và thay nó bằng một thẻ ba lựa chọn về một con chip không ai
+    nhắc tới thì còn tệ hơn câu chặn cũ.
+    """
+    from eide_core.isa import isa_cua_chip, isa_da_co
+
+    for chip in [str(x).strip() for x in (chips or []) if str(x).strip()]:
+        if co_ho_chieu(root, chip):
+            continue
+        isa = isa_cua_chip(chip)
+        the: dict[str, Any] = {
+            "kind": "proposal",
+            "chip": chip,
+            "isa": isa,
+            "lua_chon": [{"gia_tri": v, "nhan": n, "giai_thich": g}
+                         for v, n, g in LUA_CHON_DE_NGHI],
+            "vi_sao": f"`{chip}` anh vừa nói trong câu, nhưng dự án chưa có datasheet của nó. "
+                      f"Mọi con số dùng để so sánh hay sinh mã đều phải truy được về một tài "
+                      f"liệu có trang và trích đoạn (nguyên tắc N1).",
+        }
+        if isa is None:
+            # TC018 — nói THẲNG, không đưa ba ISA đều sai. Danh sách đọc từ manifest, không gõ
+            # tay: thêm một manifest mà câu này vẫn kể tên cũ là một câu nói dối tự sinh ra.
+            the["canh_bao_isa"] = (
+                f"`{chip}` không khớp manifest ISA nào EIDE đang có ({', '.join(isa_da_co())}) — "
+                f"chuỗi công cụ cho chip này chưa được hỗ trợ. Việc cần làm là thêm một manifest "
+                f"ISA, không phải chọn một ISA gần giống.")
+        return the
+    return None
